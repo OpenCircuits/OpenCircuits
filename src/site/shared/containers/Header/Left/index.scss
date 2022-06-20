@@ -2,7 +2,7 @@
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
 .header__left {
-    margin-left: 7px;
+    margin-left: 12px;
 
     & div {
         float: left;
@@ -37,6 +37,19 @@
             background-color: darken($success-color, 10%);
         }
     }
+    &__duplicate {
+        height: 40px;
+        padding: 5px;
+        cursor: pointer;
+        margin-left: 7px;
+        color: #ccc;
+
+        transition: 0.5s;
+
+        &:hover {
+            background-color: lighten($primary-color, 10%);
+        }
+    }
     &__saving__icons {
         & > img {
             margin-left: 7px;
@@ -66,9 +79,21 @@
             }
         }
     }
+    &__history {
+        margin-top: math.div($header-height - $header-history-height, 2) - $header-border-width;
+        margin-right: 7px;
+
+        cursor: pointer;
+
+        background-color: transparent;
+
+        img {
+            height: $header-history-height;
+        }
+    }
     &__lock {
         margin-top: math.div($header-height - $header-lock-height, 2) - $header-border-width;
-        margin-right: 5px;
+        margin-right: 7px;
 
         cursor: pointer;
 

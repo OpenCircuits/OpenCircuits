@@ -1,28 +1,33 @@
+import {CircuitInfo} from "core/utils/CircuitInfo";
+
+import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 import {TimedComponent} from "digital/models/ioobjects/TimedComponent";
 
-import {ButtonPopupModule, UseModuleProps} from "shared/containers/SelectionPopup/modules/Module";
 
+type Props = {
+    info: CircuitInfo;
+}
+export const PauseResumeButtonModule = ({ info }: Props) => {
+    const { renderer } = info;
 
-export const PauseButtonModule = (props: UseModuleProps) => (
-    <ButtonPopupModule
-        text="Pause"
-        alt="Pause the timed component"
-        getDependencies={(s) => (s instanceof TimedComponent ? `${s.isPaused()}` : "-")}
-        isActive={(selections) => selections.every(s => s instanceof TimedComponent && !s.isPaused())}
-        onClick={(selections) => {
-            (selections as TimedComponent[]).forEach(c => c.pause());
-        }}
-        {...props} />
-);
+    const [props, ts, forceUpdate] = useSelectionProps(
+        info,
+        (s): s is TimedComponent => (s instanceof TimedComponent),
+        (s) => ({ isPaused: s.isPaused() })
+    );
 
-export const ResumeButtonModule = (props: UseModuleProps) => (
-    <ButtonPopupModule
-        text="Resume"
-        alt="Resume the timed component"
-        getDependencies={(s) => (s instanceof TimedComponent ? `${s.isPaused()}` : "-")}
-        isActive={(selections) => selections.every(s => s instanceof TimedComponent && s.isPaused())}
-        onClick={(selections) => {
-            (selections as TimedComponent[]).forEach(c => c.resume());
-        }}
-        {...props} />
-);
+    if (!props)
+        return null;
+
+    const allPaused = (props.isPaused as boolean[]).every(Boolean);
+
+    return <button
+        title="Resume/Pause the timed component"
+        onClick={() => {
+            ts.forEach(t => (allPaused ? t.resume() : t.pause()));
+            renderer.render();
+            forceUpdate(); // Need to force an update since this isn't changed by an action
+        }}>
+        {allPaused ? "Resume" : "Pause"}
+    </button>
+}

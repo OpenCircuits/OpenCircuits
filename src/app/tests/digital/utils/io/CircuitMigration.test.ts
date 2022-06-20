@@ -1,18 +1,21 @@
 import "jest";
 
-import v1_1muxesJson from "./saves/v1.1_muxes.json";
-import v1_1everythingJson from "./saves/v1.1_everything.json";
-import v2_1muxesJson from "./saves/v2.1_muxes.json";
-import v2_1everythingJson from "./saves/v2.1_everything.json";
-
 // TODO: Find out why Camera is being ignored and requiring a manual import
 import "math/Camera";
-import "digital/models/ioobjects";
 
 import {Circuit} from "core/models/Circuit";
 
-import {LoadCircuit} from "./CircuitLoadingUtils";
 import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver";
+
+import "digital/models/ioobjects";
+
+import {LoadCircuit} from "./CircuitLoadingUtils";
+
+import v1_1everythingJson from "./saves/v1.1_everything.json";
+import v1_1muxesJson      from "./saves/v1.1_muxes.json";
+import v2_1everythingJson from "./saves/v2.1_everything.json";
+import v2_1muxesJson      from "./saves/v2.1_muxes.json";
+
 
 describe("Save Migration Tests", () => {
     describe("v1.1 -> v2.0", () => {

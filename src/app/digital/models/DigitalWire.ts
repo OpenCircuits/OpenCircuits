@@ -1,11 +1,15 @@
 import {serializable, serialize} from "serialeazy";
 
+import {DEFAULT_ON_COLOR} from "core/utils/Constants";
+
 import {Port} from "core/models";
+
 import {Wire} from "core/models/Wire";
+
+import {DigitalNode} from "./ioobjects/other/DigitalNode";
 
 import {DigitalComponent, InputPort, OutputPort} from "./index";
 
-import {DigitalNode} from "./ioobjects/other/DigitalNode";
 
 
 @serializable("DigitalWire")
@@ -19,10 +23,10 @@ export class DigitalWire extends Wire {
     private isOn: boolean;
 
     public constructor(input?: OutputPort, output?: InputPort) {
-        super(input, output);
+        super(input!, output!);
 
-        this.p1 = input;
-        this.p2 = output;
+        this.p1 = input!;
+        this.p2 = output!;
         this.isOn = false;
     }
 
@@ -32,7 +36,7 @@ export class DigitalWire extends Wire {
             return;
 
         this.isOn = signal;
-        if (this.p2 != null)
+        if (this.p2 !== undefined)
             this.p2.activate(signal);
     }
 
@@ -69,6 +73,10 @@ export class DigitalWire extends Wire {
 
     public getOutputComponent(): DigitalComponent {
         return this.p2.getParent();
+    }
+
+    public getDisplayColor(): string {
+        return (this.getInput()?.getIsOn() ? DEFAULT_ON_COLOR : this.getColor());
     }
 
     public getIsOn(): boolean {

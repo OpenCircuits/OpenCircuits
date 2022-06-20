@@ -87,6 +87,7 @@
     &__errorMessage {
         color: $danger-color;
         font-weight: bold;
+        white-space: pre-wrap;
     }
 
     &__customOps {

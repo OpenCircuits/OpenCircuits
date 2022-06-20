@@ -1,13 +1,12 @@
-import {Action} from "core/actions/Action";
-
 import {GetPath} from "core/utils/ComponentUtils";
 
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {Component} from "core/models/Component";
-import {Port} from "core/models/ports/Port";
+import {Action} from "core/actions/Action";
 
-import {GroupAction} from "../GroupAction";
+
+import {CircuitDesigner, Port} from "core/models";
+
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
+import {GroupAction}            from "../GroupAction";
 
 
 export abstract class PortChangeAction implements Action {
@@ -18,7 +17,9 @@ export abstract class PortChangeAction implements Action {
 
     private wireDeletionAction: GroupAction;
 
-    protected constructor(designer: CircuitDesigner, target: number, initialCount: number) {
+    protected constructor(designer: CircuitDesigner | undefined, target: number, initialCount: number) {
+        if (!designer)
+            throw new Error("PortChangeAction failed: designer not found");
         this.designer = designer;
 
         this.targetCount = target;
@@ -26,13 +27,13 @@ export abstract class PortChangeAction implements Action {
     }
 
     private createAction(): GroupAction {
-        const action = new GroupAction();
+        const action = new GroupAction([], "Port Change Action");
         const ports = this.getPorts();
 
         // Disconnect all wires from each port
         //  that will be remove if target < ports.length
         while (ports.length > this.targetCount) {
-            const wires = ports.pop().getWires();
+            const wires = ports.pop()!.getWires();
             action.add(wires.map(w => CreateDeletePathAction(this.designer, GetPath(w))));
         }
 
@@ -55,6 +56,10 @@ export abstract class PortChangeAction implements Action {
         this.wireDeletionAction.undo();
 
         return this;
+    }
+
+    public getName(): string {
+        return "Port Change";
     }
 
 }

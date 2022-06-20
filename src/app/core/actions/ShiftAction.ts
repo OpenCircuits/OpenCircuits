@@ -1,8 +1,9 @@
 import {Action} from "core/actions/Action";
 
 import {CircuitDesigner} from "core/models";
+
 import {Component} from "core/models/Component";
-import {Wire} from "core/models/Wire";
+import {Wire}      from "core/models/Wire";
 
 
 export class ShiftAction implements Action {
@@ -27,4 +28,11 @@ export class ShiftAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Shift Object";
+    }
+
+    public getCustomInfo(): string[] {
+        return [`${this.obj.getName()}: ${this.i}`];
+    }
 }

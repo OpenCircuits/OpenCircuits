@@ -2,6 +2,7 @@ import "jest";
 
 import {Vector} from "Vector";
 
+
 describe("Vector", () => {
     describe("Constructor", () => {
         test("No parameters", () => {
@@ -207,13 +208,28 @@ describe("Vector", () => {
             {
                 const v1 = new Vector(8, 4);
                 const v2 = new Vector(1, 0);
-                const p = v1.project(v2);
+                const p1 = v1.project(v2);
+                const p2 = v2.project(v1);
                 expect(v1.x).toBe(8);
                 expect(v1.y).toBe(4);
                 expect(v2.x).toBe(1);
                 expect(v2.y).toBe(0);
-                expect(p.x).toBeCloseTo(0.8, 1e-3);
-                expect(p.y).toBeCloseTo(0.4, 1e-3);
+                expect(p1.x).toBeCloseTo(8, 1e-3);
+                expect(p1.y).toBeCloseTo(0, 1e-3);
+                expect(p2.x).toBeCloseTo(0.8, 1e-3);
+                expect(p2.y).toBeCloseTo(0.4, 1e-3);
+                const v3 = new Vector(2,2);
+                const v4 = new Vector(-20,-5);
+                const p3 = v3.project(v4);
+                const p4 = v4.project(v3);
+                expect(v3.x).toBe(2);
+                expect(v3.y).toBe(2);
+                expect(v4.x).toBe(-20);
+                expect(v4.y).toBe(-5);
+                expect(p3.x).toBeCloseTo(2.352941, 1e-3);
+                expect(p3.y).toBeCloseTo(0.588235, 1e-3);
+                expect(p4.x).toBeCloseTo(-12.5, 1e-3);
+                expect(p4.y).toBeCloseTo(-12.5, 1e-3);
             }
         });
     });
@@ -222,7 +238,7 @@ describe("Vector", () => {
             {
                 const v1 = new Vector(5, 5);
                 const v2 = new Vector(-5, 10);
-                const min = Vector.min(v1, v2);
+                const min = Vector.Min(v1, v2);
                 expect(min.x).toBe(-5);
                 expect(min.y).toBe(5);
             }
@@ -231,7 +247,7 @@ describe("Vector", () => {
             {
                 const v1 = new Vector(5, 5);
                 const v2 = new Vector(-5, 10);
-                const max = Vector.max(v1, v2);
+                const max = Vector.Max(v1, v2);
                 expect(max.x).toBe(5);
                 expect(max.y).toBe(10);
             }

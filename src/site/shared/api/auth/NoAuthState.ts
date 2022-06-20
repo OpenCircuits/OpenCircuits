@@ -1,6 +1,8 @@
 import {SetCookie} from "shared/utils/Cookies";
-import {AuthType} from "./AuthTypes";
+
 import {AuthState} from "./AuthState";
+import {AuthType}  from "./AuthTypes";
+
 
 const NO_AUTH_USERNAME_COOKIE = "no_auth_username";
 
@@ -24,9 +26,9 @@ export class NoAuthState implements AuthState {
         return this.userName;
     }
 
-    public logOut(): Promise<object> {
+    public logOut(): Promise<object | undefined> {
         SetCookie(NO_AUTH_USERNAME_COOKIE, "");
-        return Promise.resolve(null);
+        return Promise.resolve(undefined);
     }
 
 }

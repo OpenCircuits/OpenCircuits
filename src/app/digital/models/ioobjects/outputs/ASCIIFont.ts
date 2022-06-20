@@ -42,7 +42,7 @@ export const ASCIIFont: Record<string, number[][]> = {
         [0, 1, 4, 6],
         [0, 1, 2, 3, 4, 6],
 
-        //A - Z
+        // A - Z
         [0, 1, 2, 4, 5, 6],
         [2, 3, 4, 5, 6],
         [0, 3, 4, 5],
@@ -111,7 +111,7 @@ export const ASCIIFont: Record<string, number[][]> = {
         [1, 6, 2],
         [4, 5],
         [4, 5, 6],
-        [0]
+        [0],
     ],
 
 
@@ -220,7 +220,7 @@ export const ASCIIFont: Record<string, number[][]> = {
         [1, 6, 2],
         [4, 5],
         [4, 5, 6],
-        [1, 5, 7]
+        [1, 5, 7],
     ],
 
 
@@ -329,7 +329,7 @@ export const ASCIIFont: Record<string, number[][]> = {
         [0, 3, 6, 11, 12],
         [8, 9],
         [0, 3, 7, 10, 13],
-        [6, 7, 10, 12]
+        [6, 7, 10, 12],
     ],
 
 
@@ -439,6 +439,6 @@ export const ASCIIFont: Record<string, number[][]> = {
         [11, 10],
         [11, 9, 10, 5, 0],
         [8, 14, 9, 12],
-        []
-    ]
+        [],
+    ],
 };

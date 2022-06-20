@@ -6,6 +6,7 @@ const getEnv = require("./utils/env");
 const getDirs = require("./utils/getDirs");
 const getAliases = require("./utils/getAliases");
 const path = require("path");
+const open = require("open");
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -32,9 +33,11 @@ async function launch_test(dir, flags) {
 (async () => {
     const argv = yargs(process.argv.slice(2))
         .boolean("ci")
+        .boolean("coverage")
         .argv;
 
     const ci = argv.ci;
+    const coverage = argv.coverage;
 
     let dirs = argv._;
     if (ci && dirs.length === 0) {
@@ -54,7 +57,10 @@ async function launch_test(dir, flags) {
     }
 
     const flags = {
-        ci, watch: (dirs.length === 1 && !ci)
+        ci,
+        watch: (dirs.length === 1 && !ci) && !coverage,
+        coverage,
+        collectCoverageFrom: "**/*.{js,ts,tsx}"
     };
 
     const results = [];
@@ -75,9 +81,13 @@ async function launch_test(dir, flags) {
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
+        const testDir = dir === "app" ? "src/app" : `src/site/pages/${dir}`;
+        flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
         results.push(
-            (await launch_test(dir === "app" ? "src/app" : `src/site/pages/${dir}`, flags)).results
+            (await launch_test(testDir, flags)).results
         );
+        if (coverage)
+            open(flags.coverageDirectory + "/lcov-report/index.html");
     }
 
     const pass = results.every(r => r.success);

@@ -10,6 +10,7 @@ const choosePort = require("../utils/choosePort");
 const copyDir = require("../utils/copyDir");
 const getEnv = require("../utils/env");
 const config = require("./config");
+const {errors} = require("@ts-morph/common");
 
 
 /**
@@ -111,6 +112,8 @@ module.exports = async (dir, mode) => {
             client: {
                 overlay: true,
             },
+            // Allows devs to save local circuits for use in #1037
+            onBeforeSetupMiddleware: require("./customDevServer"),
         }, compiler);
 
         ["SIGINT", "SIGTERM"].forEach(sig => {
@@ -129,8 +132,8 @@ module.exports = async (dir, mode) => {
 
         return new Promise((resolve, reject) => {
             compiler.run((err, result) => {
-                if (err)
-                    reject(err);
+                if (err || result.compilation.errors.length > 0)
+                    reject({ err, errors: result.compilation.errors });
                 else
                     resolve(result);
             });

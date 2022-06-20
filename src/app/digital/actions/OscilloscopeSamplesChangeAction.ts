@@ -28,4 +28,8 @@ export class OscilloscopeSamplesChangeAction implements Action {
         return this;
     }
 
+    public getName(): string {
+        return "Oscilloscope Sample Change"
+    }
+
 }

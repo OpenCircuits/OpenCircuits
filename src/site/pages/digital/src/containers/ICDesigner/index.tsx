@@ -1,7 +1,5 @@
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 
-import {ENTER_KEY, ESC_KEY} from "core/utils/Constants";
-
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {V} from "Vector";
@@ -38,6 +36,8 @@ import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
+import {InputField} from "shared/components/InputField";
+
 import "./index.scss";
 
 
@@ -52,7 +52,6 @@ export const ICDesigner = (() => {
 
     const icInfo: ICCircuitInfo = {
         ...info,
-        ic: undefined
     };
 
     const EdgesToCursors: Record<ICEdge, string> = {
@@ -67,11 +66,11 @@ export const ICDesigner = (() => {
 
         const {isActive, ic: data} = useDigitalSelector(
             state => ({ ...state.icDesigner })
-        )
+        );
         const dispatch = useDigitalDispatch();
 
         const {w, h} = useWindowSize();
-        const canvas = useRef<HTMLCanvasElement>();
+        const canvas = useRef<HTMLCanvasElement>(null);
         const [{name}, setName] = useState({ name: "" });
         const [{cursor}, setCursor] = useState({ cursor: "default" });
 
@@ -87,6 +86,8 @@ export const ICDesigner = (() => {
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
+            if (!canvas.current)
+                throw new Error("ICDesigner.useEffect failed: canvas.current is null");
             // Create input w/ canvas
             icInfo.input = new Input(canvas.current);
 
@@ -120,7 +121,7 @@ export const ICDesigner = (() => {
         useLayoutEffect(() => {
             if (!data || !icInfo.ic)
                 return;
-            data.setName(name);
+            data.setName(name ?? "");
             icInfo.ic.update();
             renderer.render();
         }, [name, data, icInfo.ic]);
@@ -157,6 +158,9 @@ export const ICDesigner = (() => {
             icInfo.input.block();
 
             if (!cancelled) {
+                if (!data)
+                    throw new Error("ICDesigner.close failed: data was undefined");
+
                 // Create IC on center of screen
                 const ic = new IC(data);
                 ic.setPos(mainInfo.camera.getPos());
@@ -167,7 +171,7 @@ export const ICDesigner = (() => {
                     new CreateICDataAction(data, mainInfo.designer),
                     new PlaceAction(mainInfo.designer, ic),
                     new SelectAction(mainInfo.selections, ic)
-                ]);
+                ], "Create IC Action");
                 mainInfo.history.add(action.execute());
                 mainInfo.renderer.render();
             }
@@ -180,23 +184,20 @@ export const ICDesigner = (() => {
             setName({ name: "" }); // Clear name
         }
 
-        useKeyDownEvent(icInfo.input, ESC_KEY,   () => close(true),  [data, mainInfo]);
-        useKeyDownEvent(icInfo.input, ENTER_KEY, () => close(false), [data, mainInfo]);
+        useKeyDownEvent(icInfo.input, "Escape", () => close(true),  [data, mainInfo]);
+        useKeyDownEvent(icInfo.input, "Enter",  () => close(false), [data, mainInfo]);
 
         return (
-            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none") }}>
+            <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
                 <canvas ref={canvas}
                         width={w*IC_DESIGNER_VW}
                         height={h*IC_DESIGNER_VH}
                         style={{ cursor }} />
 
-                <input type="text"
-                       placeholder="IC Name"
-                       value={name}
-                       onChange={(ev) => setName({name: ev.target.value})}
-                       onKeyUp={(ev) => {
-                           if (ev.key == "Escape" || ev.key == "Enter") ev.currentTarget.blur();
-                       }} />
+                <InputField type="text"
+                            value={name}
+                            placeholder="IC Name"
+                            onChange={(ev) => setName({name: ev.target.value})} />
 
                 <div className="icdesigner__buttons">
                     <button name="confirm" onClick={() => close()}>

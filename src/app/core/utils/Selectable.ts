@@ -1,5 +1,6 @@
 import {Vector} from "Vector";
 
+
 export interface Selectable {
     setName(name: string): void;
     getName(): string;

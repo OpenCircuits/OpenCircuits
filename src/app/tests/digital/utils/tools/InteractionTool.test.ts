@@ -1,15 +1,12 @@
 import "jest";
-import "test/helpers/Extensions";
 
-import {SHIFT_KEY,
-        DELETE_KEY,
-        BACKSPACE_KEY,
-        IO_PORT_LENGTH,
-        COMMAND_KEY,
-        A_KEY,
-        X_KEY} from "core/utils/Constants";
+import {IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V} from "Vector";
+
+import "test/helpers/Extensions";
+import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
 
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
@@ -18,13 +15,11 @@ import {ANDGate, BUFGate,
         LED,
         Multiplexer, Switch} from "digital/models/ioobjects";
 
-import {Setup}      from "test/helpers/Setup";
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("Selection Tool", () => {
     const {designer, input, selections, history} = Setup();
-    const {Place, Connect} = GetHelpers({designer});
+    const {Place, Connect} = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {
@@ -130,7 +125,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
             obj2.setPos(V(200, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
 
             input.click(V(100, 0));
             expect(selections.get().length).toBe(1);
@@ -148,7 +143,7 @@ describe("Selection Tool", () => {
 
             obj2.setPos(V(200, 0));
 
-            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+            Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
             input.click(V(20, 0));
             expect(selections.get().length).toBe(1);
@@ -167,7 +162,7 @@ describe("Selection Tool", () => {
             obj2.setPos(V(IO_PORT_LENGTH + obj2.getSize().x/2, 200));
             expect(obj2.getInputPortPos(0)).toApproximatelyEqual(V(0, 200));
 
-            Connect(obj1, 0, obj2, 0).getWire().setIsStraight(true);
+            Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
             input.click(V(0, 20));
             expect(selections.get().length).toBe(1);
@@ -176,11 +171,11 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate", () => {
-            const [gate] = Place(new ANDGate());
+            Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))
-                    .pressKey(DELETE_KEY);
+                    .pressKey("Delete");
             expect(selections.get().length).toBe(0);
             expect(designer.getObjects().length).toBe(0);
 
@@ -188,11 +183,11 @@ describe("Selection Tool", () => {
         });
 
         test("Select then Delete ANDGate w/ Backspace", () => {
-            const [gate] = Place(new ANDGate());
+            Place(new ANDGate());
 
             input.drag(V(-100, 100),
                        V(100, -100))
-                    .pressKey(BACKSPACE_KEY);
+                    .pressKey("Backspace");
             expect(selections.get().length).toBe(0);
             expect(designer.getObjects().length).toBe(0);
 
@@ -203,7 +198,7 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
             obj2.setPos(V(200, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
@@ -213,7 +208,7 @@ describe("Selection Tool", () => {
             expect(selections.get()).toContain(wire);
             expect(history.getActions()).toHaveLength(1);
 
-            input.pressKey(BACKSPACE_KEY);
+            input.pressKey("Backspace");
             expect(history.getActions()).toHaveLength(2);
 
             expect(selections.get().length).toBe(0);
@@ -234,9 +229,9 @@ describe("Selection Tool", () => {
             obj1.setPos(V(100, 0));
 
             input.click(V(0, 0));
-            input.pressKey(SHIFT_KEY);
+            input.pressKey("Shift");
             input.click(obj1.getPos());
-            input.releaseKey(SHIFT_KEY);
+            input.releaseKey("Shift");
 
             expect(selections.get().length).toBe(2);
             expect(selections.get()).toContain(obj1);
@@ -250,10 +245,10 @@ describe("Selection Tool", () => {
         });
 
         test("Select All Test", () => {
-            input.pressKey(COMMAND_KEY)
-                .pressKey(A_KEY)
-                .releaseKey(A_KEY)
-                .releaseKey(COMMAND_KEY);
+            input.pressKey("Meta")
+                .pressKey("a")
+                .releaseKey("a")
+                .releaseKey("Meta");
 
             // When no objects, there should be no action made
             expect(history.getActions()).toHaveLength(0);
@@ -261,10 +256,10 @@ describe("Selection Tool", () => {
             // Create objects and select all
             const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
 
-            input.pressKey(COMMAND_KEY)
-                .pressKey(A_KEY)
-                .releaseKey(A_KEY)
-                .releaseKey(COMMAND_KEY);
+            input.pressKey("Meta")
+                .pressKey("a")
+                .releaseKey("a")
+                .releaseKey("Meta");
 
             expect(selections.get()).toHaveLength(2);
             expect(selections.get()).toContain(obj1);
@@ -273,10 +268,10 @@ describe("Selection Tool", () => {
             expect(history.getActions()).toHaveLength(1);
 
             // When everything is already selected, selecting-all again shouldn't create another action
-            input.pressKey(COMMAND_KEY)
-                .pressKey(A_KEY)
-                .releaseKey(A_KEY)
-                .releaseKey(COMMAND_KEY);
+            input.pressKey("Meta")
+                .pressKey("a")
+                .releaseKey("a")
+                .releaseKey("Meta");
 
             expect(history.getActions()).toHaveLength(1);
         });
@@ -286,13 +281,13 @@ describe("Selection Tool", () => {
             obj2.setPos(V(200, 0));
             obj1.setPos(V(0, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
-            
+
             // Select all objects with shift and click
-            input.pressKey(SHIFT_KEY);
+            input.pressKey("Shift");
             input.click(obj1.getPos());
             expect(selections.get().length).toBe(1);
 
@@ -300,12 +295,12 @@ describe("Selection Tool", () => {
             expect(selections.get().length).toBe(2);
 
             input.click(V(100, 0));
-            input.releaseKey(SHIFT_KEY);
+            input.releaseKey("Shift");
             expect(selections.get().length).toBe(3);
             expect(selections.get()).toContain(wire);
 
             // When everything is deleted, no objects should be selected
-            input.pressKey(BACKSPACE_KEY);
+            input.pressKey("Backspace");
             expect(selections.get()).toHaveLength(0);
             expect(designer.getWires().length).toBe(0);
         });
@@ -314,22 +309,22 @@ describe("Selection Tool", () => {
             const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
             obj1.setPos(V(100, 0));
 
-            const wire = Connect(obj1, 0, obj2, 0).getWire();
+            const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires().length).toBe(1);
 
             expect(selections.get().length).toBe(0);
 
             // Select all objects (wire does not get selected)
-            input.pressKey(COMMAND_KEY)
-                .pressKey(A_KEY)
-                .releaseKey(A_KEY)
-                .releaseKey(COMMAND_KEY);
+            input.pressKey("Meta")
+                .pressKey("a")
+                .releaseKey("a")
+                .releaseKey("Meta");
 
             expect(selections.get()).toHaveLength(2);
             expect(selections.get()).not.toContain(wire);
 
             // When everything is deleted, no objects should be selected
-            input.pressKey(BACKSPACE_KEY);
+            input.pressKey("Backspace");
             expect(selections.get()).toHaveLength(0);
             expect(designer.getWires().length).toBe(0);
         });
@@ -363,8 +358,8 @@ describe("Selection Tool", () => {
             expect(sw).not.toBeConnectedTo(led, {depth: 1});
             expect(sw).toBeConnectedTo(led, {depth: 2});
 
-            input.pressKey(X_KEY)
-                .releaseKey(X_KEY);
+            input.pressKey("x")
+                .releaseKey("x");
 
             expect(designer.getObjects()).toHaveLength(2);
             expect(selections.amount()).toEqual(0);
@@ -395,8 +390,8 @@ describe("Selection Tool", () => {
             expect(sw).not.toBeConnectedTo(led, {depth: 2});
             expect(sw).toBeConnectedTo(led, {depth: 3});
 
-            input.pressKey(X_KEY)
-                .releaseKey(X_KEY);
+            input.pressKey("x")
+                .releaseKey("x");
 
             expect(designer.getObjects()).toHaveLength(3);
             expect(selections.amount()).toEqual(0);
@@ -408,8 +403,8 @@ describe("Selection Tool", () => {
             expect(selections.amount()).toEqual(1);
             expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
 
-            input.pressKey(X_KEY)
-                .releaseKey(X_KEY);
+            input.pressKey("x")
+                .releaseKey("x");
 
             expect(designer.getObjects()).toHaveLength(2);
             expect(selections.amount()).toEqual(0);
@@ -432,17 +427,17 @@ describe("Selection Tool", () => {
                     .press(wire.getShape().getPos(0.75))
                     .move(V(-20, 0))
                     .release()
-                    .pressKey(SHIFT_KEY)
+                    .pressKey("Shift")
                     .click(designer.getObjects()[2].getPos())
-                    .releaseKey(SHIFT_KEY);
+                    .releaseKey("Shift");
 
             expect(designer.getObjects()).toHaveLength(4);
             expect(selections.amount()).toEqual(2);
             expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
             expect(selections.get()[1]).toBeInstanceOf(DigitalNode);
 
-            input.pressKey(X_KEY)
-                .releaseKey(X_KEY);
+            input.pressKey("x")
+                .releaseKey("x");
 
             expect(designer.getObjects()).toHaveLength(2);
             expect(selections.amount()).toEqual(0);

@@ -1,5 +1,7 @@
 import {Vector} from "Vector";
 
+import {Key} from "./Key";
+
 
 export type EventType =
     "click"       |
@@ -29,7 +31,7 @@ export type MouseEvent = {
 }
 export type KeyboardEvent = {
     type: "keydown" | "keyup";
-    key: number;
+    key: Key;
 }
 export type ZoomEvent = {
     type: "zoom";

@@ -2,16 +2,17 @@ import "jest";
 
 import {V} from "Vector";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {Switch, LED} from "digital/models/ioobjects";
-
-import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
+import {DigitalComponent} from "digital/models/DigitalComponent";
+import {LED, Switch}      from "digital/models/ioobjects";
+
 
 
 describe("Wiring Tool", () => {
     const {designer, input} = Setup({ propagationTime: 0 });
-    const {Place} = GetHelpers({designer});
+    const {Place} = GetHelpers(designer);
 
     // TODO: Make a bunch of global jest extensions like these
     function expectToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {

@@ -1,6 +1,9 @@
 import {Vector} from "Vector";
+
 import {Camera} from "math/Camera";
+
 import {Action} from "core/actions/Action";
+
 
 export class MoveCameraAction implements Action {
     protected camera: Camera;
@@ -33,6 +36,10 @@ export class MoveCameraAction implements Action {
         this.camera.setZoom(this.initialZoom);
 
         return this;
+    }
+
+    public getName(): string {
+        return "Moved Camera"
     }
 
 }

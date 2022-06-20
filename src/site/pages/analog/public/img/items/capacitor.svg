@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="20px" height="60px" viewBox="-10 -30 20 60" enable-background="new -10 -30 20 60" xml:space="preserve">
+    <line stroke="#000000" stroke-width="2" x1="-9" y1="-30" x2="-9" y2="30" />
+    <line stroke="#000000" stroke-width="2" x1="9"  y1="-30" x2="9"  y2="30" />
+</svg>

@@ -24,7 +24,7 @@ import "./index.scss";
 
 type Props = {
     info: DigitalCircuitInfo;
-    canvas: React.MutableRefObject<HTMLCanvasElement>;
+    canvas: React.RefObject<HTMLCanvasElement>;
 }
 export const MainDesigner = ({info, canvas}: Props) => {
     const {camera, designer, history, selections, toolManager, renderer} = info;
@@ -48,6 +48,8 @@ export const MainDesigner = ({info, canvas}: Props) => {
 
     // Initial function called after the canvas first shows up
     useLayoutEffect(() => {
+        if (!canvas.current)
+            throw new Error("MainDesigner.useLayoutEffect failed: canvas is null");
         // Create input w/ canvas
         info.input = new Input(canvas.current);
 
@@ -88,6 +90,8 @@ export const MainDesigner = ({info, canvas}: Props) => {
     return (<>
         <Droppable ref={canvas}
                    onDrop={(pos, itemId, num, smartPlaceOptions: SmartPlaceOptions) => {
+                       if (!canvas.current)
+                           throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
                        num = num ?? 1;
                        if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                            return;

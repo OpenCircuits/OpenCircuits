@@ -1,6 +1,7 @@
 import {Action} from "core/actions/Action";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
 
@@ -21,5 +22,9 @@ export class DeleteICDataAction implements Action {
     public undo(): Action {
         this.target.addICData(this.data);
         return this;
+    }
+
+    public getName(): string {
+        return "Deleted IC Data"
     }
 }
