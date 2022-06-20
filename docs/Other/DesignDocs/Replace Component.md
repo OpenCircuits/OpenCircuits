@@ -16,7 +16,7 @@ import Timeline from './_timeline';
 
 
 # *Replace Component* Design Doc
-#### *[Trevor Crystal](https://github.com/TGCrystal)*
+#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Leon Montealegre](https://github.com/LeonMontealegre) (Last updated *June 19, 2022*)
 
 
 <details>
@@ -113,7 +113,7 @@ There shouldn't be any side effects from this.
 
 ## Detailed Scoping
 
-Ther is an action for replacing a component already implemented. It currently throws an error if the new component does not have the same number ports, so that would have to modified to an error if the replacement does not have the same number as the number of ports in use. That action is in the core so is ignorant to the difference between input and output ports. That is where the funciton in Milestone 2 will come into play in order. It will function similar to the check in the core replacement action, but with input and output ports. It will return a boolean for whether or not the proposed component is a suitable replacement. When the popup is loaded, it can check every kind of Component available in OpenCircuits to see if the selected Component can be replaced by it.
+There is an action for replacing a component already implemented. It currently throws an error if the new component does not have the same number ports, so that would have to modified to an error if the replacement does not have the same number as the number of ports in use. That action is in the core so is ignorant to the difference between input and output ports. That is where the funciton in Milestone 2 will come into play in order. It will function similar to the check in the core replacement action, but with input and output ports. It will return a boolean for whether or not the proposed component is a suitable replacement. When the popup is loaded, it can check every kind of Component available in OpenCircuits to see if the selected Component can be replaced by it.
 
 
 ### Milestone 1
@@ -129,3 +129,12 @@ The function will check the number of output/input ports in use vs. the number t
 ### Milestone 3
 
 Using a Popup would likely be the easiest way to do this. Flexbox can be used to display the items and they can be grouped like they are grouped in the itemnav.
+
+There are a few ways to go about the UI, but the presented ideas are as follows:
+
+1. An area within the SelectionPopup directly that has a visual list of all the components that are able to replace the currently selected ones. The user could then click on one and press the "Replace Component" button to replace it. Potentially it could even "temporarily" replace as the user clicks on them and does a permanent replace when the button is pressed.
+![A quick mockup of what the area might look like](img/ReplaceComponent/ReplaceComponentIdea.jpg)
+
+2. The alternative idea would have the same display but in a larger popup that shows up when the "Replace Component" button is pressed. This may be better on mobile or smaller screens since (1) may be too cluttered or small to see/press.
+
+Note: that for multiple components, the replace components feature should only show up if all the components have the exact same number of ports and can be replaced by the same things.
