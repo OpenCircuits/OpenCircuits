@@ -1,17 +1,19 @@
 import {GatherGroup} from "core/utils/ComponentUtils";
 
-import {GroupAction}      from "core/actions/GroupAction";
-import {DeleteAction}     from "core/actions/addition/PlaceAction";
-import {DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {GroupAction} from "core/actions/GroupAction";
 
-import {CircuitDesigner, IOObject, isNode, Node} from "core/models";
+import {DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {DeleteAction}     from "core/actions/addition/PlaceAction";
+
+import {CircuitDesigner, IOObject, Node, isNode} from "core/models";
 
 
 /**
  * Goes through group of selected IOObjects and deletes them along with other connected objects that need to be deleted.
  *
- * @param designer is the CircuitDesigner the action is being done on.
- * @param objects are the IOObjects that are being added to the DeleteGroupAction.
+ * @param designer Is the CircuitDesigner the action is being done on.
+ * @param objects  Are the IOObjects that are being added to the DeleteGroupAction.
+ * @returns          An action to delete the entire bundle of objects/connections.
  */
 export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
     const action = new GroupAction([], "Delete Group Action");

@@ -2,11 +2,10 @@ import "jest";
 
 import {V} from "Vector";
 
-import {Switch, Button,
-        ANDGate, LED, DigitalNode} from "digital/models/ioobjects";
-
-import {Setup}      from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
+import {ANDGate, Button, DigitalNode, LED, Switch} from "digital/models/ioobjects";
 
 
 describe("Translate Tool", () => {
