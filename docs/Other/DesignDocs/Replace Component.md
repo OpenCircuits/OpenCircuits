@@ -16,7 +16,7 @@ import Timeline from './_timeline';
 
 
 # *Replace Component* Design Doc
-#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Leon Montealegre](https://github.com/LeonMontealegre) (Last updated *June 19, 2022*)
+#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Leon Montealegre](https://github.com/LeonMontealegre)* (Last updated *June 19, 2022*)
 
 
 <details>

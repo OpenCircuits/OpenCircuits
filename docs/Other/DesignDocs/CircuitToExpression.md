@@ -16,7 +16,7 @@ import Timeline from './_timeline';
 
 
 # *Circuit to Logical Expression* Design Doc
-#### *[Trevor Crystal](https://github.com/TGCrystal)* (Last updated *December 4, 2021*)
+#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Leon Montealegre](https://github.com/LeonMontealegre)* (Last updated *June 19, 2022*)
 
 
 <details>
@@ -29,7 +29,7 @@ import Timeline from './_timeline';
 
 ## Overview
 
-Recently, a feature to generate a circuit from a logical boolean expression was added. This is an interesting feature and can be useful for those learning how the logic of digital circuitry works. There is, however, now way to do the reverse of this operation.
+Recently, a feature to generate a circuit from a logical boolean expression was added. This is an interesting feature and can be useful for those learning how the logic of digital circuitry works. There is, however, no way to do the reverse of this operation.
 
 
 ## Context
@@ -101,10 +101,10 @@ There is one more case that we would not easily be able to represent at the abst
 
 ## Known Unknowns
 
-- The exact way the expression is represented in the Selection Popup is unknown. It could have a button that would directly display it, or, if the algorithm is efficient enough, can display the expression inline. That would mean there (probably) couldn't be any choices for how to format the output.
-- Should there be options to format the output (different operations, parenthesis usage, etc.)?
-- Should all operations be parenthesized (easy and literal) or should the parenthesis be removed if not necessary (hard and simplified)?
-- The output can be confusing with unnamed inputs. Is there any way to remedy this?
+- ~~The exact way the expression is represented in the Selection Popup is unknown. It could have a button that would directly display it, or, if the algorithm is efficient enough, can display the expression inline. That would mean there (probably) couldn't be any choices for how to format the output.~~ The output will be shown in a popup along with settings, similar to the Expression to Circuit Popup.
+- ~~Should there be options to format the output (different operations, parenthesis usage, etc.)?~~ Yes
+- ~~Should all operations be parenthesized (easy and literal) or should the parenthesis be removed if not necessary (hard and simplified)?~~ Option for it, simplify by default.
+- ~~The output can be confusing with unnamed inputs. Is there any way to remedy this?~~ Ex: 2 Switches both named Switch, in the output they will be named "Switch1" and "Switch2". In the popup, after Generate is clicked, it can show labels (in the popup view only) for the names for the components.
 
 
 ## Detailed Scoping
@@ -128,4 +128,9 @@ There is one more case that we would not easily be able to represent at the abst
 
 1. Finalize the design of the ui
 2. Create an action (or other function) to perform all of the parts created in Milestone 2, create tests for that
+3. There will be a button in the Selection Popup to open a popup similar to the one for generating a circuit from an expression.
+
+The button in the Selection Popup will look something like this: ![The Selection Popup with the added button](img/CircuitToExpression/MockupPart1.jpg)
+Before clicking Generate, the popup will look like this: ![The popup before clicking Generate](img/CircuitToExpression/MockupPart2.jpg)
+Afterwards, the expression will be shown below with an icon to quickly copy it: ![The popup after clicking Generate](img/CircuitToExpression/MockupPart3.jpg)
 
