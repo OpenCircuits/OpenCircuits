@@ -31,7 +31,6 @@ import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers
 import styles from "./index.scss";
 
 
-console.log(styles);
 
 export type ItemNavItem = {
     id: string;
