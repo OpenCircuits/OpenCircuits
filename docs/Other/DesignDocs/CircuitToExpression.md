@@ -131,6 +131,14 @@ There is one more case that we would not easily be able to represent at the abst
 3. There will be a button in the Selection Popup to open a popup similar to the one for generating a circuit from an expression.
 
 The button in the Selection Popup will look something like this: ![The Selection Popup with the added button](img/CircuitToExpression/MockupPart1.jpg)
+
 Before clicking Generate, the popup will look like this: ![The popup before clicking Generate](img/CircuitToExpression/MockupPart2.jpg)
+
 Afterwards, the expression will be shown below with an icon to quickly copy it: ![The popup after clicking Generate](img/CircuitToExpression/MockupPart3.jpg)
+
+Note that the preview in the top of the circuit will be similar to the one in Image Exporter with the user able to pan/zoom around and such.
+
+Also note the placement of labels after the "Generate" is clicked which will hopefully clarify issues with naming and duplicate names. Maybe a little popup warning saying that new names have been generated would be good too.
+
+Also note that the generate button should probably gray out or dissapear after being clicked since generating more then once for the same circuit is pointless.
 
