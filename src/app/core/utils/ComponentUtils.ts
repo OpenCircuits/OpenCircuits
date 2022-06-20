@@ -1,22 +1,24 @@
-import {serializable, Serialize, Deserialize} from "serialeazy";
+import {Deserialize, Serialize, serializable} from "serialeazy";
 
-import {IO_PORT_LINE_WIDTH,
-        GRID_SIZE} from "./Constants";
+import {GRID_SIZE,
+        IO_PORT_LINE_WIDTH} from "./Constants";
 
-import {Vector, V} from "Vector";
-import {Graph} from "math/Graph";
-import {Transform} from "math/Transform";
-import {BoundingBox} from "math/BoundingBox";
+import {V, Vector} from "Vector";
+
+import {BoundingBox}  from "math/BoundingBox";
+import {Camera}       from "math/Camera";
+import {Graph}        from "math/Graph";
 import {RectContains} from "math/MathUtils";
-import {Camera} from "math/Camera";
+import {Transform}    from "math/Transform";
 
 import {isPressable} from "core/utils/Pressable";
 
-import {IOObject} from "core/models/IOObject";
+import {Component}      from "core/models/Component";
 import {CullableObject} from "core/models/CullableObject";
-import {Component} from "core/models/Component";
-import {Wire} from "core/models/Wire";
-import {Node, isNode} from "core/models/Node";
+import {IOObject}       from "core/models/IOObject";
+import {Node, isNode}   from "core/models/Node";
+import {Wire}           from "core/models/Wire";
+
 import {Port} from "core/models/ports/Port";
 
 
@@ -27,11 +29,11 @@ import {Port} from "core/models/ports/Port";
  *  Input components  (anything with 0 output ports and >0  input ports)
  *  Output components (anything with 0 input ports  and >0 output ports)
  *  Wires             (wires)
- *  Components        (anything else)
+ *  Components        (anything else).
  *
  * Note that .getComponents() does NOT contain wires
  *  A helper method to get all the components including them
- *  is included as toList()
+ *  is included as toList().
  */
 @serializable("IOObjectSet")
 export class IOObjectSet {
@@ -52,16 +54,16 @@ export class IOObjectSet {
     }
 
     public toList(): IOObject[] {
-        return (<IOObject[]>this.getComponents()).concat(this.getWires());
+        return [...this.getComponents(), ...this.getWires()];
     }
 }
 
 /**
  * Helper function to retrieve a list of all the Input/Output ports
- *  from the given list of objects/wires
+ *  from the given list of objects/wires.
  *
- * @param  objects The list of objects to get ports from
- * @return    All the ports attached to the given list of objects
+ * @param objs The list of objects to get ports from.
+ * @returns      All the ports attached to the given list of objects.
  */
 export function GetAllPorts(objs: Component[]): Port[] {
     return objs.flatMap((o) => o.getPorts());
@@ -70,14 +72,14 @@ export function GetAllPorts(objs: Component[]): Port[] {
 /**
  * Creates a Separated group from the given list of objects
  *  and also retrieves all IMMEDIATELY connected wires that
- *  connect to other objects in `objects`
+ *  connect to other objects in `objects`.
  *
  * Note that this method assumes all the components you want in the group are
  *  provided in `objects` INCLUDING WirePorts, this will not trace down the paths
  *  to get all wires ports. Use GatherGroup(objects) to do this.
  *
- * @param  objects The list of objects to separate
- * @return         A SeparatedComponentCollection of the objects
+ * @param objects The list of objects to separate.
+ * @returns         A SeparatedComponentCollection of the objects.
  */
 export function CreateGroup(objects: IOObject[]): IOObjectSet {
     const group = new IOObjectSet(objects);
@@ -91,17 +93,18 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
             .filter((w) => objs.includes(w.getP1Component()) &&
                            objs.includes(w.getP2Component()));
 
-    return new IOObjectSet((<IOObject[]>objs).concat(wires));
+    return new IOObjectSet([...objs, ...wires]);
 }
 
 
 /**
  * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
- * @param   full True if you want to return everything in the circuit otherwise returns
- *               only the wires/nodes connected to the wire.
- * @param   w    The wire to start from
- * @return       The array of wires/WirePorts in this path (including w)
+ *
+ * @param w    The wire to start from.
+ * @param full True if you want to return everything in the circuit otherwise returns
+ *       only the wires/nodes connected to the wire.
+ * @returns      The array of wires/WirePorts in this path (including w).
  */
 export function GetPath(w: Wire | Node, full = true): Array<Wire | Node> {
     const path: Array<Wire | Node> = [];
@@ -145,11 +148,11 @@ export function GetPath(w: Wire | Node, full = true): Array<Wire | Node> {
  * Gets all the components connected to this component
  *  Note: this path is UN-ORDERED!
  *
- * @param  c The component to start from
- * @return   The array of components in the same circuit (including c)
+ * @param c The component to start from.
+ * @returns   The array of components in the same circuit (including c).
  */
-export function GetComponentPath(c: Component): Array<Component> {
-    const path: Array<Component> = [];
+export function GetComponentPath(c: Component): Component[] {
+    const path: Component[] = [];
 
     // Breadth First Search
     const queue = new Array<Component>(c);
@@ -175,8 +178,10 @@ export function GetComponentPath(c: Component): Array<Component> {
  * Gathers all wires + wireports in the path from the inputs/outputs
  *  of the given component.
  *
- * @param  obj  The component
- * @return      An array of connections + WirePorts
+ * @param obj  The component.
+ * @param full True if you want to return everything in the circuit otherwise
+ *       returns only the wires/nodes connected to the selected wire.
+ * @returns      An array of connections + WirePorts.
  */
 export function GetAllPaths(obj: Component, full = true): Array<Wire | Node> {
     // Get all distinct connections
@@ -191,10 +196,11 @@ export function GetAllPaths(obj: Component, full = true): Array<Wire | Node> {
 /**
  * Creates a Separated group from the given list of objects.
  *  It also retrieves all "paths" going out from each object.
- * @param full true if you want to return everything in the circuit otherwise
- *             returns only the wires/nodes connected to the selected wire.
- * @param objects The list of objects
- * @return         A SeparatedComponentCollection of the objects
+ *
+ * @param objects The list of objects.
+ * @param full    True if you want to return everything in the circuit otherwise
+ *          returns only the wires/nodes connected to the selected wire.
+ * @returns         A SeparatedComponentCollection of the objects.
  */
 export function GatherGroup(objects: IOObject[], full = true): IOObjectSet {
     const group = new IOObjectSet(objects);
@@ -205,7 +211,7 @@ export function GatherGroup(objects: IOObject[], full = true): IOObjectSet {
 
     const paths = [...new Set([
         ...wires.flatMap((w) => GetPath(w, full)),
-        ...components.flatMap((c) => GetAllPaths(c, full))
+        ...components.flatMap((c) => GetAllPaths(c, full)),
     ])];
 
     return new IOObjectSet([...components, ...wires, ...paths]);
@@ -213,16 +219,16 @@ export function GatherGroup(objects: IOObject[], full = true): IOObjectSet {
 
 /**
  * Helper function to create a directed graph from a given
- *  collection of components
+ *  collection of components.
  *
  * The Graph stores Nodes as indices from the
- * groups.getAllComponents() array
+ *  groups.getAllComponents() array.
  *
  * The edge weights are stored as pairs representing
- * the input index (i1) and the output index (i2) respectively
+ * the input index (i1) and the output index (i2) respectively.
  *
- * @param  groups The SeparatedComponentCollection of components
- * @return        A graph corresponding to the given circuit
+ * @param groups The SeparatedComponentCollection of components.
+ * @returns        A graph corresponding to the given circuit.
  */
 export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     const graph = new Graph<number, number>();
@@ -275,7 +281,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
     //  the entire circuit doesn't get serialized
     return Serialize(objects, [
         {
-            type: Port,
+            type:           Port,
             customBehavior: {
                 customSerialization: (serializer, port: Port) => {
                     const parent = port.getParent();
@@ -298,30 +304,30 @@ export function SerializeForCopy(objects: IOObject[]): string {
                     return data;
                 },
                 customKeyFilter: (_: Port, key: string) => {
-                    return (key != "connections"); // don't serialize connections (handle them above)
-                }
-            }
+                    return (key !== "connections"); // don't serialize connections (handle them above)
+                },
+            },
         },
         {
-            type: IOObject,
+            type:           IOObject,
             customBehavior: {
                 customKeyFilter: (_: IOObject, key: string) => {
-                    return (key != "designer"); // don't serialize designer
-                }
-            }
-        }
+                    return (key !== "designer"); // don't serialize designer
+                },
+            },
+        },
     ]);
 }
 
 /**
  * Copies a group of objects including connections that are
- *  present within the objects
+ *  present within the objects.
  *
- * @param  objects [description]
- * @return         [description]
+ * @param objects The object to copy.
+ * @returns         The copied set of objects.
  */
 export function CopyGroup(objects: IOObject[]): IOObjectSet {
-    if (objects.length == 0)
+    if (objects.length === 0)
         return new IOObjectSet();
 
     const copies = Deserialize<IOObject[]>(SerializeForCopy(objects));
@@ -354,7 +360,10 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
  * the camera's view with adjustable padding. If objs
  * is empty, uses a default size.
  *
- * @return Tuple of desired camera position and zoom
+ * @param camera  The camera to fit within.
+ * @param objs    The objects to fit within the camera.
+ * @param padding The amount of padding for the fit.
+ * @returns         Tuple of desired camera position and zoom.
  */
 export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
     // If no objects return to default zoom

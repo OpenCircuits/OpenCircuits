@@ -3,11 +3,12 @@ import {serializable, serialize} from "serialeazy";
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
+import {DigitalComponent}       from "digital/models/DigitalComponent";
+import {DigitalObjectSet}       from "digital/models/DigitalObjectSet";
 
 import {ICData} from "./ICData";
 
@@ -15,7 +16,7 @@ import {ICData} from "./ICData";
 @serializable("IC", {
     customPostDeserialization: (obj: IC) => {
         obj.redirectOutputs();
-    }
+    },
 })
 export class IC extends DigitalComponent {
     @serialize

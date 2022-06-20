@@ -1,7 +1,9 @@
 import {Action} from "core/actions/Action";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {ICData} from "digital/models/ioobjects/other/ICData";
+
 
 export class CreateICDataAction implements Action {
     /**
@@ -9,14 +11,14 @@ export class CreateICDataAction implements Action {
      */
     private data: ICData;
     /**
-     * The target DigitalCircuitDesigner
+     * The target DigitalCircuitDesigner.
      */
     private target: DigitalCircuitDesigner;
 
     /**
-     * Initialize the Action with the data in "ICData" and target in "DigitalCircuitDesigner"
-     * 
-     * @param data The ICData 
+     * Initialize the Action with the data in "ICData" and target in "DigitalCircuitDesigner".
+     *
+     * @param data   The ICData.
      * @param target The target dessigner that we want to add ICData to it.
      */
     public constructor(data: ICData, target: DigitalCircuitDesigner) {
@@ -26,8 +28,8 @@ export class CreateICDataAction implements Action {
 
     /**
      * Execute the action, add the ICData to the target designer.
-     * 
-     * @returns This action
+     *
+     * @returns This action.
      */
     public execute(): Action {
         this.target.addICData(this.data);
@@ -35,10 +37,10 @@ export class CreateICDataAction implements Action {
     }
 
      /**
-     * Undo the action, remove the ICData that added to the designer.
-     * 
-     * @returns This action
-     */
+      * Undo the action, remove the ICData that added to the designer.
+      *
+      * @returns This action.
+      */
     public undo(): Action {
         this.target.removeICData(this.data);
         return this;
