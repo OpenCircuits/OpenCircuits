@@ -5,6 +5,7 @@ import {IC} from "digital/models/ioobjects";
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
 import {useDigitalDispatch} from "site/digital/utils/hooks/useDigital";
+
 import {OpenICViewer} from "site/digital/state/ICViewer";
 
 
@@ -25,9 +26,11 @@ export const ViewICButtonModule = ({ info }: Props) => {
     if (!(props && ics.length === 1))
         return null;
 
-    return <button
-        title="View the inside of this IC"
-        onClick={() => dispatch(OpenICViewer(ics[0]))}>
-        View IC
-    </button>
+    return (
+        <button type="button"
+                title="View the inside of this IC"
+                onClick={() => dispatch(OpenICViewer(ics[0]))}>
+            View IC
+        </button>
+    );
 }

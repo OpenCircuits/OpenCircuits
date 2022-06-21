@@ -6,7 +6,9 @@ import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 const DOCUMENT_NODE_TYPE = 9;
 
 function parentOf(elem: Element, target: string) {
+    // eslint-disable-next-line @typescript-eslint/ban-types
     let el = elem as Element | null;
+
     // Loop through each parent element and see if it matches the target
     //  also stop if the nodeType == document
     while ((el = el!.parentElement) && el.nodeType !== DOCUMENT_NODE_TYPE) {
@@ -27,9 +29,7 @@ type Props = {
     onClick?: () => void;
     onClose?: () => void;
 }
-export function Dropdown(props: Props) {
-    const {open, btnInfo, onClick, onClose} = props;
-
+export const Dropdown = ({open, btnInfo, onClick, onClose, children}: Props) => {
     // Check for clicking outside of the menu as to call onClose
     useEffect(() => {
         function onWindowClick(ev: MouseEvent) {
@@ -41,7 +41,7 @@ export function Dropdown(props: Props) {
                 onClose();
         }
 
-        //listener for mobile and desktop (see Issue #597)
+        // listener for mobile and desktop (see Issue #597)
         const events = ["click", "touchend"];
 
         // Add listener on start
@@ -55,14 +55,15 @@ export function Dropdown(props: Props) {
 
     return (
         <div className="header__right__dropdown">
-            <button className={`header__right__dropdown__button ${open ? "white" : ""}`}
+            <button type="button"
+                    className={`header__right__dropdown__button ${open ? "white" : ""}`}
                     title={btnInfo.title}
                     onClick={open ? onClose : onClick}>
                 <img src={btnInfo.src} height="100%" alt={btnInfo.title} />
             </button>
             <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}
                  style={{maxHeight: h-75+"px"}}>
-                {props.children}
+                {children}
             </div>
         </div>
     );

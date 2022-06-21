@@ -4,15 +4,16 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {Clamp} from "math/MathUtils";
 
-import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {ImageExportOptions, SaveImage} from "shared/utils/ImageExporter";
+
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {CloseHeaderPopups} from "shared/state/Header";
 
-import {Popup} from "shared/components/Popup";
-import {SwitchToggle} from "shared/components/SwitchToggle";
 import {ButtonToggle} from "shared/components/ButtonToggle";
-import {InputField} from "shared/components/InputField";
+import {InputField}   from "shared/components/InputField";
+import {Popup}        from "shared/components/Popup";
+import {SwitchToggle} from "shared/components/SwitchToggle";
 
 import "./index.scss";
 
@@ -40,9 +41,9 @@ export const ImageExporterPopup = ({preview}: Props) => {
 
 
     const [state, setState] = useState<ImageExportOptions>({
-        type: "png",
-        width: window.innerWidth, height: window.innerHeight-HEADER_HEIGHT,
-        bgColor: "#cccccc", useBg: true, useGrid: true,
+        type:    "png",
+        width:   window.innerWidth, height:  window.innerHeight-HEADER_HEIGHT,
+        bgColor: "#cccccc", useBg:   true, useGrid: true,
     });
 
     const wrapper = useRef<HTMLDivElement>(null);
@@ -87,13 +88,13 @@ export const ImageExporterPopup = ({preview}: Props) => {
                     {preview({
                         canvas,
                         isActive: (curPopup === "image_exporter"),
-                        width: Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE),
-                        height: Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
-                        useGrid: state.useGrid,
-                        style: {
-                            border: "1px solid black",
+                        width:    Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE),
+                        height:   Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
+                        useGrid:  state.useGrid,
+                        style:    {
+                            border:          "1px solid black",
                             backgroundColor: state.useBg ? state.bgColor : "transparent",
-                        }
+                        },
                     })}
                 </div>
                 <div className="imageexporter__popup__options">
@@ -121,7 +122,8 @@ export const ImageExporterPopup = ({preview}: Props) => {
                                     value={state.bgColor}
                                     onChange={(ev) => setState({...state, bgColor: ev.target.value})} />
                                 <span>
-                                    <button onClick={() => setState({...state, bgColor: "#cccccc"})}>Reset</button>
+                                    <button type="button"
+                                            onClick={() => setState({...state, bgColor: "#cccccc"})}>Reset</button>
                                 </span>
                             </div>
                         </div>
@@ -162,14 +164,14 @@ export const ImageExporterPopup = ({preview}: Props) => {
                         </div>
                     </div>
                     <div>
-                        <button name="confirm" onClick={() => {
+                        <button type="button" name="confirm" onClick={() => {
                             if (!canvas.current)
                                 throw new Error("ImageExporterPopup.button.onClick failed: canvas.current is null");
                             SaveImage(canvas.current, circuitName, state);
                         }}>
                             Export as {state.type.toUpperCase()}
                         </button>
-                        <button name="cancel" onClick={() => dispatch(CloseHeaderPopups())}>
+                        <button type="button" name="cancel" onClick={() => dispatch(CloseHeaderPopups())}>
                             Cancel
                         </button>
                     </div>

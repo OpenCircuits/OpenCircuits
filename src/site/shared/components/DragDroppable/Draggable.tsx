@@ -4,7 +4,7 @@ import {DRAG_TIME, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
-import {useDocEvent} from "shared/utils/hooks/useDocEvent";
+import {useDocEvent}           from "shared/utils/hooks/useDocEvent";
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
 import {DragDropHandlers} from "./DragDropHandlers";
@@ -24,7 +24,7 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
     //   they have a tiny amount of time before it starts dragging so they can swipe
     //  Also keep track of starting position so we can determine direction of movement
     const [state, setState] = useState({
-        startTapTime: 0, startX: 0, startY: 0, touchDown: false
+        startTapTime: 0, startX: 0, startY: 0, touchDown: false,
     });
 
     function onDragEnd(pos: Vector) {
@@ -51,8 +51,7 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
     }, [isDragging], true);
 
     useEffect(() => {
-        if (onDragChange)
-            onDragChange(isDragging ? "start" : "end");
+        onDragChange?.(isDragging ? "start" : "end");
     }, [isDragging]);
 
     useDocEvent(
@@ -63,9 +62,13 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
 
     return (
         <button
+            type="button"
             {...other}
-            onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault() }
-            onMouseDown={(e) => {if (!state.touchDown) setIsDragging(true);}}
+            onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault()}
+            onMouseDown={(_) => {
+                if (!state.touchDown)
+                    setIsDragging(true);
+            }}
             // This is necessary for mobile such that when the user is trying to
             //  swipe to scroll, it doesn't drag too quickly
             onTouchStart={(e) => {
@@ -93,7 +96,7 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
             }}
             onTouchEnd={(ev) => {
                 onDragEnd(V(ev.changedTouches[0].clientX, ev.changedTouches[0].clientY));
-                if (other.onTouchEnd) other.onTouchEnd(ev);
+                other.onTouchEnd?.(ev);
             }}>
             {children}
         </button>

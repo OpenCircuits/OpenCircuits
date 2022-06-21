@@ -36,6 +36,8 @@ export const InputField = React.forwardRef<HTMLInputElement, Props>(({ onEnter, 
             }} />
     );
 }) as React.FC<Props> & { ref?: React.RefObject<HTMLInputElement> };
+InputField.displayName = "InputField";
+
 
 type NumberProps = Props & {
     step?: number;
@@ -72,3 +74,4 @@ export const NumberInputField = React.forwardRef<HTMLInputElement, NumberProps>(
         </div>
     );
 });
+NumberInputField.displayName = "NumberInputField";

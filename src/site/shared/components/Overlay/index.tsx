@@ -20,4 +20,3 @@ export const Overlay = ({ isOpen, close, children }: Props) => {
         </div>
     );
 };
-      

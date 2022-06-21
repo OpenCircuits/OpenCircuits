@@ -1,12 +1,15 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
 import {BUFGate} from "digital/models/ioobjects";
+
 import {Gate} from "digital/models/ioobjects/gates/Gate";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 
 
@@ -25,12 +28,13 @@ export const InputCountModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Input Count
         <label>
             <NumberModuleInputField
                 kind="int" min={2} max={8} step={1}
                 props={props.numInputs}
+                alt="Number of inputs object(s) have"
                 getAction={(newCount) =>
                     new GroupAction(
                         cs.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCount)),
@@ -40,8 +44,7 @@ export const InputCountModule = ({ info }: Props) => {
                     renderer.render();
                     if (info.isValid && info.isFinal)
                         history.add(info.action);
-                }}
-                alt="Number of inputs object(s) have" />
+                }} />
         </label>
-    </div>
+    </div>);
 }

@@ -1,19 +1,22 @@
 import {useEffect, useLayoutEffect} from "react";
-import {Deserialize, Serialize} from "serialeazy";
+import {Deserialize, Serialize}     from "serialeazy";
 
 import {Input} from "core/utils/Input";
 
-import {InteractionTool}  from "core/tools/InteractionTool";
-import {PanTool}          from "core/tools/PanTool";
+import {InteractionTool} from "core/tools/InteractionTool";
+import {PanTool}         from "core/tools/PanTool";
+
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+
 import {AnalogCircuitDesigner} from "analog/models";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
-import {CreateInfo}    from "site/analog/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/analog/utils/Rendering";
+
+import {CreateInfo} from "site/analog/utils/CircuitInfo/CreateInfo";
 
 import "./index.scss";
 
@@ -24,6 +27,7 @@ type Props = ImageExporterPreviewProps & {
 export const ImageExporterPreview = (() => {
     const info = CreateInfo(undefined, new InteractionTool([FitToScreenHandler]), PanTool);
 
+    // eslint-disable-next-line react/display-name
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
         const { camera, designer, toolManager, renderer } = info;
 
@@ -55,7 +59,8 @@ export const ImageExporterPreview = (() => {
             // Add input listener
             info.input.addListener((event) => {
                 const change = toolManager.onEvent(event, info);
-                if (change) renderer.render();
+                if (change)
+                    renderer.render();
             });
 
             // Input should be blocked initially

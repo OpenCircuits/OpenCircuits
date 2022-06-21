@@ -1,4 +1,5 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
@@ -6,6 +7,7 @@ import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction
 import {Encoder} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 
 
@@ -24,12 +26,13 @@ export const OutputCountModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Output Count
         <label>
             <NumberModuleInputField
                 kind="int" min={1} max={8} step={1}
                 props={props.numOutputs}
+                alt="Number of outputs object(s) have"
                 getAction={(newCount) =>
                     new GroupAction(
                         cs.map(o => new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)),
@@ -39,8 +42,7 @@ export const OutputCountModule = ({ info }: Props) => {
                     renderer.render();
                     if (info.isValid && info.isFinal)
                         history.add(info.action);
-                }}
-                alt="Number of outputs object(s) have" />
+                }} />
         </label>
-    </div>
+    </div>);
 }

@@ -1,24 +1,25 @@
 import {useState} from "react";
 
-import {DigitalCircuitInfo}  from "digital/utils/DigitalCircuitInfo";
 import {OperatorFormat, OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
+import {FORMATS}                             from "digital/utils/ExpressionParser/Constants/Formats";
 
-import {Popup}        from "shared/components/Popup";
-import {ButtonToggle} from "shared/components/ButtonToggle";
-import {InputField} from "shared/components/InputField";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {CloseHeaderPopups} from "shared/state/Header";
 import {useSharedDispatch,
         useSharedSelector} from "shared/utils/hooks/useShared";
 
-import {InputTypes,
-        Generate,
-        ExprToCirGeneratorOptions,
-        OutputTypes}    from "./generate";
-import {CustomOps}      from "./CustomOps";
+import {CloseHeaderPopups} from "shared/state/Header";
+
+import {ButtonToggle} from "shared/components/ButtonToggle";
+import {InputField}   from "shared/components/InputField";
+import {Popup}        from "shared/components/Popup";
+
 import {BooleanOption}  from "./BooleanOption";
+import {CustomOps}      from "./CustomOps";
 import {DropdownOption} from "./DropdownOption";
+import {Generate,
+        InputTypes,
+        OutputTypes}    from "./generate";
 
 import "./index.scss";
 
@@ -26,7 +27,6 @@ import "./index.scss";
 type Props = {
     mainInfo: DigitalCircuitInfo;
 }
-
 export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
     const {curPopup} = useSharedSelector(
         state => ({ curPopup: state.header.curPopup })
@@ -59,19 +59,19 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                             type="text"
                             value={expression}
                             placeholder="!a | (B^third)"
-                            onChange={e => setExpression(e.target.value)}
-                            spellCheck={false} />
-                <br/>
+                            spellCheck={false}
+                            onChange={e => setExpression(e.target.value)} />
+                <br />
 
                 <div className="exprtocircuit__popup__settings">
                     <div>
                         <h3>Notation</h3>
                         {FORMATS.map(curFormat =>
-                            <ButtonToggle key={curFormat.icon}
-                                          isOn={format === curFormat.icon} text={curFormat.label} height="40px"
-                                          onChange={() => setFormat(curFormat.icon)} />
+                            (<ButtonToggle key={curFormat.icon}
+                                           isOn={format === curFormat.icon} text={curFormat.label} height="40px"
+                                           onChange={() => setFormat(curFormat.icon)} />)
                         )}
-                        <ButtonToggle isOn={format === "custom"} text={"Custom"} height="40px"
+                        <ButtonToggle isOn={format === "custom"} text="Custom" height="40px"
                                       onChange={() => setFormat("custom")} />
                         {
                             format === "custom" &&
@@ -81,10 +81,10 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
 
                     <div>
                         <h3>Options</h3>
-                        <BooleanOption displayCondition={true}
-                                       option={label}
+                        <BooleanOption option={label}
                                        setOption={setLabel}
-                                       text="Place labels for inputs" />
+                                       text="Place labels for inputs"
+                                       displayCondition />
                         <BooleanOption displayCondition={output !== "Oscilloscope"}
                                        option={isIC}
                                        setOption={setIsIC}
@@ -107,25 +107,28 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                     </div>
                 </div>
 
-                <button className="exprtocircuit__popup__generate" type="button" disabled={expression===""} onClick={() => {
-                    try {
-                        Generate(mainInfo, expression, {
-                            input, output, isIC,
-                            connectClocksToOscope: clocksToOscope,
-                            label, format,
-                            ops: customOps,
-                        });
-                        reset();
-                    } catch (err) {
-                        setErrorMessage(err.message);
-                        console.error(err);
-                    }
-                }}>Generate</button>
+                <button type="button"
+                        className="exprtocircuit__popup__generate"
+                        disabled={expression===""}
+                        onClick={() => {
+                            try {
+                                Generate(mainInfo, expression, {
+                                    input, output, isIC,
+                                    connectClocksToOscope: clocksToOscope,
+                                    label, format,
+                                    ops:                   customOps,
+                                });
+                                reset();
+                            } catch (err) {
+                                setErrorMessage(err.message);
+                                console.error(err);
+                            }
+                        }}>
+                    Generate
+                </button>
 
-                <button className="cancel" type="button" onClick={() => reset()}>Cancel</button>
-
+                <button type="button" className="cancel" onClick={() => reset()}>Cancel</button>
             </div>
-
         </Popup>
     );
 });

@@ -1,17 +1,18 @@
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 
-import {IC_VIEWER_ZOOM_PADDING_RATIO} from "core/utils/Constants";
+import {IC_VIEWER_ZOOM_PADDING_RATIO}   from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo}             from "core/utils/CircuitInfo";
 import {CopyGroup, GetCameraFit} from "core/utils/ComponentUtils";
-import {Event} from "core/utils/Events";
-import {Input} from "core/utils/Input";
-import {isPressable} from "core/utils/Pressable";
+import {Event}                   from "core/utils/Events";
+import {Input}                   from "core/utils/Input";
+import {isPressable}             from "core/utils/Pressable";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
-import {InteractionTool}  from "core/tools/InteractionTool";
-import {PanTool}          from "core/tools/PanTool";
+
+import {InteractionTool} from "core/tools/InteractionTool";
+import {PanTool}         from "core/tools/PanTool";
 
 import {CullableObject} from "core/models";
 
@@ -19,12 +20,14 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {Button, Switch} from "digital/models/ioobjects/inputs";
 
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
+import {useWindowSize}   from "shared/utils/hooks/useWindowSize";
+
+import {GetRenderFunc} from "site/digital/utils/Rendering";
+
+import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
 
 import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
-import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
-import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {CloseICViewer} from "site/digital/state/ICViewer";
 
@@ -56,6 +59,7 @@ type Props = {
 export const ICViewer = (() => {
     const info = CreateInfo(new InteractionTool([]), PanTool);
 
+    // eslint-disable-next-line react/display-name
     return ({ mainInfo }: Props) => {
         const { camera, designer, toolManager, renderer } = info;
 
@@ -163,7 +167,8 @@ export const ICViewer = (() => {
         }
 
         const updateViewer = () => {
-            if (!ic) return;
+            if (!ic)
+                return;
             // loop through all the inputs for this IC
             //  set their input value to be what the info.designer has for their input
             const viewerInputs = designer.getObjects().filter(i => [Switch, Button].some((type) => i instanceof type));
@@ -185,10 +190,10 @@ export const ICViewer = (() => {
                         height={h*IC_DESIGNER_VH} />
 
                 <div className="icviewer__buttons">
-                    <button name="close" onClick={close}>
+                    <button type="button" name="close" onClick={close}>
                         Close
                     </button>
-                    <button name="restore" disabled={!pauseUpdates} onClick={restore}>
+                    <button type="button" name="restore" disabled={!pauseUpdates} onClick={restore}>
                         Restore
                     </button>
                 </div>

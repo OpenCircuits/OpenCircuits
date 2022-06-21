@@ -1,15 +1,19 @@
 import {useEffect} from "react";
 
-import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {OpenHeaderMenu, CloseHeaderMenus} from "shared/state/Header";
+import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+
 import {ToggleDebugCullboxes, ToggleDebugNoFill,
         ToggleDebugPressableBounds, ToggleDebugSelectionBounds} from "shared/state/DebugInfo";
+import {CloseHeaderMenus, OpenHeaderMenu} from "shared/state/Header";
 
 import {SwitchToggle} from "shared/components/SwitchToggle";
+
 import {Dropdown} from "../Dropdown";
+
 import {AutoSaveToggle} from "./AutoSaveToggle";
 
 
@@ -32,14 +36,14 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
 
     return (
         <Dropdown open={(curMenu === "settings")}
+                  btnInfo={{ title: "User Settings", src: "img/icons/settings.svg" }}
                   onClick={() => dispatch(OpenHeaderMenu("settings"))}
-                  onClose={() => dispatch(CloseHeaderMenus())}
-                  btnInfo={{ title: "User Settings", src: "img/icons/settings.svg" }}>
-            <AutoSaveToggle helpers={helpers}/>
+                  onClose={() => dispatch(CloseHeaderMenus())}>
+            <AutoSaveToggle helpers={helpers} />
             {process.env.NODE_ENV === "development" &&
-                <>
+                (<>
                     <h1>Debug</h1>
-                    <hr/>
+                    <hr />
                     <SwitchToggle
                         isOn={debugInfo.debugCullboxes}
                         onChange={() => dispatch(ToggleDebugCullboxes())}>
@@ -60,8 +64,7 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
                         onChange={() => dispatch(ToggleDebugNoFill())}>
                         Debug No Fill : {debugInfo.debugNoFill ? "On" : "Off"}
                     </SwitchToggle>
-                </>
-            }
+                </>)}
         </Dropdown>
     );
 }

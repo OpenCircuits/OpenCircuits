@@ -4,20 +4,23 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
 
-import {Input} from "core/utils/Input";
 import {Cursor} from "core/utils/CircuitInfo";
+import {Input}  from "core/utils/Input";
 
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
+
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+
 import {Droppable} from "shared/components/DragDroppable/Droppable";
 
-import {GetRenderFunc} from "site/analog/utils/Rendering";
-import {useAnalogSelector} from "site/analog/utils/hooks/useAnalog";
 import {AnalogCreateN} from "site/analog/utils/AnalogCreate";
+import {GetRenderFunc} from "site/analog/utils/Rendering";
+
+import {useAnalogSelector} from "site/analog/utils/hooks/useAnalog";
 
 import "./index.scss";
 
@@ -63,7 +66,8 @@ export const MainDesigner = ({ info, canvas }: Props) => {
             // Update cursor
             setCursor(info.cursor);
 
-            if (change) renderer.render();
+            if (change)
+                renderer.render();
         });
 
         // Add render callbacks and set render function
@@ -84,7 +88,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     }, [isLocked]);
 
 
-    return (<>
+    return (
         <Droppable
             ref={canvas}
             onDrop={(pos, itemId, num) => {
@@ -106,5 +110,5 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                 width={w}
                 height={h-HEADER_HEIGHT} />
         </Droppable>
-    </>);
+    );
 }
