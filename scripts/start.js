@@ -35,19 +35,15 @@ function start_client(dir) {
 // CLI
 (async () => {
     // Get the start value for the Digital page so that "yarn start" starts on Digital
-    start_value = 0;
-    for (dir of getDirs(true, false)) {
-        if (dir.title === "Digital") {
-            break;
-        }
-        start_value += 1;
-    }
+    const dirs = getDirs(true, false);
+    const start_value = dirs.findIndex((dir) => dir.title === "Digital");
+
     // Prompt for project type
     const type = await prompts({
         type: "select",
         name: "value",
         message: "Pick a project",
-        choices: getDirs(true, false),
+        choices: dirs,
         initial: start_value
     });
 
