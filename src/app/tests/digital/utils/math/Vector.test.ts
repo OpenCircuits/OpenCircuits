@@ -1,5 +1,3 @@
-import "jest";
-
 import {Vector} from "Vector";
 
 
@@ -27,6 +25,7 @@ describe("Vector", () => {
             expect(v2.y).toBe(5);
         });
     });
+
     describe("Operators", () => {
         test("Add (numbers)", () => {
             const v1 = new Vector(1, 1);
@@ -93,6 +92,7 @@ describe("Vector", () => {
             expect(v1.y).toBe(v2.y);
         });
     });
+
     describe("Math", () => {
         test("Normalize", () => {
             {
@@ -233,6 +233,7 @@ describe("Vector", () => {
             }
         });
     });
+
     describe("Utility", () => {
         test("Min", () => {
             {

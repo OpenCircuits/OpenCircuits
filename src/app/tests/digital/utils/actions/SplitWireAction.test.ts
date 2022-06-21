@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
@@ -24,48 +22,48 @@ describe("Split Wire Action", () => {
         const w = Connect(a, b)[0].getWire();
 
         // before split
-        expect(designer.getObjects().length).toBe(2);
-        expect(designer.getWires().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(2);
+        expect(designer.getWires()).toHaveLength(1);
         expect(designer.getWires()[0]).toBe(w);
-        expect(a.getOutputs().length).toBe(1);
+        expect(a.getOutputs()).toHaveLength(1);
         expect(a.getOutputs()[0]).toBe(w);
-        expect(b.getInputs().length).toBe(1);
+        expect(b.getInputs()).toHaveLength(1);
         expect(b.getInputs()[0]).toBe(w);
 
         const n = new DigitalNode();
         const ac = CreateSplitWireAction(designer, w, n);
 
         // after split
-        expect(designer.getObjects().length).toBe(3);
-        expect(designer.getWires().length).toBe(2);
-        expect(a.getOutputs().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(3);
+        expect(designer.getWires()).toHaveLength(2);
+        expect(a.getOutputs()).toHaveLength(1);
         expect(a.getOutputs()[0]).toBe(n.getInputs()[0]);
-        expect(n.getInputs().length).toBe(1);
-        expect(n.getOutputs().length).toBe(1);
-        expect(b.getInputs().length).toBe(1);
+        expect(n.getInputs()).toHaveLength(1);
+        expect(n.getOutputs()).toHaveLength(1);
+        expect(b.getInputs()).toHaveLength(1);
         expect(b.getInputs()[0]).toBe(n.getOutputs()[0]);
 
         // undo
         ac.undo();
 
-        expect(designer.getObjects().length).toBe(2);
-        expect(designer.getWires().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(2);
+        expect(designer.getWires()).toHaveLength(1);
         expect(designer.getWires()[0]).toBe(w);
-        expect(a.getOutputs().length).toBe(1);
+        expect(a.getOutputs()).toHaveLength(1);
         expect(a.getOutputs()[0]).toBe(w);
-        expect(b.getInputs().length).toBe(1);
+        expect(b.getInputs()).toHaveLength(1);
         expect(b.getInputs()[0]).toBe(w);
 
         // redo
         ac.execute();
 
-        expect(designer.getObjects().length).toBe(3);
-        expect(designer.getWires().length).toBe(2);
-        expect(a.getOutputs().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(3);
+        expect(designer.getWires()).toHaveLength(2);
+        expect(a.getOutputs()).toHaveLength(1);
         expect(a.getOutputs()[0]).toBe(n.getInputs()[0]);
-        expect(n.getInputs().length).toBe(1);
-        expect(n.getOutputs().length).toBe(1);
-        expect(b.getInputs().length).toBe(1);
+        expect(n.getInputs()).toHaveLength(1);
+        expect(n.getOutputs()).toHaveLength(1);
+        expect(b.getInputs()).toHaveLength(1);
         expect(b.getInputs()[0]).toBe(n.getOutputs()[0]);
     });
 });

@@ -1,5 +1,3 @@
-import "jest";
-
 import {MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";

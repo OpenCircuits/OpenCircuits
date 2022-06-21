@@ -31,8 +31,8 @@ describe("Serialization", () => {
         expect(dCopy.getICData()).toHaveLength(0);
 
         expect(dCopy.getObjects()[0]).toBeInstanceOf(Switch);
-        expect(dCopy.getObjects()[0].getPos().x).toEqual(100);
+        expect(dCopy.getObjects()[0].getPos().x).toBe(100);
         expect(dCopy.getObjects()[0].getPos().y).toEqual(-5);
-        expect(dCopy.getObjects()[0].getName()).toEqual("Bob");
+        expect(dCopy.getObjects()[0].getName()).toBe("Bob");
     });
 });

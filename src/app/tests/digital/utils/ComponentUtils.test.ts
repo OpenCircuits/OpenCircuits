@@ -1,5 +1,3 @@
-import "jest";
-
 import {CopyGroup, CreateGroup,
         GatherGroup} from "core/utils/ComponentUtils";
 
@@ -105,8 +103,8 @@ describe("CreateGroup", () => {
     test("Group 0", () => {
         const group = CreateGroup([]);
 
-        expect(group.getWires().length).toBe(0);
-        expect(group.getComponents().length).toBe(0);
+        expect(group.getWires()).toHaveLength(0);
+        expect(group.getComponents()).toHaveLength(0);
     });
     test("Group 1", () => {
         const i1 = new Switch();
@@ -120,8 +118,8 @@ describe("CreateGroup", () => {
 
         const group = CreateGroup([i1,i2,g,o1]);
 
-        expect(group.getWires().length).toBe(3);
-        expect(group.getComponents().length).toBe(4);
+        expect(group.getWires()).toHaveLength(3);
+        expect(group.getComponents()).toHaveLength(4);
     });
     test("Group 2", () => {
         const i1 = new Switch();
@@ -135,8 +133,8 @@ describe("CreateGroup", () => {
         Connect(i2, 0,  g, 1);
         Connect(g,  0, o1, 0);
 
-        expect(group.getWires().length).toBe(0);
-        expect(group.getComponents().length).toBe(4);
+        expect(group.getWires()).toHaveLength(0);
+        expect(group.getComponents()).toHaveLength(4);
     });
 
 });
@@ -150,10 +148,11 @@ describe("GetAllOutgoingPaths", () => {
         test("Gather Gate", () => {
             const group = GatherGroup([gate]);
 
-            expect(group.getWires().length).toBe(1);
+            expect(group.getWires()).toHaveLength(1);
             expect(group.getWires()[0]).toBe(wire);
         });
     });
+
     describe("Group 2", () => {
         const gate = new ANDGate();
         const wp = new DigitalNode();
@@ -164,9 +163,9 @@ describe("GetAllOutgoingPaths", () => {
         test("Gather Gate", () => {
             const group = GatherGroup([gate]);
 
-            expect(group.getWires().length).toBe(2);
-            expect(group.getWires().includes(wire1)).toBe(true);
-            expect(group.getWires().includes(wire2)).toBe(true);
+            expect(group.getWires()).toHaveLength(2);
+            expect(group.getWires()).toContain(wire1);
+            expect(group.getWires()).toContain(wire2);
         });
         test("Gather WirePort", () => {
             const removed = GatherGroup([wp]);
@@ -174,11 +173,11 @@ describe("GetAllOutgoingPaths", () => {
             const components = removed.getComponents();
             const wires = removed.getWires();
 
-            expect(components.length).toBe(1);
-            expect(wires.length).toBe(2);
+            expect(components).toHaveLength(1);
+            expect(wires).toHaveLength(2);
             expect(components[0]).toBe(wp);
-            expect(wires.includes(wire1)).toBe(true);
-            expect(wires.includes(wire2)).toBe(true);
+            expect(wires).toContain(wire1);
+            expect(wires).toContain(wire2);
         });
         test("Gather Wire1", () => {
             const removed = GatherGroup([wire1]);
@@ -186,11 +185,11 @@ describe("GetAllOutgoingPaths", () => {
             const components = removed.getComponents();
             const wires = removed.getWires();
 
-            expect(components.length).toBe(1);
-            expect(wires.length).toBe(2);
+            expect(components).toHaveLength(1);
+            expect(wires).toHaveLength(2);
             expect(components[0]).toBe(wp);
-            expect(wires.includes(wire1)).toBe(true);
-            expect(wires.includes(wire2)).toBe(true);
+            expect(wires).toContain(wire1);
+            expect(wires).toContain(wire2);
         });
         test("Gather Wire2", () => {
             const removed = GatherGroup([wire2]);
@@ -198,13 +197,14 @@ describe("GetAllOutgoingPaths", () => {
             const components = removed.getComponents();
             const wires = removed.getWires();
 
-            expect(components.length).toBe(1);
-            expect(wires.length).toBe(2);
+            expect(components).toHaveLength(1);
+            expect(wires).toHaveLength(2);
             expect(components[0]).toBe(wp);
-            expect(wires.includes(wire1)).toBe(true);
-            expect(wires.includes(wire2)).toBe(true);
+            expect(wires).toContain(wire1);
+            expect(wires).toContain(wire2);
         });
     });
+
     describe("Group 3", () => {
         const s1 = new Switch();
         const s2 = new Switch();
@@ -230,18 +230,18 @@ describe("GetAllOutgoingPaths", () => {
             const components = removed.getComponents();
             const wires = removed.getWires();
 
-            expect(components.length).toBe(4);
-            expect(wires.length).toBe(6);
-            expect(components.includes(gate)).toBe(true);
-            expect(components.includes(wp1)).toBe(true);
-            expect(components.includes(wp2)).toBe(true);
-            expect(components.includes(wp3)).toBe(true);
-            expect(wires.includes(wire1)).toBe(true);
-            expect(wires.includes(wire2)).toBe(true);
-            expect(wires.includes(wire3)).toBe(true);
-            expect(wires.includes(wire4)).toBe(true);
-            expect(wires.includes(wire5)).toBe(true);
-            expect(wires.includes(wire6)).toBe(true);
+            expect(components).toHaveLength(4);
+            expect(wires).toHaveLength(6);
+            expect(components).toContain(gate);
+            expect(components).toContain(wp1);
+            expect(components).toContain(wp2);
+            expect(components).toContain(wp3);
+            expect(wires).toContain(wire1);
+            expect(wires).toContain(wire2);
+            expect(wires).toContain(wire3);
+            expect(wires).toContain(wire4);
+            expect(wires).toContain(wire5);
+            expect(wires).toContain(wire6);
         });
     });
 });
@@ -273,8 +273,8 @@ describe("CopyGroup", () => {
         const wires = copy.getWires() as DigitalWire[];
 
         // Expect same amount of componnets/wires
-        expect(components.length).toBe(types.length);
-        expect(wires.length).toBe(connections.length);
+        expect(components).toHaveLength(types.length);
+        expect(wires).toHaveLength(connections.length);
 
         // Expect each component to be instance of the given types
         components.forEach((c, i) => {
@@ -410,6 +410,7 @@ describe("CopyGroup", () => {
 
         expect(icCopy).toBeInstanceOf(IC);
     });
+
     describe("Group 10 - Floating Nodes", () => {
         const objs = [new Switch(), new DigitalNode(), new DigitalNode(), new LED(), new LED()];
         Connect(objs[0], 0, objs[1], 0);

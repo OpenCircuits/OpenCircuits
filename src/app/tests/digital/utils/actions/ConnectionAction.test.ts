@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
@@ -22,32 +20,32 @@ describe("Connection Action", () => {
         a.activate(true);
 
         // before connection
-        expect(designer.getWires().length).toBe(0);
-        expect(a.getOutputs().length).toBe(0);
-        expect(b.getInputs().length).toBe(0);
+        expect(designer.getWires()).toHaveLength(0);
+        expect(a.getOutputs()).toHaveLength(0);
+        expect(b.getInputs()).toHaveLength(0);
         expect(b.isOn()).toBe(false);
 
         // connect
         const a1 = new ConnectionAction(designer, a.getOutputPort(0), b.getInputPort(0)).execute();
 
         // initial
-        expect(designer.getWires().length).toBe(1);
-        expect(a.getOutputs().length).toBe(1);
-        expect(b.getInputs().length).toBe(1);
+        expect(designer.getWires()).toHaveLength(1);
+        expect(a.getOutputs()).toHaveLength(1);
+        expect(b.getInputs()).toHaveLength(1);
         expect(b.isOn()).toBe(true);
 
         // reverted
         a1.undo();
-        expect(designer.getWires().length).toBe(0);
-        expect(a.getOutputs().length).toBe(0);
-        expect(b.getInputs().length).toBe(0);
+        expect(designer.getWires()).toHaveLength(0);
+        expect(a.getOutputs()).toHaveLength(0);
+        expect(b.getInputs()).toHaveLength(0);
         expect(b.isOn()).toBe(false);
 
         // back to initial
         a1.execute();
-        expect(designer.getWires().length).toBe(1);
-        expect(a.getOutputs().length).toBe(1);
-        expect(b.getInputs().length).toBe(1);
+        expect(designer.getWires()).toHaveLength(1);
+        expect(a.getOutputs()).toHaveLength(1);
+        expect(b.getInputs()).toHaveLength(1);
         expect(b.isOn()).toBe(true);
     });
 });

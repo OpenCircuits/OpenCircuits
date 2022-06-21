@@ -1,5 +1,3 @@
-import "jest";
-
 import {V, Vector} from "Vector";
 
 import {Transform} from "math/Transform";
@@ -48,14 +46,16 @@ import {Transform} from "math/Transform";
 describe("Transform", () => {
     describe("Constructor", () => {
         test("No parameters", () => {
-            new Transform(V(0,0), V(0,0), 0);
-            // tests
+            expect(new Transform()).toEqual(new Transform(V(0, 0), V(1, 1), 0));
         });
         test("All parameters", () => {
-            new Transform(V(5, 5), V(10, 10), 0);
-            // tests
+            const transform = new Transform(V(5, 5), V(10, 10), 1);
+            expect(transform.getPos()).toStrictEqual(V(5, 5));
+            expect(transform.getSize()).toStrictEqual(V(10, 10));
+            expect(transform.getAngle()).toBe(1);
         });
     });
+
     describe("Modifiers", () => {
         test("Rotate About", () => {
             {
@@ -97,7 +97,7 @@ describe("Transform", () => {
         test("Set Parent", () => {
             const t1 = new Transform(V(0,0), V(0,0), 0);
             const t2 = new Transform(V(0,0), V(0,0), 0);
-            expect(t2.getParent()).toBe(undefined);
+            expect(t2.getParent()).toBeUndefined();
 
             t2.setParent(t1);
             expect(t2.getParent()).toBe(t1);
@@ -170,6 +170,7 @@ describe("Transform", () => {
             expect(t.getRadius()).toBeCloseTo(2.5, 1e-3);
         });
     });
+
     // getBottomLeft(): Vector;
     // getBottomRight(): Vector;
     // getTopRight(): Vector;
@@ -182,6 +183,7 @@ describe("Transform", () => {
     // copy(): Transform;
     describe("Getters", () => {
         test("To Local Space", () => {
+            // TODO: LEON DO THIS
             const v = new Vector();
             const t = new Transform(V(0,0), V(0,0), 0);
             // stuff
@@ -198,7 +200,7 @@ describe("Transform", () => {
         test("Corners", () => {
             {
                 const t = new Transform(V(0,0), V(5,5), 0);
-                expect(t.getCorners().length).toBe(4);
+                expect(t.getCorners()).toHaveLength(4);
 
                 expect(t.getBottomLeft().x).toBeCloseTo(-2.5, 1e-3);
                 expect(t.getBottomLeft().y).toBeCloseTo(-2.5, 1e-3);

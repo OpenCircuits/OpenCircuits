@@ -1,5 +1,3 @@
-import "jest";
-
 import {InputToken, InputTreeIdent,
         InputTreeUnOpNode, OperatorFormat,
         Token} from "digital/utils/ExpressionParser/Constants/DataStructures";
@@ -496,7 +494,7 @@ describe("Expression Parser", () => {
 
             const objectSet = ExpressionToCircuit(inputMap, "", o);
 
-            expect(objectSet.toList().length).toBe(0);
+            expect(objectSet.toList()).toHaveLength(0);
         });
         test("Parse: ' '", () => {
             const o = new LED();
@@ -504,7 +502,7 @@ describe("Expression Parser", () => {
 
             const objectSet = ExpressionToCircuit(inputMap, " ", o);
 
-            expect(objectSet.toList().length).toBe(0);
+            expect(objectSet.toList()).toHaveLength(0);
         });
     });
 
@@ -639,7 +637,7 @@ describe("Expression Parser", () => {
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(9);
+                expect(objectSet.getComponents()).toHaveLength(9);
             });
 
             test("Correct connections", () => {
@@ -659,7 +657,7 @@ describe("Expression Parser", () => {
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(10);
+                expect(objectSet.getComponents()).toHaveLength(10);
             });
 
             test("Correct connections", () => {
@@ -679,7 +677,7 @@ describe("Expression Parser", () => {
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(12);
+                expect(objectSet.getComponents()).toHaveLength(12);
             });
 
             test("Correct connections", () => {
@@ -701,7 +699,7 @@ describe("Expression Parser", () => {
             const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(8);
+                expect(objectSet.getComponents()).toHaveLength(8);
             });
 
             test("Correct connections", () => {
@@ -724,7 +722,7 @@ describe("Expression Parser", () => {
             const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(5);
+                expect(objectSet.getComponents()).toHaveLength(5);
             });
 
             test("Correct connections", () => {

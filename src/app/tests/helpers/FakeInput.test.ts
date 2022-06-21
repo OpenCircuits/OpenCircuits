@@ -1,5 +1,3 @@
-import "jest";
-
 import {V, Vector} from "Vector";
 
 import {FakeInput} from "./FakeInput";

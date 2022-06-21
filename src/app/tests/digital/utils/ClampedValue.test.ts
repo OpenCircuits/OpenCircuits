@@ -1,5 +1,3 @@
-import "jest";
-
 import {ClampedValue} from "math/ClampedValue";
 
 
@@ -38,6 +36,7 @@ describe("ClampedValue", () => {
             expect(v3.getMaxValue()).toBe(5);
         });
     });
+
     describe("Modifiers", () => {
         test("Set Value", () => {
             const v1 = new ClampedValue(1, 1, 1);

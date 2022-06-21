@@ -1,28 +1,16 @@
-import "jest";
-
 import {V} from "Vector";
 
+import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
 import {Setup}      from "test/helpers/Setup";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {LED, Switch}      from "digital/models/ioobjects";
+import {LED, Switch} from "digital/models/ioobjects";
 
 
 
 describe("Wiring Tool", () => {
     const { designer, input } = Setup({ propagationTime: 0 });
     const { Place } = GetHelpers(designer);
-
-    // TODO: Make a bunch of global jest extensions like these
-    function expectToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {
-        const connections = obj1.getOutputs().map((w) => w.getOutputComponent());
-        expect(connections).toContain(obj2);
-    }
-    function expectNotToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {
-        const connections = obj1.getOutputs().map((w) => w.getOutputComponent());
-        expect(connections).not.toContain(obj2);
-    }
 
     afterEach(() => {
         // Clear circuit
@@ -36,7 +24,7 @@ describe("Wiring Tool", () => {
         input.click(sw.getOutputPort(0).getWorldTargetPos())
                 .click(led.getInputPort(0).getWorldTargetPos());
 
-        expectToBeConnected(sw, led);
+        expect(sw).toBeConnectedTo(led);
     });
 
     test("Drag to Connect Switch -> LED", () => {
@@ -46,7 +34,7 @@ describe("Wiring Tool", () => {
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
                    led.getInputPort(0).getWorldTargetPos());
 
-        expectToBeConnected(sw, led);
+        expect(sw).toBeConnectedTo(led);
     });
 
     test("Click to Connect LED -> Switch", () => {
@@ -56,7 +44,7 @@ describe("Wiring Tool", () => {
         input.click(led.getInputPort(0).getWorldTargetPos())
                 .click(sw.getOutputPort(0).getWorldTargetPos());
 
-        expectToBeConnected(sw, led);
+        expect(sw).toBeConnectedTo(led);
     });
 
     test("Drag to Connect LED -> Switch", () => {
@@ -66,7 +54,7 @@ describe("Wiring Tool", () => {
         input.drag(led.getInputPort(0).getWorldTargetPos(),
                    sw.getOutputPort(0).getWorldTargetPos());
 
-        expectToBeConnected(sw, led);
+        expect(sw).toBeConnectedTo(led);
     });
 
     test("Connect Switch to Multiple LEDs", () => {
@@ -79,8 +67,8 @@ describe("Wiring Tool", () => {
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
                    led2.getInputPort(0).getWorldTargetPos());
 
-        expectToBeConnected(sw, led1);
-        expectToBeConnected(sw, led2);
+        expect(sw).toBeConnectedTo(led1);
+        expect(sw).toBeConnectedTo(led2);
     });
 
     test("Try to Connect LED to Multiple Inputs", () => {
@@ -93,8 +81,8 @@ describe("Wiring Tool", () => {
         input.click(led.getInputPort(0).getWorldTargetPos())
                 .click(sw2.getOutputPort(0).getWorldTargetPos());
 
-        expectToBeConnected(sw1, led);
-        expectNotToBeConnected(sw2, led);
+        expect(sw1).toBeConnectedTo(led);
+        expect(sw2).not.toBeConnectedTo(led);
     });
 
 });

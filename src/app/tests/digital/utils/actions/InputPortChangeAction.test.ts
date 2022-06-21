@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
@@ -52,9 +50,9 @@ describe("Input Port Change Action", () => {
         // before change
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(1);
-        expect(buf2.getOutputs().length).toBe(1);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(1);
+        expect(buf2.getOutputs()).toHaveLength(1);
 
         // change input count
         const a1 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 4).execute();
@@ -66,11 +64,11 @@ describe("Input Port Change Action", () => {
         // before change2
         expect(gate.getInputPortCount().getValue()).toBe(4);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(4);
-        expect(buf1.getOutputs().length).toBe(1);
-        expect(buf2.getOutputs().length).toBe(1);
-        expect(buf3.getOutputs().length).toBe(1);
-        expect(buf4.getOutputs().length).toBe(1);
+        expect(gate.getInputs()).toHaveLength(4);
+        expect(buf1.getOutputs()).toHaveLength(1);
+        expect(buf2.getOutputs()).toHaveLength(1);
+        expect(buf3.getOutputs()).toHaveLength(1);
+        expect(buf4.getOutputs()).toHaveLength(1);
 
         // change input count
         const a2 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 2).execute();
@@ -78,31 +76,31 @@ describe("Input Port Change Action", () => {
         // initial
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(1);
-        expect(buf2.getOutputs().length).toBe(1);
-        expect(buf3.getOutputs().length).toBe(0);
-        expect(buf4.getOutputs().length).toBe(0);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(1);
+        expect(buf2.getOutputs()).toHaveLength(1);
+        expect(buf3.getOutputs()).toHaveLength(0);
+        expect(buf4.getOutputs()).toHaveLength(0);
 
         // reverted
         a2.undo();
         expect(gate.getInputPortCount().getValue()).toBe(4);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(4);
-        expect(buf1.getOutputs().length).toBe(1);
-        expect(buf2.getOutputs().length).toBe(1);
-        expect(buf3.getOutputs().length).toBe(1);
-        expect(buf4.getOutputs().length).toBe(1);
+        expect(gate.getInputs()).toHaveLength(4);
+        expect(buf1.getOutputs()).toHaveLength(1);
+        expect(buf2.getOutputs()).toHaveLength(1);
+        expect(buf3.getOutputs()).toHaveLength(1);
+        expect(buf4.getOutputs()).toHaveLength(1);
 
         // back to initial
         a2.execute();
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(1);
-        expect(buf2.getOutputs().length).toBe(1);
-        expect(buf3.getOutputs().length).toBe(0);
-        expect(buf4.getOutputs().length).toBe(0);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(1);
+        expect(buf2.getOutputs()).toHaveLength(1);
+        expect(buf3.getOutputs()).toHaveLength(0);
+        expect(buf4.getOutputs()).toHaveLength(0);
 
         a2.undo();
         c2.undo();
@@ -113,9 +111,9 @@ describe("Input Port Change Action", () => {
         // initial
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(1);
-        expect(buf2.getOutputs().length).toBe(1);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(1);
+        expect(buf2.getOutputs()).toHaveLength(1);
     });
     test("Undo/Redo 3", () => {
         const designer = new DigitalCircuitDesigner(0);
@@ -128,8 +126,8 @@ describe("Input Port Change Action", () => {
         // before change
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(2);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(2);
 
         // change input count
         const a1 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 4).execute();
@@ -141,8 +139,8 @@ describe("Input Port Change Action", () => {
         // before change2
         expect(gate.getInputPortCount().getValue()).toBe(4);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(4);
-        expect(buf1.getOutputs().length).toBe(4);
+        expect(gate.getInputs()).toHaveLength(4);
+        expect(buf1.getOutputs()).toHaveLength(4);
 
         // change input count
         const a2 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 2).execute();
@@ -150,22 +148,22 @@ describe("Input Port Change Action", () => {
         // initial
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(2);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(2);
 
         // reverted
         a2.undo();
         expect(gate.getInputPortCount().getValue()).toBe(4);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(4);
-        expect(buf1.getOutputs().length).toBe(4);
+        expect(gate.getInputs()).toHaveLength(4);
+        expect(buf1.getOutputs()).toHaveLength(4);
 
         // back to initial
         a2.execute();
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(2);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(2);
 
         a2.undo();
         c2.undo();
@@ -176,7 +174,7 @@ describe("Input Port Change Action", () => {
         // initial
         expect(gate.getInputPortCount().getValue()).toBe(2);
         expect(gate.getOutputPortCount().getValue()).toBe(1);
-        expect(gate.getInputs().length).toBe(2);
-        expect(buf1.getOutputs().length).toBe(2);
+        expect(gate.getInputs()).toHaveLength(2);
+        expect(buf1.getOutputs()).toHaveLength(2);
     });
 });

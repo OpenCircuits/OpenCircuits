@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -43,6 +41,7 @@ describe("XORGate", () => {
             expect(o.isOn()).toBe(false);
         });
     });
+
     describe("XNORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
         const { AutoPlace } = GetHelpers(designer);

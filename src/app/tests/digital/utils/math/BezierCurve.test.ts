@@ -1,5 +1,3 @@
-import "jest";
-
 import {V} from "Vector";
 
 import {BezierCurve} from "math/BezierCurve";
@@ -53,12 +51,12 @@ describe("BezierCurve", () => {
     test("getX", () => {
         const curve = new BezierCurve(V(0,0), V(-2,5), V(1,2), V(2,0));
         const c = curve.getX(0.5);
-        expect(c).toEqual(0.875);
+        expect(c).toBe(0.875);
     });
     test("getY", () => {
         const curve = new BezierCurve(V(0,0), V(-2,5), V(1,2), V(2,0));
         const c = curve.getY(0.5);
-        expect(c).toEqual(1.375);
+        expect(c).toBe(1.375);
     });
     test("getPos", () => {
         const curve = new BezierCurve(V(0,0), V(-2,5), V(1,2), V(2,0));
