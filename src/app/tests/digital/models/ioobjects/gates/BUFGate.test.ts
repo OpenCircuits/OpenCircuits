@@ -11,7 +11,7 @@ import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 describe("BUFGate", () => {
     describe("BUFGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a], [o]] = AutoPlace(new BUFGate());
 
@@ -32,7 +32,7 @@ describe("BUFGate", () => {
 
     describe("NOTGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a], [o]] = AutoPlace(new BUFGate(true));
 

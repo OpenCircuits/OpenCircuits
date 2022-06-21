@@ -29,16 +29,16 @@ type Props = {
     info: DigitalCircuitInfo;
     canvas: React.RefObject<HTMLCanvasElement>;
 }
-export const MainDesigner = ({info, canvas}: Props) => {
-    const {camera, designer, history, selections, toolManager, renderer} = info;
+export const MainDesigner = ({ info, canvas }: Props) => {
+    const { camera, designer, history, selections, toolManager, renderer } = info;
 
     const isPageVisible = usePageVisibility();
 
-    const {isLocked} = useDigitalSelector(
+    const { isLocked } = useDigitalSelector(
         state => ({ isLocked: state.circuit.isLocked })
     );
 
-    const {w, h} = useWindowSize();
+    const { w, h } = useWindowSize();
 
 
     // On resize (useLayoutEffect happens sychronously so

@@ -143,7 +143,7 @@ export class Graph<V, E> {
         }
 
         // Convert to an array of arrays where each index indicates the depth of that node
-        const ret: V[][] = Array.from({length: deepest+1}, _ => Array(0));
+        const ret: V[][] = Array.from({ length: deepest+1 }, _ => Array(0));
 
         Array.from(nodeToNumber.entries()).forEach(([node, depth]) =>
             ret[depth].push(node)

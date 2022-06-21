@@ -28,7 +28,7 @@ type Props = {
     mainInfo: DigitalCircuitInfo;
 }
 export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
-    const {curPopup} = useSharedSelector(
+    const { curPopup } = useSharedSelector(
         state => ({ curPopup: state.header.curPopup })
     );
     const dispatch = useSharedDispatch();
@@ -41,7 +41,7 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
     const [input, setInput] = useState<InputTypes>("Switch");
     const [output, setOutput] = useState<OutputTypes>("LED");
     const [format, setFormat] = useState<OperatorFormatLabel>("|");
-    const [customOps, setCustomOps] = useState<OperatorFormat>({...FORMATS[0], icon: "custom"});
+    const [customOps, setCustomOps] = useState<OperatorFormat>({ ...FORMATS[0], icon: "custom" });
 
     function reset() {
         setExpression("");

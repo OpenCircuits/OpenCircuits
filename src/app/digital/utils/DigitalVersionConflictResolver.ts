@@ -26,20 +26,20 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             const set = c[(val.data[ports] as {ref: string})["ref"]]; // Get PortSet from (inputs/outputs) of Component
             const positionerRef = (set.data["positioner"] as {ref: string})["ref"]; // Get positioner ID from PortSet
 
-            c[positionerRef] = {"type": type, "data": {}};
+            c[positionerRef] = { "type": type, "data": {} };
         }
 
         const transformations: Record<string, Array<{ports: string, positioner: string}>> = {
-            "Multiplexer":    [{ports: "inputs",  positioner: "ConstantSpacePositioner"},
-                               {ports: "outputs", positioner: "Positioner"}],
-            "Demultiplexer":  [{ports: "outputs", positioner: "ConstantSpacePositioner"},
-                               {ports: "inputs",  positioner: "Positioner"}],
-            "ANDGate":        [{ports: "inputs",  positioner: "Positioner"}],
-            "NANDGate":       [{ports: "inputs",  positioner: "Positioner"}],
-            "SegmentDisplay": [{ports: "inputs",  positioner: "ConstantSpacePositioner"}],
-            "SRFlipFlop":     [{ports: "inputs",  positioner: "FlipFlopPositioner"}],
-            "JKFlipFlop":     [{ports: "inputs",  positioner: "FlipFlopPositioner"}],
-            "SRLatch":        [{ports: "inputs",  positioner: "Positioner"}],
+            "Multiplexer":    [{ ports: "inputs",  positioner: "ConstantSpacePositioner" },
+                               { ports: "outputs", positioner: "Positioner" }],
+            "Demultiplexer":  [{ ports: "outputs", positioner: "ConstantSpacePositioner" },
+                               { ports: "inputs",  positioner: "Positioner" }],
+            "ANDGate":        [{ ports: "inputs",  positioner: "Positioner" }],
+            "NANDGate":       [{ ports: "inputs",  positioner: "Positioner" }],
+            "SegmentDisplay": [{ ports: "inputs",  positioner: "ConstantSpacePositioner" }],
+            "SRFlipFlop":     [{ ports: "inputs",  positioner: "FlipFlopPositioner" }],
+            "JKFlipFlop":     [{ ports: "inputs",  positioner: "FlipFlopPositioner" }],
+            "SRLatch":        [{ ports: "inputs",  positioner: "Positioner" }],
         };
 
         Object.keys(c).forEach((key) => {

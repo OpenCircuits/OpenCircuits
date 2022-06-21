@@ -13,7 +13,7 @@ import {GRID_LINE_COLOR} from "../Styles";
 export const GridRenderer = (() => {
 
     return {
-        render(renderer: Renderer, {camera}: CircuitInfo): void {
+        render(renderer: Renderer, { camera }: CircuitInfo): void {
             const step = GRID_SIZE/camera.getZoom();
 
             const cpos = camera.getPos().scale(1.0/camera.getZoom()).sub(renderer.getSize().scale(0.5));

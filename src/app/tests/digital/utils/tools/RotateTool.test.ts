@@ -12,8 +12,8 @@ import {ANDGate, ORGate} from "digital/models/ioobjects";
 
 
 describe("Rotate Tool", () => {
-    const {input, designer, selections} = Setup();
-    const {Place} = GetHelpers(designer);
+    const { input, designer, selections } = Setup();
+    const { Place } = GetHelpers(designer);
 
     describe("Single Object", () => {
         const obj = new ANDGate();

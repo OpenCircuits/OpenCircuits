@@ -20,7 +20,7 @@ describe("CircuitDesigner", () => {
     describe("Add", () => {
         test("Add Object", () => {
             const designer = new DigitalCircuitDesigner(0);
-            const {Place} = GetHelpers(designer);
+            const { Place } = GetHelpers(designer);
 
             const [a, o] = Place(new Switch(), new LED());
 
@@ -34,7 +34,7 @@ describe("CircuitDesigner", () => {
         });
         test("Add Objects", () => {
             const designer = new DigitalCircuitDesigner(0);
-            const {Place} = GetHelpers(designer);
+            const { Place } = GetHelpers(designer);
 
             const [a, o] = Place(new Switch(), new LED());
 
@@ -49,7 +49,7 @@ describe("CircuitDesigner", () => {
     });
     describe("Basic Circuit", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [a, o] = Place(new Switch(), new LED());
         Connect(a,  o);
@@ -77,7 +77,7 @@ describe("CircuitDesigner", () => {
     describe("Remove Object", () => {
         test("Add Remove No Connection", () => {
             const designer = new DigitalCircuitDesigner(0);
-            const {Place, Remove} = GetHelpers(designer);
+            const { Place, Remove } = GetHelpers(designer);
 
             const [a, o] = Place(new Switch(), new LED());
 
@@ -95,7 +95,7 @@ describe("CircuitDesigner", () => {
         });
         test("Add Remove Connected 1", () => {
             const designer = new DigitalCircuitDesigner(0);
-            const {Place, Connect, Remove} = GetHelpers(designer);
+            const { Place, Connect, Remove } = GetHelpers(designer);
 
             const [a, o] = Place(new Switch(), new LED());
             Connect(a,  o);
@@ -117,7 +117,7 @@ describe("CircuitDesigner", () => {
     });
     describe("Reset Circuit", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [a, o] = Place(new Switch(), new LED());
         Connect(a,  o);

@@ -21,7 +21,7 @@ export const WiringTool = (() => {
     let wire: Wire;
     let stateType: StateType;
 
-    function findPorts({input, camera, designer}: CircuitInfo): Port[] {
+    function findPorts({ input, camera, designer }: CircuitInfo): Port[] {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const objects = designer.getObjects().reverse();
 
@@ -29,7 +29,7 @@ export const WiringTool = (() => {
         //  and find one where the mouse is over
         return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
     }
-    function findNearestPort({input, camera}: CircuitInfo, ports: Port[]): Port | undefined {
+    function findNearestPort({ input, camera }: CircuitInfo, ports: Port[]): Port | undefined {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         // Look through all ports in array
         //  and find closest one to the mouse
@@ -67,7 +67,7 @@ export const WiringTool = (() => {
 
     return {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
-            const {locked, input, designer} = info;
+            const { locked, input, designer } = info;
             if (locked)
                 return false;
             const ports = findPorts(info);
@@ -103,7 +103,7 @@ export const WiringTool = (() => {
             stateType = (event.type === "click" ? StateType.CLICKED : StateType.DRAGGED);
         },
         onDeactivate({}: Event, info: CircuitInfo): void {
-            const {history, designer} = info;
+            const { history, designer } = info;
             const list = findPorts(info).filter(p => wire.canConnectTo(p));
             // See if we ended on a port
             const port2 = findNearestPort(info,list);
@@ -112,7 +112,7 @@ export const WiringTool = (() => {
         },
 
 
-        onEvent(event: Event, {input, camera}: CircuitInfo): boolean {
+        onEvent(event: Event, { input, camera }: CircuitInfo): boolean {
             if (event.type !== "mousemove")
                 return false;
 

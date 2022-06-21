@@ -17,7 +17,7 @@ import "./index.scss";
 
 
 export const LoginPopup = () => {
-    const {curPopup} = useSharedSelector(
+    const { curPopup } = useSharedSelector(
         state => ({ curPopup: state.header.curPopup })
     );
     const dispatch = useSharedDispatch();

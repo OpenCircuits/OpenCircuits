@@ -6,7 +6,7 @@ import {Popup} from "shared/components/Popup";
 
 
 export const QuickStartPopup = () => {
-    const {curPopup} = useSharedSelector(
+    const { curPopup } = useSharedSelector(
         state => ({ curPopup: state.header.curPopup })
     );
     const dispatch = useSharedDispatch();

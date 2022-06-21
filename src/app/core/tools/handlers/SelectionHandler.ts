@@ -18,7 +18,7 @@ export const SelectionHandler: EventHandler = ({
     conditions: (event: Event, {}: CircuitInfo) =>
         (event.type === "click" && event.button === LEFT_MOUSE_BUTTON),
 
-    getResponse: ({input, camera, history, designer, selections}: CircuitInfo) => {
+    getResponse: ({ input, camera, history, designer, selections }: CircuitInfo) => {
         const action = new GroupAction([], "Selection Handler");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
 

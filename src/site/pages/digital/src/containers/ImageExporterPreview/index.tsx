@@ -29,7 +29,7 @@ export const ImageExporterPreview = (() => {
 
     // eslint-disable-next-line react/display-name
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
-        const {camera, designer, toolManager, renderer} = info;
+        const { camera, designer, toolManager, renderer } = info;
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)

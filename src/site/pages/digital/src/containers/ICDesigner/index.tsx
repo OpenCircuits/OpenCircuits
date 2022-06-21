@@ -68,17 +68,17 @@ export const ICDesigner = (() => {
 
     // eslint-disable-next-line react/display-name
     return ({ mainInfo }: Props) => {
-        const {camera, designer, toolManager, renderer} = info;
+        const { camera, designer, toolManager, renderer } = info;
 
-        const {isActive, ic: data} = useDigitalSelector(
+        const { isActive, ic: data } = useDigitalSelector(
             state => ({ ...state.icDesigner })
         );
         const dispatch = useDigitalDispatch();
 
-        const {w, h} = useWindowSize();
+        const { w, h } = useWindowSize();
         const canvas = useRef<HTMLCanvasElement>(null);
-        const [{name}, setName] = useState({ name: "" });
-        const [{cursor}, setCursor] = useState({ cursor: "default" });
+        const [{ name }, setName] = useState({ name: "" });
+        const [{ cursor }, setCursor] = useState({ cursor: "default" });
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
@@ -204,7 +204,7 @@ export const ICDesigner = (() => {
                 <InputField type="text"
                             value={name}
                             placeholder="IC Name"
-                            onChange={(ev) => setName({name: ev.target.value})} />
+                            onChange={(ev) => setName({ name: ev.target.value })} />
 
                 <div className="icdesigner__buttons">
                     <button type="button" name="confirm" onClick={() => close()}>

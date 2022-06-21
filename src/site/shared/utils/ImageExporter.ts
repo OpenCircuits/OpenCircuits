@@ -42,7 +42,7 @@ function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageE
     const filename = `${projectName}.${options.type}`;
 
     if ((window.navigator as any).msSaveOrOpenBlob) { // IE10+
-        const file = new Blob([data], {type: "image/png"});
+        const file = new Blob([data], { type: "image/png" });
         (window.navigator as any).msSaveOrOpenBlob(file, filename);
     } else { // Others
         const a = document.createElement("a");

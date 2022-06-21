@@ -79,7 +79,7 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, {camera, selections}: CircuitInfo, object: Component): void {
+        render(renderer: Renderer, { camera, selections }: CircuitInfo, object: Component): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;

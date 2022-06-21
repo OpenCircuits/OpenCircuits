@@ -70,8 +70,8 @@ type Props = {
     canvas: React.RefObject<HTMLCanvasElement>;
 }
 
-export const App = ({info, helpers, canvas}: Props) => {
-    const {h} = useWindowSize();
+export const App = ({ info, helpers, canvas }: Props) => {
+    const { h } = useWindowSize();
 
     // Memoize for eslint(react/no-unstable-nested-components)
     const imageExporterPreview = useCallback((props: ImageExporterPreviewProps) => (
@@ -83,7 +83,7 @@ export const App = ({info, helpers, canvas}: Props) => {
             <SideNav helpers={helpers}
                      exampleCircuits={exampleCircuits} />
 
-            <div className="App__container" style={{height: h+"px"}}>
+            <div className="App__container" style={{ height: h+"px" }}>
                 <DigitalHeader img="img/icons/logo.svg"
                                helpers={helpers}
                                info={info} />

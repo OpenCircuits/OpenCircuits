@@ -15,7 +15,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 describe("Connection Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place} = GetHelpers(designer);
+        const { Place } = GetHelpers(designer);
 
         const [a, b] = Place(new Switch(), new LED());
 

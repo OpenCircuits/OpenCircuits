@@ -12,7 +12,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 
 describe ("Clock", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers(designer);
+    const { Place, Connect } = GetHelpers(designer);
 
     const [c, l] = Place(new Clock(), new LED());
     Connect(c, l);

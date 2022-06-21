@@ -7,7 +7,7 @@ import "./index.scss";
 
 
 export const SignInOutButtons = () => {
-    const {isLoggedIn} = useSharedSelector(
+    const { isLoggedIn } = useSharedSelector(
         state => ({ isLoggedIn: state.user.isLoggedIn })
     );
     const dispatch = useSharedDispatch();

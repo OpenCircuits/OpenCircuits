@@ -12,8 +12,8 @@ import {DigitalNode, LED,
 
 
 describe("Split Wire Tool", () => {
-    const {designer, input} = Setup();
-    const {Place} = GetHelpers(designer);
+    const { designer, input } = Setup();
+    const { Place } = GetHelpers(designer);
 
     afterEach(() => {
         // Clear circuit

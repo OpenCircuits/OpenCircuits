@@ -10,7 +10,7 @@ import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 
 describe("Digital Node", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers(designer);
+    const { AutoPlace } = GetHelpers(designer);
 
     const [, [s], [o]] = AutoPlace(new DigitalNode());
 

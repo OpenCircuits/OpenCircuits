@@ -9,8 +9,8 @@ import {ANDGate, Button, DigitalNode, LED, Switch} from "digital/models/ioobject
 
 
 describe("Translate Tool", () => {
-    const {designer, input} = Setup();
-    const {Place, Connect} = GetHelpers(designer);
+    const { designer, input } = Setup();
+    const { Place, Connect } = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {

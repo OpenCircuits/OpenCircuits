@@ -8,7 +8,7 @@ import {Setup} from "test/helpers/Setup";
 
 
 describe("Pan Tool", () => {
-    const {camera, input, reset} = Setup();
+    const { camera, input, reset } = Setup();
 
     afterEach(() => reset());
 

@@ -18,7 +18,7 @@ import {DEBUG_CULLBOX_STYLE,
 export const DebugRenderer = (() => {
     return {
         render(renderer: Renderer, info: CircuitInfo): void {
-            const {camera, designer} = info;
+            const { camera, designer } = info;
 
             const objects = designer.getObjects();
             const wires = designer.getWires();
