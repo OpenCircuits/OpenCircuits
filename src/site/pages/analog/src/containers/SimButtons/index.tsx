@@ -1,13 +1,17 @@
 import {useEffect, useState} from "react";
-import {ColorToHex} from "svg2canvas";
+import {ColorToHex}          from "svg2canvas";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
 import {Oscilloscope} from "analog/models/eeobjects";
-import {NetlistAnalysis} from "analog/models/sim/Netlist";
+
+import {NetlistAnalysis}  from "analog/models/sim/Netlist";
 import {CircuitToNetlist} from "analog/models/sim/NetlistGenerator";
 
+import {InputField} from "shared/components/InputField";
+
 import {useAnalogDispatch, useAnalogSelector} from "site/analog/utils/hooks/useAnalog";
+
 import {SetHasData, SetSimMappings} from "site/analog/state/Sim";
 
 import "./index.scss";
@@ -56,7 +60,7 @@ export const SimButtons = ({ info }: Props) => {
                         [key]: {
                             // Last data-array is x/time data, disabled by default
                             enabled: (i < arr.length-1),
-                            color: GetCol(i, arr.length),
+                            color:   GetCol(i, arr.length),
                         },
                     }), {}
                 ),
@@ -93,22 +97,22 @@ export const SimButtons = ({ info }: Props) => {
     //   > Every node must have at least two connections
 
     return (<>
-        {analysis?.kind === "tran" && <div className="sim-analysis-panel">
+        {analysis?.kind === "tran" && (<div className="sim-analysis-panel">
             <div>Transient Analysis</div>
             {Object.entries(analysis).filter(([key]) => key !== "kind").map(([key, val]) => (
                 <div key={`sim-analysis-panel-${key}`}>
                     {key}:
-                    <input
+                    <InputField
                         type="text"
                         value={val}
                         onChange={(e) => setAnalysis({ ...analysis, [key]: e.target.value })} />
                 </div>
             ))}
-        </div>}
+        </div>)}
         <div className="sim-buttons">
-            <button disabled={!hasMappings} onClick={Simulate}>Sim</button>
+            <button type="button" disabled={!hasMappings} onClick={Simulate}>Sim</button>
 
-            <button disabled={!analysis} onClick={Upload}>Upload</button>
+            <button type="button" disabled={!analysis} onClick={Upload}>Upload</button>
 
             <select value={analysis?.kind ?? ""} onChange={(e) => {
                 const val = e.target.value as NetlistAnalysis["kind"];
@@ -126,20 +130,20 @@ export const SimButtons = ({ info }: Props) => {
                 <option value="tran">Trans</option>
             </select>
 
-            <button disabled={!hasData} onClick={() => {
-                console.log(info.sim?.getPlotIDs());
-                const curPlot = info.sim?.getCurPlotID();
-                console.log("cur", curPlot);
-                const vecs = info.sim?.getVecIDs(curPlot);
-                console.log("vecs", vecs);
-                const vecIDs = vecs?.map(v => `${curPlot!}.${v}` as const);
+            <button type="button" disabled={!hasData} onClick={() => {
+                // console.log(info.sim?.getPlotIDs());
+                // const curPlot = info.sim?.getCurPlotID();
+                // console.log("cur", curPlot);
+                // const vecs = info.sim?.getVecIDs(curPlot);
+                // console.log("vecs", vecs);
+                // const vecIDs = vecs?.map(v => `${curPlot!}.${v}` as const);
 
-                const dataLens = vecIDs?.map(id => info.sim?.getVecLen(id));
-                console.log(dataLens);
+                // const dataLens = vecIDs?.map(id => info.sim?.getVecLen(id));
+                // console.log(dataLens);
 
-                const datas = vecIDs?.map((id => info.sim?.getVecData(id)));
-                console.log(datas);
-                // info.sim?.printData();
+                // const datas = vecIDs?.map((id => info.sim?.getVecData(id)));
+                // console.log(datas);
+                // // info.sim?.printData();
             }}>Print</button>
         </div>
     </>);

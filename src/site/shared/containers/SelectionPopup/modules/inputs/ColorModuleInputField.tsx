@@ -12,8 +12,8 @@ export const ColorModuleInputField = ({ placeholder, alt, ...props }: Props) => 
     const [state, setState] = useBaseModule<string>({
         ...props,
 
-        parseVal:      (val) => val,
-        isValid:        (_)  => true,
+        parseVal: (val) => val,
+        isValid:  (_)  => true,
     });
 
     return (
@@ -22,9 +22,9 @@ export const ColorModuleInputField = ({ placeholder, alt, ...props }: Props) => 
             type="color"
             value={state.value}
             placeholder={state.allSame ? "" : (placeholder ?? "-")}
+            alt={alt}
             onChange={(ev) => setState.onChange(ev.target.value)}
             onFocus={() => setState.onFocus()}
-            onBlur={() => setState.onBlur()}
-            alt={alt} />
+            onBlur={() => setState.onBlur()} />
     )
 }

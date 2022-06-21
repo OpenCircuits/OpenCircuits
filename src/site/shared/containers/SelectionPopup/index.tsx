@@ -1,5 +1,5 @@
-import {GetIDFor} from "serialeazy";
 import React, {useEffect, useRef, useState} from "react";
+import {GetIDFor}                           from "serialeazy";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -20,7 +20,7 @@ type Props = {
     docsUrlConfig: Record<string, string>;
     children: React.ReactNode;
 }
-export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
+export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
     const calcPos = () => camera.getScreenPos(selections.midpoint(true));
 
     const { input, camera, history, selections } = info;
@@ -99,20 +99,20 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
     return (
         <div ref={popup}
              className="selection-popup"
+             tabIndex={-1}
              style={{
-                left: `${pos.x}px`,
-                top:  `${pos.y}px`,
-                visibility: (isVisible && !isDragging ? "visible": "hidden"),
+                left:          `${pos.x}px`,
+                top:           `${pos.y}px`,
+                visibility:    (isVisible && !isDragging ? "visible": "hidden"),
                 // Fixes issue with double clicks and when dragging from the ItemNav
                 //  Issues #521 and #863 respectively
                 pointerEvents: (clickThrough || !!itemNavCurItem ? "none" : "auto"),
-             }}
-             tabIndex={-1}>
-            {id && <div className="info-button">
+             }}>
+            {id && (<div className="info-button">
                 <div>{id}</div>
                 <a href={infoLink} target="_blank" rel="noopener noreferrer"
                    title="Click for component information">?</a>
-            </div>}
+            </div>)}
             <TitleModule info={info}  />
             <hr />
             {children}

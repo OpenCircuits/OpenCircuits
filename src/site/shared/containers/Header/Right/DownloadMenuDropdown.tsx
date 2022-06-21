@@ -1,8 +1,9 @@
-import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {SaveFile} from "shared/utils/Exporter";
+import {SaveFile}           from "shared/utils/Exporter";
 
-import {OpenHeaderMenu, CloseHeaderMenus, OpenHeaderPopup} from "shared/state/Header";
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+
+import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/state/Header";
 
 import {Dropdown} from "./Dropdown";
 
@@ -18,18 +19,18 @@ export const DownloadMenuDropdown = ({ helpers: {GetSerializedCircuit} }: Props)
 
     return (
         <Dropdown open={(curMenu === "download")}
+                  btnInfo={{title: "Download current scene", src: "img/icons/download.svg"}}
                   onClick={() => dispatch(OpenHeaderMenu("download"))}
-                  onClose={() => dispatch(CloseHeaderMenus())}
-                  btnInfo={{title: "Download current scene", src: "img/icons/download.svg"}}>
+                  onClose={() => dispatch(CloseHeaderMenus())}>
             <div title="Download circuit locally" onClick={() => SaveFile(GetSerializedCircuit(), circuitName)}>
-                <img src="img/icons/download.svg" height="100%" alt="Download current scene"/>
+                <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
                 <span>Download</span>
             </div>
             <div title="Export as Image" onClick={() => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("image_exporter"));
                 }}>
-                <img src="img/icons/png_download.svg" height="100%" alt="Export current scene as an image"/>
+                <img src="img/icons/png_download.svg" height="100%" alt="Export current scene as an image" />
                 <span>Export Image</span>
             </div>
         </Dropdown>

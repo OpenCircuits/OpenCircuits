@@ -10,8 +10,8 @@ export const BooleanModuleInputField = ({ text, ...props }: Props) => {
     const [state, setState] = useBaseModule<boolean>({
         ...props,
 
-        parseVal:      (val) => (val === "true"),
-        isValid:        (_)  => true,
+        parseVal: (val) => (val === "true"),
+        isValid:  (_)  => true,
     });
 
     const isOn = (state.value === "true" || state.value === true);

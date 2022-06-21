@@ -6,37 +6,43 @@ import {V} from "Vector";
 
 import {Input} from "core/utils/Input";
 
-import {GroupAction}             from "core/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {PlaceAction} from "core/actions/addition/PlaceAction";
+
 import {CreateDeselectAllAction,
         SelectAction}            from "core/actions/selection/SelectAction";
-import {PlaceAction}             from "core/actions/addition/PlaceAction";
-import {CreateICDataAction}      from "digital/actions/CreateICDataAction";
+
+import {DefaultTool} from "core/tools/DefaultTool";
+import {PanTool}     from "core/tools/PanTool";
 
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
-import {UndoHandler}        from "core/tools/handlers/UndoHandler";
 import {RedoHandler}        from "core/tools/handlers/RedoHandler";
-import {DefaultTool}        from "core/tools/DefaultTool";
-import {PanTool}            from "core/tools/PanTool";
+import {UndoHandler}        from "core/tools/handlers/UndoHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ICCircuitInfo}      from "digital/utils/ICCircuitInfo";
 
-import {IC} from "digital/models/ioobjects";
+import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
 import {ICPortTool}   from "digital/tools/ICPortTool";
 import {ICEdge,
         ICResizeTool} from "digital/tools/ICResizeTool";
 
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {IC} from "digital/models/ioobjects";
+
 import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
-
-import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
-import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
-import {GetRenderFunc} from "site/digital/utils/Rendering";
-
-import {CloseICDesigner} from "site/digital/state/ICDesigner";
+import {useWindowSize}   from "shared/utils/hooks/useWindowSize";
 
 import {InputField} from "shared/components/InputField";
+
+import {GetRenderFunc} from "site/digital/utils/Rendering";
+
+import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
+
+import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
+
+import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
 import "./index.scss";
 
@@ -55,12 +61,12 @@ export const ICDesigner = (() => {
     };
 
     const EdgesToCursors: Record<ICEdge, string> = {
-        "none": "default",
+        "none":       "default",
         "horizontal": "ew-resize",
-        "vertical": "ns-resize"
+        "vertical":   "ns-resize",
     };
 
-
+    // eslint-disable-next-line react/display-name
     return ({ mainInfo }: Props) => {
         const {camera, designer, toolManager, renderer} = info;
 
@@ -104,7 +110,8 @@ export const ICDesigner = (() => {
                     newCursor = EdgesToCursors[ICResizeTool.findEdge(icInfo)];
                 setCursor({ cursor: newCursor });
 
-                if (change) renderer.render();
+                if (change)
+                    renderer.render();
             });
 
             // Input should be blocked initially
@@ -153,7 +160,7 @@ export const ICDesigner = (() => {
         }, [isActive, data, mainInfo, setName]);
 
 
-        const close = (cancelled: boolean = false) => {
+        const close = (cancelled = false) => {
             // Block input while closed
             icInfo.input.block();
 
@@ -170,7 +177,7 @@ export const ICDesigner = (() => {
                     CreateDeselectAllAction(mainInfo.selections),
                     new CreateICDataAction(data, mainInfo.designer),
                     new PlaceAction(mainInfo.designer, ic),
-                    new SelectAction(mainInfo.selections, ic)
+                    new SelectAction(mainInfo.selections, ic),
                 ], "Create IC Action");
                 mainInfo.history.add(action.execute());
                 mainInfo.renderer.render();
@@ -200,10 +207,10 @@ export const ICDesigner = (() => {
                             onChange={(ev) => setName({name: ev.target.value})} />
 
                 <div className="icdesigner__buttons">
-                    <button name="confirm" onClick={() => close()}>
+                    <button type="button" name="confirm" onClick={() => close()}>
                         Confirm
                     </button>
-                    <button name="cancel"  onClick={() => close(true)}>
+                    <button type="button" name="cancel"  onClick={() => close(true)}>
                         Cancel
                     </button>
                 </div>

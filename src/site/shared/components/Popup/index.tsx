@@ -19,8 +19,8 @@ export const Popup = ({title, isOpen, close, className, width, height, children}
         <div className={"popup " + (className ?? "")}
              style={{
                 display: (isOpen ? "initial" : "none"),
-                width: `${width}%`,
-                height: `${height}%`
+                width:   `${width}%`,
+                height:  `${height}%`,
              }}>
             <h1>{title}</h1>
             <hr />

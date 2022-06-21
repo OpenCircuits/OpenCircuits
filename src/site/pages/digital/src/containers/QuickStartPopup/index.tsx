@@ -1,4 +1,5 @@
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+
 import {CloseHeaderPopups} from "shared/state/Header";
 
 import {Popup} from "shared/components/Popup";
@@ -35,7 +36,7 @@ export const QuickStartPopup = () => {
                 <li><b>Snap Wires</b>: When splitting a wire, you can move the WirePort to positions aligned with the
                     outgoing and incoming ports to snap the wire.</li>
                 <li><b>Bus</b>: To bus a group of ports together, simply select an equal number of input/output ports
-                    and then press the 'Bus' button.</li>
+                    and then press the &apos;Bus&apos; button.</li>
                 <li><b>Quick Duplicate Group</b>: To quickly duplicate a group of selected objects, begin Translating
                     them and then press the Spacebar.</li>
                 <li><b>Quick Change Gate Input Count</b>: To quickly change the input count of alike gates, select

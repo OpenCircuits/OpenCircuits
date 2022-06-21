@@ -7,17 +7,20 @@ import {V} from "Vector";
 import {Input} from "core/utils/Input";
 
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
+
 import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
+import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
+
 import {Droppable} from "shared/components/DragDroppable/Droppable";
 
-import {GetRenderFunc} from "site/digital/utils/Rendering";
-import {useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 import {DigitalCreateN, SmartPlace, SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
+import {GetRenderFunc}                                 from "site/digital/utils/Rendering";
+
+import {useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 
 import "./index.scss";
 
@@ -59,7 +62,8 @@ export const MainDesigner = ({info, canvas}: Props) => {
         // Add input listener
         info.input.addListener((event) => {
             const change = toolManager.onEvent(event, info);
-            if (change) renderer.render();
+            if (change)
+                renderer.render();
         });
 
         // Add render callbacks and set render function
@@ -86,29 +90,29 @@ export const MainDesigner = ({info, canvas}: Props) => {
             info.designer.pause();
     }, [isPageVisible]);
 
+    return (
+        <Droppable
+            ref={canvas}
+            onDrop={(pos, itemId, num, smartPlaceOptions: SmartPlaceOptions) => {
+                if (!canvas.current)
+                    throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
+                num = num ?? 1;
+                if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
+                    return;
+                pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
-    return (<>
-        <Droppable ref={canvas}
-                   onDrop={(pos, itemId, num, smartPlaceOptions: SmartPlaceOptions) => {
-                       if (!canvas.current)
-                           throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
-                       num = num ?? 1;
-                       if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
-                           return;
-                       pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
-
-                       if (smartPlaceOptions !== SmartPlaceOptions.Off) {
-                           history.add(SmartPlace(pos, itemId, designer, num, smartPlaceOptions).execute());
-                       } else {
-                           history.add(
-                               CreateGroupPlaceAction(designer, DigitalCreateN(pos, itemId, designer, num)).execute()
-                           );
-                       }
-                       renderer.render();
-                   }}>
+                if (smartPlaceOptions !== SmartPlaceOptions.Off) {
+                    history.add(SmartPlace(pos, itemId, designer, num, smartPlaceOptions).execute());
+                } else {
+                    history.add(
+                        CreateGroupPlaceAction(designer, DigitalCreateN(pos, itemId, designer, num)).execute()
+                    );
+                }
+                renderer.render();
+            }}>
             <canvas className="main__canvas"
                     width={w}
                     height={h-HEADER_HEIGHT} />
         </Droppable>
-    </>);
+    );
 }

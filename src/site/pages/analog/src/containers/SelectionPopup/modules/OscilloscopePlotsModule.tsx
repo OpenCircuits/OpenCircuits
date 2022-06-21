@@ -1,12 +1,15 @@
 import {GroupAction} from "core/actions/GroupAction";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo"
+
 import {SetScopeConfigAction} from "analog/actions/SetScopeConfigAction";
+
 import {Oscilloscope} from "analog/models/eeobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {BooleanModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/BooleanModuleInputField";
-import {ColorModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
+import {ColorModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 
 
 type Props = {
@@ -19,9 +22,9 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
         info,
         (s): s is Oscilloscope => (s instanceof Oscilloscope),
         (o) => ({
-            showAxes: o.getConfig().showAxes,
+            showAxes:   o.getConfig().showAxes,
             showLegend: o.getConfig().showLegend,
-            showGrid: o.getConfig().showGrid,
+            showGrid:   o.getConfig().showGrid,
             ...Object.fromEntries(
                 Object.entries(o.getConfig().vecs)
                     .map(([key, vecConfig]) => [`${key}_enabled`, vecConfig.enabled] as const)
@@ -51,7 +54,7 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
         )
     );
 
-    return <>
+    return (<>
         <div>
             Config
             <div style={{ margin: "5px" }}>
@@ -78,39 +81,39 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
         <div>
             Plots
             <div style={{ margin: "5px" }}>
-            {otherKeys.map((key) => (<div key={`oscilloscope-module-${key}`}>
-                <BooleanModuleInputField
-                    props={props[`${key}_enabled`]} text={key.split(".")[1]}
-                    getAction={(enabled) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, {
-                            ...o.getConfig(),
-                            "vecs": {
-                                ...o.getConfig().vecs,
-                                [key]: {
-                                    ...o.getConfig().vecs[key],
-                                    enabled,
+                {otherKeys.map((key) => (<div key={`oscilloscope-module-${key}`}>
+                    <BooleanModuleInputField
+                        props={props[`${key}_enabled`]} text={key.split(".")[1]}
+                        getAction={(enabled) => new GroupAction(
+                            os.map(o => new SetScopeConfigAction(o, {
+                                ...o.getConfig(),
+                                "vecs": {
+                                    ...o.getConfig().vecs,
+                                    [key]: {
+                                        ...o.getConfig().vecs[key],
+                                        enabled,
+                                    },
                                 },
-                            },
-                        })
-                    ))}
-                    onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
-                <ColorModuleInputField
-                    props={props[`${key}_color`]}
-                    getAction={(color) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, {
-                            ...o.getConfig(),
-                            "vecs": {
-                                ...o.getConfig().vecs,
-                                [key]: {
-                                    ...o.getConfig().vecs[key],
-                                    color,
+                            })
+                        ))}
+                        onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
+                    <ColorModuleInputField
+                        props={props[`${key}_color`]}
+                        getAction={(color) => new GroupAction(
+                            os.map(o => new SetScopeConfigAction(o, {
+                                ...o.getConfig(),
+                                "vecs": {
+                                    ...o.getConfig().vecs,
+                                    [key]: {
+                                        ...o.getConfig().vecs[key],
+                                        color,
+                                    },
                                 },
-                            },
-                        })
-                    ))}
-                    onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
-            </div>))}
+                            })
+                        ))}
+                        onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
+                </div>))}
             </div>
         </div>
-    </>
+    </>)
 }

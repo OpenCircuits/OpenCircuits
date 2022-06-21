@@ -5,6 +5,7 @@ import {useSharedDispatch} from "shared/utils/hooks/useShared";
 import {GoogleAuthState} from "shared/api/auth/GoogleAuthState";
 
 import {CloseHeaderPopups} from "shared/state/Header";
+
 import {Login} from "shared/state/thunks/User";
 
 
@@ -24,12 +25,15 @@ export const GoogleAuthButton = () => {
 
         // Render sign in button
         gapi.signin2.render("login-popup-google-signin", {
-            "scope": "profile email",
-            "width": 180,
-            "height": 60,
+            "scope":     "profile email",
+            "width":     180,
+            "height":    60,
             "longtitle": false,
             "onsuccess": (_) => onLogin(true),
-            "onfailure": (e) => { if (e.error !== "popup_closed_by_user") throw new Error(e.error); onLogin(false); }
+            "onfailure": (e) => {
+                if (e.error !== "popup_closed_by_user")
+                    throw new Error(e.error); onLogin(false);
+            },
         });
 
         return () => {

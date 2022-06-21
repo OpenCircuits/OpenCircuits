@@ -1,4 +1,5 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
@@ -6,6 +7,7 @@ import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction
 import {SegmentDisplay} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 
 
@@ -24,7 +26,7 @@ export const SegmentCountModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Segment Count
         <label>
             <SelectModuleInputField
@@ -42,5 +44,5 @@ export const SegmentCountModule = ({ info }: Props) => {
                         history.add(info.action);
                 }} />
         </label>
-    </div>
+    </div>);
 }

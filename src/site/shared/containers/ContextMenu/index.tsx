@@ -1,24 +1,29 @@
 import {useEffect, useRef, useState} from "react";
+
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo}      from "core/utils/CircuitInfo";
 import {SerializeForCopy} from "core/utils/ComponentUtils";
+
 import {V, Vector} from "core/utils/math/Vector";
+
+import {GroupAction} from "core/actions/GroupAction";
+
+import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+
+import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+
+import {CleanUpHandler}     from "core/tools/handlers/CleanUpHandler"
+import {DuplicateHandler}   from "core/tools/handlers/DuplicateHandler"
+import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
 
 import {IOObject} from "core/models";
 
-import {GroupAction} from "core/actions/GroupAction";
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
-
-import {CleanUpHandler} from "core/tools/handlers/CleanUpHandler"
-import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
-import {DuplicateHandler} from "core/tools/handlers/DuplicateHandler"
-
+import {useDocEvent}                          from "shared/utils/hooks/useDocEvent";
+import {useHistory}                           from "shared/utils/hooks/useHistory";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-import {useDocEvent} from "shared/utils/hooks/useDocEvent";
+
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
-import {useHistory} from "shared/utils/hooks/useHistory";
 
 import "./index.scss";
 
@@ -47,7 +52,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
     );
     const dispatch = useSharedDispatch();
 
-    const [{ posX, posY }, setPos] = useState({ posX:0, posY:0 });
+    const [{ posX, posY }, setPos] = useState({ posX: 0, posY: 0 });
 
     useEffect(() => {
         if (!input)
@@ -69,7 +74,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
             return;
         // Updates position state
         const pos = input?.getMousePos();
-        setPos({ posX:pos.x, posY:pos.y });
+        setPos({ posX: pos.x, posY: pos.y });
     }, [isOpen]);
 
     useDocEvent("mousedown", (ev) => {
@@ -99,7 +104,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
         const objs = selections.get().filter(s => s instanceof IOObject) as IOObject[];
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
-            CreateDeleteGroupAction(designer, objs)
+            CreateDeleteGroupAction(designer, objs),
         ], "Cut (Context Menu)").execute());
     }
 
@@ -173,24 +178,49 @@ export const ContextMenu = ({ info, paste }: Props) => {
     }
 
     return (
-        <div className="contextmenu"
-             ref={menu}
+        <div ref={menu}
+             className="contextmenu"
              style={{
-                 left: `${menuPos.x}px`,
-                 top: `${menuPos.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
-                 visibility: (isOpen ? "initial" : "hidden")
+                 left:       `${menuPos.x}px`,
+                 top:        `${menuPos.y + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET}px`,
+                 visibility: (isOpen ? "initial" : "hidden"),
              }}>
-            <button title="Cut"        onClick={() => doFunc(onCut)} disabled={selections.amount() === 0}>Cut</button>
-            <button title="Copy"       onClick={() => doFunc(onCopy)} disabled={selections.amount() === 0}>Copy</button>
-            <button title="Paste"      onClick={() => doFunc(onPaste)}>Paste</button>
-            <button title="Select All" onClick={() => doFunc(onSelectAll)} disabled={designer.getObjects().length === 0}>Select All</button>
-            <hr/>
-            <button title="Focus"      onClick={() => doFunc(onFocus)}>Focus</button>
-            <button title="CleanUp"    onClick={() => doFunc(onCleanUp)} disabled={designer.getObjects().length === 0}>Clean Up</button>
-            <button title="Duplicate"  onClick={() => doFunc(onDuplicate)} disabled={selections.amount() === 0}>Duplicate</button>
-            <hr/>
-            <button title="Undo" onClick={() => doFunc(onUndo)} disabled={undoHistory.length === 0}>Undo</button>
-            <button title="Redo" onClick={() => doFunc(onRedo)} disabled={redoHistory.length === 0}>Redo</button>
+            <button type="button"
+                    title="Cut"
+                    disabled={selections.amount() === 0}
+                    onClick={() => doFunc(onCut)}>Cut</button>
+            <button type="button"
+                    title="Copy"
+                    disabled={selections.amount() === 0}
+                    onClick={() => doFunc(onCopy)}>Copy</button>
+            <button type="button"
+                    title="Paste"
+                    onClick={() => doFunc(onPaste)}>Paste</button>
+            <button type="button"
+                    title="Select All"
+                    disabled={designer.getObjects().length === 0}
+                    onClick={() => doFunc(onSelectAll)}>Select All</button>
+            <hr />
+            <button type="button"
+                    title="Focus"
+                    onClick={() => doFunc(onFocus)}>Focus</button>
+            <button type="button"
+                    title="CleanUp"
+                    disabled={designer.getObjects().length === 0}
+                    onClick={() => doFunc(onCleanUp)}>Clean Up</button>
+            <button type="button"
+                    title="Duplicate"
+                    disabled={selections.amount() === 0}
+                    onClick={() => doFunc(onDuplicate)}>Duplicate</button>
+            <hr />
+            <button type="button"
+                    title="Undo"
+                    disabled={undoHistory.length === 0}
+                    onClick={() => doFunc(onUndo)}>Undo</button>
+            <button type="button"
+                    title="Redo"
+                    disabled={redoHistory.length === 0}
+                    onClick={() => doFunc(onRedo)}>Redo</button>
         </div>
     );
 }
