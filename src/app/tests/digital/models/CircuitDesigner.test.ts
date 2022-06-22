@@ -9,7 +9,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 
 
 describe("CircuitDesigner", () => {
-    describe("Empty Circuit", () => {
+    test("Empty Circuit", () => {
         const designer = new DigitalCircuitDesigner(0);
 
         expect(designer.getObjects()).toHaveLength(0);
@@ -54,15 +54,19 @@ describe("CircuitDesigner", () => {
         const [a, o] = Place(new Switch(), new LED());
         Connect(a,  o);
 
-        const objects = designer.getObjects();
-        expect(objects).toHaveLength(2);
-        expect(objects[0]).toBe(a);
-        expect(objects[1]).toBe(o);
+        test("Object Initialization", () => {
+            const objects = designer.getObjects();
+            expect(objects).toHaveLength(2);
+            expect(objects[0]).toBe(a);
+            expect(objects[1]).toBe(o);
+        });
 
-        const wires = designer.getWires();
-        expect(wires).toHaveLength(1);
-        expect(wires[0].getInputComponent()).toBe(a);
-        expect(wires[0].getOutputComponent()).toBe(o);
+        test("Wire Initialization", () => {
+            const wires = designer.getWires();
+            expect(wires).toHaveLength(1);
+            expect(wires[0].getInputComponent()).toBe(a);
+            expect(wires[0].getOutputComponent()).toBe(o);
+        });
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(false);
@@ -117,7 +121,7 @@ describe("CircuitDesigner", () => {
         });
     });
 
-    describe("Reset Circuit", () => {
+    test("Reset Circuit", () => {
         const designer = new DigitalCircuitDesigner(0);
         const { Place, Connect } = GetHelpers(designer);
 

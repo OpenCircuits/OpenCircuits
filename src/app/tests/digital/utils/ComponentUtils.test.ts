@@ -21,9 +21,6 @@ import {LED}            from "digital/models/ioobjects/outputs/LED";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
 
-
-
-
 function Connect(c1: DigitalComponent, i1: number, c2?: DigitalComponent, i2?: number): DigitalWire {
     const p1 = c1.getOutputPort(i1);
     const p2 = c2!.getInputPort(i2!);
@@ -32,72 +29,6 @@ function Connect(c1: DigitalComponent, i1: number, c2?: DigitalComponent, i2?: n
     p2.connect(wire);
     return wire;
 }
-
-// describe("SeparateGroup", () => {
-//     const NUM_SAMPLES = 10;
-//     function shuffle(a: Array<any>): Array<any> {
-//         for (const i = a.length - 1; i > 0; i--) {
-//             const j = Math.floor(Math.random() * (i + 1));
-//             [a[i], a[j]] = [a[j], a[i]];
-//         }
-//         return a;
-//     }
-
-//     test("Group 1", () => {
-//         const group = [new Button(), new ConstantHigh(), new Switch(),
-//                      new LED(), new ANDGate(), new DFlipFlop(), new DLatch(),
-//                      new SRLatch(), new SevenSegmentDisplay(), new ConstantLow()];
-//         for (const i = 0; i < NUM_SAMPLES; i++) {
-//             shuffle(group);
-
-//             const separatedGroup = SeparateGroup(group);
-//             expect(separatedgroup.getInputs().length).toBe(4);
-//             expect(separatedgroup.getOutputs().length).toBe(2);
-//             expect(separatedgroup.getOthers().length).toBe(4);
-//             expect(separatedgroup.getWires().length).toBe(0);
-//         }
-//     });
-//     test("Group 2", () => {
-//         const group = [new Button(), new ConstantHigh(), new Switch(), new ConstantLow()];
-//         for (const i = 0; i < NUM_SAMPLES; i++) {
-//             shuffle(group);
-
-//             const separatedGroup = SeparateGroup(group);
-//             expect(separatedgroup.getInputs().length).toBe(4);
-//             expect(separatedgroup.getOutputs().length).toBe(0);
-//             expect(separatedgroup.getOthers().length).toBe(0);
-//             expect(separatedgroup.getWires().length).toBe(0);
-//         }
-//     });
-//     test("Group 3", () => {
-//         const group = [new Button(), new ConstantHigh(), new Switch(),
-//                      new LED(), new Button(), new DFlipFlop(), new Button(),
-//                      new SRLatch(), new Button(), new ConstantLow()];
-//         for (const i = 0; i < NUM_SAMPLES; i++) {
-//             shuffle(group);
-
-//             const separatedGroup = SeparateGroup(group);
-//             expect(separatedgroup.getInputs().length).toBe(7);
-//             expect(separatedgroup.getOutputs().length).toBe(1);
-//             expect(separatedgroup.getOthers().length).toBe(2);
-//             expect(separatedgroup.getWires().length).toBe(0);
-//         }
-//     });
-//     test("Group 4", () => {
-//         const group = [new ANDGate(), new LED(), new ANDGate(),
-//                      new LED(), new ANDGate(), new LED(), new ANDGate(),
-//                      new ANDGate(), new LED(), new ANDGate()];
-//         for (const i = 0; i < NUM_SAMPLES; i++) {
-//             shuffle(group);
-
-//             const separatedGroup = SeparateGroup(group);
-//             expect(separatedgroup.getInputs().length).toBe(0);
-//             expect(separatedgroup.getOutputs().length).toBe(4);
-//             expect(separatedgroup.getOthers().length).toBe(6);
-//             expect(separatedgroup.getWires().length).toBe(0);
-//         }
-//     });
-// });
 
 describe("CreateGroup", () => {
     test("Group 0", () => {
@@ -418,21 +349,21 @@ describe("CopyGroup", () => {
         Connect(objs[2], 0, objs[3], 0);
         Connect(objs[2], 0, objs[4], 0);
 
-        test("Group 10a – One Node", () => {
+        test("Group 10a - One Node", () => {
             const copy = CopyGroup([objs[1]]);
 
             expect(copy.getWires()).toHaveLength(0);
             expect(copy.getComponents()).toHaveLength(0);
         });
 
-        test("Group 10b – Two Nodes", () => {
+        test("Group 10b - Two Nodes", () => {
             const copy = CopyGroup([objs[1], objs[2]]);
 
             expect(copy.getWires()).toHaveLength(0);
             expect(copy.getComponents()).toHaveLength(0);
         });
 
-        test("Group 10c – Switch + Two Nodes", () => {
+        test("Group 10c - Switch + Two Nodes", () => {
             const copy = CopyGroup([objs[0], objs[1], objs[2]]);
 
             expect(copy.getWires()).toHaveLength(0);
@@ -444,7 +375,7 @@ describe("CopyGroup", () => {
             expect(sCopy.getConnections()).toHaveLength(0);
         });
 
-        test("Group 10d – Node with 2 LEDs", () => {
+        test("Group 10d - Node with 2 LEDs", () => {
             const copy = CopyGroup([objs[2], objs[3], objs[4]]);
 
             expect(copy.getWires()).toHaveLength(0);
@@ -459,7 +390,7 @@ describe("CopyGroup", () => {
             expect(l1Copy.getConnections()).toHaveLength(0);
         });
 
-        test("Group 10e – Switch with both Nodes and 1 LED", () => {
+        test("Group 10e - Switch with both Nodes and 1 LED", () => {
             const copy = CopyGroup([objs[0], objs[1], objs[2], objs[3]]);
 
             expect(copy.getWires()).toHaveLength(3);
@@ -480,7 +411,7 @@ describe("CopyGroup", () => {
             expect(lCopy.getConnections()).toHaveLength(1);
         });
 
-        test("Group 10f – Copy whole group", () => {
+        test("Group 10f - Copy whole group", () => {
             const copy = CopyGroup([objs[0], objs[1], objs[2], objs[3], objs[4]]);
 
             expect(copy.getWires()).toHaveLength(4);
