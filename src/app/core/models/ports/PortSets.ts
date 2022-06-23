@@ -80,7 +80,7 @@ export class PortSet<T extends Port> {
     }
 
     public getPorts(): T[] {
-        return this.currentPorts.slice();
+        return [...this.currentPorts];
     }
 
     public getPositioner(): Positioner<T> {

@@ -37,7 +37,7 @@ export class Renderer {
     public transform(camera: Camera, transform: Transform): void {
         const m = transform.getMatrix().copy();
         m.setTranslation(camera.getScreenPos(m.getTranslation()));
-        m.scale(1.0/camera.getZoom());
+        m.scale(1/camera.getZoom());
         this.context.setTransform(m.get(0), m.get(1), m.get(2),
                                   m.get(3), m.get(4), m.get(5));
     }

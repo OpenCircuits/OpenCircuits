@@ -4,8 +4,8 @@ import {Graph} from "math/Graph";
 function compareDepths(expected: string[][], actual: string[][]): boolean {
     if (actual.length !== expected.length)
         return false;
-    for (let i = 0; i < actual.length; i++) {
-        if (actual[i].sort().join("") !== expected[i].sort().join(""))
+    for (const [i, element] of actual.entries()) {
+        if (element.sort().join("") !== expected[i].sort().join(""))
             return false;
     }
     return true;

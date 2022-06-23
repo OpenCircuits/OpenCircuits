@@ -218,7 +218,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     const deleteImg = useMemo(() => {
         // If not pressing a Component or not hovering the ItemNav, then returned undefined
         if (!(currentlyPressedObj instanceof Component) || !hoveringNav)
-            return undefined;
+            return;
         return getImgSrc(currentlyPressedObj);
     }, [currentlyPressedObj, hoveringNav, getImgSrc]);
 
@@ -245,7 +245,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
              }}>
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
-            {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
+            {new Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
                 <div key={`itemnav-preview-stack-${i}`}
                      style={{
                          position: "absolute",

@@ -37,6 +37,7 @@ module.exports = {
         "unicorn/prefer-number-properties": "off",
         "unicorn/prefer-query-selector": "off",
         "unicorn/prefer-string-replace-all": "error",
+        "unicorn/prefer-switch": "off",
         "unicorn/prefer-ternary": ["error", "only-single-line"],
         "unicorn/prevent-abbreviations": "off",
         "unicorn/no-array-callback-reference": "off",

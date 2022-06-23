@@ -62,7 +62,7 @@ export function VersionConflictPostResolver(version: string, data: ContentsData)
 
     const designer = data.designer as DigitalCircuitDesigner;
 
-    if (v < 3.0) {
+    if (v < 3) {
         // Fix issue where old ICs don't have the properly separated 'collections' so need to sort them out
         designer.getObjects().filter(o => o instanceof IC).forEach((ic: IC) => {
             const INPUT_WHITELIST = [Switch, Button];

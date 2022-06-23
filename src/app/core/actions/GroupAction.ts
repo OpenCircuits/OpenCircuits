@@ -13,7 +13,7 @@ export class GroupAction implements Action {
     }
 
     public add(action: Action | Action[]): GroupAction {
-        if (action instanceof Array)
+        if (Array.isArray(action))
             this.actions = this.actions.concat(action);
         else
             this.actions.push(action);

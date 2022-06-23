@@ -108,7 +108,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
         renderer.render();
 
         return true;
-    } catch (_) {
+    } catch {
         return false;
     }
 }

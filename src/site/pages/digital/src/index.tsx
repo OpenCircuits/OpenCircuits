@@ -123,7 +123,7 @@ async function Init(): Promise<void> {
                 ReactGA.initialize(process.env.OC_GA_ID, {});
                 ReactGA.pageview("/");
             } catch (e) {
-                console.error("Failed to connect with Google Analytics: ", e);
+                console.error("Failed to connect with Google Analytics:", e);
             }
         }],
         [100, "Rendering", async () => {

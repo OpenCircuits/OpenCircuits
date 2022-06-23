@@ -138,9 +138,9 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     let circuit = new DigitalObjectSet();
     try {
         circuit = ExpressionToCircuit(inputMap, expression, o, ops);
-    } catch (err) {
+    } catch (e) {
         action.undo(); // Undo any actions that have been done so far
-        throw err;
+        throw e;
     }
 
     action.add(new AddGroupAction(info.designer, circuit).execute());

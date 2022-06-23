@@ -95,7 +95,7 @@ export const OscilloscopeRenderer = (() => {
             const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
                 const samples = Math.min(data.length, o.getProp("samples") as number);
 
-                return Array(samples).fill(0)
+                return new Array(samples).fill(0)
                     .map((_, i) => data[Math.floor(i * data.length / samples)]);
             });
 

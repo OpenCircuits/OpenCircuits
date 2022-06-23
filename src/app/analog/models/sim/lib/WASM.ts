@@ -108,16 +108,16 @@ function GetArray<T extends GetArrayParams>(
         }
         const arr = module.HEAPU32.subarray(ptr, ptr + len);
         if (o.type === "string*")
-            return Array.from(arr) as GetArrayReturn<T>;
-        return Array.from(arr, ptr => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
+            return [...arr] as GetArrayReturn<T>;
+        return [...arr].map(ptr => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
     }
     if (o.type === "int") {
         ptr = ptr / module.HEAP32.BYTES_PER_ELEMENT;
-        return Array.from(module.HEAP32.subarray(ptr, ptr + o.len)) as GetArrayReturn<T>;
+        return [...module.HEAP32.subarray(ptr, ptr + o.len)] as GetArrayReturn<T>;
     }
     if (o.type === "double") {
         ptr = ptr / module.HEAPF64.BYTES_PER_ELEMENT;
-        return Array.from(module.HEAPF64.subarray(ptr, ptr + o.len)) as GetArrayReturn<T>;
+        return [...module.HEAPF64.subarray(ptr, ptr + o.len)] as GetArrayReturn<T>;
     }
     assertNever(o);
 }

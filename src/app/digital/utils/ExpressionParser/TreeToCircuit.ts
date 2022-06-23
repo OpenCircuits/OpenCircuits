@@ -90,11 +90,10 @@ export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, D
     if (!tree)
         return [];
 
-    let ret: IOObject[] = Array.from(inputs.values());
+    let ret: IOObject[] = [...inputs.values()];
 
     ret = treeToCircuitCore(tree, inputs, ret);
     const wire = LazyConnect(ret.slice(-1)[0] as DigitalComponent, output);
-    ret.push(wire);
-    ret.push(output);
+    ret.push(wire, output);
     return ret;
 }

@@ -38,7 +38,7 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
                 const outs = c1.getOutputPorts();
                 const ins = c2.getInputPorts().filter(i => i.getWires().length === 0);
 
-                return Array(Math.min(outs.length, ins.length))
+                return new Array(Math.min(outs.length, ins.length))
                     .fill(0)
                     .map((_, i) => new ConnectionAction(designer, outs[i], ins[i]).execute()) as ConnectionAction[];
             }

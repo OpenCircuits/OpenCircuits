@@ -33,14 +33,11 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         super.activate(signal, i);
     }
 
-    public press(): void {
-    }
+    public press(): void {}
 
-    public click(): void {
-    }
+    public click(): void {}
 
-    public release(): void {
-    }
+    public release(): void {}
 
     /**
      * Determines whether or not a point is within
