@@ -13,10 +13,10 @@ export function SaveFile(data: string, name: string): void {
         const url = URL.createObjectURL(file);
         a.href = url;
         a.download = filename;
-        document.body.appendChild(a);
+        document.body.append(a);
         a.click();
         setTimeout(() => {
-            document.body.removeChild(a);
+            a.remove();
             window.URL.revokeObjectURL(url);
         }, 0);
     }

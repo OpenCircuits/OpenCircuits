@@ -146,9 +146,9 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
 
         const o = new LED();
         const inputs: Array<[string, Switch]> = [];
-        const charCodeStart = "a".charCodeAt(0);
+        const charCodeStart = "a".codePointAt(0)!;
         for (let i = 0; i < numInputs; i++)
-            inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
+            inputs.push([String.fromCodePoint(charCodeStart+i), new Switch()]);
 
         const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
 
@@ -628,9 +628,9 @@ describe("Expression Parser", () => {
         describe("7 variable OR", () => {
             const o = new LED();
             const inputs: Array<[string, Switch]> = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 7; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
 
@@ -648,9 +648,9 @@ describe("Expression Parser", () => {
         describe("8 variable OR", () => {
             const o = new LED();
             const inputs: Array<[string, Switch]> = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 8; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
 
@@ -668,9 +668,9 @@ describe("Expression Parser", () => {
         describe("9 variable OR", () => {
             const o = new LED();
             const inputs: Array<[string, Switch]> = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 9; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
 
@@ -690,9 +690,9 @@ describe("Expression Parser", () => {
         describe("(a|b)|(c|d)", () => {
             const o = new LED();
             const inputs: Array<[string, Switch]> = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 4; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
 
@@ -713,9 +713,9 @@ describe("Expression Parser", () => {
         describe("!(a|b|c)", () => {
             const o = new LED();
             const inputs: Array<[string, Switch]> = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 3; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
 

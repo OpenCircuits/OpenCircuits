@@ -25,7 +25,7 @@ export const DebugRenderer = (() => {
 
 
             if (info.debugOptions.debugCullboxes) {
-                const cullboxes = objects.map((c) => c.getCullBox()).concat(wires.map((w) => w.getCullBox()));
+                const cullboxes = [...objects.map((c) => c.getCullBox()), ...wires.map((w) => w.getCullBox())];
                 renderer.save();
                 for (const cullBox of cullboxes) {
                     renderer.transform(camera, cullBox);

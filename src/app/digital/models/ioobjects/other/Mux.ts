@@ -72,14 +72,14 @@ export abstract class Mux extends DigitalComponent {
     public getInputs(): DigitalWire[] {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
-        return super.getInputs().concat(
-            this.getSelectPorts().map((p) => p.getInput())
-                    .filter(w => !!w));
+        return [...super.getInputs(), ...this.getSelectPorts()
+                                             .map((p) => p.getInput())
+                                             .filter(w => !!w)];
     }
 
     // @Override
     public getPorts(): Port[] {
-        return super.getPorts().concat(this.getSelectPorts());
+        return [...super.getPorts(), ...this.getSelectPorts()];
     }
 
     /**

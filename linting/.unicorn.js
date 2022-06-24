@@ -18,7 +18,7 @@ module.exports = {
             },
             "ignore": [
                 // Ignore things with words like IC, ID, etc. (i.e. ICViewer)
-                /(.*?)(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII)(.*)/,
+                /(.*?)(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII|OS|NG)(.*)/,
             ],
         }],
         "unicorn/no-array-reduce": "off",

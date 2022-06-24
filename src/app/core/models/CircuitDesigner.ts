@@ -36,6 +36,6 @@ export abstract class CircuitDesigner {
     public abstract getWires(): Wire[];
 
     public getAll(): IOObject[] {
-        return (this.getObjects() as IOObject[]).concat(this.getWires());
+        return [...(this.getObjects() as IOObject[]), ...this.getWires()];
     }
 }

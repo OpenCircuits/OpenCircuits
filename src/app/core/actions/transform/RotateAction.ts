@@ -89,7 +89,7 @@ export class RotateAction implements Action {
     }
 
     public getCustomInfo(): string[] {
-        const deg = String.fromCharCode(176);
+        const deg = String.fromCodePoint(176);
         return [...this.objects].map(
             (obj, i) =>
                 `${obj.getName()}: rotated from ${Math.round(this.initialAngles[i] * (180 / Math.PI))}${deg}

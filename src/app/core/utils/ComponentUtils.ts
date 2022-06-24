@@ -85,9 +85,9 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
     const group = new IOObjectSet(objects);
 
     const objs = group.getComponents();
-    const wires = group.getWires()
+    const wires = [...group.getWires(),
             // Add all connections from every object
-            .concat(objs.flatMap((o) => o.getConnections()))
+            ...objs.flatMap((o) => o.getConnections())]
             // Filter out any connection that isn't connected
             //  to two objects in the objects list
             .filter((w) => objs.includes(w.getP1Component()) &&

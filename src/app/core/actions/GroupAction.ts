@@ -14,7 +14,7 @@ export class GroupAction implements Action {
 
     public add(action: Action | Action[]): GroupAction {
         if (Array.isArray(action))
-            this.actions = this.actions.concat(action);
+            this.actions = [...this.actions, ...action];
         else
             this.actions.push(action);
 

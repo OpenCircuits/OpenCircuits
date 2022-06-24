@@ -49,10 +49,10 @@ function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageE
         const url = data;
         a.href = url;
         a.download = filename;
-        document.body.appendChild(a);
+        document.body.append(a);
         a.click();
         setTimeout(() => {
-            document.body.removeChild(a);
+            a.remove();
             window.URL.revokeObjectURL(url);
         }, 0);
     }
@@ -63,7 +63,7 @@ function SavePDF(canvas: HTMLCanvasElement, projectName: string, options: ImageE
     const width  = canvas.width;
     const height = canvas.height;
 
-    const data = canvas.toDataURL("image/png", 1.0);
+    const data = canvas.toDataURL("image/png", 1);
     const pdf = new jsPDF("l", "px", [width, height]);
 
     // Get name

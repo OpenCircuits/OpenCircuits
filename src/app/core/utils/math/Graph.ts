@@ -84,7 +84,7 @@ export class Graph<V, E> {
 
     public getEndNodes(): V[] {
         // Get nodes that are sources/sinks
-        return this.getSources().concat(this.getSinks());
+        return [...this.getSources(), ...this.getSinks()];
     }
 
     public size(): number {

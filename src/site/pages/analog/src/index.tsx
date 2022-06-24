@@ -137,7 +137,7 @@ async function Init(): Promise<void> {
                 ReactGA.initialize(process.env.OC_GA_ID, {});
                 ReactGA.pageview("/");
             } catch (e) {
-                console.error("Failed to connect with Google Analytics: ", e);
+                console.error("Failed to connect with Google Analytics:", e);
             }
         }],
         [100, "Rendering", async () => {
@@ -166,9 +166,10 @@ async function Init(): Promise<void> {
 
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
-                if ((await DevListFiles()).includes(DEV_CACHED_CIRCUIT_FILE))
+                const files = await DevListFiles();
+                if(files.includes(DEV_CACHED_CIRCUIT_FILE))
                     await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-            }
+        }
 
             ReactDOM.render(
                 <React.StrictMode>

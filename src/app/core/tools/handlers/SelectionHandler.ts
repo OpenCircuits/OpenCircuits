@@ -34,13 +34,11 @@ export const SelectionHandler: EventHandler = ({
 
         // If we clicked a port and also hit a wire,
         //  we want to prioritize the port, so skip selecting
-        if (!(obj instanceof Wire && ports.some(p => p.isWithinSelectBounds(worldMousePos)))) {
-            // Select object
-            if (obj) {
+        if (!(obj instanceof Wire && ports.some(p => p.isWithinSelectBounds(worldMousePos))) // Select object
+            && obj) {
                 const deselect = (input.isShiftKeyDown() && selections.has(obj));
                 action.add(new SelectAction(selections, obj, deselect).execute());
                 action.add(new ShiftAction(designer, obj).execute());
-            }
         }
 
         // https://github.com/OpenCircuits/OpenCircuits/issues/622

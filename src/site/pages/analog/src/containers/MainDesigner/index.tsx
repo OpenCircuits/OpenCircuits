@@ -91,10 +91,9 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     return (
         <Droppable
             ref={canvas}
-            onDrop={(pos, itemId, num) => {
+            onDrop={(pos, itemId, num = 1) => {
                 if (!canvas.current)
                     throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
-                num = num ?? 1;
                 if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                     return;
                 pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
