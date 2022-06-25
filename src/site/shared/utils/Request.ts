@@ -16,13 +16,15 @@ export function Request({ method, url, headers, data, async }: Props): Promise<s
         // Set headers
         Object.entries(headers).forEach(([name, value]) => xhr.setRequestHeader(name, value));
 
-        xhr.onload = function() {
+        xhr.addEventListener("load", function() {
             if (this.status >= 200 && this.status < 400)
                 resolve(this.response);
             else
                 reject(this.response);
-        }
-        xhr.onabort = xhr.onerror = xhr.ontimeout = (ev) => reject(ev);
+        });
+        xhr.addEventListener("abort", (ev) => reject(ev));
+        xhr.addEventListener("error", (ev) => reject(ev));
+        xhr.addEventListener("timeout", (ev) => reject(ev));
 
         xhr.send(data);
     })
