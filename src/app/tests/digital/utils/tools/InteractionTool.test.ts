@@ -19,13 +19,15 @@ describe("Selection Tool", () => {
     const { designer, input, selections, history } = Setup();
     const { Place, Connect } = GetHelpers(designer);
 
+    const reset = () => {
+        // Clear previous circuit
+        designer.reset();
+        history.reset();
+        CreateDeselectAllAction(selections).execute();
+    }
+
     describe("Single Object", () => {
-        afterEach(() => {
-            // Clear previous circuit
-            designer.reset();
-            history.reset();
-            CreateDeselectAllAction(selections).execute();
-        });
+        afterEach(reset);
 
         test("Clicking on nothing should NOT create an action", () => {
             input.click(V(0, 0));
@@ -215,12 +217,7 @@ describe("Selection Tool", () => {
     });
 
     describe("Multiple Objects", () => {
-        afterEach(() => {
-            // Clear previous circuit
-            designer.reset();
-            history.reset();
-            CreateDeselectAllAction(selections).execute();
-        });
+        afterEach(reset);
 
         test("Click with Shift to Select Objects then Deselect", () => {
             const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
