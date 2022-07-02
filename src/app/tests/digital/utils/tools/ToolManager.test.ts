@@ -1,9 +1,8 @@
-import "jest";
-
 import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 
+import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
 import {Setup}      from "test/helpers/Setup";
 
@@ -107,6 +106,8 @@ describe("Tool Manager", () => {
         input.click(s2.getPos());
         expect(tool()).toBe(defaultTool);
 
-        expect(l.isOn());
+        expect(s1).toBeConnectedTo(l);
+        expect(s2).toBeConnectedTo(l);
+        expect(l.isOn()).toBeTruthy();
     });
 });

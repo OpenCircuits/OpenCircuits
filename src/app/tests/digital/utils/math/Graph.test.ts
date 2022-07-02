@@ -1,12 +1,14 @@
-import "jest";
-
 import {Graph} from "math/Graph";
 
 
-function compareDepths(expected: string[][], actual: string[][]) {
-    expect(actual.length).toEqual(expected.length);
-        for (let i = 0; i < actual.length; i++)
-            expect(actual[i].sort()).toEqual(expected[i].sort());
+function compareDepths(expected: string[][], actual: string[][]): boolean {
+    if (actual.length !== expected.length)
+        return false;
+    for (let i = 0; i < actual.length; i++) {
+        if (actual[i].sort().join("") !== expected[i].sort().join(""))
+            return false;
+    }
+    return true;
 }
 
 describe("Graph", () => {
@@ -64,6 +66,7 @@ describe("Graph", () => {
             expect(graph.isConnected()).toBe(true);
         });
     });
+
     describe("getMaxNodeDepths", () => {
         test("Single Node graph", () => {
             const graph = new Graph<string, string>();
@@ -73,7 +76,7 @@ describe("Graph", () => {
             const nodeDepths = graph.getMaxNodeDepths();
 
             const expected = [["A"]];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
         test("Simple graph", () => {
             const graph = new Graph<string, string>();
@@ -94,7 +97,7 @@ describe("Graph", () => {
                 ["B", "D"],
                 ["C"],
             ];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
         test("Multisource graph", () => {
             const graph = new Graph<string, string>();
@@ -119,7 +122,7 @@ describe("Graph", () => {
                 ["C", "E", "F"],
                 ["D"],
             ];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
         test("Advanced graph", () => {
             const graph = new Graph<string, string>();
@@ -150,9 +153,10 @@ describe("Graph", () => {
                 ["E"],
                 ["G"],
             ];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
     });
+
     describe("getMinNodeDepths", () => {
         test("Single Node graph", () => {
             const graph = new Graph<string, string>();
@@ -162,7 +166,7 @@ describe("Graph", () => {
             const nodeDepths = graph.getMinNodeDepths();
 
             const expected = [["A"]];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
         test("Simple graph", () => {
             const graph = new Graph<string, string>();
@@ -183,7 +187,7 @@ describe("Graph", () => {
                 ["B", "D"],
                 ["C"],
             ];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
         test("Multisource graph", () => {
             const graph = new Graph<string, string>();
@@ -208,7 +212,7 @@ describe("Graph", () => {
                 ["C", "E", "F"],
                 ["D"],
             ];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
         test("Advanced graph", () => {
             const graph = new Graph<string, string>();
@@ -237,7 +241,7 @@ describe("Graph", () => {
                 ["C", "F", "E"],
                 ["D", "G"],
             ];
-            compareDepths(expected, nodeDepths);
+            expect(compareDepths(expected, nodeDepths)).toBeTruthy();
         });
     });
 });

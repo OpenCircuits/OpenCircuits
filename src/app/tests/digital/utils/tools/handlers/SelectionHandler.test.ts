@@ -1,5 +1,3 @@
-import "jest";
-
 import {V} from "Vector";
 
 import {GetHelpers} from "test/helpers/Helpers";

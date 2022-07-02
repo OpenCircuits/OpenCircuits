@@ -1,5 +1,3 @@
-import "jest";
-
 import {V} from "Vector";
 
 import {linspace} from "math/MathUtils";

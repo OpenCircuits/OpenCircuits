@@ -1,5 +1,3 @@
-import "jest";
-
 import {V} from "Vector";
 
 import {GetHelpers} from "test/helpers/Helpers";
@@ -146,12 +144,12 @@ describe("Translate Tool", () => {
 
             // Find duplicated objects
             const objs = designer.getObjects();
-            expect(objs.length).toBe(6);
+            expect(objs).toHaveLength(6);
 
             objs.splice(objs.indexOf(sw), 1);
             objs.splice(objs.indexOf(led), 1);
             objs.splice(objs.indexOf(port), 1);
-            expect(objs.length).toBe(3);
+            expect(objs).toHaveLength(3);
 
             const sw2   = objs.filter((o) => o instanceof Switch)[0] as Switch;
             const led2  = objs.filter((o) => o instanceof LED)[0] as LED;
