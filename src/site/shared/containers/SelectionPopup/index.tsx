@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
-import {GetIDFor}                           from "serialeazy";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {GetIDFor}                                        from "serialeazy";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -21,8 +21,6 @@ type Props = {
     children: React.ReactNode;
 }
 export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
-    const calcPos = () => camera.getScreenPos(selections.midpoint(true));
-
     const { input, camera, history, selections } = info;
 
     const itemNavCurItem = useSharedSelector(state => state.itemNav.curItemID);
@@ -44,16 +42,16 @@ export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
 
 
     const [pos, setPos] = useState({ x: 0, y: 0 });
-    useEffect(() => {
-        const update = () => setPos(calcPos());
+    const updatePos = useCallback(() => {
+        setPos(camera.getScreenPos(selections.midpoint(true)));
+    }, [camera, selections, setPos]);
 
+    useEffect(() => {
         // Subscribe to history for translation/selection changes
-        history.addCallback(update);
-        return () => history.removeCallback(update);
-    }, [history, setPos]);
-    useEvent("zoom", (_) => {
-        setPos(calcPos()); // Recalculate position on zoom
-    }, input, [camera, selections, setPos]);
+        history.addCallback(updatePos);
+        return () => history.removeCallback(updatePos);
+    }, [history, updatePos]);
+    useEvent("zoom", updatePos, input, [updatePos]);
 
     const [isDragging, setIsDragging] = useState(false);
     useEvent("mousedrag", (_) => {
@@ -61,8 +59,8 @@ export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
     }, input, [setIsDragging]);
     useEvent("mouseup", (_) => {
         setIsDragging(false); // Show when stopped dragging
-        setPos(calcPos()); // And recalculate position
-    }, input, [selections, setIsDragging]);
+        updatePos(); // And recalculate position
+    }, input, [updatePos, setIsDragging]);
 
 
     const [clickThrough, setClickThrough] = useState(false);
