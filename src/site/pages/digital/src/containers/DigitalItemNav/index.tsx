@@ -1,6 +1,8 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Create, GetIDFor}                          from "serialeazy";
 
+import {Component} from "core/models";
+
 import {IsICDataInUse}      from "digital/utils/ComponentUtils";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -58,7 +60,7 @@ type Props = {
     info: DigitalCircuitInfo;
 }
 export const DigitalItemNav = ({ info }: Props) => {
-    const { designer } = info;
+    const { designer, history } = info;
     const [{ ics }, setState] = useState({ ics: [] as ItemNavItem[] });
 
     // State for if we should 'Smart Place' (issue #689)
@@ -138,40 +140,49 @@ export const DigitalItemNav = ({ info }: Props) => {
                          }} />
                 ))}
         </>)
-    }, [smartPlace]);
+    }, [info]);
+
+    // Callbacks
+    const getImgSrc = useCallback((c: Component) => {
+        // Get ID
+        const id = (c instanceof IC)
+            // IC config 'id' is based on index of its ICData
+            ? (`ic/${designer.getICData().indexOf(c.getData())}`)
+            // Otherwise just get the Serialized ID
+            : (GetIDFor(c));
+        if (!id)
+            throw new Error(`DigitalItemNav: Can't find ID for component ${c.getName()}`);
+
+        // Get path within config of ItemNav icon
+        const section = config.sections.find(s => s.items.find(i => i.id === id));
+        const item = section?.items.find(i => i.id === id);
+
+        return `${config.imgRoot}/${section?.id}/${item?.icon}`;
+    }, [config.imgRoot, config.sections, designer]);
+
+    const onSmartPlaceOff = useCallback(() => setSmartPlace(SmartPlaceOptions.Off), [setSmartPlace]);
+
+    const onDelete = useCallback((sec: ItemNavSection, ic: ItemNavItem) => {
+        const icData = designer.getICData()[+ic.id.substring(ic.id.indexOf("/")+1)];
+        if (IsICDataInUse(designer, icData)) {
+            window.alert("Cannot delete this IC while instances remain in the circuit.");
+            return false;
+        }
+        sec.items.splice(sec.items.indexOf(ic));
+        history.add(new DeleteICDataAction(icData, designer).execute());
+        return true;
+    }, [designer, history]);
 
     // Append regular ItemNav items with ICs
-    return (<ItemNav
-        info={info}
-        config={config}
-        additionalData={smartPlace}
-        additionalPreview={additionalPreview}
-        getImgSrc={(c) => {
-            // Get ID
-            const id = (c instanceof IC)
-                // IC config 'id' is based on index of its ICData
-                ? (`ic/${designer.getICData().indexOf(c.getData())}`)
-                // Otherwise just get the Serialized ID
-                : (GetIDFor(c));
-            if (!id)
-                throw new Error(`DigitalItemNav: Can't find ID for component ${c.getName()}`);
-
-            // Get path within config of ItemNav icon
-            const section = config.sections.find(s => s.items.find(i => i.id === id));
-            const item = section?.items.find(i => i.id === id);
-
-            return `${config.imgRoot}/${section?.id}/${item?.icon}`;
-        }}
-        onStart={() => setSmartPlace(SmartPlaceOptions.Off)}
-        onFinish={() => setSmartPlace(SmartPlaceOptions.Off)}
-        onDelete={(sec: ItemNavSection, ic: ItemNavItem) => {
-            const icData = info.designer.getICData()[+ic.id.substring(ic.id.indexOf("/")+1)];
-            if (IsICDataInUse(info.designer, icData)) {
-                window.alert("Cannot delete this IC while instances remain in the circuit.");
-                return false;
-            }
-            sec.items.splice(sec.items.indexOf(ic));
-            info.history.add(new DeleteICDataAction(icData, designer).execute());
-            return true;
-        }} />);
+    return (
+        <ItemNav
+            info={info}
+            config={config}
+            additionalData={smartPlace}
+            additionalPreview={additionalPreview}
+            getImgSrc={getImgSrc}
+            onStart={onSmartPlaceOff}
+            onFinish={onSmartPlaceOff}
+            onDelete={onDelete} />
+    );
 }

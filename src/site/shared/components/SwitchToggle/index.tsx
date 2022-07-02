@@ -14,9 +14,9 @@ type Props = {
     onFocus?: () => void;
     onBlur?: () => void;
 }
-export const SwitchToggle = ({ className, isOn, height, disabled, children, ...callbacks }: Props) => (
+export const SwitchToggle = ({ className, isOn, height, disabled, children, onChange, ...callbacks }: Props) => (
     <div className={`switchtoggle ${disabled ? "disabled" : ""} ${className ?? ""}`}
-         style={{ height }} {...callbacks}>
+         style={{ height }} onClick={onChange} {...callbacks}>
         <img src="img/items/switchDown.svg"
              style={{ display: (!disabled && isOn ? "" : "none") }}
              height="100%" alt="Switch on" />

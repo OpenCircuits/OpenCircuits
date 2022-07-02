@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {useCallback, useEffect, useState} from "react"
 
 import {DRAG_TIME, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
@@ -27,13 +27,12 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
         startTapTime: 0, startX: 0, startY: 0, touchDown: false,
     });
 
-    function onDragEnd(pos: Vector) {
+    const onDragEnd = useCallback((pos: Vector) => {
         if (!isDragging)
             return;
         DragDropHandlers.drop(pos, ...data);
         setIsDragging(false);
-    }
-
+    }, [isDragging, data, setIsDragging]);
 
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
@@ -52,12 +51,12 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
 
     useEffect(() => {
         onDragChange?.(isDragging ? "start" : "end");
-    }, [isDragging]);
+    }, [isDragging, onDragChange]);
 
     useDocEvent(
         "mouseup",
         (ev) => onDragEnd(V(ev.clientX, ev.clientY)),
-        [isDragging, ...data]
+        [isDragging, ...data, onDragEnd]
     );
 
     return (
