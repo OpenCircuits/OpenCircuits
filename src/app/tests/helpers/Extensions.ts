@@ -77,7 +77,7 @@ expect.extend({
         };
     },
 
-    toBeConnectedTo(source: any, target: DigitalComponent, options = {depth: Infinity}) {
+    toBeConnectedTo(source: any, target: DigitalComponent, options = { depth: Infinity }) {
         if (!(source instanceof DigitalComponent))
             throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
 

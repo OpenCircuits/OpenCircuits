@@ -15,7 +15,7 @@ import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 describe("Input Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place} = GetHelpers(designer);
+        const { Place } = GetHelpers(designer);
 
         const [gate] = Place(new ANDGate());
 
@@ -42,7 +42,7 @@ describe("Input Port Change Action", () => {
     });
     test("Undo/Redo 2", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [gate, buf1, buf2, buf3, buf4] = Place(new ANDGate(), new BUFGate(), new BUFGate(),
                                                      new BUFGate(), new BUFGate());
@@ -119,7 +119,7 @@ describe("Input Port Change Action", () => {
     });
     test("Undo/Redo 3", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [gate, buf1] = Place(new ANDGate(), new BUFGate());
         Connect(buf1, gate);

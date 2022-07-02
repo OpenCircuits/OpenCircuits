@@ -18,8 +18,8 @@ import {ANDGate, BUFGate,
 
 
 describe("Selection Tool", () => {
-    const {designer, input, selections, history} = Setup();
-    const {Place, Connect} = GetHelpers(designer);
+    const { designer, input, selections, history } = Setup();
+    const { Place, Connect } = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {
@@ -355,15 +355,15 @@ describe("Selection Tool", () => {
 
             expect(selections.amount()).toEqual(1);
             expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
-            expect(sw).not.toBeConnectedTo(led, {depth: 1});
-            expect(sw).toBeConnectedTo(led, {depth: 2});
+            expect(sw).not.toBeConnectedTo(led, { depth: 1 });
+            expect(sw).toBeConnectedTo(led, { depth: 2 });
 
             input.pressKey("x")
                 .releaseKey("x");
 
             expect(designer.getObjects()).toHaveLength(2);
             expect(selections.amount()).toEqual(0);
-            expect(sw).toBeConnectedTo(led, {depth: 1});
+            expect(sw).toBeConnectedTo(led, { depth: 1 });
         });
 
         test("Snip 2 Single Ports", () => {
@@ -387,16 +387,16 @@ describe("Selection Tool", () => {
 
             expect(selections.amount()).toEqual(1);
             expect(selections.get()[0]).toBeInstanceOf(DigitalNode);
-            expect(sw).not.toBeConnectedTo(led, {depth: 2});
-            expect(sw).toBeConnectedTo(led, {depth: 3});
+            expect(sw).not.toBeConnectedTo(led, { depth: 2 });
+            expect(sw).toBeConnectedTo(led, { depth: 3 });
 
             input.pressKey("x")
                 .releaseKey("x");
 
             expect(designer.getObjects()).toHaveLength(3);
             expect(selections.amount()).toEqual(0);
-            expect(sw).not.toBeConnectedTo(led, {depth: 1});
-            expect(sw).toBeConnectedTo(led, {depth: 2});
+            expect(sw).not.toBeConnectedTo(led, { depth: 1 });
+            expect(sw).toBeConnectedTo(led, { depth: 2 });
 
             input.click(designer.getObjects()[2].getPos());
 
@@ -408,7 +408,7 @@ describe("Selection Tool", () => {
 
             expect(designer.getObjects()).toHaveLength(2);
             expect(selections.amount()).toEqual(0);
-            expect(sw).toBeConnectedTo(led, {depth: 1});
+            expect(sw).toBeConnectedTo(led, { depth: 1 });
         });
 
         test("Snip Multiple Ports (x2)", () => {
@@ -441,11 +441,11 @@ describe("Selection Tool", () => {
 
             expect(designer.getObjects()).toHaveLength(2);
             expect(selections.amount()).toEqual(0);
-            expect(sw).toBeConnectedTo(led, {depth: 1});
+            expect(sw).toBeConnectedTo(led, { depth: 1 });
 
             expect(designer.getObjects()).toHaveLength(2);
             expect(selections.amount()).toEqual(0);
-            expect(sw).toBeConnectedTo(led, {depth: 1});
+            expect(sw).toBeConnectedTo(led, { depth: 1 });
         });
     });
 });

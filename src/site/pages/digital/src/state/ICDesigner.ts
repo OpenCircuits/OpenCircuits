@@ -19,5 +19,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type ICDesignerState = typeof initialState;
-export const {OpenICDesigner, CloseICDesigner} = actions;
+export const { OpenICDesigner, CloseICDesigner } = actions;
 export const icDesignerReducer = reducer;

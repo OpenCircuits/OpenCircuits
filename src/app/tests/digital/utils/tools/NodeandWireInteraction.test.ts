@@ -14,8 +14,8 @@ import {DigitalNode, LED, Switch} from "digital/models/ioobjects";
 
 
 describe("Node and Wire Interaction", () => {
-    const {designer, input} = Setup();
-    const {Place} = GetHelpers(designer);
+    const { designer, input } = Setup();
+    const { Place } = GetHelpers(designer);
 
     function expectNotToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {
         const connections = obj1.getOutputs().map((w) => w.getOutputComponent());

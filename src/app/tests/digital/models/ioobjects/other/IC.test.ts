@@ -21,7 +21,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 describe("IC", () => {
     test("Basic IC", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
         const a = new Switch, o = new LED(), bufGate = new BUFGate();
 
         Place(a, o, bufGate);
@@ -45,7 +45,7 @@ describe("IC", () => {
     });
     test("Basic IC 2", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
         const a = new Switch, b = new Switch, o = new LED(), andGate = new ANDGate();
 
         Place(a, b, o, andGate);
@@ -77,7 +77,7 @@ describe("IC", () => {
     });
     test("Basic IC 3 - ON Switch -> LED (issue #468)", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
         const a = new Switch, o = new LED();
 
         Place(a, o);
@@ -104,7 +104,7 @@ describe("IC", () => {
     });
     test("Basic IC 4 - Constant High -> LED (issue #468)", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
         const a = new ConstantHigh(), o = new LED();
 
         Place(a, o);

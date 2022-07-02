@@ -14,7 +14,7 @@ export class FakeInput extends Input {
         // Fake canvas and instant drag time
         super({
             addEventListener:      () => {},
-            getBoundingClientRect: () => ({left: 0, top: 0, width: 1, height: 1}),
+            getBoundingClientRect: () => ({ left: 0, top: 0, width: 1, height: 1 }),
 
             width: 1, height: 1,
         } as any, -1);

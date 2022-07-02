@@ -71,12 +71,12 @@ export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: P
             // This is necessary for mobile such that when the user is trying to
             //  swipe to scroll, it doesn't drag too quickly
             onTouchStart={(e) => {
-                const {clientX: x, clientY: y} = e.touches.item(0);
+                const { clientX: x, clientY: y } = e.touches.item(0);
                 setState({ startTapTime: Date.now(), startX: x, startY: y, touchDown: true });
             }}
             onTouchMove={(e) => {
-                const {startTapTime, startX, startY, touchDown} = state;
-                const {clientX: x, clientY: y} = e.touches.item(0);
+                const { startTapTime, startX, startY, touchDown } = state;
+                const { clientX: x, clientY: y } = e.touches.item(0);
                 const vx = (x - startX), vy = (y - startY);
                 const dt = (Date.now() - startTapTime);
 

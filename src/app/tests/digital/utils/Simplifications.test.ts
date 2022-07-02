@@ -17,7 +17,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
 describe("Simplifications", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers(designer);
+    const { Place, Connect } = GetHelpers(designer);
 
     describe("Create Negation Gates", () => {
         describe("!(a&b)", () => {

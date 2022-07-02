@@ -768,8 +768,8 @@ describe("Expression Parser", () => {
         // });
 
         describe("!a", () => {
-            const tokenA: InputToken = {type: "input", name: "a"};
-            const notToken: Token = {type: "!"};
+            const tokenA: InputToken = { type: "input", name: "a" };
+            const notToken: Token = { type: "!" };
             const tokenList = [notToken, tokenA];
             const tree = GenerateInputTree(tokenList);
             const treeNot = tree as InputTreeUnOpNode;

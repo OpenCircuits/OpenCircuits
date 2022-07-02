@@ -11,15 +11,15 @@ import {Dropdown} from "./Dropdown";
 type Props = {
     helpers: CircuitInfoHelpers;
 }
-export const DownloadMenuDropdown = ({ helpers: {GetSerializedCircuit} }: Props) => {
-    const {curMenu, circuitName} = useSharedSelector(
+export const DownloadMenuDropdown = ({ helpers: { GetSerializedCircuit } }: Props) => {
+    const { curMenu, circuitName } = useSharedSelector(
         state => ({ curMenu: state.header.curMenu, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 
     return (
         <Dropdown open={(curMenu === "download")}
-                  btnInfo={{title: "Download current scene", src: "img/icons/download.svg"}}
+                  btnInfo={{ title: "Download current scene", src: "img/icons/download.svg" }}
                   onClick={() => dispatch(OpenHeaderMenu("download"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
             <div title="Download circuit locally" onClick={() => SaveFile(GetSerializedCircuit(), circuitName)}>

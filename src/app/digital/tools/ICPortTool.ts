@@ -15,7 +15,7 @@ import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
 export const ICPortTool = (() => {
     let port: Port | undefined;
 
-    function findPort({input, camera, ic}: ICCircuitInfo): Port | undefined {
+    function findPort({ input, camera, ic }: ICCircuitInfo): Port | undefined {
         if (!ic)
             throw new Error("ICPortTool.findPort failed: ic was undefined");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -47,7 +47,7 @@ export const ICPortTool = (() => {
         },
 
 
-        onEvent(event: Event, {input, camera, ic}: ICCircuitInfo): boolean {
+        onEvent(event: Event, { input, camera, ic }: ICCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 

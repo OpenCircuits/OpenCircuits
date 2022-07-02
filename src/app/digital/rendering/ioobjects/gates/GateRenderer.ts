@@ -58,7 +58,7 @@ export const GateRenderer = (() => {
             }
             else if (amt !== 1 || dx !== 0) {
                 renderer.save();
-                renderer.setPathStyle({lineCap: "round"});
+                renderer.setPathStyle({ lineCap: "round" });
                 renderer.draw(new QuadCurve(p1, p2, c), style);
                 renderer.restore();
             }

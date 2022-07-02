@@ -81,7 +81,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
  */
 export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: Vector): boolean {
     try {
-        const {history, designer, selections, renderer} = info;
+        const { history, designer, selections, renderer } = info;
         const objs = Deserialize<IOObject[]>(data);
 
         const newICDataAction = TransferNewICData(objs, designer);

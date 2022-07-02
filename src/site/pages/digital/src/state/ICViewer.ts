@@ -19,5 +19,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type ICViewerState = typeof initialState;
-export const {OpenICViewer, CloseICViewer} = actions;
+export const { OpenICViewer, CloseICViewer } = actions;
 export const icViewerReducer = reducer;

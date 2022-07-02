@@ -33,9 +33,9 @@ export type ImageExporterPreviewProps = {
 type Props = {
     preview: (props: ImageExporterPreviewProps) => JSX.Element;
 }
-export const ImageExporterPopup = ({preview}: Props) => {
-    const {curPopup, circuitName} = useSharedSelector(
-        state => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name }),
+export const ImageExporterPopup = ({ preview }: Props) => {
+    const { curPopup, circuitName } = useSharedSelector(
+        state => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 
@@ -107,13 +107,13 @@ export const ImageExporterPopup = ({preview}: Props) => {
                                 <span>Grid</span>
                                 <SwitchToggle
                                     isOn={state.useGrid} height="60px"
-                                    onChange={() => setState({...state, useGrid: !state.useGrid})} />
+                                    onChange={() => setState({ ...state, useGrid: !state.useGrid })} />
                             </div>
                             <div>
                                 <span>Background</span>
                                 <SwitchToggle
                                     isOn={state.useBg} height="60px"
-                                    onChange={() => setState({...state, useBg: !state.useBg})} />
+                                    onChange={() => setState({ ...state, useBg: !state.useBg })} />
                             </div>
                         </div>
                         <div>
@@ -122,10 +122,10 @@ export const ImageExporterPopup = ({preview}: Props) => {
                                 <InputField
                                     type="color"
                                     value={state.bgColor}
-                                    onChange={(ev) => setState({...state, bgColor: ev.target.value})} />
+                                    onChange={(ev) => setState({ ...state, bgColor: ev.target.value })} />
                                 <span>
                                     <button type="button"
-                                            onClick={() => setState({...state, bgColor: "#cccccc"})}>Reset</button>
+                                            onClick={() => setState({ ...state, bgColor: "#cccccc" })}>Reset</button>
                                 </span>
                             </div>
                         </div>
@@ -136,12 +136,12 @@ export const ImageExporterPopup = ({preview}: Props) => {
                                     type="number"
                                     value={state.width}
                                     step={50} min={MIN_IMG_SIZE} max={MAX_IMG_SIZE}
-                                    onChange={(ev) => setState({...state, width: ev.target.valueAsNumber})} />
+                                    onChange={(ev) => setState({ ...state, width: ev.target.valueAsNumber })} />
                                 <InputField
                                     type="number"
                                     value={state.height}
                                     step={50} min={MIN_IMG_SIZE} max={MAX_IMG_SIZE}
-                                    onChange={(ev) => setState({...state, height: ev.target.valueAsNumber})} />
+                                    onChange={(ev) => setState({ ...state, height: ev.target.valueAsNumber })} />
                             </div>
                         </div>
                         <div>
@@ -149,17 +149,17 @@ export const ImageExporterPopup = ({preview}: Props) => {
                             <div className="imageexporter__popup__options__buttons">
                                 <div>
                                     <ButtonToggle isOn={state.type === "png"} height="50px"
-                                                  onChange={() => setState({...state, type: "png"})} />
+                                                  onChange={() => setState({ ...state, type: "png" })} />
                                     <span>PNG</span>
                                 </div>
                                 <div>
                                     <ButtonToggle isOn={state.type === "jpeg"} height="50px"
-                                                  onChange={() => setState({...state, type: "jpeg"})} />
+                                                  onChange={() => setState({ ...state, type: "jpeg" })} />
                                     <span>JPEG</span>
                                 </div>
                                 <div>
                                     <ButtonToggle isOn={state.type === "pdf"} height="50px"
-                                                  onChange={() => setState({...state, type: "pdf"})} />
+                                                  onChange={() => setState({ ...state, type: "pdf" })} />
                                     <span>PDF</span>
                                 </div>
                             </div>

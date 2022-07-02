@@ -25,5 +25,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type HeaderState = typeof initialState;
-export const {OpenHeaderMenu, CloseHeaderMenus, OpenHeaderPopup, CloseHeaderPopups} = actions;
+export const { OpenHeaderMenu, CloseHeaderMenus, OpenHeaderPopup, CloseHeaderPopups } = actions;
 export const headerReducer = reducer;

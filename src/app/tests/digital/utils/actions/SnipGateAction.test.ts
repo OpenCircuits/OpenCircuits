@@ -14,7 +14,7 @@ import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
 describe("SnipGateAction", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers(designer);
+    const { Place, Connect } = GetHelpers(designer);
 
     describe("BUFGate", () => {
         const [input, buf, out] = Place(new Switch(), new BUFGate(), new LED());

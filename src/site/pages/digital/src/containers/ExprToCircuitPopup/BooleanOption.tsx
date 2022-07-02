@@ -11,7 +11,7 @@ type Props = {
     setOption: React.Dispatch<React.SetStateAction<boolean>>;
     text: string;
 }
-export const BooleanOption = ({displayCondition, option, setOption, text}: Props) => (
+export const BooleanOption = ({ displayCondition, option, setOption, text }: Props) => (
     displayCondition ? (<>
         <SwitchToggle isOn={option} height="40px"
                       onChange={() => setOption(!option)}>{text}</SwitchToggle>

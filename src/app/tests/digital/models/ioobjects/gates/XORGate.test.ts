@@ -11,7 +11,7 @@ import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 describe("XORGate", () => {
     describe("XORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a, b], [o]] = AutoPlace(new XORGate());
 
@@ -45,7 +45,7 @@ describe("XORGate", () => {
     });
     describe("XNORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a, b], [o]] = AutoPlace(new XORGate(true));
 

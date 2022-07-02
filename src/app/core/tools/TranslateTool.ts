@@ -28,7 +28,7 @@ export const TranslateTool: Tool = (() => {
     let activatedButton: string | number;
 
     return {
-        shouldActivate(event: Event, {locked, currentlyPressedObject, selections}: CircuitInfo): boolean {
+        shouldActivate(event: Event, { locked, currentlyPressedObject, selections }: CircuitInfo): boolean {
             if (locked)
                 return false;
             // Activate if the user is pressing down on an object or an arrow key
@@ -49,7 +49,7 @@ export const TranslateTool: Tool = (() => {
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            const {camera, input, selections, currentlyPressedObject, designer} = info;
+            const { camera, input, selections, currentlyPressedObject, designer } = info;
 
             // The event that activates this will either be keydown or mousedrag, so
             //  we can save the key like this to use later
@@ -75,7 +75,7 @@ export const TranslateTool: Tool = (() => {
             // explicitly start a drag
             this.onEvent(event, info);
         },
-        onDeactivate({}: Event, {history}: CircuitInfo): void {
+        onDeactivate({}: Event, { history }: CircuitInfo): void {
             const finalPositions = components.map(o => o.getPos());
 
             history.add(
@@ -85,7 +85,7 @@ export const TranslateTool: Tool = (() => {
 
 
         onEvent(event: Event, info: CircuitInfo): boolean {
-            const {input, camera, history, designer} = info;
+            const { input, camera, history, designer } = info;
 
             switch (event.type) {
                 // Using mousemove instead of mousedrag here because when a button besides

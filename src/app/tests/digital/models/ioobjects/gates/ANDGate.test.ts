@@ -11,7 +11,7 @@ import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 describe("ANDGate", () => {
     describe("ANDGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a, b], [o]] = AutoPlace(new ANDGate());
 
@@ -46,7 +46,7 @@ describe("ANDGate", () => {
 
     describe("NANDGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a, b], [o]] = AutoPlace(new ANDGate(true));
 

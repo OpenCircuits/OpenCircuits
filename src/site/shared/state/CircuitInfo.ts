@@ -41,7 +41,7 @@ const [initialState, actions, reducer] = CreateState()(
 
 
 export type CircuitInfoState = typeof initialState;
-export const {ToggleCircuitLocked, SetCircuitId, SetCircuitName,
+export const { ToggleCircuitLocked, SetCircuitId, SetCircuitName,
               SetCircuitSaved, _SetCircuitLoading,
-              _SetCircuitSavingStart, _SetCircuitSavingFinish} = actions;
+              _SetCircuitSavingStart, _SetCircuitSavingFinish } = actions;
 export const circuitInfoReducer = reducer;

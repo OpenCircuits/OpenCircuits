@@ -17,8 +17,8 @@ import {ANDGate, LED, Switch} from "digital/models/ioobjects";
 
 
 describe("Tool Manager", () => {
-    const {designer, input, toolManager} = Setup();
-    const {Place, AutoPlace} = GetHelpers(designer);
+    const { designer, input, toolManager } = Setup();
+    const { Place, AutoPlace } = GetHelpers(designer);
 
     const defaultTool = toolManager.getCurrentTool() as DefaultTool;
 

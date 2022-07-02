@@ -17,7 +17,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 describe("Split Wire Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [a, b] = Place(new Switch(), new LED());
 

@@ -15,7 +15,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 
 describe("Button", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers(designer);
+    const { Place, Connect } = GetHelpers(designer);
 
     const [a, b, b2, g, o, o2] = Place(new Switch(), new Button() , new Button(),
                                        new ANDGate(), new LED() , new LED());
