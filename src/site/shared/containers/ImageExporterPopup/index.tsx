@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -35,25 +35,31 @@ type Props = {
 }
 export const ImageExporterPopup = ({preview}: Props) => {
     const {curPopup, circuitName} = useSharedSelector(
-        state => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
+        state => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name }),
     );
     const dispatch = useSharedDispatch();
 
+    const isActive = (curPopup === "image_exporter");
 
     const [state, setState] = useState<ImageExportOptions>({
-        type:    "png",
-        width:   window.innerWidth, height:  window.innerHeight-HEADER_HEIGHT,
-        bgColor: "#cccccc", useBg:   true, useGrid: true,
+        type:   "png",
+        width:  window.innerWidth,
+        height: window.innerHeight-HEADER_HEIGHT,
+
+        bgColor: "#cccccc", useBg: true, useGrid: true,
     });
 
     const wrapper = useRef<HTMLDivElement>(null);
     const canvas = useRef<HTMLCanvasElement>(null);
 
-    const onResize = () => {
+    const onResize = useCallback(() => {
+        if (!isActive)
+            return;
         if (!wrapper.current)
             throw new Error("ImageExporterPopup.onResize failed: wrapper.current is null");
         if (!canvas.current)
-            throw new Error("ImageExporterPopup.onResize failed: canvas.current is null")
+            throw new Error("ImageExporterPopup.onResize failed: canvas.current is null");
+
         // Fit the canvas within the wrapper using the same ratio as the actual canvas
         const sw = Clamp(state.width, MIN_IMG_SIZE, MAX_IMG_SIZE);
         const sh = Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE);
@@ -66,17 +72,13 @@ export const ImageExporterPopup = ({preview}: Props) => {
 
         canvas.current.style.width  = `${w}px`;
         canvas.current.style.height = `${h}px`;
-    }
+    }, [isActive, state.width, state.height]);
 
     useEffect(() => {
+        onResize();
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
-    }, [wrapper, canvas, state.width, state.height]);
-
-    useEffect(() => {
-        if (curPopup === "image_exporter")
-            onResize();
-    }, [curPopup, state.width, state.height]);
+    }, [onResize]);
 
     return (
         <Popup title="Image Exporter"
@@ -87,11 +89,11 @@ export const ImageExporterPopup = ({preview}: Props) => {
                      className={`imageexporter__popup__canvas-wrapper ${state.useBg ? "" : "checkered"}`}>
                     {preview({
                         canvas,
-                        isActive: (curPopup === "image_exporter"),
-                        width:    Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE),
-                        height:   Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
-                        useGrid:  state.useGrid,
-                        style:    {
+                        isActive,
+                        width:   Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE),
+                        height:  Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
+                        useGrid: state.useGrid,
+                        style:   {
                             border:          "1px solid black",
                             backgroundColor: state.useBg ? state.bgColor : "transparent",
                         },
