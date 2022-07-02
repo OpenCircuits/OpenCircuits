@@ -2,6 +2,8 @@ import {V, Vector} from "Vector";
 
 import {Transform} from "math/Transform";
 
+import "test/helpers/Extensions";
+
 /*
     constructor(pos: Vector, size: Vector, angle: number = 0);
 
@@ -183,19 +185,50 @@ describe("Transform", () => {
     // copy(): Transform;
     describe("Getters", () => {
         test("To Local Space", () => {
-            // TODO: LEON DO THIS
-            const v = new Vector();
-            const t = new Transform(V(0,0), V(0,0), 0);
-            // stuff
-            t.toLocalSpace(v);
-            // tests
+            { // Unit
+                const t = new Transform(V(0, 0), V(1, 1), 0);
+                expect(t.toLocalSpace(V(0,  0))).toApproximatelyEqual(V(0,  0));
+                expect(t.toLocalSpace(V(5, -5))).toApproximatelyEqual(V(5, -5));
+            }
+            { // Translated
+                const t = new Transform(V(5, -5), V(1, 1), 0);
+                expect(t.toLocalSpace(V(0,  0))).toApproximatelyEqual(V(-5, 5));
+                expect(t.toLocalSpace(V(5, -5))).toApproximatelyEqual(V( 0, 0));
+            }
+            { // Rotated
+                const t = new Transform(V(0, 0), V(1, 1), Math.PI/2);
+                expect(t.toLocalSpace(V(0,  0))).toApproximatelyEqual(V( 0,  0));
+                expect(t.toLocalSpace(V(5, -5))).toApproximatelyEqual(V(-5, -5));
+            }
+            { // Translated and Rotated
+                const t = new Transform(V(5, -5), V(1, 1), Math.PI/2);
+                expect(t.toLocalSpace(V(0,  0))).toApproximatelyEqual(V( 5, 5));
+                expect(t.toLocalSpace(V(5, -5))).toApproximatelyEqual(V( 0, 0));
+                expect(t.toLocalSpace(V(5,  5))).toApproximatelyEqual(V(10, 0));
+            }
         });
         test("To World Space", () => {
-            const v = new Vector();
-            const t = new Transform(V(0,0), V(0,0), 0);
-            // stuff
-            t.toWorldSpace(v);
-            // tests
+            { // Unit
+                const t = new Transform(V(0, 0), V(1, 1), 0);
+                expect(t.toWorldSpace(V(0,  0))).toApproximatelyEqual(V(0,  0));
+                expect(t.toWorldSpace(V(5, -5))).toApproximatelyEqual(V(5, -5));
+            }
+            { // Translated
+                const t = new Transform(V(5, -5), V(1, 1), 0);
+                expect(t.toWorldSpace(V(0,  0))).toApproximatelyEqual(V( 5,  -5));
+                expect(t.toWorldSpace(V(5, -5))).toApproximatelyEqual(V(10, -10));
+            }
+            { // Rotated
+                const t = new Transform(V(0, 0), V(1, 1), Math.PI/2);
+                expect(t.toWorldSpace(V(0,  0))).toApproximatelyEqual(V(0, 0));
+                expect(t.toWorldSpace(V(5, -5))).toApproximatelyEqual(V(5, 5));
+            }
+            { // Translated and Rotated
+                const t = new Transform(V(5, -5), V(1, 1), Math.PI/2);
+                expect(t.toWorldSpace(V(0,  0))).toApproximatelyEqual(V( 5, -5));
+                expect(t.toWorldSpace(V(5, -5))).toApproximatelyEqual(V(10,  0));
+                expect(t.toWorldSpace(V(5,  5))).toApproximatelyEqual(V( 0,  0));
+            }
         });
         test("Corners", () => {
             {

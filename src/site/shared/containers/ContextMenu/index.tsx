@@ -64,7 +64,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
             else if (ev.type === "mousedown")
                 dispatch(CloseContextMenu());
         });
-    }, [input]);
+    }, [input, dispatch]);
 
     // Position changes are calculated using the react hook so that the
     // context menu does not jump around during other update events.
@@ -75,7 +75,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
         // Updates position state
         const pos = input?.getMousePos();
         setPos({ posX: pos.x, posY: pos.y });
-    }, [isOpen]);
+    }, [input, isOpen, setPos]);
 
     useDocEvent("mousedown", (ev) => {
         if (!menu.current)
@@ -83,7 +83,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
         if (!menu.current.contains(ev.target as Node))
             dispatch(CloseContextMenu());
-    }, []);
+    }, [dispatch]);
 
 
     const copy = () => {

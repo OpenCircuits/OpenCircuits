@@ -30,8 +30,6 @@ type Props = {
     canvas: React.RefObject<HTMLCanvasElement>;
 }
 export const MainDesigner = ({ info, canvas }: Props) => {
-    const { camera, designer, history, selections, toolManager, renderer } = info;
-
     const isPageVisible = usePageVisibility();
 
     const { isLocked } = useDigitalSelector(
@@ -40,14 +38,12 @@ export const MainDesigner = ({ info, canvas }: Props) => {
 
     const { w, h } = useWindowSize();
 
-
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
-        camera.resize(w, h-HEADER_HEIGHT); // Update camera size when w/h changes
-        renderer.render(); // Re-render
-    }, [w, h]);
-
+        info.camera.resize(w, h-HEADER_HEIGHT); // Update camera size when w/h changes
+        info.renderer.render(); // Re-render
+    }, [info, w, h]);
 
     // Initial function called after the canvas first shows up
     useLayoutEffect(() => {
@@ -61,34 +57,34 @@ export const MainDesigner = ({ info, canvas }: Props) => {
 
         // Add input listener
         info.input.addListener((event) => {
-            const change = toolManager.onEvent(event, info);
+            const change = info.toolManager.onEvent(event, info);
             if (change)
-                renderer.render();
+                info.renderer.render();
         });
 
         // Add render callbacks and set render function
-        designer.addCallback(() => renderer.render());
+        info.designer.addCallback(() => info.renderer.render());
 
-        renderer.setRenderFunction(() => renderFunc());
-        renderer.render();
-    }, []); // Pass empty array so that this only runs once on mount
+        info.renderer.setRenderFunction(() => renderFunc());
+        info.renderer.render();
+    }, [info, canvas]); // Pass empty array so that this only runs once on mount
 
 
     // Lock/unlock circuit
     useLayoutEffect(() => {
         info.locked = isLocked;
         if (isLocked) // Deselect everything
-            history.add(CreateDeselectAllAction(selections).execute());
-        history.setDisabled(isLocked);
-        selections.setDisabled(isLocked);
-    }, [isLocked]);
+            info.history.add(CreateDeselectAllAction(info.selections).execute());
+        info.history.setDisabled(isLocked);
+        info.selections.setDisabled(isLocked);
+    }, [info, isLocked]);
 
     useLayoutEffect(() => {
         if (isPageVisible)
             info.designer.resume();
         else
             info.designer.pause();
-    }, [isPageVisible]);
+    }, [info, isPageVisible]);
 
     return (
         <Droppable
@@ -99,16 +95,16 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                 num = num ?? 1;
                 if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
                     return;
-                pos = camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
+                pos = info.camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
                 if (smartPlaceOptions !== SmartPlaceOptions.Off) {
-                    history.add(SmartPlace(pos, itemId, designer, num, smartPlaceOptions).execute());
+                    info.history.add(SmartPlace(pos, itemId, info.designer, num, smartPlaceOptions).execute());
                 } else {
-                    history.add(
-                        CreateGroupPlaceAction(designer, DigitalCreateN(pos, itemId, designer, num)).execute()
+                    info.history.add(
+                        CreateGroupPlaceAction(info.designer, DigitalCreateN(pos, itemId, info.designer, num)).execute()
                     );
                 }
-                renderer.render();
+                info.renderer.render();
             }}>
             <canvas className="main__canvas"
                     width={w}
