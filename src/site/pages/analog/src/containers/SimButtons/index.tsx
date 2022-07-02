@@ -84,6 +84,7 @@ export const SimButtons = ({ info }: Props) => {
             Upload();
             Simulate();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     // --------------
 

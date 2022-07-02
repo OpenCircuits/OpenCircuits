@@ -12,16 +12,16 @@ import {Login} from "shared/state/thunks/User";
 export const GoogleAuthButton = () => {
     const dispatch = useSharedDispatch();
 
-    function onLogin(success: boolean) {
-        if (success) {
-            dispatch(Login(new GoogleAuthState()));
-            dispatch(CloseHeaderPopups());
-        } // Else don't login or close
-    }
-
     useEffect(() => {
         if (!("gapi" in window)) // GAPI failed to load for some reason
             return;
+
+        function onLogin(success: boolean) {
+            if (success) {
+                dispatch(Login(new GoogleAuthState()));
+                dispatch(CloseHeaderPopups());
+            } // Else don't login or close
+        }
 
         // Render sign in button
         gapi.signin2.render("login-popup-google-signin", {
@@ -39,7 +39,7 @@ export const GoogleAuthButton = () => {
         return () => {
             throw new Error("Google Sign In Button effect happened again! This should not happen!");
         }
-    }, []);
+    }, [dispatch]);
 
     return (<div id="login-popup-google-signin"></div>);
 }

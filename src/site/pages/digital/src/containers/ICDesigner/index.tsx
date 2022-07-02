@@ -68,8 +68,6 @@ export const ICDesigner = (() => {
 
     // eslint-disable-next-line react/display-name
     return ({ mainInfo }: Props) => {
-        const { camera, designer, toolManager, renderer } = info;
-
         const { isActive, ic: data } = useDigitalSelector(
             state => ({ ...state.icDesigner })
         );
@@ -85,8 +83,8 @@ export const ICDesigner = (() => {
         useLayoutEffect(() => {
             if (!isActive)
                 return;
-            camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-            renderer.render(); // Re-render
+            icInfo.camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
+            icInfo.renderer.render(); // Re-render
         }, [isActive, w, h]);
 
 
@@ -102,7 +100,7 @@ export const ICDesigner = (() => {
 
             // Add input listener
             icInfo.input.addListener((event) => {
-                const change = toolManager.onEvent(event, icInfo);
+                const change = icInfo.toolManager.onEvent(event, icInfo);
 
                 // Change cursor
                 let newCursor = ICPortTool.findPort(icInfo) === undefined ? "none" : "move";
@@ -111,17 +109,17 @@ export const ICDesigner = (() => {
                 setCursor({ cursor: newCursor });
 
                 if (change)
-                    renderer.render();
+                    icInfo.renderer.render();
             });
 
             // Input should be blocked initially
             icInfo.input.block();
 
             // Add render callbacks and set render function
-            designer.addCallback(() => renderer.render());
+            icInfo.designer.addCallback(() => icInfo.renderer.render());
 
-            renderer.setRenderFunction(() => renderFunc());
-            renderer.render();
+            icInfo.renderer.setRenderFunction(() => renderFunc());
+            icInfo.renderer.render();
         }, [setCursor]); // Pass empty array so that this only runs once on mount
 
         // Keeps the ICData/IC name's in sync with `name`
@@ -130,8 +128,8 @@ export const ICDesigner = (() => {
                 return;
             data.setName(name ?? "");
             icInfo.ic.update();
-            renderer.render();
-        }, [name, data, icInfo.ic]);
+            icInfo.renderer.render();
+        }, [name, data]);
 
         // Happens when activated
         useLayoutEffect(() => {
@@ -148,15 +146,15 @@ export const ICDesigner = (() => {
             mainInfo.input.block();
 
             // Reset designer and add IC
-            designer.reset();
+            icInfo.designer.reset();
             icInfo.ic = new IC(data);
             icInfo.ic.setPos(V());
-            designer.addObject(icInfo.ic);
+            icInfo.designer.addObject(icInfo.ic);
 
             // Set camera
-            camera.setPos(V());
+            icInfo.camera.setPos(V());
 
-            renderer.render();
+            icInfo.renderer.render();
         }, [isActive, data, mainInfo, setName]);
 
 

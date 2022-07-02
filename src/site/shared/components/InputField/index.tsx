@@ -11,16 +11,21 @@ export const InputField = React.forwardRef<HTMLInputElement, Props>(({ onEnter, 
     const ref = (forwardedRef ?? defaultRef) as React.MutableRefObject<HTMLInputElement>;
 
     useEffect(() => {
-        if (!ref.current)
+        const cur = ref.current;
+        if (!cur)
             throw new Error("InputField.useEffect failed: ref.current is null");
-        ref.current.addEventListener("keyup", function (evt) {
-            if (evt.key === "Escape" || evt.key === "Enter")
-                ref.current!.blur();
 
-            if (evt.key === "Enter" && onEnter)
-                onEnter(evt);
-        });
-    }, [ref]);
+        const onKeyUp = (evt: KeyboardEvent) => {
+            if (evt.key === "Escape" || evt.key === "Enter")
+                cur.blur();
+
+            if (evt.key === "Enter")
+                onEnter?.(evt);
+        }
+
+        cur.addEventListener("keyup", onKeyUp);
+        return () => cur.removeEventListener("keyup", onKeyUp);
+    }, [ref, onEnter]);
 
     return (
         // eslint-disable-next-line react/forbid-elements
