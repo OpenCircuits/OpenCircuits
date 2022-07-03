@@ -1,24 +1,19 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * Adapted from Facebook, create-react-app:
+ *  https://github.com/facebook/create-react-app/blob/main/packages/react-dev-utils/openBrowser.js
  */
-
-'use strict';
-
 import chalk from "chalk";
 import {execSync} from "child_process";
 import spawn from "cross-spawn";
 import open from "open";
 
 // https://github.com/sindresorhus/open#app
-var OSX_CHROME = 'google chrome';
+const OSX_CHROME = "google chrome";
 
 const Actions = Object.freeze({
-  NONE: 0,
-  BROWSER: 1,
-  SCRIPT: 2,
+    NONE: 0,
+    BROWSER: 1,
+    SCRIPT: 2,
 });
 
 function getBrowserEnv() {

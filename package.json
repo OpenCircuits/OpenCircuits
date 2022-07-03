@@ -6,14 +6,14 @@
     "src/site/pages/*"
   ],
   "scripts": {
-    "start": "node ./scripts/start.js",
-    "build": "node ./scripts/build.js",
-    "build:prod": "node ./scripts/build.js --prod server digital",
+    "start": "ts-node ./scripts/start.js",
+    "build": "ts-node ./scripts/build.js",
+    "build:prod": "ts-node ./scripts/build.js --prod server digital",
     "docs": "cd ./src/site/pages/docs && yarn start",
     "build:docs": "cd ./src/site/pages/docs && yarn build",
     "build:jsdocs": "ts-node ./scripts/docs/index.ts",
-    "test": "node ./scripts/test.js",
-    "coverage": "node ./scripts/test.js --coverage",
+    "test": "ts-node ./scripts/test.js",
+    "coverage": "ts-node ./scripts/test.js --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
