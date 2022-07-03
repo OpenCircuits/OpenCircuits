@@ -1,5 +1,5 @@
-const path = require("path");
-const {readdirSync, readFileSync, existsSync} = require("fs");
+import path from "path";
+import {readdirSync, readFileSync, existsSync} from "fs";
 
 
 /**
@@ -7,7 +7,7 @@ const {readdirSync, readFileSync, existsSync} = require("fs");
  * @param {boolean} includeApp
  * @returns {Array<{ title: string, description: string, value: string }}>}
  */
-module.exports = function getDirs(includeServer, includeApp) {
+export default function getDirs(includeServer, includeApp) {
     const pagesDir = "src/site/pages";
     const dirs = readdirSync(pagesDir, { withFileTypes: true });
 

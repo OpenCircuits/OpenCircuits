@@ -1,12 +1,13 @@
-const prompts = require("prompts");
-const chalk = require("chalk");
-const yargs = require("yargs/yargs");
-const jest = require("jest");
-const getEnv = require("./utils/env");
-const getDirs = require("./utils/getDirs");
-const getAliases = require("./utils/getAliases");
-const path = require("path");
-const open = require("open");
+import path from "path";
+import open from "open";
+import prompts from "prompts";
+import chalk from "chalk";
+import yargs from "yargs/yargs";
+import jest from "jest";
+
+import getEnv from "./utils/env.js";
+import getDirs from "./utils/getDirs.js";
+import getAliases from "./utils/getAliases.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.

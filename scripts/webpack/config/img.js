@@ -1,12 +1,13 @@
-const webpack = require("webpack");
-const {Config} = require("./types");
+import webpack from "webpack";
+
+import * as Types from "./types.js";
 
 
 /**
- * @param {Config} config
+ * @param {Types.Config} config
  * @returns {webpack.Configuration}
  */
-module.exports = ({ }) => ({
+ export default ({ }) => ({
     output: {
         assetModuleFilename: "images/[hash][ext][query]", // extract assets (images and such) to and images folder in the output
     },

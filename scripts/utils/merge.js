@@ -5,7 +5,7 @@
 * @param {...object} objects - Objects to merge
 * @returns {object} New object with merged key/values
 */
-module.exports = function mergeDeep(...objects) {
+export default function mergeDeep(...objects) {
     const isObject = obj => obj && typeof obj === 'object';
 
     return objects.reduce((prev, obj) => {

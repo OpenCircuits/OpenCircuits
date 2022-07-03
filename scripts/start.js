@@ -1,11 +1,11 @@
-const os = require("os");
-const prompts = require("prompts");
-const {spawn} = require("child_process");
-const startWebpack = require("./webpack");
-const getDirs = require("./utils/getDirs");
-const {existsSync} = require("fs");
-const path = require("path");
-const chalk = require("chalk");
+import os from "os";
+import prompts from "prompts";
+import {spawn} from "child_process";
+import startWebpack from "./webpack/index.js";
+import getDirs from "./utils/getDirs.js";
+import {existsSync} from "fs";
+import path from "path";
+import chalk from "chalk";
 
 
 // Do this as the first thing so that any code reading it knows the right env.

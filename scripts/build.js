@@ -1,15 +1,15 @@
-const os = require("os");
-const {existsSync, rmSync} = require("fs");
-const {spawn} = require("child_process");
+import os from "os";
+import {existsSync, rmSync} from "fs";
+import {spawn} from "child_process";
 
-const ora = require("ora");
-const chalk = require("chalk");
-const prompts = require("prompts");
-const yargs = require("yargs/yargs");
+import ora from "ora";
+import chalk from "chalk";
+import prompts from "prompts";
+import yargs from "yargs/yargs";
 
-const getDirs = require("./utils/getDirs");
-const copy_dir = require("./utils/copyDir");
-const startWebpack = require("./webpack");
+import getDirs from "./utils/getDirs.js";
+import copy_dir from "./utils/copyDir.js";
+import startWebpack from "./webpack/index.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.

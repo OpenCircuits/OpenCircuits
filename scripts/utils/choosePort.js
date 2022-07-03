@@ -1,6 +1,6 @@
-const detect = require("detect-port-alt");
-const prompts = require("prompts");
-const chalk = require("chalk");
+import detect from "detect-port-alt";
+import prompts from "prompts";
+import chalk from "chalk";
 
 
 /**
@@ -8,7 +8,7 @@ const chalk = require("chalk");
  * @param {number} defaultPort
  * @returns {Promise<string>}
  */
-module.exports = async function choosePort(host, defaultPort) {
+export default async function choosePort(host, defaultPort) {
     try {
         const port = await detect(defaultPort, host);
 

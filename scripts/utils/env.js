@@ -1,5 +1,8 @@
-const {existsSync} = require("fs");
-const path = require("path");
+import {existsSync} from "fs";
+import path from "path";
+
+import dotEnv from "dotenv";
+import dotEnvExpand from "dotenv-expand";
 
 
 /**
@@ -7,7 +10,7 @@ const path = require("path");
  * @param {string} publicRoot
  * @returns {Object}
  */
-module.exports = function getEnv(dir, publicRoot) {
+export default function getEnv(dir, publicRoot) {
     const NODE_ENV = process.env.NODE_ENV || "development";
     const dotenv = path.resolve(dir, ".env");
 
@@ -18,7 +21,7 @@ module.exports = function getEnv(dir, publicRoot) {
         `${dotenv}`,
     ].filter(existsSync)
      .map(path => ({ path }))
-     .forEach(cfg => require("dotenv-expand")(require("dotenv").config(cfg)));
+     .forEach(cfg => dotEnvExpand.expand(dotEnv.config(cfg)));
 
     return Object.keys(process.env)
                  .filter(k => k.startsWith("OC"))

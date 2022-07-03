@@ -1,5 +1,5 @@
-const path = require("path");
-const ts = require("typescript");
+import path from "path";
+import ts from "typescript";
 
 
 /**
@@ -8,7 +8,7 @@ const ts = require("typescript");
  * @param {"webpack" | "jest"} format
  * @returns
  */
-module.exports = function getAliases(cwd = process.cwd(), format = "webpack") {
+export default function getAliases(cwd = process.cwd(), format = "webpack") {
     const file = path.join(cwd, "tsconfig.json");
 
     const rawConfig = ts.readConfigFile(file, ts.sys.readFile).config;

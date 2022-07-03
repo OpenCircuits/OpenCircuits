@@ -7,10 +7,10 @@
 
 'use strict';
 
-var chalk = require('chalk');
-var execSync = require('child_process').execSync;
-var spawn = require('cross-spawn');
-var open = require('open');
+import chalk from "chalk";
+import {execSync} from "child_process";
+import spawn from "cross-spawn";
+import open from "open";
 
 // https://github.com/sindresorhus/open#app
 var OSX_CHROME = 'google chrome';
@@ -150,4 +150,4 @@ function openBrowser(url) {
   }
 }
 
-module.exports = openBrowser;
+export default openBrowser;

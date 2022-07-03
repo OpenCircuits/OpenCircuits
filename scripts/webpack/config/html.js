@@ -1,15 +1,16 @@
-const webpack = require("webpack");
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const InterpolateHtmlPlugin = require("interpolate-html-plugin");
-const {Config} = require("./types");
+import webpack from "webpack";
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import InterpolateHtmlPlugin from "interpolate-html-plugin";
+
+import * as Types from "./types.js";
 
 
 /**
- * @param {Config} config
+ * @param {Types.Config} config
  * @returns {webpack.Configuration}
  */
-module.exports = ({ env, publicPath }) => ({
+ export default ({ env, publicPath }) => ({
     plugins: [
         new HtmlWebpackPlugin({
             template: path.resolve(publicPath, "index.html"),

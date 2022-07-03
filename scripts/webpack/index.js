@@ -1,16 +1,18 @@
-const path = require("path");
-const url = require("url");
-const address = require("address");
-const chalk = require("chalk");
-const webpack = require("webpack");
-const WebpackDevServer = require("webpack-dev-server");
+import path from "path";
+import url from "url";
+import address from "address";
+import chalk from "chalk";
+import webpack from "webpack";
+import WebpackDevServer from "webpack-dev-server";
 
-const openBrowser = require("../utils/browser/openBrowser");
-const choosePort = require("../utils/choosePort");
-const copyDir = require("../utils/copyDir");
-const getEnv = require("../utils/env");
-const config = require("./config");
-const {errors} = require("@ts-morph/common");
+import openBrowser from "../utils/browser/openBrowser.js";
+import choosePort from "../utils/choosePort.js";
+import copyDir from "../utils/copyDir.js";
+import getEnv from "../utils/env.js";
+import config from "./config/index.js";
+import {errors} from "@ts-morph/common";
+
+import customDevServer from "./customDevServer.js";
 
 
 /**
@@ -18,7 +20,7 @@ const {errors} = require("@ts-morph/common");
  * @param {webpack.Configuration["mode"]} mode
  * @returns {Promise<void>}
  */
-module.exports = async (dir, mode) => {
+export default async (dir, mode) => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
@@ -113,7 +115,7 @@ module.exports = async (dir, mode) => {
                 overlay: true,
             },
             // Allows devs to save local circuits for use in #1037
-            onBeforeSetupMiddleware: require("./customDevServer"),
+            setupMiddlewares: customDevServer,
         }, compiler);
 
         ["SIGINT", "SIGTERM"].forEach(sig => {

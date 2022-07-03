@@ -1,13 +1,14 @@
-const webpack = require("webpack");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const {Config} = require("./types");
+import webpack from "webpack";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+
+import * as Types from "./types.js";
 
 
 /**
- * @param {Config} config
+ * @param {Types.Config} config
  * @returns {webpack.Configuration}
  */
-module.exports = ({ isProd, publicPath }) => ({
+ export default ({ isProd, publicPath }) => ({
     module: {
         rules: [
             {

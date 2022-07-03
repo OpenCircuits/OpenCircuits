@@ -1,6 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const bodyParser = require("body-parser");
+import fs from "fs";
+import path from "path";
+import bodyParser from "body-parser";
 
 
 const CACHE_PATH = path.resolve(process.cwd(), ".devCache");
@@ -10,7 +10,7 @@ const CACHE_PATH = path.resolve(process.cwd(), ".devCache");
  *
  * Specifically creates a dev API for saving/fetching files
  */
-module.exports = (devServer) => {
+export default (middlewares, devServer) => {
     if (!devServer)
         throw new Error("webpack-dev-server is not defined");
 
@@ -52,4 +52,6 @@ module.exports = (devServer) => {
 
         res.status(200).json({ files });
     });
+
+    return middlewares;
 }

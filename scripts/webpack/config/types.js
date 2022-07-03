@@ -1,4 +1,4 @@
-const webpack = require("webpack");
+import webpack from "webpack";
 
 /**
  * @typedef Config
@@ -14,4 +14,4 @@ const webpack = require("webpack");
  * @property {Object} env
  */
 
-module.exports = {};
+export default {};

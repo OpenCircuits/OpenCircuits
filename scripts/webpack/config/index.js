@@ -1,16 +1,23 @@
-const webpack = require("webpack");
+import webpack from "webpack";
 
-const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
 
-const mergeDeep = require("../../utils/merge");
-const {Config} = require("./types");
+import mergeDeep from "../../utils/merge.js";
+
+import * as Types from "./types.js";
+
+import IMGConfig  from "./img.js";
+import CSSConfig  from "./css.js";
+import TSConfig   from "./ts.js";
+import HTMLConfig from "./html.js";
+import WASMConfig from "./wasm.js";
 
 
 /**
- * @param {Config} config
+ * @param {Types.Config} config
  * @returns {webpack.Configuration}
  */
-module.exports = (config) => {
+ export default (config) => {
     const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;
 
     return mergeDeep(
@@ -45,10 +52,10 @@ module.exports = (config) => {
 
             devtool: (isDev ? "source-map" : undefined),
         },
-        require("./img")(config),
-        require("./css")(config),
-        require("./ts")(config),
-        require("./html")(config),
-        require("./wasm")(config),
+        IMGConfig(config),
+        CSSConfig(config),
+        TSConfig(config),
+        HTMLConfig(config),
+        WASMConfig(config),
     );
 }

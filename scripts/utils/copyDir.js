@@ -1,8 +1,8 @@
-const path = require("path");
-const {mkdirSync, copyFileSync, readdirSync, existsSync} = require("fs");
+import path from "path";
+import {mkdirSync, copyFileSync, readdirSync, existsSync} from "fs";
 
 
-module.exports = function copy_dir(dir, target) {
+export default function copy_dir(dir, target) {
     if (!existsSync(target))
         mkdirSync(target, { recursive: true });
 

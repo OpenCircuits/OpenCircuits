@@ -1,17 +1,18 @@
-const path = require("path");
-const webpack = require("webpack");
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const ReactRefreshTypescript = require("react-refresh-typescript");
+import path from "path";
+import webpack from "webpack";
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import ReactRefreshTypescript from "react-refresh-typescript";
 
-const {Config} = require("./types");
-const getAliases = require("../../utils/getAliases");
+import getAliases from "../../utils/getAliases.js";
+
+import * as Types from "./types.js";
 
 
 /**
- * @param {Config} config
+ * @param {Types.Config} config
  * @returns {webpack.Configuration}
  */
-module.exports = (config) => {
+export default (config) => {
     const { rootDir, isDev } = config;
 
     // Configuration for babel
