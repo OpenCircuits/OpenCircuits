@@ -108,7 +108,7 @@ export const DigitalItemNav = ({ info }: Props) => {
         ],
     }), [ics]);
 
-    const additionalPreview = useCallback((smartPlace, curItemId: string) => {
+    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemId: string) => {
         if (!curItemId || (smartPlace === SmartPlaceOptions.Off))
             return;
 
