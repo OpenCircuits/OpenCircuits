@@ -1,13 +1,12 @@
-import webpack from "webpack";
-
-import * as Types from "./types.js";
+import type {Configuration} from "webpack";
+import type {Config} from "./types.js";
 
 
 /**
- * @param {Types.Config} config
- * @returns {webpack.Configuration}
+ * @param config The current configuration
+ * @returns The webpack configuration for the WASM-specific rules
  */
-export default (config) => ({
+export default ({ }: Config): Configuration => ({
     module: {
         rules: [{
             // Test for: .wasm

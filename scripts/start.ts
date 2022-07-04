@@ -1,11 +1,14 @@
-import os from "os";
-import prompts from "prompts";
-import {spawn} from "child_process";
-import startWebpack from "./webpack/index.js";
-import getDirs from "./utils/getDirs.js";
-import {existsSync} from "fs";
+import os   from "os";
 import path from "path";
-import chalk from "chalk";
+
+import {existsSync} from "fs";
+import {spawn}      from "child_process";
+
+import chalk   from "chalk";
+import prompts from "prompts";
+
+import getDirs      from "./utils/getDirs.js";
+import startWebpack from "./webpack/index.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -27,7 +30,7 @@ function start_server() {
     });
 }
 
-function start_client(dir) {
+function start_client(dir: string) {
     startWebpack(dir, "development");
 }
 

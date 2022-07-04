@@ -1,17 +1,18 @@
-import webpack from "webpack";
+import type {Configuration} from "webpack";
 
-/**
- * @typedef Config
- * @property {string} publicPath
- * @property {string} rootDir
- * @property {webpack.Configuration["target"]} target
- * @property {webpack.Configuration["entry"]} entry
- * @property {string} buildDir
- * @property {webpack.Configuration["mode"]} mode
- * @property {boolean} isProd
- * @property {boolean} isDev
- * @property {webpack.Configuration["stats"]} stats
- * @property {Object} env
- */
 
-export default {};
+export type Config = {
+    isProd: boolean;
+    isDev:  boolean;
+
+    publicPath: string;
+    rootDir:    string;
+    buildDir:   string;
+
+    target: Configuration["target"];
+    entry:  Configuration["entry"];
+    mode:   Configuration["mode"];
+    stats:  Configuration["stats"];
+
+    env: Record<string, string>;
+}

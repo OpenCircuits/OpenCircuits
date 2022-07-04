@@ -1,6 +1,6 @@
-import {Types, Method, Class, TSDoc, MethodSignature} from "./model";
-import {getType} from "./parse";
-import {escapeStr} from "./utils";
+import {escapeStr} from "./utils.js";
+
+import type {Types, Method, Class, TSDoc, MethodSignature} from "./model";
 
 
 const Colors = {

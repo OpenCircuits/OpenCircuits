@@ -4,13 +4,13 @@ import chalk from "chalk";
 
 
 /**
- * @param {string} host
- * @param {number} defaultPort
- * @returns {Promise<string>}
+ * @param host The hostname
+ * @param defaultPort The default port number
+ * @returns The found port
  */
-export default async function choosePort(host, defaultPort) {
+export default async function choosePort(host: string, defaultPort: number) {
     try {
-        const port = await detect(defaultPort, host);
+        const port: number = await detect(defaultPort, host);
 
         // All good to use
         if (port === defaultPort)
@@ -27,7 +27,7 @@ export default async function choosePort(host, defaultPort) {
             initial: true,
         });
 
-        return (changePort ? port : null);
+        return (changePort ? port : undefined);
     } catch (err) {
         throw new Error(
             chalk.red(`Could not find an open port at ${chalk.bold(host)}.\n`) +

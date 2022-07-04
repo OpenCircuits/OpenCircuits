@@ -1,13 +1,12 @@
-import webpack from "webpack";
-
-import * as Types from "./types.js";
+import type {Configuration} from "webpack";
+import type {Config} from "./types";
 
 
 /**
- * @param {Types.Config} config
- * @returns {webpack.Configuration}
+ * @param config The current configuration
+ * @returns The webpack configuration for the Image-specific rules
  */
- export default ({ }) => ({
+export default ({ }: Config): Configuration => ({
     output: {
         assetModuleFilename: "images/[hash][ext][query]", // extract assets (images and such) to and images folder in the output
     },

@@ -2,7 +2,7 @@ import path from "path";
 import {mkdirSync, copyFileSync, readdirSync, existsSync} from "fs";
 
 
-export default function copy_dir(dir, target) {
+export default function copy_dir(dir: string, target: string) {
     if (!existsSync(target))
         mkdirSync(target, { recursive: true });
 

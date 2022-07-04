@@ -9,6 +9,8 @@ import getEnv from "./utils/env.js";
 import getDirs from "./utils/getDirs.js";
 import getAliases from "./utils/getAliases.js";
 
+import type {Arguments} from "yargs";
+
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "test";
@@ -18,21 +20,28 @@ process.env.NODE_ENV = "test";
 const DIRS = getDirs(true, true);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
-async function launch_test(dir, flags) {
+async function launch_test({ $0, _ }: Arguments, dir: string, flags: Record<string, any>) {
     return await jest.runCLI({
+        // $0, _,
         ...flags,
+        // "runInBand": true,
+        // "noCache": true,
+        // "clearCache": true,
         config: JSON.stringify({
             "preset": "ts-jest",
             "testEnvironment": "jsdom",
             "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
+            // "watchman": false,
+            // "detectOpenHandles": true,
+            // "forceExit": true,
         }),
-    }, [dir]);
+    } as any, [dir]);
 }
 
 
 // CLI
 (async () => {
-    const argv = yargs(process.argv.slice(2))
+    const argv = await yargs(process.argv.slice(2))
         .boolean("ci")
         .boolean("coverage")
         .argv;
@@ -53,6 +62,7 @@ async function launch_test(dir, flags) {
             choices: DIRS,
             initial: 1
         })).value];
+
         if (!dirs[0])
             return;
     }
@@ -61,7 +71,8 @@ async function launch_test(dir, flags) {
         ci,
         watch: (dirs.length === 1 && !ci) && !coverage,
         coverage,
-        collectCoverageFrom: "**/*.{js,ts,tsx}"
+        collectCoverageFrom: "**/*.{js,ts,tsx}",
+        coverageDirectory: undefined,
     };
 
     const results = [];
@@ -71,7 +82,7 @@ async function launch_test(dir, flags) {
         const info = DIR_MAP[dir];
 
         // Ensure all environment variables are read
-        getEnv(dir, "");
+        getEnv(`${dir}`, "");
 
         console.log();
         if (!info) {
@@ -85,7 +96,7 @@ async function launch_test(dir, flags) {
         const testDir = dir === "app" ? "src/app" : `src/site/pages/${dir}`;
         flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
         results.push(
-            (await launch_test(testDir, flags)).results
+            (await launch_test(argv, testDir, flags)).results
         );
         if (coverage)
             open(flags.coverageDirectory + "/lcov-report/index.html");

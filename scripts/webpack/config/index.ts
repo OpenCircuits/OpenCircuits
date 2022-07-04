@@ -4,20 +4,21 @@ import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
 
 import mergeDeep from "../../utils/merge.js";
 
-import * as Types from "./types.js";
-
 import IMGConfig  from "./img.js";
 import CSSConfig  from "./css.js";
 import TSConfig   from "./ts.js";
 import HTMLConfig from "./html.js";
 import WASMConfig from "./wasm.js";
 
+import type {Configuration} from "webpack";
+import type {Config} from "./types";
+
 
 /**
- * @param {Types.Config} config
- * @returns {webpack.Configuration}
+ * @param config The current configuration
+ * @returns The webpack configuration for the Image-specific rules
  */
- export default (config) => {
+export default (config: Config): Configuration => {
     const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;
 
     return mergeDeep(
@@ -52,9 +53,9 @@ import WASMConfig from "./wasm.js";
 
             devtool: (isDev ? "source-map" : undefined),
         },
-        IMGConfig(config),
-        CSSConfig(config),
-        TSConfig(config),
+         IMGConfig(config),
+         CSSConfig(config),
+          TSConfig(config),
         HTMLConfig(config),
         WASMConfig(config),
     );

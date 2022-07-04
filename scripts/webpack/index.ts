@@ -1,26 +1,28 @@
 import path from "path";
 import url from "url";
+
 import address from "address";
+
 import chalk from "chalk";
-import webpack from "webpack";
+
+import webpack          from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 
 import openBrowser from "../utils/browser/openBrowser.js";
-import choosePort from "../utils/choosePort.js";
-import copyDir from "../utils/copyDir.js";
-import getEnv from "../utils/env.js";
+import choosePort  from "../utils/choosePort.js";
+import copyDir     from "../utils/copyDir.js";
+import getEnv      from "../utils/env.js";
+
 import config from "./config/index.js";
-import {errors} from "@ts-morph/common";
 
 import customDevServer from "./customDevServer.js";
 
 
 /**
- * @param {string} dir
- * @param {webpack.Configuration["mode"]} mode
- * @returns {Promise<void>}
+ * @param dir The directory to launch the webpack instance in
+ * @param mode The webpack-mode: development or production
  */
-export default async (dir, mode) => {
+export default async (dir: string, mode: "development" | "production") => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
@@ -58,21 +60,22 @@ export default async (dir, mode) => {
             return; // No port found
 
         // Attempt to get full IPv4 local address
-        let lanUrl;
-        try {
-            lanUrl = address.ip();
-            if (lanUrl) {
-                const privateTest = /^10[.]|^172[.](1[6-9]|2[0-9]|3[0-1])[.]|^192[.]168[.]/;
-                // Check if private
-                if (privateTest.test(lanUrl))
-                    lanUrl = url.format({ protocol, hostname: lanUrl, port: chalk.bold(port), pathname });
-                else
-                    lanUrl = undefined;
+        const lanUrl = (() => {
+            try {
+                let ip = address.ip();
+                if (ip) {
+                    const privateTest = /^10[.]|^172[.](1[6-9]|2[0-9]|3[0-1])[.]|^192[.]168[.]/;
+                    // Check if private
+                    if (privateTest.test(ip))
+                        return url.format({ protocol, hostname: ip, port: chalk.bold(port), pathname });
+                    else
+                        return undefined;
+                }
+            } catch (e) {
+                // Ignore, just defer to localhost
+                return undefined;
             }
-        } catch (e) {
-            // Ignore, just defer to localhost
-            lanUrl = undefined;
-        }
+        })();
 
         let firstDone = false;
         compiler.hooks.done.tap("done", async stats => {
@@ -134,8 +137,8 @@ export default async (dir, mode) => {
 
         return new Promise((resolve, reject) => {
             compiler.run((err, result) => {
-                if (err || result.compilation.errors.length > 0)
-                    reject({ err, errors: result.compilation.errors });
+                if (err || result!.compilation.errors.length > 0)
+                    reject({ err, errors: result!.compilation.errors });
                 else
                     resolve(result);
             });

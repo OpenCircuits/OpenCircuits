@@ -1,14 +1,15 @@
 import os from "os";
+
 import {existsSync, rmSync} from "fs";
-import {spawn} from "child_process";
+import {spawn}              from "child_process";
 
-import ora from "ora";
-import chalk from "chalk";
+import ora     from "ora";
+import chalk   from "chalk";
 import prompts from "prompts";
-import yargs from "yargs/yargs";
+import yargs   from "yargs/yargs";
 
-import getDirs from "./utils/getDirs.js";
-import copy_dir from "./utils/copyDir.js";
+import getDirs      from "./utils/getDirs.js";
+import copy_dir     from "./utils/copyDir.js";
 import startWebpack from "./webpack/index.js";
 
 
@@ -22,7 +23,7 @@ const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 
 function build_server(prod) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
         // GCP requires raw go files, so no need to build server
         if (prod) {
             copy_dir("src/server", "build")
@@ -40,14 +41,14 @@ function build_server(prod) {
         });
     });
 }
-async function build_dir(dir) {
+async function build_dir(dir: string) {
     return await startWebpack(dir, "production");
 }
 
 
 // CLI
 (async () => {
-    const argv = yargs(process.argv.slice(2))
+    const argv = await yargs(process.argv.slice(2))
         .boolean("ci")
         .boolean("prod")
         .argv;

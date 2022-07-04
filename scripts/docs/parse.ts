@@ -1,6 +1,6 @@
 import path from "path";
 import {ClassDeclaration, ConstructorDeclaration, FunctionDeclaration, JSDocParameterTag, JSDocReturnTag, MethodDeclaration, ParameterDeclaration, PropertyDeclaration, SyntaxKind, ts, Type} from "ts-morph";
-import {AccessModifier, Types, Parameter, Property, Method, Constructor, Class} from "./model";
+import type {AccessModifier, Types, Parameter, Property, Method, Constructor, Class} from "./model";
 
 
 export function getAccessModifier(d: ConstructorDeclaration | PropertyDeclaration | MethodDeclaration | FunctionDeclaration): AccessModifier {

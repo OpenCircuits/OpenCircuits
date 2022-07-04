@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import bodyParser from "body-parser";
+import Server, {Middleware} from "webpack-dev-server";
 
 
 const CACHE_PATH = path.resolve(process.cwd(), ".devCache");
@@ -10,9 +11,9 @@ const CACHE_PATH = path.resolve(process.cwd(), ".devCache");
  *
  * Specifically creates a dev API for saving/fetching files
  */
-export default (middlewares, devServer) => {
-    if (!devServer)
-        throw new Error("webpack-dev-server is not defined");
+export default (middlewares: Middleware[], devServer: Server) => {
+    if (!devServer.app)
+        throw new Error("webpack-dev-server app is not defined");
 
     // Create new file
     devServer.app.post("/dev/file/:id", bodyParser.text(), (req, res) => {

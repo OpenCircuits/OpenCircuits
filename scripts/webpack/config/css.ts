@@ -1,14 +1,14 @@
-import webpack from "webpack";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
-import * as Types from "./types.js";
+import type {Configuration} from "webpack";
+import type {Config} from "./types";
 
 
 /**
- * @param {Types.Config} config
- * @returns {webpack.Configuration}
+ * @param config The current configuration
+ * @returns The webpack configuration for the CSS-specific rules
  */
- export default ({ isProd, publicPath }) => ({
+export default ({ isProd, publicPath }: Config): Configuration => ({
     module: {
         rules: [
             {

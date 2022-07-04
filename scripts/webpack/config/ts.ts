@@ -1,73 +1,67 @@
-import path from "path";
-import webpack from "webpack";
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import ReactRefreshTypescript from "react-refresh-typescript";
 
 import getAliases from "../../utils/getAliases.js";
 
-import * as Types from "./types.js";
+import type {Configuration} from "webpack";
+import type {Config} from "./types.js";
 
 
 /**
- * @param {Types.Config} config
- * @returns {webpack.Configuration}
+ * @param config The current configuration
+ * @returns The webpack configuration for the TypeScript-specific rules
  */
-export default (config) => {
-    const { rootDir, isDev } = config;
+export default ({ rootDir, isDev }: Config): Configuration => ({
+    module: {
+        rules: [{
+            // Test for: .ts, .tsx, .js, .jsx
+            test: /\.[jt]sx?$/,
 
-    // Configuration for babel
-    const BabelConfig = {
-        presets: [
-            "@babel/preset-env",
-            // runtime: automatic => makes it so you don't have to `import React` in every tsx file
-            ["@babel/preset-react", { runtime: "automatic" }],
-        ],
-        plugins: [
-            (isDev && "react-refresh/babel"),
-        ].filter(Boolean),
-    };
+            // Do not want to process anything from node_modules
+            exclude: /node_modules/,
 
-    return {
-        module: {
-            rules: [{
-                // Test for: .ts, .tsx, .js, .jsx
-                test: /\.[jt]sx?$/,
+            // Loads from bottom to top:
+            //  So it first goes through the ts-loader to become js
+            //  and then goes through babel-loader to transpile it
+            //
+            //  Babel: the defacto-standard for compiling JS to support older versions with newer syntax
+            use: [
+                {
+                    loader: "babel-loader",
 
-                // Do not want to process anything from node_modules
-                exclude: /node_modules/,
-
-                // Loads from bottom to top:
-                //  So it first goes through the ts-loader to become js
-                //  and then goes through babel-loader to transpile it
-                //
-                //  Babel: the defacto-standard for compiling JS to support older versions with newer syntax
-                use: [
-                    {
-                        loader: "babel-loader",
-                        options: BabelConfig,
+                    // Configuration for babel
+                    options: {
+                        presets: [
+                            "@babel/preset-env",
+                            // runtime: automatic => makes it so you don't have to `import React` in every tsx file
+                            ["@babel/preset-react", { runtime: "automatic" }],
+                        ],
+                        plugins: [
+                            ...(isDev ? ["react-refresh/babel"] : []),
+                        ],
                     },
-                    {
-                        loader: "ts-loader",
-                        options: {
-                            getCustomTransformers: () => ({
-                                before: (isDev ? [ReactRefreshTypescript()] : []),
-                            }),
-                        },
+                },
+                {
+                    loader: "ts-loader",
+                    options: {
+                        getCustomTransformers: () => ({
+                            before: (isDev ? [ReactRefreshTypescript()] : []),
+                        }),
                     },
-                ]
-            }]
-        },
+                },
+            ]
+        }]
+    },
 
-        plugins: [
-            // Setup hot-module refreshing
-            (isDev && new ReactRefreshWebpackPlugin()),
-        ].filter(Boolean),
+    plugins: [
+        // Setup hot-module refreshing
+        ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+    ],
 
-        resolve: {
-            extensions: [".ts", ".tsx", ".js", ".jsx"],
+    resolve: {
+        extensions: [".ts", ".tsx", ".js", ".jsx"],
 
-            // Retrieve the TypeScript paths
-            alias: getAliases(rootDir),
-        },
-    };
-}
+        // Retrieve the TypeScript paths
+        alias: getAliases(rootDir),
+    },
+});
