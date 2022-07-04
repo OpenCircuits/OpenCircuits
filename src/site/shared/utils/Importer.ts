@@ -7,8 +7,8 @@ export function LoadFile(file: File): Promise<string> {
                 throw new Error("LoadFile failed: reader.result is undefined");
             resolve(reader.result.toString());
         });
-        reader.addEventListener("abort", () => { reject("Failed to load file!"); });
-        reader.addEventListener("error", () => { reject("Failed to load file!"); });
+        reader.addEventListener("abort", () => reject("Failed to load file!"));
+        reader.addEventListener("error", () => reject("Failed to load file!"));
         reader.readAsText(file);
     });
 }

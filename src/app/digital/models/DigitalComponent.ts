@@ -118,7 +118,7 @@ export abstract class DigitalComponent extends Component {
     }
 
     public getPorts(): Port[] {
-        return [...(this.getInputPorts() as Port[]), ...this.getOutputPorts()];
+        return [...this.getInputPorts(), ...this.getOutputPorts()];
     }
 
     public getConnections(): DigitalWire[] {
