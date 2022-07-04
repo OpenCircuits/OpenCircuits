@@ -5,6 +5,15 @@ module.exports = {
     "extends": [
         "plugin:unicorn/recommended",
     ],
+    "overrides": [
+        {
+            "files": ["src/site/**/*.tsx"],
+            "rules": {
+                // TODO: Remove this exception when https://github.com/microsoft/TypeScript/issues/21699 is fixed
+                "unicorn/no-null": "off",
+            }
+        },
+    ],
     "rules": {
         "unicorn/catch-error-name": ["error", {"name": "e"}],
         "unicorn/consistent-destructuring": "off",
