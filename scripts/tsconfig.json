@@ -1,10 +1,4 @@
 {
-    "ts-node": {
-        "esm": true,
-        "files": true,
-        "transpileOnly": true,
-        // "swc": true, // For performance reasons, much faster transpiler
-    },
     "compilerOptions": {
         "lib": [
             "es2021"
