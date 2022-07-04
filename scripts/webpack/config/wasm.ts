@@ -3,8 +3,10 @@ import type {Configuration} from "webpack";
 
 
 /**
- * @param config The current configuration
- * @returns The webpack configuration for the WASM-specific rules
+ * Returns the wasm webpack configuration.
+ *
+ * @param config The current configuration.
+ * @returns        The webpack configuration for the WASM-specific rules.
  */
 export default ({ }: Config): Configuration => ({
     module: {

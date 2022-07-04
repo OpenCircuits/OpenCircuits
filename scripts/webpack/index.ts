@@ -16,8 +16,10 @@ import customDevServer from "./customDevServer.js";
 
 
 /**
- * @param dir The directory to launch the webpack instance in
- * @param mode The webpack-mode: development or production
+ * Basic webpack creation.
+ *
+ * @param dir  The directory to launch the webpack instance in.
+ * @param mode The webpack-mode: development or production.
  */
 export default async (dir: string, mode: "development" | "production") => {
     const publicRoot = "/";

@@ -4,9 +4,11 @@ import prompts from "prompts";
 
 
 /**
- * @param host The hostname
- * @param defaultPort The default port number
- * @returns The found port
+ * Chooses an open port to run on.
+ *
+ * @param host        The hostname.
+ * @param defaultPort The default port number.
+ * @returns             The found port.
  */
 export default async function choosePort(host: string, defaultPort: number) {
     try {

@@ -8,9 +8,14 @@ import Server, {Middleware} from "webpack-dev-server";
 const CACHE_PATH = path.resolve(process.cwd(), ".devCache");
 
 /**
- * Custom dev server middleware for use in issue #1037
+ * Custom dev server middleware for use in issue #1037.
  *
- * Specifically creates a dev API for saving/fetching files
+ * Specifically creates a dev API for saving/fetching files.
+ *
+ * @param middlewares Middlewares to be returned at the end of the funciton.
+ * @param devServer   The instance of the development server.
+ * @returns             The passed in middlewares.
+ * @throws If one of the underlying functions throws an error.
  */
 export default (middlewares: Middleware[], devServer: Server) => {
     if (!devServer.app)
