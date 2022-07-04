@@ -5,7 +5,8 @@ export const Header = () => (
     <div className="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 border-bottom box-shadow">
         <h5 className="my-0 mr-md-auto font-weight-normal">
             <a className="navbar-brand" href="#">
-                <img src="img/icon.svg" height="80px" style={{ marginTop: "-20px", marginBottom: "-20px" }} />
+                <img src="img/icon.svg" alt="Opencircuits icon" height="80px"
+                     style={{ marginTop: "-20px", marginBottom: "-20px" }} />
             </a>
         </h5>
         <a className="btn btn-outline-success me-3 header-simulator-btn" href={DIGITAL_URL}>Simulator</a>

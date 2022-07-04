@@ -19,12 +19,12 @@ export const Main = () => {
             <a className={`btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-1
                            ${sim === "digital" ? "circuit-launch-wrapper-btn-selected" : ""}`}
                onClick={() => setSim("digital")}>
-                <img src="img/digital-logo.svg" />
+                <img src="img/digital-logo.svg" alt="Digital Logo" />
             </a>
             <a className={`btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-2
                            ${sim === "analog" ? "circuit-launch-wrapper-btn-selected" : ""}`}
                onClick={() => setSim("analog")}>
-                <img src="img/analog-logo.svg" />
+                <img src="img/analog-logo.svg" alt="Analog Logo" />
             </a>
 
             <div className="circuit-launch-wrapper-wire1"></div>
@@ -33,19 +33,19 @@ export const Main = () => {
 
             <div className="circuit-launch-wrapper-output-div">
                 <div className={`card text-center h-100 ${sim === "digital" ? "" : "d-none"}`}>
-                    <img className="card-img-top p-2" src="img/digital-logo.svg" />
+                    <img className="card-img-top p-2" src="img/digital-logo.svg" alt="Digital Logo" />
                     <div className="card-body p-2">
                         <p className="card-text font-weight-light">
                             The original OpenCircuits with entirely digital components.
                         </p>
                         <div className="extra-info p-1">
-                            <img src="img/example2.png" />
+                            <img src="img/example2.png" alt="Example circuit" />
                         </div>
                         <a href="../" className="btn btn-success">Launch Simulator</a>
                     </div>
                 </div>
                 <div className={`card text-center h-100 ${sim === "analog" ? "" : "d-none"}`}>
-                    <img className="card-img-top p-2" src="img/analog-logo.svg" />
+                    <img className="card-img-top p-2" src="img/analog-logo.svg" alt="Analog Logo" />
                     <div className="card-body p-2">
                         <p className="card-text font-weight-light">
                             The new, in progress, OpenCircuits EE with analog components.
@@ -55,7 +55,7 @@ export const Main = () => {
                 </div>
             </div>
 
-            <img className="circuit-launch-wrapper-gate" src="img/xorgate.svg" />
+            <img className="circuit-launch-wrapper-gate" src="img/xorgate.svg" alt="XOR Gate" />
         </div>
     </>);
 }

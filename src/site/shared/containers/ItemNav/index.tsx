@@ -232,7 +232,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                     top:     pos.y,
                 }}>
             {/* config.imgRoot / section.id / item.icon */}
-            <img src={deleteImg} width="80px" />
+            <img src={deleteImg} alt="Deletion Preview" width="80px" />
         </div>
         )}
 
@@ -243,7 +243,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                  left:    pos.x,
                  top:     pos.y,
              }}>
-            <img src={curItemImg} width="80px" />
+            <img src={curItemImg} alt="Current item preview" width="80px" />
             {additionalPreviewComp}
             {new Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
                 <div key={`itemnav-preview-stack-${i}`}
@@ -253,7 +253,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                          top:      (i+1)*5,
                          zIndex:   100-(i+1),
                      }}>
-                    <img src={curItemImg} width="80px" />
+                    <img src={curItemImg} alt="Current item preview" width="80px" />
                     {additionalPreviewComp}
                 </div>
             ))}
@@ -275,7 +275,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                         else
                             dispatch(OpenHistoryBox());
                     }}>
-                        <img src="img/icons/history.svg"></img>
+                        <img src="img/icons/history.svg" alt="Toggle history box"></img>
                     </button>
                 </div>
                 <div>

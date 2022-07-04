@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {SaveFile}           from "shared/utils/Exporter";
 
