@@ -1,6 +1,6 @@
 import os from "os";
 
-import {existsSync, rmSync} from "fs";
+import {existsSync, readdirSync, rmSync} from "fs";
 import {spawn}              from "child_process";
 
 import ora     from "ora";
@@ -74,8 +74,12 @@ async function build_dir(dir: string) {
     }
 
     // If prod, clear build directory first
-    if (prod)
-        rmSync("build", { recursive: true, force: true });
+    if (prod) {
+        readdirSync("build")
+            // Don't clear scripts directory though
+            .filter(name => (name !== "scripts"))
+            .forEach(name => rmSync(`./build/${name}`, { recursive: true, force: true }));
+    }
 
     // If manual production build, copy secrets
     if (prod && !ci && existsSync("src/secrets"))
