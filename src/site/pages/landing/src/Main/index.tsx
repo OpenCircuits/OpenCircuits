@@ -16,16 +16,18 @@ export const Main = () => {
         </div>
 
         <div className="container-fluid circuit-launch-wrapper mb-5">
-            <a className={`btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-1
+            <button type="button"
+                    className={`btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-1
                            ${sim === "digital" ? "circuit-launch-wrapper-btn-selected" : ""}`}
-               onClick={() => setSim("digital")}>
+                    onClick={() => setSim("digital")}>
                 <img src="img/digital-logo.svg" alt="Digital Logo" />
-            </a>
-            <a className={`btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-2
+            </button>
+            <button type="button"
+                    className={`btn btn-outline-dark py-1 px-0 circuit-launch-wrapper-btn-2
                            ${sim === "analog" ? "circuit-launch-wrapper-btn-selected" : ""}`}
-               onClick={() => setSim("analog")}>
+                    onClick={() => setSim("analog")}>
                 <img src="img/analog-logo.svg" alt="Analog Logo" />
-            </a>
+            </button>
 
             <div className="circuit-launch-wrapper-wire1"></div>
             <div className="circuit-launch-wrapper-wire2"></div>

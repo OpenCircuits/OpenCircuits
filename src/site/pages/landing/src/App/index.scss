@@ -209,7 +209,7 @@ nav {
             bottom: 20%;
         }
     }
-    &-btn-selected {
+    &-btn-selected, button:focus {
         box-shadow: -1px 1px 2px gray;
 
         @media (max-width: $min-width-sm) {
