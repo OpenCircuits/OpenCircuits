@@ -48,6 +48,7 @@ module.exports = {
         "unicorn/prefer-string-replace-all": "error",
         "unicorn/prefer-switch": "off",
         "unicorn/prefer-ternary": ["error", "only-single-line"],
+        "unicorn/prefer-top-level-await": "off",
         "unicorn/prevent-abbreviations": "off",
         "unicorn/no-array-callback-reference": "off",
     },
