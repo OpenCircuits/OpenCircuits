@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import {SaveFile} from "./Exporter";
 
 
 export type ImageExportOptions = {
@@ -34,28 +35,7 @@ function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageE
     }
 
     const data = canvas.toDataURL(`image/${options.type}, 1.0`);
-
-    // Get name
-    if (projectName.replace(/\s+/g, "") === "")
-        projectName = "Untitled Circuit";
-
-    const filename = `${projectName}.${options.type}`;
-
-    if ((window.navigator as any).msSaveOrOpenBlob) { // IE10+
-        const file = new Blob([data], { type: "image/png" });
-        (window.navigator as any).msSaveOrOpenBlob(file, filename);
-    } else { // Others
-        const a = document.createElement("a");
-        const url = data;
-        a.href = url;
-        a.download = filename;
-        document.body.append(a);
-        a.click();
-        setTimeout(() => {
-            a.remove();
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
+    SaveFile(data, projectName, options.type);
 }
 
 
