@@ -1,10 +1,11 @@
-import fs from "fs";
-import path from "path";
-import {ts, Project, ScriptTarget, ModuleKind} from "ts-morph";
+import fs   from "node:fs";
+import path from "node:path";
 
+import {ModuleKind, Project, ScriptTarget, ts} from "ts-morph";
+
+import {generateMD}               from "./display.js";
 import {parseClass, parseMethods} from "./parse.js";
-import {generateMD} from "./display.js";
-import {getAllFiles} from "./utils.js";
+import {getAllFiles}              from "./utils.js";
 
 import type {TSDoc} from "./model";
 
@@ -18,9 +19,9 @@ function generateDocumentation(fileNames: string[], outPath: string, compilerOpt
     for (const srcFile of project.getSourceFiles()) {
         try {
             docs.push({
-                file: srcFile.getFilePath(),
-                fileName: srcFile.getBaseName(),
-                classes: srcFile.getClasses().map(parseClass),
+                file:      srcFile.getFilePath(),
+                fileName:  srcFile.getBaseName(),
+                classes:   srcFile.getClasses().map(parseClass),
                 functions: parseMethods(srcFile.getFunctions()),
             });
         } catch (e) {
@@ -67,14 +68,15 @@ function generateDocumentation(fileNames: string[], outPath: string, compilerOpt
 
 const files = [
     ...getAllFiles(path.resolve("src/app/core")),
-    ...getAllFiles(path.resolve("src/app/digital"))
+    ...getAllFiles(path.resolve("src/app/digital")),
 ];
 generateDocumentation(files, "docs/ts/", {
     target: ScriptTarget.ES5,
     module: ModuleKind.ESNext,
+
     lib: [
         "dom",
         "dom.iterable",
-        "esnext"
-    ]
+        "esnext",
+    ],
 });

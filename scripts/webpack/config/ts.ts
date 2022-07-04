@@ -1,10 +1,10 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import ReactRefreshTypescript from "react-refresh-typescript";
+import ReactRefreshTypescript    from "react-refresh-typescript";
 
 import getAliases from "../../utils/getAliases.js";
 
+import type {Config}        from "./types.js";
 import type {Configuration} from "webpack";
-import type {Config} from "./types.js";
 
 
 /**
@@ -42,15 +42,15 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
                     },
                 },
                 {
-                    loader: "ts-loader",
+                    loader:  "ts-loader",
                     options: {
                         getCustomTransformers: () => ({
                             before: (isDev ? [ReactRefreshTypescript()] : []),
                         }),
                     },
                 },
-            ]
-        }]
+            ],
+        }],
     },
 
     plugins: [

@@ -1,4 +1,5 @@
-import path from "path";
+import path from "node:path";
+
 import ts from "typescript";
 
 
@@ -17,7 +18,7 @@ export default function getAliases(cwd = process.cwd(), format: "webpack" | "jes
         cwd
     );
 
-    let aliases: Record<string, string> = {};
+    const aliases: Record<string, string> = {};
     if (config.options.paths) {
         const paths = config.options.paths;
         Object.entries(paths).forEach(([n, [p]]) => {

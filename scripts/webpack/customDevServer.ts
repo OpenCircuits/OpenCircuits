@@ -1,6 +1,7 @@
-import fs from "fs";
-import path from "path";
-import bodyParser from "body-parser";
+import fs   from "node:fs";
+import path from "node:path";
+
+import bodyParser           from "body-parser";
 import Server, {Middleware} from "webpack-dev-server";
 
 
@@ -39,7 +40,7 @@ export default (middlewares: Middleware[], devServer: Server) => {
         if (!fs.existsSync(filePath))
             return res.status(404);
 
-        const data = fs.readFileSync(filePath).toString("utf-8");
+        const data = fs.readFileSync(filePath).toString("utf8");
 
         res.status(200).send(data);
     });

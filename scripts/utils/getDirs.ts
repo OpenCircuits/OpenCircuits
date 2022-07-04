@@ -1,5 +1,5 @@
-import path from "path";
-import {readdirSync, readFileSync, existsSync} from "fs";
+import {existsSync, readFileSync, readdirSync} from "node:fs";
+import path                                    from "node:path";
 
 import type {Choice} from "prompts";
 
@@ -23,9 +23,9 @@ export default function getDirs(includeServer: boolean, includeApp: boolean): Ch
         .filter(([_, packagePath]) => existsSync(packagePath))
         // Map to prompt formats
         .map(([dir, packagePath]) => ({
-            title: (dir.name[0].toUpperCase() + dir.name.slice(1).toLowerCase()),
-            description: JSON.parse(readFileSync(packagePath, "utf-8")).description,
-            value: dir.name,
+            title:       (dir.name[0].toUpperCase() + dir.name.slice(1).toLowerCase()),
+            description: JSON.parse(readFileSync(packagePath, "utf8")).description,
+            value:       dir.name,
         }));
 
     return [

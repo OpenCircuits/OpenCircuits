@@ -1,5 +1,5 @@
+import type {Config}        from "./types.js";
 import type {Configuration} from "webpack";
-import type {Config} from "./types.js";
 
 
 /**
@@ -16,9 +16,9 @@ export default ({ }: Config): Configuration => ({
             exclude: /node_modules/,
 
             use: {
-                loader: "emscript-loader",
+                loader:  "emscript-loader",
                 options: {},
             },
-        }]
+        }],
     },
 });

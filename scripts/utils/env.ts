@@ -1,7 +1,7 @@
-import {existsSync} from "fs";
-import path from "path";
+import {existsSync} from "node:fs";
+import path         from "node:path";
 
-import dotEnv from "dotenv";
+import dotEnv       from "dotenv";
 import dotEnvExpand from "dotenv-expand";
 
 
@@ -26,7 +26,7 @@ export default function getEnv(dir: string, publicRoot: string) {
     return Object.keys(process.env)
                  .filter(k => k.startsWith("OC"))
                  .reduce(
-                     (env, key) => ({...env, [key]: process.env[key]}),
+                     (env, key) => ({ ...env, [key]: process.env[key] }),
                      {
                          NODE_ENV, PUBLIC_URL: publicRoot.slice(0, -1),
                      }

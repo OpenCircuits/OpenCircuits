@@ -1,13 +1,15 @@
-import path from "path";
-import open from "open";
-import prompts from "prompts";
-import chalk from "chalk";
-import yargs from "yargs/yargs";
-import jest from "jest";
+/* eslint-disable jest/no-jest-import */
+import path from "node:path";
 
-import getEnv from "./utils/env.js";
-import getDirs from "./utils/getDirs.js";
+import chalk   from "chalk";
+import jest    from "jest";
+import open    from "open";
+import prompts from "prompts";
+import yargs   from "yargs/yargs";
+
+import getEnv     from "./utils/env.js";
 import getAliases from "./utils/getAliases.js";
+import getDirs    from "./utils/getDirs.js";
 
 import type {Arguments} from "yargs";
 
@@ -28,8 +30,8 @@ async function launch_test({ $0, _ }: Arguments, dir: string, flags: Record<stri
         // "noCache": true,
         // "clearCache": true,
         config: JSON.stringify({
-            "preset": "ts-jest",
-            "testEnvironment": "jsdom",
+            "preset":           "ts-jest",
+            "testEnvironment":  "jsdom",
             "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
             // "watchman": false,
             // "detectOpenHandles": true,
@@ -56,11 +58,11 @@ async function launch_test({ $0, _ }: Arguments, dir: string, flags: Record<stri
     } else if (dirs.length === 0) {
         // Prompt user for directory
         dirs = [(await prompts({
-            type: "select",
-            name: "value",
+            type:    "select",
+            name:    "value",
             message: "Pick a project",
             choices: DIRS,
-            initial: 1
+            initial: 1,
         })).value];
 
         if (!dirs[0])
@@ -69,10 +71,10 @@ async function launch_test({ $0, _ }: Arguments, dir: string, flags: Record<stri
 
     const flags = {
         ci,
-        watch: (dirs.length === 1 && !ci) && !coverage,
+        watch:               (dirs.length === 1 && !ci) && !coverage,
         coverage,
         collectCoverageFrom: "**/*.{js,ts,tsx}",
-        coverageDirectory: undefined,
+        coverageDirectory:   undefined,
     };
 
     const results = [];

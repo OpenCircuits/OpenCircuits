@@ -1,7 +1,7 @@
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
+import type {Config}        from "./types";
 import type {Configuration} from "webpack";
-import type {Config} from "./types";
 
 
 /**
@@ -22,20 +22,20 @@ export default ({ isProd, publicPath }: Config): Configuration => ({
                 //  then shoots it into mini-css-extract-plugin to extract it out of the bundle and into a separate file
                 use: [
                     {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: { publicPath, },
+                        loader:  MiniCssExtractPlugin.loader,
+                        options: { publicPath },
                     },
                     {
-                        loader: "css-loader",
+                        loader:  "css-loader",
                         options: {
                             importLoaders: 2,
-                            modules: {
+                            modules:       {
                                 mode: "icss",
                             },
                         },
                     },
                     {
-                        loader: "postcss-loader",
+                        loader:  "postcss-loader",
                         options: {
                             postcssOptions: {
                                 plugins: [
@@ -45,15 +45,15 @@ export default ({ isProd, publicPath }: Config): Configuration => ({
                         },
                     },
                     "sass-loader",
-                ]
-            }
-        ]
+                ],
+            },
+        ],
     },
 
     plugins: [
         new MiniCssExtractPlugin(isProd ? {
             // Extract the css to /static/css/
-            filename: "static/css/[name].[contenthash:8].css",
+            filename:      "static/css/[name].[contenthash:8].css",
             chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
         } : undefined),
     ],

@@ -1,5 +1,5 @@
-import path from "path";
-import {mkdirSync, copyFileSync, readdirSync, existsSync} from "fs";
+import {copyFileSync, existsSync, mkdirSync, readdirSync} from "node:fs";
+import path                                               from "node:path";
 
 
 export default function copy_dir(dir: string, target: string) {

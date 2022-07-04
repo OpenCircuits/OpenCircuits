@@ -2,18 +2,19 @@
  * Adapted from Facebook, create-react-app:
  *  https://github.com/facebook/create-react-app/blob/main/packages/react-dev-utils/openBrowser.js
  */
+import {execSync} from "node:child_process";
+
 import chalk from "chalk";
-import {execSync} from "child_process";
 import spawn from "cross-spawn";
-import open from "open";
+import open  from "open";
 
 // https://github.com/sindresorhus/open#app
 const OSX_CHROME = "google chrome";
 
 const Actions = Object.freeze({
-    NONE: 0,
+    NONE:    0,
     BROWSER: 1,
-    SCRIPT: 2,
+    SCRIPT:  2,
 });
 
 function getBrowserEnv() {
@@ -53,7 +54,7 @@ function executeNodeScript(scriptPath, url) {
             );
             console.log(chalk.cyan(scriptPath) + " exited with code " + code + ".");
             console.log();
-            return;
+
         }
     });
     return true;
@@ -93,12 +94,12 @@ function startBrowserProcess(browser: string | undefined, url: string, args: str
                         chromiumBrowser +
                         "\"",
                     {
-                        cwd: __dirname,
+                        cwd:   __dirname,
                         stdio: "ignore",
                     }
                 );
                 return true;
-            } catch (err) {
+            } catch {
                 // Ignore errors.
             }
         }
@@ -110,7 +111,7 @@ function startBrowserProcess(browser: string | undefined, url: string, args: str
         // just ignore it (thus ensuring the intended behavior, i.e. opening the system browser):
         // https://github.com/facebook/create-react-app/pull/1690#issuecomment-283518768
         if (process.platform === "darwin" && browser === "open")
-            return undefined;
+            return;
 
         // If there are arguments, they must be passed as array with the browser
         if (typeof browser === "string" && args.length > 0)
@@ -125,7 +126,7 @@ function startBrowserProcess(browser: string | undefined, url: string, args: str
         const options = { app, wait: false, url: true };
         open(url, options).catch(() => {}); // Prevent `unhandledRejection` error.
         return true;
-    } catch (err) {
+    } catch {
         return false;
     }
 }
