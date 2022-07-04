@@ -1,10 +1,8 @@
-import path from "path";
-import url from "url";
+import path from "node:path";
+import url  from "node:url";
 
-import address from "address";
-
-import chalk from "chalk";
-
+import address          from "address";
+import chalk            from "chalk";
 import webpack          from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 
@@ -13,14 +11,15 @@ import choosePort  from "../utils/choosePort.js";
 import copyDir     from "../utils/copyDir.js";
 import getEnv      from "../utils/env.js";
 
-import config from "./config/index.js";
-
+import config          from "./config/index.js";
 import customDevServer from "./customDevServer.js";
 
 
 /**
- * @param dir The directory to launch the webpack instance in
- * @param mode The webpack-mode: development or production
+ * Basic webpack creation.
+ *
+ * @param dir  The directory to launch the webpack instance in.
+ * @param mode The webpack-mode: development or production.
  */
 export default async (dir: string, mode: "development" | "production") => {
     const publicRoot = "/";
@@ -31,7 +30,7 @@ export default async (dir: string, mode: "development" | "production") => {
     const compiler = webpack(config({
         mode,
         isProd: (mode === "production"),
-        isDev: (mode === "development"),
+        isDev:  (mode === "development"),
 
         target: (mode === "production" ? "browserslist" : "web"),
 
@@ -62,23 +61,22 @@ export default async (dir: string, mode: "development" | "production") => {
         // Attempt to get full IPv4 local address
         const lanUrl = (() => {
             try {
-                let ip = address.ip();
+                const ip = address.ip();
                 if (ip) {
-                    const privateTest = /^10[.]|^172[.](1[6-9]|2[0-9]|3[0-1])[.]|^192[.]168[.]/;
+                    const privateTest = /^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./;
                     // Check if private
                     if (privateTest.test(ip))
                         return url.format({ protocol, hostname: ip, port: chalk.bold(port), pathname });
-                    else
-                        return undefined;
+
                 }
-            } catch (e) {
+            } catch {
                 // Ignore, just defer to localhost
-                return undefined;
+
             }
         })();
 
         let firstDone = false;
-        compiler.hooks.done.tap("done", async stats => {
+        compiler.hooks.done.tap("done", async _ => {
             if (!firstDone) {
                 openBrowser(url.format({ protocol, hostname, port, pathname }));
                 firstDone = true;
@@ -87,27 +85,28 @@ export default async (dir: string, mode: "development" | "production") => {
             console.log(`\nYou can now view ${chalk.bold("OpenCircuits")} in the browser!\n`);
 
             if (lanUrl) {
-                console.log(`  ${chalk.bold("Local:")}            ${url.format({ protocol, hostname, port: chalk.bold(port), pathname })}`);
+                console.log(`  ${chalk.bold("Local:")}            `
+                            + `${url.format({ protocol, hostname, port: chalk.bold(port), pathname })}`);
                 console.log(`  ${chalk.bold("On Your Network:")}  ${lanUrl}`);
             }
 
-            console.log(`\nNote that the development buld is not optimized!`);
+            console.log("\nNote that the development buld is not optimized!");
             console.log(`To create a production build, use ${chalk.cyan("yarn build")}\n`);
         });
 
         const server = new WebpackDevServer({
             // Explanations: https://stackoverflow.com/a/62992178
             static: {
-                directory: path.resolve(dirPath, "public"),
+                directory:  path.resolve(dirPath, "public"),
                 publicPath: [pathname],
             },
-            hot: true,
-            host: "0.0.0.0",
+            hot:   true,
+            host:  "0.0.0.0",
             port,
             proxy: {
                 "/api/**": {
-                    target: `http://${hostname}:8080`,
-                    secure: false,
+                    target:       `http://${hostname}:8080`,
+                    secure:       false,
                     changeOrigin: true,
                 },
             },

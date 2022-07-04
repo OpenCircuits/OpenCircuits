@@ -1,15 +1,15 @@
-import os from "os";
+import {spawn}                           from "node:child_process";
+import {existsSync, readdirSync, rmSync} from "node:fs";
+import os                                from "node:os";
 
-import {existsSync, readdirSync, rmSync} from "fs";
-import {spawn}              from "child_process";
 
-import ora     from "ora";
 import chalk   from "chalk";
+import ora     from "ora";
 import prompts from "prompts";
 import yargs   from "yargs/yargs";
 
-import getDirs      from "./utils/getDirs.js";
 import copy_dir     from "./utils/copyDir.js";
+import getDirs      from "./utils/getDirs.js";
 import startWebpack from "./webpack/index.js";
 
 
@@ -23,7 +23,7 @@ const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 
 function build_server(prod) {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve, _) => {
         // GCP requires raw go files, so no need to build server
         if (prod) {
             copy_dir("src/server", "build")
@@ -35,7 +35,7 @@ function build_server(prod) {
 
         const isWin = (os.platform() === "win32");
         spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {
-            shell: true, stdio: "inherit"
+            shell: true, stdio: "inherit",
         }).on("exit", () => {
             resolve();
         });
@@ -63,11 +63,11 @@ async function build_dir(dir: string) {
     } else if (dirs.length === 0) {
         // Prompt user for directory
         dirs = [(await prompts({
-            type: "select",
-            name: "value",
+            type:    "select",
+            name:    "value",
             message: "Pick a project to build",
             choices: DIRS,
-            initial: 0
+            initial: 0,
         })).value];
         if (!dirs[0])
             return;

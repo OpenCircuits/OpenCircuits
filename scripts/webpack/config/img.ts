@@ -1,10 +1,12 @@
+import type {Config}        from "./types";
 import type {Configuration} from "webpack";
-import type {Config} from "./types";
 
 
 /**
- * @param config The current configuration
- * @returns The webpack configuration for the Image-specific rules
+ * Creates the webpack configuration for Images.
+ *
+ * @param config The current configuration.
+ * @returns        The webpack configuration for the Image-specific rules.
  */
 export default ({ }: Config): Configuration => ({
     output: {
@@ -27,7 +29,7 @@ export default ({ }: Config): Configuration => ({
                 //         maxSize: 30 * 1024, // Set inline-size to 30kb (30 * 1024 bytes)
                 //     }
                 // }
-            }
-        ]
+            },
+        ],
     },
 });

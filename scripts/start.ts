@@ -1,8 +1,8 @@
-import os   from "os";
-import path from "path";
+import {spawn}      from "node:child_process";
+import {existsSync} from "node:fs";
+import os           from "node:os";
+import path         from "node:path";
 
-import {existsSync} from "fs";
-import {spawn}      from "child_process";
 
 import chalk   from "chalk";
 import prompts from "prompts";
@@ -39,11 +39,11 @@ function start_client(dir: string) {
 (async () => {
     // Prompt for project type
     const type = await prompts({
-        type: "select",
-        name: "value",
+        type:    "select",
+        name:    "value",
         message: "Pick a project",
         choices: getDirs(true, false),
-        initial: 1
+        initial: 1,
     });
 
     if (!type.value)

@@ -1,10 +1,12 @@
+import type {Config}        from "./types.js";
 import type {Configuration} from "webpack";
-import type {Config} from "./types.js";
 
 
 /**
- * @param config The current configuration
- * @returns The webpack configuration for the WASM-specific rules
+ * Returns the wasm webpack configuration.
+ *
+ * @param config The current configuration.
+ * @returns        The webpack configuration for the WASM-specific rules.
  */
 export default ({ }: Config): Configuration => ({
     module: {
@@ -16,9 +18,9 @@ export default ({ }: Config): Configuration => ({
             exclude: /node_modules/,
 
             use: {
-                loader: "emscript-loader",
+                loader:  "emscript-loader",
                 options: {},
             },
-        }]
+        }],
     },
 });
