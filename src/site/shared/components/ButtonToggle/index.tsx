@@ -11,6 +11,7 @@ type Props = {
 }
 export const ButtonToggle = ({ isOn, className, height, onChange, text, disabled }: Props) => (
     <div className={`buttontoggle ${disabled ? "disabled" : ""} ${className ?? ""}`}
+         role="switch" aria-checked={!disabled && isOn} tabIndex={0}
          style={{ height }}
          onClick={onChange}>
         <img src="img/items/buttonDown.svg"
