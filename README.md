@@ -7,7 +7,6 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/OpenCircuits/OpenCircuits.svg)](https://github.com/OpenCircuits/OpenCircuits/commits/master)
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/52689df193bd42d4b819ef670e2853b4)](https://www.codacy.com/gh/OpenCircuits/OpenCircuits?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenCircuits/OpenCircuits&amp;utm_campaign=Badge_Grade)
-[![codebeat badge](https://codebeat.co/badges/16d70cd0-8f54-4691-9b6e-ea250d09e88f)](https://codebeat.co/projects/github-com-opencircuits-opencircuits-master)
 [![Build Status](https://travis-ci.org/OpenCircuits/OpenCircuits.svg?branch=master)](https://travis-ci.org/OpenCircuits/OpenCircuits)
 
 [![Discord](https://img.shields.io/discord/636332516357439524.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/bCV2tYFer9)
