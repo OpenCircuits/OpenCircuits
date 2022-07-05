@@ -263,10 +263,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);
-    if (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
-        return true;
 
-    return false;
+    return (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2);
 }
 
 /**
