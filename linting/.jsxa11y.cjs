@@ -82,12 +82,13 @@ module.exports = {
         "jsx-a11y/no-distracting-elements": "warn",
         "jsx-a11y/no-interactive-element-to-noninteractive-role": "warn",
         "jsx-a11y/no-noninteractive-element-interactions": [
-            "warn",
-            {
-                "body": ["onwarning", "onLoad"],
-                "iframe": ["onwarning", "onLoad"],
-                "img": ["onwarning", "onLoad"],
-            },
+            // TODO: Enable one day when we really dive into making the site accessible
+            "off",
+            // {
+            //     "body": ["onwarning", "onLoad"],
+            //     "iframe": ["onwarning", "onLoad"],
+            //     "img": ["onwarning", "onLoad"],
+            // },
         ],
         "jsx-a11y/no-noninteractive-element-to-interactive-role": "warn",
         "jsx-a11y/no-noninteractive-tabindex": "warn",

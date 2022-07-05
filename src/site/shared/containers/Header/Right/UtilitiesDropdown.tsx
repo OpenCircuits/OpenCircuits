@@ -44,38 +44,41 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
                   onClose={() => dispatch(CloseHeaderMenus())}>
             {extraUtilities.map(utility => (
                 <div key={utility.popupName}
+                     role="button" tabIndex={0}
                      className={`${isLocked ? "disabled" : ""}`}
                      onClick={() => {
-                     if (isLocked)
-                        return;
-                     dispatch(CloseHeaderMenus());
-                     dispatch(OpenHeaderPopup(utility.popupName));
-                 }}>
+                        if (isLocked)
+                            return;
+                        dispatch(CloseHeaderMenus());
+                        dispatch(OpenHeaderPopup(utility.popupName));
+                     }}>
                     <img src={utility.img} height="100%" alt="Wrench Icon for Utilities Dropdown" />
                     <span>{utility.text}</span>
                 </div>
-        ))}
-            {process.env.NODE_ENV === "development" &&
-        (<>
-            <h1>Development</h1>
-            <hr />
-            <div onClick={async () => {
-                    dispatch(CloseHeaderMenus());
-                    await DevCreateFile(helpers.GetSerializedCircuit(), DEV_CACHED_CIRCUIT_FILE);
-                    setEnableReload(true);
-                }}>
-                <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />
-                <span>Cache Circuit</span>
-            </div>
-            {enableReload &&
-                (<div onClick={() => {
+            ))}
+            {process.env.NODE_ENV === "development" && (<>
+                <h1>Development</h1>
+                <hr />
+                <div role="button" tabIndex={0}
+                     onClick={async () => {
                         dispatch(CloseHeaderMenus());
-                        helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-                    }}>
-                    <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Reload Circuit Icon" />
-                    <span>Reload Circuit</span>
-                </div>)}
-        </>)}
+                        await DevCreateFile(helpers.GetSerializedCircuit(), DEV_CACHED_CIRCUIT_FILE);
+                        setEnableReload(true);
+                     }}>
+                    <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />
+                    <span>Cache Circuit</span>
+                </div>
+                {enableReload && (
+                    <div role="button" tabIndex={0}
+                         onClick={() => {
+                            dispatch(CloseHeaderMenus());
+                            helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+                         }}>
+                        <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Reload Circuit Icon" />
+                        <span>Reload Circuit</span>
+                    </div>
+                )}
+            </>)}
         </Dropdown>
     );
 }

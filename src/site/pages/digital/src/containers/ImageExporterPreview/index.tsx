@@ -107,6 +107,7 @@ export const ImageExporterPreview = (() => {
         return (<>
             <img src="img/icons/fitscreen.svg"
                  className="image-exporter-preview__button"
+                 alt="Fit to screen"
                  onClick={() => {
                     FitToScreenHandler.getResponse(info);
                     info.renderer.render();

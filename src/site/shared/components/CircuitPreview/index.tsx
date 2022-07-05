@@ -10,7 +10,7 @@ type CircuitPreviewProps = {
     onDelete: () => void;
 }
 export const CircuitPreview = ({ readonly, data, onClick, onDelete }: CircuitPreviewProps) => (
-    <div className="circuit__preview" title="Load circuit" onClick={onClick}>
+    <div role="button" tabIndex={0} className="circuit__preview" title="Load circuit" onClick={onClick}>
         <span className="circuit__preview__icon">
             <img src={data.getThumbnail()} alt={`Thumbnail for example circuit, ${data.getName()}`} />
         </span>

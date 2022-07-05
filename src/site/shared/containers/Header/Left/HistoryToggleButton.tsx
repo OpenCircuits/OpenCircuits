@@ -20,7 +20,7 @@ export const HistoryToggleButton = () => {
                         else
                             dispatch(OpenHistoryBox());
                     }}>
-                <img src="img/icons/history-light.svg"></img>
+                <img src="img/icons/history-light.svg" alt="History box icon (light)"></img>
             </button>
         </div>
     );
