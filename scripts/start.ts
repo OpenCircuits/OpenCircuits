@@ -39,13 +39,15 @@ function StartClient(dir: string) {
 
 // CLI
 (async () => {
+    const dirs = getDirs(true, false);
+
     // Prompt for project type
     const { value } = await prompts({
         type:    "select",
         name:    "value",
         message: "Pick a project",
-        choices: getDirs(true, false),
-        initial: 1,
+        choices: dirs,
+        initial: dirs.findIndex((dir) => (dir.title === "Digital")),
     });
 
     if (!value)
