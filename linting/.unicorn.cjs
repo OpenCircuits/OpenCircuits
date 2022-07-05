@@ -5,6 +5,15 @@ module.exports = {
     "extends": [
         "plugin:unicorn/recommended",
     ],
+    "overrides": [
+        {
+            "files": ["src/site/**/*.tsx"],
+            "rules": {
+                // TODO: Remove this exception when https://github.com/microsoft/TypeScript/issues/21699 is fixed
+                "unicorn/no-null": "off",
+            }
+        },
+    ],
     "rules": {
         "unicorn/catch-error-name": ["error", {"name": "e"}],
         "unicorn/consistent-destructuring": "off",
@@ -18,7 +27,7 @@ module.exports = {
             },
             "ignore": [
                 // Ignore things with words like IC, ID, etc. (i.e. ICViewer)
-                /(.*?)(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII)(.*)/,
+                /(.*?)(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII|OS|NG)(.*)/,
             ],
         }],
         "unicorn/no-array-reduce": "off",
@@ -37,7 +46,9 @@ module.exports = {
         "unicorn/prefer-number-properties": "off",
         "unicorn/prefer-query-selector": "off",
         "unicorn/prefer-string-replace-all": "error",
+        "unicorn/prefer-switch": "off",
         "unicorn/prefer-ternary": ["error", "only-single-line"],
+        "unicorn/prefer-top-level-await": "off",
         "unicorn/prevent-abbreviations": "off",
         "unicorn/no-array-callback-reference": "off",
     },

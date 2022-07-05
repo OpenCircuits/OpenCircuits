@@ -192,9 +192,9 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         function GroupBy<T>(amt: number) {
             return ((prev: T[][], cur: T) => [
                 ...prev.slice(0,-1),
-                ...(prev[prev.length-1].length < amt
-                    ? [[...prev[prev.length-1], cur]] // Add cur to last group
-                    : [prev[prev.length-1], [cur]]),  // Create new group with just cur
+                ...(prev.at(-1)!.length < amt
+                    ? [[...prev.at(-1)!, cur]] // Add cur to last group
+                    : [prev.at(-1)!, [cur]]),  // Create new group with just cur
             ]);
         }
 
@@ -219,7 +219,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     const deleteImg = useMemo(() => {
         // If not pressing a Component or not hovering the ItemNav, then returned undefined
         if (!(currentlyPressedObj instanceof Component) || !hoveringNav)
-            return undefined;
+            return;
         return getImgSrc(currentlyPressedObj);
     }, [currentlyPressedObj, hoveringNav, getImgSrc]);
 
@@ -246,7 +246,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
              }}>
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
-            {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
+            {new Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
                 <div key={`itemnav-preview-stack-${i}`}
                      style={{
                          position: "absolute",

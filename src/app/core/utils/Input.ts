@@ -158,7 +158,7 @@ export class Input {
      */
     private hookupTouchEvents(): void {
         const getTouchPositions = (touches: TouchList): Vector[] => {
-            return Array.from(touches).map((t) => V(t.clientX, t.clientY));
+            return [...touches].map((t) => V(t.clientX, t.clientY));
         };
 
         // Touch screen events
@@ -420,7 +420,7 @@ export class Input {
         // calculate zoom factor
         let zoomFactor = 0.95;
         if (delta >= 0)
-            zoomFactor = 1.0 / zoomFactor;
+            zoomFactor = 1 / zoomFactor;
 
         this.callListeners({
             type:   "zoom",

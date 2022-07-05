@@ -140,7 +140,7 @@ export class SelectionsWrapper {
 
         // Filter out selections that we can get the position of
         const selections =
-            Array.from(this.selections)
+            [...this.selections]
                  .filter(s => (all ? (s instanceof Component || s instanceof Wire || s instanceof Port)
                                    : (s instanceof Component))) as Array<Component | Wire | Port>;
 
@@ -153,7 +153,7 @@ export class SelectionsWrapper {
         // Calculate midpoint
         return positions
             .reduce((sum, cur) => sum.add(cur), V())
-            .scale(1.0 / positions.length);
+            .scale(1 / positions.length);
     }
 
     /**
@@ -162,7 +162,7 @@ export class SelectionsWrapper {
      * @returns An array of type Selectable that contains the elements of `this.selections`.
      */
     public get(): Selectable[] {
-        return Array.from(this.selections);
+        return [...this.selections];
     }
 
     /**

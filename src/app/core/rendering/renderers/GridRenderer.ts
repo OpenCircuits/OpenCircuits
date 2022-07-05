@@ -16,7 +16,7 @@ export const GridRenderer = (() => {
         render(renderer: Renderer, { camera }: CircuitInfo): void {
             const step = GRID_SIZE/camera.getZoom();
 
-            const cpos = camera.getPos().scale(1.0/camera.getZoom()).sub(renderer.getSize().scale(0.5));
+            const cpos = camera.getPos().scale(1/camera.getZoom()).sub(renderer.getSize().scale(0.5));
 
             let cpx = cpos.x - Math.floor(cpos.x / step) * step;
             if (cpx < 0)
@@ -27,7 +27,7 @@ export const GridRenderer = (() => {
 
             // Batch-render the lines = uglier code + way better performance
             renderer.save();
-            renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 1.0 / camera.getZoom()));
+            renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 1 / camera.getZoom()));
             renderer.beginPath();
             for (let x = -cpx; x <= renderer.getSize().x-cpx+step; x += step)
                 renderer.pathLine(V(x, 0), V(x, renderer.getSize().y));

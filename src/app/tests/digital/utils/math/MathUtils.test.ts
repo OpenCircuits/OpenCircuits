@@ -225,7 +225,7 @@ describe("CircleContains", () => {
         expect(c).toBe(true);
     });
     test("on the cusp", () => {
-        const c  = CircleContains(V(1,5), -3, V(3.1,7.14242));
+        const c  = CircleContains(V(1,5), -3, V(3.1,7.142_42));
         expect(c).toBe(true);
     });
     test("outside", () => {

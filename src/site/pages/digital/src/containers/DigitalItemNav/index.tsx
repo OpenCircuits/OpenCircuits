@@ -55,6 +55,8 @@ const SmartPlaceOrder = [
     SmartPlaceOptions.Inputs,
 ];
 
+type ICID = `ic/${number}`;
+
 
 type Props = {
     info: DigitalCircuitInfo;
@@ -83,7 +85,7 @@ export const DigitalItemNav = ({ info }: Props) => {
                 return;
             setState({
                 ics: designer.getICData().map((d, i) => ({
-                    id:        `ic/${i}`,
+                    id:        `ic/${i}` as ICID,
                     label:     d.getName(),
                     icon:      "multiplexer.svg",
                     removable: true,
@@ -108,15 +110,15 @@ export const DigitalItemNav = ({ info }: Props) => {
         ],
     }), [ics]);
 
-    const additionalPreview = useCallback((smartPlace, curItemId: string) => {
+    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemId: string) => {
         if (!curItemId || (smartPlace === SmartPlaceOptions.Off))
-            return undefined;
+            return;
 
         // This function shows the display for 'Smart Place' (issue #689)
         const [numInputs, numOutputs] = GetNumInputsAndOutputs(curItemId, info);
         return (<>
             {!!(smartPlace & SmartPlaceOptions.Inputs) &&
-                Array(numInputs).fill(0).map((_, i) => (
+                new Array(numInputs).fill(0).map((_, i) => (
                     // Show the Switches
                     <img key={`digital-itemnav-inputs-${i}`}
                          src={`/${itemNavConfig.imgRoot}/inputs/switch.svg`}
@@ -128,7 +130,7 @@ export const DigitalItemNav = ({ info }: Props) => {
                          }} />
                 ))}
             {!!(smartPlace & SmartPlaceOptions.Outputs) &&
-                Array(numOutputs).fill(0).map((_, i) => (
+                new Array(numOutputs).fill(0).map((_, i) => (
                     // Show the LEDs
                     <img key={`digital-itemnav-outputs-${i}`}
                          src={`/${itemNavConfig.imgRoot}/outputs/led.svg`}
@@ -163,7 +165,8 @@ export const DigitalItemNav = ({ info }: Props) => {
     const onSmartPlaceOff = useCallback(() => setSmartPlace(SmartPlaceOptions.Off), [setSmartPlace]);
 
     const onDelete = useCallback((sec: ItemNavSection, ic: ItemNavItem) => {
-        const icData = designer.getICData()[+ic.id.substring(ic.id.indexOf("/")+1)];
+        const id = ic.id as ICID;
+        const icData = designer.getICData()[parseInt(id.split("/")[1])];
         if (IsICDataInUse(designer, icData)) {
             window.alert("Cannot delete this IC while instances remain in the circuit.");
             return false;

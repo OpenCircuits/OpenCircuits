@@ -19,7 +19,7 @@ import "./index.scss";
 
 
 const MIN_IMG_SIZE = 50;
-const MAX_IMG_SIZE = 10000;
+const MAX_IMG_SIZE = 10_000;
 
 export type ImageExporterPreviewProps = {
     canvas: React.RefObject<HTMLCanvasElement>;

@@ -1,18 +1,25 @@
-const fs = require("fs");
-const path = require("path");
-const bodyParser = require("body-parser");
+import fs   from "node:fs";
+import path from "node:path";
+
+import bodyParser           from "body-parser";
+import Server, {Middleware} from "webpack-dev-server";
 
 
 const CACHE_PATH = path.resolve(process.cwd(), ".devCache");
 
 /**
- * Custom dev server middleware for use in issue #1037
+ * Custom dev server middleware for use in issue #1037.
  *
- * Specifically creates a dev API for saving/fetching files
+ * Specifically creates a dev API for saving/fetching files.
+ *
+ * @param middlewares Middlewares to be returned at the end of the funciton.
+ * @param devServer   The instance of the development server.
+ * @returns             The passed in middlewares.
+ * @throws If one of the underlying functions throws an error.
  */
-module.exports = (devServer) => {
-    if (!devServer)
-        throw new Error("webpack-dev-server is not defined");
+export default (middlewares: Middleware[], devServer: Server) => {
+    if (!devServer.app)
+        throw new Error("webpack-dev-server app is not defined");
 
     // Create new file
     devServer.app.post("/dev/file/:id", bodyParser.text(), (req, res) => {
@@ -38,7 +45,7 @@ module.exports = (devServer) => {
         if (!fs.existsSync(filePath))
             return res.status(404);
 
-        const data = fs.readFileSync(filePath).toString("utf-8");
+        const data = fs.readFileSync(filePath).toString("utf8");
 
         res.status(200).send(data);
     });
@@ -52,4 +59,6 @@ module.exports = (devServer) => {
 
         res.status(200).json({ files });
     });
+
+    return middlewares;
 }

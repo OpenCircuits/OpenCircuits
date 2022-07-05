@@ -7,5 +7,5 @@
  * @returns          True if input has a substring starting at index that matches sequence, false otherwise.
  */
 export function SubStrEquals(input: string, index: number, sequence: string): boolean {
-    return input.substring(index, index + sequence.length) === sequence;
+    return input.slice(index, index + sequence.length) === sequence;
 }

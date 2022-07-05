@@ -79,7 +79,7 @@ export class Oscilloscope extends TimedComponent {
     }
 
     public getSignals(): boolean[][] {
-        return this.signals.slice();
+        return [...this.signals];
     }
 
     public getDisplaySize(): Vector {

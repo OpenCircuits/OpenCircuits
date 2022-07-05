@@ -58,8 +58,8 @@ export class Matrix2x3 {
     public identity(): Matrix2x3 {
         this.zero();
 
-        this.mat[0] = 1.0;
-        this.mat[3] = 1.0;
+        this.mat[0] = 1;
+        this.mat[3] = 1;
 
         return this;
     }
@@ -183,7 +183,7 @@ export class Matrix2x3 {
         if (det === 0)
             return new Matrix2x3();
 
-        det = 1.0 / det;
+        det = 1 / det;
 
         const m = new Matrix2x3();
         for (let i = 0; i < 2*3; i++)

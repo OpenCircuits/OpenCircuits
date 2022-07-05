@@ -67,7 +67,7 @@ export class ICData {
 
         // Set start size based on length of names and amount of ports
         let longestName = 0;
-        for (const obj of inputs.concat(outputs))
+        for (const obj of [...inputs, ...outputs])
             longestName = Math.max(obj.getName().length, longestName);
         longestName += this.getName().length; // Add name of IC
 
@@ -107,7 +107,7 @@ export class ICData {
             //  is not in the rectangle of the IC
             const target = this.transform.getMatrix().mul(port.getTargetPos());
             const origin = this.transform.getMatrix().mul(port.getOriginPos());
-            const pos = target.add(target.sub(origin).normalize().scale(10000));
+            const pos = target.add(target.sub(origin).normalize().scale(10_000));
 
             const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), pos);
             const v = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH).add(size.scale(0.5)))).add(p);

@@ -33,7 +33,7 @@ export const WiringTool = (() => {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         // Look through all ports in array
         //  and find closest one to the mouse
-        if (ports.length < 1)
+        if (ports.length === 0)
             return undefined;
 
         let nearestport = ports[0];

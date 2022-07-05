@@ -98,12 +98,12 @@ export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
     //  an ID of 0 since that is how it is represented in NGSpice
     const fullPathIDs = paths.map((_, i) => i+1);
     paths.forEach((path, i) => {
-        const ports = Array.from(path.values()).filter(p => p instanceof AnalogPort) as AnalogPort[];
+        const ports = [...path.values()].filter(p => p instanceof AnalogPort) as AnalogPort[];
         if (ports.some(p => p.getParent() instanceof Ground))
             fullPathIDs[i] = 0; // Whole path is connected to ground
     });
 
-    const pathUIDs = new Map(paths.flatMap((s,i) => Array.from(s.values()).map((val) => [val, fullPathIDs[i]])));
+    const pathUIDs = new Map(paths.flatMap((s,i) => [...s.values()].map((val) => [val, fullPathIDs[i]])));
 
     const elementConnections = new Map<AnalogComponent, [number, number]>();
     const elementUIDs = new Map(elements.map((e, i) => [e, i]));

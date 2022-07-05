@@ -30,7 +30,7 @@ export const FrequencyModule = ({ info }: Props) => {
         Delay
         <label>
             <NumberModuleInputField
-                kind="int" min={50} max={10000} step={50}
+                kind="int" min={50} max={10_000} step={50}
                 props={props.freq}
                 alt="Delay in milliseconds"
                 getAction={(newFreq) =>

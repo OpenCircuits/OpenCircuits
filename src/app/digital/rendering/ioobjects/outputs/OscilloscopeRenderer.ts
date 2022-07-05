@@ -37,8 +37,8 @@ export const OscilloscopeRenderer = (() => {
             renderer.beginPath();
 
             const allSignals = o.getSignals();
-            for (let i = 0; i < allSignals.length; i++) {
-                const signals = allSignals[i].slice(0, o.getNumSamples());
+            for (const [i, allSignal] of allSignals.entries()) {
+                const signals = allSignal.slice(0, o.getNumSamples());
 
                 // Get y-offset for i'th graph
                 const dy = -size.y/2 + (i + 0.5)*o.getDisplaySize().y;

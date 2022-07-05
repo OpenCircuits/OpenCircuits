@@ -151,9 +151,9 @@ describe("Translate Tool", () => {
             objs.splice(objs.indexOf(port), 1);
             expect(objs).toHaveLength(3);
 
-            const sw2   = objs.filter((o) => o instanceof Switch)[0] as Switch;
-            const led2  = objs.filter((o) => o instanceof LED)[0] as LED;
-            const port2 = objs.filter((o) => o instanceof DigitalNode)[0] as DigitalNode;
+            const sw2   = objs.find((o) => o instanceof Switch) as Switch;
+            const led2  = objs.find((o) => o instanceof LED) as LED;
+            const port2 = objs.find((o) => o instanceof DigitalNode) as DigitalNode;
 
             // Expect duplicated objects to be the same
             expect(sw2.getPos()).toEqual(V(-100, 0));

@@ -119,9 +119,9 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                                     ops:                   customOps,
                                 });
                                 reset();
-                            } catch (err) {
-                                setErrorMessage(err.message);
-                                console.error(err);
+                            } catch (e) {
+                                setErrorMessage(e.message);
+                                console.error(e);
                             }
                         }}>
                     Generate

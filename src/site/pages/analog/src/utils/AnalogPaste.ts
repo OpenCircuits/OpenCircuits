@@ -50,7 +50,7 @@ export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vec
         renderer.render();
 
         return true;
-    } catch (_) {
+    } catch {
         return false;
     }
 }

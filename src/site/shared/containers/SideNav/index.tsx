@@ -50,7 +50,7 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
             <div className="sidenav__accountinfo">
                 <div className="sidenav__accountinfo__name">
-                    {auth ? `Hello, ${auth.getName()}!` : null}
+                    {auth ? `Hello, ${auth.getName()}!` : undefined}
                 </div>
                 <div className="sidenav__accountinfo__sign">
                     <SignInOutButtons />
