@@ -1,7 +1,6 @@
 import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
 import webpack                     from "webpack";
 
-
 import mergeDeep from "../../utils/merge.js";
 
 import CSSConfig  from "./css.js";

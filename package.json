@@ -17,7 +17,7 @@
     "coverage": "node ./build/scripts/test.js --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "postinstall": "tsc --project ./scripts/tsconfig.json"
+    "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
@@ -34,6 +34,7 @@
     "@typescript-eslint/parser": "^5.30.4",
     "babel-loader": "^8.2.5",
     "chalk": "^5.0.1",
+    "copyfiles": "^2.4.1",
     "css-loader": "^6.7.1",
     "detect-port-alt": "^1.1.6",
     "dotenv": "^16.0.1",

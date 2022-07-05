@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 
 /**
  * Performs a deep merge of objects and returns new object. Does not modify
@@ -7,7 +8,10 @@
  * @returns         New object with merged key/values.
  */
 export default function mergeDeep(...objects: Object[]): Object {
-    const isObject = obj => obj && typeof obj === "object";
+    const isObject = (
+        (obj: unknown): obj is Object =>
+            (obj && typeof obj === "object")
+    );
 
     return objects.reduce((prev, obj) => {
         Object.keys(obj).forEach(key => {

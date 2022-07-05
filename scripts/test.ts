@@ -22,22 +22,16 @@ process.env.NODE_ENV = "test";
 const DIRS = getDirs(true, true);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
-async function launch_test({ $0, _ }: Arguments, dir: string, flags: Record<string, any>) {
+async function LaunchTest(args: Arguments, dir: string, flags: Record<string, unknown>) {
     return await jest.runCLI({
-        // $0, _,
+        ...args,
         ...flags,
-        // "runInBand": true,
-        // "noCache": true,
-        // "clearCache": true,
         config: JSON.stringify({
             "preset":           "ts-jest",
             "testEnvironment":  "jsdom",
             "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
-            // "watchman": false,
-            // "detectOpenHandles": true,
-            // "forceExit": true,
         }),
-    } as any, [dir]);
+    }, [dir]);
 }
 
 
@@ -57,22 +51,24 @@ async function launch_test({ $0, _ }: Arguments, dir: string, flags: Record<stri
         dirs = Object.keys(DIR_MAP);
     } else if (dirs.length === 0) {
         // Prompt user for directory
-        dirs = [(await prompts({
+        const { value } = await prompts({
             type:    "select",
             name:    "value",
             message: "Pick a project",
             choices: DIRS,
             initial: 1,
-        })).value];
-
-        if (!dirs[0])
+        });
+        if (!value)
             return;
+        dirs = [value];
     }
 
     const flags = {
         ci,
-        watch:               (dirs.length === 1 && !ci) && !coverage,
         coverage,
+
+        watch: (dirs.length === 1 && !ci) && !coverage,
+
         collectCoverageFrom: "**/*.{js,ts,tsx}",
         coverageDirectory:   undefined,
     };
@@ -97,14 +93,14 @@ async function launch_test({ $0, _ }: Arguments, dir: string, flags: Record<stri
         }
         const testDir = dir === "app" ? "src/app" : `src/site/pages/${dir}`;
         flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
-        results.push(
-            (await launch_test(argv, testDir, flags)).results
-        );
+
+        const { results: result } = await LaunchTest(argv, testDir, flags);
+        results.push(result);
         if (coverage)
             open(flags.coverageDirectory + "/lcov-report/index.html");
     }
 
     const pass = results.every(r => r.success);
     if (!pass && ci) // Exit with failure
-        process.exit(1);
+        throw new Error("Not all tests passed!");
 })();

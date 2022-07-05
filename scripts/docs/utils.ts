@@ -8,7 +8,9 @@ const EscapeCodes = {
     "{": "#123",
     "}": "#125",
 } as Record<string, string>;
+
 const EscapeRegex = new RegExp(`[${Object.keys(EscapeCodes).join("")}]`, "g");
+
 export function escapeStr(str: string | undefined): string | undefined {
     if (!str)
         return undefined;
@@ -23,7 +25,9 @@ export function getAllFiles(p: string): string[] {
         return [];
     let files = [] as string[];
     for (const f of dir) {
-        files = f.isDirectory() ? [...files, ...getAllFiles(path.resolve(p, f.name))] : [...files, path.resolve(p, f.name)];
+        files = f.isDirectory()
+            ? [...files, ...getAllFiles(path.resolve(p, f.name))]
+            : [...files, path.resolve(p, f.name)];
     }
     return files;
 }

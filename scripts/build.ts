@@ -2,13 +2,12 @@ import {spawn}                           from "node:child_process";
 import {existsSync, readdirSync, rmSync} from "node:fs";
 import os                                from "node:os";
 
-
 import chalk   from "chalk";
 import ora     from "ora";
 import prompts from "prompts";
 import yargs   from "yargs/yargs";
 
-import copy_dir     from "./utils/copyDir.js";
+import CopyDir      from "./utils/copyDir.js";
 import getDirs      from "./utils/getDirs.js";
 import startWebpack from "./webpack/index.js";
 
@@ -22,16 +21,16 @@ const DIRS = getDirs(true, false);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 
-function build_server(prod) {
+function BuildServer(prod: boolean) {
     return new Promise<void>((resolve, _) => {
         // GCP requires raw go files, so no need to build server
         if (prod) {
-            copy_dir("src/server", "build")
+            CopyDir("src/server", "build")
             resolve();
             return;
         }
 
-        copy_dir("src/server/data/sql/sqlite", "build/sql/sqlite");
+        CopyDir("src/server/data/sql/sqlite", "build/sql/sqlite");
 
         const isWin = (os.platform() === "win32");
         spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {
@@ -41,7 +40,7 @@ function build_server(prod) {
         });
     });
 }
-async function build_dir(dir: string) {
+async function BuildDir(dir: string) {
     return await startWebpack(dir, "production");
 }
 
@@ -62,15 +61,16 @@ async function build_dir(dir: string) {
         dirs = Object.keys(DIR_MAP);
     } else if (dirs.length === 0) {
         // Prompt user for directory
-        dirs = [(await prompts({
+        const { value } = await prompts({
             type:    "select",
             name:    "value",
             message: "Pick a project to build",
             choices: DIRS,
             initial: 0,
-        })).value];
-        if (!dirs[0])
+        });
+        if (!value)
             return;
+        dirs = [value];
     }
 
     // If prod, clear build directory first
@@ -83,7 +83,7 @@ async function build_dir(dir: string) {
 
     // If manual production build, copy secrets
     if (prod && !ci && existsSync("src/secrets"))
-        copy_dir("src/secrets", "build");
+    CopyDir("src/secrets", "build");
 
     // Launch build in each directory
     for (const dir of dirs) {
@@ -100,10 +100,10 @@ async function build_dir(dir: string) {
 
         if (dir === "server") {
             const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
-            await build_server(prod);
+            await BuildServer(prod);
             spinner.stop();
         } else {
-            await build_dir(`src/site/pages/${dir}`);
+            await BuildDir(`src/site/pages/${dir}`);
         }
 
         console.log(`${chalk.greenBright("Done!")}`);

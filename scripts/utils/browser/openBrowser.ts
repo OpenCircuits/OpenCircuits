@@ -1,6 +1,6 @@
 /**
  * Adapted from Facebook, create-react-app:
- *  https://github.com/facebook/create-react-app/blob/main/packages/react-dev-utils/openBrowser.js
+ *  https://github.com/facebook/create-react-app/blob/main/packages/react-dev-utils/openBrowser.js .
  */
 import {execSync} from "node:child_process";
 
@@ -82,6 +82,7 @@ function startBrowserProcess(browser: string | undefined, url: string, args: str
             "Chromium",
         ];
 
+        const dirName = new URL(".", import.meta.url).pathname;
         for (const chromiumBrowser of supportedChromiumBrowsers) {
             try {
                 // Try our best to reuse existing tab
@@ -94,7 +95,7 @@ function startBrowserProcess(browser: string | undefined, url: string, args: str
                         chromiumBrowser +
                         "\"",
                     {
-                        cwd:   __dirname,
+                        cwd:   dirName,
                         stdio: "ignore",
                     }
                 );

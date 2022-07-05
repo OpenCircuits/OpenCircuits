@@ -94,7 +94,8 @@ export function displayFunc(f: Method, global = false): string {
         fo.parameters.map(p =>
             //   | this HTML space character is needed because idfk, but it makes
             //   V   the JSDocs for the rest of the line actually function
-            `\n* &nbsp;<code>${escapeStr(p.name)}: ${displayType(p.type)}</code> – ${p.docs || "*Description needed*"}\n`
+            `\n* &nbsp;<code>${escapeStr(p.name)}: ${displayType(p.type)}</code> ` +
+            `– ${p.docs || "*Description needed*"}\n`
         ).join("") +
 
         // Display returns for overload

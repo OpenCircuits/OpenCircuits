@@ -3,7 +3,6 @@ import {existsSync} from "node:fs";
 import os           from "node:os";
 import path         from "node:path";
 
-
 import chalk   from "chalk";
 import prompts from "prompts";
 
@@ -16,12 +15,15 @@ process.env.BABEL_ENV = "development";
 process.env.NODE_ENV = "development";
 
 
-function start_server() {
+function StartServer() {
     const isWin = (os.platform() === "win32");
 
     // Check if server is built
     if (!existsSync(path.resolve(process.cwd(), "build", (isWin ? "server.exe" : "server")))) {
-        console.log(`\n${chalk.red("Failed to start server!")}\nYou must first build the server with ${chalk.bold(chalk.cyan("yarn build"))}\n`);
+        console.log(
+            `\n${chalk.red("Failed to start server!")}\n`+
+            `You must first build the server with ${chalk.bold(chalk.cyan("yarn build"))}\n`
+        );
         return;
     }
 
@@ -30,7 +32,7 @@ function start_server() {
     });
 }
 
-function start_client(dir: string) {
+function StartClient(dir: string) {
     startWebpack(dir, "development");
 }
 
@@ -38,7 +40,7 @@ function start_client(dir: string) {
 // CLI
 (async () => {
     // Prompt for project type
-    const type = await prompts({
+    const { value } = await prompts({
         type:    "select",
         name:    "value",
         message: "Pick a project",
@@ -46,15 +48,15 @@ function start_client(dir: string) {
         initial: 1,
     });
 
-    if (!type.value)
+    if (!value)
         return;
 
     // Start server
-    if (type.value === "server") {
-        start_server();
+    if (value === "server") {
+        StartServer();
         return;
     }
 
     // Start digital/analog/landing page
-    start_client(`src/site/pages/${type.value}`);
+    StartClient(`src/site/pages/${value}`);
 })();

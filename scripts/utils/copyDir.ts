@@ -2,7 +2,7 @@ import {copyFileSync, existsSync, mkdirSync, readdirSync} from "node:fs";
 import path                                               from "node:path";
 
 
-export default function copy_dir(dir: string, target: string) {
+export default function CopyDir(dir: string, target: string) {
     if (!existsSync(target))
         mkdirSync(target, { recursive: true });
 
@@ -14,6 +14,6 @@ export default function copy_dir(dir: string, target: string) {
         if (file.isFile())
             copyFileSync(p1, p2);
         else // Subdirectory
-            copy_dir(p1, p2);
+            CopyDir(p1, p2);
     }
 }
