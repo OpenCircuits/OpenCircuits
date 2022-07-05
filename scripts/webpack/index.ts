@@ -1,24 +1,27 @@
-const path = require("path");
-const url = require("url");
-const address = require("address");
-const chalk = require("chalk");
-const webpack = require("webpack");
-const WebpackDevServer = require("webpack-dev-server");
+import path from "node:path";
+import url  from "node:url";
 
-const openBrowser = require("../utils/browser/openBrowser");
-const choosePort = require("../utils/choosePort");
-const copyDir = require("../utils/copyDir");
-const getEnv = require("../utils/env");
-const config = require("./config");
-const {errors} = require("@ts-morph/common");
+import address          from "address";
+import chalk            from "chalk";
+import webpack          from "webpack";
+import WebpackDevServer from "webpack-dev-server";
+
+import openBrowser from "../utils/browser/openBrowser.js";
+import choosePort  from "../utils/choosePort.js";
+import copyDir     from "../utils/copyDir.js";
+import getEnv      from "../utils/env.js";
+
+import config          from "./config/index.js";
+import customDevServer from "./customDevServer.js";
 
 
 /**
- * @param {string} dir
- * @param {webpack.Configuration["mode"]} mode
- * @returns {Promise<void>}
+ * Basic webpack creation.
+ *
+ * @param dir  The directory to launch the webpack instance in.
+ * @param mode The webpack-mode: development or production.
  */
-module.exports = async (dir, mode) => {
+export default async (dir: string, mode: "development" | "production") => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
@@ -27,7 +30,7 @@ module.exports = async (dir, mode) => {
     const compiler = webpack(config({
         mode,
         isProd: (mode === "production"),
-        isDev: (mode === "development"),
+        isDev:  (mode === "development"),
 
         target: (mode === "production" ? "browserslist" : "web"),
 
@@ -56,24 +59,24 @@ module.exports = async (dir, mode) => {
             return; // No port found
 
         // Attempt to get full IPv4 local address
-        let lanUrl;
-        try {
-            lanUrl = address.ip();
-            if (lanUrl) {
-                const privateTest = /^10[.]|^172[.](1[6-9]|2[0-9]|3[0-1])[.]|^192[.]168[.]/;
-                // Check if private
-                if (privateTest.test(lanUrl))
-                    lanUrl = url.format({ protocol, hostname: lanUrl, port: chalk.bold(port), pathname });
-                else
-                    lanUrl = undefined;
+        const lanUrl = (() => {
+            try {
+                const ip = address.ip();
+                if (ip) {
+                    const privateTest = /^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./;
+                    // Check if private
+                    if (privateTest.test(ip))
+                        return url.format({ protocol, hostname: ip, port: chalk.bold(port), pathname });
+
+                }
+            } catch {
+                // Ignore, just defer to localhost
+
             }
-        } catch (e) {
-            // Ignore, just defer to localhost
-            lanUrl = undefined;
-        }
+        })();
 
         let firstDone = false;
-        compiler.hooks.done.tap("done", async stats => {
+        compiler.hooks.done.tap("done", async _ => {
             if (!firstDone) {
                 openBrowser(url.format({ protocol, hostname, port, pathname }));
                 firstDone = true;
@@ -82,27 +85,28 @@ module.exports = async (dir, mode) => {
             console.log(`\nYou can now view ${chalk.bold("OpenCircuits")} in the browser!\n`);
 
             if (lanUrl) {
-                console.log(`  ${chalk.bold("Local:")}            ${url.format({ protocol, hostname, port: chalk.bold(port), pathname })}`);
+                console.log(`  ${chalk.bold("Local:")}            `
+                            + `${url.format({ protocol, hostname, port: chalk.bold(port), pathname })}`);
                 console.log(`  ${chalk.bold("On Your Network:")}  ${lanUrl}`);
             }
 
-            console.log(`\nNote that the development buld is not optimized!`);
+            console.log("\nNote that the development buld is not optimized!");
             console.log(`To create a production build, use ${chalk.cyan("yarn build")}\n`);
         });
 
         const server = new WebpackDevServer({
             // Explanations: https://stackoverflow.com/a/62992178
             static: {
-                directory: path.resolve(dirPath, "public"),
+                directory:  path.resolve(dirPath, "public"),
                 publicPath: [pathname],
             },
-            hot: true,
-            host: "0.0.0.0",
+            hot:   true,
+            host:  "0.0.0.0",
             port,
             proxy: {
                 "/api/**": {
-                    target: `http://${hostname}:8080`,
-                    secure: false,
+                    target:       `http://${hostname}:8080`,
+                    secure:       false,
                     changeOrigin: true,
                 },
             },
@@ -113,7 +117,7 @@ module.exports = async (dir, mode) => {
                 overlay: true,
             },
             // Allows devs to save local circuits for use in #1037
-            onBeforeSetupMiddleware: require("./customDevServer"),
+            setupMiddlewares: customDevServer,
         }, compiler);
 
         ["SIGINT", "SIGTERM"].forEach(sig => {
@@ -132,8 +136,8 @@ module.exports = async (dir, mode) => {
 
         return new Promise((resolve, reject) => {
             compiler.run((err, result) => {
-                if (err || result.compilation.errors.length > 0)
-                    reject({ err, errors: result.compilation.errors });
+                if (err || result!.compilation.errors.length > 0)
+                    reject({ err, errors: result!.compilation.errors });
                 else
                     resolve(result);
             });

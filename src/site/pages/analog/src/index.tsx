@@ -167,9 +167,9 @@ async function Init(): Promise<void> {
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
                 const files = await DevListFiles();
-                if(files.includes(DEV_CACHED_CIRCUIT_FILE))
+                if (files.includes(DEV_CACHED_CIRCUIT_FILE))
                     await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-        }
+            }
 
             ReactDOM.render(
                 <React.StrictMode>

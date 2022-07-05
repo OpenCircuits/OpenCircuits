@@ -48,9 +48,9 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
     const { showAxes, showLegend, showGrid, ...other } = props;
 
     const otherKeys = [...new Set(
-            Object.keys(other)
-                .map(k => k.split("_")[0] as `${string}.${string}`)
-        )];
+        Object.keys(other)
+            .map(k => k.split("_")[0] as `${string}.${string}`)
+    )];
 
     return (<>
         <div>

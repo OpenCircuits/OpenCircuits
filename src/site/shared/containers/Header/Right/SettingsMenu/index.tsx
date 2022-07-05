@@ -32,7 +32,8 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
     useEffect(() => {
         info.debugOptions = debugInfo;
         info.renderer.render();
-    }, [...Object.values(debugInfo)]); // Updates when any of the debugInfo values change
+    }, [info, debugInfo, debugInfo.debugCullboxes, debugInfo.debugPressableBounds,
+        debugInfo.debugSelectionBounds, debugInfo.debugNoFill]); // Updates when any of the debugInfo values change
 
     return (
         <Dropdown open={(curMenu === "settings")}

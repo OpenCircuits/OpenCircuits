@@ -1,3 +1,5 @@
+import {useCallback} from "react";
+
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
@@ -22,6 +24,8 @@ export const HeaderLeft = ({ helpers }: Props) => {
     );
     const dispatch = useSharedDispatch();
 
+    const onEnter = useCallback(() => helpers.SaveCircuitRemote(), [helpers]);
+
     return (
         <div className="header__left">
             <SideBarToggleButton />
@@ -33,7 +37,7 @@ export const HeaderLeft = ({ helpers }: Props) => {
                             placeholder="Untitled Circuit*"
                             alt="Name of project"
                             onChange={(s) => dispatch(SetCircuitName(s.target.value))}
-                            onEnter={() => helpers.SaveCircuitRemote()} />
+                            onEnter={onEnter} />
             </div>
             <div>
                 <button type="button"

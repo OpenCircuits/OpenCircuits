@@ -1,15 +1,15 @@
-const os = require("os");
-const {existsSync, rmSync} = require("fs");
-const {spawn} = require("child_process");
+import {spawn}                           from "node:child_process";
+import {existsSync, readdirSync, rmSync} from "node:fs";
+import os                                from "node:os";
 
-const ora = require("ora");
-const chalk = require("chalk");
-const prompts = require("prompts");
-const yargs = require("yargs/yargs");
+import chalk   from "chalk";
+import ora     from "ora";
+import prompts from "prompts";
+import yargs   from "yargs/yargs";
 
-const getDirs = require("./utils/getDirs");
-const copy_dir = require("./utils/copyDir");
-const startWebpack = require("./webpack");
+import CopyDir      from "./utils/copyDir.js";
+import getDirs      from "./utils/getDirs.js";
+import startWebpack from "./webpack/index.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -21,33 +21,33 @@ const DIRS = getDirs(true, false);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 
-function build_server(prod) {
-    return new Promise((resolve, reject) => {
+function BuildServer(prod: boolean) {
+    return new Promise<void>((resolve, _) => {
         // GCP requires raw go files, so no need to build server
         if (prod) {
-            copy_dir("src/server", "build")
+            CopyDir("src/server", "build")
             resolve();
             return;
         }
 
-        copy_dir("src/server/data/sql/sqlite", "build/sql/sqlite");
+        CopyDir("src/server/data/sql/sqlite", "build/sql/sqlite");
 
         const isWin = (os.platform() === "win32");
         spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {
-            shell: true, stdio: "inherit"
+            shell: true, stdio: "inherit",
         }).on("exit", () => {
             resolve();
         });
     });
 }
-async function build_dir(dir) {
+async function BuildDir(dir: string) {
     return await startWebpack(dir, "production");
 }
 
 
 // CLI
 (async () => {
-    const argv = yargs(process.argv.slice(2))
+    const argv = await yargs(process.argv.slice(2))
         .boolean("ci")
         .boolean("prod")
         .argv;
@@ -61,24 +61,29 @@ async function build_dir(dir) {
         dirs = Object.keys(DIR_MAP);
     } else if (dirs.length === 0) {
         // Prompt user for directory
-        dirs = [(await prompts({
-            type: "select",
-            name: "value",
+        const { value } = await prompts({
+            type:    "select",
+            name:    "value",
             message: "Pick a project to build",
             choices: DIRS,
-            initial: 0
-        })).value];
-        if (!dirs[0])
+            initial: 0,
+        });
+        if (!value)
             return;
+        dirs = [value];
     }
 
     // If prod, clear build directory first
-    if (prod)
-        rmSync("build", { recursive: true, force: true });
+    if (prod) {
+        readdirSync("build")
+            // Don't clear scripts directory though
+            .filter(name => (name !== "scripts"))
+            .forEach(name => rmSync(`./build/${name}`, { recursive: true, force: true }));
+    }
 
     // If manual production build, copy secrets
     if (prod && !ci && existsSync("src/secrets"))
-        copy_dir("src/secrets", "build");
+    CopyDir("src/secrets", "build");
 
     // Launch build in each directory
     for (const dir of dirs) {
@@ -95,10 +100,10 @@ async function build_dir(dir) {
 
         if (dir === "server") {
             const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
-            await build_server(prod);
+            await BuildServer(prod);
             spinner.stop();
         } else {
-            await build_dir(`src/site/pages/${dir}`);
+            await BuildDir(`src/site/pages/${dir}`);
         }
 
         console.log(`${chalk.greenBright("Done!")}`);
