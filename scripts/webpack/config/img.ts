@@ -1,12 +1,14 @@
-const webpack = require("webpack");
-const {Config} = require("./types");
+import type {Config}        from "./types";
+import type {Configuration} from "webpack";
 
 
 /**
- * @param {Config} config
- * @returns {webpack.Configuration}
+ * Creates the webpack configuration for Images.
+ *
+ * @param config The current configuration.
+ * @returns        The webpack configuration for the Image-specific rules.
  */
-module.exports = ({ }) => ({
+export default ({ }: Config): Configuration => ({
     output: {
         assetModuleFilename: "images/[hash][ext][query]", // extract assets (images and such) to and images folder in the output
     },
@@ -27,7 +29,7 @@ module.exports = ({ }) => ({
                 //         maxSize: 30 * 1024, // Set inline-size to 30kb (30 * 1024 bytes)
                 //     }
                 // }
-            }
-        ]
+            },
+        ],
     },
 });

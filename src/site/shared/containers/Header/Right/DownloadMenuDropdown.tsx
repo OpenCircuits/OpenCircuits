@@ -18,6 +18,16 @@ export const DownloadMenuDropdown = ({ helpers: { GetSerializedCircuit } }: Prop
     );
     const dispatch = useSharedDispatch();
 
+    const onDownloadClick = () => {
+        const data = GetSerializedCircuit();
+
+        // Convert to URL data
+        const file = new Blob([data], { type: "text/json" });
+        const url = URL.createObjectURL(file);
+
+        SaveFile(url, circuitName, "circuit");
+    }
+
     return (
         <Dropdown open={(curMenu === "download")}
                   btnInfo={{ title: "Download current scene", src: "img/icons/download.svg" }}
@@ -26,7 +36,7 @@ export const DownloadMenuDropdown = ({ helpers: { GetSerializedCircuit } }: Prop
             <div role="button"
                  tabIndex={0}
                  title="Download circuit locally"
-                 onClick={() => SaveFile(GetSerializedCircuit(), circuitName)}>
+                 onClick={onDownloadClick}>
                 <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
                 <span>Download</span>
             </div>

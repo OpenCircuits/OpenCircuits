@@ -102,7 +102,7 @@ export const OscilloscopeRenderer = (() => {
             // TODO: Normalize data to best unit
 
             // Find value range
-            const minX = xData[0], maxX = xData[xData.length-1];
+            const minX = xData[0], maxX = xData.at(-1)!;
             const [minVal, maxVal] = sampledData.reduce<[number, number]>(
                 ([prevMin, prevMax], cur) =>
                     cur.reduce<[number,number]>(([prevMin, prevMax], cur) => [

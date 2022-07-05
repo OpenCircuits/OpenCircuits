@@ -192,9 +192,9 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         function GroupBy<T>(amt: number) {
             return ((prev: T[][], cur: T) => [
                 ...prev.slice(0,-1),
-                ...(prev[prev.length-1].length < amt
-                    ? [[...prev[prev.length-1], cur]] // Add cur to last group
-                    : [prev[prev.length-1], [cur]]),  // Create new group with just cur
+                ...(prev.at(-1)!.length < amt
+                    ? [[...prev.at(-1)!, cur]] // Add cur to last group
+                    : [prev.at(-1)!, [cur]]),  // Create new group with just cur
             ]);
         }
 
