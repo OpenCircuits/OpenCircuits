@@ -50,7 +50,7 @@ export class Camera {
         this.zoom = startZoom;
         this.transform = new Transform(V(0,0), V(0,0), 0);
         this.dirty = true;
-        this.margin = {left: 0, right: 0, bottom: 0, top: 0};
+        this.margin = { left: 0, right: 0, bottom: 0, top: 0 };
     }
 
     /**
@@ -246,6 +246,6 @@ export class Camera {
      * @param newMargin.top    The top margin of the camera.
      */
     public setMargin(newMargin: Partial<Margin>): void{
-        this.margin = {...this.margin, ...newMargin};
+        this.margin = { ...this.margin, ...newMargin };
     }
 }

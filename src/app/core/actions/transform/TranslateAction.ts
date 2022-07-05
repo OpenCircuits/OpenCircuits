@@ -14,23 +14,23 @@ import {SnapPos} from "./SnapUtils";
 export class TranslateAction implements Action {
 
     /**
-     * An array of the selected component(s)
+     * An array of the selected component(s).
      */
     protected objs: Component[];
 
     /**
-     * An array of the starting position(s) of the selected component(s)
+     * An array of the starting position(s) of the selected component(s).
      */
     protected initialPositions: Vector[];
 
     /**
-     * An array of the final position(s) of the selected component(s)
+     * An array of the final position(s) of the selected component(s).
      */
     protected targetPositions: Vector[];
 
     /**
      * Flag that represents whether or not positions should be snapped.
-     * Necessary to resolve issue #910
+     * Necessary to resolve issue #910.
      */
     protected snap: boolean;
 
@@ -39,10 +39,10 @@ export class TranslateAction implements Action {
      * Each component in objs list has corresponding initial position and target position in those
      * respective lists.
      *
-     * @param objs Initializes the array with the selected component(s)
-     * @param initialPositions Initializes the array with the selected components' starting positions
-     * @param targetPositions Initializes the array with the selected components' final positions
-     * @param snap Sets whether or not components will snap. Defaults to true.
+     * @param objs             Initializes the array with the selected component(s).
+     * @param initialPositions Initializes the array with the selected components' starting positions.
+     * @param targetPositions  Initializes the array with the selected components' final positions.
+     * @param snap             Sets whether or not components will snap. Defaults to true.
      */
     public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], snap = true) {
         this.objs = objs;
@@ -55,7 +55,7 @@ export class TranslateAction implements Action {
     /**
      * Moves object from the initial to target position, and snaps the wires accordingly.
      *
-     * @returns an Action where the translation is executed
+     * @returns An Action where the translation is executed.
      */
     public execute(): Action {
         this.objs.forEach((o, i) => o.setPos(this.targetPositions[i]));
@@ -70,7 +70,7 @@ export class TranslateAction implements Action {
     /**
      * Reverts a previous translation by moving component back to initial position.
      *
-     * @returns an Action where the translation is undone
+     * @returns An Action where the translation is undone.
      */
     public undo(): Action {
         this.objs.forEach((o, i) => o.setPos(this.initialPositions[i]));
@@ -87,10 +87,13 @@ export class TranslateAction implements Action {
     }
 
     public getCustomInfo(): string[] {
-        return Array.from(
-            this.objs, (obj, i) =>
-                `${obj.getName()}: moved from (${this.initialPositions[i].x.toFixed(2)}, ${this.initialPositions[i].y.toFixed(2)})
-                                            to (${this.targetPositions[i].x.toFixed(2)}, ${this.targetPositions[i].y.toFixed(2)})`
-        )
+        return [...this.objs].map(
+            (obj, i) => {
+                const { x: ix, y: iy } = this.initialPositions[i];
+                const { x: tx, y: ty } = this.targetPositions[i];
+                return `${obj.getName()}: moved from (${ix.toFixed(2)}, ${iy.toFixed(2)})
+                                                  to (${tx.toFixed(2)}, ${ty.toFixed(2)})`;
+            }
+        );
     }
 }

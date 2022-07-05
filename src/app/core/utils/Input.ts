@@ -158,7 +158,7 @@ export class Input {
      */
     private hookupTouchEvents(): void {
         const getTouchPositions = (touches: TouchList): Vector[] => {
-            return Array.from(touches).map((t) => V(t.clientX, t.clientY));
+            return [...touches].map((t) => V(t.clientX, t.clientY));
         };
 
         // Touch screen events
@@ -183,7 +183,7 @@ export class Input {
      */
     private setupHammer(): void {
         // Pinch to zoom
-        const touchManager = new Hammer.Manager(this.canvas, {recognizers: [], domEvents: true});
+        const touchManager = new Hammer.Manager(this.canvas, { recognizers: [], domEvents: true });
         let lastScale = 1;
 
         touchManager.add(new Hammer.Pinch());
@@ -369,7 +369,7 @@ export class Input {
         this.keysDown.set(key, true);
 
         // call each listener
-        this.callListeners({type: "keydown", key});
+        this.callListeners({ type: "keydown", key });
     }
     /**
      * Sets the given key as up, and calls each Listener on Event "keyup", key.
@@ -380,7 +380,7 @@ export class Input {
         this.keysDown.set(key, false);
 
         // call each listener
-        this.callListeners({type: "keyup", key});
+        this.callListeners({ type: "keyup", key });
     }
 
     /**
@@ -397,7 +397,7 @@ export class Input {
         }
 
         // call each listener
-        this.callListeners({type: "click", button});
+        this.callListeners({ type: "click", button });
     }
     /**
      * Calls each Listener on Event "dbclick", button.
@@ -407,7 +407,7 @@ export class Input {
     protected onDoubleClick(button: number): void {
 
         // call each listener
-        this.callListeners({type: "dblclick", button});
+        this.callListeners({ type: "dblclick", button });
     }
 
     /**
@@ -420,7 +420,7 @@ export class Input {
         // calculate zoom factor
         let zoomFactor = 0.95;
         if (delta >= 0)
-            zoomFactor = 1.0 / zoomFactor;
+            zoomFactor = 1 / zoomFactor;
 
         this.callListeners({
             type:   "zoom",
@@ -453,7 +453,7 @@ export class Input {
         this.mousePos = V(this.mouseDownPos);
         this.mouseDownButton = button;
 
-        this.callListeners({type: "mousedown", button});
+        this.callListeners({ type: "mousedown", button });
     }
     /**
      * Triggered on mouse movement, calculates new mouse position,
@@ -481,7 +481,7 @@ export class Input {
                 button: this.mouseDownButton,
             });
         }
-        this.callListeners({type: "mousemove"});
+        this.callListeners({ type: "mousemove" });
     }
     /**
      * Calls each Listener on Event "mouseup", button
@@ -494,14 +494,14 @@ export class Input {
         this.mouseDown = false;
         this.mouseDownButton = -1;
 
-        this.callListeners({type: "mouseup", button});
+        this.callListeners({ type: "mouseup", button });
     }
 
     /**
      * Calls each Listener on Event "mouseenter".
      */
     protected onMouseEnter(): void {
-        this.callListeners({type: "mouseenter"});
+        this.callListeners({ type: "mouseenter" });
     }
     /**
      * Calls each Listener on Event "mouseleave".
@@ -511,7 +511,7 @@ export class Input {
         this.touchCount = 0;
         this.mouseDown = false;
 
-        this.callListeners({type: "mouseleave"});
+        this.callListeners({ type: "mouseleave" });
 
         // call mouse up as well so that
         //  up events get called when the

@@ -168,7 +168,7 @@ export const useBaseModule = <V extends Types>({
         }
 
         // Submit final valid action
-        onSubmit?.({ isFinal: true, isValid: true, action: new GroupAction([
+        onSubmit?.({ isFinal: true, isValid: true, action:  new GroupAction([
             getAction(finalVal),
             ...(modifierAction ? [modifierAction] : []),
         ]).execute() });

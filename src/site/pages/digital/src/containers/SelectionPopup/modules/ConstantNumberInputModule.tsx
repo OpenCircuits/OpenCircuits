@@ -1,11 +1,14 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {GroupAction} from "core/actions/GroupAction";
 
-import {ConstantNumber} from "digital/models/ioobjects";
+import {GroupAction} from "core/actions/GroupAction";
 
 import {ConstantNumberChangeAction} from "digital/actions/ConstantNumberChangeAction"
 
+import {ConstantNumber} from "digital/models/ioobjects";
+
+
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 
 
@@ -24,12 +27,13 @@ export const ConstantNumberInputModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Input Number
         <label>
             <NumberModuleInputField
                 kind="int" min={0} max={15} step={1}
                 props={props.inputNum}
+                alt="Constant number input (0-15)"
                 getAction={(newInput) =>
                     new GroupAction(
                         cs.map(o => new ConstantNumberChangeAction(o, newInput)),
@@ -39,8 +43,7 @@ export const ConstantNumberInputModule = ({ info }: Props) => {
                     renderer.render();
                     if (info.isValid && info.isFinal)
                         history.add(info.action);
-                }}
-                alt="Constant number input (0-15)" />
+                }} />
         </label>
-    </div>
+    </div>);
 }

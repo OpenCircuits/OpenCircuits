@@ -1,9 +1,8 @@
-import "jest";
-
 import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 
+import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
 import {Setup}      from "test/helpers/Setup";
 
@@ -17,8 +16,8 @@ import {ANDGate, LED, Switch} from "digital/models/ioobjects";
 
 
 describe("Tool Manager", () => {
-    const {designer, input, toolManager} = Setup();
-    const {Place, AutoPlace} = GetHelpers(designer);
+    const { designer, input, toolManager } = Setup();
+    const { Place, AutoPlace } = GetHelpers(designer);
 
     const defaultTool = toolManager.getCurrentTool() as DefaultTool;
 
@@ -107,6 +106,8 @@ describe("Tool Manager", () => {
         input.click(s2.getPos());
         expect(tool()).toBe(defaultTool);
 
-        expect(l.isOn());
+        expect(s1).toBeConnectedTo(l);
+        expect(s2).toBeConnectedTo(l);
+        expect(l.isOn()).toBeTruthy();
     });
 });

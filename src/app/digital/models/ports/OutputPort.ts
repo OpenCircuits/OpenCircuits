@@ -72,7 +72,7 @@ export class OutputPort extends Port {
      * @returns A shallow copy of the all the connections.
      */
     public getConnections(): DigitalWire[] {
-        return this.connections.slice(); // Shallow copy array
+        return [...this.connections]; // Shallow copy array
     }
 
     /**

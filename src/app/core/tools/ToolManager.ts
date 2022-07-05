@@ -53,7 +53,7 @@ export class ToolManager {
     }
 
     public hasTool(tool: Tool): boolean {
-        return this.tools.some(t => t === tool);
+        return this.tools.includes(tool);
     }
 
     public getCurrentTool(): Tool | DefaultTool {

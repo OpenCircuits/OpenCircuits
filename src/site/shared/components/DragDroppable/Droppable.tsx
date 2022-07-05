@@ -9,22 +9,27 @@ type Props = {
     children: React.ReactElement;
     onDrop: (pos: Vector, ...data: any[]) => void;
 };
-export const Droppable = React.forwardRef(<T extends HTMLElement>({ children, onDrop }: Props, ref: React.RefObject<T>) => {
-    const actualRef = ref ?? useRef<T>();
+export const Droppable = React.forwardRef(
+    <T extends HTMLElement>({ children, onDrop }: Props, forwardedRed: React.RefObject<T>
+) => {
+    const defaultRef = useRef<T>();
+    const ref = forwardedRed ?? defaultRef;
 
     useEffect(() => {
-        if (!actualRef.current)
+        const { current } = ref;
+        if (!current)
             throw new Error("Droppable.useEffect failed: actualRef.current is null");
-        DragDropHandlers.add(actualRef.current, onDrop);
+        DragDropHandlers.add(current, onDrop);
         return () => {
-            DragDropHandlers.remove(actualRef.current!);
+            DragDropHandlers.remove(current);
         }
-    }, [actualRef, onDrop]);
+    }, [ref, onDrop]);
 
-    return <>
+    return (<>
         {React.cloneElement(children, {
-            ref: actualRef,
-            onDragOver: (ev: React.DragEvent<HTMLElement>) => ev.preventDefault()
+            ref:        ref,
+            onDragOver: (ev: React.DragEvent<HTMLElement>) => ev.preventDefault(),
         })}
-    </>
+    </>)
 });
+Droppable.displayName = "Droppable";

@@ -23,6 +23,9 @@ module.exports = {
     "rules": {
         "jest/prefer-comparison-matcher": "error",
         "jest/prefer-equality-matcher": "error",
+        "jest/expect-expect": ["warn", {
+            "assertFunctionNames": ["expect**"],
+        }],
         "jest/prefer-expect-resolves": "error",
         "jest/prefer-hooks-on-top": "error",
         "jest/prefer-strict-equal": "off",

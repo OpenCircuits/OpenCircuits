@@ -13,13 +13,13 @@ import {EventHandler} from "../EventHandler";
 
 
 export const SnipWirePortsHandler: EventHandler = ({
-    conditions: (event: Event, {selections}: CircuitInfo) =>
+    conditions: (event: Event, { selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "x" &&
          selections.amount() > 0 &&
          selections.all(o => isNode(o))),
 
-    getResponse: ({history, designer, selections}: CircuitInfo) => {
+    getResponse: ({ history, designer, selections }: CircuitInfo) => {
         const ports = selections.get().filter(o => isNode(o)) as Node[];
 
         // Deselect the ports and then snip them

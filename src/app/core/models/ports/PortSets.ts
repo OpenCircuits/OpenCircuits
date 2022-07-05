@@ -80,7 +80,7 @@ export class PortSet<T extends Port> {
     }
 
     public getPorts(): T[] {
-        return this.currentPorts.slice();
+        return [...this.currentPorts];
     }
 
     public getPositioner(): Positioner<T> {
@@ -100,7 +100,7 @@ export class PortSet<T extends Port> {
     }
 
     public get last(): T {
-        return this.currentPorts[this.currentPorts.length - 1];
+        return this.currentPorts.at(-1)!;
     }
 
     public isEmpty(): boolean {

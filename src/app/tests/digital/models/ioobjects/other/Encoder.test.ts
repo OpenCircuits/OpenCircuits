@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -12,7 +10,7 @@ import {Encoder} from "digital/models/ioobjects/other/Encoder";
 describe("Encoder", () => {
     describe("Encoder", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [i1,i2,i3,i4], [o1,o2]] = AutoPlace(new Encoder());
 
@@ -56,7 +54,7 @@ describe("Encoder", () => {
 
     describe("Decoder", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [i1,i2], [o1,o2,o3,o4]] = AutoPlace(new Decoder());
 

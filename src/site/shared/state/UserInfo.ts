@@ -52,5 +52,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type UserInfoState = typeof initialState;
-export const {SetAutoSave, Logout, _Login, _LoadCircuitsStart, _LoadCircuitsFinish} = actions;
+export const { SetAutoSave, Logout, _Login, _LoadCircuitsStart, _LoadCircuitsFinish } = actions;
 export const userInfoReducer = reducer;

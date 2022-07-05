@@ -51,11 +51,9 @@ export class AnalogSim {
         this.plotIDs = plotIDPtrs.map(ptr => this.lib.get_array(ptr, { type: "char" }));
         this.curPlotID = this.lib.get_array(this.lib.get_cur_plot(), { type: "char" });
         { // Get vec IDs
-            this.vecIDs = plotIDPtrs.reduce((prev, plotIDPtr, i) => ({
-                ...prev,
-                [this.plotIDs[i]]:
-                    this.lib.get_array(this.lib.get_vector_ids(plotIDPtr), { type: "string" }),
-            }), {});
+            this.vecIDs = Object.fromEntries(plotIDPtrs.map(( plotIDPtr, i) =>
+                [this.plotIDs[i], this.lib.get_array(this.lib.get_vector_ids(plotIDPtr), { type: "string" })]
+            ));
         }
         { // Get vec data
             const allIDs = this.plotIDs.flatMap(plotID => this.vecIDs[plotID].map(id => `${plotID}.${id}`));

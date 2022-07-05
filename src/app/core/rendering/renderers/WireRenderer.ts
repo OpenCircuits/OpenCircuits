@@ -30,7 +30,7 @@ function ColorToHex(col: Color): string {
  */
 export const WireRenderer = (() => {
     return {
-        render(renderer: Renderer, {camera, selections}: CircuitInfo, wire: Wire): void {
+        render(renderer: Renderer, { camera, selections }: CircuitInfo, wire: Wire): void {
             if (!camera.cull(wire.getCullBox()))
                 return;
 

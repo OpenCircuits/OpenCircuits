@@ -38,19 +38,19 @@ export class DigitalObjectSet extends IOObjectSet {
     }
 
     public getInputs(): DigitalComponent[] {
-        return this.inputs.slice(); // Shallow Copy
+        return [...this.inputs]; // Shallow Copy
     }
 
     public getOutputs(): DigitalComponent[] {
-        return this.outputs.slice(); // Shallow Copy
+        return [...this.outputs]; // Shallow Copy
     }
 
     public getOthers(): DigitalComponent[] {
-        return this.others.slice(); // Shallow Copy
+        return [...this.others]; // Shallow Copy
     }
 
     public getWires(): DigitalWire[] {
-        return Array.from(this.wires) as DigitalWire[];
+        return [...this.wires] as DigitalWire[];
     }
 
     public getComponents(): DigitalComponent[] {

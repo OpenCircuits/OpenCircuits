@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {IOObject} from "core/models";
@@ -17,7 +15,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
 describe("Simplifications", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers(designer);
+    const { Place, Connect } = GetHelpers(designer);
 
     describe("Create Negation Gates", () => {
         describe("!(a&b)", () => {
@@ -31,10 +29,10 @@ describe("Simplifications", () => {
                 not,
             ];
 
-            objects.push(Connect(a, and)[0].getWire());
-            objects.push(Connect(b, and)[0].getWire());
-            objects.push(Connect(and, not)[0].getWire());
-            objects.push(Connect(not, o)[0].getWire());
+            objects.push(Connect(a, and)[0].getWire(),
+                         Connect(b, and)[0].getWire(),
+                         Connect(and, not)[0].getWire(),
+                         Connect(not, o)[0].getWire());
 
             const circuit = DigitalObjectSet.From(objects);
 
@@ -85,10 +83,10 @@ describe("Simplifications", () => {
                 not,
             ];
 
-            objects.push(Connect(a, or)[0].getWire());
-            objects.push(Connect(b, or)[0].getWire());
-            objects.push(Connect(or, not)[0].getWire());
-            objects.push(Connect(not, o)[0].getWire());
+            objects.push(Connect(a, or)[0].getWire(),
+                         Connect(b, or)[0].getWire(),
+                         Connect(or, not)[0].getWire(),
+                         Connect(not, o)[0].getWire());
 
             const circuit = DigitalObjectSet.From(objects);
 
@@ -139,10 +137,10 @@ describe("Simplifications", () => {
                 not,
             ];
 
-            objects.push(Connect(a, xor)[0].getWire());
-            objects.push(Connect(b, xor)[0].getWire());
-            objects.push(Connect(xor, not)[0].getWire());
-            objects.push(Connect(not, o)[0].getWire());
+            objects.push(Connect(a, xor)[0].getWire(),
+                         Connect(b, xor)[0].getWire(),
+                         Connect(xor, not)[0].getWire(),
+                         Connect(not, o)[0].getWire());
 
             const circuit = DigitalObjectSet.From(objects);
 

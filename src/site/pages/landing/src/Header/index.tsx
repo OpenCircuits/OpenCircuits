@@ -16,6 +16,6 @@ export const Header = () => (
             <a className="p-2 text-dark disabled" href="">About</a>
             <a className="btn btn-outline-primary ms-3 disabled" href="">Sign up</a>
         </nav>
-        <a className="ms-auto" href={GITHUB_URL} target="_blank"><img src="img/github.svg"/></a>
+        <a className="ms-auto" href={GITHUB_URL} target="_blank" rel="noreferrer"><img src="img/github.svg" /></a>
     </div>
 );

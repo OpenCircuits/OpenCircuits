@@ -35,10 +35,7 @@ export class Curve implements Shape {
      * @param c2 Optional control point of curve.
      */
     public constructor(p1: Vector | BezierCurve, p2?: Vector, c1?: Vector, c2?: Vector) {
-        if (p1 instanceof BezierCurve)
-            this.curve = p1;
-        else
-            this.curve = new BezierCurve(p1, p2, c1, c2);
+        this.curve = p1 instanceof BezierCurve ? p1 : new BezierCurve(p1, p2, c1, c2);
     }
 
     /**

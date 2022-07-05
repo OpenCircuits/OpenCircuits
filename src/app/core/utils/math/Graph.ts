@@ -84,7 +84,7 @@ export class Graph<V, E> {
 
     public getEndNodes(): V[] {
         // Get nodes that are sources/sinks
-        return this.getSources().concat(this.getSinks());
+        return [...this.getSources(), ...this.getSinks()];
     }
 
     public size(): number {
@@ -127,7 +127,7 @@ export class Graph<V, E> {
         // Performs a bfs search to find the depth of each node
         // If max is true then the depth is the furthest depth (and thus largest number)
         //  that the node can be found at
-        while (currentLayer.length !== 0) {
+        while (currentLayer.length > 0) {
             for (const node of currentLayer) {
                 const nextDepth = nodeToNumber.get(node)! + 1;
                 for (const next of this.list.get(node)!)  {
@@ -143,9 +143,9 @@ export class Graph<V, E> {
         }
 
         // Convert to an array of arrays where each index indicates the depth of that node
-        const ret: V[][] = Array.from({length: deepest+1}, _ => Array(0));
+        const ret: V[][] = Array.from({ length: deepest+1 }, _ => new Array(0));
 
-        Array.from(nodeToNumber.entries()).forEach(([node, depth]) =>
+        [...nodeToNumber.entries()].forEach(([node, depth]) =>
             ret[depth].push(node)
         );
 

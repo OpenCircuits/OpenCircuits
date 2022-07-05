@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-standalone-expect */
 import {Deserialize} from "serialeazy";
 
 import "test/helpers/Extensions";

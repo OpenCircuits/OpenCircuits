@@ -1,14 +1,16 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {GroupAction} from "core/actions/GroupAction";
 
-import {Wire} from "core/models/Wire";
 import {isNode} from "core/models/Node";
+import {Wire}   from "core/models/Wire";
 
 import {ColorChangeAction} from "digital/actions/ColorChangeAction";
 
-import {Label, LED} from "digital/models/ioobjects";
+import {LED, Label} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {ColorModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 
 
@@ -29,11 +31,12 @@ export const ColorModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Color
         <label>
             <ColorModuleInputField
                 props={props.color}
+                alt="Color of object(s)"
                 getAction={(newCol) =>
                     new GroupAction(
                         cs.filter(o => !isNode(o)).map(o => new ColorChangeAction(o, newCol)),
@@ -43,8 +46,7 @@ export const ColorModule = ({ info }: Props) => {
                     renderer.render();
                     if (info.isValid && info.isFinal)
                         history.add(info.action);
-                }}
-                alt="Color of object(s)" />
+                }} />
         </label>
-    </div>
+    </div>);
 }
