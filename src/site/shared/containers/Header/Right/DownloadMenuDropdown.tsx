@@ -23,11 +23,17 @@ export const DownloadMenuDropdown = ({ helpers: { GetSerializedCircuit } }: Prop
                   btnInfo={{ title: "Download current scene", src: "img/icons/download.svg" }}
                   onClick={() => dispatch(OpenHeaderMenu("download"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
-            <div title="Download circuit locally" onClick={() => SaveFile(GetSerializedCircuit(), circuitName)}>
+            <div role="button"
+                 tabIndex={0}
+                 title="Download circuit locally"
+                 onClick={() => SaveFile(GetSerializedCircuit(), circuitName)}>
                 <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
                 <span>Download</span>
             </div>
-            <div title="Export as Image" onClick={() => {
+            <div title="Export as Image"
+                 role="button"
+                 tabIndex={0}
+                 onClick={() => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("image_exporter"));
                 }}>

@@ -45,6 +45,8 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
             {extraUtilities.map(utility => (
                 <div key={utility.popupName}
                      className={`${isLocked ? "disabled" : ""}`}
+                     role="button"
+                     tabIndex={0}
                      onClick={() => {
                      if (isLocked)
                         return;
@@ -59,7 +61,9 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
         (<>
             <h1>Development</h1>
             <hr />
-            <div onClick={async () => {
+            <div role="button"
+                 tabIndex={0}
+                 onClick={async () => {
                     dispatch(CloseHeaderMenus());
                     await DevCreateFile(helpers.GetSerializedCircuit(), DEV_CACHED_CIRCUIT_FILE);
                     setEnableReload(true);
@@ -68,7 +72,9 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
                 <span>Cache Circuit</span>
             </div>
             {enableReload &&
-                (<div onClick={() => {
+                (<div role="button"
+                      tabIndex={0}
+                      onClick={() => {
                         dispatch(CloseHeaderMenus());
                         helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
                     }}>
