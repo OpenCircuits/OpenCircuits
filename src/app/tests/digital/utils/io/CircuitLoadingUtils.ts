@@ -27,7 +27,7 @@ declare global {
 }
 
 expect.extend({
-    toMatchCircuit(received: any, expected: CircuitDesigner) {
+    toMatchCircuit(received: unknown, expected: CircuitDesigner) {
         if (!(received instanceof CircuitDesigner)) {
             return {
                 message: () => "expected type of CircuitDesigner",

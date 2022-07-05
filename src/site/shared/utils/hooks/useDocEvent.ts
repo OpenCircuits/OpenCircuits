@@ -3,7 +3,7 @@ import React, {useEffect} from "react";
 
 export const useDocEvent = <K extends keyof DocumentEventMap>(
     event: K,
-    listener: (this: Document, ev: DocumentEventMap[K]) => any,
+    listener: (this: Document, ev: DocumentEventMap[K]) => void,
     deps?: React.DependencyList,
     options?: boolean | AddEventListenerOptions,
 ) => {

@@ -1,5 +1,7 @@
 
-export type ActionType = {readonly type: string};
+export type ActionType = { readonly type: string };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionCreatorType = ((...args: any[]) => ActionType);
 
 
@@ -46,6 +48,7 @@ export function CreateState<X extends ActionCreatorType = never>() {
             const type = action.type;
             if (type in reducers)
                 /* i cannot figure out the correct cast here  vvvv  for the life of me */
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return reducers[type as GetTypes<A,X>]!(state, action as any);
             return state;
         }] as const;
