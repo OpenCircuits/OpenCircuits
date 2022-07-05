@@ -95,14 +95,14 @@ export const OscilloscopeRenderer = (() => {
             const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
                 const samples = Math.min(data.length, o.getProp("samples") as number);
 
-                return Array(samples).fill(0)
+                return new Array(samples).fill(0)
                     .map((_, i) => data[Math.floor(i * data.length / samples)]);
             });
 
             // TODO: Normalize data to best unit
 
             // Find value range
-            const minX = xData[0], maxX = xData[xData.length-1];
+            const minX = xData[0], maxX = xData.at(-1)!;
             const [minVal, maxVal] = sampledData.reduce<[number, number]>(
                 ([prevMin, prevMax], cur) =>
                     cur.reduce<[number,number]>(([prevMin, prevMax], cur) => [

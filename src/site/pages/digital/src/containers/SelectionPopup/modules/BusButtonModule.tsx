@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 
-import {OutputPort, InputPort} from "digital/models";
+import {InputPort, OutputPort} from "digital/models";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
@@ -31,12 +31,14 @@ export const BusButtonModule = ({ info }: Props) => {
     if (iports.length !== oports.length)
         return null
 
-    return <button
-        title="Create a bus between selected ports"
-        onClick={() => {
-            history.add(CreateBusAction(oports, iports).execute());
-            renderer.render();
-        }}>
-        Bus
-    </button>
+    return (
+        <button type="button"
+                title="Create a bus between selected ports"
+                onClick={() => {
+                    history.add(CreateBusAction(oports, iports).execute());
+                    renderer.render();
+                }}>
+            Bus
+        </button>
+    );
 }

@@ -1,5 +1,3 @@
-import "jest";
-
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";

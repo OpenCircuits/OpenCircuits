@@ -24,6 +24,6 @@ const [initialState, actions, reducer] = CreateState()(
 
 
 export type DebugInfoState = typeof initialState;
-export const {ToggleDebugCullboxes, ToggleDebugPressableBounds,
-              ToggleDebugSelectionBounds, ToggleDebugNoFill} = actions;
+export const { ToggleDebugCullboxes, ToggleDebugPressableBounds,
+              ToggleDebugSelectionBounds, ToggleDebugNoFill } = actions;
 export const debugInfoReducer = reducer;

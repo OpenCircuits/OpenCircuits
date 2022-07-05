@@ -106,7 +106,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
         if (token.type === "(")
             return generateInputTreeCore(tokens, ops, nextOpNum, index);
         if (token.type === "input")
-            return {index: index+1, tree: {kind: "leaf", ident: token.name}};
+            return { index: index+1, tree: { kind: "leaf", ident: token.name } };
         throw new Error(`Missing Left Operand: "${ops[token.type]}"`);
     }
 
@@ -132,7 +132,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
     if (currentOp === "!" && rightToken.type === "!") { // This case applies when there are two !'s in a row
         rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
     } else if (currentOp === "!" && rightToken.type === "input") { // This case would apply when an input follows a "!"
-        rightRet = {index: index+1, tree: {kind: "leaf", ident: rightToken.name}};
+        rightRet = { index: index+1, tree: { kind: "leaf", ident: rightToken.name } };
     } else if (currentOp === "(") {
         if (index >= tokens.length)
             throw new Error(`Encountered Unmatched "${ops["("]}"`);
@@ -160,7 +160,7 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
             tree.isNot = true;
         }
         else {
-            tree = {kind: "unop", type: "!", child: rightRet.tree};
+            tree = { kind: "unop", type: "!", child: rightRet.tree };
         }
     }
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
@@ -175,9 +175,9 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
 
         childrenArray = generateNestedTrees(childrenArray, currentOp);
 
-        tree = {kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren};
+        tree = { kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren };
     }
-    return {index: index, tree: tree!};
+    return { index: index, tree: tree! };
 
 }
 

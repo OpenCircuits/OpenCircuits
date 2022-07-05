@@ -15,7 +15,7 @@ export const FitToScreenHandler: EventHandler = ({
     conditions: (event: Event, {}: CircuitInfo) =>
         (event.type === "keydown" && event.key === "f"),
 
-    getResponse: ({camera, history, designer, selections}: CircuitInfo) => {
+    getResponse: ({ camera, history, designer, selections }: CircuitInfo) => {
         // Fit to selections, if any;
         //  otherwise fit all CullableObjects
         const objs = (selections.amount() === 0 ?

@@ -52,7 +52,16 @@ module.exports = {
                 "requireLast": false
             }
         }],
-        "@typescript-eslint/comma-dangle": ["error", "always-multiline"],
+        "@typescript-eslint/comma-dangle": ["error", {
+            "arrays": "always-multiline",
+            "objects": "always-multiline",
+            "imports": "always-multiline",
+            "exports": "always-multiline",
+            "functions": "ignore",
+            "enums": "always-multiline",
+            "generics": "ignore",
+            "tuples": "always-multiline",
+        }],
         "@typescript-eslint/no-angle-bracket-type-assertion": "off",
         "@typescript-eslint/no-array-constructor": "error",
         "@typescript-eslint/no-empty-function": "off",
@@ -68,8 +77,10 @@ module.exports = {
         "@typescript-eslint/triple-slash-reference": "error",
         "@typescript-eslint/no-unused-vars": ["error", {
             "argsIgnorePattern": "_",
+            "varsIgnorePattern": "_",
+            "caughtErrorsIgnorePattern": "_",
             "args": "after-used",
-            "ignoreRestSiblings": false
+            "ignoreRestSiblings": false,
         }],
         "@typescript-eslint/no-use-before-define": ["off"],
         "@typescript-eslint/no-var-requires": "error",
@@ -155,6 +166,24 @@ module.exports = {
                 ],
                 "format": null,
                 "modifiers": ["requiresQuotes"]
+            },
+
+            // Act as ignores for client_id and no_auth keys
+            {
+                "selector": "objectLiteralProperty",
+                "format": null,
+                "filter": {
+                    "regex": "^(client_id)$",
+                    "match": true,
+                }
+            },
+            {
+                "selector": "objectLiteralMethod",
+                "format": null,
+                "filter": {
+                    "regex": "^(no_auth)$",
+                    "match": true,
+                }
             },
         ],
 

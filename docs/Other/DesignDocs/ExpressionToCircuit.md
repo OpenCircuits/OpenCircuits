@@ -16,7 +16,7 @@ import Timeline from './_timeline';
 
 
 # *Logical Expression to Circuit* Design Doc
-#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Leon Montealegre](https://github.com/LeonMontealegre) (Last updated *December 11, 2020*)
+#### *[Trevor Crystal](https://github.com/TGCrystal)*, *[Leon Montealegre](https://github.com/LeonMontealegre)* (Last updated *December 11, 2020*)
 
 
 <details>

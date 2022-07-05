@@ -1,4 +1,5 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {LabelTextColorChangeAction} from "digital/actions/LabelTextColorChangeAction";
@@ -6,6 +7,7 @@ import {LabelTextColorChangeAction} from "digital/actions/LabelTextColorChangeAc
 import {Label} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {ColorModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 
 
@@ -24,11 +26,12 @@ export const TextColorModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Text Color
         <label>
             <ColorModuleInputField
                 props={props.color}
+                alt="Text color of object(s)"
                 getAction={(newCol) =>
                     new GroupAction(
                         cs.map(o => new LabelTextColorChangeAction(o, newCol)),
@@ -38,8 +41,7 @@ export const TextColorModule = ({ info }: Props) => {
                     renderer.render();
                     if (info.isValid && info.isFinal)
                         history.add(info.action);
-                }}
-                alt="Text color of object(s)" />
+                }} />
         </label>
-    </div>
+    </div>);
 }

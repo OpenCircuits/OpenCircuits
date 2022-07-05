@@ -115,7 +115,7 @@ function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], ex
 // TODO: Refactor this to a GroupAction factory once there is a better (and Action) algorithm to arrange the circuit
 export function Generate(info: DigitalCircuitInfo, expression: string,
                          userOptions: Partial<ExprToCirGeneratorOptions>) {
-    const options = {...defaultOptions, ...userOptions};
+    const options = { ...defaultOptions, ...userOptions };
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
     const ops = (options.format === "custom")
                 ? (options.ops)
@@ -138,9 +138,9 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     let circuit = new DigitalObjectSet();
     try {
         circuit = ExpressionToCircuit(inputMap, expression, o, ops);
-    } catch (err) {
+    } catch (e) {
         action.undo(); // Undo any actions that have been done so far
-        throw err;
+        throw e;
     }
 
     action.add(new AddGroupAction(info.designer, circuit).execute());

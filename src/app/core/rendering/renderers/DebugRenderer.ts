@@ -18,14 +18,14 @@ import {DEBUG_CULLBOX_STYLE,
 export const DebugRenderer = (() => {
     return {
         render(renderer: Renderer, info: CircuitInfo): void {
-            const {camera, designer} = info;
+            const { camera, designer } = info;
 
             const objects = designer.getObjects();
             const wires = designer.getWires();
 
 
             if (info.debugOptions.debugCullboxes) {
-                const cullboxes = objects.map((c) => c.getCullBox()).concat(wires.map((w) => w.getCullBox()));
+                const cullboxes = [...objects, ...wires].map((c) => c.getCullBox());
                 renderer.save();
                 for (const cullBox of cullboxes) {
                     renderer.transform(camera, cullBox);

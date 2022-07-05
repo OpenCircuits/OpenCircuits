@@ -7,11 +7,11 @@ import {EventHandler} from "../EventHandler";
 
 
 export const DeselectAllHandler: EventHandler = ({
-    conditions: (event: Event, {selections}: CircuitInfo) =>
+    conditions: (event: Event, { selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "Escape" &&
          selections.amount() > 0),
 
-    getResponse: ({history, selections}: CircuitInfo) =>
+    getResponse: ({ history, selections }: CircuitInfo) =>
         history.add(CreateDeselectAllAction(selections).execute()),
 });

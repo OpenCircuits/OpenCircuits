@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -11,7 +9,7 @@ import {ORGate} from "digital/models/ioobjects/gates/ORGate";
 describe("ORGate", () => {
     describe("ORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a, b], [o]] = AutoPlace(new ORGate());
 
@@ -46,7 +44,7 @@ describe("ORGate", () => {
 
     describe("NORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
         const [, [a, b], [o]] = AutoPlace(new ORGate(true));
 

@@ -17,13 +17,13 @@ import {EventHandler} from "../EventHandler";
 
 
 export const DuplicateHandler: EventHandler = ({
-    conditions: (event: Event, {input, selections}: CircuitInfo) =>
+    conditions: (event: Event, { input, selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "d" &&
          input.isModifierKeyDown() &&
          selections.amount() > 0),
 
-    getResponse: ({history, designer, selections}: CircuitInfo) => {
+    getResponse: ({ history, designer, selections }: CircuitInfo) => {
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
 
         const copyGroupAction = new CopyGroupAction(designer, objs);

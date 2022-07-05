@@ -1,13 +1,18 @@
-const webpack = require("webpack");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const {Config} = require("./types");
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+
+import type {Config}        from "./types";
+import type {Configuration} from "webpack";
 
 
 /**
- * @param {Config} config
- * @returns {webpack.Configuration}
+ * Creates the webpack configuration for CSS.
+ *
+ * @param config            The current configuration.
+ * @param config.isProd     Indicates whether or not this config is for prod.
+ * @param config.publicPath The public path.
+ * @returns                   The webpack configuration for the CSS-specific rules.
  */
-module.exports = ({ isProd, publicPath }) => ({
+export default ({ isProd, publicPath }: Config): Configuration => ({
     module: {
         rules: [
             {
@@ -21,20 +26,20 @@ module.exports = ({ isProd, publicPath }) => ({
                 //  then shoots it into mini-css-extract-plugin to extract it out of the bundle and into a separate file
                 use: [
                     {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: { publicPath, },
+                        loader:  MiniCssExtractPlugin.loader,
+                        options: { publicPath },
                     },
                     {
-                        loader: "css-loader",
+                        loader:  "css-loader",
                         options: {
                             importLoaders: 2,
-                            modules: {
+                            modules:       {
                                 mode: "icss",
                             },
                         },
                     },
                     {
-                        loader: "postcss-loader",
+                        loader:  "postcss-loader",
                         options: {
                             postcssOptions: {
                                 plugins: [
@@ -44,15 +49,15 @@ module.exports = ({ isProd, publicPath }) => ({
                         },
                     },
                     "sass-loader",
-                ]
-            }
-        ]
+                ],
+            },
+        ],
     },
 
     plugins: [
         new MiniCssExtractPlugin(isProd ? {
             // Extract the css to /static/css/
-            filename: "static/css/[name].[contenthash:8].css",
+            filename:      "static/css/[name].[contenthash:8].css",
             chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
         } : undefined),
     ],

@@ -1,10 +1,9 @@
-import React, {createRef} from "react";
-import ReactDOM from "react-dom";
-import ReactGA from "react-ga";
-
-import {createStore, applyMiddleware} from "redux";
-import thunk, {ThunkMiddleware} from "redux-thunk";
-import {Provider} from "react-redux";
+import React, {createRef}             from "react";
+import ReactDOM                       from "react-dom";
+import ReactGA                        from "react-ga";
+import {Provider}                     from "react-redux";
+import {applyMiddleware, createStore} from "redux";
+import thunk, {ThunkMiddleware}       from "redux-thunk";
 
 import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
@@ -13,56 +12,54 @@ import {Images} from "core/utils/Images";
 import {InteractionTool}  from "core/tools/InteractionTool";
 import {PanTool}          from "core/tools/PanTool";
 import {RotateTool}       from "core/tools/RotateTool";
+import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
+import {SplitWireTool}    from "core/tools/SplitWireTool";
 import {TranslateTool}    from "core/tools/TranslateTool";
 import {WiringTool}       from "core/tools/WiringTool";
-import {SplitWireTool}    from "core/tools/SplitWireTool";
-import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
 
-import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
-import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
-import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
+import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
+import {CopyHandler}          from "core/tools/handlers/CopyHandler";
 import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
-import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
 import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
+import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
+import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
+import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+import {RedoHandler}          from "core/tools/handlers/RedoHandler";
+import {SaveHandler}          from "core/tools/handlers/SaveHandler";
+import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
 import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
 import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
+import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
 import {UndoHandler}          from "core/tools/handlers/UndoHandler";
-import {RedoHandler}          from "core/tools/handlers/RedoHandler";
-import {CopyHandler}          from "core/tools/handlers/CopyHandler";
-import {PasteHandler}         from "core/tools/handlers/PasteHandler";
-import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
-import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 
 import {ResizeTool} from "analog/tools/ResizeTool";
+
 import {CursorHandler} from "analog/tools/handlers/CursorHandler";
 
 import "analog/models/eeobjects";
-
-import {DevGetFile, DevListFiles} from "shared/api/Dev";
 
 import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
 
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
-import {SetCircuitSaved} from "shared/state/CircuitInfo";
+import {DevGetFile, DevListFiles} from "shared/api/Dev";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
 
+import {SetCircuitSaved} from "shared/state/CircuitInfo";
+
 import {Login} from "shared/state/thunks/User";
 
-import {AnalogPaste} from "./utils/AnalogPaste";
-import {Setup}       from "./utils/CircuitInfo/Setup";
-
+import {App}                from "./containers/App";
+import NGSpice              from "./lib/ngspice.wasm";
 import {AppState, AppStore} from "./state";
 import {AllActions}         from "./state/actions";
 import {reducers}           from "./state/reducers";
-
-import {App} from "./containers/App";
+import {AnalogPaste}        from "./utils/AnalogPaste";
+import {Setup}              from "./utils/CircuitInfo/Setup";
 
 import ImageFiles from "./data/images.json";
-
-import NGSpice from "./lib/ngspice.wasm";
 
 
 async function Init(): Promise<void> {
@@ -123,7 +120,7 @@ async function Init(): Promise<void> {
                     }
 
                     await new Promise((resolve) => gapi.load("auth2", resolve));
-                    await gapi.auth2.init({ client_id: clientId }).then(async (_) => {}); // Have to explicitly call .then
+                    await gapi.auth2.init({ "client_id": clientId }).then(async (_) => {}); // Have to explicitly call .then
                 },
             };
             try {
@@ -140,7 +137,7 @@ async function Init(): Promise<void> {
                 ReactGA.initialize(process.env.OC_GA_ID, {});
                 ReactGA.pageview("/");
             } catch (e) {
-                console.error("Failed to connect with Google Analytics: ", e);
+                console.error("Failed to connect with Google Analytics:", e);
             }
         }],
         [100, "Rendering", async () => {
@@ -169,7 +166,8 @@ async function Init(): Promise<void> {
 
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
-                if ((await DevListFiles()).includes(DEV_CACHED_CIRCUIT_FILE))
+                const files = await DevListFiles();
+                if (files.includes(DEV_CACHED_CIRCUIT_FILE))
                     await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             }
 

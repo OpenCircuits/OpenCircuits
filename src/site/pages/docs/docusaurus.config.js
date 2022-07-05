@@ -1,5 +1,5 @@
-const math = require("remark-math");
 const katex = require("rehype-katex");
+const math = require("remark-math");
 
 module.exports = {
   title: "OpenCircuits",
@@ -64,7 +64,7 @@ module.exports = {
           items: [
             {
               label: "Style Guide",
-              to: "Introduction",
+              to: "/",
             },
             {
               label: "JSDocs",

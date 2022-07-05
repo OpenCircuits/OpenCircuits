@@ -39,8 +39,7 @@ export const GateRenderer = (() => {
         const amt = 2 * Math.floor(inputs / 4) + 1;
 
         // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
-        const lNumMod = (amt === 1 && dx !== 0) ? 0.7 : 0.0;
-        const sMod = (amt === 1 && dx !== 0) ? 0.0 : 0.6;
+        const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.7, 0]) : ([0, 0.6]);
         for (let i = 0; i < amt; i++) {
             const d = (i - Math.floor(amt / 2)) * size.y;
             const h = DEFAULT_BORDER_WIDTH;
@@ -58,7 +57,7 @@ export const GateRenderer = (() => {
             }
             else if (amt !== 1 || dx !== 0) {
                 renderer.save();
-                renderer.setPathStyle({lineCap: "round"});
+                renderer.setPathStyle({ lineCap: "round" });
                 renderer.draw(new QuadCurve(p1, p2, c), style);
                 renderer.restore();
             }

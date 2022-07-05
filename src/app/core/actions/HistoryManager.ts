@@ -5,7 +5,7 @@ export type HistoryCallbackType = "add" | "undo" | "redo" | "reset";
 export type HistoryCallback = (type: HistoryCallbackType, action?: Action) => void;
 
 /**
- * Manages undo/redo actions
+ * Manages undo/redo actions.
  */
 export class HistoryManager {
     private undoStack: Action[];
@@ -39,8 +39,10 @@ export class HistoryManager {
     }
 
     /**
-     * Add a new action to the undo stack
-     * @param action The new action
+     * Add a new action to the undo stack.
+     *
+     * @param action The new action.
+     * @returns        This HistoryManager for method chaining.
      */
     public add(action: Action): HistoryManager {
         if (this.disabled)
@@ -55,7 +57,9 @@ export class HistoryManager {
     }
 
     /**
-     * Undo next action and add to redo stack
+     * Undo next action and add to redo stack.
+     *
+     * @returns This HistoryManager for method chaining.
      */
     public undo(): HistoryManager {
         if (this.disabled)
@@ -76,7 +80,9 @@ export class HistoryManager {
     }
 
     /**
-     * Redo next action and add back to undo stack
+     * Redo next action and add back to undo stack.
+     *
+     * @returns This HistoryManager for method chaining.
      */
     public redo(): HistoryManager {
         if (this.disabled)
@@ -103,10 +109,10 @@ export class HistoryManager {
     }
 
     public getActions(): Action[] {
-        return this.undoStack.slice();
+        return [...this.undoStack];
     }
 
     public getRedoActions(): Action[] {
-        return this.redoStack.slice();
+        return [...this.redoStack];
     }
 }

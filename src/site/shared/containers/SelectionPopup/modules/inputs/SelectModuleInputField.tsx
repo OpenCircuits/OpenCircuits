@@ -13,21 +13,21 @@ export const SelectModuleInputField = <T extends number|string>({ kind, options,
     const [state, setState] = useBaseModule<T>({
         ...props,
 
-        parseVal:      (val) => (kind === "string[]" ? val : Number(val)) as T,
-        isValid:        (_)  => true,
+        parseVal: (val) => (kind === "string[]" ? val : Number(val)) as T,
+        isValid:  (_)  => true,
     });
 
     return (
         <select
             ref={ref}
             value={state.value}
+            placeholder={placeholder}
             onChange={(ev) => setState.onChange(ev.target.value)}
             onFocus={() => setState.onFocus()}
-            onBlur={() => setState.onBlur()}
-            placeholder={placeholder}>
-        <option value="" disabled hidden>{placeholder ?? "-"}</option>
-        {options.map(o => (
-            <option key={`select-module-${o}`} value={o[1]}>{o[0]}</option>
+            onBlur={() => setState.onBlur()}>
+            <option value="" disabled hidden>{placeholder ?? "-"}</option>
+            {options.map(o => (
+                <option key={`select-module-${o}`} value={o[1]}>{o[0]}</option>
         ))}
         </select>
     );

@@ -12,17 +12,15 @@ import {EventHandler} from "../EventHandler";
 
 
 export const SelectPathHandler: EventHandler = ({
-    conditions: (event: Event, {input, camera, designer}: CircuitInfo) =>
+    conditions: (event: Event, { input, camera, designer }: CircuitInfo) =>
         (event.type === "dblclick" &&
          event.button === LEFT_MOUSE_BUTTON &&
          designer // is there a wire or component within select bounds?
            .getAll()
-           .find(o =>
-               o.isWithinSelectBounds(camera.getWorldPos(input.getMousePos())))
-           !== undefined
+           .some(o => o.isWithinSelectBounds(camera.getWorldPos(input.getMousePos())))
         ),
 
-    getResponse: ({input, camera, history, designer, selections}: CircuitInfo) => {
+    getResponse: ({ input, camera, history, designer, selections }: CircuitInfo) => {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
 
         const obj = designer

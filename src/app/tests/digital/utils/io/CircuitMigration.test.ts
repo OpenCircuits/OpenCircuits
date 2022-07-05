@@ -1,5 +1,3 @@
-import "jest";
-
 // TODO: Find out why Camera is being ignored and requiring a manual import
 import "math/Camera";
 

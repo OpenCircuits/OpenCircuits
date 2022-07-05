@@ -237,11 +237,11 @@ export class Transform {
     }
     public getCorners(): Vector[] {
         this.updateCorners();
-        return this.corners.slice(); // Shallow copy array
+        return [...this.corners]; // Shallow copy array
     }
     public getLocalCorners(): Vector[] {
         this.updateSize();
-        return this.localCorners.slice(); // Shallow copy array
+        return [...this.localCorners]; // Shallow copy array
     }
 
     public copy(): Transform {
