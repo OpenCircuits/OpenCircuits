@@ -1,17 +1,20 @@
 import {Action} from "core/actions/Action";
 
+
 export class GroupAction implements Action {
     private actions: Action[];
     private customName?: string;
+    private customInfo?: string[];
 
-    public constructor(actions?: Action[], customName?: string) {
+    public constructor(actions?: Action[], customName?: string, customInfo?: string[]) {
         this.actions = actions || [];
         this.customName = customName;
+        this.customInfo = customInfo;
     }
 
     public add(action: Action | Action[]): GroupAction {
-        if (action instanceof Array)
-            this.actions = this.actions.concat(action);
+        if (Array.isArray(action))
+            this.actions = [...this.actions, ...action];
         else
             this.actions.push(action);
 
@@ -49,6 +52,10 @@ export class GroupAction implements Action {
         if (this.actions.length === 1)
             return this.actions[0].getName();
         return `Grouped ${this.actions.length} actions` ;
+    }
+
+    public getCustomInfo(): string[] | undefined {
+        return this.customInfo;
     }
 
     public getActions(): Action[] {

@@ -1,7 +1,11 @@
-import {V} from "Vector";
-import {FlipFlop} from "./FlipFlop";
 import {serializable} from "serialeazy";
+
+import {V} from "Vector";
+
 import {FlipFlopPositioner} from "digital/models/ports/positioners/FlipFlopPositioner";
+
+import {FlipFlop} from "./FlipFlop";
+
 
 @serializable("TFlipFlop")
 export class TFlipFlop extends FlipFlop {

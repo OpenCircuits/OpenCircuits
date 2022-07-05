@@ -1,0 +1,22 @@
+{
+    "examples": [
+        {
+            "id": "0",
+            "name": "Basic AND Gate Setup",
+            "file": "example1.circuit",
+            "thumbnail": "img/thumbnails/example1.png"
+        },
+        {
+            "id": "1",
+            "name": "SR-Latch Gate Implementation",
+            "file": "example2.circuit",
+            "thumbnail": "img/thumbnails/example2.png"
+        },
+        {
+            "id": "2",
+            "name": "Full Adder Circuit",
+            "file": "example3.circuit",
+            "thumbnail": "img/thumbnails/example3.png"
+        }
+    ]
+}

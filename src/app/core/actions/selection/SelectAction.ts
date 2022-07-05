@@ -1,16 +1,18 @@
+import {Selectable}        from "core/utils/Selectable";
+import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
+
 import {Action} from "core/actions/Action";
-import {GroupAction} from "../GroupAction";
+
+import {GroupAction}      from "../GroupAction";
 import {ReversableAction} from "../ReversableAction";
 
-import {Selectable} from "core/utils/Selectable";
-import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 
 export class SelectAction extends ReversableAction {
     private selections: SelectionsWrapper;
     private obj: Selectable;
 
-    public constructor(selections: SelectionsWrapper, obj: Selectable, flip: boolean = false) {
+    public constructor(selections: SelectionsWrapper, obj: Selectable, flip = false) {
         super(flip);
 
         this.selections = selections;

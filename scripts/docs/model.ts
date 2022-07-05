@@ -11,11 +11,11 @@ export type AccessModifier = "private" | "protected" | "public";
 //         }[];
 //     }[];
 // }
-export type Types = {
+export type Types = Array<Array<{
     type: string | Types;
     args?: Types[]; // For generics
     link?: string;
-}[][]; // Union of intersections of types
+}>>; // Union of intersections of types
 
 export type Parameter = {
     docs?: string;
@@ -29,10 +29,10 @@ export type Property = Parameter & {
 export type MethodSignature = {
     docs?: string;
     parameters: Parameter[];
-    returns: {
+    returns: Array<{
         docs?: string;
         type: Types;
-    }[];
+    }>;
 };
 export type Method = {
     docs?: string;
@@ -44,24 +44,24 @@ export type Method = {
 export type Constructor = {
     docs?: string;
     access: AccessModifier;
-    overloads: {
+    overloads: Array<{
         docs?: string;
         parameters: Parameter[];
-    }[];
+    }>;
 }
 
 export type Class = {
     docs?: string;
-    generics: {
+    generics: Array<{
         docs?: string;
-        constraint?: Types,
+        constraint?: Types;
         name: string;
-    }[];
+    }>;
     name: string;
-    constructor?: Constructor,
-    properties: Property[]
-    methods: Method[],
-    staticMethods: Method[]
+    constructor?: Constructor;
+    properties: Property[];
+    methods: Method[];
+    staticMethods: Method[];
 }
 
 export type TSDoc = {

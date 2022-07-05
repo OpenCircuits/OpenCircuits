@@ -2,16 +2,20 @@ import {serializable} from "serialeazy";
 
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
-import {V}            from "Vector";
+import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
-import {DigitalComponent}     from "digital/models/DigitalComponent";
-import {OutputPort}           from "digital/models/ports/OutputPort";
+import {PortsToDecimal} from "digital/utils/ComponentUtils";
+
+import {DigitalComponent} from "digital/models/DigitalComponent";
+
+import {OutputPort} from "digital/models/ports/OutputPort";
+
 import {ComparatorPositioner} from "digital/models/ports/positioners/ComparatorPositioner";
 
-import {PortsToDecimal} from "digital/utils/ComponentUtils";
 
 
 @serializable("Comparator")
@@ -29,8 +33,8 @@ export class Comparator extends DigitalComponent {
 
         this.activate();
         this.setInputPortCount(2);
-        
-        this.getOutputPort(Comparator.LT_PORT).setName("<");        
+
+        this.getOutputPort(Comparator.LT_PORT).setName("<");
         this.getOutputPort(Comparator.EQ_PORT).setName("=");
         this.getOutputPort(Comparator.GT_PORT).setName(">");
     }

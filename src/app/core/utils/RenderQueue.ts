@@ -8,7 +8,7 @@ export type RenderOptions = {
  * Utility class to help cut down on render times by
  *  grouping together render calls into a single call
  *  by adding them to a queue and only rendering once
- *  every 'requestAnimationFrame' time (usually 60fps)
+ *  every 'requestAnimationFrame' time (usually 60fps).
  */
 export class RenderQueue {
     private queued: number;
@@ -17,8 +17,11 @@ export class RenderQueue {
     private options: RenderOptions;
 
     /**
-     * Constructor for RenderQueue
-     * @param renderFunction The callback actual render function
+     * Constructor for RenderQueue.
+     *
+     * @param renderFunction The callback actual render function.
+     * @param options        Optional options for rendering.
+     * @see RenderOptions
      */
     public constructor(renderFunction?: (options?: RenderOptions) => void, options: RenderOptions = { useGrid: true }) {
         this.queued = 0;
@@ -27,7 +30,7 @@ export class RenderQueue {
     }
 
     /**
-     * Call the render function and reset the queue
+     * Call the render function and reset the queue.
      */
     private actualRender(): void {
         this.queued = 0;
@@ -36,7 +39,7 @@ export class RenderQueue {
     }
 
     public setOptions(options: Partial<RenderOptions>): void {
-        this.options = {...this.options, ...options};
+        this.options = { ...this.options, ...options };
     }
 
     public setRenderFunction(renderFunction?: (options?: RenderOptions) => void): void {
@@ -44,7 +47,7 @@ export class RenderQueue {
     }
 
     /**
-     * Request a render frame and add to the queue
+     * Request a render frame and add to the queue.
      */
     public render(): void {
         if (this.queued === 0)

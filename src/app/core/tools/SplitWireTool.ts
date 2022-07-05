@@ -1,15 +1,20 @@
-import {GRID_SIZE, LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
+import {GRID_SIZE, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V, Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
-import {GroupAction}           from "core/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
+
 import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
-import {TranslateAction}       from "core/actions/transform/TranslateAction";
+
 import {CreateDeselectAllAction,
         SelectAction}          from "core/actions/selection/SelectAction";
-import {Tool}                  from "core/tools/Tool";
+
+import {TranslateAction} from "core/actions/transform/TranslateAction";
+
+import {Tool} from "core/tools/Tool";
 
 import {Node, Wire} from "core/models";
 
@@ -25,7 +30,7 @@ export const SplitWireTool: Tool = (() => {
     }
 
     return {
-        shouldActivate(event: Event, {locked, input, currentlyPressedObject}: CircuitInfo): boolean {
+        shouldActivate(event: Event, { locked, input, currentlyPressedObject }: CircuitInfo): boolean {
             if (locked)
                 return false;
             // Activate if the user dragged over a wire with 1 touch/finger
@@ -40,7 +45,7 @@ export const SplitWireTool: Tool = (() => {
 
 
         onActivate({}: Event, info: CircuitInfo): void {
-            const {input, camera, designer, selections, currentlyPressedObject} = info;
+            const { input, camera, designer, selections, currentlyPressedObject } = info;
 
             const wire = currentlyPressedObject as Wire;
 
@@ -60,7 +65,7 @@ export const SplitWireTool: Tool = (() => {
             // Set initial position
             initialPosition = camera.getWorldPos(input.getMouseDownPos());
         },
-        onDeactivate({}: Event, {history}: CircuitInfo): void {
+        onDeactivate({}: Event, { history }: CircuitInfo): void {
             history.add(action.add(new TranslateAction([port], [initialPosition], [port.getPos()])));
         },
 
@@ -69,7 +74,7 @@ export const SplitWireTool: Tool = (() => {
             if (event.type !== "mousedrag")
                 return false;
 
-            const {input, camera} = info;
+            const { input, camera } = info;
 
             const worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
             const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -85,6 +90,6 @@ export const SplitWireTool: Tool = (() => {
             new TranslateAction([port], [initialPosition], [newPosition]).execute();
 
             return true;
-        }
+        },
     }
 })();

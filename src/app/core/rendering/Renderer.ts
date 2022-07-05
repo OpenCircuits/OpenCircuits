@@ -1,13 +1,14 @@
-import {parseColor, SVGDrawing} from "svg2canvas";
+import {SVGDrawing, parseColor} from "svg2canvas";
 
-import {Vector,V} from "Vector";
+import {V, Vector} from "Vector";
+
+import {Camera}    from "math/Camera";
 import {Transform} from "math/Transform";
-import {Camera} from "math/Camera";
-
-import {FONT} from "./Styles";
-import {Style} from "./Style";
 
 import {Shape} from "./shapes/Shape";
+import {Style} from "./Style";
+import {FONT}  from "./Styles";
+
 
 
 export class Renderer {
@@ -36,7 +37,7 @@ export class Renderer {
     public transform(camera: Camera, transform: Transform): void {
         const m = transform.getMatrix().copy();
         m.setTranslation(camera.getScreenPos(m.getTranslation()));
-        m.scale(1.0/camera.getZoom());
+        m.scale(1/camera.getZoom());
         this.context.setTransform(m.get(0), m.get(1), m.get(2),
                                   m.get(3), m.get(4), m.get(5));
     }
@@ -58,7 +59,7 @@ export class Renderer {
     public stroke(): void {
         this.context.stroke();
     }
-    public draw(shape: Shape, style: Style, alpha: number = 1): void {
+    public draw(shape: Shape, style: Style, alpha = 1): void {
         this.save();
         this.setStyle(style, alpha);
 
@@ -75,20 +76,24 @@ export class Renderer {
         this.context.closePath();
         this.restore();
     }
-    public image(img: SVGDrawing, center: Vector, size: Vector, tint?: string): void {
-        const pos = center.sub(size.scale(0.5));
+    public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
         const col = (tint ? parseColor(tint) : undefined);
 
         img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
     }
 
-    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign, color: string = "#000", font?: string): void {
+    public text(txt: string, pos: Vector, textAlign: CanvasTextAlign,
+                color = "#000", font = FONT, textBaseline: CanvasTextBaseline = "middle", angle = 0): void {
         this.save();
-        this.context.font = font ?? FONT;
+        this.context.font = font;
         this.context.fillStyle = color;
         this.context.textAlign = textAlign;
-        this.context.textBaseline = "middle";
-        this.context.fillText(txt, pos.x, pos.y);
+        this.context.textBaseline = textBaseline;
+
+        this.translate(pos);
+        if (angle !== 0)
+            this.rotate(angle);
+        this.context.fillText(txt, 0, 0);
         this.restore();
     }
 
@@ -101,21 +106,59 @@ export class Renderer {
         this.context.textBaseline = "middle";
         return this.context.measureText(txt).width;
     }
-    public moveTo(p: Vector): void {
+    public moveTo(p: Vector) {
         this.context.moveTo(p.x, p.y);
     }
-    public lineTo(p: Vector): void {
+    public lineTo(p: Vector) {
         this.context.lineTo(p.x, p.y);
     }
-    public lineWith(p: Vector): void {
+    public lineWith(p: Vector) {
         this.lineTo(p);
         this.moveTo(p);
     }
-    public pathLine(p1: Vector, p2: Vector): void {
+    public hLine(pos: Vector, len: number, align: "left"|"center") {
+        if (align === "center")
+            this.pathLine(pos.sub(len/2, 0), pos.add(len/2, 0));
+        else
+            this.pathLine(pos, pos.add(len, 0));
+    }
+    public hLines(ys: number[], x0: number, len: number, align: "left"|"center") {
+        ys.forEach(y => this.hLine(V(x0, y), len, align));
+    }
+    public strokeHLines(...args: Parameters<typeof this.hLines>) {
+        this.beginPath();
+        this.hLines(...args);
+        this.closePath();
+        this.stroke();
+    }
+    public vLine(pos: Vector, len: number, baseline: "bottom"|"middle") {
+        if (baseline === "middle")
+            this.pathLine(pos.sub(0, len/2), pos.add(0, len/2));
+        else
+            this.pathLine(pos, pos.sub(0, len));
+    }
+    public vLines(xs: number[], y0: number, len: number, baseline: "bottom"|"middle") {
+        xs.forEach(x => this.vLine(V(x, y0), len, baseline));
+    }
+    public strokeVLines(...args: Parameters<typeof this.vLines>) {
+        this.beginPath();
+        this.vLines(...args);
+        this.closePath();
+        this.stroke();
+    }
+    public pathLine(p1: Vector, p2: Vector) {
         this.moveTo(p1);
         this.lineTo(p2);
     }
-    public setPathStyle(style: Partial<Omit<CanvasPathDrawingStyles, "lineWidth" | "getLineDash" | "setLineDash">>): void {
+    public strokePath(path: Vector[]) {
+        this.beginPath();
+        this.moveTo(path[0]);
+        for (let s = 0; s < path.length-1; s++)
+            this.lineWith(path[s+1]);
+        this.closePath();
+        this.stroke();
+    }
+    public setPathStyle(style: Partial<Omit<CanvasPathDrawingStyles, "lineWidth" | "getLineDash" | "setLineDash">>) {
         if (style.lineCap && style.lineCap !== this.context.lineCap)
             this.context.lineCap = style.lineCap;
         if (style.lineDashOffset && style.lineDashOffset !== this.context.lineDashOffset)
@@ -125,7 +168,7 @@ export class Renderer {
         if (style.miterLimit && style.miterLimit !== this.context.miterLimit)
             this.context.miterLimit = style.miterLimit;
     }
-    public setStyle(style: Style, alpha: number = 1): void {
+    public setStyle(style: Style, alpha = 1): void {
         // Set styles but only change them if they're different for optimization purposes
         if (alpha !== this.context.globalAlpha)
             this.context.globalAlpha = alpha;

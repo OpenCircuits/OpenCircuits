@@ -1,18 +1,18 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {DFlipFlop} from "digital/models/ioobjects/flipflops/DFlipFlop";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("DFlipFlop", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers(designer);
+    const { AutoPlace } = GetHelpers(designer);
 
-    const [f, [PRE, CLR, D, C], [Q, Q2]] = AutoPlace(new DFlipFlop());
+    const [, [PRE, CLR, D, C], [Q, Q2]] = AutoPlace(new DFlipFlop());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

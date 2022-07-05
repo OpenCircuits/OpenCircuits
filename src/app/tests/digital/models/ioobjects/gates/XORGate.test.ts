@@ -1,17 +1,17 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {XORGate} from "digital/models/ioobjects/gates/XORGate";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("XORGate", () => {
     describe("XORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
-        const [g, [a, b], [o]] = AutoPlace(new XORGate());
+        const [, [a, b], [o]] = AutoPlace(new XORGate());
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(false);
@@ -41,11 +41,12 @@ describe("XORGate", () => {
             expect(o.isOn()).toBe(false);
         });
     });
+
     describe("XNORGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
-        const [g, [a, b], [o]] = AutoPlace(new XORGate(true));
+        const [, [a, b], [o]] = AutoPlace(new XORGate(true));
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(true);

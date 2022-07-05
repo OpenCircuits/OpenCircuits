@@ -1,4 +1,5 @@
 import {serializable} from "serialeazy";
+
 import {DigitalComponent, DigitalWire} from "./index";
 
 

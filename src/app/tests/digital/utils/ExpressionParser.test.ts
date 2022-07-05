@@ -1,32 +1,33 @@
-import "jest";
-
-import {InputToken, Token,
-        InputTreeUnOpNode, InputTreeBinOpNode, InputTreeIdent,
-        OperatorFormat} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {Formats} from "digital/utils/ExpressionParser/Constants/Formats";
-
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
-import {Switch} from "digital/models/ioobjects/inputs/Switch";
-import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
-import {ConstantLow} from "digital/models/ioobjects/inputs/ConstantLow";
-import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate} from "digital/models/ioobjects/gates/ORGate";
-import {LED} from "digital/models/ioobjects/outputs/LED";
-import {DigitalComponent} from "digital/models/index";
+import {InputToken, InputTreeBinOpNode, InputTreeIdent,
+        InputTreeUnOpNode, OperatorFormat,
+        Token} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
-import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
-import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
 
+import {GenerateInputTree} from "digital/utils/ExpressionParser/GenerateInputTree";
+import {GenerateTokens}    from "digital/utils/ExpressionParser/GenerateTokens";
+
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalObjectSet}       from "digital/models/DigitalObjectSet";
+import {DigitalComponent}       from "digital/models/index";
 import "digital/models/ioobjects";
+
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
+
+import {ConstantHigh} from "digital/models/ioobjects/inputs/ConstantHigh";
+import {ConstantLow}  from "digital/models/ioobjects/inputs/ConstantLow";
+import {Switch}       from "digital/models/ioobjects/inputs/Switch";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
 
 
 /**
- * Gets the component that the first wire of the first output port of the supplied component is connected to
- * 
- * @param component the component whose output is wanted
- * @returns the component that is the "first" connected from the supplied component
+ * Gets the component that the first wire of the first output port of the supplied component is connected to.
+ *
+ * @param component The component whose output is wanted.
+ * @returns           The component that is the "first" connected from the supplied component.
  */
 function getOutputComponent(component: DigitalComponent): DigitalComponent {
     return component.getOutputPort(0).getWires()[0].getOutputComponent();
@@ -39,26 +40,27 @@ function getOutputComponent(component: DigitalComponent): DigitalComponent {
  * in expected and 2 to the power of the index of the Switch in inputs. If the result is 0, then the switch
  * will be off. If it is anything else, it will be on.
  * For example, for a circuit with three Switches a, b, and c in inputs (in that order), expected[6] would
- * have Switches enabled according to the following
- * (2**0 & 6) => 0 so Switch a will be off
- * (2**1 & 6) => 2 so Switch b will be on
- * (2**2 & 6) => 4 so Switch c will be on
+ * have Switches enabled according to the following:
+ * (2**0 & 6) => 0 so Switch a will be off.
+ * (2**1 & 6) => 2 so Switch b will be on.
+ * (2**2 & 6) => 4 so Switch c will be on.
  *
  * Currently, jest runs the test in the opposite order of how they are given in the expected array.
  * This is done to avoid an issue where circuits initial state is incorrect. This is likely due to
  * the same underlying issue as issues #468 and #613 and if those are fixed, this function should
  * also be modified.
  *
- * @param inputs an array of the names of the switches along with their corresponding Switch,
- *  those same Switch objects must be present in circuit
- * @param circuit the components and wires that make up the circuit being tested
- * @param output the component whose state will be evaluated in the test, must be present in circuit
- * @param expected the expected states of the output LED for all the different switch combinations
- * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
+ * @param  inputs   An array of the names of the switches along with their corresponding Switch,
+ *                  those same Switch objects must be present in circuit.
+ * @param  circuit  The components and wires that make up the circuit being tested.
+ * @param  output   The component whose state will be evaluated in the test, must be present in circuit.
+ * @param  expected The expected states of the output LED for all the different switch combinations.
+ * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
  */
-function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
+function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2**inputs.length + ")");
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
+                        2**inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -84,19 +86,21 @@ function testInputs(inputs: [string, Switch][], circuit: DigitalObjectSet, outpu
 }
 
 /**
- * This function is similar to testInputs but only generates one test case rather than one for every state
+ * This function is similar to testInputs but only generates one test case rather than one for every state.
  *
- * @param inputs an array of the names of the switches along with their corresponding Switch,
- *  those same Switch objects must be present in circuit
- * @param circuit the components and wires that make up the circuit being tested
- * @param output the component whose state will be evaluated in the test, must be present in circuit
- * @param expected the expected states of the output LED for all the different switch combinations
- * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
+ * @param  inputs   An array of the names of the switches along with their corresponding Switch,
+ *                  those same Switch objects must be present in circuit.
+ * @param  circuit  The components and wires that make up the circuit being tested.
+ * @param  output   The component whose state will be evaluated in the test, must be present in circuit.
+ * @param  expected The expected states of the output LED for all the different switch combinations.
+ * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  */
-function testInputsSimple(inputs: [string, Switch][], circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
+function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED,
+                          expected: boolean[]) {
     if (2 ** inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" + 2 ** inputs.length + ")");
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
+                        2 ** inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
     designer.addGroup(circuit);
@@ -119,16 +123,19 @@ function testInputsSimple(inputs: [string, Switch][], circuit: DigitalObjectSet,
  * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
  * as input names.
  *
- * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the entire expression.
+ * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the
+ * entire expression.
  * This behavior can be overwritten with the verbose argument.
  *
- * @param numInputs the number of switches that are used by this expression/test
- * @param expression the logical boolean expression to test
- * @param expected the expected states of the output LED for all the different switch combinations (see testInputs for order)
- * @param ops the strings used to represent the different operators
- * @param verbose true to force creating a new test for every state, false to force creating one single test encompassing all states
- * @throws {Error} if numInputs > 8
- * @throws {Error} if the length of expected is not equal to 2 to the power of the length of inputs
+ * @param  numInputs  The number of switches that are used by this expression/test.
+ * @param  expression The logical boolean expression to test.
+ * @param  expected   The expected states of the output LED for all the different switch combinations
+ *                    (see testInputs for order).
+ * @param  ops        The strings used to represent the different operators.
+ * @param  verbose    True to force creating a new test for every state, false to force creating one single test
+ *                    encompassing all states.
+ * @throws {Error} If numInputs > 8.
+ * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  * @see ExpressionToCircuit
  */
@@ -138,14 +145,14 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
             throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = new LED();
-        const inputs: [string, Switch][] = [];
-        const charCodeStart = "a".charCodeAt(0);
+        const inputs: Array<[string, Switch]> = [];
+        const charCodeStart = "a".codePointAt(0)!;
         for (let i = 0; i < numInputs; i++)
-            inputs.push([String.fromCharCode(charCodeStart+i), new Switch()]);
+            inputs.push([String.fromCodePoint(charCodeStart+i), new Switch()]);
 
         const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
 
-        if (verbose === false || (verbose == undefined && numInputs > 3))
+        if (verbose === false || (verbose === undefined && numInputs > 3))
             testInputsSimple(inputs, objectSet, o, expected);
         else
             testInputs(inputs, objectSet, o, expected);
@@ -158,10 +165,10 @@ describe("Expression Parser", () => {
         test("Not An Input", () => {
             const a = new LED(), b = new ORGate(), o1 = new LED(), o2 = new LED();
             const inputMap1 = new Map([
-                ["a", a]
+                ["a", a],
             ]);
             const inputMap2 = new Map([
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -177,7 +184,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o1 = new ANDGate(), o2 = new Switch();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -192,7 +199,7 @@ describe("Expression Parser", () => {
         test("Input Not Found", () => {
             const a = new Switch(), o = new LED();
             const inputMap = new Map([
-                ["a", a]
+                ["a", a],
             ]);
 
             expect(() => {
@@ -210,7 +217,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
             const inputMap2 = new Map();
 
@@ -250,7 +257,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -295,7 +302,7 @@ describe("Expression Parser", () => {
             const a = new Switch(), b = new Switch(), o = new LED();
             const inputMap = new Map([
                 ["a", a],
-                ["b", b]
+                ["b", b],
             ]);
 
             expect(() => {
@@ -344,9 +351,10 @@ describe("Expression Parser", () => {
 
             test("Invalid |", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "",
                         "^": "^",
@@ -354,7 +362,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -362,9 +370,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid ^", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "",
@@ -372,7 +381,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -380,9 +389,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid &", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -390,7 +400,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -398,9 +408,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid !", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -408,7 +419,7 @@ describe("Expression Parser", () => {
                         "!": "",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -416,9 +427,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid (", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -426,7 +438,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -434,9 +446,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid )", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -444,7 +457,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": "",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -452,9 +465,10 @@ describe("Expression Parser", () => {
             });
             test("Invalid separator", () => {
                 const testOps: OperatorFormat = {
-                    label: "Programming 1 (&, |, ^, !)",
+                    label:     "Programming 1 (&, |, ^, !)",
                     separator: "",
-                    icon: "|",
+                    icon:      "|",
+
                     ops: {
                         "|": "|",
                         "^": "^",
@@ -462,7 +476,7 @@ describe("Expression Parser", () => {
                         "!": "!",
                         "(": "(",
                         ")": ")",
-                    }
+                    },
                 }
                 expect(() => {
                     GenerateTokens(expression, testOps);
@@ -478,7 +492,7 @@ describe("Expression Parser", () => {
 
             const objectSet = ExpressionToCircuit(inputMap, "", o);
 
-            expect(objectSet.toList().length).toBe(0);
+            expect(objectSet.toList()).toHaveLength(0);
         });
         test("Parse: ' '", () => {
             const o = new LED();
@@ -486,7 +500,7 @@ describe("Expression Parser", () => {
 
             const objectSet = ExpressionToCircuit(inputMap, " ", o);
 
-            expect(objectSet.toList().length).toBe(0);
+            expect(objectSet.toList()).toHaveLength(0);
         });
     });
 
@@ -503,7 +517,7 @@ describe("Expression Parser", () => {
             const designer = new DigitalCircuitDesigner(0);
             const a = new ConstantHigh(), o = new LED();
             const inputMap = new Map([
-                ["a", a]
+                ["a", a],
             ]);
 
             const objectSet = ExpressionToCircuit(inputMap, "a", o);
@@ -518,7 +532,7 @@ describe("Expression Parser", () => {
             const designer = new DigitalCircuitDesigner(0);
             const a = new ConstantLow(), o = new LED();
             const inputMap = new Map([
-                ["a", a]
+                ["a", a],
             ]);
 
             const objectSet = ExpressionToCircuit(inputMap, "a", o);
@@ -545,7 +559,7 @@ describe("Expression Parser", () => {
 
         describe("Parse: 'longName'", () => {
             const a = new Switch(), o = new LED();
-            const inputs: [string, Switch][] = [["longName", a]];
+            const inputs: Array<[string, Switch]> = [["longName", a]];
             const objectSet = ExpressionToCircuit(new Map(inputs), "longName", o);
 
             testInputs(inputs, objectSet, o, [false, true]);
@@ -599,29 +613,29 @@ describe("Expression Parser", () => {
     });
 
     describe("Alternate Formats", () => {
-        runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], Formats[1]);
+        runTests(3, "a&&b&&c", [false, false, false, false, false, false, false, true], FORMATS[1]);
 
-        runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], Formats[2]);
+        runTests(3, "a*b*c", [false, false, false, false, false, false, false, true], FORMATS[2]);
 
-        runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], Formats[1]);
+        runTests(3, "a||b||c", [false, true, true, true, true, true, true, true], FORMATS[1]);
 
-        runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], Formats[2]);
+        runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], FORMATS[2]);
 
-        runTests(1, "_a", [true, false], Formats[3]);
+        runTests(1, "_a", [true, false], FORMATS[3]);
     });
 
     describe("Binary gate variants", () => {
         describe("7 variable OR", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const inputs: Array<[string, Switch]> = [];
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 7; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(9);
+                expect(objectSet.getComponents()).toHaveLength(9);
             });
 
             test("Correct connections", () => {
@@ -633,15 +647,15 @@ describe("Expression Parser", () => {
 
         describe("8 variable OR", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const inputs: Array<[string, Switch]> = [];
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 8; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(10);
+                expect(objectSet.getComponents()).toHaveLength(10);
             });
 
             test("Correct connections", () => {
@@ -653,15 +667,15 @@ describe("Expression Parser", () => {
 
         describe("9 variable OR", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const inputs: Array<[string, Switch]> = [];
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 9; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(12);
+                expect(objectSet.getComponents()).toHaveLength(12);
             });
 
             test("Correct connections", () => {
@@ -675,15 +689,15 @@ describe("Expression Parser", () => {
 
         describe("(a|b)|(c|d)", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const inputs: Array<[string, Switch]> = [];
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 4; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(8);
+                expect(objectSet.getComponents()).toHaveLength(8);
             });
 
             test("Correct connections", () => {
@@ -698,15 +712,15 @@ describe("Expression Parser", () => {
 
         describe("!(a|b|c)", () => {
             const o = new LED();
-            const inputs: [string, Switch][] = [];
-            const charCodeStart = "a".charCodeAt(0);
+            const inputs: Array<[string, Switch]> = [];
+            const charCodeStart = "a".codePointAt(0)!;
             for (let i = 0; i < 3; i++)
-                inputs.push([String.fromCharCode(charCodeStart + i), new Switch()]);
+                inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
 
             const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
 
             test("Correct number of components", () => {
-                expect(objectSet.getComponents().length).toBe(5);
+                expect(objectSet.getComponents()).toHaveLength(5);
             });
 
             test("Correct connections", () => {
@@ -718,40 +732,35 @@ describe("Expression Parser", () => {
     });
 
     describe("Generate Input Tree", () => {
-        // describe("!(a&b)", () => {
-        //     const tokenA: InputToken = {type: "input", name: "a"};
-        //     const tokenB: InputToken = {type: "input", name: "b"};
-        //     const parenOpen: Token = {type: "("};
-        //     const parenClose: Token = {type: ")"};
-        //     const andToken: Token = {type: "&"};
-        //     const notToken: Token = {type: "!"};
-        //     const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
-        //     const tree = GenerateInputTree(tokenList);
-        //     const treeNot = tree as InputTreeUnOpNode;
-        //     test("!", () => {
-        //         expect(treeNot.kind).toBe("unop");
-        //         expect(treeNot.type).toBe("!");
-        //         expect(treeNot.child.kind).toBe("binop");
-        //     });
-        //     const treeAnd = treeNot.child as InputTreeBinOpNode;
-        //     test("&", () => {
-        //         expect(treeAnd.type).toBe("&");
-        //         expect(treeAnd.children[0].kind).toBe("leaf");
-        //         expect(treeAnd.children[1].kind).toBe("leaf");
-        //     });
-        //     const treeLeft = treeAnd.children[0] as InputTreeIdent;
-        //     test("a", () => {
-        //         expect(treeLeft.ident).toBe("a");
-        //     });
-        //     const treeRight = treeAnd.children[1] as InputTreeIdent;
-        //     test("a", () => {
-        //         expect(treeRight.ident).toBe("b");
-        //     });
-        // });
+        describe("!(a&b)", () => {
+            const tokenA: InputToken = { type: "input", name: "a" };
+            const tokenB: InputToken = { type: "input", name: "b" };
+            const parenOpen: Token = { type: "(" };
+            const parenClose: Token = { type: ")" };
+            const andToken: Token = { type: "&" };
+            const notToken: Token = { type: "!" };
+            const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
+            const tree = GenerateInputTree(tokenList);
+            const treeNand = tree as InputTreeBinOpNode;
+            test("!", () => {
+                expect(treeNand.kind).toBe("binop");
+                expect(treeNand.isNot).toBeTruthy();
+                expect(treeNand.children[0].kind).toBe("leaf");
+                expect(treeNand.children[1].kind).toBe("leaf");
+            });
+            const treeLeft = treeNand.children[0] as InputTreeIdent;
+            test("a", () => {
+                expect(treeLeft.ident).toBe("a");
+            });
+            const treeRight = treeNand.children[1] as InputTreeIdent;
+            test("b", () => {
+                expect(treeRight.ident).toBe("b");
+            });
+        });
 
         describe("!a", () => {
-            const tokenA: InputToken = {type: "input", name: "a"};
-            const notToken: Token = {type: "!"};
+            const tokenA: InputToken = { type: "input", name: "a" };
+            const notToken: Token = { type: "!" };
             const tokenList = [notToken, tokenA];
             const tree = GenerateInputTree(tokenList);
             const treeNot = tree as InputTreeUnOpNode;

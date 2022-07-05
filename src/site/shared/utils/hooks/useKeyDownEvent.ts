@@ -1,8 +1,8 @@
 import {useEffect} from "react";
 
-import {Input} from "core/utils/Input";
-import {Key} from "core/utils/Key";
 import {Event} from "core/utils/Events";
+import {Input} from "core/utils/Input";
+import {Key}   from "core/utils/Key";
 
 
 export const useKeyDownEvent = (input: Input, key: Key, f: () => void, deps?: React.DependencyList) => {
@@ -11,7 +11,8 @@ export const useKeyDownEvent = (input: Input, key: Key, f: () => void, deps?: Re
             return;
 
         const LookForKey = (ev: Event) => {
-            if (ev.type === "keydown" && ev.key === key) f();
+            if (ev.type === "keydown" && ev.key === key)
+                f();
         }
 
         input.addListener(LookForKey);

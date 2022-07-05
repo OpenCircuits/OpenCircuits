@@ -1,10 +1,12 @@
+import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
 import {Utility} from "shared/containers/Header/Right/UtilitiesDropdown";
 
-import {HeaderLeft} from "./Left";
+import {HeaderLeft}  from "./Left";
 import {HeaderRight} from "./Right";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import "./index.scss";
 

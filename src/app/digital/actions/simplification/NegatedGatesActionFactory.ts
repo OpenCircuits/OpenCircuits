@@ -1,11 +1,13 @@
-import {GroupAction} from "core/actions/GroupAction";
+import {GroupAction}                  from "core/actions/GroupAction";
 import {CreateReplaceComponentAction} from "core/actions/ReplaceComponentActionFactory";
 
 import {GetInvertedGate} from "digital/utils/ComponentUtils";
 
 import {DigitalCircuitDesigner} from "digital/models";
-import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
+
+import {DigitalObjectSet}         from "digital/models/DigitalObjectSet";
 import {ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
+
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
 import {CreateSnipGateAction} from "../SnipGateActionFactory";
@@ -15,16 +17,18 @@ import {CreateSnipGateAction} from "../SnipGateActionFactory";
  * This action replaces ANDGates, ORGates, and XORGates followed by only a NOTGate with
  *  NANDGates, NORGates, and XNORGates respectively. This action is implicitly executed on creation.
  *
- * @param designer the designer in which the action is taking place
- * @param circuit the circuit to modify, must be placed in designer
+ * @param designer The designer in which the action is taking place.
+ * @param circuit  The circuit to modify, must be placed in designer.
+ * @returns          The action to create the negated circuit and the negated circuit.
  */
-export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {
+export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
+                                         circuit: DigitalObjectSet): [GroupAction, DigitalObjectSet] {
     const action = new GroupAction([], "Create Negated Gates Action");
     const negatedCircuit = [...circuit.toList()];
 
     const gates = circuit.getOthers().filter(gate =>
         (gate instanceof ANDGate || gate instanceof ORGate || gate instanceof XORGate)
-    ) as (ANDGate | ORGate | XORGate)[];
+    ) as Array<ANDGate | ORGate | XORGate>;
 
     gates.forEach(gate => {
         const wires = gate.getOutputPort(0).getWires();
@@ -51,5 +55,5 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner, circu
         }
     });
 
-    return [action, DigitalObjectSet.from(negatedCircuit)];
+    return [action, DigitalObjectSet.From(negatedCircuit)];
 }

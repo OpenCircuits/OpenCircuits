@@ -1,14 +1,18 @@
+import {serializable} from "serialeazy";
+
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
-import {serializable} from "serialeazy";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {InputPort} from "digital/models/ports/InputPort";
+
+import {InputPort}  from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+
 
 @serializable("Decoder")
 export class Decoder extends DigitalComponent {
@@ -40,10 +44,12 @@ export class Decoder extends DigitalComponent {
 
     public updatePortNames(): void {
         this.inputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "") p.setName(`I${i}`);
+            if (p.getName() === "")
+                p.setName(`I${i}`);
         });
         this.outputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "") p.setName(`O${i}`);
+            if (p.getName() === "")
+                p.setName(`O${i}`);
         });
     }
 

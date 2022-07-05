@@ -1,19 +1,22 @@
 import {useEffect, useLayoutEffect} from "react";
-import {Deserialize, Serialize} from "serialeazy";
+import {Deserialize, Serialize}     from "serialeazy";
 
 import {Input} from "core/utils/Input";
 
-import {InteractionTool}  from "core/tools/InteractionTool";
-import {PanTool}          from "core/tools/PanTool";
+import {InteractionTool} from "core/tools/InteractionTool";
+import {PanTool}         from "core/tools/PanTool";
+
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+
 import {DigitalCircuitDesigner} from "digital/models";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
-import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
 import {GetRenderFunc} from "site/digital/utils/Rendering";
+
+import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
 
 import "./index.scss";
 
@@ -24,23 +27,25 @@ type Props = ImageExporterPreviewProps & {
 export const ImageExporterPreview = (() => {
     const info = CreateInfo(new InteractionTool([FitToScreenHandler]), PanTool);
 
+    // eslint-disable-next-line react/display-name
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
-        const {camera, designer, toolManager, renderer} = info;
+        const { backgroundColor } = style;
+        const { useGrid } = renderingOptions;
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
         useLayoutEffect(() => {
             if (!isActive)
                 return;
-            camera.resize(width, height); // Update camera size when w/h changes
-            renderer.render(); // Re-render
+            info.camera.resize(width, height); // Update camera size when w/h changes
+            info.renderer.render(); // Re-render
         }, [isActive, width, height]);
 
         // Re-render when rendering options change
         useLayoutEffect(() => {
-            renderer.setOptions(renderingOptions);
-            renderer.render();
-        }, [renderingOptions.useGrid, style.backgroundColor]);
+            info.renderer.setOptions({ useGrid });
+            info.renderer.render();
+        }, [useGrid, backgroundColor]);
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
@@ -54,54 +59,57 @@ export const ImageExporterPreview = (() => {
 
             // Add input listener
             info.input.addListener((event) => {
-                const change = toolManager.onEvent(event, info);
-                if (change) renderer.render();
+                const change = info.toolManager.onEvent(event, info);
+                if (change)
+                    info.renderer.render();
             });
 
             // Input should be blocked initially
             info.input.block();
 
             // Add render callbacks and set render function
-            designer.addCallback(() => renderer.render());
+            info.designer.addCallback(() => info.renderer.render());
 
-            renderer.setRenderFunction(renderFunc);
-            renderer.render();
-        }, []); // Pass empty array so that this only runs once on mount
+            info.renderer.setRenderFunction(renderFunc);
+            info.renderer.render();
+        }, [canvas]); // Pass empty array so that this only runs once on mount
 
         // Happens when de/activated
         useLayoutEffect(() => {
+            const { camera, input, debugOptions, designer } = mainInfo;
+
             if (!isActive) {
                 info.input?.block();
-                mainInfo.input?.unblock();
+                input?.unblock();
                 info.designer.reset();
                 return;
             }
 
-            info.debugOptions = mainInfo.debugOptions;
+            info.debugOptions = debugOptions;
 
             // Make a deep copy of the entire designer so that they don't share components
-            const copy = Deserialize<DigitalCircuitDesigner>(Serialize(mainInfo.designer));
+            const copy = Deserialize<DigitalCircuitDesigner>(Serialize(designer));
             info.designer.replace(copy);
 
-            info.camera.resize(width, height);
-            info.camera.setPos(mainInfo.camera.getPos());
-            info.camera.setZoom(mainInfo.camera.getZoom());
+            // info.camera.resize(width, height);
+            info.camera.setPos(camera.getPos());
+            info.camera.setZoom(camera.getZoom());
 
             // Unblock input
             info.input.unblock();
 
             // Block input for main designer
-            mainInfo.input.block();
+            input.block();
 
-            renderer.render();
-        }, [isActive]);
+            info.renderer.render();
+        }, [isActive, mainInfo]);
 
         return (<>
             <img src="img/icons/fitscreen.svg"
                  className="image-exporter-preview__button"
                  onClick={() => {
                     FitToScreenHandler.getResponse(info);
-                    renderer.render();
+                    info.renderer.render();
                  }} />
             <canvas ref={canvas}
                     width={`${width}px`}

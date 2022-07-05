@@ -1,5 +1,6 @@
 import {Style} from "./Style";
 
+
 export const DEBUG_CULLBOX_STYLE = new Style("#00ff00", "#000000", 1);
 
 export const DEBUG_PRESSABLE_BOUNDS_STYLE = new Style("#ff0000", "#000000", 1);

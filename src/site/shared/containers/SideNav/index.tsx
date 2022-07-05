@@ -1,17 +1,16 @@
 import {CircuitMetadata} from "core/models/CircuitMetadata";
 
-import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver"
-
-import {Request} from "shared/utils/Request";
-import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {Request}            from "shared/utils/Request";
+
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {LoadUserCircuit} from "shared/api/Circuits";
 
 import {ToggleSideNav} from "shared/state/SideNav";
 
-import {Overlay} from "shared/components/Overlay";
 import {CircuitPreview} from "shared/components/CircuitPreview";
+import {Overlay}        from "shared/components/Overlay";
 
 import {SignInOutButtons} from "shared/containers/Header/Right/SignInOutButtons";
 
@@ -20,12 +19,10 @@ import "./index.scss";
 
 function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
     return Request({
-        method: "GET",
-        url: `/examples/${data.getId()}`,
-        headers: {}
-    })
-    // We want to run example circuits through the VersionConflictResolver to make sure they're up to date.
-   .then(VersionConflictResolver);
+        method:  "GET",
+        url:     `/examples/${data.getId()}`,
+        headers: {},
+    });
 }
 
 type Props = {
@@ -34,9 +31,10 @@ type Props = {
 }
 export const SideNav = ({ helpers, exampleCircuits }: Props) => {
     const { auth, circuits, isOpen, loading, loadingCircuits } = useSharedSelector(
-        state => ({ ...state.user, isOpen: state.sideNav.isOpen,
-                    loading: state.circuit.loading, loadingCircuits: state.user.loading })
+        state => ({ ...state.user, isOpen:          state.sideNav.isOpen,
+                    loading:         state.circuit.loading, loadingCircuits: state.user.loading })
     );
+
     const dispatch = useSharedDispatch();
 
     return (<>
@@ -52,19 +50,23 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
             <div className="sidenav__accountinfo">
                 <div className="sidenav__accountinfo__name">
-                    {auth ? `Hello, ${auth.getName()}!` : null}
+                    {auth ? `Hello, ${auth.getName()}!` : undefined}
                 </div>
                 <div className="sidenav__accountinfo__sign">
                     <SignInOutButtons />
                 </div>
             </div>
+            <button type="button" onClick={() => helpers.ResetCircuit()}>
+                <span>+</span>
+                New Circuit
+            </button>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>
-                {loadingCircuits ?
-                    <div className="sidenav__content__circuits-loading"></div> :
+                    {loadingCircuits ?
+                        <div className="sidenav__content__circuits-loading"></div> :
                     circuits.map((circuit, i) =>
-                        <CircuitPreview
+                        (<CircuitPreview
                             key={`sidenav-user-circuit-${i}`}
                             data={circuit}
                             onClick={async () => {
@@ -79,22 +81,22 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                                 if (loading) // Don't let user delete circuit while loading
                                     return;
                                 helpers.DeleteCircuitRemote(circuit);
-                            }} />
+                            }} />)
                 )}
                 </div>
                 <h4 unselectable="on">Examples</h4>
                 <div>
-                {exampleCircuits.map((example, i) =>
-                    <CircuitPreview key={`sidenav-example-circuit-${i}`}
-                                    readonly
-                                    data={example}
-                                    onClick={async () => {
+                    {exampleCircuits.map((example, i) =>
+                    (<CircuitPreview key={`sidenav-example-circuit-${i}`}
+                                     data={example}
+                                     readonly
+                                     onDelete={() => { /* Do nothing */ }}
+                                     onClick={async () => {
                                         if (loading) // Don't load another circuit if already loading
                                             return;
                                         await helpers.LoadCircuit(() => LoadExampleCircuit(example));
                                         dispatch(ToggleSideNav());
-                                    }}
-                                    onDelete={() => { /* Do nothing */ }} />
+                                    }} />)
                 )}
                 </div>
                 <div className="sidenav__content__footer">
