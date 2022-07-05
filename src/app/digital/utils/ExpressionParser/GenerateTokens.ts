@@ -14,7 +14,7 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
  * @returns            An InputToken with the input name in it.
  */
  function getInput(expression: string, index: number, ops: OperatorFormat): InputToken {
-    const endIndex = Array.from({length: expression.length - index - 1}, (_, i) => i + index + 1)
+    const endIndex = Array.from({ length: expression.length - index - 1 }, (_, i) => i + index + 1)
                           .find(endIndex =>
                                // Check if the substring from index to endIndex is a token [|, ^, &, !, (, )]
                                TokenTypesArray.find(tokenType => SubStrEquals(expression, endIndex, ops.ops[tokenType]))
@@ -22,8 +22,8 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
                                || SubStrEquals(expression, endIndex, ops.separator)
                           );
     if (endIndex)
-        return {type: "input", name: expression.substring(index, endIndex)};
-    return {type: "input", name: expression.substring(index, expression.length)};
+        return { type: "input", name: expression.slice(index, endIndex) };
+    return { type: "input", name: expression.slice(index, expression.length) };
 }
 
 /**
@@ -38,7 +38,7 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
 function getToken(expression: string, index: number, ops: OperatorFormat): Token | undefined {
     const tokenType = TokenTypesArray.find(tokenType => SubStrEquals(expression, index, ops.ops[tokenType]));
     if (tokenType)
-        return {type: tokenType};
+        return { type: tokenType };
     if (SubStrEquals(expression, index, ops.separator))
         return;
     return getInput(expression, index, ops);

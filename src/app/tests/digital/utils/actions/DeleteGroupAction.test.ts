@@ -1,5 +1,3 @@
-import "jest";
-
 import {V} from "Vector";
 
 import {linspace} from "math/MathUtils";
@@ -57,9 +55,9 @@ describe("Delete Group Action", () => {
     // See https://github.com/OpenCircuits/OpenCircuits/issues/902
     describe("Deletion of parts of Tree", () => {
         function PlaceTree() {
-            const leds = Array(8).fill(0).map(_ => Place(new LED())[0]);
-            const nodes2 = Array(4).fill(0).map(_ => Place(new DigitalNode())[0]);
-            const nodes1 = Array(2).fill(0).map(_ => Place(new DigitalNode())[0]);
+            const leds = new Array(8).fill(0).map(_ => Place(new LED())[0]);
+            const nodes2 = new Array(4).fill(0).map(_ => Place(new DigitalNode())[0]);
+            const nodes1 = new Array(2).fill(0).map(_ => Place(new DigitalNode())[0]);
             const [sw] = Place(new Switch());
 
             // Place LEDs vertically from [5, -5] to [5, +5]

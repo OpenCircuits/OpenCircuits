@@ -1,5 +1,3 @@
-import "jest";
-
 import {PlaceAction} from "core/actions/addition/PlaceAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -14,14 +12,14 @@ describe("Place Action", () => {
 
         const a1 = new PlaceAction(designer, a).execute();
 
-        expect(designer.getObjects().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(1);
         expect(designer.getObjects()[0]).toBe(a);
 
         a1.undo();
-        expect(designer.getObjects().length).toBe(0);
+        expect(designer.getObjects()).toHaveLength(0);
 
         a1.execute();
-        expect(designer.getObjects().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(1);
         expect(designer.getObjects()[0]).toBe(a);
     });
 });

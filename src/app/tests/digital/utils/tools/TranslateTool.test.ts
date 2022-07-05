@@ -1,5 +1,3 @@
-import "jest";
-
 import {V} from "Vector";
 
 import {GetHelpers} from "test/helpers/Helpers";
@@ -9,8 +7,8 @@ import {ANDGate, Button, DigitalNode, LED, Switch} from "digital/models/ioobject
 
 
 describe("Translate Tool", () => {
-    const {designer, input} = Setup();
-    const {Place, Connect} = GetHelpers(designer);
+    const { designer, input } = Setup();
+    const { Place, Connect } = GetHelpers(designer);
 
     describe("Single Object", () => {
         afterEach(() => {
@@ -146,16 +144,16 @@ describe("Translate Tool", () => {
 
             // Find duplicated objects
             const objs = designer.getObjects();
-            expect(objs.length).toBe(6);
+            expect(objs).toHaveLength(6);
 
             objs.splice(objs.indexOf(sw), 1);
             objs.splice(objs.indexOf(led), 1);
             objs.splice(objs.indexOf(port), 1);
-            expect(objs.length).toBe(3);
+            expect(objs).toHaveLength(3);
 
-            const sw2   = objs.filter((o) => o instanceof Switch)[0] as Switch;
-            const led2  = objs.filter((o) => o instanceof LED)[0] as LED;
-            const port2 = objs.filter((o) => o instanceof DigitalNode)[0] as DigitalNode;
+            const sw2   = objs.find((o) => o instanceof Switch) as Switch;
+            const led2  = objs.find((o) => o instanceof LED) as LED;
+            const port2 = objs.find((o) => o instanceof DigitalNode) as DigitalNode;
 
             // Expect duplicated objects to be the same
             expect(sw2.getPos()).toEqual(V(-100, 0));

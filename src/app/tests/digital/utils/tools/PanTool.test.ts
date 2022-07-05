@@ -1,5 +1,3 @@
-import "jest";
-
 import {MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";
@@ -8,7 +6,7 @@ import {Setup} from "test/helpers/Setup";
 
 
 describe("Pan Tool", () => {
-    const {camera, input, reset} = Setup();
+    const { camera, input, reset } = Setup();
 
     afterEach(() => reset());
 

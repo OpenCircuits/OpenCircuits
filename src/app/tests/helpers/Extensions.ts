@@ -1,5 +1,3 @@
-import "jest";
-
 import {DigitalComponent} from "digital/models";
 
 
@@ -50,6 +48,7 @@ expect.extend({
                 };
             }
 
+            // eslint-disable-next-line jest/no-standalone-expect
             expect(received[key]).toApproximatelyEqual(expected[key], epsilon);
         });
 
@@ -77,7 +76,7 @@ expect.extend({
         };
     },
 
-    toBeConnectedTo(source: any, target: DigitalComponent, options = {depth: Infinity}) {
+    toBeConnectedTo(source: any, target: DigitalComponent, options = { depth: Infinity }) {
         if (!(source instanceof DigitalComponent))
             throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
 

@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -12,7 +10,7 @@ describe("JKFlipFlop", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers(designer);
+    const { AutoPlace } = GetHelpers(designer);
 
     const [, [PRE, CLR, J, C, K], [Q, Q2]] = AutoPlace(new JKFlipFlop());
 

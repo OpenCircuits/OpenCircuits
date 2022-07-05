@@ -14,8 +14,7 @@ export class DLatch extends Latch {
     }
 
     protected getNextState(): boolean {
-        const data = this.inputs.get(DLatch.DATA_PORT).getIsOn();
-        return data;
+        return this.inputs.get(DLatch.DATA_PORT).getIsOn();
     }
 
     public getDisplayName(): string {

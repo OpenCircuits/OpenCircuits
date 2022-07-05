@@ -13,6 +13,7 @@ import {Oscilloscope} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
+import {ModuleSubmitInfo}       from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 
 
@@ -33,6 +34,12 @@ export const OscilloscopeModule = ({ info }: Props) => {
         })
     );
 
+    const onSubmit = (info: ModuleSubmitInfo) => {
+        renderer.render();
+        if (info.isValid && info.isFinal)
+            history.add(info.action);
+    }
+
     if (!props)
         return null;
 
@@ -49,11 +56,7 @@ export const OscilloscopeModule = ({ info }: Props) => {
                             cs.map(o => new OscilloscopeSizeChangeAction(o, V(newWidth, o.getDisplaySize().y))),
                             "Oscilloscope Width Change Module"
                         )}
-                    onSubmit={(info) => {
-                        renderer.render();
-                        if (info.isValid && info.isFinal)
-                            history.add(info.action);
-                    }} />
+                    onSubmit={onSubmit} />
                 <NumberModuleInputField
                     kind="float" min={50} max={400} step={50}
                     props={props.displayHeight}
@@ -63,11 +66,7 @@ export const OscilloscopeModule = ({ info }: Props) => {
                             cs.map(o => new OscilloscopeSizeChangeAction(o, V(o.getDisplaySize().x, newHeight))),
                             "Oscilloscope Height Change Module"
                         )}
-                    onSubmit={(info) => {
-                        renderer.render();
-                        if (info.isValid && info.isFinal)
-                            history.add(info.action);
-                    }} />
+                    onSubmit={onSubmit} />
             </label>
         </div>
 
@@ -83,11 +82,7 @@ export const OscilloscopeModule = ({ info }: Props) => {
                             cs.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCount)),
                             "Oscilloscope Input Count Change Module"
                         )}
-                    onSubmit={(info) => {
-                        renderer.render();
-                        if (info.isValid && info.isFinal)
-                            history.add(info.action);
-                    }} />
+                    onSubmit={onSubmit} />
             </label>
         </div>
 
@@ -103,11 +98,7 @@ export const OscilloscopeModule = ({ info }: Props) => {
                             cs.map(o => new OscilloscopeSamplesChangeAction(o, newNumSamples)),
                             "Oscilloscope Samples Change Module"
                         )}
-                    onSubmit={(info) => {
-                        renderer.render();
-                        if (info.isValid && info.isFinal)
-                            history.add(info.action);
-                    }} />
+                    onSubmit={onSubmit} />
             </label>
         </div>
 

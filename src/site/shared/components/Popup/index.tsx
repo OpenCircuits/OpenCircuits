@@ -12,7 +12,7 @@ type Props = {
     height?: number;
     children: React.ReactNode;
 }
-export const Popup = ({title, isOpen, close, className, width, height, children}: Props) => (
+export const Popup = ({ title, isOpen, close, className, width, height, children }: Props) => (
     <>
         <Overlay isOpen={isOpen} close={close} />
 

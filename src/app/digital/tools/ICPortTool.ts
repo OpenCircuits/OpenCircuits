@@ -15,7 +15,7 @@ import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
 export const ICPortTool = (() => {
     let port: Port | undefined;
 
-    function findPort({input, camera, ic}: ICCircuitInfo): Port | undefined {
+    function findPort({ input, camera, ic }: ICCircuitInfo): Port | undefined {
         if (!ic)
             throw new Error("ICPortTool.findPort failed: ic was undefined");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -47,7 +47,7 @@ export const ICPortTool = (() => {
         },
 
 
-        onEvent(event: Event, {input, camera, ic}: ICCircuitInfo): boolean {
+        onEvent(event: Event, { input, camera, ic }: ICCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 
@@ -67,10 +67,9 @@ export const ICPortTool = (() => {
                 v = worldMousePos.sub(p);
             } else if (worldMousePos.x === p.x && worldMousePos.y === p.y) {
                 // Set v outwards from the edge the origin position is on
-                if (Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2)
-                    v = V(0,-1).scale(p.y);
-                else
-                    v = V(-1,0).scale(p.x);
+                v = Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2
+                    ? V(0,-1).scale(p.y)
+                    : V(-1,0).scale(p.x);
             }
 
             // Set the direction vector to the length of a port

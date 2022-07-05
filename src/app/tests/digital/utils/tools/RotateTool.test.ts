@@ -1,5 +1,3 @@
-import "jest";
-
 import {ROTATION_CIRCLE_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
@@ -12,8 +10,8 @@ import {ANDGate, ORGate} from "digital/models/ioobjects";
 
 
 describe("Rotate Tool", () => {
-    const {input, designer, selections} = Setup();
-    const {Place} = GetHelpers(designer);
+    const { input, designer, selections } = Setup();
+    const { Place } = GetHelpers(designer);
 
     describe("Single Object", () => {
         const obj = new ANDGate();
@@ -30,7 +28,7 @@ describe("Rotate Tool", () => {
 
         test("Rotate ANDGate 45° CCW from side", () => {
             input.click(V(0, 0)); // Select object
-            expect(selections.get().length).toBe(1);
+            expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(obj);
 
             input.move(V(-ROTATION_CIRCLE_RADIUS, 0))
@@ -42,7 +40,7 @@ describe("Rotate Tool", () => {
 
         test("Rotate ANDGate 45° CW from top", () => {
             input.click(V(0, 0)); // Select object
-            expect(selections.get().length).toBe(1);
+            expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(obj);
 
             input.move(V(0, +ROTATION_CIRCLE_RADIUS))
@@ -76,7 +74,7 @@ describe("Rotate Tool", () => {
         test("Rotate Objects 45° CW", () => {
             input.drag(V(-40, -40),
                        V(40, 40)); // Select objects
-            expect(selections.get().length).toBe(2);
+            expect(selections.get()).toHaveLength(2);
             expect(selections.get()).toContain(obj1);
             expect(selections.get()).toContain(obj2);
 
@@ -94,7 +92,7 @@ describe("Rotate Tool", () => {
             input.drag(V(-40, -40),
                        V(40, 40)); // Select objects
 
-            expect(selections.get().length).toBe(2);
+            expect(selections.get()).toHaveLength(2);
             expect(selections.get()).toContain(obj1);
             expect(selections.get()).toContain(obj2);
 

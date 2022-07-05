@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
@@ -108,12 +108,13 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     }
 
     // Resets the curItemID and numClicks
-    function reset(cancelled = false) {
+    const reset = useCallback((cancelled = false) => {
         dispatch(SetCurItem(""));
         setNumClicks(1);
         setCurItemImg("");
         onFinish?.(cancelled);
-    }
+    }, [setNumClicks, setCurItemImg, onFinish, dispatch]);
+
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         // If holding shift then drop only a single item (issue #1043)
@@ -125,7 +126,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         // Otherwise drop all and reset
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks]);
+    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks, reset]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
         if (!touch)
@@ -133,7 +134,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         const { clientX: x, clientY: y } = touch;
         DragDropHandlers.drop(V(x,y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setNumClicks, additionalData]);
+    }, [curItemID, numClicks, setNumClicks, reset, additionalData]);
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
@@ -147,7 +148,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
 
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
-    }, [isShiftDown, setNumClicks]);
+    }, [isShiftDown, setNumClicks, reset]);
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
@@ -156,7 +157,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
             ? { left: (isOpen ? ITEMNAV_WIDTH : 0), bottom: 0 }
             : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left: 0 }
         );
-    }, [isOpen, side]);
+    }, [info.camera, isOpen, side]);
 
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
@@ -191,9 +192,9 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         function GroupBy<T>(amt: number) {
             return ((prev: T[][], cur: T) => [
                 ...prev.slice(0,-1),
-                ...(prev[prev.length-1].length < amt
-                    ? [[...prev[prev.length-1], cur]] // Add cur to last group
-                    : [prev[prev.length-1], [cur]]),  // Create new group with just cur
+                ...(prev.at(-1)!.length < amt
+                    ? [[...prev.at(-1)!, cur]] // Add cur to last group
+                    : [prev.at(-1)!, [cur]]),  // Create new group with just cur
             ]);
         }
 
@@ -218,7 +219,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     const deleteImg = useMemo(() => {
         // If not pressing a Component or not hovering the ItemNav, then returned undefined
         if (!(currentlyPressedObj instanceof Component) || !hoveringNav)
-            return undefined;
+            return;
         return getImgSrc(currentlyPressedObj);
     }, [currentlyPressedObj, hoveringNav, getImgSrc]);
 
@@ -245,7 +246,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
              }}>
             <img src={curItemImg} width="80px" />
             {additionalPreviewComp}
-            {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
+            {new Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
                 <div key={`itemnav-preview-stack-${i}`}
                      style={{
                          position: "absolute",

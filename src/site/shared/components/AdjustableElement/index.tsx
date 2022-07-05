@@ -58,7 +58,7 @@ export const AdjustableElement = ({ className, style, initialWidth, initialHeigh
 
                  cursor,
 
-                 ...(style ?? {}),
+                 ...style,
              }}
              onPointerUp={onMouseUp}
              onPointerDown={(ev) => {

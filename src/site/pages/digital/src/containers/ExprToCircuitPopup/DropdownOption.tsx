@@ -10,7 +10,7 @@ type Props<T> = {
     setOption: React.Dispatch<React.SetStateAction<T>>;
     text: string;
 }
-export const DropdownOption = <T extends string>({id, option, options, setOption, text}: Props<T>) => (<>
+export const DropdownOption = <T extends string>({ id, option, options, setOption, text }: Props<T>) => (<>
     <br />
     <label>{text}</label>
     <select id={id} value={option}

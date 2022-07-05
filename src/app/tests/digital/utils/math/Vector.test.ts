@@ -1,5 +1,3 @@
-import "jest";
-
 import {Vector} from "Vector";
 
 
@@ -27,6 +25,7 @@ describe("Vector", () => {
             expect(v2.y).toBe(5);
         });
     });
+
     describe("Operators", () => {
         test("Add (numbers)", () => {
             const v1 = new Vector(1, 1);
@@ -93,6 +92,7 @@ describe("Vector", () => {
             expect(v1.y).toBe(v2.y);
         });
     });
+
     describe("Math", () => {
         test("Normalize", () => {
             {
@@ -147,7 +147,7 @@ describe("Vector", () => {
                 const l = v.len();
                 expect(v.x).toBe(543);
                 expect(v.y).toBe(210);
-                expect(l).toBeCloseTo(582.1932668797, 1e-3);
+                expect(l).toBeCloseTo(582.193_266_879_7, 1e-3);
             }
         });
         test("Len2", () => {
@@ -177,7 +177,7 @@ describe("Vector", () => {
                 const l = v.len2();
                 expect(v.x).toBe(543);
                 expect(v.y).toBe(210);
-                expect(l).toBe(338949);
+                expect(l).toBe(338_949);
             }
         });
         test("DistanceTo", () => {
@@ -226,13 +226,14 @@ describe("Vector", () => {
                 expect(v3.y).toBe(2);
                 expect(v4.x).toBe(-20);
                 expect(v4.y).toBe(-5);
-                expect(p3.x).toBeCloseTo(2.352941, 1e-3);
-                expect(p3.y).toBeCloseTo(0.588235, 1e-3);
+                expect(p3.x).toBeCloseTo(2.352_941, 1e-3);
+                expect(p3.y).toBeCloseTo(0.588_235, 1e-3);
                 expect(p4.x).toBeCloseTo(-12.5, 1e-3);
                 expect(p4.y).toBeCloseTo(-12.5, 1e-3);
             }
         });
     });
+
     describe("Utility", () => {
         test("Min", () => {
             {

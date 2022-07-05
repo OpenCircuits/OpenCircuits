@@ -39,7 +39,7 @@ export class RenderQueue {
     }
 
     public setOptions(options: Partial<RenderOptions>): void {
-        this.options = {...this.options, ...options};
+        this.options = { ...this.options, ...options };
     }
 
     public setRenderFunction(renderFunction?: (options?: RenderOptions) => void): void {

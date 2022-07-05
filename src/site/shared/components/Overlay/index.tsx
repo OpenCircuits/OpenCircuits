@@ -10,11 +10,11 @@ type Props = {
 }
 export const Overlay = ({ isOpen, close, children }: Props) => {
     // Needed because Safari sucks: https://medium.com/rbi-tech/safaris-100vh-problem-3412e6f13716
-    const {h} = useWindowSize();
+    const { h } = useWindowSize();
 
     return (
         <div className={`overlay ${isOpen ? "" : "invisible"}`}
-             style={{height: h+"px"}}
+             style={{ height: h+"px" }}
              onClick={() => close()}>
             {children}
         </div>

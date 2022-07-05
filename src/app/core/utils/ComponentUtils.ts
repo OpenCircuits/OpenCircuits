@@ -46,11 +46,11 @@ export class IOObjectSet {
     }
 
     public getComponents(): Component[] {
-        return Array.from(this.components);
+        return [...this.components];
     }
 
     public getWires(): Wire[] {
-        return Array.from(this.wires);
+        return [...this.wires];
     }
 
     public toList(): IOObject[] {
@@ -85,13 +85,14 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
     const group = new IOObjectSet(objects);
 
     const objs = group.getComponents();
-    const wires = group.getWires()
+    const wires = [
+            ...group.getWires(),
             // Add all connections from every object
-            .concat(objs.flatMap((o) => o.getConnections()))
-            // Filter out any connection that isn't connected
-            //  to two objects in the objects list
-            .filter((w) => objs.includes(w.getP1Component()) &&
-                           objs.includes(w.getP2Component()));
+            ...objs.flatMap((o) => o.getConnections()),
+         // Filter out any connection that isn't connected
+         //  to two objects in the objects list
+        ].filter((w) => objs.includes(w.getP1Component()) &&
+                        objs.includes(w.getP2Component()));
 
     return new IOObjectSet([...objs, ...wires]);
 }
@@ -238,14 +239,13 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     const map = new Map<Component, number>();
 
     // Create nodes and map
-    for (let i = 0; i < objs.length; i++) {
+    for (const [i, obj] of objs.entries()) {
         graph.createNode(i);
-        map.set(objs[i], i);
+        map.set(obj, i);
     }
 
     // Create edges
-    for (let j = 0; j < wires.length; j++) {
-        const wire = wires[j];
+    for (const [j, wire] of wires.entries()) {
         const c1 = map.get(wire.getP1Component())!;
         const c2 = map.get(wire.getP2Component())!;
         graph.createEdge(c1, c2, j);

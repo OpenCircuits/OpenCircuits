@@ -1,5 +1,3 @@
-import "jest";
-
 import {Vector} from "Vector";
 
 import {Matrix2x3} from "math/Matrix";
@@ -26,6 +24,7 @@ describe("Matrix2x3", () => {
             expect(m2["mat"]).toEqual([6, 5, 4, 3, 2, 1]);
         });
     });
+
     describe("Modifiers", () => {
         test("Zero", () => {
             const m = new Matrix2x3();
@@ -113,6 +112,7 @@ describe("Matrix2x3", () => {
             }
         });
     });
+
     describe("Operators", () => {
         test("Mul", () => {
             const m = new Matrix2x3();
