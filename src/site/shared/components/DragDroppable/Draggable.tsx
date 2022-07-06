@@ -10,13 +10,14 @@ import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 import {DragDropHandlers} from "./DragDropHandlers";
 
 
-type Props = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
+type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
+type Props<D extends unknown[]> = ButtonProps & {
     children: React.ReactNode;
-    data: any[];
+    data: D;
     dragDir: "horizontal" | "vertical";
     onDragChange?: (type: "start" | "end") => void;
 };
-export const Draggable = ({ children, data, dragDir, onDragChange, ...other }: Props) => {
+export const Draggable = <D extends unknown[]>({ children, data, dragDir, onDragChange, ...other }: Props<D>) => {
     const [isDragging, setIsDragging] = useState(false);
 
     // State to keep track of when to "start" dragging for a mobile touch-down
