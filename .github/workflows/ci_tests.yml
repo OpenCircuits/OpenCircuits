@@ -33,6 +33,9 @@ jobs:
     - name: Build frontend [TypeScript]
       run: yarn build --ci --prod digital
 
+    - name: Lint files [TypeScript]
+      run: yarn lint
+
     - name: Run tests (App) [TypeScript]
       run: yarn test  --ci app
 
