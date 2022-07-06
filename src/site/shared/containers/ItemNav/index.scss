@@ -26,7 +26,7 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
-    @media (max-width: 768px) and (orientation:portrait) {
+    @media (max-width: $desktop-width) and (orientation:portrait) {
         top: unset;
         right: 0;
         width: unset;
@@ -37,11 +37,11 @@ $tab-padding: 8px;
     }
 
     &__move {
-        @media (min-width: 768px), (orientation:landscape) {
+        @media (min-width: $desktop-width), (orientation:landscape) {
             left: -$itemnav-width - $header-border-width;
         }
 
-        @media (max-width: 768px) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation:portrait) {
             bottom: -$itemnav-height - $header-border-width;
         }
     }
@@ -160,11 +160,11 @@ $tab-padding: 8px;
 
             transition: 0.5s;
 
-            @media (min-width: 768px), (orientation:landscape) {
+            @media (min-width: $desktop-width), (orientation:landscape) {
                 border-bottom-right-radius: 15px;
             }
 
-            @media (max-width: 768px) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation:portrait) {
                 left: -$size - $header-border-width;
                 top: -$size - 3*$header-border-width - $top-margin;
                 border-top-left-radius: 15px;
@@ -184,7 +184,7 @@ $tab-padding: 8px;
 
                 transform: translate(-50%, -50%);
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     left: 50%;
                     top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
                 }
@@ -201,7 +201,7 @@ $tab-padding: 8px;
                 top: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     top: 50%;
                 }
             }
@@ -219,11 +219,11 @@ $tab-padding: 8px;
         scrollbar-width: thin;
         scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
 
-        @media (min-width: 768px), (orientation:landscape) {
+        @media (min-width: $desktop-width), (orientation:landscape) {
             border-top: 3px solid #888;
         }
 
-        @media (max-width: 768px) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation:portrait) {
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             flex-wrap: wrap;
@@ -253,7 +253,7 @@ $tab-padding: 8px;
         & > div {
             scroll-snap-align: center;
 
-            @media (max-width: 768px) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation:portrait) {
                 width: 100%;
             }
 
@@ -273,7 +273,7 @@ $tab-padding: 8px;
                 color: #fff;
                 text-shadow: -1px 1px 3px darken(#fff, 40%);
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     margin: 0;
                 }
             }
@@ -285,7 +285,7 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     margin: 0;
                 }
 

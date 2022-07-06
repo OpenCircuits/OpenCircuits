@@ -12,15 +12,15 @@ type Props = {
     height?: number;
     children: React.ReactNode;
 }
-export const Popup = ({title, isOpen, close, className, width, height, children}: Props) => (
+export const Popup = ({ title, isOpen, close, className, width, height, children }: Props) => (
     <>
         <Overlay isOpen={isOpen} close={close} />
 
         <div className={"popup " + (className ?? "")}
              style={{
                 display: (isOpen ? "initial" : "none"),
-                width: `${width}%`,
-                height: `${height}%`
+                width:   `${width}%`,
+                height:  `${height}%`,
              }}>
             <h1>{title}</h1>
             <hr />

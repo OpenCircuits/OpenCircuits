@@ -1,13 +1,14 @@
-import {parseColor, SVGDrawing} from "svg2canvas";
+import {SVGDrawing, parseColor} from "svg2canvas";
 
-import {Vector,V} from "Vector";
+import {V, Vector} from "Vector";
+
+import {Camera}    from "math/Camera";
 import {Transform} from "math/Transform";
-import {Camera} from "math/Camera";
-
-import {FONT} from "./Styles";
-import {Style} from "./Style";
 
 import {Shape} from "./shapes/Shape";
+import {Style} from "./Style";
+import {FONT}  from "./Styles";
+
 
 
 export class Renderer {
@@ -36,7 +37,7 @@ export class Renderer {
     public transform(camera: Camera, transform: Transform): void {
         const m = transform.getMatrix().copy();
         m.setTranslation(camera.getScreenPos(m.getTranslation()));
-        m.scale(1.0/camera.getZoom());
+        m.scale(1/camera.getZoom());
         this.context.setTransform(m.get(0), m.get(1), m.get(2),
                                   m.get(3), m.get(4), m.get(5));
     }
@@ -58,7 +59,7 @@ export class Renderer {
     public stroke(): void {
         this.context.stroke();
     }
-    public draw(shape: Shape, style: Style, alpha: number = 1): void {
+    public draw(shape: Shape, style: Style, alpha = 1): void {
         this.save();
         this.setStyle(style, alpha);
 

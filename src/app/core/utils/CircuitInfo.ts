@@ -1,12 +1,14 @@
 import {Camera} from "math/Camera";
 
-import {CircuitDesigner} from "core/models";
 import {HistoryManager} from "core/actions/HistoryManager";
+
 import {ToolManager} from "core/tools/ToolManager";
 
-import {Input} from "./Input";
-import {RenderQueue} from "./RenderQueue";
-import {Selectable} from "./Selectable";
+import {CircuitDesigner} from "core/models";
+
+import {Input}             from "./Input";
+import {RenderQueue}       from "./RenderQueue";
+import {Selectable}        from "./Selectable";
 import {SelectionsWrapper} from "./SelectionsWrapper";
 
 
@@ -41,5 +43,5 @@ export type CircuitInfo = {
         debugPressableBounds: boolean;
         debugSelectionBounds: boolean;
         debugNoFill: boolean;
-    },
+    };
 }

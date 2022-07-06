@@ -1,12 +1,15 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent} from "analog/models";
-import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
-import {ResistanceInfo} from "analog/models/Units";
+
 import {GenInitialInfo} from "analog/models/AnalogComponent";
+import {ResistanceInfo} from "analog/models/Units";
+
+import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
 const Info = {
@@ -36,16 +39,18 @@ export class Resistor extends AnalogComponent {
     }
 
     /**
-     * Returns name of Component
-     * @returns "Resistor"
+     * Returns name of Component.
+     *
+     * @returns The string "Resistor".
      */
     public override getDisplayName(): string {
         return "Resistor";
     }
 
     /**
-     * Returns name of image file
-     * @returns "resistor.svg"
+     * Returns name of image file.
+     *
+     * @returns The string "resistor.svg".
      */
     public override getImageName(): string {
         return "resistor.svg";

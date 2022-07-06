@@ -21,11 +21,11 @@ export function GetRenderFunc({ canvas, info }: Info) {
     const renderer = new Renderer(canvas);
 
     const renderers = CreateRenderers(renderer, info, {
-        gridRenderer: GridRenderer,
-        wireRenderer: WireRenderer,
+        gridRenderer:      GridRenderer,
+        wireRenderer:      WireRenderer,
         componentRenderer: ComponentRenderer,
-        toolRenderer: ToolRenderer,
-        debugRenderer: DebugRenderer,
+        toolRenderer:      ToolRenderer,
+        debugRenderer:     DebugRenderer,
     });
 
     return function render({ useGrid }: RenderOptions = { useGrid: true }) {

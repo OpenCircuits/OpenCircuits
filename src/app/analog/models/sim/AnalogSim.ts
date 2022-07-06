@@ -1,7 +1,7 @@
-import {Netlist, NetlistToNGSpice} from "./Netlist";
 
-import {NGSpiceLib} from "./lib/NGSpiceLib";
-import {CreateWASMInstance} from "./lib/WASM";
+import {NGSpiceLib}                from "./lib/NGSpiceLib";
+import {CreateWASMInstance}        from "./lib/WASM";
+import {Netlist, NetlistToNGSpice} from "./Netlist";
 
 
 const MakeInstance = (lib: NGSpiceLib) => CreateWASMInstance(lib);
@@ -35,7 +35,7 @@ export class AnalogSim {
         // Convert netlist to format for NGSpice
         const ngNetList = NetlistToNGSpice(netlist).map(line => line.join(" "));
 
-        console.log(ngNetList.join("\n"));
+        // console.log(ngNetList.join("\n"));
 
         // Upload data to NGSpice
         this.netlistPtrs = this.lib.create_str_array(ngNetList);
@@ -51,11 +51,9 @@ export class AnalogSim {
         this.plotIDs = plotIDPtrs.map(ptr => this.lib.get_array(ptr, { type: "char" }));
         this.curPlotID = this.lib.get_array(this.lib.get_cur_plot(), { type: "char" });
         { // Get vec IDs
-            this.vecIDs = plotIDPtrs.reduce((prev, plotIDPtr, i) => ({
-                ...prev,
-                [this.plotIDs[i]]:
-                    this.lib.get_array(this.lib.get_vector_ids(plotIDPtr), { type: "string" }),
-            }), {});
+            this.vecIDs = Object.fromEntries(plotIDPtrs.map(( plotIDPtr, i) =>
+                [this.plotIDs[i], this.lib.get_array(this.lib.get_vector_ids(plotIDPtr), { type: "string" })]
+            ));
         }
         { // Get vec data
             const allIDs = this.plotIDs.flatMap(plotID => this.vecIDs[plotID].map(id => `${plotID}.${id}`));
@@ -100,7 +98,7 @@ export class AnalogSim {
         return this.vecs[id].data;
     }
 
-    public getVecDataIm(id: string): { re: number, im: number }[] {
+    public getVecDataIm(_id: string): Array<{ re: number, im: number }> {
         // const idPtr = this.lib.create_array("string", id);
         // const vecDataPtr = this.lib.get_vector_data(idPtr);
         // return this.lib.get_array(vecDataPtr, { type: "double", len: this.getVecLen(id) });

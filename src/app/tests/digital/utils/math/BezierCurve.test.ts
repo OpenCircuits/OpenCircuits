@@ -1,6 +1,5 @@
-import "jest";
-
 import {V} from "Vector";
+
 import {BezierCurve} from "math/BezierCurve";
 
 
@@ -52,12 +51,12 @@ describe("BezierCurve", () => {
     test("getX", () => {
         const curve = new BezierCurve(V(0,0), V(-2,5), V(1,2), V(2,0));
         const c = curve.getX(0.5);
-        expect(c).toEqual(0.875);
+        expect(c).toBe(0.875);
     });
     test("getY", () => {
         const curve = new BezierCurve(V(0,0), V(-2,5), V(1,2), V(2,0));
         const c = curve.getY(0.5);
-        expect(c).toEqual(1.375);
+        expect(c).toBe(1.375);
     });
     test("getPos", () => {
         const curve = new BezierCurve(V(0,0), V(-2,5), V(1,2), V(2,0));
@@ -88,7 +87,7 @@ describe("BezierCurve", () => {
         const curve = new BezierCurve(V(1,2.5), V(0,1), V(6,0), V(-0.5,6));
         const c = curve.getBoundingBox();
         const arr = c.getCorners();
-        const expected = [V(-0.02769,3.06), V(2.90132,3.06), V(2.90132,1), V(-0.02769,1)];
+        const expected = [V(-0.027_69,3.06), V(2.901_32,3.06), V(2.901_32,1), V(-0.027_69,1)];
         arr.forEach((_, i) => {
             expect(arr[i].x).toBeCloseTo(expected[i].x, 1e-3);
             expect(arr[i].y).toBeCloseTo(expected[i].y, 1e-3);

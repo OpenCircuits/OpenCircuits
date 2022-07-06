@@ -1,5 +1,5 @@
-import {GetIDFor} from "serialeazy";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {GetIDFor}                                        from "serialeazy";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -20,9 +20,7 @@ type Props = {
     docsUrlConfig: Record<string, string>;
     children: React.ReactNode;
 }
-export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
-    const calcPos = () => camera.getScreenPos(selections.midpoint(true));
-
+export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
     const { input, camera, history, selections } = info;
 
     const itemNavCurItem = useSharedSelector(state => state.itemNav.curItemID);
@@ -44,16 +42,16 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
 
 
     const [pos, setPos] = useState({ x: 0, y: 0 });
-    useEffect(() => {
-        const update = () => setPos(calcPos());
+    const updatePos = useCallback(() => {
+        setPos(camera.getScreenPos(selections.midpoint(true)));
+    }, [camera, selections, setPos]);
 
+    useEffect(() => {
         // Subscribe to history for translation/selection changes
-        history.addCallback(update);
-        return () => history.removeCallback(update);
-    }, [history, setPos]);
-    useEvent("zoom", (_) => {
-        setPos(calcPos()); // Recalculate position on zoom
-    }, input, [camera, selections, setPos]);
+        history.addCallback(updatePos);
+        return () => history.removeCallback(updatePos);
+    }, [history, updatePos]);
+    useEvent("zoom", updatePos, input, [updatePos]);
 
     const [isDragging, setIsDragging] = useState(false);
     useEvent("mousedrag", (_) => {
@@ -61,8 +59,8 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
     }, input, [setIsDragging]);
     useEvent("mouseup", (_) => {
         setIsDragging(false); // Show when stopped dragging
-        setPos(calcPos()); // And recalculate position
-    }, input, [selections, setIsDragging]);
+        updatePos(); // And recalculate position
+    }, input, [updatePos, setIsDragging]);
 
 
     const [clickThrough, setClickThrough] = useState(false);
@@ -99,20 +97,20 @@ export function SelectionPopup({ info, docsUrlConfig, children }: Props) {
     return (
         <div ref={popup}
              className="selection-popup"
+             tabIndex={-1}
              style={{
-                left: `${pos.x}px`,
-                top:  `${pos.y}px`,
-                visibility: (isVisible && !isDragging ? "visible": "hidden"),
+                left:          `${pos.x}px`,
+                top:           `${pos.y}px`,
+                visibility:    (isVisible && !isDragging ? "visible": "hidden"),
                 // Fixes issue with double clicks and when dragging from the ItemNav
                 //  Issues #521 and #863 respectively
                 pointerEvents: (clickThrough || !!itemNavCurItem ? "none" : "auto"),
-             }}
-             tabIndex={-1}>
-            {id && <div className="info-button">
+             }}>
+            {id && (<div className="info-button">
                 <div>{id}</div>
                 <a href={infoLink} target="_blank" rel="noopener noreferrer"
                    title="Click for component information">?</a>
-            </div>}
+            </div>)}
             <TitleModule info={info}  />
             <hr />
             {children}

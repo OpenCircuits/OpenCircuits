@@ -4,17 +4,13 @@ import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {Event} from "core/utils/Events";
 import {Cursor} from "core/utils/CircuitInfo";
+import {Event}  from "core/utils/Events";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
 import {Oscilloscope} from "analog/models/eeobjects";
 
-
-export type Corner = "topleft" | "topright" | "bottomleft" | "bottomright";
-export type Edge = "left" | "right" | "top" | "bottom";
-export type ResizeArea = Edge | Corner;
 
 const EDGE_SIZE = DEFAULT_BORDER_WIDTH*5;
 
@@ -55,7 +51,7 @@ export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undef
 }
 
 export const CursorHandler = ({
-    conditions: (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
+    conditions:  (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
     getResponse: (info: AnalogCircuitInfo, _: Event) => {
         const [cursor] = FindEdge(info);
         info.cursor = cursor;

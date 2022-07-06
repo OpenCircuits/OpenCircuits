@@ -1,3 +1,4 @@
+/* eslint-disable key-spacing */
 import {NumberPropInfo, PropInfo, UnitInfo} from "./AnalogComponent";
 
 

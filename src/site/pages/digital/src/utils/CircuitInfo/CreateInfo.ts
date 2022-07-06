@@ -1,16 +1,17 @@
 import {Camera} from "math/Camera";
 
-import {Input} from "core/utils/Input";
+import {Input}             from "core/utils/Input";
+import {RenderQueue}       from "core/utils/RenderQueue";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
-import {RenderQueue} from "core/utils/RenderQueue";
 
 import {HistoryManager} from "core/actions/HistoryManager";
-import {DefaultTool} from "core/tools/DefaultTool";
 
-import {Tool} from "core/tools/Tool";
+import {DefaultTool} from "core/tools/DefaultTool";
+import {Tool}        from "core/tools/Tool";
 import {ToolManager} from "core/tools/ToolManager";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+
 import {DigitalCircuitDesigner} from "digital/models";
 
 
@@ -27,17 +28,19 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalC
         history,
         camera,
         designer,
+
         // This is necessary because input is created later in the pipeline because it requires canvas
         input: undefined as unknown as Input,
         selections,
         toolManager,
         renderer,
+
         debugOptions: {
-            debugCullboxes: false,
+            debugCullboxes:       false,
             debugPressableBounds: false,
             debugSelectionBounds: false,
-            debugNoFill: false
-        }
+            debugNoFill:          false,
+        },
     };
 
     return info;

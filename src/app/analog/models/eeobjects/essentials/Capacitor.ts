@@ -1,11 +1,14 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent} from "analog/models";
+
+import {GenInitialInfo}  from "analog/models/AnalogComponent";
 import {CapacitanceInfo} from "analog/models/Units";
-import {GenInitialInfo} from "analog/models/AnalogComponent";
+
 import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
@@ -36,16 +39,18 @@ export class Capacitor extends AnalogComponent {
     }
 
     /**
-     * Returns name of Component
-     * @returns "Capacitor"
+     * Returns name of Component.
+     *
+     * @returns The string "Capacitor".
      */
     public getDisplayName(): string {
         return "Capacitor";
     }
 
     /**
-     * Returns name of image file
-     * @returns "capacitor.svg"
+     * Returns name of image file.
+     *
+     * @returns The string "capacitor.svg".
      */
     public getImageName(): string {
         return "capacitor.svg";

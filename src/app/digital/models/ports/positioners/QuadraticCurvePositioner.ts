@@ -1,11 +1,13 @@
+import {serializable} from "serialeazy";
+
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
+import {Positioner} from "core/models/ports/positioners/Positioner";
+
 import {InputPort} from "../InputPort";
 
-import {Positioner} from "core/models/ports/positioners/Positioner";
-import {serializable} from "serialeazy";
 
 @serializable("QuadraticCurvePositioner")
 export class QuadraticCurvePositioner extends Positioner<InputPort> {
@@ -15,18 +17,19 @@ export class QuadraticCurvePositioner extends Positioner<InputPort> {
     }
 
     /**
-     * Port positioning for OR/XOR gates along the quadratic curves
+     * Port positioning for OR/XOR gates along the quadratic curves.
      *
-     * @param arr The array of ports (either in or out ports)
+     * @param ports The array of ports (either in or out ports).
      */
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: InputPort[]): void {
         super.updatePortPositions(ports);
 
         ports.forEach((port) => {
             const parent = port.getParent();
 
-            let t = ((port.getOriginPos().y) / parent.getSize().y + 0.5) % 1.0;
-            if (t < 0) t += 1.0;
+            let t = ((port.getOriginPos().y) / parent.getSize().y + 0.5) % 1;
+            if (t < 0)
+                t += 1;
 
             // @TODO move to a MathUtils QuadCurve function or something
             const s = parent.getSize().x/2 - DEFAULT_BORDER_WIDTH;

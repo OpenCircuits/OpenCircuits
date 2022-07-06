@@ -4,17 +4,20 @@ import {ARROW_TRANSLATE_DISTANCE_NORMAL,
 
 import {V, Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Snap}        from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
 
 import {CopyGroupAction} from "core/actions/CopyGroupAction";
+import {GroupAction}     from "core/actions/GroupAction";
+import {ShiftAction}     from "core/actions/ShiftAction";
+
 import {TranslateAction} from "core/actions/transform/TranslateAction";
-import {Tool}            from "core/tools/Tool";
+
+import {Tool} from "core/tools/Tool";
 
 import {Component} from "core/models";
-import {ShiftAction} from "core/actions/ShiftAction";
-import {GroupAction} from "core/actions/GroupAction";
+
 
 
 export const TranslateTool: Tool = (() => {
@@ -25,7 +28,7 @@ export const TranslateTool: Tool = (() => {
     let activatedButton: string | number;
 
     return {
-        shouldActivate(event: Event, {locked, currentlyPressedObject, selections}: CircuitInfo): boolean {
+        shouldActivate(event: Event, { locked, currentlyPressedObject, selections }: CircuitInfo): boolean {
             if (locked)
                 return false;
             // Activate if the user is pressing down on an object or an arrow key
@@ -46,7 +49,7 @@ export const TranslateTool: Tool = (() => {
 
 
         onActivate(event: Event, info: CircuitInfo): void {
-            const {camera, input, selections, currentlyPressedObject, designer} = info;
+            const { camera, input, selections, currentlyPressedObject, designer } = info;
 
             // The event that activates this will either be keydown or mousedrag, so
             //  we can save the key like this to use later
@@ -64,7 +67,7 @@ export const TranslateTool: Tool = (() => {
             ) as Component[];
 
             action = new GroupAction([
-                new GroupAction(components.map(c => new ShiftAction(designer, c)), "Shift Action").execute()
+                new GroupAction(components.map(c => new ShiftAction(designer, c)), "Shift Action").execute(),
             ], "Translate Tool", components.map(c => `Translated ${c.getName()}.`));
 
             initalPositions = components.map(o => o.getPos());
@@ -72,7 +75,7 @@ export const TranslateTool: Tool = (() => {
             // explicitly start a drag
             this.onEvent(event, info);
         },
-        onDeactivate({}: Event, {history}: CircuitInfo): void {
+        onDeactivate({}: Event, { history }: CircuitInfo): void {
             const finalPositions = components.map(o => o.getPos());
 
             history.add(
@@ -82,7 +85,7 @@ export const TranslateTool: Tool = (() => {
 
 
         onEvent(event: Event, info: CircuitInfo): boolean {
-            const {input, camera, history, designer} = info;
+            const { input, camera, history, designer } = info;
 
             switch (event.type) {
                 // Using mousemove instead of mousedrag here because when a button besides
@@ -90,7 +93,8 @@ export const TranslateTool: Tool = (() => {
                 //  So instead mousemove is used and whether or not left mouse is still pressed is
                 //  handled within the activation and deactivation of this tool.
                 case "mousemove":
-                    if (activatedButton !== LEFT_MOUSE_BUTTON) break;
+                    if (activatedButton !== LEFT_MOUSE_BUTTON)
+                        break;
 
                     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
@@ -119,7 +123,8 @@ export const TranslateTool: Tool = (() => {
                     break;
 
                 case "keydown":
-                    if (activatedButton === LEFT_MOUSE_BUTTON) break;
+                    if (activatedButton === LEFT_MOUSE_BUTTON)
+                        break;
 
                     // Translate with the arrow keys
                     let deltaPos = new Vector();
@@ -136,13 +141,19 @@ export const TranslateTool: Tool = (() => {
                         deltaPos = deltaPos.add(0, 1);
 
                     // Object gets moved different amounts depending on if the shift key is held
-                    const factor = (input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL);
+                    const factor = (
+                        input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL
+                    );
 
-                    new TranslateAction(components, initalPositions, initalPositions.map(p => p.add(deltaPos.scale(factor)))).execute();
+                    new TranslateAction(
+                        components,
+                        initalPositions,
+                        initalPositions.map(p => p.add(deltaPos.scale(factor)))
+                    ).execute();
 
                     return true;
             }
             return false;
-        }
+        },
     }
 })();

@@ -1,11 +1,14 @@
 import {serializable, serialize} from "serialeazy";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
-import {TimedComponent} from "../TimedComponent";
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
+
 import {InputPort} from "digital/models";
+
+import {TimedComponent} from "../TimedComponent";
 
 
 @serializable("Oscilloscope")
@@ -76,7 +79,7 @@ export class Oscilloscope extends TimedComponent {
     }
 
     public getSignals(): boolean[][] {
-        return this.signals.slice();
+        return [...this.signals];
     }
 
     public getDisplaySize(): Vector {

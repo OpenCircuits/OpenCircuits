@@ -12,5 +12,5 @@
             "shared/*":       ["../../shared/*"],
         }
     },
-    "include": ["src", "tests"],
+    "include": ["src", "../../shared/utils/types", "tests"],
 }

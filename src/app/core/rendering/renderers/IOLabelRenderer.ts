@@ -1,18 +1,21 @@
 import {IO_LABEL_DIR_PADDING, IO_LABEL_VERTICAL_TEXT_PADDING} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
-import {Camera} from "math/Camera";
 
-import {Port} from "core/models";
-import {Component} from "core/models/Component";
+import {Camera} from "math/Camera";
 
 import {Renderer} from "core/rendering/Renderer";
 
+import {Port} from "core/models";
+
+import {Component} from "core/models/Component";
+
+
 
 /**
- * Renders IOLabels
- * * Check if Component is on screen, quit if not
- * * For each port, align and render name of port at port position
+ * Renders IOLabels.
+ * Check if Component is on screen, quit if not.
+ * For each port, align and render name of port at port position.
  */
 export const IOLabelRenderer = (() => {
 
@@ -34,7 +37,7 @@ export const IOLabelRenderer = (() => {
         const min = V(-xBound, -yBound);
         const max = V( xBound,  yBound);
 
-        renderer.text(port.getName(), Vector.clamp(pos, min, max), align);
+        renderer.text(port.getName(), Vector.Clamp(pos, min, max), align);
     }
 
     return {
@@ -44,7 +47,7 @@ export const IOLabelRenderer = (() => {
 
             const size = object.getTransform().getSize();
             object.getPorts().forEach((p) => drawPortText(renderer, p, size));
-        }
+        },
     };
 
 })();

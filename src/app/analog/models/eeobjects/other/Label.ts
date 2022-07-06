@@ -1,6 +1,7 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent, GenInitialInfo, PropInfo} from "analog/models/AnalogComponent";
@@ -8,12 +9,12 @@ import {AnalogComponent, GenInitialInfo, PropInfo} from "analog/models/AnalogCom
 
 const Info: Record<string, PropInfo> = {
     "color": {
-        type: "color",
+        type:    "color",
         display: "Color",
         initial: "#ffffff",
     },
     "textColor": {
-        type: "color",
+        type:    "color",
         display: "Text Color",
         initial: "#000000",
     },

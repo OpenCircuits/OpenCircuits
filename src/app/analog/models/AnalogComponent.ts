@@ -1,15 +1,18 @@
 import {serialize} from "serialeazy";
 
 import {Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
 
 import {PortSet} from "core/models/ports/PortSets";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {AnalogCircuitDesigner, AnalogWire, AnalogPort} from "./index";
 import {NetlistElement} from "./sim/Netlist";
+
+import {AnalogCircuitDesigner, AnalogPort, AnalogWire} from "./index";
 
 
 export type UnitInfo = Record<string, {
@@ -85,9 +88,9 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
     const merge = (a1: GroupPropInfo["isActive"], a2: GroupPropInfo["isActive"]): GroupPropInfo["isActive"] => {
         if (a1 && a2) {
             return (state) => (a1(state) && a2(state));
-        } else {
-            return a1 ?? a2;
         }
+        return a1 ?? a2;
+
     }
 
     const collectGroups = (groups: GroupPropInfo[], parentIsActive?: GroupPropInfo["isActive"]): void => {
@@ -223,7 +226,7 @@ export abstract class AnalogComponent extends Component {
     public getConnections(): AnalogWire[] {
         // Get each wire connected to each port and then filter out the null ones
         return this.getPorts().flatMap((p) => p.getWires())
-                .filter((w) => w != null);
+                .filter(w => !!w);
     }
 
     public hasProp(key: string): boolean {

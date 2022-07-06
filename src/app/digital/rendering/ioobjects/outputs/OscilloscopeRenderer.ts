@@ -1,15 +1,16 @@
-import {SELECTED_BORDER_COLOR,
-        DEFAULT_BORDER_COLOR,
-        SELECTED_FILL_COLOR,
+import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
-        DEFAULT_ON_COLOR} from "core/utils/Constants";
+        DEFAULT_ON_COLOR,
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
 import {Renderer} from "core/rendering/Renderer";
-import {Style} from "core/rendering/Style";
+import {Style}    from "core/rendering/Style";
+
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {Oscilloscope} from "digital/models/ioobjects";
@@ -36,8 +37,8 @@ export const OscilloscopeRenderer = (() => {
             renderer.beginPath();
 
             const allSignals = o.getSignals();
-            for (let i = 0; i < allSignals.length; i++) {
-                const signals = allSignals[i].slice(0, o.getNumSamples());
+            for (const [i, allSignal] of allSignals.entries()) {
+                const signals = allSignal.slice(0, o.getNumSamples());
 
                 // Get y-offset for i'th graph
                 const dy = -size.y/2 + (i + 0.5)*o.getDisplaySize().y;
@@ -69,6 +70,6 @@ export const OscilloscopeRenderer = (() => {
             renderer.closePath();
             renderer.stroke();
             renderer.restore();
-        }
+        },
     };
 })();

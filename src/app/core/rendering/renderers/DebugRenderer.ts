@@ -1,31 +1,31 @@
 import {IO_PORT_SELECT_RADIUS} from "core/utils/Constants";
-import {DEBUG_CULLBOX_STYLE,
-        DEBUG_SELECTION_BOUNDS_STYLE,
-        DEBUG_PRESSABLE_BOUNDS_STYLE} from "../Styles";
+
 
 import {V} from "Vector";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {GetAllPorts} from "core/utils/ComponentUtils";
+import {CircuitInfo}            from "core/utils/CircuitInfo";
+import {GetAllPorts}            from "core/utils/ComponentUtils";
 import {Pressable, isPressable} from "core/utils/Pressable";
 
-import {Renderer} from "../Renderer";
-
-import {Circle} from "../shapes/Circle";
-import {Rectangle} from "../shapes/Rectangle";
+import {Renderer}                     from "../Renderer";
+import {Circle}                       from "../shapes/Circle";
+import {Rectangle}                    from "../shapes/Rectangle";
+import {DEBUG_CULLBOX_STYLE,
+        DEBUG_PRESSABLE_BOUNDS_STYLE,
+        DEBUG_SELECTION_BOUNDS_STYLE} from "../Styles";
 
 
 export const DebugRenderer = (() => {
     return {
         render(renderer: Renderer, info: CircuitInfo): void {
-            const {camera, designer} = info;
+            const { camera, designer } = info;
 
             const objects = designer.getObjects();
             const wires = designer.getWires();
 
 
             if (info.debugOptions.debugCullboxes) {
-                const cullboxes = objects.map((c) => c.getCullBox()).concat(wires.map((w) => w.getCullBox()));
+                const cullboxes = [...objects, ...wires].map((c) => c.getCullBox());
                 renderer.save();
                 for (const cullBox of cullboxes) {
                     renderer.transform(camera, cullBox);
@@ -56,6 +56,6 @@ export const DebugRenderer = (() => {
                 renderer.restore();
             }
 
-        }
+        },
     };
 })();

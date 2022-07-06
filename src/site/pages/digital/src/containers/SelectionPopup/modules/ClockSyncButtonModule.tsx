@@ -18,16 +18,19 @@ export const ClockSyncButtonModule = ({ info }: Props) => {
                                    //  we need to be able to update the state
     );
 
-    if (!props)
+    // Show if valid and if there are multiple clocks
+    if (!props || props.isClock.length < 2)
         return null;
 
-    return <button
-        title="Sychronize start of selected clocks"
-        onClick={() => {
-            cs.forEach(c => c.reset());
-            renderer.render();
-            forceUpdate(); // Need to force an update since this isn't changed by an action
-        }}>
-        Sync Clocks
-    </button>
+    return (
+        <button type="button"
+                title="Sychronize start of selected clocks"
+                onClick={() => {
+                    cs.forEach(c => c.reset());
+                    renderer.render();
+                    forceUpdate(); // Need to force an update since this isn't changed by an action
+                }}>
+            Sync Clocks
+        </button>
+    );
 }

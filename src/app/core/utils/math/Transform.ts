@@ -1,11 +1,12 @@
-import {Vector,V}  from "./Vector";
+import {serializable, serialize} from "serialeazy";
+
 import {Matrix2x3} from "./Matrix";
-import {serialize, serializable} from "serialeazy";
+import {V, Vector} from "./Vector";
 
 /**
  * Class representing a Transform.
- * A Transform holds all the spacial information about an object.
- * (ex. position, rotating, size, etc.)
+ * A Transform holds all the spacial information about an object
+ * (ex. position, rotating, size, etc.).
  *
  * For performance reasons the transform also stores a list of corners
  *  to be able to quickly apply intersection testing.
@@ -27,8 +28,8 @@ export class Transform {
     @serialize
     private size: Vector;
 
-    private corners: Array<Vector>;
-    private localCorners: Array<Vector>;
+    private corners: Vector[];
+    private localCorners: Vector[];
 
     private dirty: boolean;
     private dirtySize: boolean;
@@ -41,13 +42,13 @@ export class Transform {
     private radius: number;
 
     /**
-     * Constructs a new Transform object
+     * Constructs a new Transform object.
      *
-     * @param  {Vector} pos     The initial position of the transform
-     * @param  {Vector} size    The initial size of the transform
-     * @param  {number} angle   The initial angle of the transform
+     * @param pos   The initial position of the transform.
+     * @param size  The initial size of the transform.
+     * @param angle The initial angle of the transform.
      */
-    public constructor(pos: Vector = V(0), size: Vector = V(1), angle: number = 0) {
+    public constructor(pos: Vector = V(0), size: Vector = V(1), angle = 0) {
         this.parent = undefined;
 
         this.pos = V(pos.x, pos.y);
@@ -65,7 +66,7 @@ export class Transform {
     }
     private updateMatrix(): void {
         // If parent changed then we need to recalculate matrix
-        if (this.parent != undefined && this.prevParentMatrix != undefined &&
+        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
             this.dirty = true;
 
@@ -78,7 +79,7 @@ export class Transform {
         this.matrix.rotate(this.angle);
         this.matrix.scale(this.scale);
 
-        if (this.parent != undefined) {
+        if (this.parent !== undefined) {
             this.matrix = this.parent.getMatrix().mult(this.matrix);
             this.prevParentMatrix = this.parent.getMatrix();
         }
@@ -97,7 +98,7 @@ export class Transform {
     }
     private updateCorners(): void {
         // If parent changed then we need to recalculate corners
-        if (this.parent != undefined && this.prevParentMatrix != undefined &&
+        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
             !this.parent.getMatrix().equals(this.prevParentMatrix))
             this.dirtyCorners = true;
 
@@ -111,10 +112,10 @@ export class Transform {
     }
 
     /**
-     * Rotates this transform 'a' radians about the axis 'c'
+     * Rotates this transform 'a' radians about the axis 'c'.
      *
-     * @param {number} a The angle to rotate
-     * @param {number} c The axis to rotate about
+     * @param a The angle to rotate.
+     * @param c The axis to rotate about.
      */
     public rotateAbout(a: number, c: Vector): void {
         this.setAngle(this.getAngle() + a);
@@ -171,12 +172,10 @@ export class Transform {
 
     /**
      * Converts the given Vector, v, to local space relative
-     *  to this transform
+     *  to this transform.
      *
-     * @param {Vector} v    The vector to transform
-     *                      Must be in world coordinates
-     *
-     * @return {Vector}     The local space vector
+     * @param v The vector to transform, must be in world coordinates.
+     * @returns   The local space vector.
      */
     public toLocalSpace(v: Vector): Vector { // v must be in world coords
         return this.getInverseMatrix().mul(v);
@@ -184,12 +183,10 @@ export class Transform {
 
     /**
      * Converts the given Vector, v, to world space relative
-     *  to this transform
+     *  to this transform.
      *
-     * @param {Vector} v    The vector to transform
-     *                      Must be in local coordinates
-     *
-     * @return {Vector}     The world space vector
+     * @param v The vector to transform, must be in local coordinates.
+     * @returns   The world space vector.
      */
     public toWorldSpace(v: Vector): Vector {
         return this.getMatrix().mul(v);
@@ -238,13 +235,13 @@ export class Transform {
         this.updateCorners();
         return this.corners[3];
     }
-    public getCorners(): Array<Vector> {
+    public getCorners(): Vector[] {
         this.updateCorners();
-        return this.corners.slice(); // Shallow copy array
+        return [...this.corners]; // Shallow copy array
     }
-    public getLocalCorners(): Array<Vector> {
+    public getLocalCorners(): Vector[] {
         this.updateSize();
-        return this.localCorners.slice(); // Shallow copy array
+        return [...this.localCorners]; // Shallow copy array
     }
 
     public copy(): Transform {
@@ -254,7 +251,7 @@ export class Transform {
         return trans;
     }
 
-    public static fromCorners(p1: Vector, p2: Vector): Transform {
+    public static FromCorners(p1: Vector, p2: Vector): Transform {
         return new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
     }
 }

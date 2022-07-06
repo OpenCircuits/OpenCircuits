@@ -1,4 +1,5 @@
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+
 import {CloseHistoryBox, OpenHistoryBox} from "shared/state/ItemNav";
 
 import "./index.scss";
@@ -10,15 +11,17 @@ export const HistoryToggleButton = () => {
 
     return (
         <div>
-            <button className="header__left__history"
+            <button type="button"
+                    className="header__left__history"
                     title="History"
                     onClick={() => {
-                        if (isHistoryBoxOpen) dispatch(CloseHistoryBox());
-                        else dispatch(OpenHistoryBox());
+                        if (isHistoryBoxOpen)
+                            dispatch(CloseHistoryBox());
+                        else
+                            dispatch(OpenHistoryBox());
                     }}>
-                <img src="img/icons/history-light.svg" ></img>
+                <img src="img/icons/history-light.svg" alt="History box icon (light)"></img>
             </button>
         </div>
     );
 }
-

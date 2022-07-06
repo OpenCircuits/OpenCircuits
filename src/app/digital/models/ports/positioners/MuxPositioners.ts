@@ -6,7 +6,7 @@ import {V} from "Vector";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {InputPort} from "../InputPort";
+import {InputPort}  from "../InputPort";
 import {OutputPort} from "../OutputPort";
 
 
@@ -16,17 +16,17 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
     // lower edge are different, so the offsets are opposite of each other
     private slopeMultiplier: number;
 
-    public constructor(isMultiplexer: boolean = true) {
+    public constructor(isMultiplexer = true) {
         super();
         this.slopeMultiplier = isMultiplexer ? -1 : 1;
     }
 
     /**
-     * Port positioning for Multiplexer/Demultiplexer select lines
+     * Port positioning for Multiplexer/Demultiplexer select lines.
      *
-     * @param arr The array of input ports
+     * @param ports The array of input ports.
      */
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: InputPort[]): void {
         // Calculations for parameters to use in determining origin positions
         const size = ports[0].getParent().getSize();
         const width = size.x;

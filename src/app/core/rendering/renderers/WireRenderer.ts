@@ -1,13 +1,14 @@
-import {blend, parseColor, Color} from "svg2canvas";
+import {Color, blend, parseColor} from "svg2canvas";
 
 import {SELECTED_FILL_COLOR,
         WIRE_THICKNESS} from "core/utils/Constants";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Style} from "core/rendering/Style";
-import {Curve} from "core/rendering/shapes/Curve";
 import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
+
+import {Curve} from "core/rendering/shapes/Curve";
 
 import {Wire} from "core/models";
 
@@ -16,20 +17,20 @@ import {Wire} from "core/models";
 function ColorToHex(col: Color): string {
     return `#${[col.r, col.g, col.b].map(x => {
         const hex = Math.round(x).toString(16);
-        return (hex.length === 1 ? '0'+hex : hex);
-    }).join('')}`
+        return (hex.length === 1 ? "0"+hex : hex);
+    }).join("")}`
 }
 
 /**
- * Renders Wires
- * * Check if wire is on screen, quit render if not
- * * Set wire colour - prioritize on colour, else colour as selection status
- * * Calculate Wire Bezier Curve
- * * Draw
+ * Renders Wires:
+ * - Check if wire is on screen, quit render if not,
+ * - Set wire colour - prioritize on colour, else colour as selection status,
+ * - Calculate Wire Bezier Curve,
+ * - Draw.
  */
 export const WireRenderer = (() => {
     return {
-        render(renderer: Renderer, {camera, selections}: CircuitInfo, wire: Wire): void {
+        render(renderer: Renderer, { camera, selections }: CircuitInfo, wire: Wire): void {
             if (!camera.cull(wire.getCullBox()))
                 return;
 
@@ -60,6 +61,6 @@ export const WireRenderer = (() => {
         renderAll(renderer: Renderer, info: CircuitInfo, wires: Wire[]): void {
             for (const wire of wires)
                 WireRenderer.render(renderer, info, wire);
-        }
+        },
     };
 })();

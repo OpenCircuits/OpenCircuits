@@ -1,8 +1,8 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event} from "core/utils/Events";
+import {Event}       from "core/utils/Events";
 
 import {DefaultTool} from "./DefaultTool";
-import {Tool} from "./Tool";
+import {Tool}        from "./Tool";
 
 
 export class ToolManager {
@@ -24,7 +24,6 @@ export class ToolManager {
 
     public onEvent(event: Event, info: CircuitInfo): boolean {
         // Call the current tool's (or default tool's) onEvent method
-
         if (this.currentTool) {
             const changed = this.currentTool.onEvent(event, info);
             // Check if we should deactivate the current tool
@@ -36,25 +35,25 @@ export class ToolManager {
                 return true;
             }
             return changed;
-        } else {
-            // Check if some other tool should be activated
-            const newTool = this.tools.find(t => t.shouldActivate(event, info));
-            if (newTool !== undefined) {
-                this.currentTool = newTool;
-                newTool.onActivate(event, info);
-                return true;
-            }
-
-            // Specifically do defaultTool's `onEvent` last
-            //  which means that Tool activations will take priority
-            //  over the default behavior for things like Handlers
-            //  Fixes #624
-            return this.defaultTool.onEvent(event, info);
         }
+
+        // Check if some other tool should be activated
+        const newTool = this.tools.find(t => t.shouldActivate(event, info));
+        if (newTool !== undefined) {
+            this.currentTool = newTool;
+            newTool.onActivate(event, info);
+            return true;
+        }
+
+        // Specifically do defaultTool's `onEvent` last
+        //  which means that Tool activations will take priority
+        //  over the default behavior for things like Handlers
+        //  Fixes #624
+        return this.defaultTool.onEvent(event, info);
     }
 
     public hasTool(tool: Tool): boolean {
-        return this.tools.some(t => t === tool);
+        return this.tools.includes(tool);
     }
 
     public getCurrentTool(): Tool | DefaultTool {

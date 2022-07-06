@@ -1,7 +1,10 @@
 import {serializable, serialize} from "serialeazy";
+
 import {V} from "Vector";
-import {DecimalToBCD} from "math/MathUtils";
+
 import {ClampedValue} from "math/ClampedValue";
+import {DecimalToBCD} from "math/MathUtils";
+
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
 
@@ -26,8 +29,9 @@ export class ConstantNumber extends DigitalComponent {
 
     /**
      * Set the value of the input number.
-     * @param input The new input value
-     * @requires `0 <= input < 16`
+     *
+     * @param input The new input value (`0 <= input < 16`).
+     * @throws Error if input is outside the range of `0 <= input < 16`.
      */
     public setInput(input: number): void {
         if (!Number.isInteger(input) || input < 0 || input >= 16)
@@ -42,15 +46,17 @@ export class ConstantNumber extends DigitalComponent {
 
     /**
      * Get the value of the input number.
-     * @returns The input value
+     *
+     * @returns The input value.
      */
     public getInputNum(): number {
         return this.inputNum;
     }
 
     /**
-     * Gets the display name for a Constant Number object
-     * @returns The display name "Constant Number"
+     * Gets the display name for a Constant Number object.
+     *
+     * @returns The display name "Constant Number".
      */
      public getDisplayName(): string {
         return "Constant Number";

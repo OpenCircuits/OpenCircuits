@@ -1,9 +1,10 @@
 import {CreateState} from "shared/utils/CreateState";
 
+
 const [initialState, actions, reducer] = CreateState()(
     {
         isEnabled: true,
-        isOpen: false,
+        isOpen:    false,
     },
     {
         OpenContextMenu:  () => ({ type: "OPEN_CONTEXT_MENU_ID" })  as const,
@@ -16,5 +17,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type ContextMenuState = typeof initialState;
-export const {OpenContextMenu, CloseContextMenu} = actions;
+export const { OpenContextMenu, CloseContextMenu } = actions;
 export const contextMenuReducer = reducer;

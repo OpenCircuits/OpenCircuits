@@ -1,14 +1,16 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {Rect} from "math/Rect";
 
-import {Event} from "core/utils/Events";
 import {Cursor} from "core/utils/CircuitInfo";
+import {Event}  from "core/utils/Events";
 
-import {Action} from "core/actions/Action";
+import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 import {ShiftAction} from "core/actions/ShiftAction";
+
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -80,7 +82,7 @@ export const ResizeTool = (() => {
             tempAction = new GroupAction([
                 new ShiftAction(designer, obj!),
                 new TranslateAction([obj!], [obj!.getPos()], [newRect.center]),
-                new SetPropertyAction(obj!, "size", Vector.max(V(400, 200), newRect.size)),
+                new SetPropertyAction(obj!, "size", Vector.Max(V(400, 200), newRect.size)),
             ]).execute();
 
             // Return true since we did something

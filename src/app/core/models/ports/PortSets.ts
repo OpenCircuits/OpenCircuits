@@ -1,10 +1,13 @@
+import {serializable} from "serialeazy";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
-import {Port}      from "core/models/ports/Port";
+
+import {Port} from "core/models/ports/Port";
 
 import {Positioner} from "./positioners/Positioner";
-import {serializable} from "serialeazy";
+
 
 @serializable("PortSet")
 export class PortSet<T extends Port> {
@@ -22,7 +25,8 @@ export class PortSet<T extends Port> {
     private positioner: Positioner<T>;
 
     public constructor();
-    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>, type: new(c: Component | undefined) => T);
+    public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>,
+                       type: new(c: Component | undefined) => T);
     public constructor(parent?: Component, count?: ClampedValue,
                        positioner: Positioner<T> = new Positioner<T>(), type?: new(c: Component | undefined) => T) {
         this.parent = parent!;
@@ -41,12 +45,13 @@ export class PortSet<T extends Port> {
      * Set the number of Ports of this set.
      *  The value will be clamped and positions of ports
      *  will be updated.
-     * @param val The new number of ports
+     *
+     * @param newVal The new number of ports.
      */
     public setPortCount(newVal: number): void {
         // no need to update if value is already
         //  the current amount
-        if (newVal == this.currentPorts.length)
+        if (newVal === this.currentPorts.length)
             return;
 
         // set count (will auto-clamp)
@@ -64,7 +69,7 @@ export class PortSet<T extends Port> {
 
     /**
      * Updates the positions of the ports in the set. Allows for
-     * position updating even when the size does not change
+     * position updating even when the size does not change.
      */
     public updatePortPositions(): void {
         this.positioner.updatePortPositions(this.currentPorts);
@@ -75,7 +80,7 @@ export class PortSet<T extends Port> {
     }
 
     public getPorts(): T[] {
-        return this.currentPorts.slice();
+        return [...this.currentPorts];
     }
 
     public getPositioner(): Positioner<T> {
@@ -95,10 +100,10 @@ export class PortSet<T extends Port> {
     }
 
     public get last(): T {
-        return this.currentPorts[this.currentPorts.length - 1];
+        return this.currentPorts.at(-1)!;
     }
 
     public isEmpty(): boolean {
-        return this.currentPorts.length == 0;
+        return this.currentPorts.length === 0;
     }
 }

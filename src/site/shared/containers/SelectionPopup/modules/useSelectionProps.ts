@@ -3,10 +3,11 @@ import React, {useCallback, useEffect, useState} from "react";
 import {Vector} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Selectable} from "core/utils/Selectable";
+import {Selectable}  from "core/utils/Selectable";
 
 
 type BaseType = Record<string, string | number | Vector | boolean>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ToArray<Type> = Type extends any ? Type[] : never;
 type RecordOfArrays<T extends BaseType> = {
     [Key in keyof T]: ToArray<T[Key]>;
@@ -17,7 +18,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
     validTypes: (s: Selectable) => s is V,
     getProps: (s: V) => T,
     deps: React.DependencyList = [],
-    ignore: (s: Selectable) => boolean = (s) => false,
+    ignore: (s: Selectable) => boolean = () => false,
 ) => {
     const [props, setProps] = useState(undefined as RecordOfArrays<T> | undefined);
 

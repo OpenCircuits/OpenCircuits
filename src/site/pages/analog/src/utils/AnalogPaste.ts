@@ -5,8 +5,11 @@ import {V, Vector} from "Vector";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
+
 import {AddGroupAction} from "core/actions/addition/AddGroupAction";
+
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {Component, IOObject} from "core/models";
@@ -15,11 +18,12 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
 
 /**
- * Performs paste action in an Analog Circuit
- * @param data Clipboard data
- * @param info Circuit info
- * @param menuPos Top left of context menu if being pasted using context menu
- * @returns True if successful paste
+ * Performs paste action in an Analog Circuit.
+ *
+ * @param data    Clipboard data.
+ * @param info    Circuit info.
+ * @param menuPos Top left of context menu if being pasted using context menu.
+ * @returns         True if successful paste.
  */
 export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vector): boolean {
     try {
@@ -46,7 +50,7 @@ export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vec
         renderer.render();
 
         return true;
-    } catch (_) {
+    } catch {
         return false;
     }
 }

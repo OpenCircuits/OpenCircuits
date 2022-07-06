@@ -1,0 +1,60 @@
+@import "~shared/utils/constants";
+
+
+.numberinputfield {
+    display: inline-flex;
+
+    margin-bottom: 1px;
+
+    & > input {
+        display: inline;
+
+        margin-bottom: 0px !important;
+
+        height: 26px - 4px - 4px;
+
+        -moz-appearance: textfield;
+        &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    & > span {
+        & > button {
+            display: none;
+
+            width: 25px;
+            height: 13px;
+
+            border-radius: 0;
+
+            font-size: 0.5em !important;
+            font-weight: bold !important;
+
+            margin-top: 0px !important;
+            padding: 0px 5px !important;
+
+            border: solid 2px rgba(204, 204, 204, 0.5);
+            border-left: none;
+
+            &:first-child {
+                border-bottom: none;
+            }
+            &:last-child {
+                border-top: none;
+            }
+        }
+    }
+
+    @media (min-width: $desktop-width) {
+        &:hover {
+            & > input {
+                border-right: none !important;
+            }
+            & > span > button {
+                display: block;
+            }
+        }
+    }
+}

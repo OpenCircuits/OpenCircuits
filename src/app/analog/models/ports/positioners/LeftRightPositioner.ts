@@ -1,6 +1,7 @@
+import {serializable} from "serialeazy";
+
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {serializable} from "serialeazy";
 
 import {V} from "Vector";
 
@@ -17,9 +18,11 @@ export class LeftRightPositioner extends Positioner<AnalogPort> {
     }
 
     /**
-     * Position ports with constant space but put blank space in the middle
+     * Position ports with constant space but put blank space in the middle.
      *
-     * @param arr The array of input ports
+     * @param arr     The array of input ports.
+     * @param arr."0" The first port.
+     * @param arr."1" The second port.
      */
     public updatePortPositions([p1, p2]: AnalogPort[]): void {
         const width = p1.getParent().getSize().x;

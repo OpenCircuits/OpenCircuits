@@ -1,12 +1,13 @@
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {Clamp} from "math/MathUtils";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Selectable} from "core/utils/Selectable";
+import {Selectable}  from "core/utils/Selectable";
 
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
@@ -14,21 +15,21 @@ import {DeleteHandler} from "core/tools/handlers/DeleteHandler";
 
 import {Component} from "core/models";
 
-import {useSharedDispatch,
-        useSharedSelector}     from "shared/utils/hooks/useShared";
-import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
-import {useKey}                from "shared/utils/hooks/useKey";
-import {useMousePos}           from "shared/utils/hooks/useMousePos";
 import {useDocEvent}           from "shared/utils/hooks/useDocEvent";
 import {useHistory}            from "shared/utils/hooks/useHistory";
-import {useWindowSize}         from "shared/utils/hooks/useWindowSize";
+import {useKey}                from "shared/utils/hooks/useKey";
+import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
+import {useMousePos}           from "shared/utils/hooks/useMousePos";
+import {useSharedDispatch,
+        useSharedSelector}     from "shared/utils/hooks/useShared";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {OpenItemNav, CloseItemNav, CloseHistoryBox, OpenHistoryBox, SetCurItem} from "shared/state/ItemNav";
+import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} from "shared/state/ItemNav";
 
-import {Draggable} from "shared/components/DragDroppable/Draggable";
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
+import {Draggable}        from "shared/components/DragDroppable/Draggable";
 
-import "./index.scss";
+import styles from "./index.scss";
 
 
 export type ItemNavItem = {
@@ -65,7 +66,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     const dispatch = useSharedDispatch();
 
     const { w, h } = useWindowSize();
-    const side = (w > 768 || w > h) ? "left" : "bottom";
+    const side = (w > Number(styles.desktopWidth) || w > h) ? "left" : "bottom";
 
     const { undoHistory, redoHistory } = useHistory(info);
 
@@ -107,12 +108,13 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     }
 
     // Resets the curItemID and numClicks
-    function reset(cancelled = false) {
+    const reset = useCallback((cancelled = false) => {
         dispatch(SetCurItem(""));
         setNumClicks(1);
         setCurItemImg("");
         onFinish?.(cancelled);
-    }
+    }, [setNumClicks, setCurItemImg, onFinish, dispatch]);
+
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         // If holding shift then drop only a single item (issue #1043)
@@ -124,7 +126,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         // Otherwise drop all and reset
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks]);
+    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks, reset]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
         if (!touch)
@@ -132,27 +134,30 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         const { clientX: x, clientY: y } = touch;
         DragDropHandlers.drop(V(x,y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, setNumClicks, additionalData]);
+    }, [curItemID, numClicks, setNumClicks, reset, additionalData]);
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
         if (isShiftDown) // Don't reset on click if shift is down
             return;
 
-        const resetListener = (_: Vector, hit: boolean) => { if (hit) reset(false); }
+        const resetListener = (_: Vector, hit: boolean) => {
+            if (hit)
+                reset(false);
+        }
 
         DragDropHandlers.addListener(resetListener);
         return () => DragDropHandlers.removeListener(resetListener);
-    }, [isShiftDown, setNumClicks]);
+    }, [isShiftDown, setNumClicks, reset]);
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
         info.camera.setMargin(
             side === "left"
-            ? { left:   (isOpen ? ITEMNAV_WIDTH  : 0), bottom: 0 }
-            : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left:   0 }
+            ? { left: (isOpen ? ITEMNAV_WIDTH : 0), bottom: 0 }
+            : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left: 0 }
         );
-    }, [isOpen, side]);
+    }, [info.camera, isOpen, side]);
 
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
@@ -187,9 +192,9 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         function GroupBy<T>(amt: number) {
             return ((prev: T[][], cur: T) => [
                 ...prev.slice(0,-1),
-                ...(prev[prev.length-1].length < amt
-                    ? [[...prev[prev.length-1], cur]] // Add cur to last group
-                    : [prev[prev.length-1], [cur]]),  // Create new group with just cur
+                ...(prev.at(-1)!.length < amt
+                    ? [[...prev.at(-1)!, cur]] // Add cur to last group
+                    : [prev.at(-1)!, [cur]]),  // Create new group with just cur
             ]);
         }
 
@@ -214,7 +219,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     const deleteImg = useMemo(() => {
         // If not pressing a Component or not hovering the ItemNav, then returned undefined
         if (!(currentlyPressedObj instanceof Component) || !hoveringNav)
-            return undefined;
+            return;
         return getImgSrc(currentlyPressedObj);
     }, [currentlyPressedObj, hoveringNav, getImgSrc]);
 
@@ -222,13 +227,13 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         {/* Item Nav Deletion Preview (PR #1047) */}
         {deleteImg && (
         <div className="itemnav__preview"
-                style={{
+             style={{
                     display: "initial",
-                    left: pos.x,
-                    top: pos.y,
+                    left:    pos.x,
+                    top:     pos.y,
                 }}>
             {/* config.imgRoot / section.id / item.icon */}
-            <img src={deleteImg} width="80px" />
+            <img src={deleteImg} alt="Deletion Preview" width="80px" />
         </div>
         )}
 
@@ -236,20 +241,20 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         <div className="itemnav__preview"
              style={{
                  display: (curItemImg ? "initial" : "none"),
-                 left: pos.x,
-                 top: pos.y,
+                 left:    pos.x,
+                 top:     pos.y,
              }}>
-            <img src={curItemImg} width="80px" />
+            <img src={curItemImg} alt="Current item preview" width="80px" />
             {additionalPreviewComp}
-            {Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
+            {new Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
                 <div key={`itemnav-preview-stack-${i}`}
                      style={{
                          position: "absolute",
-                         left: (i+1)*5,
-                         top: (i+1)*5,
-                         zIndex: 100-(i+1),
+                         left:     (i+1)*5,
+                         top:      (i+1)*5,
+                         zIndex:   100-(i+1),
                      }}>
-                    <img src={curItemImg} width="80px" />
+                    <img src={curItemImg} alt="Current item preview" width="80px" />
                     {additionalPreviewComp}
                 </div>
             ))}
@@ -259,22 +264,26 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         </div>
 
         {/* Actual Item Nav */}
-        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
-             onMouseOver ={() => setHoveringNav(true)}
-             onMouseLeave={() => setHoveringNav(false)}
+        <nav role="application"
+             className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
+             onMouseOver={() => setHoveringNav(true)} onFocus={() => setHoveringNav(true)}
+             onMouseLeave={() => setHoveringNav(false)} onBlur={() => setHoveringNav(false)}
              onMouseUp={handleItemNavDrag}>
             <div className="itemnav__top">
                 <div>
-                    <button  title="History" onClick={() => {
-                        if (isHistoryBoxOpen) dispatch(CloseHistoryBox());
-                        else dispatch(OpenHistoryBox());
+                    <button type="button" title="History" onClick={() => {
+                        if (isHistoryBoxOpen)
+                            dispatch(CloseHistoryBox());
+                        else
+                            dispatch(OpenHistoryBox());
                     }}>
-                        <img src="img/icons/history.svg"></img>
+                        <img src="img/icons/history.svg" alt="Toggle history box"></img>
                     </button>
                 </div>
                 <div>
                     <div className="itemnav__top__history__buttons">
-                        <button title="Undo"
+                        <button type="button"
+                                title="Undo"
                                 disabled={undoHistory.length === 0}
                                 onClick={() => {
                                     info.history.undo();
@@ -282,7 +291,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                                 }}>
                             <img src="img/icons/undo.svg" alt="" />
                         </button>
-                        <button title="Redo"
+                        <button type="button"
+                                title="Redo"
                                 disabled={redoHistory.length === 0}
                                 onClick={() => {
                                     info.history.redo();
@@ -295,23 +305,25 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                 <div>
                     { // Hide tab if the circuit is locked
                     isEnabled &&
-                        <div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
-                             title="Circuit Components"
-                             onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
-                             <div></div>
-                        </div>
+                        (<div role="button" tabIndex={0}
+                              className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
+                              title="Circuit Components"
+                              onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
+                            <div></div>
+                        </div>)
                     }
                 </div>
             </div>
             <div className={`itemnav__sections ${curItemImg ? "dragging" : ""}`}>
                 {sections.map((section, i) =>
-                    <div key={`itemnav-section-${i}`}>
+                    (<div key={`itemnav-section-${i}`}>
                         <h4>{section.label}</h4>
                         <div>
-                            {section.items.map((item, j) =>
+                            {section.items.map((item, j) => (
                                 <div key={`itemnav-section-${i}-item-${j}`}
-                                    onMouseEnter={() => {item.removable && setHover(item.id)}}
-                                    onMouseLeave={() => {item.removable && setHover("")}}>
+                                     role="button" tabIndex={0}
+                                     onMouseEnter={() => {item.removable && setHover(item.id)}}
+                                     onMouseLeave={() => {item.removable && setHover("")}}>
                                     <Draggable
                                         dragDir={(side === "left") ? "horizontal" : "vertical"}
                                         data={[item.id, Math.max(numClicks,1), additionalData]}
@@ -342,29 +354,31 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                                         <img src={`/${config.imgRoot}/${section.id}/${item.icon}`} alt={item.label} />
                                     </Draggable>
                                     {
-                                        (item.removable && hovering === item.id) &&
-                                        <div onClick={(ev) => {
-                                            // Resets click tracking and stops propgation so that an
-                                            // Components are not clicked onto the canvas after being deleted.
-                                            dispatch(SetCurItem(""));
-                                            setNumClicks(1);
-                                            // Stops drag'n'drop preview when deleting
-                                            setCurItemImg("");
-                                            if (onDelete)
-                                                onDelete(section, item);
-                                            setHover("");
+                                        (item.removable && hovering === item.id) && (
+                                            <div role="button" tabIndex={0}
+                                                 onClick={(ev) => {
+                                                    // Resets click tracking and stops propgation so that an
+                                                    // Components are not clicked onto the canvas after being deleted.
+                                                    dispatch(SetCurItem(""));
+                                                    setNumClicks(1);
+                                                    // Stops drag'n'drop preview when deleting
+                                                    setCurItemImg("");
+                                                    if (onDelete)
+                                                        onDelete(section, item);
+                                                    setHover("");
 
-                                            ev.stopPropagation();
-                                        }}>
-                                            X
-                                        </div>
+                                                    ev.stopPropagation();
+                                                 }}>
+                                                X
+                                            </div>
+                                        )
                                     }
                                     <br />
                                     {item.label}
                                 </div>
-                            )}
+                            ))}
                         </div>
-                    </div>
+                    </div>)
                 )}
             </div>
         </nav>

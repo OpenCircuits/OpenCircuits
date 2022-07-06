@@ -3,13 +3,16 @@ import {serializable} from "serialeazy";
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
-import {InputPort} from "digital/models/ports/InputPort";
+
+import {InputPort}  from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+
 
 @serializable("Encoder")
 export class Encoder extends DigitalComponent {
@@ -33,7 +36,7 @@ export class Encoder extends DigitalComponent {
         const index = this.getInputPorts().indexOf(onPorts[0]);
 
         // Convert index to list of bits in binary
-        const bits = index.toString(2).padStart(this.outputs.length, "0").split("").reverse();
+        const bits = [...index.toString(2).padStart(this.outputs.length, "0")].reverse();
         bits.forEach((bit, i) => {
             super.activate(bit === "1", i);
         });
@@ -41,10 +44,12 @@ export class Encoder extends DigitalComponent {
 
     public updatePortNames(): void {
         this.inputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "") p.setName(`I${i}`);
+            if (p.getName() === "")
+                p.setName(`I${i}`);
         });
         this.outputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "") p.setName(`O${i}`);
+            if (p.getName() === "")
+                p.setName(`O${i}`);
         });
     }
 

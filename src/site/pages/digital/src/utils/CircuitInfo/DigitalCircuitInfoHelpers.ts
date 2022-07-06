@@ -1,38 +1,43 @@
+import {RefObject}   from "react";
 import {Deserialize} from "serialeazy";
-import {RefObject} from "react";
+
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "../Constants";
 
 import {V} from "Vector";
 
-import {Circuit, ContentsData} from "core/models/Circuit";
+import {Circuit, ContentsData}  from "core/models/Circuit";
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitInfo}                                   from "digital/utils/DigitalCircuitInfo";
 import {VersionConflictPostResolver, VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver";
 
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
-
-import {LoadUserCircuits} from "shared/state/thunks/User";
-import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
-import {SaveCircuit} from "shared/state/thunks/SaveCircuit";
-
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
+
+import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
+
+import {SaveCircuit}      from "shared/state/thunks/SaveCircuit";
+import {LoadUserCircuits} from "shared/state/thunks/User";
+
+
+import {AppStore}          from "../../state";
 import {GenerateThumbnail} from "../GenerateThumbnail";
-import {AppStore} from "../../state";
 
 
-export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>, info: DigitalCircuitInfo): CircuitInfoHelpers {
+export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<HTMLCanvasElement>,
+                                             info: DigitalCircuitInfo): CircuitInfoHelpers {
     const helpers: CircuitInfoHelpers = {
         LoadCircuit: async (getData) => {
             const { circuit } = store.getState();
 
             // Prompt to load
             const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
-            if (!open) return;
+            if (!open)
+                return;
 
             store.dispatch(_SetCircuitLoading(true));
 
@@ -76,7 +81,8 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
 
             // Prompt to load
             const open = circuit.isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
-            if (!open) return;
+            if (!open)
+                return;
 
             const { camera, history, designer, selections, renderer } = info;
 
@@ -154,7 +160,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             const { circuit } = store.getState();
 
             // Shouldn't be able to duplicate if circuit has never been saved
-            if (circuit.id == "")
+            if (circuit.id === "")
                 return;
 
             const thumbnail = GenerateThumbnail({ info });
@@ -174,13 +180,14 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
 
             if (!circuitCopyMetadata)
-                throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: circuitCopyMetadata is undefined");
+                throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: " +
+                                "circuitCopyMetadata is undefined");
 
             // Load circuit copy onto canvas
             await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, circuitCopyMetadata.getId()));
 
             await store.dispatch(LoadUserCircuits());
-        }
+        },
     }
 
     return helpers;

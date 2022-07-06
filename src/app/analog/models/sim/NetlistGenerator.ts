@@ -1,11 +1,14 @@
-import {isNode} from "core/models";
 import {CreateGraph, IOObjectSet} from "core/utils/ComponentUtils";
+
+import {isNode} from "core/models";
+
 import {AnalogCircuitDesigner} from "../AnalogCircuitDesigner";
-import {AnalogComponent} from "../AnalogComponent";
-import {AnalogNode} from "../AnalogNode";
-import {AnalogWire} from "../AnalogWire";
-import {Ground} from "../eeobjects";
-import {AnalogPort} from "../ports";
+import {AnalogComponent}       from "../AnalogComponent";
+import {AnalogNode}            from "../AnalogNode";
+import {AnalogWire}            from "../AnalogWire";
+import {Ground}                from "../eeobjects";
+import {AnalogPort}            from "../ports";
+
 import {Netlist, NetlistAnalysis} from "./Netlist";
 
 
@@ -44,10 +47,14 @@ function GetAllPaths(start: AnalogWire): Path[] {
             } else if (q instanceof AnalogWire) {
                 const p1 = q.getP1Component(), p2 = q.getP2Component();
 
-                if (isNode(p1)) outgoingConnected.push(p1 as AnalogNode);
-                else outgoingConnected.push(q.getP1() as AnalogPort);
-                if (isNode(p2)) outgoingConnected.push(p2 as AnalogNode);
-                else outgoingConnected.push(q.getP2() as AnalogPort);
+                if (isNode(p1))
+                    outgoingConnected.push(p1 as AnalogNode);
+                else
+                    outgoingConnected.push(q.getP1() as AnalogPort);
+                if (isNode(p2))
+                    outgoingConnected.push(p2 as AnalogNode);
+                else
+                    outgoingConnected.push(q.getP2() as AnalogPort);
             } else {
                 outgoingConnected = q.getConnections();
             }
@@ -91,12 +98,12 @@ export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
     //  an ID of 0 since that is how it is represented in NGSpice
     const fullPathIDs = paths.map((_, i) => i+1);
     paths.forEach((path, i) => {
-        const ports = Array.from(path.values()).filter(p => p instanceof AnalogPort) as AnalogPort[];
+        const ports = [...path.values()].filter(p => p instanceof AnalogPort) as AnalogPort[];
         if (ports.some(p => p.getParent() instanceof Ground))
             fullPathIDs[i] = 0; // Whole path is connected to ground
     });
 
-    const pathUIDs = new Map(paths.flatMap((s,i) => Array.from(s.values()).map((val) => [val, fullPathIDs[i]])));
+    const pathUIDs = new Map(paths.flatMap((s,i) => [...s.values()].map((val) => [val, fullPathIDs[i]])));
 
     const elementConnections = new Map<AnalogComponent, [number, number]>();
     const elementUIDs = new Map(elements.map((e, i) => [e, i]));

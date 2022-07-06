@@ -1,10 +1,11 @@
-import {MIDDLE_MOUSE_BUTTON,
-        ARROW_PAN_DISTANCE_NORMAL,
-        ARROW_PAN_DISTANCE_SMALL} from "core/utils/Constants";
+import {ARROW_PAN_DISTANCE_NORMAL,
+        ARROW_PAN_DISTANCE_SMALL,
+        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
 import {Tool} from "core/tools/Tool";
 
