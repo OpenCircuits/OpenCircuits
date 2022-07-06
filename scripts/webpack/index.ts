@@ -20,8 +20,9 @@ import customDevServer from "./customDevServer.js";
  *
  * @param dir  The directory to launch the webpack instance in.
  * @param mode The webpack-mode: development or production.
+ * @param open Boolean indicating whether or not we should auto-open the browser on start.
  */
-export default async (dir: string, mode: "development" | "production") => {
+export default async (dir: string, mode: "development" | "production", open: boolean) => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
@@ -77,7 +78,7 @@ export default async (dir: string, mode: "development" | "production") => {
 
         let firstDone = false;
         compiler.hooks.done.tap("done", async _ => {
-            if (!firstDone) {
+            if (open && !firstDone) {
                 openBrowser(url.format({ protocol, hostname, port, pathname }));
                 firstDone = true;
             }

@@ -41,7 +41,7 @@ function BuildServer(prod: boolean) {
     });
 }
 async function BuildDir(dir: string) {
-    return await startWebpack(dir, "production");
+    return await startWebpack(dir, "production", false);
 }
 
 
