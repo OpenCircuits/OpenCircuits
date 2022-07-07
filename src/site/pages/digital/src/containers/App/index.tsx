@@ -17,6 +17,7 @@ import {SelectionPopup} from "shared/containers/SelectionPopup";
 import {SideNav}        from "shared/containers/SideNav";
 
 import {PositionModule} from "shared/containers/SelectionPopup/modules/PositionModule";
+import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 
@@ -97,6 +98,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
                         <PositionModule info={info} />
+                        <PropertyModule info={info} />
                         <InputCountModule info={info} />
                         <ComparatorInputCountModule info={info} />
                         <SelectPortCountModule info={info} />
