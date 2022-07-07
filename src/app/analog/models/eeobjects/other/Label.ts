@@ -4,7 +4,11 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
-import {AnalogComponent, GenInitialInfo, PropInfo} from "analog/models/AnalogComponent";
+import {GenInitialInfo} from "core/utils/PropInfoUtils";
+
+import {PropInfo} from "core/models/PropInfo";
+
+import {AnalogComponent} from "analog/models/AnalogComponent";
 
 
 const Info: Record<string, PropInfo> = {

@@ -4,9 +4,10 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenInitialInfo} from "core/utils/PropInfoUtils";
+
 import {AnalogComponent} from "analog/models";
 
-import {GenInitialInfo} from "analog/models/AnalogComponent";
 import {InductanceInfo} from "analog/models/Units";
 
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";

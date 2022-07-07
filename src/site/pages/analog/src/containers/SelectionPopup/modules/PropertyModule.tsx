@@ -1,15 +1,14 @@
 import {V, Vector} from "Vector";
 
-import {Action}      from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+import {Action}            from "core/actions/Action";
+import {GroupAction}       from "core/actions/GroupAction";
+import {SetPropertyAction} from "core/actions/SetPropertyAction";
 
-import {SetPropertyAction} from "analog/actions/SetPropertyAction";
+import {Component} from "core/models";
 
-import {AnalogComponent} from "analog/models";
-
-import {Prop, PropInfo} from "analog/models/AnalogComponent";
+import {Prop, PropInfo} from "core/models/PropInfo";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
@@ -24,7 +23,7 @@ type PropInputFieldProps = {
     propKey: string;
     info: PropInfo;
 
-    cs: AnalogComponent[];
+    cs: Component[];
 
     vals: string[] | number[] | Vector[] | boolean[];
 
@@ -117,14 +116,14 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
 
 
 type Props = {
-    info: AnalogCircuitInfo;
+    info: CircuitInfo;
 }
 export const PropertyModule = ({ info }: Props) => {
     const { history, renderer } = info;
 
     const [props, cs, forceUpdate] = useSelectionProps(
         info,
-        (s): s is AnalogComponent => (s instanceof AnalogComponent),
+        (s): s is Component => (s instanceof Component),
         (s) => s.getProps(),
     );
 
@@ -151,23 +150,25 @@ export const PropertyModule = ({ info }: Props) => {
             : info.display(cs[0].getProps())
         );
 
-        return (<div key={`property-module-${key}`}>
-            {display}
-            <label>
-                { info.readonly
-                ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0] : "-")
-                : (<ModulePropInputField
-                        propKey={key} info={info} cs={cs} vals={vals} forceUpdate={forceUpdate}
-                        alt={`${display} property of object`}
-                        getAction={(newVal) => new GroupAction(
-                            cs.map(a => new SetPropertyAction(a, key, newVal))
-                        )}
-                        onSubmit={(info) => {
-                            renderer.render();
-                            if (info.isValid && info.isFinal)
-                                history.add(info.action);
-                        }} />) }
-            </label>
-        </div>);
+        return (
+            <div key={`property-module-${key}`}>
+                {display}
+                <label>
+                    { info.readonly
+                    ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0].toString() : "-")
+                    : (<ModulePropInputField
+                            propKey={key} info={info} cs={cs} vals={vals} forceUpdate={forceUpdate}
+                            alt={`${display} property of object`}
+                            getAction={(newVal) => new GroupAction(
+                                cs.map(a => new SetPropertyAction(a, key, newVal))
+                            )}
+                            onSubmit={(info) => {
+                                renderer.render();
+                                if (info.isValid && info.isFinal)
+                                    history.add(info.action);
+                            }} />) }
+                </label>
+            </div>
+        );
     })}</>)
 }

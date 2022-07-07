@@ -4,10 +4,14 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenInitialInfo, GenPropInfo}        from "core/utils/PropInfoUtils";
+import {AngleInfo, FrequencyInfo, TimeInfo} from "core/utils/Units";
+
+import {GroupPropInfo} from "core/models/PropInfo";
+
 import {AnalogComponent} from "analog/models";
 
-import {GenInitialInfo, GenPropInfo, GroupPropInfo}      from "analog/models/AnalogComponent";
-import {AngleInfo, FrequencyInfo, TimeInfo, VoltageInfo} from "analog/models/Units";
+import {VoltageInfo} from "analog/models/Units";
 
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
 

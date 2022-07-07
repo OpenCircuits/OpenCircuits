@@ -11,6 +11,7 @@ import {Transform}    from "math/Transform";
 
 import {CullableObject} from "./CullableObject";
 import {Port}           from "./ports/Port";
+import {Prop, PropInfo} from "./PropInfo";
 import {Wire}           from "./Wire";
 
 
@@ -18,15 +19,29 @@ export abstract class Component extends CullableObject {
     @serialize
     protected transform: Transform;
 
-    protected constructor(size: Vector) {
+    @serialize
+    protected props: Record<string, Prop>;
+
+
+    protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
         super();
 
         this.transform = new Transform(V(), size);
+        this.props = initialProps;
     }
 
     public onTransformChange(): void {
         super.onTransformChange();
         this.getConnections().forEach((w) => w.onTransformChange());
+    }
+
+    public setProp(key: string, val: Prop) {
+        const prop = this.props[key];
+        if (prop === undefined)
+            throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
+                            `My props: ${Object.entries(this.props).join(",")}`);
+
+        this.props[key] = val;
     }
 
     public setPos(v: Vector): void {
@@ -61,6 +76,10 @@ export abstract class Component extends CullableObject {
         return RectContains(this.getTransform(), v);
     }
 
+    public hasProp(key: string): boolean {
+        return (key in this.props);
+    }
+
     public abstract getPorts(): Port[];
 
     public getConnections(): Wire[] {
@@ -81,6 +100,18 @@ export abstract class Component extends CullableObject {
 
     public getTransform(): Transform {
         return this.transform.copy();
+    }
+
+    public getProp(key: string): Prop {
+        return this.props[key];
+    }
+
+    public getProps() {
+        return this.props;
+    }
+
+    public getPropInfo(_key: string): PropInfo | undefined {
+        return undefined;
     }
 
     public getOffset(): Vector {

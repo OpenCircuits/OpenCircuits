@@ -1,19 +1,19 @@
 import {Action} from "core/actions/Action";
 
-import {AnalogComponent} from "analog/models";
+import {Component} from "core/models";
 
-import {Prop} from "analog/models/AnalogComponent";
+import {Prop} from "core/models/PropInfo";
 
 
 export class SetPropertyAction implements Action {
-    private component: AnalogComponent;
+    private component: Component;
 
     private propKey: string;
 
     private initialProp: Prop;
     private targetProp: Prop;
 
-    public constructor(component: AnalogComponent, key: string, prop: Prop) {
+    public constructor(component: Component, key: string, prop: Prop) {
         if (!component.hasProp(key))
             throw new Error(`Cannot find property ${key} in ${component.getName()}!`);
 
