@@ -15,6 +15,7 @@ import {useAnalogDispatch, useAnalogSelector} from "site/analog/utils/hooks/useA
 import {SetHasData, SetSimMappings} from "site/analog/state/Sim";
 
 import "./index.scss";
+import {CreateGraph} from "core/utils/ComponentUtils";
 
 
 function HSLToHex(h: number, s: number, l: number) {
@@ -78,8 +79,12 @@ export const SimButtons = ({ info }: Props) => {
     // INITIALLY UPLOAD CAUSE IM TIRED OF DOING IT MANUALLY
     useEffect(() => {
         if (info.designer.getAll().length > 0) {
-            Upload();
-            Simulate();
+            try {
+                Upload();
+                Simulate();
+            } catch (e) {
+                console.error("Failed to upload:", e);
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
