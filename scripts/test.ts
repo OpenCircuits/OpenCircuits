@@ -30,6 +30,10 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
             "preset":           "ts-jest",
             "testEnvironment":  "jsdom",
             "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
+
+            "transform": {
+                "^.+\\.scss$": path.resolve("build/scripts/test/scssTransform.js"),
+            },
         }),
     }, [dir]);
 }
