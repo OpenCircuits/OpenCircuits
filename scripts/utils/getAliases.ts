@@ -39,6 +39,5 @@ export default function getAliases(cwd = process.cwd(), format: "webpack" | "jes
         });
     }
 
-    console.log(aliases);
     return aliases;
 }
