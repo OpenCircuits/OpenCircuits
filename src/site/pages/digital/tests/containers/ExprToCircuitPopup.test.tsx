@@ -1,11 +1,13 @@
 import "@testing-library/jest-dom";
-import {fireEvent, render, screen}    from "@testing-library/react";
+import {act, render, screen}          from "@testing-library/react";
 import userEvent                      from "@testing-library/user-event";
 import {Provider}                     from "react-redux";
 import {applyMiddleware, createStore} from "redux";
 import thunk, {ThunkMiddleware}       from "redux-thunk";
 
 import {Setup} from "test/helpers/Setup";
+
+import {OpenHeaderPopup} from "shared/state/Header";
 
 import {AppState} from "site/digital/state";
 
@@ -22,11 +24,11 @@ describe("Main Popup", () => {
         const user = userEvent.setup();
         const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
         render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
-        expect(true).toBeTruthy();
-        expect(screen.getByText("Digital Expression To Circuit Generator")).toBeInTheDocument();
-        expect(screen.getByText("Cancel")).toBeInTheDocument();
+        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+        expect(screen.getByText("Digital Expression To Circuit Generator")).toBeVisible();
+        expect(screen.getByText("Cancel")).toBeVisible();
         await user.click(screen.getByText("Cancel"));
-        expect(screen.getByText("Cancel")).not.toBeInTheDocument();
-        expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeInTheDocument();
+        expect(screen.getByText("Cancel")).not.toBeVisible();
+        expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
     })
 });
