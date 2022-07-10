@@ -38,7 +38,7 @@ jobs:
         yarn build:jsdocs
         yarn build:docs
 
-  test:
+  test - app:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -52,6 +52,21 @@ jobs:
 
     - name: Run tests (App) [TypeScript]
       run: yarn test  --ci app
+
+  test - digital:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+
+    - run: yarn
+
+    - name: Run tests (Digital) [TypeScript]
+      run: yarn test  --ci digital
 
   lint:
     runs-on: ubuntu-latest
