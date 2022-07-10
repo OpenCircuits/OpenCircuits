@@ -38,7 +38,7 @@ jobs:
         yarn build:jsdocs
         yarn build:docs
 
-  test - app:
+  test-app:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -53,7 +53,7 @@ jobs:
     - name: Run tests (App) [TypeScript]
       run: yarn test  --ci app
 
-  test - digital:
+  test-digital:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
