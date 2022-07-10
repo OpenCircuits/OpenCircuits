@@ -1,23 +1,24 @@
 import {V, Vector} from "Vector";
-import {Transform} from "math/Transform";
+
 import {RectContains,
         TransformContains} from "math/MathUtils";
+import {Transform} from "math/Transform";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
+
 import {CreateDeselectAllAction,
         CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-import {Tool}        from "core/tools/Tool";
 
 
 export const SelectionBoxTool = (() => {
     let p1: Vector, p2: Vector;
 
     return {
-        shouldActivate(event: Event, {locked, input, selections, currentlyPressedObject}: CircuitInfo): boolean {
+        shouldActivate(event: Event, { locked, input, selections, currentlyPressedObject }: CircuitInfo): boolean {
             if (locked)
                 return false;
             // Activate if the user began dragging on empty canvas
@@ -32,18 +33,18 @@ export const SelectionBoxTool = (() => {
         },
 
 
-        onActivate({}: Event, {input}: CircuitInfo): void {
+        onActivate({}: Event, { input }: CircuitInfo): void {
             p1 = input.getMouseDownPos();
             p2 = input.getMousePos();
         },
-        onDeactivate({}: Event, {input, camera, history, designer, selections}: CircuitInfo): void {
-            const action = new GroupAction();
+        onDeactivate({}: Event, { input, camera, history, designer, selections }: CircuitInfo): void {
+            const action = new GroupAction([], "Selection Box Tool");
 
             // Clear selections if shift key isn't being held
             if (!input.isShiftKeyDown())
                 action.add(CreateDeselectAllAction(selections).execute());
 
-            const box = Transform.fromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
+            const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
             // Find all objects within the selection box
             const objects = designer.getObjects().filter(o => TransformContains(box, o.getTransform()));
@@ -67,7 +68,7 @@ export const SelectionBoxTool = (() => {
         },
 
 
-        onEvent(event: Event, {input}: CircuitInfo): boolean {
+        onEvent(event: Event, { input }: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 
@@ -83,6 +84,6 @@ export const SelectionBoxTool = (() => {
         },
         getP2(): Vector {
             return V(p2);
-        }
+        },
     }
 })();

@@ -1,29 +1,25 @@
-import {serializable, Serialize, Deserialize} from "serialeazy";
+import {Deserialize, Serialize, serializable} from "serialeazy";
 
-import {IO_PORT_LINE_WIDTH,
-        EMPTY_CIRCUIT_MAX,
-        EMPTY_CIRCUIT_MIN,
-        GRID_SIZE} from "./Constants";
+import {GRID_SIZE,
+        IO_PORT_LINE_WIDTH} from "./Constants";
 
-import {Vector, V} from "Vector";
-import {Graph} from "math/Graph";
-import {Transform} from "math/Transform";
-import {BoundingBox} from "math/BoundingBox";
+import {V, Vector} from "Vector";
+
+import {BoundingBox}  from "math/BoundingBox";
+import {Camera}       from "math/Camera";
+import {Graph}        from "math/Graph";
 import {RectContains} from "math/MathUtils";
-import {Camera} from "math/Camera";
+import {Transform}    from "math/Transform";
 
 import {isPressable} from "core/utils/Pressable";
 
-import {IOObject} from "core/models/IOObject";
+import {Component}      from "core/models/Component";
 import {CullableObject} from "core/models/CullableObject";
-import {Component} from "core/models/Component";
-import {Wire} from "core/models/Wire";
-import {Node, isNode} from "core/models/Node";
+import {IOObject}       from "core/models/IOObject";
+import {Node, isNode}   from "core/models/Node";
+import {Wire}           from "core/models/Wire";
+
 import {Port} from "core/models/ports/Port";
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {DeleteAction, PlaceAction} from "core/actions/addition/PlaceAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 /**
@@ -33,11 +29,11 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
  *  Input components  (anything with 0 output ports and >0  input ports)
  *  Output components (anything with 0 input ports  and >0 output ports)
  *  Wires             (wires)
- *  Components        (anything else)
+ *  Components        (anything else).
  *
  * Note that .getComponents() does NOT contain wires
  *  A helper method to get all the components including them
- *  is included as toList()
+ *  is included as toList().
  */
 @serializable("IOObjectSet")
 export class IOObjectSet {
@@ -50,24 +46,24 @@ export class IOObjectSet {
     }
 
     public getComponents(): Component[] {
-        return Array.from(this.components);
+        return [...this.components];
     }
 
     public getWires(): Wire[] {
-        return Array.from(this.wires);
+        return [...this.wires];
     }
 
     public toList(): IOObject[] {
-        return (<IOObject[]>this.getComponents()).concat(this.getWires());
+        return [...this.getComponents(), ...this.getWires()];
     }
 }
 
 /**
  * Helper function to retrieve a list of all the Input/Output ports
- *  from the given list of objects/wires
+ *  from the given list of objects/wires.
  *
- * @param  objects The list of objects to get ports from
- * @return    All the ports attached to the given list of objects
+ * @param objs The list of objects to get ports from.
+ * @returns      All the ports attached to the given list of objects.
  */
 export function GetAllPorts(objs: Component[]): Port[] {
     return objs.flatMap((o) => o.getPorts());
@@ -76,28 +72,29 @@ export function GetAllPorts(objs: Component[]): Port[] {
 /**
  * Creates a Separated group from the given list of objects
  *  and also retrieves all IMMEDIATELY connected wires that
- *  connect to other objects in `objects`
+ *  connect to other objects in `objects`.
  *
  * Note that this method assumes all the components you want in the group are
  *  provided in `objects` INCLUDING WirePorts, this will not trace down the paths
  *  to get all wires ports. Use GatherGroup(objects) to do this.
  *
- * @param  objects The list of objects to separate
- * @return         A SeparatedComponentCollection of the objects
+ * @param objects The list of objects to separate.
+ * @returns         A SeparatedComponentCollection of the objects.
  */
 export function CreateGroup(objects: IOObject[]): IOObjectSet {
     const group = new IOObjectSet(objects);
 
     const objs = group.getComponents();
-    const wires = group.getWires()
+    const wires = [
+            ...group.getWires(),
             // Add all connections from every object
-            .concat(objs.flatMap((o) => o.getConnections()))
-            // Filter out any connection that isn't connected
-            //  to two objects in the objects list
-            .filter((w) => objs.includes(w.getP1Component()) &&
-                           objs.includes(w.getP2Component()));
+            ...objs.flatMap((o) => o.getConnections()),
+         // Filter out any connection that isn't connected
+         //  to two objects in the objects list
+        ].filter((w) => objs.includes(w.getP1Component()) &&
+                        objs.includes(w.getP2Component()));
 
-    return new IOObjectSet((<IOObject[]>objs).concat(wires));
+    return new IOObjectSet([...objs, ...wires]);
 }
 
 
@@ -105,28 +102,40 @@ export function CreateGroup(objects: IOObject[]): IOObjectSet {
  * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
  *
- * @param  w The wire to start from
- * @return   The array of wires/WirePorts in this path (including w)
+ * @param w    The wire to start from.
+ * @param full True if you want to return everything in the circuit otherwise returns
+ *       only the wires/nodes connected to the wire.
+ * @returns      The array of wires/WirePorts in this path (including w).
  */
-export function GetPath(w: Wire | Node): Array<Wire | Node> {
+export function GetPath(w: Wire | Node, full = true): Array<Wire | Node> {
     const path: Array<Wire | Node> = [];
 
     // Breadth First Search
     const queue = new Array<Wire | Node>(w);
     const visited = new Set<Wire | Node>();
 
-    while(queue.length > 0) {
-        const q = queue.shift();
+    while (queue.length > 0) {
+        const q = queue.shift()!;
 
         visited.add(q);
         path.push(q);
         if (q instanceof Wire) {
-            const p1 = q.getP1Component();
-            const p2 = q.getP2Component();
-            if (isNode(p1) && !visited.has(p1))
-                queue.push(p1);
-            if (isNode(p2) && !visited.has(p2))
-                queue.push(p2);
+            if(full) {
+                const p1 = q.getP1Component();
+
+                if (isNode(p1) && !visited.has(p1))
+                    queue.push(p1);
+
+                const p2 = q.getP2Component();
+                if (isNode(p2) && !visited.has(p2))
+                    queue.push(p2);
+            }
+            else {
+                const p2 = q.getP2Component();
+                if (isNode(p2) && !visited.has(p2))
+                    queue.push(p2);
+            }
+
         } else {
             // Push all of the Node's connecting wires, filtered by if they've been visited
             queue.push(...q.getConnections().filter((w) => !visited.has(w)));
@@ -137,52 +146,90 @@ export function GetPath(w: Wire | Node): Array<Wire | Node> {
 }
 
 /**
+ * Gets all the components connected to this component
+ *  Note: this path is UN-ORDERED!
+ *
+ * @param c The component to start from.
+ * @returns   The array of components in the same circuit (including c).
+ */
+export function GetComponentPath(c: Component): Component[] {
+    const path: Component[] = [];
+
+    // Breadth First Search
+    const queue = new Array<Component>(c);
+    const visited = new Set<Component>();
+
+    while (queue.length > 0) {
+        const q = queue.shift()!;
+
+        visited.add(q);
+        path.push(q);
+        for (const w of q.getConnections()) {
+            if (!visited.has(w.getP1Component()))
+                queue.push(w.getP1Component());
+            if (!visited.has(w.getP2Component()))
+                queue.push(w.getP2Component());
+        }
+    }
+
+    return path;
+}
+
+/**
  * Gathers all wires + wireports in the path from the inputs/outputs
  *  of the given component.
  *
- * @param  obj  The component
- * @return      An array of connections + WirePorts
+ * @param obj  The component.
+ * @param full True if you want to return everything in the circuit otherwise
+ *       returns only the wires/nodes connected to the selected wire.
+ * @returns      An array of connections + WirePorts.
  */
-export function GetAllPaths(obj: Component): Array<Wire | Node> {
+export function GetAllPaths(obj: Component, full = true): Array<Wire | Node> {
     // Get all distinct connections
     const wires = [...new Set(obj.getConnections())];
 
     // Get all distinct paths
-    return [...new Set(wires.flatMap((w) => GetPath(w)))];
+
+    return [...new Set(wires.flatMap((w) => GetPath(w,full)))];
+
 }
 
 /**
  * Creates a Separated group from the given list of objects.
  *  It also retrieves all "paths" going out from each object.
  *
- * @param  objects The list of objects
- * @return         A SeparatedComponentCollection of the objects
+ * @param objects The list of objects.
+ * @param full    True if you want to return everything in the circuit otherwise
+ *          returns only the wires/nodes connected to the selected wire.
+ * @returns         A SeparatedComponentCollection of the objects.
  */
-export function GatherGroup(objects: IOObject[]): IOObjectSet {
+export function GatherGroup(objects: IOObject[], full = true): IOObjectSet {
     const group = new IOObjectSet(objects);
 
     // Gather all connecting paths
     const wires = group.getWires();
     const components = group.getComponents();
 
-    const paths = [...new Set(wires.flatMap((w) => GetPath(w))
-            .concat(components.flatMap((c) => GetAllPaths(c))))];
+    const paths = [...new Set([
+        ...wires.flatMap((w) => GetPath(w, full)),
+        ...components.flatMap((c) => GetAllPaths(c, full)),
+    ])];
 
-    return new IOObjectSet((components as IOObject[]).concat(wires, paths));
+    return new IOObjectSet([...components, ...wires, ...paths]);
 }
 
 /**
  * Helper function to create a directed graph from a given
- *  collection of components
+ *  collection of components.
  *
  * The Graph stores Nodes as indices from the
- * groups.getAllComponents() array
+ *  groups.getAllComponents() array.
  *
  * The edge weights are stored as pairs representing
- * the input index (i1) and the output index (i2) respectively
+ * the input index (i1) and the output index (i2) respectively.
  *
- * @param  groups The SeparatedComponentCollection of components
- * @return        A graph corresponding to the given circuit
+ * @param groups The SeparatedComponentCollection of components.
+ * @returns        A graph corresponding to the given circuit.
  */
 export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     const graph = new Graph<number, number>();
@@ -192,16 +239,15 @@ export function CreateGraph(groups: IOObjectSet): Graph<number, number> {
     const map = new Map<Component, number>();
 
     // Create nodes and map
-    for (let i = 0; i < objs.length; i++) {
+    for (const [i, obj] of objs.entries()) {
         graph.createNode(i);
-        map.set(objs[i], i);
+        map.set(obj, i);
     }
 
     // Create edges
-    for (let j = 0; j < wires.length; j++) {
-        const wire = wires[j];
-        const c1 = map.get(wire.getP1Component());
-        const c2 = map.get(wire.getP2Component());
+    for (const [j, wire] of wires.entries()) {
+        const c1 = map.get(wire.getP1Component())!;
+        const c2 = map.get(wire.getP2Component())!;
         graph.createEdge(c1, c2, j);
     }
 
@@ -235,7 +281,7 @@ export function SerializeForCopy(objects: IOObject[]): string {
     //  the entire circuit doesn't get serialized
     return Serialize(objects, [
         {
-            type: Port,
+            type:           Port,
             customBehavior: {
                 customSerialization: (serializer, port: Port) => {
                     const parent = port.getParent();
@@ -258,30 +304,30 @@ export function SerializeForCopy(objects: IOObject[]): string {
                     return data;
                 },
                 customKeyFilter: (_: Port, key: string) => {
-                    return (key != "connections"); // don't serialize connections (handle them above)
-                }
-            }
+                    return (key !== "connections"); // don't serialize connections (handle them above)
+                },
+            },
         },
         {
-            type: IOObject,
+            type:           IOObject,
             customBehavior: {
                 customKeyFilter: (_: IOObject, key: string) => {
-                    return (key != "designer"); // don't serialize designer
-                }
-            }
-        }
+                    return (key !== "designer"); // don't serialize designer
+                },
+            },
+        },
     ]);
 }
 
 /**
  * Copies a group of objects including connections that are
- *  present within the objects
+ *  present within the objects.
  *
- * @param  objects [description]
- * @return         [description]
+ * @param objects The object to copy.
+ * @returns         The copied set of objects.
  */
 export function CopyGroup(objects: IOObject[]): IOObjectSet {
-    if (objects.length == 0)
+    if (objects.length === 0)
         return new IOObjectSet();
 
     const copies = Deserialize<IOObject[]>(SerializeForCopy(objects));
@@ -303,8 +349,8 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
 // Find a minimal bounding box enclosing all cullable objects in a given array
 // Note that if the array is empty, min and max will both be (0, 0)
 export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
-    const min = Vector.min(...all.map(o => o.getMinPos()));
-    const max = Vector.max(...all.map(o => o.getMaxPos()));
+    const min = Vector.Min(...all.map(o => o.getMinPos()));
+    const max = Vector.Max(...all.map(o => o.getMaxPos()));
 
     return new BoundingBox(min, max);
 }
@@ -314,23 +360,32 @@ export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
  * the camera's view with adjustable padding. If objs
  * is empty, uses a default size.
  *
- * @return Tuple of desired camera position and zoom
+ * @param camera  The camera to fit within.
+ * @param objs    The objects to fit within the camera.
+ * @param padding The amount of padding for the fit.
+ * @returns         Tuple of desired camera position and zoom.
  */
 export function GetCameraFit(camera: Camera, objs: CullableObject[], padding: number): [Vector, number] {
     // If no objects return to default zoom
     if (objs.length === 0)
         return [V(), 1];
 
-    const bbox = CircuitBoundingBox(objs);
-    const finalPos = bbox.getCenter();
+    const { left, right, bottom, top } = camera.getMargin();
 
-    const screenSize = camera.getCenter().scale(2); // Bottom right corner of screen
+    const marginSize = V(left - right, top - bottom);
+
+    const bbox = CircuitBoundingBox(objs);
+
+    const screenSize = camera.getSize().sub(V(left, bottom)); // Bottom right corner of screen
     const worldSize = camera.getWorldPos(screenSize).sub(camera.getWorldPos(V(0,0))); // World size of camera view
 
     // Determine which bbox dimension will limit zoom level
-    const xRatio = bbox.getWidth()/worldSize.x;
-    const yRatio = bbox.getHeight()/worldSize.y;
-    const finalZoom = camera.getZoom()*Math.max(xRatio, yRatio)*padding;
+    const ratio = V(bbox.getWidth() / worldSize.x, bbox.getHeight() / worldSize.y);
+    const finalZoom = camera.getZoom()*Math.max(ratio.x, ratio.y)*padding;
+
+    // Only subtract off 0.5 of the margin offset since currently it's centered on the margin'd
+    //  screen size so only half of the margin on the top/left need to be contributed
+    const finalPos = bbox.getCenter().sub(marginSize.scale(0.5 * finalZoom));
 
     return [finalPos, finalZoom];
 }

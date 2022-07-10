@@ -1,10 +1,12 @@
+import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+
 import {Utility} from "shared/containers/Header/Right/UtilitiesDropdown";
 
-import {HeaderLeft} from "./Left";
+import {HeaderLeft}  from "./Left";
 import {HeaderRight} from "./Right";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import "./index.scss";
 
@@ -21,7 +23,7 @@ export const Header = ({ img, helpers, info, extraUtilities }: Props) => (
         <HeaderLeft helpers={helpers} />
 
         <div className="header__center">
-            <a href="/home" target="_blank">
+            <a href="/" target="_blank">
                 <img className="header__center__logo" src={img} height="100%" alt="OpenCircuits logo" />
             </a>
             <a href="https://github.com/OpenCircuits/OpenCircuits/" rel="noreferrer" target="_blank">

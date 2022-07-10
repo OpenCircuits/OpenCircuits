@@ -1,24 +1,26 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}          from "digital/models/ioobjects/inputs/Switch";
-import {Button}          from "digital/models/ioobjects/inputs/Button";
-import {ANDGate}         from "digital/models/ioobjects/gates/ANDGate";
-import {LED}             from "digital/models/ioobjects/outputs/LED";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+
+import {Button} from "digital/models/ioobjects/inputs/Button";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {LED} from "digital/models/ioobjects/outputs/LED";
+
 
 
 describe("Button", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
+    const { Place, Connect } = GetHelpers(designer);
 
     const [a, b, b2, g, o, o2] = Place(new Switch(), new Button() , new Button(),
                                        new ANDGate(), new LED() , new LED());
-    Connect(a, 0,  g, 0);
-    Connect(b, 0,  g, 1);
-    Connect(g, 0,  o, 0);
-    Connect(b2, 0, o2, 0);
+    Connect(a,  g);
+    Connect(b,  g);
+    Connect(g,  o);
+    Connect(b2, o2);
 
     test("Initial State", () => {
         b2.press();

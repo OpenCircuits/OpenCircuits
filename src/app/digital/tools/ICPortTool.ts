@@ -1,9 +1,11 @@
 import {IO_PORT_LENGTH, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V} from "Vector";
+
 import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {PortContains} from "core/utils/ComponentUtils";
-import {Event} from "core/utils/Events";
+import {Event}        from "core/utils/Events";
 
 import {Port} from "core/models";
 
@@ -11,9 +13,11 @@ import {ICCircuitInfo} from "digital/utils/ICCircuitInfo";
 
 
 export const ICPortTool = (() => {
-    let port: Port;
+    let port: Port | undefined;
 
-    function findPort({input, camera, ic}: Partial<ICCircuitInfo>): Port {
+    function findPort({ input, camera, ic }: ICCircuitInfo): Port | undefined {
+        if (!ic)
+            throw new Error("ICPortTool.findPort failed: ic was undefined");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         return ic.getPorts().find(p => PortContains(p, worldMousePos));
     }
@@ -33,17 +37,22 @@ export const ICPortTool = (() => {
 
 
         onActivate(_: Event, info: ICCircuitInfo): void {
+            if (!info.ic)
+                throw new Error("ICPortTool.onActivate failed: info.ic was undefined");
             const icPort = findPort(info);
-            port = info.ic.getData().getPorts()[info.ic.getPorts().indexOf(icPort)];
+            port = info.ic.getData().getPorts()[info.ic.getPorts().indexOf(icPort!)];
         },
-        onDeactivate(_: Event, __: ICCircuitInfo): void {
+        onDeactivate(): void {
             port = undefined;
         },
 
 
-        onEvent(event: Event, {input, camera, ic}: ICCircuitInfo): boolean {
+        onEvent(event: Event, { input, camera, ic }: ICCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
+
+            if (!ic)
+                throw new Error("ICPortTool.onEvent failed: ic was undefined");
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
 
@@ -56,16 +65,18 @@ export const ICPortTool = (() => {
                 // TODO: turn switches into little switch icons
                 //  on the surface of the IC and same with LEDs
                 v = worldMousePos.sub(p);
-            } else if (worldMousePos.x == p.x && worldMousePos.y == p.y) {
+            } else if (worldMousePos.x === p.x && worldMousePos.y === p.y) {
                 // Set v outwards from the edge the origin position is on
-                if (Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2)
-                    v = V(0,-1).scale(p.y);
-                else
-                    v = V(-1,0).scale(p.x);
+                v = Math.abs(p.x)-size.x/2 < Math.abs(p.y)-size.y/2
+                    ? V(0,-1).scale(p.y)
+                    : V(-1,0).scale(p.x);
             }
 
             // Set the direction vector to the length of a port
             v = v.normalize().scale(-IO_PORT_LENGTH).add(p);
+
+            if (!port)
+                throw new Error("ICPortTool.onEvent failed: port is undefined");
 
             // Set port for IC
             port.setOriginPos(p);
@@ -83,6 +94,6 @@ export const ICPortTool = (() => {
         findPort: findPort,
         isDragging(): boolean {
             return (port !== undefined);
-        }
+        },
     }
 })();

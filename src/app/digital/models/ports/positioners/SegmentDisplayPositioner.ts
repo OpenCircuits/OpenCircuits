@@ -4,18 +4,20 @@ import {IO_PORT_RADIUS} from "core/utils/Constants";
 
 import {V} from "Vector";
 
-import {InputPort} from "../InputPort";
 import {Positioner} from "core/models/ports/positioners/Positioner";
+
+import {InputPort} from "../InputPort";
+
 
 @serializable("SegmentDisplayPositioner")
 export class SegmentDisplayPositioner extends Positioner<InputPort> {
 
     /**
-     * Port positioning for segment displays for different inputs
+     * Port positioning for segment displays for different inputs.
      *
-     * @param arr The array of ports (either in or out ports)
+     * @param ports The array of ports (either in or out ports).
      */
-    public updatePortPositions(ports: Array<InputPort>): void {
+    public updatePortPositions(ports: InputPort[]): void {
         ports.forEach((port, i) => {
             // Calculate y position of port
             const size = port.getParent().getSize();

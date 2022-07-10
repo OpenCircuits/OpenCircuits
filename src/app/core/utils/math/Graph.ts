@@ -1,7 +1,7 @@
 
 /**
- * @param V The type for the vertices of the edge
- * @param E The type for weight of the edge
+ * @param V The type for the vertices of the edge.
+ * @param E The type for weight of the edge.
  */
 export class Edge<V, E> {
     private target: V;
@@ -23,16 +23,16 @@ export class Edge<V, E> {
 
 
 /**
- * @param V The type for the vertices of the graph
- * @param E The type for the weight of the edges of the graph
+ * @param V The type for the vertices of the graph.
+ * @param E The type for the weight of the edges of the graph.
  */
 export class Graph<V, E> {
-    private list: Map<V, Edge<V, E>[]>;
-    private reverseList: Map<V, Edge<V, E>[]>;
+    private list: Map<V, Array<Edge<V, E>>>;
+    private reverseList: Map<V, Array<Edge<V, E>>>;
 
     public constructor() {
-        this.list = new Map<V, Edge<V, E>[]>();
-        this.reverseList = new Map<V, Edge<V, E>[]>();
+        this.list = new Map<V, Array<Edge<V, E>>>();
+        this.reverseList = new Map<V, Array<Edge<V, E>>>();
     }
 
     private dfs(visited: Map<V, boolean>, v: V): void {
@@ -40,8 +40,8 @@ export class Graph<V, E> {
             return;
 
         visited.set(v, true);
-        this.list.get(v).forEach((e) => this.dfs(visited, e.getTarget()));
-        this.reverseList.get(v).forEach((e) => this.dfs(visited, e.getTarget()));
+        this.list.get(v)?.forEach((e) => this.dfs(visited, e.getTarget()));
+        this.reverseList.get(v)?.forEach((e) => this.dfs(visited, e.getTarget()));
     }
 
     public createNode(value: V): void {
@@ -58,8 +58,8 @@ export class Graph<V, E> {
         if (!this.list.has(target))
             throw new Error("Graph doesn't have node of value: " + target);
 
-        this.list.get(source).push(new Edge<V, E>(target, weight));
-        this.reverseList.get(target).push(new Edge<V, E>(source, weight));
+        this.list.get(source)!.push(new Edge<V, E>(target, weight));
+        this.reverseList.get(target)!.push(new Edge<V, E>(source, weight));
     }
 
     public isConnected(): boolean {
@@ -75,16 +75,16 @@ export class Graph<V, E> {
     }
 
     public getSources(): V[] {
-        return this.getNodes().filter((n) => this.reverseList.get(n).length === 0);
+        return this.getNodes().filter((n) => this.reverseList.get(n)?.length === 0);
     }
 
     public getSinks(): V[] {
-        return this.getNodes().filter((n) => this.list.get(n).length === 0);
+        return this.getNodes().filter((n) => this.list.get(n)?.length === 0);
     }
 
     public getEndNodes(): V[] {
         // Get nodes that are sources/sinks
-        return this.getSources().concat(this.getSinks());
+        return [...this.getSources(), ...this.getSinks()];
     }
 
     public size(): number {
@@ -92,11 +92,15 @@ export class Graph<V, E> {
     }
 
     public getDegree(node: V): number {
-        return this.list.get(node).length + this.reverseList.get(node).length;
+        if (!this.list.has(node))
+            throw new Error("getDegree() failed: node not found");
+        return this.list.get(node)!.length + this.reverseList.get(node)!.length;
     }
 
-    public getConnections(value: V): Edge<V, E>[] {
-        return this.list.get(value);
+    public getConnections(value: V): Array<Edge<V, E>> {
+        if (!this.list.has(value))
+            throw new Error("getConnections() failed: value not found");
+        return this.list.get(value)!;
     }
 
     public getNodes(): V[] {
@@ -123,10 +127,10 @@ export class Graph<V, E> {
         // Performs a bfs search to find the depth of each node
         // If max is true then the depth is the furthest depth (and thus largest number)
         //  that the node can be found at
-        while (currentLayer.length != 0) {
+        while (currentLayer.length > 0) {
             for (const node of currentLayer) {
-                const nextDepth = nodeToNumber.get(node) + 1;
-                for (const next of this.list.get(node))  {
+                const nextDepth = nodeToNumber.get(node)! + 1;
+                for (const next of this.list.get(node)!)  {
                     if (!nodeToNumber.has(next.getTarget()) || max) {
                         deepest = Math.max(deepest, nextDepth);
                         nodeToNumber.set(next.getTarget(), nextDepth);
@@ -139,9 +143,9 @@ export class Graph<V, E> {
         }
 
         // Convert to an array of arrays where each index indicates the depth of that node
-        let ret: V[][] = Array.from({length: deepest+1}, _ => Array(0));
+        const ret: V[][] = Array.from({ length: deepest+1 }, _ => new Array(0));
 
-        Array.from(nodeToNumber.entries()).forEach(([node, depth]) =>
+        [...nodeToNumber.entries()].forEach(([node, depth]) =>
             ret[depth].push(node)
         );
 
@@ -155,7 +159,7 @@ export class Graph<V, E> {
      *  have a depth of 4. This should only be called if the isConnected() is true and the
      *  graph is acyclic.
      *
-     * @return a map where each key is each node and the value is the max depth of that node
+     * @returns A map where each key is each node and the value is the max depth of that node.
      */
     public getMaxNodeDepths(): V[][] {
         return this.getNodeDepths(true);
@@ -168,7 +172,7 @@ export class Graph<V, E> {
      *  have a depth of 2. This should only be called if the isConnected() is true and the
      *  graph is acyclic.
      *
-     * @return a map where each key is each node and the value is the max depth of that node
+     * @returns A map where each key is each node and the value is the max depth of that node.
      */
     public getMinNodeDepths(): V[][] {
         return this.getNodeDepths(false);

@@ -15,6 +15,7 @@
     background-color: rgba(white, 0.8);
 
     transform: translate(0, -50%);
+
     & .info-button {
         & div {
             display: inline-block;
@@ -46,12 +47,14 @@
             margin-right: 0;
         }
     }
-    & div {
+    & > div {
         margin-top: 6px;
         margin-bottom: 2px;
     }
-    & input {
+    & label > div, input {
         width: calc(100% - 2*2px - 2*2px);
+    }
+    & input {
         margin-bottom: 1px;
         padding: 2px;
 
@@ -85,6 +88,10 @@
         &:active {
             background-color: darken(white, 10%);
         }
+    }
+
+    & .switchtoggle > span {
+        margin-left: 12px;
     }
 
     & select {

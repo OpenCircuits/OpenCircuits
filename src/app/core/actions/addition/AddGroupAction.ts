@@ -1,10 +1,7 @@
-import {GroupAction} from "../GroupAction";
-import {PlaceAction} from "./PlaceAction";
-import {ConnectionAction} from "./ConnectionAction";
-
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
+
 import {Action} from "../Action";
 
 

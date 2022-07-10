@@ -1,18 +1,18 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {DLatch} from "digital/models/ioobjects/latches/DLatch";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("DLatch", () => {
     const ON = true, OFF = false;
 
     const designer = new DigitalCircuitDesigner(0);
-    const {AutoPlace} = GetHelpers({designer});
+    const { AutoPlace } = GetHelpers(designer);
 
-    const [f, [D, E], [Q, Q2]] = AutoPlace(new DLatch());
+    const [, [D, E], [Q, Q2]] = AutoPlace(new DLatch());
 
     function expectState(state: boolean): void {
         expect(Q.isOn()).toBe(state);

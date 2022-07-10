@@ -1,9 +1,11 @@
 import {serializable} from "serialeazy";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
+
 import {InputPort} from "digital/models/ports/InputPort";
 
 import {Latch} from "./Latch";
+
 
 @serializable("SRLatch")
 export class SRLatch extends Latch {

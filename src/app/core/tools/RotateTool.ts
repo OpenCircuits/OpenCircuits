@@ -1,10 +1,11 @@
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         ROTATION_SNAP_AMT}  from "core/utils/Constants";
-import {V, Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
+import {Vector} from "Vector";
+
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
 import {RotateAction} from "core/actions/transform/RotateAction";
 
@@ -19,7 +20,7 @@ export const RotateTool = (() => {
     let prevAngle = 0;
 
 
-    function isMouseOnCircle({camera, input, selections}: Partial<CircuitInfo>): boolean {
+    function isMouseOnCircle({ camera, input, selections }: CircuitInfo): boolean {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const d = worldMousePos.sub(selections.midpoint()).len2();
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2)
@@ -29,7 +30,8 @@ export const RotateTool = (() => {
     }
 
     return {
-        shouldActivate(event: Event, {locked, camera, input, selections}: CircuitInfo): boolean {
+        shouldActivate(event: Event, info: CircuitInfo): boolean {
+            const { input, selections, locked } = info;
             if (locked)
                 return false;
             // Activate if the user pressed their mouse or finger down
@@ -39,7 +41,7 @@ export const RotateTool = (() => {
                     input.getTouchCount() === 1 &&
                     selections.amount() > 0 &&
                     selections.all(s => s instanceof Component) &&
-                    isMouseOnCircle({camera, input, selections}));
+                    isMouseOnCircle(info));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
             // Deactivate only mouse release
@@ -47,21 +49,21 @@ export const RotateTool = (() => {
         },
 
 
-        onActivate({}: Event, {camera, input, selections}: CircuitInfo): void {
+        onActivate({}: Event, { camera, input, selections }: CircuitInfo): void {
             const worldMousePos = camera.getWorldPos(input.getMousePos());
             const components = selections.get() as Component[];
 
             // Get initial component angles
             initialAngles = components.map(o => o.getAngle());
-            currentAngles = initialAngles.slice();
+            currentAngles = [...initialAngles];
 
             // Get initial overall angle
             startAngle = getAngle(worldMousePos, selections.midpoint());
             prevAngle = startAngle;
 
-            return;
+
         },
-        onDeactivate({}: Event, {history, selections}: CircuitInfo): void {
+        onDeactivate({}: Event, { history, selections }: CircuitInfo): void {
             const components = selections.get() as Component[];
             const finalAngles = components.map(o => o.getAngle());
 
@@ -69,7 +71,7 @@ export const RotateTool = (() => {
         },
 
 
-        onEvent(event: Event, {camera, input, selections}: CircuitInfo): boolean {
+        onEvent(event: Event, { camera, input, selections }: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 
@@ -103,6 +105,6 @@ export const RotateTool = (() => {
         },
         getPrevAngle(): number {
             return prevAngle;
-        }
+        },
     }
 })();

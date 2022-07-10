@@ -1,5 +1,5 @@
-import {Event} from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
 import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
@@ -7,7 +7,7 @@ import {EventHandler} from "../EventHandler";
 
 
 export const SelectAllHandler: EventHandler = ({
-    conditions: (event: Event, {input, designer, selections}: CircuitInfo) =>
+    conditions: (event: Event, { input, designer, selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "a" &&
          input.isModifierKeyDown() &&
@@ -15,6 +15,6 @@ export const SelectAllHandler: EventHandler = ({
          designer.getObjects().length > 0 &&
          designer.getObjects().length !== selections.amount()),
 
-    getResponse: ({history, designer, selections}: CircuitInfo) =>
-        history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute())
+    getResponse: ({ history, designer, selections }: CircuitInfo) =>
+        history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute()),
 });

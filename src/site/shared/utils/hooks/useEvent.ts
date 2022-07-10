@@ -1,10 +1,11 @@
 import {useEffect} from "react";
 
-import {Input} from "core/utils/Input";
 import {Event, EventType} from "core/utils/Events";
+import {Input}            from "core/utils/Input";
 
 
-export const useEvent = <T extends EventType>(type: T, f: (ev: Event & {type: T}) => void, input: Input, deps?: React.DependencyList) => {
+export const useEvent = <T extends EventType>(type: T, f: (ev: Event & {type: T}) => void,
+                                              input?: Input, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
             return;

@@ -1,0 +1,97 @@
+
+
+.sim-analysis-panel {
+    position: absolute;
+
+    right: 5px;
+    top: 60px;
+
+    padding: 10px;
+
+    background-color: #999999;
+    color: #eeeeee;
+
+    border-radius: 5px;
+
+    & > div:first-child {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    & > div {
+        margin-top: 10px;
+    }
+
+    & input {
+        color: #eeeeee;
+        width: 60%;
+        margin-left: 10px;
+        border: 1px solid white;
+        padding: 4px;
+    }
+}
+
+.sim-buttons {
+    position: absolute;
+
+    right: 5px;
+    top: 5px;
+    height: 50px;
+    line-height: 50px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+    background-color: #999999;
+    color: #eeeeee;
+
+    border-radius: 5px;
+
+    & > button, select {
+        flex: 1 1 auto;
+
+        height: 30px;
+        line-height: 30px;
+
+        padding: 0 10px;
+
+        font-size: 20px;
+
+        text-align: center;
+        vertical-align: middle;
+
+        color: white;
+
+        border-right: 1px solid #222222;
+        border-left: 1px solid #222222;
+
+        &:first-child {
+            border-left: none;
+        }
+        &:last-child {
+            border-right: none;
+        }
+
+        &:disabled {
+            color: #ccc;
+        }
+    }
+    & > select {
+        appearance: none;
+
+        padding-right: 30px;
+
+        background-color: transparent;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 1em;
+
+        outline: none;
+
+        border-top: none;
+        border-bottom: none;
+    }
+}

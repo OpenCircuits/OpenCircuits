@@ -1,0 +1,15 @@
+{
+    "extends": "../../../../tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "Vector":        ["../../../app/core/utils/math/Vector"],
+            "math/*":        ["../../../app/core/utils/math/*"],
+            "core/*":        ["../../../app/core/*"],
+            "analog/*":      ["../../../app/analog/*"],
+            "shared/*":      ["../../shared/*"],
+            "site/analog/*": ["./src/*"],
+        }
+    },
+    "include": ["src", "../../shared/utils/types"],
+}

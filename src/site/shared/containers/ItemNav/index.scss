@@ -4,7 +4,6 @@ $tab-width: 18px;
 $tab-padding: 8px;
 
 
-
 .itemnav {
     $top-margin: 10px;
     $top-height: 35px;
@@ -27,7 +26,7 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
-    @media (max-width: 768px) and (orientation:portrait) {
+    @media (max-width: $desktop-width) and (orientation:portrait) {
         top: unset;
         right: 0;
         width: unset;
@@ -38,11 +37,11 @@ $tab-padding: 8px;
     }
 
     &__move {
-        @media (min-width: 768px), (orientation:landscape) {
+        @media (min-width: $desktop-width), (orientation:landscape) {
             left: -$itemnav-width - $header-border-width;
         }
 
-        @media (max-width: 768px) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation:portrait) {
             bottom: -$itemnav-height - $header-border-width;
         }
     }
@@ -59,8 +58,12 @@ $tab-padding: 8px;
 
         & img {
             position: relative;
-            opacity: 1;
+
+            width: 80px;
+            height: 80px;
             z-index: 100;
+
+            opacity: 1;
 
             filter: drop-shadow(3px 3px 4px #888);
         }
@@ -153,14 +156,15 @@ $tab-padding: 8px;
             border-color: transparent;
 
             cursor: pointer;
+            pointer-events: none;
 
             transition: 0.5s;
 
-            @media (min-width: 768px), (orientation:landscape) {
+            @media (min-width: $desktop-width), (orientation:landscape) {
                 border-bottom-right-radius: 15px;
             }
 
-            @media (max-width: 768px) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation:portrait) {
                 left: -$size - $header-border-width;
                 top: -$size - 3*$header-border-width - $top-margin;
                 border-top-left-radius: 15px;
@@ -168,7 +172,7 @@ $tab-padding: 8px;
 
             &:after {
                 content: '×';
-
+                pointer-events: all;
                 position: absolute;
                 left: calc(-50% - #{$header-border-width + $header-padding});
                 top: 50%;
@@ -180,23 +184,24 @@ $tab-padding: 8px;
 
                 transform: translate(-50%, -50%);
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     left: 50%;
                     top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
                 }
+
             }
         }
 
         &__closed > div {
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
-
+            pointer-events: all;
             &:after {
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     top: 50%;
                 }
             }
@@ -214,11 +219,11 @@ $tab-padding: 8px;
         scrollbar-width: thin;
         scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
 
-        @media (min-width: 768px), (orientation:landscape) {
+        @media (min-width: $desktop-width), (orientation:landscape) {
             border-top: 3px solid #888;
         }
 
-        @media (max-width: 768px) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation:portrait) {
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             flex-wrap: wrap;
@@ -248,7 +253,7 @@ $tab-padding: 8px;
         & > div {
             scroll-snap-align: center;
 
-            @media (max-width: 768px) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation:portrait) {
                 width: 100%;
             }
 
@@ -268,7 +273,7 @@ $tab-padding: 8px;
                 color: #fff;
                 text-shadow: -1px 1px 3px darken(#fff, 40%);
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     margin: 0;
                 }
             }
@@ -280,11 +285,15 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                @media (max-width: 768px) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation:portrait) {
                     margin: 0;
                 }
 
                 & > div {
+                    $item-container-width: 100px;
+                    $item-container-padding: 10px;
+                    $item-width: $item-container-width - 2*$item-container-padding;
+
                     position: relative;
                     display: inline-block;
 
@@ -298,13 +307,18 @@ $tab-padding: 8px;
                     padding: 0;
                     margin: 0;
 
-                    width: 100px;
-                    padding: 10px;
+                    width: $item-container-width;
+                    padding: $item-container-padding;
 
                     transition: 0.3s;
                     word-break: break-word;
 
                     color: darken($secondary-color, 5%);
+
+                    & > button > img {
+                        width: $item-width;
+                        height: $item-width;
+                    }
 
                     & > div {
                         position: absolute;

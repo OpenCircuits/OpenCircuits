@@ -1,10 +1,11 @@
 import {ThunkAction} from "redux-thunk";
 
-import {AuthState} from "shared/api/auth/AuthState";
 import {QueryUserCircuits} from "shared/api/Circuits";
 
-import {SharedAppState} from "..";
-import {AllSharedActions} from "../actions";
+import {AuthState} from "shared/api/auth/AuthState";
+
+import {SharedAppState}                                  from "..";
+import {AllSharedActions}                                from "../actions";
 import {_LoadCircuitsFinish, _LoadCircuitsStart, _Login} from "../UserInfo";
 
 
@@ -19,7 +20,9 @@ export function LoadUserCircuits(): ThunkResult<Promise<boolean>> {
         dispatch(_LoadCircuitsStart());
         try {
             // Attempt to load circuits from backend
-            const circuits = await QueryUserCircuits(auth);
+            const circuits = await QueryUserCircuits(auth!);
+            if (!circuits)
+                throw new Error("LoadUserCircuits failed: circuits is undefined");
             dispatch(_LoadCircuitsFinish(circuits));
 
             return true; // success

@@ -6,37 +6,43 @@ import {V} from "Vector";
 
 import {Input} from "core/utils/Input";
 
-import {GroupAction}             from "core/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {PlaceAction} from "core/actions/addition/PlaceAction";
+
 import {CreateDeselectAllAction,
         SelectAction}            from "core/actions/selection/SelectAction";
-import {PlaceAction}             from "core/actions/addition/PlaceAction";
-import {CreateICDataAction}      from "digital/actions/CreateICDataAction";
+
+import {DefaultTool} from "core/tools/DefaultTool";
+import {PanTool}     from "core/tools/PanTool";
 
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
-import {UndoHandler}        from "core/tools/handlers/UndoHandler";
 import {RedoHandler}        from "core/tools/handlers/RedoHandler";
-import {DefaultTool}        from "core/tools/DefaultTool";
-import {PanTool}            from "core/tools/PanTool";
+import {UndoHandler}        from "core/tools/handlers/UndoHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ICCircuitInfo}      from "digital/utils/ICCircuitInfo";
 
-import {IC} from "digital/models/ioobjects";
+import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
 import {ICPortTool}   from "digital/tools/ICPortTool";
 import {ICEdge,
         ICResizeTool} from "digital/tools/ICResizeTool";
 
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {IC} from "digital/models/ioobjects";
+
 import {useKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
-
-import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
-import {CreateInfo}    from "site/digital/utils/CircuitInfo/CreateInfo";
-import {GetRenderFunc} from "site/digital/utils/Rendering";
-
-import {CloseICDesigner} from "site/digital/state/ICDesigner";
+import {useWindowSize}   from "shared/utils/hooks/useWindowSize";
 
 import {InputField} from "shared/components/InputField";
+
+import {GetRenderFunc} from "site/digital/utils/Rendering";
+
+import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
+
+import {useDigitalDispatch, useDigitalSelector} from "site/digital/utils/hooks/useDigital";
+
+import {CloseICDesigner} from "site/digital/state/ICDesigner";
 
 import "./index.scss";
 
@@ -52,41 +58,40 @@ export const ICDesigner = (() => {
 
     const icInfo: ICCircuitInfo = {
         ...info,
-        ic: undefined
     };
 
     const EdgesToCursors: Record<ICEdge, string> = {
-        "none": "default",
+        "none":       "default",
         "horizontal": "ew-resize",
-        "vertical": "ns-resize"
+        "vertical":   "ns-resize",
     };
 
-
+    // eslint-disable-next-line react/display-name
     return ({ mainInfo }: Props) => {
-        const {camera, designer, toolManager, renderer} = info;
-
-        const {isActive, ic: data} = useDigitalSelector(
+        const { isActive, ic: data } = useDigitalSelector(
             state => ({ ...state.icDesigner })
-        )
+        );
         const dispatch = useDigitalDispatch();
 
-        const {w, h} = useWindowSize();
-        const canvas = useRef<HTMLCanvasElement>();
-        const [{name}, setName] = useState({ name: "" });
-        const [{cursor}, setCursor] = useState({ cursor: "default" });
+        const { w, h } = useWindowSize();
+        const canvas = useRef<HTMLCanvasElement>(null);
+        const [{ name }, setName] = useState({ name: "" });
+        const [{ cursor }, setCursor] = useState({ cursor: "default" });
 
         // On resize (useLayoutEffect happens sychronously so
         //  there's no pause/glitch when resizing the screen)
         useLayoutEffect(() => {
             if (!isActive)
                 return;
-            camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-            renderer.render(); // Re-render
+            icInfo.camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
+            icInfo.renderer.render(); // Re-render
         }, [isActive, w, h]);
 
 
         // Initial function called after the canvas first shows up
         useEffect(() => {
+            if (!canvas.current)
+                throw new Error("ICDesigner.useEffect failed: canvas.current is null");
             // Create input w/ canvas
             icInfo.input = new Input(canvas.current);
 
@@ -95,7 +100,7 @@ export const ICDesigner = (() => {
 
             // Add input listener
             icInfo.input.addListener((event) => {
-                const change = toolManager.onEvent(event, icInfo);
+                const change = icInfo.toolManager.onEvent(event, icInfo);
 
                 // Change cursor
                 let newCursor = ICPortTool.findPort(icInfo) === undefined ? "none" : "move";
@@ -103,27 +108,28 @@ export const ICDesigner = (() => {
                     newCursor = EdgesToCursors[ICResizeTool.findEdge(icInfo)];
                 setCursor({ cursor: newCursor });
 
-                if (change) renderer.render();
+                if (change)
+                    icInfo.renderer.render();
             });
 
             // Input should be blocked initially
             icInfo.input.block();
 
             // Add render callbacks and set render function
-            designer.addCallback(() => renderer.render());
+            icInfo.designer.addCallback(() => icInfo.renderer.render());
 
-            renderer.setRenderFunction(() => renderFunc());
-            renderer.render();
+            icInfo.renderer.setRenderFunction(() => renderFunc());
+            icInfo.renderer.render();
         }, [setCursor]); // Pass empty array so that this only runs once on mount
 
         // Keeps the ICData/IC name's in sync with `name`
         useLayoutEffect(() => {
             if (!data || !icInfo.ic)
                 return;
-            data.setName(name);
+            data.setName(name ?? "");
             icInfo.ic.update();
-            renderer.render();
-        }, [name, data, icInfo.ic]);
+            icInfo.renderer.render();
+        }, [name, data]);
 
         // Happens when activated
         useLayoutEffect(() => {
@@ -140,23 +146,26 @@ export const ICDesigner = (() => {
             mainInfo.input.block();
 
             // Reset designer and add IC
-            designer.reset();
+            icInfo.designer.reset();
             icInfo.ic = new IC(data);
             icInfo.ic.setPos(V());
-            designer.addObject(icInfo.ic);
+            icInfo.designer.addObject(icInfo.ic);
 
             // Set camera
-            camera.setPos(V());
+            icInfo.camera.setPos(V());
 
-            renderer.render();
+            icInfo.renderer.render();
         }, [isActive, data, mainInfo, setName]);
 
 
-        const close = (cancelled: boolean = false) => {
+        const close = (cancelled = false) => {
             // Block input while closed
             icInfo.input.block();
 
             if (!cancelled) {
+                if (!data)
+                    throw new Error("ICDesigner.close failed: data was undefined");
+
                 // Create IC on center of screen
                 const ic = new IC(data);
                 ic.setPos(mainInfo.camera.getPos());
@@ -166,8 +175,8 @@ export const ICDesigner = (() => {
                     CreateDeselectAllAction(mainInfo.selections),
                     new CreateICDataAction(data, mainInfo.designer),
                     new PlaceAction(mainInfo.designer, ic),
-                    new SelectAction(mainInfo.selections, ic)
-                ]);
+                    new SelectAction(mainInfo.selections, ic),
+                ], "Create IC Action");
                 mainInfo.history.add(action.execute());
                 mainInfo.renderer.render();
             }
@@ -193,13 +202,13 @@ export const ICDesigner = (() => {
                 <InputField type="text"
                             value={name}
                             placeholder="IC Name"
-                            onChange={(ev) => setName({name: ev.target.value})} />
+                            onChange={(ev) => setName({ name: ev.target.value })} />
 
                 <div className="icdesigner__buttons">
-                    <button name="confirm" onClick={() => close()}>
+                    <button type="button" name="confirm" onClick={() => close()}>
                         Confirm
                     </button>
-                    <button name="cancel"  onClick={() => close(true)}>
+                    <button type="button" name="cancel"  onClick={() => close(true)}>
                         Cancel
                     </button>
                 </div>

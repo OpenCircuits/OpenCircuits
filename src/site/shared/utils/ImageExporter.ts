@@ -1,5 +1,7 @@
 import jsPDF from "jspdf";
 
+import {SaveFile} from "./Exporter";
+
 
 export type ImageExportOptions = {
     type: "png" | "jpeg" | "pdf";
@@ -25,7 +27,7 @@ export function SaveImage(canvas: HTMLCanvasElement, name: string, options: Imag
 function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageExportOptions) {
     if (options.useBg) {
         // From https://stackoverflow.com/a/50126796
-        const ctx = canvas.getContext("2d"); // get the context to overwrite the background of the canvas
+        const ctx = canvas.getContext("2d")!; // get the context to overwrite the background of the canvas
         ctx.save(); // save the current state of the context
         ctx.globalCompositeOperation = "destination-over"; // set the composite operation to overwrite the background
         ctx.fillStyle = options.bgColor;
@@ -34,28 +36,7 @@ function SaveImg(canvas: HTMLCanvasElement, projectName: string, options: ImageE
     }
 
     const data = canvas.toDataURL(`image/${options.type}, 1.0`);
-
-    // Get name
-    if (projectName.replace(/\s+/g, "") === "")
-        projectName = "Untitled Circuit";
-
-    const filename = `${projectName}.${options.type}`;
-
-    if (window.navigator.msSaveOrOpenBlob) { // IE10+
-        const file = new Blob([data], {type: "image/png"});
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    } else { // Others
-        const a = document.createElement("a");
-        const url = data;
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
+    SaveFile(data, projectName, options.type);
 }
 
 
@@ -63,7 +44,7 @@ function SavePDF(canvas: HTMLCanvasElement, projectName: string, options: ImageE
     const width  = canvas.width;
     const height = canvas.height;
 
-    const data = canvas.toDataURL("image/png", 1.0);
+    const data = canvas.toDataURL("image/png", 1);
     const pdf = new jsPDF("l", "px", [width, height]);
 
     // Get name

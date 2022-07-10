@@ -10,19 +10,14 @@ type Props<T> = {
     setOption: React.Dispatch<React.SetStateAction<T>>;
     text: string;
 }
-export const DropdownOption = <T extends string>({id, option, options, setOption, text}: Props<T>) => (
-    <>
-        <br/>
-        <label>{text}</label>
-        <select id={id}
-                value={option}
-                onChange={e => setOption(e.target.value as T)}
-                onBlur={e => setOption(e.target.value as T)}>
-
-                {options.map(opt =>
-                    <option key={opt} value={opt}>{opt}</option>
-                )}
-
-        </select>
-    </>
-);
+export const DropdownOption = <T extends string>({ id, option, options, setOption, text }: Props<T>) => (<>
+    <br />
+    <label>{text}</label>
+    <select id={id} value={option}
+            onChange={e => setOption(e.target.value as T)}
+            onBlur={e => setOption(e.target.value as T)}>
+        {options.map(opt =>
+            <option key={opt} value={opt}>{opt}</option>
+        )}
+    </select>
+</>);

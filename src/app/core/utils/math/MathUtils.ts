@@ -1,25 +1,18 @@
 import {WIRE_DIST_ITERATIONS,
-        WIRE_NEWTON_ITERATIONS,
-        WIRE_DIST_THRESHOLD2} from "../Constants";
+        WIRE_DIST_THRESHOLD2,
+        WIRE_NEWTON_ITERATIONS} from "../Constants";
 
-import {Vector, V} from "./Vector";
-import {Transform} from "./Transform";
 import {BezierCurve} from "./BezierCurve";
+import {Transform}   from "./Transform";
+import {V, Vector}   from "./Vector";
 
 /**
- * Clamps a number between a given min and max
+ * Clamps a number between a given min and max.
  *
- * @param  {Number} x
- *         The number to clamp
- *
- * @param  {Number} min
- *         The minimum
- *
- * @param  {Number} max
- *         The maximum
- *
- * @return {Number}
- *         The clamped number
+ * @param x   The number to clamp.
+ * @param min The minimum.
+ * @param max The maximum.
+ * @returns     The clamped number.
  */
 export function Clamp(x: number, min: number, max: number): number {
     return Math.max(Math.min(x, max), min);
@@ -29,22 +22,15 @@ export function Clamp(x: number, min: number, max: number): number {
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
- * @param  {Vector} bl
- *         Bottom left corner of the rectangle
- *
- * @param  {Vector} tr
- *         Top right corner of the rectangle
- *
- * @param  {Vector} pos
- *         The position to get the nearest point on
- *
- * @return {Vector}
- *         The closest position on the edge of
- *         the rectangle from 'pos'
+ * @param bl  Bottom left corner of the rectangle.
+ * @param tr  Top right corner of the rectangle.
+ * @param pos The position to get the nearest point on.
+ * @returns     The closest position on the edge of
+ *      the rectangle from 'pos'.
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
     // First clamp point to within the rectangle
-    pos = Vector.clamp(pos, bl, tr);
+    pos = Vector.Clamp(pos, bl, tr);
 
     // Then find corresponding edge when point is inside the rectangle
     // (see https://www.desmos.com/calculator/edhaqiwgf1)
@@ -61,19 +47,14 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
 /**
  * Determines whether the given point is
  * within the rectangle defined by the
- * given transform
+ * given transform.
  *
- * @param  {Transform} transform
- *         The transform that represents the rectangle
- *
- * @param  {Vector} pos
- *         * Must be in world coordinates *
- *         The point to determine whether or not
- *         it's within the rectangle
- *
- * @return {Boolean}
- *         True if the point is within the rectangle,
- *         false otherwise
+ * @param transform The transform that represents the rectangle.
+ * @param pos       Must be in world coordinates *
+ *            The point to determine whether or not
+ *            it's within the rectangle.
+ * @returns           True if the point is within the rectangle,
+ *            false otherwise.
  */
 export function RectContains(transform: Transform, pos: Vector): boolean {
     const tr = transform.getSize().scale(0.5);  // top right corner
@@ -90,24 +71,17 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
 /**
  * Determines whether the given point
  * is within the circle defined by the
- * given transform
+ * given transform.
  *
- * @param  {Vector} pos1
- *         The center of the circle in world
- *         coordinates
- *
- * @param  {number} r
- *         The radius of the circle in world
- *         units
- *
- * @param  {Vector} pos2
- *         * Must be in world coordinates *
- *         The point to determine whether or not
- *         it's within the circle
- *
- * @return {Boolean}
- *          True if the point is within the rectangle,
- *          false otherwise
+ * @param pos1 The center of the circle in world
+ *       coordinates.
+ * @param r    The radius of the circle in world
+ *       units.
+ * @param pos2 Must be in world coordinates *
+ *       The point to determine whether or not
+ *       it's within the circle.
+ * @returns      True if the point is within the rectangle,
+ *       false otherwise.
  */
 export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
     return (pos2.sub(pos1).len2() <= r*r);
@@ -116,21 +90,17 @@ export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
 /**
  * Compares two transforms to see if they overlap.
  * First tests it using a quick circle-circle
- * intersection using the 'radius' of the transform
+ * intersection using the 'radius' of the transform.
  *
  * Then uses a SAT (Separating Axis Theorem) method
  * to determine whether or not the two transforms
- * are intersecting
+ * are intersecting.
  *
- * @param  {Transform} a
- *         The first transform
- *
- * @param  {Transform} b
- *         The second transform
- *
- * @return {Boolean}
- *         True if the two transforms are overlapping,
- *         false otherwise
+ * @param A The first transform.
+ * @param B The second transform.
+ * @returns
+ *    True if the two transforms are overlapping,
+ *    false otherwise.
  */
 export function TransformContains(A: Transform, B: Transform): boolean {
     // If both transforms are non-rotated
@@ -166,7 +136,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
         b[i].y += 0.0001*i;
     }
 
-    const corners = a.concat(b);
+    const corners = [...a, ...b];
 
     let minA, maxA, minB, maxB;
 
@@ -220,33 +190,20 @@ export function TransformContains(A: Transform, B: Transform): boolean {
 
 /**
  * Uses Newton's method to find the roots of
- * the function 'f' given a derivative 'df'
+ * the function 'f' given a derivative 'df'.
  *
- * @param  {Number} iterations
- *         The number of iterations to perform
- *         Newton's method with; the smaller
- *         the better but less accurate
- *
- * @param  {Number} t0
- *         The starting root value parameter
- *
- * @param  {Number} x
- *         Parameter 1 for the function
- *
- * @param  {Number} y
- *         Parameter 2 for the function
- *
- * @param  {Function} f
- *         The function to find the roots of
- *         In the form f(t, x, y) = ...
- *
- * @param  {Function} df
- *         The derivative of the function
- *         In the form of df(t, x, y)
- *
- * @return {Number}
- *         The parameter 't' that results in
- *         f(t, x, y) = 0
+ * @param iterations The number of iterations to perform
+ *             Newton's method with; the smaller
+ *             the better but less accurate.
+ * @param t0         The starting root value parameter.
+ * @param x          Parameter 1 for the function.
+ * @param y          Parameter 2 for the function.
+ * @param f          The function to find the roots of.
+ *             In the form `f(t, x, y) = ...`.
+ * @param df         The derivative of the function
+ *             In the form of `df(t, x, y)`.
+ * @returns            The parameter 't' that results in
+ *             `f(t, x, y) = 0`.
  */
 export function FindRoots(iterations: number, t0: number, x: number, y: number,
                           f:  (t: number, x: number, y: number) => number,
@@ -265,30 +222,25 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
 
 /**
  * Finds if the given position is within
- *  the given bezier curve
+ *  the given bezier curve.
  *
  * Parametric function defined by
- * X(t) = t(p2.x - p1.x) + p1.x
- * Y(t) = t(p2.y - p1.y) + p1.y
+ * `X(t) = t(p2.x - p1.x) + p1.x` and
+ * `Y(t) = t(p2.y - p1.y) + p1.y`.
  *
  * Solves for 't' from root of the derivative of
- * the distance function between the line and `pos`
- * D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)
+ * the distance function between the line and `pos`.
+ * `D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)`.
  *
- * @param  {BezierCurve} curve
-           The bezier curve
- *
- * @param  {Vector} pos
-           The position
- *
- * @return {boolean}
- *         True if position is within the bezier curve
-           False otherwise
+ * @param curve The bezier curve.
+ * @param pos   The position.
+ * @returns       True if position is within the bezier curve,
+ *        false otherwise.
  */
 export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     let minDist = 1e20;
     let t0 = -1;
-    for (let tt = 0; tt <= 1.0; tt += 1.0 / WIRE_DIST_ITERATIONS) {
+    for (let tt = 0; tt <= 1; tt += 1 / WIRE_DIST_ITERATIONS) {
         const dist = curve.getPos(tt).sub(pos).len();
         if (dist < minDist) {
             t0 = tt;
@@ -297,7 +249,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     }
 
     const f1  = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).len2();
-    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2).dot(curve.getDerivative(t));
+    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2)
+                                                                  .dot(curve.getDerivative(t));
 
     // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
     const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
@@ -305,38 +258,31 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
         return true;
 
     const f2  = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
-    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
+    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t))
+                                                             + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
 
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);
-    if (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
-        return true;
 
-    return false;
+    return (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2);
 }
 
 /**
- * Finds the midpoint from a list of positions
+ * Finds the midpoint from a list of positions.
  *
- * @param  {Array<Vector>} positions
-           The list of positions
- *
- * @return {Vector}
- *         The midpoint of all the given positions
+ * @param positions The list of positions.
+ * @returns           The midpoint of all the given positions.
  */
-export function CalculateMidpoint(positions: Array<Vector>): Vector {
-    return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
+export function CalculateMidpoint(positions: Vector[]): Vector {
+    return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1 / positions.length);
 }
 
 /**
  * Calculates the decimal value of a binary-coded-decimal
- *  represented by a list of booleans
+ *  represented by a list of booleans.
  *
- * @param  {Array<boolean>} bcd
- *         The binary-coded-decimal as a list of booleans
- *
- * @return {number}
- *         The decimal equivalent of the binary-coded-decimal
+ * @param bcd The binary-coded-decimal as a list of booleans.
+ * @returns     The decimal equivalent of the binary-coded-decimal.
  */
 export function BCDtoDecimal(bcd: boolean[]): number {
     return bcd.reduce((sum, on, i) => sum + (on ? 1 << i : 0), 0);
@@ -344,17 +290,44 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 
 /**
  * Calculates the BCD representation of the input number.
- * @param decimal The number to convert
- * @requires `decimal >= 0`
- * @returns The BCD representation of the input
+ *
+ * @param decimal The number to convert (`decimal >= 0`).
+ * @throws An Error if decimal is not a valid integer `>= 0`.
+ * @returns         The BCD representation of the input.
  */
 export function DecimalToBCD(decimal: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
         throw "input must be a nonnegative integer";
-    let result : boolean[] = [];
+    const result: boolean[] = [];
     while (decimal) {
-        result.push(decimal % 2 == 1);
+        result.push(decimal % 2 === 1);
         decimal = Math.floor(decimal / 2);
     }
     return result;
+}
+
+/**
+ * Creates a "linear space" or uniform/collocated grid from [x0, xf] with n points
+ *  uniformly between them.
+ *
+ * @param x0 Start point (inclusive).
+ * @param xf End point (inclusive).
+ * @param n  The number of points in the space.
+ * @returns    An array of n uniform points on the domain [x0, xf].
+ */
+export function linspace(x0: number, xf: number, n: number) {
+    return new Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
+}
+
+/**
+ * Creates a "linear space" or uniform/staggered grid from `[x0, xf)` with spacing dx.
+ *
+ * @param x0 Start point (inclusive).
+ * @param xf End point (exclusive).
+ * @param dx The spacing between each point.
+ * @returns    An array of n uniform points on the domain `[x0, xf)`.
+ */
+export function linspaceDX(x0: number, xf: number, dx: number) {
+    const N = Math.ceil((xf - x0) / dx);
+    return new Array(N).fill(0).map((_, i) => x0 + dx * i);
 }

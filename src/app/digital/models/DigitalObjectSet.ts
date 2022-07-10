@@ -1,21 +1,23 @@
 import {serializable} from "serialeazy";
 
-import {IOObject, Wire} from "core/models";
 import {IOObjectSet} from "core/utils/ComponentUtils";
-import {DigitalWire, DigitalComponent} from "./index";
+
+import {IOObject, Wire} from "core/models";
+
+import {DigitalComponent, DigitalWire} from "./index";
 
 /**
  * Helper class to hold different groups of components.
  *
  * The groups are:
- *  Input components  (anything with 0 output ports and >0  input ports)
- *  Output components (anything with 0 input ports  and >0 output ports)
- *  Wires             (wires)
- *  Other             (anything else)
+ *  Input components  (anything with 0 output ports and >0  input ports).
+ *  Output components (anything with 0 input ports  and >0 output ports).
+ *  Wires             (wires).
+ *  Other             (anything else).
  *
  * Note that .getComponents() does NOT contain wires
  *  A helper method to get all the components including them
- *  is included as toList()
+ *  is included as toList().
  */
 @serializable("DigitalObjectSet")
 export class DigitalObjectSet extends IOObjectSet {
@@ -24,7 +26,8 @@ export class DigitalObjectSet extends IOObjectSet {
     private others:  DigitalComponent[];
 
     public constructor();
-    public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[], others: DigitalComponent[], wires: Wire[]);
+    public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[],
+                       others: DigitalComponent[], wires: Wire[]);
     public constructor(inputs: DigitalComponent[] = [], outputs: DigitalComponent[] = [],
                        others: DigitalComponent[] = [], wires: Wire[] = []) {
         super([...inputs, ...outputs, ...others, ...wires]);
@@ -35,26 +38,26 @@ export class DigitalObjectSet extends IOObjectSet {
     }
 
     public getInputs(): DigitalComponent[] {
-        return this.inputs.slice(); // Shallow Copy
+        return [...this.inputs]; // Shallow Copy
     }
 
     public getOutputs(): DigitalComponent[] {
-        return this.outputs.slice(); // Shallow Copy
+        return [...this.outputs]; // Shallow Copy
     }
 
     public getOthers(): DigitalComponent[] {
-        return this.others.slice(); // Shallow Copy
+        return [...this.others]; // Shallow Copy
     }
 
     public getWires(): DigitalWire[] {
-        return Array.from(this.wires) as DigitalWire[];
+        return [...this.wires] as DigitalWire[];
     }
 
     public getComponents(): DigitalComponent[] {
         return [...this.inputs, ...this.outputs, ...this.others];
     }
 
-    public static from(set: IOObject[] = []): DigitalObjectSet {
+    public static From(set: IOObject[] = []): DigitalObjectSet {
         const inputs  = [] as DigitalComponent[];
         const outputs = [] as DigitalComponent[];
         const others  = [] as DigitalComponent[];

@@ -1,10 +1,11 @@
 import {OperatorFormat} from "./DataStructures";
 
 
-const programming1: OperatorFormat = {
-    label: "Programming 1 (&, |, ^, !)",
+const programming1: Readonly<OperatorFormat> = {
+    label:     "Programming 1 (&, |, ^, !)",
     separator: " ",
-    icon: "|",
+    icon:      "|",
+
     ops: {
         "|": "|",
         "^": "^",
@@ -12,12 +13,13 @@ const programming1: OperatorFormat = {
         "!": "!",
         "(": "(",
         ")": ")",
-    }
+    },
 }
-const programming2: OperatorFormat = {
-    label: "Programming 2 (&&, ||, ^, !)",
+const programming2: Readonly<OperatorFormat> = {
+    label:     "Programming 2 (&&, ||, ^, !)",
     separator: " ",
-    icon: "||",
+    icon:      "||",
+
     ops: {
         "|": "||",
         "^": "^",
@@ -25,12 +27,13 @@ const programming2: OperatorFormat = {
         "!": "!",
         "(": "(",
         ")": ")",
-    }
+    },
 }
-const algebraic1: OperatorFormat = {
-    label: "Algebraic 1 (*, +, ^, !)",
+const algebraic1: Readonly<OperatorFormat> = {
+    label:     "Algebraic 1 (*, +, ^, !)",
     separator: " ",
-    icon: "+",
+    icon:      "+",
+
     ops: {
         "|": "+",
         "^": "^",
@@ -38,12 +41,13 @@ const algebraic1: OperatorFormat = {
         "!": "!",
         "(": "(",
         ")": ")",
-    }
+    },
 }
-const algebraic2: OperatorFormat = {
-    label: "Algebraic 2 (*, +, ^, _)",
+const algebraic2: Readonly<OperatorFormat> = {
+    label:     "Algebraic 2 (*, +, ^, _)",
     separator: " ",
-    icon: "+_",
+    icon:      "+_",
+
     ops: {
         "|": "+",
         "^": "^",
@@ -51,12 +55,13 @@ const algebraic2: OperatorFormat = {
         "!": "_",
         "(": "(",
         ")": ")",
-    }
+    },
 }
-const literal1: OperatorFormat = {
-    label: "Literal 1 (AND, OR, XOR, NOT)",
+const literal1: Readonly<OperatorFormat> = {
+    label:     "Literal 1 (AND, OR, XOR, NOT)",
     separator: " ",
-    icon: "OR",
+    icon:      "OR",
+
     ops: {
         "|": "OR",
         "^": "XOR",
@@ -64,12 +69,13 @@ const literal1: OperatorFormat = {
         "!": "NOT",
         "(": "(",
         ")": ")",
-    }
+    },
 }
-const literal2: OperatorFormat = {
-    label: "Literal 2 (and, or, xor, not)",
+const literal2: Readonly<OperatorFormat> = {
+    label:     "Literal 2 (and, or, xor, not)",
     separator: " ",
-    icon: "or",
+    icon:      "or",
+
     ops: {
         "|": "or",
         "^": "xor",
@@ -77,14 +83,14 @@ const literal2: OperatorFormat = {
         "!": "not",
         "(": "(",
         ")": ")",
-    }
+    },
 }
 
 /**
  * Stores the different types of preset formats.
  * If any new formats are added, they must be added to the end of the array.
  */
-export const Formats = [
+export const FORMATS = [
     programming1,
     programming2,
     algebraic1,

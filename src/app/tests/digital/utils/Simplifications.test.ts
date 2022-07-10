@@ -1,20 +1,21 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {IOObject} from "core/models";
+
 import {CreateNegatedGatesAction} from "digital/actions/simplification/NegatedGatesActionFactory";
-import {Switch, LED, ANDGate, ORGate, XORGate} from "digital/models/ioobjects";
-import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalObjectSet}   from "digital/models/DigitalObjectSet";
+
+import {DigitalCircuitDesigner}                from "digital/models/DigitalCircuitDesigner";
+import {DigitalObjectSet}                      from "digital/models/DigitalObjectSet";
+import {ANDGate, LED, ORGate, Switch, XORGate} from "digital/models/ioobjects";
+
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
-import "digital/models/ioobjects";
+
 
 
 describe("Simplifications", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect} = GetHelpers({designer});
+    const { Place, Connect } = GetHelpers(designer);
 
     describe("Create Negation Gates", () => {
         describe("!(a&b)", () => {
@@ -25,17 +26,17 @@ describe("Simplifications", () => {
                 b,
                 o,
                 and,
-                not
+                not,
             ];
 
-            objects.push(Connect(a, 0, and, 0).getWire());
-            objects.push(Connect(b, 0, and, 1).getWire());
-            objects.push(Connect(and, 0, not, 0).getWire());
-            objects.push(Connect(not, 0, o, 0).getWire());
+            objects.push(Connect(a, and)[0].getWire(),
+                         Connect(b, and)[0].getWire(),
+                         Connect(and, not)[0].getWire(),
+                         Connect(not, o)[0].getWire());
 
-            const circuit = DigitalObjectSet.from(objects);
+            const circuit = DigitalObjectSet.From(objects);
 
-            const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
+            const [, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
 
             test("NOTGate and ANDGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(and)).toBe(-1);
@@ -79,17 +80,17 @@ describe("Simplifications", () => {
                 b,
                 o,
                 or,
-                not
+                not,
             ];
 
-            objects.push(Connect(a, 0, or, 0).getWire());
-            objects.push(Connect(b, 0, or, 1).getWire());
-            objects.push(Connect(or, 0, not, 0).getWire());
-            objects.push(Connect(not, 0, o, 0).getWire());
+            objects.push(Connect(a, or)[0].getWire(),
+                         Connect(b, or)[0].getWire(),
+                         Connect(or, not)[0].getWire(),
+                         Connect(not, o)[0].getWire());
 
-            const circuit = DigitalObjectSet.from(objects);
+            const circuit = DigitalObjectSet.From(objects);
 
-            const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
+            const [, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
 
             test("NOTGate and ORGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(or)).toBe(-1);
@@ -133,17 +134,17 @@ describe("Simplifications", () => {
                 b,
                 o,
                 xor,
-                not
+                not,
             ];
 
-            objects.push(Connect(a, 0, xor, 0).getWire());
-            objects.push(Connect(b, 0, xor, 1).getWire());
-            objects.push(Connect(xor, 0, not, 0).getWire());
-            objects.push(Connect(not, 0, o, 0).getWire());
+            objects.push(Connect(a, xor)[0].getWire(),
+                         Connect(b, xor)[0].getWire(),
+                         Connect(xor, not)[0].getWire(),
+                         Connect(not, o)[0].getWire());
 
-            const circuit = DigitalObjectSet.from(objects);
+            const circuit = DigitalObjectSet.From(objects);
 
-            const [action, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
+            const [, negatedCircuit] = CreateNegatedGatesAction(designer, circuit);
 
             test("NOTGate and XORGate removed", () => {
                 expect(negatedCircuit.getComponents().indexOf(xor)).toBe(-1);

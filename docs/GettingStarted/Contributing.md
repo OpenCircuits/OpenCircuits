@@ -26,7 +26,7 @@ See [testing](./Running#testing)
 
 ## Submitting your code
 
-Make sure to follow our style guide (link coming soon).
+Make sure your code passes all [linting](./Running#linting) without any errors or warning. Code with an error or warning will not be merged.
 
 Before submitting – always make sure to build and run unit tests (we won't merge any request that fails Travis CI)
 

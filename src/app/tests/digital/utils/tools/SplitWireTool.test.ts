@@ -1,18 +1,17 @@
-import "jest";
-import "test/helpers/Extensions";
-
 import {V} from "Vector";
 
-import {Switch, LED,
-        DigitalNode} from "digital/models/ioobjects";
-
-import {Setup}      from "test/helpers/Setup";
+import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
+import {DigitalNode, LED,
+        Switch} from "digital/models/ioobjects";
+
 
 
 describe("Split Wire Tool", () => {
-    const {camera, designer, input} = Setup();
-    const {Place} = GetHelpers({designer});
+    const { designer, input } = Setup();
+    const { Place } = GetHelpers(designer);
 
     afterEach(() => {
         // Clear circuit
@@ -32,13 +31,19 @@ describe("Split Wire Tool", () => {
         // Split into Snap position
         const wire = sw.getOutputs()[0];
         input.press(wire.getShape().getPos(0.5))
-                .move(V(20, 0))
-                .release()
-                .pressKey("Control")
-                .pressKey("z")
-                .releaseKey("z")
-                .pressKey("z")
-                .releaseKey("z");
+             .move(V(20, 0))
+             .release();
+        expect(sw).not.toBeConnectedTo(led, { depth: 1 });
+        input.pressKey("Control")
+             .pressKey("z")
+             .releaseKey("z")
+             .releaseKey("Control");
+        expect(sw).toBeConnectedTo(led, { depth: 1 });
+        input.pressKey("Control")
+             .pressKey("y")
+             .releaseKey("y")
+             .releaseKey("Control");
+        expect(sw).not.toBeConnectedTo(led, { depth: 1 });
     });
 
     test("Connect Switch -> LED then Split and Snap then Unsnap and move Down", () => {

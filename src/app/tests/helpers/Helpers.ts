@@ -1,24 +1,59 @@
+import {Action}      from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {ConnectionAction}       from "core/actions/addition/ConnectionAction";
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalWire} from "digital/models/DigitalWire";
-import {Action} from "core/actions/Action";
-import {LED, Switch} from "digital/models/ioobjects";
-import {GroupAction} from "core/actions/GroupAction";
 import {Wire} from "core/models";
 
+import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+import {DigitalComponent}       from "digital/models/DigitalComponent";
+import {DigitalWire}            from "digital/models/DigitalWire";
+import {LED, Switch}            from "digital/models/ioobjects";
 
-export function GetHelpers({designer}: Partial<DigitalCircuitInfo>) {
+
+
+export function GetHelpers(designer: DigitalCircuitDesigner) {
+    function Place<T extends DigitalComponent[]>(...objs: T) {
+        return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];
+    }
+
+    // type ObjConnectInfo = { c: DigitalComponent, i?: number };
+    // function Connect(c1: ObjConnectInfo, c2: ObjConnectInfo): ConnectionAction[] {
+    //     if (c1.i && c2.i) {
+    //         return [new ConnectionAction(designer, c1.c.getOutputPort(c1.i),
+    //                                      c2.c.getInputPort(c2.i)).execute() as ConnectionAction];
+    //     }
+    // }
+    function Connect(c1: DigitalComponent, c2: DigitalComponent): ConnectionAction[];
+    function Connect(c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number): ConnectionAction;
+    function Connect(...args: [DigitalComponent, DigitalComponent] |
+                              [DigitalComponent, number, DigitalComponent, number]) {
+        switch (args.length) {
+            case 2: {
+                const [c1, c2] = args;
+                // Connect each port
+                const outs = c1.getOutputPorts();
+                const ins = c2.getInputPorts().filter(i => i.getWires().length === 0);
+
+                return new Array(Math.min(outs.length, ins.length))
+                    .fill(0)
+                    .map((_, i) => new ConnectionAction(designer, outs[i], ins[i]).execute()) as ConnectionAction[];
+            }
+            case 4: {
+                const [c1, i1, c2, i2] = args;
+                return new ConnectionAction(designer, c1.getOutputPort(i1),
+                                            c2.getInputPort(i2)).execute() as ConnectionAction;
+            }
+        }
+    }
+
+
     return {
-        Place: <T extends DigitalComponent[]>(...objs: T) => {
-            return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];
-        },
-        Connect: (c1: DigitalComponent, i1: number, c2: DigitalComponent, i2: number) => {
-            return new ConnectionAction(designer, c1.getOutputPort(i1), c2.getInputPort(i2)).execute() as ConnectionAction;
-        },
+        Place,
+        Connect,
         // Given a DigitalComponent
         // Creates Switches for each input and LEDs for each output
         // Connects them together, and returns them
@@ -31,7 +66,7 @@ export function GetHelpers({designer}: Partial<DigitalCircuitInfo>) {
             group.add(CreateGroupPlaceAction(designer, [obj, ...switches, ...leds]));
 
             // Create connections
-            let wires = [] as Wire[];
+            const wires = [] as Wire[];
             switches.forEach((s, i) => {
                 const action = new ConnectionAction(designer, s.getOutputPort(0), obj.getInputPort(i));
                 group.add(action);
@@ -45,8 +80,8 @@ export function GetHelpers({designer}: Partial<DigitalCircuitInfo>) {
 
             return [obj, switches, leds, wires, group.execute()] as [T, Switch[], LED[], Wire[], Action];
         },
-        Remove: (...objs: (DigitalComponent | DigitalWire)[]) => {
+        Remove: (...objs: Array<DigitalComponent | DigitalWire>) => {
             return CreateDeleteGroupAction(designer, objs).execute();
-        }
+        },
     };
 }

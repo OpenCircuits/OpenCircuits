@@ -6,6 +6,7 @@ import {FlipFlopPositioner} from "digital/models/ports/positioners/FlipFlopPosit
 
 import {FlipFlop} from "./FlipFlop";
 
+
 @serializable("JKFlipFlop")
 export class JKFlipFlop extends FlipFlop {
     public static readonly SET_PORT = 2;

@@ -57,10 +57,10 @@ export default function Timeline({start, milestones, end}) {
         <svg width="100%" height="100%">
         <g style={{ transform: "translate(0, 50%)" }}>
             <rect y={`-${TICK_H_LG/2}px`} width="1px" height={`${TICK_H_LG}px`} fill="gray" />
-            <text y={`${-TICK_H_LG/2 - 5}px`} fill="gray" alignmentBaseline="baseline">Start Date</text>
+            <text y={`${-TICK_H_LG/2 - 5}px`} fill="gray" alignmentBaseline="baseline">{start}</text>
 
             <rect x="calc(100% - 1px)" y={`-${TICK_H_LG/2}px`} width="1px" height={`${TICK_H_LG}px`} fill="gray" />
-            <text x="100%" y={`${-TICK_H_LG/2 - 5}px`} fill="gray" textAnchor="end" alignmentBaseline="baseline">End Date</text>
+            <text x="100%" y={`${-TICK_H_LG/2 - 5}px`} fill="gray" textAnchor="end" alignmentBaseline="baseline">{end}</text>
 
             { // Display other grid lines
                 milestones
