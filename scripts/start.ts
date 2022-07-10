@@ -44,7 +44,7 @@ function StartClient(dir: string, open: boolean) {
         .boolean("open")
         .argv;
 
-    const dirs = getDirs(true, false);
+    const dirs = getDirs(true, false, false);
 
     // Prompt for project type
     const { value } = await prompts({

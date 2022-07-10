@@ -19,7 +19,7 @@ process.env.BABEL_ENV = "test";
 process.env.NODE_ENV = "test";
 
 
-const DIRS = getDirs(true, true);
+const DIRS = getDirs(true, true, true);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 async function LaunchTest(args: Arguments, dir: string, flags: Record<string, unknown>) {
@@ -95,7 +95,8 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
             console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
             continue;
         }
-        const testDir = dir === "app" ? "src/app" : `src/site/pages/${dir}`;
+        const testDir = (dir === "app" || dir === "site/shared")
+                        ? `src/${dir}` : `src/site/pages/${dir}`;
         flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
 
         const { results: result } = await LaunchTest(argv, testDir, flags);

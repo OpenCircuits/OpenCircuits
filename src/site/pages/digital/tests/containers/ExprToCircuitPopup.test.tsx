@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import {Matcher, act, render, screen} from "@testing-library/react";
+import {act, render, screen}          from "@testing-library/react";
 import userEvent                      from "@testing-library/user-event";
 import {Provider}                     from "react-redux";
 import {applyMiddleware, createStore} from "redux";
@@ -11,6 +11,8 @@ import {LED, ORGate, Switch} from "digital/models/ioobjects";
 
 import {OpenHeaderPopup} from "shared/state/Header";
 
+import {GetToggles} from "shared/tests/helpers/GetToggles";
+
 import {AppState} from "site/digital/state";
 
 import {AllActions} from "site/digital/state/actions";
@@ -18,20 +20,6 @@ import {reducers}   from "site/digital/state/reducers";
 
 import {ExprToCircuitPopup} from "site/digital/containers/ExprToCircuitPopup";
 
-
-/**
- * Gets the ButtonToggle or SwitchToggle images associated with the provided text.
- * The pressed image will be returned first and the unpressed second.
- *
- * @param id The id of the text to search for.
- * @returns    An array containing the pressed and unpressed images, respectively.
- */
-function getButtons(id: Matcher): [HTMLImageElement, HTMLImageElement] {
-    const buttons = screen.getByText(id).parentNode!.querySelectorAll("img");
-    return buttons[0].src.includes("Down")
-        ? [buttons[0], buttons[1]]
-        : [buttons[1], buttons[0]];
-}
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro
@@ -57,19 +45,19 @@ describe("Main Popup", () => {
         expect(screen.getByText("Generate")).toBeDisabled();
 
         // Check format options
-        const [onButton1, offButton1] = getButtons(/Programming 1/);
+        const [onButton1, offButton1] = GetToggles(/Programming 1/);
         expect(onButton1).toBeVisible();
         expect(offButton1).not.toBeVisible();
-        const [onButton2, offButton2] = getButtons(/Custom/);
+        const [onButton2, offButton2] = GetToggles(/Custom/);
         expect(onButton2).not.toBeVisible();
         expect(offButton2).toBeVisible();
         expect(screen.queryByText(/Custom AND/)).toBeNull();
 
         // Check toggle switches
-        const [onButton3, offButton3] = getButtons(/Place labels for inputs/);
+        const [onButton3, offButton3] = GetToggles(/Place labels for inputs/);
         expect(onButton3).not.toBeVisible();
         expect(offButton3).toBeVisible();
-        const [onButton4, offButton4] = getButtons(/Generate into IC/);
+        const [onButton4, offButton4] = GetToggles(/Generate into IC/);
         expect(onButton4).not.toBeVisible();
         expect(offButton4).toBeVisible();
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
@@ -132,7 +120,7 @@ describe("Main Popup", () => {
     });
 
     test("Custom format settings appear", async () => {
-        const [onButton, offButton] = getButtons(/Custom/);
+        const [onButton, offButton] = GetToggles(/Custom/);
         await user.click(offButton);
         expect(onButton).toBeVisible();
         expect(offButton).not.toBeVisible();
@@ -145,7 +133,7 @@ describe("Main Popup", () => {
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
 
         await user.selectOptions(screen.getByLabelText(/Input Component/), "Clock");
-        const [onButton, offButton] = getButtons(/Connect Clocks/);
+        const [onButton, offButton] = GetToggles(/Connect Clocks/);
         expect(onButton).not.toBeVisible();
         expect(offButton).toBeVisible();
 
