@@ -7,6 +7,8 @@ import thunk, {ThunkMiddleware}       from "redux-thunk";
 
 import {Setup} from "test/helpers/Setup";
 
+import {LED, ORGate, Switch} from "digital/models/ioobjects";
+
 import {OpenHeaderPopup} from "shared/state/Header";
 
 import {AppState} from "site/digital/state";
@@ -68,10 +70,10 @@ describe("Main Popup", () => {
 
         // Check dropdowns
         const inputOptions = screen.getByLabelText(/Input Component/).querySelectorAll("option");
-        const switchInputOption = [...inputOptions].find((input) => input.text === "Switch")
+        const switchInputOption = [...inputOptions].find((input) => input.text === "Switch");
         expect(switchInputOption?.selected).toBeTruthy();
         const outputOptions = screen.getByLabelText(/Output Component/).querySelectorAll("option");
-        const ledOutputOption = [...outputOptions].find((input) => input.text === "LED")
+        const ledOutputOption = [...outputOptions].find((input) => input.text === "LED");
         expect(ledOutputOption?.selected).toBeTruthy();
 
         // Text input is empty
@@ -86,8 +88,86 @@ describe("Main Popup", () => {
         render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
         act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
 
+        await user.type(screen.getByPlaceholderText("!a | (B^third)"), "a | b");
+
         await user.click(screen.getByText("Cancel"));
         expect(screen.getByText("Cancel")).not.toBeVisible();
         expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
-    })
+
+        // Reopen and requery in case reference changed
+        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+        expect((screen.getByPlaceholderText("!a | (B^third)") as HTMLInputElement).value).toBe("");
+    });
+
+    test("Generate Button", async () => {
+        const info = Setup();
+        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+        const user = userEvent.setup();
+        render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
+        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+
+        // Enter the expression and generate
+        await user.type(screen.getByPlaceholderText("!a | (B^third)"), "a | b");
+        expect(screen.getByText("Generate")).toBeEnabled();
+        await user.click(screen.getByText("Generate"));
+        expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
+
+        // Check that the components are placed and connected
+        const components = info.designer.getObjects();
+        expect(components).toHaveLength(4);
+        const inputA = components.find(component => component instanceof Switch
+                                                 && component.getName() === "a") as Switch;
+        const inputB = components.find(component => component instanceof Switch
+                                                 && component.getName() === "b") as Switch;
+        const orGate = components.find(component => component instanceof ORGate) as ORGate;
+        const led = components.find(component => component instanceof LED) as LED;
+        expect(inputA).toBeDefined();
+        expect(inputB).toBeDefined();
+        expect(orGate).toBeDefined();
+        expect(led).toBeDefined();
+        expect(led.isOn()).toBeFalsy();
+        inputA.click();
+        expect(led.isOn()).toBeTruthy();
+        inputA.click();
+        inputB.click();
+        expect(led.isOn()).toBeTruthy();
+
+        // Reopen and requery in case reference changed
+        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+        expect((screen.getByPlaceholderText("!a | (B^third)") as HTMLInputElement).value).toBe("");
+    });
+
+    test("Custom format settings appear", async () => {
+        const info = Setup();
+        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+        const user = userEvent.setup();
+        render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
+        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+
+        const [onButton, offButton] = getButtons(/Custom/);
+        await user.click(offButton);
+        expect(onButton).toBeVisible();
+        expect(offButton).not.toBeVisible();
+        expect(screen.queryByText(/Custom AND/)).toBeVisible();
+    });
+
+    test("Conditions for options to appear", async () => {
+        const info = Setup();
+        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+        const user = userEvent.setup();
+        render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
+        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+
+        await user.selectOptions(screen.getByLabelText(/Output Component/), "Oscilloscope");
+        expect(screen.queryByText(/Generate into IC/)).toBeNull();
+        expect(screen.queryByText(/Connect Clocks/)).toBeNull();
+
+        await user.selectOptions(screen.getByLabelText(/Input Component/), "Clock");
+        const [onButton, offButton] = getButtons(/Connect Clocks/);
+        expect(onButton).not.toBeVisible();
+        expect(offButton).toBeVisible();
+
+        await user.selectOptions(screen.getByLabelText(/Input Component/), "Switch");
+        expect(screen.queryByText(/Connect Clocks/)).toBeNull();
+    });
 });
