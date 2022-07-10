@@ -1,37 +1,53 @@
-import {DisconnectAction, ConnectionAction} from "core/actions/addition/ConnectionAction";
-import {PlaceAction, DeleteAction} from "core/actions/addition/PlaceAction";
 import {GroupAction} from "core/actions/GroupAction";
+
+import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
+import {DeleteAction, PlaceAction}          from "core/actions/addition/PlaceAction";
+
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {DigitalComponent} from "digital/models";
+
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
 /**
- * Returns a GroupAction for replacing the original component with a new one. Replacement must have at least as many input/output ports
- * as original has in use. original must be placed in a designer, and replacement must not be placed in a designer.
+ * .
+ * Returns a GroupAction for replacing the original component with a new one.
+ * Replacement must have at least as many input/output ports as original has in use.
+ * Original must be placed in a designer, and replacement must not be placed in a designer.
  * This action implicitly executes on creation.
- * 
- * @param original the component to replace, already in designer
- * @param replacement the new component, not yet in designer
- * @return a GroupAction containing the actions required to replace the component
- * @throws {Error} if replacement has less input ports than original has in use
- * @throws {Error} if replacement has less output ports than original has in use
+ *
+ * @param original    The component to replace, already in designer.
+ * @param replacement The new component, not yet in designer.
+ * @returns             A GroupAction containing the actions required to replace the component.
+ * @throws If replacement has less input ports than original has in use.
+ * @throws If replacement has less output ports than original has in use.
  */
- export function CreateReplaceDigitalComponentAction(original: DigitalComponent, replacement: DigitalComponent): GroupAction {
+ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
+                                                     replacement: DigitalComponent): GroupAction {
     const designer = original.getDesigner();
+    if (!designer)
+        throw new Error("original is not in a designer");
+    if (replacement.getDesigner())
+        throw new Error("replacement is in designer");
     const action = new GroupAction();
-    const origInputs = original instanceof Mux ? original.getInputPorts().concat(original.getSelectPorts()) : original.getInputPorts();
+    const origInputs = original instanceof Mux
+                     ? [...original.getInputPorts(), ...original.getSelectPorts()]
+                     : original.getInputPorts();
     const origOutputs = original.getOutputPorts();
-    const repInputs = replacement instanceof Mux ? replacement.getInputPorts().concat(replacement.getSelectPorts()) : replacement.getInputPorts();
+    const repInputs = replacement instanceof Mux
+                    ? [...replacement.getInputPorts(), ...replacement.getSelectPorts()]
+                    : replacement.getInputPorts();
     const repOutputs = replacement.getOutputPorts();
 
     const origInputsInUse = origInputs.filter(port => port.getWires().length > 0);
     const origOutputsInUse = origOutputs.filter(port => port.getWires().length > 0);
     if (origInputsInUse.length > repInputs.length)
-        throw new Error(`Insufficient input ports available on replacement (replacement has ${repInputs.length}, needs at least ${origInputsInUse.length})`);
+        throw new Error("Insufficient input ports available on replacement " +
+                        `(replacement has ${repInputs.length}, needs at least ${origInputsInUse.length})`);
     if (origOutputsInUse.length > repOutputs.length)
-        throw new Error(`Insufficient output ports available on replacement (replacement has ${repOutputs.length}, needs at least ${origOutputsInUse.length})`);
+        throw new Error("Insufficient output ports available on replacement " +
+                        `(replacement has ${repOutputs.length}, needs at least ${origOutputsInUse.length})`);
 
     action.add(new PlaceAction(designer, replacement).execute());
 
