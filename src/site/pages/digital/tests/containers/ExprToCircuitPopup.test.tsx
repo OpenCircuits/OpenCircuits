@@ -36,14 +36,20 @@ function getButtons(id: Matcher): [HTMLImageElement, HTMLImageElement] {
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro
 describe("Main Popup", () => {
+    const info = Setup();
+    const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+    const user = userEvent.setup();
 
-    test("Popup Created with default states", () => {
-        // Basic setup
-        const info = Setup();
-        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+    beforeEach(() => {
         render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
         act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+    });
 
+    afterEach(() => {
+        info.designer.reset();
+    });
+
+    test("Popup Created with default states", () => {
         // Check header and button states
         expect(screen.getByText("Digital Expression To Circuit Generator")).toBeVisible();
         expect(screen.getByText("Cancel")).toBeVisible();
@@ -82,12 +88,6 @@ describe("Main Popup", () => {
     });
 
     test("Cancel Button Cancels", async () => {
-        const info = Setup();
-        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
-        const user = userEvent.setup();
-        render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
-        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
-
         await user.type(screen.getByPlaceholderText("!a | (B^third)"), "a | b");
 
         await user.click(screen.getByText("Cancel"));
@@ -100,12 +100,6 @@ describe("Main Popup", () => {
     });
 
     test("Generate Button", async () => {
-        const info = Setup();
-        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
-        const user = userEvent.setup();
-        render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
-        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
-
         // Enter the expression and generate
         await user.type(screen.getByPlaceholderText("!a | (B^third)"), "a | b");
         expect(screen.getByText("Generate")).toBeEnabled();
@@ -138,12 +132,6 @@ describe("Main Popup", () => {
     });
 
     test("Custom format settings appear", async () => {
-        const info = Setup();
-        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
-        const user = userEvent.setup();
-        render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
-        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
-
         const [onButton, offButton] = getButtons(/Custom/);
         await user.click(offButton);
         expect(onButton).toBeVisible();
@@ -152,12 +140,6 @@ describe("Main Popup", () => {
     });
 
     test("Conditions for options to appear", async () => {
-        const info = Setup();
-        const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
-        const user = userEvent.setup();
-        render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
-        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
-
         await user.selectOptions(screen.getByLabelText(/Output Component/), "Oscilloscope");
         expect(screen.queryByText(/Generate into IC/)).toBeNull();
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
