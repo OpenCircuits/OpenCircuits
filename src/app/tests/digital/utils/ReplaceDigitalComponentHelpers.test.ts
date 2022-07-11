@@ -1,18 +1,19 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
-import {DigitalCircuitDesigner} from "digital/models";
-import {ANDGate, Demultiplexer, ICData, LED, ORGate, Switch} from "digital/models/ioobjects";
-import {DigitalObjectSet} from "digital/utils/ComponentUtils";
 import {CanReplace} from "digital/utils/ReplaceDigitalComponentHelpers";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalCircuitDesigner} from "digital/models";
+
+import {DigitalObjectSet}                                    from "digital/models/DigitalObjectSet";
+import {ANDGate, Demultiplexer, ICData, LED, ORGate, Switch} from "digital/models/ioobjects";
+
 
 
 describe("CanReplace", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place, Connect, AutoPlace} = GetHelpers({designer});
+    const { Place, Connect, AutoPlace } = GetHelpers(designer);
 
     test("ANDGate -> ORGate", () => {
         const [and] = AutoPlace(new ANDGate());
@@ -46,7 +47,7 @@ describe("CanReplace", () => {
         new ConnectionAction(designer, i.getOutputPort(0), selectPorts[7]).execute();
 
         expect(CanReplace(demux, "ORGate")).toBeFalsy();
-        
+
         demux.setSelectPortCount(7);
         expect(CanReplace(demux, "ORGate")).toBeTruthy();
 
@@ -58,7 +59,7 @@ describe("CanReplace", () => {
     test("ORGate -> ICData", () => {
         const [obj, switches, leds, wires] = AutoPlace(new ANDGate());
         const [or] = AutoPlace(new ORGate());
-        const icdata = new ICData(new DigitalObjectSet([obj, ...switches, ...leds, ...wires]));
+        const icdata = new ICData(DigitalObjectSet.From([obj, ...switches, ...leds, ...wires]));
         expect(CanReplace(or, icdata)).toBeTruthy();
         or.setInputPortCount(3);
         const [a] = Place(new Switch());
