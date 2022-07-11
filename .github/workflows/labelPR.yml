@@ -16,7 +16,8 @@ jobs:
           github.event.review.author_association == 'OWNER'
         uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          labels: Status: Ready to Merge
+          labels: |
+            Status: Ready to Merge
           github_token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Remove Labels for Ready to Merge 
         if: |
@@ -33,7 +34,8 @@ jobs:
           github.event.review.author_association == 'OWNER'
         uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          labels: Status: Changes Requested
+          labels: |
+            Status: Changes Requested
           github_token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Remove Labels for Changes Requested
         if: |
