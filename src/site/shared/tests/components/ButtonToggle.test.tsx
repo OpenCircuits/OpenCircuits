@@ -21,15 +21,15 @@ describe("Button Toggle", () => {
         expect(buttonOff).toBeVisible();
     });
     test("onChange", async () => {
-        let isOn = false;
+        let testBoolean = false;
         const user = userEvent.setup();
-        render(<ButtonToggle text="test" isOn={isOn} onChange={() => isOn = !isOn} />);
+        render(<ButtonToggle text="test" isOn={testBoolean} onChange={() => testBoolean = !testBoolean} />);
         const [buttonOn, buttonOff] = GetToggles("test");
         expect(buttonOn).not.toBeVisible();
         expect(buttonOff).toBeVisible();
         await user.click(buttonOff);
-        expect(isOn).toBeTruthy();
+        expect(testBoolean).toBeTruthy();
         await user.click(buttonOn);
-        expect(isOn).toBeFalsy();
+        expect(testBoolean).toBeFalsy();
     });
 });
