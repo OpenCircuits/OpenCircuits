@@ -71,12 +71,12 @@ describe("Main Popup", () => {
         expect(ledOutputOption?.selected).toBeTruthy();
 
         // Text input is empty
-        const input = screen.getByPlaceholderText("!a | (B^third)") as HTMLInputElement;
+        const input = screen.getByRole<HTMLInputElement>("textbox");
         expect(input.value).toBe("");
     });
 
     test("Cancel Button Cancels", async () => {
-        await user.type(screen.getByPlaceholderText("!a | (B^third)"), "a | b");
+        await user.type(screen.getByRole("textbox"), "a | b");
 
         await user.click(screen.getByText("Cancel"));
         expect(screen.getByText("Cancel")).not.toBeVisible();
@@ -84,12 +84,12 @@ describe("Main Popup", () => {
 
         // Reopen and requery in case reference changed
         act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
-        expect((screen.getByPlaceholderText("!a | (B^third)") as HTMLInputElement).value).toBe("");
+        expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
     });
 
     test("Generate Button", async () => {
         // Enter the expression and generate
-        await user.type(screen.getByPlaceholderText("!a | (B^third)"), "a | b");
+        await user.type(screen.getByRole("textbox"), "a | b");
         expect(screen.getByText("Generate")).toBeEnabled();
         await user.click(screen.getByText("Generate"));
         expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
@@ -116,7 +116,7 @@ describe("Main Popup", () => {
 
         // Reopen and requery in case reference changed
         act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
-        expect((screen.getByPlaceholderText("!a | (B^third)") as HTMLInputElement).value).toBe("");
+        expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
     });
 
     test("Custom format settings appear", async () => {
