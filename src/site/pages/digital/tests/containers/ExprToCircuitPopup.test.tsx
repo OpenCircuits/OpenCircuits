@@ -30,7 +30,7 @@ describe("Main Popup", () => {
 
     beforeEach(() => {
         render(<Provider store={store}><ExprToCircuitPopup mainInfo={info} /></Provider>);
-        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+        act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
     });
 
     afterEach(() => {
@@ -83,7 +83,7 @@ describe("Main Popup", () => {
         expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
 
         // Reopen and requery in case reference changed
-        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+        act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
         expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
     });
 
@@ -115,7 +115,7 @@ describe("Main Popup", () => {
         expect(led.isOn()).toBeTruthy();
 
         // Reopen and requery in case reference changed
-        act(() => {store.dispatch(OpenHeaderPopup("expr_to_circuit"))});
+        act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
         expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
     });
 
