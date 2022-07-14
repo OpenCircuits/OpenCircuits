@@ -11,7 +11,8 @@ import {LED, ORGate, Switch} from "digital/models/ioobjects";
 
 import {OpenHeaderPopup} from "shared/state/Header";
 
-import {GetToggles} from "shared/tests/helpers/GetToggles";
+import "shared/tests/helpers/Extensions";
+import {PressToggle} from "shared/tests/helpers/PressToggle";
 
 import {AppState} from "site/digital/state";
 
@@ -45,21 +46,13 @@ describe("Main Popup", () => {
         expect(screen.getByText("Generate")).toBeDisabled();
 
         // Check format options
-        const [onButton1, offButton1] = GetToggles(/Programming 1/);
-        expect(onButton1).toBeVisible();
-        expect(offButton1).not.toBeVisible();
-        const [onButton2, offButton2] = GetToggles(/Custom/);
-        expect(onButton2).not.toBeVisible();
-        expect(offButton2).toBeVisible();
+        expect(/Programming 1/).toBeToggledOn();
+        expect(/Custom/).toBeToggledOff();
         expect(screen.queryByText(/Custom AND/)).toBeNull();
 
         // Check toggle switches
-        const [onButton3, offButton3] = GetToggles(/Place labels for inputs/);
-        expect(onButton3).not.toBeVisible();
-        expect(offButton3).toBeVisible();
-        const [onButton4, offButton4] = GetToggles(/Generate into IC/);
-        expect(onButton4).not.toBeVisible();
-        expect(offButton4).toBeVisible();
+        expect(/Place labels for inputs/).toBeToggledOff();
+        expect(/Generate into IC/).toBeToggledOff();
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
 
         // Check dropdowns
@@ -120,10 +113,8 @@ describe("Main Popup", () => {
     });
 
     test("Custom format settings appear", async () => {
-        const [onButton, offButton] = GetToggles(/Custom/);
-        await user.click(offButton);
-        expect(onButton).toBeVisible();
-        expect(offButton).not.toBeVisible();
+        await PressToggle("Custom", user);
+        expect("Custom").toBeToggledOn();
         expect(screen.queryByText(/Custom AND/)).toBeVisible();
     });
 
@@ -133,9 +124,7 @@ describe("Main Popup", () => {
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
 
         await user.selectOptions(screen.getByLabelText(/Input Component/), "Clock");
-        const [onButton, offButton] = GetToggles(/Connect Clocks/);
-        expect(onButton).not.toBeVisible();
-        expect(offButton).toBeVisible();
+        expect(/Connect Clocks/).toBeToggledOff();
 
         await user.selectOptions(screen.getByLabelText(/Input Component/), "Switch");
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
