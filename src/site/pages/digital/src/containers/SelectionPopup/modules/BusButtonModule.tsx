@@ -1,4 +1,7 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {GetAllPorts} from "core/utils/ComponentUtils";
+
+import {Component} from "core/models";
 
 import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 
@@ -13,22 +16,38 @@ type Props = {
 export const BusButtonModule = ({ info }: Props) => {
     const { renderer, history } = info;
 
-    const [props, ps] = useSelectionProps(
+    const [props, items] = useSelectionProps(
         info,
-        (s): s is (InputPort | OutputPort) => (
-            (s instanceof InputPort && s.getWires().length === 0) ||
-            s instanceof OutputPort
+        (s): s is (Component | InputPort | OutputPort) => (
+            (s instanceof Component ||
+             s instanceof InputPort && s.getWires().length === 0) ||
+             s instanceof OutputPort && s.getWires().length === 0
         ),
-        (s) => ({ type: (s instanceof InputPort ? "input" : "output") })
+        (s) => ({ type: (s instanceof Component ? "component" : "port") })
     );
 
     if (!props)
         return null;
 
-    const iports = ps.filter(s => s instanceof InputPort)  as InputPort[];
-    const oports = ps.filter(s => s instanceof OutputPort) as OutputPort[];
+    let iports = items.filter(s => s instanceof InputPort)  as InputPort[];
+    let oports = items.filter(s => s instanceof OutputPort) as OutputPort[];
 
-    if (iports.length !== oports.length)
+    // Filter out all InputPorts and Output ports for all components and concat them
+    // to their respective array.
+    let components = items.filter(s => s instanceof Component) as Component[];
+    components = components.filter(s => s.getPorts().filter(p => p instanceof InputPort).length !==
+                                        s.getPorts().filter(p => p instanceof OutputPort).length);
+    if (components.length > 0) {
+        const cports = GetAllPorts(components);
+        const ciports = cports.filter(s => s instanceof InputPort && s.getWires().length === 0) as InputPort[];
+        const coports = cports.filter(s => s instanceof OutputPort && s.getWires().length === 0) as OutputPort[];
+        iports = [...iports, ...ciports];
+        oports = [...oports, ...coports];
+    }
+
+    if (iports.length !== oports.length ||
+        iports.length === 0 ||
+        oports.length === 0)
         return null
 
     return (
