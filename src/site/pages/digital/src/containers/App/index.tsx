@@ -30,21 +30,22 @@ import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsP
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
-import {BusButtonModule}            from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
-import {ClockSyncButtonModule}      from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
-import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
-import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
-import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
-import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
-import {DecoderInputCountModule}    from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {FrequencyModule}            from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
-import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
-import {OscilloscopeModule}         from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
-import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
-import {SegmentCountModule}         from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
-import {SelectPortCountModule}      from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-import {TextColorModule}            from "site/digital/containers/SelectionPopup/modules/TextColorModule";
-import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
+import {BusButtonModule}              from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
+import {ClockSyncButtonModule}        from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
+import {ColorModule}                  from "site/digital/containers/SelectionPopup/modules/ColorModule";
+import {ComparatorInputCountModule}   from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
+import {ConstantNumberInputModule}    from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
+import {CreateICButtonModule}         from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+import {DecoderInputCountModule}      from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
+import {FrequencyModule}              from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
+import {InputCountModule}             from "site/digital/containers/SelectionPopup/modules/InputCountModule";
+import {OscilloscopeModule}           from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
+import {OutputCountModule}            from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
+import {ReplaceComponentButtonModule} from "site/digital/containers/SelectionPopup/modules/ReplaceComponentButtonModule";
+import {SegmentCountModule}           from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
+import {SelectPortCountModule}        from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
+import {TextColorModule}              from "site/digital/containers/SelectionPopup/modules/TextColorModule";
+import {ViewICButtonModule}           from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
 import docsConfig    from "site/digital/data/docsUrlConfig.json";
 import exampleConfig from "site/digital/data/examples.json";
@@ -113,6 +114,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
                         <BusButtonModule info={info} />
                         <CreateICButtonModule info={info} />
                         <ViewICButtonModule info={info} />
+                        <ReplaceComponentButtonModule info={info} />
                     </SelectionPopup>
 
                     <ContextMenu info={info}

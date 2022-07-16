@@ -1,7 +1,11 @@
+import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
 import {DeleteAction, PlaceAction}          from "core/actions/addition/PlaceAction";
+
+import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
@@ -11,7 +15,6 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
 /**
- * .
  * Returns a GroupAction for replacing the original component with a new one.
  * Replacement must have at least as many input/output ports as original has in use.
  * Original must be placed in a designer, and replacement must not be placed in a designer.
@@ -19,15 +22,22 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
  *
  * @param original    The component to replace, already in designer.
  * @param replacement The new component, not yet in designer.
+ * @param selections  If supplied, deselects the current selection and selects replacement.
  * @returns             A GroupAction containing the actions required to replace the component.
  * @throws If replacement has less input ports than original has in use.
  * @throws If replacement has less output ports than original has in use.
+ * @throws If original is not in a designer.
+ * @throws If replacement is in a designer.
  */
  export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
-                                                     replacement: DigitalComponent): GroupAction {
+                                                     replacement: DigitalComponent,
+                                                     selections?: SelectionsWrapper): GroupAction {
     const designer = original.getDesigner();
-    if (!designer)
+    if (!designer) {
+        console.error("IUGGKJGJK");
+        console.error(designer);
         throw new Error("original is not in a designer");
+    }
     if (replacement.getDesigner())
         throw new Error("replacement is in designer");
     const action = new GroupAction();
@@ -49,7 +59,11 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
         throw new Error("Insufficient output ports available on replacement " +
                         `(replacement has ${repOutputs.length}, needs at least ${origOutputsInUse.length})`);
 
+    if (selections)
+        action.add(CreateDeselectAllAction(selections).execute());
     action.add(new PlaceAction(designer, replacement).execute());
+    if (selections)
+        action.add(CreateGroupSelectAction(selections, [replacement]).execute());
 
     origInputsInUse.forEach((port, index) => {
         const wires = [...port.getWires()];

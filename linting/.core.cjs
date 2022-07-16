@@ -15,6 +15,7 @@ module.exports = {
             "code": 120,
             "ignoreUrls": true,
             "ignoreTrailingComments": true,
+            "ignorePattern": "^import .*",
         }],
         "quotes": ["error", "double"],
         "no-self-compare": "error",

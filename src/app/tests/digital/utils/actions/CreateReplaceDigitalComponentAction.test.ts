@@ -1,5 +1,7 @@
 import {GetHelpers} from "test/helpers/Helpers";
 
+import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
+
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
 import {CreateICDataAction}                  from "digital/actions/CreateICDataAction";
@@ -9,7 +11,7 @@ import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction
 
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {ANDGate, Demultiplexer, IC, ICData, LED,
+import {ANDGate, Button, Clock, Demultiplexer, IC, ICData, LED,
         Multiplexer, ORGate, SRLatch, Switch, XORGate} from "digital/models/ioobjects";
 
 import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
@@ -41,6 +43,8 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         // Replaced
         const action = CreateReplaceDigitalComponentAction(and, or);
+        expect(and.getDesigner()).toBeUndefined();
+        expect(or.getDesigner()).toBeDefined();
         expect(out.isOn()).toBeFalsy();
         a.activate(true);
         expect(out.isOn()).toBeTruthy();
@@ -53,6 +57,8 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         // Undo
         action.undo();
+        expect(and.getDesigner()).toBeDefined();
+        expect(or.getDesigner()).toBeUndefined();
         expect(out.isOn()).toBeFalsy();
         a.activate(true);
         expect(out.isOn()).toBeFalsy();
@@ -268,6 +274,49 @@ describe("CreateReplaceDigitalComponentAction", () => {
         const andInputs = and.getInputs().map(wire => wire.getInputComponent());
         expect(andInputs).toEqual(expect.arrayContaining([d, e]));
         expect(and.getOutputs()[0].getOutputComponent()).toBe(outer);
+    });
+
+    test("Switch -> Button -> Clock", () => {
+        const [a, out] = Place(new Switch(), new LED());
+        const button = new Button();
+        const clock = new Clock();
+
+        Connect(a, 0, out, 0);
+
+        expect(out.isOn()).toBeFalsy();
+        a.click();
+        expect(out.isOn()).toBeTruthy();
+        a.click();
+        expect(out.isOn()).toBeFalsy();
+
+        CreateReplaceDigitalComponentAction(a, button);
+
+        expect(a.getDesigner()).toBeUndefined();
+        expect(button.getDesigner()).toBeDefined();
+        expect(out.isOn()).toBeFalsy();
+        button.press();
+        expect(out.isOn()).toBeTruthy();
+        button.release();
+        expect(out.isOn()).toBeFalsy();
+
+        CreateReplaceDigitalComponentAction(button, clock);
+
+        expect(button.getDesigner()).toBeUndefined();
+        expect(clock.getDesigner()).toBeDefined();
+    });
+
+    test("Update selection", () => {
+        const selections = new SelectionsWrapper();
+        const [a, out] = Place(new Switch(), new LED());
+        const button = new Button();
+
+        Connect(a, 0, out, 0);
+
+        selections.select(a);
+        CreateReplaceDigitalComponentAction(a, button, selections);
+
+        expect(selections.has(button)).toBeTruthy();
+        expect(selections.has(a)).toBeFalsy();
     });
 
     describe("Invalid", () => {
