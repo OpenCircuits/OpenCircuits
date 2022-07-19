@@ -6,9 +6,8 @@ import {CanReplace} from "digital/utils/ReplaceDigitalComponentHelpers";
 
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {DigitalObjectSet}                                    from "digital/models/DigitalObjectSet";
-import {ANDGate, Demultiplexer, ICData, LED, ORGate, Switch} from "digital/models/ioobjects";
-
+import {DigitalObjectSet}                                  from "digital/models/DigitalObjectSet";
+import {ANDGate, ICData, LED, Multiplexer, ORGate, Switch} from "digital/models/ioobjects";
 
 
 describe("CanReplace", () => {
@@ -25,35 +24,19 @@ describe("CanReplace", () => {
     });
 
     test("Demultiplexer -> ORGate", () => {
-        const [a, b, c, d, e, f, g, h, i, demux, out] = Place(new Switch(), new Switch(), new Switch(),
-                                                              new Switch(), new Switch(), new Switch(),
-                                                              new Switch(), new Switch(), new Switch(),
-                                                              new Demultiplexer(), new LED());
-        Connect(a, 0, demux, 0);
-        Connect(demux, 0, out, 0);
-        let selectPorts = demux.getSelectPorts();
+        const [a, b, c, mux, out] = Place(new Switch(), new Switch(), new Switch(),
+                                            new Multiplexer(), new LED());
+        Connect(a, 0, mux, 0);
+        Connect(mux, 0, out, 0);
+
+        expect(CanReplace(mux, "ORGate")).toBeTruthy();
+
+        const selectPorts = mux.getSelectPorts();
         new ConnectionAction(designer, b.getOutputPort(0), selectPorts[0]).execute();
         new ConnectionAction(designer, c.getOutputPort(0), selectPorts[1]).execute();
 
-        expect(CanReplace(demux, "ORGate")).toBeTruthy();
+        expect(CanReplace(mux, "ORGate")).toBeFalsy();
 
-        demux.setSelectPortCount(8);
-        selectPorts = demux.getSelectPorts();
-        new ConnectionAction(designer, d.getOutputPort(0), selectPorts[2]).execute();
-        new ConnectionAction(designer, e.getOutputPort(0), selectPorts[3]).execute();
-        new ConnectionAction(designer, f.getOutputPort(0), selectPorts[4]).execute();
-        new ConnectionAction(designer, g.getOutputPort(0), selectPorts[5]).execute();
-        new ConnectionAction(designer, h.getOutputPort(0), selectPorts[6]).execute();
-        new ConnectionAction(designer, i.getOutputPort(0), selectPorts[7]).execute();
-
-        expect(CanReplace(demux, "ORGate")).toBeFalsy();
-
-        demux.setSelectPortCount(7);
-        expect(CanReplace(demux, "ORGate")).toBeTruthy();
-
-        const [out2] = Place(new LED());
-        Connect(demux, 1, out2, 0);
-        expect(CanReplace(demux, "ORGate")).toBeFalsy();
     });
 
     test("ORGate -> ICData", () => {
@@ -67,11 +50,17 @@ describe("CanReplace", () => {
         expect(CanReplace(or, icdata)).toBeFalsy();
     });
 
-    test("ORGate -> Demultiplexer", () => {
+    test("ORGate -> Multiplexer", () => {
         const or = new ORGate();
-        or.setInputPortCount(3);
+        or.setInputPortCount(5);
         const [obj] = AutoPlace(or);
 
-        expect(CanReplace(obj, "Demultiplexer")).toBeTruthy();
+        expect(CanReplace(obj, "Multiplexer")).toBeTruthy();
+    });
+
+    test("Invalid id", () => {
+        const obj = new ORGate();
+
+        expect(() => CanReplace(obj, "This is an invalid Id")).toThrow();
     });
 });

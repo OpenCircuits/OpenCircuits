@@ -43,15 +43,16 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
                 negatedCircuit.splice(negatedCircuit.indexOf(wires[0]), 1);
                 other.getOutputs().forEach(wire => negatedCircuit.splice(negatedCircuit.indexOf(wire), 1));
                 negatedCircuit.splice(negatedCircuit.indexOf(other), 1);
-                negatedCircuit.splice(negatedCircuit.indexOf(gate), 1, newGate);
 
                 // Swap out the gates
                 action.add(CreateSnipGateAction(other));
-                action.add(CreateReplaceDigitalComponentAction(gate, newGate));
+                const [replaceAction, replacementComponent] = CreateReplaceDigitalComponentAction(gate, newGate)
+                action.add(replaceAction);
 
                 // Add new wires to negatedCircuit
-                newGate.getInputs().forEach(wire => negatedCircuit.push(wire));
-                newGate.getOutputs().forEach(wire => negatedCircuit.push(wire));
+                negatedCircuit.splice(negatedCircuit.indexOf(gate), 1, replacementComponent);
+                replacementComponent.getInputs().forEach(wire => negatedCircuit.push(wire));
+                replacementComponent.getOutputs().forEach(wire => negatedCircuit.push(wire));
             }
         }
     });

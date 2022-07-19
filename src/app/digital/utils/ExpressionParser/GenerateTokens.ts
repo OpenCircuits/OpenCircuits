@@ -13,7 +13,7 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
  * @param ops        The representation format for the operations used in this expression.
  * @returns            An InputToken with the input name in it.
  */
- function getInput(expression: string, index: number, ops: OperatorFormat): InputToken {
+function getInput(expression: string, index: number, ops: OperatorFormat): InputToken {
     const endIndex = Array.from({ length: expression.length - index - 1 }, (_, i) => i + index + 1)
                           .find(endIndex =>
                                // Check if the substring from index to endIndex is a token [|, ^, &, !, (, )]

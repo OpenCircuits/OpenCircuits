@@ -1,6 +1,6 @@
 import {Create} from "serialeazy";
 
-import {DigitalComponent} from "digital/models";
+import {DigitalComponent, InputPort, OutputPort} from "digital/models";
 
 import {ICData} from "digital/models/ioobjects";
 
@@ -18,23 +18,24 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
  * @param replacement The ID or ICData to try to replace against the .
  * @returns             An instance, of the DigitalComponent that can replace, the ICData if it can replace,
  *              or null if replacement can not replace.
+ * @throws An error if replacement is a string and not a valid component id.
  */
- export function CanReplace(original: DigitalComponent, replacement: string | ICData): boolean {
-    const origInputs = original instanceof Mux
-                       ? [...original.getInputPorts(), ...original.getSelectPorts()]
-                       : original.getInputPorts();
-    const origOutputs = original.getOutputPorts();
-    const numInputsInUse = origInputs.filter(port => port.getWires().length > 0).length;
-    const numOutputsInUse = origOutputs.filter(port => port.getWires().length > 0).length;
+export function CanReplace(original: DigitalComponent, replacement: string | ICData): boolean {
+    const origInputs = original.getPorts().filter(port => port instanceof InputPort).length;
+    const origOutputs = original.getPorts().filter(port => port instanceof OutputPort).length;
 
-    if (replacement instanceof ICData)
-        return replacement.getInputCount() >= numInputsInUse && replacement.getOutputPortCount() >= numOutputsInUse;
+    if (replacement instanceof ICData) {
+        return replacement.getInputCount() >= origInputs && replacement.getOutputPortCount() >= origOutputs;
+    }
 
     const replacementComponent = Create<DigitalComponent>(replacement);
-    let maxInputs = replacementComponent.getInputPortCount().getMaxValue();
-    if (replacementComponent instanceof Mux)
-        maxInputs += replacementComponent.getSelectPortCount().getMaxValue();
-    const maxOutputs = replacementComponent.getOutputPortCount().getMaxValue();
-
-    return maxInputs >= numInputsInUse && maxOutputs >= numOutputsInUse;
+    if (!replacementComponent)
+        throw new Error(`Supplied replacement id "${replacement}" is invalid`);
+    const replacementInputs = replacementComponent.getInputPortCount();
+    const replacementOutputs = replacementComponent.getOutputPortCount();
+    const inOutContains = replacementInputs.contains(origInputs) && replacementOutputs.contains(origOutputs);
+    if (original instanceof Mux)
+        return inOutContains && (replacementComponent instanceof Mux
+                                 || original.getSelectPorts().every(port => port.getWires().length === 0));
+    return inOutContains;
 }

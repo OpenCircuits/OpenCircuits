@@ -1,3 +1,5 @@
+import {Create} from "serialeazy";
+
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {GroupAction} from "core/actions/GroupAction";
@@ -9,81 +11,94 @@ import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/sel
 
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
+import {InputPortChangeAction}  from "digital/actions/ports/InputPortChangeAction";
+import {MuxPortChangeAction}    from "digital/actions/ports/MuxPortChangeAction";
+import {OutputPortChangeAction} from "digital/actions/ports/OutputPortChangeAction";
+
 import {DigitalComponent} from "digital/models";
+
+import {IC, ICData, Multiplexer} from "digital/models/ioobjects";
 
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
+
 /**
  * Returns a GroupAction for replacing the original component with a new one.
- * Replacement must have at least as many input/output ports as original has in use.
- * Original must be placed in a designer, and replacement must not be placed in a designer.
+ * Replacement must be able to have at least as many input/output ports as original has in use.
+ * Original must be placed in a designer.
  * This action implicitly executes on creation.
  *
  * @param original    The component to replace, already in designer.
- * @param replacement The new component, not yet in designer.
+ * @param replacement The new component's string representation or ICData.
  * @param selections  If supplied, deselects the current selection and selects replacement.
- * @returns             A GroupAction containing the actions required to replace the component.
- * @throws If replacement has less input ports than original has in use.
- * @throws If replacement has less output ports than original has in use.
+ * @returns             A GroupAction containing the actions required to replace the component and the new component.
  * @throws If original is not in a designer.
- * @throws If replacement is in a designer.
+ * @throws If replacement is a string that does not represent a valid component.
  */
- export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
-                                                     replacement: DigitalComponent,
-                                                     selections?: SelectionsWrapper): GroupAction {
+export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
+                                                    replacement: string | ICData,
+                                                    selections?: SelectionsWrapper): [GroupAction, DigitalComponent] {
     const designer = original.getDesigner();
     if (!designer) {
-        console.error("IUGGKJGJK");
-        console.error(designer);
         throw new Error("original is not in a designer");
     }
-    if (replacement.getDesigner())
-        throw new Error("replacement is in designer");
-    const action = new GroupAction();
-    const origInputs = original instanceof Mux
-                     ? [...original.getInputPorts(), ...original.getSelectPorts()]
-                     : original.getInputPorts();
+    const replacementComponent = replacement instanceof ICData
+                                 ? new IC(replacement)
+                                 : Create<DigitalComponent>(replacement);
+    if (!replacementComponent)
+        throw new Error(`Supplied replacement id "${replacement}" is invalid`);
+    const action = new GroupAction([], "Replace Digital Component",
+                                   [`Replacing "${original.getName()}" with a(n) "${replacement instanceof ICData
+                                                                                    ? replacement.getName()
+                                                                                    : replacement}"`]);
+    const origInputs = original.getInputPorts();
     const origOutputs = original.getOutputPorts();
-    const repInputs = replacement instanceof Mux
-                    ? [...replacement.getInputPorts(), ...replacement.getSelectPorts()]
-                    : replacement.getInputPorts();
-    const repOutputs = replacement.getOutputPorts();
-
-    const origInputsInUse = origInputs.filter(port => port.getWires().length > 0);
-    const origOutputsInUse = origOutputs.filter(port => port.getWires().length > 0);
-    if (origInputsInUse.length > repInputs.length)
-        throw new Error("Insufficient input ports available on replacement " +
-                        `(replacement has ${repInputs.length}, needs at least ${origInputsInUse.length})`);
-    if (origOutputsInUse.length > repOutputs.length)
-        throw new Error("Insufficient output ports available on replacement " +
-                        `(replacement has ${repOutputs.length}, needs at least ${origOutputsInUse.length})`);
 
     if (selections)
         action.add(CreateDeselectAllAction(selections).execute());
-    action.add(new PlaceAction(designer, replacement).execute());
+    action.add(new PlaceAction(designer, replacementComponent).execute());
     if (selections)
-        action.add(CreateGroupSelectAction(selections, [replacement]).execute());
+        action.add(CreateGroupSelectAction(selections, [replacementComponent]).execute());
 
-    origInputsInUse.forEach((port, index) => {
-        const wires = [...port.getWires()];
-        wires.forEach(wire => {
+    if (replacementComponent instanceof Mux) {
+        const numSelectOrig = original instanceof Mux ? original.getSelectPortCount().getValue() : 0;
+        const numSelectRequired = Math.ceil(Math.sqrt((replacementComponent instanceof Multiplexer
+                                                       ? origInputs : origOutputs).length))
+        action.add(new MuxPortChangeAction(replacementComponent,
+                                           replacementComponent.getSelectPortCount().getValue(),
+                                           Math.max(numSelectOrig, numSelectRequired)).execute());
+    } else if (!(replacementComponent instanceof IC)) {
+        action.add(new InputPortChangeAction(replacementComponent,
+                                             replacementComponent.getInputPortCount().getValue(),
+                                             origInputs.length).execute());
+        action.add(new OutputPortChangeAction(replacementComponent,
+                                             replacementComponent.getOutputPortCount().getValue(),
+                                             origOutputs.length).execute());
+    }
+
+    const repInputs = replacementComponent.getInputPorts();
+    const repOutputs = replacementComponent.getOutputPorts();
+
+    origInputs.forEach((port, index) => {
+        [...port.getWires()].forEach(wire => {
             const otherPort = wire.getInput();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, repInputs[index], otherPort).execute());
         });
     });
-    origOutputsInUse.forEach((port, index) => {
-        const wires = [...port.getWires()];
-        wires.forEach(wire => {
+    origOutputs.forEach((port, index) => {
+        [...port.getWires()].forEach(wire => {
             const otherPort = wire.getOutput();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, repOutputs[index], otherPort).execute());
         });
     });
 
-    action.add(new TranslateAction([replacement], [replacement.getPos()], [original.getPos()]).execute());
+    action.add(new TranslateAction([replacementComponent],
+                                   [replacementComponent.getPos()],
+                                   [original.getPos()]).execute());
     action.add(new DeleteAction(designer, original).execute());
 
-    return action;
+    return [action, replacementComponent];
 }
