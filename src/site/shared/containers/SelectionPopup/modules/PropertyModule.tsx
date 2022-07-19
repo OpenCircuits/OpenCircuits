@@ -12,11 +12,12 @@ import {Prop, PropInfo} from "core/models/PropInfo";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
-import {ColorModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
-import {ModuleSubmitInfo}       from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
-import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
-import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
-import {TextModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/TextModuleInputField";
+import {BooleanModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/BooleanModuleInputField";
+import {ColorModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
+import {ModuleSubmitInfo}        from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
+import {NumberModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
+import {SelectModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
+import {TextModuleInputField}    from "shared/containers/SelectionPopup/modules/inputs/TextModuleInputField";
 
 
 type PropInputFieldProps = {
@@ -27,16 +28,34 @@ type PropInputFieldProps = {
 
     vals: string[] | number[] | Vector[] | boolean[];
 
+    // display: string;
     alt?: string;
 
     forceUpdate: () => void;
     getAction: (newVal: Prop) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
 }
-const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherProps }: PropInputFieldProps) => {
+const ModulePropInputField = ({
+    propKey, info, cs, vals, forceUpdate, ...otherProps
+}: PropInputFieldProps) => {
     const { type } = info;
 
     switch (type) {
+    case "button":
+        return null;
+        // return (
+        //     <BooleanModuleInputField
+        //         {...otherProps}
+        //         type={(type === "button" ? "button" : "switch")}
+        //         props={vals as boolean[]}
+        //         text={display}
+        //         onSubmit={(info) => {
+        //             otherProps.onSubmit(info);
+        //             forceUpdate(); // Buttons need to force an update
+        //         }} />
+        // );
+    case "boolean":
+        return null; // TODO
     case "string":
         return <TextModuleInputField {...otherProps} props={vals as string[]} />
     case "color":
@@ -50,17 +69,18 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
                 onSubmit={(info) => {
                     otherProps.onSubmit(info);
                     forceUpdate(); // Need to force update since these can trigger info-state changes
-                                    //  and feel less inituitive to the user about focus/blur
+                                   //  and feel less inituitive to the user about focus/blur
                 }} />
         );
     case "int":
     case "float":
         const unit = info.unit;
         if (!unit) {
-            return (<NumberModuleInputField
-                {...otherProps}
-                kind={type} min={info.min} max={info.max} step={info.step}
-                props={vals as number[]} />
+            return (
+                <NumberModuleInputField
+                    {...otherProps}
+                    kind={type} min={info.min} max={info.max} step={info.step}
+                    props={vals as number[]} />
             );
         }
 
@@ -87,7 +107,7 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
                     onSubmit={(info) => {
                         otherProps.onSubmit(info);
                         forceUpdate(); // Need to force update since these can trigger info-state changes
-                                        //  and feel less inituitive to the user about focus/blur
+                                       //  and feel less inituitive to the user about focus/blur
                     }} />
             </span>
         </div>);
@@ -115,6 +135,25 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
 }
 
 
+type PropertyModuleWrapperProps = {
+    label?: string;
+
+    children: React.ReactNode;
+}
+const PropertyModuleWrapper = ({ label, children }: PropertyModuleWrapperProps) => {
+    if (!label)
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        return <>{children}</>;
+
+    return (<div>
+        {label}
+        <label>
+            {children}
+        </label>
+    </div>);
+}
+
+
 type Props = {
     info: CircuitInfo;
 }
@@ -136,39 +175,46 @@ export const PropertyModule = ({ info }: Props) => {
         if (!info)
             throw new Error(`Failed to get prop info for ${key}!`);
 
+        // Get state of props
+        const allProps = cs.map(c => c.getProps());
+
         // Check if this property should be active, if the info defines an `isActive`
         //  function, then we need to make sure all components satisfy it
-        const isActive = (info.isActive) ? (cs.every(a => info.isActive!(a.getProps()))) : (true);
+        const isActive = (info.isActive) ? (info.isActive(allProps)) : (true);
         if (!isActive)
             return null;
 
-        const display = (
-            typeof info.display === "string"
-            ? info.display
-            // For now just take 1st component state for display
-            //  TODO: Maybe improve this
-            : info.display(cs[0].getProps())
+        const label = (
+            typeof info.label === "string"
+            ? info.label
+            : info.label?.(allProps) // Dynamic display based on prop states
         );
 
-        return (
-            <div key={`property-module-${key}`}>
-                {display}
-                <label>
-                    { info.readonly
-                    ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0].toString() : "-")
-                    : (<ModulePropInputField
-                            propKey={key} info={info} cs={cs} vals={vals} forceUpdate={forceUpdate}
-                            alt={`${display} property of object`}
-                            getAction={(newVal) => new GroupAction(
-                                cs.map(a => new SetPropertyAction(a, key, newVal))
-                            )}
-                            onSubmit={(info) => {
-                                renderer.render();
-                                if (info.isValid && info.isFinal)
-                                    history.add(info.action);
-                            }} />) }
-                </label>
-            </div>
+        const getAction = (newVal: Prop) => new GroupAction(
+            cs.map(a => new SetPropertyAction(a, key, newVal))
         );
+        const onSubmit = (info: ModuleSubmitInfo) => {
+            renderer.render();
+            if (info.isValid && info.isFinal)
+                history.add(info.action);
+        }
+
+        return (
+            <PropertyModuleWrapper
+                key={`property-module-${key}`}
+                label={label}>
+                { info.readonly
+                ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0].toString() : "-")
+                : (
+                    <ModulePropInputField
+                        propKey={key} info={info} cs={cs} vals={vals}
+                        // display={display}
+                        forceUpdate={forceUpdate}
+                        alt={`${key} property of object`}
+                        getAction={getAction}
+                        onSubmit={onSubmit} />
+                )}
+            </PropertyModuleWrapper>
+        )
     })}</>)
 }

@@ -14,12 +14,12 @@ import {AnalogComponent} from "analog/models/AnalogComponent";
 const Info: Record<string, PropInfo> = {
     "color": {
         type:    "color",
-        display: "Color",
+        label:   "Color",
         initial: "#ffffff",
     },
     "textColor": {
         type:    "color",
-        display: "Text Color",
+        label:   "Text Color",
         initial: "#000000",
     },
 };

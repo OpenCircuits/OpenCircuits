@@ -3,6 +3,8 @@ import {Vector} from "Vector";
 
 export type Prop = number | string | Vector | boolean;
 
+export type Props = Record<string, Prop>;
+
 
 export type UnitInfo = Record<string, {
     name: string;
@@ -11,9 +13,17 @@ export type UnitInfo = Record<string, {
 }>;
 export type BasePropInfo = {
     readonly?: boolean;
-    display: string | ((state: Record<string, Prop>) => string);
+    label?: string | ((states: Props[]) => string);
 
-    isActive?: (state: Record<string, Prop>) => boolean;
+    isActive?: (states: Props[]) => boolean;
+}
+export type BooleanPropInfo = BasePropInfo & {
+    type: "boolean";
+    initial: boolean;
+}
+export type ButtonPropInfo = BasePropInfo & {
+    type: "button";
+    initial: Prop;
 }
 export type NumberPropInfo = BasePropInfo & {
     type: "int" | "float";
@@ -56,14 +66,14 @@ export type NumberSelectPropInfo = BasePropInfo & {
     ]>;
 }
 export type PropInfo =
-    | NumberPropInfo | StringPropInfo | ColorPropInfo
-    | StringSelectPropInfo | NumberSelectPropInfo | VectorPropInfo;
+    | BooleanPropInfo | ButtonPropInfo | NumberPropInfo | StringPropInfo
+    | ColorPropInfo | StringSelectPropInfo | NumberSelectPropInfo | VectorPropInfo;
 
 export type GroupPropInfo = {
     type: "group";
 
     readonly?: boolean;
-    isActive?: (state: Record<string, Prop>) => boolean;
+    isActive?: (states: Props[]) => boolean;
 
     infos: Record<string, PropInfo>;
     subgroups?: GroupPropInfo[];

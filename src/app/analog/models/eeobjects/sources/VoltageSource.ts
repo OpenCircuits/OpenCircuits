@@ -19,7 +19,7 @@ import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPosi
 const ConstInfo: GroupPropInfo = {
     type: "group",
 
-    isActive: (state) => (state["waveform"] === "DC"),
+    isActive: (states) => (states.every(state => state["waveform"] === "DC")),
 
     infos: {
         ...VoltageInfo("V", "Voltage", 5),
@@ -29,7 +29,7 @@ const ConstInfo: GroupPropInfo = {
 const PulseInfo: GroupPropInfo = {
     type: "group",
 
-    isActive: (state) => (state["waveform"] === "DC PULSE"),
+    isActive: (states) => (states.every(state => state["waveform"] === "DC PULSE")),
 
     infos: {
         ...VoltageInfo("v1", "Low Voltage",  0),
@@ -46,7 +46,7 @@ const PulseInfo: GroupPropInfo = {
 const SineInfo: GroupPropInfo = {
     type: "group",
 
-    isActive: (state) => (state["waveform"] === "DC SINE"),
+    isActive: (states) => (states.every(state => state["waveform"] === "DC SINE")),
 
     infos: {
         ...VoltageInfo("v1", "Offset Voltage", 0),
@@ -56,7 +56,7 @@ const SineInfo: GroupPropInfo = {
         //  each-other as they update
         ...FrequencyInfo("f", "Frequency", 5),
         ...TimeInfo("td", "Delay Time", 0),
-         "d": { display: "Damping Factor", initial: 0, type: "float", min: 0 },
+         "d": { label: "Damping Factor", initial: 0, type: "float", min: 0 },
         ...AngleInfo("ph", "Phase", 0),
     },
 };
@@ -66,7 +66,7 @@ const Info = GenPropInfo([{
 
     infos: {
         "waveform": { // Select
-            display: "Waveform",
+            label:   "Waveform",
             type:    "string[]",
             initial: "DC",
             options: [

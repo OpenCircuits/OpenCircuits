@@ -28,28 +28,28 @@ export const UnitNumberInfo = (key: string, props: UnitNumberInfoProps,
     [`${key}_U`]: {
         type: "string[]" as const,
         isActive: () => false, // This is a "hidden" property
-        display: "",
+        label: "",
         initial: initialU,
         options: Object.entries(props.unit).map(([key, val]) => [val.display, key]),
     },
 });
 
-export const TimeInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
+export const TimeInfo = (key: string, label: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
-    { display, unit: Unit("s", "Second"), min: 0 },
+    { label, unit: Unit("s", "Second"), min: 0 },
     initial, initialU,
 );
 
-export const FrequencyInfo = (key: string, display: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
+export const FrequencyInfo = (key: string, label: string, initial = 0, initialU: UnitKey = " ") => UnitNumberInfo(
     key,
-    { display, unit: Unit("Hz", "Hertz"), min: 0 },
+    { label, unit: Unit("Hz", "Hertz"), min: 0 },
     initial, initialU,
 );
 
-export const AngleInfo = (key: string, display: string, initial = 0) => ({
+export const AngleInfo = (key: string, label: string, initial = 0) => ({
     [key]: {
         type: "float" as const,
-        display, initial,
+        label, initial,
         min: 0, max: 360, step: 1,
     },
 });
