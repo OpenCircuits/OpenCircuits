@@ -38,7 +38,6 @@ import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup
 import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
 import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 import {DecoderInputCountModule}    from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {FrequencyModule}            from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
 import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
 import {OscilloscopeModule}         from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
@@ -49,8 +48,6 @@ import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup
 
 import docsConfig    from "site/digital/data/docsUrlConfig.json";
 import exampleConfig from "site/digital/data/examples.json";
-
-import {PauseResumeButtonModule} from "../SelectionPopup/modules/PauseResumeButtonModules";
 
 import "./index.scss";
 
@@ -107,8 +104,6 @@ export const App = ({ info, helpers, canvas }: Props) => {
                         <OutputCountModule info={info} />
                         <SegmentCountModule info={info} />
                         <OscilloscopeModule info={info} />
-                        <FrequencyModule info={info} />
-                        <PauseResumeButtonModule info={info} />
                         <ClockSyncButtonModule info={info} />
                         <ColorModule info={info} />
                         <TextColorModule info={info} />

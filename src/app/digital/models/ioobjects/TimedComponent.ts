@@ -4,6 +4,8 @@ import {Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {Prop, PropInfo} from "core/models/PropInfo";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
@@ -11,19 +13,61 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {InputPort, OutputPort} from "..";
 
 
+const Info: Record<string, PropInfo> = {
+    "delay": {
+        type:  "int",
+        label: "Delay",
+
+        min: 50, max: 10_000, step: 50, initial: 1000,
+    },
+    "paused": {
+        type:    "button",
+        // label: (states, allSame) => {
+        //     if (!allSame)
+        //         return "Pause";
+        //     return (states[0]["paused"] ? "Resume" : "Pause");
+        // },
+        initial: false,
+    },
+};
+
+// export class Timer {
+//     private timeout?: number;
+//     private callback: () => void;
+
+//     public constructor(callback: () => void) {
+//         this.callback = callback;
+//     }
+
+//     public stopTimeout(): void {
+//         // Clear the timeout if it's currently set
+//         if (this.timeout !== undefined) {
+//             window.clearTimeout(this.timeout);
+//             this.timeout = undefined;
+//         }
+//     }
+
+//     public tick(): void {
+//         this.stopTimeout();
+
+
+//     }
+// }
+
 export abstract class TimedComponent extends DigitalComponent {
-    @serialize
-    protected frequency: number;
     @serialize
     protected paused: boolean;
 
     private timeout?: number;
 
-    public constructor(initialFreq: number, inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
+    public constructor(initialDelay: number, inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
                        inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
-        super(inputPortCount, outputPortCount, size, inputPositioner, outputPositioner);
+        super(
+            inputPortCount, outputPortCount, size,
+            inputPositioner, outputPositioner,
+            { "delay": initialDelay, "paused": false },
+        );
 
-        this.frequency = initialFreq;
         this.paused = false;
     }
 
@@ -36,6 +80,18 @@ export abstract class TimedComponent extends DigitalComponent {
     }
 
     protected abstract onTick(): void;
+
+    public override setProp(key: string, val: Prop): void {
+        super.setProp(key, val);
+
+        if (key === "paused") {
+            const paused = val as boolean;
+            if (paused)
+                this.stopTimeout();
+            else
+                this.tick();
+        }
+    }
 
     public tick(): void {
         this.stopTimeout();
@@ -53,11 +109,7 @@ export abstract class TimedComponent extends DigitalComponent {
         this.timeout = window.setTimeout(() => {
             this.timeout = undefined;
             this.tick();
-        }, this.frequency);
-    }
-
-    public setFrequency(freq: number): void {
-        this.frequency = freq;
+        }, this.getProp("delay") as number);
     }
 
     public pause(): void {
@@ -70,8 +122,8 @@ export abstract class TimedComponent extends DigitalComponent {
         this.tick();
     }
 
-    public getFrequency(): number {
-        return this.frequency;
+    public override getPropInfo(key: string) {
+        return Info[key];
     }
 
     public isPaused(): boolean {
