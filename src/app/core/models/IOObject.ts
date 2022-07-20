@@ -17,7 +17,7 @@ export abstract class IOObject implements Selectable {
 
     protected constructor(initialProps: Record<string, Prop> = {}) {
         this.name = new Name(this.getDisplayName());
-        this.props = initialProps;
+        this.props = { ...initialProps };
     }
 
     public abstract isWithinSelectBounds(v: Vector): boolean;
