@@ -15,7 +15,6 @@ import {useAnalogDispatch, useAnalogSelector} from "site/analog/utils/hooks/useA
 import {SetHasData, SetSimMappings} from "site/analog/state/Sim";
 
 import "./index.scss";
-import {CreateGraph} from "core/utils/ComponentUtils";
 
 
 function HSLToHex(h: number, s: number, l: number) {
