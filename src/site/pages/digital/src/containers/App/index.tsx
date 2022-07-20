@@ -33,7 +33,6 @@ import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
 import {BusButtonModule}            from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {ClockSyncButtonModule}      from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
-import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
 import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
 import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
 import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
@@ -105,7 +104,6 @@ export const App = ({ info, helpers, canvas }: Props) => {
                         <SegmentCountModule info={info} />
                         <OscilloscopeModule info={info} />
                         <ClockSyncButtonModule info={info} />
-                        <ColorModule info={info} />
                         <TextColorModule info={info} />
                         <BusButtonModule info={info} />
                         <CreateICButtonModule info={info} />
