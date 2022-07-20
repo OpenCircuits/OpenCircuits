@@ -6,7 +6,7 @@ import {Action}            from "core/actions/Action";
 import {GroupAction}       from "core/actions/GroupAction";
 import {SetPropertyAction} from "core/actions/SetPropertyAction";
 
-import {Component} from "core/models";
+import {IOObject} from "core/models";
 
 import {Prop, PropInfo} from "core/models/PropInfo";
 
@@ -24,7 +24,7 @@ type PropInputFieldProps = {
     propKey: string;
     info: PropInfo;
 
-    cs: Component[];
+    objs: IOObject[];
 
     vals: string[] | number[] | Vector[] | boolean[];
 
@@ -35,7 +35,7 @@ type PropInputFieldProps = {
     onSubmit: (info: ModuleSubmitInfo) => void;
 }
 const ModulePropInputField = ({
-    propKey, info, cs, vals, forceUpdate, ...otherProps
+    propKey, info, objs, vals, forceUpdate, ...otherProps
 }: PropInputFieldProps) => {
     const { type } = info;
 
@@ -77,7 +77,7 @@ const ModulePropInputField = ({
             );
         }
 
-        const units = vals.map((_, i) => cs[i].getProp(`${propKey}_U`)) as string[];
+        const units = vals.map((_, i) => objs[i].getProp(`${propKey}_U`)) as string[];
         const transformedVals = vals.map((v, i) => (v as number) / unit[units[i]].val);
 
         // val is ALWAYS the unit value, and gets transformed on UI-end to unit-full value
@@ -95,7 +95,7 @@ const ModulePropInputField = ({
                     kind="string[]" props={units}
                     options={Object.entries(unit).map(([key, u]) => [u.display, key])}
                     getAction={(newVal) => new GroupAction(
-                        cs.map(a => new SetPropertyAction(a, `${propKey}_U`, newVal))
+                        objs.map(a => new SetPropertyAction(a, `${propKey}_U`, newVal))
                     )}
                     onSubmit={(info) => {
                         otherProps.onSubmit(info);
@@ -114,14 +114,14 @@ const ModulePropInputField = ({
                 kind={kind} min={info.min?.x} max={info.max?.x} step={info.step?.x}
                 props={vvals.map(v => v.x)}
                 getAction={(newVal) => new GroupAction(
-                    cs.map((a,i) => new SetPropertyAction(a, propKey, V(newVal, vvals[i].y)))
+                    objs.map((a,i) => new SetPropertyAction(a, propKey, V(newVal, vvals[i].y)))
                 )} />
             <NumberModuleInputField
                 {...otherProps}
                 kind={kind} min={info.min?.y} max={info.max?.y} step={info.step?.y}
                 props={vvals.map(v => v.y)}
                 getAction={(newVal) => new GroupAction(
-                    cs.map((a,i) => new SetPropertyAction(a, propKey, V(vvals[i].x, newVal)))
+                    objs.map((a,i) => new SetPropertyAction(a, propKey, V(vvals[i].x, newVal)))
                 )} />
         </>);
     }
@@ -153,9 +153,9 @@ type Props = {
 export const PropertyModule = ({ info }: Props) => {
     const { history, renderer } = info;
 
-    const [props, cs, forceUpdate] = useSelectionProps(
+    const [props, objs, forceUpdate] = useSelectionProps(
         info,
-        (s): s is Component => (s instanceof Component),
+        (s): s is IOObject => (s instanceof IOObject),
         (s) => s.getProps(),
     );
 
@@ -164,12 +164,12 @@ export const PropertyModule = ({ info }: Props) => {
 
     return (<>{Object.entries(props).map(([key, vals]) => {
         // Assumes all Info's are the same for each key
-        const info = cs[0].getPropInfo(key);
+        const info = objs[0].getPropInfo(key);
         if (!info)
             throw new Error(`Failed to get prop info for ${key}!`);
 
         // Get state of props
-        const allProps = cs.map(c => c.getProps());
+        const allProps = objs.map(c => c.getProps());
 
         // Check if this property should be active, if the info defines an `isActive`
         //  function, then we need to make sure all components satisfy it
@@ -184,7 +184,7 @@ export const PropertyModule = ({ info }: Props) => {
         );
 
         const getAction = (newVal: Prop) => new GroupAction(
-            cs.map(a => new SetPropertyAction(a, key, newVal))
+            objs.map(a => new SetPropertyAction(a, key, newVal))
         );
         const onSubmit = (info: ModuleSubmitInfo) => {
             renderer.render();
@@ -200,7 +200,7 @@ export const PropertyModule = ({ info }: Props) => {
                 ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0].toString() : "-")
                 : (
                     <ModulePropInputField
-                        propKey={key} info={info} cs={cs} vals={vals}
+                        propKey={key} info={info} objs={objs} vals={vals}
                         forceUpdate={forceUpdate}
                         alt={`${key} property of object`}
                         getAction={getAction}
