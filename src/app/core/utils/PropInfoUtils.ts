@@ -1,20 +1,30 @@
-import {Prop, PropInfo, PropInfoLayout} from "core/models/PropInfo";
+import {Vector} from "Vector";
+
+import {BooleanPropInfo, ButtonPropInfo, ColorPropInfo, NumberPropInfo, NumberSelectPropInfo,
+        Prop, PropInfo, Props, StringPropInfo, StringSelectPropInfo, VectorPropInfo} from "core/models/PropInfo";
 
 
 const merge = (a1: PropInfoLayout["isActive"], a2: PropInfoLayout["isActive"]): PropInfoLayout["isActive"] => {
-    if (a1 && a2) {
+    if (a1 && a2)
         return (states) => (a1(states) && a2(states));
-    }
     return a1 ?? a2;
 }
 
-// TODO:
-//  take the "initial"s only in this function
-//  instead of as a property of `info` and return
-//  the initial info as a 2nd parameter of a tuple!
+export type PropInfoWithInitial = (
+    { initial: boolean } & (BooleanPropInfo)                                       |
+    { initial: Prop    } & (ButtonPropInfo)                                        |
+    { initial: number  } & (NumberPropInfo | NumberSelectPropInfo)                 |
+    { initial: Vector  } & (VectorPropInfo)                                        |
+    { initial: string  } & (StringPropInfo | ColorPropInfo | StringSelectPropInfo)
+)
+export type PropInfoLayout = {
+    isActive?: (states: Props[]) => boolean;
 
-export const GenPropInfo = (rootLayout: PropInfoLayout): Record<string, PropInfo> => {
-    const allInfos: Record<string, PropInfo[]> = {};
+    infos: Record<string, PropInfoWithInitial>;
+    sublayouts?: PropInfoLayout[];
+}
+export const GenPropInfo = (rootLayout: PropInfoLayout) => {
+    const allInfos: Record<string, PropInfoWithInitial[]> = {};
 
     // Flatten layouts into single record of all properties and their associated infos
     const collectLayouts = (layouts: PropInfoLayout[], parentIsActive?: PropInfoLayout["isActive"]): void => {
@@ -41,10 +51,12 @@ export const GenPropInfo = (rootLayout: PropInfoLayout): Record<string, PropInfo
     // Take each property and their associated infos and flatten them down to a single
     //  `info` based on the isActive's of each one
     const info: Record<string, PropInfo> = {};
+    const initialProps: Record<string, Prop> = {};
 
     Object.entries(allInfos).forEach(([key, infos]) => {
-        const info0 = { ...infos[0] };
+        const { initial, ...info0 } = { ...infos[0] };
         info[key] = info0;
+        initialProps[key] = initial;
 
         // If exactly one info, then no need to merge
         if (infos.length === 1)
@@ -73,13 +85,5 @@ export const GenPropInfo = (rootLayout: PropInfoLayout): Record<string, PropInfo
         }
     });
 
-    return info;
-}
-
-
-export const GenInitialInfo = (info: Record<string, PropInfo>): Record<string, Prop> => {
-    return Object.fromEntries(
-        Object.entries(info)
-            .map(([key, info]) => [key, info.initial])
-    );
+    return [info, initialProps] as const;
 }

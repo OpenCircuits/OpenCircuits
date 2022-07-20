@@ -4,25 +4,27 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
-import {GenInitialInfo} from "core/utils/PropInfoUtils";
+import {GenPropInfo} from "core/utils/PropInfoUtils";
 
 import {PropInfo} from "core/models/PropInfo";
 
 import {AnalogComponent} from "analog/models/AnalogComponent";
 
 
-const Info: Record<string, PropInfo> = {
-    "color": {
-        type:    "color",
-        label:   "Color",
-        initial: "#ffffff",
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        "color": {
+            type:    "color",
+            label:   "Color",
+            initial: "#ffffff",
+        },
+        "textColor": {
+            type:    "color",
+            label:   "Text Color",
+            initial: "#000000",
+        },
     },
-    "textColor": {
-        type:    "color",
-        label:   "Text Color",
-        initial: "#000000",
-    },
-};
+});
 
 @serializable("Label")
 export class Label extends AnalogComponent {
@@ -30,7 +32,7 @@ export class Label extends AnalogComponent {
         super(
             new ClampedValue(0),
             V(60, 30), undefined,
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 

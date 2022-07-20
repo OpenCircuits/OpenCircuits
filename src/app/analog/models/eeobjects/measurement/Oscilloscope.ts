@@ -4,7 +4,7 @@ import {V, Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
-import {GenInitialInfo} from "core/utils/PropInfoUtils";
+import {GenPropInfo} from "core/utils/PropInfoUtils";
 
 import {Prop, PropInfo} from "core/models/PropInfo";
 
@@ -13,21 +13,23 @@ import {AnalogComponent} from "analog/models/AnalogComponent";
 import {SidePositioner} from "analog/models/ports/positioners/SidePositioner";
 
 
-const Info: Record<string, PropInfo> = {
-    "samples": {
-        type:  "int",
-        label: "Samples",
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        "samples": {
+            type:  "int",
+            label: "Samples",
 
-        initial: 100, min: 0, step: 20,
+            initial: 100, min: 0, step: 20,
+        },
+        "size": {
+            type:    "veci",
+            label:   "Display Size",
+            initial: V(800, 400),
+            min:     V(400, 200),
+            step:    V(100, 100),
+        },
     },
-    "size": {
-        type:    "veci",
-        label:   "Display Size",
-        initial: V(800, 400),
-        min:     V(400, 200),
-        step:    V(100, 100),
-    },
-};
+});
 
 export type ScopeConfig = {
     showAxes: boolean;
@@ -46,9 +48,9 @@ export class Oscilloscope extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(1),
-            Info["size"].initial as Vector,
+            InitialProps["size"] as Vector,
             new SidePositioner("left"),
-            GenInitialInfo(Info),
+            InitialProps,
         );
 
         this.config = {

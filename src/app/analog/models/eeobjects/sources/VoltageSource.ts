@@ -4,10 +4,8 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
-import {GenInitialInfo, GenPropInfo}        from "core/utils/PropInfoUtils";
+import {GenPropInfo, PropInfoLayout}        from "core/utils/PropInfoUtils";
 import {AngleInfo, FrequencyInfo, TimeInfo} from "core/utils/Units";
-
-import {PropInfoLayout} from "core/models/PropInfo";
 
 import {AnalogComponent} from "analog/models";
 
@@ -55,7 +53,7 @@ const SineInfo: PropInfoLayout = {
     },
 };
 
-const Info = GenPropInfo({
+const [Info, InitialProps] = GenPropInfo({
     infos: {
         "waveform": { // Select
             label:   "Waveform",
@@ -77,7 +75,7 @@ export class VoltageSource extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(50, 50), new TopBottomPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 

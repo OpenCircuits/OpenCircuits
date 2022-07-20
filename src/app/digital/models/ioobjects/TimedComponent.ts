@@ -4,7 +4,9 @@ import {Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
-import {Prop, PropInfo} from "core/models/PropInfo";
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
+import {Prop} from "core/models/PropInfo";
 
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
@@ -13,24 +15,26 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {InputPort, OutputPort} from "..";
 
 
-const Info: Record<string, PropInfo> = {
-    "delay": {
-        type:  "int",
-        label: "Delay",
+const [Info] = GenPropInfo({
+    infos: {
+        "delay": {
+            type:  "int",
+            label: "Delay",
 
-        min: 50, max: 10_000, step: 50, initial: 1000,
-    },
-    "paused": {
-        type:    "button",
-        initial: false,
+            min: 50, max: 10_000, step: 50, initial: 1000,
+        },
+        "paused": {
+            type:    "button",
+            initial: false,
 
-        // Specifically default to pausing. Meaning only Resume when every component
-        //  is paused, and so if there's a single non-paused component, pressing
-        //  the button will pause them all and the text will say "Pause"
-        getText:     (states) => (states.every(s => (s === true)) ? "Resume" : "Pause"),
-        getNewState: (states) => (states.every(s => (s === true)) ? false : true),
+            // Specifically default to pausing. Meaning only Resume when every component
+            //  is paused, and so if there's a single non-paused component, pressing
+            //  the button will pause them all and the text will say "Pause"
+            getText:     (states) => (states.every(s => (s === true)) ? "Resume" : "Pause"),
+            getNewState: (states) => (states.every(s => (s === true)) ? false : true),
+        },
     },
-};
+});
 
 export abstract class TimedComponent extends DigitalComponent {
     @serialize

@@ -1,5 +1,7 @@
 /* eslint-disable key-spacing */
-import {NumberPropInfo, PropInfo, UnitInfo} from "core/models/PropInfo";
+import {PropInfoWithInitial} from "core/utils/PropInfoUtils";
+
+import {NumberPropInfo, UnitInfo} from "core/models/PropInfo";
 
 
 export const Unit = (sym: string, name:  string) => ({
@@ -19,7 +21,7 @@ export const Unit = (sym: string, name:  string) => ({
 export type UnitKey = keyof ReturnType<typeof Unit>;
 export type UnitNumberInfoProps = Omit<NumberPropInfo, "type"|"unit"|"initial"> & { unit: UnitInfo };
 export const UnitNumberInfo = (key: string, props: UnitNumberInfoProps,
-                        initial: number, initialU: UnitKey): Record<string, PropInfo> => ({
+                        initial: number, initialU: UnitKey): Record<string, PropInfoWithInitial> => ({
     [key]: {
         type: "float" as const,
         initial: initial * props.unit[initialU].val,
