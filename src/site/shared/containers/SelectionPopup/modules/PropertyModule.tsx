@@ -12,12 +12,12 @@ import {Prop, PropInfo} from "core/models/PropInfo";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
-import {BooleanModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/BooleanModuleInputField";
-import {ColorModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
-import {ModuleSubmitInfo}        from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
-import {NumberModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
-import {SelectModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
-import {TextModuleInputField}    from "shared/containers/SelectionPopup/modules/inputs/TextModuleInputField";
+import {ButtonModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ButtonModuleInputField";
+import {ColorModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
+import {ModuleSubmitInfo}       from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
+import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
+import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
+import {TextModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/TextModuleInputField";
 
 
 type PropInputFieldProps = {
@@ -28,7 +28,6 @@ type PropInputFieldProps = {
 
     vals: string[] | number[] | Vector[] | boolean[];
 
-    // display: string;
     alt?: string;
 
     forceUpdate: () => void;
@@ -42,18 +41,12 @@ const ModulePropInputField = ({
 
     switch (type) {
     case "button":
-        return null;
-        // return (
-        //     <BooleanModuleInputField
-        //         {...otherProps}
-        //         type={(type === "button" ? "button" : "switch")}
-        //         props={vals as boolean[]}
-        //         text={display}
-        //         onSubmit={(info) => {
-        //             otherProps.onSubmit(info);
-        //             forceUpdate(); // Buttons need to force an update
-        //         }} />
-        // );
+        return (
+            <ButtonModuleInputField
+                {...otherProps}
+                props={vals as Array<string | number | boolean>}
+                getText={info.getText} getNewState={info.getNewState} />
+        );
     case "boolean":
         return null; // TODO
     case "string":
@@ -208,7 +201,6 @@ export const PropertyModule = ({ info }: Props) => {
                 : (
                     <ModulePropInputField
                         propKey={key} info={info} cs={cs} vals={vals}
-                        // display={display}
                         forceUpdate={forceUpdate}
                         alt={`${key} property of object`}
                         getAction={getAction}

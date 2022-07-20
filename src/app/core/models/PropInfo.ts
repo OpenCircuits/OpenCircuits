@@ -24,6 +24,8 @@ export type BooleanPropInfo = BasePropInfo & {
 export type ButtonPropInfo = BasePropInfo & {
     type: "button";
     initial: Prop;
+    getText: (states: Prop[]) => string;
+    getNewState: (states: Prop[]) => Prop;
 }
 export type NumberPropInfo = BasePropInfo & {
     type: "int" | "float";

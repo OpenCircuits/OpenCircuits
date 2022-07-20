@@ -22,37 +22,15 @@ const Info: Record<string, PropInfo> = {
     },
     "paused": {
         type:    "button",
-        // label: (states, allSame) => {
-        //     if (!allSame)
-        //         return "Pause";
-        //     return (states[0]["paused"] ? "Resume" : "Pause");
-        // },
         initial: false,
+
+        // Specifically default to pausing. Meaning only Resume when every component
+        //  is paused, and so if there's a single non-paused component, pressing
+        //  the button will pause them all and the text will say "Pause"
+        getText:     (states) => (states.every(s => (s === true)) ? "Resume" : "Pause"),
+        getNewState: (states) => (states.every(s => (s === true)) ? false : true),
     },
 };
-
-// export class Timer {
-//     private timeout?: number;
-//     private callback: () => void;
-
-//     public constructor(callback: () => void) {
-//         this.callback = callback;
-//     }
-
-//     public stopTimeout(): void {
-//         // Clear the timeout if it's currently set
-//         if (this.timeout !== undefined) {
-//             window.clearTimeout(this.timeout);
-//             this.timeout = undefined;
-//         }
-//     }
-
-//     public tick(): void {
-//         this.stopTimeout();
-
-
-//     }
-// }
 
 export abstract class TimedComponent extends DigitalComponent {
     @serialize
