@@ -19,12 +19,10 @@ export abstract class Component extends CullableObject {
     @serialize
     protected transform: Transform;
 
-
     protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
         super(initialProps);
 
         this.transform = new Transform(V(), size);
-        this.props = initialProps;
     }
 
     public onTransformChange(): void {
