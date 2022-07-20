@@ -1,5 +1,3 @@
-import {serialize} from "serialeazy";
-
 import {Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
@@ -37,20 +35,16 @@ const [Info] = GenPropInfo({
 });
 
 export abstract class TimedComponent extends DigitalComponent {
-    @serialize
-    protected paused: boolean;
-
     private timeout?: number;
 
     public constructor(initialDelay: number, inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
-                       inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>) {
+                       inputPositioner?: Positioner<InputPort>, outputPositioner?: Positioner<OutputPort>,
+                       initialProps: Record<string, Prop> = {}) {
         super(
             inputPortCount, outputPortCount, size,
             inputPositioner, outputPositioner,
-            { "delay": initialDelay, "paused": false },
+            { ...initialProps, "delay": initialDelay, "paused": false },
         );
-
-        this.paused = false;
     }
 
     private stopTimeout(): void {
@@ -78,7 +72,7 @@ export abstract class TimedComponent extends DigitalComponent {
     public tick(): void {
         this.stopTimeout();
 
-        if (this.paused)
+        if (this.props["paused"])
             return;
 
         this.onTick();
@@ -94,27 +88,15 @@ export abstract class TimedComponent extends DigitalComponent {
         }, this.getProp("delay") as number);
     }
 
-    public pause(): void {
-        this.paused = true;
-        this.stopTimeout();
-    }
-
-    public resume(): void {
-        this.paused = false;
-        this.tick();
-    }
-
     public override getPropInfo(key: string) {
+        if (!(key in Info))
+            return super.getPropInfo(key);
         return Info[key];
-    }
-
-    public isPaused(): boolean {
-        return this.paused;
     }
 
     // Restart ticking
     public reset(): void {
-        if (!this.paused)
+        if (!this.props["paused"])
             this.tick();
     }
 }
