@@ -42,7 +42,6 @@ import {OscilloscopeModule}         from "site/digital/containers/SelectionPopup
 import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
 import {SegmentCountModule}         from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
 import {SelectPortCountModule}      from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-import {TextColorModule}            from "site/digital/containers/SelectionPopup/modules/TextColorModule";
 import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
 import docsConfig    from "site/digital/data/docsUrlConfig.json";
@@ -104,7 +103,6 @@ export const App = ({ info, helpers, canvas }: Props) => {
                         <SegmentCountModule info={info} />
                         <OscilloscopeModule info={info} />
                         <ClockSyncButtonModule info={info} />
-                        <TextColorModule info={info} />
                         <BusButtonModule info={info} />
                         <CreateICButtonModule info={info} />
                         <ViewICButtonModule info={info} />
