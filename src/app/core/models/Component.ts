@@ -11,7 +11,7 @@ import {Transform}    from "math/Transform";
 
 import {CullableObject} from "./CullableObject";
 import {Port}           from "./ports/Port";
-import {Prop, PropInfo} from "./PropInfo";
+import {Prop}           from "./PropInfo";
 import {Wire}           from "./Wire";
 
 
@@ -19,12 +19,9 @@ export abstract class Component extends CullableObject {
     @serialize
     protected transform: Transform;
 
-    @serialize
-    protected props: Record<string, Prop>;
-
 
     protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
-        super();
+        super(initialProps);
 
         this.transform = new Transform(V(), size);
         this.props = initialProps;
@@ -76,10 +73,6 @@ export abstract class Component extends CullableObject {
         return RectContains(this.getTransform(), v);
     }
 
-    public hasProp(key: string): boolean {
-        return (key in this.props);
-    }
-
     public abstract getPorts(): Port[];
 
     public getConnections(): Wire[] {
@@ -100,18 +93,6 @@ export abstract class Component extends CullableObject {
 
     public getTransform(): Transform {
         return this.transform.copy();
-    }
-
-    public getProp(key: string): Prop {
-        return this.props[key];
-    }
-
-    public getProps() {
-        return this.props;
-    }
-
-    public getPropInfo(_key: string): PropInfo | undefined {
-        return undefined;
     }
 
     public getOffset(): Vector {
