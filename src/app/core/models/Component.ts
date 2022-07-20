@@ -32,15 +32,6 @@ export abstract class Component extends CullableObject {
         this.getConnections().forEach((w) => w.onTransformChange());
     }
 
-    public setProp(key: string, val: Prop) {
-        const prop = this.props[key];
-        if (prop === undefined)
-            throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
-                            `My props: ${Object.entries(this.props).join(",")}`);
-
-        this.props[key] = val;
-    }
-
     public setPos(v: Vector): void {
         this.transform.setPos(v);
         this.onTransformChange();

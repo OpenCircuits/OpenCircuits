@@ -30,6 +30,15 @@ export abstract class IOObject implements Selectable {
         this.name.setName(name);
     }
 
+    public setProp(key: string, val: Prop) {
+        const prop = this.props[key];
+        if (prop === undefined)
+            throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
+                            `My props: ${Object.entries(this.props).join(",")}`);
+
+        this.props[key] = val;
+    }
+
     public abstract getDisplayName(): string;
 
     public getName(): string {
