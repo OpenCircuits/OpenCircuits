@@ -1,7 +1,7 @@
-import {GroupPropInfo, Prop, PropInfo} from "core/models/PropInfo";
+import {Prop, PropInfo, PropInfoLayout} from "core/models/PropInfo";
 
 
-const merge = (a1: GroupPropInfo["isActive"], a2: GroupPropInfo["isActive"]): GroupPropInfo["isActive"] => {
+const merge = (a1: PropInfoLayout["isActive"], a2: PropInfoLayout["isActive"]): PropInfoLayout["isActive"] => {
     if (a1 && a2) {
         return (states) => (a1(states) && a2(states));
     }
@@ -13,12 +13,13 @@ const merge = (a1: GroupPropInfo["isActive"], a2: GroupPropInfo["isActive"]): Gr
 //  instead of as a property of `info` and return
 //  the initial info as a 2nd parameter of a tuple!
 
-export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> => {
+export const GenPropInfo = (rootLayout: PropInfoLayout): Record<string, PropInfo> => {
     const allInfos: Record<string, PropInfo[]> = {};
 
-    const collectGroups = (groups: GroupPropInfo[], parentIsActive?: GroupPropInfo["isActive"]): void => {
-        groups.forEach((group) => {
-            const { isActive, infos, subgroups } = group;
+    // Flatten layouts into single record of all properties and their associated infos
+    const collectLayouts = (layouts: PropInfoLayout[], parentIsActive?: PropInfoLayout["isActive"]): void => {
+        layouts.forEach((layout) => {
+            const { isActive, infos, sublayouts } = layout;
 
             // Merge isActive w/ parentIsActive
             const groupIsActive = merge(isActive, parentIsActive);
@@ -31,13 +32,14 @@ export const GenPropInfo = (groups: GroupPropInfo[]): Record<string, PropInfo> =
                 // Merge isActive with groupIsActive
                 info.isActive = merge(info.isActive, groupIsActive);
             });
-            collectGroups(subgroups ?? [], groupIsActive);
+            collectLayouts(sublayouts ?? [], groupIsActive);
         });
     }
-    collectGroups(groups);
+    collectLayouts([rootLayout]);
 
 
-    // Combine multi-infos together
+    // Take each property and their associated infos and flatten them down to a single
+    //  `info` based on the isActive's of each one
     const info: Record<string, PropInfo> = {};
 
     Object.entries(allInfos).forEach(([key, infos]) => {

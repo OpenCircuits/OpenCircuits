@@ -11,6 +11,7 @@ export type UnitInfo = Record<string, {
     display: string;
     val: number;
 }>;
+
 export type BasePropInfo = {
     readonly?: boolean;
     label?: string | ((states: Props[]) => string);
@@ -67,16 +68,16 @@ export type NumberSelectPropInfo = BasePropInfo & {
         number, // Option value
     ]>;
 }
+
 export type PropInfo =
     | BooleanPropInfo | ButtonPropInfo | NumberPropInfo | StringPropInfo
     | ColorPropInfo | StringSelectPropInfo | NumberSelectPropInfo | VectorPropInfo;
 
-export type GroupPropInfo = {
-    type: "group";
 
-    readonly?: boolean;
+
+export type PropInfoLayout = {
     isActive?: (states: Props[]) => boolean;
 
     infos: Record<string, PropInfo>;
-    subgroups?: GroupPropInfo[];
+    sublayouts?: PropInfoLayout[];
 }

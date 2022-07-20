@@ -7,7 +7,7 @@ import {ClampedValue} from "math/ClampedValue";
 import {GenInitialInfo, GenPropInfo}        from "core/utils/PropInfoUtils";
 import {AngleInfo, FrequencyInfo, TimeInfo} from "core/utils/Units";
 
-import {GroupPropInfo} from "core/models/PropInfo";
+import {PropInfoLayout} from "core/models/PropInfo";
 
 import {AnalogComponent} from "analog/models";
 
@@ -16,9 +16,7 @@ import {VoltageInfo} from "analog/models/Units";
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
 
 
-const ConstInfo: GroupPropInfo = {
-    type: "group",
-
+const ConstInfo: PropInfoLayout = {
     isActive: (states) => (states.every(state => state["waveform"] === "DC")),
 
     infos: {
@@ -26,9 +24,7 @@ const ConstInfo: GroupPropInfo = {
     },
 };
 
-const PulseInfo: GroupPropInfo = {
-    type: "group",
-
+const PulseInfo: PropInfoLayout = {
     isActive: (states) => (states.every(state => state["waveform"] === "DC PULSE")),
 
     infos: {
@@ -43,9 +39,7 @@ const PulseInfo: GroupPropInfo = {
     },
 };
 
-const SineInfo: GroupPropInfo = {
-    type: "group",
-
+const SineInfo: PropInfoLayout = {
     isActive: (states) => (states.every(state => state["waveform"] === "DC SINE")),
 
     infos: {
@@ -61,9 +55,7 @@ const SineInfo: GroupPropInfo = {
     },
 };
 
-const Info = GenPropInfo([{
-    type: "group",
-
+const Info = GenPropInfo({
     infos: {
         "waveform": { // Select
             label:   "Waveform",
@@ -76,8 +68,8 @@ const Info = GenPropInfo([{
             ],
         },
     },
-    subgroups: [ ConstInfo, PulseInfo, SineInfo ],
-}]);
+    sublayouts: [ ConstInfo, PulseInfo, SineInfo ],
+});
 
 @serializable("VoltageSource")
 export class VoltageSource extends AnalogComponent {
