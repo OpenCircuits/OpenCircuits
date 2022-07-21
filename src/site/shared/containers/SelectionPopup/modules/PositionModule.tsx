@@ -7,7 +7,7 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Component} from "core/models";
 
 import {ModuleSubmitInfo}       from "./inputs/ModuleInputField";
-import {NumberModuleInputField} from "./inputs/NumberModuleInputField";
+import {VectorModuleInputField} from "./inputs/VectorModuleInputField";
 import {useSelectionProps}      from "./useSelectionProps";
 
 
@@ -31,35 +31,48 @@ export const PositionModule = ({ info }: Props) => {
         if (info.isValid && info.isFinal) // Only add final action to history
             history.add(info.action);
     }
-    const getAction = (newVal: number, dir: "x" | "y") => (
-        new TranslateAction(
-            cs,
-            cs.map(c => c.getPos()),
-            cs.map(c => c.getPos())
-                .map(({ x, y }) => V(
-                    (dir === "x" ? newVal*100 : x),
-                    (dir === "y" ? newVal*100 : y),
-                )),
-            false,
-        )
-    );
-    const getStepAction = (step: number, dir: "x" | "y") => (
-        new TranslateAction(
-            cs,
-            cs.map(c => c.getPos()),
-            cs.map(c => c.getPos())
-                .map(({ x, y }) => V(
-                    (dir === "x" ? x + step*100 : x),
-                    (dir === "y" ? y + step*100 : y),
-                )),
-            false,
-        )
-    );
+    // const getAction = (newVal: number, dir: "x" | "y") => (
+    //     new TranslateAction(
+    //         cs,
+    //         cs.map(c => c.getPos()),
+    //         cs.map(c => c.getPos())
+    //             .map(({ x, y }) => V(
+    //                 (dir === "x" ? newVal*100 : x),
+    //                 (dir === "y" ? newVal*100 : y),
+    //             )),
+    //         false,
+    //     )
+    // );
+    // const getStepAction = (step: number, dir: "x" | "y") => (
+    //     new TranslateAction(
+    //         cs,
+    //         cs.map(c => c.getPos()),
+    //         cs.map(c => c.getPos())
+    //             .map(({ x, y }) => V(
+    //                 (dir === "x" ? x + step*100 : x),
+    //                 (dir === "y" ? y + step*100 : y),
+    //             )),
+    //         false,
+    //     )
+    // );
 
     return (<div>
         Position
         <label>
-            <NumberModuleInputField
+            <VectorModuleInputField
+                kind="float" step={V(1,1)}
+                props={props.x.map((x, i) => V(x, props.y[i]))}
+                getAction={(newVals) => new TranslateAction(
+                    cs,
+                    cs.map(c => c.getPos()),
+                    cs.map((_,i) => V(newVals[i].x*100, newVals[i].y*100),
+                ))}
+                getCustomDisplayVal={(v) => V(
+                    parseFloat(v.x.toFixed(2)),
+                    parseFloat(v.y.toFixed(2))
+                )}
+                onSubmit={onSubmit} />
+            {/* <NumberModuleInputField
                 kind="float" step={1} alt="X-Position of object(s)"
                 props={props.x}
                 getAction={(newX) => getAction(newX, "x")}
@@ -72,7 +85,7 @@ export const PositionModule = ({ info }: Props) => {
                 getAction={(newY) => getAction(newY, "y")}
                 getModifierAction={(step) => getStepAction(step, "y")}
                 getCustomDisplayVal={(v) => parseFloat(v.toFixed(2))}
-                onSubmit={onSubmit} />
+                onSubmit={onSubmit} /> */}
         </label>
     </div>);
 }

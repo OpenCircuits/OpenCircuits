@@ -33,9 +33,9 @@ export const SegmentCountModule = ({ info }: Props) => {
                 kind="number[]"
                 options={[["7", 7], ["9", 9], ["14", 14], ["16", 16]]}
                 props={props.numSegments}
-                getAction={(newCount) =>
+                getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map(o => new InputPortChangeAction(o, o.getSegmentCount(), newCount)),
+                        cs.map((o,i) => new InputPortChangeAction(o, o.getSegmentCount(), newCounts[i])),
                         "Segment Count Module"
                     )}
                 onSubmit={(info) => {

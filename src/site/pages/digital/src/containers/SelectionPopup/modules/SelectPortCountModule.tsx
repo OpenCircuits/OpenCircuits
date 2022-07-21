@@ -33,9 +33,9 @@ export const SelectPortCountModule = ({ info }: Props) => {
                 kind="int" min={1} max={8} step={1}
                 props={props.numSelects}
                 alt="Number of selector ports object(s) have"
-                getAction={(newCount) =>
+                getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map(o => new MuxPortChangeAction(o, o.getSelectPortCount().getValue(), newCount)),
+                        cs.map((o,i) => new MuxPortChangeAction(o, o.getSelectPortCount().getValue(), newCounts[i])),
                         "Select Count Module"
                     )}
                 onSubmit={(info) => {

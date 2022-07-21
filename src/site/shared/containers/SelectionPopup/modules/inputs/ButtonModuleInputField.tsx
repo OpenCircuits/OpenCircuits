@@ -11,17 +11,18 @@ type Props = {
     getText: (states: Prop[]) => string;
     getNewState: (states: Prop[]) => Prop;
 
-    getAction: (newVal: Prop) => Action;
+    getAction: (newVals: Prop[]) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
 }
 export const ButtonModuleInputField = ({ props, getText, getNewState, getAction, onSubmit }: Props) => {
     const text = getText(props);
 
     const onClick = () => {
+        const newState = getNewState(props);
         onSubmit({
             isFinal: true,
             isValid: true,
-            action:  getAction(getNewState(props)).execute(),
+            action:  getAction(props.map(_ => newState)).execute(),
         });
     }
 

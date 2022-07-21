@@ -33,9 +33,9 @@ export const OutputCountModule = ({ info }: Props) => {
                 kind="int" min={1} max={8} step={1}
                 props={props.numOutputs}
                 alt="Number of outputs object(s) have"
-                getAction={(newCount) =>
+                getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map(o => new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCount)),
+                        cs.map((o,i) => new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCounts[i])),
                         "Output Count Module"
                     )}
                 onSubmit={(info) => {

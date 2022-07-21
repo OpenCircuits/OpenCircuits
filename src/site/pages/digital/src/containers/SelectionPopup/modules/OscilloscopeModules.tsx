@@ -43,9 +43,10 @@ export const OscilloscopeModule = ({ info }: Props) => {
                     kind="int" min={1} max={8} step={1}
                     props={props.numInputs}
                     alt="The number of inputs for the Oscilloscope"
-                    getAction={(newCount) =>
+                    getAction={(newCounts) =>
                         new GroupAction(
-                            cs.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCount)),
+                            cs.map((o,i) =>
+                                new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCounts[i])),
                             "Oscilloscope Input Count Change Module"
                         )}
                     onSubmit={onSubmit} />
