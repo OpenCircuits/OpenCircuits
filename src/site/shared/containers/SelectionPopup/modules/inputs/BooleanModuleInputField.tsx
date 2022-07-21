@@ -16,7 +16,7 @@ export const BooleanModuleInputField = ({ text, type, ...props }: Props) => {
 
     const isOn = (state.values[0] === "true" || state.values[0] === true);
 
-    const onClick = () => {
+    const onClick = async () => {
         setState.onFocus();
         setState.onChange(isOn ? "false" : "true");
         setState.onBlur();

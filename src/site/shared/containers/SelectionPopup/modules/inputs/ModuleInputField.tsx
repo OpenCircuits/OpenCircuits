@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import {Action} from "core/actions/Action";
 
@@ -85,6 +85,8 @@ export const useBaseModule = <V extends Primitive[]>({
         setProps:     [...props],
         initialProps: [...props],
         tempAction:   undefined as Action | undefined,
+
+        submission: undefined as ModuleSubmitInfo | undefined,
     };
     const [state, setState] = useState(initialState);
 
@@ -100,6 +102,14 @@ export const useBaseModule = <V extends Primitive[]>({
                 ? (getCustomDisplayVal?.(val0, i) ?? val0[i])
                 : ""))
     ) as Array<string | V[number]>;
+
+    useEffect(() => {
+        // Submit in an effect since it's a callback that has the potential to call other states
+        if (!state.submission)
+            return;
+        onSubmit(state.submission);
+        setState((prevState) => ({ ...prevState, submission: undefined }));
+    }, [state.submission, onSubmit]);
 
     // onModify gets called when a "modification" is made to the current value of the properties
     //  i.e. arrow-keys to step a value
@@ -124,7 +134,6 @@ export const useBaseModule = <V extends Primitive[]>({
             ));
 
             const action = getAction(moddedProps).execute();
-            onSubmit?.({ isFinal: false, isValid: true, action });
 
             // If the props are the same, then show the new prop as a text value
             const newTextVal = (allSame[i] ? `${moddedProps[0][i]}` : textVals[i]);
@@ -134,6 +143,7 @@ export const useBaseModule = <V extends Primitive[]>({
                 textVals:   [...textVals.slice(0,i), newTextVal, ...textVals.slice(i+1)],
                 modifiers:  newModifiers,
                 tempAction: action,
+                submission: { isFinal: false, isValid: true, action },
             };
         });
     }
@@ -173,7 +183,6 @@ export const useBaseModule = <V extends Primitive[]>({
             ));
 
             const action = getAction(moddedProps).execute();
-            onSubmit?.({ isFinal: false, isValid: true, action });
 
             return {
                 ...prevState,
@@ -181,6 +190,7 @@ export const useBaseModule = <V extends Primitive[]>({
                 modifiers:  newModifiers,
                 setProps:   newProps,
                 tempAction: action,
+                submission: { isFinal: false, isValid: true, action },
             };
         })
     }
@@ -237,17 +247,18 @@ export const useBaseModule = <V extends Primitive[]>({
                     .map((val, i) => (parseFinalVal?.(val,i) ?? val)) as V
             ));
 
-            // Check to make sure that at least some final property has changed from
-            //  the initial, otherwise don't submit
-            if (!finalProps.every((prop,j) =>
+            // If every prop is the same as the initial props, then just reset back to initial state and do nothing
+            if (finalProps.every((prop,j) =>
                     prop.every((val,i) => (val === initialProps[j][i]))
                 )) {
-                // Submit final valid action
-                onSubmit?.({ isFinal: true, isValid: true, action: getAction(finalProps).execute() });
+                return initialState;
             }
 
-            // Reset state
-            return initialState;
+            // Reset state with submission
+            return {
+                ...initialState,
+                submission: { isFinal: true, isValid: true, action: getAction(finalProps).execute() },
+            };
         });
     }
 
