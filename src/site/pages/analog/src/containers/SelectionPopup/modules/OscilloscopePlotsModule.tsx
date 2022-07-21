@@ -59,19 +59,19 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
                 <BooleanModuleInputField
                     props={showAxes} text="Show Axes"
                     getAction={(showAxes) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showAxes }))
+                        os.map((o,i) => new SetScopeConfigAction(o, { ...o.getConfig(), showAxes: showAxes[i] }))
                     )}
                     onSubmit={() => { renderer.render(); forceUpdate(); }} />
                 <BooleanModuleInputField
                     props={showLegend} text="Show Legend"
                     getAction={(showLegend) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showLegend }))
+                        os.map((o,i) => new SetScopeConfigAction(o, { ...o.getConfig(), showLegend: showLegend[i] }))
                     )}
                     onSubmit={() => { renderer.render(); forceUpdate(); }} />
                 <BooleanModuleInputField
                     props={showGrid} text="Show Grid"
                     getAction={(showGrid) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showGrid }))
+                        os.map((o,i) => new SetScopeConfigAction(o, { ...o.getConfig(), showGrid: showGrid[i] }))
                     )}
                     onSubmit={() => { renderer.render(); forceUpdate(); }} />
             </div>
