@@ -31,30 +31,6 @@ export const PositionModule = ({ info }: Props) => {
         if (info.isValid && info.isFinal) // Only add final action to history
             history.add(info.action);
     }
-    // const getAction = (newVal: number, dir: "x" | "y") => (
-    //     new TranslateAction(
-    //         cs,
-    //         cs.map(c => c.getPos()),
-    //         cs.map(c => c.getPos())
-    //             .map(({ x, y }) => V(
-    //                 (dir === "x" ? newVal*100 : x),
-    //                 (dir === "y" ? newVal*100 : y),
-    //             )),
-    //         false,
-    //     )
-    // );
-    // const getStepAction = (step: number, dir: "x" | "y") => (
-    //     new TranslateAction(
-    //         cs,
-    //         cs.map(c => c.getPos()),
-    //         cs.map(c => c.getPos())
-    //             .map(({ x, y }) => V(
-    //                 (dir === "x" ? x + step*100 : x),
-    //                 (dir === "y" ? y + step*100 : y),
-    //             )),
-    //         false,
-    //     )
-    // );
 
     return (<div>
         Position
@@ -72,20 +48,6 @@ export const PositionModule = ({ info }: Props) => {
                     parseFloat(v.y.toFixed(2))
                 )}
                 onSubmit={onSubmit} />
-            {/* <NumberModuleInputField
-                kind="float" step={1} alt="X-Position of object(s)"
-                props={props.x}
-                getAction={(newX) => getAction(newX, "x")}
-                getModifierAction={(step) => getStepAction(step, "x")}
-                getCustomDisplayVal={(v) => parseFloat(v.toFixed(2))}
-                onSubmit={onSubmit} />
-            <NumberModuleInputField
-                kind="float" step={1} alt="Y-Position of object(s)"
-                props={props.y}
-                getAction={(newY) => getAction(newY, "y")}
-                getModifierAction={(step) => getStepAction(step, "y")}
-                getCustomDisplayVal={(v) => parseFloat(v.toFixed(2))}
-                onSubmit={onSubmit} /> */}
         </label>
     </div>);
 }

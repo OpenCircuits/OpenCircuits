@@ -189,8 +189,6 @@ export const useBaseModule = <V extends Primitive[]>({
 
     // Blurring should trigger a 'submit' so the user-inputted value
     //  is finally realized and registers an action to the circuit
-    // However, this only triggers when ALL the values are blurred
-    //  so for a Vector with 2 values, it waits till both are blurred
     const onBlur = () => {
         if (!focused) // Skip if already not-focused
             return;
