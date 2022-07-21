@@ -35,10 +35,6 @@ export const VectorModuleInputField = ({
         applyModifier: (step, val, i) => Clamp(val + (step ?? 0), Min[i], Max[i]),
 
         getAction: (newVals) => getAction(newVals.map(([x, y]) => V(x, y))),
-        // getModifierAction: ([stepX, stepY]) => getAction(props.map((prop) => (
-        //     Vector.Clamp(prop.add(stepX ?? 0, stepY ?? 0), V(Min[0], Min[1]), V(Max[0], Max[1]))
-        // ))),
-
 
         onSubmit,
         getCustomDisplayVal: (getCustomDisplayVal
@@ -59,12 +55,11 @@ export const VectorModuleInputField = ({
             placeholder={state.allSame[0] ? "" : (placeholder ?? "-")}
             onChange={(ev) => setState.onChange(ev.target.value, 0)}
             onIncrement={(step) => setState.onModify(step, 0)}
-            onFocus={() => setState.onFocus(0)}
+            onFocus={() => setState.onFocus()}
             onBlur={(e) => {
-                // if (e.relatedTarget !== yRef.current) {
-                    setState.onBlur(0);
-                    // setState.onBlur(1);
-                // }
+                // Allows the action to only be submitted once both fields have blurred
+                if (e.relatedTarget !== yRef.current)
+                    setState.onBlur();
             }} />
         <NumberInputField
             ref={yRef}
@@ -74,12 +69,11 @@ export const VectorModuleInputField = ({
             placeholder={state.allSame[1] ? "" : (placeholder ?? "-")}
             onChange={(ev) => setState.onChange(ev.target.value, 1)}
             onIncrement={(step) => setState.onModify(step, 1)}
-            onFocus={() => setState.onFocus(1)}
+            onFocus={() => setState.onFocus()}
             onBlur={(e) => {
-                // if (e.relatedTarget !== xRef.current) {
-                    // setState.onBlur(0);
-                    setState.onBlur(1);
-                // }
+                // Allows the action to only be submitted once both fields have blurred
+                if (e.relatedTarget !== xRef.current)
+                    setState.onBlur();
             }} />
     </>);
 }

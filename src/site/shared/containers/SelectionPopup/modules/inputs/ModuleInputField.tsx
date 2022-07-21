@@ -26,24 +26,12 @@ export type SharedModuleInputFieldProps<V extends Prop> = {
     alt?: string;
 }
 
-// `props` represents ALL the selected element's properties
-//  a single `prop` can contain multiple `val`s which represent
-//  x/y in a Vector or elements in an array
-
 
 type Primitive = string | number | boolean;
-type Types = Primitive[];
-type State<V extends Types> = {
-    focuses:   boolean[];
-    textVals:  string[];
-    modifiers: Array<V[number] | undefined>;
-
-    setProps:     V[];
-    initialProps: V[];
-
-    tempAction: Action | undefined;
-}
-type Props<V extends Types> = {
+type Props<V extends Primitive[]> = {
+    // `props` represents ALL the selected element's properties
+    //  a single `prop` can contain multiple `val`s which represent
+    //  x/y in a Vector or elements in an array
     props: V[];
 
     isValid:        (val: V[number], i: number) => boolean;
@@ -59,42 +47,50 @@ type Props<V extends Types> = {
 
     getCustomDisplayVal?: (val: V, i: number) => V[number];
 }
-export const useBaseModule = <V extends Types>({
+export const useBaseModule = <V extends Primitive[]>({
     props, parseVal, isValid, parseFinalVal, getModifier,
     getAction, applyModifier, onSubmit, getCustomDisplayVal,
 }: Props<V>) => {
     const len = props.reduce((max, vals) => Math.max(max, vals.length), 0);
     const indices = new Array(len).fill(0).map((_, i) => i);
 
-    const initialState: State<V> = {
-        focuses:   new Array(len).fill(false),
-        textVals:  new Array(len).fill(""),
-        modifiers: new Array(len).fill(undefined),
+    // Initialize state
+    const [focused,      setFocused]      = useState(false);
+    const [textVals,     setTextVals]     = useState<string[]>(new Array(len).fill(""));
+    const [modifiers,    setModifiers]    = useState<Array<V[number] | undefined>>(new Array(len).fill(undefined));
+    const [setProps,     setSetProps]     = useState([...props]);
+    const [initialProps, setInitialProps] = useState([...props]);
+    const [tempAction,   setTempAction]   = useState<Action | undefined>(undefined);
 
-        setProps:     [...props],
-        initialProps: [...props],
-
-        tempAction: undefined,
-    };
-    const [state, setState] = useState<State<V>>(initialState);
-
-    const { focuses, textVals, modifiers, setProps, initialProps, tempAction } = state;
-
-    // const curProps =
-
+    // Compute useful information
     const val0 = props[0];
     const allSame = indices.map((i) => props.every(v => v[i] === val0[i]));
     const values = indices.map((i) =>
-        (focuses[i]
+        (focused
             ? textVals[i]
             : (allSame[i]
                 ? (getCustomDisplayVal?.(val0, i) ?? val0[i])
                 : ""))
     ) as Array<string | V[number]>;
 
+    // Utility method to reset state back to initial
+    const resetState = () => {
+        setFocused(false);
+        setTextVals(new Array(len).fill(""));
+        setModifiers(new Array(len).fill(undefined));
+        setSetProps([...props]);
+        setInitialProps([...props]);
+        setTempAction(undefined);
+    }
+
+    // onModify gets called when a "modification" is made to the current value of the properties
+    //  i.e. arrow-keys to step a value
     const onModify = (mod: V[number], i = 0) => {
         if (!getModifier || !applyModifier)
             return;
+
+        if (!focused)
+            onFocus();
 
         tempAction?.undo(); // If tempAction exists, then undo it
 
@@ -104,7 +100,7 @@ export const useBaseModule = <V extends Types>({
 
         // Get current set of props which we have to do because
         //  there is a possiblity that we are not focused yet
-        const curProps = (focuses[i] ? setProps : [...props]);
+        const curProps = (focused ? setProps : [...props]);
 
         const moddedProps = curProps.map((prop) => (
             // Apply new modifiers to each prop
@@ -117,19 +113,16 @@ export const useBaseModule = <V extends Types>({
         // If the props are the same, then show the new prop as a text value
         const newTextVal = (allSame[i] ? `${moddedProps[0][i]}` : textVals[i]);
 
-        setState({
-            focuses:   [ ...focuses.slice(0,i), true,        ...focuses.slice(i+1)],
-            textVals:  [...textVals.slice(0,i), newTextVal, ...textVals.slice(i+1)],
-            modifiers: newModifiers,
-
-            setProps:     curProps,
-            initialProps: (focuses[i] ? initialProps : [...props]), // Set initial props if we aren't focused
-
-            tempAction: action,
-        });
+        setTextVals((textVals) => [...textVals.slice(0,i), newTextVal, ...textVals.slice(i+1)]);
+        setModifiers(newModifiers);
+        setTempAction(action);
     }
 
+    // onChange gets called when the user directly sets the value of the property's value
     const onChange = (newVal: string, i = 0) => {
+        if (!focused)
+            throw new Error("Module Input Field: onChange called before focus!");
+
         const val = parseVal(newVal, i);
 
         // Insert newVal into text vals at `i`
@@ -138,13 +131,13 @@ export const useBaseModule = <V extends Types>({
         // If invalid input, assume it's temporary and just update the text value
         //  that they are typing
         if (!isValid(val, i)) {
-            setState({ ...state, textVals: newTextVals });
+            setTextVals(newTextVals);
             return;
         }
 
         tempAction?.undo(); // If tempAction exists, then undo it
 
-        // Reset modifier at `i`
+        // Reset modifier at `i` since value is being set exactly
         const newModifiers = [...modifiers.slice(0,i), undefined, ...modifiers.slice(i+1)];
 
         const newProps = setProps.map((prop) => (
@@ -160,17 +153,10 @@ export const useBaseModule = <V extends Types>({
         const action = getAction(moddedProps).execute();
         onSubmit?.({ isFinal: false, isValid: true, action });
 
-        // Reset modifier when state here since state is being set exactly
-        setState({
-            focuses:   [...focuses.slice(0,i), true, ...focuses.slice(i+1)],
-            textVals:  newTextVals,
-            modifiers: newModifiers,
-
-            setProps: newProps,
-            initialProps,
-
-            tempAction: action,
-        });
+        setTextVals(newTextVals);
+        setModifiers(newModifiers);
+        setSetProps(newProps);
+        setTempAction(action);
     }
 
     // Focusing on the input will enter a sort-of new "mode" where
@@ -187,47 +173,37 @@ export const useBaseModule = <V extends Types>({
     //     > finally becomes  `-.5` => valid
     //   The input can temporarily be invalid while the user is typing
     //    and is why this is all necessary.
-    const onFocus = (i = 0) => {
-        if (focuses[i]) // Skip if already focused
+    const onFocus = () => {
+        if (focused) // Skip if already focused
             return;
+
+        setFocused(true);
 
         // On focus, if all same (displaying `val0`) then
         //  start user-input with `val0`, otherwise empty
-        const textVal = (allSame[i] ? val0[i].toString() : "");
-        setState({
-            focuses:  [ ...focuses.slice(0,i), true,     ...focuses.slice(i+1)],
-            textVals: [...textVals.slice(0,i), textVal, ...textVals.slice(i+1)],
-            modifiers,
+        setTextVals((allSame.map((same, i) => (same ? val0[i].toString() : ""))));
 
-            setProps:     [...props],
-            initialProps: [...props],
-
-            tempAction: undefined,
-        });
+        setSetProps([...props]);
+        setInitialProps([...props]);
     }
 
     // Blurring should trigger a 'submit' so the user-inputted value
     //  is finally realized and registers an action to the circuit
     // However, this only triggers when ALL the values are blurred
     //  so for a Vector with 2 values, it waits till both are blurred
-    const onBlur = (i = 0) => {
-        if (!focuses[i]) // Skip if already not-focused
+    const onBlur = () => {
+        if (!focused) // Skip if already not-focused
             return;
 
         // If temp action doesn't exist, it means that the user didn't change anything
         //  so we should just do nothing and go back to normal
-        // OR if there is still some other focused value
         if (!tempAction) {
-            // || (focuses.some((focus, j) => (focus && j !== i)))) {
-            setState({
-                ...state,
-                focuses: [...focuses.slice(0,i), false, ...focuses.slice(i+1)],
-            });
+            resetState();
             return;
         }
 
         // Temp action exists, so undo it before committing final action
-        tempAction?.undo();
+        tempAction.undo();
 
         // Calculate final props
         const finalProps = setProps.map((prop) => (
@@ -247,7 +223,7 @@ export const useBaseModule = <V extends Types>({
         }
 
         // Reset state
-        setState(initialState);
+        resetState();
     }
 
     return [

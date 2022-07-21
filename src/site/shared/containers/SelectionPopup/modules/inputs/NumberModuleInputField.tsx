@@ -44,7 +44,7 @@ export const NumberModuleInputField = ({
             placeholder={state.allSame[0] ? "" : (placeholder ?? "-")}
             onChange={(ev) => setState.onChange(ev.target.value)}
             onIncrement={(step) => setState.onModify(step)}
-            onFocus={() => setState.onFocus(0)}
-            onBlur={() => setState.onBlur(0)} />
+            onFocus={() => setState.onFocus()}
+            onBlur={() => setState.onBlur()} />
     );
 }
