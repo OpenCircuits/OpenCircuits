@@ -26,6 +26,21 @@ export type SharedModuleInputFieldProps<V extends Prop> = {
     alt?: string;
 }
 
+export const DefaultConfig = <V extends Primitive>({
+    props, getAction, onSubmit, getCustomDisplayVal,
+}: Omit<SharedModuleInputFieldProps<V>, "alt" | "placeholder">): Omit<Props<[V]>, "parseVal"> => ({
+    props: props.map(v => [v]),
+
+    isValid: (_) => true,
+
+    getAction: (newVals) => getAction(newVals.map(([v]) => v)),
+
+    onSubmit,
+    getCustomDisplayVal: (getCustomDisplayVal
+        ? (([v]) => getCustomDisplayVal!(v))
+        : undefined),
+})
+
 
 type Primitive = string | number | boolean;
 type Props<V extends Primitive[]> = {
