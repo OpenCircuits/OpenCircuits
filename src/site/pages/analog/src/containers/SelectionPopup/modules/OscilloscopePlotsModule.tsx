@@ -83,13 +83,13 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
                     <BooleanModuleInputField
                         props={props[`${key}_enabled`]} text={key.split(".")[1]}
                         getAction={(enabled) => new GroupAction(
-                            os.map(o => new SetScopeConfigAction(o, {
+                            os.map((o,i) => new SetScopeConfigAction(o, {
                                 ...o.getConfig(),
                                 "vecs": {
                                     ...o.getConfig().vecs,
                                     [key]: {
                                         ...o.getConfig().vecs[key],
-                                        enabled,
+                                        enabled: enabled[i],
                                     },
                                 },
                             })
@@ -97,14 +97,14 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
                         onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
                     <ColorModuleInputField
                         props={props[`${key}_color`]}
-                        getAction={(color) => new GroupAction(
-                            os.map(o => new SetScopeConfigAction(o, {
+                        getAction={(colors) => new GroupAction(
+                            os.map((o,i) => new SetScopeConfigAction(o, {
                                 ...o.getConfig(),
                                 "vecs": {
                                     ...o.getConfig().vecs,
                                     [key]: {
                                         ...o.getConfig().vecs[key],
-                                        color,
+                                        color: colors[i],
                                     },
                                 },
                             })
