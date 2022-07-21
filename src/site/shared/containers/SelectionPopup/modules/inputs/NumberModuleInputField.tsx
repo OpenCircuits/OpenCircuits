@@ -20,12 +20,12 @@ export const NumberModuleInputField = ({
     const [state, setState] = useBaseModule<[number]>({
         props: props.map(v => [v]),
 
-        isValid:       (val) => (!isNaN(val) && (Min <= val && val <= Max)),
-        parseVal:      (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
-        parseFinalVal: (val) => Clamp(val, Min, Max),
+        isValid:  (val) => (!isNaN(val) && (Min <= val && val <= Max)),
+        parseVal: (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
+        fixVal:   (val) => Clamp(val, Min, Max),
 
-        getModifier:   (totalStep, step) => Clamp((totalStep ?? 0) + step, Min, Max),
-        applyModifier: (step, val) => Clamp(val + (step ?? 0), Min, Max),
+        applyModifier:   (val, step) => (val + (step ?? 0)),
+        reverseModifier: (val, step) => (val - (step ?? 0)),
 
         getAction: (newVals) => getAction(newVals.map(([v]) => v)),
 

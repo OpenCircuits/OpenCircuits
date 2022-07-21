@@ -5,14 +5,6 @@ import {Action} from "core/actions/Action";
 import {Prop} from "core/models/PropInfo";
 
 
-
-// TODO:
-//  blech, nested setState callbacks hell
-// checkout some useEffect / useCallback stuff might fix it somehow
-// https://stackoverflow.com/questions/62236000/cannot-update-a-component-app-while-rendering-a-different-component
-// https://stackoverflow.com/questions/67815231/warning-cannot-update-a-component-app-while-rendering-a-different-component
-// https://github.com/FormidableLabs/urql/issues/1382
-
 export type ModuleSubmitInfo = {
     isFinal: boolean;
     isValid: true;
@@ -57,12 +49,12 @@ type Props<V extends Primitive[]> = {
     //  x/y in a Vector or elements in an array
     props: V[];
 
-    isValid:        (val: V[number], i: number) => boolean;
-    parseVal:       (val: string,    i: number) => V[number];
-    parseFinalVal?: (val: V[number], i: number) => V[number]; // TODO: CONSIDER REMOVING THIS
+    isValid:  (val: V[number], i: number) => boolean;
+    parseVal: (val: string,    i: number) => V[number];
+    fixVal?:  (val: V[number], i: number) => V[number];
 
-    getModifier?: (curMod: V[number] | undefined, newMod: V[number], i: number) => V[number];
-    applyModifier?: (mod: V[number] | undefined, val: V[number], i: number) => V[number];
+    applyModifier?:   (val: V[number], mod: V[number] | undefined, i: number) => V[number];
+    reverseModifier?: (val: V[number], mod: V[number] | undefined, i: number) => V[number];
 
     getAction: (newVals: V[]) => Action;
 
@@ -71,8 +63,8 @@ type Props<V extends Primitive[]> = {
     getCustomDisplayVal?: (val: V, i: number) => V[number];
 }
 export const useBaseModule = <V extends Primitive[]>({
-    props, parseVal, isValid, parseFinalVal, getModifier,
-    getAction, applyModifier, onSubmit, getCustomDisplayVal,
+    props, parseVal, isValid, fixVal, applyModifier, reverseModifier,
+    getAction, onSubmit, getCustomDisplayVal,
 }: Props<V>) => {
     const len = props.reduce((max, vals) => Math.max(max, vals.length), 0);
     const indices = new Array(len).fill(0).map((_, i) => i);
@@ -81,12 +73,12 @@ export const useBaseModule = <V extends Primitive[]>({
     const initialState = {
         focused:      false,
         textVals:     new Array(len).fill("") as string[],
-        modifiers:    new Array(len).fill(undefined) as Array<V[number] | undefined>,
+        // Modifiers are on a per-value and per-prop basis since, note that they are indexed by [value][prop]
+        modifiers:    new Array(len).fill(0).map((_) => new Array<V[number] | undefined>(props.length).fill(undefined)),
         setProps:     [...props],
         initialProps: [...props],
         tempAction:   undefined as Action | undefined,
-
-        submission: undefined as ModuleSubmitInfo | undefined,
+        submission:   undefined as ModuleSubmitInfo | undefined,
     };
     const [state, setState] = useState(initialState);
 
@@ -114,32 +106,50 @@ export const useBaseModule = <V extends Primitive[]>({
     // onModify gets called when a "modification" is made to the current value of the properties
     //  i.e. arrow-keys to step a value
     const onModify = (mod: V[number], i = 0) => {
-        if (!getModifier || !applyModifier)
+        if (!applyModifier || !reverseModifier)
             return;
 
         if (!focused)
             onFocus();
 
         // Wrap in `setState` in-case we aren't currently focused, and need the state from focusing
-        setState(({ textVals, modifiers, tempAction, ...prevState }) => {
+        setState(({ textVals, modifiers, setProps, tempAction, ...prevState }) => {
             tempAction?.undo(); // If tempAction exists, then undo it
 
-            // Get new total modifier and insert into modifiers at `i`
-            const newMod = getModifier(modifiers[i], mod, i);
-            const newModifiers = [...modifiers.slice(0,i), newMod, ...modifiers.slice(i+1)];
+            // Calculate modifier from diffs of applied modifier. This is for the case where
+            //  there're bounds on the final values and multiple props have different values.
+            // As the value reaches its bound, it will get clamped and the modifier will then
+            //  stop increasing/decreasing and thus needs to be also clamped based on the final value.
+            const newMods = setProps.map((prop, j) => {
+                // Get new modifier by appling the modifier to the current total modifier
+                const newMod = applyModifier(mod, modifiers[i][j], i);
 
-            const moddedProps = prevState.setProps.map((prop) => (
+                // Then get the modified value by applying the modifier to the current value
+                const moddedVal = applyModifier(prop[i], newMod, i);
+
+                // Get fixed value from modded val, since modifiers are guaranteed to lead to valid results
+                const fixedVal = (fixVal?.(moddedVal, i) ?? moddedVal);
+
+                // Get the final modifier by reversing the modifier between the fixed value and the modded value
+                //  and then applying that difference to the new modifier
+                return applyModifier(reverseModifier!(fixedVal, moddedVal, i), newMod, i);
+            });
+
+            // Insert final new modifier into modifiers at value `i`
+            const newModifiers = [...modifiers.slice(0,i), newMods, ...modifiers.slice(i+1)];
+            const moddedProps = setProps.map((prop,j) => (
                 // Apply new modifiers to each prop
-                prop.map((val, i) => applyModifier(newModifiers[i], val, i)) as V
+                prop.map((val, i) => applyModifier(val, newModifiers[i][j], i)) as V
             ));
 
             const action = getAction(moddedProps).execute();
 
             // If the props are the same, then show the new prop as a text value
-            const newTextVal = (allSame[i] ? `${moddedProps[0][i]}` : textVals[i]);
+            const allSame = moddedProps.every((v) => (v[i] === moddedProps[0][i]));
+            const newTextVal = (allSame ? `${moddedProps[0][i]}` : textVals[i]);
 
             return {
-                ...prevState,
+                ...prevState, setProps,
                 textVals:   [...textVals.slice(0,i), newTextVal, ...textVals.slice(i+1)],
                 modifiers:  newModifiers,
                 tempAction: action,
@@ -170,16 +180,17 @@ export const useBaseModule = <V extends Primitive[]>({
             tempAction?.undo(); // If tempAction exists, then undo it
 
             // Reset modifier at `i` since value is being set exactly
-            const newModifiers = [...modifiers.slice(0,i), undefined, ...modifiers.slice(i+1)];
+            const newMods = new Array(props.length).fill(undefined);
+            const newModifiers = [...modifiers.slice(0,i), newMods, ...modifiers.slice(i+1)];
 
             const newProps = setProps.map((prop) => (
                 // Insert new value into each prop
                 [...prop.slice(0,i), val, ...prop.slice(i+1)] as V
             ));
 
-            const moddedProps = newProps.map((prop) => (
+            const moddedProps = newProps.map((prop, j) => (
                 // Apply current modifiers to each prop
-                prop.map((val, i) => (applyModifier?.(newModifiers[i], val, i) ?? val)) as V
+                prop.map((val, i) => (applyModifier?.(val, newModifiers[i][j], i) ?? val)) as V
             ));
 
             const action = getAction(moddedProps).execute();
@@ -192,7 +203,7 @@ export const useBaseModule = <V extends Primitive[]>({
                 tempAction: action,
                 submission: { isFinal: false, isValid: true, action },
             };
-        })
+        });
     }
 
     // Focusing on the input will enter a sort-of new "mode" where
@@ -240,11 +251,11 @@ export const useBaseModule = <V extends Primitive[]>({
             tempAction.undo();
 
             // Calculate final props
-            const finalProps = setProps.map((prop) => (
+            const finalProps = setProps.map((prop, j) => (
                 // Apply current modifiers to each prop
                 prop
-                    .map((val, i) => (applyModifier?.(modifiers[i], val, i) ?? val))
-                    .map((val, i) => (parseFinalVal?.(val,i) ?? val)) as V
+                    .map((val, i) => (applyModifier?.(val, modifiers[i][j], i) ?? val))
+                    .map((val, i) => (fixVal?.(val,i) ?? val)) as V
             ));
 
             // If every prop is the same as the initial props, then just reset back to initial state and do nothing

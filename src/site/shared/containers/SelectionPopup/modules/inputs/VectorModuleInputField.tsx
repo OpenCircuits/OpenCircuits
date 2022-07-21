@@ -27,12 +27,12 @@ export const VectorModuleInputField = ({
     const [state, setState] = useBaseModule<[number, number]>({
         props: props.map(v => [v.x, v.y]),
 
-        isValid:       (val, i) => (!isNaN(val) && Min[i] <= val && val <= Max[i]),
-        parseVal:      (val)    => (kind === "float" ? parseFloat(val) : parseInt(val)),
-        parseFinalVal: (val, i) => Clamp(val, Min[i], Max[i]),
+        isValid:  (val, i) => (!isNaN(val) && Min[i] <= val && val <= Max[i]),
+        parseVal: (val)    => (kind === "float" ? parseFloat(val) : parseInt(val)),
+        fixVal:   (val, i) => Clamp(val, Min[i], Max[i]),
 
-        getModifier:   (totalStep, step, i) => Clamp((totalStep ?? 0) + step, Min[i], Max[i]),
-        applyModifier: (step, val, i) => Clamp(val + (step ?? 0), Min[i], Max[i]),
+        applyModifier:   (val, step) => (val + (step ?? 0)),
+        reverseModifier: (val, step) => (val - (step ?? 0)),
 
         getAction: (newVals) => getAction(newVals.map(([x, y]) => V(x, y))),
 
