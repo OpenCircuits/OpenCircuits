@@ -9,11 +9,23 @@ import {V, Vector} from "Vector";
 import {BezierCurve}    from "math/BezierCurve";
 import {BezierContains} from "math/MathUtils";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {Component}      from "./Component";
 import {CullableObject} from "./CullableObject";
 import {Node}           from "./Node";
 import {Port}           from "./ports/Port";
 
+
+const [Info, InitialInfo] = GenPropInfo({
+    infos: {
+        "color": {
+            type:    "color",
+            label:   "Color",
+            initial: "#ffffff",
+        },
+    },
+});
 
 export abstract class Wire extends CullableObject {
     @serialize
@@ -25,14 +37,11 @@ export abstract class Wire extends CullableObject {
     protected shape: BezierCurve;
     @serialize
     protected straight: boolean;
-    @serialize
-    private color: string;
 
     protected dirtyShape: boolean;
 
     public constructor(p1: Port, p2: Port) {
-        super();
-        this.color = "#ffffff";
+        super(InitialInfo);
 
         this.p1 = p1;
         this.p2 = p2;
@@ -116,16 +125,12 @@ export abstract class Wire extends CullableObject {
         this.onTransformChange();
     }
 
-    public setColor(color: string): void {
-        this.color = color;
-    }
-
-    public getColor(): string {
-        return this.color;
+    public override getPropInfo(key: string) {
+        return Info[key];
     }
 
     public getDisplayColor(): string {
-        return this.getColor();
+        return this.props["color"] as string;
     }
 
     public getP1(): Port {

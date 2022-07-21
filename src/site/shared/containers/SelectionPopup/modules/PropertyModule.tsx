@@ -1,18 +1,18 @@
 import {V, Vector} from "Vector";
 
-import {Action}      from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
+import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+import {Action}            from "core/actions/Action";
+import {GroupAction}       from "core/actions/GroupAction";
+import {SetPropertyAction} from "core/actions/SetPropertyAction";
 
-import {SetPropertyAction} from "analog/actions/SetPropertyAction";
+import {IOObject} from "core/models";
 
-import {AnalogComponent} from "analog/models";
-
-import {Prop, PropInfo} from "analog/models/AnalogComponent";
+import {Prop, PropInfo} from "core/models/PropInfo";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
+import {ButtonModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ButtonModuleInputField";
 import {ColorModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 import {ModuleSubmitInfo}       from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
@@ -24,7 +24,7 @@ type PropInputFieldProps = {
     propKey: string;
     info: PropInfo;
 
-    cs: AnalogComponent[];
+    objs: IOObject[];
 
     vals: string[] | number[] | Vector[] | boolean[];
 
@@ -34,10 +34,21 @@ type PropInputFieldProps = {
     getAction: (newVal: Prop) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
 }
-const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherProps }: PropInputFieldProps) => {
+const ModulePropInputField = ({
+    propKey, info, objs, vals, forceUpdate, ...otherProps
+}: PropInputFieldProps) => {
     const { type } = info;
 
     switch (type) {
+    case "button":
+        return (
+            <ButtonModuleInputField
+                {...otherProps}
+                props={vals as Array<string | number | boolean>}
+                getText={info.getText} getNewState={info.getNewState} />
+        );
+    case "boolean":
+        return null; // TODO
     case "string":
         return <TextModuleInputField {...otherProps} props={vals as string[]} />
     case "color":
@@ -51,21 +62,22 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
                 onSubmit={(info) => {
                     otherProps.onSubmit(info);
                     forceUpdate(); // Need to force update since these can trigger info-state changes
-                                    //  and feel less inituitive to the user about focus/blur
+                                   //  and feel less inituitive to the user about focus/blur
                 }} />
         );
     case "int":
     case "float":
         const unit = info.unit;
         if (!unit) {
-            return (<NumberModuleInputField
-                {...otherProps}
-                kind={type} min={info.min} max={info.max} step={info.step}
-                props={vals as number[]} />
+            return (
+                <NumberModuleInputField
+                    {...otherProps}
+                    kind={type} min={info.min} max={info.max} step={info.step}
+                    props={vals as number[]} />
             );
         }
 
-        const units = vals.map((_, i) => cs[i].getProp(`${propKey}_U`)) as string[];
+        const units = vals.map((_, i) => objs[i].getProp(`${propKey}_U`)) as string[];
         const transformedVals = vals.map((v, i) => (v as number) / unit[units[i]].val);
 
         // val is ALWAYS the unit value, and gets transformed on UI-end to unit-full value
@@ -83,12 +95,12 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
                     kind="string[]" props={units}
                     options={Object.entries(unit).map(([key, u]) => [u.display, key])}
                     getAction={(newVal) => new GroupAction(
-                        cs.map(a => new SetPropertyAction(a, `${propKey}_U`, newVal))
+                        objs.map(a => new SetPropertyAction(a, `${propKey}_U`, newVal))
                     )}
                     onSubmit={(info) => {
                         otherProps.onSubmit(info);
                         forceUpdate(); // Need to force update since these can trigger info-state changes
-                                        //  and feel less inituitive to the user about focus/blur
+                                       //  and feel less inituitive to the user about focus/blur
                     }} />
             </span>
         </div>);
@@ -102,29 +114,48 @@ const ModulePropInputField = ({ propKey, info, cs, vals, forceUpdate, ...otherPr
                 kind={kind} min={info.min?.x} max={info.max?.x} step={info.step?.x}
                 props={vvals.map(v => v.x)}
                 getAction={(newVal) => new GroupAction(
-                    cs.map((a,i) => new SetPropertyAction(a, propKey, V(newVal, vvals[i].y)))
+                    objs.map((a,i) => new SetPropertyAction(a, propKey, V(newVal, vvals[i].y)))
                 )} />
             <NumberModuleInputField
                 {...otherProps}
                 kind={kind} min={info.min?.y} max={info.max?.y} step={info.step?.y}
                 props={vvals.map(v => v.y)}
                 getAction={(newVal) => new GroupAction(
-                    cs.map((a,i) => new SetPropertyAction(a, propKey, V(vvals[i].x, newVal)))
+                    objs.map((a,i) => new SetPropertyAction(a, propKey, V(vvals[i].x, newVal)))
                 )} />
         </>);
     }
 }
 
 
+type PropertyModuleWrapperProps = {
+    label?: string;
+
+    children: React.ReactNode;
+}
+const PropertyModuleWrapper = ({ label, children }: PropertyModuleWrapperProps) => {
+    if (!label)
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        return <>{children}</>;
+
+    return (<div>
+        {label}
+        <label>
+            {children}
+        </label>
+    </div>);
+}
+
+
 type Props = {
-    info: AnalogCircuitInfo;
+    info: CircuitInfo;
 }
 export const PropertyModule = ({ info }: Props) => {
     const { history, renderer } = info;
 
-    const [props, cs, forceUpdate] = useSelectionProps(
+    const [props, objs, forceUpdate] = useSelectionProps(
         info,
-        (s): s is AnalogComponent => (s instanceof AnalogComponent),
+        (s): s is IOObject => (s instanceof IOObject),
         (s) => s.getProps(),
     );
 
@@ -133,41 +164,49 @@ export const PropertyModule = ({ info }: Props) => {
 
     return (<>{Object.entries(props).map(([key, vals]) => {
         // Assumes all Info's are the same for each key
-        const info = cs[0].getPropInfo(key);
+        const info = objs[0].getPropInfo(key);
         if (!info)
             throw new Error(`Failed to get prop info for ${key}!`);
 
+        // Get state of props
+        const allProps = objs.map(c => c.getProps());
+
         // Check if this property should be active, if the info defines an `isActive`
         //  function, then we need to make sure all components satisfy it
-        const isActive = (info.isActive) ? (cs.every(a => info.isActive!(a.getProps()))) : (true);
+        const isActive = (info.isActive) ? (info.isActive(allProps)) : (true);
         if (!isActive)
             return null;
 
-        const display = (
-            typeof info.display === "string"
-            ? info.display
-            // For now just take 1st component state for display
-            //  TODO: Maybe improve this
-            : info.display(cs[0].getProps())
+        const label = (
+            typeof info.label === "string"
+            ? info.label
+            : info.label?.(allProps) // Dynamic display based on prop states
         );
 
-        return (<div key={`property-module-${key}`}>
-            {display}
-            <label>
+        const getAction = (newVal: Prop) => new GroupAction(
+            objs.map(a => new SetPropertyAction(a, key, newVal))
+        );
+        const onSubmit = (info: ModuleSubmitInfo) => {
+            renderer.render();
+            if (info.isValid && info.isFinal)
+                history.add(info.action);
+        }
+
+        return (
+            <PropertyModuleWrapper
+                key={`property-module-${key}`}
+                label={label}>
                 { info.readonly
-                ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0] : "-")
-                : (<ModulePropInputField
-                        propKey={key} info={info} cs={cs} vals={vals} forceUpdate={forceUpdate}
-                        alt={`${display} property of object`}
-                        getAction={(newVal) => new GroupAction(
-                            cs.map(a => new SetPropertyAction(a, key, newVal))
-                        )}
-                        onSubmit={(info) => {
-                            renderer.render();
-                            if (info.isValid && info.isFinal)
-                                history.add(info.action);
-                        }} />) }
-            </label>
-        </div>);
+                ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0].toString() : "-")
+                : (
+                    <ModulePropInputField
+                        propKey={key} info={info} objs={objs} vals={vals}
+                        forceUpdate={forceUpdate}
+                        alt={`${key} property of object`}
+                        getAction={getAction}
+                        onSubmit={onSubmit} />
+                )}
+            </PropertyModuleWrapper>
+        )
     })}</>)
 }

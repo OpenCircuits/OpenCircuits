@@ -2,7 +2,8 @@ import {V, Vector} from "Vector";
 
 import {Transform} from "math/Transform";
 
-import {IOObject} from "./IOObject"
+import {IOObject} from "core/models/IOObject"
+import {Prop}     from "core/models/PropInfo";
 
 
 export abstract class CullableObject extends IOObject {
@@ -10,8 +11,8 @@ export abstract class CullableObject extends IOObject {
 
     private dirty: boolean;
 
-    public constructor() {
-        super();
+    public constructor(initialProps: Record<string, Prop> = {}) {
+        super(initialProps);
 
         this.dirty = true;
         this.cullTransform = new Transform(V(), V());

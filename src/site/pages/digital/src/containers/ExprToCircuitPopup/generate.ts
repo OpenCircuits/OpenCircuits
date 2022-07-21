@@ -6,8 +6,9 @@ import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
-import {GroupAction}   from "core/actions/GroupAction";
-import {SetNameAction} from "core/actions/SetNameAction";
+import {GroupAction}       from "core/actions/GroupAction";
+import {SetNameAction}     from "core/actions/SetNameAction";
+import {SetPropertyAction} from "core/actions/SetPropertyAction";
 
 import {AddGroupAction}   from "core/actions/addition/AddGroupAction";
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
@@ -27,8 +28,7 @@ import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 
 import {GenerateTokens} from "digital/utils/ExpressionParser/GenerateTokens";
 
-import {CreateICDataAction}    from "digital/actions/CreateICDataAction";
-import {FrequencyChangeAction} from "digital/actions/FrequencyChangeAction";
+import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
 
@@ -81,7 +81,7 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, options: E
     let inIndex = 0;
     // Set clock frequencies
     for (const clock of inputMap.values()) {
-        action.add(new FrequencyChangeAction(clock, 500 * (2 ** inIndex)).execute());
+        action.add(new SetPropertyAction(clock, "delay", 500 * (2 ** inIndex)).execute());
         inIndex = Math.min(inIndex + 1, 4);
     }
     // Connect clocks to oscilloscope
