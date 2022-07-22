@@ -21,7 +21,7 @@ type Props = {
     info: CircuitInfo;
 }
 export const ReplaceComponentButtonModule = ({ info }: Props) => {
-    const { history, renderer } = info;
+    const { history, renderer, selections } = info;
 
     const [props, components] = useSelectionProps(
         info,
@@ -50,9 +50,10 @@ export const ReplaceComponentButtonModule = ({ info }: Props) => {
                 getAction={(replacements) =>
                     new GroupAction(
                         components.map((c, i) =>
-                                       CreateReplaceDigitalComponentAction(c, replacements[i])[0]),
+                                       CreateReplaceDigitalComponentAction(c, replacements[i], selections)[0]),
                         "Replace Component Module"
                     )}
+                updateImmediately
                 onSubmit={(info) => {
                     renderer.render();
                     if (info.isFinal)
