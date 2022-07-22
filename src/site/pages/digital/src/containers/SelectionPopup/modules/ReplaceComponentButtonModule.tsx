@@ -1,7 +1,9 @@
-import {useState}         from "react";
-import {Create, GetIDFor} from "serialeazy";
+import {useState} from "react";
+import {GetIDFor} from "serialeazy";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
+import {GroupAction} from "core/actions/GroupAction";
 
 import {CanReplace} from "digital/utils/ReplaceDigitalComponentHelpers";
 
@@ -11,6 +13,8 @@ import {DigitalComponent} from "digital/models";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
+import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
+
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 
@@ -18,7 +22,7 @@ type Props = {
     info: CircuitInfo;
 }
 export const ReplaceComponentButtonModule = ({ info }: Props) => {
-    const { renderer } = info;
+    const { history, renderer } = info;
 
     const [props, components] = useSelectionProps(
         info,
@@ -26,7 +30,7 @@ export const ReplaceComponentButtonModule = ({ info }: Props) => {
         (_) => ({ componentId: true }) // Required for button to appear
     );
 
-    const [replacement, setReplacement] = useState(undefined as string | undefined);
+    // const [replacement, setReplacement] = useState(undefined as string | undefined);
 
     if (!(props && components.length === 1))
         return null;
@@ -37,24 +41,35 @@ export const ReplaceComponentButtonModule = ({ info }: Props) => {
                                   && item.id !== GetIDFor(component))
     );
 
+    if (replaceables.length === 0)
+        return null;
+
     return (<>
-        <select id="replacementComponent" value={replacement}
-                onChange={e => setReplacement(e.target.value)}
-                onBlur={e => setReplacement(e.target.value)}>
-            {replaceables.map(replaceable =>
-                <option key={replaceable.id} value={replaceable.id}>{replaceable.label}</option>
-            )}
-        </select>
-        <button type="button"
+        Replace Component
+        <label>
+            <SelectModuleInputField
+                kind="string[]"
+                options={replaceables.map(rep => [rep.label, rep.id])}
+                props={["hu"]}
+                getAction={(replacement) => {
+                    const [action] = CreateReplaceDigitalComponentAction(component, replacement, info.selections);
+                    return action.undo();
+                }}
+                onSubmit={(info) => {
+                    renderer.render();
+                    if (info.isValid && info.isFinal)
+                        history.add(info.action);
+                }} />
+        </label>
+        {/* <button type="button"
                 title="Replace the component with the selected component"
                 disabled={!replacement}
                 onClick={() => {
-                    info.history.add(CreateReplaceDigitalComponentAction(component,
-                                                                         Create(replacement!),
-                                                                         info.selections));
+                    const [action] = CreateReplaceDigitalComponentAction(component, replacement!, info.selections);
+                    info.history.add(action);
                     renderer.render();
                 }}>
             Replace
-        </button>
+        </button> */}
     </>);
 }
