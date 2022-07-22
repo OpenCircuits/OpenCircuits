@@ -31,18 +31,18 @@ import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsP
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
-import {BusButtonModule}              from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
-import {ClockSyncButtonModule}        from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
-import {ComparatorInputCountModule}   from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
-import {CreateICButtonModule}         from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
-import {DecoderInputCountModule}      from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {InputCountModule}             from "site/digital/containers/SelectionPopup/modules/InputCountModule";
-import {OscilloscopeModule}           from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
-import {OutputCountModule}            from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
-import {ReplaceComponentButtonModule} from "site/digital/containers/SelectionPopup/modules/ReplaceComponentButtonModule";
-import {SegmentCountModule}           from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
-import {SelectPortCountModule}        from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-import {ViewICButtonModule}           from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
+import {BusButtonModule}                from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
+import {ClockSyncButtonModule}          from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
+import {ComparatorInputCountModule}     from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
+import {CreateICButtonModule}           from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+import {DecoderInputCountModule}        from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
+import {InputCountModule}               from "site/digital/containers/SelectionPopup/modules/InputCountModule";
+import {OscilloscopeModule}             from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
+import {OutputCountModule}              from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
+import {ReplaceComponentDropdownModule} from "site/digital/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
+import {SegmentCountModule}             from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
+import {SelectPortCountModule}          from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
+import {ViewICButtonModule}             from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
 import docsConfig    from "site/digital/data/docsUrlConfig.json";
 import exampleConfig from "site/digital/data/examples.json";
@@ -105,7 +105,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
                         <BusButtonModule info={info} />
                         <CreateICButtonModule info={info} />
                         <ViewICButtonModule info={info} />
-                        <ReplaceComponentButtonModule info={info} />
+                        <ReplaceComponentDropdownModule info={info} />
                     </SelectionPopup>
 
                     <ContextMenu info={info}

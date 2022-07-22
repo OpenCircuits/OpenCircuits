@@ -28,7 +28,7 @@ export const SelectModuleInputField = <T extends number|string>({
             onChange={(ev) => {
                 setState.onChange(ev.target.value);
                 if (updateImmediately)
-                    setState.onBlur();
+                    ref.current?.blur();
             }}>
             <option value="" disabled hidden>{placeholder ?? "-"}</option>
             {options.map(o => (

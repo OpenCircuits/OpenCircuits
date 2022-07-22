@@ -20,7 +20,7 @@ import itemNavConfig from "site/digital/data/itemNavConfig.json";
 type Props = {
     info: CircuitInfo;
 }
-export const ReplaceComponentButtonModule = ({ info }: Props) => {
+export const ReplaceComponentDropdownModule = ({ info }: Props) => {
     const { history, renderer, selections } = info;
 
     const [props, components] = useSelectionProps(
