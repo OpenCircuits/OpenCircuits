@@ -55,10 +55,6 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
     const [displayExtraInfo, setDisplayExtraInfo] = useState(false);
 
-    if (g.isEmpty())
-        return null;
-    if (g.getActions().length === 1)
-        return (<HistoryEntry a={g.getActions()[0]} isRedo={isRedo} />);
     return (
         <div className={`historybox__groupentry ${isRedo ? "historybox__groupentry--dashed" : ""}`}
              role="button" tabIndex={0}
@@ -89,6 +85,7 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
             {!isCollapsed && g.getActions().map((a, i) => {
                 return (<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={isRedo} />);
             })}
+            {!isCollapsed && g.isEmpty() && <div style={{ marginLeft: "10px" }}>Empty</div>}
         </div>
     );
 }

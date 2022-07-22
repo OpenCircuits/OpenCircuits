@@ -68,11 +68,11 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                         <h3>Notation</h3>
                         {FORMATS.map(curFormat =>
                             (<ButtonToggle key={curFormat.icon}
-                                           isOn={format === curFormat.icon} text={curFormat.label} height="40px"
-                                           onChange={() => setFormat(curFormat.icon)} />)
+                                           isOn={format === curFormat.icon} height="40px"
+                                           onChange={() => setFormat(curFormat.icon)}>{curFormat.label}</ButtonToggle>)
                         )}
-                        <ButtonToggle isOn={format === "custom"} text="Custom" height="40px"
-                                      onChange={() => setFormat("custom")} />
+                        <ButtonToggle isOn={format === "custom"} height="40px"
+                                      onChange={() => setFormat("custom")}>Custom</ButtonToggle>
                         {
                             format === "custom" &&
                             <CustomOps customOps={customOps} setCustomOps={setCustomOps} />

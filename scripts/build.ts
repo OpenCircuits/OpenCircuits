@@ -40,8 +40,8 @@ function BuildServer(prod: boolean) {
         });
     });
 }
-async function BuildDir(dir: string) {
-    return await startWebpack(dir, "production", false);
+async function BuildDir(dir: string, project: string) {
+    return await startWebpack(dir, project, "production", false);
 }
 
 
@@ -55,7 +55,7 @@ async function BuildDir(dir: string) {
     const ci = argv.ci;
     const prod = argv.prod;
 
-    let dirs = argv._;
+    let dirs = argv._ as string[];
     if (ci && dirs.length === 0) {
         // Run tests on all directories
         dirs = Object.keys(DIR_MAP);
@@ -88,6 +88,7 @@ async function BuildDir(dir: string) {
     // Launch build in each directory
     for (const dir of dirs) {
         const info = DIR_MAP[dir];
+
         console.log();
         if (!info) {
             console.log(chalk.red("Could not find directory,", chalk.underline(dir) + "!"));
@@ -103,7 +104,7 @@ async function BuildDir(dir: string) {
             await BuildServer(prod);
             spinner.stop();
         } else {
-            await BuildDir(`src/site/pages/${dir}`);
+            await BuildDir(`src/site/pages/${dir}`, dir);
         }
 
         console.log(`${chalk.greenBright("Done!")}`);
