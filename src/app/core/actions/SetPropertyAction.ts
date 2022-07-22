@@ -36,7 +36,10 @@ export class SetPropertyAction implements Action {
     }
 
     public getName(): string {
-        return "Changed Property";
+        return `Changed Property ${this.propKey}`;
     }
 
+    public getCustomInfo(): string[] {
+        return [`From ${this.initialProp} to ${this.targetProp}`];
+    }
 }

@@ -1,6 +1,7 @@
+import {ButtonToggle} from "shared/components/ButtonToggle";
 import {SwitchToggle} from "shared/components/SwitchToggle";
 
-import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
+import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
 type Props = SharedModuleInputFieldProps<boolean> & {
@@ -8,16 +9,14 @@ type Props = SharedModuleInputFieldProps<boolean> & {
     text?: string;
 }
 export const BooleanModuleInputField = ({ text, type, ...props }: Props) => {
-    const [state, setState] = useBaseModule<boolean>({
-        ...props,
-
+    const [state, setState] = useBaseModule<[boolean]>({
         parseVal: (val) => (val === "true"),
-        isValid:  (_)  => true,
+        ...DefaultConfig(props),
     });
 
-    const isOn = (state.value === "true" || state.value === true);
+    const isOn = (state.values[0] === "true" || state.values[0] === true);
 
-    const onClick = () => {
+    const onClick = async () => {
         setState.onFocus();
         setState.onChange(isOn ? "false" : "true");
         setState.onBlur();
@@ -25,11 +24,12 @@ export const BooleanModuleInputField = ({ text, type, ...props }: Props) => {
 
     if (type === "button") {
         return (
-            <button type="button"
-                    title="Toggle the boolean property"
-                    onClick={onClick}>
+            <ButtonToggle
+                isOn={state.allSame ? isOn : false}
+                height="35px"
+                onChange={onClick}>
                 {text}
-            </button>
+            </ButtonToggle>
         );
     }
 

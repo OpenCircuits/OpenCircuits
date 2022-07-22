@@ -1,4 +1,4 @@
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
@@ -18,6 +18,7 @@ import {ModuleSubmitInfo}       from "shared/containers/SelectionPopup/modules/i
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 import {TextModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/TextModuleInputField";
+import {VectorModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/VectorModuleInputField";
 
 
 type PropInputFieldProps = {
@@ -31,7 +32,7 @@ type PropInputFieldProps = {
     alt?: string;
 
     forceUpdate: () => void;
-    getAction: (newVal: Prop) => Action;
+    getAction: (newVals: Prop[]) => Action;
     onSubmit: (info: ModuleSubmitInfo) => void;
 }
 const ModulePropInputField = ({
@@ -86,16 +87,19 @@ const ModulePropInputField = ({
                 <NumberModuleInputField
                     {...otherProps}
                     kind={type} min={info.min} max={info.max} step={info.step}
-                    getAction={(newVal) => otherProps.getAction(newVal * unit[units[0]].val)}
-                    props={transformedVals} />
+                    props={transformedVals}
+                    getAction={(newVals) => (
+                        // Scale new value by the current unit
+                        otherProps.getAction(newVals.map(v => (v * unit[units[0]].val)))
+                    )} />
             </span>
             <span style={{ display: "inline-block", width: "30%" }}>
                 <SelectModuleInputField
                     {...otherProps}
                     kind="string[]" props={units}
                     options={Object.entries(unit).map(([key, u]) => [u.display, key])}
-                    getAction={(newVal) => new GroupAction(
-                        objs.map(a => new SetPropertyAction(a, `${propKey}_U`, newVal))
+                    getAction={(newVals) => new GroupAction(
+                        objs.map((a,i) => new SetPropertyAction(a, `${propKey}_U`, newVals[i]))
                     )}
                     onSubmit={(info) => {
                         otherProps.onSubmit(info);
@@ -108,22 +112,15 @@ const ModulePropInputField = ({
     case "vecf":
         const kind = (type === "veci" ? "int" : "float");
         const vvals = vals as Vector[];
-        return (<>
-            <NumberModuleInputField
+        return (
+            <VectorModuleInputField
                 {...otherProps}
-                kind={kind} min={info.min?.x} max={info.max?.x} step={info.step?.x}
-                props={vvals.map(v => v.x)}
-                getAction={(newVal) => new GroupAction(
-                    objs.map((a,i) => new SetPropertyAction(a, propKey, V(newVal, vvals[i].y)))
+                kind={kind} min={info.min} max={info.max} step={info.step}
+                props={vvals}
+                getAction={(vals) => new GroupAction(
+                    objs.map((a,i) => new SetPropertyAction(a, propKey, vals[i]))
                 )} />
-            <NumberModuleInputField
-                {...otherProps}
-                kind={kind} min={info.min?.y} max={info.max?.y} step={info.step?.y}
-                props={vvals.map(v => v.y)}
-                getAction={(newVal) => new GroupAction(
-                    objs.map((a,i) => new SetPropertyAction(a, propKey, V(vvals[i].x, newVal)))
-                )} />
-        </>);
+        );
     }
 }
 
@@ -183,13 +180,13 @@ export const PropertyModule = ({ info }: Props) => {
             : info.label?.(allProps) // Dynamic display based on prop states
         );
 
-        const getAction = (newVal: Prop) => new GroupAction(
-            objs.map(a => new SetPropertyAction(a, key, newVal))
+        const getAction = (newVals: Prop[]) => new GroupAction(
+            objs.map((a,i) => new SetPropertyAction(a, key, newVals[i]))
         );
-        const onSubmit = (info: ModuleSubmitInfo) => {
+        const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
             renderer.render();
-            if (info.isValid && info.isFinal)
-                history.add(info.action);
+            if (isFinal)
+                history.add(action);
         }
 
         return (
