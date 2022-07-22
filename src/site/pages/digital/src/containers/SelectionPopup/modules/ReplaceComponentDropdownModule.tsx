@@ -1,14 +1,15 @@
 import {GetIDFor} from "serialeazy";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CanReplace} from "digital/utils/ReplaceDigitalComponentHelpers";
+import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {CanReplace}         from "digital/utils/ReplaceDigitalComponentHelpers";
 
 import {CreateReplaceDigitalComponentAction} from "digital/actions/ReplaceDigitalComponentActionFactory";
 
 import {DigitalComponent} from "digital/models";
+
+import {IC} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
@@ -17,24 +18,47 @@ import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/i
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 
+type ICID = `ic/${number}`;
 type Props = {
-    info: CircuitInfo;
+    info: DigitalCircuitInfo;
 }
 export const ReplaceComponentDropdownModule = ({ info }: Props) => {
-    const { history, renderer, selections } = info;
+    const { designer, history, renderer, selections } = info;
 
     const [props, components] = useSelectionProps(
         info,
         (s): s is DigitalComponent => (s instanceof DigitalComponent),
-        (c) => ({ componentId: GetIDFor(c)! })
+        (c) => ({ componentId: c instanceof IC
+                               ? `ic/${designer.getICData().indexOf(c.getData())}`
+                               : GetIDFor(c)! })
     );
 
     if (!(props && props.componentId && components.length === 1))
         return null;
 
     const component = components[0];
-    const replaceables = itemNavConfig.sections.flatMap(section =>
-        section.items.filter(item => CanReplace(component, item.id))
+
+    const ics = designer.getICData().map((d, i) => ({
+        id:        `ic/${i}` as ICID,
+        label:     d.getName(),
+        icon:      "multiplexer.svg",
+        removable: true,
+    }));
+
+    const replaceables = [...itemNavConfig.sections,
+                          ...(ics.length === 0 ? [] : [{
+                              id:    "other",
+                              label: "ICs",
+                              items: ics,
+                          }]),
+    ].flatMap(section =>
+        section.items.filter(item => {
+            const id = item.id;
+            const replacement = id.startsWith("ic")
+                                ? designer.getICData()[parseInt(id.split("/")[1])]
+                                : id;
+            return CanReplace(component, replacement);
+        })
     );
 
     if (replaceables.length === 0)
@@ -49,8 +73,12 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
                 props={props.componentId}
                 getAction={(replacements) =>
                     new GroupAction(
-                        components.map((c, i) =>
-                                       CreateReplaceDigitalComponentAction(c, replacements[i], selections)[0]),
+                        components.map((c, i) => {
+                            const replacement = replacements[i].startsWith("ic")
+                                                ? designer.getICData()[parseInt(replacements[i].split("/")[1])]
+                                                : replacements[i];
+                                       return CreateReplaceDigitalComponentAction(c, replacement, selections)[0]
+                        }),
                         "Replace Component Module"
                     )}
                 updateImmediately

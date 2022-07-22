@@ -1,4 +1,4 @@
-import {Create, GetIDFor} from "serialeazy";
+import {Create} from "serialeazy";
 
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
@@ -38,7 +38,6 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
 export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
                                                     replacement: string | ICData,
                                                     selections?: SelectionsWrapper): [GroupAction, DigitalComponent] {
-    console.log(`Replacing ${GetIDFor(original)} with ${replacement}`);
     const designer = original.getDesigner();
     if (!designer) {
         throw new Error("original is not in a designer");
