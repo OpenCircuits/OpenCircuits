@@ -29,7 +29,7 @@ type Props = {
     onClick?: () => void;
     onClose?: () => void;
 }
-export const Dropdown = ({open, btnInfo, onClick, onClose, children}: Props) => {
+export const Dropdown = ({ open, btnInfo, onClick, onClose, children }: Props) => {
     // Check for clicking outside of the menu as to call onClose
     useEffect(() => {
         function onWindowClick(ev: MouseEvent) {
@@ -51,7 +51,7 @@ export const Dropdown = ({open, btnInfo, onClick, onClose, children}: Props) => 
         return () => {events.forEach((e) => window.removeEventListener(e, onWindowClick))};
     });
 
-    const {h} = useWindowSize();
+    const { h } = useWindowSize();
 
     return (
         <div className="header__right__dropdown">
@@ -62,7 +62,7 @@ export const Dropdown = ({open, btnInfo, onClick, onClose, children}: Props) => 
                 <img src={btnInfo.src} height="100%" alt={btnInfo.title} />
             </button>
             <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}
-                 style={{maxHeight: h-75+"px"}}>
+                 style={{ maxHeight: h-75+"px" }}>
                 {children}
             </div>
         </div>

@@ -23,7 +23,7 @@ export const GenerateThumbnail = (() => {
     const canvas = document.createElement("canvas");
     const camera = new Camera(DEFAULT_THUMBNAIL_SIZE, DEFAULT_THUMBNAIL_SIZE);
 
-    return ({info, size}: Info): string => {
+    return ({ info, size }: Info): string => {
         canvas.width  = size?.w ?? DEFAULT_THUMBNAIL_SIZE;
         canvas.height = size?.h ?? DEFAULT_THUMBNAIL_SIZE;
 

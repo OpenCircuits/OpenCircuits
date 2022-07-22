@@ -87,8 +87,8 @@ export class TranslateAction implements Action {
     }
 
     public getCustomInfo(): string[] {
-        return Array.from(
-            this.objs, (obj, i) => {
+        return [...this.objs].map(
+            (obj, i) => {
                 const { x: ix, y: iy } = this.initialPositions[i];
                 const { x: tx, y: ty } = this.targetPositions[i];
                 return `${obj.getName()}: moved from (${ix.toFixed(2)}, ${iy.toFixed(2)})

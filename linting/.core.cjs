@@ -2,6 +2,14 @@ module.exports = {
     "extends": [
         "eslint:recommended",
     ],
+    "overrides": [
+        {
+            "files": ["scripts/**"],
+            "rules": {
+                "no-console": "off", // Console logging actually has a purpose
+            }
+        },
+    ],
     "rules": {
         "max-len": ["warn", {
             "code": 120,

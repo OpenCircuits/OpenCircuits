@@ -59,7 +59,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
                                  ? NegatedTypeToGate[node.type]
                                  : TypeToGate[node.type]);
     if (node.kind === "unop") {
-        const prevNode = treeToCircuitCore(node.child, inputs, ret).slice(-1)[0] as DigitalComponent;
+        const prevNode = treeToCircuitCore(node.child, inputs, ret).at(-1) as DigitalComponent;
         const wire = LazyConnect(prevNode, newGate);
         ret.push(wire);
     } else if (node.kind === "binop") {
@@ -67,7 +67,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
         node.children.forEach(child => {
             if (!child)
                 throw new Error("treeToCircuitCore failed: child was undefined");
-            const prevNode = treeToCircuitCore(child, inputs, ret).slice(-1)[0] as DigitalComponent;
+            const prevNode = treeToCircuitCore(child, inputs, ret).at(-1) as DigitalComponent;
             const wire = LazyConnect(prevNode, newGate);
             ret.push(wire);
         });
@@ -90,11 +90,10 @@ export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, D
     if (!tree)
         return [];
 
-    let ret: IOObject[] = Array.from(inputs.values());
+    let ret: IOObject[] = [...inputs.values()];
 
     ret = treeToCircuitCore(tree, inputs, ret);
-    const wire = LazyConnect(ret.slice(-1)[0] as DigitalComponent, output);
-    ret.push(wire);
-    ret.push(output);
+    const wire = LazyConnect(ret.at(-1) as DigitalComponent, output);
+    ret.push(wire, output);
     return ret;
 }

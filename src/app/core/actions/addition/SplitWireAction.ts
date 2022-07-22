@@ -50,7 +50,7 @@ export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: 
  * @returns          A GroupAction representing the Wire being snipped.
  */
 export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): GroupAction {
-    const wires = port.getP1().getWires().concat(port.getP2().getWires());
+    const wires = [...port.getP1().getWires(), ...port.getP2().getWires()];
     if (wires.length !== 2)
         throw new Error("Cannot create snip action with WirePort of >2 wires!");
 

@@ -1,16 +1,25 @@
-const webpack = require("webpack");
+import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
+import webpack                     from "webpack";
 
-const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+import mergeDeep from "../../utils/merge.js";
 
-const mergeDeep = require("../../utils/merge");
-const {Config} = require("./types");
+import CSSConfig  from "./css.js";
+import HTMLConfig from "./html.js";
+import IMGConfig  from "./img.js";
+import TSConfig   from "./ts.js";
+import WASMConfig from "./wasm.js";
+
+import type {Config}        from "./types";
+import type {Configuration} from "webpack";
 
 
 /**
- * @param {Config} config
- * @returns {webpack.Configuration}
+ * Creates the webpack configuration.
+ *
+ * @param config The current configuration.
+ * @returns        The webpack configuration.
  */
-module.exports = (config) => {
+export default (config: Config): Configuration => {
     const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;
 
     return mergeDeep(
@@ -18,11 +27,11 @@ module.exports = (config) => {
             mode, target, entry, stats,
 
             output: {
-                path: buildDir,
+                path:       buildDir,
                 publicPath: "/",
 
                 // Extract the JS to /static/js/
-                filename: (isProd ? "static/js/[name].[contenthash:8].js" : undefined),
+                filename:      (isProd ? "static/js/[name].[contenthash:8].js" : undefined),
                 chunkFilename: (isProd ? "static/js/[name].[contenthash:8].chunk.js" : undefined),
             },
 
@@ -35,7 +44,7 @@ module.exports = (config) => {
                         Object.entries(env).map(
                             ([key, val]) => [key, JSON.stringify(val)]
                         )
-                    )
+                    ),
                 }),
             ],
 
@@ -45,10 +54,10 @@ module.exports = (config) => {
 
             devtool: (isDev ? "source-map" : undefined),
         },
-        require("./img")(config),
-        require("./css")(config),
-        require("./ts")(config),
-        require("./html")(config),
-        require("./wasm")(config),
+         IMGConfig(config),
+         CSSConfig(config),
+          TSConfig(config),
+        HTMLConfig(config),
+        WASMConfig(config),
     );
 }

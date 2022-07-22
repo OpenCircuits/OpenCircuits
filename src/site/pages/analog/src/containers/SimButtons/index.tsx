@@ -54,16 +54,13 @@ export const SimButtons = ({ info }: Props) => {
         o.forEach(o => {
             o.setConfig({
                 ...o.getConfig(),
-                vecs: info.sim!.getFullVecIDs().reduce(
-                    (prev, key, i, arr) => ({
-                        ...prev,
-                        [key]: {
-                            // Last data-array is x/time data, disabled by default
-                            enabled: (i < arr.length-1),
-                            color:   GetCol(i, arr.length),
-                        },
-                    }), {}
-                ),
+                vecs: Object.fromEntries(info.sim!.getFullVecIDs().map(
+                    (key, i, arr) => [key, {
+                        // Last data-array is x/time data, disabled by default
+                        enabled: (i < arr.length-1),
+                        color:   GetCol(i, arr.length),
+                    }]
+                )),
             });
         });
 
@@ -84,6 +81,7 @@ export const SimButtons = ({ info }: Props) => {
             Upload();
             Simulate();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     // --------------
 

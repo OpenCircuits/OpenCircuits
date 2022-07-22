@@ -196,7 +196,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         const output = (p1 instanceof OutputPort ? p1 : p2) as OutputPort;
 
         // Return undefined if InputPort already has a connection
-        if (input && input.getWires().length !== 0)
+        if (input && input.getWires().length > 0)
             return;
         return new DigitalWire(output, input);
     }
@@ -284,7 +284,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         // Copy propagations so that circuit will continue
         //  propagating if it was previously doing so
-        this.propagationQueue = designer.propagationQueue.slice();
+        this.propagationQueue = [...designer.propagationQueue];
         this.updateRequests = designer.updateRequests;
 
         this.update();
@@ -314,14 +314,14 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public getObjects(): DigitalComponent[] {
-        return this.objects.slice(); // Shallow copy array
+        return [...this.objects]; // Shallow copy array
     }
 
     public getWires(): DigitalWire[] {
-        return this.wires.slice(); // Shallow copy array
+        return [...this.wires]; // Shallow copy array
     }
 
     public getICData(): ICData[] {
-        return this.ics.slice(); // Shallow copy array
+        return [...this.ics]; // Shallow copy array
     }
 }

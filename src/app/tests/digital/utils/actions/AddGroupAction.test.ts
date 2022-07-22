@@ -1,5 +1,3 @@
-import "jest";
-
 import {AddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -26,9 +24,9 @@ describe("Add Group Action", () => {
         const circuit = DigitalObjectSet.From([input, output, wire]);
         new AddGroupAction(designer, circuit).execute();
 
-        expect(circuit.getWires().length).toBe(1);
-        expect(outPort.getWires().length).toBe(1);
-        expect(inPort.getWires().length).toBe(1);
+        expect(circuit.getWires()).toHaveLength(1);
+        expect(outPort.getWires()).toHaveLength(1);
+        expect(inPort.getWires()).toHaveLength(1);
         expect(circuit.getWires()[0]).toBe(wire);
         expect(outPort.getWires()[0]).toBe(wire);
         expect(inPort.getWires()[0]).toBe(wire);

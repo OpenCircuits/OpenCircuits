@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner}          from "digital/models/DigitalCircuitDesigner";
@@ -8,7 +6,7 @@ import {Comparator, ConstantNumber, LED} from "digital/models/ioobjects";
 
 describe("Comparator", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place,Connect} = GetHelpers(designer);
+    const { Place,Connect } = GetHelpers(designer);
 
     // create necessary components for testing
     const [c] = Place(new Comparator());

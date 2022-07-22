@@ -19,11 +19,11 @@ import {EventHandler} from "../EventHandler";
  * @param selections Are the selected objects that the action is being done on.
  */
 export const DeleteHandler: EventHandler = ({
-    conditions: (event: Event, {selections}: CircuitInfo) =>
+    conditions: (event: Event, { selections }: CircuitInfo) =>
          (event.type === "keydown" &&
          (event.key === "Delete" || event.key === "Backspace") &&
          selections.amount() > 0),
-    getResponse: ({history, designer, selections}: CircuitInfo) => {
+    getResponse: ({ history, designer, selections }: CircuitInfo) => {
         const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
         // Deselect the objects then remove them
         history.add(new GroupAction([

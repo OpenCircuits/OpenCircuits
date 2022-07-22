@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
@@ -19,7 +17,7 @@ import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
 describe("Select Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place} = GetHelpers(designer);
+        const { Place } = GetHelpers(designer);
 
         const [mux] = Place(new Multiplexer());
 
@@ -48,9 +46,9 @@ describe("Select Port Change Action", () => {
         expect(mux.getInputPortCount().getValue()).toBe(16);
         expect(mux.getOutputPortCount().getValue()).toBe(1);
     });
-    test("Undo/Redo 1", () => {
+    test("Undo/Redo 2", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [sw, n, mux] = Place(new Switch(), new DigitalNode(), new Multiplexer());
 

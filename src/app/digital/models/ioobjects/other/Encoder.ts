@@ -36,7 +36,7 @@ export class Encoder extends DigitalComponent {
         const index = this.getInputPorts().indexOf(onPorts[0]);
 
         // Convert index to list of bits in binary
-        const bits = index.toString(2).padStart(this.outputs.length, "0").split("").reverse();
+        const bits = [...index.toString(2).padStart(this.outputs.length, "0")].reverse();
         bits.forEach((bit, i) => {
             super.activate(bit === "1", i);
         });

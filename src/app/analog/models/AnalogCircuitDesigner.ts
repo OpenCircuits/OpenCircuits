@@ -165,10 +165,10 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     }
 
     public getObjects(): AnalogComponent[] {
-        return this.objects.slice(); // Shallow copy array
+        return [...this.objects]; // Shallow copy array
     }
 
     public getWires(): AnalogWire[] {
-        return this.wires.slice(); // Shallow copy array
+        return [...this.wires]; // Shallow copy array
     }
 }

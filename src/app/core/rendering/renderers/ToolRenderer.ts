@@ -54,7 +54,7 @@ export const ToolRenderer = (() => {
 
     return {
         render(renderer: Renderer, info: CircuitInfo, toolManager: ToolManager): void {
-            const {camera, selections} = info;
+            const { camera, selections } = info;
 
             const tool = toolManager.getCurrentTool();
 

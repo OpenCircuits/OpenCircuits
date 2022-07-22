@@ -15,7 +15,7 @@ export const OpenFileButton = ({ helpers }: Props) => {
     return (
         <div>
             <InputField ref={fileInput} type="file" multiple={false} accept=".circuit,.json"
-                        style={{display: "none"}}
+                        style={{ display: "none" }}
                         onChange={(e) => {
                             if (e.target.files && e.target.files.length > 0)
                             helpers.LoadCircuit(() => LoadFile(e.target.files![0]))

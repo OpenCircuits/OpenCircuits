@@ -1,5 +1,3 @@
-import "jest";
-
 import {V, Vector} from "Vector";
 
 import {FakeInput} from "./FakeInput";
@@ -16,7 +14,7 @@ describe("Fake Input", () => {
         steps++;
     }
 
-    input.addListener(({type}) => {
+    input.addListener(({ type }) => {
         if (type === "mousedown" || type ==="mousemove" || type === "mouseup")
             step();
     });

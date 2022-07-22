@@ -1,5 +1,3 @@
-import "jest";
-
 import {MIDDLE_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V} from "Vector";
@@ -8,26 +6,17 @@ import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
 import {Setup}      from "test/helpers/Setup";
 
-import {DigitalComponent} from "digital/models";
-
 import {DigitalNode, LED, Switch} from "digital/models/ioobjects";
 
 
 describe("Node and Wire Interaction", () => {
-    const {designer, input} = Setup();
-    const {Place} = GetHelpers(designer);
-
-    function expectNotToBeConnected(obj1: DigitalComponent, obj2: DigitalComponent): void {
-        const connections = obj1.getOutputs().map((w) => w.getOutputComponent());
-        expect(connections).not.toContain(obj2);
-    }
+    const { designer, input } = Setup();
+    const { Place } = GetHelpers(designer);
 
     afterEach(() => {
         // Clear circuit
         designer.reset();
     });
-
-
 
     test("Drag to Connect Switch -> LED with Right Mouse", () => {
         const [sw, led] = Place(new Switch(), new LED());
@@ -36,7 +25,7 @@ describe("Node and Wire Interaction", () => {
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
                    led.getInputPort(0).getWorldTargetPos(), RIGHT_MOUSE_BUTTON);
 
-        expectNotToBeConnected(sw, led);
+        expect(sw).not.toBeConnectedTo(led);
     });
 
     test("Connect Switch -> LED then Split Twice into Snapped Rectangle With Right Mouse Button", () => {
@@ -102,6 +91,6 @@ describe("Node and Wire Interaction", () => {
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
                    led.getInputPort(0).getWorldTargetPos(), MIDDLE_MOUSE_BUTTON);
 
-        expectNotToBeConnected(sw, led);
+        expect(sw).not.toBeConnectedTo(led);
     });
 });
