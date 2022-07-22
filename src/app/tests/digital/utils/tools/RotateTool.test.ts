@@ -67,7 +67,6 @@ describe("Rotate Tool", () => {
                     .release();
             input.releaseKey("z");
             expect(obj.getAngle()).toBeCloseTo(-Math.PI/4);
-
         });
     });
 
@@ -282,8 +281,6 @@ describe("Rotate Tool", () => {
             expect(obj1.getAngle()).toBeCloseTo(-Math.PI/2);
             expect(obj2.getAngle()).toBeCloseTo(-Math.PI/2);
             expect(newMidpoint).toApproximatelyEqual(midpoint);
-
-
         });
 
     });

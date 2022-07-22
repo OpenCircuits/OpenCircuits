@@ -30,8 +30,6 @@ export class RotateAction implements Action {
      */
     private finalAngles: number[];
 
-    private isIndependent: boolean;
-
     /**
      * Creates a rotation action for a component or a group of components.
      *

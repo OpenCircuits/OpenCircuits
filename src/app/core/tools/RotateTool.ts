@@ -21,7 +21,6 @@ export const RotateTool = (() => {
     let isIndependent = false;
 
     let initialMidpoints = [] as Vector[];
-    let currentMidpoints = [] as Vector[];
 
     function isMouseOnCircle({ camera, input, selections }: CircuitInfo): boolean {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
