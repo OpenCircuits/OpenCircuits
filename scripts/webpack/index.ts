@@ -18,11 +18,12 @@ import customDevServer from "./customDevServer.js";
 /**
  * Basic webpack creation.
  *
- * @param dir  The directory to launch the webpack instance in.
- * @param mode The webpack-mode: development or production.
- * @param open Boolean indicating whether or not we should auto-open the browser on start.
+ * @param dir     The directory to launch the webpack instance in.
+ * @param project The project that is being started, i.e. "digital" or "analog".
+ * @param mode    The webpack-mode: development or production.
+ * @param open    Boolean indicating whether or not we should auto-open the browser on start.
  */
-export default async (dir: string, mode: "development" | "production", open: boolean) => {
+export default async (dir: string, project: string, mode: "development" | "production", open: boolean) => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
@@ -118,7 +119,7 @@ export default async (dir: string, mode: "development" | "production", open: boo
                 overlay: true,
             },
             // Allows devs to save local circuits for use in #1037
-            setupMiddlewares: customDevServer,
+            setupMiddlewares: customDevServer(project),
         }, compiler);
 
         ["SIGINT", "SIGTERM"].forEach(sig => {

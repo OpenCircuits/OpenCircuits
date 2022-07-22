@@ -4,6 +4,10 @@ import {V, Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
+import {Prop} from "core/models/PropInfo";
+
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
 import {InputPort} from "digital/models";
@@ -11,39 +15,54 @@ import {InputPort} from "digital/models";
 import {TimedComponent} from "../TimedComponent";
 
 
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        "samples": {
+            type:  "int",
+            label: "Samples",
+
+            initial: 100, min: 10, max: 400, step: 10,
+        },
+        "displaySize": {
+            type:    "veci",
+            label:   "Display Size",
+            initial: V(400,  200),
+            min:     V(100,  50),
+            max:     V(1000, 500),
+            step:    V(50,   50),
+        },
+    },
+});
+
 @serializable("Oscilloscope")
 export class Oscilloscope extends TimedComponent {
     @serialize
-    private numSamples: number;
-    @serialize
     private signals: boolean[][];
-    @serialize
-    private displaySize: Vector;
 
     public constructor() {
         super(100, new ClampedValue(1, 1, 8), new ClampedValue(0), V(400, 200),
-              new ConstantSpacePositioner<InputPort>("left", 400));
+              new ConstantSpacePositioner<InputPort>("left", 400), undefined,
+              InitialProps);
 
-        this.numSamples = 100;
-        this.displaySize = V(400, 200);
         this.signals = [[]];
 
         this.reset();
     }
 
     protected onTick(): void {
+        const numSamples = this.props["samples"] as number;
         // Add signals
         for (let i = 0; i < this.numInputs(); i++) {
             this.signals[i].push(this.inputs.get(i).getIsOn());
-            if (this.signals[i].length > this.numSamples)
-                this.signals[i].splice(0, (this.signals[i].length-this.numSamples));
+            if (this.signals[i].length > numSamples)
+                this.signals[i].splice(0, (this.signals[i].length-numSamples));
         }
     }
 
     // @Override
     public setInputPortCount(val: number): void {
         // Update size (first so that ports update positions properly)
-        super.setSize(this.displaySize.scale(V(1, val)));
+        super.setSize((this.props["displaySize"] as Vector).scale(V(1, val)));
 
         super.setInputPortCount(val);
 
@@ -53,19 +72,19 @@ export class Oscilloscope extends TimedComponent {
             this.signals.pop();
     }
 
-    public setNumSamples(num: number): void {
-        this.numSamples = num;
-    }
+    public override setProp(key: string, val: Prop): void {
+        super.setProp(key, val);
 
-    public setDisplaySize(size: Vector): void {
-        this.displaySize = size;
+        if (key === "displaySize") {
+            const size = val as Vector;
 
-        super.setSize(this.displaySize.scale(V(1, this.numInputs())));
+            super.setSize(size.scale(V(1, this.numInputs())));
 
-        // Update spacing amount for port-positioner
-        (this.inputs.getPositioner() as ConstantSpacePositioner<InputPort>).spacing = size.y*2;
+            // Update spacing amount for port-positioner
+            (this.inputs.getPositioner() as ConstantSpacePositioner<InputPort>).spacing = size.y*2;
 
-        this.inputs.updatePortPositions();
+            this.inputs.updatePortPositions();
+        }
     }
 
     public reset(): void {
@@ -74,16 +93,14 @@ export class Oscilloscope extends TimedComponent {
         super.reset();
     }
 
-    public getNumSamples(): number {
-        return this.numSamples;
+    public override getPropInfo(key: string) {
+        if (!(key in Info))
+            return super.getPropInfo(key);
+        return Info[key];
     }
 
     public getSignals(): boolean[][] {
         return [...this.signals];
-    }
-
-    public getDisplaySize(): Vector {
-        return V(this.displaySize);
     }
 
     public getDisplayName(): string {

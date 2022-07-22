@@ -28,12 +28,12 @@ export const LEDRenderer = (() => {
             const size = led.getSize();
 
             // draw the LED object
-            renderer.image(Images.GetImage(led.getImageName())!, V(), size, led.getColor());
+            renderer.image(Images.GetImage(led.getImageName())!, V(), size, led.getProp("color") as string);
 
             // draw the LED glow
             if (led.isOn()) {
                 // Parse colors and blend them if selected
-                const ledColor = parseColor(led.getColor());
+                const ledColor = parseColor(led.getProp("color") as string);
                 const selectedColor = parseColor(SELECTED_FILL_COLOR!);
                 const col = (selected ? blend(ledColor, selectedColor, 0.5) : ledColor);
 
