@@ -47,7 +47,7 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
                 // Swap out the gates
                 action.add(CreateSnipGateAction(other));
                 const [replaceAction, replacementComponent] = CreateReplaceDigitalComponentAction(gate, newGate)
-                action.add(replaceAction);
+                action.add(replaceAction.execute());
 
                 // Add new wires to negatedCircuit
                 negatedCircuit.splice(negatedCircuit.indexOf(gate), 1, replacementComponent);

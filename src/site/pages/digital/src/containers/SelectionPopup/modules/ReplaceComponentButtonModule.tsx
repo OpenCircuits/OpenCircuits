@@ -1,4 +1,3 @@
-import {useState} from "react";
 import {GetIDFor} from "serialeazy";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
@@ -27,18 +26,15 @@ export const ReplaceComponentButtonModule = ({ info }: Props) => {
     const [props, components] = useSelectionProps(
         info,
         (s): s is DigitalComponent => (s instanceof DigitalComponent),
-        (_) => ({ componentId: true }) // Required for button to appear
+        (c) => ({ componentId: GetIDFor(c)! })
     );
 
-    // const [replacement, setReplacement] = useState(undefined as string | undefined);
-
-    if (!(props && components.length === 1))
+    if (!(props && props.componentId && components.length === 1))
         return null;
 
     const component = components[0];
     const replaceables = itemNavConfig.sections.flatMap(section =>
-        section.items.filter(item => CanReplace(component, item.id)
-                                  && item.id !== GetIDFor(component))
+        section.items.filter(item => CanReplace(component, item.id))
     );
 
     if (replaceables.length === 0)
@@ -50,14 +46,16 @@ export const ReplaceComponentButtonModule = ({ info }: Props) => {
             <SelectModuleInputField
                 kind="string[]"
                 options={replaceables.map(rep => [rep.label, rep.id])}
-                props={["hu"]}
-                getAction={(replacement) => {
-                    const [action] = CreateReplaceDigitalComponentAction(component, replacement, info.selections);
-                    return action.undo();
-                }}
+                props={props.componentId}
+                getAction={(replacements) =>
+                    new GroupAction(
+                        components.map((c, i) =>
+                                       CreateReplaceDigitalComponentAction(c, replacements[i])[0]),
+                        "Replace Component Module"
+                    )}
                 onSubmit={(info) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal)
+                    if (info.isFinal)
                         history.add(info.action);
                 }} />
         </label>

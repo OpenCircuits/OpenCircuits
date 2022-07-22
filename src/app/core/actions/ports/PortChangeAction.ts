@@ -10,7 +10,7 @@ import {GroupAction}            from "../GroupAction";
 
 
 export abstract class PortChangeAction implements Action {
-    protected designer: CircuitDesigner;
+    protected designer?: CircuitDesigner;
 
     protected targetCount: number;
     protected initialCount: number;
@@ -18,8 +18,6 @@ export abstract class PortChangeAction implements Action {
     private wireDeletionAction: GroupAction;
 
     protected constructor(designer: CircuitDesigner | undefined, target: number, initialCount: number) {
-        if (!designer)
-            throw new Error("PortChangeAction failed: designer not found");
         this.designer = designer;
 
         this.targetCount = target;
@@ -34,6 +32,8 @@ export abstract class PortChangeAction implements Action {
         //  that will be remove if target < ports.length
         while (ports.length > this.targetCount) {
             const wires = ports.pop()!.getWires();
+            if (wires.length > 0 && !this.designer)
+                throw new Error("PortChangeAction failed: designer not found");
             action.add(wires.map(w => CreateDeletePathAction(this.designer!, GetPath(w))));
         }
 

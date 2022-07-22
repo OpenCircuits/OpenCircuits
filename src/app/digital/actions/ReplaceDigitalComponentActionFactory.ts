@@ -1,4 +1,4 @@
-import {Create} from "serialeazy";
+import {Create, GetIDFor} from "serialeazy";
 
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
@@ -39,6 +39,7 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
 export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
                                                     replacement: string | ICData,
                                                     selections?: SelectionsWrapper): [GroupAction, DigitalComponent] {
+    console.log(`Replacing ${GetIDFor(original)} with ${replacement}`);
     const designer = original.getDesigner();
     if (!designer) {
         throw new Error("original is not in a designer");
@@ -56,10 +57,10 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
     const origOutputs = original.getOutputPorts();
 
     if (selections)
-        action.add(CreateDeselectAllAction(selections).execute());
-    action.add(new PlaceAction(designer, replacementComponent).execute());
+        action.add(CreateDeselectAllAction(selections));
+    action.add(new PlaceAction(designer, replacementComponent));
     if (selections)
-        action.add(CreateGroupSelectAction(selections, [replacementComponent]).execute());
+        action.add(CreateGroupSelectAction(selections, [replacementComponent]));
 
     if (replacementComponent instanceof Mux) {
         const numSelectOrig = original instanceof Mux ? original.getSelectPortCount().getValue() : 0;
@@ -67,14 +68,14 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
                                                        ? origInputs : origOutputs).length))
         action.add(new MuxPortChangeAction(replacementComponent,
                                            replacementComponent.getSelectPortCount().getValue(),
-                                           Math.max(numSelectOrig, numSelectRequired)).execute());
+                                           Math.max(numSelectOrig, numSelectRequired)));
     } else if (!(replacementComponent instanceof IC)) {
         action.add(new InputPortChangeAction(replacementComponent,
                                              replacementComponent.getInputPortCount().getValue(),
-                                             origInputs.length).execute());
+                                             origInputs.length));
         action.add(new OutputPortChangeAction(replacementComponent,
                                              replacementComponent.getOutputPortCount().getValue(),
-                                             origOutputs.length).execute());
+                                             origOutputs.length));
     }
 
     const repInputs = replacementComponent.getInputPorts();
@@ -83,22 +84,22 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
     origInputs.forEach((port, index) => {
         [...port.getWires()].forEach(wire => {
             const otherPort = wire.getInput();
-            action.add(new DisconnectAction(designer, wire).execute());
-            action.add(new ConnectionAction(designer, repInputs[index], otherPort).execute());
+            action.add(new DisconnectAction(designer, wire));
+            action.add(new ConnectionAction(designer, repInputs[index], otherPort));
         });
     });
     origOutputs.forEach((port, index) => {
         [...port.getWires()].forEach(wire => {
             const otherPort = wire.getOutput();
-            action.add(new DisconnectAction(designer, wire).execute());
-            action.add(new ConnectionAction(designer, repOutputs[index], otherPort).execute());
+            action.add(new DisconnectAction(designer, wire));
+            action.add(new ConnectionAction(designer, repOutputs[index], otherPort));
         });
     });
 
     action.add(new TranslateAction([replacementComponent],
                                    [replacementComponent.getPos()],
-                                   [original.getPos()]).execute());
-    action.add(new DeleteAction(designer, original).execute());
+                                   [original.getPos()]));
+    action.add(new DeleteAction(designer, original));
 
     return [action, replacementComponent];
 }
