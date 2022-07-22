@@ -68,10 +68,10 @@ describe("Matrix2x3", () => {
                 m.rotate(Math.PI / 2);
                                         // [0 -1 0]
                                         // [1  0 0]
-                expect(m["mat"][0]).toBeCloseTo( 0, 1e-3);
-                expect(m["mat"][1]).toBeCloseTo( 1, 1e-3);
+                expect(m["mat"][0]).toBeCloseTo(0, 1e-3);
+                expect(m["mat"][1]).toBeCloseTo(1, 1e-3);
                 expect(m["mat"][2]).toBeCloseTo(-1, 1e-3);
-                expect(m["mat"][3]).toBeCloseTo( 0, 1e-3);
+                expect(m["mat"][3]).toBeCloseTo(0, 1e-3);
                 expect(m["mat"][4]).toBe(0);
                 expect(m["mat"][5]).toBe(0);
             }
@@ -80,10 +80,10 @@ describe("Matrix2x3", () => {
                 m.rotate(Math.PI / 4);
                                         // [0.707 -0.707 0]
                                         // [0.707  0.707 0]
-                expect(m["mat"][0]).toBeCloseTo( Math.sqrt(2)/2, 1e-3);
-                expect(m["mat"][1]).toBeCloseTo( Math.sqrt(2)/2, 1e-3);
+                expect(m["mat"][0]).toBeCloseTo(Math.sqrt(2)/2, 1e-3);
+                expect(m["mat"][1]).toBeCloseTo(Math.sqrt(2)/2, 1e-3);
                 expect(m["mat"][2]).toBeCloseTo(-Math.sqrt(2)/2, 1e-3);
-                expect(m["mat"][3]).toBeCloseTo( Math.sqrt(2)/2, 1e-3);
+                expect(m["mat"][3]).toBeCloseTo(Math.sqrt(2)/2, 1e-3);
                 expect(m["mat"][4]).toBe(0);
                 expect(m["mat"][5]).toBe(0);
             }

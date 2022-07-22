@@ -77,7 +77,7 @@ describe("Bus Action", () => {
         const [i1, o1] = Place(new ConstantNumber(), new BCDDisplay());
 
         i1.setPos(V(-100, 0));
-        o1.setPos(V( 100, 0));
+        o1.setPos(V(100, 0));
 
         expectBusConnections(i1.getOutputPorts(), o1.getInputPorts());
 
@@ -92,7 +92,7 @@ describe("Bus Action", () => {
 
         // From issue #882
         i1.setPos(V(-250, -17));
-        o1.setPos(V( -40, -31));
+        o1.setPos(V(-40, -31));
 
         expectBusConnections(i1.getOutputPorts(), o1.getInputPorts());
 
@@ -108,7 +108,7 @@ describe("Bus Action", () => {
         // From PR #1020 (https://github.com/OpenCircuits/OpenCircuits/pull/1020#pullrequestreview-914672445)
         i1.setPos(V(-100, -100));
         i1.setAngle(-Math.PI/2);
-        o1.setPos(V( 100,  100));
+        o1.setPos(V(100,  100));
 
         expectBusConnections(i1.getOutputPorts(), o1.getInputPorts());
 
@@ -126,12 +126,12 @@ describe("Bus Action", () => {
         i3.setPos(V(-100,  100));
         i4.setPos(V(-100,  200));
 
-        i1.setAngle( 0.25);
+        i1.setAngle(0.25);
         i2.setAngle(-0.3);
-        i3.setAngle( 0.2);
+        i3.setAngle(0.2);
         i4.setAngle(-0.1);
 
-        o1.setPos(V( 100,    0));
+        o1.setPos(V(100,    0));
 
         expectBusConnections([i1,i2,i3,i4].map(i => i.getOutputPort(0)), o1.getInputPorts());
 
@@ -154,12 +154,12 @@ describe("Bus Action", () => {
 
         i1.setAngle(0.25);
         i2.setAngle(-0.3);
-        i3.setAngle( 0.2);
+        i3.setAngle(0.2);
         i4.setAngle(-0.1);
-        i5.setAngle( 0.3);
+        i5.setAngle(0.3);
         i6.setAngle(-0.17);
 
-        o1.setPos(V( 100,    0));
+        o1.setPos(V(100,    0));
         o1.setAngle(-0.21);
 
         expectBusConnections([i1,i2,i3,i4,i5,i6].map(i => i.getOutputPort(0)),
@@ -182,9 +182,9 @@ describe("Bus Action", () => {
 
         i1.setAngle(0.25);
         i2.setAngle(-0.3);
-        i3.setAngle( 0.2);
+        i3.setAngle(0.2);
 
-        o1.setPos(V( 100,    0));
+        o1.setPos(V(100,    0));
         o1.setAngle(-0.21);
 
         expectBusConnections([i1,i2,i3].flatMap(i => i.getOutputPorts()),
@@ -226,9 +226,9 @@ describe("Bus Action", () => {
                 icdata!.getPorts()[p].setTargetPos(pos.add(dir.normalize().scale(IO_PORT_LENGTH)));
             }
             setPort(0, V(-100, -50), V(-1, 0));
-            setPort(1, V(  50,  50), V( 0, 1));
+            setPort(1, V(50,  50), V(0, 1));
             setPort(2, V(-100,  50), V(-1, 0));
-            setPort(3, V( -50,  50), V( 0, 1));
+            setPort(3, V(-50,  50), V(0, 1));
         }
 
         const [ic] = Place(new IC(icdata));
@@ -270,9 +270,9 @@ describe("Bus Action", () => {
             }
 
             setPort(0, V(-100, -50), V(-1, 0));
-            setPort(1, V( 100,  50), V( 1, 1)); // Diagonal
+            setPort(1, V(100,  50), V(1, 1)); // Diagonal
             setPort(2, V(-100,  50), V(-1, 0));
-            setPort(3, V( -50,  50), V( 0, 1));
+            setPort(3, V(-50,  50), V(0, 1));
         }
 
         const [ic] = Place(new IC(icdata));

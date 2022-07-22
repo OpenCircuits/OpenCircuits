@@ -20,7 +20,7 @@ export const PanTool: Tool = (() => {
             //  or if the user pressed one of of the arrow keys while no components are selected
             return ((event.type === "keydown" && ((event.key === "Alt") ||
                                                   (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
-                                                   event.key === "ArrowUp" || event.key === "ArrowDown" ))) ||
+                                                   event.key === "ArrowUp" || event.key === "ArrowDown"))) ||
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
                                                    input.getTouchCount() === 2)));
         },

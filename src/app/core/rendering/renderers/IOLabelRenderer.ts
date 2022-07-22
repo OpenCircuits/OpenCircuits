@@ -35,7 +35,7 @@ export const IOLabelRenderer = (() => {
         const xBound = size.x/2 - IO_LABEL_DIR_PADDING - textWidth/2;
         const yBound = size.y/2 - 2*IO_LABEL_VERTICAL_TEXT_PADDING;
         const min = V(-xBound, -yBound);
-        const max = V( xBound,  yBound);
+        const max = V(xBound,  yBound);
 
         renderer.text(port.getName(), Vector.Clamp(pos, min, max), align);
     }

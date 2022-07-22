@@ -64,7 +64,7 @@ describe("Delete Group Action", () => {
             linspace(-5, 5, 8).forEach((y, i) => leds[i].setPos(V(5, y)));
 
             // Place nodes in between the LEDs
-            nodes2.forEach((n, i) => n.setPos(V(3, (  leds[2*i].getPos().y +   leds[2*i+1].getPos().y)/2)));
+            nodes2.forEach((n, i) => n.setPos(V(3, (leds[2*i].getPos().y +   leds[2*i+1].getPos().y)/2)));
 
             // Place other nodes between each of the other nodes
             nodes1.forEach((n, i) => n.setPos(V(2, (nodes2[2*i].getPos().y + nodes2[2*i+1].getPos().y)/2)));

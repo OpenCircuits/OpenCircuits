@@ -216,7 +216,7 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
             break;
         t = t - v / dv;
         t = Clamp(t, 0.01, 0.99);
-    } while((iterations--) > 0);
+    } while ((iterations--) > 0);
     return t;
 }
 

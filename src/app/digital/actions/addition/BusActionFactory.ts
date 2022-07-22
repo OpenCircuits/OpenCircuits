@@ -57,7 +57,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
 
     // Get average components
     const avgOutputTransform = calcAvgComp(outputPorts.map(p => p.getParent()));
-    const avgInputTransform  = calcAvgComp( inputPorts.map(p => p.getParent()));
+    const avgInputTransform  = calcAvgComp(inputPorts.map(p => p.getParent()));
 
     // Get relative positions for each port in average-component-space
     const outputTargetPositions = outputPorts.map(o => avgOutputTransform.toLocalSpace(o.getWorldTargetPos()));
@@ -69,7 +69,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
 
     // Associate the ports with their angle
     const outputMap = new Map(outputAngles.map((a, i) => [a, outputPorts[i]]));
-    const inputMap  = new Map( inputAngles.map((a, i) => [a,  inputPorts[i]]));
+    const inputMap  = new Map(inputAngles.map((a, i) => [a,  inputPorts[i]]));
 
     outputAngles.sort(sortByAngle);
     inputAngles.sort(sortByAngle).reverse();

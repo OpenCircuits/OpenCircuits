@@ -43,7 +43,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
 
         // Filter out keys that not all the objects have
         const keys = Object.keys(allProps[0])
-            .filter((key) => ( allProps.every(prop => (key in prop)) ));
+            .filter((key) => (allProps.every(prop => (key in prop))));
         if (keys.length === 0) {
             setProps(undefined);
             return;

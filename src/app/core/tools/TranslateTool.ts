@@ -44,7 +44,7 @@ export const TranslateTool: Tool = (() => {
             return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
             (event.type === "keyup" && event.key === activatedButton &&
                                        (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
-                                        event.key === "ArrowUp"   || event.key === "ArrowDown" ));
+                                        event.key === "ArrowUp"   || event.key === "ArrowDown"));
         },
 
 

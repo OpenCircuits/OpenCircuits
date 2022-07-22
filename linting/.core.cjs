@@ -50,5 +50,9 @@ module.exports = {
         "nonblock-statement-body-position": ["error", "below", {
             "overrides": { "while": "any" },
         }],
+
+        "keyword-spacing": "off", // typescript eslint equivalent
+        "space-before-function-paren": "off", // typescript eslint equivalent
+        "space-in-parens": "error",
     },
 }

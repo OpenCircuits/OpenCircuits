@@ -120,7 +120,7 @@ export function GetPath(w: Wire | Node, full = true): Array<Wire | Node> {
         visited.add(q);
         path.push(q);
         if (q instanceof Wire) {
-            if(full) {
+            if (full) {
                 const p1 = q.getP1Component();
 
                 if (isNode(p1) && !visited.has(p1))
