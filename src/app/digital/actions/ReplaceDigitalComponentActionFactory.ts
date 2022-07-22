@@ -27,7 +27,6 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
  * Returns a GroupAction for replacing the original component with a new one.
  * Replacement must be able to have at least as many input/output ports as original has in use.
  * Original must be placed in a designer.
- * This action implicitly executes on creation.
  *
  * @param original    The component to replace, already in designer.
  * @param replacement The new component's string representation or ICData.
@@ -57,10 +56,10 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
     const origOutputs = original.getOutputPorts();
 
     if (selections)
-        action.add(CreateDeselectAllAction(selections));
-    action.add(new PlaceAction(designer, replacementComponent));
+        action.add(CreateDeselectAllAction(selections).execute());
+    action.add(new PlaceAction(designer, replacementComponent).execute());
     if (selections)
-        action.add(CreateGroupSelectAction(selections, [replacementComponent]));
+        action.add(CreateGroupSelectAction(selections, [replacementComponent]).execute());
 
     if (replacementComponent instanceof Mux) {
         const numSelectOrig = original instanceof Mux ? original.getSelectPortCount().getValue() : 0;
@@ -68,14 +67,14 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
                                                        ? origInputs : origOutputs).length))
         action.add(new MuxPortChangeAction(replacementComponent,
                                            replacementComponent.getSelectPortCount().getValue(),
-                                           Math.max(numSelectOrig, numSelectRequired)));
+                                           Math.max(numSelectOrig, numSelectRequired)).execute());
     } else if (!(replacementComponent instanceof IC)) {
         action.add(new InputPortChangeAction(replacementComponent,
                                              replacementComponent.getInputPortCount().getValue(),
-                                             origInputs.length));
+                                             origInputs.length).execute());
         action.add(new OutputPortChangeAction(replacementComponent,
                                              replacementComponent.getOutputPortCount().getValue(),
-                                             origOutputs.length));
+                                             origOutputs.length).execute());
     }
 
     const repInputs = replacementComponent.getInputPorts();
@@ -84,22 +83,24 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
     origInputs.forEach((port, index) => {
         [...port.getWires()].forEach(wire => {
             const otherPort = wire.getInput();
-            action.add(new DisconnectAction(designer, wire));
-            action.add(new ConnectionAction(designer, repInputs[index], otherPort));
+            action.add(new DisconnectAction(designer, wire).execute());
+            action.add(new ConnectionAction(designer, repInputs[index], otherPort).execute());
         });
     });
     origOutputs.forEach((port, index) => {
         [...port.getWires()].forEach(wire => {
             const otherPort = wire.getOutput();
-            action.add(new DisconnectAction(designer, wire));
-            action.add(new ConnectionAction(designer, repOutputs[index], otherPort));
+            action.add(new DisconnectAction(designer, wire).execute());
+            action.add(new ConnectionAction(designer, repOutputs[index], otherPort).execute());
         });
     });
 
     action.add(new TranslateAction([replacementComponent],
                                    [replacementComponent.getPos()],
-                                   [original.getPos()]));
-    action.add(new DeleteAction(designer, original));
+                                   [original.getPos()]).execute());
+    action.add(new DeleteAction(designer, original).execute());
+
+    action.undo();
 
     return [action, replacementComponent];
 }
