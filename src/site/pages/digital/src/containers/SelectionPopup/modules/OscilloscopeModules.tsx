@@ -26,10 +26,10 @@ export const OscilloscopeModule = ({ info }: Props) => {
         })
     );
 
-    const onSubmit = (info: ModuleSubmitInfo) => {
+    const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
         renderer.render();
-        if (info.isValid && info.isFinal)
-            history.add(info.action);
+        if (isFinal)
+            history.add(action);
     }
 
     if (!props)

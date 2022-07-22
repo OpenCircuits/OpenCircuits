@@ -38,10 +38,10 @@ export const SegmentCountModule = ({ info }: Props) => {
                         cs.map((o,i) => new InputPortChangeAction(o, o.getSegmentCount(), newCounts[i])),
                         "Segment Count Module"
                     )}
-                onSubmit={(info) => {
+                onSubmit={({ isFinal, action }) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal)
-                        history.add(info.action);
+                    if (isFinal)
+                        history.add(action);
                 }} />
         </label>
     </div>);

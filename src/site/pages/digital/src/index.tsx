@@ -1,5 +1,5 @@
 import React, {createRef}             from "react";
-import ReactDOM                       from "react-dom";
+import ReactDOM                       from "react-dom/client";
 import ReactGA                        from "react-ga";
 import {Provider}                     from "react-redux";
 import {applyMiddleware, createStore} from "redux";
@@ -157,13 +157,13 @@ async function Init(): Promise<void> {
                     await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             }
 
-            ReactDOM.render(
+            const root = ReactDOM.createRoot(document.getElementById("root")!);
+            root.render(
                 <React.StrictMode>
                     <Provider store={store}>
                         <App info={info} helpers={helpers} canvas={canvas} />
                     </Provider>
                 </React.StrictMode>,
-                document.getElementById("root")
             );
         }],
     ]);

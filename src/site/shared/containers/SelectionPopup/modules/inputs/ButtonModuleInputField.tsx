@@ -21,7 +21,6 @@ export const ButtonModuleInputField = ({ props, getText, getNewState, getAction,
         const newState = getNewState(props);
         onSubmit({
             isFinal: true,
-            isValid: true,
             action:  getAction(props.map(_ => newState)).execute(),
         });
     }

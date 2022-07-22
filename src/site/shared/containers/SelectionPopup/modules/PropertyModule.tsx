@@ -183,10 +183,10 @@ export const PropertyModule = ({ info }: Props) => {
         const getAction = (newVals: Prop[]) => new GroupAction(
             objs.map((a,i) => new SetPropertyAction(a, key, newVals[i]))
         );
-        const onSubmit = (info: ModuleSubmitInfo) => {
+        const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
             renderer.render();
-            if (info.isValid && info.isFinal)
-                history.add(info.action);
+            if (isFinal)
+                history.add(action);
         }
 
         return (

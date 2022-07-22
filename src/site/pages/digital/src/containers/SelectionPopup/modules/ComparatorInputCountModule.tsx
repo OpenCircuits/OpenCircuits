@@ -38,10 +38,10 @@ export const ComparatorInputCountModule = ({ info }: Props) => {
                         cs.map((o,i) => new InputPortChangeAction(o, o.getInputPortCount().getValue()/2, newCounts[i])),
                         "Comparator Input Count Module"
                     )}
-                onSubmit={(info) => {
+                onSubmit={({ isFinal, action }) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal)
-                        history.add(info.action);
+                    if (isFinal)
+                        history.add(action);
                 }} />
         </label>
     </div>);

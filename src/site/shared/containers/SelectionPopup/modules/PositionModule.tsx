@@ -26,10 +26,10 @@ export const PositionModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    const onSubmit = (info: ModuleSubmitInfo) => {
+    const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
         renderer.render();
-        if (info.isValid && info.isFinal) // Only add final action to history
-            history.add(info.action);
+        if (isFinal)
+            history.add(action);
     }
 
     return (<div>

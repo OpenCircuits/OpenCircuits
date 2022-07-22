@@ -40,10 +40,10 @@ export const InputCountModule = ({ info }: Props) => {
                         cs.map((o,i) => new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCounts[i])),
                         "Input Count Module"
                     )}
-                onSubmit={(info) => {
+                onSubmit={({ isFinal, action }) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal)
-                        history.add(info.action);
+                    if (isFinal)
+                        history.add(action);
                 }} />
         </label>
     </div>);

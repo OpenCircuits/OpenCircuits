@@ -7,11 +7,7 @@ import {Prop} from "core/models/PropInfo";
 
 export type ModuleSubmitInfo = {
     isFinal: boolean;
-    isValid: true;
     action: Action;
-} | {
-    isFinal: boolean;
-    isValid: false;
 }
 
 export type SharedModuleInputFieldProps<V extends Prop> = {
@@ -77,8 +73,7 @@ export const useBaseModule = <V extends Primitive[]>({
         modifiers:    new Array(len).fill(0).map((_) => new Array<V[number] | undefined>(props.length).fill(undefined)),
         setProps:     [...props],
         initialProps: [...props],
-        tempAction:   undefined as Action | undefined,
-        submission:   undefined as ModuleSubmitInfo | undefined,
+        submission:   undefined as { isFinal: boolean, newProps: V[] } | undefined,
     };
     const [state, setState] = useState(initialState);
 
@@ -95,16 +90,32 @@ export const useBaseModule = <V extends Primitive[]>({
                 : ""))
     ) as Array<string | V[number]>;
 
+    // Use effect necessary since `onSubmit` is a callback that can call other states
+    //  also because we can't have unnecessary
+    // This is all necessary because onChange/onModify/onFocus/onBlur use the functional form of
+    //  setState since they have the ability to be called synchronously (i.e. in a Button Module)
+    //  and React.StrictMode calls these functions twice to help debug side-effects.
+    // So the side-effects are instead in this effect to create the actions and submit them to the callback
     useEffect(() => {
         // Submit in an effect since it's a callback that has the potential to call other states
         if (!state.submission)
             return;
-        onSubmit(state.submission);
-        setState((prevState) => ({ ...prevState, submission: undefined }));
-    }, [state.submission, onSubmit]);
+        const { isFinal, newProps } = state.submission;
+
+        const action = getAction(newProps).execute();
+        onSubmit({ isFinal, action });
+
+        if (isFinal) // Reset submission if final
+            setState((prevState) => ({ ...prevState, submission: undefined }));
+
+        return () => {
+            if (!isFinal) // Only undo on change if NOT the final submission
+                action.undo();
+        }
+    }, [state.submission, getAction, onSubmit]);
 
     // onModify gets called when a "modification" is made to the current value of the properties
-    //  i.e. arrow-keys to step a value
+    //  i.e. arrow-buttons to step a value
     const onModify = (mod: V[number], i = 0) => {
         if (!applyModifier || !reverseModifier)
             return;
@@ -113,9 +124,7 @@ export const useBaseModule = <V extends Primitive[]>({
             onFocus();
 
         // Wrap in `setState` in-case we aren't currently focused, and need the state from focusing
-        setState(({ textVals, modifiers, setProps, tempAction, ...prevState }) => {
-            tempAction?.undo(); // If tempAction exists, then undo it
-
+        setState(({ textVals, modifiers, setProps, ...prevState }) => {
             // Calculate modifier from diffs of applied modifier. This is for the case where
             //  there're bounds on the final values and multiple props have different values.
             // As the value reaches its bound, it will get clamped and the modifier will then
@@ -132,28 +141,25 @@ export const useBaseModule = <V extends Primitive[]>({
 
                 // Get the final modifier by reversing the modifier between the fixed value and the modded value
                 //  and then applying that difference to the new modifier
-                return applyModifier(reverseModifier!(fixedVal, moddedVal, i), newMod, i);
+                return applyModifier(reverseModifier(fixedVal, moddedVal, i), newMod, i);
             });
 
             // Insert final new modifier into modifiers at value `i`
             const newModifiers = [...modifiers.slice(0,i), newMods, ...modifiers.slice(i+1)];
-            const moddedProps = setProps.map((prop,j) => (
+            const newProps = setProps.map((prop,j) => (
                 // Apply new modifiers to each prop
                 prop.map((val, i) => applyModifier(val, newModifiers[i][j], i)) as V
             ));
 
-            const action = getAction(moddedProps).execute();
-
             // If the props are the same, then show the new prop as a text value
-            const allSame = moddedProps.every((v) => (v[i] === moddedProps[0][i]));
-            const newTextVal = (allSame ? `${moddedProps[0][i]}` : textVals[i]);
+            const allSame = newProps.every((v) => (v[i] === newProps[0][i]));
+            const newTextVal = (allSame ? `${newProps[0][i]}` : textVals[i]);
 
             return {
                 ...prevState, setProps,
                 textVals:   [...textVals.slice(0,i), newTextVal, ...textVals.slice(i+1)],
                 modifiers:  newModifiers,
-                tempAction: action,
-                submission: { isFinal: false, isValid: true, action },
+                submission: { isFinal: false, newProps },
             };
         });
     }
@@ -163,21 +169,16 @@ export const useBaseModule = <V extends Primitive[]>({
         if (!focused)
             onFocus();
 
-        const val = parseVal(newVal, i);
-
-        // If invalid input, assume it's temporary and just update the text value
-        //  that they are typing
-        if (!isValid(val, i)) {
-            setState(({ textVals, ...prevState }) => ({
-                ...prevState,
-                textVals: [...textVals.slice(0,i), newVal, ...textVals.slice(i+1)],
-            }));
-            return;
-        }
-
         // Wrap in `setState` in-case we aren't currently focused, and need the state from focusing
-        setState(({ textVals, modifiers, setProps, tempAction, ...prevState }) => {
-            tempAction?.undo(); // If tempAction exists, then undo it
+        setState(({ textVals, modifiers, setProps, ...prevState }) => {
+            const val = parseVal(newVal, i);
+
+            const newTextVals = [...textVals.slice(0,i), newVal, ...textVals.slice(i+1)];
+
+            // If invalid input, assume it's temporary and just update the text value
+            //  that they are typing
+            if (!isValid(val, i))
+                return { ...prevState, modifiers, setProps, textVals: newTextVals };
 
             // Reset modifier at `i` since value is being set exactly
             const newMods = new Array(props.length).fill(undefined);
@@ -193,15 +194,12 @@ export const useBaseModule = <V extends Primitive[]>({
                 prop.map((val, i) => (applyModifier?.(val, newModifiers[i][j], i) ?? val)) as V
             ));
 
-            const action = getAction(moddedProps).execute();
-
             return {
                 ...prevState,
-                textVals:   [...textVals.slice(0,i), newVal, ...textVals.slice(i+1)],
+                textVals:   newTextVals,
                 modifiers:  newModifiers,
                 setProps:   newProps,
-                tempAction: action,
-                submission: { isFinal: false, isValid: true, action },
+                submission: { isFinal: false, newProps: moddedProps },
             };
         });
     }
@@ -241,14 +239,11 @@ export const useBaseModule = <V extends Primitive[]>({
     // Blurring should trigger a 'submit' so the user-inputted value
     //  is finally realized and registers an action to the circuit
     const onBlur = () => {
-        setState(({ modifiers, setProps, initialProps, tempAction }) => {
-            // If temp action doesn't exist, it means that the user didn't change anything
+        setState(({ modifiers, setProps, initialProps, submission }) => {
+            // If submission doesn't exist, it means that the user didn't change anything
             //  so we should just do nothing and go back to normal
-            if (!tempAction)
+            if (!submission)
                 return initialState;
-
-            // Temp action exists, so undo it before committing final action
-            tempAction.undo();
 
             // Calculate final props
             const finalProps = setProps.map((prop, j) => (
@@ -268,7 +263,7 @@ export const useBaseModule = <V extends Primitive[]>({
             // Reset state with submission
             return {
                 ...initialState,
-                submission: { isFinal: true, isValid: true, action: getAction(finalProps).execute() },
+                submission: { isFinal: true, newProps: finalProps },
             };
         });
     }
