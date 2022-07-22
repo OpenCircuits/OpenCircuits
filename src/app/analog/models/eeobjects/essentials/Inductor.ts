@@ -4,17 +4,20 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {AnalogComponent} from "analog/models";
 
-import {GenInitialInfo} from "analog/models/AnalogComponent";
 import {InductanceInfo} from "analog/models/Units";
 
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
 
 
-const Info = {
-    ...InductanceInfo("L", "Inductance", 10, "m"),
-};
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        ...InductanceInfo("L", "Inductance", 10, "m"),
+    },
+});
 
 @serializable("Inductor")
 export class Inductor extends AnalogComponent {
@@ -22,7 +25,7 @@ export class Inductor extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(40, 240*40/104), new TopBottomPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 

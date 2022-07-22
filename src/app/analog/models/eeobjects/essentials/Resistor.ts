@@ -4,17 +4,20 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {AnalogComponent} from "analog/models";
 
-import {GenInitialInfo} from "analog/models/AnalogComponent";
 import {ResistanceInfo} from "analog/models/Units";
 
 import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
-const Info = {
-    ...ResistanceInfo("R", "Resistance", 1, "k"),
-};
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        ...ResistanceInfo("R", "Resistance", 1, "k"),
+    },
+});
 
 @serializable("Resistor")
 export class Resistor extends AnalogComponent {
@@ -22,7 +25,7 @@ export class Resistor extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(60, 50), new LeftRightPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 

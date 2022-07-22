@@ -18,6 +18,7 @@ import {SideNav}        from "shared/containers/SideNav";
 
 
 import {PositionModule} from "shared/containers/SelectionPopup/modules/PositionModule";
+import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {AnalogPaste} from "site/analog/utils/AnalogPaste";
 
@@ -28,8 +29,6 @@ import {KeyboardShortcutsPopup} from "site/analog/containers/KeyboardShortcutsPo
 import {MainDesigner}           from "site/analog/containers/MainDesigner";
 import {QuickStartPopup}        from "site/analog/containers/QuickStartPopup";
 import {SimButtons}             from "site/analog/containers/SimButtons";
-
-import {PropertyModule} from "site/analog/containers/SelectionPopup/modules/PropertyModule";
 
 import docsConfig    from "site/analog/data/docsUrlConfig.json";
 import exampleConfig from "site/analog/data/examples.json";

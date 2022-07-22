@@ -2,24 +2,30 @@ import "./index.scss";
 
 
 type Props = {
-    isOn: boolean;
     className?: string;
+
+    isOn: boolean;
     height?: string;
-    onChange?: () => void;
-    text?: string;
     disabled?: boolean;
+
+    children?: React.ReactNode;
+
+    onChange?: () => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
 }
-export const ButtonToggle = ({ isOn, className, height, onChange, text, disabled }: Props) => (
+export const ButtonToggle = ({ className, isOn, height, disabled, children, onChange, ...callbacks }: Props) => (
     <div className={`buttontoggle ${disabled ? "disabled" : ""} ${className ?? ""}`}
          role="switch" aria-checked={!disabled && isOn} tabIndex={0}
-         style={{ height }}
-         onClick={onChange}>
+         style={{ height }} onClick={onChange} {...callbacks}>
         <img src="img/items/buttonDown.svg"
              style={{ display: (!disabled && isOn ? "" : "none") }}
              height="100%" alt="Button on" />
         <img src="img/items/buttonUp.svg"
              style={{ display: (!disabled && isOn ? "none" : "") }}
              height="100%" alt="Button off" />
-        <span>{text}</span>
+        <span>
+            {children}
+        </span>
     </div>
 );
