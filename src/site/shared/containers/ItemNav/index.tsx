@@ -233,7 +233,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                     top:     pos.y,
                 }}>
             {/* config.imgRoot / section.id / item.icon */}
-            <img src={deleteImg} width="80px" />
+            <img src={deleteImg} alt="Deletion Preview" width="80px" />
         </div>
         )}
 
@@ -244,7 +244,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                  left:    pos.x,
                  top:     pos.y,
              }}>
-            <img src={curItemImg} width="80px" />
+            <img src={curItemImg} alt="Current item preview" width="80px" />
             {additionalPreviewComp}
             {new Array(Clamp(numClicks-1, 0, MAX_STACK-1)).fill(0).map((_, i) => (
                 <div key={`itemnav-preview-stack-${i}`}
@@ -254,7 +254,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                          top:      (i+1)*5,
                          zIndex:   100-(i+1),
                      }}>
-                    <img src={curItemImg} width="80px" />
+                    <img src={curItemImg} alt="Current item preview" width="80px" />
                     {additionalPreviewComp}
                 </div>
             ))}
@@ -264,9 +264,10 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         </div>
 
         {/* Actual Item Nav */}
-        <nav className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
-             onMouseOver={() => setHoveringNav(true)}
-             onMouseLeave={() => setHoveringNav(false)}
+        <nav role="application"
+             className={`itemnav ${(isOpen) ? "" : "itemnav__move"}`}
+             onMouseOver={() => setHoveringNav(true)} onFocus={() => setHoveringNav(true)}
+             onMouseLeave={() => setHoveringNav(false)} onBlur={() => setHoveringNav(false)}
              onMouseUp={handleItemNavDrag}>
             <div className="itemnav__top">
                 <div>
@@ -276,7 +277,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                         else
                             dispatch(OpenHistoryBox());
                     }}>
-                        <img src="img/icons/history.svg"></img>
+                        <img src="img/icons/history.svg" alt="Toggle history box"></img>
                     </button>
                 </div>
                 <div>
@@ -304,7 +305,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                 <div>
                     { // Hide tab if the circuit is locked
                     isEnabled &&
-                        (<div className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
+                        (<div role="button" tabIndex={0}
+                              className={`itemnav__tab ${isOpen ? "" : "itemnav__tab__closed"}`}
                               title="Circuit Components"
                               onClick={() => dispatch(isOpen ? CloseItemNav() : OpenItemNav())}>
                             <div></div>
@@ -319,6 +321,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                         <div>
                             {section.items.map((item, j) => (
                                 <div key={`itemnav-section-${i}-item-${j}`}
+                                     role="button" tabIndex={0}
                                      onMouseEnter={() => {item.removable && setHover(item.id)}}
                                      onMouseLeave={() => {item.removable && setHover("")}}>
                                     <Draggable
@@ -352,19 +355,20 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                                     </Draggable>
                                     {
                                         (item.removable && hovering === item.id) && (
-                                            <div onClick={(ev) => {
-                                                // Resets click tracking and stops propgation so that an
-                                                // Components are not clicked onto the canvas after being deleted.
-                                                dispatch(SetCurItem(""));
-                                                setNumClicks(1);
-                                                // Stops drag'n'drop preview when deleting
-                                                setCurItemImg("");
-                                                if (onDelete)
-                                                    onDelete(section, item);
-                                                setHover("");
+                                            <div role="button" tabIndex={0}
+                                                 onClick={(ev) => {
+                                                    // Resets click tracking and stops propgation so that an
+                                                    // Components are not clicked onto the canvas after being deleted.
+                                                    dispatch(SetCurItem(""));
+                                                    setNumClicks(1);
+                                                    // Stops drag'n'drop preview when deleting
+                                                    setCurItemImg("");
+                                                    if (onDelete)
+                                                        onDelete(section, item);
+                                                    setHover("");
 
-                                                ev.stopPropagation();
-                                            }}>
+                                                    ev.stopPropagation();
+                                                 }}>
                                                 X
                                             </div>
                                         )

@@ -1,4 +1,4 @@
-import {serializable, serialize} from "serialeazy";
+import {serializable} from "serialeazy";
 
 import {DEFAULT_SIZE,
         LED_LIGHT_RADIUS,
@@ -8,8 +8,20 @@ import {V, Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
+
+const [Info, InitialInfo] = GenPropInfo({
+    infos: {
+        "color": {
+            type:    "color",
+            label:   "Color",
+            initial: "#ffffff",
+        },
+    },
+});
 
 /**
  * The LED turns on when signal input connnected to it is 1.
@@ -17,8 +29,6 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
  */
 @serializable("LED")
 export class LED extends DigitalComponent {
-    @serialize
-    private color: string;
 
     /**
      * Initializes LED, has clamped value of 0 and 1 inputs.
@@ -26,8 +36,8 @@ export class LED extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(1),
               new ClampedValue(0),
-              V(50, 50));
-        this.color = "#ffffff";
+              V(50, 50), undefined, undefined,
+              InitialInfo);
 
         // Make port face down instead of sideways
         this.inputs.first.setOriginPos(V());
@@ -56,15 +66,6 @@ export class LED extends DigitalComponent {
     }
 
     /**
-     * Sets the color of the LED.
-     *
-     * @param color Inputs a color.
-     */
-    public setColor(color: string): void {
-        this.color = color;
-    }
-
-    /**
      * Returns true (1) if LED is on.
      *
      * @returns Light status of LED.
@@ -73,13 +74,8 @@ export class LED extends DigitalComponent {
         return this.inputs.first.getIsOn();
     }
 
-    /**
-     * Returns the color of the LED.
-     *
-     * @returns Color of the LED.
-     */
-    public getColor(): string {
-        return this.color;
+    public override getPropInfo(key: string) {
+        return Info[key];
     }
 
     /**

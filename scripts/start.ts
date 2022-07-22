@@ -5,6 +5,7 @@ import path         from "node:path";
 
 import chalk   from "chalk";
 import prompts from "prompts";
+import yargs   from "yargs";
 
 import getDirs      from "./utils/getDirs.js";
 import startWebpack from "./webpack/index.js";
@@ -32,13 +33,17 @@ function StartServer() {
     });
 }
 
-function StartClient(dir: string) {
-    startWebpack(dir, "development");
+function StartClient(dir: string, project: string, open: boolean) {
+    startWebpack(dir, project, "development", open);
 }
 
 
 // CLI
 (async () => {
+    const { open } = await yargs(process.argv.slice(2))
+        .boolean("open")
+        .argv;
+
     const dirs = getDirs(true, false);
 
     // Prompt for project type
@@ -60,5 +65,5 @@ function StartClient(dir: string) {
     }
 
     // Start digital/analog/landing page
-    StartClient(`src/site/pages/${value}`);
+    StartClient(`src/site/pages/${value}`, value, open);
 })();

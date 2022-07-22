@@ -17,7 +17,7 @@ export class FakeInput extends Input {
             getBoundingClientRect: () => ({ left: 0, top: 0, width: 1, height: 1 }),
 
             width: 1, height: 1,
-        } as any, -1);
+        } as unknown as HTMLCanvasElement, -1);
 
         this.touches = [];
         this.center = cameraCenter;

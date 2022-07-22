@@ -7,15 +7,14 @@ import {Rect} from "math/Rect";
 import {Cursor} from "core/utils/CircuitInfo";
 import {Event}  from "core/utils/Events";
 
-import {Action}      from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
-import {ShiftAction} from "core/actions/ShiftAction";
+import {Action}            from "core/actions/Action";
+import {GroupAction}       from "core/actions/GroupAction";
+import {SetPropertyAction} from "core/actions/SetPropertyAction";
+import {ShiftAction}       from "core/actions/ShiftAction";
 
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-
-import {SetPropertyAction} from "analog/actions/SetPropertyAction";
 
 import {Oscilloscope} from "analog/models/eeobjects";
 

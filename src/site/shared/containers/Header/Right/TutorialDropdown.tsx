@@ -24,7 +24,8 @@ export const TutorialDropdown = () => {
             </div>
             <h1>Resources</h1>
             <hr />
-            <div onClick={() => {
+            <div role="button" tabIndex={0}
+                 onClick={() => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("quick_start"));
                 }}>
@@ -49,7 +50,8 @@ export const TutorialDropdown = () => {
                 <img src="img/icons/help_center.svg" height="100%" alt="Check out our Help Center" />
                 <span>Help Center</span>
             </div>
-            <div onClick={() => {
+            <div role="button" tabIndex={0}
+                 onClick={() => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("keyboard_shortcuts"));
                 }}>

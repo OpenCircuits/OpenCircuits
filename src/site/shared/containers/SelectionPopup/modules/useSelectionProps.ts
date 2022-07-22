@@ -7,6 +7,7 @@ import {Selectable}  from "core/utils/Selectable";
 
 
 type BaseType = Record<string, string | number | Vector | boolean>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ToArray<Type> = Type extends any ? Type[] : never;
 type RecordOfArrays<T extends BaseType> = {
     [Key in keyof T]: ToArray<T[Key]>;

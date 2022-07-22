@@ -5,60 +5,69 @@ import bodyParser           from "body-parser";
 import Server, {Middleware} from "webpack-dev-server";
 
 
-const CACHE_PATH = path.resolve(process.cwd(), ".devCache");
-
 /**
- * Custom dev server middleware for use in issue #1037.
+ * HOC for dev-server, created by-project so there can be different directories
+ *  for digital and analog.
  *
- * Specifically creates a dev API for saving/fetching files.
- *
- * @param middlewares Middlewares to be returned at the end of the funciton.
- * @param devServer   The instance of the development server.
- * @returns             The passed in middlewares.
- * @throws If one of the underlying functions throws an error.
+ * @param project The project directory in `.devCache`, i.e. "digital" or "analog".
+ * @returns         The Webpack-compatible middleware and dev-server.
  */
-export default (middlewares: Middleware[], devServer: Server) => {
-    if (!devServer.app)
-        throw new Error("webpack-dev-server app is not defined");
+export default (project: string) => {
+    const CACHE_PATH = path.resolve(process.cwd(), ".devCache", project);
 
-    // Create new file
-    devServer.app.post("/dev/file/:id", bodyParser.text(), (req, res) => {
-        // Make cached directory if it doesn't already exist
-        if (!fs.existsSync(CACHE_PATH))
-            fs.mkdirSync(CACHE_PATH);
+    /**
+     * Custom dev server middleware for use in issue #1037.
+     *
+     * Specifically creates a dev API for saving/fetching files.
+     *
+     * @param middlewares Middlewares to be returned at the end of the funciton.
+     * @param devServer   The instance of the development server.
+     * @returns             The passed in middlewares.
+     * @throws If one of the underlying functions throws an error.
+     */
+    return (middlewares: Middleware[], devServer: Server) => {
+        if (!devServer.app)
+            throw new Error("webpack-dev-server app is not defined");
 
-        const fileId = req.params.id;
-        const file = req.body;
+        // Create new file
+        devServer.app.post("/dev/file/:id", bodyParser.text(), (req, res) => {
+            // Make cached directory if it doesn't already exist
+            if (!fs.existsSync(CACHE_PATH))
+                fs.mkdirSync(CACHE_PATH);
 
-        // Well aware of how unsafe this is, but since it's a DEV only feature
-        //  and only runs on the dev's computer, it should be fine
-        fs.writeFileSync(path.resolve(CACHE_PATH, fileId), file);
+            const fileId = req.params.id;
+            const file = req.body;
 
-        res.status(200);
-    });
+            // Well aware of how unsafe this is, but since it's a DEV only feature
+            //  and only runs on the dev's computer, it should be fine
+            fs.writeFileSync(path.resolve(CACHE_PATH, fileId), file);
 
-    // Get file by ID
-    devServer.app.get("/dev/file/:id", (req, res) => {
-        const fileId = req.params.id;
+            res.status(200);
+        });
 
-        const filePath = path.resolve(CACHE_PATH, fileId);
-        if (!fs.existsSync(filePath))
-            return res.status(404);
+        // Get file by ID
+        devServer.app.get("/dev/file/:id", (req, res) => {
+            const fileId = req.params.id;
 
-        const data = fs.readFileSync(filePath).toString("utf8");
+            const filePath = path.resolve(CACHE_PATH, fileId);
+            if (!fs.existsSync(filePath))
+                return res.status(404);
 
-        res.status(200).send(data);
-    });
+            const data = fs.readFileSync(filePath).toString("utf8");
 
-    // List saved files
-    devServer.app.get("/dev/filelist", (req, res) => {
-        if (!fs.existsSync(CACHE_PATH))
-            return res.status(200).json({ files: [] });
+            res.status(200).send(data);
+        });
 
-        const files = fs.readdirSync(CACHE_PATH).filter(f => f.endsWith(".circuit"));
+        // List saved files
+        devServer.app.get("/dev/filelist", (req, res) => {
+            if (!fs.existsSync(CACHE_PATH))
+                return res.status(200).json({ files: [] });
 
-        res.status(200).json({ files });
-    });
+            const files = fs.readdirSync(CACHE_PATH).filter(f => f.endsWith(".circuit"));
 
-    return middlewares;
+            res.status(200).json({ files });
+        });
+
+        return middlewares;
+    }
 }

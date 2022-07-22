@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {SaveFile}           from "shared/utils/Exporter";
 
@@ -32,11 +33,15 @@ export const DownloadMenuDropdown = ({ helpers: { GetSerializedCircuit } }: Prop
                   btnInfo={{ title: "Download current scene", src: "img/icons/download.svg" }}
                   onClick={() => dispatch(OpenHeaderMenu("download"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
-            <div title="Download circuit locally" onClick={onDownloadClick}>
+            <div role="button" tabIndex={0}
+                 title="Download circuit locally"
+                 onClick={onDownloadClick}>
                 <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
                 <span>Download</span>
             </div>
-            <div title="Export as Image" onClick={() => {
+            <div role="button" tabIndex={0}
+                 title="Export as Image"
+                 onClick={() => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("image_exporter"));
                 }}>

@@ -123,6 +123,7 @@ export const DigitalItemNav = ({ info }: Props) => {
                     <img key={`digital-itemnav-inputs-${i}`}
                          src={`/${itemNavConfig.imgRoot}/inputs/switch.svg`}
                          width="80px" height="80px"
+                         alt="Switch"
                          style={{
                              position: "absolute",
                              left:     -100,
@@ -135,6 +136,7 @@ export const DigitalItemNav = ({ info }: Props) => {
                     <img key={`digital-itemnav-outputs-${i}`}
                          src={`/${itemNavConfig.imgRoot}/outputs/led.svg`}
                          width="80px" height="80px"
+                         alt="Switch"
                          style={{
                              position: "absolute",
                              left:     100,

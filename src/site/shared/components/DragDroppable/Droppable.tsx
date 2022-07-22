@@ -7,7 +7,7 @@ import {DragDropHandlers} from "./DragDropHandlers";
 
 type Props = {
     children: React.ReactElement;
-    onDrop: (pos: Vector, ...data: any[]) => void;
+    onDrop: (pos: Vector, ...data: unknown[]) => void;
 };
 export const Droppable = React.forwardRef(
     <T extends HTMLElement>({ children, onDrop }: Props, forwardedRed: React.RefObject<T>

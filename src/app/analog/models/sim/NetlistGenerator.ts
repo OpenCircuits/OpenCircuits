@@ -87,7 +87,7 @@ export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
     const wires = circuit.getWires();
 
     const graph = CreateGraph(new IOObjectSet([...elements, ...nodes, ...grounds, ...wires]));
-    if (!graph.isConnected()) // Assume circuit is fully connected for now
+    if (!graph.isConnected() || graph.size() <= 1) // Assume circuit is fully connected for now
         throw new Error("Cannot convert non-fully-connected circuit to a Netlist!");
 
     const paths = GetAllPaths(wires[0]);
