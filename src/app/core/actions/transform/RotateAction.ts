@@ -16,9 +16,9 @@ export class RotateAction implements Action {
     private objects: Component[];
 
     /**
-     * The x, y coordinates of the midpoint between the selected component(s).
+     * An Array of the x, y coordinates of the midpoints for each component of the selected component(s).
      */
-    private midpoint: Vector;
+    private midpoints: Vector[];
 
     /**
      * An Array of the initial angles the selected component(s) are placed at.
@@ -30,20 +30,22 @@ export class RotateAction implements Action {
      */
     private finalAngles: number[];
 
+    private isIndependent: boolean;
+
     /**
      * Creates a rotation action for a component or a group of components.
      *
      * @param objects       Initializes the action with an Array of the selected component(s).
-     * @param midpoint      Inititalizes the action with the x, y coordinates of the midpoint between
+     * @param midpoints     Inititalizes the action with the x, y coordinates of the midpoint between
      *                the selected component(s).
      * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s)
      *                are placed at.
      * @param finalAngles   Inititalizes the action an Array of the final angles the selected component(s)
      *                will be placed at.
      */
-    public constructor(objects: Component[], midpoint: Vector, initialAngles: number[], finalAngles: number[]) {
+    public constructor(objects: Component[], midpoints: Vector[], initialAngles: number[], finalAngles: number[]) {
         this.objects = objects;
-        this.midpoint = midpoint;
+        this.midpoints = midpoints;
         this.initialAngles = initialAngles;
         this.finalAngles = finalAngles;
     }
@@ -56,7 +58,7 @@ export class RotateAction implements Action {
     private setAngles(angles: number[]): void {
         for (let i = 0; i < this.objects.length; i++) {
             const obj = this.objects[i];
-            obj.setRotationAbout(angles[i], this.midpoint);
+            obj.setRotationAbout(angles[i], this.midpoints[i]);
         }
     }
 

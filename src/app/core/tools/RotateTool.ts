@@ -1,3 +1,4 @@
+import {RotateAction} from "core/actions/transform/RotateAction";
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         ROTATION_SNAP_AMT}  from "core/utils/Constants";
@@ -7,9 +8,7 @@ import {Vector} from "Vector";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event}       from "core/utils/Events";
 
-import {RotateAction} from "core/actions/transform/RotateAction";
-
-import {Component, Wire} from "core/models";
+import {Component} from "core/models";
 
 
 export const RotateTool = (() => {
@@ -19,6 +18,10 @@ export const RotateTool = (() => {
     let startAngle = 0;
     let prevAngle = 0;
 
+    let isIndependent = false;
+
+    let initialMidpoints = [] as Vector[];
+    let currentMidpoints = [] as Vector[];
 
     function isMouseOnCircle({ camera, input, selections }: CircuitInfo): boolean {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -57,6 +60,9 @@ export const RotateTool = (() => {
             initialAngles = components.map(o => o.getAngle());
             currentAngles = [...initialAngles];
 
+            // Get whether z is presesed for independent rotation
+            isIndependent = input.isKeyDown("z");
+
             // Get initial overall angle
             startAngle = getAngle(worldMousePos, selections.midpoint());
             prevAngle = startAngle;
@@ -67,7 +73,8 @@ export const RotateTool = (() => {
             const components = selections.get() as Component[];
             const finalAngles = components.map(o => o.getAngle());
 
-            history.add(new RotateAction(components, selections.midpoint(), initialAngles, finalAngles));
+            history.add(new RotateAction(components, initialMidpoints, initialAngles, finalAngles));
+
         },
 
 
@@ -79,7 +86,7 @@ export const RotateTool = (() => {
             const components = selections.get() as Component[];
 
             const midpoint = selections.midpoint();
-            const dAngle = getAngle(worldMousePos, selections.midpoint()) - prevAngle;
+            const dAngle = getAngle(worldMousePos, midpoint) - prevAngle;
 
             currentAngles = currentAngles.map(a => a + dAngle);
 
@@ -88,16 +95,14 @@ export const RotateTool = (() => {
                 currentAngles.map(a => Math.floor(a/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT) :
                 currentAngles;
 
-            // Set the rotations, rotate individually if z is held
-            if (input.isKeyDown("z")) {
-                const individualMidpoints = selections.get().map(s => (s instanceof Component ? s.getPos() :
-                                                                     s instanceof Wire      ? s.getShape().getPos(0.5) :
-                                                                     midpoint));
-                components.forEach((c, i) => c.setRotationAbout(newAngles[i], individualMidpoints[i]));
+            // Rotate independently if z is held
+            if( isIndependent ) {
+                components.forEach((c, i) => c.setRotationAbout(newAngles[i], c.getPos()));
+                initialMidpoints = components.map(o => o.getPos())
             } else {
-                components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint))
+                components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
+                initialMidpoints = components.map(o => selections.midpoint());
             }
-
             prevAngle += dAngle;
 
             // Return true since we did something

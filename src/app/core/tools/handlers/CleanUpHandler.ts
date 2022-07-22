@@ -11,6 +11,7 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Component} from "core/models";
 
 import {EventHandler} from "../EventHandler";
+import { Vector } from "Vector";
 
 
 export const CleanUpHandler: EventHandler = ({
@@ -30,9 +31,13 @@ export const CleanUpHandler: EventHandler = ({
         if (components.length === 0)
             return;
 
+        const midpoints = [] as Vector[];
+        for(let i=0; i<midpoints.length; i++) {
+            midpoints[i].add(selections.midpoint());
+        }
         history.add(new GroupAction([
             ...components.map(c =>
-                new RotateAction([c], c.getPos(), [c.getAngle()], [0])
+                new RotateAction([c], midpoints, [c.getAngle()], [0])
             ),
             new TranslateAction(
                 components,
