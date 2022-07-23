@@ -22,10 +22,11 @@ type Props = {
 export const HeaderRight = ({ helpers, info, extraUtilities }: Props) => {
     const [isHidden, setHidden] = useState(true);
 
-    return (
-        <div className="header__right">
+    return (<div className="header__right">
+        <div className="header__right__wrapper">
             <button type="button" onClick={() => setHidden(!isHidden)}>
-                <img className="expand" src={isHidden ? "img/icons/expand.svg" : "img/icons/collapse.svg"} alt="" />
+                <img className="expand" src={isHidden ? "img/icons/expand.svg" : "img/icons/collapse.svg"}
+                     width="40px" height="40px" alt="" />
             </button>
 
             <div className={`header__right__btns ${isHidden ? "header__right__collapsed" : ""}`}>
@@ -40,5 +41,5 @@ export const HeaderRight = ({ helpers, info, extraUtilities }: Props) => {
                 <TutorialDropdown />
             </div>
         </div>
-    );
+    </div>);
 };
