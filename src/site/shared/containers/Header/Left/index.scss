@@ -1,45 +1,23 @@
 @use "sass:math";
 @import "~shared/utils/constants", "~shared/utils/theme", "../constants";
 
-.header__left {
-    margin-left: 12px;
 
+.header__left {
     padding: 5px 0;
 
     & > * {
         margin-right: 7px;
     }
 
-    // & > button {
-    //     cursor: pointer;
-    // }
-
-
     &__sidebar {
-        font-size: 24px;
-
         margin-bottom: 2px;
-
-        vertical-align: middle;
-
-        color: $secondary-color;
-    }
-
-    &__history {
-        img {
-            height: $header-history-height;
-        }
-    }
-
-    &__lock {
-    }
-
-    & input {
         font-size: 24px;
-        width: 175px; // @TODO: Auto-adjust to fit within a min/max width=
+        vertical-align: middle;
+    }
 
-        color: $secondary-color;
-
+    & > input {
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
+        font-size: 24px;
         text-overflow: ellipsis;
     }
 
@@ -98,7 +76,7 @@
             height: 100%;
 
             border-radius: 7.5px;
-            background-color: #888;
+            background-color: $secondary-color;
 
             opacity: 0.5;
 

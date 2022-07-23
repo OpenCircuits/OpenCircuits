@@ -25,19 +25,27 @@ header {
     }
 
     & > div {
+        display: flex;
         flex: 0;
+        flex-direction: row;
+        align-items: center;
+
+        height: 100%;
 
         &:first-of-type, &:last-of-type {
-            display: flex;
             flex: 1;
         }
         &:first-of-type {
             justify-content: flex-start;
-            align-items: center;
+            margin-left: 12px;
         }
         &:last-of-type {
             justify-content: flex-end;
-            align-items: center;
+            margin-right: 12px;
+        }
+
+        & > * {
+            color: $secondary-color;
         }
     }
 }
@@ -45,16 +53,7 @@ header {
 .header__center {
     position: relative;
 
-    opacity: 1 !important;
-
-    display: flex;
-    flex-direction: row;
     justify-content: center;
-    align-items: center;
-
-    height: 100%;
-
-    color: $secondary-color;
 
     &__github {
         margin-bottom: 2px;

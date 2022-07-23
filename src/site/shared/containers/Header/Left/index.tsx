@@ -36,12 +36,14 @@ export const HeaderLeft = ({ helpers }: Props) => {
                 &#9776;
             </button>
 
-            <button type="button" className="header__left__history" title="History"
+            <button type="button" title="History"
+                    className="header__left__history"
                     onClick={() => dispatch((isHistoryBoxOpen) ? (CloseHistoryBox()) : (OpenHistoryBox()))}>
                 <img src="img/icons/history-light.svg" alt="History box icon (light)"></img>
             </button>
 
-            <button type="button" className="header__left__lock" title="Lock/Unlock Editing"
+            <button type="button" title="Lock/Unlock Editing"
+                    className="header__left__lock"
                     onClick={() => dispatch(ToggleCircuitLocked())}>
                 <img src="img/icons/lock_open.svg" className={isLocked ? "hide" : ""}
                      width="18px" height="18px" alt="Icon for unlocked lock" />
