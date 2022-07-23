@@ -29,13 +29,16 @@ export const TitleModule = ({ info }: Props) => {
         <label>
             <TextModuleInputField
                 props={props.name}
-                getAction={(newName) => new GroupAction(s.map(o => new SetNameAction(o, newName)), "Title Module")}
                 placeholder="<Multiple>"
                 alt="Name of object(s)"
-                onSubmit={(info) => {
+                getAction={(newNames) => new GroupAction(
+                    s.map((o,i) => new SetNameAction(o, newNames[i])),
+                    "Title Module"
+                )}
+                onSubmit={({ isFinal, action }) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal) // / Only add final action to history
-                        history.add(info.action);
+                    if (isFinal)
+                        history.add(action);
                 }} />
         </label>
     </div>)

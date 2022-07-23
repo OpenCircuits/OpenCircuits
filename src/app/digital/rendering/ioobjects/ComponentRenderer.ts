@@ -119,9 +119,9 @@ export const ComponentRenderer = (() => {
                 const width = renderer.getTextWidth(object.getName()) + 20;
                 object.setSize(V(width, size.y));
 
-                drawBox(renderer, object.getTransform(), selected, object.getColor());
+                drawBox(renderer, object.getTransform(), selected, object.getProp("color") as string);
 
-                renderer.text(object.getName(), V(), "center", object.getTextColor());
+                renderer.text(object.getName(), V(), "center", object.getProp("textColor") as string);
             }
 
             // Specific renderers

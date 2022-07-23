@@ -33,8 +33,8 @@ function StartServer() {
     });
 }
 
-function StartClient(dir: string, open: boolean) {
-    startWebpack(dir, "development", open);
+function StartClient(dir: string, project: string, open: boolean) {
+    startWebpack(dir, project, "development", open);
 }
 
 
@@ -65,5 +65,5 @@ function StartClient(dir: string, open: boolean) {
     }
 
     // Start digital/analog/landing page
-    StartClient(`src/site/pages/${value}`, open);
+    StartClient(`src/site/pages/${value}`, value, open);
 })();

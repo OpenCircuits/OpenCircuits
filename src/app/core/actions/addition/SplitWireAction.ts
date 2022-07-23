@@ -6,7 +6,8 @@ import {CircuitDesigner} from "core/models";
 import {Node} from "core/models/Node";
 import {Wire} from "core/models/Wire";
 
-import {GroupAction} from "../GroupAction";
+import {GroupAction}       from "../GroupAction";
+import {SetPropertyAction} from "../SetPropertyAction";
 
 import {ConnectionAction, DisconnectAction} from "./ConnectionAction";
 import {DeleteAction, PlaceAction}          from "./PlaceAction";
@@ -30,12 +31,12 @@ export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: 
     action.add(con1.execute());
 
     // After execution the color of the first half of the new wire is set to the color of the old wire.
-    con1.getWire().setColor(w.getColor());
+    action.add(new SetPropertyAction(con1.getWire(), "color", w.getProp("color")).execute());
 
     // Repeats same process for the other half of the split wire.
     const con2 = new ConnectionAction(designer, port.getP2(), w.getP2());
     action.add(con2.execute());
-    con2.getWire().setColor(w.getColor());
+    action.add(new SetPropertyAction(con2.getWire(), "color", w.getProp("color")).execute());
 
     return action;
 }
@@ -68,10 +69,13 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     action.add(con1.execute());
 
     // Change color on new wire that's a blend between the two wires
-    con1.getWire().setColor(ColorToHex(blend(
-        parseColor(wires[0].getColor()),
-        parseColor(wires[1].getColor()), 0.5
-    )));
+    action.add(new SetPropertyAction(
+        con1.getWire(), "color",
+        ColorToHex(blend(
+            parseColor(wires[0].getProp("color") as string),
+            parseColor(wires[1].getProp("color") as string), 0.5
+        )),
+    ).execute());
 
     return action;
 }

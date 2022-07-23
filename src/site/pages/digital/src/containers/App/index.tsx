@@ -17,6 +17,7 @@ import {SelectionPopup} from "shared/containers/SelectionPopup";
 import {SideNav}        from "shared/containers/SideNav";
 
 import {PositionModule} from "shared/containers/SelectionPopup/modules/PositionModule";
+import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 
@@ -32,24 +33,18 @@ import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
 import {BusButtonModule}            from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {ClockSyncButtonModule}      from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
-import {ColorModule}                from "site/digital/containers/SelectionPopup/modules/ColorModule";
 import {ComparatorInputCountModule} from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
-import {ConstantNumberInputModule}  from "site/digital/containers/SelectionPopup/modules/ConstantNumberInputModule";
 import {CreateICButtonModule}       from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
 import {DecoderInputCountModule}    from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {FrequencyModule}            from "site/digital/containers/SelectionPopup/modules/FrequencyModule";
 import {InputCountModule}           from "site/digital/containers/SelectionPopup/modules/InputCountModule";
 import {OscilloscopeModule}         from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 import {OutputCountModule}          from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
 import {SegmentCountModule}         from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
 import {SelectPortCountModule}      from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
-import {TextColorModule}            from "site/digital/containers/SelectionPopup/modules/TextColorModule";
 import {ViewICButtonModule}         from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
 import docsConfig    from "site/digital/data/docsUrlConfig.json";
 import exampleConfig from "site/digital/data/examples.json";
-
-import {PauseResumeButtonModule} from "../SelectionPopup/modules/PauseResumeButtonModules";
 
 import "./index.scss";
 
@@ -97,19 +92,15 @@ export const App = ({ info, helpers, canvas }: Props) => {
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
                         <PositionModule info={info} />
+                        <PropertyModule info={info} />
                         <InputCountModule info={info} />
                         <ComparatorInputCountModule info={info} />
                         <SelectPortCountModule info={info} />
-                        <ConstantNumberInputModule info={info} />
                         <DecoderInputCountModule info={info} />
                         <OutputCountModule info={info} />
                         <SegmentCountModule info={info} />
                         <OscilloscopeModule info={info} />
-                        <FrequencyModule info={info} />
-                        <PauseResumeButtonModule info={info} />
                         <ClockSyncButtonModule info={info} />
-                        <ColorModule info={info} />
-                        <TextColorModule info={info} />
                         <BusButtonModule info={info} />
                         <CreateICButtonModule info={info} />
                         <ViewICButtonModule info={info} />
