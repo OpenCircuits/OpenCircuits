@@ -101,7 +101,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     private callback(ev: DigitalEvent): void {
-        this.updateCallbacks.forEach(c => c(ev));
+        this.updateCallbacks.forEach((c) => c(ev));
     }
 
     /**
@@ -235,7 +235,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.callback({ type: "obj", op: "added", obj });
 
         // Checking all ports (issue #613)
-        for (const p of obj.getPorts().filter(r => r instanceof InputPort) as InputPort[])
+        for (const p of obj.getPorts().filter((r) => r instanceof InputPort) as InputPort[])
             p.activate(p.getInput() !== undefined && p.getInput().getIsOn());
     }
 

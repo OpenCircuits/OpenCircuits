@@ -36,7 +36,7 @@ const Shortcut = ({ os, label, pre, keys, mod }: ShortcutProps) => (
 
 export const KeyboardShortcutsPopup = () => {
     const { curPopup } = useSharedSelector(
-        state => ({ curPopup: state.header.curPopup })
+        (state) => ({ curPopup: state.header.curPopup })
     );
     const dispatch = useSharedDispatch();
 

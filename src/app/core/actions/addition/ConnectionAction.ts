@@ -121,5 +121,5 @@ export class DisconnectAction extends ConnectionAction {
  * @returns          A GroupAction representing the DisconnectActions of each Wire.
  */
 export function CreateGroupDisconnectAction(designer: CircuitDesigner, wires: Wire[]): GroupAction {
-    return new GroupAction(wires.map(w => new DisconnectAction(designer, w)), "Group Disconnect Action");
+    return new GroupAction(wires.map((w) => new DisconnectAction(designer, w)), "Group Disconnect Action");
 }

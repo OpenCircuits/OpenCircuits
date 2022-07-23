@@ -25,8 +25,8 @@ export const BusButtonModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    const iports = ps.filter(s => s instanceof InputPort)  as InputPort[];
-    const oports = ps.filter(s => s instanceof OutputPort) as OutputPort[];
+    const iports = ps.filter((s) => s instanceof InputPort)  as InputPort[];
+    const oports = ps.filter((s) => s instanceof OutputPort) as OutputPort[];
 
     if (iports.length !== oports.length)
         return null

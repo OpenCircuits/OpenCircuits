@@ -24,7 +24,7 @@ export const DeleteHandler: EventHandler = ({
          (event.key === "Delete" || event.key === "Backspace") &&
          selections.amount() > 0),
     getResponse: ({ history, designer, selections }: CircuitInfo) => {
-        const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
+        const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
         // Deselect the objects then remove them
         history.add(new GroupAction([
             CreateDeselectAllAction(selections).execute(),

@@ -6,7 +6,7 @@ import "./index.scss";
 
 
 export const HistoryToggleButton = () => {
-    const isHistoryBoxOpen = useSharedSelector(state => state.itemNav.isHistoryBoxOpen);
+    const isHistoryBoxOpen = useSharedSelector((state) => state.itemNav.isHistoryBoxOpen);
     const dispatch = useSharedDispatch();
 
     return (

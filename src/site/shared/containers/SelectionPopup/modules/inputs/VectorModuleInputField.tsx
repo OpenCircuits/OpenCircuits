@@ -25,7 +25,7 @@ export const VectorModuleInputField = ({
     const Max = [max?.x ?? +Infinity, max?.y ?? +Infinity] as const;
 
     const [state, setState] = useBaseModule<[number, number]>({
-        props: props.map(v => [v.x, v.y]),
+        props: props.map((v) => [v.x, v.y]),
 
         isValid:  (val, i) => (!isNaN(val) && Min[i] <= val && val <= Max[i]),
         parseVal: (val)    => (kind === "float" ? parseFloat(val) : parseInt(val)),

@@ -18,7 +18,7 @@ import "./index.scss";
 
 export const LoginPopup = () => {
     const { curPopup } = useSharedSelector(
-        state => ({ curPopup: state.header.curPopup })
+        (state) => ({ curPopup: state.header.curPopup })
     );
     const dispatch = useSharedDispatch();
     const [username, setUsername] = useState("");
@@ -38,7 +38,7 @@ export const LoginPopup = () => {
                             <div className="login__popup__label">NoAuth Login</div>
                             <div>
                                 <InputField type="text" placeholder="username"
-                                            value={username} onChange={e => setUsername(e.target.value.trim())} />
+                                            value={username} onChange={(e) => setUsername(e.target.value.trim())} />
                             </div>
                             <button type="button" onClick={() => {
                                 if (username === "") {

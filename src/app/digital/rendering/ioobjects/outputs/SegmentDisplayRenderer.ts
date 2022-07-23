@@ -27,9 +27,7 @@ import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
  * - Draws line spanning length between first and last input ports,
  * - Draw segments one by one - prioritize on colour, else colour as per selection status.
  */
-export const SegmentDisplayRenderer = (() => {
-
-    return {
+export const SegmentDisplayRenderer = (() => ({
         render(renderer: Renderer, _: Camera, display: SegmentDisplay, selected: boolean): void {
             const transform = display.getTransform();
 
@@ -59,5 +57,4 @@ export const SegmentDisplayRenderer = (() => {
                 renderer.image(img, pos, size, col);
             }
         },
-    };
-})();
+    }))();

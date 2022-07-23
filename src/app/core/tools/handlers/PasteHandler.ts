@@ -3,8 +3,7 @@ import {CopyPasteEvent, Event} from "core/utils/Events";
 import {EventHandler} from "../EventHandler";
 
 
-export const PasteHandler = (paste: (text: string) => boolean): EventHandler => {
-    return ({
+export const PasteHandler = (paste: (text: string) => boolean): EventHandler => ({
         conditions: (event: Event) =>
             (event.type === "paste" &&
              (!!event.ev.clipboardData) &&
@@ -13,5 +12,4 @@ export const PasteHandler = (paste: (text: string) => boolean): EventHandler => 
         getResponse: (_, { ev }: CopyPasteEvent) => {
             paste(ev.clipboardData!.getData("text/plain"));
         },
-    });
-}
+    })

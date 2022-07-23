@@ -32,23 +32,23 @@ import {IC} from "digital/models/ioobjects/other";
  */
 function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): Action | undefined {
     // Find ICs and ICData
-    const ics = objs.filter(o => o instanceof IC) as IC[];
-    const icData = [...new Set(ics.map(ic => ic.getData()))]; // Get unique ICData
+    const ics = objs.filter((o) => o instanceof IC) as IC[];
+    const icData = [...new Set(ics.map((ic) => ic.getData()))]; // Get unique ICData
 
     // Check if any of the icData's are already within this circuit by comparing
     //  their serialized versions (fixes issue #712)
-    const serializedICDatas = designer.getICData().map(d => Serialize(d));
+    const serializedICDatas = designer.getICData().map((d) => Serialize(d));
 
     // Get indices of ICData that already exist (-1 if the ICData is new)
     const icDataIndices = icData
-        .map(d => Serialize(d))
-        .map(s => serializedICDatas.indexOf(s));
+        .map((d) => Serialize(d))
+        .map((s) => serializedICDatas.indexOf(s));
 
     // Filter out only the new ICData
     const newICData = icData.filter((_, i) => (icDataIndices[i] === -1));
 
     // Update ICs to use existing ICData if applicable
-    ics.forEach(ic => {
+    ics.forEach((ic) => {
         const dataIndex = icDataIndices[icData.indexOf(ic.getData())];
         if (dataIndex === -1)
             return; // Don't change IC since it uses the new Data
@@ -62,7 +62,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
     ], "Recursive Transfer ICData Action");
 
     // Recursively look through all the new ICs for new ICData
-    newICData.forEach(d => {
+    newICData.forEach((d) => {
         const newAction = TransferNewICData(d.getGroup().toList(), designer);
         if (newAction)
             action.add(newAction)
@@ -87,7 +87,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
         const newICDataAction = TransferNewICData(objs, designer);
 
         // Get all components
-        const comps = objs.filter(o => o instanceof Component) as Component[];
+        const comps = objs.filter((o) => o instanceof Component) as Component[];
 
         // Determine shift for target positions for pasted components
         const targetPosShift = menuPos?.sub(comps[0].getPos()) ?? V(5, 5);
@@ -100,7 +100,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(targetPosShift))),
+            new TranslateAction(comps, comps.map((o) => o.getPos()), comps.map((o) => o.getPos().add(targetPosShift))),
         ]).execute());
 
         history.add(action);

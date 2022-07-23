@@ -74,5 +74,5 @@ export class DeleteAction extends PlaceAction {
  * @returns          A GroupAction representing the PlaceActions of every Component.
  */
 export function CreateGroupPlaceAction(designer: CircuitDesigner, objs: Component[]): GroupAction {
-    return new GroupAction(objs.map(o => new PlaceAction(designer, o)), "Group Place Action");
+    return new GroupAction(objs.map((o) => new PlaceAction(designer, o)), "Group Place Action");
 }

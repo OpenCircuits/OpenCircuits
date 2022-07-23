@@ -26,7 +26,7 @@ export const CopyHandler: EventHandler = ({
          document.getSelection()?.type === "Caret"),
 
     getResponse: ({ selections, designer, history }: CircuitInfo, { type, ev }: CopyPasteEvent) => {
-        const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
+        const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
 
         const str = SerializeForCopy(objs);
 

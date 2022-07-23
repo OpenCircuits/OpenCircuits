@@ -21,8 +21,8 @@ export const AnalogItemNav = ({ info }: Props) => {
             throw new Error(`AnalogItemNav: Can't find ID for component ${c.getName()}`);
 
         // Get path within config of ItemNav icon
-        const section = itemNavConfig.sections.find(s => s.items.find(i => i.id === id));
-        const item = section?.items.find(i => i.id === id);
+        const section = itemNavConfig.sections.find((s) => s.items.find((i) => i.id === id));
+        const item = section?.items.find((i) => i.id === id);
 
         return `${itemNavConfig.imgRoot}/${section?.id}/${item?.icon}`;
     }, []);

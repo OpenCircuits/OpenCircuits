@@ -25,7 +25,7 @@ type Props = {
 }
 export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
     const { curMenu, isLocked } = useSharedSelector(
-        state => ({ curMenu: state.header.curMenu, isLocked: state.circuit.isLocked })
+        (state) => ({ curMenu: state.header.curMenu, isLocked: state.circuit.isLocked })
     );
     const dispatch = useSharedDispatch();
 
@@ -42,7 +42,7 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
                   btnInfo={{ title: "Utilities", src: "img/icons/utilities.svg" }}
                   onClick={() => dispatch(OpenHeaderMenu("utilities"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
-            {extraUtilities.map(utility => (
+            {extraUtilities.map((utility) => (
                 <div key={utility.popupName}
                      role="button" tabIndex={0}
                      className={`${isLocked ? "disabled" : ""}`}

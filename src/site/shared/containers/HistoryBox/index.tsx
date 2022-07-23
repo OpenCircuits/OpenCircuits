@@ -82,9 +82,7 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
             {displayExtraInfo && g.getCustomInfo?.()?.map((obj, i) =>
                 <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
             )}
-            {!isCollapsed && g.getActions().map((a, i) => {
-                return (<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={isRedo} />);
-            })}
+            {!isCollapsed && g.getActions().map((a, i) => (<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={isRedo} />))}
             {!isCollapsed && g.isEmpty() && <div style={{ marginLeft: "10px" }}>Empty</div>}
         </div>
     );
@@ -96,7 +94,7 @@ type Props = {
 }
 export const HistoryBox = ({ info }: Props) => {
     const { isOpen, isHistoryBoxOpen, curItemID } = useSharedSelector(
-        state => ({ ...state.itemNav }),
+        (state) => ({ ...state.itemNav }),
     );
     const dispatch = useSharedDispatch();
 

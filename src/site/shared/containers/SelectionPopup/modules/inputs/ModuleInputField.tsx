@@ -25,7 +25,7 @@ export type SharedModuleInputFieldProps<V extends Prop> = {
 export const DefaultConfig = <V extends Primitive>({
     props, getAction, onSubmit, getCustomDisplayVal,
 }: Omit<SharedModuleInputFieldProps<V>, "alt" | "placeholder">): Omit<Props<[V]>, "parseVal"> => ({
-    props: props.map(v => [v]),
+    props: props.map((v) => [v]),
 
     isValid: (_) => true,
 
@@ -81,7 +81,7 @@ export const useBaseModule = <V extends Primitive[]>({
 
     // Compute useful information
     const val0 = props[0];
-    const allSame = indices.map((i) => props.every(v => v[i] === val0[i]));
+    const allSame = indices.map((i) => props.every((v) => v[i] === val0[i]));
     const values = indices.map((i) =>
         (focused
             ? textVals[i]

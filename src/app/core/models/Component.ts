@@ -65,7 +65,7 @@ export abstract class Component extends CullableObject {
     public abstract getPorts(): Port[];
 
     public getConnections(): Wire[] {
-        return this.getPorts().flatMap(p => p.getWires());
+        return this.getPorts().flatMap((p) => p.getWires());
     }
 
     public getPos(): Vector {
@@ -93,12 +93,12 @@ export abstract class Component extends CullableObject {
 
         // Find minimum pos from corners of transform with added offset
         const corners = this.transform.getCorners().map(
-            v => v.sub(this.getOffset())
+            (v) => v.sub(this.getOffset())
         );
 
         // Find minimum pos from ports
         const ports = this.getPorts().map(
-            p => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
+            (p) => p.getWorldTargetPos().sub(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
         );
 
         return Vector.Min(min, ...corners, ...ports);
@@ -109,12 +109,12 @@ export abstract class Component extends CullableObject {
 
         // Find maximum pos from corners of transform with added offset
         const corners = this.transform.getCorners().map(
-            v => v.add(this.getOffset())
+            (v) => v.add(this.getOffset())
         );
 
         // Find maximum pos from ports
         const ports = this.getPorts().map(
-            p => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
+            (p) => p.getWorldTargetPos().add(IO_PORT_RADIUS+IO_PORT_BORDER_WIDTH)
         );
 
         return Vector.Max(max, ...corners, ...ports);

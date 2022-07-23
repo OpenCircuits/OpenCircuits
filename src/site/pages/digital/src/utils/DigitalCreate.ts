@@ -109,13 +109,13 @@ export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuit
         // Need to do it like this rather then comp.getInputPorts() since this can
         //  account for things like the Select ports on Multiplexers
         const inputPorts  = (options & SmartPlaceOptions.Inputs) ?
-            comp.getPorts().filter(p => p instanceof InputPort)  : [];
+            comp.getPorts().filter((p) => p instanceof InputPort)  : [];
 
         const outputPorts = (options & SmartPlaceOptions.Outputs) ?
-            comp.getPorts().filter(p => p instanceof OutputPort) : [];
+            comp.getPorts().filter((p) => p instanceof OutputPort) : [];
 
-        const inputs  =  inputPorts.map(_ => new Switch());
-        const outputs = outputPorts.map(_ => new LED());
+        const inputs  =  inputPorts.map((_) => new Switch());
+        const outputs = outputPorts.map((_) => new LED());
 
         inputs.forEach((s, i) => {
             s.setPos(V(-comp.getCullBox().getSize().x/2 - AUTO_PLACE_SWITCH_SPACE,

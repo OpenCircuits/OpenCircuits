@@ -28,8 +28,8 @@ const [Info] = GenPropInfo({
             // Specifically default to pausing. Meaning only Resume when every component
             //  is paused, and so if there's a single non-paused component, pressing
             //  the button will pause them all and the text will say "Pause"
-            getText:     (states) => (states.every(s => (s === true)) ? "Resume" : "Pause"),
-            getNewState: (states) => (states.every(s => (s === true)) ? false : true),
+            getText:     (states) => (states.every((s) => (s === true)) ? "Resume" : "Pause"),
+            getNewState: (states) => (states.every((s) => (s === true)) ? false : true),
         },
     },
 });

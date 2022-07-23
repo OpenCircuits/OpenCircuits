@@ -50,8 +50,8 @@ export const SimButtons = ({ info }: Props) => {
         info.renderer.render();
 
         // Add all current plots to all current Oscilloscopes
-        const o = info.designer.getObjects().filter(a => a instanceof Oscilloscope) as Oscilloscope[];
-        o.forEach(o => {
+        const o = info.designer.getObjects().filter((a) => a instanceof Oscilloscope) as Oscilloscope[];
+        o.forEach((o) => {
             o.setConfig({
                 ...o.getConfig(),
                 vecs: Object.fromEntries(info.sim!.getFullVecIDs().map(

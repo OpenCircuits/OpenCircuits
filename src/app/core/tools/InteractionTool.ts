@@ -24,7 +24,7 @@ export class InteractionTool extends DefaultTool {
         //  pressed/selected before wires!
         const objs = designer.getObjects().reverse();
         const wires = designer.getWires().reverse();
-        return [...objs, ...wires].find(o => (isPressable(o) && o.isWithinPressBounds(pos) ||
+        return [...objs, ...wires].find((o) => (isPressable(o) && o.isWithinPressBounds(pos) ||
                                              o.isWithinSelectBounds(pos)));
     }
 

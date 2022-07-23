@@ -14,9 +14,9 @@ export const DropdownOption = <T extends string>({ id, option, options, setOptio
     <br />
     <label>{text}</label>
     <select id={id} value={option}
-            onChange={e => setOption(e.target.value as T)}
-            onBlur={e => setOption(e.target.value as T)}>
-        {options.map(opt =>
+            onChange={(e) => setOption(e.target.value as T)}
+            onBlur={(e) => setOption(e.target.value as T)}>
+        {options.map((opt) =>
             <option key={opt} value={opt}>{opt}</option>
         )}
     </select>

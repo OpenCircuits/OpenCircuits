@@ -61,8 +61,7 @@ function toShape(rect: Rect): Rectangle {
     return new Rectangle(rect.center, rect.size);
 }
 
-export const OscilloscopeRenderer = (() => {
-    return {
+export const OscilloscopeRenderer = (() => ({
         render(renderer: Renderer, info: AnalogCircuitInfo, o: Oscilloscope, selected: boolean): void {
             const transform = o.getTransform();
             const size = transform.getSize();
@@ -81,8 +80,8 @@ export const OscilloscopeRenderer = (() => {
 
             const { showAxes, showLegend, showGrid, vecs } = o.getConfig();
 
-            const enabledVecIDs = (Object.keys(vecs) as Array<`${string}.${string}`>).filter(id => vecs[id].enabled);
-            const allData = enabledVecIDs.map(id => info.sim!.getVecData(id));
+            const enabledVecIDs = (Object.keys(vecs) as Array<`${string}.${string}`>).filter((id) => vecs[id].enabled);
+            const allData = enabledVecIDs.map((id) => info.sim!.getVecData(id));
 
             if (!allData || Object.entries(allData).length === 0)
                 return;
@@ -155,8 +154,8 @@ export const OscilloscopeRenderer = (() => {
                 return {
                     xs:    linspace(bounds.left, bounds.right, num.x),
                     ys:    linspace(bounds.bottom, bounds.top, num.y),
-                    xVals: linspace(minX,   maxX,   num.x).map(v => v.toFixed(2)),
-                    yVals: linspace(minVal, maxVal, num.y).map(v => v.toFixed(2)),
+                    xVals: linspace(minX,   maxX,   num.x).map((v) => v.toFixed(2)),
+                    yVals: linspace(minVal, maxVal, num.y).map((v) => v.toFixed(2)),
                 }
             }
 
@@ -266,5 +265,4 @@ export const OscilloscopeRenderer = (() => {
                 renderer.restore();
             }
         },
-    }
-})();
+    }))();

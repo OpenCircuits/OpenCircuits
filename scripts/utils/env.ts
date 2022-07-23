@@ -22,11 +22,11 @@ export default function getEnv(dir: string, publicRoot: string) {
         `${dotenv}.${NODE_ENV}`,
         `${dotenv}`,
     ].filter(existsSync)
-     .map(path => ({ path }))
-     .forEach(cfg => dotEnvExpand.expand(dotEnv.config(cfg)));
+     .map((path) => ({ path }))
+     .forEach((cfg) => dotEnvExpand.expand(dotEnv.config(cfg)));
 
     return Object.keys(process.env)
-                 .filter(k => k.startsWith("OC"))
+                 .filter((k) => k.startsWith("OC"))
                  .reduce(
                      (env, key) => ({ ...env, [key]: process.env[key] }),
                      {

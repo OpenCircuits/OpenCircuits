@@ -24,7 +24,7 @@ export const DuplicateHandler: EventHandler = ({
          selections.amount() > 0),
 
     getResponse: ({ history, designer, selections }: CircuitInfo) => {
-        const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
+        const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
 
         const copyGroupAction = new CopyGroupAction(designer, objs);
         const components = copyGroupAction.getCopies().getComponents();
@@ -35,8 +35,8 @@ export const DuplicateHandler: EventHandler = ({
             CreateDeselectAllAction(selections).execute(),
             CreateGroupSelectAction(selections, components).execute(),
             new TranslateAction(components,
-                                components.map(o => o.getPos()),
-                                components.map(o => o.getPos().add(V(5, 5)))).execute(),
+                                components.map((o) => o.getPos()),
+                                components.map((o) => o.getPos().add(V(5, 5)))).execute(),
         ], "Duplicate Handler"));
     },
 });

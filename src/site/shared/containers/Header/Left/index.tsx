@@ -20,7 +20,7 @@ type Props = {
 }
 export const HeaderLeft = ({ helpers }: Props) => {
     const { id, name, isSaved, isLoggedIn, saving, error } = useSharedSelector(
-        state => ({ ...state.circuit, isLoggedIn: state.user.isLoggedIn })
+        (state) => ({ ...state.circuit, isLoggedIn: state.user.isLoggedIn })
     );
     const dispatch = useSharedDispatch();
 

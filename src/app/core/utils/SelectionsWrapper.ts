@@ -64,7 +64,7 @@ export class SelectionsWrapper {
         this.selections.add(s);
 
         // Callback change listeners
-        this.listeners.forEach(l => l());
+        this.listeners.forEach((l) => l());
 
         return true;
     }
@@ -80,7 +80,7 @@ export class SelectionsWrapper {
             return false;
 
         // Callback change listeners
-        this.listeners.forEach(l => l());
+        this.listeners.forEach((l) => l());
 
         return true;
     }
@@ -92,7 +92,7 @@ export class SelectionsWrapper {
      * @returns   Returns true if `f` returns true for every element in `this.selections` and false otherwise.
      */
     public all(f: (s: Selectable) => boolean): boolean {
-        return this.get().every(s => f(s));
+        return this.get().every((s) => f(s));
     }
 
     /**
@@ -102,7 +102,7 @@ export class SelectionsWrapper {
      * @returns   Returns true if `f` returns true for every element in `this.selections` and false otherwise.
      */
     public any(f: (s: Selectable) => boolean): boolean {
-        return this.get().some(s => f(s));
+        return this.get().some((s) => f(s));
     }
 
     /**
@@ -112,7 +112,7 @@ export class SelectionsWrapper {
      * @returns   True if every Selectable in s is also in `this.selections` and false otherwise.
      */
     public has(...s: Selectable[]): boolean {
-        return s.every(s => this.selections.has(s));
+        return s.every((s) => this.selections.has(s));
     }
 
 
@@ -141,12 +141,12 @@ export class SelectionsWrapper {
         // Filter out selections that we can get the position of
         const selections =
             [...this.selections]
-                 .filter(s => (all ? (s instanceof Component || s instanceof Wire || s instanceof Port)
+                 .filter((s) => (all ? (s instanceof Component || s instanceof Wire || s instanceof Port)
                                    : (s instanceof Component))) as Array<Component | Wire | Port>;
 
         // Get positions from Selectables
         const positions = selections
-            .map(s => (s instanceof Component ? s.getPos() :
+            .map((s) => (s instanceof Component ? s.getPos() :
                        s instanceof Wire      ? s.getShape().getPos(0.5) :
                                                 s.getWorldTargetPos()));
 

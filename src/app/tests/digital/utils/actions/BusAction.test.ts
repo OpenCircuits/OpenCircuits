@@ -26,7 +26,7 @@ describe("Bus Action", () => {
             expect(designer.getWires()).toHaveLength(outs.length); // outs.length = ins.length
 
             // Make sure all ports have exactly 1 connection
-            [...ins, ...outs].forEach(p => {
+            [...ins, ...outs].forEach((p) => {
                 expect(p.getWires()).toHaveLength(1);
             });
         }
@@ -133,7 +133,7 @@ describe("Bus Action", () => {
 
         o1.setPos(V(100,    0));
 
-        expectBusConnections([i1,i2,i3,i4].map(i => i.getOutputPort(0)), o1.getInputPorts());
+        expectBusConnections([i1,i2,i3,i4].map((i) => i.getOutputPort(0)), o1.getInputPorts());
 
         // Assert order of connections
         expect(i1.getConnections()[0]).toBe(o1.getConnections()[0]);
@@ -162,7 +162,7 @@ describe("Bus Action", () => {
         o1.setPos(V(100,    0));
         o1.setAngle(-0.21);
 
-        expectBusConnections([i1,i2,i3,i4,i5,i6].map(i => i.getOutputPort(0)),
+        expectBusConnections([i1,i2,i3,i4,i5,i6].map((i) => i.getOutputPort(0)),
                              [...o1.getInputPorts(), ...o1.getSelectPorts()]);
 
         // Assert order of connections
@@ -187,7 +187,7 @@ describe("Bus Action", () => {
         o1.setPos(V(100,    0));
         o1.setAngle(-0.21);
 
-        expectBusConnections([i1,i2,i3].flatMap(i => i.getOutputPorts()),
+        expectBusConnections([i1,i2,i3].flatMap((i) => i.getOutputPorts()),
                              [...o1.getInputPorts(), ...o1.getSelectPorts()]);
 
         // Assert order of connections
@@ -233,7 +233,7 @@ describe("Bus Action", () => {
 
         const [ic] = Place(new IC(icdata));
 
-        expectBusConnections([i1,i2,i3,i4].flatMap(i => i.getOutputPorts()), ic.getInputPorts());
+        expectBusConnections([i1,i2,i3,i4].flatMap((i) => i.getOutputPorts()), ic.getInputPorts());
 
         // Assert order of connections
         expect(i1.getConnections()[0]).toBe(ic.getConnections()[0]);
@@ -277,7 +277,7 @@ describe("Bus Action", () => {
 
         const [ic] = Place(new IC(icdata));
 
-        expectBusConnections([i1,i2,i3,i4].flatMap(i => i.getOutputPorts()), ic.getInputPorts());
+        expectBusConnections([i1,i2,i3,i4].flatMap((i) => i.getOutputPorts()), ic.getInputPorts());
 
         // Assert order of connections
         expect(i1.getConnections()[0]).toBe(ic.getConnections()[0]);

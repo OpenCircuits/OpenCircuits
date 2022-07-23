@@ -22,8 +22,7 @@ import {LED} from "digital/models/ioobjects";
  * - Draws LED svg
  * - If LED is on, draws glow the appropriate color.
  */
-export const LEDRenderer = (() => {
-    return {
+export const LEDRenderer = (() => ({
         render(renderer: Renderer, _: Camera, led: LED, selected: boolean): void {
             const size = led.getSize();
 
@@ -46,5 +45,4 @@ export const LEDRenderer = (() => {
                 renderer.draw(new Circle(V(), LED_LIGHT_RADIUS), new Style(gradient));
             }
         },
-    };
-})();
+    }))();

@@ -26,11 +26,11 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
     const action = new GroupAction([], "Create Negated Gates Action");
     const negatedCircuit = [...circuit.toList()];
 
-    const gates = circuit.getOthers().filter(gate =>
+    const gates = circuit.getOthers().filter((gate) =>
         (gate instanceof ANDGate || gate instanceof ORGate || gate instanceof XORGate)
     ) as Array<ANDGate | ORGate | XORGate>;
 
-    gates.forEach(gate => {
+    gates.forEach((gate) => {
         const wires = gate.getOutputPort(0).getWires();
         if (wires.length === 1) {
             const other = wires[0].getOutputComponent();
@@ -38,9 +38,9 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
                 const newGate = GetInvertedGate(gate);
 
                 // Remove wires and gates from negatedCircuit
-                gate.getInputs().forEach(wire => negatedCircuit.splice(negatedCircuit.indexOf(wire), 1));
+                gate.getInputs().forEach((wire) => negatedCircuit.splice(negatedCircuit.indexOf(wire), 1));
                 negatedCircuit.splice(negatedCircuit.indexOf(wires[0]), 1);
-                other.getOutputs().forEach(wire => negatedCircuit.splice(negatedCircuit.indexOf(wire), 1));
+                other.getOutputs().forEach((wire) => negatedCircuit.splice(negatedCircuit.indexOf(wire), 1));
                 negatedCircuit.splice(negatedCircuit.indexOf(other), 1);
                 negatedCircuit.splice(negatedCircuit.indexOf(gate), 1, newGate);
 
@@ -49,8 +49,8 @@ export function CreateNegatedGatesAction(designer: DigitalCircuitDesigner,
                 action.add(CreateReplaceComponentAction(designer, gate, newGate));
 
                 // Add new wires to negatedCircuit
-                newGate.getInputs().forEach(wire => negatedCircuit.push(wire));
-                newGate.getOutputs().forEach(wire => negatedCircuit.push(wire));
+                newGate.getInputs().forEach((wire) => negatedCircuit.push(wire));
+                newGate.getOutputs().forEach((wire) => negatedCircuit.push(wire));
             }
         }
     });

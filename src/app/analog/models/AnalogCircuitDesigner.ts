@@ -63,7 +63,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     }
 
     private callback(ev: AnalogEvent): void {
-        this.updateCallbacks.forEach(c => c(ev));
+        this.updateCallbacks.forEach((c) => c(ev));
     }
 
     /**

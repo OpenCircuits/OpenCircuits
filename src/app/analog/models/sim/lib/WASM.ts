@@ -48,7 +48,7 @@ function CreateArray(module: WASMModule, ...params: CreateArrayParams) {
     return arrPointer;
 }
 function CreateStringArray(module: WASMModule, strs: string[]): [number, ...number[]] {
-    const ptrs = strs.map(s => CreateArray(module, "string", s));
+    const ptrs = strs.map((s) => CreateArray(module, "string", s));
     const res = new Uint32Array(ptrs);
 
     const arrPointer = module._malloc(res.byteLength);
@@ -109,7 +109,7 @@ function GetArray<T extends GetArrayParams>(
         const arr = module.HEAPU32.subarray(ptr, ptr + len);
         if (o.type === "string*")
             return [...arr] as GetArrayReturn<T>;
-        return [...arr].map(ptr => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
+        return [...arr].map((ptr) => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
     }
     if (o.type === "int") {
         ptr = ptr / module.HEAP32.BYTES_PER_ELEMENT;

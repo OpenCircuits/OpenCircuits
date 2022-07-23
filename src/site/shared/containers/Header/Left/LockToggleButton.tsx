@@ -6,7 +6,7 @@ import "./index.scss";
 
 
 export const LockToggleButton = () => {
-    const isLocked = useSharedSelector(state => (state.circuit.isLocked));
+    const isLocked = useSharedSelector((state) => (state.circuit.isLocked));
     const dispatch = useSharedDispatch();
 
     return (<div>

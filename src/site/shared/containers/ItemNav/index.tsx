@@ -61,7 +61,7 @@ type Props<D> = {
 export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
     const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
-        state => ({ ...state.itemNav })
+        (state) => ({ ...state.itemNav })
     );
     const dispatch = useSharedDispatch();
 
@@ -201,16 +201,14 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         const H_MARGIN = 30, ITEM_WIDTH = 100;
 
         const numPerSection = Math.floor((w - H_MARGIN) / ITEM_WIDTH);
-        return config.sections.reduce((prev, section) => {
-            return [
+        return config.sections.reduce((prev, section) => [
                 ...prev,
                 ...section.items
                     // Reduce items to group of `numPerSection`
                     .reduce(GroupBy(numPerSection), [[]] as ItemNavItem[][])
                     // Map each group to a new section with same ID and label
-                    .map<ItemNavSection>(items => ({ id: section.id, label: section.label, items })),
-            ];
-        }, [] as ItemNavSection[]);
+                    .map<ItemNavSection>((items) => ({ id: section.id, label: section.label, items })),
+            ], [] as ItemNavSection[]);
     }, [config.sections, w]);
 
     const sections = (side === "left") ? config.sections : sectionsBottom;

@@ -31,7 +31,7 @@ type Props = {
 }
 export const MainDesigner = ({ info, canvas }: Props) => {
     const { isLocked } = useAnalogSelector(
-        state => ({ isLocked: state.circuit.isLocked })
+        (state) => ({ isLocked: state.circuit.isLocked })
     );
 
     const { w, h } = useWindowSize();

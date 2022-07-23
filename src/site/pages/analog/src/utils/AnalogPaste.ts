@@ -31,7 +31,7 @@ export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vec
         const objs = Deserialize<IOObject[]>(data);
 
         // Get all components
-        const comps = objs.filter(o => o instanceof Component) as Component[];
+        const comps = objs.filter((o) => o instanceof Component) as Component[];
 
         // Determine shift for target positions for pasted components
         const targetPosShift = menuPos?.sub(comps[0].getPos()) ?? V(5, 5);
@@ -42,7 +42,7 @@ export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vec
             new AddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map(o => o.getPos()), comps.map(o => o.getPos().add(targetPosShift))),
+            new TranslateAction(comps, comps.map((o) => o.getPos()), comps.map((o) => o.getPos().add(targetPosShift))),
         ]).execute());
 
         history.add(action);

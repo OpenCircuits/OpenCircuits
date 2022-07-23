@@ -91,11 +91,9 @@ export class Input {
 
         // Check if some combination has every key pressed and newKey is one of them
         //  and return true if that's the case
-        return PREVENTED_COMBINATIONS.some((combination) => {
-            return combination.flat().includes(newKey) &&
-                   combination.every(keys =>
-                       keys.some(key => this.isKeyDown(key)));
-        });
+        return PREVENTED_COMBINATIONS.some((combination) => combination.flat().includes(newKey) &&
+                   combination.every((keys) =>
+                       keys.some((key) => this.isKeyDown(key))));
     }
 
     /**
@@ -157,9 +155,7 @@ export class Input {
      * Sets up Listeners for touch events.
      */
     private hookupTouchEvents(): void {
-        const getTouchPositions = (touches: TouchList): Vector[] => {
-            return [...touches].map((t) => V(t.clientX, t.clientY));
-        };
+        const getTouchPositions = (touches: TouchList): Vector[] => [...touches].map((t) => V(t.clientX, t.clientY));
 
         // Touch screen events
         this.canvas.addEventListener("touchstart", (e) => {

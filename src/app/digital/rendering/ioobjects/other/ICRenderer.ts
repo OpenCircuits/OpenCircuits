@@ -21,8 +21,7 @@ import {IC} from "digital/models/ioobjects/other/IC";
  * - Draw Rectangle to size
  * - Render IC name aligned in center.
  */
-export const ICRenderer = (() => {
-    return {
+export const ICRenderer = (() => ({
         render(renderer: Renderer, _: Camera, ic: IC, selected: boolean): void {
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
@@ -32,5 +31,4 @@ export const ICRenderer = (() => {
 
             renderer.text(ic.getData().getName(), V(), "center");
         },
-    }
-})();
+    }))();

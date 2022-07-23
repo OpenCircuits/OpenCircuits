@@ -30,7 +30,7 @@ export class Demultiplexer extends Mux {
     }
 
     public activate(): void {
-        const values = this.selects.getPorts().map(p => (p.getIsOn() ? 1 : 0)) as number[];
+        const values = this.selects.getPorts().map((p) => (p.getIsOn() ? 1 : 0)) as number[];
 
         const num = values.reduce((acc, cur, i) => acc = acc | (cur << i), 0);
 

@@ -15,7 +15,7 @@ import {Wire} from "core/models";
 
 // @TODO @leon - Move this function to "svg2canvas"
 function ColorToHex(col: Color): string {
-    return `#${[col.r, col.g, col.b].map(x => {
+    return `#${[col.r, col.g, col.b].map((x) => {
         const hex = Math.round(x).toString(16);
         return (hex.length === 1 ? "0"+hex : hex);
     }).join("")}`
@@ -28,8 +28,7 @@ function ColorToHex(col: Color): string {
  * - Calculate Wire Bezier Curve,
  * - Draw.
  */
-export const WireRenderer = (() => {
-    return {
+export const WireRenderer = (() => ({
         render(renderer: Renderer, { camera, selections }: CircuitInfo, wire: Wire): void {
             if (!camera.cull(wire.getCullBox()))
                 return;
@@ -62,5 +61,4 @@ export const WireRenderer = (() => {
             for (const wire of wires)
                 WireRenderer.render(renderer, info, wire);
         },
-    };
-})();
+    }))();

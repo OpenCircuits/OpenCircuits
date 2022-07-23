@@ -26,7 +26,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
     //  or their properties change
     const updateState = useCallback(() => {
         // Get selections with ignored types filtered out
-        const selections = info.selections.get().filter(s => !ignore(s));
+        const selections = info.selections.get().filter((s) => !ignore(s));
         const filteredSelections = selections.filter(validTypes);
 
         // Ensure we only have the acceptable types selected
@@ -35,7 +35,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
             return;
         }
 
-        const allProps = filteredSelections.map(s => getProps(s));
+        const allProps = filteredSelections.map((s) => getProps(s));
         if (allProps.length === 0) {
             setProps(undefined);
             return;
@@ -43,7 +43,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
 
         // Filter out keys that not all the objects have
         const keys = Object.keys(allProps[0])
-            .filter((key) => (allProps.every(prop => (key in prop))));
+            .filter((key) => (allProps.every((prop) => (key in prop))));
         if (keys.length === 0) {
             setProps(undefined);
             return;
@@ -52,7 +52,7 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
 
         const props = Object.fromEntries(
             keys.map((key: keyof T) => (
-                [key, allProps.map(p => p[key])] as const
+                [key, allProps.map((p) => p[key])] as const
             ))
         ) as RecordOfArrays<T>;
 

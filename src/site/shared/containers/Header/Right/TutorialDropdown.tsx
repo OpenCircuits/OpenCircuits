@@ -7,7 +7,7 @@ import {Dropdown} from "./Dropdown";
 
 export const TutorialDropdown = () => {
     const { curMenu } = useSharedSelector(
-        state => ({ curMenu: state.header.curMenu })
+        (state) => ({ curMenu: state.header.curMenu })
     );
     const dispatch = useSharedDispatch();
 

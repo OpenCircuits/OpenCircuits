@@ -23,7 +23,7 @@ export class HistoryManager {
     }
 
     private callback(type: HistoryCallbackType, action?: Action): void {
-        this.callbacks.forEach(c => c(type, action));
+        this.callbacks.forEach((c) => c(type, action));
     }
 
     public addCallback(callback: HistoryCallback): void {

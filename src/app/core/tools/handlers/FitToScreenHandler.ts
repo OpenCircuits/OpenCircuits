@@ -20,7 +20,7 @@ export const FitToScreenHandler: EventHandler = ({
         //  otherwise fit all CullableObjects
         const objs = (selections.amount() === 0 ?
             designer.getAll() :
-            selections.get().filter(o => o instanceof CullableObject)) as CullableObject[];
+            selections.get().filter((o) => o instanceof CullableObject)) as CullableObject[];
 
         // Get final camera position and zoom
         const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);

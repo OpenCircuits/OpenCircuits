@@ -33,7 +33,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     const isPageVisible = usePageVisibility();
 
     const { isLocked } = useDigitalSelector(
-        state => ({ isLocked: state.circuit.isLocked })
+        (state) => ({ isLocked: state.circuit.isLocked })
     );
 
     const { w, h } = useWindowSize();

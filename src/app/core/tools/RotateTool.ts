@@ -40,7 +40,7 @@ export const RotateTool = (() => {
             return (event.type === "mousedown" &&
                     input.getTouchCount() === 1 &&
                     selections.amount() > 0 &&
-                    selections.all(s => s instanceof Component) &&
+                    selections.all((s) => s instanceof Component) &&
                     isMouseOnCircle(info));
         },
         shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
@@ -54,7 +54,7 @@ export const RotateTool = (() => {
             const components = selections.get() as Component[];
 
             // Get initial component angles
-            initialAngles = components.map(o => o.getAngle());
+            initialAngles = components.map((o) => o.getAngle());
             currentAngles = [...initialAngles];
 
             // Get initial overall angle
@@ -65,7 +65,7 @@ export const RotateTool = (() => {
         },
         onDeactivate({}: Event, { history, selections }: CircuitInfo): void {
             const components = selections.get() as Component[];
-            const finalAngles = components.map(o => o.getAngle());
+            const finalAngles = components.map((o) => o.getAngle());
 
             history.add(new RotateAction(components, selections.midpoint(), initialAngles, finalAngles));
         },
@@ -82,11 +82,11 @@ export const RotateTool = (() => {
             const dAngle = getAngle(worldMousePos, midpoint) - prevAngle;
 
             // Calculate new angles
-            currentAngles = currentAngles.map(a => a + dAngle);
+            currentAngles = currentAngles.map((a) => a + dAngle);
 
             // Get snapped angles if shift is held
             const newAngles = input.isShiftKeyDown() ?
-                currentAngles.map(a => Math.floor(a/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT) :
+                currentAngles.map((a) => Math.floor(a/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT) :
                 currentAngles;
 
             // Set the rotations

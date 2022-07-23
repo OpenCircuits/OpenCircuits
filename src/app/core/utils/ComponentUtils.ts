@@ -41,8 +41,8 @@ export class IOObjectSet {
     protected wires: Set<Wire>;
 
     public constructor(set: IOObject[] = []) {
-        this.components = new Set<Component>(set.filter(o => o instanceof Component) as Component[]);
-        this.wires      = new Set<Wire>     (set.filter(o => o instanceof Wire)      as Wire[]);
+        this.components = new Set<Component>(set.filter((o) => o instanceof Component) as Component[]);
+        this.wires      = new Set<Wire>     (set.filter((o) => o instanceof Wire)      as Wire[]);
     }
 
     public getComponents(): Component[] {
@@ -294,26 +294,24 @@ export function SerializeForCopy(objects: IOObject[]): string {
                     let connections = port.getWires();
                     if (objects.includes(parent)) {
                         // prevent connections not in our list from being serialized
-                        connections = connections.filter((wire) => {
-                            return (objects.includes(wire));
-                        });
+                        connections = connections.filter((wire) => (objects.includes(wire)));
                     }
 
                     data["connections"] = serializer.serializeProperty(connections);
 
                     return data;
                 },
-                customKeyFilter: (_: Port, key: string) => {
-                    return (key !== "connections"); // don't serialize connections (handle them above)
-                },
+                customKeyFilter: (_: Port, key: string) =>
+                     (key !== "connections") // don't serialize connections (handle them above)
+                ,
             },
         },
         {
             type:           IOObject,
             customBehavior: {
-                customKeyFilter: (_: IOObject, key: string) => {
-                    return (key !== "designer"); // don't serialize designer
-                },
+                customKeyFilter: (_: IOObject, key: string) =>
+                     (key !== "designer") // don't serialize designer
+                ,
             },
         },
     ]);
@@ -349,8 +347,8 @@ export function CopyGroup(objects: IOObject[]): IOObjectSet {
 // Find a minimal bounding box enclosing all cullable objects in a given array
 // Note that if the array is empty, min and max will both be (0, 0)
 export function CircuitBoundingBox(all: CullableObject[]): BoundingBox {
-    const min = Vector.Min(...all.map(o => o.getMinPos()));
-    const max = Vector.Max(...all.map(o => o.getMaxPos()));
+    const min = Vector.Min(...all.map((o) => o.getMinPos()));
+    const max = Vector.Max(...all.map((o) => o.getMaxPos()));
 
     return new BoundingBox(min, max);
 }

@@ -30,10 +30,10 @@ export class AnalogSim {
     public uploadNetlist(netlist: Netlist) {
         // If netlist already exists, free it
         if (this.netlistPtrs)
-            this.netlistPtrs.forEach(ptr => this.lib.free_array(ptr));
+            this.netlistPtrs.forEach((ptr) => this.lib.free_array(ptr));
 
         // Convert netlist to format for NGSpice
-        const ngNetList = NetlistToNGSpice(netlist).map(line => line.join(" "));
+        const ngNetList = NetlistToNGSpice(netlist).map((line) => line.join(" "));
 
         // console.log(ngNetList.join("\n"));
 
@@ -48,7 +48,7 @@ export class AnalogSim {
 
         // Gather data (slice off end which has "const" plot/data)
         const plotIDPtrs = this.lib.get_array(this.lib.get_plot_ids(), { type: "string*" }).slice(0, -1);
-        this.plotIDs = plotIDPtrs.map(ptr => this.lib.get_array(ptr, { type: "char" }));
+        this.plotIDs = plotIDPtrs.map((ptr) => this.lib.get_array(ptr, { type: "char" }));
         this.curPlotID = this.lib.get_array(this.lib.get_cur_plot(), { type: "char" });
         { // Get vec IDs
             this.vecIDs = Object.fromEntries(plotIDPtrs.map((plotIDPtr, i) =>
@@ -56,7 +56,7 @@ export class AnalogSim {
             ));
         }
         { // Get vec data
-            const allIDs = this.plotIDs.flatMap(plotID => this.vecIDs[plotID].map(id => `${plotID}.${id}`));
+            const allIDs = this.plotIDs.flatMap((plotID) => this.vecIDs[plotID].map((id) => `${plotID}.${id}`));
             this.vecs = allIDs.reduce((prev, id) => {
                 const idPtr = this.lib.create_array("string", id);
 
@@ -83,11 +83,11 @@ export class AnalogSim {
     }
 
     public getFullVecIDs(plotID = this.getCurPlotID()) {
-        return this.getVecIDs().map(id => `${plotID}.${id}` as const);
+        return this.getVecIDs().map((id) => `${plotID}.${id}` as const);
     }
 
     public getVecs(plotID = this.getCurPlotID()) {
-        return this.vecIDs[plotID].map(id => this.vecs[`${plotID}.${id}`]);
+        return this.vecIDs[plotID].map((id) => this.vecs[`${plotID}.${id}`]);
     }
 
     public getVecLen(id: keyof typeof this.vecs) {

@@ -36,7 +36,7 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
 
     const calcAvgComp = (cs: Component[]) => {
         const avgPos = cs
-            .map(c => c.getPos())
+            .map((c) => c.getPos())
             .reduce((sum, cur) => sum.add(cur), V())
             .scale(1 / cs.length);
 
@@ -44,28 +44,26 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
         //  because averaging an angle like -270 and 90 would lead to
         //  -90 when they are both actually the same angle
         const avgRot = cs
-            .map(c => c.getAngle())
-            .map(a => V(Math.cos(a), Math.sin(a)))
+            .map((c) => c.getAngle())
+            .map((a) => V(Math.cos(a), Math.sin(a)))
             .reduce((sum, cur) => sum.add(cur), V())
             .scale(1 / cs.length);
 
         return new Transform(avgPos, V(), avgRot.angle());
     }
-    const sortByAngle = (a: number, b: number) => {
-        return a - b;
-    }
+    const sortByAngle = (a: number, b: number) => a - b
 
     // Get average components
-    const avgOutputTransform = calcAvgComp(outputPorts.map(p => p.getParent()));
-    const avgInputTransform  = calcAvgComp(inputPorts.map(p => p.getParent()));
+    const avgOutputTransform = calcAvgComp(outputPorts.map((p) => p.getParent()));
+    const avgInputTransform  = calcAvgComp(inputPorts.map((p) => p.getParent()));
 
     // Get relative positions for each port in average-component-space
-    const outputTargetPositions = outputPorts.map(o => avgOutputTransform.toLocalSpace(o.getWorldTargetPos()));
-    const inputTargetPositions  =  inputPorts.map(o =>  avgInputTransform.toLocalSpace(o.getWorldTargetPos()));
+    const outputTargetPositions = outputPorts.map((o) => avgOutputTransform.toLocalSpace(o.getWorldTargetPos()));
+    const inputTargetPositions  =  inputPorts.map((o) =>  avgInputTransform.toLocalSpace(o.getWorldTargetPos()));
 
     // Get angles of each port in local space
-    const outputAngles = outputTargetPositions.map(p => p.angle());
-    const inputAngles  =  inputTargetPositions.map(p => p.angle()).map(a => (a < 0 ? a + 2*Math.PI : a));
+    const outputAngles = outputTargetPositions.map((p) => p.angle());
+    const inputAngles  =  inputTargetPositions.map((p) => p.angle()).map((a) => (a < 0 ? a + 2*Math.PI : a));
 
     // Associate the ports with their angle
     const outputMap = new Map(outputAngles.map((a, i) => [a, outputPorts[i]]));

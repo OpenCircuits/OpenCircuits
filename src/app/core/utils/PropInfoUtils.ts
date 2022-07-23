@@ -63,7 +63,7 @@ export const GenPropInfo = (rootLayout: PropInfoLayout) => {
             return;
 
         // Merge displays
-        if (infos.some(i => i.label !== info0.label)) {
+        if (infos.some((i) => i.label !== info0.label)) {
             // This is necessary in the case where a property has multiple labels but shares
             //  the same ID, and is active at different times, so the label for the currently
             //  active state
@@ -79,7 +79,7 @@ export const GenPropInfo = (rootLayout: PropInfoLayout) => {
         }
 
         // Merge isActives via union
-        if (infos.some(i => !!i.isActive)) {
+        if (infos.some((i) => !!i.isActive)) {
             // isActive if at least one of the infos is active
             info0.isActive = (states) => infos.some((i) => (i.isActive?.(states) ?? true));
         }
