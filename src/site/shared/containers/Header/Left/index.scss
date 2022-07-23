@@ -4,21 +4,50 @@
 .header__left {
     margin-left: 12px;
 
-    & div {
-        float: left;
+    padding: 5px 0;
 
-        height: $header-height - 2*$header-padding;
-        margin-top: $header-padding;
+    & > * {
+        margin-right: 7px;
     }
+
+    // & > button {
+    //     cursor: pointer;
+    // }
+
+
+    &__sidebar {
+        font-size: 24px;
+
+        margin-bottom: 2px;
+
+        vertical-align: middle;
+
+        color: $secondary-color;
+    }
+
+    &__history {
+        img {
+            height: $header-history-height;
+        }
+    }
+
+    &__lock {
+    }
+
+    & input {
+        font-size: 24px;
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width=
+
+        color: $secondary-color;
+
+        text-overflow: ellipsis;
+    }
+
     &__save {
-        line-height: $header-button-height;
-
         height: $header-button-height;
-        margin-top: $header-padding;
-        padding-right: 7px;
-        padding-left: 7px;
 
-        cursor: pointer;
+        padding: 0 7px;
+
         transition: 0.5s;
 
         color: #ddd;
@@ -30,18 +59,16 @@
             background-color: transparent;
             border: 1px solid black;
         }
-
         &:enabled:hover {
             color: #ccc;
-            border-color: #aaa;
             background-color: darken($success-color, 10%);
+            border-color: #aaa;
         }
     }
+
     &__duplicate {
         height: 40px;
         padding: 5px;
-        cursor: pointer;
-        margin-left: 7px;
         color: #ccc;
 
         transition: 0.5s;
@@ -50,78 +77,35 @@
             background-color: lighten($primary-color, 10%);
         }
     }
-    &__saving__icons {
-        & > img {
-            margin-left: 7px;
-            margin-top: 7px;
+
+    &__saving {
+        position: relative;
+
+        width: 15px;
+        height: 15px;
+
+        // Pulse animation
+        @keyframes loadpulse {
+            0%   { transform: scale(0.3, 0.3); }
+            50%  { transform: scale(1.5, 1.5); }
+            100% { transform: scale(0.3, 0.3); }
         }
-        & > span {
-            &::after, &::before {
-                content: "";
-                position: absolute;
-                margin-left: 7.5px + 4px;
-                margin-top: 7.5px + 4px;
-                width: 15px;
-                height: 15px;
-                border-radius: 7.5px;
-                background-color: #888;
-                opacity: 0.5;
-                animation: loadpulse 2s infinite linear;
-            }
-            &::before {
-                animation-delay: 1s;
-            }
+        &::after, &::before {
+            content: "";
+            position: absolute;
 
-            @keyframes loadpulse {
-                0%   { transform: scale(0.3, 0.3); }
-                50%  { transform: scale(1.5, 1.5); }
-                100% { transform: scale(0.3, 0.3); }
-            }
+            width: 100%;
+            height: 100%;
+
+            border-radius: 7.5px;
+            background-color: #888;
+
+            opacity: 0.5;
+
+            animation: loadpulse 2s infinite linear;
         }
-    }
-    &__history {
-        margin-top: math.div($header-height - $header-history-height, 2) - $header-border-width;
-        margin-right: 7px;
-
-        cursor: pointer;
-
-        background-color: transparent;
-
-        img {
-            height: $header-history-height;
+        &::before {
+            animation-delay: 1s;
         }
-    }
-    &__lock {
-        margin-top: math.div($header-height - $header-lock-height, 2) - $header-border-width;
-        margin-right: 7px;
-
-        cursor: pointer;
-
-        background-color: transparent;
-
-        img {
-            height: $header-lock-height;
-        }
-    }
-    & input {
-        font-size: 24px;
-        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
-        height: $header-height - 2*$header-padding;
-        margin-right: 10px;
-
-        color: $secondary-color;
-
-        text-overflow: ellipsis;
-    }
-    & span {
-        font-size: 24px;
-        line-height: $header-height - 2*$header-padding;
-
-        margin-right: 10px;
-
-        cursor: pointer;
-        vertical-align: middle;
-
-        color: $secondary-color;
     }
 }

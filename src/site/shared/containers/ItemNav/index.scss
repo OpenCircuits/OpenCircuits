@@ -141,12 +141,12 @@ $tab-padding: 8px;
 
 
         & > div {
-            $size: $top-height + $top-margin + $header-padding;
+            $size: $top-height + $top-margin;// + $header-padding;
 
             position: absolute;
 
             top: -$top-margin - $header-border-width;
-            left: $header-padding + $header-border-width;
+            left: $header-border-width; // + $header-padding
 
             width: $size;
             height: $size;
@@ -174,7 +174,7 @@ $tab-padding: 8px;
                 content: '×';
                 pointer-events: all;
                 position: absolute;
-                left: calc(-50% - #{$header-border-width + $header-padding});
+                left: calc(-50% - #{$header-border-width});// + $header-padding});
                 top: 50%;
 
                 color: black;
@@ -186,7 +186,7 @@ $tab-padding: 8px;
 
                 @media (max-width: $desktop-width) and (orientation:portrait) {
                     left: 50%;
-                    top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
+                    top: calc(50% + #{$size + 1.5*$header-border-width});// + $header-padding});
                 }
 
             }

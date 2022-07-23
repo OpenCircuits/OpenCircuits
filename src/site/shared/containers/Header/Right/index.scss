@@ -23,8 +23,8 @@
 
         padding: 0 10px;
 
-        height: $header-height - 2*$header-padding;
-        margin-top: $header-padding;
+        // height: $header-height - 2*$header-padding;
+        // margin-top: $header-padding;
 
         & > img {
             width: 40px;
@@ -32,7 +32,7 @@
 
         @media (max-width: $collapse-breakpoint) {
             display: inherit;
-            margin-bottom: 2*$header-padding;
+            // margin-bottom: 2*$header-padding;
         }
     }
 
@@ -63,14 +63,14 @@
         & div {
             // float: right;
 
-            height: $header-height - 2*$header-padding;
-            margin-top: $header-padding;
+            // height: $header-height - 2*$header-padding;
+            // margin-top: $header-padding;
 
             cursor: pointer;
         }
         & button {
-            height: $header-height - 2*$header-padding;
-            margin-left: $header-padding;
+            // height: $header-height - 2*$header-padding;
+            // margin-left: $header-padding;
 
             @media (max-width: $collapse-breakpoint) {
                 margin-left: 0;
@@ -190,7 +190,7 @@
             float: right;
 
             height: $header-button-height;
-            margin-top: $header-padding;
+            // margin-top: $header-padding;
             margin-left: 0;
             padding-right: 5px;
             padding-left: 5px;
