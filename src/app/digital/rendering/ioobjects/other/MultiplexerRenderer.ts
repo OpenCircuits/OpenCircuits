@@ -24,7 +24,9 @@ import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
  * - Color and style border and fill as per selection status
  * - Draw Mux correct size and shape depending on whether it is a Multiplexor or Demultiplexor.
  */
-export const MultiplexerRenderer = (() => ({
+export const MultiplexerRenderer = (() => {
+
+    return {
         render(renderer: Renderer, _: Camera, mul: Multiplexer | Demultiplexer, selected: boolean): void {
             const transform = mul.getTransform();
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
@@ -53,4 +55,5 @@ export const MultiplexerRenderer = (() => ({
                 renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
             }
         },
-    }))();
+    }
+})();

@@ -28,7 +28,8 @@ function ColorToHex(col: Color): string {
  * - Calculate Wire Bezier Curve,
  * - Draw.
  */
-export const WireRenderer = (() => ({
+export const WireRenderer = (() => {
+    return {
         render(renderer: Renderer, { camera, selections }: CircuitInfo, wire: Wire): void {
             if (!camera.cull(wire.getCullBox()))
                 return;
@@ -61,4 +62,5 @@ export const WireRenderer = (() => ({
             for (const wire of wires)
                 WireRenderer.render(renderer, info, wire);
         },
-    }))();
+    };
+})();

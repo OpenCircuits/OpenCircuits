@@ -15,7 +15,8 @@ import {DEBUG_CULLBOX_STYLE,
         DEBUG_SELECTION_BOUNDS_STYLE} from "../Styles";
 
 
-export const DebugRenderer = (() => ({
+export const DebugRenderer = (() => {
+    return {
         render(renderer: Renderer, info: CircuitInfo): void {
             const { camera, designer } = info;
 
@@ -56,4 +57,5 @@ export const DebugRenderer = (() => ({
             }
 
         },
-    }))();
+    };
+})();

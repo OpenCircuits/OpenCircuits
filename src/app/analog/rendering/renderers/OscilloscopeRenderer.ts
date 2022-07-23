@@ -61,7 +61,8 @@ function toShape(rect: Rect): Rectangle {
     return new Rectangle(rect.center, rect.size);
 }
 
-export const OscilloscopeRenderer = (() => ({
+export const OscilloscopeRenderer = (() => {
+    return {
         render(renderer: Renderer, info: AnalogCircuitInfo, o: Oscilloscope, selected: boolean): void {
             const transform = o.getTransform();
             const size = transform.getSize();
@@ -265,4 +266,5 @@ export const OscilloscopeRenderer = (() => ({
                 renderer.restore();
             }
         },
-    }))();
+    }
+})();

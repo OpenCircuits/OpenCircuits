@@ -10,7 +10,9 @@ import {Style}           from "../Style";
 import {GRID_LINE_COLOR} from "../Styles";
 
 
-export const GridRenderer = (() => ({
+export const GridRenderer = (() => {
+
+    return {
         render(renderer: Renderer, { camera }: CircuitInfo): void {
             const step = GRID_SIZE/camera.getZoom();
 
@@ -35,4 +37,5 @@ export const GridRenderer = (() => ({
             renderer.stroke();
             renderer.restore();
         },
-    }))();
+    };
+})();

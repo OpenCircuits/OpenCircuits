@@ -18,7 +18,8 @@ import {Oscilloscope} from "digital/models/ioobjects";
 
 const GRAPH_LINE_WIDTH = 4;
 
-export const OscilloscopeRenderer = (() => ({
+export const OscilloscopeRenderer = (() => {
+    return {
         render(renderer: Renderer, _: Camera, o: Oscilloscope, selected: boolean): void {
             const transform = o.getTransform();
             const size = transform.getSize();
@@ -73,4 +74,5 @@ export const OscilloscopeRenderer = (() => ({
             renderer.stroke();
             renderer.restore();
         },
-    }))();
+    };
+})();

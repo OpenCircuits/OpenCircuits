@@ -22,7 +22,8 @@ import {Port} from "core/models/ports/Port";
  * Separate port selection.
  * Colour, style, draw port border and fill - selected colour both if port or parent object are selected.
  */
-export const IOPortRenderer = (() => ({
+export const IOPortRenderer = (() => {
+    return {
         renderPort(renderer: Renderer, port: Port, selected: boolean, portSelected: boolean): void {
             const o = port.getOriginPos();
             const v = port.getTargetPos();
@@ -38,4 +39,5 @@ export const IOPortRenderer = (() => ({
 
             renderer.draw(new Circle(v, IO_PORT_RADIUS), circleStyle);
         },
-    }))();
+    };
+})();
