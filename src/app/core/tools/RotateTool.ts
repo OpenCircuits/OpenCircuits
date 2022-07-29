@@ -99,10 +99,10 @@ export const RotateTool = (() => {
             // Rotate independently if z is held
             if( isIndependent ) {
                 components.forEach((c, i) => c.setRotationAbout(newAngles[i], c.getPos()));
-                initialMidpoints = components.map(o => o.getPos())
+                initialMidpoints = components.map(o => o.getPos());
             } else {
                 components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
-                initialMidpoints = components.map(o => midpoint);
+                initialMidpoints = components.map(function() { return midpoint });
             }
             prevAngle += dAngle;
 

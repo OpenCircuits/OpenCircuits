@@ -16,7 +16,7 @@ export class RotateAction implements Action {
     private objects: Component[];
 
     /**
-     * An Array of the x, y coordinates of the midpoints for each component of the selected component(s).
+     * An Array of the x, y coordinates for each component of the selected component(s) to be rotated around.
      */
     private midpoints: Vector[];
 
@@ -34,8 +34,8 @@ export class RotateAction implements Action {
      * Creates a rotation action for a component or a group of components.
      *
      * @param objects       Initializes the action with an Array of the selected component(s).
-     * @param midpoints     Inititalizes the action with the x, y coordinates of the midpoint between
-     *                the selected component(s).
+     * @param midpoints     Inititalizes the action with the x, y coordinates of the points to rotate
+     *                the selected component(s) around.
      * @param initialAngles Inititalizes the action an Array of the initial angles the selected component(s)
      *                are placed at.
      * @param finalAngles   Inititalizes the action an Array of the final angles the selected component(s)
