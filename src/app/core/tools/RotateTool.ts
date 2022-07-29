@@ -1,4 +1,4 @@
-import {RotateAction} from "core/actions/transform/RotateAction";
+
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         ROTATION_SNAP_AMT}  from "core/utils/Constants";
@@ -7,6 +7,8 @@ import {Vector} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event}       from "core/utils/Events";
+
+import {RotateAction} from "core/actions/transform/RotateAction";
 
 import {Component} from "core/models";
 
@@ -100,7 +102,7 @@ export const RotateTool = (() => {
                 initialMidpoints = components.map(o => o.getPos())
             } else {
                 components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
-                initialMidpoints = components.map(o => selections.midpoint());
+                initialMidpoints = components.map(o => o.getPos());
             }
             prevAngle += dAngle;
 

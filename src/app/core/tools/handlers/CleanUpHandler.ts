@@ -1,7 +1,9 @@
+
+import {Vector} from "Vector";
+
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Snap}        from "core/utils/ComponentUtils";
 import {Event}       from "core/utils/Events";
-
 
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -11,7 +13,6 @@ import {TranslateAction} from "core/actions/transform/TranslateAction";
 import {Component} from "core/models";
 
 import {EventHandler} from "../EventHandler";
-import { Vector } from "Vector";
 
 
 export const CleanUpHandler: EventHandler = ({
@@ -32,8 +33,8 @@ export const CleanUpHandler: EventHandler = ({
             return;
 
         const midpoints = [] as Vector[];
-        for(let i=0; i<midpoints.length; i++) {
-            midpoints[i].add(selections.midpoint());
+        for(const midpoint of midpoints) {
+            midpoint.add(selections.midpoint());
         }
         history.add(new GroupAction([
             ...components.map(c =>
