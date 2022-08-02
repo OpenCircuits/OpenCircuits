@@ -33,15 +33,15 @@ export const DecoderInputCountModule = ({ info }: Props) => {
                 kind="int" min={1} max={8} step={1}
                 props={props.numInputs}
                 alt="Number of inputs object(s) have"
-                getAction={(newCount) =>
+                getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map(o => new CoderPortChangeAction(o, o.getInputPortCount().getValue(), newCount)),
+                        cs.map((o,i) => new CoderPortChangeAction(o, o.getInputPortCount().getValue(), newCounts[i])),
                         "Decoder Input Count Module"
                     )}
-                onSubmit={(info) => {
+                onSubmit={({ isFinal, action }) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal)
-                        history.add(info.action);
+                    if (isFinal)
+                        history.add(action);
                 }} />
         </label>
     </div>);

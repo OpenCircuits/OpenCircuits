@@ -4,17 +4,20 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {AnalogComponent} from "analog/models";
 
-import {GenInitialInfo} from "analog/models/AnalogComponent";
-import {AmperageInfo}   from "analog/models/Units";
+import {AmperageInfo} from "analog/models/Units";
 
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
 
 
-const Info = {
-    ...AmperageInfo("c", "Current", 0.05),
-};
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        ...AmperageInfo("c", "Current", 0.05),
+    },
+});
 
 @serializable("CurrentSource")
 export class CurrentSource extends AnalogComponent {
@@ -22,7 +25,7 @@ export class CurrentSource extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(50, 50), new TopBottomPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 

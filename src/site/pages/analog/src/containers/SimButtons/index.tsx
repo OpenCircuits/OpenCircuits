@@ -78,8 +78,12 @@ export const SimButtons = ({ info }: Props) => {
     // INITIALLY UPLOAD CAUSE IM TIRED OF DOING IT MANUALLY
     useEffect(() => {
         if (info.designer.getAll().length > 0) {
-            Upload();
-            Simulate();
+            try {
+                Upload();
+                Simulate();
+            } catch (e) {
+                console.error("Failed to upload:", e);
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
