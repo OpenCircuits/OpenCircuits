@@ -14,5 +14,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type SideNavState = typeof initialState;
-export const {ToggleSideNav} = actions;
+export const { ToggleSideNav } = actions;
 export const sideNavReducer = reducer;

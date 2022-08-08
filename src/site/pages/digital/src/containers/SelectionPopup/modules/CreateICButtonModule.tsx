@@ -7,6 +7,7 @@ import {ICData} from "digital/models/ioobjects/other/ICData";
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
 import {useDigitalDispatch} from "site/digital/utils/hooks/useDigital";
+
 import {OpenICDesigner} from "site/digital/state/ICDesigner";
 
 
@@ -26,9 +27,11 @@ export const CreateICButtonModule = ({ info }: Props) => {
     if (!(props && ICData.IsValid(cs))) // Make selected components form valid set
         return null;
 
-    return <button
-        title="Create an IC from selections"
-        onClick={() => dispatch(OpenICDesigner(ICData.Create(cs)!)) }>
-        Create IC
-    </button>
+    return (
+        <button type="button"
+                title="Create an IC from selections"
+                onClick={() => dispatch(OpenICDesigner(ICData.Create(cs)!))}>
+            Create IC
+        </button>
+    );
 }

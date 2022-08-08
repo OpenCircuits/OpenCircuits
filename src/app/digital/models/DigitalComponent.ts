@@ -5,6 +5,7 @@ import {Vector} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
+import {Prop}      from "core/models/PropInfo";
 
 import {Port}    from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
@@ -25,8 +26,9 @@ export abstract class DigitalComponent extends Component {
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
                           inputPositioner:  Positioner<InputPort>  = new Positioner<InputPort>("left"),
-                          outputPositioner: Positioner<OutputPort> = new Positioner<OutputPort>("right")) {
-        super(size);
+                          outputPositioner: Positioner<OutputPort> = new Positioner<OutputPort>("right"),
+                          initialProps: Record<string, Prop> = {}) {
+        super(size, initialProps);
 
         this.inputs  = new PortSet<InputPort> (this, inputPortCount, inputPositioner, InputPort);
         this.outputs = new PortSet<OutputPort>(this, outputPortCount, outputPositioner, OutputPort);
@@ -118,11 +120,11 @@ export abstract class DigitalComponent extends Component {
     }
 
     public getPorts(): Port[] {
-        return (this.getInputPorts() as Port[]).concat(this.getOutputPorts());
+        return [...this.getInputPorts(), ...this.getOutputPorts()];
     }
 
     public getConnections(): DigitalWire[] {
-        return this.getInputs().concat(this.getOutputs());
+        return [...this.getInputs(), ...this.getOutputs()];
     }
 
 

@@ -4,7 +4,7 @@ import {DEFAULT_BORDER_COLOR,
         SELECTED_BORDER_COLOR,
         SELECTED_FILL_COLOR} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Camera} from "math/Camera";
 
@@ -24,6 +24,9 @@ export const OscilloscopeRenderer = (() => {
             const transform = o.getTransform();
             const size = transform.getSize();
 
+            const numSamples = o.getProp("samples") as number;
+            const displaySize = o.getProp("displaySize") as Vector;
+
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
             const fillCol   = (selected ? SELECTED_FILL_COLOR   : "#ffffff");
             const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
@@ -37,11 +40,11 @@ export const OscilloscopeRenderer = (() => {
             renderer.beginPath();
 
             const allSignals = o.getSignals();
-            for (let i = 0; i < allSignals.length; i++) {
-                const signals = allSignals[i].slice(0, o.getNumSamples());
+            for (const [i, allSignal] of allSignals.entries()) {
+                const signals = allSignal.slice(0, numSamples);
 
                 // Get y-offset for i'th graph
-                const dy = -size.y/2 + (i + 0.5)*o.getDisplaySize().y;
+                const dy = -size.y/2 + (i + 0.5)*displaySize.y;
 
                 if (signals.length <= 1)
                     continue;
@@ -50,10 +53,10 @@ export const OscilloscopeRenderer = (() => {
                 const offset = (GRAPH_LINE_WIDTH + DEFAULT_BORDER_WIDTH)/2;
 
                 // Calculate the positions for each signal
-                const dx = (size.x - 2*offset)/(o.getNumSamples() - 1);
+                const dx = (size.x - 2*offset)/(numSamples - 1);
                 const positions = signals.map((s, i) => V(
-                    -o.getDisplaySize().x/2 + offset + i*dx,     // x-position: linear space
-                    o.getDisplaySize().y * (s ? -1/3 : 1/3) + dy // y-position: based on signal value
+                    -displaySize.x/2 + offset + i*dx,      // x-position: linear space
+                     displaySize.y * (s ? -1/3 : 1/3) + dy // y-position: based on signal value
                 ));
 
                 // Draw the graph

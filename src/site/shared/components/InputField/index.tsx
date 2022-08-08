@@ -11,16 +11,21 @@ export const InputField = React.forwardRef<HTMLInputElement, Props>(({ onEnter, 
     const ref = (forwardedRef ?? defaultRef) as React.MutableRefObject<HTMLInputElement>;
 
     useEffect(() => {
-        if (!ref.current)
+        const cur = ref.current;
+        if (!cur)
             throw new Error("InputField.useEffect failed: ref.current is null");
-        ref.current.addEventListener("keyup", function (evt) {
-            if (evt.key === "Escape" || evt.key === "Enter")
-                ref.current!.blur();
 
-            if (evt.key === "Enter" && onEnter)
-                onEnter(evt);
-        });
-    }, [ref]);
+        const onKeyUp = (evt: KeyboardEvent) => {
+            if (evt.key === "Escape" || evt.key === "Enter")
+                cur.blur();
+
+            if (evt.key === "Enter")
+                onEnter?.(evt);
+        }
+
+        cur.addEventListener("keyup", onKeyUp);
+        return () => cur.removeEventListener("keyup", onKeyUp);
+    }, [ref, onEnter]);
 
     return (
         // eslint-disable-next-line react/forbid-elements
@@ -29,13 +34,15 @@ export const InputField = React.forwardRef<HTMLInputElement, Props>(({ onEnter, 
             ref={ref}
             onChange={(ev) => {
                 props.onChange?.(ev);
-                // Due to Firefox not focusing when the arrow keys
-                //  are pressed on number inputs (issue #818)
-                // NOTE: May be fixed with PR #1033
-                ref.current?.focus();
+                // // Due to Firefox not focusing when the arrow keys
+                // //  are pressed on number inputs (issue #818)
+                // // NOTE: May be fixed with PR #1033
+                // ref.current?.focus();
             }} />
     );
 }) as React.FC<Props> & { ref?: React.RefObject<HTMLInputElement> };
+InputField.displayName = "InputField";
+
 
 type NumberProps = Props & {
     step?: number;
@@ -72,3 +79,4 @@ export const NumberInputField = React.forwardRef<HTMLInputElement, NumberProps>(
         </div>
     );
 });
+NumberInputField.displayName = "NumberInputField";

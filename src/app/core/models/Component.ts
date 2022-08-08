@@ -11,6 +11,7 @@ import {Transform}    from "math/Transform";
 
 import {CullableObject} from "./CullableObject";
 import {Port}           from "./ports/Port";
+import {Prop}           from "./PropInfo";
 import {Wire}           from "./Wire";
 
 
@@ -18,8 +19,8 @@ export abstract class Component extends CullableObject {
     @serialize
     protected transform: Transform;
 
-    protected constructor(size: Vector) {
-        super();
+    protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
+        super(initialProps);
 
         this.transform = new Transform(V(), size);
     }

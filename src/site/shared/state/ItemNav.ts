@@ -5,10 +5,12 @@ import {ToggleCircuitLocked} from "./CircuitInfo";
 
 const [initialState, actions, reducer] = CreateState<typeof ToggleCircuitLocked>()(
     {
-        isEnabled:        true,
-        isOpen:           false,
+        isEnabled: true,
+        isOpen:    false,
+
         isHistoryBoxOpen: false,
-        curItemID:        "",
+
+        curItemID: "",
     },
     {
         OpenItemNav:  () => ({ type: "OPEN_ITEMNAV_ID"   }) as const,

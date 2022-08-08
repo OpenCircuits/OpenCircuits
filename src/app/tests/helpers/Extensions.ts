@@ -1,5 +1,3 @@
-import "jest";
-
 import {DigitalComponent} from "digital/models";
 
 
@@ -8,7 +6,7 @@ declare global {
     namespace jest {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R> {
-            toApproximatelyEqual(expected: any, epsilon?: number): CustomMatcherResult;
+            toApproximatelyEqual(expected: unknown, epsilon?: number): CustomMatcherResult;
             toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
             toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
@@ -16,16 +14,7 @@ declare global {
 }
 
 expect.extend({
-    toApproximatelyEqual(received: any, expected: any, epsilon = 1e-2) {
-        // If both are numbers, then pass
-        if (!isNaN(received) && !isNaN(expected)) {
-            const pass = Math.abs(received - expected) <= epsilon;
-            return {
-                message: () => `expected ${received} ${pass ? "" : "not "}to be approximately equal to ${expected}`,
-                pass,
-            };
-        }
-
+    toApproximatelyEqual(received: unknown, expected: unknown, epsilon = 1e-2) {
         // If types aren't same, then fail
         if (typeof(received) !== typeof(expected)) {
             return {
@@ -34,8 +23,19 @@ expect.extend({
             };
         }
 
+        // If both are numbers, then pass
+        if (typeof(received) === "number" && typeof(expected) === "number") {
+            const pass = Math.abs(received - expected) <= epsilon;
+            return {
+                message: () => `expected ${received} ${pass ? "" : "not "}to be approximately equal to ${expected}`,
+                pass,
+            };
+        }
+
+        const isRecord = (obj: unknown): obj is Record<string, unknown> => (obj instanceof Object);
+
         // For other non-number primitives, ignore and pass
-        if (!(received instanceof Object)) {
+        if (!isRecord(received) || !isRecord(expected)) {
             return {
                 message: () => `expected ${received} and ${expected} to not be non-number primitives`,
                 pass:    true,
@@ -43,13 +43,14 @@ expect.extend({
         }
 
         Object.keys(received).forEach((key) => {
-            if (expected[key] === undefined) {
+            if (!(key in expected)) {
                 return {
                     message: () => `expected ${expected} to have key ${key} that ${received} has`,
                     pass:    false,
                 };
             }
 
+            // eslint-disable-next-line jest/no-standalone-expect
             expect(received[key]).toApproximatelyEqual(expected[key], epsilon);
         });
 
@@ -59,9 +60,9 @@ expect.extend({
         };
     },
 
-    toBeCloseToAngle(received: any, otherAngle: number, epsilon = 1e-4) {
+    toBeCloseToAngle(received: unknown, otherAngle: number, epsilon = 1e-4) {
         // If both are numbers, then pass
-        if (!isNaN(received) && !isNaN(otherAngle)) {
+        if (typeof(received) === "number" && !isNaN(received) && !isNaN(otherAngle)) {
             const diff = Math.atan2(Math.sin(otherAngle - received), Math.cos(otherAngle - received));
             const pass = Math.abs(diff) <= epsilon;
             return {
@@ -77,7 +78,7 @@ expect.extend({
         };
     },
 
-    toBeConnectedTo(source: any, target: DigitalComponent, options = {depth: Infinity}) {
+    toBeConnectedTo(source: unknown, target: DigitalComponent, options = { depth: Infinity }) {
         if (!(source instanceof DigitalComponent))
             throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
 

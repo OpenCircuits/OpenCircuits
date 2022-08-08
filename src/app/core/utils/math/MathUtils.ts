@@ -136,7 +136,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
         b[i].y += 0.0001*i;
     }
 
-    const corners = a.concat(b);
+    const corners = [...a, ...b];
 
     let minA, maxA, minB, maxB;
 
@@ -240,7 +240,7 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
 export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     let minDist = 1e20;
     let t0 = -1;
-    for (let tt = 0; tt <= 1.0; tt += 1.0 / WIRE_DIST_ITERATIONS) {
+    for (let tt = 0; tt <= 1; tt += 1 / WIRE_DIST_ITERATIONS) {
         const dist = curve.getPos(tt).sub(pos).len();
         if (dist < minDist) {
             t0 = tt;
@@ -263,10 +263,8 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);
-    if (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
-        return true;
 
-    return false;
+    return (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2);
 }
 
 /**
@@ -276,7 +274,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
  * @returns           The midpoint of all the given positions.
  */
 export function CalculateMidpoint(positions: Vector[]): Vector {
-    return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1.0 / positions.length);
+    return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1 / positions.length);
 }
 
 /**
@@ -318,7 +316,7 @@ export function DecimalToBCD(decimal: number): boolean[] {
  * @returns    An array of n uniform points on the domain [x0, xf].
  */
 export function linspace(x0: number, xf: number, n: number) {
-    return Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
+    return new Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
 }
 
 /**
@@ -331,5 +329,5 @@ export function linspace(x0: number, xf: number, n: number) {
  */
 export function linspaceDX(x0: number, xf: number, dx: number) {
     const N = Math.ceil((xf - x0) / dx);
-    return Array(N).fill(0).map((_, i) => x0 + dx * i);
+    return new Array(N).fill(0).map((_, i) => x0 + dx * i);
 }

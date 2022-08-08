@@ -1,5 +1,3 @@
-import "jest";
-
 import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner}          from "digital/models/DigitalCircuitDesigner";
@@ -8,7 +6,7 @@ import {Comparator, ConstantNumber, LED} from "digital/models/ioobjects";
 
 describe("Comparator", () => {
     const designer = new DigitalCircuitDesigner(0);
-    const {Place,Connect} = GetHelpers(designer);
+    const { Place,Connect } = GetHelpers(designer);
 
     // create necessary components for testing
     const [c] = Place(new Comparator());
@@ -26,15 +24,15 @@ describe("Comparator", () => {
 
     // testing numbers 0-15 to make sure they work
     test("Numbers 0-15", () => {
-        a.setInput(5);
-        b.setInput(6);
+        a.setProp("inputNum", 5);
+        b.setProp("inputNum", 6);
         expect(lt.isOn()).toBe((5 < 6));
         expect(gt.isOn()).toBe((5 > 6));
 
         for (let i = 0; i < 15; i++){
-            a.setInput(i);
+            a.setProp("inputNum", i);
             for (let j = 0; j < 15; j++){
-                b.setInput(j);
+                b.setProp("inputNum", j);
 
                 expect(lt.isOn()).toBe((i < j));
                 expect(gt.isOn()).toBe((i > j));

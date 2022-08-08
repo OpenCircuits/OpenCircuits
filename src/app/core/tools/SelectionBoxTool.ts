@@ -18,7 +18,7 @@ export const SelectionBoxTool = (() => {
     let p1: Vector, p2: Vector;
 
     return {
-        shouldActivate(event: Event, {locked, input, selections, currentlyPressedObject}: CircuitInfo): boolean {
+        shouldActivate(event: Event, { locked, input, selections, currentlyPressedObject }: CircuitInfo): boolean {
             if (locked)
                 return false;
             // Activate if the user began dragging on empty canvas
@@ -33,11 +33,11 @@ export const SelectionBoxTool = (() => {
         },
 
 
-        onActivate({}: Event, {input}: CircuitInfo): void {
+        onActivate({}: Event, { input }: CircuitInfo): void {
             p1 = input.getMouseDownPos();
             p2 = input.getMousePos();
         },
-        onDeactivate({}: Event, {input, camera, history, designer, selections}: CircuitInfo): void {
+        onDeactivate({}: Event, { input, camera, history, designer, selections }: CircuitInfo): void {
             const action = new GroupAction([], "Selection Box Tool");
 
             // Clear selections if shift key isn't being held
@@ -68,7 +68,7 @@ export const SelectionBoxTool = (() => {
         },
 
 
-        onEvent(event: Event, {input}: CircuitInfo): boolean {
+        onEvent(event: Event, { input }: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 

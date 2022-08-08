@@ -3,11 +3,12 @@ import {serializable, serialize} from "serialeazy";
 import {DEFAULT_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
+import {DigitalComponent}       from "digital/models/DigitalComponent";
+import {DigitalObjectSet}       from "digital/models/DigitalObjectSet";
 
 import {ICData} from "./ICData";
 
@@ -15,7 +16,7 @@ import {ICData} from "./ICData";
 @serializable("IC", {
     customPostDeserialization: (obj: IC) => {
         obj.redirectOutputs();
-    }
+    },
 })
 export class IC extends DigitalComponent {
     @serialize
@@ -62,10 +63,10 @@ export class IC extends DigitalComponent {
         const myPorts = this.getPorts();
 
         // Copy names and positions of ports
-        for (let i = 0; i < ports.length; i++) {
-            myPorts[i].setName     (ports[i].getName());
-            myPorts[i].setOriginPos(ports[i].getOriginPos());
-            myPorts[i].setTargetPos(ports[i].getTargetPos());
+        for (const [i, port] of ports.entries()) {
+            myPorts[i].setName     (port.getName());
+            myPorts[i].setOriginPos(port.getOriginPos());
+            myPorts[i].setTargetPos(port.getTargetPos());
         }
     }
 

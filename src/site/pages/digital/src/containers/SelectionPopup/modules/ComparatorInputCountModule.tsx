@@ -1,4 +1,5 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
@@ -6,6 +7,7 @@ import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction
 import {Comparator} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 
 
@@ -24,23 +26,23 @@ export const ComparatorInputCountModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Input Count
         <label>
             <NumberModuleInputField
                 kind="int" min={1} max={8} step={1}
                 props={props.numInputs}
-                getAction={(newCount) =>
+                alt="Number of inputs object(s) have"
+                getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map(o => new InputPortChangeAction(o, o.getInputPortCount().getValue()/2, newCount)),
+                        cs.map((o,i) => new InputPortChangeAction(o, o.getInputPortCount().getValue()/2, newCounts[i])),
                         "Comparator Input Count Module"
                     )}
-                onSubmit={(info) => {
+                onSubmit={({ isFinal, action }) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal)
-                        history.add(info.action);
-                }}
-                alt="Number of inputs object(s) have" />
+                    if (isFinal)
+                        history.add(action);
+                }} />
         </label>
-    </div>
+    </div>);
 }

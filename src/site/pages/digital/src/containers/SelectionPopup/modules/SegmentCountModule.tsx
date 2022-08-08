@@ -1,4 +1,5 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
@@ -6,6 +7,7 @@ import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction
 import {SegmentDisplay} from "digital/models/ioobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 
 
@@ -24,23 +26,23 @@ export const SegmentCountModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return <div>
+    return (<div>
         Segment Count
         <label>
             <SelectModuleInputField
                 kind="number[]"
                 options={[["7", 7], ["9", 9], ["14", 14], ["16", 16]]}
                 props={props.numSegments}
-                getAction={(newCount) =>
+                getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map(o => new InputPortChangeAction(o, o.getSegmentCount(), newCount)),
+                        cs.map((o,i) => new InputPortChangeAction(o, o.getSegmentCount(), newCounts[i])),
                         "Segment Count Module"
                     )}
-                onSubmit={(info) => {
+                onSubmit={({ isFinal, action }) => {
                     renderer.render();
-                    if (info.isValid && info.isFinal)
-                        history.add(info.action);
+                    if (isFinal)
+                        history.add(action);
                 }} />
         </label>
-    </div>
+    </div>);
 }

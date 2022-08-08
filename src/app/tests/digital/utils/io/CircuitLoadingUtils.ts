@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-standalone-expect */
 import {Deserialize} from "serialeazy";
 
 import "test/helpers/Extensions";
@@ -26,7 +27,7 @@ declare global {
 }
 
 expect.extend({
-    toMatchCircuit(received: any, expected: CircuitDesigner) {
+    toMatchCircuit(received: unknown, expected: CircuitDesigner) {
         if (!(received instanceof CircuitDesigner)) {
             return {
                 message: () => "expected type of CircuitDesigner",

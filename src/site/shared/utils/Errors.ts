@@ -5,8 +5,8 @@
  * @param e Any object.
  * @returns   Whether or not `e` is an Error.
  */
-export function isError(e: any): e is Error {
-    return (e.name) && (e.stack);
+export function isError(e: unknown): e is Error {
+    return (!!e) && (typeof e === "object") && ("name" in e) && ("stack" in e);
 }
 
 

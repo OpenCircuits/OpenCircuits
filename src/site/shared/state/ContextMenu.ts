@@ -17,5 +17,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type ContextMenuState = typeof initialState;
-export const {OpenContextMenu, CloseContextMenu} = actions;
+export const { OpenContextMenu, CloseContextMenu } = actions;
 export const contextMenuReducer = reducer;

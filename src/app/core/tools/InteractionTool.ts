@@ -17,15 +17,15 @@ export class InteractionTool extends DefaultTool {
         super(...handlers);
     }
 
-    private findObject(pos: Vector, {designer}: CircuitInfo): IOObject | undefined {
+    private findObject(pos: Vector, { designer }: CircuitInfo): IOObject | undefined {
         // Very specifically get the objects and wires and reverse them SEPARATELY
         //  doing `designer.getAll().reverse()` would put the wires BEFORE the objects
         //  which will cause incorrect behavior! Objects are always going to need to be
         //  pressed/selected before wires!
         const objs = designer.getObjects().reverse();
         const wires = designer.getWires().reverse();
-        return (objs as IOObject[]).concat(wires).find(o => (isPressable(o) && o.isWithinPressBounds(pos) ||
-                                                             o.isWithinSelectBounds(pos)));
+        return [...objs, ...wires].find(o => (isPressable(o) && o.isWithinPressBounds(pos) ||
+                                             o.isWithinSelectBounds(pos)));
     }
 
     public onActivate(event: Event, info: CircuitInfo): boolean {
@@ -33,7 +33,7 @@ export class InteractionTool extends DefaultTool {
     }
 
     public onEvent(event: Event, info: CircuitInfo): boolean {
-        const {locked, input, camera, currentlyPressedObject} = info;
+        const { locked, input, camera, currentlyPressedObject } = info;
 
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const obj = this.findObject(worldMousePos, info);

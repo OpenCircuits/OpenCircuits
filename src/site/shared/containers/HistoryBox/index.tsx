@@ -2,19 +2,19 @@ import {useState} from "react";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Action} from "core/actions/Action";
+import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
+import {useDocEvent}                          from "shared/utils/hooks/useDocEvent";
+import {useEvent}                             from "shared/utils/hooks/useEvent";
+import {useHistory}                           from "shared/utils/hooks/useHistory";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-import {useHistory} from "shared/utils/hooks/useHistory";
-
-import {AdjustableElement} from "shared/components/AdjustableElement";
 
 import {CloseHistoryBox} from "shared/state/ItemNav";
 
+import {AdjustableElement} from "shared/components/AdjustableElement";
+
 import "./index.scss";
-import {useEvent} from "shared/utils/hooks/useEvent";
-import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 
 
 type HistoryEntryProps = {
@@ -24,9 +24,10 @@ type HistoryEntryProps = {
 const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
     const [displayExtraInfo, setDisplayExtraInfo] = useState(true);
     if (a instanceof GroupAction)
-        return (<GroupActionEntry g={a} isRedo={isRedo}></GroupActionEntry>);
+        return (<GroupActionEntry g={a} isRedo={isRedo} />);
     return (
         <div className={`historybox__entry ${isRedo ? "historybox__entry--dashed" : ""}`}
+             role="button" tabIndex={0}
              onClick={(e) => {
                  // Necessary to stop child entries from collapsing the parent history entry
                  e.stopPropagation();
@@ -34,10 +35,9 @@ const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
              }}>
             <div className="historybox__entry__header">
                 {a.getCustomInfo &&
-                    <img src="img/icons/info.svg"
-                         height="24px"
-                         alt="Display extra info" />
-                }
+                    (<img src="img/icons/info.svg"
+                          height="24px"
+                          alt="Display extra info" />)}
                 <span>{a.getName()}</span>
             </div>
             {!displayExtraInfo && a.getCustomInfo?.()?.map((obj, i) =>
@@ -55,12 +55,9 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
     const [displayExtraInfo, setDisplayExtraInfo] = useState(false);
 
-    if (g.isEmpty())
-        return null;
-    if (g.getActions().length === 1)
-        return (<HistoryEntry a={g.getActions()[0]} isRedo={isRedo}></HistoryEntry>);
     return (
         <div className={`historybox__groupentry ${isRedo ? "historybox__groupentry--dashed" : ""}`}
+             role="button" tabIndex={0}
              onClick={(e) => {
                  // Necessary to stop child entries from collapsing the parent history entry
                  e.stopPropagation();
@@ -68,16 +65,16 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
              }}>
             <div className="historybox__groupentry__header">
                 <div>
-                    {g.getCustomInfo() &&
+                    {g.getCustomInfo() && (
                         <img src="img/icons/info.svg"
+                             alt="Display extra info"
                              onClick={(e) => {
                                  // Necessary to stop child entries from displaying
                                  //  extra info about the parent history entry
                                  e.stopPropagation();
                                  setDisplayExtraInfo(!displayExtraInfo);
-                             }}
-                             alt="Display extra info" />
-                    }
+                             }} />
+                    )}
                     <span>{g.getName()}</span>
                 </div>
                 <span className={`${isCollapsed ? "collapsed" : "" }`}>&rsaquo;</span>
@@ -86,8 +83,9 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
                 <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
             )}
             {!isCollapsed && g.getActions().map((a, i) => {
-                return (<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={isRedo}></HistoryEntry>);
+                return (<HistoryEntry key={`group-action-entry-${i}`} a={a} isRedo={isRedo} />);
             })}
+            {!isCollapsed && g.isEmpty() && <div style={{ marginLeft: "10px" }}>Empty</div>}
         </div>
     );
 }

@@ -15,7 +15,7 @@ export type ICEdge = "horizontal" | "vertical" | "none";
 export const ICResizeTool = (() => {
     let edge: ICEdge = "none";
 
-    function findEdge({input, camera, ic}: ICCircuitInfo): ICEdge {
+    function findEdge({ input, camera, ic }: ICCircuitInfo): ICEdge {
         if (!ic)
             throw new Error("ICResizeTool.findEdge failed: ic is undefined");
         // Create slightly larger and smaller box and check
@@ -58,7 +58,7 @@ export const ICResizeTool = (() => {
         },
 
 
-        onEvent(event: Event, {input, camera, ic}: ICCircuitInfo): boolean {
+        onEvent(event: Event, { input, camera, ic }: ICCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 

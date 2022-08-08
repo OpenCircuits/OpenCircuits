@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-abusive-eslint-disable */
 /* eslint-disable */
 
 // Code from https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser

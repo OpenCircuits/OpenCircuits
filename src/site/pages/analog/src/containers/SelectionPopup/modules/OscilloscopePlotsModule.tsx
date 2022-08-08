@@ -1,12 +1,15 @@
 import {GroupAction} from "core/actions/GroupAction";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo"
+
 import {SetScopeConfigAction} from "analog/actions/SetScopeConfigAction";
+
 import {Oscilloscope} from "analog/models/eeobjects";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+
 import {BooleanModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/BooleanModuleInputField";
-import {ColorModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
+import {ColorModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 
 
 type Props = {
@@ -19,9 +22,9 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
         info,
         (s): s is Oscilloscope => (s instanceof Oscilloscope),
         (o) => ({
-            showAxes: o.getConfig().showAxes,
+            showAxes:   o.getConfig().showAxes,
             showLegend: o.getConfig().showLegend,
-            showGrid: o.getConfig().showGrid,
+            showGrid:   o.getConfig().showGrid,
             ...Object.fromEntries(
                 Object.entries(o.getConfig().vecs)
                     .map(([key, vecConfig]) => [`${key}_enabled`, vecConfig.enabled] as const)
@@ -44,33 +47,31 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
 
     const { showAxes, showLegend, showGrid, ...other } = props;
 
-    const otherKeys = Array.from(
-        new Set(
-            Object.keys(other)
-                .map(k => k.split("_")[0] as `${string}.${string}`)
-        )
-    );
+    const otherKeys = [...new Set(
+        Object.keys(other)
+            .map(k => k.split("_")[0] as `${string}.${string}`)
+    )];
 
-    return <>
+    return (<>
         <div>
             Config
             <div style={{ margin: "5px" }}>
                 <BooleanModuleInputField
                     props={showAxes} text="Show Axes"
                     getAction={(showAxes) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showAxes }))
+                        os.map((o,i) => new SetScopeConfigAction(o, { ...o.getConfig(), showAxes: showAxes[i] }))
                     )}
                     onSubmit={() => { renderer.render(); forceUpdate(); }} />
                 <BooleanModuleInputField
                     props={showLegend} text="Show Legend"
                     getAction={(showLegend) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showLegend }))
+                        os.map((o,i) => new SetScopeConfigAction(o, { ...o.getConfig(), showLegend: showLegend[i] }))
                     )}
                     onSubmit={() => { renderer.render(); forceUpdate(); }} />
                 <BooleanModuleInputField
                     props={showGrid} text="Show Grid"
                     getAction={(showGrid) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, { ...o.getConfig(), showGrid }))
+                        os.map((o,i) => new SetScopeConfigAction(o, { ...o.getConfig(), showGrid: showGrid[i] }))
                     )}
                     onSubmit={() => { renderer.render(); forceUpdate(); }} />
             </div>
@@ -78,39 +79,39 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
         <div>
             Plots
             <div style={{ margin: "5px" }}>
-            {otherKeys.map((key) => (<div key={`oscilloscope-module-${key}`}>
-                <BooleanModuleInputField
-                    props={props[`${key}_enabled`]} text={key.split(".")[1]}
-                    getAction={(enabled) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, {
-                            ...o.getConfig(),
-                            "vecs": {
-                                ...o.getConfig().vecs,
-                                [key]: {
-                                    ...o.getConfig().vecs[key],
-                                    enabled,
+                {otherKeys.map((key) => (<div key={`oscilloscope-module-${key}`}>
+                    <BooleanModuleInputField
+                        props={props[`${key}_enabled`]} text={key.split(".")[1]}
+                        getAction={(enabled) => new GroupAction(
+                            os.map((o,i) => new SetScopeConfigAction(o, {
+                                ...o.getConfig(),
+                                "vecs": {
+                                    ...o.getConfig().vecs,
+                                    [key]: {
+                                        ...o.getConfig().vecs[key],
+                                        enabled: enabled[i],
+                                    },
                                 },
-                            },
-                        })
-                    ))}
-                    onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
-                <ColorModuleInputField
-                    props={props[`${key}_color`]}
-                    getAction={(color) => new GroupAction(
-                        os.map(o => new SetScopeConfigAction(o, {
-                            ...o.getConfig(),
-                            "vecs": {
-                                ...o.getConfig().vecs,
-                                [key]: {
-                                    ...o.getConfig().vecs[key],
-                                    color,
+                            })
+                        ))}
+                        onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
+                    <ColorModuleInputField
+                        props={props[`${key}_color`]}
+                        getAction={(colors) => new GroupAction(
+                            os.map((o,i) => new SetScopeConfigAction(o, {
+                                ...o.getConfig(),
+                                "vecs": {
+                                    ...o.getConfig().vecs,
+                                    [key]: {
+                                        ...o.getConfig().vecs[key],
+                                        color: colors[i],
+                                    },
                                 },
-                            },
-                        })
-                    ))}
-                    onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
-            </div>))}
+                            })
+                        ))}
+                        onSubmit={(_) => { renderer.render(); forceUpdate(); }} />
+                </div>))}
             </div>
         </div>
-    </>
+    </>)
 }

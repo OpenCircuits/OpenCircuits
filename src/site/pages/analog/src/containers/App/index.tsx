@@ -1,3 +1,5 @@
+import {useCallback} from "react";
+
 import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -6,30 +8,32 @@ import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {ContextMenu}     from "shared/containers/ContextMenu";
-import {SideNav}         from "shared/containers/SideNav";
+import {ContextMenu}               from "shared/containers/ContextMenu";
+import {HistoryBox}                from "shared/containers/HistoryBox";
+import {ImageExporterPopup,
+        ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
+import {LoginPopup}     from "shared/containers/LoginPopup";
+import {SelectionPopup} from "shared/containers/SelectionPopup";
+import {SideNav}        from "shared/containers/SideNav";
 
-import {LoginPopup}         from "shared/containers/LoginPopup";
-import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
-import {HistoryBox}         from "shared/containers/HistoryBox";
-import {SelectionPopup}     from "shared/containers/SelectionPopup";
-import {PositionModule}     from "shared/containers/SelectionPopup/modules/PositionModule";
+
+import {PositionModule} from "shared/containers/SelectionPopup/modules/PositionModule";
+import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {AnalogPaste} from "site/analog/utils/AnalogPaste";
 
 import {AnalogHeader}           from "site/analog/containers/AnalogHeader";
 import {AnalogItemNav}          from "site/analog/containers/AnalogItemNav";
+import {ImageExporterPreview}   from "site/analog/containers/ImageExporterPreview";
 import {KeyboardShortcutsPopup} from "site/analog/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/analog/containers/MainDesigner";
 import {QuickStartPopup}        from "site/analog/containers/QuickStartPopup";
-import {ImageExporterPreview}   from "site/analog/containers/ImageExporterPreview";
 import {SimButtons}             from "site/analog/containers/SimButtons";
 
-import {PropertyModule} from "site/analog/containers/SelectionPopup/modules/PropertyModule";
-import {OscilloscopePlotsModule} from "../SelectionPopup/modules/OscilloscopePlotsModule";
-
+import docsConfig    from "site/analog/data/docsUrlConfig.json";
 import exampleConfig from "site/analog/data/examples.json";
-import docsConfig from "site/analog/data/docsUrlConfig.json";
+
+import {OscilloscopePlotsModule} from "../SelectionPopup/modules/OscilloscopePlotsModule";
 
 import "./index.scss";
 
@@ -51,6 +55,11 @@ type Props = {
 }
 export const App = ({ info, helpers, canvas }: Props) => {
     const { h } = useWindowSize();
+
+    // Memoize for eslint(react/no-unstable-nested-components)
+    const imageExporterPreview = useCallback((props: ImageExporterPreviewProps) => (
+        <ImageExporterPreview mainInfo={info} {...props} />
+    ), [info]);
 
     return (
         <div className="App">
@@ -86,9 +95,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
 
             <QuickStartPopup />
             <KeyboardShortcutsPopup />
-            <ImageExporterPopup preview={(props) => (
-                <ImageExporterPreview mainInfo={info} {...props} />
-            )} />
+            <ImageExporterPopup preview={imageExporterPreview} />
 
             <LoginPopup />
         </div>
