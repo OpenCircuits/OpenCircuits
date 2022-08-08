@@ -19,9 +19,9 @@ export const BusButtonModule = ({ info }: Props) => {
     const [props, items] = useSelectionProps(
         info,
         (s): s is (Component | InputPort | OutputPort) => (
-            (s instanceof Component ||
-             s instanceof InputPort && s.getWires().length === 0) ||
-             s instanceof OutputPort && s.getWires().length === 0
+            (s instanceof Component) ||
+            (s instanceof InputPort && s.getWires().length === 0) ||
+            (s instanceof OutputPort && s.getWires().length === 0)
         ),
         (s) => ({ type: (s instanceof Component ? "component" : "port") })
     );
@@ -47,11 +47,8 @@ export const BusButtonModule = ({ info }: Props) => {
                                                  s.getPorts().some(p => p instanceof OutputPort &&
                                                                         p.getWires().length === 0)) as Component[];
         // Remove ambiguous components that have no available ports
-        //  (occurs when an input/output only component is already connected to other components
-        //   and thus 0 free iports === 0 free oports)
         ambiComps.forEach(c => {
-            if (c.getPorts().filter(p => p instanceof InputPort && p.getWires().length === 0).length === 0 &&
-                c.getPorts().filter(p => p instanceof OutputPort && p.getWires().length === 0).length === 0) {
+            if (c.getPorts().every(p => p.getWires().length > 0)) {
                 ambiComps.splice(ambiComps.indexOf(c), 1);
             }
         });
