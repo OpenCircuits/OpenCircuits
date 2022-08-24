@@ -1,72 +1,29 @@
-import "jest";
+import {FIT_PADDING_RATIO,} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {Event} from "core/utils/Events";
+import {CircuitInfo} from "core/utils/CircuitInfo";
+import {GetCameraFit} from "core/utils/ComponentUtils";
 
-import {Setup} from "test/helpers/Setup";
-import {GetHelpers} from "test/helpers/Helpers";
-import {ConstantLow} from "digital/models/ioobjects";
-import {LED} from "digital/models/ioobjects/outputs/LED";
+import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
+
+import {CullableObject} from "core/models";
+
+import {EventHandler} from "../EventHandler";
 
 
-describe("FitToScreenHandler", () => {
-    const {input, designer, selections, camera} = Setup();
-    const {Place} = GetHelpers(designer);
+export const FitToScreenHandler: EventHandler = ({
+    conditions: (event: Event, {}: CircuitInfo) =>
+        (event.type === "keyup" && event.key === "f"),
 
-    afterEach(() => {
-        designer.reset();
-        selections.get().forEach(s => selections.deselect(s));
-    });
+    getResponse: ({camera, history, designer, selections}: CircuitInfo) => {
+        // Fit to selections, if any;
+        //  otherwise fit all CullableObjects
+        const objs = (selections.amount() === 0 ?
+            designer.getAll() :
+            selections.get().filter(o => o instanceof CullableObject)) as CullableObject[];
 
-    test("Fit to Screen of a Single Object", () => {
-        const [lo] = Place(new ConstantLow());
-
-        expect(designer.getObjects()).toHaveLength(1)
-        expect(selections.amount()).toBe(0);
-
-        input.click(V(0, 0));
-
-        expect(selections.amount()).toBe(1);
-
-        input.pressKey("f")
-            .releaseKey("f");
-
-        expect(selections.amount()).toBe(1);
-        expect(camera.getPos()).toEqual(V(21.5,0));
-
-    });
-
-    test("Fit to Screen with no objects", () => {
-
-        expect(designer.getObjects()).toHaveLength(0)
-        expect(selections.amount()).toBe(0);
-
-        input.pressKey("f")
-            .releaseKey("f");
-
-        expect(selections.amount()).toBe(0);
-        expect(camera.getPos()).toEqual(V(0,0));
-
-    });
-
-    test("Fit to Screen of Two Connected Objects", () => {
-        const {Connect} = GetHelpers(designer);
-        const [lo, a] = Place(new ConstantLow(), new LED());
-
-        Connect(lo, a);
-
-        expect(designer.getObjects()).toHaveLength(2)
-        expect(designer.getWires()).toHaveLength(1);
-        expect(selections.amount()).toBe(0);
-
-        input.click(V(0, 0));
-
-        expect(selections.amount()).toBe(1);
-
-        input.pressKey("f")
-            .releaseKey("f");
-
-        expect(selections.amount()).toBe(1);
-        expect(camera.getPos()).toEqual(V(21.5,0));
-        
-    });
+        // Get final camera position and zoom
+        const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);
+        history.add(new MoveCameraAction(camera, pos, zoom).execute());
+    }
 });
