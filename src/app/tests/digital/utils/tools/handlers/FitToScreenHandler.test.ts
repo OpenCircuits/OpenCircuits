@@ -1,8 +1,11 @@
+import "jest";
+
 import {V} from "Vector";
 
 import {Setup} from "test/helpers/Setup";
-
+import {GetHelpers} from "test/helpers/Helpers";
 import {ConstantLow} from "digital/models/ioobjects";
+import {LED} from "digital/models/ioobjects/outputs/LED";
 
 
 describe("FitToScreenHandler", () => {
@@ -43,5 +46,27 @@ describe("FitToScreenHandler", () => {
         expect(selections.amount()).toBe(0);
         expect(camera.getPos()).toEqual(V(0,0));
 
+    });
+
+    test("Fit to Screen of Two Connected Objects", () => {
+        const {Connect} = GetHelpers(designer);
+        const [lo, a] = Place(new ConstantLow(), new LED());
+
+        Connect(lo, a);
+
+        expect(designer.getObjects()).toHaveLength(2)
+        expect(designer.getWires()).toHaveLength(1);
+        expect(selections.amount()).toBe(0);
+
+        input.click(V(0, 0));
+
+        expect(selections.amount()).toBe(1);
+
+        input.pressKey("f")
+            .releaseKey("f");
+
+        expect(selections.amount()).toBe(1);
+        expect(camera.getPos()).toEqual(V(21.5,0));
+        
     });
 });
