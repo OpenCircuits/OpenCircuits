@@ -1,11 +1,9 @@
-import "jest";
-
 import {V} from "Vector";
 
 import {Setup} from "test/helpers/Setup";
-import {GetHelpers} from "test/helpers/Helpers";
-import {ConstantHigh, ConstantLow} from "digital/models/ioobjects";
-import {LED} from "digital/models/ioobjects/outputs/LED";
+
+import {ConstantLow} from "digital/models/ioobjects";
+
 
 describe("FitToScreenHandler", () => {
     const {input, designer, selections, camera} = Setup();
