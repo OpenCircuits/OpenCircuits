@@ -6,8 +6,8 @@ import {CanReplace} from "digital/utils/ReplaceDigitalComponentHelpers";
 
 import {DigitalCircuitDesigner} from "digital/models";
 
-import {DigitalObjectSet}                                  from "digital/models/DigitalObjectSet";
-import {ANDGate, ICData, LED, Multiplexer, ORGate, Switch} from "digital/models/ioobjects";
+import {DigitalObjectSet}                                                    from "digital/models/DigitalObjectSet";
+import {ANDGate, Decoder, Encoder, ICData, LED, Multiplexer, ORGate, Switch} from "digital/models/ioobjects";
 
 
 describe("CanReplace", () => {
@@ -57,6 +57,30 @@ describe("CanReplace", () => {
 
         expect(CanReplace(obj, "Multiplexer")).toBeTruthy();
     });
+
+    test("Multiplexer -> IC", () => {
+        const [a, b, c, mux, out] = Place(new Switch(), new Switch(), new Switch(), new Multiplexer(), new LED());
+        Connect(a, 0, mux, 0);
+        Connect(mux, 0, out, 0);
+        const [ic1, ic2, ic3, ic4, ic5, ic6, icOut] = Place(new Switch(), new Switch(), new Switch(), new Switch(),
+                                                            new Switch(), new Switch(), new LED());
+        const icdata = new ICData(DigitalObjectSet.From([ic1, ic2, ic3, ic4, ic5, ic6, icOut]));
+        expect(CanReplace(mux, icdata)).toBeTruthy();
+
+        const selectPorts = mux.getSelectPorts();
+        new ConnectionAction(designer, b.getOutputPort(0), selectPorts[0]).execute();
+        new ConnectionAction(designer, c.getOutputPort(0), selectPorts[1]).execute();
+        expect(CanReplace(mux, icdata)).toBeFalsy();
+    });
+
+    // TODO: Figure out a better way to handle encoders
+    test("Encoder", () => {
+        const [encoder, decoder, mux] = Place(new Encoder(), new Decoder(), new Multiplexer());
+        expect(CanReplace(encoder, "Multiplexer")).toBeFalsy();
+        expect(CanReplace(mux, "Encoder")).toBeFalsy();
+        expect(CanReplace(decoder, "Multiplexer")).toBeFalsy();
+        expect(CanReplace(mux, "Decoder")).toBeFalsy();
+    })
 
     test("Invalid id", () => {
         const obj = new ORGate();

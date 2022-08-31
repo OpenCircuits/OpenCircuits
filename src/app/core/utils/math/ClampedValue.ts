@@ -117,7 +117,7 @@ export class ClampedValue {
      * @returns       True if value is between the minimum and maximum allowed values.
      */
     public contains(value: number): boolean {
-        return this.minValue <= value && this.maxValue >= value;
+        return (this.minValue <= value && this.maxValue >= value);
     }
 
     /**

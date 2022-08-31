@@ -2,7 +2,7 @@ import {Create} from "serialeazy";
 
 import {DigitalComponent, InputPort, OutputPort} from "digital/models";
 
-import {ICData} from "digital/models/ioobjects";
+import {Decoder, Encoder, ICData} from "digital/models/ioobjects";
 
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
@@ -21,21 +21,30 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
  * @throws An error if replacement is a string and not a valid component id.
  */
 export function CanReplace(original: DigitalComponent, replacement: string | ICData): boolean {
+    // TODO: Figure out a better way to handle encoders
+    if (original instanceof Encoder || original instanceof Decoder ||
+        replacement === "Encoder" || replacement === "Decoder")
+        return false;
+
     const origInputs = original.getPorts().filter(port => port instanceof InputPort).length;
     const origOutputs = original.getPorts().filter(port => port instanceof OutputPort).length;
 
+    let inOutContains = false;
+    let replacementComponent: DigitalComponent | undefined;
     if (replacement instanceof ICData) {
-        return replacement.getInputCount() >= origInputs && replacement.getOutputPortCount() >= origOutputs;
+        inOutContains = replacement.getInputCount() >= origInputs && replacement.getOutputPortCount() >= origOutputs;
+    }
+    else {
+        replacementComponent = Create<DigitalComponent>(replacement);
+        if (!replacementComponent)
+            throw new Error(`Supplied replacement id "${replacement}" is invalid`);
+        const replacementInputs = replacementComponent.getInputPortCount();
+        const replacementOutputs = replacementComponent.getOutputPortCount();
+        inOutContains = replacementInputs.contains(origInputs) && replacementOutputs.contains(origOutputs);
     }
 
-    const replacementComponent = Create<DigitalComponent>(replacement);
-    if (!replacementComponent)
-        throw new Error(`Supplied replacement id "${replacement}" is invalid`);
-    const replacementInputs = replacementComponent.getInputPortCount();
-    const replacementOutputs = replacementComponent.getOutputPortCount();
-    const inOutContains = replacementInputs.contains(origInputs) && replacementOutputs.contains(origOutputs);
     if (original instanceof Mux)
-        return inOutContains && (replacementComponent instanceof Mux
+        return inOutContains && (replacementComponent && replacementComponent instanceof Mux
                                  || original.getSelectPorts().every(port => port.getWires().length === 0));
     return inOutContains;
 }

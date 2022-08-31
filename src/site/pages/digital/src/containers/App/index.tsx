@@ -103,9 +103,9 @@ export const App = ({ info, helpers, canvas }: Props) => {
                         <OscilloscopeModule info={info} />
                         <ClockSyncButtonModule info={info} />
                         <BusButtonModule info={info} />
+                        <ReplaceComponentDropdownModule info={info} />
                         <CreateICButtonModule info={info} />
                         <ViewICButtonModule info={info} />
-                        <ReplaceComponentDropdownModule info={info} />
                     </SelectionPopup>
 
                     <ContextMenu info={info}

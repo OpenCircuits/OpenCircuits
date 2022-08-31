@@ -22,7 +22,6 @@ import {IC, ICData, Multiplexer} from "digital/models/ioobjects";
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
-
 /**
  * Returns a GroupAction for replacing the original component with a new one.
  * Replacement must be able to have at least as many input/output ports as original has in use.
@@ -39,9 +38,8 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
                                                     replacement: string | ICData,
                                                     selections?: SelectionsWrapper): [GroupAction, DigitalComponent] {
     const designer = original.getDesigner();
-    if (!designer) {
+    if (!designer)
         throw new Error("original is not in a designer");
-    }
     const replacementComponent = replacement instanceof ICData
                                  ? new IC(replacement)
                                  : Create<DigitalComponent>(replacement);

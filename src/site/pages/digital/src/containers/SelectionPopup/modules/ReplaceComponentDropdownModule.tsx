@@ -45,12 +45,13 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
         removable: true,
     }));
 
-    const replaceables = [...itemNavConfig.sections,
-                          ...(ics.length === 0 ? [] : [{
-                              id:    "other",
-                              label: "ICs",
-                              items: ics,
-                          }]),
+    const replaceables = [
+        ...itemNavConfig.sections,
+        ...(ics.length === 0 ? [] : [{
+            id:    "other",
+            label: "ICs",
+            items: ics,
+        }]),
     ].flatMap(section =>
         section.items.filter(item => {
             const id = item.id;
@@ -64,7 +65,10 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
     if (replaceables.length === 0)
         return null;
 
-    return (<>
+    // updateImmediately is required because this action changes the selected item thus changing the selection popup.
+    // updateImmediately forces the selection popup to update.
+    // TODO: Remove the need for updateImmediately with/after the model refactor
+    return (<div>
         Replace Component
         <label>
             <SelectModuleInputField
@@ -88,15 +92,5 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
                         history.add(info.action);
                 }} />
         </label>
-        {/* <button type="button"
-                title="Replace the component with the selected component"
-                disabled={!replacement}
-                onClick={() => {
-                    const [action] = CreateReplaceDigitalComponentAction(component, replacement!, info.selections);
-                    info.history.add(action);
-                    renderer.render();
-                }}>
-            Replace
-        </button> */}
-    </>);
+    </div>);
 }
