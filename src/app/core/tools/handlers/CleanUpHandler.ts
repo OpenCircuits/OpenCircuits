@@ -1,6 +1,3 @@
-
-import {Vector} from "Vector";
-
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Snap}        from "core/utils/ComponentUtils";
 import {Event}       from "core/utils/Events";
@@ -32,13 +29,9 @@ export const CleanUpHandler: EventHandler = ({
         if (components.length === 0)
             return;
 
-        const midpoints = [] as Vector[];
-        for(const midpoint of midpoints) {
-            midpoint.add(selections.midpoint());
-        }
         history.add(new GroupAction([
             ...components.map(c =>
-                new RotateAction([c], midpoints, [c.getAngle()], [0])
+                new RotateAction(c, c.getAngle(), 0)
             ),
             new TranslateAction(
                 components,

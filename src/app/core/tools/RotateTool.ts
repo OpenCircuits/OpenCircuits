@@ -11,18 +11,18 @@ import {Event}       from "core/utils/Events";
 import {RotateAction} from "core/actions/transform/RotateAction";
 
 import {Component} from "core/models";
+import {GroupAction} from "core/actions/GroupAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 export const RotateTool = (() => {
+    let initialPositions = [] as Vector[];
+
     let initialAngles = [] as number[];
     let currentAngles = [] as number[];
 
     let startAngle = 0;
     let prevAngle = 0;
-
-    let isIndependent = false;
-
-    let initialMidpoints = [] as Vector[];
 
     function isMouseOnCircle({ camera, input, selections }: CircuitInfo): boolean {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -61,27 +61,36 @@ export const RotateTool = (() => {
             initialAngles = components.map(o => o.getAngle());
             currentAngles = [...initialAngles];
 
-            // Get whether z is presesed for independent rotation
-            isIndependent = input.isKeyDown("z");
+            // Get initial positions as well since we can rotate around a point which moves the components
+            initialPositions = components.map(o => o.getPos());
 
             // Get initial overall angle
             startAngle = getAngle(worldMousePos, selections.midpoint());
             prevAngle = startAngle;
-
-
         },
         onDeactivate({}: Event, { history, selections }: CircuitInfo): void {
             const components = selections.get() as Component[];
             const finalAngles = components.map(o => o.getAngle());
+            const finalPositions = components.map(o => o.getPos());
 
-            history.add(new RotateAction(components, initialMidpoints, initialAngles, finalAngles));
-
+            history.add(
+                new GroupAction([
+                    new TranslateAction(components, initialPositions, finalPositions),
+                    new GroupAction(
+                        components.map((o,i) => new RotateAction(o, initialAngles[i], finalAngles[i])),
+                        "Rotation"
+                    ),
+                ], "Rotation")
+            );
         },
 
 
         onEvent(event: Event, { camera, input, selections }: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
+
+            // Get whether z is presesed for independent rotation
+            const isIndependent = input.isKeyDown("z");
 
             const worldMousePos = camera.getWorldPos(input.getMousePos());
             const components = selections.get() as Component[];
@@ -97,13 +106,11 @@ export const RotateTool = (() => {
                 currentAngles;
 
             // Rotate independently if z is held
-            if( isIndependent ) {
-                components.forEach((c, i) => c.setRotationAbout(newAngles[i], c.getPos()));
-                initialMidpoints = components.map(o => o.getPos());
-            } else {
+            if (isIndependent)
+                components.forEach((c, i) => c.setAngle(newAngles[i]));
+            else
                 components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
-                initialMidpoints = components.map(function() { return midpoint });
-            }
+
             prevAngle += dAngle;
 
             // Return true since we did something
