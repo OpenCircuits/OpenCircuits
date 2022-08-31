@@ -241,7 +241,7 @@ describe("Rotate Tool", () => {
             expect(obj2.getAngle()).toBeCloseTo(-Math.PI/4);
         });
 
-        test("Rotate Objects 45° CW while toggling Z", () => {
+        test("Rotate Objects 180° CW while toggling Z halfway through", () => {
             input.drag(V(-40, -40),
                        V(40, 40)); // Select objects
             expect(selections.get()).toHaveLength(2);
@@ -251,41 +251,28 @@ describe("Rotate Tool", () => {
             input.pressKey("z");
             expect(input.isKeyDown("z")).toBe(true);
 
-            let midpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
-            const initialMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            const midpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
 
             // rotation #1
             input.moveTo(midpoint) // Move to midpoint of objects
                     .move(V(-ROTATION_CIRCLE_RADIUS, 0))
                     .press()
-                    .move(V(0, +ROTATION_CIRCLE_RADIUS/2));
-            input.releaseKey("z");  // release z partway through rotation
-            input.move(V(0, +ROTATION_CIRCLE_RADIUS/2))
-                    .release();
+                    .move(V(ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_RADIUS));
 
-            const newMidpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
-            const finalMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            // Make sure it rotated 90 degrees for each component
+            expect(obj1.getAngle()).toBeCloseToAngle(-Math.PI/2);
+            expect(obj2.getAngle()).toBeCloseToAngle(-Math.PI/2);
 
-            expect(obj1.getAngle()).toBeCloseTo(-Math.PI/4);
-            expect(obj2.getAngle()).toBeCloseTo(-Math.PI/4);
-            expect(newMidpoint).toStrictEqual(midpoint);
-            initialMidpoints.forEach((c, i) => expect(initialMidpoints[i]).toStrictEqual(finalMidpoints[i]));
+            // Rotate the rest of the 180
+            input.releaseKey("z") // release z partway through
+                .move(V(ROTATION_CIRCLE_RADIUS, -ROTATION_CIRCLE_RADIUS))
+                .release();
 
-            // rotation #2
-            input.moveTo(newMidpoint) // Move to midpoint of objects
-                    .move(V(-ROTATION_CIRCLE_RADIUS, 0))
-                    .press()
-                    .move(V(0, +ROTATION_CIRCLE_RADIUS/2));
-            input.pressKey("z");    // press z partway through rotation
-            input.move(V(0, +ROTATION_CIRCLE_RADIUS/2))
-                    .release();
-            input.releaseKey("z");
+            expect(obj1.getAngle()).toBeCloseToAngle(-Math.PI);
+            expect(obj2.getAngle()).toBeCloseToAngle(-Math.PI);
 
-            midpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
-
-            expect(obj1.getAngle()).toBeCloseTo(-Math.PI/2);
-            expect(obj2.getAngle()).toBeCloseTo(-Math.PI/2);
-            expect(newMidpoint).toApproximatelyEqual(midpoint);
+            expect(obj1.getPos()).toApproximatelyEqual(V(+10, +30));
+            expect(obj2.getPos()).toApproximatelyEqual(V(-10, -10));
         });
 
     });
