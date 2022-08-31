@@ -1,4 +1,3 @@
-
 import {ROTATION_CIRCLE_R1,
         ROTATION_CIRCLE_R2,
         ROTATION_SNAP_AMT}  from "core/utils/Constants";
@@ -8,11 +7,12 @@ import {Vector} from "Vector";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event}       from "core/utils/Events";
 
-import {RotateAction} from "core/actions/transform/RotateAction";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {RotateAction}    from "core/actions/transform/RotateAction";
+import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 import {Component} from "core/models";
-import {GroupAction} from "core/actions/GroupAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
 
 
 export const RotateTool = (() => {
