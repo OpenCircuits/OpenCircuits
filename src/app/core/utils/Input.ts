@@ -295,8 +295,8 @@ export class Input {
      * @returns     True if key is down, false otherwise.
      */
     public isKeyDown(key: Key): boolean {
-        return (this.keysDown.has(key) &&
-                this.keysDown.get(key) === true);
+        return (this.keysDown.has(key.toLowerCase() as Key) &&
+                this.keysDown.get(key.toLowerCase() as Key) === true);
     }
 
     /**
@@ -375,7 +375,7 @@ export class Input {
      * @param key Represents the key being pressed.
      */
     protected onKeyDown(key: Key): void {
-        this.keysDown.set(key, true);
+        this.keysDown.set(key.toLowerCase() as Key, true); // Lower case so that letters are the same despite SHIFT
 
         // call each listener
         this.callListeners({ type: "keydown", key });
@@ -386,7 +386,7 @@ export class Input {
      * @param key Represents the key being released.
      */
     protected onKeyUp(key: Key): void {
-        this.keysDown.set(key, false);
+        this.keysDown.set(key.toLowerCase() as Key, false); // Lower case so that letters are the same despite SHIFT
 
         // call each listener
         this.callListeners({ type: "keyup", key });
