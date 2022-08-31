@@ -115,7 +115,16 @@ export class Input {
         window.addEventListener("keyup",   (e) => {
             // Check for "Alt" to fix issue #943
             if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.key as Key)
+                this.onKeyUp(e.key as Key);
+
+            // Check for Meta key and release all other keys on up
+            //  See https://stackoverflow.com/q/27380018/5911675
+            if (e.key === "Meta") {
+                [...this.keysDown.entries()]
+                    .filter(([_,down]) => down)
+                    .map(([k]) => k)
+                    .forEach(k => this.onKeyUp(k));
+            }
         }, false);
 
         window.addEventListener("blur", (_) => this.onBlur());
