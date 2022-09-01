@@ -1,50 +1,105 @@
-import {Create} from "serialeazy";
+import {Create, GetIDFor} from "serialeazy";
 
-import {DigitalComponent, InputPort, OutputPort} from "digital/models";
+import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
+import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {MuxPortChangeAction}   from "digital/actions/ports/MuxPortChangeAction";
 
-import {Decoder, Encoder, ICData} from "digital/models/ioobjects";
+import {DigitalCircuitDesigner, DigitalComponent, InputPort, OutputPort} from "digital/models";
+
+import {Decoder, Encoder, IC} from "digital/models/ioobjects";
 
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
-/**
- * This function checks if a component can be used to replace another component.
- * If it can, then true is returned, otherwise return false.
- * A replacement is considered valid if the replacement has as many input ports as the original has in use and
- * as many output ports as the original has in use (in use defined as having 1+ wire(s) connected).
- * Select ports are counted as input ports.
- *
- * @param original    The component to be replaced.
- * @param replacement The ID or ICData to try to replace against the .
- * @returns             An instance, of the DigitalComponent that can replace, the ICData if it can replace,
- *              or null if replacement can not replace.
- * @throws An error if replacement is a string and not a valid component id.
- */
-export function CanReplace(original: DigitalComponent, replacement: string | ICData): boolean {
-    // TODO: Figure out a better way to handle encoders
-    if (original instanceof Encoder || original instanceof Decoder ||
-        replacement === "Encoder" || replacement === "Decoder")
-        return false;
+type ReplacementList = Map<
+//    #inputs : #outputs
+    `${number}:${number}`,
+    Array<{
+        id: string;
+        amt?: number;
+    }>
+>;
 
-    const origInputs = original.getPorts().filter(port => port instanceof InputPort).length;
-    const origOutputs = original.getPorts().filter(port => port instanceof OutputPort).length;
+export type DigitalID = `ic/${string}` | string;
 
-    let inOutContains = false;
-    let replacementComponent: DigitalComponent | undefined;
-    if (replacement instanceof ICData) {
-        inOutContains = replacement.getInputCount() >= origInputs && replacement.getOutputPortCount() >= origOutputs;
+function GetReplacementListKey(comp: DigitalComponent) {
+    const inputPorts  = comp.getPorts().filter(p => (p instanceof  InputPort));
+    const outputPorts = comp.getPorts().filter(p => (p instanceof OutputPort));
+    return `${inputPorts.length}:${outputPorts.length}` as const;
+}
+
+export function CreateDigitalComponent(id: DigitalID, designer: DigitalCircuitDesigner) {
+    if (id.startsWith("ic")) {
+        const idx = parseInt(id.split("/")[1]);
+        return new IC(designer.getICData()[idx]);
     }
-    else {
-        replacementComponent = Create<DigitalComponent>(replacement);
-        if (!replacementComponent)
-            throw new Error(`Supplied replacement id "${replacement}" is invalid`);
-        const replacementInputs = replacementComponent.getInputPortCount();
-        const replacementOutputs = replacementComponent.getOutputPortCount();
-        inOutContains = replacementInputs.contains(origInputs) && replacementOutputs.contains(origOutputs);
-    }
+    return Create<DigitalComponent>(id);
+}
 
-    if (original instanceof Mux)
-        return inOutContains && (replacementComponent && replacementComponent instanceof Mux
-                                 || original.getSelectPorts().every(port => port.getWires().length === 0));
-    return inOutContains;
+export function GetDigitalIDFor(comp: DigitalComponent, designer: DigitalCircuitDesigner) {
+    if (comp instanceof IC) {
+        const idx = designer.getICData().indexOf(comp.getData());
+        return `ic/${idx}`;
+    }
+    return GetIDFor(comp);
+}
+
+export function GetPortChangeAction(comp: DigitalComponent, amt: number) {
+    if (comp instanceof Mux)
+        return new MuxPortChangeAction(comp, amt, amt);
+    if (comp instanceof Encoder || comp instanceof Decoder)
+        return new CoderPortChangeAction(comp, amt, amt);
+    return new InputPortChangeAction(comp, amt, amt);
+}
+
+export function GenerateReplacementList(designer: DigitalCircuitDesigner, allComponents: string[]) {
+    const list: ReplacementList = new Map();
+
+    allComponents.forEach(id => {
+        const comp = CreateDigitalComponent(id, designer);
+        if (!comp)
+            throw new Error(`Can't find component w/ ID: ${id}`);
+
+        const count = (() => {
+            if (comp instanceof Mux)
+                return comp.getSelectPortCount();
+            if (comp instanceof Encoder)
+                return comp.getOutputPortCount();
+            return comp.getInputPortCount();
+        })();
+
+        const min = count.getMinValue();
+        const max = count.getMaxValue();
+
+        for (let amt = min; amt <= max; amt++) {
+            // Only change if it's a component that can change the number of inputs/outputs
+            if (max !== min) {
+                // Change ports and see how many input/outputs there are
+                GetPortChangeAction(comp, amt).execute();
+            }
+
+            const key = GetReplacementListKey(comp);
+            if (!list.has(key))
+                list.set(key, []);
+            list.get(key)?.push({
+                id,
+                amt: (max === min ? undefined : amt),
+            });
+        }
+    });
+
+    return list;
+}
+
+
+export function GetReplacements(comp: DigitalComponent, designer: DigitalCircuitDesigner, list: ReplacementList) {
+    const key = GetReplacementListKey(comp);
+    if (!list.has(key))
+        throw new Error(`Failed to find ReplaceList entry with key ${key} for component ${comp.getName()}`);
+
+    const id = GetDigitalIDFor(comp, designer);
+
+    // Put the `comp`s entry at the beginning of the array
+    const self = list.get(key)!.find(r => r.id === id)!;
+    return [self, ...list.get(key)!.filter(r => r.id !== id)];
 }

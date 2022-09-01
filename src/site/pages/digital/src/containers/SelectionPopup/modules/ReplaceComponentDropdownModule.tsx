@@ -1,13 +1,14 @@
-import {GetIDFor} from "serialeazy";
+import {useEffect, useMemo, useState} from "react";
+import {GetIDFor}                     from "serialeazy";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-import {CanReplace}         from "digital/utils/ReplaceDigitalComponentHelpers";
+import {DigitalCircuitInfo}                       from "digital/utils/DigitalCircuitInfo";
+import {GenerateReplacementList, GetReplacements} from "digital/utils/ReplaceDigitalComponentHelpers";
 
 import {CreateReplaceDigitalComponentAction} from "digital/actions/ReplaceDigitalComponentActionFactory";
 
-import {DigitalComponent} from "digital/models";
+import {DigitalComponent, DigitalEvent} from "digital/models";
 
 import {IC} from "digital/models/ioobjects";
 
@@ -18,7 +19,8 @@ import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/i
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 
-type ICID = `ic/${number}`;
+const allBaseComponentIDs = itemNavConfig.sections.flatMap(s => s.items.map(i => i.id));
+
 type Props = {
     info: DigitalCircuitInfo;
 }
@@ -33,36 +35,30 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
                                : GetIDFor(c)! })
     );
 
+    // Replace list is a utility data structure to map replacements
+    const initialReplacementList = useMemo(() => GenerateReplacementList(designer, allBaseComponentIDs), [designer]);
+    const [replacementList, setReplacementList] = useState(initialReplacementList);
+
+    // Need to update the replacement list whenever the ICs are changed
+    useEffect(() => {
+        const callback = (ev: DigitalEvent) => {
+            if (ev.type !== "ic")
+                return;
+
+            const ics = designer.getICData().map((_,i) => `ic/${i}`);
+            const newList = GenerateReplacementList(designer, [...allBaseComponentIDs, ...ics]);
+            setReplacementList(newList);
+        }
+
+        designer.addCallback(callback);
+        return () => designer.removeCallback(callback);
+    }, [designer]);
+
     if (!(props && props.componentId && components.length === 1))
         return null;
 
-    const component = components[0];
-
-    const ics = designer.getICData().map((d, i) => ({
-        id:        `ic/${i}` as ICID,
-        label:     d.getName(),
-        icon:      "multiplexer.svg",
-        removable: true,
-    }));
-
-    const replaceables = [
-        ...itemNavConfig.sections,
-        ...(ics.length === 0 ? [] : [{
-            id:    "other",
-            label: "ICs",
-            items: ics,
-        }]),
-    ].flatMap(section =>
-        section.items.filter(item => {
-            const id = item.id;
-            const replacement = id.startsWith("ic")
-                                ? designer.getICData()[parseInt(id.split("/")[1])]
-                                : id;
-            return CanReplace(component, replacement);
-        })
-    );
-
-    if (replaceables.length === 0)
+    const replaceables = GetReplacements(components[0], designer, replacementList);
+    if (replaceables.length === 1)
         return null;
 
     // updateImmediately is required because this action changes the selected item thus changing the selection popup.
@@ -73,15 +69,14 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
         <label>
             <SelectModuleInputField
                 kind="string[]"
-                options={replaceables.map(rep => [rep.label, rep.id])}
+                options={replaceables.map((rep, i) => [rep.id, `${i}`])}
                 props={props.componentId}
-                getAction={(replacements) =>
+                getAction={(vals) =>
                     new GroupAction(
                         components.map((c, i) => {
-                            const replacement = replacements[i].startsWith("ic")
-                                                ? designer.getICData()[parseInt(replacements[i].split("/")[1])]
-                                                : replacements[i];
-                                       return CreateReplaceDigitalComponentAction(c, replacement, selections)[0]
+                            const replacementIdx = parseInt(vals[i]);
+                            const replacement = replaceables[replacementIdx];
+                            return CreateReplaceDigitalComponentAction(designer, c, replacement, selections)[0];
                         }),
                         "Replace Component Module"
                     )}

@@ -1,5 +1,3 @@
-import {Create} from "serialeazy";
-
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {GroupAction} from "core/actions/GroupAction";
@@ -11,15 +9,9 @@ import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/sel
 
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
-import {InputPortChangeAction}  from "digital/actions/ports/InputPortChangeAction";
-import {MuxPortChangeAction}    from "digital/actions/ports/MuxPortChangeAction";
-import {OutputPortChangeAction} from "digital/actions/ports/OutputPortChangeAction";
+import {CreateDigitalComponent, GetPortChangeAction} from "digital/utils/ReplaceDigitalComponentHelpers";
 
-import {DigitalComponent} from "digital/models";
-
-import {IC, ICData, Multiplexer} from "digital/models/ioobjects";
-
-import {Mux} from "digital/models/ioobjects/other/Mux";
+import {DigitalCircuitDesigner, DigitalComponent, InputPort, OutputPort} from "digital/models";
 
 
 /**
@@ -27,30 +19,39 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
  * Replacement must be able to have at least as many input/output ports as original has in use.
  * Original must be placed in a designer.
  *
- * @param original    The component to replace, already in designer.
- * @param replacement The new component's string representation or ICData.
- * @param selections  If supplied, deselects the current selection and selects replacement.
- * @returns             A GroupAction containing the actions required to replace the component and the new component.
+ * @param designer        The circuit designer for the component.
+ * @param comp            The component to replace.
+ * @param replacement     The new component's replacement info.
+ * @param replacement.id  The new component's replacement ID.
+ * @param replacement.amt The new component's port amount.
+ * @param selections      If supplied, deselects the current selection and selects replacement.
+ * @returns                 A GroupAction containing the actions required to
+ *                  replace the component and the new component.
  * @throws If original is not in a designer.
  * @throws If replacement is a string that does not represent a valid component.
  */
-export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
-                                                    replacement: string | ICData,
+export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesigner,
+                                                    comp: DigitalComponent,
+                                                    replacement: { id: string, amt?: number },
                                                     selections?: SelectionsWrapper): [GroupAction, DigitalComponent] {
-    const designer = original.getDesigner();
-    if (!designer)
-        throw new Error("original is not in a designer");
-    const replacementComponent = replacement instanceof ICData
-                                 ? new IC(replacement)
-                                 : Create<DigitalComponent>(replacement);
+    // Create replacement component
+    const replacementComponent = CreateDigitalComponent(replacement.id, designer);
     if (!replacementComponent)
-        throw new Error(`Supplied replacement id "${replacement}" is invalid`);
-    const action = new GroupAction([], "Replace Digital Component",
-                                   [`Replacing "${original.getName()}" with a(n) "${replacement instanceof ICData
-                                                                                    ? replacement.getName()
-                                                                                    : replacement}"`]);
-    const origInputs = original.getInputPorts();
-    const origOutputs = original.getOutputPorts();
+        throw new Error(`Supplied replacement id "${replacement.id}" is invalid`);
+
+    const action = new GroupAction(
+        [], "Replace Digital Component",
+        [`Replacing "${comp.getName()}" with a(n) "${replacementComponent.getName()}"`]
+    );
+
+    // Change name of replacement component to be the replaced one if set
+    if (comp["name"].isSet())
+        replacementComponent.setName(comp.getName());
+
+    // Move replacement to the replaced position
+    action.add(new TranslateAction([replacementComponent],
+                                   [replacementComponent.getPos()],
+                                   [comp.getPos()]).execute());
 
     if (selections)
         action.add(CreateDeselectAllAction(selections).execute());
@@ -58,33 +59,23 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
     if (selections)
         action.add(CreateGroupSelectAction(selections, [replacementComponent]).execute());
 
-    if (replacementComponent instanceof Mux) {
-        const numSelectOrig = original instanceof Mux ? original.getSelectPortCount().getValue() : 0;
-        const numSelectRequired = Math.ceil(Math.sqrt((replacementComponent instanceof Multiplexer
-                                                       ? origInputs : origOutputs).length))
-        action.add(new MuxPortChangeAction(replacementComponent,
-                                           replacementComponent.getSelectPortCount().getValue(),
-                                           Math.max(numSelectOrig, numSelectRequired)).execute());
-    } else if (!(replacementComponent instanceof IC)) {
-        action.add(new InputPortChangeAction(replacementComponent,
-                                             replacementComponent.getInputPortCount().getValue(),
-                                             origInputs.length).execute());
-        action.add(new OutputPortChangeAction(replacementComponent,
-                                             replacementComponent.getOutputPortCount().getValue(),
-                                             origOutputs.length).execute());
-    }
+    // Only set ports if there is an amount to set, otherwise the ports can't be changed
+    if (replacement.amt)
+        action.add(GetPortChangeAction(replacementComponent, replacement.amt).execute());
 
-    const repInputs = replacementComponent.getInputPorts();
-    const repOutputs = replacementComponent.getOutputPorts();
+    const compInputs  = comp.getPorts().filter(p => (p instanceof  InputPort)) as InputPort[];
+    const compOutputs = comp.getPorts().filter(p => (p instanceof OutputPort)) as OutputPort[];
+    const repInputs   = replacementComponent.getPorts().filter(p => (p instanceof  InputPort)) as InputPort[];
+    const repOutputs  = replacementComponent.getPorts().filter(p => (p instanceof OutputPort)) as OutputPort[];
 
-    origInputs.forEach((port, index) => {
+    compInputs.forEach((port, index) => {
         [...port.getWires()].forEach(wire => {
             const otherPort = wire.getInput();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, repInputs[index], otherPort).execute());
         });
     });
-    origOutputs.forEach((port, index) => {
+    compOutputs.forEach((port, index) => {
         [...port.getWires()].forEach(wire => {
             const otherPort = wire.getOutput();
             action.add(new DisconnectAction(designer, wire).execute());
@@ -92,10 +83,8 @@ export function CreateReplaceDigitalComponentAction(original: DigitalComponent,
         });
     });
 
-    action.add(new TranslateAction([replacementComponent],
-                                   [replacementComponent.getPos()],
-                                   [original.getPos()]).execute());
-    action.add(new DeleteAction(designer, original).execute());
+    // Finally, delete the original component
+    action.add(new DeleteAction(designer, comp).execute());
 
     action.undo();
 
