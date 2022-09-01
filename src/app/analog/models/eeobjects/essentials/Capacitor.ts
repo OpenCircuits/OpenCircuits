@@ -4,17 +4,20 @@ import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {AnalogComponent} from "analog/models";
 
-import {GenInitialInfo}  from "analog/models/AnalogComponent";
 import {CapacitanceInfo} from "analog/models/Units";
 
 import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
-const Info = {
-    ...CapacitanceInfo("C", "Capacitance", 1, "u"),
-};
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        ...CapacitanceInfo("C", "Capacitance", 1, "u"),
+    },
+});
 
 @serializable("Capacitor")
 export class Capacitor extends AnalogComponent {
@@ -22,7 +25,7 @@ export class Capacitor extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(20, 60), new LeftRightPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 

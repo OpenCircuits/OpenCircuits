@@ -6,10 +6,9 @@ import {DigitalCircuitDesigner} from "digital/models";
 import {Button, IC, Switch} from "digital/models/ioobjects";
 
 
-type SerializationDataTypes = string | number | boolean | {ref: string}
 interface SerializationEntry {
     type: string;
-    data: Record<string, SerializationDataTypes>;
+    data: Record<string, unknown>;
 }
 
 export function VersionConflictResolver(fileContents: string | Circuit): string {
@@ -17,18 +16,9 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
 
     const v = parseFloat(circuit.metadata.version);
 
-    const contents = circuit.contents;
+    const contents = JSON.parse(circuit.contents) as Record<string, SerializationEntry>;
 
     if (v < 2.1) {
-        const c = JSON.parse(contents) as Record<string, SerializationEntry>;
-
-        const replacePositioner = (val: SerializationEntry, ports: string, type: string): void => {
-            const set = c[(val.data[ports] as {ref: string})["ref"]]; // Get PortSet from (inputs/outputs) of Component
-            const positionerRef = (set.data["positioner"] as {ref: string})["ref"]; // Get positioner ID from PortSet
-
-            c[positionerRef] = { "type": type, "data": {} };
-        }
-
         const transformations: Record<string, Array<{ports: string, positioner: string}>> = {
             "Multiplexer":    [{ ports: "inputs",  positioner: "ConstantSpacePositioner" },
                                { ports: "outputs", positioner: "Positioner" }],
@@ -42,18 +32,74 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             "SRLatch":        [{ ports: "inputs",  positioner: "Positioner" }],
         };
 
-        Object.keys(c).forEach((key) => {
-            const val = c[key];
-            const transformation = transformations[val.type] || [];
+        Object.values(contents).forEach(({ type, data }) => {
+            const transformation = transformations[type] ?? [];
+            // Replace positioners
+            transformation.forEach(({ ports, positioner: type }) => {
+                // Get PortSet from (inputs/outputs) of Component
+                const set = contents[(data[ports] as {ref: string})["ref"]];
+                const positionerRef = (set.data["positioner"] as {ref: string})["ref"]; // Get positioner ID from PortSet
 
-            transformation.forEach((v) => {
-                replacePositioner(val, v.ports, v.positioner);
+                contents[positionerRef] = { "type": type, "data": {} };
             });
         });
-
-        circuit.contents = JSON.stringify(c);
     }
 
+    // Migrate from old property system to new "props" property system
+    //  https://github.com/OpenCircuits/OpenCircuits/pull/1087
+    if (v < 3.1) {
+        // Represents the transformation of property keys by object type,
+        //  `newKey` is assumed to be part of the object's `props` struct
+        const transformations = {
+            "Clock": [
+                { prevKey: "frequency", newKey: "delay",  defaultVal: 0 },
+                { prevKey: "paused",    newKey: "paused", defaultVal: 0 },
+            ],
+            "ConstantNumber": [
+                { prevKey: "inputNum", newKey: "inputNum", defaultVal: 0 },
+            ],
+            "DigitalWire": [
+                { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
+            ],
+            "Label": [
+                { prevKey: "color",     newKey: "color",     defaultVal: "#ffffff"  },
+                { prevKey: "textColor", newKey: "textColor", defaultVal: "#000000" },
+            ],
+            "LED": [
+                { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
+            ],
+            "Oscilloscope": [
+                { prevKey: "frequency",   newKey: "delay"      , defaultVal: 0     },
+                { prevKey: "paused",      newKey: "paused"     , defaultVal: false },
+                { prevKey: "numSamples",  newKey: "samples"    , defaultVal: 100   },
+                { prevKey: "displaySize", newKey: "displaySize"                    },
+            ],
+        } as Record<string, Array<{ prevKey: string, newKey: string, defaultVal?: unknown }>>;
+
+        Object.values(contents).forEach(({ type, data }) => {
+            const transformation = transformations[type] ?? [];
+
+            if (transformation.length === 0)
+                return;
+
+            // Add props with all the new properties
+            data["props"] = {
+                type: "",
+                data: transformation.reduce((props, { prevKey, newKey, defaultVal }) => {
+                    return {
+                        ...props,
+                        [newKey]: (data[prevKey] ?? defaultVal),
+                    };
+                }, {}),
+            };
+
+            // Remove old properties
+            transformation.forEach(({ prevKey }) => (delete data[prevKey]));
+        })
+    }
+
+
+    circuit.contents = JSON.stringify(contents);
     return JSON.stringify(circuit);
 }
 

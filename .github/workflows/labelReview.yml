@@ -20,11 +20,12 @@ jobs:
       - name: Actions Ecosystem Add Labels
         uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          labels: Review Required
+          labels: |
+            Status: Awaiting Review
           github_token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Actions Ecosystem Remove Labels
         uses: actions-ecosystem/action-remove-labels@v1.3.0
         with:
           labels: |
-            Changes Requested
-            Ready To Merge
+            Status: Changes Requested
+            Status: Ready to Merge

@@ -13,34 +13,40 @@ jobs:
       - name: Add Label Ready to Merge
         if: |
           github.event.review.state == 'approved' &&
-          github.event.review.author_association == 'OWNER'
+          (github.event.comment.author_association == 'OWNER' ||
+           github.event.review.author_association == 'OWNER')
         uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          labels: Ready To Merge
+          labels: |
+            Status: Ready to Merge
           github_token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Remove Labels for Ready to Merge 
         if: |
           github.event.review.state == 'approved' &&
-          github.event.review.author_association == 'OWNER'
+          (github.event.comment.author_association == 'OWNER' ||
+           github.event.review.author_association == 'OWNER')
         uses: actions-ecosystem/action-remove-labels@v1.3.0
         with:
           labels: |
-            Changes Requested
-            Review Required
+            Status: Changes Requested
+            Status: Awaiting Review
       - name: Add Label Changes Requested
         if: |
           github.event.review.state == 'changes_requested' &&
-          github.event.review.author_association == 'OWNER'
+          (github.event.comment.author_association == 'OWNER' ||
+           github.event.review.author_association == 'OWNER')
         uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          labels: Changes Requested
+          labels: |
+            Status: Changes Requested
           github_token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Remove Labels for Changes Requested
         if: |
           github.event.review.state == 'changes_requested' &&
-          github.event.review.author_association == 'OWNER'
+          (github.event.comment.author_association == 'OWNER' ||
+           github.event.review.author_association == 'OWNER')
         uses: actions-ecosystem/action-remove-labels@v1.3.0
         with:
           labels: |
-            Ready To Merge
-            Review Required
+            Status: Ready to Merge
+            Status: Awaiting Review
