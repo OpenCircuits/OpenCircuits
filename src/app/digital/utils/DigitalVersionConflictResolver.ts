@@ -85,10 +85,8 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             // Add props with all the new properties
             data["props"] = {
                 type: "",
-                data: Object.fromEntries(transformation.map(({ prevKey,
-                                                               newKey,
-                                                               defaultVal,
-                                                            }) => [newKey, (data[prevKey] ?? defaultVal)])),
+                data: Object.fromEntries(transformation.map(({ prevKey, newKey, defaultVal }) =>
+                    [newKey, (data[prevKey] ?? defaultVal)])),
             };
 
             // Remove old properties

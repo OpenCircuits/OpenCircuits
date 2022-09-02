@@ -25,16 +25,18 @@ const ConstInfo: PropInfoLayout = {
 const PulseInfo: PropInfoLayout = {
     isActive: (states) => (states.every((state) => state["waveform"] === "DC PULSE")),
 
+    /* eslint-disable space-in-parens */
     infos: {
         ...VoltageInfo("v1", "Low Voltage",  0),
-        ...VoltageInfo("V", "High Voltage", 5),
+        ...VoltageInfo( "V", "High Voltage", 5),
            ...TimeInfo("td", "Delay Time",   0),
            ...TimeInfo("tr", "Rise Time",    0.01),
            ...TimeInfo("tf", "Fall Time",    0.01),
            ...TimeInfo("pw", "Pulse Width",  0.1),
-           ...TimeInfo("p", "Period",       0.2),
+           ...TimeInfo( "p", "Period",       0.2),
           ...AngleInfo("ph", "Phase",        0),
     },
+    /* eslint-enable space-in-parens */
 };
 
 const SineInfo: PropInfoLayout = {

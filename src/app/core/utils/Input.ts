@@ -91,9 +91,12 @@ export class Input {
 
         // Check if some combination has every key pressed and newKey is one of them
         //  and return true if that's the case
-        return PREVENTED_COMBINATIONS.some((combination) => combination.flat().includes(newKey) &&
-                   combination.every((keys) =>
-                       keys.some((key) => this.isKeyDown(key))));
+        return PREVENTED_COMBINATIONS.some((combination) => (
+            combination.flat().includes(newKey) &&
+            combination.every((keys) => (
+                keys.some((key) => this.isKeyDown(key))
+            ))
+        ));
     }
 
     /**

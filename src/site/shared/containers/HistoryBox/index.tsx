@@ -82,9 +82,10 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
             {displayExtraInfo && g.getCustomInfo?.()?.map((obj, i) =>
                 <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
             )}
-            {!isCollapsed && g.getActions().map((a, i) => (<HistoryEntry key={`group-action-entry-${i}`}
-                                                                         a={a}
-                                                                         isRedo={isRedo} />))}
+            {!isCollapsed && g.getActions().map((a, i) =>
+                (<HistoryEntry key={`group-action-entry-${i}`}
+                               a={a}
+                               isRedo={isRedo} />))}
             {!isCollapsed && g.isEmpty() && <div style={{ marginLeft: "10px" }}>Empty</div>}
         </div>
     );

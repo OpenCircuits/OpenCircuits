@@ -171,9 +171,11 @@ export class ICData {
         //  things like ConstantHigh and ConstantLow which aren't interactive
         const INPUT_WHITELIST = [Switch, Button];
         const OUTPUT_WHITELIST = [LED];
-        const inputs  = copies.getInputs().filter((i) => INPUT_WHITELIST.some((type) => i instanceof type));
+        /* eslint-disable space-in-parens */
+        const inputs  = copies.getInputs().filter( (i) =>  INPUT_WHITELIST.some((type) => i instanceof type));
         const outputs = copies.getOutputs().filter((o) => OUTPUT_WHITELIST.some((type) => o instanceof type));
         const others  = copies.getComponents().filter((c) => (!inputs.includes(c) && !outputs.includes(c)));
+        /* eslint-enable space-in-parens */
 
         // Sort inputs/outputs by their position
         const sortByPos = (a: Component, b: Component) => {

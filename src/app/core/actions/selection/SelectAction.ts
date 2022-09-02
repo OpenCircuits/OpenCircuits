@@ -50,6 +50,7 @@ export function CreateGroupSelectAction(selections: SelectionsWrapper, objs: Sel
 
 export function CreateDeselectAllAction(selections: SelectionsWrapper): GroupAction {
     const objs = selections.get();
-    return objs.reduce((acc, s) => acc.add(new DeselectAction(selections, s)),
-                                   new GroupAction([], "Deselect All Action"));
+    return objs.reduce(
+        (acc, s) => acc.add(new DeselectAction(selections, s)),
+        new GroupAction([], "Deselect All Action"));
 }

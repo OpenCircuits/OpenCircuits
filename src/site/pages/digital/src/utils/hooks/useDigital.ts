@@ -6,7 +6,7 @@ import {AppState} from "site/digital/state";
 import {AllActions} from "site/digital/state/actions";
 
 
-export const useDigitalDispatch = () => useDispatch<ThunkDispatch<AppState, undefined, AllActions>>()
+export const useDigitalDispatch = () => useDispatch<ThunkDispatch<AppState, undefined, AllActions>>();
 
 export const useDigitalSelector = <TSelected = unknown>(
     selector: (state: AppState) => TSelected,

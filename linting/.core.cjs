@@ -9,13 +9,6 @@ module.exports = {
                 "no-console": "off", // Console logging actually has a purpose
             }
         },
-        {
-            "files": ["**/rendering/**"],
-            "rules": {
-                // The fix was causing unicorn/no-unreadable-iife to trigger on the renderers
-                "arrow-body-style": ["error", "as-needed", {"requireReturnForObjectLiteral": true}],
-            }
-        },
     ],
     "rules": {
         "max-len": ["warn", {

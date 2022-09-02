@@ -65,9 +65,11 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     const outputAngles = outputTargetPositions.map((p) => p.angle());
     const inputAngles  =  inputTargetPositions.map((p) => p.angle()).map((a) => (a < 0 ? a + 2*Math.PI : a));
 
+    /* eslint-disable space-in-parens */
     // Associate the ports with their angle
     const outputMap = new Map(outputAngles.map((a, i) => [a, outputPorts[i]]));
-    const inputMap  = new Map(inputAngles.map((a, i) => [a,  inputPorts[i]]));
+    const inputMap  = new Map( inputAngles.map((a, i) => [a,  inputPorts[i]]));
+    /* eslint-enable space-in-parens */
 
     outputAngles.sort(sortByAngle);
     inputAngles.sort(sortByAngle).reverse();

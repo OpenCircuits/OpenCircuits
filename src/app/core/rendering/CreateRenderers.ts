@@ -33,7 +33,7 @@ export const CreateRenderers = <A, B1, B2, C1, C2, D, E>(
         toolRenderer: RendererInstance<D>;
         debugRenderer: RendererInstance<E>;
     }
-) => {return {
+) => ({
     renderer,
     info,
     Grid: {
@@ -53,6 +53,6 @@ export const CreateRenderers = <A, B1, B2, C1, C2, D, E>(
     Debug: {
         render: (extra?: E) => renderers.debugRenderer.render(renderer, info, extra),
     },
-}}
+});
 
 

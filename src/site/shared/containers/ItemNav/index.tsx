@@ -202,13 +202,13 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
 
         const numPerSection = Math.floor((w - H_MARGIN) / ITEM_WIDTH);
         return config.sections.reduce((prev, section) => [
-                ...prev,
-                ...section.items
-                    // Reduce items to group of `numPerSection`
-                    .reduce(GroupBy(numPerSection), [[]] as ItemNavItem[][])
-                    // Map each group to a new section with same ID and label
-                    .map<ItemNavSection>((items) => ({ id: section.id, label: section.label, items })),
-            ], [] as ItemNavSection[]);
+            ...prev,
+            ...section.items
+                // Reduce items to group of `numPerSection`
+                .reduce(GroupBy(numPerSection), [[]] as ItemNavItem[][])
+                // Map each group to a new section with same ID and label
+                .map<ItemNavSection>((items) => ({ id: section.id, label: section.label, items })),
+        ], [] as ItemNavSection[]);
     }, [config.sections, w]);
 
     const sections = (side === "left") ? config.sections : sectionsBottom;
