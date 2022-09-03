@@ -13,8 +13,6 @@ jobs:
       - name: Add Label Ready to Merge
         if: |
           github.event.review.state == 'approved' &&
-          # This is a terrible way of doing this, but I cannot figure out why
-          #  Leon doesn't have an `author_association` of "OWNER"
           (github.event.comment.user.login == 'LeonMontealegre' ||
            github.event.review.user.login == 'LeonMontealegre')
         uses: actions-ecosystem/action-add-labels@v1.1.0
