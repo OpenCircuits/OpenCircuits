@@ -1,9 +1,8 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {Component} from "core/models";
 
-import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
+import {CreateBusAction, GetComponentBusPorts} from "digital/actions/addition/BusActionFactory";
 
 import {InputPort, OutputPort} from "digital/models";
 
@@ -34,62 +33,18 @@ export const BusButtonModule = ({ info }: Props) => {
     let oports = items.filter(s => s instanceof OutputPort) as OutputPort[];
     const components = items.filter(s => s instanceof Component) as Component[];
 
-    // Introduces ambiguity between components and individual ports
-    if ( (iports.length > 0 || oports.length > 0) && components.length > 0) {
+    // If user has ports AND components selected, then this is an invalid
+    //  state for now, so we will not handle it
+    if ((iports.length > 0 || oports.length > 0) && components.length > 0)
         return null;
-    }
 
-    // No individual ports selected, only components are selected
-    //  Bus components:
-    if (iports.length === 0 && oports.length === 0) {
-        const ambiComps = components.filter(s => s.getPorts().some(p => p instanceof InputPort &&
-                                                                        p.getWires().length === 0) ===
-                                                 s.getPorts().some(p => p instanceof OutputPort &&
-                                                                        p.getWires().length === 0)) as Component[];
-        // Remove ambiguous components that have no available ports
-        ambiComps.forEach(c => {
-            if (c.getPorts().every(p => p.getWires().length > 0)) {
-                ambiComps.splice(ambiComps.indexOf(c), 1);
-            }
-        });
-
-        // Remove the ambiguous components from components list for filtering output and input components
-        for (let i = 0; i < components.length; i++) {
-            if (ambiComps.includes(components[i])) {
-                components.splice(i, 1);
-                i--;
-            }
-        }
-        const outputComps = components.filter(s => s.getPorts().some(p => p instanceof OutputPort &&
-                                                                          p.getWires().length === 0)) as Component[];
-        const inputComps = components.filter(s => s.getPorts().some(p => p instanceof InputPort &&
-                                                                         p.getWires().length === 0)) as Component[];
-        // three cases:
-        //   - only input and output components are selected
-        //   - only input and ambiguous components are selected
-        //   - only output and ambiguous components are selected
-        if (inputComps.length > 0 && outputComps.length > 0 && ambiComps.length === 0) {
-            iports = GetAllPorts(inputComps).filter(p => p instanceof InputPort &&
-                                                         p.getWires().length === 0) as InputPort[];
-            oports = GetAllPorts(outputComps).filter(p => p instanceof OutputPort &&
-                                                          p.getWires().length === 0) as OutputPort[];
-        } else if (inputComps.length > 0 && ambiComps.length > 0 && outputComps.length === 0) {
-            iports = GetAllPorts(inputComps).filter(p => p instanceof InputPort &&
-                                                         p.getWires().length === 0) as InputPort[];
-            oports = GetAllPorts(ambiComps).filter(p => p instanceof OutputPort &&
-                                                        p.getWires().length === 0) as OutputPort[];
-        } else if (outputComps.length > 0 && ambiComps.length > 0 && inputComps.length === 0) {
-            iports = GetAllPorts(ambiComps).filter(p => p instanceof InputPort &&
-                                                        p.getWires().length === 0) as InputPort[];
-            oports = GetAllPorts(outputComps).filter(p => p instanceof OutputPort &&
-                                                          p.getWires().length === 0) as OutputPort[];
-        }
-    }
+    // Gather ports from the components to bus them instead
+    if (components.length > 0)
+        [iports, oports] = GetComponentBusPorts(components);
 
     // Port counts mismatch or no ports selected
-    if (iports.length !== oports.length || iports.length === 0 || oports.length === 0) {
+    if (iports.length !== oports.length || iports.length === 0 || oports.length === 0)
         return null
-    }
 
     return (
         <button type="button"
