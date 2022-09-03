@@ -20,7 +20,7 @@ jobs:
           labels: |
             Status: Ready to Merge
           github_token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Remove Labels for Ready to Merge 
+      - name: Remove Changes Requested Label for Ready to Merge 
         if: |
           github.event.review.state == 'approved' &&
           (github.event.comment.user.login == 'LeonMontealegre' ||
@@ -29,6 +29,14 @@ jobs:
         with:
           labels: |
             Status: Changes Requested
+      - name: Remove Awaiting Review Label for Ready to Merge 
+        if: |
+          github.event.review.state == 'approved' &&
+          (github.event.comment.user.login == 'LeonMontealegre' ||
+           github.event.review.user.login == 'LeonMontealegre')
+        uses: actions-ecosystem/action-remove-labels@v1.3.0
+        with:
+          labels: |
             Status: Awaiting Review
       - name: Add Label Changes Requested
         if: |
@@ -40,7 +48,7 @@ jobs:
           labels: |
             Status: Changes Requested
           github_token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Remove Labels for Changes Requested
+      - name: Remove Ready to Merge Label for Changes Requested
         if: |
           github.event.review.state == 'changes_requested' &&
           (github.event.comment.user.login == 'LeonMontealegre' ||
@@ -49,4 +57,12 @@ jobs:
         with:
           labels: |
             Status: Ready to Merge
+      - name: Remove Awaiting Review Label for Changes Requested
+        if: |
+          github.event.review.state == 'changes_requested' &&
+          (github.event.comment.user.login == 'LeonMontealegre' ||
+           github.event.review.user.login == 'LeonMontealegre')
+        uses: actions-ecosystem/action-remove-labels@v1.3.0
+        with:
+          labels: |
             Status: Awaiting Review

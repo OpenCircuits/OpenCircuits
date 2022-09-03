@@ -5,7 +5,7 @@ module.exports = {
     },
     "overrides": [
         {
-            "files": ["**.test.ts"],
+            "files": ["**.test.ts?(x)"],
             "rules": {
                 "jest/unbound-method": "error", // Typescript version disabled in .ts.js
             }

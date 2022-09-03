@@ -2,39 +2,31 @@
 
 
 .header__right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
+    padding: 5px 0;
 
-    margin-right: 19px;
-
-    @media (max-width: $collapse-breakpoint) {
-        flex: 0;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        margin-right: 9px;
-    }
-
-
-    & > button {
-        display: none;
-
-        padding: 0 10px;
-
-        height: $header-height - 2*$header-padding;
-        margin-top: $header-padding;
-
-        & > img {
-            width: 40px;
-        }
-
+    &__wrapper {
         @media (max-width: $collapse-breakpoint) {
-            display: inherit;
-            margin-bottom: 2*$header-padding;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            align-self: flex-start;
+        }
+
+        & > button {
+            display: none;
+
+            @media (max-width: $collapse-breakpoint) {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+
+                width: 100%;
+
+                padding: 0 10px;
+            }
         }
     }
+
 
     &__btns {
         display: flex;
@@ -42,47 +34,34 @@
         align-items: center;
         justify-content: flex-end;
 
+        height: 100%;
+
+        & > * {
+            margin-left: 5px;
+        }
+
         @media (max-width: $collapse-breakpoint) {
             padding: 0 10px 10px 10px;
             border-radius: 0 0 5px 5px;
             background-color: $primary-color;
 
+            height: unset;
+
             flex-direction: column;
             justify-content: flex-start;
+
+            & > * {
+                margin-top: 10px;
+                margin-left: 0;
+            }
 
             & > div:first-child {
                 display: none;
             }
         }
 
-        // @media (max-width: $collapse-breakpoint) {
-        //     flex-direction: column;
-        //     justify-content: flex-start;
-        // }
-
-        & div {
-            // float: right;
-
-            height: $header-height - 2*$header-padding;
-            margin-top: $header-padding;
-
+        & div, button {
             cursor: pointer;
-        }
-        & button {
-            height: $header-height - 2*$header-padding;
-            margin-left: $header-padding;
-
-            @media (max-width: $collapse-breakpoint) {
-                margin-left: 0;
-            }
-
-            cursor: pointer;
-        }
-        & img {
-            display: block;
-
-            height: 85%;
-            margin: auto;
         }
         #header-help-img {
             height: 75%;
@@ -101,6 +80,10 @@
         position: relative;
 
         display: inline-block;
+
+        & > button {
+            display: block;
+        }
 
         & div {
             height: auto;
@@ -190,7 +173,6 @@
             float: right;
 
             height: $header-button-height;
-            margin-top: $header-padding;
             margin-left: 0;
             padding-right: 5px;
             padding-left: 5px;
@@ -215,50 +197,7 @@
         }
 
         @media (max-width: 500px) {
-            & {
-                display: none;
-            }
+            display: none;
         }
     }
 }
-
-// .header__right__alt {
-//     display: none;
-// }
-// }
-
-
-// @media (max-width: 450px) {
-//     .header__right__alt {
-//         margin-right: 14px;
-//         top: 10px;
-//         right: 10px;
-//         position: fixed;
-
-//         & #hidden {
-//             display: none;
-//         }
-
-//         & img {
-//             width: 40px;
-//             height: 40px;
-//             border-radius: 10px;
-//         }
-
-//         & .expand {
-//             transform: scale(1.75);
-//             margin-bottom: 15px;
-//         }
-
-//         & #notHidden {
-//             list-style-type: none;
-//             background-color: white;
-//             border-radius: 6px 6px 6px;
-//             box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
-//         }
-//     }
-
-//     .header__right {
-//         display: none;
-//     }
-// }

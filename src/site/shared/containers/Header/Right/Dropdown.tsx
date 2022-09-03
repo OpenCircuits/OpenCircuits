@@ -59,7 +59,7 @@ export const Dropdown = ({ open, btnInfo, onClick, onClose, children }: Props) =
                     className={`header__right__dropdown__button ${open ? "white" : ""}`}
                     title={btnInfo.title}
                     onClick={open ? onClose : onClick}>
-                <img src={btnInfo.src} height="100%" alt={btnInfo.title} />
+                <img src={btnInfo.src} width="34px" height="34px" alt={btnInfo.title} />
             </button>
             <div className={`header__right__dropdown__content ${open ? "" : "hide"}`}
                  style={{ maxHeight: h-75+"px" }}>
