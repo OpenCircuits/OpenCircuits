@@ -13,8 +13,8 @@ jobs:
       - name: Add Label Ready to Merge
         if: |
           github.event.review.state == 'approved' &&
-          (github.event.comment.author_association == 'OWNER' ||
-           github.event.review.author_association == 'OWNER')
+          (github.event.comment.user.login == 'LeonMontealegre' ||
+           github.event.review.user.login == 'LeonMontealegre')
         uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
           labels: |
@@ -23,8 +23,8 @@ jobs:
       - name: Remove Labels for Ready to Merge 
         if: |
           github.event.review.state == 'approved' &&
-          (github.event.comment.author_association == 'OWNER' ||
-           github.event.review.author_association == 'OWNER')
+          (github.event.comment.user.login == 'LeonMontealegre' ||
+           github.event.review.user.login == 'LeonMontealegre')
         uses: actions-ecosystem/action-remove-labels@v1.3.0
         with:
           labels: |
@@ -33,8 +33,8 @@ jobs:
       - name: Add Label Changes Requested
         if: |
           github.event.review.state == 'changes_requested' &&
-          (github.event.comment.author_association == 'OWNER' ||
-           github.event.review.author_association == 'OWNER')
+          (github.event.comment.user.login == 'LeonMontealegre' ||
+           github.event.review.user.login == 'LeonMontealegre')
         uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
           labels: |
@@ -43,8 +43,8 @@ jobs:
       - name: Remove Labels for Changes Requested
         if: |
           github.event.review.state == 'changes_requested' &&
-          (github.event.comment.author_association == 'OWNER' ||
-           github.event.review.author_association == 'OWNER')
+          (github.event.comment.user.login == 'LeonMontealegre' ||
+           github.event.review.user.login == 'LeonMontealegre')
         uses: actions-ecosystem/action-remove-labels@v1.3.0
         with:
           labels: |
