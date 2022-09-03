@@ -1,5 +1,4 @@
 import path from "node:path";
-import url  from "node:url";
 
 import address          from "address";
 import chalk            from "chalk";
@@ -51,6 +50,10 @@ export default async (dir: string, project: string, mode: "development" | "produ
     }));
 
     if (mode === "development") {
+        const formatURL = (protocol: "http" | "https", hostname: string, port: number | string, pathname: string) => (
+            `${protocol}://${hostname}:${port}${pathname}`
+        );
+
         const protocol = "http";
         const hostname = "localhost"; // Allow any connections
         const pathname = publicRoot.slice(0, -1);
@@ -68,19 +71,17 @@ export default async (dir: string, project: string, mode: "development" | "produ
                     const privateTest = /^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./;
                     // Check if private
                     if (privateTest.test(ip))
-                        return url.format({ protocol, hostname: ip, port: chalk.bold(port), pathname });
-
+                        return formatURL(protocol, hostname, chalk.bold(port), pathname);
                 }
             } catch {
                 // Ignore, just defer to localhost
-
             }
         })();
 
         let firstDone = false;
         compiler.hooks.done.tap("done", async _ => {
             if (open && !firstDone) {
-                openBrowser(url.format({ protocol, hostname, port, pathname }));
+                openBrowser(formatURL(protocol, hostname, port, pathname));
                 firstDone = true;
             }
 
@@ -88,7 +89,7 @@ export default async (dir: string, project: string, mode: "development" | "produ
 
             if (lanUrl) {
                 console.log(`  ${chalk.bold("Local:")}            `
-                            + `${url.format({ protocol, hostname, port: chalk.bold(port), pathname })}`);
+                            + formatURL(protocol, hostname, chalk.bold(port), pathname));
                 console.log(`  ${chalk.bold("On Your Network:")}  ${lanUrl}`);
             }
 
