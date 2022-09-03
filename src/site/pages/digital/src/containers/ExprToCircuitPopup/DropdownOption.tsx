@@ -12,7 +12,7 @@ type Props<T> = {
 }
 export const DropdownOption = <T extends string>({ id, option, options, setOption, text }: Props<T>) => (<>
     <br />
-    <label>{text}</label>
+    <label htmlFor={id}>{text}</label>
     <select id={id} value={option}
             onChange={e => setOption(e.target.value as T)}
             onBlur={e => setOption(e.target.value as T)}>
