@@ -118,14 +118,20 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     const inputAngles  =  inputTargetPositions.map(p => p.angle()).map(a => (a < 0 ? a + 2*Math.PI : a));
 
     // Associate the ports with their angle
-    const outputMap = new Map(outputAngles.map((a, i) => [a, outputPorts[i]]));
-    const inputMap  = new Map( inputAngles.map((a, i) => [a,  inputPorts[i]]));
+    //  Needs to be a map of arrays, in the case where two ports share the exact same angle
+    const outputMap = new Map<number, OutputPort[]>;
+    const inputMap  = new Map<number, InputPort[]>;
+
+    // Add each ports to the maps by angle
+    outputAngles.forEach((a, i) => outputMap.set(a, [...(outputMap.get(a) ?? []), outputPorts[i]]));
+     inputAngles.forEach((a, i) =>  inputMap.set(a, [...( inputMap.get(a) ?? []),  inputPorts[i]]));
 
     outputAngles.sort(sortByAngle);
     inputAngles.sort(sortByAngle).reverse();
 
     // Connect Ports according to their target pos on the Average Component
     return new GroupAction(inputAngles.map((inputAngle, i) =>
-        new ConnectionAction(designer, inputMap.get(inputAngle)!, outputMap.get(outputAngles[i])!)
+        // Pop the ports out of their map so they only get used once
+        new ConnectionAction(designer, inputMap.get(inputAngle)!.pop()!, outputMap.get(outputAngles[i])!.pop()!)
     ), "Bus Action");
 }
