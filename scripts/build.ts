@@ -17,7 +17,7 @@ process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
 
 
-const DIRS = getDirs(true, false);
+const DIRS = getDirs(true, false, false);
 const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
 
 
