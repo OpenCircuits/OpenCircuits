@@ -4,11 +4,11 @@ import {V, Vector} from "Vector";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
+import {CreateBusAction, GetComponentBusPorts} from "digital/actions/addition/BusActionFactory";
 
 import {DigitalCircuitDesigner, InputPort, OutputPort} from "digital/models";
 
-import {ANDGate, BCDDisplay, ConstantNumber, IC, ICData, LED, Multiplexer, Switch} from "digital/models/ioobjects";
+import {ANDGate, BCDDisplay, BUFGate, ConstantNumber, IC, ICData, LED, Multiplexer, Switch} from "digital/models/ioobjects";
 
 
 
@@ -284,5 +284,89 @@ describe("Bus Action", () => {
         expect(i2.getConnections()[0]).toBe(ic.getConnections()[2]);
         expect(i3.getConnections()[0]).toBe(ic.getConnections()[3]);
         expect(i4.getConnections()[0]).toBe(ic.getConnections()[1]);
+    });
+    test("Switches at exact same position", () => {
+        const [i1, i2, i3, i4, bcd1] = Place(new Switch(), new Switch(), new Switch(),
+                                             new Switch(), new BCDDisplay());
+
+        i1.setPos(V(0,0));
+        i2.setPos(V(0,0));
+        i3.setPos(V(0,0));
+        i4.setPos(V(0,0));
+        bcd1.setPos(V(200,0));
+
+        // Expect every single switch to connect, but we can't assert anything about the order of connections
+        expectBusConnections([i1,i2,i3,i4].flatMap(i => i.getOutputPorts()), bcd1.getInputPorts());
+    });
+
+    describe("Bus Components", () => {
+        // Buses that should work
+        test("Constant Number -> BCD Display", () => {
+            const [c1, bcd1] = Place(new ConstantNumber(), new BCDDisplay());
+
+            const [iports, oports] = GetComponentBusPorts([c1, bcd1]);
+
+            expect(iports).toHaveLength(4);
+            expect(oports).toHaveLength(4);
+
+            expectBusConnections(oports, iports);
+        });
+        test("4 Switches -> BCD Display", () => {
+            const [i1, i2, i3, i4, bcd1] = Place(new Switch(), new Switch(), new Switch(),
+                                                 new Switch(), new BCDDisplay());
+
+            const [iports, oports] = GetComponentBusPorts([i1, i2, bcd1, i3, i4]);
+
+            expect(iports).toHaveLength(4);
+            expect(oports).toHaveLength(4);
+
+            expectBusConnections(oports, iports);
+        });
+        test("4 Switches -> 2 ANDGates", () => {
+            const [i1, i2, i3, i4, a1, a2] = Place(new Switch(), new Switch(), new Switch(),
+                                                   new Switch(), new ANDGate(), new ANDGate());
+
+            const [iports, oports] = GetComponentBusPorts([i1, a2, i3, i2, i4, a1]);
+
+            expect(iports).toHaveLength(4);
+            expect(oports).toHaveLength(4);
+
+            expectBusConnections(oports, iports);
+        });
+        test("6 Switches -> Mux", () => {
+            const [i1, i2, i3, i4, i5, i6, m1] = Place(new Switch(), new Switch(), new Switch(), new Switch(),
+                                                       new Switch(), new Switch(), new Multiplexer());
+
+            const [iports, oports] = GetComponentBusPorts([i1, i2, i3, i4, i5, i6, m1]);
+
+            expect(iports).toHaveLength(6);
+            expect(oports).toHaveLength(6);
+
+            expectBusConnections(oports, iports);
+        });
+
+        // Buses that should not work
+        test("Fail: BUFGate -> BUFGate", () => {
+            const [b1, b2] = Place(new BUFGate(), new BUFGate());
+
+            const [iports, oports] = GetComponentBusPorts([b1, b2]);
+
+            expect(iports).not.toHaveLength(oports.length);
+        });
+        test("Fail: 3 Switches -> BCD Display", () => {
+            const [i1, i2, i3, bcd1] = Place(new Switch(), new Switch(), new Switch(), new BCDDisplay());
+
+            const [iports, oports] = GetComponentBusPorts([i1, i2, i3, bcd1]);
+
+            expect(iports).not.toHaveLength(oports.length);
+        });
+        test("Fail: 7 Switches -> Mux", () => {
+            const [i1, i2, i3, i4, i5, i6, i7, m1] = Place(new Switch(), new Switch(), new Switch(), new Switch(),
+                                                       new Switch(), new Switch(), new Switch(), new Multiplexer());
+
+            const [iports, oports] = GetComponentBusPorts([i1, i2, i3, i4, i5, i6, i7, m1]);
+
+            expect(iports).not.toHaveLength(oports.length);
+        });
     });
 });
