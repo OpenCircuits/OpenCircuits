@@ -2,7 +2,6 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Snap}        from "core/utils/ComponentUtils";
 import {Event}       from "core/utils/Events";
 
-
 import {GroupAction} from "core/actions/GroupAction";
 
 import {RotateAction}    from "core/actions/transform/RotateAction";
@@ -32,7 +31,7 @@ export const CleanUpHandler: EventHandler = ({
 
         history.add(new GroupAction([
             ...components.map(c =>
-                new RotateAction([c], c.getPos(), [c.getAngle()], [0])
+                new RotateAction(c, c.getAngle(), 0)
             ),
             new TranslateAction(
                 components,
