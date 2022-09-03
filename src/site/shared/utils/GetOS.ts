@@ -2,12 +2,12 @@
 // Recommend specifically for keyboard shortcut detection
 //  https://developer.mozilla.org/en-US/docs/Web/API/Navigator/platform#examples
 export function GetOS(): "mac" | "win" | "unknown" {
-    if (!navigator || !navigator.platform)
+    if (!navigator || !navigator.userAgent)
         return "unknown";
-    const p = navigator.platform;
+    const p = navigator.userAgent.toLowerCase();
     return (
-        p.includes("Mac") ? "mac" :
-        p.includes("Win") ? "win" :
+        p.includes("mac") ? "mac" :
+        p.includes("win") ? "win" :
                             "unknown"
     );
 }
