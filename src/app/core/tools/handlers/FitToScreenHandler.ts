@@ -1,8 +1,8 @@
-import {FIT_PADDING_RATIO,} from "core/utils/Constants";
+import {FIT_PADDING_RATIO} from "core/utils/Constants";
 
-import {Event} from "core/utils/Events";
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo}  from "core/utils/CircuitInfo";
 import {GetCameraFit} from "core/utils/ComponentUtils";
+import {Event}        from "core/utils/Events";
 
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
@@ -15,7 +15,7 @@ export const FitToScreenHandler: EventHandler = ({
     conditions: (event: Event, {}: CircuitInfo) =>
         (event.type === "keyup" && event.key === "f"),
 
-    getResponse: ({camera, history, designer, selections}: CircuitInfo) => {
+    getResponse: ({ camera, history, designer, selections }: CircuitInfo) => {
         // Fit to selections, if any;
         //  otherwise fit all CullableObjects
         const objs = (selections.amount() === 0 ?
@@ -25,5 +25,5 @@ export const FitToScreenHandler: EventHandler = ({
         // Get final camera position and zoom
         const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);
         history.add(new MoveCameraAction(camera, pos, zoom).execute());
-    }
+    },
 });
