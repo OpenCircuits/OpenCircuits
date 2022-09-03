@@ -13,7 +13,7 @@ import {EventHandler} from "../EventHandler";
 
 export const FitToScreenHandler: EventHandler = ({
     conditions: (event: Event, {}: CircuitInfo) =>
-        (event.type === "keydown" && event.key === "f"),
+        (event.type === "keyup" && event.key === "f"),
 
     getResponse: ({ camera, history, designer, selections }: CircuitInfo) => {
         // Fit to selections, if any;
