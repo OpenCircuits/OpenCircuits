@@ -10,6 +10,15 @@ jobs:
       contents: read
       pull-requests: write
     steps:
+      - name : machine echo github
+        env : { CONTENT : "${{ toJson(github) }}" }
+        run : "echo $CONTENT"
+      - name : machine echo github 2
+        env : { CONTENT : "${{ toJson(github.event) }}" }
+        run : "echo $CONTENT"
+      - name : machine echo github 3
+        env : { CONTENT : "${{ toJson(github.event.review) }}" }
+        run : "echo $CONTENT"
       - name: Add Label Ready to Merge
         if: |
           github.event.review.state == 'approved' &&
