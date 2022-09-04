@@ -14,7 +14,7 @@ describe("FitToScreenHandler", () => {
 
     afterEach(() => {
         designer.reset();
-        selections.get().forEach(s => selections.deselect(s));
+        selections.get().forEach((s) => selections.deselect(s));
     });
 
     test("Fit to Screen of a Single Object", () => {
@@ -31,7 +31,7 @@ describe("FitToScreenHandler", () => {
             .releaseKey("f");
 
         expect(selections.amount()).toBe(1);
-        expect(camera.getPos()).toEqual(V(21.5,0));
+        expect(camera.getPos()).toEqual(V(21.5, 0));
 
     });
 
@@ -44,7 +44,7 @@ describe("FitToScreenHandler", () => {
             .releaseKey("f");
 
         expect(selections.amount()).toBe(0);
-        expect(camera.getPos()).toEqual(V(0,0));
+        expect(camera.getPos()).toEqual(V(0, 0));
 
     });
 
@@ -66,7 +66,7 @@ describe("FitToScreenHandler", () => {
             .releaseKey("f");
 
         expect(selections.amount()).toBe(1);
-        expect(camera.getPos()).toEqual(V(21.5,0));
+        expect(camera.getPos()).toEqual(V(0, 40.5));
 
     });
 });
