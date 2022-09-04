@@ -51,5 +51,7 @@ module.exports = {
         "nonblock-statement-body-position": ["error", "below", {
             "overrides": { "while": "any" },
         }],
+
+        "eol-last": "error",
     },
 }

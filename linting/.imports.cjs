@@ -38,7 +38,7 @@ function addPath(pathGroupsIn, pattern) {
 const appDirectories = ["core", "analog", "digital"];
 const appSubDirectories = ["utils", "actions", "tools", "rendering", "models"];
 const siteDirectories = ["shared", "analog", "digital", "landing"];
-const siteSubDirectories = ["utils", "api", "state", "components", "containers"];
+const siteSubDirectories = ["utils", "api", "state", "components", "containers", "tests"];
 const pathGroups = [
     {"pattern": "react", "group": "external"},
     {"pattern": "{**,**/,,./,../,*}{C,c}onstants{**,/**,,*}", "group": "external", "position": "after"},

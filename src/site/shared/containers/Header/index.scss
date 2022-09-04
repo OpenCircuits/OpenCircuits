@@ -1,56 +1,68 @@
 @use "sass:math";
 @import "~shared/utils/constants", "~shared/utils/theme", "./constants";
 
+
 header {
     z-index: 3;
 
+    position: relative;
+
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 
     width: 100%;
     height: $header-height;
-    padding: $header-padding 0;
+    padding: 6px 0;
+
+    box-sizing: border-box;
 
     border: $header-border;
     border-bottom-width: $header-border-width;
     background-color: $primary-color;
 
-    & > div {
-        flex: 1;
+    & img {
+        display: block;
+    }
 
-        &:first-child {
-            margin-right: auto;
+    & > div {
+        display: flex;
+        flex: 0;
+        flex-direction: row;
+        align-items: center;
+
+        height: 100%;
+
+        &:first-of-type, &:last-of-type {
+            flex: 1;
         }
-        &:last-child {
-            margin-left: auto;
+        &:first-of-type {
+            justify-content: flex-start;
+            margin-left: 12px;
+        }
+        &:last-of-type {
+            justify-content: flex-end;
+            margin-right: 12px;
+        }
+
+        & > * {
+            color: $secondary-color;
         }
     }
 }
 
 .header__center {
-    display: flex;
-    flex-direction: row;
+    position: relative;
+
     justify-content: center;
 
-    color: $secondary-color;
-
-    $logo-width: 200px;
-    $github-margin: 10px;
-
-    &__logo {
-        position: relative;
-        top: 2px;
-
-        width: $logo-width;
-    }
-
     &__github {
-        position: relative;
-        top: 2px;
-
-        width: $header-height - 2*$header-padding;
-        height: $header-height - 2*$header-padding;
-        margin-left: $github-margin;
+        margin-bottom: 2px;
+    }
+    &__logo {
+        margin-top: 4px;
+        margin-right: 10px;
     }
 
     @media (max-width: 1050px) {

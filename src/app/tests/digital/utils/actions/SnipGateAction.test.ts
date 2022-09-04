@@ -9,7 +9,6 @@ import {LED, Switch} from "digital/models/ioobjects";
 import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
 
-
 describe("SnipGateAction", () => {
     const designer = new DigitalCircuitDesigner(0);
     const { Place, Connect } = GetHelpers(designer);
