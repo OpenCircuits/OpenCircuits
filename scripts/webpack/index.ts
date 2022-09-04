@@ -71,7 +71,7 @@ export default async (dir: string, project: string, mode: "development" | "produ
                     const privateTest = /^10\.|^172\.(1[6-9]|2\d|3[01])\.|^192\.168\./;
                     // Check if private
                     if (privateTest.test(ip))
-                        return formatURL(protocol, hostname, chalk.bold(port), pathname);
+                        return formatURL(protocol, ip, chalk.bold(port), pathname);
                 }
             } catch {
                 // Ignore, just defer to localhost
