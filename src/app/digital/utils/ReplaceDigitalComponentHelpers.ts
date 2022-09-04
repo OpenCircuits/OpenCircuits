@@ -91,7 +91,6 @@ export function GenerateReplacementList(designer: DigitalCircuitDesigner, allCom
     return list;
 }
 
-
 export function GetReplacements(comp: DigitalComponent, designer: DigitalCircuitDesigner, list: ReplacementList) {
     const key = GetReplacementListKey(comp);
     if (!list.has(key))
