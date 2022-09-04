@@ -143,7 +143,7 @@ describe("Rotate Tool", () => {
             expect(selections.get()).toContain(obj1);
             expect(selections.get()).toContain(obj2);
 
-            const initialMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            const initialMidpoints = (selections.get() as Component[]).map((o) => o.getPos());
 
             input.pressKey("z");
             expect(input.isKeyDown("z")).toBe(true);
@@ -157,7 +157,7 @@ describe("Rotate Tool", () => {
             input.releaseKey("z");
 
             const newMidpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
-            const finalMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            const finalMidpoints = (selections.get() as Component[]).map((o) => o.getPos());
 
             expect(obj1.getAngle()).toBeCloseTo(-Math.PI/4);
             expect(obj2.getAngle()).toBeCloseTo(-Math.PI/4);
@@ -173,7 +173,7 @@ describe("Rotate Tool", () => {
             expect(selections.get()).toContain(obj2);
 
             const midpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
-            const initialMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            const initialMidpoints = (selections.get() as Component[]).map((o) => o.getPos());
             input.moveTo(midpoint) // Move to midpoint of objects
                     .move(V(-ROTATION_CIRCLE_RADIUS, 0))
                     .press()
@@ -188,7 +188,7 @@ describe("Rotate Tool", () => {
             input.releaseKey("Control");
             input.releaseKey("z");
 
-            const newMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            const newMidpoints = (selections.get() as Component[]).map((o) => o.getPos());
             initialMidpoints.forEach((c, i) => expect(initialMidpoints[i]).toApproximatelyEqual(newMidpoints[i]));  // Make sure midpoints stayed in the same place
             expect(obj1.getAngle()).toBeCloseTo(0);
             expect(obj2.getAngle()).toBeCloseTo(0);
@@ -205,7 +205,7 @@ describe("Rotate Tool", () => {
             expect(input.isKeyDown("z")).toBe(true);
 
             const midpoint = obj1.getPos().add(obj2.getPos()).scale(0.5);
-            const initialMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            const initialMidpoints = (selections.get() as Component[]).map((o) => o.getPos());
             input.moveTo(midpoint) // Move to midpoint of objects
                     .move(V(-ROTATION_CIRCLE_RADIUS, 0))
                     .press()
@@ -222,7 +222,7 @@ describe("Rotate Tool", () => {
             input.releaseKey("Control");
             input.releaseKey("z");
 
-            let newMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            let newMidpoints = (selections.get() as Component[]).map((o) => o.getPos());
             initialMidpoints.forEach((c, i) => expect(initialMidpoints[i]).toStrictEqual(newMidpoints[i]));  // Make sure midpoints stayed in the same place
             expect(obj1.getAngle()).toBeCloseTo(0);
             expect(obj2.getAngle()).toBeCloseTo(0);
@@ -233,7 +233,7 @@ describe("Rotate Tool", () => {
             input.releaseKey("Control");
             input.releaseKey("y");
 
-            newMidpoints = (selections.get() as Component[]).map(o => o.getPos());
+            newMidpoints = (selections.get() as Component[]).map((o) => o.getPos());
             initialMidpoints.forEach((c, i) => expect(initialMidpoints[i]).toStrictEqual(newMidpoints[i]));  // Make sure midpoints stayed in the same place
             expect(obj1.getAngle()).toBeCloseTo(-Math.PI/4);
             expect(obj2.getAngle()).toBeCloseTo(-Math.PI/4);

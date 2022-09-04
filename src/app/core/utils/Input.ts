@@ -124,7 +124,7 @@ export class Input {
                 [...this.keysDown.entries()]
                     .filter(([_,down]) => down)
                     .map(([k]) => k)
-                    .forEach(k => this.onKeyUp(k));
+                    .forEach((k) => this.onKeyUp(k));
             }
         }, false);
 

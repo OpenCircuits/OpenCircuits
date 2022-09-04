@@ -62,7 +62,7 @@ export const RotateTool = (() => {
             currentAngles = [...initialAngles];
 
             // Get initial positions as well since we can rotate around a point which moves the components
-            initialPositions = components.map(o => o.getPos());
+            initialPositions = components.map((o) => o.getPos());
 
             // Get initial overall angle
             startAngle = getAngle(worldMousePos, selections.midpoint());
