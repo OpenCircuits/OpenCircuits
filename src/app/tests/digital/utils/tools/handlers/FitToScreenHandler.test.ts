@@ -1,16 +1,16 @@
-import "jest";
-
 import {V} from "Vector";
 
-import {Setup} from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
 import {ConstantLow} from "digital/models/ioobjects";
+
 import {LED} from "digital/models/ioobjects/outputs/LED";
 
 
 describe("FitToScreenHandler", () => {
-    const {input, designer, selections, camera} = Setup();
-    const {Place} = GetHelpers(designer);
+    const { input, designer, selections, camera } = Setup();
+    const { Place } = GetHelpers(designer);
 
     afterEach(() => {
         designer.reset();
@@ -18,7 +18,7 @@ describe("FitToScreenHandler", () => {
     });
 
     test("Fit to Screen of a Single Object", () => {
-        const [lo] = Place(new ConstantLow());
+        Place(new ConstantLow());
 
         expect(designer.getObjects()).toHaveLength(1)
         expect(selections.amount()).toBe(0);
@@ -49,7 +49,7 @@ describe("FitToScreenHandler", () => {
     });
 
     test("Fit to Screen of Two Connected Objects", () => {
-        const {Connect} = GetHelpers(designer);
+        const { Connect } = GetHelpers(designer);
         const [lo, a] = Place(new ConstantLow(), new LED());
 
         Connect(lo, a);
@@ -67,6 +67,6 @@ describe("FitToScreenHandler", () => {
 
         expect(selections.amount()).toBe(1);
         expect(camera.getPos()).toEqual(V(21.5,0));
-        
+
     });
 });
