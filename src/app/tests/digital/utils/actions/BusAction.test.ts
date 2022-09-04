@@ -8,14 +8,13 @@ import {CreateBusAction, GetComponentBusPorts} from "digital/actions/addition/Bu
 
 import {DigitalCircuitDesigner, InputPort, OutputPort} from "digital/models";
 
-import {ANDGate, BCDDisplay, BUFGate, ConstantNumber, IC, ICData, LED, Multiplexer, Switch} from "digital/models/ioobjects";
-
+import {ANDGate, BCDDisplay, BUFGate, ConstantNumber, IC,
+        ICData, LED, Multiplexer, Switch} from "digital/models/ioobjects";
 
 
 describe("Bus Action", () => {
     const designer = new DigitalCircuitDesigner(0);
     const { Place } = GetHelpers(designer);
-
 
     function expectBusConnections(outs: OutputPort[], ins: InputPort[]) {
         // Helper functions to for expected connectivity
