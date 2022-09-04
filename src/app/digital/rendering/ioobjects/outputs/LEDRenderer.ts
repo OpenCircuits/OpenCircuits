@@ -18,6 +18,11 @@ import {Circle} from "core/rendering/shapes/Circle";
 import {LED} from "digital/models/ioobjects";
 
 
+/**
+ * Renders LEDs using the following steps:
+ * - Draws LED svg
+ * - If LED is on, draws glow the appropriate color.
+ */
 export const LEDRenderer = ({
     render(renderer: Renderer, _: Camera, led: LED, selected: boolean): void {
         const size = led.getSize();

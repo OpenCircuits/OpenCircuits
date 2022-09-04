@@ -76,11 +76,11 @@ export function LazyConnect(source: DigitalComponent, destination: DigitalCompon
  * @returns          True if the ICData is being used somewhere, false otherwise.
  */
 export function IsICDataInUse(designer: DigitalCircuitDesigner, data: ICData): boolean {
-    const checkInUse = (objs: IOObject[]): boolean => objs.some((o) =>
-            (o instanceof IC &&
-                (o.getData() === data ||
-                // Recursively check if this IC depends on the given data
-                checkInUse(o.getData().getGroup().toList())))
-        );
+    const checkInUse = (objs: IOObject[]): boolean => objs.some((o) => (
+        o instanceof IC &&
+        (o.getData() === data ||
+            // Recursively check if this IC depends on the given data
+            checkInUse(o.getData().getGroup().toList()))
+    ));
     return checkInUse(designer.getAll());
 }

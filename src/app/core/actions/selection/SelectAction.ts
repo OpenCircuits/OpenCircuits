@@ -52,5 +52,6 @@ export function CreateDeselectAllAction(selections: SelectionsWrapper): GroupAct
     const objs = selections.get();
     return objs.reduce(
         (acc, s) => acc.add(new DeselectAction(selections, s)),
-        new GroupAction([], "Deselect All Action"));
+        new GroupAction([], "Deselect All Action")
+    );
 }
