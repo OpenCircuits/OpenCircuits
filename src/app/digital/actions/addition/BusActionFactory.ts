@@ -2,14 +2,64 @@ import {V} from "Vector";
 
 import {Transform} from "math/Transform";
 
+import {GetAllPorts} from "core/utils/ComponentUtils";
+
 import {GroupAction} from "core/actions/GroupAction";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
-import {Component} from "core/models";
+import {Component, Port} from "core/models";
 
 import {InputPort}  from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
+
+
+/**
+ * For use in component bussing (#1056):
+ * Gathers all the ports of the given components that should be bus'd together.
+ *
+ * @param components The component to get the ports of.
+ * @returns            A tuple of the input and output ports to bus.
+ */
+export function GetComponentBusPorts(components: Component[]): [InputPort[], OutputPort[]] {
+    const EmptyInputPorts  = (p: Port): p is InputPort  => (p instanceof  InputPort && p.getWires().length === 0);
+    const EmptyOutputPorts = (p: Port): p is OutputPort => (p instanceof OutputPort && p.getWires().length === 0);
+
+    // Filter out components that don't have exclusively available input or output ports
+    //  these are "ambiguous" components since we might need to bus to their inputs or outputs
+    const ambiComps = components.filter((s) => (
+        s.getPorts().some(EmptyInputPorts) === s.getPorts().some(EmptyOutputPorts)
+    // Then filter out ones that have no available ports
+    )).filter((c) => !(c.getPorts().every((p) => (p.getWires().length > 0))));
+
+    // Output components are components where there are no empty input ports => there are only output ports
+    const outputComps = components.filter((c) => (!c.getPorts().some(EmptyInputPorts)));
+    // Input components are components where there are no empty output ports => there are only input ports
+    const inputComps  = components.filter((c) => (!c.getPorts().some(EmptyOutputPorts)));
+
+    // There cannot be input, output, and ambiguous components as this would be an ambigious case
+    if (inputComps.length > 0 && outputComps.length > 0 && ambiComps.length > 0)
+        return [[], []];
+
+    const [finalInputComps, finalOutputComps] = (() => {
+        // So, then there are only 3 cases:
+        //  Only input and output components are selected (no ambiguous components)
+        if (ambiComps.length === 0)
+            return [inputComps, outputComps];
+        //  Only input and ambiguous components are selected (no output components)
+        if (outputComps.length === 0)
+            return [inputComps, ambiComps];
+        //  Only output and ambiguous components are selected (no input components)
+        if (inputComps.length === 0)
+            return [ambiComps, outputComps];
+        return [[], []];
+    })();
+
+    return [
+        GetAllPorts(finalInputComps).filter(EmptyInputPorts),
+        GetAllPorts(finalOutputComps).filter(EmptyOutputPorts),
+    ];
+}
 
 
 export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
@@ -68,14 +118,20 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     const inputAngles  =  inputTargetPositions.map(p => p.angle()).map(a => (a < 0 ? a + 2*Math.PI : a));
 
     // Associate the ports with their angle
-    const outputMap = new Map(outputAngles.map((a, i) => [a, outputPorts[i]]));
-    const inputMap  = new Map( inputAngles.map((a, i) => [a,  inputPorts[i]]));
+    //  Needs to be a map of arrays, in the case where two ports share the exact same angle
+    const outputMap = new Map<number, OutputPort[]>;
+    const inputMap  = new Map<number, InputPort[]>;
+
+    // Add each ports to the maps by angle
+    outputAngles.forEach((a, i) => outputMap.set(a, [...(outputMap.get(a) ?? []), outputPorts[i]]));
+     inputAngles.forEach((a, i) =>  inputMap.set(a, [...( inputMap.get(a) ?? []),  inputPorts[i]]));
 
     outputAngles.sort(sortByAngle);
     inputAngles.sort(sortByAngle).reverse();
 
     // Connect Ports according to their target pos on the Average Component
     return new GroupAction(inputAngles.map((inputAngle, i) =>
-        new ConnectionAction(designer, inputMap.get(inputAngle)!, outputMap.get(outputAngles[i])!)
+        // Pop the ports out of their map so they only get used once
+        new ConnectionAction(designer, inputMap.get(inputAngle)!.pop()!, outputMap.get(outputAngles[i])!.pop()!)
     ), "Bus Action");
 }
