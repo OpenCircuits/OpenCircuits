@@ -116,7 +116,16 @@ export class Input {
         window.addEventListener("keyup",   (e) => {
             // Check for "Alt" to fix issue #943
             if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.key as Key)
+                this.onKeyUp(e.key as Key);
+
+            // Check for Meta key and release all other keys on up
+            //  See https://stackoverflow.com/q/27380018/5911675
+            if (e.key === "Meta") {
+                [...this.keysDown.entries()]
+                    .filter(([_,down]) => down)
+                    .map(([k]) => k)
+                    .forEach(k => this.onKeyUp(k));
+            }
         }, false);
 
         window.addEventListener("blur", (_) => this.onBlur());
@@ -285,8 +294,8 @@ export class Input {
      * @returns     True if key is down, false otherwise.
      */
     public isKeyDown(key: Key): boolean {
-        return (this.keysDown.has(key) &&
-                this.keysDown.get(key) === true);
+        return (this.keysDown.has(key.toLowerCase() as Key) &&
+                this.keysDown.get(key.toLowerCase() as Key) === true);
     }
 
     /**
@@ -365,7 +374,7 @@ export class Input {
      * @param key Represents the key being pressed.
      */
     protected onKeyDown(key: Key): void {
-        this.keysDown.set(key, true);
+        this.keysDown.set(key.toLowerCase() as Key, true); // Lower case so that letters are the same despite SHIFT
 
         // call each listener
         this.callListeners({ type: "keydown", key });
@@ -376,7 +385,7 @@ export class Input {
      * @param key Represents the key being released.
      */
     protected onKeyUp(key: Key): void {
-        this.keysDown.set(key, false);
+        this.keysDown.set(key.toLowerCase() as Key, false); // Lower case so that letters are the same despite SHIFT
 
         // call each listener
         this.callListeners({ type: "keyup", key });

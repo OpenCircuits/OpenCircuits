@@ -57,5 +57,6 @@ module.exports = {
         "arrow-parens": "error",
         "arrow-body-style": "error",
         "arrow-spacing": "error",
+        "eol-last": "error",
     },
 }

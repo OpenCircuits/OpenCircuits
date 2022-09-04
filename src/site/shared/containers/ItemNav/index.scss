@@ -139,14 +139,13 @@ $tab-padding: 8px;
 
         position: relative;
 
-
         & > div {
-            $size: $top-height + $top-margin + $header-padding;
+            $size: $top-height + $top-margin + 5px;
 
             position: absolute;
 
             top: -$top-margin - $header-border-width;
-            left: $header-padding + $header-border-width;
+            left: $header-border-width + 5px;
 
             width: $size;
             height: $size;
@@ -170,11 +169,11 @@ $tab-padding: 8px;
                 border-top-left-radius: 15px;
             }
 
-            &:after {
-                content: '×';
+            &::after {
+                content: "×";
                 pointer-events: all;
                 position: absolute;
-                left: calc(-50% - #{$header-border-width + $header-padding});
+                left: calc(-50% - #{$header-border-width});
                 top: 50%;
 
                 color: black;
@@ -186,7 +185,7 @@ $tab-padding: 8px;
 
                 @media (max-width: $desktop-width) and (orientation:portrait) {
                     left: 50%;
-                    top: calc(50% + #{$size + $header-padding + 1.5*$header-border-width});
+                    top: calc(50% + #{$size + $header-border-width + 5px});
                 }
 
             }
@@ -196,7 +195,8 @@ $tab-padding: 8px;
             border-color: $secondary-color;
             background-color: rgba($background-color, 0.7);
             pointer-events: all;
-            &:after {
+
+            &::after {
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);

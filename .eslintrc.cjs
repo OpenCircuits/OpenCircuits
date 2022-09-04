@@ -26,4 +26,5 @@ module.exports = deepMerge.all([{
     require("./linting/.unicorn.cjs"),
     require("./linting/.sonarjs.cjs"),
     require("./linting/.jsxa11y.cjs"),
+    require("./linting/.deprecation.cjs"),
 ]);
