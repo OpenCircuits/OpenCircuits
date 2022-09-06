@@ -123,7 +123,7 @@ export class Renderer {
             this.pathLine(pos, pos.add(len, 0));
     }
     public hLines(ys: number[], x0: number, len: number, align: "left"|"center") {
-        ys.forEach(y => this.hLine(V(x0, y), len, align));
+        ys.forEach((y) => this.hLine(V(x0, y), len, align));
     }
     public strokeHLines(...args: Parameters<typeof this.hLines>) {
         this.beginPath();
@@ -138,7 +138,7 @@ export class Renderer {
             this.pathLine(pos, pos.sub(0, len));
     }
     public vLines(xs: number[], y0: number, len: number, baseline: "bottom"|"middle") {
-        xs.forEach(x => this.vLine(V(x, y0), len, baseline));
+        xs.forEach((x) => this.vLine(V(x, y0), len, baseline));
     }
     public strokeVLines(...args: Parameters<typeof this.vLines>) {
         this.beginPath();

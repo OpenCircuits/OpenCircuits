@@ -208,9 +208,9 @@ export function GenerateInputTree(tokens: Token[], ops = FORMATS[0].ops): InputT
 
         const prev = tokens.slice(0, index) // Decrementing through the array starting at right before the returned index
                            .reverse()
-                           .find(token => token.type === "input") as InputToken;
+                           .find((token) => token.type === "input") as InputToken;
         const next = tokens.slice(index)
-                           .find(token => token.type === "input") as InputToken;
+                           .find((token) => token.type === "input") as InputToken;
         if (prev && prev.name && next && next.name)
             throw new Error(generateErrorMessage(prev.name, next.name, ops));
 

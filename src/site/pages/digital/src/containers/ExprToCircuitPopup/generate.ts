@@ -119,7 +119,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
     const ops = (options.format === "custom")
                 ? (options.ops)
-                : (FORMATS.find(form => form.icon === options.format) ?? FORMATS[0]);
+                : (FORMATS.find((form) => form.icon === options.format) ?? FORMATS[0]);
     const tokenList = GenerateTokens(expression, ops);
     const action = new GroupAction([CreateDeselectAllAction(info.selections).execute()], "Expression Parser Action");
     const inputMap = new Map<string, DigitalComponent>();

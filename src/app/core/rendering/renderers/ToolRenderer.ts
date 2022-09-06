@@ -58,7 +58,7 @@ export const ToolRenderer = (() => {
 
             const tool = toolManager.getCurrentTool();
 
-            const hasOnlyComponents = selections.all(s => s instanceof Component);
+            const hasOnlyComponents = selections.all((s) => s instanceof Component);
             const midpoint = selections.midpoint();
 
             if (tool instanceof InteractionTool) {

@@ -48,7 +48,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
     const { undoHistory, redoHistory } = useHistory(info);
 
     const { isOpen } = useSharedSelector(
-        state => ({ isOpen: state.contextMenu.isOpen })
+        (state) => ({ isOpen: state.contextMenu.isOpen })
     );
     const dispatch = useSharedDispatch();
 
@@ -87,7 +87,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
 
     const copy = () => {
-        const objs = selections.get().filter(o => o instanceof IOObject) as IOObject[];
+        const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
         return SerializeForCopy(objs);
     }
 
@@ -101,7 +101,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
         await navigator.clipboard.writeText(copy());
 
         // Delete selections
-        const objs = selections.get().filter(s => s instanceof IOObject) as IOObject[];
+        const objs = selections.get().filter((s) => s instanceof IOObject) as IOObject[];
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
             CreateDeleteGroupAction(designer, objs),

@@ -41,7 +41,7 @@ export function GetInvertedGate(oldGate: Gate): string {
 }
 
 export function PortsToDecimal(ports: Array<InputPort | OutputPort>): number {
-    return BCDtoDecimal(ports.map(p => p.getIsOn()));
+    return BCDtoDecimal(ports.map((p) => p.getIsOn()));
 }
 
 /**
@@ -55,7 +55,7 @@ export function PortsToDecimal(ports: Array<InputPort | OutputPort>): number {
  */
 export function LazyConnect(source: DigitalComponent, destination: DigitalComponent): DigitalWire {
     const outPort = source.getOutputPort(0);
-    const inPort = destination.getInputPorts().find(port => port.getWires().length === 0);
+    const inPort = destination.getInputPorts().find((port) => port.getWires().length === 0);
 
     if (!inPort)
         throw new Error("No available InputPort on destination");
@@ -75,13 +75,11 @@ export function LazyConnect(source: DigitalComponent, destination: DigitalCompon
  * @returns          True if the ICData is being used somewhere, false otherwise.
  */
 export function IsICDataInUse(designer: DigitalCircuitDesigner, data: ICData): boolean {
-    const checkInUse = (objs: IOObject[]): boolean => {
-        return objs.some(o =>
-            (o instanceof IC &&
-                (o.getData() === data ||
-                 // Recursively check if this IC depends on the given data
-                 checkInUse(o.getData().getGroup().toList())))
-        );
-    };
+    const checkInUse = (objs: IOObject[]): boolean => objs.some((o) => (
+        o instanceof IC &&
+        (o.getData() === data ||
+            // Recursively check if this IC depends on the given data
+            checkInUse(o.getData().getGroup().toList()))
+    ));
     return checkInUse(designer.getAll());
 }

@@ -94,9 +94,9 @@ expect.extend({
                 visited.add(cur);
 
                 const connections = [
-                    ...cur.getOutputs().map(w => w.getOutputComponent()),
-                    ...cur.getInputs().map(w => w.getInputComponent()),
-                ].filter(c => !visited.has(c));
+                    ...cur.getOutputs().map((w) => w.getOutputComponent()),
+                    ...cur.getInputs().map((w) => w.getInputComponent()),
+                ].filter((c) => !visited.has(c));
 
                 if (connections.includes(target))
                     return true;

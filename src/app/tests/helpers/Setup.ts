@@ -105,7 +105,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
             if (resetDesigner)
                 designer.reset();
             input.reset();
-            selections.get().forEach(s => selections.deselect(s)); // Reset selections
+            selections.get().forEach((s) => selections.deselect(s)); // Reset selections
             toolManager.reset(info);
         },
     };

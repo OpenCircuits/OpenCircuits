@@ -31,7 +31,7 @@ export const SelectModuleInputField = <T extends number|string>({
                     ref.current?.blur();
             }}>
             <option value="" disabled hidden>{placeholder ?? "-"}</option>
-            {options.map(o => (
+            {options.map((o) => (
                 <option key={`select-module-${o}`} value={o[1]}>{o[0]}</option>
         ))}
         </select>

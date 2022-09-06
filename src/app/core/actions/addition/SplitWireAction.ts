@@ -55,7 +55,7 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
     if (wires.length !== 2)
         throw new Error("Cannot create snip action with WirePort of >2 wires!");
 
-    const ports = wires.flatMap(w => [w.getP1(), w.getP2()]).filter(p => p.getParent() !== port);
+    const ports = wires.flatMap((w) => [w.getP1(), w.getP2()]).filter((p) => p.getParent() !== port);
     if (ports.length !== 2)
         throw new Error("Failed to find 2 ports to snip to");
 
@@ -89,5 +89,5 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
  * @returns          A GroupAction of the actions to snip the wires.
  */
 export function CreateGroupSnipAction(designer: CircuitDesigner, ports: Node[]): GroupAction {
-    return new GroupAction(ports.map(p => CreateSnipWireAction(designer, p)), "Group Snip Action");
+    return new GroupAction(ports.map((p) => CreateSnipWireAction(designer, p)), "Group Snip Action");
 }

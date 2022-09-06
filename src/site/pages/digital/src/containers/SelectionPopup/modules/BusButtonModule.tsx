@@ -29,9 +29,9 @@ export const BusButtonModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    let iports = items.filter(s => s instanceof InputPort)  as InputPort[];
-    let oports = items.filter(s => s instanceof OutputPort) as OutputPort[];
-    const components = items.filter(s => s instanceof Component) as Component[];
+    let iports = items.filter((s) => s instanceof InputPort)  as InputPort[];
+    let oports = items.filter((s) => s instanceof OutputPort) as OutputPort[];
+    const components = items.filter((s) => s instanceof Component) as Component[];
 
     // If user has ports AND components selected, then this is an invalid
     //  state for now, so we will not handle it

@@ -111,7 +111,7 @@ async function Init(): Promise<void> {
             };
             try {
                 if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
-                    await Promise.all(process.env.OC_AUTH_TYPES!.split(" ").map(a => AuthMethods[a]()));
+                    await Promise.all(process.env.OC_AUTH_TYPES!.split(" ").map((a) => AuthMethods[a]()));
             } catch (e) {
                 console.error(e);
             }

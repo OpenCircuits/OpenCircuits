@@ -1,3 +1,4 @@
+/* eslint-disable space-in-parens */
 import {V, Vector} from "Vector";
 
 import {Transform} from "math/Transform";

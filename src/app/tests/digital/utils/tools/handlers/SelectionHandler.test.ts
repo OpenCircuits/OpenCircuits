@@ -13,7 +13,7 @@ describe("SelectionHandler", () => {
 
     afterEach(() => {
         designer.reset();
-        selections.get().forEach(s => selections.deselect(s));
+        selections.get().forEach((s) => selections.deselect(s));
     });
 
     test("Select Single Object", () => {

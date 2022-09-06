@@ -19,9 +19,9 @@ export default function getDirs(includeServer: boolean, includeApp: boolean, inc
     // Get all directories in `src/site/pages`
     const pageDirs = dirs
         // Filter out directories
-        .filter(dir => dir.isDirectory())
+        .filter((dir) => dir.isDirectory())
         // Get package.json paths
-        .map(dir => [dir, path.resolve(pagesDir, dir.name, "package.json")] as const)
+        .map((dir) => [dir, path.resolve(pagesDir, dir.name, "package.json")] as const)
         // Filter out non-package.json-containing directories
         .filter(([_, packagePath]) => existsSync(packagePath))
         // Map to prompt formats

@@ -37,7 +37,7 @@ export const useAdjustableElement = (initialRect: RectProps, bounds: Rect,
         // Get area subsections for the center and each edge/corner
         [innerRect, ...outerRect.sub(innerRect)]
         // And find the one containing the given position
-        .findIndex(a => a.contains(pos))
+        .findIndex((a) => a.contains(pos))
     ];
 
     const onMouseDown = ({ button, pageX: x, pageY: y }: React.PointerEvent) => {

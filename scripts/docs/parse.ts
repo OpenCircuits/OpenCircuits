@@ -10,11 +10,11 @@ import type {AccessModifier, Class, Constructor, Method, Parameter, Property, Ty
 export function getAccessModifier(d: ConstructorDeclaration | PropertyDeclaration
                                    | MethodDeclaration | FunctionDeclaration): AccessModifier {
     const modifiers = d?.getModifiers() ?? [];
-    if (modifiers.some(m => m.getKind() === SyntaxKind.PublicKeyword))
+    if (modifiers.some((m) => m.getKind() === SyntaxKind.PublicKeyword))
         return "public";
-    if (modifiers.some(m => m.getKind() === SyntaxKind.ProtectedKeyword))
+    if (modifiers.some((m) => m.getKind() === SyntaxKind.ProtectedKeyword))
         return "protected";
-    if (modifiers.some(m => m.getKind() === SyntaxKind.PrivateKeyword))
+    if (modifiers.some((m) => m.getKind() === SyntaxKind.PrivateKeyword))
         return "private";
     return "public"; // Default modifier
 }
@@ -27,8 +27,8 @@ export function getType(t: Type<ts.Type>): Types {
         return [];
     // t.getUnionTypes()
     return (t.isUnion() ? t.getUnionTypes() : [t])
-        .map(t => (t.isIntersection() ? t.getIntersectionTypes() : [t])
-            .map(t => {
+        .map((t) => (t.isIntersection() ? t.getIntersectionTypes() : [t])
+            .map((t) => {
                 // Recursively get array types
                 if (t.isArray())
                     return { type: getType(t.getArrayElementTypeOrThrow()) };
@@ -59,8 +59,8 @@ export function getParameter(p: ParameterDeclaration): Parameter {
     return {
         docs: jsDocs[0]
             ?.getTags()
-            ?.filter(t => t instanceof JSDocParameterTag)
-            ?.find(t => (t as JSDocParameterTag).getName() === p.getName())
+            ?.filter((t) => t instanceof JSDocParameterTag)
+            ?.find((t) => (t as JSDocParameterTag).getName() === p.getName())
             ?.getCommentText(),
         name: p.getName(),
         type: getType(p.getType()),
@@ -82,7 +82,7 @@ export function getConstructors(c: ClassDeclaration): Constructor | undefined {
         access:    getAccessModifier(cc),
         // If no overloads, then just use the single constructor declaration `cc`
         overloads: (cc.getOverloads().length > 0 ? cc.getOverloads() : [cc])
-            .map(c => ({
+            .map((c) => ({
                 docs:       c.getJsDocs()[0]?.getDescription(),
                 parameters: c.getParameters().map(getParameter),
             })),
@@ -91,7 +91,7 @@ export function getConstructors(c: ClassDeclaration): Constructor | undefined {
 
 
 export function getProperties(c: ClassDeclaration): Property[] {
-    return c.getProperties().map(p => ({
+    return c.getProperties().map((p) => ({
         docs:   p.getJsDocs()[0]?.getDescription(),
         access: getAccessModifier(p),
         name:   p.getName(),
@@ -108,8 +108,8 @@ export function parseMethods(methods: Array<MethodDeclaration | FunctionDeclarat
             // Filter JSDocs for return tags and use those for return statements
             const returns = m.getJsDocs()[0]
                 ?.getTags()
-                ?.filter(t => t instanceof JSDocReturnTag)
-                ?.map(t => ({
+                ?.filter((t) => t instanceof JSDocReturnTag)
+                ?.map((t) => ({
                     docs: (t as JSDocReturnTag).getCommentText(),
                     type: getType(m.getReturnType()),
                 })) ?? [];
@@ -124,7 +124,7 @@ export function parseMethods(methods: Array<MethodDeclaration | FunctionDeclarat
     });
 
     return methods
-        .map(m => ({
+        .map((m) => ({
             docs:           m.getJsDocs()[0]?.getDescription(),
             access:         getAccessModifier(m),
             name:           m.getName() ?? "(undefined)",
@@ -140,11 +140,11 @@ export function parseClass(c: ClassDeclaration): Class {
         console.trace(`Found JSDoc with length > 1 !!: ${c.getName()}`);
     return {
         docs:     jsDocs[0]?.getDescription(),
-        generics: c.getTypeParameters()?.map(t => ({
+        generics: c.getTypeParameters()?.map((t) => ({
             docs: c.getJsDocs()[0]
                 ?.getTags()
-                ?.filter(p => p instanceof JSDocParameterTag)
-                ?.find(p => (p as JSDocParameterTag).getName() === t.getName())
+                ?.filter((p) => p instanceof JSDocParameterTag)
+                ?.find((p) => (p as JSDocParameterTag).getName() === t.getName())
                 ?.getCommentText(),
             constraint: t.getConstraint() ? getType(t.getConstraint()!.getType()) : undefined,
             name:       t.getName(),

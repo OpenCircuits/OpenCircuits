@@ -64,7 +64,7 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
         ret.push(wire);
     } else if (node.kind === "binop") {
         newGate.setInputPortCount(node.children.length);
-        node.children.forEach(child => {
+        node.children.forEach((child) => {
             if (!child)
                 throw new Error("treeToCircuitCore failed: child was undefined");
             const prevNode = treeToCircuitCore(child, inputs, ret).at(-1) as DigitalComponent;

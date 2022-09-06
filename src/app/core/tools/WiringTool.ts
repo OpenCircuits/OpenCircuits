@@ -27,7 +27,7 @@ export const WiringTool = (() => {
 
         // Look through all ports in all objects
         //  and find one where the mouse is over
-        return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
+        return GetAllPorts(objects).filter((p) => p.isWithinSelectBounds(worldMousePos));
     }
     function findNearestPort({ input, camera }: CircuitInfo, ports: Port[]): Port | undefined {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -104,7 +104,7 @@ export const WiringTool = (() => {
         },
         onDeactivate({}: Event, info: CircuitInfo): void {
             const { history, designer } = info;
-            const list = findPorts(info).filter(p => wire.canConnectTo(p));
+            const list = findPorts(info).filter((p) => wire.canConnectTo(p));
             // See if we ended on a port
             const port2 = findNearestPort(info,list);
             if (port2 !== undefined)

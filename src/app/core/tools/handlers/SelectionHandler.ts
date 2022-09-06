@@ -30,9 +30,9 @@ export const SelectionHandler: EventHandler = ({
         const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];
 
         // Check if an object was clicked
-        const obj = objs.find(o => o.isWithinSelectBounds(worldMousePos));
+        const obj = objs.find((o) => o.isWithinSelectBounds(worldMousePos));
         const isWire = (obj instanceof Wire);
-        const hitPort = ports.some(p => p.isWithinSelectBounds(worldMousePos));
+        const hitPort = ports.some((p) => p.isWithinSelectBounds(worldMousePos));
 
         // Only select if object was hit and
         //  if we clicked a port but also hit a wire, we want to prioritize

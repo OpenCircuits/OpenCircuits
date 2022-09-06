@@ -26,7 +26,7 @@ export const ClockSyncButtonModule = ({ info }: Props) => {
         <button type="button"
                 title="Sychronize start of selected clocks"
                 onClick={() => {
-                    cs.forEach(c => c.reset());
+                    cs.forEach((c) => c.reset());
                     renderer.render();
                     forceUpdate(); // Need to force an update since this isn't changed by an action
                 }}>

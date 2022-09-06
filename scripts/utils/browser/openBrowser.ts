@@ -44,7 +44,7 @@ function executeNodeScript(scriptPath, url) {
     const child = spawn(process.execPath, [scriptPath, ...extraArgs, url], {
         stdio: "inherit",
     });
-    child.on("close", code => {
+    child.on("close", (code) => {
         if (code !== 0) {
             console.log();
             console.log(

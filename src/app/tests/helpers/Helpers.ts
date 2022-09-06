@@ -36,7 +36,7 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
                 const [c1, c2] = args;
                 // Connect each port
                 const outs = c1.getOutputPorts();
-                const ins = c2.getInputPorts().filter(i => i.getWires().length === 0);
+                const ins = c2.getInputPorts().filter((i) => i.getWires().length === 0);
 
                 return new Array(Math.min(outs.length, ins.length))
                     .fill(0)
@@ -59,8 +59,8 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
         // Connects them together, and returns them
         AutoPlace: <T extends DigitalComponent>(obj: T) => {
             // Create switches/leds
-            const switches = new Array(obj.numInputs()).fill(0).map(_ => new Switch());
-            const leds = new Array(obj.numOutputs()).fill(0).map(_ => new LED());
+            const switches = new Array(obj.numInputs()).fill(0).map((_) => new Switch());
+            const leds = new Array(obj.numOutputs()).fill(0).map((_) => new LED());
 
             const group = new GroupAction();
             group.add(CreateGroupPlaceAction(designer, [obj, ...switches, ...leds]));
@@ -80,8 +80,6 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
 
             return [obj, switches, leds, wires, group.execute()] as [T, Switch[], LED[], Wire[], Action];
         },
-        Remove: (...objs: Array<DigitalComponent | DigitalWire>) => {
-            return CreateDeleteGroupAction(designer, objs).execute();
-        },
+        Remove: (...objs: Array<DigitalComponent | DigitalWire>) => CreateDeleteGroupAction(designer, objs).execute(),
     };
 }

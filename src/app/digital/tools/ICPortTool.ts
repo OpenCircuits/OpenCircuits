@@ -19,7 +19,7 @@ export const ICPortTool = (() => {
         if (!ic)
             throw new Error("ICPortTool.findPort failed: ic was undefined");
         const worldMousePos = camera.getWorldPos(input.getMousePos());
-        return ic.getPorts().find(p => PortContains(p, worldMousePos));
+        return ic.getPorts().find((p) => PortContains(p, worldMousePos));
     }
 
     return {

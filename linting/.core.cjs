@@ -52,6 +52,12 @@ module.exports = {
             "overrides": { "while": "any" },
         }],
 
+        "keyword-spacing": "off", // typescript eslint equivalent
+        "space-before-function-paren": "off", // typescript eslint equivalent
+        "space-in-parens": "error",
+        "arrow-parens": "error",
+        "arrow-body-style": "error",
+        "arrow-spacing": "error",
         "eol-last": "error",
     },
 }

@@ -75,8 +75,8 @@ export abstract class Mux extends DigitalComponent {
         return [
             ...super.getInputs(),
             ...this.getSelectPorts()
-                .map(p => p.getInput())
-                .filter(w => !!w),
+                .map((p) => p.getInput())
+                .filter((w) => !!w),
         ];
     }
 

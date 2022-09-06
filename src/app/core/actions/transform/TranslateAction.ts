@@ -62,7 +62,7 @@ export class TranslateAction implements Action {
 
         // Always snap afterwards to avoid issue #417
         if (this.snap)
-            this.objs.forEach(o => SnapPos(o));
+            this.objs.forEach((o) => SnapPos(o));
 
         return this;
     }
@@ -77,7 +77,7 @@ export class TranslateAction implements Action {
 
         // Always snap afterwards to avoid issue #417
         if (this.snap)
-            this.objs.forEach(o => SnapPos(o));
+            this.objs.forEach((o) => SnapPos(o));
 
         return this;
     }

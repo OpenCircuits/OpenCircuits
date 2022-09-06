@@ -14,11 +14,11 @@ import {Oscilloscope} from "analog/models/eeobjects";
 
 const EDGE_SIZE = DEFAULT_BORDER_WIDTH*5;
 
-const CURSORS_MAP = ["sw", "w", "nw", "s", "n", "se", "e", "ne"].map(s => `${s}-resize` as Cursor);
+const CURSORS_MAP = ["sw", "w", "nw", "s", "n", "se", "e", "ne"].map((s) => `${s}-resize` as Cursor);
 
 export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undefined] | [Cursor, Vector, Oscilloscope] {
     const objs = designer.getObjects();
-    const resizables = objs.filter(a => a instanceof Oscilloscope) as Oscilloscope[];
+    const resizables = objs.filter((a) => a instanceof Oscilloscope) as Oscilloscope[];
 
     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
@@ -34,7 +34,7 @@ export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undef
         // Creates 8 rectangle areas
         const areas = rect1.sub(rect2);
 
-        const areaI = areas.findIndex(a => a.contains(worldMousePos));
+        const areaI = areas.findIndex((a) => a.contains(worldMousePos));
         if (areaI === -1)
             continue;
 

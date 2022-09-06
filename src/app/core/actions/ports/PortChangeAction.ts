@@ -34,7 +34,7 @@ export abstract class PortChangeAction implements Action {
             const wires = ports.pop()!.getWires();
             if (wires.length > 0 && !this.designer)
                 throw new Error("PortChangeAction failed: designer not found");
-            action.add(wires.map(w => CreateDeletePathAction(this.designer!, GetPath(w))));
+            action.add(wires.map((w) => CreateDeletePathAction(this.designer!, GetPath(w))));
         }
 
         return action;

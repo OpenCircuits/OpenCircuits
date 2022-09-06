@@ -14,7 +14,7 @@ type Props = {
 }
 export const DownloadMenuDropdown = ({ helpers: { GetSerializedCircuit } }: Props) => {
     const { curMenu, circuitName } = useSharedSelector(
-        state => ({ curMenu: state.header.curMenu, circuitName: state.circuit.name })
+        (state) => ({ curMenu: state.header.curMenu, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 

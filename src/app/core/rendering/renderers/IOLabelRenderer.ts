@@ -11,7 +11,6 @@ import {Port} from "core/models";
 import {Component} from "core/models/Component";
 
 
-
 /**
  * Renders IOLabels.
  * Check if Component is on screen, quit if not.
@@ -34,8 +33,10 @@ export const IOLabelRenderer = (() => {
         // Clamp the position inside the box
         const xBound = size.x/2 - IO_LABEL_DIR_PADDING - textWidth/2;
         const yBound = size.y/2 - 2*IO_LABEL_VERTICAL_TEXT_PADDING;
+        /* eslint-disable space-in-parens */
         const min = V(-xBound, -yBound);
         const max = V( xBound,  yBound);
+        /* eslint-enable space-in-parens */
 
         renderer.text(port.getName(), Vector.Clamp(pos, min, max), align);
     }

@@ -14,9 +14,7 @@ const EscapeRegex = new RegExp(`[${Object.keys(EscapeCodes).join("")}]`, "g");
 export function escapeStr(str: string | undefined): string | undefined {
     if (!str)
         return undefined;
-    return str.replace(EscapeRegex, (m) => {
-        return `&${EscapeCodes[m]};`;
-    });
+    return str.replace(EscapeRegex, (m) => `&${EscapeCodes[m]};`);
 }
 
 export function getAllFiles(p: string): string[] {

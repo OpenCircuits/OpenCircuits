@@ -23,7 +23,7 @@ type Props = {
 }
 export const SettingsMenu = ({ helpers, info }: Props) => {
     const { curMenu, debugInfo } = useSharedSelector(
-        state => ({ curMenu: state.header.curMenu, debugInfo: state.debugInfo })
+        (state) => ({ curMenu: state.header.curMenu, debugInfo: state.debugInfo })
     );
     const dispatch = useSharedDispatch();
 

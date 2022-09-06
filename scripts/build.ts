@@ -18,7 +18,7 @@ process.env.NODE_ENV = "production";
 
 
 const DIRS = getDirs(true, false, false);
-const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
+const DIR_MAP = Object.fromEntries(DIRS.map((d) => [d.value, d]));
 
 
 function BuildServer(prod: boolean) {
@@ -77,8 +77,8 @@ async function BuildDir(dir: string, project: string) {
     if (prod) {
         readdirSync("build")
             // Don't clear scripts directory though
-            .filter(name => (name !== "scripts"))
-            .forEach(name => rmSync(`./build/${name}`, { recursive: true, force: true }));
+            .filter((name) => (name !== "scripts"))
+            .forEach((name) => rmSync(`./build/${name}`, { recursive: true, force: true }));
     }
 
     // If manual production build, copy secrets
