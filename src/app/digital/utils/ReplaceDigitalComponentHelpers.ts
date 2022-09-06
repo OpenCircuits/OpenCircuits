@@ -23,8 +23,8 @@ type ReplacementList = Map<
 export type DigitalID = `ic/${string}` | string;
 
 function GetReplacementListKey(comp: DigitalComponent) {
-    const inputPorts  = comp.getPorts().filter(p => (p instanceof  InputPort));
-    const outputPorts = comp.getPorts().filter(p => (p instanceof OutputPort));
+    const inputPorts  = comp.getPorts().filter((p) => (p instanceof  InputPort));
+    const outputPorts = comp.getPorts().filter((p) => (p instanceof OutputPort));
     return `${inputPorts.length}:${outputPorts.length}` as const;
 }
 
@@ -55,7 +55,7 @@ export function GetPortChangeAction(comp: DigitalComponent, amt: number) {
 export function GenerateReplacementList(designer: DigitalCircuitDesigner, allComponents: string[]) {
     const list: ReplacementList = new Map();
 
-    allComponents.forEach(id => {
+    allComponents.forEach((id) => {
         const comp = CreateDigitalComponent(id, designer);
         if (!comp)
             throw new Error(`Can't find component w/ ID: ${id}`);
@@ -99,6 +99,6 @@ export function GetReplacements(comp: DigitalComponent, designer: DigitalCircuit
     const id = GetDigitalIDFor(comp, designer);
 
     // Put the `comp`s entry at the beginning of the array
-    const self = list.get(key)!.find(r => r.id === id)!;
-    return [self, ...list.get(key)!.filter(r => r.id !== id)];
+    const self = list.get(key)!.find((r) => (r.id === id))!;
+    return [self, ...list.get(key)!.filter((r) => (r.id !== id))];
 }

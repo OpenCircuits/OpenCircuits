@@ -63,7 +63,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         // Undo
         action.undo();
         expect(and.getDesigner()).toBe(designer);
-        expect(designer.getObjects().some(component => component instanceof ORGate)).toBeFalsy();
+        expect(designer.getObjects().some((component) => (component instanceof ORGate))).toBeFalsy();
         expect(out.isOn()).toBeFalsy();
         a.activate(true);
         expect(out.isOn()).toBeFalsy();
@@ -247,7 +247,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         expect(in2.getOutputs()[0].getOutputComponent()).toBe(muxComponent);
         expect(in3.getOutputs()[0].getOutputComponent()).toBe(muxComponent);
         expect(out.getInputs()[0].getInputComponent()).toBe(muxComponent);
-        const muxInputs = muxComponent.getInputs().map(wire => wire.getInputComponent());
+        const muxInputs = muxComponent.getInputs().map((wire) => wire.getInputComponent());
         expect(muxInputs).toEqual(expect.arrayContaining([in1, in2, in3]));
         expect(muxComponent.getOutputs()[0].getOutputComponent()).toBe(out);
     });
@@ -273,7 +273,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         expect(d.getOutputs()[0].getOutputComponent()).toBe(andComponent);
         expect(e.getOutputs()[0].getOutputComponent()).toBe(andComponent);
         expect(outer.getInputs()[0].getInputComponent()).toBe(andComponent);
-        const andInputs = andComponent.getInputs().map(wire => wire.getInputComponent());
+        const andInputs = andComponent.getInputs().map((wire) => wire.getInputComponent());
         expect(andInputs).toEqual(expect.arrayContaining([d, e]));
         expect(andComponent.getOutputs()[0].getOutputComponent()).toBe(outer);
     });
@@ -298,7 +298,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         expect(d.getOutputs()[0].getOutputComponent()).toBe(ic);
         expect(e.getOutputs()[0].getOutputComponent()).toBe(ic);
         expect(outer.getInputs()[0].getInputComponent()).toBe(ic);
-        const icInputs = ic.getInputs().map(wire => wire.getInputComponent());
+        const icInputs = ic.getInputs().map((wire) => wire.getInputComponent());
         expect(icInputs).toEqual(expect.arrayContaining([d, e]));
         expect(ic.getOutputs()[0].getOutputComponent()).toBe(outer);
     });

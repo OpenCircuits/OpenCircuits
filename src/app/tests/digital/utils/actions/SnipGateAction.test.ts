@@ -91,12 +91,12 @@ describe("SnipGateAction", () => {
 
         const action = CreateSnipGateAction(buf);
 
-        expect(designer.getObjects().some(comp => comp instanceof BUFGate)).toBeFalsy();
+        expect(designer.getObjects().some((comp) => (comp instanceof BUFGate))).toBeFalsy();
         expect(buf.getDesigner()).toBeUndefined();
 
         action.undo();
 
-        expect(designer.getObjects().some(comp => comp instanceof BUFGate)).toBeTruthy();
+        expect(designer.getObjects().some((comp) => (comp instanceof BUFGate))).toBeTruthy();
         expect(buf.getDesigner()).toBeDefined();
     });
 

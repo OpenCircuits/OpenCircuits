@@ -19,7 +19,7 @@ import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/i
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 
-const allBaseComponentIDs = itemNavConfig.sections.flatMap(s => s.items.map(i => i.id));
+const allBaseComponentIDs = itemNavConfig.sections.flatMap((s) => s.items.map((i) => i.id));
 
 type Props = {
     info: DigitalCircuitInfo;

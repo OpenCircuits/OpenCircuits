@@ -63,20 +63,20 @@ export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesi
     if (replacement.amt)
         action.add(GetPortChangeAction(replacementComponent, replacement.amt).execute());
 
-    const compInputs  = comp.getPorts().filter(p => (p instanceof  InputPort)) as InputPort[];
-    const compOutputs = comp.getPorts().filter(p => (p instanceof OutputPort)) as OutputPort[];
-    const repInputs   = replacementComponent.getPorts().filter(p => (p instanceof  InputPort)) as InputPort[];
-    const repOutputs  = replacementComponent.getPorts().filter(p => (p instanceof OutputPort)) as OutputPort[];
+    const compInputs  = comp.getPorts().filter((p) => (p instanceof  InputPort)) as InputPort[];
+    const compOutputs = comp.getPorts().filter((p) => (p instanceof OutputPort)) as OutputPort[];
+    const repInputs   = replacementComponent.getPorts().filter((p) => (p instanceof  InputPort)) as InputPort[];
+    const repOutputs  = replacementComponent.getPorts().filter((p) => (p instanceof OutputPort)) as OutputPort[];
 
     compInputs.forEach((port, index) => {
-        [...port.getWires()].forEach(wire => {
+        [...port.getWires()].forEach((wire) => {
             const otherPort = wire.getInput();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, repInputs[index], otherPort).execute());
         });
     });
     compOutputs.forEach((port, index) => {
-        [...port.getWires()].forEach(wire => {
+        [...port.getWires()].forEach((wire) => {
             const otherPort = wire.getOutput();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, repOutputs[index], otherPort).execute());
