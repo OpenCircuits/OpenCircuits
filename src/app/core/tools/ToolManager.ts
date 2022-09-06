@@ -38,7 +38,7 @@ export class ToolManager {
         }
 
         // Check if some other tool should be activated
-        const newTool = this.tools.find(t => t.shouldActivate(event, info));
+        const newTool = this.tools.find((t) => t.shouldActivate(event, info));
         if (newTool !== undefined) {
             this.currentTool = newTool;
             newTool.onActivate(event, info);

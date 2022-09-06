@@ -29,7 +29,7 @@ import {TranslateAction}                    from "./transform/TranslateAction";
     action.add(new PlaceAction(designer, replacement).execute());
 
     originalPorts.forEach((port, index) => {
-        port.getWires().forEach(wire => {
+        port.getWires().forEach((wire) => {
             const otherPort = (wire.getP1() === port) ? wire.getP2() : wire.getP1();
             action.add(new DisconnectAction(designer, wire).execute());
             action.add(new ConnectionAction(designer, replacementPorts[index], otherPort).execute());

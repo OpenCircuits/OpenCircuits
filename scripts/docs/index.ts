@@ -31,8 +31,8 @@ function generateDocumentation(fileNames: string[], outPath: string, compilerOpt
     }
 
     // If a class with the same name as the file is within the list of classes, then move to top so it displays first
-    docs.forEach(doc => {
-        const i = doc.classes.map(c => c.name).indexOf(doc.fileName.split(".")[0]);
+    docs.forEach((doc) => {
+        const i = doc.classes.map((c) => c.name).indexOf(doc.fileName.split(".")[0]);
         if (i === -1 || i === 0)
             return;
         const c = doc.classes[i];
@@ -46,7 +46,7 @@ function generateDocumentation(fileNames: string[], outPath: string, compilerOpt
         fs.mkdirSync(path.resolve(outPath), { recursive: true });
 
     // Export each doc
-    docs.forEach(doc => {
+    docs.forEach((doc) => {
         const outDir = path.resolve(
             outPath,
             path.join(

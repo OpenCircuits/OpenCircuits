@@ -63,7 +63,7 @@ export default (project: string) => {
             if (!fs.existsSync(CACHE_PATH))
                 return res.status(200).json({ files: [] });
 
-            const files = fs.readdirSync(CACHE_PATH).filter(f => f.endsWith(".circuit"));
+            const files = fs.readdirSync(CACHE_PATH).filter((f) => f.endsWith(".circuit"));
 
             res.status(200).json({ files });
         });

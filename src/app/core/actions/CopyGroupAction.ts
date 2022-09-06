@@ -20,7 +20,7 @@ export class CopyGroupAction implements Action {
         this.designer = designer;
         this.copy = CopyGroup(initialGroup);
 
-        this.transforms = this.copy.getComponents().map(c => c.getTransform());
+        this.transforms = this.copy.getComponents().map((c) => c.getTransform());
     }
 
     public execute(): Action {

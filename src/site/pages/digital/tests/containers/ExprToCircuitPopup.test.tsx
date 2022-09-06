@@ -90,12 +90,12 @@ describe("Main Popup", () => {
         // Check that the components are placed and connected
         const components = info.designer.getObjects();
         expect(components).toHaveLength(4);
-        const inputA = components.find(component => component instanceof Switch
-                                                 && component.getName() === "a") as Switch;
-        const inputB = components.find(component => component instanceof Switch
-                                                 && component.getName() === "b") as Switch;
-        const orGate = components.find(component => component instanceof ORGate) as ORGate;
-        const led = components.find(component => component instanceof LED) as LED;
+        const inputA = components.find((component) => component instanceof Switch
+                                                   && component.getName() === "a") as Switch;
+        const inputB = components.find((component) => component instanceof Switch
+                                                   && component.getName() === "b") as Switch;
+        const orGate = components.find((component) => component instanceof ORGate) as ORGate;
+        const led = components.find((component) => component instanceof LED) as LED;
         expect(inputA).toBeDefined();
         expect(inputB).toBeDefined();
         expect(orGate).toBeDefined();

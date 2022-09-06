@@ -69,7 +69,7 @@ export const ICDesigner = (() => {
     // eslint-disable-next-line react/display-name
     return ({ mainInfo }: Props) => {
         const { isActive, ic: data } = useDigitalSelector(
-            state => ({ ...state.icDesigner })
+            (state) => ({ ...state.icDesigner })
         );
         const dispatch = useDigitalDispatch();
 

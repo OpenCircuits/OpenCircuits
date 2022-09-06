@@ -23,7 +23,7 @@ type Props = {
 export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
     const { input, camera, history, selections } = info;
 
-    const itemNavCurItem = useSharedSelector(state => state.itemNav.curItemID);
+    const itemNavCurItem = useSharedSelector((state) => state.itemNav.curItemID);
 
     const [isVisible, setIsVisible] = useState(false);
     const [id, setID] = useState("");
@@ -33,7 +33,7 @@ export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
 
             // Make sure all components have same ID
             const ids = selections.get().map(GetIDFor);
-            setID((ids.length > 0 && ids.every(id => id === ids[0])) ? ids[0]! : "");
+            setID((ids.length > 0 && ids.every((id) => id === ids[0])) ? ids[0]! : "");
         }
 
         selections.addChangeListener(update);

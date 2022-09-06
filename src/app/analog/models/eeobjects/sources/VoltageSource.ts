@@ -15,7 +15,7 @@ import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPosi
 
 
 const ConstInfo: PropInfoLayout = {
-    isActive: (states) => (states.every(state => state["waveform"] === "DC")),
+    isActive: (states) => (states.every((state) => state["waveform"] === "DC")),
 
     infos: {
         ...VoltageInfo("V", "Voltage", 5),
@@ -23,8 +23,9 @@ const ConstInfo: PropInfoLayout = {
 };
 
 const PulseInfo: PropInfoLayout = {
-    isActive: (states) => (states.every(state => state["waveform"] === "DC PULSE")),
+    isActive: (states) => (states.every((state) => state["waveform"] === "DC PULSE")),
 
+    /* eslint-disable space-in-parens */
     infos: {
         ...VoltageInfo("v1", "Low Voltage",  0),
         ...VoltageInfo( "V", "High Voltage", 5),
@@ -35,10 +36,11 @@ const PulseInfo: PropInfoLayout = {
            ...TimeInfo( "p", "Period",       0.2),
           ...AngleInfo("ph", "Phase",        0),
     },
+    /* eslint-enable space-in-parens */
 };
 
 const SineInfo: PropInfoLayout = {
-    isActive: (states) => (states.every(state => state["waveform"] === "DC SINE")),
+    isActive: (states) => (states.every((state) => state["waveform"] === "DC SINE")),
 
     infos: {
         ...VoltageInfo("v1", "Offset Voltage", 0),
@@ -93,9 +95,9 @@ export class VoltageSource extends AnalogComponent {
         const type = this.props["waveform"] as "DC"|"DC PULSE"|"DC SINE";
 
         // Filter out unit keys
-        const keys = Object.keys(InfoMap[type].infos).filter(key => !key.endsWith("_U"));
+        const keys = Object.keys(InfoMap[type].infos).filter((key) => !key.endsWith("_U"));
 
-        return [`${type}(${keys.map(k => this.props[k]!).join(" ")})`];
+        return [`${type}(${keys.map((k) => this.props[k]!).join(" ")})`];
     }
 
     public override getPropInfo(key: string) {

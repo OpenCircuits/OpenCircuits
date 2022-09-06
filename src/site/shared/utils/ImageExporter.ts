@@ -12,7 +12,7 @@ export type ImageExportOptions = {
     useGrid: boolean;
 }
 export function SaveImage(canvas: HTMLCanvasElement, name: string, options: ImageExportOptions) {
-    switch(options.type) {
+    switch (options.type) {
     case "png":
     case "jpeg":
         SaveImg(canvas, name, options);

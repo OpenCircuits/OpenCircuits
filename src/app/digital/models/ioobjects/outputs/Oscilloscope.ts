@@ -67,7 +67,7 @@ export class Oscilloscope extends TimedComponent {
         super.setInputPortCount(val);
 
         while (val > this.signals.length)
-            this.signals.push(this.signals[0].map(_ => false));
+            this.signals.push(this.signals[0].map((_) => false));
         while (val < this.signals.length)
             this.signals.pop();
     }

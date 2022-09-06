@@ -24,15 +24,15 @@ export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOOb
     const wires = allDeletions.getWires();
 
     // go through all wires and get their input component
-    const inputComps = wires.map(wire => wire.getP1Component());
+    const inputComps = wires.map((wire) => wire.getP1Component());
 
     // filter out duplicates and non-nodes
-    const inputNodes = inputComps.filter(comp => isNode(comp)) as Node[];
-    const inputNodesNoDuplicates = new Set(inputNodes.filter(node => !objects.includes(node)));
+    const inputNodes = inputComps.filter((comp) => isNode(comp)) as Node[];
+    const inputNodesNoDuplicates = new Set(inputNodes.filter((node) => !objects.includes(node)));
 
     // loop through each input component and check if all of its output wires are in `wires`
     for (const inputComp of inputNodesNoDuplicates) {
-        const found = inputComp.getP2().getWires().every(wire => wires.includes(wire));
+        const found = inputComp.getP2().getWires().every((wire) => wires.includes(wire));
 
         // if so then we want to also delete it
         // call CreateDeleteGroupAction again but with the current node includes in `objects`

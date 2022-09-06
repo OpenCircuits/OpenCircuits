@@ -31,7 +31,7 @@ type Props = {
 }
 export const SideNav = ({ helpers, exampleCircuits }: Props) => {
     const { auth, circuits, isOpen, loading, loadingCircuits } = useSharedSelector(
-        state => ({ ...state.user, isOpen:          state.sideNav.isOpen,
+        (state) => ({ ...state.user, isOpen:          state.sideNav.isOpen,
                     loading:         state.circuit.loading, loadingCircuits: state.user.loading })
     );
 

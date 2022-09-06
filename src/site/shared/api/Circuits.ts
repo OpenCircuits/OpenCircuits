@@ -50,7 +50,7 @@ export async function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadat
             "authId":   auth.getId(),
         },
     })) as CircuitMetadataDef[];
-    return arr.map(data => new CircuitMetadata(data));
+    return arr.map((data) => new CircuitMetadata(data));
 }
 
 export async function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<boolean> {

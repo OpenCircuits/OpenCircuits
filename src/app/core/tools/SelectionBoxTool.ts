@@ -47,7 +47,7 @@ export const SelectionBoxTool = (() => {
             const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
             // Find all objects within the selection box
-            const objects = designer.getObjects().filter(o => TransformContains(box, o.getTransform()));
+            const objects = designer.getObjects().filter((o) => TransformContains(box, o.getTransform()));
             if (objects.length > 0) {
                 history.add(action.add(CreateGroupSelectAction(selections, objects).execute()));
                 return;
@@ -56,7 +56,7 @@ export const SelectionBoxTool = (() => {
             // If no regular objects were found
             //  then see if any ports were within the box
             const ports = GetAllPorts(designer.getObjects())
-                .filter(p => RectContains(box, p.getWorldTargetPos()));
+                .filter((p) => RectContains(box, p.getWorldTargetPos()));
 
             if (ports.length > 0) {
                 history.add(action.add(CreateGroupSelectAction(selections, ports).execute()));

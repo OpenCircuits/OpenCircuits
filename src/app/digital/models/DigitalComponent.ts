@@ -86,7 +86,7 @@ export abstract class DigitalComponent extends Component {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return this.getInputPorts().map((p) => p.getInput())
-                .filter(w => !!w);
+                .filter((w) => !!w);
     }
 
     public numInputs(): number {
@@ -112,7 +112,7 @@ export abstract class DigitalComponent extends Component {
 
     public getOutputs(): DigitalWire[] {
         // Accumulate all the OutputPort connections
-        return this.getOutputPorts().flatMap(p => p.getConnections());
+        return this.getOutputPorts().flatMap((p) => p.getConnections());
     }
 
     public numOutputs(): number {

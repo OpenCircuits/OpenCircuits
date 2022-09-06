@@ -16,7 +16,7 @@ type Props = {
 }
 export const AutoSaveToggle = ({ helpers }: Props) => {
     const { isLoggedIn, isSaved, autoSave } = useSharedSelector(
-        state => ({ ...state.user, isSaved: state.circuit.isSaved })
+        (state) => ({ ...state.user, isSaved: state.circuit.isSaved })
     );
     const dispatch = useSharedDispatch();
 

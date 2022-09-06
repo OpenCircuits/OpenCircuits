@@ -18,7 +18,7 @@ type Props = {
 }
 export const HeaderLeft = ({ helpers }: Props) => {
     const { id, name, isSaved, isLocked, isLoggedIn, isHistoryBoxOpen, saving, error } = useSharedSelector(
-        state => ({
+        (state) => ({
             ...state.circuit,
             isLoggedIn:       state.user.isLoggedIn,
             isHistoryBoxOpen: state.itemNav.isHistoryBoxOpen,

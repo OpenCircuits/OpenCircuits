@@ -21,8 +21,8 @@ export class AddGroupAction implements Action {
     }
 
     public undo() {
-        this.group.getComponents().forEach(c => this.designer.removeObject(c));
-        this.group.getWires().forEach(w => this.designer.removeWire(w));
+        this.group.getComponents().forEach((c) => this.designer.removeObject(c));
+        this.group.getWires().forEach((w) => this.designer.removeWire(w));
 
         return this;
     }

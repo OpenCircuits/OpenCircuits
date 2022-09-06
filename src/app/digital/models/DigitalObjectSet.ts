@@ -61,10 +61,10 @@ export class DigitalObjectSet extends IOObjectSet {
         const inputs  = [] as DigitalComponent[];
         const outputs = [] as DigitalComponent[];
         const others  = [] as DigitalComponent[];
-        const wires   = set.filter(w => w instanceof Wire) as Wire[];
+        const wires   = set.filter((w) => w instanceof Wire) as Wire[];
 
         // Filter out inputs and outputs
-        const objs = set.filter(o => o instanceof DigitalComponent) as DigitalComponent[];
+        const objs = set.filter((o) => o instanceof DigitalComponent) as DigitalComponent[];
         for (const obj of objs) {
             // Input => >0 output ports and 0 input ports
             if (obj.numInputs() === 0 && obj.numOutputs() > 0)

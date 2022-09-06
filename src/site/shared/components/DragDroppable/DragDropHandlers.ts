@@ -20,7 +20,7 @@ export const DragDropHandlers = (() => {
             const hit = handlers.has(el);
             if (hit)
                 handlers.get(el)!(pos, ...data);
-            listeners.forEach(l => l(pos, hit, ...data));
+            listeners.forEach((l) => l(pos, hit, ...data));
         },
         addListener: (listener: DropListener) => {
             listeners.add(listener);

@@ -29,7 +29,7 @@ type Props = {
 }
 export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
     const { curPopup } = useSharedSelector(
-        state => ({ curPopup: state.header.curPopup })
+        (state) => ({ curPopup: state.header.curPopup })
     );
     const dispatch = useSharedDispatch();
 
@@ -60,13 +60,13 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                             value={expression}
                             placeholder="!a | (B^third)"
                             spellCheck={false}
-                            onChange={e => setExpression(e.target.value)} />
+                            onChange={(e) => setExpression(e.target.value)} />
                 <br />
 
                 <div className="exprtocircuit__popup__settings">
                     <div>
                         <h3>Notation</h3>
-                        {FORMATS.map(curFormat =>
+                        {FORMATS.map((curFormat) =>
                             (<ButtonToggle key={curFormat.icon}
                                            isOn={format === curFormat.icon} height="40px"
                                            onChange={() => setFormat(curFormat.icon)}>{curFormat.label}</ButtonToggle>)

@@ -38,7 +38,7 @@ function CheckForInteraction(ev: Event, { toolManager, camera, designer, input, 
     if (toolManager.getCurrentTool() instanceof InteractionTool) {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const obj = designer.getObjects().reverse()
-            .find(p => isPressable(p) && p.isWithinPressBounds(worldMousePos));
+            .find((p) => isPressable(p) && p.isWithinPressBounds(worldMousePos));
 
         // Check if Switch was clicked
         if (obj instanceof Switch && ev.type === "click")
@@ -62,7 +62,7 @@ export const ICViewer = (() => {
     // eslint-disable-next-line react/display-name
     return ({ mainInfo }: Props) => {
         const { isActive, ic } = useDigitalSelector(
-            state => ({ ...state.icViewer })
+            (state) => ({ ...state.icViewer })
         );
         const dispatch = useDigitalDispatch();
 
@@ -78,7 +78,7 @@ export const ICViewer = (() => {
             // loop through all the inputs for this IC
             //  set their input value to be what the info.designer has for their input
             const viewerInputs = info.designer.getObjects().filter(
-                input => [Switch, Button].some((type) => input instanceof type)
+                (input) => [Switch, Button].some((type) => input instanceof type)
             );
             for (let i = 0; i < viewerInputs.length; ++i)
                 viewerInputs[i].activate(ic.getInputPort(i).getIsOn());

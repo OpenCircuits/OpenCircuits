@@ -43,7 +43,7 @@ function GetAllPaths(start: AnalogWire): Path[] {
             let outgoingDisconnected: PathPart[] = [];
             if (q instanceof AnalogPort) {
                 outgoingConnected = q.getWires();
-                outgoingDisconnected = q.getParent().getPorts().filter(p => p !== q);
+                outgoingDisconnected = q.getParent().getPorts().filter((p) => p !== q);
             } else if (q instanceof AnalogWire) {
                 const p1 = q.getP1Component(), p2 = q.getP2Component();
 
@@ -59,8 +59,8 @@ function GetAllPaths(start: AnalogWire): Path[] {
                 outgoingConnected = q.getConnections();
             }
 
-            outgoingQueue.push(...outgoingDisconnected.filter(w => !visited.has(w)));
-            queue.push(...outgoingConnected.filter(w => !visited.has(w)));
+            outgoingQueue.push(...outgoingDisconnected.filter((w) => !visited.has(w)));
+            queue.push(...outgoingConnected.filter((w) => !visited.has(w)));
         }
 
         paths.push(path);
@@ -81,9 +81,9 @@ export type SimDataMappings = {
 export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
                                  circuit: AnalogCircuitDesigner): [Netlist, SimDataMappings] {
     // Get elements, filtered by if they are valid NGSpice elements
-    const elements = circuit.getObjects().filter(a => !!a.getNetlistSymbol());
-    const nodes    = circuit.getObjects().filter(a => a instanceof AnalogNode);
-    const grounds  = circuit.getObjects().filter(a => a instanceof Ground);
+    const elements = circuit.getObjects().filter((a) => !!a.getNetlistSymbol());
+    const nodes    = circuit.getObjects().filter((a) => a instanceof AnalogNode);
+    const grounds  = circuit.getObjects().filter((a) => a instanceof Ground);
     const wires = circuit.getWires();
 
     const graph = CreateGraph(new IOObjectSet([...elements, ...nodes, ...grounds, ...wires]));
@@ -98,8 +98,8 @@ export function CircuitToNetlist(title: string, analysis: NetlistAnalysis,
     //  an ID of 0 since that is how it is represented in NGSpice
     const fullPathIDs = paths.map((_, i) => i+1);
     paths.forEach((path, i) => {
-        const ports = [...path.values()].filter(p => p instanceof AnalogPort) as AnalogPort[];
-        if (ports.some(p => p.getParent() instanceof Ground))
+        const ports = [...path.values()].filter((p) => p instanceof AnalogPort) as AnalogPort[];
+        if (ports.some((p) => p.getParent() instanceof Ground))
             fullPathIDs[i] = 0; // Whole path is connected to ground
     });
 

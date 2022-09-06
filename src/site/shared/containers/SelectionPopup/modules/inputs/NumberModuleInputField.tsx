@@ -18,7 +18,7 @@ export const NumberModuleInputField = ({
     const Max = max ?? +Infinity;
 
     const [state, setState] = useBaseModule<[number]>({
-        props: props.map(v => [v]),
+        props: props.map((v) => [v]),
 
         isValid:  (val) => (!isNaN(val) && (Min <= val && val <= Max)),
         parseVal: (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),

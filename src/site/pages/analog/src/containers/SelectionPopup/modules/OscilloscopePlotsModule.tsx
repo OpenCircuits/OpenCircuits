@@ -49,7 +49,7 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
 
     const otherKeys = [...new Set(
         Object.keys(other)
-            .map(k => k.split("_")[0] as `${string}.${string}`)
+            .map((k) => k.split("_")[0] as `${string}.${string}`)
     )];
 
     return (<>

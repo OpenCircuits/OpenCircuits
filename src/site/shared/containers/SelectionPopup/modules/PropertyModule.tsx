@@ -90,7 +90,7 @@ const ModulePropInputField = ({
                     props={transformedVals}
                     getAction={(newVals) => (
                         // Scale new value by the current unit
-                        otherProps.getAction(newVals.map(v => (v * unit[units[0]].val)))
+                        otherProps.getAction(newVals.map((v) => (v * unit[units[0]].val)))
                     )} />
             </span>
             <span style={{ display: "inline-block", width: "30%" }}>
@@ -166,7 +166,7 @@ export const PropertyModule = ({ info }: Props) => {
             throw new Error(`Failed to get prop info for ${key}!`);
 
         // Get state of props
-        const allProps = objs.map(c => c.getProps());
+        const allProps = objs.map((c) => c.getProps());
 
         // Check if this property should be active, if the info defines an `isActive`
         //  function, then we need to make sure all components satisfy it
@@ -194,7 +194,7 @@ export const PropertyModule = ({ info }: Props) => {
                 key={`property-module-${key}`}
                 label={label}>
                 { info.readonly
-                ? ((vals as Prop[]).every(v => v === vals[0]) ? vals[0].toString() : "-")
+                ? ((vals as Prop[]).every((v) => v === vals[0]) ? vals[0].toString() : "-")
                 : (
                     <ModulePropInputField
                         propKey={key} info={info} objs={objs} vals={vals}

@@ -79,7 +79,7 @@ export default async (dir: string, project: string, mode: "development" | "produ
         })();
 
         let firstDone = false;
-        compiler.hooks.done.tap("done", async _ => {
+        compiler.hooks.done.tap("done", async (_) => {
             if (open && !firstDone) {
                 openBrowser(formatURL(protocol, hostname, port, pathname));
                 firstDone = true;
@@ -123,7 +123,7 @@ export default async (dir: string, project: string, mode: "development" | "produ
             setupMiddlewares: customDevServer(project),
         }, compiler);
 
-        ["SIGINT", "SIGTERM"].forEach(sig => {
+        ["SIGINT", "SIGTERM"].forEach((sig) => {
             process.on(sig, () => {
                 server.stop();
                 process.exit();

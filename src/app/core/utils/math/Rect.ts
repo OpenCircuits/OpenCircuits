@@ -135,7 +135,7 @@ export class Rect {
             Rect.From({ left: rect.right, right: this.right, top: this.top,    bottom: rect.top    }),
             Rect.From({ left: rect.right, right: this.right, top: rect.top,    bottom: rect.bottom }),
             Rect.From({ left: rect.right, right: this.right, top: rect.bottom, bottom: this.bottom }),
-        ].filter(r => r.width > 0 && r.height > 0);
+        ].filter((r) => (r.width > 0 && r.height > 0));
     }
 
     /**

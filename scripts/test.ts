@@ -20,7 +20,7 @@ process.env.NODE_ENV = "test";
 
 
 const DIRS = getDirs(true, true, true);
-const DIR_MAP = Object.fromEntries(DIRS.map(d => [d.value, d]));
+const DIR_MAP = Object.fromEntries(DIRS.map((d) => [d.value, d]));
 
 async function LaunchTest(args: Arguments, dir: string, flags: Record<string, unknown>) {
     return await jest.runCLI({
@@ -105,7 +105,7 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
             open(flags.coverageDirectory + "/lcov-report/index.html");
     }
 
-    const pass = results.every(r => r.success);
+    const pass = results.every((r) => r.success);
     if (!pass && ci) // Exit with failure
         throw new Error("Not all tests passed!");
 })();

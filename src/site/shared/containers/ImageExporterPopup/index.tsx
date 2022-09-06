@@ -35,7 +35,7 @@ type Props = {
 }
 export const ImageExporterPopup = ({ preview }: Props) => {
     const { curPopup, circuitName } = useSharedSelector(
-        state => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
+        (state) => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 

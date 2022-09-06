@@ -32,7 +32,7 @@ type GetTypes<A extends Record<string, ActionCreatorType>, X extends ActionCreat
 
 // Finds action of given type `K`
 type FindAction<A extends Record<string, ActionCreatorType>, X extends ActionCreatorType, K> =
-    ( ReturnType<X> extends {type: K} ? ReturnType<X> : never ) | {
+    (ReturnType<X> extends {type: K} ? ReturnType<X> : never) | {
         [Name in keyof A]: (ReturnType<A[Name]>["type"] extends K ? ReturnType<A[Name]> : never)
     }[keyof A];
 

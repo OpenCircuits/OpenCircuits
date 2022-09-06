@@ -44,7 +44,7 @@ export const TranslateTool: Tool = (() => {
             return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
             (event.type === "keyup" && event.key === activatedButton &&
                                        (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
-                                        event.key === "ArrowUp"   || event.key === "ArrowDown" ));
+                                        event.key === "ArrowUp"   || event.key === "ArrowDown"));
         },
 
 
@@ -62,21 +62,21 @@ export const TranslateTool: Tool = (() => {
             //  otherwise, just translate the pressed object
             components = (
                 !currentlyPressedObject || selections.has(currentlyPressedObject) ?
-                        selections.get().filter(s => s instanceof Component) :
+                        selections.get().filter((s) => s instanceof Component) :
                         [currentlyPressedObject]
             ) as Component[];
 
             action = new GroupAction([
-                new GroupAction(components.map(c => new ShiftAction(designer, c)), "Shift Action").execute(),
-            ], "Translate Tool", components.map(c => `Translated ${c.getName()}.`));
+                new GroupAction(components.map((c) => new ShiftAction(designer, c)), "Shift Action").execute(),
+            ], "Translate Tool", components.map((c) => `Translated ${c.getName()}.`));
 
-            initalPositions = components.map(o => o.getPos());
+            initalPositions = components.map((o) => o.getPos());
 
             // explicitly start a drag
             this.onEvent(event, info);
         },
         onDeactivate({}: Event, { history }: CircuitInfo): void {
-            const finalPositions = components.map(o => o.getPos());
+            const finalPositions = components.map((o) => o.getPos());
 
             history.add(
                 action.add(new TranslateAction(components, initalPositions, finalPositions))
@@ -101,11 +101,11 @@ export const TranslateTool: Tool = (() => {
                     const dPos = worldMousePos.sub(worldMouseDownPos);
 
                     // Calculate new positions
-                    const curPositions = initalPositions.map(p => p.add(dPos));
+                    const curPositions = initalPositions.map((p) => p.add(dPos));
 
                     // Get snapped positions if shift is held
                     const newPositions = input.isShiftKeyDown() ?
-                        curPositions.map(p => Snap(p)):
+                        curPositions.map((p) => Snap(p)):
                         curPositions;
 
                     const snapToConnections = input.isShiftKeyDown() ? false : true;
@@ -148,7 +148,7 @@ export const TranslateTool: Tool = (() => {
                     new TranslateAction(
                         components,
                         initalPositions,
-                        initalPositions.map(p => p.add(deltaPos.scale(factor)))
+                        initalPositions.map((p) => p.add(deltaPos.scale(factor)))
                     ).execute();
 
                     return true;

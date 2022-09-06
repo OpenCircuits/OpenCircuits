@@ -24,19 +24,19 @@ export const CleanUpHandler: EventHandler = ({
         // If nothing is selected, select all units.
         const components = (selections.amount() === 0 ?
             designer.getObjects() :
-            selections.get().filter(o => o instanceof Component)) as Component[];
+            selections.get().filter((o) => o instanceof Component)) as Component[];
 
         if (components.length === 0)
             return;
 
         history.add(new GroupAction([
-            ...components.map(c =>
+            ...components.map((c) =>
                 new RotateAction(c, c.getAngle(), 0)
             ),
             new TranslateAction(
                 components,
-                components.map(o => o.getPos()),
-                components.map(o => Snap(o.getPos()))
+                components.map((o) => o.getPos()),
+                components.map((o) => Snap(o.getPos()))
             ),
         ], "Clean Up Handler").execute());
     },

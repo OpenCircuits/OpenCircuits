@@ -85,12 +85,11 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             // Add props with all the new properties
             data["props"] = {
                 type: "",
-                data: transformation.reduce((props, { prevKey, newKey, defaultVal }) => {
-                    return {
-                        ...props,
-                        [newKey]: (data[prevKey] ?? defaultVal),
-                    };
-                }, {}),
+                data: Object.fromEntries(
+                    transformation.map(({ prevKey, newKey, defaultVal }) =>
+                        [newKey, (data[prevKey] ?? defaultVal)]
+                    )
+                ),
             };
 
             // Remove old properties
@@ -110,15 +109,15 @@ export function VersionConflictPostResolver(version: string, data: ContentsData)
 
     if (v < 3) {
         // Fix issue where old ICs don't have the properly separated 'collections' so need to sort them out
-        designer.getObjects().filter(o => o instanceof IC).forEach((ic: IC) => {
+        designer.getObjects().filter((o) => o instanceof IC).forEach((ic: IC) => {
             const INPUT_WHITELIST = [Switch, Button];
 
             const c = ic["collection"];
             const inputs = c["inputs"];
             const others = c["others"];
 
-            const wrongInputs = inputs.filter(i => !INPUT_WHITELIST.some((type) => i instanceof type));
-            wrongInputs.forEach(i => {
+            const wrongInputs = inputs.filter((i) => !INPUT_WHITELIST.some((type) => i instanceof type));
+            wrongInputs.forEach((i) => {
                 // Remove from `inputs` and push into `others`
                 inputs.splice(inputs.indexOf(i), 1);
                 others.push(i);

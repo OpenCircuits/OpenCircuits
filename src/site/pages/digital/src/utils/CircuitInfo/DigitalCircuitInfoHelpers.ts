@@ -61,7 +61,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             camera.setPos(data.camera.getPos());
             camera.setZoom(data.camera.getZoom());
 
-            selections.get().forEach(s => selections.deselect(s));
+            selections.get().forEach((s) => selections.deselect(s));
 
             history.reset();
 
@@ -90,7 +90,7 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             camera.setPos(V());
             camera.setZoom(1);
 
-            selections.get().forEach(s => selections.deselect(s));
+            selections.get().forEach((s) => selections.deselect(s));
 
             history.reset();
             designer.reset();

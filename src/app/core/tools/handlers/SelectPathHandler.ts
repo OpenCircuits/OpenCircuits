@@ -17,7 +17,7 @@ export const SelectPathHandler: EventHandler = ({
          event.button === LEFT_MOUSE_BUTTON &&
          designer // is there a wire or component within select bounds?
            .getAll()
-           .some(o => o.isWithinSelectBounds(camera.getWorldPos(input.getMousePos())))
+           .some((o) => o.isWithinSelectBounds(camera.getWorldPos(input.getMousePos())))
         ),
 
     getResponse: ({ input, camera, history, designer, selections }: CircuitInfo) => {
@@ -26,7 +26,7 @@ export const SelectPathHandler: EventHandler = ({
         const obj = designer
             .getAll()
             .reverse()
-            .find(o =>
+            .find((o) =>
                 o.isWithinSelectBounds(worldMousePos)) as Component | Wire;
 
         const path = (obj instanceof Wire) ? (GetPath(obj)) : (GetComponentPath(obj!));

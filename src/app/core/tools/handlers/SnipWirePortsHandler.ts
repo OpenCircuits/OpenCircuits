@@ -17,10 +17,10 @@ export const SnipWirePortsHandler: EventHandler = ({
         (event.type === "keydown" &&
          event.key === "x" &&
          selections.amount() > 0 &&
-         selections.all(o => isNode(o))),
+         selections.all((o) => isNode(o))),
 
     getResponse: ({ history, designer, selections }: CircuitInfo) => {
-        const ports = selections.get().filter(o => isNode(o)) as Node[];
+        const ports = selections.get().filter((o) => isNode(o)) as Node[];
 
         // Deselect the ports and then snip them
         history.add(new GroupAction([

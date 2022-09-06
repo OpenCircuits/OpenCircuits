@@ -42,8 +42,8 @@ function GetNumInputsAndOutputs(itemId: string, info: DigitalCircuitInfo): [numb
     return [
         // Need to do it like this rather then comp.getInputPorts() since this can
         //  account for things like the Select ports on Multiplexers
-        component.getPorts().filter(p => p instanceof InputPort).length,
-        component.getPorts().filter(p => p instanceof OutputPort).length,
+        component.getPorts().filter((p) => p instanceof InputPort).length,
+        component.getPorts().filter((p) => p instanceof OutputPort).length,
     ];
 }
 
@@ -158,8 +158,8 @@ export const DigitalItemNav = ({ info }: Props) => {
             throw new Error(`DigitalItemNav: Can't find ID for component ${c.getName()}`);
 
         // Get path within config of ItemNav icon
-        const section = config.sections.find(s => s.items.find(i => i.id === id));
-        const item = section?.items.find(i => i.id === id);
+        const section = config.sections.find((s) => s.items.find((i) => (i.id === id)));
+        const item = section?.items.find((i) => (i.id === id));
 
         return `${config.imgRoot}/${section?.id}/${item?.icon}`;
     }, [config.imgRoot, config.sections, designer]);

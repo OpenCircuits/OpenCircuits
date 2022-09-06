@@ -58,7 +58,7 @@ export function GetAnalogCircuitInfoHelpers(store: AppStore, canvas: RefObject<H
             camera.setPos(data.camera.getPos());
             camera.setZoom(data.camera.getZoom());
 
-            selections.get().forEach(s => selections.deselect(s));
+            selections.get().forEach((s) => selections.deselect(s));
 
             history.reset();
 
@@ -87,7 +87,7 @@ export function GetAnalogCircuitInfoHelpers(store: AppStore, canvas: RefObject<H
             camera.setPos(V());
             camera.setZoom(1);
 
-            selections.get().forEach(s => selections.deselect(s));
+            selections.get().forEach((s) => selections.deselect(s));
 
             history.reset();
             designer.reset();

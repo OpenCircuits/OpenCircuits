@@ -122,7 +122,7 @@ export class Graph<V, E> {
         let nextLayer: V[] = [];
         let deepest = 0;
 
-        currentLayer.forEach(node => nodeToNumber.set(node, 0));
+        currentLayer.forEach((node) => nodeToNumber.set(node, 0));
 
         // Performs a bfs search to find the depth of each node
         // If max is true then the depth is the furthest depth (and thus largest number)
@@ -143,7 +143,7 @@ export class Graph<V, E> {
         }
 
         // Convert to an array of arrays where each index indicates the depth of that node
-        const ret: V[][] = Array.from({ length: deepest+1 }, _ => new Array(0));
+        const ret: V[][] = Array.from({ length: deepest+1 }, (_) => new Array(0));
 
         [...nodeToNumber.entries()].forEach(([node, depth]) =>
             ret[depth].push(node)

@@ -6,10 +6,7 @@ import {AppState} from "site/analog/state";
 import {AllActions} from "site/analog/state/actions";
 
 
-export const useAnalogDispatch = () => {
-    return useDispatch<ThunkDispatch<AppState, undefined, AllActions>>();
-}
+export const useAnalogDispatch = () => useDispatch<ThunkDispatch<AppState, undefined, AllActions>>();
 
-export const useAnalogSelector = <TSelected = unknown>(selector: (state: AppState) => TSelected) => {
-    return useSelector<AppState, TSelected>(selector);
-}
+export const useAnalogSelector = <TSelected = unknown>(selector: (state: AppState) => TSelected) =>
+                                    useSelector<AppState, TSelected>(selector)
