@@ -9,7 +9,6 @@ import {LED, Switch} from "digital/models/ioobjects";
 import {BUFGate, NOTGate} from "digital/models/ioobjects/gates/BUFGate";
 
 
-
 describe("SnipGateAction", () => {
     const designer = new DigitalCircuitDesigner(0);
     const { Place, Connect } = GetHelpers(designer);
@@ -85,4 +84,25 @@ describe("SnipGateAction", () => {
             expect(outputsBuf[0].getOutput().getParent()).toBe(out);
         });
     });
+
+    test("Unconnected Gate", () => {
+        designer.reset();
+        const [buf] = Place(new BUFGate());
+
+        const action = CreateSnipGateAction(buf);
+
+        expect(designer.getObjects().some((comp) => (comp instanceof BUFGate))).toBeFalsy();
+        expect(buf.getDesigner()).toBeUndefined();
+
+        action.undo();
+
+        expect(designer.getObjects().some((comp) => (comp instanceof BUFGate))).toBeTruthy();
+        expect(buf.getDesigner()).toBeDefined();
+    });
+
+    test("Unplaced Gate", () => {
+        const buf = new BUFGate();
+
+        expect(() => CreateSnipGateAction(buf)).toThrow();
+    })
 })

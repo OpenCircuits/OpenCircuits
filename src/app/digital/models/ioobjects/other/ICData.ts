@@ -143,6 +143,14 @@ export class ICData {
         return this.transform.getSize();
     }
 
+    public getInputPortCount(): number {
+        return this.inputPorts.length;
+    }
+
+    public getOutputPortCount(): number {
+        return this.outputPorts.length;
+    }
+
     public getInputPort(i: number): InputPort {
         return this.inputPorts[i];
     }

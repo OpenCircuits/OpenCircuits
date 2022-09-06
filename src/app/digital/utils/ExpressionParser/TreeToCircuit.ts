@@ -44,7 +44,7 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  * @throws {Error} When one of the leaf nodes of the InputTree references an input that is not inputs.
  * @see TreeToCircuit
  */
- function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
+function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
     if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
         if (!inputs.has(node.ident))
             throw new Error("Input Not Found: \"" + node.ident + "\"");

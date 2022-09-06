@@ -1,4 +1,4 @@
-import {serializable, serialize} from "serialeazy";
+import {GetIDFor, serializable, serialize} from "serialeazy";
 
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
@@ -227,7 +227,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
     public addObject(obj: DigitalComponent): void {
         if (this.objects.includes(obj))
-            throw new Error("Attempted to add an object that already existed!");
+            throw new Error(`Attempted to add an object with id "${GetIDFor(obj)}" that already existed!`);
 
         obj.setDesigner(this);
         this.objects.push(obj);

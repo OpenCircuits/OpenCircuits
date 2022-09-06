@@ -16,7 +16,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
  * @returns       A GroupAction containing the actions required to snip the gate.
  * @throws {Error} If gate is not placed in a designer.
  */
- export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
+export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
     const action = new GroupAction([], "Snip Gate Action");
     const designer = gate.getDesigner();
     if (!designer)

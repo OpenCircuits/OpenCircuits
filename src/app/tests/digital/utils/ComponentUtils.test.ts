@@ -7,8 +7,8 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 import {DigitalWire}      from "digital/models/DigitalWire";
 
-import {ANDGate, NANDGate} from "digital/models/ioobjects/gates/ANDGate";
-import {ORGate}            from "digital/models/ioobjects/gates/ORGate";
+import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
+import {ORGate}  from "digital/models/ioobjects/gates/ORGate";
 
 import {Button} from "digital/models/ioobjects/inputs/Button";
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
@@ -439,6 +439,6 @@ describe("CopyGroup", () => {
 
 describe("GetInvertedGate", () => {
     test("AND -> NAND", () => {
-        expect(GetInvertedGate(new ANDGate()) instanceof NANDGate).toBeTruthy();
+        expect(GetInvertedGate(new ANDGate()) === "NANDGate").toBeTruthy();
     })
 });

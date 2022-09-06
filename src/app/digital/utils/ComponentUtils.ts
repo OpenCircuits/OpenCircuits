@@ -1,4 +1,4 @@
-import {Create, GetIDFor} from "serialeazy";
+import {GetIDFor} from "serialeazy";
 
 import {BCDtoDecimal} from "math/MathUtils";
 
@@ -27,18 +27,17 @@ const gateInversion: Record<string, string> = {
 }
 
 /**
- * Gets a new instance of the inverted version of the supplied gate.
+ * Gets the string id of the inverted version of the supplied gate.
  *
- * @param    oldGate The gate to get the inverted version of.
- * @returns          NANDGate when supplied with an ANDGate, NORGate when supplied with an ORGate, etc.
- * @throws {Error} When the ID for oldGate cannot be found.
+ * @param oldGate The gate to get the inverted version of.
+ * @returns         `NANDGate` when supplied with an ANDGate, `NORGate` when supplied with an ORGate, etc.
+ * @throws When the ID for oldGate cannot be found.
  */
-export function GetInvertedGate(oldGate: Gate): Gate {
+export function GetInvertedGate(oldGate: Gate): string {
     const oldName = GetIDFor(oldGate);
     if (!oldName || !(oldName in gateInversion))
-        throw new Error(`Failed to find gate to invert with ID: ${oldName}!`);
-    const newName = gateInversion[oldName];
-    return Create<Gate>(newName);
+        throw new Error(`Failed to find gate to invert with ID: ${oldName}`);
+    return gateInversion[oldName];
 }
 
 export function PortsToDecimal(ports: Array<InputPort | OutputPort>): number {
