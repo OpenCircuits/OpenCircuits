@@ -9,6 +9,8 @@ import {Event}                   from "core/utils/Events";
 import {Input}                   from "core/utils/Input";
 import {isPressable}             from "core/utils/Pressable";
 
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
+
 import {MoveCameraAction} from "core/actions/camera/MoveCameraAction";
 
 import {InteractionTool} from "core/tools/InteractionTool";
@@ -155,7 +157,7 @@ export const ICViewer = (() => {
             // Reset designer and add IC insides
             info.designer.reset();
             const inside = CopyGroup(ic.getCollection().toList());
-            info.designer.addGroup(inside);
+            CreateAddGroupAction(info.designer, inside);
 
             // Adjust the camera so it all fits in the viewer
             const [pos, zoom] = GetCameraFit(

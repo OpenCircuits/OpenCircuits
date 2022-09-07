@@ -4,13 +4,14 @@ import {ARROW_TRANSLATE_DISTANCE_NORMAL,
 
 import {V, Vector} from "Vector";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Snap}        from "core/utils/ComponentUtils";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}     from "core/utils/CircuitInfo";
+import {CopyGroup, Snap} from "core/utils/ComponentUtils";
+import {Event}           from "core/utils/Events";
 
-import {CopyGroupAction} from "core/actions/CopyGroupAction";
-import {GroupAction}     from "core/actions/GroupAction";
-import {ShiftAction}     from "core/actions/ShiftAction";
+import {GroupAction} from "core/actions/GroupAction";
+import {ShiftAction} from "core/actions/ShiftAction";
+
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
@@ -117,7 +118,8 @@ export const TranslateTool: Tool = (() => {
                 case "keyup":
                     // Duplicate group when we press the spacebar
                     if (event.key === " ") {
-                        history.add(new CopyGroupAction(designer, components).execute());
+                        const copies = CopyGroup(components);
+                        history.add(CreateAddGroupAction(designer, copies));
                         return true;
                     }
                     break;

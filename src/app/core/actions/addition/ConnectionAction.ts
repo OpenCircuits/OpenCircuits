@@ -50,6 +50,8 @@ export class ConnectionAction extends ReversableAction {
             this.p1 = p1;
             this.p2 = p2!;
         }
+
+        this.execute();
     }
 
     /**

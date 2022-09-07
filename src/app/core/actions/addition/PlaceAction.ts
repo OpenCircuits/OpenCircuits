@@ -26,6 +26,8 @@ export class PlaceAction extends ReversableAction {
 
         this.designer = designer;
         this.obj = obj;
+
+        this.execute();
     }
 
     /**

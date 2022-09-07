@@ -7,7 +7,7 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {AddGroupAction} from "core/actions/addition/AddGroupAction";
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
 
@@ -98,7 +98,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
         if (newICDataAction)
             action.add(newICDataAction);
         action.add(new GroupAction([
-            new AddGroupAction(designer, new IOObjectSet(objs)),
+            CreateAddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
             new TranslateAction(comps, comps.map((o) => o.getPos()), comps.map((o) => o.getPos().add(targetPosShift))),

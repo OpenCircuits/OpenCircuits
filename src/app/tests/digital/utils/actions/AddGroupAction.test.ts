@@ -1,4 +1,4 @@
-import {AddGroupAction} from "core/actions/addition/AddGroupAction";
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {DigitalObjectSet}       from "digital/models/DigitalObjectSet";
@@ -22,7 +22,7 @@ describe("Add Group Action", () => {
         inPort.connect(wire);
 
         const circuit = DigitalObjectSet.From([input, output, wire]);
-        new AddGroupAction(designer, circuit).execute();
+        CreateAddGroupAction(designer, circuit);
 
         expect(circuit.getWires()).toHaveLength(1);
         expect(outPort.getWires()).toHaveLength(1);

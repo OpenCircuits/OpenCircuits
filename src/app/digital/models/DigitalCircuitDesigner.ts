@@ -201,14 +201,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         return new DigitalWire(output, input);
     }
 
-    public addGroup(group: IOObjectSet): void {
-        for (const a of group.getComponents())
-            this.addObject(a as DigitalComponent);
-
-        for (const b of group.getWires())
-            this.addWire(b as DigitalWire);
-    }
-
     public addICData(data: ICData): void {
         this.ics.push(data);
         this.callback({ type: "ic", op: "added", data });

@@ -10,9 +10,9 @@ import {GroupAction}       from "core/actions/GroupAction";
 import {SetNameAction}     from "core/actions/SetNameAction";
 import {SetPropertyAction} from "core/actions/SetPropertyAction";
 
-import {AddGroupAction}   from "core/actions/addition/AddGroupAction";
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
-import {PlaceAction}      from "core/actions/addition/PlaceAction";
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
+import {ConnectionAction}     from "core/actions/addition/ConnectionAction";
+import {PlaceAction}          from "core/actions/addition/PlaceAction";
 
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
@@ -143,7 +143,7 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
         throw e;
     }
 
-    action.add(new AddGroupAction(info.designer, circuit).execute());
+    action.add(CreateAddGroupAction(info.designer, circuit));
 
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner

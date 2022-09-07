@@ -2,32 +2,18 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 
-import {Action} from "../Action";
+import {GroupAction} from "../GroupAction";
+
+import {AddWireAction} from "./AddWireAction";
+import {PlaceAction}   from "./PlaceAction";
 
 
-export class AddGroupAction implements Action {
-    private readonly designer: CircuitDesigner;
-    private readonly group: IOObjectSet;
+export function CreateAddGroupAction(designer: CircuitDesigner, group: IOObjectSet) {
+    const components = group.getComponents();
+    const wires = group.getWires();
 
-    public constructor(designer: CircuitDesigner, group: IOObjectSet) {
-        this.designer = designer;
-        this.group = group;
-    }
-
-    public execute() {
-        this.designer.addGroup(this.group);
-
-        return this;
-    }
-
-    public undo() {
-        this.group.getComponents().forEach((c) => this.designer.removeObject(c));
-        this.group.getWires().forEach((w) => this.designer.removeWire(w));
-
-        return this;
-    }
-
-    public getName(): string {
-        return "Added Group Action"
-    }
+    return new GroupAction([
+        ...components.map((c) => new PlaceAction(designer, c)),
+             ...wires.map((w) => new AddWireAction(designer, w)),
+    ]);
 }
