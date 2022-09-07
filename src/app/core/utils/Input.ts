@@ -19,7 +19,7 @@ export type Listener = (event: Event) => void;
  */
 export class Input {
     /** The canvas the user is performing inputs on. */
-    private canvas: HTMLCanvasElement;
+    private readonly canvas: HTMLCanvasElement;
     /** A vector representing the previous position of the mouse. */
     private prevMousePos: Vector;
     /** A vector representing the current position of the mouse. */
@@ -41,12 +41,12 @@ export class Input {
     private touchCount: number;
 
     /** Stores the Listeners for events that may be triggered by user input. */
-    private listeners: Listener[];
+    private readonly listeners: Listener[];
     /** Map with keycodes as keys and booleans representing whether that key is held as values. */
     private keysDown: Map<Key, boolean>;
 
     /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
-    private dragTime: number;
+    private readonly dragTime: number;
 
     /** If true, "blocks" Input, stopping listeners from triggering events. */
     private blocked: boolean;

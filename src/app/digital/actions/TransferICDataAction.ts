@@ -6,9 +6,9 @@ import {ICData} from "digital/models/ioobjects/other/ICData";
 
 
 export class TransferICDataAction implements Action {
-    private target: DigitalCircuitDesigner;
+    private readonly target: DigitalCircuitDesigner;
 
-    private data: ICData[];
+    private readonly data: ICData[];
 
     public constructor(data1: ICData[], target: DigitalCircuitDesigner) {
         this.target = target;

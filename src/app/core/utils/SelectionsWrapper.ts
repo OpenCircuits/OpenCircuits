@@ -11,10 +11,10 @@ import {Selectable} from "./Selectable";
  * the # of selections through its array of listeners functions.
  */
 export class SelectionsWrapper {
-    private selections: Set<Selectable>;
+    private readonly selections: Set<Selectable>;
     private disabled: boolean;
 
-    private listeners: Set<(() => void)>;
+    private readonly listeners: Set<(() => void)>;
 
     /**
      * Intializes a SelectionsWrapper with no elements in `this.seclections`

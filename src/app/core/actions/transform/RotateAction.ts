@@ -11,17 +11,17 @@ export class RotateAction implements Action {
     /**
      * The selected component.
      */
-    private obj: Component;
+    private readonly obj: Component;
 
     /**
      * The initial angle of the selected component.
      */
-    private initialAngle: number;
+    private readonly initialAngle: number;
 
     /**
      * The final angle the selected component.
      */
-    private finalAngle: number;
+    private readonly finalAngle: number;
 
     /**
      * Creates a rotation action for a component.

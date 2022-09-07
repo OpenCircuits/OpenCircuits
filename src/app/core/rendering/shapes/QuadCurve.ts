@@ -7,9 +7,9 @@ import {Shape} from "./Shape";
  * A representation of a QuadCurve shape.
  */
 export class QuadCurve implements Shape {
-    private p1: Vector;
-    private p2: Vector;
-    private c: Vector;
+    private readonly p1: Vector;
+    private readonly p2: Vector;
+    private readonly c: Vector;
 
     /**
      * Constructor for QuadCurve.

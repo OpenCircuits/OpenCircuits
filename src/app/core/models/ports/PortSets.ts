@@ -11,18 +11,18 @@ import {Positioner} from "./positioners/Positioner";
 
 @serializable("PortSet")
 export class PortSet<T extends Port> {
-    private parent: Component;
+    private readonly parent: Component;
 
     // Keep track of old ports so that we can keep references intact
     //  for wire connections and such when we change the port count
-    private oldPorts: T[];
-    private currentPorts: T[];
+    private readonly oldPorts: T[];
+    private readonly currentPorts: T[];
 
-    private count: ClampedValue;
+    private readonly count: ClampedValue;
 
-    private type: new(c: Component | undefined) => T;
+    private readonly type: new(c: Component | undefined) => T;
 
-    private positioner: Positioner<T>;
+    private readonly positioner: Positioner<T>;
 
     public constructor();
     public constructor(parent: Component, count: ClampedValue, positioner: Positioner<T>,

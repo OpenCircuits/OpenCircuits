@@ -41,7 +41,7 @@ export class BezierCurve {
     /**
      * The Bounding Box that encases the entire curve.
      */
-    private boundingBox: Transform;
+    private readonly boundingBox: Transform;
 
     /**
      * Whether the curve's data has been updated.

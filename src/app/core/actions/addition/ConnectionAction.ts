@@ -14,11 +14,11 @@ import {ReversableAction} from "../ReversableAction";
  * ports with a wire.
  */
 export class ConnectionAction extends ReversableAction {
-    private designer: CircuitDesigner;
-    private wire: Wire;
+    private readonly designer: CircuitDesigner;
+    private readonly wire: Wire;
 
-    private p1: Port;
-    private p2: Port;
+    private readonly p1: Port;
+    private readonly p2: Port;
 
     /**
      * Initializes a ConnectionAction given the CircuitDesigner and a Wire.

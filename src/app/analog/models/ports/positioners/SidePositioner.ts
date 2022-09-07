@@ -12,7 +12,7 @@ import {AnalogPort} from "analog/models";
 
 @serializable("SidePositioner")
 export class SidePositioner extends Positioner<AnalogPort> {
-    private side: "left" | "right" | "top" | "bottom";
+    private readonly side: "left" | "right" | "top" | "bottom";
 
     public constructor(side: "left" | "right" | "top" | "bottom" = "left") {
         super();

@@ -8,7 +8,7 @@ import {Key}   from "core/utils/Key";
 
 export class FakeInput extends Input {
     private touches: Vector[];
-    private center: Vector;
+    private readonly center: Vector;
 
     public constructor(cameraCenter: Vector = V()) {
         // Fake canvas and instant drag time

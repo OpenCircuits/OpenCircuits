@@ -21,9 +21,9 @@ import {DigitalComponent, DigitalWire} from "./index";
  */
 @serializable("DigitalObjectSet")
 export class DigitalObjectSet extends IOObjectSet {
-    private inputs:  DigitalComponent[];
-    private outputs: DigitalComponent[];
-    private others:  DigitalComponent[];
+    private readonly inputs:  DigitalComponent[];
+    private readonly outputs: DigitalComponent[];
+    private readonly others:  DigitalComponent[];
 
     public constructor();
     public constructor(inputs: DigitalComponent[], outputs: DigitalComponent[],

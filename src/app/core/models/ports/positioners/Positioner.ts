@@ -29,20 +29,20 @@ export class Positioner<T extends Port> {
     /**
      * Direction of the ports relative to the parent component.
      */
-    private dir: Vector;
+    private readonly dir: Vector;
     /**
      * Factor to increase the spacing of the ports by.
      */
-    private scale: number;
+    private readonly scale: number;
     /**
      * Length of the ports.
      */
-    private length: number;
+    private readonly length: number;
     /**
      * If true the first port and last port will be moved innerward
      * by one space in the spacing calculation.
      */
-    private shortenEdges: boolean;
+    private readonly shortenEdges: boolean;
 
     /**
      * Intializes a Positioner with the following parameters.

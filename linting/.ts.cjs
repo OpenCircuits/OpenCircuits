@@ -191,7 +191,9 @@ module.exports = {
         "@typescript-eslint/space-before-function-paren": ["error", {
             "anonymous": "never",
             "named": "never",
-            "asyncArrow": "always"
+            "asyncArrow": "always",
         }],
+
+        "@typescript-eslint/prefer-readonly": "error",
     },
 }

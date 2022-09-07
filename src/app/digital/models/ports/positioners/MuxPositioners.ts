@@ -14,7 +14,7 @@ import {OutputPort} from "../OutputPort";
 export class MuxSelectPositioner extends Positioner<InputPort> {
     // Multiplier for slope, since Multiplexer and Demultiplexer angle on the
     // lower edge are different, so the offsets are opposite of each other
-    private slopeMultiplier: number;
+    private readonly slopeMultiplier: number;
 
     public constructor(isMultiplexer = true) {
         super();

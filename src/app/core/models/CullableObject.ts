@@ -7,7 +7,7 @@ import {Prop}     from "core/models/PropInfo";
 
 
 export abstract class CullableObject extends IOObject {
-    private cullTransform: Transform;
+    private readonly cullTransform: Transform;
 
     private dirty: boolean;
 

@@ -7,8 +7,8 @@ import {Wire}      from "core/models/Wire";
 
 
 export class ShiftAction implements Action {
-    private designer: CircuitDesigner;
-    private obj: Component | Wire;
+    private readonly designer: CircuitDesigner;
+    private readonly obj: Component | Wire;
     private i: number;
 
     public constructor(designer: CircuitDesigner, obj: Component | Wire) {

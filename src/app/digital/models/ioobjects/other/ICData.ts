@@ -34,12 +34,12 @@ import {OutputPort} from "digital/models/ports/OutputPort";
 export class ICData {
     private name: string;
 
-    private transform: Transform;
+    private readonly transform: Transform;
 
-    private collection: DigitalObjectSet;
+    private readonly collection: DigitalObjectSet;
 
-    private inputPorts:  InputPort[];
-    private outputPorts: OutputPort[];
+    private readonly inputPorts:  InputPort[];
+    private readonly outputPorts: OutputPort[];
 
     /**
      * The sole constructor for ICData, it is recommended to use the Create function instead.

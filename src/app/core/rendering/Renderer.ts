@@ -12,7 +12,7 @@ import {FONT}  from "./Styles";
 
 
 export class Renderer {
-    private canvas: HTMLCanvasElement;
+    private readonly canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
 
     public constructor(canvas: HTMLCanvasElement) {

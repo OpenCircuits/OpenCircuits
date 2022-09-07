@@ -9,8 +9,8 @@ import {ReversableAction} from "../ReversableAction";
 
 
 export class SelectAction extends ReversableAction {
-    private selections: SelectionsWrapper;
-    private obj: Selectable;
+    private readonly selections: SelectionsWrapper;
+    private readonly obj: Selectable;
 
     public constructor(selections: SelectionsWrapper, obj: Selectable, flip = false) {
         super(flip);

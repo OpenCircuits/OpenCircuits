@@ -13,7 +13,7 @@ export class HistoryManager {
 
     private disabled: boolean;
 
-    private callbacks: Set<HistoryCallback>;
+    private readonly callbacks: Set<HistoryCallback>;
 
     public constructor() {
         this.undoStack = [];

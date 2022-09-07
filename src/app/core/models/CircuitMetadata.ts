@@ -15,7 +15,7 @@ export class CircuitMetadataDef {
 
 @serializable("CircuitMetadata")
 export class CircuitMetadata {
-    private data: CircuitMetadataDef;
+    private readonly data: CircuitMetadataDef;
 
     public constructor(data?: CircuitMetadataDef) {
         this.data = data!;
