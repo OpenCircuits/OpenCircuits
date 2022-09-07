@@ -38,13 +38,13 @@ export type DigitalEvent =
 @serializable("DigitalCircuitDesigner")
 export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
-    private ics: ICData[];
+    private readonly ics: ICData[];
 
     @serialize
-    private objects: DigitalComponent[];
+    private readonly objects: DigitalComponent[];
 
     @serialize
-    private wires: DigitalWire[];
+    private readonly wires: DigitalWire[];
 
     @serialize
     private propagationQueue: Propagation[];
@@ -57,7 +57,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
     private paused: boolean;
 
-    private updateCallbacks: Array<(ev: DigitalEvent) => void>;
+    private readonly updateCallbacks: Array<(ev: DigitalEvent) => void>;
 
     private timeout?: number;
 

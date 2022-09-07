@@ -9,11 +9,11 @@ export class CreateICDataAction implements Action {
     /**
      * The ICData of the action.
      */
-    private data: ICData;
+    private readonly data: ICData;
     /**
      * The target DigitalCircuitDesigner.
      */
-    private target: DigitalCircuitDesigner;
+    private readonly target: DigitalCircuitDesigner;
 
     /**
      * Initialize the Action with the data in "ICData" and target in "DigitalCircuitDesigner".

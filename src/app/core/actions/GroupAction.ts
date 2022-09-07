@@ -3,8 +3,8 @@ import {Action} from "core/actions/Action";
 
 export class GroupAction implements Action {
     private actions: Action[];
-    private customName?: string;
-    private customInfo?: string[];
+    private readonly customName?: string;
+    private readonly customInfo?: string[];
 
     public constructor(actions?: Action[], customName?: string, customInfo?: string[]) {
         this.actions = actions || [];

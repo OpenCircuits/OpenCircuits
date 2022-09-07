@@ -7,7 +7,7 @@ import {Netlist, NetlistToNGSpice} from "./Netlist";
 const MakeInstance = (lib: NGSpiceLib) => CreateWASMInstance(lib);
 
 export class AnalogSim {
-    private lib: ReturnType<typeof MakeInstance>;
+    private readonly lib: ReturnType<typeof MakeInstance>;
 
     private netlistPtrs: [number, ...number[]];
 

@@ -36,7 +36,7 @@ export function Margin(left: number, right: number, bottom?: number, top?: numbe
 
 
 export class Rect {
-    private yIsUp: number; // +1 or -1
+    private readonly yIsUp: number; // +1 or -1
 
     public left:   number;
     public right:  number;

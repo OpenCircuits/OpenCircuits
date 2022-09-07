@@ -19,7 +19,7 @@ export class Camera {
     @serialize
     private zoom: number;
 
-    private transform: Transform;
+    private readonly transform: Transform;
 
     private mat: Matrix2x3;
     private inv: Matrix2x3;

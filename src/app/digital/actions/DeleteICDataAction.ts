@@ -6,8 +6,8 @@ import {ICData} from "digital/models/ioobjects/other/ICData";
 
 
 export class DeleteICDataAction implements Action {
-    private data: ICData;
-    private target: DigitalCircuitDesigner;
+    private readonly data: ICData;
+    private readonly target: DigitalCircuitDesigner;
 
     public constructor(data: ICData, target: DigitalCircuitDesigner) {
         this.data = data;

@@ -23,7 +23,7 @@ export class IC extends DigitalComponent {
     private data: ICData;
 
     @serialize
-    private collection: DigitalObjectSet;
+    private readonly collection: DigitalObjectSet;
 
     public constructor(data?: ICData) {
         // If data if undefined (because we're deserealizing it, then use 0)
@@ -95,6 +95,10 @@ export class IC extends DigitalComponent {
         this.collection.getInputs().forEach((input, i) =>
             input.activate(this.getInputPort(i).getIsOn())
         );
+    }
+
+    public setData(data: ICData) {
+        this.data = data;
     }
 
     public getData(): ICData {

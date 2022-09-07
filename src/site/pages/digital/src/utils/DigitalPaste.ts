@@ -23,6 +23,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 import {IC} from "digital/models/ioobjects/other";
 
+
 /**
  * Finds and adds any new IC data upon paste.
  *
@@ -53,7 +54,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
         if (dataIndex === -1)
             return; // Don't change IC since it uses the new Data
         // Change ICData to point to the existing ICData in the designer
-        ic["data"] = designer.getICData()[dataIndex];
+        ic.setData(designer.getICData()[dataIndex]);
     });
 
     // Transfer the new ICData

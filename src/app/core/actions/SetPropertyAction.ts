@@ -6,12 +6,12 @@ import {Prop} from "core/models/PropInfo";
 
 
 export class SetPropertyAction implements Action {
-    private obj: IOObject;
+    private readonly obj: IOObject;
 
-    private propKey: string;
+    private readonly propKey: string;
 
-    private initialProp: Prop;
-    private targetProp: Prop;
+    private readonly initialProp: Prop;
+    private readonly targetProp: Prop;
 
     public constructor(obj: IOObject, key: string, prop: Prop) {
         if (!obj.hasProp(key))

@@ -7,7 +7,7 @@ import {Action} from "core/actions/Action";
  *  This reconciles that reuse of code and allows for a single class.
  */
 export abstract class ReversableAction implements Action {
-    private flipped: boolean;
+    private readonly flipped: boolean;
 
     protected constructor(flip: boolean) {
         this.flipped = flip;

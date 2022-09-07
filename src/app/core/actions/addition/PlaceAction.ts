@@ -11,8 +11,8 @@ import {ReversableAction} from "../ReversableAction";
  * PlaceAction represents the action of placing a new Component into the CircuitDesigner.
  */
 export class PlaceAction extends ReversableAction {
-    private designer: CircuitDesigner;
-    private obj: Component;
+    private readonly designer: CircuitDesigner;
+    private readonly obj: Component;
 
     /**
      * Initializes a PlaceAction given the CircuitDesigner, Component, and a flip boolean.

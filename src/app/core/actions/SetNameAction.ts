@@ -4,9 +4,9 @@ import {Action} from "core/actions/Action";
 
 
 export class SetNameAction implements Action {
-    private obj: Selectable;
-    private newName: string;
-    private oldName: string;
+    private readonly obj: Selectable;
+    private readonly newName: string;
+    private readonly oldName: string;
 
     public constructor(o: Selectable, newName: string) {
         this.obj = o;

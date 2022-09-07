@@ -29,12 +29,12 @@ export type AnalogEvent =
 @serializable("AnalogCircuitDesigner")
 export class AnalogCircuitDesigner extends CircuitDesigner {
     @serialize
-    private objects: AnalogComponent[];
+    private readonly objects: AnalogComponent[];
 
     @serialize
-    private wires: AnalogWire[];
+    private readonly wires: AnalogWire[];
 
-    private updateCallbacks: Array<(ev: AnalogEvent) => void>;
+    private readonly updateCallbacks: Array<(ev: AnalogEvent) => void>;
 
     public constructor() {
         super();

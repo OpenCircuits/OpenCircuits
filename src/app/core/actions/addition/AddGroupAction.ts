@@ -6,8 +6,8 @@ import {Action} from "../Action";
 
 
 export class AddGroupAction implements Action {
-    private designer: CircuitDesigner;
-    private group: IOObjectSet;
+    private readonly designer: CircuitDesigner;
+    private readonly group: IOObjectSet;
 
     public constructor(designer: CircuitDesigner, group: IOObjectSet) {
         this.designer = designer;

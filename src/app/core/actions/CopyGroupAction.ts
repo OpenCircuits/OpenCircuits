@@ -10,11 +10,11 @@ import {IOObject}        from "core/models/IOObject";
 
 // TODO: Change this terribleness
 export class CopyGroupAction implements Action {
-    private designer: CircuitDesigner;
+    private readonly designer: CircuitDesigner;
 
-    private copy: IOObjectSet;
+    private readonly copy: IOObjectSet;
 
-    private transforms: Transform[];
+    private readonly transforms: Transform[];
 
     public constructor(designer: CircuitDesigner, initialGroup: IOObject[]) {
         this.designer = designer;
