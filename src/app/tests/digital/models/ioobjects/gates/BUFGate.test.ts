@@ -5,7 +5,6 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 
 
-
 describe("BUFGate", () => {
     describe("BUFGate", () => {
         const designer = new DigitalCircuitDesigner(0);

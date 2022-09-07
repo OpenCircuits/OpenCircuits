@@ -9,6 +9,7 @@ import {Selectable} from "core/utils/Selectable";
 import {Component} from "core/models/Component";
 import {Wire}      from "core/models/Wire";
 
+
 /**
  * Represents a port.
  * Ports are attached to a parent component.

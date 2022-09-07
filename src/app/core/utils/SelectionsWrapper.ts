@@ -4,6 +4,7 @@ import {Component, Port, Wire} from "core/models";
 
 import {Selectable} from "./Selectable";
 
+
 /**
  * Wrapper class to hold and manage a set of Selectables.
  * Can notfiy to other parts of the code about changes in
