@@ -8,8 +8,6 @@ import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
 
 
-
-
 describe("Input Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);

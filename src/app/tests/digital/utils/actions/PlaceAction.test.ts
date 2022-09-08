@@ -18,7 +18,7 @@ describe("Place Action", () => {
         a1.undo();
         expect(designer.getObjects()).toHaveLength(0);
 
-        a1;
+        a1.execute();
         expect(designer.getObjects()).toHaveLength(1);
         expect(designer.getObjects()[0]).toBe(a);
     });

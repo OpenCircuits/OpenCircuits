@@ -43,7 +43,7 @@ describe("Bus Action", () => {
         expectAllDisconnected();
 
         // Back to bus'd
-        a1;
+        a1.execute();
         expectConnected();
     }
 

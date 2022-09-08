@@ -42,7 +42,7 @@ describe("IC Action", () => {
         expect(designer.getICData()).toHaveLength(0);
 
         // back to initial
-        ac;
+        ac.execute();
         expect(designer.getWires()).toHaveLength(1);
         expect(designer.getObjects()).toHaveLength(2);
         expect(designer.getICData()).toHaveLength(1);

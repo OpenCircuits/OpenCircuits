@@ -49,7 +49,8 @@ export abstract class PortChangeAction<T extends Component> implements Action {
         //  all wires that are going to be removed
         if (!this.wireDeletionAction)
             this.wireDeletionAction = this.createAction();
-        this.wireDeletionAction.execute();
+        else
+            this.wireDeletionAction.execute();
 
         return this;
     }

@@ -12,8 +12,6 @@ import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
 
 
-
-
 describe("Select Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
@@ -41,7 +39,7 @@ describe("Select Port Change Action", () => {
         expect(mux.getOutputPortCount().getValue()).toBe(1);
 
         // back to initial
-        a1;
+        a1.execute();
         expect(mux.getSelectPortCount().getValue()).toBe(4);
         expect(mux.getInputPortCount().getValue()).toBe(16);
         expect(mux.getOutputPortCount().getValue()).toBe(1);
@@ -73,7 +71,7 @@ describe("Select Port Change Action", () => {
         expect(designer.getWires()).toHaveLength(3);
 
         // back to initial
-        a1;
+        a1.execute();
         expect(designer.getObjects()).toHaveLength(2);
         expect(designer.getWires()).toHaveLength(0);
     });

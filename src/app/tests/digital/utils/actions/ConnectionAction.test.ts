@@ -42,7 +42,7 @@ describe("Connection Action", () => {
         expect(b.isOn()).toBe(false);
 
         // back to initial
-        a1;
+        a1.execute();
         expect(designer.getWires()).toHaveLength(1);
         expect(a.getOutputs()).toHaveLength(1);
         expect(b.getInputs()).toHaveLength(1);
