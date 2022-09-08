@@ -5,9 +5,9 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {ShiftAction} from "core/actions/ShiftAction";
 
-import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
+import {Deselect, DeselectAll, Select} from "core/actions/units/Select";
+import {Shift}                         from "core/actions/units/Shift";
 
 import {Wire} from "core/models";
 
@@ -24,7 +24,7 @@ export const SelectionHandler: EventHandler = ({
 
         // Clear previous selections if not holding shift
         if (!input.isShiftKeyDown())
-            action.add(CreateDeselectAllAction(selections).execute());
+            action.add(DeselectAll(selections));
 
         const ports = GetAllPorts(designer.getObjects());
         const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];
@@ -40,8 +40,12 @@ export const SelectionHandler: EventHandler = ({
         if (obj && !(hitPort && isWire)) {
             // Select object
             const deselect = (input.isShiftKeyDown() && selections.has(obj));
-            action.add(new SelectAction(selections, obj, deselect).execute());
-            action.add(new ShiftAction(designer, obj).execute());
+            action.add((
+                deselect
+                ? Deselect(selections, obj)
+                : Select(selections, obj)
+            ));
+            action.add(Shift(designer, obj));
         }
 
         // https://github.com/OpenCircuits/OpenCircuits/issues/622

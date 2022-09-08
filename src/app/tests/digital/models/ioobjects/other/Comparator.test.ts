@@ -13,7 +13,7 @@ describe("Comparator", () => {
     const [a,b] = Place(new ConstantNumber(), new ConstantNumber());
     const [lt,eq,gt] = Place(new LED(), new LED(), new LED());
 
-    c.setInputPortCount(4);
+    c.setInputPortCount(8); // 4 -> 4 comparison
 
     // Connect everything together
     Connect(a, c);

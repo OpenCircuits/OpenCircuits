@@ -1,8 +1,8 @@
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Connect as CreateConnection} from "core/actions/units/Connect";
 
-import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {SetMuxPortCount} from "digital/actions/compositions/SetMuxPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -10,8 +10,6 @@ import {Switch} from "digital/models/ioobjects/inputs/Switch";
 
 import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
-
-
 
 
 describe("Select Port Change Action", () => {
@@ -27,7 +25,7 @@ describe("Select Port Change Action", () => {
         expect(mux.getOutputPortCount().getValue()).toBe(1);
 
         // change select port count
-        const a1 = new MuxPortChangeAction(mux, mux.getSelectPortCount().getValue(), 4).execute();
+        const a1 = SetMuxPortCount(mux, 4);
 
         // initial
         expect(mux.getSelectPortCount().getValue()).toBe(4);
@@ -55,13 +53,13 @@ describe("Select Port Change Action", () => {
         // Connect switch to node and then then to input and select ports of Mux
         Connect(sw, n);
         Connect(n, 0, mux, 3);
-        new ConnectionAction(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]).execute();
+        CreateConnection(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]);
 
         expect(designer.getObjects()).toHaveLength(3);
         expect(designer.getWires()).toHaveLength(3);
 
         // change select port count
-        const a1 = new MuxPortChangeAction(mux, mux.getSelectPortCount().getValue(), 1).execute();
+        const a1 = SetMuxPortCount(mux, 1);
 
         // initial
         expect(designer.getObjects()).toHaveLength(2);

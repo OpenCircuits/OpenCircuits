@@ -2,26 +2,27 @@ import {GetPath} from "core/utils/ComponentUtils";
 
 import {Action} from "core/actions/Action";
 
+import {CircuitDesigner, Component, Port} from "core/models";
 
-import {CircuitDesigner, Port} from "core/models";
-
-import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
-import {GroupAction}            from "../GroupAction";
+import {DeletePath}  from "../compositions/DeletePath";
+import {GroupAction} from "../GroupAction";
 
 
-export abstract class PortChangeAction implements Action {
+export abstract class PortChangeAction<T extends Component> implements Action {
     protected designer?: CircuitDesigner;
+    protected obj: T;
 
     protected targetCount: number;
     protected initialCount: number;
 
     private wireDeletionAction: GroupAction;
 
-    protected constructor(designer: CircuitDesigner | undefined, target: number, initialCount: number) {
+    protected constructor(designer: CircuitDesigner | undefined, obj: T, target: number) {
         this.designer = designer;
+        this.obj = obj;
 
         this.targetCount = target;
-        this.initialCount = initialCount;
+        this.initialCount = this.getPorts().length;
     }
 
     private createAction(): GroupAction {
@@ -34,7 +35,7 @@ export abstract class PortChangeAction implements Action {
             const wires = ports.pop()!.getWires();
             if (wires.length > 0 && !this.designer)
                 throw new Error("PortChangeAction failed: designer not found");
-            action.add(wires.map((w) => CreateDeletePathAction(this.designer!, GetPath(w))));
+            action.add(wires.map((w) => DeletePath(this.designer!, GetPath(w))));
         }
 
         return action;
@@ -47,7 +48,8 @@ export abstract class PortChangeAction implements Action {
         //  all wires that are going to be removed
         if (!this.wireDeletionAction)
             this.wireDeletionAction = this.createAction();
-        this.wireDeletionAction.execute();
+        else
+            this.wireDeletionAction.execute();
 
         return this;
     }
@@ -61,5 +63,4 @@ export abstract class PortChangeAction implements Action {
     public getName(): string {
         return "Port Change";
     }
-
 }

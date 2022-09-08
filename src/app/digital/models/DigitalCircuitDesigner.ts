@@ -1,7 +1,5 @@
 import {GetIDFor, serializable, serialize} from "serialeazy";
 
-import {IOObjectSet} from "core/utils/ComponentUtils";
-
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}        from "core/models/IOObject";
 
@@ -199,14 +197,6 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         if (input && input.getWires().length > 0)
             return;
         return new DigitalWire(output, input);
-    }
-
-    public addGroup(group: IOObjectSet): void {
-        for (const a of group.getComponents())
-            this.addObject(a as DigitalComponent);
-
-        for (const b of group.getWires())
-            this.addWire(b as DigitalWire);
     }
 
     public addICData(data: ICData): void {

@@ -6,7 +6,7 @@ import {Component} from "core/models";
 import {IsICDataInUse}      from "digital/utils/ComponentUtils";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
+import {RemoveICData} from "digital/actions/units/AddICData";
 
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
 
@@ -174,7 +174,7 @@ export const DigitalItemNav = ({ info }: Props) => {
             return false;
         }
         sec.items.splice(sec.items.indexOf(ic));
-        history.add(new DeleteICDataAction(icData, designer).execute());
+        history.add(RemoveICData(icData, designer));
         return true;
     }, [designer, history]);
 

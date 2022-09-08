@@ -1,6 +1,6 @@
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {CreateSnipGateAction} from "digital/actions/SnipGateActionFactory";
+import {SnipGate} from "digital/actions/compositions/SnipGate";
 
 import {DigitalCircuitDesigner} from "digital/models";
 
@@ -18,7 +18,7 @@ describe("SnipGateAction", () => {
         Connect(input, buf);
         Connect(buf, out);
 
-        const action = CreateSnipGateAction(buf);
+        const action = SnipGate(buf);
 
         test("Execute/Undo", () => {
             expect(out.isOn()).toBeFalsy();
@@ -54,7 +54,7 @@ describe("SnipGateAction", () => {
         Connect(input, not);
         Connect(not, out);
 
-        const action = CreateSnipGateAction(not);
+        const action = SnipGate(not);
 
         test("Execute/Undo", () => {
             expect(out.isOn()).toBeFalsy();
@@ -89,7 +89,7 @@ describe("SnipGateAction", () => {
         designer.reset();
         const [buf] = Place(new BUFGate());
 
-        const action = CreateSnipGateAction(buf);
+        const action = SnipGate(buf);
 
         expect(designer.getObjects().some((comp) => (comp instanceof BUFGate))).toBeFalsy();
         expect(buf.getDesigner()).toBeUndefined();
@@ -103,6 +103,6 @@ describe("SnipGateAction", () => {
     test("Unplaced Gate", () => {
         const buf = new BUFGate();
 
-        expect(() => CreateSnipGateAction(buf)).toThrow();
+        expect(() => SnipGate(buf)).toThrow();
     })
 })

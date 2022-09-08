@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {Comparator} from "digital/models/ioobjects";
 
@@ -35,7 +35,7 @@ export const ComparatorInputCountModule = ({ info }: Props) => {
                 alt="Number of inputs object(s) have"
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => new InputPortChangeAction(o, o.getInputPortCount().getValue()/2, newCounts[i])),
+                        cs.map((o,i) => SetInputPortCount(o, 2*newCounts[i])),
                         "Comparator Input Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

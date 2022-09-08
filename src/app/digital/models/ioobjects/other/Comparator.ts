@@ -39,9 +39,12 @@ export class Comparator extends DigitalComponent {
         this.getOutputPort(Comparator.GT_PORT).setName(">");
     }
 
-    public setInputPortCount(val: number): void {
-        this.setSize(V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*(val+0.5)));
-        super.setInputPortCount(2*val);
+    public override setInputPortCount(val: number): void {
+        if (val % 2 !== 0)
+            throw new Error(`Attempted to set Comparator inputs to be odd! ${val}!`);
+
+        this.setSize(V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*(val/2+0.5)));
+        super.setInputPortCount(val);
 
         this.getInputPorts()
             .slice(0,this.getInputPortCount().getValue()/2)
@@ -51,7 +54,7 @@ export class Comparator extends DigitalComponent {
             .forEach((port, i) => port.setName("b"+i));
     }
 
-    public activate(): void {
+    public override activate(): void {
         const a = PortsToDecimal(this.getInputPorts().slice(0,this.getInputPortCount().getValue()/2));
         const b = PortsToDecimal(this.getInputPorts().slice(this.getInputPortCount().getValue()/2));
         super.activate(a  <  b, Comparator.LT_PORT);
@@ -59,7 +62,7 @@ export class Comparator extends DigitalComponent {
         super.activate(a  >  b, Comparator.GT_PORT);
     }
 
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "Comparator";
     }
 }

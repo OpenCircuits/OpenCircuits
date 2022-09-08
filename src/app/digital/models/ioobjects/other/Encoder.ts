@@ -26,6 +26,30 @@ export class Encoder extends DigitalComponent {
         this.updatePortNames();
     }
 
+    private updatePortNames(): void {
+        this.inputs.getPorts().forEach((p, i) => {
+            if (p.getName() === "")
+                p.setName(`I${i}`);
+        });
+        this.outputs.getPorts().forEach((p, i) => {
+            if (p.getName() === "")
+                p.setName(`O${i}`);
+        });
+    }
+
+    public override setOutputPortCount(val: number): void {
+        // Update size
+        const newSize = V((1 + (val - 1)/20), Math.pow(2, val)/2).scale(DEFAULT_SIZE);
+        this.setSize(newSize);
+
+        super.setOutputPortCount(val);
+
+        // Update port names
+        this.inputs.updatePortPositions();
+        this.outputs.updatePortPositions();
+        this.updatePortNames();
+    }
+
     public activate(): void {
         // Filter ports that are on then map to their indices
         const onPorts = this.getInputPorts().filter((p) => p.getIsOn());
@@ -39,17 +63,6 @@ export class Encoder extends DigitalComponent {
         const bits = [...index.toString(2).padStart(this.outputs.length, "0")].reverse();
         bits.forEach((bit, i) => {
             super.activate(bit === "1", i);
-        });
-    }
-
-    public updatePortNames(): void {
-        this.inputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "")
-                p.setName(`I${i}`);
-        });
-        this.outputs.getPorts().forEach((p, i) => {
-            if (p.getName() === "")
-                p.setName(`O${i}`);
         });
     }
 

@@ -1,8 +1,9 @@
-import {PlaceAction} from "core/actions/addition/PlaceAction";
+import {Place} from "core/actions/units/Place";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
 
 
 describe("Place Action", () => {
@@ -10,7 +11,7 @@ describe("Place Action", () => {
         const designer = new DigitalCircuitDesigner(0);
         const a = new Switch();
 
-        const a1 = new PlaceAction(designer, a).execute();
+        const a1 = Place(designer, a);
 
         expect(designer.getObjects()).toHaveLength(1);
         expect(designer.getObjects()[0]).toBe(a);
