@@ -4,7 +4,9 @@ import {CircuitInfo}  from "core/utils/CircuitInfo";
 import {GetCameraFit} from "core/utils/ComponentUtils";
 import {Event}        from "core/utils/Events";
 
-import {MoveCamera} from "core/actions/units/MoveCamera";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {SetProperty} from "core/actions/units/SetProperty";
 
 import {CullableObject} from "core/models";
 
@@ -24,6 +26,9 @@ export const FitToScreenHandler: EventHandler = ({
 
         // Get final camera position and zoom
         const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);
-        history.add(MoveCamera(camera, pos, zoom));
+        history.add(new GroupAction([
+            SetProperty(camera, "pos", pos),
+            SetProperty(camera, "zoom", zoom),
+        ], "Fit to Screen"));
     },
 });

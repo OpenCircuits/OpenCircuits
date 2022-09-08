@@ -1,4 +1,7 @@
-import {serializable, serialize} from "serialeazy";
+import {serializable} from "serialeazy";
+
+import {BaseObject} from "core/models/BaseObject";
+import {Prop}       from "core/models/PropInfo";
 
 import {TransformContains} from "./MathUtils";
 import {Matrix2x3}         from "./Matrix";
@@ -11,23 +14,15 @@ type Margin = {left: number, right: number, bottom: number, top: number}
 /**
  * This code is for the camera object which is a representation of the screen while using OpenCircuits.
  */
-
 @serializable("Camera")
-export class Camera {
-    @serialize
-    private pos: Vector;
-    @serialize
-    private zoom: number;
+export class Camera extends BaseObject {
+    private width: number;
+    private height: number;
 
     private readonly transform: Transform;
 
     private mat: Matrix2x3;
     private inv: Matrix2x3;
-
-    @serialize
-    private width: number;
-    @serialize
-    private height: number;
 
     private dirty: boolean;
 
@@ -38,17 +33,19 @@ export class Camera {
      * and initializes all the variables.
      * It sets dirty to true which means that.
      *
-     * @param width     The width of the camera (screen).
-     * @param height    The height of the camera (screen).
-     * @param startPos  The starting position in the camera to 0,0 (vector).
-     * @param startZoom This initialzed zoom to 1.
+     * @param width  The width of the camera (screen).
+     * @param height The height of the camera (screen).
+     * @param pos    The starting position in the camera to 0,0 (vector).
+     * @param zoom   This initialzed zoom to 1.
      */
-    public constructor(width?: number, height?: number, startPos: Vector = V(0, 0), startZoom = 1) {
-        this.width = width!;
-        this.height = height!;
-        this.pos = startPos;
-        this.zoom = startZoom;
+    public constructor(width = 0, height = 0, pos = V(0, 0), zoom = 1) {
+        super({ pos, zoom });
+
+        this.width = width;
+        this.height = height;
+
         this.transform = new Transform(V(0,0), V(0,0), 0);
+
         this.dirty = true;
         this.margin = { left: 0, right: 0, bottom: 0, top: 0 };
     }
@@ -64,8 +61,8 @@ export class Camera {
         this.dirty = false;
 
         this.mat = new Matrix2x3();
-        this.mat.translate(this.pos);
-        this.mat.scale(V(this.zoom, this.zoom));
+        this.mat.translate(this.props["pos"] as Vector);
+        this.mat.scale(V(this.props["zoom"] as number));
         this.inv = this.mat.inverse();
 
         const p1 = this.getWorldPos(V(0, 0));
@@ -86,14 +83,18 @@ export class Camera {
         this.height = height;
     }
 
+    public override setProp(key: string, val: Prop): void {
+        super.setProp(key, val);
+        this.dirty = true;
+    }
+
     /**
      * This sets the position of the screen (vector coordinates) and sets dirty to true.
      *
      * @param pos The new position vector.
      */
     public setPos(pos: Vector): void {
-        this.dirty = true;
-        this.pos = pos;
+        this.setProp("pos", pos);
     }
 
     /**
@@ -101,9 +102,8 @@ export class Camera {
      *
      * @param zoom The new zoom number (how much it's being zoomed in).
      */
-    public setZoom(zoom: number): void{
-        this.dirty = true;
-        this.zoom = zoom;
+    public setZoom(zoom: number): void {
+        this.setProp("zoom", zoom);
     }
 
     /**
@@ -113,7 +113,7 @@ export class Camera {
      */
     public translate(dv: Vector): void {
         this.dirty = true;
-        this.pos = this.pos.add(dv);
+        this.setPos(this.getPos().add(dv));
     }
 
     /**
@@ -138,7 +138,7 @@ export class Camera {
      */
     public zoomBy(s: number): void {
         this.dirty = true;
-        this.zoom *= s;
+        this.setZoom(this.getZoom() * s);
     }
     /**
      * This function returns true or false if this.transform contains the transform passed through.
@@ -171,7 +171,7 @@ export class Camera {
      * @returns The position.
      */
     public getPos(): Vector {
-        return this.pos.copy();
+        return V(this.props["pos"] as Vector);
     }
     /**
      * Return how much the screen is zoomed in/out by.
@@ -179,7 +179,7 @@ export class Camera {
      * @returns The zoom, which is data type Number.
      */
     public getZoom(): number {
-        return this.zoom;
+        return this.props["zoom"] as number;
     }
     /**
      * This returns a copy of the transform of camera and updates the matrix.

@@ -11,7 +11,7 @@ import {isPressable}             from "core/utils/Pressable";
 
 import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {MoveCamera} from "core/actions/units/MoveCamera";
+import {SetProperty} from "core/actions/units/SetProperty";
 
 import {InteractionTool} from "core/tools/InteractionTool";
 import {PanTool}         from "core/tools/PanTool";
@@ -163,7 +163,8 @@ export const ICViewer = (() => {
             const [pos, zoom] = GetCameraFit(
                 info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
             );
-            MoveCamera(info.camera, pos, zoom);
+            SetProperty(info.camera, "pos", pos);
+            SetProperty(info.camera, "zoom", zoom);
 
             updateViewer();
             info.renderer.render();

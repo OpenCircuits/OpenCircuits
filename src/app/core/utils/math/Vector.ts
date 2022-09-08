@@ -231,6 +231,10 @@ export class Vector {
     public copy(): Vector {
         return new Vector(this.x, this.y);
     }
+
+    public toString(): string {
+        return `(${Math.round(this.x)}, ${Math.round(this.y)})`;
+    }
     /**
      * Return a vector that has mininum 'x' and 'y' components from
      * vectors within the array 'vectors'.
