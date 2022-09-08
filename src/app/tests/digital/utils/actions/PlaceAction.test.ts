@@ -1,8 +1,9 @@
+import {Place} from "core/actions/units/Place";
+
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
 
-import {Place} from "core/actions/units/Place";
 
 
 describe("Place Action", () => {

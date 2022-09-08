@@ -1,10 +1,11 @@
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {Connect as CreateConnection} from "core/actions/units/Connect";
-import {PlaceGroup} from "core/actions/units/Place";
-
 import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
+
+import {Connect as CreateConnection} from "core/actions/units/Connect";
+import {PlaceGroup}                  from "core/actions/units/Place";
+
 
 import {Wire} from "core/models";
 

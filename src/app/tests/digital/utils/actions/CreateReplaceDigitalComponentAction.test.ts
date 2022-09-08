@@ -4,9 +4,9 @@ import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {AddICData} from "digital/actions/units/AddICData";
 import {ReplaceComponent} from "digital/actions/compositions/ReplaceComponent";
 
+import {AddICData}         from "digital/actions/units/AddICData";
 import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models";

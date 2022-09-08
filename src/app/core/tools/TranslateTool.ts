@@ -9,10 +9,10 @@ import {CopyGroup, Snap} from "core/utils/ComponentUtils";
 import {Event}           from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {Shift} from "core/actions/units/Shift";
 
 import {AddGroup} from "core/actions/compositions/AddGroup";
 
+import {Shift}     from "core/actions/units/Shift";
 import {Translate} from "core/actions/units/Translate";
 
 import {Tool} from "core/tools/Tool";

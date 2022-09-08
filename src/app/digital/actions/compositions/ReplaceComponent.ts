@@ -5,8 +5,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {Connect, Disconnect}      from "core/actions/units/Connect";
 import {Delete, Place}            from "core/actions/units/Place";
 import {DeselectAll, SelectGroup} from "core/actions/units/Select";
-
-import {Translate} from "core/actions/units/Translate";
+import {Translate}                from "core/actions/units/Translate";
 
 import {CreateDigitalComponent, GetPortChangeAction} from "digital/utils/ReplaceDigitalComponentHelpers";
 

@@ -1,7 +1,5 @@
 import {GetIDFor, serializable, serialize} from "serialeazy";
 
-import {IOObjectSet} from "core/utils/ComponentUtils";
-
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {IOObject}        from "core/models/IOObject";
 

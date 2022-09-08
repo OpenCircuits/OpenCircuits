@@ -1,12 +1,14 @@
 import {GroupAction} from "core/actions/GroupAction";
 
-import {Multiplexer} from "digital/models/ioobjects";
 
-import {Mux} from "digital/models/ioobjects/other/Mux";
 
 import {SetInputPortCount}  from "digital/actions/units/SetInputPortCount";
 import {SetOutputPortCount} from "digital/actions/units/SetOutputPortCount";
 import {SetSelectPortCount} from "digital/actions/units/SetSelectPortCount";
+
+import {Multiplexer} from "digital/models/ioobjects";
+
+import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
 /**

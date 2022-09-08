@@ -2,9 +2,9 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 import {CreateDigitalComponent, GenerateReplacementList, GetReplacements} from "digital/utils/ReplaceDigitalComponentHelpers";
 
-import {AddICData} from "digital/actions/units/AddICData";
-
 import {SetCoderPortCount} from "digital/actions/compositions/SetCoderPortCount";
+
+import {AddICData}         from "digital/actions/units/AddICData";
 import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models";

@@ -3,8 +3,8 @@ import {Action} from "core/actions/Action";
 import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component}       from "core/models/Component";
 
-import {GroupAction}      from "../GroupAction";
 import {ReversableAction} from "../bases/ReversableAction";
+import {GroupAction}      from "../GroupAction";
 
 
 /**

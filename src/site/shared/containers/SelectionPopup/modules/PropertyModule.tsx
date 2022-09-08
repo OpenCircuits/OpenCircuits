@@ -2,8 +2,9 @@ import {Vector} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Action}            from "core/actions/Action";
-import {GroupAction}       from "core/actions/GroupAction";
+import {Action}      from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
+
 import {SetProperty} from "core/actions/units/SetProperty";
 
 import {IOObject} from "core/models";

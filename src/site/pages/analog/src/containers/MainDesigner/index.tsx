@@ -1,3 +1,4 @@
+import {CreateGroupPlaceAction}    from "core/actions/addition/PlaceAction";
 import {useLayoutEffect, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
@@ -7,7 +8,6 @@ import {V} from "Vector";
 import {Cursor} from "core/utils/CircuitInfo";
 import {Input}  from "core/utils/Input";
 
-import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 
 import {DeselectAll} from "core/actions/units/Select";
 

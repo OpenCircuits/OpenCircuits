@@ -5,8 +5,8 @@ import {Wire}            from "core/models/Wire";
 
 import {Port} from "core/models/ports/Port";
 
-import {GroupAction}      from "../GroupAction";
 import {ReversableAction} from "../bases/ReversableAction";
+import {GroupAction}      from "../GroupAction";
 
 
 /**

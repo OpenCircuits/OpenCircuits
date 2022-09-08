@@ -9,11 +9,10 @@ import {Event}  from "core/utils/Events";
 
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
-import {Shift} from "core/actions/units/Shift";
 
 import {SetProperty} from "core/actions/units/SetProperty";
-
-import {Translate} from "core/actions/units/Translate";
+import {Shift}       from "core/actions/units/Shift";
+import {Translate}   from "core/actions/units/Translate";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
