@@ -37,7 +37,7 @@ export const InputCountModule = ({ info }: Props) => {
                 alt="Number of inputs object(s) have"
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCounts[i])),
+                        cs.map((o,i) => new InputPortChangeAction(o, newCounts[i])),
                         "Input Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

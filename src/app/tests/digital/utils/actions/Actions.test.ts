@@ -6,7 +6,7 @@ import {CreateSplitWireAction}  from "core/actions/addition/SplitWireAction";
 
 import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 
-import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {CreateMuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -16,7 +16,6 @@ import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
 import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
 
 import {LED} from "digital/models/ioobjects/outputs/LED";
-
 
 
 describe("Integration Tests for Actions", () => {
@@ -38,7 +37,7 @@ describe("Integration Tests for Actions", () => {
 
         manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]).execute())
 
-                .add(new MuxPortChangeAction(m, m.getSelectPortCount().getValue(), 3).execute())
+                .add(CreateMuxPortChangeAction(m, 3).execute())
 
                 .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
                                      [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
@@ -68,12 +67,12 @@ describe("Integration Tests for Actions", () => {
 
         manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]).execute())
 
-                .add(new MuxPortChangeAction(m, m.getSelectPortCount().getValue(), 3).execute())
+                .add(CreateMuxPortChangeAction(m, 3).execute())
 
                 .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
                                      [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
 
-                .add(new MuxPortChangeAction(m, m.getSelectPortCount().getValue(), 2).execute())
+                .add(CreateMuxPortChangeAction(m, 2).execute())
 
                 .undo().undo().undo().undo()
                 .redo().redo().redo().redo()

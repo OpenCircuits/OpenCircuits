@@ -16,13 +16,14 @@ export class InputPortChangeAction extends PortChangeAction {
     /**
      * This code constructs the obj with the new number of ports.
      *
-     * @param obj     The object being changed.
-     * @param initial Number of ports.
-     * @param target  Number of ports.
+     * @param obj    The object being changed.
+     * @param target Number of ports.
      */
-    public constructor(obj: DigitalComponent, initial: number, target: number) {
-        super(obj.getDesigner(), target, initial);
+    public constructor(obj: DigitalComponent, target: number) {
+        super(obj.getDesigner(), target);
         this.obj = obj;
+
+        this.execute();
     }
 
     /**
@@ -57,7 +58,6 @@ export class InputPortChangeAction extends PortChangeAction {
     }
 
     public getName(): string {
-        return "Inport Change";
+        return "Input port Change";
     }
-
 }

@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
+import {CreateCoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
 
 import {Encoder} from "digital/models/ioobjects";
 
@@ -35,7 +35,7 @@ export const OutputCountModule = ({ info }: Props) => {
                 alt="Number of outputs object(s) have"
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => new CoderPortChangeAction(o, o.getOutputPortCount().getValue(), newCounts[i])),
+                        cs.map((o,i) => CreateCoderPortChangeAction(o, newCounts[i])),
                         "Output Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

@@ -35,7 +35,7 @@ export const ComparatorInputCountModule = ({ info }: Props) => {
                 alt="Number of inputs object(s) have"
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => new InputPortChangeAction(o, o.getInputPortCount().getValue()/2, newCounts[i])),
+                        cs.map((o,i) => new InputPortChangeAction(o, 2*newCounts[i])),
                         "Comparator Input Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

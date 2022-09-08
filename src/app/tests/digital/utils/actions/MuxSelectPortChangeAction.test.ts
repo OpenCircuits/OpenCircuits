@@ -2,7 +2,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 import {ConnectionAction} from "core/actions/addition/ConnectionAction";
 
-import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {CreateMuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -27,7 +27,7 @@ describe("Select Port Change Action", () => {
         expect(mux.getOutputPortCount().getValue()).toBe(1);
 
         // change select port count
-        const a1 = new MuxPortChangeAction(mux, mux.getSelectPortCount().getValue(), 4).execute();
+        const a1 = CreateMuxPortChangeAction(mux, 4).execute();
 
         // initial
         expect(mux.getSelectPortCount().getValue()).toBe(4);
@@ -61,7 +61,7 @@ describe("Select Port Change Action", () => {
         expect(designer.getWires()).toHaveLength(3);
 
         // change select port count
-        const a1 = new MuxPortChangeAction(mux, mux.getSelectPortCount().getValue(), 1).execute();
+        const a1 = CreateMuxPortChangeAction(mux, 1).execute();
 
         // initial
         expect(designer.getObjects()).toHaveLength(2);

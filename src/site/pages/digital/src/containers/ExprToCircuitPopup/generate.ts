@@ -87,7 +87,7 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, options: E
     // Connect clocks to oscilloscope
     if (options.connectClocksToOscope) {
         inIndex = 0;
-        action.add(new InputPortChangeAction(o, 1, Math.min(inputMap.size + 1, 6)).execute());
+        action.add(new InputPortChangeAction(o, Math.min(inputMap.size + 1, 6)).execute());
         for (const clock of inputMap.values()) {
             action.add(new ConnectionAction(designer, clock.getOutputPort(0), o.getInputPort(inIndex + 1)).execute());
             inIndex++;

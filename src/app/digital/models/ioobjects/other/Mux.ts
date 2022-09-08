@@ -26,11 +26,12 @@ export abstract class Mux extends DigitalComponent {
                         selectPositioner: Positioner<InputPort>,
                         inputPositioner?: Positioner<InputPort>,
                         outputPositioner?: Positioner<OutputPort>) {
-        super(inputPortCount, outputPortCount, Mux.CalcSize(MUX_DEFAULT_SELECT_PORTS),
-                inputPositioner, outputPositioner);
+        super(inputPortCount, outputPortCount, V(), inputPositioner, outputPositioner);
 
-        this.selects = new PortSet<InputPort>(this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
-                                              selectPositioner, InputPort as new (c: Component) => InputPort);
+        this.selects = new PortSet<InputPort>(
+            this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
+            selectPositioner, InputPort as new (c: Component) => InputPort
+        );
 
         this.setSelectPortCount(MUX_DEFAULT_SELECT_PORTS);
     }
@@ -43,6 +44,10 @@ export abstract class Mux extends DigitalComponent {
     }
 
     public setSelectPortCount(val: number): void {
+        // Update size (before setting ports since their positions are based on the size)
+        const newSize = V((0.5 + val/2), (1 + Math.pow(2, val - 1))).scale(DEFAULT_SIZE);
+        this.setSize(newSize);
+
         this.selects.setPortCount(val);
 
         // Update input port positions and port names
@@ -84,15 +89,4 @@ export abstract class Mux extends DigitalComponent {
     public getPorts(): Port[] {
         return [...super.getPorts(), ...this.getSelectPorts()];
     }
-
-    /**
-     * Calculates the size for a Mux with a number of selectors.
-     *
-     * @param ports Number of selectors.
-     * @returns       A Vector of the size for a Mux.
-     */
-    public static CalcSize(ports: number): Vector {
-        return V((0.5 + ports/2) * DEFAULT_SIZE, (1 + Math.pow(2, ports - 1)) * DEFAULT_SIZE);
-    }
-
 }

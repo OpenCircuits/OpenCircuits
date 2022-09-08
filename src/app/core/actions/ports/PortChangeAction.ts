@@ -17,11 +17,11 @@ export abstract class PortChangeAction implements Action {
 
     private wireDeletionAction: GroupAction;
 
-    protected constructor(designer: CircuitDesigner | undefined, target: number, initialCount: number) {
+    protected constructor(designer: CircuitDesigner | undefined, target: number) {
         this.designer = designer;
 
         this.targetCount = target;
-        this.initialCount = initialCount;
+        this.initialCount = this.getPorts().length;
     }
 
     private createAction(): GroupAction {

@@ -1,5 +1,5 @@
-
-import {Action} from "core/actions/Action";
+import {Action}      from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
 
 import {PortChangeAction} from "core/actions/ports/PortChangeAction";
 
@@ -18,35 +18,36 @@ import {OutputPortChangeAction} from "./OutputPortChangeAction";
  * 2 to the power of the number of selector inputs chosen.
  * Ex.) input count = 3, then the number of inputs changes to 2^3 or 8.
  * The actual size of the mux object is also changed accordingly.
+ *
+ * @param obj    Refers to the Mux object.
+ * @param target Refers to the new number of inputs requested.
+ * @returns        A port change action for mux's.
  */
-export class MuxPortChangeAction extends PortChangeAction {
+export function CreateMuxPortChangeAction(obj: Mux, target: number) {
+    return new GroupAction([
+        new SelectPortChangeAction(obj, target),
+        (obj instanceof Multiplexer
+            ?  new InputPortChangeAction(obj, Math.pow(2, target))
+            : new OutputPortChangeAction(obj, Math.pow(2, target))),
+    ]);
+}
+
+export class SelectPortChangeAction extends PortChangeAction {
     protected obj: Mux;
 
     protected otherPortAction: PortChangeAction;
 
     /**
-     * Either changes the size of the inputs if it's a multiplexor or the outputs if it's a Demux.
+     * Sets the number of select ports on the object.
      *
-     * @param obj     Refers to the Mux object.
-     * @param initial Refers to the initial number of inputs.
-     * @param target  Refers to the new number of inputs requested.
+     * @param obj    The object being changed.
+     * @param target Number of ports.
      */
-    public constructor(obj: Mux, initial: number, target: number) {
-        super(obj.getDesigner(), target, initial);
+    public constructor(obj: Mux, target: number) {
+        super(obj.getDesigner(), target);
         this.obj = obj;
 
-        this.otherPortAction = obj instanceof Multiplexer
-                               ? new InputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target))
-                               : new OutputPortChangeAction(obj, Math.pow(2, initial), Math.pow(2, target));
-    }
-
-    /**
-     * This function changes the width and height of the obj based on the number of ports chosen.
-     *
-     * @param val The target number the user chose.
-     */
-    protected changeSize(val: number): void {
-        this.obj.setSize(Mux.CalcSize(val));
+        this.execute();
     }
 
     /**
@@ -65,11 +66,7 @@ export class MuxPortChangeAction extends PortChangeAction {
      * @returns The new obj with the new size and number of ports.
      */
     public execute(): Action {
-        // Change size first
-        this.changeSize(this.targetCount);
-
         super.execute();
-        this.otherPortAction.execute();
         this.obj.setSelectPortCount(this.targetCount);
         return this;
     }
@@ -80,17 +77,13 @@ export class MuxPortChangeAction extends PortChangeAction {
      * @returns The new object with the initial size and number of ports.
      */
     public undo(): Action {
-        // Change size back first
-        this.changeSize(this.initialCount);
-
         this.obj.setSelectPortCount(this.initialCount);
-        this.otherPortAction.undo();
         super.undo();
         return this;
     }
 
     public getName(): string {
-        return "Mux Port Change";
+        return "Select Port Change";
     }
 
 }
