@@ -104,7 +104,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
             CreateAddGroupAction(designer, new IOObjectSet(objs)),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map((o) => o.getPos()), comps.map((o) => o.getPos().add(targetPosShift))),
+            new TranslateAction(comps, comps.map((o) => o.getPos().add(targetPosShift))),
         ]).execute());
 
         history.add(action);

@@ -40,7 +40,6 @@ export const PositionModule = ({ info }: Props) => {
                 props={props.x.map((x, i) => V(x, props.y[i]))}
                 getAction={(newVals) => new TranslateAction(
                     cs,
-                    cs.map((c) => c.getPos()),
                     cs.map((_,i) => V(newVals[i].x*100, newVals[i].y*100),
                 ))}
                 getCustomDisplayVal={(v) => V(

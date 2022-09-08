@@ -23,20 +23,20 @@ import {DeleteAction, PlaceAction}          from "./PlaceAction";
  */
 export function CreateSplitWireAction(designer: CircuitDesigner, w: Wire, port: Node): GroupAction {
     const action = new GroupAction([], "Split Wire Action");
-    action.add(new DisconnectAction(designer, w).execute());
-    action.add(new PlaceAction(designer, port).execute());
+    action.add(new DisconnectAction(designer, w));
+    action.add(new PlaceAction(designer, port));
 
     // Creates and saves new ConnectionAction to a var and then executes the action.
     const con1 = new ConnectionAction(designer, w.getP1(), port.getP1());
-    action.add(con1.execute());
+    action.add(con1);
 
     // After execution the color of the first half of the new wire is set to the color of the old wire.
-    action.add(new SetPropertyAction(con1.getWire(), "color", w.getProp("color")).execute());
+    action.add(new SetPropertyAction(con1.getWire(), "color", w.getProp("color")));
 
     // Repeats same process for the other half of the split wire.
     const con2 = new ConnectionAction(designer, port.getP2(), w.getP2());
-    action.add(con2.execute());
-    action.add(new SetPropertyAction(con2.getWire(), "color", w.getProp("color")).execute());
+    action.add(con2);
+    action.add(new SetPropertyAction(con2.getWire(), "color", w.getProp("color")));
 
     return action;
 }
@@ -61,12 +61,12 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
 
     const action = new GroupAction([], "Snip Wire Action");
 
-    action.add(new DisconnectAction(designer, wires[0]).execute());
-    action.add(new DisconnectAction(designer, wires[1]).execute());
-    action.add(new DeleteAction(designer, port).execute());
+    action.add(new DisconnectAction(designer, wires[0]));
+    action.add(new DisconnectAction(designer, wires[1]));
+    action.add(new DeleteAction(designer, port));
 
     const con1 = new ConnectionAction(designer, ports[0], ports[1]);
-    action.add(con1.execute());
+    action.add(con1);
 
     // Change color on new wire that's a blend between the two wires
     action.add(new SetPropertyAction(
@@ -75,7 +75,7 @@ export function CreateSnipWireAction(designer: CircuitDesigner, port: Node): Gro
             parseColor(wires[0].getProp("color") as string),
             parseColor(wires[1].getProp("color") as string), 0.5
         )),
-    ).execute());
+    ));
 
     return action;
 }

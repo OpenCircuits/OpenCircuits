@@ -79,8 +79,11 @@ export const TranslateTool: Tool = (() => {
         onDeactivate({}: Event, { history }: CircuitInfo): void {
             const finalPositions = components.map((o) => o.getPos());
 
+            // Translate back to original position, so that it undo's properly
+            new TranslateAction(components, initalPositions);
+
             history.add(
-                action.add(new TranslateAction(components, initalPositions, finalPositions))
+                action.add(new TranslateAction(components, finalPositions))
             );
         },
 
@@ -111,7 +114,7 @@ export const TranslateTool: Tool = (() => {
 
                     const snapToConnections = input.isShiftKeyDown() ? false : true;
                     // Execute translate but don't save to group
-                    new TranslateAction(components, initalPositions, newPositions, snapToConnections).execute();
+                    new TranslateAction(components, newPositions, snapToConnections);
 
                     return true;
 
@@ -147,11 +150,7 @@ export const TranslateTool: Tool = (() => {
                         input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL
                     );
 
-                    new TranslateAction(
-                        components,
-                        initalPositions,
-                        initalPositions.map((p) => p.add(deltaPos.scale(factor)))
-                    ).execute();
+                    new TranslateAction(components, initalPositions.map((p) => p.add(deltaPos.scale(factor))));
 
                     return true;
             }

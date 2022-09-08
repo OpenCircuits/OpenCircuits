@@ -66,7 +66,7 @@ export const SplitWireTool: Tool = (() => {
             initialPosition = camera.getWorldPos(input.getMouseDownPos());
         },
         onDeactivate({}: Event, { history }: CircuitInfo): void {
-            history.add(action.add(new TranslateAction([port], [initialPosition], [port.getPos()])));
+            history.add(action.add(new TranslateAction([port], [port.getPos()])));
         },
 
 
@@ -87,7 +87,7 @@ export const SplitWireTool: Tool = (() => {
 
             // Execute translate but don't save to group
             //  action since we do that onDeactivate
-            new TranslateAction([port], [initialPosition], [newPosition]).execute();
+            new TranslateAction([port], [newPosition]);
 
             return true;
         },

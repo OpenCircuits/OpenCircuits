@@ -39,15 +39,14 @@ export class TranslateAction implements Action {
      * Each component in objs list has corresponding initial position and target position in those
      * respective lists.
      *
-     * @param objs             Initializes the array with the selected component(s).
-     * @param initialPositions Initializes the array with the selected components' starting positions.
-     * @param targetPositions  Initializes the array with the selected components' final positions.
-     * @param snap             Sets whether or not components will snap. Defaults to true.
+     * @param objs            Initializes the array with the selected component(s).
+     * @param targetPositions Initializes the array with the selected components' final positions.
+     * @param snap            Sets whether or not components will snap. Defaults to true.
      */
-    public constructor(objs: Component[], initialPositions: Vector[], targetPositions: Vector[], snap = true) {
+    public constructor(objs: Component[], targetPositions: Vector[], snap = true) {
         this.objs = objs;
 
-        this.initialPositions = initialPositions;
+        this.initialPositions = objs.map((o) => o.getPos());
         this.targetPositions = targetPositions;
         this.snap = snap;
 

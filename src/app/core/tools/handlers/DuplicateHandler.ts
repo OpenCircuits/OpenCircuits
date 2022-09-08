@@ -34,11 +34,9 @@ export const DuplicateHandler: EventHandler = ({
         // Copy the group and then select them and move them over slightly
         history.add(new GroupAction([
             CreateAddGroupAction(designer, copies),
-            CreateDeselectAllAction(selections).execute(),
-            CreateGroupSelectAction(selections, components).execute(),
-            new TranslateAction(components,
-                                components.map((o) => o.getPos()),
-                                components.map((o) => o.getPos().add(V(5, 5)))).execute(),
+            CreateDeselectAllAction(selections),
+            CreateGroupSelectAction(selections, components),
+            new TranslateAction(components, components.map((o) => o.getPos().add(V(5, 5)))),
         ], "Duplicate Handler"));
     },
 });

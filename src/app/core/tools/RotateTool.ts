@@ -73,11 +73,16 @@ export const RotateTool = (() => {
             const finalAngles = components.map((o) => o.getAngle());
             const finalPositions = components.map((o) => o.getPos());
 
+            // Translate and rotate back to original position, so that it undo's properly
+            // TODO: use a `tempAction` instead so that they don't need to be stored
+            new TranslateAction(components, initialPositions);
+            components.forEach((c, i) => new RotateAction(c, initialAngles[i]));
+
             history.add(
                 new GroupAction([
-                    new TranslateAction(components, initialPositions, finalPositions),
+                    new TranslateAction(components, finalPositions),
                     new GroupAction(
-                        components.map((o,i) => new RotateAction(o, initialAngles[i], finalAngles[i])),
+                        components.map((o,i) => new RotateAction(o, finalAngles[i])),
                         "Rotation"
                     ),
                 ], "Rotation")

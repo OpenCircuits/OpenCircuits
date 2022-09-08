@@ -37,8 +37,6 @@ import {DigitalCircuitDesigner, DigitalComponent, DigitalObjectSet} from "digita
 import {Clock, IC, ICData, Label} from "digital/models/ioobjects";
 
 
-
-
 export type ExprToCirGeneratorOptions = {
     input: InputTypes;
     output: OutputTypes;
@@ -71,7 +69,7 @@ function addLabels(inputMap: Map<string, DigitalComponent>, action: GroupAction,
         const pos = component.getPos().sub(newLabel.getSize().x + component.getSize().x, 0);
         action.add(new PlaceAction(designer, newLabel).execute());
         action.add(new SetNameAction(newLabel, name).execute());
-        action.add(new TranslateAction([newLabel], [newLabel.getPos()], [pos]).execute());
+        action.add(new TranslateAction([newLabel], [pos]).execute());
         circuitComponents.push(newLabel);
     }
 }
@@ -108,7 +106,7 @@ function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], ex
     action.add(new CreateICDataAction(data, info.designer).execute());
     action.add(CreateDeleteGroupAction(info.designer, circuitComponents).execute());
     action.add(new PlaceAction(info.designer, ic).execute());
-    action.add(new TranslateAction([ic], [ic.getPos()], [info.camera.getPos()]).execute());
+    action.add(new TranslateAction([ic], [info.camera.getPos()]).execute());
     action.add(new SelectAction(info.selections, ic).execute());
 }
 
