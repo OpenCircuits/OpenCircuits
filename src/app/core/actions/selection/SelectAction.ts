@@ -17,6 +17,8 @@ export class SelectAction extends ReversableAction {
 
         this.selections = selections;
         this.obj = obj;
+
+        this.execute();
     }
 
     protected normalExecute(): Action {

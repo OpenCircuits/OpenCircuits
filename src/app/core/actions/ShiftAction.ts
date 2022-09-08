@@ -14,6 +14,8 @@ export class ShiftAction implements Action {
     public constructor(designer: CircuitDesigner, obj: Component | Wire) {
         this.designer = designer;
         this.obj = obj;
+
+        this.execute();
     }
 
     public execute(): Action {

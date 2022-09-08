@@ -22,6 +22,8 @@ export class MoveCameraAction implements Action {
 
         this.initialZoom = camera.getZoom();
         this.finalZoom = finalZoom;
+
+        this.execute();
     }
 
     public execute(): Action {

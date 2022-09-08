@@ -1,11 +1,12 @@
-import {Action} from "core/actions/Action";
+import {Action}           from "core/actions/Action";
+import {ReversableAction} from "core/actions/ReversableAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
 
-export class CreateICDataAction implements Action {
+export class CreateICDataAction extends ReversableAction {
     /**
      * The ICData of the action.
      */
@@ -20,10 +21,15 @@ export class CreateICDataAction implements Action {
      *
      * @param data   The ICData.
      * @param target The target dessigner that we want to add ICData to it.
+     * @param flip   A boolean to mark if this should be a deletion action.
      */
-    public constructor(data: ICData, target: DigitalCircuitDesigner) {
+    public constructor(data: ICData, target: DigitalCircuitDesigner, flip = false) {
+        super(flip);
+
         this.data = data;
         this.target = target;
+
+        this.execute();
     }
 
     /**
@@ -31,7 +37,7 @@ export class CreateICDataAction implements Action {
      *
      * @returns This action.
      */
-    public execute(): Action {
+    public override normalExecute(): Action {
         this.target.addICData(this.data);
         return this;
     }
@@ -41,12 +47,18 @@ export class CreateICDataAction implements Action {
       *
       * @returns This action.
       */
-    public undo(): Action {
+    public override normalUndo(): Action {
         this.target.removeICData(this.data);
         return this;
     }
 
     public getName(): string {
         return "Create IC Data";
+    }
+}
+
+export class DeleteICDataAction extends CreateICDataAction {
+    public constructor(data: ICData, target: DigitalCircuitDesigner) {
+        super(data, target, true);
     }
 }

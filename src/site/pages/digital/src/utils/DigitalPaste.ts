@@ -17,7 +17,7 @@ import {Component, IOObject} from "core/models";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {TransferICDataAction} from "digital/actions/TransferICDataAction";
+import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -58,9 +58,12 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
     });
 
     // Transfer the new ICData
-    const action = new GroupAction([
-        new TransferICDataAction(newICData, designer).execute(),
-    ], "Recursive Transfer ICData Action");
+    const action = new GroupAction(
+        newICData
+            // Filter out ICData that we already have
+            .filter((data) => !designer.getICData().includes(data))
+            .map((data) => new CreateICDataAction(data, designer)),
+    "Transfer ICData");
 
     // Recursively look through all the new ICs for new ICData
     newICData.forEach((d) => {

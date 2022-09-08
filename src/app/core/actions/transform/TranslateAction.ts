@@ -50,6 +50,8 @@ export class TranslateAction implements Action {
         this.initialPositions = initialPositions;
         this.targetPositions = targetPositions;
         this.snap = snap;
+
+        this.execute();
     }
 
     /**

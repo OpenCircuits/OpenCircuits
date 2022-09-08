@@ -36,6 +36,8 @@ export class RotateAction implements Action {
         this.obj = obj;
         this.initialAngle = initialAngle;
         this.finalAngle = finalAngle;
+
+        this.execute();
     }
 
     /**

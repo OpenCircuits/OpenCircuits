@@ -6,7 +6,7 @@ import {Component} from "core/models";
 import {IsICDataInUse}      from "digital/utils/ComponentUtils";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {DeleteICDataAction} from "digital/actions/DeleteICDataAction";
+import {DeleteICDataAction} from "digital/actions/CreateICDataAction";
 
 import {DigitalComponent, DigitalEvent, InputPort, OutputPort} from "digital/models";
 

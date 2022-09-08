@@ -21,6 +21,8 @@ export class SetPropertyAction implements Action {
         this.propKey = key;
         this.initialProp = obj.getProp(key);
         this.targetProp = prop;
+
+        this.execute();
     }
 
     public execute(): Action {

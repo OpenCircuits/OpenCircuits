@@ -12,6 +12,8 @@ export class SetNameAction implements Action {
         this.obj = o;
         this.newName = newName;
         this.oldName = o.getName();
+
+        this.execute();
     }
 
     public execute(): Action {
