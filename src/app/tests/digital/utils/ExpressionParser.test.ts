@@ -1,7 +1,10 @@
+
 import {InputToken, InputTreeBinOpNode, InputTreeIdent,
         InputTreeUnOpNode, OperatorFormat,
         Token} from "digital/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
+
+import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
 
 import {ExpressionToCircuit} from "digital/utils/ExpressionParser";
 
@@ -63,7 +66,7 @@ function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, 
                         2**inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
-    designer.addGroup(circuit);
+    CreateAddGroupAction(designer, circuit);
 
     // Decrements because there can be weird propagation issues when trying to read initial state
     // For more, see issues #468 and #613
@@ -103,7 +106,7 @@ function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjec
                         2 ** inputs.length + ")");
 
     const designer = new DigitalCircuitDesigner(0);
-    designer.addGroup(circuit);
+    CreateAddGroupAction(designer, circuit);
 
     // Decrements because there can be weird propagation issues when trying to read initial state
     // For more, see issues #468 and #613
@@ -521,7 +524,7 @@ describe("Expression Parser", () => {
             ]);
 
             const objectSet = ExpressionToCircuit(inputMap, "a", o);
-            designer.addGroup(objectSet);
+            CreateAddGroupAction(designer, objectSet);
 
             test("Initial State", () => {
                 expect(o.isOn()).toBe(true);
@@ -536,7 +539,7 @@ describe("Expression Parser", () => {
             ]);
 
             const objectSet = ExpressionToCircuit(inputMap, "a", o);
-            designer.addGroup(objectSet);
+            CreateAddGroupAction(designer, objectSet);
 
             test("Initial State", () => {
                 expect(o.isOn()).toBe(false);

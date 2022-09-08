@@ -4,8 +4,8 @@ import {CreateDigitalComponent, GenerateReplacementList, GetReplacements} from "
 
 import {CreateICDataAction} from "digital/actions/CreateICDataAction";
 
-import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
-import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {CreateCoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
+import {InputPortChangeAction}       from "digital/actions/ports/InputPortChangeAction";
 
 import {DigitalCircuitDesigner} from "digital/models";
 
@@ -50,7 +50,7 @@ describe("ReplaceDigitalComponentHelpers", () => {
             const expected = ["ANDGate", "Encoder", "ic/0", "ORGate"];
             expect(filteredList.map((entry) => entry.id).sort()).toEqual(expected.sort());
 
-            new InputPortChangeAction(comp, comp.getInputPortCount().getValue(), 8);
+            new InputPortChangeAction(comp, 8);
             const filteredList2 = GetReplacements(comp, designer, list);
             const expected2 = ["ANDGate", "ORGate"];
             expect(filteredList2.map((entry) => entry.id).sort()).toEqual(expected2.sort());
@@ -69,7 +69,7 @@ describe("ReplaceDigitalComponentHelpers", () => {
             const expected = ["Encoder"];
             expect(filteredList.map((entry) => entry.id).sort()).toEqual(expected.sort());
 
-            new CoderPortChangeAction(comp, comp.getOutputPortCount().getValue(), 1);
+            CreateCoderPortChangeAction(comp, 1);
             const filteredList2 = GetReplacements(comp, designer, list);
             const expected2 = ["ANDGate", "Encoder", "ic/0", "ORGate"];
             expect(filteredList2.map((entry) => entry.id).sort()).toEqual(expected2.sort());
