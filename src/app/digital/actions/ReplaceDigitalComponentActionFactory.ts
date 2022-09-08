@@ -84,7 +84,5 @@ export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesi
     // Finally, delete the original component
     action.add(new DeleteAction(designer, comp));
 
-    action.undo();
-
     return [action, replacementComponent];
 }
