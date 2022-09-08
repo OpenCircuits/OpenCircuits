@@ -2,11 +2,10 @@ import {GetPath} from "core/utils/ComponentUtils";
 
 import {Action} from "core/actions/Action";
 
-
 import {CircuitDesigner, Component, Port} from "core/models";
 
-import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
-import {GroupAction}            from "../GroupAction";
+import {DeletePath}  from "../compositions/DeletePath";
+import {GroupAction} from "../GroupAction";
 
 
 export abstract class PortChangeAction<T extends Component> implements Action {
@@ -36,7 +35,7 @@ export abstract class PortChangeAction<T extends Component> implements Action {
             const wires = ports.pop()!.getWires();
             if (wires.length > 0 && !this.designer)
                 throw new Error("PortChangeAction failed: designer not found");
-            action.add(wires.map((w) => CreateDeletePathAction(this.designer!, GetPath(w))));
+            action.add(wires.map((w) => DeletePath(this.designer!, GetPath(w))));
         }
 
         return action;
@@ -64,5 +63,4 @@ export abstract class PortChangeAction<T extends Component> implements Action {
     public getName(): string {
         return "Port Change";
     }
-
 }

@@ -5,7 +5,7 @@ import {Camera} from "math/Camera";
 import {Action} from "core/actions/Action";
 
 
-export class MoveCameraAction implements Action {
+class MoveCameraAction implements Action {
     protected camera: Camera;
 
     protected initialPos: Vector;
@@ -44,4 +44,8 @@ export class MoveCameraAction implements Action {
         return "Moved Camera"
     }
 
+}
+
+export function MoveCamera(camera: Camera, finalPos: Vector, finalZoom: number) {
+    return new MoveCameraAction(camera, finalPos, finalZoom);
 }

@@ -7,12 +7,11 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
+import {SplitWire} from "core/actions/compositions/SplitWire";
 
-import {CreateDeselectAllAction,
-        SelectAction}          from "core/actions/selection/SelectAction";
+import {CreateDeselectAllAction, Select} from "core/actions/units/Select";
 
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {Translate} from "core/actions/units/Translate";
 
 import {Tool} from "core/tools/Tool";
 
@@ -57,8 +56,8 @@ export const SplitWireTool: Tool = (() => {
 
             // Set wireport as selection and being pressed
             action.add(CreateDeselectAllAction(selections));
-            action.add(new SelectAction(selections, port));
-            action.add(CreateSplitWireAction(designer, wire, port));
+            action.add(Select(selections, port));
+            action.add(SplitWire(designer, wire, port));
 
             info.currentlyPressedObject = port;
 
@@ -66,7 +65,7 @@ export const SplitWireTool: Tool = (() => {
             initialPosition = camera.getWorldPos(input.getMouseDownPos());
         },
         onDeactivate({}: Event, { history }: CircuitInfo): void {
-            history.add(action.add(new TranslateAction([port], [port.getPos()])));
+            history.add(action.add(Translate([port], [port.getPos()])));
         },
 
 
@@ -87,7 +86,7 @@ export const SplitWireTool: Tool = (() => {
 
             // Execute translate but don't save to group
             //  action since we do that onDeactivate
-            new TranslateAction([port], [newPosition]);
+            Translate([port], [newPosition]);
 
             return true;
         },

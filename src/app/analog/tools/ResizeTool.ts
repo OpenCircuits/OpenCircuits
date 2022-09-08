@@ -7,12 +7,13 @@ import {Rect} from "math/Rect";
 import {Cursor} from "core/utils/CircuitInfo";
 import {Event}  from "core/utils/Events";
 
-import {Action}            from "core/actions/Action";
-import {GroupAction}       from "core/actions/GroupAction";
-import {SetPropertyAction} from "core/actions/SetPropertyAction";
-import {ShiftAction}       from "core/actions/ShiftAction";
+import {Action}      from "core/actions/Action";
+import {GroupAction} from "core/actions/GroupAction";
+import {Shift} from "core/actions/units/Shift";
 
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {SetProperty} from "core/actions/units/SetProperty";
+
+import {Translate} from "core/actions/units/Translate";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
@@ -79,9 +80,9 @@ export const ResizeTool = (() => {
             const newRect = curRect.shift(dir!, V(amtX, amtY));
 
             tempAction = new GroupAction([
-                new ShiftAction(designer, obj!),
-                new TranslateAction([obj!], [obj!.getPos()], [newRect.center]),
-                new SetPropertyAction(obj!, "size", Vector.Max(V(400, 200), newRect.size)),
+                Shift(designer, obj!),
+                Translate([obj!], [newRect.center]),
+                SetProperty(obj!, "size", Vector.Max(V(400, 200), newRect.size)),
             ]);
 
             // Return true since we did something

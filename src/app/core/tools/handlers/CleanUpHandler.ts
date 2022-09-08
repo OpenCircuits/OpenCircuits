@@ -4,8 +4,8 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {RotateAction}    from "core/actions/transform/RotateAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {Rotate}    from "core/actions/units/Rotate";
+import {Translate} from "core/actions/units/Translate";
 
 import {Component} from "core/models";
 
@@ -30,8 +30,8 @@ export const CleanUpHandler: EventHandler = ({
             return;
 
         history.add(new GroupAction([
-            ...components.map((c) => new RotateAction(c, 0)),
-            new TranslateAction(components, components.map((o) => Snap(o.getPos()))),
+            ...components.map((c) => Rotate(c, 0)),
+            Translate(components, components.map((o) => Snap(o.getPos()))),
         ], "Clean Up Handler"));
     },
 });

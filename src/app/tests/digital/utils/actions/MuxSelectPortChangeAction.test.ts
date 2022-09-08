@@ -1,6 +1,6 @@
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Connect as CreateConnection} from "core/actions/units/Connect";
 
 import {CreateMuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
 
@@ -53,7 +53,7 @@ describe("Select Port Change Action", () => {
         // Connect switch to node and then then to input and select ports of Mux
         Connect(sw, n);
         Connect(n, 0, mux, 3);
-        new ConnectionAction(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]);
+        CreateConnection(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]);
 
         expect(designer.getObjects()).toHaveLength(3);
         expect(designer.getWires()).toHaveLength(3);

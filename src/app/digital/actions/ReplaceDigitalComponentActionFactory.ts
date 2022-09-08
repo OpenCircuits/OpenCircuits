@@ -2,12 +2,12 @@ import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {DeleteAction, PlaceAction}          from "core/actions/addition/PlaceAction";
+import {Connect, Disconnect}     from "core/actions/units/Connect";
+import {Delete, Place}           from "core/actions/units/Place";
+import {CreateDeselectAllAction,
+        CreateGroupSelectAction} from "core/actions/units/Select";
 
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {Translate} from "core/actions/units/Translate";
 
 import {CreateDigitalComponent, GetPortChangeAction} from "digital/utils/ReplaceDigitalComponentHelpers";
 
@@ -49,11 +49,11 @@ export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesi
         replacementComponent.setName(comp.getName());
 
     // Move replacement to the replaced position
-    action.add(new TranslateAction([replacementComponent], [comp.getPos()]));
+    action.add(Translate([replacementComponent], [comp.getPos()]));
 
     if (selections)
         action.add(CreateDeselectAllAction(selections));
-    action.add(new PlaceAction(designer, replacementComponent));
+    action.add(Place(designer, replacementComponent));
     if (selections)
         action.add(CreateGroupSelectAction(selections, [replacementComponent]));
 
@@ -69,20 +69,20 @@ export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesi
     compInputs.forEach((port, index) => {
         [...port.getWires()].forEach((wire) => {
             const otherPort = wire.getInput();
-            action.add(new DisconnectAction(designer, wire));
-            action.add(new ConnectionAction(designer, repInputs[index], otherPort));
+            action.add(Disconnect(designer, wire));
+            action.add(Connect(designer, repInputs[index], otherPort));
         });
     });
     compOutputs.forEach((port, index) => {
         [...port.getWires()].forEach((wire) => {
             const otherPort = wire.getOutput();
-            action.add(new DisconnectAction(designer, wire));
-            action.add(new ConnectionAction(designer, repOutputs[index], otherPort));
+            action.add(Disconnect(designer, wire));
+            action.add(Connect(designer, repOutputs[index], otherPort));
         });
     });
 
     // Finally, delete the original component
-    action.add(new DeleteAction(designer, comp));
+    action.add(Delete(designer, comp));
 
     return [action, replacementComponent];
 }

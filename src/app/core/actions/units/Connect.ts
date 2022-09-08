@@ -6,14 +6,14 @@ import {Wire}            from "core/models/Wire";
 import {Port} from "core/models/ports/Port";
 
 import {GroupAction}      from "../GroupAction";
-import {ReversableAction} from "../ReversableAction";
+import {ReversableAction} from "../bases/ReversableAction";
 
 
 /**
  * ConnectionAction represents the action of connecting two
  * ports with a wire.
  */
-export class ConnectionAction extends ReversableAction {
+class ConnectionAction extends ReversableAction {
     private readonly designer: CircuitDesigner;
     private readonly wire: Wire;
 
@@ -99,20 +99,12 @@ export class ConnectionAction extends ReversableAction {
 
 }
 
-/**
- * DisconnectAction represents the action of disconnecting a Wire
- * from two Ports.
- */
-export class DisconnectAction extends ConnectionAction {
-    /**
-     * Initializes a DisconnectAction given a CircuitDesigner and a Wire.
-     *
-     * @param designer The CircuitDesigner the action is done on.
-     * @param wire     The Wire being disconnected.
-     */
-    public constructor(designer: CircuitDesigner, wire: Wire) {
-        super(designer, wire);
-    }
+export function Connect(designer: CircuitDesigner, p1: Port, p2: Port) {
+    return new ConnectionAction(designer, p1, p2);
+}
+
+export function Disconnect(designer: CircuitDesigner, wire: Wire) {
+    return new ConnectionAction(designer, wire);
 }
 
 /**
@@ -123,5 +115,8 @@ export class DisconnectAction extends ConnectionAction {
  * @returns          A GroupAction representing the DisconnectActions of each Wire.
  */
 export function CreateGroupDisconnectAction(designer: CircuitDesigner, wires: Wire[]): GroupAction {
-    return new GroupAction(wires.map((w) => new DisconnectAction(designer, w)), "Group Disconnect Action");
+    return new GroupAction(
+        wires.map((w) => Disconnect(designer, w)),
+        "Group Disconnect Action"
+    );
 }

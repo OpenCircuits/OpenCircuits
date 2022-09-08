@@ -3,9 +3,9 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+import {CreateDeselectAllAction} from "core/actions/units/Select";
 
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
 
 import {IOObject} from "core/models";
 
@@ -28,8 +28,7 @@ export const DeleteHandler: EventHandler = ({
         // Deselect the objects then remove them
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
-
-            CreateDeleteGroupAction(designer, objs),
+            DeleteGroup(designer, objs),
         ], "Delete Handler"));
 
     },

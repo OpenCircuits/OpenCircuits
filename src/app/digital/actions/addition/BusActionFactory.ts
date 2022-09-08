@@ -6,7 +6,7 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Connect} from "core/actions/units/Connect";
 
 import {Component, Port} from "core/models";
 
@@ -131,6 +131,6 @@ export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort
     // Connect Ports according to their target pos on the Average Component
     return new GroupAction(inputAngles.map((inputAngle, i) =>
         // Pop the ports out of their map so they only get used once
-        new ConnectionAction(designer, inputMap.get(inputAngle)!.pop()!, outputMap.get(outputAngles[i])!.pop()!)
+        Connect(designer, inputMap.get(inputAngle)!.pop()!, outputMap.get(outputAngles[i])!.pop()!)
     ), "Bus Action");
 }

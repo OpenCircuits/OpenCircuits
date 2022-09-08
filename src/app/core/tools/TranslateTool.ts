@@ -9,11 +9,11 @@ import {CopyGroup, Snap} from "core/utils/ComponentUtils";
 import {Event}           from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {ShiftAction} from "core/actions/ShiftAction";
+import {Shift} from "core/actions/units/Shift";
 
-import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
+import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {Translate} from "core/actions/units/Translate";
 
 import {Tool} from "core/tools/Tool";
 
@@ -68,7 +68,7 @@ export const TranslateTool: Tool = (() => {
             ) as Component[];
 
             action = new GroupAction([
-                new GroupAction(components.map((c) => new ShiftAction(designer, c)), "Shift Action"),
+                new GroupAction(components.map((c) => Shift(designer, c)), "Shift Action"),
             ], "Translate Tool", components.map((c) => `Translated ${c.getName()}.`));
 
             initalPositions = components.map((o) => o.getPos());
@@ -80,10 +80,10 @@ export const TranslateTool: Tool = (() => {
             const finalPositions = components.map((o) => o.getPos());
 
             // Translate back to original position, so that it undo's properly
-            new TranslateAction(components, initalPositions);
+            Translate(components, initalPositions);
 
             history.add(
-                action.add(new TranslateAction(components, finalPositions))
+                action.add(Translate(components, finalPositions))
             );
         },
 
@@ -114,7 +114,7 @@ export const TranslateTool: Tool = (() => {
 
                     const snapToConnections = input.isShiftKeyDown() ? false : true;
                     // Execute translate but don't save to group
-                    new TranslateAction(components, newPositions, snapToConnections);
+                    Translate(components, newPositions, snapToConnections);
 
                     return true;
 
@@ -122,7 +122,7 @@ export const TranslateTool: Tool = (() => {
                     // Duplicate group when we press the spacebar
                     if (event.key === " ") {
                         const copies = CopyGroup(components);
-                        history.add(CreateAddGroupAction(designer, copies));
+                        history.add(AddGroup(designer, copies));
                         return true;
                     }
                     break;
@@ -150,7 +150,7 @@ export const TranslateTool: Tool = (() => {
                         input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL
                     );
 
-                    new TranslateAction(components, initalPositions.map((p) => p.add(deltaPos.scale(factor))));
+                    Translate(components, initalPositions.map((p) => p.add(deltaPos.scale(factor))));
 
                     return true;
             }

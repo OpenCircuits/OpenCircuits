@@ -1,8 +1,8 @@
 import {HistoryManager} from "core/actions/HistoryManager";
 
-import {ConnectionAction}       from "core/actions/addition/ConnectionAction";
-import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
-import {CreateSplitWireAction}  from "core/actions/addition/SplitWireAction";
+import {Connect}       from "core/actions/units/Connect";
+import {PlaceGroup} from "core/actions/units/Place";
+import {SplitWire}  from "core/actions/compositions/SplitWire";
 
 import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
 
@@ -35,7 +35,7 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getObjects()).toHaveLength(0);
         expect(designer.getWires()).toHaveLength(0);
 
-        manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]))
+        manager.add(PlaceGroup(designer, [a,b,c,d,e,m]))
 
                 .add(CreateMuxPortChangeAction(m, 3))
 
@@ -65,7 +65,7 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getObjects()).toHaveLength(0);
         expect(designer.getWires()).toHaveLength(0);
 
-        manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]))
+        manager.add(PlaceGroup(designer, [a,b,c,d,e,m]))
 
                 .add(CreateMuxPortChangeAction(m, 3))
 
@@ -92,11 +92,11 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getObjects()).toHaveLength(0);
         expect(designer.getWires()).toHaveLength(0);
 
-        manager.add(CreateGroupPlaceAction(designer, [a,b]))
+        manager.add(PlaceGroup(designer, [a,b]))
 
-                .add(new ConnectionAction(designer, a.getOutputPort(0), b.getInputPort(0)))
+                .add(Connect(designer, a.getOutputPort(0), b.getInputPort(0)))
 
-                .add(CreateSplitWireAction(designer, a.getOutputs()[0], n))
+                .add(SplitWire(designer, a.getOutputs()[0], n))
 
                 .undo().undo().undo()
                 .redo().redo().redo()

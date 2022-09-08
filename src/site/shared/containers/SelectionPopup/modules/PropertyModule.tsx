@@ -4,7 +4,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Action}            from "core/actions/Action";
 import {GroupAction}       from "core/actions/GroupAction";
-import {SetPropertyAction} from "core/actions/SetPropertyAction";
+import {SetProperty} from "core/actions/units/SetProperty";
 
 import {IOObject} from "core/models";
 
@@ -99,7 +99,7 @@ const ModulePropInputField = ({
                     kind="string[]" props={units}
                     options={Object.entries(unit).map(([key, u]) => [u.display, key])}
                     getAction={(newVals) => new GroupAction(
-                        objs.map((a,i) => new SetPropertyAction(a, `${propKey}_U`, newVals[i]))
+                        objs.map((a,i) => SetProperty(a, `${propKey}_U`, newVals[i]))
                     )}
                     onSubmit={(info) => {
                         otherProps.onSubmit(info);
@@ -118,7 +118,7 @@ const ModulePropInputField = ({
                 kind={kind} min={info.min} max={info.max} step={info.step}
                 props={vvals}
                 getAction={(vals) => new GroupAction(
-                    objs.map((a,i) => new SetPropertyAction(a, propKey, vals[i]))
+                    objs.map((a,i) => SetProperty(a, propKey, vals[i]))
                 )} />
         );
     }
@@ -181,7 +181,7 @@ export const PropertyModule = ({ info }: Props) => {
         );
 
         const getAction = (newVals: Prop[]) => new GroupAction(
-            objs.map((a,i) => new SetPropertyAction(a, key, newVals[i]))
+            objs.map((a,i) => SetProperty(a, key, newVals[i]))
         );
         const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
             renderer.render();

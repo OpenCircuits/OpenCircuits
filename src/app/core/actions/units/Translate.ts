@@ -1,17 +1,17 @@
 import {Vector} from "Vector";
 
+import {SnapPos} from "core/utils/SnapUtils";
+
 import {Action} from "core/actions/Action";
 
 import {Component} from "core/models/Component";
-
-import {SnapPos} from "./SnapUtils";
 
 
 /**
  * Translate can be applied to single components or groups of components,
  * used for moving componets from one position to another.
  */
-export class TranslateAction implements Action {
+class TranslateAction implements Action {
 
     /**
      * An array of the selected component(s).
@@ -97,4 +97,8 @@ export class TranslateAction implements Action {
             }
         );
     }
+}
+
+export function Translate(objs: Component[], targetPositions: Vector[], snap = true) {
+    return new TranslateAction(objs, targetPositions, snap);
 }

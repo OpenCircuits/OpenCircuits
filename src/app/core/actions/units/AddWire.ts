@@ -4,7 +4,7 @@ import {Action} from "../Action";
 
 
 // TODO: delete this once model refactor is done
-export class AddWireAction implements Action {
+class AddWireAction implements Action {
     private readonly designer: CircuitDesigner;
     private readonly wire: Wire;
 
@@ -30,4 +30,8 @@ export class AddWireAction implements Action {
     public getName(): string {
         return "Added Wire Action"
     }
+}
+
+export function AddWire(designer: CircuitDesigner, wire: Wire) {
+    return new AddWireAction(designer, wire);
 }

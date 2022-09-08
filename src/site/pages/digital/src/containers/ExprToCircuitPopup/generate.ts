@@ -7,12 +7,13 @@ import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
 import {OrganizeMinDepth} from "core/utils/ComponentOrganizers";
 
 import {GroupAction}       from "core/actions/GroupAction";
-import {SetNameAction}     from "core/actions/SetNameAction";
-import {SetPropertyAction} from "core/actions/SetPropertyAction";
+import {SetProperty} from "core/actions/units/SetProperty";
 
 import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
 import {ConnectionAction}     from "core/actions/addition/ConnectionAction";
 import {PlaceAction}          from "core/actions/addition/PlaceAction";
+
+import {SetName} from "core/actions/units/SetName";
 
 import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
 
@@ -68,7 +69,7 @@ function addLabels(inputMap: Map<string, DigitalComponent>, action: GroupAction,
         const newLabel = Create<Label>("Label");
         const pos = component.getPos().sub(newLabel.getSize().x + component.getSize().x, 0);
         action.add(new PlaceAction(designer, newLabel));
-        action.add(new SetNameAction(newLabel, name));
+        action.add(SetName(newLabel, name));
         action.add(new TranslateAction([newLabel], [pos]));
         circuitComponents.push(newLabel);
     }
@@ -79,7 +80,7 @@ function setClocks(inputMap: Map<string, Clock>, action: GroupAction, options: E
     let inIndex = 0;
     // Set clock frequencies
     for (const clock of inputMap.values()) {
-        action.add(new SetPropertyAction(clock, "delay", 500 * (2 ** inIndex)));
+        action.add(SetProperty(clock, "delay", 500 * (2 ** inIndex)));
         inIndex = Math.min(inIndex + 1, 4);
     }
     // Connect clocks to oscilloscope
@@ -102,7 +103,7 @@ function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], ex
         throw new Error("Failed to create ICData");
     data.setName(expression);
     const ic = new IC(data);
-    action.add(new SetNameAction(ic, expression));
+    action.add(SetName(ic, expression));
     action.add(new CreateICDataAction(data, info.designer));
     action.add(CreateDeleteGroupAction(info.designer, circuitComponents));
     action.add(new PlaceAction(info.designer, ic));
@@ -125,12 +126,12 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
         if (token.type !== "input" || inputMap.has(token.name))
             continue;
         inputMap.set(token.name, Create<DigitalComponent>(options.input));
-        action.add(new SetNameAction(inputMap.get(token.name)!, token.name));
+        action.add(SetName(inputMap.get(token.name)!, token.name));
     }
 
     // Create output LED
     const o = Create<DigitalComponent>(options.output);
-    action.add(new SetNameAction(o, "Output"));
+    action.add(SetName(o, "Output"));
 
     // Get the generated circuit
     let circuit = new DigitalObjectSet();

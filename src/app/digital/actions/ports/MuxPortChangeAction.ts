@@ -1,7 +1,7 @@
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {PortChangeAction} from "core/actions/ports/PortChangeAction";
+import {PortChangeAction} from "core/actions/units/PortChangeAction";
 
 import {Port} from "core/models";
 

@@ -1,6 +1,6 @@
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
+import {SplitWire} from "core/actions/compositions/SplitWire";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -31,7 +31,7 @@ describe("Split Wire Action", () => {
         expect(b.getInputs()[0]).toBe(w);
 
         const n = new DigitalNode();
-        const ac = CreateSplitWireAction(designer, w, n);
+        const ac = SplitWire(designer, w, n);
 
         // after split
         expect(designer.getObjects()).toHaveLength(3);

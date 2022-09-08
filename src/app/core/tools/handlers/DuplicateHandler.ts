@@ -6,12 +6,12 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
+import {AddGroup} from "core/actions/compositions/AddGroup";
 
 import {CreateDeselectAllAction,
-        CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+        CreateGroupSelectAction} from "core/actions/units/Select";
 
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {Translate} from "core/actions/units/Translate";
 
 import {IOObject} from "core/models";
 
@@ -33,10 +33,10 @@ export const DuplicateHandler: EventHandler = ({
 
         // Copy the group and then select them and move them over slightly
         history.add(new GroupAction([
-            CreateAddGroupAction(designer, copies),
+            AddGroup(designer, copies),
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, components),
-            new TranslateAction(components, components.map((o) => o.getPos().add(V(5, 5)))),
+            Translate(components, components.map((o) => o.getPos().add(V(5, 5)))),
         ], "Duplicate Handler"));
     },
 });

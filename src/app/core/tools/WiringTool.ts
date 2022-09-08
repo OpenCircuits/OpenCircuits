@@ -6,7 +6,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
 import {Event}       from "core/utils/Events";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Connect} from "core/actions/units/Connect";
 
 import {Port, Wire} from "core/models";
 
@@ -108,7 +108,7 @@ export const WiringTool = (() => {
             // See if we ended on a port
             const port2 = findNearestPort(info,list);
             if (port2 !== undefined)
-                history.add(new ConnectionAction(designer, port, port2));
+                history.add(Connect(designer, port, port2));
         },
 
 

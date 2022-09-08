@@ -4,8 +4,6 @@ import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
-
 import {CreateICDataAction}                  from "digital/actions/CreateICDataAction";
 import {CreateReplaceDigitalComponentAction} from "digital/actions/ReplaceDigitalComponentActionFactory";
 

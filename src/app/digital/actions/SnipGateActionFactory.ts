@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 
-import {ConnectionAction, DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {DeleteAction}                       from "core/actions/addition/PlaceAction";
+import {Connect, Disconnect} from "core/actions/units/Connect";
+import {Delete} from "core/actions/units/Place";
 
 import {BUFGate} from "digital/models/ioobjects";
 
@@ -26,7 +26,7 @@ export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
     const outputs = gate.getOutputs();
 
     if (inputs.length === 0 || outputs.length === 0) {
-        action.add(new DeleteAction(designer, gate));
+        action.add(Delete(designer, gate));
         return action;
     }
 
@@ -34,13 +34,13 @@ export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
     const outputWires = outputs;
 
     const prevPort = inputWire.getInput();
-    action.add(new DisconnectAction(designer, inputWire));
+    action.add(Disconnect(designer, inputWire));
     for (const wire of outputWires) { // Typescript gives error on .add() if this is a .forEach() loop
         const newPort = wire.getOutput();
-        action.add(new DisconnectAction(designer, wire));
-        action.add(new ConnectionAction(designer, prevPort, newPort));
+        action.add(Disconnect(designer, wire));
+        action.add(Connect(designer, prevPort, newPort));
     }
-    action.add(new DeleteAction(designer, gate));
+    action.add(Delete(designer, gate));
 
     return action;
 }

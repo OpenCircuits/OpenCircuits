@@ -1,7 +1,7 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event}       from "core/utils/Events";
 
-import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+import {CreateGroupSelectAction} from "core/actions/units/Select";
 
 import {EventHandler} from "../EventHandler";
 

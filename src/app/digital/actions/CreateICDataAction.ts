@@ -1,5 +1,5 @@
 import {Action}           from "core/actions/Action";
-import {ReversableAction} from "core/actions/ReversableAction";
+import {ReversableAction} from "core/actions/bases/ReversableAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 

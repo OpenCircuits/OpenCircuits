@@ -5,7 +5,7 @@ import {IOObject} from "core/models";
 import {Prop} from "core/models/PropInfo";
 
 
-export class SetPropertyAction implements Action {
+class SetPropertyAction implements Action {
     private readonly obj: IOObject;
 
     private readonly propKey: string;
@@ -44,4 +44,8 @@ export class SetPropertyAction implements Action {
     public getCustomInfo(): string[] {
         return [`From ${this.initialProp} to ${this.targetProp}`];
     }
+}
+
+export function SetProperty(obj: IOObject, key: string, prop: Prop) {
+    return new SetPropertyAction(obj, key, prop);
 }

@@ -2,8 +2,8 @@ import {GatherGroup} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {DisconnectAction} from "core/actions/addition/ConnectionAction";
-import {DeleteAction}     from "core/actions/addition/PlaceAction";
+import {Disconnect} from "core/actions/units/Connect";
+import {Delete}     from "core/actions/units/Place";
 
 import {CircuitDesigner, IOObject, Node, isNode} from "core/models";
 
@@ -15,7 +15,7 @@ import {CircuitDesigner, IOObject, Node, isNode} from "core/models";
  * @param objects  Are the IOObjects that are being added to the DeleteGroupAction.
  * @returns          An action to delete the entire bundle of objects/connections.
  */
-export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
+export function DeleteGroup(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
     const action = new GroupAction([], "Delete Group Action");
 
     const allDeletions = GatherGroup(objects,false);
@@ -38,14 +38,15 @@ export function CreateDeleteGroupAction(designer: CircuitDesigner, objects: IOOb
         // call CreateDeleteGroupAction again but with the current node includes in `objects`
         // and then just return early
         if (found) // TODO: Make this better cause it's pretty inefficient
-            return CreateDeleteGroupAction(designer, [inputComp as IOObject, ...objects]);
+            return DeleteGroup(designer, [inputComp as IOObject, ...objects]);
     }
 
     // Create actions for deletion of wires then objects
     //  order matters because the components need to be added
     //  (when undoing) before the wires can be connected
-    action.add(wires.map((wire)     => new DisconnectAction(designer, wire)));
-    action.add(components.map((obj) => new DeleteAction(designer, obj)));
+    // eslint-disable-next-line space-in-parens
+    action.add(     wires.map((wire) => Disconnect(designer, wire)));
+    action.add(components.map((obj)  =>     Delete(designer, obj)));
 
     return action;
 }

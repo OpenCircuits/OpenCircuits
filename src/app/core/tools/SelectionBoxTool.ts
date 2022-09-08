@@ -11,7 +11,7 @@ import {Event}       from "core/utils/Events";
 import {GroupAction} from "core/actions/GroupAction";
 
 import {CreateDeselectAllAction,
-        CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+        CreateGroupSelectAction} from "core/actions/units/Select";
 
 
 export const SelectionBoxTool = (() => {

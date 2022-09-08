@@ -5,9 +5,9 @@ import {GetAllPorts} from "core/utils/ComponentUtils";
 import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
-import {ShiftAction} from "core/actions/ShiftAction";
 
-import {CreateDeselectAllAction, SelectAction} from "core/actions/selection/SelectAction";
+import {CreateDeselectAllAction, Deselect, Select} from "core/actions/units/Select";
+import {Shift}                                     from "core/actions/units/Shift";
 
 import {Wire} from "core/models";
 
@@ -40,8 +40,12 @@ export const SelectionHandler: EventHandler = ({
         if (obj && !(hitPort && isWire)) {
             // Select object
             const deselect = (input.isShiftKeyDown() && selections.has(obj));
-            action.add(new SelectAction(selections, obj, deselect));
-            action.add(new ShiftAction(designer, obj));
+            action.add((
+                deselect
+                ? Deselect(selections, obj)
+                : Select(selections, obj)
+            ));
+            action.add(Shift(designer, obj));
         }
 
         // https://github.com/OpenCircuits/OpenCircuits/issues/622

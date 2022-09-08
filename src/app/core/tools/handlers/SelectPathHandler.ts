@@ -4,7 +4,7 @@ import {CircuitInfo}               from "core/utils/CircuitInfo";
 import {GetComponentPath, GetPath} from "core/utils/ComponentUtils";
 import {Event}                     from "core/utils/Events";
 
-import {CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+import {CreateGroupSelectAction} from "core/actions/units/Select";
 
 import {Component, Wire} from "core/models";
 

@@ -4,13 +4,13 @@ import {CircuitDesigner} from "core/models/CircuitDesigner";
 import {Component}       from "core/models/Component";
 
 import {GroupAction}      from "../GroupAction";
-import {ReversableAction} from "../ReversableAction";
+import {ReversableAction} from "../bases/ReversableAction";
 
 
 /**
  * PlaceAction represents the action of placing a new Component into the CircuitDesigner.
  */
-export class PlaceAction extends ReversableAction {
+class PlaceAction extends ReversableAction {
     private readonly designer: CircuitDesigner;
     private readonly obj: Component;
 
@@ -58,14 +58,11 @@ export class PlaceAction extends ReversableAction {
 
 }
 
-/**
- * The DeleteAction represents the action of deleting a Component
- * from a CircuitDesigner. The DeleteAction is the reverse of a PlaceAction.
- */
-export class DeleteAction extends PlaceAction {
-    public constructor(designer: CircuitDesigner, obj: Component) {
-        super(designer, obj, true);
-    }
+export function Place(designer: CircuitDesigner, obj: Component) {
+    return new PlaceAction(designer, obj);
+}
+export function Delete(designer: CircuitDesigner, obj: Component) {
+    return new PlaceAction(designer, obj, true);
 }
 
 /**
@@ -75,6 +72,9 @@ export class DeleteAction extends PlaceAction {
  * @param objs     The Components of each action.
  * @returns          A GroupAction representing the PlaceActions of every Component.
  */
-export function CreateGroupPlaceAction(designer: CircuitDesigner, objs: Component[]): GroupAction {
-    return new GroupAction(objs.map((o) => new PlaceAction(designer, o)), "Group Place Action");
+export function PlaceGroup(designer: CircuitDesigner, objs: Component[]): GroupAction {
+    return new GroupAction(
+        objs.map((o) => new PlaceAction(designer, o)),
+        "Group Place Action"
+    );
 }

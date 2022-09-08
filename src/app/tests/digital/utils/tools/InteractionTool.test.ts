@@ -6,13 +6,12 @@ import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
 import {Setup}      from "test/helpers/Setup";
 
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {CreateDeselectAllAction} from "core/actions/units/Select";
 
 import {ANDGate, BUFGate,
         DigitalNode,
         LED,
         Multiplexer, Switch} from "digital/models/ioobjects";
-
 
 
 describe("Selection Tool", () => {
