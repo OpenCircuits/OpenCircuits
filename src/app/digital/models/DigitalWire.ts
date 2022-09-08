@@ -15,9 +15,9 @@ import {DigitalComponent, InputPort, OutputPort} from "./index";
 @serializable("DigitalWire")
 export class DigitalWire extends Wire {
     @serialize
-    protected p1: OutputPort;
+    protected override p1: OutputPort;
     @serialize
-    protected p2: InputPort;
+    protected override p2: InputPort;
 
     @serialize
     private isOn: boolean;
@@ -40,7 +40,7 @@ export class DigitalWire extends Wire {
             this.p2.activate(signal);
     }
 
-    public canConnectTo(port: Port): boolean {
+    public override canConnectTo(port: Port): boolean {
         if (!super.canConnectTo(port))
             return false;
 
@@ -75,7 +75,7 @@ export class DigitalWire extends Wire {
         return this.p2.getParent();
     }
 
-    public getDisplayColor(): string {
+    public override getDisplayColor(): string {
         return (this.getInput()?.getIsOn() ? DEFAULT_ON_COLOR : super.getDisplayColor());
     }
 

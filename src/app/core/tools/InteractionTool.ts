@@ -28,11 +28,11 @@ export class InteractionTool extends DefaultTool {
                                              o.isWithinSelectBounds(pos)));
     }
 
-    public onActivate(event: Event, info: CircuitInfo): boolean {
+    public override onActivate(event: Event, info: CircuitInfo): boolean {
         return this.onEvent(event, info);
     }
 
-    public onEvent(event: Event, info: CircuitInfo): boolean {
+    public override onEvent(event: Event, info: CircuitInfo): boolean {
         const { locked, input, camera, currentlyPressedObject } = info;
 
         const worldMousePos = camera.getWorldPos(input.getMousePos());

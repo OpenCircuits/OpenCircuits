@@ -123,7 +123,7 @@ export abstract class DigitalComponent extends Component {
         return [...this.getInputPorts(), ...this.getOutputPorts()];
     }
 
-    public getConnections(): DigitalWire[] {
+    public override getConnections(): DigitalWire[] {
         return [...this.getInputs(), ...this.getOutputs()];
     }
 

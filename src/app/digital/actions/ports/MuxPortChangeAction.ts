@@ -64,7 +64,7 @@ export class MuxPortChangeAction extends PortChangeAction {
      *
      * @returns The new obj with the new size and number of ports.
      */
-    public execute(): Action {
+    public override execute(): Action {
         // Change size first
         this.changeSize(this.targetCount);
 
@@ -79,7 +79,7 @@ export class MuxPortChangeAction extends PortChangeAction {
      *
      * @returns The new object with the initial size and number of ports.
      */
-    public undo(): Action {
+    public override undo(): Action {
         // Change size back first
         this.changeSize(this.initialCount);
 
@@ -89,7 +89,7 @@ export class MuxPortChangeAction extends PortChangeAction {
         return this;
     }
 
-    public getName(): string {
+    public override getName(): string {
         return "Mux Port Change";
     }
 

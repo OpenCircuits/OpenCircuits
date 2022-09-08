@@ -24,7 +24,7 @@ export class LeftRightPositioner extends Positioner<AnalogPort> {
      * @param arr."0" The first port.
      * @param arr."1" The second port.
      */
-    public updatePortPositions([p1, p2]: AnalogPort[]): void {
+    public override updatePortPositions([p1, p2]: AnalogPort[]): void {
         const width = p1.getParent().getSize().x;
 
         p1.setOriginPos(V(-width/2, 0));

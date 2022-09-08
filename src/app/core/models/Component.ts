@@ -25,7 +25,7 @@ export abstract class Component extends CullableObject {
         this.transform = new Transform(V(), size);
     }
 
-    public onTransformChange(): void {
+    public override onTransformChange(): void {
         super.onTransformChange();
         this.getConnections().forEach((w) => w.onTransformChange());
     }

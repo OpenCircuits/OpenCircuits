@@ -25,7 +25,7 @@ export class AnalogNode extends AnalogComponent implements Node {
         this.ports.last .setTargetPos(V(0, 0));
     }
 
-    public isWithinSelectBounds(v: Vector): boolean {
+    public override isWithinSelectBounds(v: Vector): boolean {
         return CircleContains(this.getPos(), this.getSize().x, v);
     }
 

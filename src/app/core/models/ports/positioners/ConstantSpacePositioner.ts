@@ -21,7 +21,7 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
      *
      * @param ports The array of input ports.
      */
-    public updatePortPositions(ports: Array<T | undefined>): void {
+    public override updatePortPositions(ports: Array<T | undefined>): void {
         ports.forEach((port, i) => {
             if (!port) // Ignore undefined ports for 'blank spaces' in the positioning
                 return;

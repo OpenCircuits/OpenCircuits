@@ -60,7 +60,7 @@ export class Oscilloscope extends TimedComponent {
     }
 
     // @Override
-    public setInputPortCount(val: number): void {
+    public override setInputPortCount(val: number): void {
         // Update size (first so that ports update positions properly)
         super.setSize((this.props["displaySize"] as Vector).scale(V(1, val)));
 
@@ -87,7 +87,7 @@ export class Oscilloscope extends TimedComponent {
         }
     }
 
-    public reset(): void {
+    public override reset(): void {
         for (let i = 0; i < this.signals.length; i++)
             this.signals[i] = [];
         super.reset();

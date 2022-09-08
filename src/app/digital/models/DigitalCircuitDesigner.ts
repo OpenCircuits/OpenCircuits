@@ -274,7 +274,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.callback({ type: "wire", op: "removed", wire });
     }
 
-    public replace(designer: DigitalCircuitDesigner): void {
+    public override replace(designer: DigitalCircuitDesigner): void {
         super.replace(designer);
 
         for (const ic of designer.getICData())

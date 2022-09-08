@@ -24,7 +24,7 @@ export class TopBottomPositioner extends Positioner<AnalogPort> {
      * @param arr."0" The first port.
      * @param arr."1" The second port.
      */
-    public updatePortPositions([p1, p2]: AnalogPort[]): void {
+    public override updatePortPositions([p1, p2]: AnalogPort[]): void {
         const height = p1.getParent().getSize().y;
 
         p1.setOriginPos(V(0, -height/2));

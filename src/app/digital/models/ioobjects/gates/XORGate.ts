@@ -26,7 +26,7 @@ export class XORGate extends Gate {
     /**
      * Activates the XOR gate only when one of the inputs is true but not when both inputs are true.
      */
-    public activate(): void {
+    public override activate(): void {
         let on = false;
         for (const input of this.getInputPorts())
             on = (on !== input.getIsOn());
@@ -38,7 +38,7 @@ export class XORGate extends Gate {
      *
      * @returns A vector representing the clickable offset.
      */
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
     }
     /**
@@ -54,7 +54,7 @@ export class XORGate extends Gate {
      *
      * @returns The name of the image to use to represent this gate.
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "or.svg";
     }
 }

@@ -26,11 +26,11 @@ export class DigitalNode extends DigitalComponent implements Node {
     }
 
     // @Override
-    public activate(): void {
+    public override activate(): void {
         super.activate(this.inputs.first.getIsOn());
     }
 
-    public isWithinSelectBounds(v: Vector): boolean {
+    public override isWithinSelectBounds(v: Vector): boolean {
         return CircleContains(this.getPos(), this.getSize().x, v);
     }
 

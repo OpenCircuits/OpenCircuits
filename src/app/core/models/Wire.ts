@@ -96,7 +96,7 @@ export abstract class Wire extends CullableObject {
         }
     }
 
-    public onTransformChange(): void {
+    public override onTransformChange(): void {
         super.onTransformChange();
         this.dirtyShape = true;
     }

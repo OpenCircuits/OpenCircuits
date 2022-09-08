@@ -26,7 +26,7 @@ export class Encoder extends DigitalComponent {
         this.updatePortNames();
     }
 
-    public activate(): void {
+    public override activate(): void {
         // Filter ports that are on then map to their indices
         const onPorts = this.getInputPorts().filter((p) => p.getIsOn());
         if (onPorts.length !== 1)

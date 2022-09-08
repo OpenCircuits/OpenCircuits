@@ -27,7 +27,7 @@ export abstract class Gate extends DigitalComponent {
     }
 
     // @Override
-    public activate(on: boolean, i = 0): void {
+    public override activate(on: boolean, i = 0): void {
         super.activate((this.not ? !on : on), i);
     }
 
