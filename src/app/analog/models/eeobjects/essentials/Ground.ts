@@ -36,7 +36,7 @@ export class Ground extends AnalogComponent {
      *
      * @returns The string "ground.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "ground.svg";
     }
 }

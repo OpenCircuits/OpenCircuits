@@ -129,7 +129,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         this.callback({ type: "wire", op: "removed", wire });
     }
 
-    public replace(designer: AnalogCircuitDesigner): void {
+    public override replace(designer: AnalogCircuitDesigner): void {
         super.replace(designer);
     }
 

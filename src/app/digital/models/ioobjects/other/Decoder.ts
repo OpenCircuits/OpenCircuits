@@ -54,7 +54,7 @@ export class Decoder extends DigitalComponent {
         this.updatePortNames();
     }
 
-    public activate(): void {
+    public override activate(): void {
         // Convert binary input to index of which output should be on
         const num = this.getInputPorts()
                 .map((port) => (port.getIsOn() ? 1 : 0))

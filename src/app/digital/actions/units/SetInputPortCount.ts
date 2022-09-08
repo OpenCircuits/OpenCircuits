@@ -37,7 +37,7 @@ class InputPortChangeAction extends PortChangeAction<DigitalComponent> {
      *
      * @returns The object with the new number of ports.
      */
-    public execute(): Action {
+    public override execute(): Action {
         super.execute();
         this.obj.setInputPortCount(this.targetCount);
         return this;
@@ -48,13 +48,13 @@ class InputPortChangeAction extends PortChangeAction<DigitalComponent> {
      *
      * @returns The object with the initial number of ports.
      */
-    public undo(): Action {
+    public override undo(): Action {
         this.obj.setInputPortCount(this.initialCount);
         super.undo();
         return this;
     }
 
-    public getName(): string {
+    public override getName(): string {
         return "Input port Change";
     }
 }

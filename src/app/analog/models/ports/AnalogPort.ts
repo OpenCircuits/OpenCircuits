@@ -9,8 +9,8 @@ import {AnalogComponent, AnalogWire} from "../index";
 
 @serializable("AnalogPort")
 export class AnalogPort extends Port {
-    protected parent: AnalogComponent;
-    protected connections: AnalogWire[];
+    protected override parent: AnalogComponent;
+    protected override connections: AnalogWire[];
 
     public constructor(parent?: AnalogComponent) {
         super(parent!);
@@ -33,11 +33,11 @@ export class AnalogPort extends Port {
         return V(-1, 0);
     }
 
-    public getParent(): AnalogComponent {
+    public override getParent(): AnalogComponent {
         return this.parent;
     }
 
-    public getWires(): AnalogWire[] {
+    public override getWires(): AnalogWire[] {
         return this.connections;
     }
 

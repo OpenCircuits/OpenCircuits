@@ -17,14 +17,14 @@ export class ASCIIDisplay extends SegmentDisplay {
         super(new ClampedValue(7));
     }
 
-    public setInputPortCount(val: number): void {
+    public override setInputPortCount(val: number): void {
         // don't change input port count since we
         //  have a constant number of inputs
         //  but change number of segments instead
         this.setSegmentCount(val);
     }
 
-    public isSegmentOn(segment: number): boolean {
+    public override isSegmentOn(segment: number): boolean {
         const dec = PortsToDecimal(this.getInputPorts());
 
         const font = ASCIIFont[`${this.segmentCount}`];
@@ -38,7 +38,7 @@ export class ASCIIDisplay extends SegmentDisplay {
         return glyph.includes(segment);
     }
 
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return `${this.segmentCount} ASCII Display`;
     }
 }

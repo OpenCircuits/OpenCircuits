@@ -24,7 +24,7 @@ export class FlipFlopPositioner extends Positioner<InputPort> {
      *
      * @param ports The array of input ports.
      */
-    public updatePortPositions(ports: InputPort[]): void {
+    public override updatePortPositions(ports: InputPort[]): void {
         super.updatePortPositions(ports.slice(2)); // Position ports after PRE/CLR (index 2)
 
         const height = ports[0].getParent().getSize().y;

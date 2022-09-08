@@ -79,12 +79,12 @@ export abstract class Mux extends DigitalComponent {
     }
 
     // @Override
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return super.getOffset().add(0, MULTIPLEXER_HEIGHT_OFFSET/2);
     }
 
     // @Override
-    public getInputs(): DigitalWire[] {
+    public override getInputs(): DigitalWire[] {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return [
@@ -96,7 +96,7 @@ export abstract class Mux extends DigitalComponent {
     }
 
     // @Override
-    public getPorts(): Port[] {
+    public override getPorts(): Port[] {
         return [...super.getPorts(), ...this.getSelectPorts()];
     }
 

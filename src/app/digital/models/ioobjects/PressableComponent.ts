@@ -27,7 +27,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         this.on = false;
     }
 
-    public activate(signal: boolean, i = 0): void {
+    public override activate(signal: boolean, i = 0): void {
         this.on = signal;
 
         super.activate(signal, i);
@@ -51,7 +51,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         return RectContains(this.pressableBox, v);
     }
 
-    public isWithinSelectBounds(v: Vector): boolean {
+    public override isWithinSelectBounds(v: Vector): boolean {
         // Only true if we're normally in bounds and also not in the press bounds
         //   i.e. prevents selecting when pressing the button part of the Button
         return super.isWithinSelectBounds(v) && !this.isWithinPressBounds(v);
@@ -65,7 +65,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         return this.on;
     }
 
-    public getMinPos(): Vector {
+    public override getMinPos(): Vector {
         const min = super.getMinPos();
         // Find minimum pos from corners of selection box
         const corners = this.pressableBox.getCorners().map((v) =>
@@ -74,7 +74,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         return Vector.Min(min, ...corners);
     }
 
-    public getMaxPos(): Vector {
+    public override getMaxPos(): Vector {
         const max = super.getMaxPos();
         // Find maximum pos from corners of selection box
         const corners = this.pressableBox.getCorners().map((v) =>
@@ -83,7 +83,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
         return Vector.Max(max, ...corners);
     }
 
-    public getImageName(): string {
+    public override getImageName(): string {
         return (this.isOn() ? this.getOnImageName() : this.getOffImageName());
     }
 

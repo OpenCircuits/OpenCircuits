@@ -8,7 +8,7 @@ import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
 class SelectPortChangeAction extends PortChangeAction<Mux> {
-    protected obj: Mux;
+    protected override obj: Mux;
 
     /**
      * Sets the number of select ports on the object.
@@ -37,7 +37,7 @@ class SelectPortChangeAction extends PortChangeAction<Mux> {
      *
      * @returns The new obj with the new size and number of ports.
      */
-    public execute(): Action {
+    public override execute(): Action {
         super.execute();
         this.obj.setSelectPortCount(this.targetCount);
         return this;
@@ -48,13 +48,13 @@ class SelectPortChangeAction extends PortChangeAction<Mux> {
      *
      * @returns The new object with the initial size and number of ports.
      */
-    public undo(): Action {
+    public override undo(): Action {
         this.obj.setSelectPortCount(this.initialCount);
         super.undo();
         return this;
     }
 
-    public getName(): string {
+    public override getName(): string {
         return "Select Port Change";
     }
 

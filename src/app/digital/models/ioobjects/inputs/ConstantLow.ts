@@ -26,7 +26,7 @@ export class ConstantLow extends DigitalComponent {
      *
      * @returns The offset vector which represents a border width of 0px.
      */
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return V();
     }
 
@@ -44,7 +44,7 @@ export class ConstantLow extends DigitalComponent {
      *
      * @returns The image name "constLow.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "constLow.svg";
     }
 }
