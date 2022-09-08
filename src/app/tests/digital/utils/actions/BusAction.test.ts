@@ -5,7 +5,7 @@ import {V, Vector} from "Vector";
 
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {CreateBusAction, GetComponentBusPorts} from "digital/actions/addition/BusActionFactory";
+import {Bus, GetComponentBusPorts} from "digital/actions/compositions/Bus";
 
 import {DigitalCircuitDesigner, InputPort, OutputPort} from "digital/models";
 
@@ -35,7 +35,7 @@ describe("Bus Action", () => {
         expectAllDisconnected();
 
         // Bus
-        const a1 = CreateBusAction(outs, ins);
+        const a1 = Bus(outs, ins);
         expectConnected();
 
         // Reverted

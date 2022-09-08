@@ -62,7 +62,7 @@ export function GetComponentBusPorts(components: Component[]): [InputPort[], Out
 }
 
 
-export function CreateBusAction(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
+export function Bus(outputPorts: OutputPort[], inputPorts: InputPort[]): GroupAction {
     if (inputPorts.length !== outputPorts.length)
         throw new Error("Expected equal size input and output ports to bus!");
 

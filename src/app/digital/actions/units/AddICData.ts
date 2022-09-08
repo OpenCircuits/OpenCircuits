@@ -1,4 +1,5 @@
-import {Action}           from "core/actions/Action";
+import {Action} from "core/actions/Action";
+
 import {ReversableAction} from "core/actions/bases/ReversableAction";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -6,7 +7,7 @@ import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
 
-export class CreateICDataAction extends ReversableAction {
+class AddICDataAction extends ReversableAction {
     /**
      * The ICData of the action.
      */
@@ -57,8 +58,9 @@ export class CreateICDataAction extends ReversableAction {
     }
 }
 
-export class DeleteICDataAction extends CreateICDataAction {
-    public constructor(data: ICData, target: DigitalCircuitDesigner) {
-        super(data, target, true);
-    }
+export function AddICData(data: ICData, target: DigitalCircuitDesigner) {
+    return new AddICDataAction(data, target);
+}
+export function RemoveICData(data: ICData, target: DigitalCircuitDesigner) {
+    return new AddICDataAction(data, target, true);
 }

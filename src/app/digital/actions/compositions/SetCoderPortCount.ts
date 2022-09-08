@@ -3,8 +3,8 @@ import {GroupAction} from "core/actions/GroupAction";
 import {Decoder} from "digital/models/ioobjects/other/Decoder";
 import {Encoder} from "digital/models/ioobjects/other/Encoder";
 
-import {InputPortChangeAction}  from "./InputPortChangeAction";
-import {OutputPortChangeAction} from "./OutputPortChangeAction";
+import {SetInputPortCount}  from "../units/SetInputPortCount";
+import {SetOutputPortCount} from "../units/SetOutputPortCount";
 
 
 /**
@@ -18,16 +18,16 @@ import {OutputPortChangeAction} from "./OutputPortChangeAction";
  * @param target The target number of outputs/inputs.
  * @returns        An action that changes the objects ports.
  */
-export function CreateCoderPortChangeAction(obj: Encoder | Decoder, target: number) {
+export function SetCoderPortCount(obj: Encoder | Decoder, target: number) {
     if (obj instanceof Encoder) {
         return new GroupAction([
-            new InputPortChangeAction(obj, Math.pow(2, target)),
-            new OutputPortChangeAction(obj, target),
+            SetInputPortCount(obj, Math.pow(2, target)),
+            SetOutputPortCount(obj, target),
         ]);
     }
 
     return new GroupAction([
-        new InputPortChangeAction(obj, target),
-        new OutputPortChangeAction(obj, Math.pow(2, target)),
+        SetInputPortCount(obj, target),
+        SetOutputPortCount(obj, Math.pow(2, target)),
     ]);
 }

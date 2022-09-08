@@ -1,38 +1,13 @@
-import {Action}      from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
+import {Action} from "core/actions/Action";
 
-import {PortChangeAction} from "core/actions/units/PortChangeAction";
+import {PortChangeAction} from "core/actions/bases/PortChangeAction";
 
 import {Port} from "core/models";
 
-import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
-import {Mux}         from "digital/models/ioobjects/other/Mux";
-
-import {InputPortChangeAction}  from "./InputPortChangeAction";
-import {OutputPortChangeAction} from "./OutputPortChangeAction";
+import {Mux} from "digital/models/ioobjects/other/Mux";
 
 
-/**
- * This code changes the size of the Mux object based on how many inputs are entered.
- * When the selector inputs are increased the number of inputs are also increased by
- * 2 to the power of the number of selector inputs chosen.
- * Ex.) input count = 3, then the number of inputs changes to 2^3 or 8.
- * The actual size of the mux object is also changed accordingly.
- *
- * @param obj    Refers to the Mux object.
- * @param target Refers to the new number of inputs requested.
- * @returns        A port change action for mux's.
- */
-export function CreateMuxPortChangeAction(obj: Mux, target: number) {
-    return new GroupAction([
-        new SelectPortChangeAction(obj, target),
-        (obj instanceof Multiplexer
-            ?  new InputPortChangeAction(obj, Math.pow(2, target))
-            : new OutputPortChangeAction(obj, Math.pow(2, target))),
-    ]);
-}
-
-export class SelectPortChangeAction extends PortChangeAction<Mux> {
+class SelectPortChangeAction extends PortChangeAction<Mux> {
     protected obj: Mux;
 
     /**
@@ -83,4 +58,8 @@ export class SelectPortChangeAction extends PortChangeAction<Mux> {
         return "Select Port Change";
     }
 
+}
+
+export function SetSelectPortCount(obj: Mux, target: number) {
+    return new SelectPortChangeAction(obj, target);
 }

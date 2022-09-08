@@ -2,7 +2,7 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 import {Connect as CreateConnection} from "core/actions/units/Connect";
 
-import {CreateMuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {CreateMuxPortChangeAction} from "digital/actions/units/SetSelectPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 

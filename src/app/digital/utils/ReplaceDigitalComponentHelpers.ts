@@ -1,8 +1,8 @@
 import {Create, GetIDFor} from "serialeazy";
 
-import {CreateCoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
-import {InputPortChangeAction}       from "digital/actions/ports/InputPortChangeAction";
-import {CreateMuxPortChangeAction}   from "digital/actions/ports/MuxPortChangeAction";
+import {SetCoderPortCount} from "digital/actions/compositions/SetCoderPortCount";
+import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
+import {CreateMuxPortChangeAction} from "digital/actions/units/SetSelectPortCount";
 
 import {DigitalCircuitDesigner, DigitalComponent, InputPort, OutputPort} from "digital/models";
 
@@ -48,8 +48,8 @@ export function GetPortChangeAction(comp: DigitalComponent, amt: number) {
     if (comp instanceof Mux)
         return CreateMuxPortChangeAction(comp, amt);
     if (comp instanceof Encoder || comp instanceof Decoder)
-        return CreateCoderPortChangeAction(comp, amt);
-    return new InputPortChangeAction(comp, amt);
+        return SetCoderPortCount(comp, amt);
+    return SetInputPortCount(comp, amt);
 }
 
 export function GenerateReplacementList(designer: DigitalCircuitDesigner, allComponents: string[]) {

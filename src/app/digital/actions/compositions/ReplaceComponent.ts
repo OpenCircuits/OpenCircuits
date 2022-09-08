@@ -2,10 +2,9 @@ import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {Connect, Disconnect}     from "core/actions/units/Connect";
-import {Delete, Place}           from "core/actions/units/Place";
-import {CreateDeselectAllAction,
-        CreateGroupSelectAction} from "core/actions/units/Select";
+import {Connect, Disconnect}      from "core/actions/units/Connect";
+import {Delete, Place}            from "core/actions/units/Place";
+import {DeselectAll, SelectGroup} from "core/actions/units/Select";
 
 import {Translate} from "core/actions/units/Translate";
 
@@ -30,10 +29,10 @@ import {DigitalCircuitDesigner, DigitalComponent, InputPort, OutputPort} from "d
  * @throws If original is not in a designer.
  * @throws If replacement is a string that does not represent a valid component.
  */
-export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesigner,
-                                                    comp: DigitalComponent,
-                                                    replacement: { id: string, amt?: number },
-                                                    selections?: SelectionsWrapper): [GroupAction, DigitalComponent] {
+export function ReplaceComponent(designer: DigitalCircuitDesigner,
+                                 comp: DigitalComponent,
+                                 replacement: { id: string, amt?: number },
+                                 selections?: SelectionsWrapper): [GroupAction, DigitalComponent] {
     // Create replacement component
     const replacementComponent = CreateDigitalComponent(replacement.id, designer);
     if (!replacementComponent)
@@ -52,10 +51,10 @@ export function CreateReplaceDigitalComponentAction(designer: DigitalCircuitDesi
     action.add(Translate([replacementComponent], [comp.getPos()]));
 
     if (selections)
-        action.add(CreateDeselectAllAction(selections));
+        action.add(DeselectAll(selections));
     action.add(Place(designer, replacementComponent));
     if (selections)
-        action.add(CreateGroupSelectAction(selections, [replacementComponent]));
+        action.add(SelectGroup(selections, [replacementComponent]));
 
     // Only set ports if there is an amount to set, otherwise the ports can't be changed
     if (replacement.amt)

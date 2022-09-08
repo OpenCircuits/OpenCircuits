@@ -4,9 +4,9 @@ import {Connect}       from "core/actions/units/Connect";
 import {PlaceGroup} from "core/actions/units/Place";
 import {SplitWire}  from "core/actions/compositions/SplitWire";
 
-import {CreateBusAction} from "digital/actions/addition/BusActionFactory";
+import {Bus} from "digital/actions/compositions/Bus";
 
-import {CreateMuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {CreateMuxPortChangeAction} from "digital/actions/units/SetSelectPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -39,8 +39,8 @@ describe("Integration Tests for Actions", () => {
 
                 .add(CreateMuxPortChangeAction(m, 3))
 
-                .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
-                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
+                .add(Bus([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
+                         [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
 
                 .undo().undo().undo()
                 .redo().redo().redo()
@@ -69,8 +69,8 @@ describe("Integration Tests for Actions", () => {
 
                 .add(CreateMuxPortChangeAction(m, 3))
 
-                .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
-                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
+                .add(Bus([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
+                         [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
 
                 .add(CreateMuxPortChangeAction(m, 2))
 

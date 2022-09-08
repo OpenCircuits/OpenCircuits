@@ -2,10 +2,10 @@ import {GetHelpers} from "test/helpers/Helpers";
 
 import {CreateDigitalComponent, GenerateReplacementList, GetReplacements} from "digital/utils/ReplaceDigitalComponentHelpers";
 
-import {CreateICDataAction} from "digital/actions/CreateICDataAction";
+import {AddICData} from "digital/actions/units/AddICData";
 
-import {CreateCoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
-import {InputPortChangeAction}       from "digital/actions/ports/InputPortChangeAction";
+import {SetCoderPortCount} from "digital/actions/compositions/SetCoderPortCount";
+import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models";
 
@@ -20,7 +20,7 @@ describe("ReplaceDigitalComponentHelpers", () => {
     Connect(b, 0, or, 1);
     Connect(or, 0, out, 0);
     const data = ICData.Create([a, b, or, out])!;
-    new CreateICDataAction(data, designer);
+    AddICData(data, designer);
     const baseComponentIDs = ["ANDGate", "ORGate", "Multiplexer", "Demultiplexer", "Encoder", "Decoder", "ic/0"];
     const list = GenerateReplacementList(designer, baseComponentIDs);
 
@@ -50,7 +50,7 @@ describe("ReplaceDigitalComponentHelpers", () => {
             const expected = ["ANDGate", "Encoder", "ic/0", "ORGate"];
             expect(filteredList.map((entry) => entry.id).sort()).toEqual(expected.sort());
 
-            new InputPortChangeAction(comp, 8);
+            SetInputPortCount(comp, 8);
             const filteredList2 = GetReplacements(comp, designer, list);
             const expected2 = ["ANDGate", "ORGate"];
             expect(filteredList2.map((entry) => entry.id).sort()).toEqual(expected2.sort());
@@ -69,7 +69,7 @@ describe("ReplaceDigitalComponentHelpers", () => {
             const expected = ["Encoder"];
             expect(filteredList.map((entry) => entry.id).sort()).toEqual(expected.sort());
 
-            CreateCoderPortChangeAction(comp, 1);
+            SetCoderPortCount(comp, 1);
             const filteredList2 = GetReplacements(comp, designer, list);
             const expected2 = ["ANDGate", "Encoder", "ic/0", "ORGate"];
             expect(filteredList2.map((entry) => entry.id).sort()).toEqual(expected2.sort());

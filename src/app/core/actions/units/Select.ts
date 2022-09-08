@@ -45,14 +45,18 @@ export function Deselect(selections: SelectionsWrapper, obj: Selectable) {
     return new SelectAction(selections, obj, true);
 }
 
-export function CreateGroupSelectAction(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
-    return objs.reduce((acc, s) => acc.add(new SelectAction(selections, s)), new GroupAction([], "Select Action"));
+
+export function SelectGroup(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
+    return new GroupAction(
+        objs.map((o) => Select(selections, o)),
+        "Select Group",
+    );
 }
 
-export function CreateDeselectAllAction(selections: SelectionsWrapper): GroupAction {
+export function DeselectAll(selections: SelectionsWrapper): GroupAction {
     const objs = selections.get();
-    return objs.reduce(
-        (acc, s) => acc.add(new DeselectAction(selections, s)),
-        new GroupAction([], "Deselect All Action")
+    return new GroupAction(
+        objs.map((o) => Deselect(selections, o)),
+        "Deselect All",
     );
 }

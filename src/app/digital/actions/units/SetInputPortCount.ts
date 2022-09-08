@@ -1,6 +1,6 @@
 import {Action} from "core/actions/Action";
 
-import {PortChangeAction} from "core/actions/units/PortChangeAction";
+import {PortChangeAction} from "core/actions/bases/PortChangeAction";
 
 import {Port} from "core/models/ports/Port";
 
@@ -8,9 +8,9 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 
 
 /**
- * This code allows for the change in the number of output ports on a DigitalComponent.
+ * This code allows for the change in the number of input ports on a DigitalComponent.
  */
-export class OutputPortChangeAction extends PortChangeAction<DigitalComponent> {
+class InputPortChangeAction extends PortChangeAction<DigitalComponent> {
     /**
      * This code constructs the obj with the new number of ports.
      *
@@ -24,37 +24,41 @@ export class OutputPortChangeAction extends PortChangeAction<DigitalComponent> {
     }
 
     /**
-     * Returns the objects output ports.
+     * Returns the objects input ports.
      *
-     * @returns The objects output inports.
+     * @returns The objects input inports.
      */
     protected getPorts(): Port[] {
-        return this.obj.getOutputPorts();
+        return this.obj.getInputPorts();
     }
 
     /**
-     * Changes the number of output ports on the object to the target count.
+     * Changes the number of input ports on the object to the target count.
      *
      * @returns The object with the new number of ports.
      */
     public execute(): Action {
         super.execute();
-        this.obj.setOutputPortCount(this.targetCount);
+        this.obj.setInputPortCount(this.targetCount);
         return this;
     }
 
     /**
-     * Resets the number of output ports back to the initial count.
+     * Resets the number of input ports back to the initial count.
      *
      * @returns The object with the initial number of ports.
      */
     public undo(): Action {
-        this.obj.setOutputPortCount(this.initialCount);
+        this.obj.setInputPortCount(this.initialCount);
         super.undo();
         return this;
     }
 
     public getName(): string {
-        return "Outport Change";
+        return "Input port Change";
     }
+}
+
+export function SetInputPortCount(obj: DigitalComponent, target: number) {
+    return new InputPortChangeAction(obj, target);
 }

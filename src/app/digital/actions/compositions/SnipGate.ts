@@ -1,7 +1,7 @@
 import {GroupAction} from "core/actions/GroupAction";
 
 import {Connect, Disconnect} from "core/actions/units/Connect";
-import {Delete} from "core/actions/units/Place";
+import {Delete}              from "core/actions/units/Place";
 
 import {BUFGate} from "digital/models/ioobjects";
 
@@ -16,7 +16,7 @@ import {NOTGate} from "digital/models/ioobjects/gates/BUFGate";
  * @returns       A GroupAction containing the actions required to snip the gate.
  * @throws {Error} If gate is not placed in a designer.
  */
-export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
+export function SnipGate(gate: BUFGate | NOTGate): GroupAction {
     const action = new GroupAction([], "Snip Gate Action");
     const designer = gate.getDesigner();
     if (!designer)
