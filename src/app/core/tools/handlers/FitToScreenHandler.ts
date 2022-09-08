@@ -24,6 +24,6 @@ export const FitToScreenHandler: EventHandler = ({
 
         // Get final camera position and zoom
         const [pos, zoom] = GetCameraFit(camera, objs, FIT_PADDING_RATIO);
-        history.add(new MoveCameraAction(camera, pos, zoom).execute());
+        history.add(new MoveCameraAction(camera, pos, zoom));
     },
 });

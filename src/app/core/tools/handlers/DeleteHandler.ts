@@ -27,9 +27,9 @@ export const DeleteHandler: EventHandler = ({
         const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
         // Deselect the objects then remove them
         history.add(new GroupAction([
-            CreateDeselectAllAction(selections).execute(),
+            CreateDeselectAllAction(selections),
 
-            CreateDeleteGroupAction(designer, objs).execute(),
+            CreateDeleteGroupAction(designer, objs),
         ], "Delete Handler"));
 
     },

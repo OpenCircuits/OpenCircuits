@@ -30,6 +30,6 @@ export const SelectPathHandler: EventHandler = ({
                 o.isWithinSelectBounds(worldMousePos)) as Component | Wire;
 
         const path = (obj instanceof Wire) ? (GetPath(obj)) : (GetComponentPath(obj!));
-        history.add(CreateGroupSelectAction(selections, path).execute());
+        history.add(CreateGroupSelectAction(selections, path));
     },
 });

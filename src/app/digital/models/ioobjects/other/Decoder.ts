@@ -49,6 +49,8 @@ export class Decoder extends DigitalComponent {
         super.setInputPortCount(val);
 
         // Update port names
+        this.inputs.updatePortPositions();
+        this.outputs.updatePortPositions();
         this.updatePortNames();
     }
 

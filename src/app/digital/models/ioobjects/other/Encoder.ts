@@ -45,6 +45,8 @@ export class Encoder extends DigitalComponent {
         super.setOutputPortCount(val);
 
         // Update port names
+        this.inputs.updatePortPositions();
+        this.outputs.updatePortPositions();
         this.updatePortNames();
     }
 

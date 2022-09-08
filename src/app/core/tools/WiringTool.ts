@@ -108,7 +108,7 @@ export const WiringTool = (() => {
             // See if we ended on a port
             const port2 = findNearestPort(info,list);
             if (port2 !== undefined)
-                history.add(new ConnectionAction(designer, port, port2).execute());
+                history.add(new ConnectionAction(designer, port, port2));
         },
 
 

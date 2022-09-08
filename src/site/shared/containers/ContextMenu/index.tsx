@@ -105,7 +105,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
         history.add(new GroupAction([
             CreateDeselectAllAction(selections),
             CreateDeleteGroupAction(designer, objs),
-        ], "Cut (Context Menu)").execute());
+        ], "Cut (Context Menu)"));
     }
 
     /* Context Menu "Copy" */
@@ -128,7 +128,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
     /* Context Menu "Select All" */
     const onSelectAll = async () => {
-        history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute());
+        history.add(CreateGroupSelectAction(selections, designer.getObjects()));
     }
 
     /* Context Menu "Focus" */

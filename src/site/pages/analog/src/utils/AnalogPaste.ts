@@ -43,7 +43,7 @@ export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vec
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
             new TranslateAction(comps, comps.map((o) => o.getPos()), comps.map((o) => o.getPos().add(targetPosShift))),
-        ]).execute());
+        ]));
 
         history.add(action);
 

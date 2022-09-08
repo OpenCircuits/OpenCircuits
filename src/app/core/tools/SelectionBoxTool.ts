@@ -42,14 +42,14 @@ export const SelectionBoxTool = (() => {
 
             // Clear selections if shift key isn't being held
             if (!input.isShiftKeyDown())
-                action.add(CreateDeselectAllAction(selections).execute());
+                action.add(CreateDeselectAllAction(selections));
 
             const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
             // Find all objects within the selection box
             const objects = designer.getObjects().filter((o) => TransformContains(box, o.getTransform()));
             if (objects.length > 0) {
-                history.add(action.add(CreateGroupSelectAction(selections, objects).execute()));
+                history.add(action.add(CreateGroupSelectAction(selections, objects)));
                 return;
             }
 
@@ -59,7 +59,7 @@ export const SelectionBoxTool = (() => {
                 .filter((p) => RectContains(box, p.getWorldTargetPos()));
 
             if (ports.length > 0) {
-                history.add(action.add(CreateGroupSelectAction(selections, ports).execute()));
+                history.add(action.add(CreateGroupSelectAction(selections, ports)));
                 return;
             }
 

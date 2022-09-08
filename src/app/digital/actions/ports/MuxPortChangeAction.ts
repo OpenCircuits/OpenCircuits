@@ -32,10 +32,8 @@ export function CreateMuxPortChangeAction(obj: Mux, target: number) {
     ]);
 }
 
-export class SelectPortChangeAction extends PortChangeAction {
+export class SelectPortChangeAction extends PortChangeAction<Mux> {
     protected obj: Mux;
-
-    protected otherPortAction: PortChangeAction;
 
     /**
      * Sets the number of select ports on the object.
@@ -44,8 +42,7 @@ export class SelectPortChangeAction extends PortChangeAction {
      * @param target Number of ports.
      */
     public constructor(obj: Mux, target: number) {
-        super(obj.getDesigner(), target);
-        this.obj = obj;
+        super(obj.getDesigner(), obj, target);
 
         this.execute();
     }

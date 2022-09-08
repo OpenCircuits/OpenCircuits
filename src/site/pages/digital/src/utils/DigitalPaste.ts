@@ -105,7 +105,7 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
             CreateDeselectAllAction(selections),
             CreateGroupSelectAction(selections, comps),
             new TranslateAction(comps, comps.map((o) => o.getPos().add(targetPosShift))),
-        ]).execute());
+        ]));
 
         history.add(action);
 

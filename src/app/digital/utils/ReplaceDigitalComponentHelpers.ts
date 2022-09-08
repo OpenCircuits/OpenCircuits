@@ -75,7 +75,13 @@ export function GenerateReplacementList(designer: DigitalCircuitDesigner, allCom
             // Only change if it's a component that can change the number of inputs/outputs
             if (max !== min) {
                 // Change ports and see how many input/outputs there are
-                GetPortChangeAction(comp, amt).execute();
+                try {
+                    GetPortChangeAction(comp, amt);
+                } catch {
+                    // If failed, then it's an invalid port configuration
+                    //  (this is a hack that should go away when the model refactor is complete)
+                    continue;
+                }
             }
 
             const key = GetReplacementListKey(comp);

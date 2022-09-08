@@ -32,6 +32,6 @@ export const CleanUpHandler: EventHandler = ({
         history.add(new GroupAction([
             ...components.map((c) => new RotateAction(c, 0)),
             new TranslateAction(components, components.map((o) => Snap(o.getPos()))),
-        ], "Clean Up Handler").execute());
+        ], "Clean Up Handler"));
     },
 });

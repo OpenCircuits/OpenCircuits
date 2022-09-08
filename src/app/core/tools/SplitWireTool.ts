@@ -56,8 +56,8 @@ export const SplitWireTool: Tool = (() => {
             action = new GroupAction([], "Split Wire Tool");
 
             // Set wireport as selection and being pressed
-            action.add(CreateDeselectAllAction(selections).execute());
-            action.add(new SelectAction(selections, port).execute());
+            action.add(CreateDeselectAllAction(selections));
+            action.add(new SelectAction(selections, port));
             action.add(CreateSplitWireAction(designer, wire, port));
 
             info.currentlyPressedObject = port;

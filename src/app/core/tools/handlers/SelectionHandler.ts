@@ -24,7 +24,7 @@ export const SelectionHandler: EventHandler = ({
 
         // Clear previous selections if not holding shift
         if (!input.isShiftKeyDown())
-            action.add(CreateDeselectAllAction(selections).execute());
+            action.add(CreateDeselectAllAction(selections));
 
         const ports = GetAllPorts(designer.getObjects());
         const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];
@@ -40,8 +40,8 @@ export const SelectionHandler: EventHandler = ({
         if (obj && !(hitPort && isWire)) {
             // Select object
             const deselect = (input.isShiftKeyDown() && selections.has(obj));
-            action.add(new SelectAction(selections, obj, deselect).execute());
-            action.add(new ShiftAction(designer, obj).execute());
+            action.add(new SelectAction(selections, obj, deselect));
+            action.add(new ShiftAction(designer, obj));
         }
 
         // https://github.com/OpenCircuits/OpenCircuits/issues/622

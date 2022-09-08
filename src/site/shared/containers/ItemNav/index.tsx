@@ -104,7 +104,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
             return;
         }
         // Else just delete
-        info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
+        info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]));
     }
 
     // Resets the curItemID and numClicks

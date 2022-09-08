@@ -3,22 +3,24 @@ import {GetPath} from "core/utils/ComponentUtils";
 import {Action} from "core/actions/Action";
 
 
-import {CircuitDesigner, Port} from "core/models";
+import {CircuitDesigner, Component, Port} from "core/models";
 
 import {CreateDeletePathAction} from "../deletion/DeletePathActionFactory";
 import {GroupAction}            from "../GroupAction";
 
 
-export abstract class PortChangeAction implements Action {
+export abstract class PortChangeAction<T extends Component> implements Action {
     protected designer?: CircuitDesigner;
+    protected obj: T;
 
     protected targetCount: number;
     protected initialCount: number;
 
     private wireDeletionAction: GroupAction;
 
-    protected constructor(designer: CircuitDesigner | undefined, target: number) {
+    protected constructor(designer: CircuitDesigner | undefined, obj: T, target: number) {
         this.designer = designer;
+        this.obj = obj;
 
         this.targetCount = target;
         this.initialCount = this.getPorts().length;

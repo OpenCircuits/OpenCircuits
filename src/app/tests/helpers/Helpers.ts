@@ -17,14 +17,14 @@ import {LED, Switch}            from "digital/models/ioobjects";
 
 export function GetHelpers(designer: DigitalCircuitDesigner) {
     function Place<T extends DigitalComponent[]>(...objs: T) {
-        return [...objs, CreateGroupPlaceAction(designer, objs).execute()] as [...T, Action];
+        return [...objs, CreateGroupPlaceAction(designer, objs)] as [...T, Action];
     }
 
     // type ObjConnectInfo = { c: DigitalComponent, i?: number };
     // function Connect(c1: ObjConnectInfo, c2: ObjConnectInfo): ConnectionAction[] {
     //     if (c1.i && c2.i) {
     //         return [new ConnectionAction(designer, c1.c.getOutputPort(c1.i),
-    //                                      c2.c.getInputPort(c2.i)).execute() as ConnectionAction];
+    //                                      c2.c.getInputPort(c2.i)) as ConnectionAction];
     //     }
     // }
     function Connect(c1: DigitalComponent, c2: DigitalComponent): ConnectionAction[];
@@ -40,12 +40,12 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
 
                 return new Array(Math.min(outs.length, ins.length))
                     .fill(0)
-                    .map((_, i) => new ConnectionAction(designer, outs[i], ins[i]).execute()) as ConnectionAction[];
+                    .map((_, i) => new ConnectionAction(designer, outs[i], ins[i])) as ConnectionAction[];
             }
             case 4: {
                 const [c1, i1, c2, i2] = args;
                 return new ConnectionAction(designer, c1.getOutputPort(i1),
-                                            c2.getInputPort(i2)).execute() as ConnectionAction;
+                                            c2.getInputPort(i2)) as ConnectionAction;
             }
         }
     }
@@ -78,8 +78,8 @@ export function GetHelpers(designer: DigitalCircuitDesigner) {
                 wires.push(action.getWire());
             });
 
-            return [obj, switches, leds, wires, group.execute()] as [T, Switch[], LED[], Wire[], Action];
+            return [obj, switches, leds, wires, group] as [T, Switch[], LED[], Wire[], Action];
         },
-        Remove: (...objs: Array<DigitalComponent | DigitalWire>) => CreateDeleteGroupAction(designer, objs).execute(),
+        Remove: (...objs: Array<DigitalComponent | DigitalWire>) => CreateDeleteGroupAction(designer, objs),
     };
 }

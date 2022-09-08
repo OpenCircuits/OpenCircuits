@@ -50,7 +50,7 @@ export const BusButtonModule = ({ info }: Props) => {
         <button type="button"
                 title="Create a bus between selected ports"
                 onClick={() => {
-                    history.add(CreateBusAction(oports, iports).execute());
+                    history.add(CreateBusAction(oports, iports));
                     renderer.render();
                 }}>
             Bus

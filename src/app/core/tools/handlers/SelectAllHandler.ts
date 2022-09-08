@@ -16,5 +16,5 @@ export const SelectAllHandler: EventHandler = ({
          designer.getObjects().length !== selections.amount()),
 
     getResponse: ({ history, designer, selections }: CircuitInfo) =>
-        history.add(CreateGroupSelectAction(selections, designer.getObjects()).execute()),
+        history.add(CreateGroupSelectAction(selections, designer.getObjects())),
 });

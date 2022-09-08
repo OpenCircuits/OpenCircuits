@@ -23,7 +23,7 @@ describe("Selection Tool", () => {
         // Clear previous circuit
         designer.reset();
         history.reset();
-        CreateDeselectAllAction(selections).execute();
+        CreateDeselectAllAction(selections);
     }
 
     describe("Single Object", () => {

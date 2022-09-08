@@ -174,7 +174,7 @@ export const DigitalItemNav = ({ info }: Props) => {
             return false;
         }
         sec.items.splice(sec.items.indexOf(ic));
-        history.add(new DeleteICDataAction(icData, designer).execute());
+        history.add(new DeleteICDataAction(icData, designer));
         return true;
     }, [designer, history]);
 

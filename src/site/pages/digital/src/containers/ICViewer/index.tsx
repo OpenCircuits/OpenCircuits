@@ -163,7 +163,7 @@ export const ICViewer = (() => {
             const [pos, zoom] = GetCameraFit(
                 info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
             );
-            new MoveCameraAction(info.camera, pos, zoom).execute();
+            new MoveCameraAction(info.camera, pos, zoom);
 
             updateViewer();
             info.renderer.render();

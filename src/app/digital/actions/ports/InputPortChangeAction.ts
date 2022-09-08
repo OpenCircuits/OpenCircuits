@@ -10,9 +10,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 /**
  * This code allows for the change in the number of input ports on a DigitalComponent.
  */
-export class InputPortChangeAction extends PortChangeAction {
-    protected obj: DigitalComponent;
-
+export class InputPortChangeAction extends PortChangeAction<DigitalComponent> {
     /**
      * This code constructs the obj with the new number of ports.
      *
@@ -20,8 +18,7 @@ export class InputPortChangeAction extends PortChangeAction {
      * @param target Number of ports.
      */
     public constructor(obj: DigitalComponent, target: number) {
-        super(obj.getDesigner(), target);
-        this.obj = obj;
+        super(obj.getDesigner(), obj, target);
 
         this.execute();
     }
