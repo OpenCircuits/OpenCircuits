@@ -29,7 +29,7 @@ describe("Delete Group Action", () => {
 
         expect(designer.getObjects()).toContain(a);
 
-        const a1 = CreateDeleteGroupAction(designer, [a]).execute();
+        const a1 = CreateDeleteGroupAction(designer, [a]);
 
         expect(designer.getObjects()).not.toContain(a);
 
@@ -43,7 +43,7 @@ describe("Delete Group Action", () => {
 
         expect(designer.getObjects()).toContain(a);
 
-        const a1 = CreateDeleteGroupAction(designer, [a]).execute();
+        const a1 = CreateDeleteGroupAction(designer, [a]);
 
         expect(designer.getObjects()).not.toContain(a);
 
@@ -92,7 +92,7 @@ describe("Delete Group Action", () => {
         test("Delete Switch", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, [sw]).execute();
+            const a1 = CreateDeleteGroupAction(designer, [sw]);
 
             expect(designer.getObjects()).toHaveLength(8);
             expect(designer.getWires()).toHaveLength(0);
@@ -110,7 +110,7 @@ describe("Delete Group Action", () => {
         test("Delete All LEDs", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, leds).execute();
+            const a1 = CreateDeleteGroupAction(designer, leds);
 
             expect(designer.getObjects()).toHaveLength(1);
             expect(designer.getWires()).toHaveLength(0);
@@ -128,7 +128,7 @@ describe("Delete Group Action", () => {
         test("Delete TOp 4 LEDs", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, leds.slice(0, 4)).execute();
+            const a1 = CreateDeleteGroupAction(designer, leds.slice(0, 4));
 
             expect(designer.getObjects()).toHaveLength(1+1+2+4);
             expect(designer.getWires()).toHaveLength(1+2+4);
@@ -144,7 +144,7 @@ describe("Delete Group Action", () => {
         test("Delete First layer of Nodes", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, nodes1).execute();
+            const a1 = CreateDeleteGroupAction(designer, nodes1);
 
             expect(designer.getObjects()).toHaveLength(9);
             expect(designer.getWires()).toHaveLength(0);
@@ -163,7 +163,7 @@ describe("Delete Group Action", () => {
         test("Delete Second layer of Nodes", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, nodes2).execute();
+            const a1 = CreateDeleteGroupAction(designer, nodes2);
 
             expect(designer.getObjects()).toHaveLength(9);
             expect(designer.getWires()).toHaveLength(0);
@@ -182,7 +182,7 @@ describe("Delete Group Action", () => {
         test("Delete Top First Wire", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, [sw.getOutputs()[0]]).execute();
+            const a1 = CreateDeleteGroupAction(designer, [sw.getOutputs()[0]]);
 
             expect(designer.getObjects()).toHaveLength(1+1+2+8);
             expect(designer.getWires()).toHaveLength(1+2+4);
@@ -214,7 +214,7 @@ describe("Delete Group Action", () => {
             // nodes1[0] is top node in first layer
             expect(sw.getOutputs()[0].getOutputComponent()).toEqual(nodes1[0]);
 
-            const a1 = CreateDeleteGroupAction(designer, [nodes1[0].getOutputs()[0]]).execute();
+            const a1 = CreateDeleteGroupAction(designer, [nodes1[0].getOutputs()[0]]);
 
             expect(designer.getObjects()).toHaveLength(1+2+3+8);
             expect(designer.getWires()).toHaveLength(2+3+6);
@@ -230,7 +230,7 @@ describe("Delete Group Action", () => {
         test("Delete Top-most Wire", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, [nodes2[0].getOutputs()[0]]).execute();
+            const a1 = CreateDeleteGroupAction(designer, [nodes2[0].getOutputs()[0]]);
 
             expect(designer.getObjects()).toHaveLength(1+2+4+8);
             expect(designer.getWires()).toHaveLength(2+4+7);
@@ -246,7 +246,7 @@ describe("Delete Group Action", () => {
         test("Delete Top-most 2 Wires", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, nodes2[0].getOutputs()).execute();
+            const a1 = CreateDeleteGroupAction(designer, nodes2[0].getOutputs());
 
             expect(designer.getObjects()).toHaveLength(1+2+3+8);
             expect(designer.getWires()).toHaveLength(2+3+6);
@@ -262,7 +262,7 @@ describe("Delete Group Action", () => {
         test("Delete Top 2 Second Layer Nodes", () => {
             const [sw, nodes1, nodes2, leds] = PlaceTree();
 
-            const a1 = CreateDeleteGroupAction(designer, [nodes2[0], nodes2[1]]).execute();
+            const a1 = CreateDeleteGroupAction(designer, [nodes2[0], nodes2[1]]);
 
             expect(designer.getObjects()).toHaveLength(1+1+2+8);
             expect(designer.getWires()).toHaveLength(1+2+4);

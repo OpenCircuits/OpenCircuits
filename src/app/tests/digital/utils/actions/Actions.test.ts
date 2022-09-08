@@ -35,12 +35,12 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getObjects()).toHaveLength(0);
         expect(designer.getWires()).toHaveLength(0);
 
-        manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]).execute())
+        manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]))
 
-                .add(CreateMuxPortChangeAction(m, 3).execute())
+                .add(CreateMuxPortChangeAction(m, 3))
 
                 .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
-                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
+                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
 
                 .undo().undo().undo()
                 .redo().redo().redo()
@@ -65,14 +65,14 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getObjects()).toHaveLength(0);
         expect(designer.getWires()).toHaveLength(0);
 
-        manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]).execute())
+        manager.add(CreateGroupPlaceAction(designer, [a,b,c,d,e,m]))
 
-                .add(CreateMuxPortChangeAction(m, 3).execute())
+                .add(CreateMuxPortChangeAction(m, 3))
 
                 .add(CreateBusAction([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
-                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))).execute())
+                                     [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
 
-                .add(CreateMuxPortChangeAction(m, 2).execute())
+                .add(CreateMuxPortChangeAction(m, 2))
 
                 .undo().undo().undo().undo()
                 .redo().redo().redo().redo()
@@ -92,9 +92,9 @@ describe("Integration Tests for Actions", () => {
         expect(designer.getObjects()).toHaveLength(0);
         expect(designer.getWires()).toHaveLength(0);
 
-        manager.add(CreateGroupPlaceAction(designer, [a,b]).execute())
+        manager.add(CreateGroupPlaceAction(designer, [a,b]))
 
-                .add(new ConnectionAction(designer, a.getOutputPort(0), b.getInputPort(0)).execute())
+                .add(new ConnectionAction(designer, a.getOutputPort(0), b.getInputPort(0)))
 
                 .add(CreateSplitWireAction(designer, a.getOutputs()[0], n))
 

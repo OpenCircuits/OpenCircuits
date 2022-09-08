@@ -26,7 +26,7 @@ describe("Connection Action", () => {
         expect(b.isOn()).toBe(false);
 
         // connect
-        const a1 = new ConnectionAction(designer, a.getOutputPort(0), b.getInputPort(0)).execute();
+        const a1 = new ConnectionAction(designer, a.getOutputPort(0), b.getInputPort(0));
 
         // initial
         expect(designer.getWires()).toHaveLength(1);
@@ -42,7 +42,7 @@ describe("Connection Action", () => {
         expect(b.isOn()).toBe(false);
 
         // back to initial
-        a1.execute();
+        a1;
         expect(designer.getWires()).toHaveLength(1);
         expect(a.getOutputs()).toHaveLength(1);
         expect(b.getInputs()).toHaveLength(1);

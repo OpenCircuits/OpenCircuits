@@ -27,7 +27,7 @@ describe("Select Port Change Action", () => {
         expect(mux.getOutputPortCount().getValue()).toBe(1);
 
         // change select port count
-        const a1 = CreateMuxPortChangeAction(mux, 4).execute();
+        const a1 = CreateMuxPortChangeAction(mux, 4);
 
         // initial
         expect(mux.getSelectPortCount().getValue()).toBe(4);
@@ -41,7 +41,7 @@ describe("Select Port Change Action", () => {
         expect(mux.getOutputPortCount().getValue()).toBe(1);
 
         // back to initial
-        a1.execute();
+        a1;
         expect(mux.getSelectPortCount().getValue()).toBe(4);
         expect(mux.getInputPortCount().getValue()).toBe(16);
         expect(mux.getOutputPortCount().getValue()).toBe(1);
@@ -55,13 +55,13 @@ describe("Select Port Change Action", () => {
         // Connect switch to node and then then to input and select ports of Mux
         Connect(sw, n);
         Connect(n, 0, mux, 3);
-        new ConnectionAction(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]).execute();
+        new ConnectionAction(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]);
 
         expect(designer.getObjects()).toHaveLength(3);
         expect(designer.getWires()).toHaveLength(3);
 
         // change select port count
-        const a1 = CreateMuxPortChangeAction(mux, 1).execute();
+        const a1 = CreateMuxPortChangeAction(mux, 1);
 
         // initial
         expect(designer.getObjects()).toHaveLength(2);
@@ -73,7 +73,7 @@ describe("Select Port Change Action", () => {
         expect(designer.getWires()).toHaveLength(3);
 
         // back to initial
-        a1.execute();
+        a1;
         expect(designer.getObjects()).toHaveLength(2);
         expect(designer.getWires()).toHaveLength(0);
     });

@@ -28,7 +28,7 @@ describe("IC Action", () => {
 
         // connect
         const data = ICData.Create([a, b])!;
-        const ac = new CreateICDataAction(data, designer).execute();
+        const ac = new CreateICDataAction(data, designer);
 
         // initial
         expect(designer.getWires()).toHaveLength(1);
@@ -42,7 +42,7 @@ describe("IC Action", () => {
         expect(designer.getICData()).toHaveLength(0);
 
         // back to initial
-        ac.execute();
+        ac;
         expect(designer.getWires()).toHaveLength(1);
         expect(designer.getObjects()).toHaveLength(2);
         expect(designer.getICData()).toHaveLength(1);

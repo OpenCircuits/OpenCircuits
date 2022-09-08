@@ -46,7 +46,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         // Replaced
         const [action, orGate] = CreateReplaceDigitalComponentAction(designer, and, or);
-        action.execute();
+        action;
         expect(and.getDesigner()).toBeUndefined();
         expect(orGate.getDesigner()).toBeDefined();
         expect(designer.getObjects().includes(orGate)).toBeTruthy();
@@ -87,7 +87,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         // Replaced
         const [action, orGate] = CreateReplaceDigitalComponentAction(designer, and, or);
-        action.execute();
+        action;
         expect(orGate.getName()).toBe("My favorite gate");
     });
 
@@ -104,7 +104,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         // Replaced
         const [action, switchA] = CreateReplaceDigitalComponentAction(designer, and, a);
-        action.execute();
+        action;
         expect(out1.isOn()).toBeFalsy();
         expect(out2.isOn()).toBeFalsy();
         expect(switchA).toBeDefined();
@@ -132,7 +132,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         // Replaced
         const [action] = CreateReplaceDigitalComponentAction(designer, xor, not);
-        action.execute();
+        action;
         expect(out.isOn()).toBeTruthy();
         a.activate(true);
         expect(out.isOn()).toBeFalsy();
@@ -158,7 +158,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         // Replaced
         const [action, xorGate] = CreateReplaceDigitalComponentAction(designer, a, xor);
-        action.execute();
+        action;
         Connect(b, 0, xorGate, 0);
         Connect(c, 0, xorGate, 1);
 
@@ -190,7 +190,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         Connect(mux, 0, out, 0);
 
         const [action] = CreateReplaceDigitalComponentAction(designer, mux, and);
-        action.execute();
+        action;
 
         // Modified
         expect(out.isOn()).toBeFalsy();
@@ -212,7 +212,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         Connect(mux, 0, out, 0);
 
         const [action, demuxComp] = CreateReplaceDigitalComponentAction(designer, mux, demux);
-        action.execute();
+        action;
 
         expect(demuxComp.getDesigner()).toBeDefined();
     });
@@ -220,7 +220,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
     test("ANDGate -> Multiplexer", () => {
         const [in1, in2, in3, and, out] = Place(new Switch(), new Switch(), new Switch(), new ANDGate(), new LED());
         const mux = { id: "Multiplexer" };
-        new InputPortChangeAction(and, 2, 3).execute();
+        new InputPortChangeAction(and, 2, 3);
         Connect(in1, 0, and, 0);
         Connect(in2, 0, and, 1);
         Connect(in3, 0, and, 2);
@@ -239,7 +239,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         in3.activate(false);
 
         const [action, muxComponent] = CreateReplaceDigitalComponentAction(designer, and, mux);
-        action.execute();
+        action;
 
         // Replaced
         expect(muxComponent).toBeDefined();
@@ -260,7 +260,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         Connect(or, 0, out, 0);
         const data = ICData.Create([a, b, or, out])!;
         expect(data).toBeDefined();
-        new CreateICDataAction(data, designer).execute();
+        new CreateICDataAction(data, designer);
 
         const [ic, d, e, outer] = Place(new IC(data), new Switch(), new Switch(), new LED());
         Connect(d, 0, ic, 0);
@@ -268,7 +268,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         Connect(ic, 0, outer, 0);
 
         const [action, andComponent] = CreateReplaceDigitalComponentAction(designer, ic, and);
-        action.execute();
+        action;
 
         expect(d.getOutputs()[0].getOutputComponent()).toBe(andComponent);
         expect(e.getOutputs()[0].getOutputComponent()).toBe(andComponent);
@@ -285,7 +285,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         Connect(or, 0, out, 0);
         const data = ICData.Create([a, b, or, out])!;
         expect(data).toBeDefined();
-        new CreateICDataAction(data, designer).execute();
+        new CreateICDataAction(data, designer);
 
         const [d, e, outer] = Place(new Switch(), new Switch(), new LED());
         Connect(d, 0, and, 0);
@@ -293,7 +293,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         Connect(and, 0, outer, 0);
 
         const [action, ic] = CreateReplaceDigitalComponentAction(designer, and, { id: "ic/0" });
-        action.execute();
+        action;
 
         expect(d.getOutputs()[0].getOutputComponent()).toBe(ic);
         expect(e.getOutputs()[0].getOutputComponent()).toBe(ic);
@@ -318,7 +318,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         const [action, buttonComponent] = CreateReplaceDigitalComponentAction(designer, a, button) as
                                           [GroupAction, Button];
-        action.execute();
+        action;
 
         expect(a.getDesigner()).toBeUndefined();
         expect(buttonComponent.getDesigner()).toBe(designer);
@@ -329,7 +329,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
         expect(out.isOn()).toBeFalsy();
 
         const [action2, clockComponent] = CreateReplaceDigitalComponentAction(designer, buttonComponent, clock);
-        action2.execute();
+        action2;
 
         expect(buttonComponent.getDesigner()).toBeUndefined();
         expect(clockComponent).toBeDefined();
@@ -345,7 +345,7 @@ describe("CreateReplaceDigitalComponentAction", () => {
 
         selections.select(a);
         const [action, buttonComponent] = CreateReplaceDigitalComponentAction(designer, a, button, selections);
-        action.execute();
+        action;
 
         expect(buttonComponent).toBeDefined();
         expect(selections.has(buttonComponent)).toBeTruthy();

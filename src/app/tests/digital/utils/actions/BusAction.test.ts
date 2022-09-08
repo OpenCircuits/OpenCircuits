@@ -35,7 +35,7 @@ describe("Bus Action", () => {
         expectAllDisconnected();
 
         // Bus
-        const a1 = CreateBusAction(outs, ins).execute();
+        const a1 = CreateBusAction(outs, ins);
         expectConnected();
 
         // Reverted
@@ -43,7 +43,7 @@ describe("Bus Action", () => {
         expectAllDisconnected();
 
         // Back to bus'd
-        a1.execute();
+        a1;
         expectConnected();
     }
 

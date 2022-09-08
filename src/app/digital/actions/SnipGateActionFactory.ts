@@ -26,7 +26,7 @@ export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
     const outputs = gate.getOutputs();
 
     if (inputs.length === 0 || outputs.length === 0) {
-        action.add(new DeleteAction(designer, gate).execute());
+        action.add(new DeleteAction(designer, gate));
         return action;
     }
 
@@ -34,13 +34,13 @@ export function CreateSnipGateAction(gate: BUFGate | NOTGate): GroupAction {
     const outputWires = outputs;
 
     const prevPort = inputWire.getInput();
-    action.add(new DisconnectAction(designer, inputWire).execute());
+    action.add(new DisconnectAction(designer, inputWire));
     for (const wire of outputWires) { // Typescript gives error on .add() if this is a .forEach() loop
         const newPort = wire.getOutput();
-        action.add(new DisconnectAction(designer, wire).execute());
-        action.add(new ConnectionAction(designer, prevPort, newPort).execute());
+        action.add(new DisconnectAction(designer, wire));
+        action.add(new ConnectionAction(designer, prevPort, newPort));
     }
-    action.add(new DeleteAction(designer, gate).execute());
+    action.add(new DeleteAction(designer, gate));
 
     return action;
 }

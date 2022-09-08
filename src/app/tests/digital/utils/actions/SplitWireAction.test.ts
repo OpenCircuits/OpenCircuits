@@ -55,7 +55,7 @@ describe("Split Wire Action", () => {
         expect(b.getInputs()[0]).toBe(w);
 
         // redo
-        ac.execute();
+        ac;
 
         expect(designer.getObjects()).toHaveLength(3);
         expect(designer.getWires()).toHaveLength(2);
