@@ -25,7 +25,7 @@ export class BUFGate extends Gate {
      * Activate function, passes the input port state to
      * the parent class activate function.
      */
-    public activate(): void {
+    public override activate(): void {
         super.activate(this.inputs.first.getIsOn());
     }
 
@@ -43,7 +43,7 @@ export class BUFGate extends Gate {
      *
      * @returns The string "buf.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "buf.svg";
     }
 }

@@ -49,11 +49,11 @@ export class DigitalObjectSet extends IOObjectSet {
         return [...this.others]; // Shallow Copy
     }
 
-    public getWires(): DigitalWire[] {
+    public override getWires(): DigitalWire[] {
         return [...this.wires] as DigitalWire[];
     }
 
-    public getComponents(): DigitalComponent[] {
+    public override getComponents(): DigitalComponent[] {
         return [...this.inputs, ...this.outputs, ...this.others];
     }
 

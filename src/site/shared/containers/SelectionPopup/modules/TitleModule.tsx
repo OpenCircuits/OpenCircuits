@@ -1,8 +1,9 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Selectable}  from "core/utils/Selectable";
 
-import {GroupAction}   from "core/actions/GroupAction";
-import {SetNameAction} from "core/actions/SetNameAction";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {SetName} from "core/actions/units/SetName";
 
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
 import {useSelectionProps}    from "./useSelectionProps";
@@ -32,7 +33,7 @@ export const TitleModule = ({ info }: Props) => {
                 placeholder="<Multiple>"
                 alt="Name of object(s)"
                 getAction={(newNames) => new GroupAction(
-                    s.map((o,i) => new SetNameAction(o, newNames[i])),
+                    s.map((o,i) => SetName(o, newNames[i])),
                     "Title Module"
                 )}
                 onSubmit={({ isFinal, action }) => {

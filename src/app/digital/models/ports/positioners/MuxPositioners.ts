@@ -26,7 +26,7 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
      *
      * @param ports The array of input ports.
      */
-    public updatePortPositions(ports: InputPort[]): void {
+    public override updatePortPositions(ports: InputPort[]): void {
         // Calculations for parameters to use in determining origin positions
         const size = ports[0].getParent().getSize();
         const width = size.x;
@@ -46,7 +46,7 @@ export class MuxSelectPositioner extends Positioner<InputPort> {
 
 @serializable("MultiplexerInputPositioner")
 export class MultiplexerInputPositioner extends Positioner<InputPort> {
-    public updatePortPositions(ports: InputPort[]): void {
+    public override updatePortPositions(ports: InputPort[]): void {
         const x = -ports[0].getParent().getSize().x / 2;
         ports.forEach((port, i) => {
             const y = this.calcSpacingPos(i, ports.length, DEFAULT_SIZE) - DEFAULT_SIZE/4;
@@ -59,7 +59,7 @@ export class MultiplexerInputPositioner extends Positioner<InputPort> {
 
 @serializable("DemultiplexerOutputPositioner")
 export class DemultiplexerOutputPositioner extends Positioner<OutputPort> {
-    public updatePortPositions(ports: OutputPort[]): void {
+    public override updatePortPositions(ports: OutputPort[]): void {
         const x = ports[0].getParent().getSize().x / 2;
         ports.forEach((port, i) => {
             const y = this.calcSpacingPos(i, ports.length, DEFAULT_SIZE) - DEFAULT_SIZE/4;

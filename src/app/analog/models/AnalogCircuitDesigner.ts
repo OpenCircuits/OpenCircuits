@@ -79,14 +79,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         return new AnalogWire(p1, p2);
     }
 
-    public addGroup(group: IOObjectSet): void {
-        for (const a of group.getComponents())
-            this.addObject(a as AnalogComponent);
-
-        for (const b of group.getWires())
-            this.addWire(b as AnalogWire);
-    }
-
     public addObjects(objects: AnalogComponent[]): void {
         for (const object of objects)
             this.addObject(object);
@@ -137,7 +129,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         this.callback({ type: "wire", op: "removed", wire });
     }
 
-    public replace(designer: AnalogCircuitDesigner): void {
+    public override replace(designer: AnalogCircuitDesigner): void {
         super.replace(designer);
     }
 

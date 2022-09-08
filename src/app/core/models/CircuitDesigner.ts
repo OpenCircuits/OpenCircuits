@@ -1,5 +1,3 @@
-import {IOObjectSet} from "core/utils/ComponentUtils";
-
 import {Component} from "./Component";
 import {IOObject}  from "./IOObject";
 import {Port}      from "./ports/Port";
@@ -12,7 +10,6 @@ export abstract class CircuitDesigner {
 
     public abstract addObject(obj: Component): void;
     public abstract addWire(wire: Wire): void;
-    public abstract addGroup(group: IOObjectSet): void;
 
     public abstract createWire(p1?: Port, p2?: Port): Wire;
 

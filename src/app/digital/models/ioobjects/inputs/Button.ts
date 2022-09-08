@@ -33,21 +33,21 @@ export class Button extends PressableComponent {
      * @returns   True if the point is within this component,
      *    false otherwise.
      */
-    public isWithinPressBounds(v: Vector): boolean {
+    public override isWithinPressBounds(v: Vector): boolean {
         return CircleContains(this.getPos(), this.getSize().x/2, v);
     }
 
     /**
      * Activates the button (makes the output true) by calling activate.
      */
-    public press(): void {
+    public override press(): void {
         this.activate(true);
     }
 
     /**
      * Deactivates the button (makes the output false) by calling activate.
      */
-    public release(): void {
+    public override release(): void {
         this.activate(false);
     }
 
@@ -57,7 +57,7 @@ export class Button extends PressableComponent {
      * @param signal True makes it activate the output,
      *         false deactivates.
      */
-    public activate(signal: boolean): void {
+    public override activate(signal: boolean): void {
         super.activate(signal, 0);
     }
 

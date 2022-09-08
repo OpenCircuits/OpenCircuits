@@ -40,7 +40,7 @@ export abstract class Latch extends DigitalComponent {
 
     protected abstract getNextState(): boolean;
 
-    public activate(): void {
+    public override activate(): void {
         this.enabled = this.inputs.get(Latch.E_PORT).getIsOn();
 
         if (this.enabled)

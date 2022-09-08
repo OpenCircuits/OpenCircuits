@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {SetMuxPortCount} from "digital/actions/compositions/SetMuxPortCount";
 
 import {Mux} from "digital/models/ioobjects/other/Mux";
 
@@ -35,7 +35,7 @@ export const SelectPortCountModule = ({ info }: Props) => {
                 alt="Number of selector ports object(s) have"
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => new MuxPortChangeAction(o, o.getSelectPortCount().getValue(), newCounts[i])),
+                        cs.map((o,i) => SetMuxPortCount(o, newCounts[i])),
                         "Select Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

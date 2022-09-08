@@ -50,7 +50,7 @@ export class LED extends DigitalComponent {
      * @param signal Signal connected to the LED (on or off).
      * @param i      The output port index.
      */
-    public activate(signal: boolean, i = 0): void {
+    public override activate(signal: boolean, i = 0): void {
         this.onTransformChange();
         super.activate(signal, i);
     }
@@ -60,7 +60,7 @@ export class LED extends DigitalComponent {
      *
      * @returns Gets extra offset of light radius if LED is on.
      */
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         // Add extra offset if this LED is on (to account for light)
         return super.getOffset().add((this.isOn() ? (LED_LIGHT_RADIUS - LED_WIDTH/2) : (0)));
     }
@@ -92,7 +92,7 @@ export class LED extends DigitalComponent {
      *
      * @returns Image name of the LED (OFF).
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "led.svg";
     }
 

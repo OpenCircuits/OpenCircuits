@@ -30,18 +30,6 @@ export class Decoder extends DigitalComponent {
         this.updatePortNames();
     }
 
-    public activate(): void {
-        // Convert binary input to index of which output should be on
-        const num = this.getInputPorts()
-                .map((port) => (port.getIsOn() ? 1 : 0))
-                .reduce((prev, cur, i) => prev | (cur << i), 0);
-
-        // Turn everything off except i === num
-        this.getOutputPorts().forEach((_, i) => {
-            super.activate(i === num, i);
-        });
-    }
-
     public updatePortNames(): void {
         this.inputs.getPorts().forEach((p, i) => {
             if (p.getName() === "")
@@ -50,6 +38,31 @@ export class Decoder extends DigitalComponent {
         this.outputs.getPorts().forEach((p, i) => {
             if (p.getName() === "")
                 p.setName(`O${i}`);
+        });
+    }
+
+    public override setInputPortCount(val: number): void {
+        // Update size
+        const newSize = V((1 + (val - 1)/20), Math.pow(2, val)/2).scale(DEFAULT_SIZE);
+        this.setSize(newSize);
+
+        super.setInputPortCount(val);
+
+        // Update port names
+        this.inputs.updatePortPositions();
+        this.outputs.updatePortPositions();
+        this.updatePortNames();
+    }
+
+    public override activate(): void {
+        // Convert binary input to index of which output should be on
+        const num = this.getInputPorts()
+                .map((port) => (port.getIsOn() ? 1 : 0))
+                .reduce((prev, cur, i) => prev | (cur << i), 0);
+
+        // Turn everything off except i === num
+        this.getOutputPorts().forEach((_, i) => {
+            super.activate(i === num, i);
         });
     }
 

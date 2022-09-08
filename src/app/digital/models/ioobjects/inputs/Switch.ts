@@ -23,7 +23,7 @@ export class Switch extends PressableComponent {
     /**
      * Toggles Switch.
      */
-    public click(): void {
+    public override click(): void {
         this.activate(!this.on);
     }
 
@@ -32,7 +32,7 @@ export class Switch extends PressableComponent {
      *
      * @param signal Boolean representing on or off.
      */
-    public activate(signal: boolean): void {
+    public override activate(signal: boolean): void {
         super.activate(signal, 0);
     }
 

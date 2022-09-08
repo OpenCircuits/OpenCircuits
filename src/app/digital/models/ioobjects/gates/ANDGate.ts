@@ -28,7 +28,7 @@ export class ANDGate extends Gate {
      * Uses the inputs to determine the output signal from this logic gate, that
      * is, on only when all of the inputs are on.
      */
-    public activate(): void {
+    public override activate(): void {
         const on = this.getInputPorts().every((input) => input.getIsOn());
         super.activate(on);
     }
@@ -48,7 +48,7 @@ export class ANDGate extends Gate {
      *
      * @returns The image filename.
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "and.svg";
     }
 }

@@ -9,8 +9,8 @@ import {DigitalComponent, DigitalWire} from "../index";
 
 @serializable("DigitalOutputPort")
 export class OutputPort extends Port {
-    protected parent: DigitalComponent;
-    protected connections: DigitalWire[];
+    protected override parent: DigitalComponent;
+    protected override connections: DigitalWire[];
 
     /**
      * Constructs the output port with no connections.
@@ -90,7 +90,7 @@ export class OutputPort extends Port {
      *
      * @returns The wire connections.
      */
-    public getWires(): DigitalWire[] {
+    public override getWires(): DigitalWire[] {
         return this.connections;
     }
 
@@ -99,7 +99,7 @@ export class OutputPort extends Port {
      *
      * @returns The parent component.
      */
-    public getParent(): DigitalComponent {
+    public override getParent(): DigitalComponent {
         return this.parent;
     }
 }

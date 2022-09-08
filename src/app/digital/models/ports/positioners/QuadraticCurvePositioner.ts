@@ -21,7 +21,7 @@ export class QuadraticCurvePositioner extends Positioner<InputPort> {
      *
      * @param ports The array of ports (either in or out ports).
      */
-    public updatePortPositions(ports: InputPort[]): void {
+    public override updatePortPositions(ports: InputPort[]): void {
         super.updatePortPositions(ports);
 
         ports.forEach((port) => {

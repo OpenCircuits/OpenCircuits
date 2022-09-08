@@ -62,7 +62,7 @@ export class SegmentDisplay extends DigitalComponent {
      *
      * @param val The new number of segements and input ports.
      */
-    public setInputPortCount(val: number): void {
+    public override setInputPortCount(val: number): void {
         super.setInputPortCount(val);
         this.setSegmentCount(val);
     }

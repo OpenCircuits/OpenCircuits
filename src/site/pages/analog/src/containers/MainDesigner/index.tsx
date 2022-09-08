@@ -1,3 +1,4 @@
+import {CreateGroupPlaceAction}    from "core/actions/addition/PlaceAction";
 import {useLayoutEffect, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
@@ -7,9 +8,8 @@ import {V} from "Vector";
 import {Cursor} from "core/utils/CircuitInfo";
 import {Input}  from "core/utils/Input";
 
-import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {DeselectAll} from "core/actions/units/Select";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
@@ -80,7 +80,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     useLayoutEffect(() => {
         info.locked = isLocked;
         if (isLocked) // Deselect everything
-            info.history.add(CreateDeselectAllAction(info.selections).execute());
+            info.history.add(DeselectAll(info.selections));
         info.history.setDisabled(isLocked);
         info.selections.setDisabled(isLocked);
     }, [info, isLocked]);
@@ -97,7 +97,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                 pos = info.camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
                 info.history.add(
-                    CreateGroupPlaceAction(info.designer, AnalogCreateN(pos, itemId, info.designer, num)).execute()
+                    CreateGroupPlaceAction(info.designer, AnalogCreateN(pos, itemId, info.designer, num))
                 );
                 info.renderer.render();
             }}>

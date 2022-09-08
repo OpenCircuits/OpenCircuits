@@ -25,7 +25,7 @@ export class SidePositioner extends Positioner<AnalogPort> {
      * @param arr     The array of input ports.
      * @param arr."0" The input port.
      */
-    public updatePortPositions([p1]: AnalogPort[]): void {
+    public override updatePortPositions([p1]: AnalogPort[]): void {
         const size = (
             this.side === "left" || this.side === "right"
             ? p1.getParent().getSize().x

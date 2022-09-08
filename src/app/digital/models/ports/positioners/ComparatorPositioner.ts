@@ -13,7 +13,7 @@ export class ComparatorPositioner extends ConstantSpacePositioner<InputPort> {
      *
      * @param ports The array of input ports.
      */
-    public updatePortPositions(ports: InputPort[]): void {
+    public override updatePortPositions(ports: InputPort[]): void {
         super.updatePortPositions([
             ...ports.slice(0, ports.length/2),
             undefined,

@@ -37,7 +37,7 @@ export class Capacitor extends AnalogComponent {
         return [`${this.props["C"]}`];
     }
 
-    public getPropInfo(key: string) {
+    public override getPropInfo(key: string) {
         return Info[key];
     }
 
@@ -55,7 +55,7 @@ export class Capacitor extends AnalogComponent {
      *
      * @returns The string "capacitor.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "capacitor.svg";
     }
 }

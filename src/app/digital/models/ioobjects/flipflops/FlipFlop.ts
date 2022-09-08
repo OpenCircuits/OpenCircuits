@@ -52,7 +52,7 @@ export abstract class FlipFlop extends DigitalComponent {
         return this.clock && !this.lastClock;
     }
 
-    public activate(): void {
+    public override activate(): void {
         this.lastClock = this.clock;
 
         this.clock = this.inputs.get(FlipFlop.CLK_PORT).getIsOn();

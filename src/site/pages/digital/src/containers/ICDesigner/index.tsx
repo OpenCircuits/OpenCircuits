@@ -8,10 +8,8 @@ import {Input} from "core/utils/Input";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {PlaceAction} from "core/actions/addition/PlaceAction";
-
-import {CreateDeselectAllAction,
-        SelectAction}            from "core/actions/selection/SelectAction";
+import {Place}               from "core/actions/units/Place";
+import {DeselectAll, Select} from "core/actions/units/Select";
 
 import {DefaultTool} from "core/tools/DefaultTool";
 import {PanTool}     from "core/tools/PanTool";
@@ -23,7 +21,7 @@ import {UndoHandler}        from "core/tools/handlers/UndoHandler";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 import {ICCircuitInfo}      from "digital/utils/ICCircuitInfo";
 
-import {CreateICDataAction} from "digital/actions/CreateICDataAction";
+import {AddICData} from "digital/actions/units/AddICData";
 
 import {ICPortTool}   from "digital/tools/ICPortTool";
 import {ICEdge,
@@ -172,12 +170,12 @@ export const ICDesigner = (() => {
 
                 // Deselect other things, create IC and select it
                 const action = new GroupAction([
-                    CreateDeselectAllAction(mainInfo.selections),
-                    new CreateICDataAction(data, mainInfo.designer),
-                    new PlaceAction(mainInfo.designer, ic),
-                    new SelectAction(mainInfo.selections, ic),
+                    DeselectAll(mainInfo.selections),
+                    AddICData(data, mainInfo.designer),
+                    Place(mainInfo.designer, ic),
+                    Select(mainInfo.selections, ic),
                 ], "Create IC Action");
-                mainInfo.history.add(action.execute());
+                mainInfo.history.add(action);
                 mainInfo.renderer.render();
             }
 

@@ -3,12 +3,11 @@ import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {Action} from "core/actions/Action";
 
+import {ReversableAction} from "../bases/ReversableAction";
 import {GroupAction}      from "../GroupAction";
-import {ReversableAction} from "../ReversableAction";
 
 
-
-export class SelectAction extends ReversableAction {
+class SelectAction extends ReversableAction {
     private readonly selections: SelectionsWrapper;
     private readonly obj: Selectable;
 
@@ -17,6 +16,8 @@ export class SelectAction extends ReversableAction {
 
         this.selections = selections;
         this.obj = obj;
+
+        this.execute();
     }
 
     protected normalExecute(): Action {
@@ -37,21 +38,25 @@ export class SelectAction extends ReversableAction {
 
 }
 
-export class DeselectAction extends SelectAction {
-    public constructor(selections: SelectionsWrapper, obj: Selectable) {
-        super(selections, obj, true);
-    }
+export function Select(selections: SelectionsWrapper, obj: Selectable) {
+    return new SelectAction(selections, obj);
+}
+export function Deselect(selections: SelectionsWrapper, obj: Selectable) {
+    return new SelectAction(selections, obj, true);
 }
 
 
-export function CreateGroupSelectAction(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
-    return objs.reduce((acc, s) => acc.add(new SelectAction(selections, s)), new GroupAction([], "Select Action"));
+export function SelectGroup(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
+    return new GroupAction(
+        objs.map((o) => Select(selections, o)),
+        "Select Group",
+    );
 }
 
-export function CreateDeselectAllAction(selections: SelectionsWrapper): GroupAction {
+export function DeselectAll(selections: SelectionsWrapper): GroupAction {
     const objs = selections.get();
-    return objs.reduce(
-        (acc, s) => acc.add(new DeselectAction(selections, s)),
-        new GroupAction([], "Deselect All Action")
+    return new GroupAction(
+        objs.map((o) => Deselect(selections, o)),
+        "Deselect All",
     );
 }

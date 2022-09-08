@@ -1,6 +1,6 @@
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Connect} from "core/actions/units/Connect";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -26,7 +26,7 @@ describe("Connection Action", () => {
         expect(b.isOn()).toBe(false);
 
         // connect
-        const a1 = new ConnectionAction(designer, a.getOutputPort(0), b.getInputPort(0)).execute();
+        const a1 = Connect(designer, a.getOutputPort(0), b.getInputPort(0));
 
         // initial
         expect(designer.getWires()).toHaveLength(1);

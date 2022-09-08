@@ -27,10 +27,12 @@ export abstract class Mux extends DigitalComponent {
                         inputPositioner?: Positioner<InputPort>,
                         outputPositioner?: Positioner<OutputPort>) {
         super(inputPortCount, outputPortCount, Mux.CalcSize(MUX_DEFAULT_SELECT_PORTS),
-                inputPositioner, outputPositioner);
+              inputPositioner, outputPositioner);
 
-        this.selects = new PortSet<InputPort>(this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
-                                              selectPositioner, InputPort as new (c: Component) => InputPort);
+        this.selects = new PortSet<InputPort>(
+            this, new ClampedValue(MUX_DEFAULT_SELECT_PORTS, 1, 8),
+            selectPositioner, InputPort as new (c: Component) => InputPort
+        );
 
         this.setSelectPortCount(MUX_DEFAULT_SELECT_PORTS);
     }
@@ -42,7 +44,20 @@ export abstract class Mux extends DigitalComponent {
         });
     }
 
+    public override setInputPortCount(val: number): void {
+        super.setInputPortCount(val);
+        this.updatePortNames();
+    }
+
+    public override setOutputPortCount(val: number): void {
+        super.setOutputPortCount(val);
+        this.updatePortNames();
+    }
+
     public setSelectPortCount(val: number): void {
+        // Update size (before setting ports since their positions are based on the size)
+        this.setSize(Mux.CalcSize(val));
+
         this.selects.setPortCount(val);
 
         // Update input port positions and port names
@@ -64,12 +79,12 @@ export abstract class Mux extends DigitalComponent {
     }
 
     // @Override
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return super.getOffset().add(0, MULTIPLEXER_HEIGHT_OFFSET/2);
     }
 
     // @Override
-    public getInputs(): DigitalWire[] {
+    public override getInputs(): DigitalWire[] {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return [
@@ -81,7 +96,7 @@ export abstract class Mux extends DigitalComponent {
     }
 
     // @Override
-    public getPorts(): Port[] {
+    public override getPorts(): Port[] {
         return [...super.getPorts(), ...this.getSelectPorts()];
     }
 
@@ -92,7 +107,6 @@ export abstract class Mux extends DigitalComponent {
      * @returns       A Vector of the size for a Mux.
      */
     public static CalcSize(ports: number): Vector {
-        return V((0.5 + ports/2) * DEFAULT_SIZE, (1 + Math.pow(2, ports - 1)) * DEFAULT_SIZE);
+        return V((0.5 + ports/2), (1 + Math.pow(2, ports - 1))).scale(DEFAULT_SIZE);
     }
-
 }

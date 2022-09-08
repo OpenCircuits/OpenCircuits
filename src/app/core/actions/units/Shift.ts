@@ -6,7 +6,7 @@ import {Component} from "core/models/Component";
 import {Wire}      from "core/models/Wire";
 
 
-export class ShiftAction implements Action {
+class ShiftAction implements Action {
     private readonly designer: CircuitDesigner;
     private readonly obj: Component | Wire;
     private i: number;
@@ -14,6 +14,8 @@ export class ShiftAction implements Action {
     public constructor(designer: CircuitDesigner, obj: Component | Wire) {
         this.designer = designer;
         this.obj = obj;
+
+        this.execute();
     }
 
     public execute(): Action {
@@ -35,4 +37,8 @@ export class ShiftAction implements Action {
     public getCustomInfo(): string[] {
         return [`${this.obj.getName()}: ${this.i}`];
     }
+}
+
+export function Shift(designer: CircuitDesigner, obj: Component | Wire) {
+    return new ShiftAction(designer, obj);
 }

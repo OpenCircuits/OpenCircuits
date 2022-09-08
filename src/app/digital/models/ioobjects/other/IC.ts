@@ -70,7 +70,7 @@ export class IC extends DigitalComponent {
         }
     }
 
-    public setDesigner(designer?: DigitalCircuitDesigner): void {
+    public override setDesigner(designer?: DigitalCircuitDesigner): void {
         super.setDesigner(designer);
 
         // Set designer of all internal objects
@@ -90,7 +90,7 @@ export class IC extends DigitalComponent {
         this.onTransformChange();
     }
 
-    public activate(): void {
+    public override activate(): void {
         // Activate corresponding input object
         this.collection.getInputs().forEach((input, i) =>
             input.activate(this.getInputPort(i).getIsOn())

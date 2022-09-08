@@ -40,7 +40,7 @@ export class ORGate extends Gate {
     /**
      * Checks if some of the inputs are on, and if they are, activates the gate.
      */
-    public activate(): void {
+    public override activate(): void {
         const on = this.getInputPorts().some((input) => input.getIsOn());
         super.activate(on);
     }
@@ -50,7 +50,7 @@ export class ORGate extends Gate {
      *
      * @returns A vector with the symmetric offset based on the current input number.
      */
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
     }
     /**
@@ -67,7 +67,7 @@ export class ORGate extends Gate {
      *
      * @returns The string "or.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "or.svg";
     }
 }

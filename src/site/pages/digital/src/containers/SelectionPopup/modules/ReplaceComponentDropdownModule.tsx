@@ -6,7 +6,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {DigitalCircuitInfo}                       from "digital/utils/DigitalCircuitInfo";
 import {GenerateReplacementList, GetReplacements} from "digital/utils/ReplaceDigitalComponentHelpers";
 
-import {CreateReplaceDigitalComponentAction} from "digital/actions/ReplaceDigitalComponentActionFactory";
+import {ReplaceComponent} from "digital/actions/compositions/ReplaceComponent";
 
 import {DigitalComponent, DigitalEvent} from "digital/models";
 
@@ -19,7 +19,10 @@ import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/i
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 
-const allBaseComponentIDs = itemNavConfig.sections.flatMap((s) => s.items.map((i) => i.id));
+const allBaseComponentIDs = [
+    ...itemNavConfig.sections.flatMap((s) => s.items.map((i) => i.id)),
+    "DigitalNode",
+];
 
 type Props = {
     info: DigitalCircuitInfo;
@@ -58,7 +61,7 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
         return null;
 
     const replaceables = GetReplacements(components[0], designer, replacementList);
-    if (replaceables.length === 1)
+    if (replaceables.length <= 1)
         return null;
 
     // updateImmediately is required because this action changes the selected item thus changing the selection popup.
@@ -76,7 +79,7 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
                         components.map((c, i) => {
                             const replacementIdx = parseInt(vals[i]);
                             const replacement = replaceables[replacementIdx];
-                            return CreateReplaceDigitalComponentAction(designer, c, replacement, selections)[0];
+                            return ReplaceComponent(designer, c, replacement, selections)[0];
                         }),
                         "Replace Component Module"
                     )}

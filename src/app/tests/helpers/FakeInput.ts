@@ -84,11 +84,11 @@ export class FakeInput extends Input {
         return this;
     }
 
-    public onMouseEnter(): FakeInput {
+    public override onMouseEnter(): FakeInput {
         super.onMouseEnter();
         return this;
     }
-    public onMouseLeave(): FakeInput {
+    public override onMouseLeave(): FakeInput {
         super.onMouseLeave();
         return this;
     }
@@ -125,12 +125,12 @@ export class FakeInput extends Input {
         return this;
     }
 
-    public onBlur(): FakeInput {
+    public override onBlur(): FakeInput {
         super.onBlur();
         return this;
     }
 
-    public reset(): FakeInput {
+    public override reset(): FakeInput {
         super.reset();
         this.touches = [];
         return this;

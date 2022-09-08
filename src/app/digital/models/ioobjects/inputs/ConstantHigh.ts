@@ -26,7 +26,7 @@ export class ConstantHigh extends DigitalComponent {
      *
      * @returns An empty vector.
      */
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return V();
     }
 
@@ -44,7 +44,7 @@ export class ConstantHigh extends DigitalComponent {
      *
      * @returns The name of the image file.
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "constHigh.svg";
     }
 

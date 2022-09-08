@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {SegmentDisplay} from "digital/models/ioobjects";
 
@@ -35,7 +35,7 @@ export const SegmentCountModule = ({ info }: Props) => {
                 props={props.numSegments}
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => new InputPortChangeAction(o, o.getSegmentCount(), newCounts[i])),
+                        cs.map((o,i) => SetInputPortCount(o, newCounts[i])),
                         "Segment Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

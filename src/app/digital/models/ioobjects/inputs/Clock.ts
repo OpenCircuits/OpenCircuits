@@ -43,7 +43,7 @@ export class Clock extends TimedComponent {
      * which intially set the clock off and call for onTick() function to turn on the clock.
      */
     // Reset to off and start ticking
-    public reset(): void {
+    public override reset(): void {
         this.isOn = false;
         super.reset();
     }
@@ -53,7 +53,7 @@ export class Clock extends TimedComponent {
      *
      * @returns An empty vector.
      */
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return V();
     }
 
@@ -71,7 +71,7 @@ export class Clock extends TimedComponent {
      *
      * @returns The name of the clock image file.
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return (this.isOn ? "clockOn.svg" : "clock.svg");
     }
 }
