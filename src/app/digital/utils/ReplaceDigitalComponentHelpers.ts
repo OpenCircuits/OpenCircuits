@@ -106,5 +106,9 @@ export function GetReplacements(comp: DigitalComponent, designer: DigitalCircuit
 
     // Put the `comp`s entry at the beginning of the array
     const self = list.get(key)!.find((r) => (r.id === id))!;
+    if (!self) {
+        console.warn(`Entry with ID: ${id}, doesn't appear to have an entry for Replacements... Ignoring.`);
+        return [];
+    }
     return [self, ...list.get(key)!.filter((r) => (r.id !== id))];
 }

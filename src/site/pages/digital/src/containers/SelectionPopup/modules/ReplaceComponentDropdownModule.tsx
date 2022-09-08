@@ -19,7 +19,10 @@ import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/i
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
 
-const allBaseComponentIDs = itemNavConfig.sections.flatMap((s) => s.items.map((i) => i.id));
+const allBaseComponentIDs = [
+    ...itemNavConfig.sections.flatMap((s) => s.items.map((i) => i.id)),
+    "DigitalNode",
+];
 
 type Props = {
     info: DigitalCircuitInfo;
@@ -58,7 +61,7 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
         return null;
 
     const replaceables = GetReplacements(components[0], designer, replacementList);
-    if (replaceables.length === 1)
+    if (replaceables.length <= 1)
         return null;
 
     // updateImmediately is required because this action changes the selected item thus changing the selection popup.
