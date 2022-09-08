@@ -4,7 +4,7 @@ import {CircuitInfo}               from "core/utils/CircuitInfo";
 import {GetComponentPath, GetPath} from "core/utils/ComponentUtils";
 import {Event}                     from "core/utils/Events";
 
-import {CreateGroupSelectAction} from "core/actions/units/Select";
+import {SelectGroup} from "core/actions/units/Select";
 
 import {Component, Wire} from "core/models";
 
@@ -30,6 +30,6 @@ export const SelectPathHandler: EventHandler = ({
                 o.isWithinSelectBounds(worldMousePos)) as Component | Wire;
 
         const path = (obj instanceof Wire) ? (GetPath(obj)) : (GetComponentPath(obj!));
-        history.add(CreateGroupSelectAction(selections, path));
+        history.add(SelectGroup(selections, path));
     },
 });

@@ -4,9 +4,9 @@ import {CopyPasteEvent, Event} from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateDeselectAllAction} from "core/actions/units/Select";
-
 import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
+
+import {DeselectAll} from "core/actions/units/Select";
 
 import {IOObject} from "core/models";
 
@@ -41,7 +41,7 @@ export const CopyHandler: EventHandler = ({
         if (type === "cut") {
             // Delete selections
             history.add(new GroupAction([
-                CreateDeselectAllAction(selections),
+                DeselectAll(selections),
                 DeleteGroup(designer, objs),
             ], "Copy Handler"));
         }

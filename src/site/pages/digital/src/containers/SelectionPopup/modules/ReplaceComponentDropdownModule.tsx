@@ -6,7 +6,7 @@ import {GroupAction} from "core/actions/GroupAction";
 import {DigitalCircuitInfo}                       from "digital/utils/DigitalCircuitInfo";
 import {GenerateReplacementList, GetReplacements} from "digital/utils/ReplaceDigitalComponentHelpers";
 
-import {CreateReplaceDigitalComponentAction} from "digital/actions/ReplaceDigitalComponentActionFactory";
+import {ReplaceComponent} from "digital/actions/compositions/ReplaceComponent";
 
 import {DigitalComponent, DigitalEvent} from "digital/models";
 
@@ -79,7 +79,7 @@ export const ReplaceComponentDropdownModule = ({ info }: Props) => {
                         components.map((c, i) => {
                             const replacementIdx = parseInt(vals[i]);
                             const replacement = replaceables[replacementIdx];
-                            return CreateReplaceDigitalComponentAction(designer, c, replacement, selections)[0];
+                            return ReplaceComponent(designer, c, replacement, selections)[0];
                         }),
                         "Replace Component Module"
                     )}

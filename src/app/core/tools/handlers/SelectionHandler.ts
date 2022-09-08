@@ -6,8 +6,8 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateDeselectAllAction, Deselect, Select} from "core/actions/units/Select";
-import {Shift}                                     from "core/actions/units/Shift";
+import {Deselect, DeselectAll, Select} from "core/actions/units/Select";
+import {Shift}                         from "core/actions/units/Shift";
 
 import {Wire} from "core/models";
 
@@ -24,7 +24,7 @@ export const SelectionHandler: EventHandler = ({
 
         // Clear previous selections if not holding shift
         if (!input.isShiftKeyDown())
-            action.add(CreateDeselectAllAction(selections));
+            action.add(DeselectAll(selections));
 
         const ports = GetAllPorts(designer.getObjects());
         const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];

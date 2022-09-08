@@ -1,7 +1,7 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event}       from "core/utils/Events";
 
-import {CreateGroupSelectAction} from "core/actions/units/Select";
+import {SelectGroup} from "core/actions/units/Select";
 
 import {EventHandler} from "../EventHandler";
 
@@ -16,5 +16,5 @@ export const SelectAllHandler: EventHandler = ({
          designer.getObjects().length !== selections.amount()),
 
     getResponse: ({ history, designer, selections }: CircuitInfo) =>
-        history.add(CreateGroupSelectAction(selections, designer.getObjects())),
+        history.add(SelectGroup(selections, designer.getObjects())),
 });

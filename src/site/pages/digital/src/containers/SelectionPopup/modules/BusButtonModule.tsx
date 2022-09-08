@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Component} from "core/models";
 
-import {CreateBusAction, GetComponentBusPorts} from "digital/actions/addition/BusActionFactory";
+import {Bus, GetComponentBusPorts} from "digital/actions/compositions/Bus";
 
 import {InputPort, OutputPort} from "digital/models";
 
@@ -50,7 +50,7 @@ export const BusButtonModule = ({ info }: Props) => {
         <button type="button"
                 title="Create a bus between selected ports"
                 onClick={() => {
-                    history.add(CreateBusAction(oports, iports));
+                    history.add(Bus(oports, iports));
                     renderer.render();
                 }}>
             Bus

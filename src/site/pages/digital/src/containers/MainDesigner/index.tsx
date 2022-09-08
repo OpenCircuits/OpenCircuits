@@ -6,9 +6,8 @@ import {V} from "Vector";
 
 import {Input} from "core/utils/Input";
 
-import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
-
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {PlaceGroup}  from "core/actions/units/Place";
+import {DeselectAll} from "core/actions/units/Select";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -74,7 +73,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     useLayoutEffect(() => {
         info.locked = isLocked;
         if (isLocked) // Deselect everything
-            info.history.add(CreateDeselectAllAction(info.selections));
+            info.history.add(DeselectAll(info.selections));
         info.history.setDisabled(isLocked);
         info.selections.setDisabled(isLocked);
     }, [info, isLocked]);
@@ -101,7 +100,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                     info.history.add(SmartPlace(pos, itemId, info.designer, num, smartPlaceOptions));
                 } else {
                     info.history.add(
-                        CreateGroupPlaceAction(info.designer, DigitalCreateN(pos, itemId, info.designer, num))
+                        PlaceGroup(info.designer, DigitalCreateN(pos, itemId, info.designer, num))
                     );
                 }
                 info.renderer.render();

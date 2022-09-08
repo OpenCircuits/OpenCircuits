@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateCoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
+import {SetCoderPortCount} from "digital/actions/compositions/SetCoderPortCount";
 
 import {Decoder} from "digital/models/ioobjects";
 
@@ -35,7 +35,7 @@ export const DecoderInputCountModule = ({ info }: Props) => {
                 alt="Number of inputs object(s) have"
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => CreateCoderPortChangeAction(o, newCounts[i])),
+                        cs.map((o,i) => SetCoderPortCount(o, newCounts[i])),
                         "Decoder Input Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

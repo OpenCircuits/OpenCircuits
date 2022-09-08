@@ -2,7 +2,7 @@ import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {Translate} from "core/actions/units/Translate";
 
 import {Component} from "core/models";
 
@@ -38,7 +38,7 @@ export const PositionModule = ({ info }: Props) => {
             <VectorModuleInputField
                 kind="float" step={V(1,1)}
                 props={props.x.map((x, i) => V(x, props.y[i]))}
-                getAction={(newVals) => new TranslateAction(
+                getAction={(newVals) => Translate(
                     cs,
                     cs.map((_,i) => V(newVals[i].x*100, newVals[i].y*100),
                 ))}

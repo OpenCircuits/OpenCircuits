@@ -1,7 +1,7 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Event}       from "core/utils/Events";
 
-import {CreateDeselectAllAction} from "core/actions/units/Select";
+import {DeselectAll} from "core/actions/units/Select";
 
 import {EventHandler} from "../EventHandler";
 
@@ -13,5 +13,5 @@ export const DeselectAllHandler: EventHandler = ({
          selections.amount() > 0),
 
     getResponse: ({ history, selections }: CircuitInfo) =>
-        history.add(CreateDeselectAllAction(selections)),
+        history.add(DeselectAll(selections)),
 });

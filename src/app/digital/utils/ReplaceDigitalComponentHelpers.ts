@@ -1,8 +1,9 @@
 import {Create, GetIDFor} from "serialeazy";
 
 import {SetCoderPortCount} from "digital/actions/compositions/SetCoderPortCount";
+import {SetMuxPortCount}   from "digital/actions/compositions/SetMuxPortCount";
+
 import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
-import {CreateMuxPortChangeAction} from "digital/actions/units/SetSelectPortCount";
 
 import {DigitalCircuitDesigner, DigitalComponent, InputPort, OutputPort} from "digital/models";
 
@@ -46,7 +47,7 @@ export function GetDigitalIDFor(comp: DigitalComponent, designer: DigitalCircuit
 
 export function GetPortChangeAction(comp: DigitalComponent, amt: number) {
     if (comp instanceof Mux)
-        return CreateMuxPortChangeAction(comp, amt);
+        return SetMuxPortCount(comp, amt);
     if (comp instanceof Encoder || comp instanceof Decoder)
         return SetCoderPortCount(comp, amt);
     return SetInputPortCount(comp, amt);

@@ -9,9 +9,8 @@ import {GroupAction} from "core/actions/GroupAction";
 
 import {SplitWire} from "core/actions/compositions/SplitWire";
 
-import {CreateDeselectAllAction, Select} from "core/actions/units/Select";
-
-import {Translate} from "core/actions/units/Translate";
+import {DeselectAll, Select} from "core/actions/units/Select";
+import {Translate}           from "core/actions/units/Translate";
 
 import {Tool} from "core/tools/Tool";
 
@@ -55,7 +54,7 @@ export const SplitWireTool: Tool = (() => {
             action = new GroupAction([], "Split Wire Tool");
 
             // Set wireport as selection and being pressed
-            action.add(CreateDeselectAllAction(selections));
+            action.add(DeselectAll(selections));
             action.add(Select(selections, port));
             action.add(SplitWire(designer, wire, port));
 

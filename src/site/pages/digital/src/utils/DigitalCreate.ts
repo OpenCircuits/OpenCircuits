@@ -8,8 +8,8 @@ import {CircuitBoundingBox} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {ConnectionAction}       from "core/actions/addition/ConnectionAction";
-import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
+import {Connect}    from "core/actions/units/Connect";
+import {PlaceGroup} from "core/actions/units/Place";
 
 import {DigitalCircuitDesigner, DigitalComponent, InputPort, OutputPort} from "digital/models";
 
@@ -128,15 +128,15 @@ export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuit
         });
 
         action.add(new GroupAction([
-            CreateGroupPlaceAction(designer, [comp, ...inputs, ...outputs]),
+            PlaceGroup(designer, [comp, ...inputs, ...outputs]),
             // TODO: Have these use Bus action to connect better, since sometimes
             //  indices don't match up well. This will require improvement of bussing though
             //  since a quick test showed that it didn't work too well currently
             new GroupAction(
-                inputs.map((v, i) => new ConnectionAction(designer, v.getOutputPort(0), inputPorts[i]))
+                inputs.map((v, i) => Connect(designer, v.getOutputPort(0), inputPorts[i]))
             ),
             new GroupAction(
-                outputs.map((v, i) => new ConnectionAction(designer, outputPorts[i], v.getInputPort(0)))
+                outputs.map((v, i) => Connect(designer, outputPorts[i], v.getInputPort(0)))
             ),
         ], "Smart Place"));
 

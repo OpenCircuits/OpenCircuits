@@ -9,7 +9,7 @@ import {Input}  from "core/utils/Input";
 
 import {CreateGroupPlaceAction} from "core/actions/addition/PlaceAction";
 
-import {CreateDeselectAllAction} from "core/actions/selection/SelectAction";
+import {DeselectAll} from "core/actions/units/Select";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
@@ -80,7 +80,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     useLayoutEffect(() => {
         info.locked = isLocked;
         if (isLocked) // Deselect everything
-            info.history.add(CreateDeselectAllAction(info.selections));
+            info.history.add(DeselectAll(info.selections));
         info.history.setDisabled(isLocked);
         info.selections.setDisabled(isLocked);
     }, [info, isLocked]);

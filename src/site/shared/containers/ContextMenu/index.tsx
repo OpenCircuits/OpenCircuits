@@ -9,9 +9,9 @@ import {V, Vector} from "core/utils/math/Vector";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
 
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+import {DeselectAll, SelectGroup} from "core/actions/units/Select";
 
 import {CleanUpHandler}     from "core/tools/handlers/CleanUpHandler"
 import {DuplicateHandler}   from "core/tools/handlers/DuplicateHandler"
@@ -103,8 +103,8 @@ export const ContextMenu = ({ info, paste }: Props) => {
         // Delete selections
         const objs = selections.get().filter((s) => s instanceof IOObject) as IOObject[];
         history.add(new GroupAction([
-            CreateDeselectAllAction(selections),
-            CreateDeleteGroupAction(designer, objs),
+            DeselectAll(selections),
+            DeleteGroup(designer, objs),
         ], "Cut (Context Menu)"));
     }
 
@@ -128,7 +128,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
     /* Context Menu "Select All" */
     const onSelectAll = async () => {
-        history.add(CreateGroupSelectAction(selections, designer.getObjects()));
+        history.add(SelectGroup(selections, designer.getObjects()));
     }
 
     /* Context Menu "Focus" */

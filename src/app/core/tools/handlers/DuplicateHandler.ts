@@ -8,10 +8,8 @@ import {GroupAction} from "core/actions/GroupAction";
 
 import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {CreateDeselectAllAction,
-        CreateGroupSelectAction} from "core/actions/units/Select";
-
-import {Translate} from "core/actions/units/Translate";
+import {DeselectAll, SelectGroup} from "core/actions/units/Select";
+import {Translate}                from "core/actions/units/Translate";
 
 import {IOObject} from "core/models";
 
@@ -34,8 +32,8 @@ export const DuplicateHandler: EventHandler = ({
         // Copy the group and then select them and move them over slightly
         history.add(new GroupAction([
             AddGroup(designer, copies),
-            CreateDeselectAllAction(selections),
-            CreateGroupSelectAction(selections, components),
+            DeselectAll(selections),
+            SelectGroup(selections, components),
             Translate(components, components.map((o) => o.getPos().add(V(5, 5)))),
         ], "Duplicate Handler"));
     },

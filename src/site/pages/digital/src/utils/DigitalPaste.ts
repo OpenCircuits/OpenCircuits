@@ -7,17 +7,16 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
+import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {DeselectAll, SelectGroup} from "core/actions/units/Select";
+import {Translate}                from "core/actions/units/Translate";
 
 import {Component, IOObject} from "core/models";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {CreateICDataAction} from "digital/actions/CreateICDataAction";
+import {AddICData} from "digital/actions/units/AddICData";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -62,7 +61,7 @@ function TransferNewICData(objs: IOObject[], designer: DigitalCircuitDesigner): 
         newICData
             // Filter out ICData that we already have
             .filter((data) => !designer.getICData().includes(data))
-            .map((data) => new CreateICDataAction(data, designer)),
+            .map((data) => AddICData(data, designer)),
     "Transfer ICData");
 
     // Recursively look through all the new ICs for new ICData
@@ -101,10 +100,10 @@ export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: V
         if (newICDataAction)
             action.add(newICDataAction);
         action.add(new GroupAction([
-            CreateAddGroupAction(designer, new IOObjectSet(objs)),
-            CreateDeselectAllAction(selections),
-            CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map((o) => o.getPos().add(targetPosShift))),
+            AddGroup(designer, new IOObjectSet(objs)),
+            DeselectAll(selections),
+            SelectGroup(selections, comps),
+            Translate(comps, comps.map((o) => o.getPos().add(targetPosShift))),
         ]));
 
         history.add(action);

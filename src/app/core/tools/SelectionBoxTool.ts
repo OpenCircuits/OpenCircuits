@@ -10,8 +10,7 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateDeselectAllAction,
-        CreateGroupSelectAction} from "core/actions/units/Select";
+import {DeselectAll, SelectGroup} from "core/actions/units/Select";
 
 
 export const SelectionBoxTool = (() => {
@@ -42,14 +41,14 @@ export const SelectionBoxTool = (() => {
 
             // Clear selections if shift key isn't being held
             if (!input.isShiftKeyDown())
-                action.add(CreateDeselectAllAction(selections));
+                action.add(DeselectAll(selections));
 
             const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
             // Find all objects within the selection box
             const objects = designer.getObjects().filter((o) => TransformContains(box, o.getTransform()));
             if (objects.length > 0) {
-                history.add(action.add(CreateGroupSelectAction(selections, objects)));
+                history.add(action.add(SelectGroup(selections, objects)));
                 return;
             }
 
@@ -59,7 +58,7 @@ export const SelectionBoxTool = (() => {
                 .filter((p) => RectContains(box, p.getWorldTargetPos()));
 
             if (ports.length > 0) {
-                history.add(action.add(CreateGroupSelectAction(selections, ports)));
+                history.add(action.add(SelectGroup(selections, ports)));
                 return;
             }
 

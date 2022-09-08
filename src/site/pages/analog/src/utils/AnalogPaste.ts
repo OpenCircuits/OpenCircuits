@@ -6,9 +6,9 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateAddGroupAction} from "core/actions/addition/AddGroupAction";
+import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+import {DeselectAll, CreateGroupSelectAction} from "core/actions/units/Select";
 
 import {TranslateAction} from "core/actions/transform/TranslateAction";
 
@@ -40,7 +40,7 @@ export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vec
         const action = new GroupAction([], "Analog Paste");
         action.add(new GroupAction([
             CreateAddGroupAction(designer, new IOObjectSet(objs)),
-            CreateDeselectAllAction(selections),
+            DeselectAll(selections),
             CreateGroupSelectAction(selections, comps),
             new TranslateAction(comps, comps.map((o) => o.getPos()), comps.map((o) => o.getPos().add(targetPosShift))),
         ]));

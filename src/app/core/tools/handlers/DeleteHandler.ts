@@ -3,9 +3,9 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateDeselectAllAction} from "core/actions/units/Select";
-
 import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
+
+import {DeselectAll} from "core/actions/units/Select";
 
 import {IOObject} from "core/models";
 
@@ -23,13 +23,13 @@ export const DeleteHandler: EventHandler = ({
          (event.type === "keydown" &&
          (event.key === "Delete" || event.key === "Backspace") &&
          selections.amount() > 0),
+
     getResponse: ({ history, designer, selections }: CircuitInfo) => {
         const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
         // Deselect the objects then remove them
         history.add(new GroupAction([
-            CreateDeselectAllAction(selections),
+            DeselectAll(selections),
             DeleteGroup(designer, objs),
         ], "Delete Handler"));
-
     },
 });
