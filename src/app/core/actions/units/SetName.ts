@@ -3,7 +3,7 @@ import {Selectable} from "core/utils/Selectable";
 import {Action} from "core/actions/Action";
 
 
-export class SetNameAction implements Action {
+class SetNameAction implements Action {
     private readonly obj: Selectable;
     private readonly newName: string;
     private readonly oldName: string;
@@ -12,6 +12,8 @@ export class SetNameAction implements Action {
         this.obj = o;
         this.newName = newName;
         this.oldName = o.getName();
+
+        this.execute();
     }
 
     public execute(): Action {
@@ -27,5 +29,8 @@ export class SetNameAction implements Action {
     public getName(): string {
         return "Set Name";
     }
+}
 
+export function SetName(o: Selectable, newName: string) {
+    return new SetNameAction(o, newName);
 }

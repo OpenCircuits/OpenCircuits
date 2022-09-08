@@ -6,7 +6,7 @@ import {Component} from "core/models/Component";
 /**
  * Implementation of Action interface for rotating components.
  */
-export class RotateAction implements Action {
+class RotateAction implements Action {
 
     /**
      * The selected component.
@@ -26,16 +26,16 @@ export class RotateAction implements Action {
     /**
      * Creates a rotation action for a component.
      *
-     * @param obj          Initializes the action with an Array of the selected component(s).
-     * @param initialAngle Inititalizes the action an Array of the initial angles the selected component(s)
-     *               are placed at.
-     * @param finalAngle   Inititalizes the action an Array of the final angles the selected component(s)
-     *               will be placed at.
+     * @param obj        Initializes the action with an Array of the selected component(s).
+     * @param finalAngle Inititalizes the action an Array of the final angles the selected component(s)
+     *             will be placed at.
      */
-    public constructor(obj: Component, initialAngle: number, finalAngle: number) {
+    public constructor(obj: Component, finalAngle: number) {
         this.obj = obj;
-        this.initialAngle = initialAngle;
+        this.initialAngle = obj.getAngle();
         this.finalAngle = finalAngle;
+
+        this.execute();
     }
 
     /**
@@ -71,4 +71,8 @@ export class RotateAction implements Action {
         const a1 = Math.round(this.finalAngle   * 180 / Math.PI);
         return [`${this.obj.getName()}: rotated from ${a0}${deg} to ${a1}${deg}`];
     }
+}
+
+export function Rotate(obj: Component, angle: number) {
+    return new RotateAction(obj, angle);
 }

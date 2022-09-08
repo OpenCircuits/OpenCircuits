@@ -9,8 +9,8 @@ import {Event}       from "core/utils/Events";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {RotateAction}    from "core/actions/transform/RotateAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {Rotate}    from "core/actions/units/Rotate";
+import {Translate} from "core/actions/units/Translate";
 
 import {Component} from "core/models";
 
@@ -73,11 +73,16 @@ export const RotateTool = (() => {
             const finalAngles = components.map((o) => o.getAngle());
             const finalPositions = components.map((o) => o.getPos());
 
+            // Translate and rotate back to original position, so that it undo's properly
+            // TODO: use a `tempAction` instead so that they don't need to be stored
+            Translate(components, initialPositions);
+            components.forEach((c, i) => Rotate(c, initialAngles[i]));
+
             history.add(
                 new GroupAction([
-                    new TranslateAction(components, initialPositions, finalPositions),
+                    Translate(components, finalPositions),
                     new GroupAction(
-                        components.map((o,i) => new RotateAction(o, initialAngles[i], finalAngles[i])),
+                        components.map((o,i) => Rotate(o, finalAngles[i])),
                         "Rotation"
                     ),
                 ], "Rotation")

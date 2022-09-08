@@ -13,6 +13,8 @@ export class SetScopeConfigAction implements Action {
         this.o = o;
         this.targetConfig = targetConfig;
         this.prevConfig = o.getConfig();
+
+        this.execute();
     }
 
     public execute(): Action {

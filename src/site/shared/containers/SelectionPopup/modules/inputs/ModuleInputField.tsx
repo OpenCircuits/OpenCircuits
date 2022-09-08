@@ -102,7 +102,7 @@ export const useBaseModule = <V extends Primitive[]>({
             return;
         const { isFinal, newProps } = state.submission;
 
-        const action = getAction(newProps).execute();
+        const action = getAction(newProps);
         onSubmit({ isFinal, action });
 
         if (isFinal) // Reset submission if final

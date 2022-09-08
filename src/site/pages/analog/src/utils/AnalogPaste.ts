@@ -6,11 +6,10 @@ import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {AddGroupAction} from "core/actions/addition/AddGroupAction";
+import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {CreateDeselectAllAction, CreateGroupSelectAction} from "core/actions/selection/SelectAction";
-
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {DeselectAll, SelectGroup} from "core/actions/units/Select";
+import {Translate}                from "core/actions/units/Translate";
 
 import {Component, IOObject} from "core/models";
 
@@ -39,11 +38,11 @@ export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vec
         // Create action to transfer the ICData, add the objects, select them, and offset them slightly
         const action = new GroupAction([], "Analog Paste");
         action.add(new GroupAction([
-            new AddGroupAction(designer, new IOObjectSet(objs)),
-            CreateDeselectAllAction(selections),
-            CreateGroupSelectAction(selections, comps),
-            new TranslateAction(comps, comps.map((o) => o.getPos()), comps.map((o) => o.getPos().add(targetPosShift))),
-        ]).execute());
+            AddGroup(designer, new IOObjectSet(objs)),
+            DeselectAll(selections),
+            SelectGroup(selections, comps),
+            Translate(comps, comps.map((o) => o.getPos().add(targetPosShift))),
+        ]));
 
         history.add(action);
 

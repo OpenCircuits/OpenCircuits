@@ -1,6 +1,6 @@
 import {Action} from "core/actions/Action";
 
-import {PortChangeAction} from "core/actions/ports/PortChangeAction";
+import {PortChangeAction} from "core/actions/bases/PortChangeAction";
 
 import {Port} from "core/models/ports/Port";
 
@@ -10,19 +10,17 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 /**
  * This code allows for the change in the number of input ports on a DigitalComponent.
  */
-export class InputPortChangeAction extends PortChangeAction {
-    protected obj: DigitalComponent;
-
+class InputPortChangeAction extends PortChangeAction<DigitalComponent> {
     /**
      * This code constructs the obj with the new number of ports.
      *
-     * @param obj     The object being changed.
-     * @param initial Number of ports.
-     * @param target  Number of ports.
+     * @param obj    The object being changed.
+     * @param target Number of ports.
      */
-    public constructor(obj: DigitalComponent, initial: number, target: number) {
-        super(obj.getDesigner(), target, initial);
-        this.obj = obj;
+    public constructor(obj: DigitalComponent, target: number) {
+        super(obj.getDesigner(), obj, target);
+
+        this.execute();
     }
 
     /**
@@ -57,7 +55,10 @@ export class InputPortChangeAction extends PortChangeAction {
     }
 
     public override getName(): string {
-        return "Inport Change";
+        return "Input port Change";
     }
+}
 
+export function SetInputPortCount(obj: DigitalComponent, target: number) {
+    return new InputPortChangeAction(obj, target);
 }

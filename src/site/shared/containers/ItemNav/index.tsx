@@ -9,7 +9,7 @@ import {Clamp} from "math/MathUtils";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Selectable}  from "core/utils/Selectable";
 
-import {CreateDeleteGroupAction} from "core/actions/deletion/DeleteGroupActionFactory";
+import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
 
 import {DeleteHandler} from "core/tools/handlers/DeleteHandler";
 
@@ -104,7 +104,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
             return;
         }
         // Else just delete
-        info.history.add(CreateDeleteGroupAction(info.designer, [currentlyPressedObj]).execute());
+        info.history.add(DeleteGroup(info.designer, [currentlyPressedObj]));
     }
 
     // Resets the curItemID and numClicks

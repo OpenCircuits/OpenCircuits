@@ -1,8 +1,9 @@
 import {Create, GetIDFor} from "serialeazy";
 
-import {CoderPortChangeAction} from "digital/actions/ports/CoderPortChangeAction";
-import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
-import {MuxPortChangeAction}   from "digital/actions/ports/MuxPortChangeAction";
+import {SetCoderPortCount} from "digital/actions/compositions/SetCoderPortCount";
+import {SetMuxPortCount}   from "digital/actions/compositions/SetMuxPortCount";
+
+import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {DigitalCircuitDesigner, DigitalComponent, InputPort, OutputPort} from "digital/models";
 
@@ -46,10 +47,10 @@ export function GetDigitalIDFor(comp: DigitalComponent, designer: DigitalCircuit
 
 export function GetPortChangeAction(comp: DigitalComponent, amt: number) {
     if (comp instanceof Mux)
-        return new MuxPortChangeAction(comp, amt, amt);
+        return SetMuxPortCount(comp, amt);
     if (comp instanceof Encoder || comp instanceof Decoder)
-        return new CoderPortChangeAction(comp, amt, amt);
-    return new InputPortChangeAction(comp, amt, amt);
+        return SetCoderPortCount(comp, amt);
+    return SetInputPortCount(comp, amt);
 }
 
 export function GenerateReplacementList(designer: DigitalCircuitDesigner, allComponents: string[]) {
@@ -75,7 +76,13 @@ export function GenerateReplacementList(designer: DigitalCircuitDesigner, allCom
             // Only change if it's a component that can change the number of inputs/outputs
             if (max !== min) {
                 // Change ports and see how many input/outputs there are
-                GetPortChangeAction(comp, amt).execute();
+                try {
+                    GetPortChangeAction(comp, amt);
+                } catch {
+                    // If failed, then it's an invalid port configuration
+                    //  (this is a hack that should go away when the model refactor is complete)
+                    continue;
+                }
             }
 
             const key = GetReplacementListKey(comp);
@@ -100,5 +107,9 @@ export function GetReplacements(comp: DigitalComponent, designer: DigitalCircuit
 
     // Put the `comp`s entry at the beginning of the array
     const self = list.get(key)!.find((r) => (r.id === id))!;
+    if (!self) {
+        console.warn(`Entry with ID: ${id}, doesn't appear to have an entry for Replacements... Ignoring.`);
+        return [];
+    }
     return [self, ...list.get(key)!.filter((r) => (r.id !== id))];
 }

@@ -1,13 +1,11 @@
 import {GetHelpers} from "test/helpers/Helpers";
 
-import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
 import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 import {BUFGate} from "digital/models/ioobjects/gates/BUFGate";
-
-
 
 
 describe("Input Port Change Action", () => {
@@ -22,7 +20,7 @@ describe("Input Port Change Action", () => {
         expect(gate.getOutputPortCount().getValue()).toBe(1);
 
         // connect
-        const a1 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 5).execute();
+        const a1 = SetInputPortCount(gate, 5);
 
         // initial
         expect(gate.getInputPortCount().getValue()).toBe(5);
@@ -55,7 +53,7 @@ describe("Input Port Change Action", () => {
         expect(buf2.getOutputs()).toHaveLength(1);
 
         // change input count
-        const a1 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 4).execute();
+        const a1 = SetInputPortCount(gate, 4);
 
         // Connect some more things
         const [c1] = Connect(buf3, gate);
@@ -71,7 +69,7 @@ describe("Input Port Change Action", () => {
         expect(buf4.getOutputs()).toHaveLength(1);
 
         // change input count
-        const a2 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 2).execute();
+        const a2 = SetInputPortCount(gate, 2);
 
         // initial
         expect(gate.getInputPortCount().getValue()).toBe(2);
@@ -130,7 +128,7 @@ describe("Input Port Change Action", () => {
         expect(buf1.getOutputs()).toHaveLength(2);
 
         // change input count
-        const a1 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 4).execute();
+        const a1 = SetInputPortCount(gate, 4);
 
         // Connect some more things
         const [c1] = Connect(buf1, gate);
@@ -143,7 +141,7 @@ describe("Input Port Change Action", () => {
         expect(buf1.getOutputs()).toHaveLength(4);
 
         // change input count
-        const a2 = new InputPortChangeAction(gate, gate.getInputPortCount().getValue(), 2).execute();
+        const a2 = SetInputPortCount(gate, 2);
 
         // initial
         expect(gate.getInputPortCount().getValue()).toBe(2);

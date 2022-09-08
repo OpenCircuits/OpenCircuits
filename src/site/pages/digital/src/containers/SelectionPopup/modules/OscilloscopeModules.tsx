@@ -2,7 +2,7 @@ import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {InputPortChangeAction} from "digital/actions/ports/InputPortChangeAction";
+import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
 
 import {Oscilloscope} from "digital/models/ioobjects";
 
@@ -45,8 +45,7 @@ export const OscilloscopeModule = ({ info }: Props) => {
                     alt="The number of inputs for the Oscilloscope"
                     getAction={(newCounts) =>
                         new GroupAction(
-                            cs.map((o,i) =>
-                                new InputPortChangeAction(o, o.getInputPortCount().getValue(), newCounts[i])),
+                            cs.map((o,i) => SetInputPortCount(o, newCounts[i])),
                             "Oscilloscope Input Count Change Module"
                         )}
                     onSubmit={onSubmit} />

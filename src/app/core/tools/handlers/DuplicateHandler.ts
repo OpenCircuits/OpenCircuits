@@ -1,15 +1,15 @@
 import {V} from "Vector";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CopyGroup}   from "core/utils/ComponentUtils";
 import {Event}       from "core/utils/Events";
 
-import {CopyGroupAction} from "core/actions/CopyGroupAction";
-import {GroupAction}     from "core/actions/GroupAction";
+import {GroupAction} from "core/actions/GroupAction";
 
-import {CreateDeselectAllAction,
-        CreateGroupSelectAction} from "core/actions/selection/SelectAction";
+import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+import {DeselectAll, SelectGroup} from "core/actions/units/Select";
+import {Translate}                from "core/actions/units/Translate";
 
 import {IOObject} from "core/models";
 
@@ -26,17 +26,15 @@ export const DuplicateHandler: EventHandler = ({
     getResponse: ({ history, designer, selections }: CircuitInfo) => {
         const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
 
-        const copyGroupAction = new CopyGroupAction(designer, objs);
-        const components = copyGroupAction.getCopies().getComponents();
+        const copies = CopyGroup(objs);
+        const components = copies.getComponents();
 
         // Copy the group and then select them and move them over slightly
         history.add(new GroupAction([
-            copyGroupAction.execute(),
-            CreateDeselectAllAction(selections).execute(),
-            CreateGroupSelectAction(selections, components).execute(),
-            new TranslateAction(components,
-                                components.map((o) => o.getPos()),
-                                components.map((o) => o.getPos().add(V(5, 5)))).execute(),
+            AddGroup(designer, copies),
+            DeselectAll(selections),
+            SelectGroup(selections, components),
+            Translate(components, components.map((o) => o.getPos().add(V(5, 5)))),
         ], "Duplicate Handler"));
     },
 });
