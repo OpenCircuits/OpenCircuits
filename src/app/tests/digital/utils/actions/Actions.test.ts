@@ -1,12 +1,12 @@
 import {HistoryManager} from "core/actions/HistoryManager";
 
-import {Connect}       from "core/actions/units/Connect";
+import {SplitWire} from "core/actions/compositions/SplitWire";
+
+import {Connect}    from "core/actions/units/Connect";
 import {PlaceGroup} from "core/actions/units/Place";
-import {SplitWire}  from "core/actions/compositions/SplitWire";
 
-import {Bus} from "digital/actions/compositions/Bus";
-
-import {CreateMuxPortChangeAction} from "digital/actions/units/SetSelectPortCount";
+import {Bus}             from "digital/actions/compositions/Bus";
+import {SetMuxPortCount} from "digital/actions/compositions/SetMuxPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
 
@@ -37,7 +37,7 @@ describe("Integration Tests for Actions", () => {
 
         manager.add(PlaceGroup(designer, [a,b,c,d,e,m]))
 
-                .add(CreateMuxPortChangeAction(m, 3))
+                .add(SetMuxPortCount(m, 3))
 
                 .add(Bus([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
                          [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
@@ -67,12 +67,12 @@ describe("Integration Tests for Actions", () => {
 
         manager.add(PlaceGroup(designer, [a,b,c,d,e,m]))
 
-                .add(CreateMuxPortChangeAction(m, 3))
+                .add(SetMuxPortCount(m, 3))
 
                 .add(Bus([a,b,c,d,e].map((s)   => s.getOutputPort(0)),
                          [m,m,m,m,m].map((m,i) => m.getInputPort(i))))
 
-                .add(CreateMuxPortChangeAction(m, 2))
+                .add(SetMuxPortCount(m, 2))
 
                 .undo().undo().undo().undo()
                 .redo().redo().redo().redo()
