@@ -198,18 +198,6 @@ describe("CreateReplaceDigitalComponentAction", () => {
         expect(out.isOn()).toBeTruthy();
     });
 
-    test("Multiplexer -> Demultiplexer", () => {
-        const [mux, in0, in1, out] = Place(new Multiplexer(), new Switch(), new Switch(), new LED());
-        const demux = { id: "Demultiplexer" };
-        Connect(in0, 0, mux, 0);
-        new ConnectionAction(mux.getDesigner()!, in1.getOutputPort(0), mux.getSelectPorts()[0]);
-        Connect(mux, 0, out, 0);
-
-        const [_, demuxComp] = CreateReplaceDigitalComponentAction(designer, mux, demux);
-
-        expect(demuxComp.getDesigner()).toBeDefined();
-    });
-
     test("ANDGate -> Multiplexer", () => {
         const [in1, in2, in3, and, out] = Place(new Switch(), new Switch(), new Switch(), new ANDGate(), new LED());
         const mux = { id: "Multiplexer" };
