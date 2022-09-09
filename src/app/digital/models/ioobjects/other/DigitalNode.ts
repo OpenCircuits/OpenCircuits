@@ -43,11 +43,11 @@ export class DigitalNode extends DigitalComponent implements Node {
     }
 
     public getInputDir(): Vector {
-        return this.transform.getMatrix().mul(V(-1, 0)).sub(this.getPos()).normalize();
+        return this.getTransform().getMatrix().mul(V(-1, 0)).sub(this.getPos()).normalize();
     }
 
     public getOutputDir(): Vector {
-        return this.transform.getMatrix().mul(V(1, 0)).sub(this.getPos()).normalize();
+        return this.getTransform().getMatrix().mul(V(1, 0)).sub(this.getPos()).normalize();
     }
 
     public getDisplayName(): string {

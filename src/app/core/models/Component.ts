@@ -23,8 +23,6 @@ const [Info, InitialInfo] = GenPropInfo({
             label:   "Position",
             step:    V(1, 1),
             initial: V(),
-
-            isActive: () => false,
         },
         "size": {
             type:    "vecf",
@@ -39,30 +37,25 @@ const [Info, InitialInfo] = GenPropInfo({
 
 export abstract class Component extends CullableObject {
     protected transform: Transform;
+    private dirtyTransform: boolean;
 
     protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
         super({ ...InitialInfo, size, ...initialProps });
 
         this.transform = new Transform(V(), size);
+        this.dirtyTransform = true;
     }
 
     public override setProp(key: string, val: Prop): void {
         super.setProp(key, val);
 
-        if (key === "pos") {
-            this.transform.setPos(val as Vector);
+        if (key === "pos" || key === "angle" || key === "size")
             this.onTransformChange();
-        } else if (key === "size") {
-            this.transform.setSize(val as Vector);
-            this.onTransformChange();
-        } else if (key === "angle") {
-            this.transform.setAngle(val as number);
-            this.onTransformChange();
-        }
     }
 
     public override onTransformChange(): void {
         super.onTransformChange();
+        this.dirtyTransform = true;
         this.getConnections().forEach((w) => w.onTransformChange());
     }
 
@@ -80,7 +73,7 @@ export abstract class Component extends CullableObject {
 
     public setRotationAbout(a: number, c: Vector): void {
         const [newPos, newAngle] =
-            this.transform.calcRotationAbout(a - this.transform.getAngle(), c);
+            this.getTransform().calcRotationAbout(a - this.getAngle(), c);
         this.setPos(newPos);
         this.setAngle(newAngle);
     }
@@ -116,7 +109,13 @@ export abstract class Component extends CullableObject {
     }
 
     public getTransform(): Transform {
-        return this.transform.copy();
+        if (this.dirtyTransform) {
+            this.transform.setPos(this.props["pos"] as Vector);
+            this.transform.setSize(this.props["size"] as Vector);
+            this.transform.setAngle(this.props["angle"] as number);
+            this.dirtyTransform = false;
+        }
+        return this.transform;
     }
 
     public getOffset(): Vector {
@@ -131,7 +130,7 @@ export abstract class Component extends CullableObject {
         const min = V(Infinity);
 
         // Find minimum pos from corners of transform with added offset
-        const corners = this.transform.getCorners().map(
+        const corners = this.getTransform().getCorners().map(
             (v) => v.sub(this.getOffset())
         );
 
@@ -147,7 +146,7 @@ export abstract class Component extends CullableObject {
         const max = V(-Infinity);
 
         // Find maximum pos from corners of transform with added offset
-        const corners = this.transform.getCorners().map(
+        const corners = this.getTransform().getCorners().map(
             (v) => v.add(this.getOffset())
         );
 
