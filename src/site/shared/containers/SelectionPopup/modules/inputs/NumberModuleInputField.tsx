@@ -30,9 +30,9 @@ export const NumberModuleInputField = ({
         getAction: (newVals) => getAction(newVals.map(([v]) => v)),
 
         onSubmit,
-        getCustomDisplayVal: (getCustomDisplayVal
-            ? (([v]) => getCustomDisplayVal!(v))
-            : undefined
+        getCustomDisplayVal: (([v]) =>
+            // Default to rounding to two digits
+            (getCustomDisplayVal ?? ((v) => parseFloat(v.toFixed(2))))(v)
         ),
     });
 

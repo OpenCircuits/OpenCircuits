@@ -36,7 +36,7 @@ export class Label extends DigitalComponent {
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public override getDisplayName(): string {
