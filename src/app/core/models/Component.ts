@@ -7,22 +7,41 @@ import {V, Vector} from "Vector";
 import {RectContains} from "math/MathUtils";
 import {Transform}    from "math/Transform";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+import {AngleInfo}   from "core/utils/Units";
+
 import {CullableObject} from "./CullableObject";
 import {Port}           from "./ports/Port";
 import {Prop}           from "./PropInfo";
 import {Wire}           from "./Wire";
 
 
+const [Info, InitialInfo] = GenPropInfo({
+    infos: {
+        "pos": {
+            type:    "vecf",
+            label:   "Position",
+            step:    V(1, 1),
+            initial: V(),
+
+            isActive: () => false,
+        },
+        "size": {
+            type:    "vecf",
+            label:   "Size",
+            initial: V(),
+
+            isActive: () => false,
+        },
+        ...AngleInfo("angle", "Angle", 0, "deg", 45),
+    },
+});
+
 export abstract class Component extends CullableObject {
     protected transform: Transform;
 
     protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
-        super({
-            ...initialProps,
-            "pos":   V(),
-            "size":  size,
-            "angle": 0,
-        });
+        super({ ...InitialInfo, size, ...initialProps });
 
         this.transform = new Transform(V(), size);
     }
@@ -102,6 +121,10 @@ export abstract class Component extends CullableObject {
 
     public getOffset(): Vector {
         return V(DEFAULT_BORDER_WIDTH);
+    }
+
+    public override getPropInfo(key: string) {
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public getMinPos(): Vector {

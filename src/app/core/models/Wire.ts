@@ -126,7 +126,7 @@ export abstract class Wire extends CullableObject {
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public getDisplayColor(): string {

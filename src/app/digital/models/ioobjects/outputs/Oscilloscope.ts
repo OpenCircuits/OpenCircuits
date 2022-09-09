@@ -94,9 +94,7 @@ export class Oscilloscope extends TimedComponent {
     }
 
     public override getPropInfo(key: string) {
-        if (!(key in Info))
-            return super.getPropInfo(key);
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public getSignals(): boolean[][] {
