@@ -1,5 +1,3 @@
-import {serialize} from "serialeazy";
-
 import {DEFAULT_BORDER_WIDTH,
         IO_PORT_BORDER_WIDTH,
         IO_PORT_RADIUS} from "core/utils/Constants";
@@ -16,13 +14,32 @@ import {Wire}           from "./Wire";
 
 
 export abstract class Component extends CullableObject {
-    @serialize
     protected transform: Transform;
 
     protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
-        super(initialProps);
+        super({
+            ...initialProps,
+            "pos":   V(),
+            "size":  size,
+            "angle": 0,
+        });
 
         this.transform = new Transform(V(), size);
+    }
+
+    public override setProp(key: string, val: Prop): void {
+        super.setProp(key, val);
+
+        if (key === "pos") {
+            this.transform.setPos(val as Vector);
+            this.onTransformChange();
+        } else if (key === "size") {
+            this.transform.setSize(val as Vector);
+            this.onTransformChange();
+        } else if (key === "angle") {
+            this.transform.setAngle(val as number);
+            this.onTransformChange();
+        }
     }
 
     public override onTransformChange(): void {
@@ -31,23 +48,22 @@ export abstract class Component extends CullableObject {
     }
 
     public setPos(v: Vector): void {
-        this.transform.setPos(v);
-        this.onTransformChange();
+        this.setProp("pos", v);
     }
 
     public setAngle(a: number): void {
-        this.transform.setAngle(a);
-        this.onTransformChange();
+        this.setProp("angle", a);
     }
 
     public setSize(s: Vector): void {
-        this.transform.setSize(s);
-        this.onTransformChange();
+        this.setProp("size", s);
     }
 
     public setRotationAbout(a: number, c: Vector): void {
-        this.transform.setRotationAbout(a, c);
-        this.onTransformChange();
+        const [newPos, newAngle] =
+            this.transform.calcRotationAbout(a - this.transform.getAngle(), c);
+        this.setPos(newPos);
+        this.setAngle(newAngle);
     }
 
     /**
@@ -69,15 +85,15 @@ export abstract class Component extends CullableObject {
     }
 
     public getPos(): Vector {
-        return this.transform.getPos();
+        return this.props["pos"] as Vector;
     }
 
     public getSize(): Vector {
-        return this.transform.getSize();
+        return this.props["size"] as Vector;
     }
 
     public getAngle(): number {
-        return this.transform.getAngle();
+        return this.props["angle"] as number;
     }
 
     public getTransform(): Transform {

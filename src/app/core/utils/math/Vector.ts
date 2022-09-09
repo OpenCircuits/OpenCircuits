@@ -207,6 +207,19 @@ export class Vector {
         return this.x * v.x + this.y * v.y;
     }
     /**
+     * Returns a new vector rotated `a` radians from this one.
+     *
+     * @param a The angle in radians.
+     * @returns   A new, rotated vector.
+     */
+    public rotate(a: number): Vector {
+        const cos = Math.cos(a), sin = Math.sin(a);
+        return V(
+            (this.x * cos - this.y * sin),
+            (this.x * sin + this.y * cos)
+        );
+    }
+    /**
      * Return the projection of 'this' on 'v'.
      *
      * @param v The vector that 'this' projects to.
