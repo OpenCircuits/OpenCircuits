@@ -160,51 +160,54 @@ export const PropertyModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    return (<>{Object.entries(props).map(([key, vals]) => {
-        // Assumes all Info's are the same for each key
-        const info = objs[0].getPropInfo(key);
-        if (!info)
-            throw new Error(`Failed to get prop info for ${key}!`);
+    return (<>{Object.entries(props)
+        // Filter out props that are without info, since they are private
+        .filter(([key]) => (!!objs[0].getPropInfo(key)))
+        .map(([key, vals]) => {
+            // Assumes all Info's are the same for each key
+            const info = objs[0].getPropInfo(key);
+            if (!info)
+                throw new Error(`Failed to get prop info for ${key}!`);
 
-        // Get state of props
-        const allProps = objs.map((c) => c.getProps());
+            // Get state of props
+            const allProps = objs.map((c) => c.getProps());
 
-        // Check if this property should be active, if the info defines an `isActive`
-        //  function, then we need to make sure all components satisfy it
-        const isActive = (info.isActive) ? (info.isActive(allProps)) : (true);
-        if (!isActive)
-            return null;
+            // Check if this property should be active, if the info defines an `isActive`
+            //  function, then we need to make sure all components satisfy it
+            const isActive = (info.isActive) ? (info.isActive(allProps)) : (true);
+            if (!isActive)
+                return null;
 
-        const label = (
-            typeof info.label === "string"
-            ? info.label
-            : info.label?.(allProps) // Dynamic display based on prop states
-        );
+            const label = (
+                typeof info.label === "string"
+                ? info.label
+                : info.label?.(allProps) // Dynamic display based on prop states
+            );
 
-        const getAction = (newVals: Prop[]) => new GroupAction(
-            objs.map((a,i) => SetProperty(a, key, newVals[i]))
-        );
-        const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
-            renderer.render();
-            if (isFinal)
-                history.add(action);
-        }
+            const getAction = (newVals: Prop[]) => new GroupAction(
+                objs.map((a,i) => SetProperty(a, key, newVals[i]))
+            );
+            const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
+                renderer.render();
+                if (isFinal)
+                    history.add(action);
+            }
 
-        return (
-            <PropertyModuleWrapper
-                key={`property-module-${key}`}
-                label={label}>
-                { info.readonly
-                ? ((vals as Prop[]).every((v) => v === vals[0]) ? vals[0].toString() : "-")
-                : (
-                    <ModulePropInputField
-                        propKey={key} info={info} objs={objs} vals={vals}
-                        forceUpdate={forceUpdate}
-                        alt={`${key} property of object`}
-                        getAction={getAction}
-                        onSubmit={onSubmit} />
-                )}
-            </PropertyModuleWrapper>
-        )
-    })}</>)
+            return (
+                <PropertyModuleWrapper
+                    key={`property-module-${key}`}
+                    label={label}>
+                    { info.readonly
+                    ? ((vals as Prop[]).every((v) => v === vals[0]) ? vals[0].toString() : "-")
+                    : (
+                        <ModulePropInputField
+                            propKey={key} info={info} objs={objs} vals={vals}
+                            forceUpdate={forceUpdate}
+                            alt={`${key} property of object`}
+                            getAction={getAction}
+                            onSubmit={onSubmit} />
+                    )}
+                </PropertyModuleWrapper>
+            )
+        })}</>)
 }
