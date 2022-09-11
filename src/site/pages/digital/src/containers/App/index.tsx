@@ -40,7 +40,6 @@ import {InputCountModule}               from "site/digital/containers/SelectionP
 import {OscilloscopeModule}             from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 import {OutputCountModule}              from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
 import {ReplaceComponentDropdownModule} from "site/digital/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
-import {SegmentCountModule}             from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
 import {SelectPortCountModule}          from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
 import {ViewICButtonModule}             from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
@@ -99,7 +98,6 @@ export const App = ({ info, helpers, canvas }: Props) => {
                         <SelectPortCountModule info={info} />
                         <DecoderInputCountModule info={info} />
                         <OutputCountModule info={info} />
-                        <SegmentCountModule info={info} />
                         <OscilloscopeModule info={info} />
                         <ClockSyncButtonModule info={info} />
                         <BusButtonModule info={info} />
