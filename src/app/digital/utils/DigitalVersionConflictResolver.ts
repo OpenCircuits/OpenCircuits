@@ -106,40 +106,41 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
 
     // Migrate transforms to Prop system and camera attributes to Props
     if (v < 3.2) {
-        Object.values(contents).forEach(({ data }) => {
-            const transform = data["transform"];
-            if (!transform)
+        // Utility func to get vector data through a ref or directly
+        const getEntry = (parent: SerializationEntry, key: string) => {
+            const v = parent["data"][key];
+            if (!v)
+                return;
+            if (isRef(v))
+                return contents[v["ref"]];
+            return v as SerializationEntry;
+        }
+
+        Object.values(contents).forEach((entry) => {
+            const t = getEntry(entry, "transform");
+            if (!t)
                 return;
 
-            const [pos, size, angle] = (() => {
-                // Get transform object by ref or directly
-                const t = (() => {
-                    // Reference to somewhere else in `contents`
-                    if (isRef(transform))
-                        return contents[transform["ref"]];
-                    return transform as SerializationEntry;
-                })();
-
-                // Utility func to get vector data through a ref or directly
-                const getVec = (key: string) => {
-                    const v = t["data"][key];
-                    if (isRef(v))
-                        return contents[v["ref"]];
-                    return v as SerializationEntry;
-                }
-
-                return [getVec("pos"), getVec("size"), t["data"]["angle"]] as const;
-            })();
-
-            delete data["transform"];
-            data["props"] = {
+            entry.data["props"] = {
                 type: "",
                 data: {
-                    ...(data["props"] as SerializationEntry ?? ({ data: {} }))["data"],
-                    pos, size, angle,
+                    ...(entry.data["props"] as SerializationEntry ?? ({ data: {} }))["data"],
+                    pos: getEntry(t, "pos")!,
+                    size: getEntry(t, "size")!,
+                    angle: t["data"]["angle"],
                 },
-            }
+            };
+            delete entry.data["transform"];
         });
+
+        // Get camera info
+        const cam = getEntry(contents["0"], "camera")!;
+        const pos = getEntry(cam, "pos");
+        const zoom = cam["data"]["zoom"] as number;
+        cam.data["props"] = {
+            type: "",
+            data: { pos, zoom },
+        };
     }
 
     circuit.contents = JSON.stringify(contents);
