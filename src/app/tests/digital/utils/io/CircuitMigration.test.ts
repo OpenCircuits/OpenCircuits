@@ -29,6 +29,7 @@ describe("Save Migration Tests", () => {
             expect.anything();
 
             // Load current version
+            VersionConflictResolver(v2_1muxesJson as Circuit);
             const circuit2 = LoadCircuit(v2_1muxesJson);
             expect(circuit1).toMatchCircuit(circuit2);
         });
@@ -39,6 +40,7 @@ describe("Save Migration Tests", () => {
             expect.anything();
 
             // Load current version
+            VersionConflictResolver(v2_1everythingJson as Circuit);
             const circuit2 = LoadCircuit(v2_1everythingJson);
             expect(circuit1).toMatchCircuit(circuit2);
         });
@@ -52,6 +54,7 @@ describe("Save Migration Tests", () => {
             expect.anything();
 
             // Load current version
+            VersionConflictResolver(v3_1propsJson as Circuit);
             const circuit2 = LoadCircuit(v3_1propsJson);
             expect(circuit1).toMatchCircuit(circuit2);
         });

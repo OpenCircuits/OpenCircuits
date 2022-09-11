@@ -11,6 +11,13 @@ interface SerializationEntry {
     data: Record<string, unknown>;
 }
 
+type Ref = { ref: string };
+function isRef(o: unknown): o is Ref {
+    if (!o || typeof o !== "object")
+        return false;
+    return ("ref" in o);
+}
+
 export function VersionConflictResolver(fileContents: string | Circuit): string {
     const circuit = (typeof(fileContents) === "string" ? JSON.parse(fileContents) as Circuit : fileContents);
 
@@ -37,8 +44,8 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
             // Replace positioners
             transformation.forEach(({ ports, positioner: type }) => {
                 // Get PortSet from (inputs/outputs) of Component
-                const set = contents[(data[ports] as {ref: string})["ref"]];
-                const positionerRef = (set.data["positioner"] as {ref: string})["ref"]; // Get positioner ID from PortSet
+                const set = contents[(data[ports] as Ref)["ref"]];
+                const positionerRef = (set.data["positioner"] as Ref)["ref"]; // Get positioner ID from PortSet
 
                 contents[positionerRef] = { "type": type, "data": {} };
             });
@@ -94,9 +101,46 @@ export function VersionConflictResolver(fileContents: string | Circuit): string 
 
             // Remove old properties
             transformation.forEach(({ prevKey }) => (delete data[prevKey]));
-        })
+        });
     }
 
+    // Migrate transforms to Prop system and camera attributes to Props
+    if (v < 3.2) {
+        Object.values(contents).forEach(({ data }) => {
+            const transform = data["transform"];
+            if (!transform)
+                return;
+
+            const [pos, size, angle] = (() => {
+                // Get transform object by ref or directly
+                const t = (() => {
+                    // Reference to somewhere else in `contents`
+                    if (isRef(transform))
+                        return contents[transform["ref"]];
+                    return transform as SerializationEntry;
+                })();
+
+                // Utility func to get vector data through a ref or directly
+                const getVec = (key: string) => {
+                    const v = t["data"][key];
+                    if (isRef(v))
+                        return contents[v["ref"]];
+                    return v as SerializationEntry;
+                }
+
+                return [getVec("pos"), getVec("size"), t["data"]["angle"]] as const;
+            })();
+
+            delete data["transform"];
+            data["props"] = {
+                type: "",
+                data: {
+                    ...(data["props"] as SerializationEntry ?? ({ data: {} }))["data"],
+                    pos, size, angle,
+                },
+            }
+        });
+    }
 
     circuit.contents = JSON.stringify(contents);
     return JSON.stringify(circuit);

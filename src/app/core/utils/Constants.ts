@@ -1,7 +1,7 @@
 import {V} from "Vector";
 
 
-export const SAVE_VERSION = "3.1";
+export const SAVE_VERSION = "3.2";
 
 export const DEBUG_NO_FILL = false;
 
