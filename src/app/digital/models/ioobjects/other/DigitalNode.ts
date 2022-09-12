@@ -16,12 +16,12 @@ import {DigitalComponent, InputPort, OutputPort} from "digital/models/index";
 export class DigitalNode extends DigitalComponent implements Node {
 
     public constructor() {
-        super(new ClampedValue(1,1,1), new ClampedValue(1,1,1), V(2*IO_PORT_RADIUS, 2*IO_PORT_RADIUS));
+        super(new ClampedValue(1), new ClampedValue(1), V(2*IO_PORT_RADIUS));
 
         // Set origin = target position so that they overlap and look like 1 dot
-        this.inputs.first.setOriginPos(V(0, 0));
+         this.inputs.first.setOriginPos(V(0, 0));
         this.outputs.first.setOriginPos(V(0, 0));
-        this.inputs.first.setTargetPos(this.inputs.first.getOriginPos());
+         this.inputs.first.setTargetPos(this.inputs.first.getOriginPos());
         this.outputs.first.setTargetPos(this.outputs.first.getOriginPos());
     }
 

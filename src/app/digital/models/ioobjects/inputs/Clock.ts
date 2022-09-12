@@ -22,7 +22,7 @@ export class Clock extends TimedComponent {
     public constructor() {
         super(
             1000, new ClampedValue(0), new ClampedValue(1),
-            V(60, 42), undefined, undefined,
+            V(1.2, 0.84), undefined, undefined,
             { "isOn": false }
         );
         this.reset();

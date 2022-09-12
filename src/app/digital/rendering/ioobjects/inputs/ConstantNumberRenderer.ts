@@ -29,7 +29,7 @@ export const ConstantNumberRenderer = (() => {
     // Function to draw the input value on the component
     const drawInputText = function(renderer: Renderer, value: number): void {
         // to adjust for cap-height of the Arial font (see https://stackoverflow.com/questions/61747006)
-        const FONT_CAP_OFFSET = 3;
+        const FONT_CAP_OFFSET = 0.06;
 
         const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
         renderer.text(text, V(0, FONT_CAP_OFFSET), "center", DEFAULT_ON_COLOR, FONT_CONSTANT_NUMBER);

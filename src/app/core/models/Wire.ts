@@ -1,7 +1,6 @@
 import {serialize} from "serialeazy";
 
-import {DEFAULT_SIZE,
-        WIRE_SNAP_THRESHOLD,
+import {WIRE_SNAP_THRESHOLD,
         WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
@@ -72,7 +71,7 @@ export abstract class Wire extends CullableObject {
         const dir = port.getWorldDir();
 
         // For straight bezier curves, Control point needs to be at the Point
-        const c = (this.straight) ? (pos) : (pos.add(dir.scale(DEFAULT_SIZE)));
+        const c = (this.straight) ? (pos) : (pos.add(dir.scale(1)));
 
         return [pos, c];
     }

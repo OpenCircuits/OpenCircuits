@@ -1,4 +1,4 @@
-import {GRID_SIZE, SCALE} from "core/utils/Constants";
+import {GRID_LINE_WIDTH, GRID_SIZE} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -8,8 +8,6 @@ import {Renderer}        from "../Renderer";
 import {Style}           from "../Style";
 import {GRID_LINE_COLOR} from "../Styles";
 
-
-const GRID_LINE_WIDTH = 2;
 
 export const GridRenderer = ({
     render(renderer: Renderer, { camera }: CircuitInfo): void {
@@ -26,7 +24,7 @@ export const GridRenderer = ({
 
         // Batch-render the lines = uglier code + way better performance
         renderer.save();
-        renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, GRID_LINE_WIDTH * SCALE / camera.getZoom()));
+        renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, GRID_LINE_WIDTH / camera.getZoom()));
         renderer.beginPath();
         for (let x = -cpx; x <= renderer.getSize().x-cpx+step; x += step)
             renderer.pathLine(V(x, 0), V(x, renderer.getSize().y));
