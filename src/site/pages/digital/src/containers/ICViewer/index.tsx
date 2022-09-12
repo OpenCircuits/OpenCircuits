@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useLayoutEffect, useRef, useState} from "react";
 
-import {IC_VIEWER_ZOOM_PADDING_RATIO}   from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {CircuitInfo}             from "core/utils/CircuitInfo";
@@ -35,6 +34,8 @@ import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
 
+
+const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
 function CheckForInteraction(ev: Event, { toolManager, camera, designer, input, currentlyPressedObject }: CircuitInfo) {
     if (toolManager.getCurrentTool() instanceof InteractionTool) {

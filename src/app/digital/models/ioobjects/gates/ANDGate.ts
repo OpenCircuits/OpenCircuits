@@ -21,7 +21,7 @@ export class ANDGate extends Gate {
      * @param not True if this should be a NAND gate.
      */
     public constructor(not = false) {
-        super(not, new ClampedValue(2,2,8), V(50, 50));
+        super(not, new ClampedValue(2,2,8), V(1, 1));
     }
 
     /**

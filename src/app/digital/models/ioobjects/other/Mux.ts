@@ -1,6 +1,6 @@
 import {serialize} from "serialeazy";
 
-import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET, MUX_DEFAULT_SELECT_PORTS} from "core/utils/Constants";
+import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -17,6 +17,8 @@ import {DigitalComponent, DigitalWire} from "digital/models";
 import {InputPort}  from "digital/models/ports/InputPort";
 import {OutputPort} from "digital/models/ports/OutputPort";
 
+
+const MUX_DEFAULT_SELECT_PORTS = 2;
 
 export abstract class Mux extends DigitalComponent {
     @serialize

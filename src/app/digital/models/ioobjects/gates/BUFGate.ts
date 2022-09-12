@@ -19,7 +19,7 @@ export class BUFGate extends Gate {
      * @param not Determines whether the gate is a Buffer gate or a Not gate.
      */
     public constructor(not = false) {
-        super(not, new ClampedValue(1,1,1), V(50, 50));
+        super(not, new ClampedValue(1,1,1), V(1, 1));
     }
     /**
      * Activate function, passes the input port state to

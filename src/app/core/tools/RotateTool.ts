@@ -1,6 +1,5 @@
-import {ROTATION_CIRCLE_R1,
-        ROTATION_CIRCLE_R2,
-        ROTATION_SNAP_AMT}  from "core/utils/Constants";
+import {ROTATION_CIRCLE_RADIUS,
+        ROTATION_CIRCLE_THICKNESS} from "core/utils/Constants";
 
 import {Vector} from "Vector";
 
@@ -14,6 +13,11 @@ import {Translate} from "core/actions/units/Translate";
 
 import {Component} from "core/models";
 
+
+const ROTATION_SNAP_AMT = Math.PI/4;
+const ROTATION_CIRCLE_THRESHOLD = ROTATION_CIRCLE_THICKNESS + 3;
+const ROTATION_CIRCLE_R1 = (ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD) ** 2;
+const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) ** 2;
 
 export const RotateTool = (() => {
     let initialPositions = [] as Vector[];
