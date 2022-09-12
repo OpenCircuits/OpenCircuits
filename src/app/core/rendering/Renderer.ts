@@ -10,7 +10,6 @@ import {Style} from "./Style";
 import {FONT}  from "./Styles";
 
 
-
 export class Renderer {
     private readonly canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
@@ -43,9 +42,6 @@ export class Renderer {
     }
     public translate(v: Vector): void {
         this.context.translate(v.x, v.y);
-    }
-    public scale(s: Vector): void {
-        this.context.scale(s.x, s.y);
     }
     public rotate(a: number): void {
         this.context.rotate(a);

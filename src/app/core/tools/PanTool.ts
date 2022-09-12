@@ -1,6 +1,4 @@
-import {ARROW_PAN_DISTANCE_NORMAL,
-        ARROW_PAN_DISTANCE_SMALL,
-        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
+import {MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector} from "Vector";
 
@@ -9,6 +7,9 @@ import {Event}       from "core/utils/Events";
 
 import {Tool} from "core/tools/Tool";
 
+
+const ARROW_PAN_DISTANCE_NORMAL = 75;
+const ARROW_PAN_DISTANCE_SMALL = 5;
 
 export const PanTool: Tool = (() => {
     let isDragging = false;

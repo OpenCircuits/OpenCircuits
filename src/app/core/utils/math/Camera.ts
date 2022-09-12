@@ -1,5 +1,7 @@
 import {serializable} from "serialeazy";
 
+import {SCALE} from "core/utils/Constants";
+
 import {BaseObject} from "core/models/BaseObject";
 import {Prop}       from "core/models/PropInfo";
 
@@ -38,7 +40,7 @@ export class Camera extends BaseObject {
      * @param pos    The starting position in the camera to 0,0 (vector).
      * @param zoom   This initialzed zoom to 1.
      */
-    public constructor(width = 0, height = 0, pos = V(0, 0), zoom = 1) {
+    public constructor(width = 0, height = 0, pos = V(0, 0), zoom = 2*SCALE) {
         super({ pos, zoom });
 
         this.width = width;
