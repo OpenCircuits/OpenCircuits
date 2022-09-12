@@ -40,30 +40,37 @@ function StartClient(dir: string, project: string, open: boolean) {
 
 // CLI
 (async () => {
-    const { open } = await yargs(process.argv.slice(2))
+    const { open, digital } = await yargs(process.argv.slice(2))
         .boolean("open")
+        .boolean("digital")
         .argv;
 
     const dirs = getDirs(true, false, false);
 
-    // Prompt for project type
-    const { value } = await prompts({
-        type:    "select",
-        name:    "value",
-        message: "Pick a project",
-        choices: dirs,
-        initial: dirs.findIndex((dir) => (dir.title === "Digital")),
-    });
+    let dir;
+    if (digital) {
+        dir = "digital";
+    } else {
+        // Prompt for project type
+        const { value } = await prompts({
+            type:    "select",
+            name:    "value",
+            message: "Pick a project",
+            choices: dirs,
+            initial: dirs.findIndex((dir) => (dir.title === "Digital")),
+        });
+        dir = value;
+    }
 
-    if (!value)
+    if (!dir)
         return;
 
     // Start server
-    if (value === "server") {
+    if (dir === "server") {
         StartServer();
         return;
     }
 
     // Start digital/analog/landing page
-    StartClient(`src/site/pages/${value}`, value, open);
+    StartClient(`src/site/pages/${dir}`, dir, open);
 })();
