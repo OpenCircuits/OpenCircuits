@@ -1,6 +1,6 @@
 import {serialize} from "serialeazy";
 
-import {DEFAULT_SIZE, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
+import {MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -109,6 +109,6 @@ export abstract class Mux extends DigitalComponent {
      * @returns       A Vector of the size for a Mux.
      */
     public static CalcSize(ports: number): Vector {
-        return V((0.5 + ports/2), (1 + Math.pow(2, ports - 1))).scale(DEFAULT_SIZE);
+        return V((0.5 + ports/2), (1 + Math.pow(2, ports - 1)));
     }
 }

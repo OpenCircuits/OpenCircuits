@@ -10,6 +10,8 @@ import {Port} from "core/models/ports/Port";
 export type Dir = "left" | "right" | "top" | "bottom";
 
 
+const SHORTEN_AMT = 0.02;
+
 /**
  * Places the ports depending on the type of Positioner.
  * Each component assigns its own Positioner.
@@ -77,9 +79,9 @@ export class Positioner<T extends Port> {
         let l = this.scale * size/2 * (i - midpoint);
 
         if (this.shortenEdges && i === 0)
-            l++;
+            l += SHORTEN_AMT;
         if (this.shortenEdges && i === numPorts-1)
-            l--;
+            l -= SHORTEN_AMT;
 
         return l;
     }

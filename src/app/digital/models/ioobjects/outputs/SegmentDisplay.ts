@@ -48,10 +48,10 @@ export class SegmentDisplay extends DigitalComponent {
      */
     public constructor(
         numInputs = new ClampedValue(7, 7, 16),
-        positioner: Positioner<InputPort> = new ConstantSpacePositioner("left", 4*IO_PORT_RADIUS+2, false)
+        positioner: Positioner<InputPort> = new ConstantSpacePositioner("left", 4*IO_PORT_RADIUS+0.04, false)
     ) {
         super(
-            numInputs, new ClampedValue(0), V(70, 100),
+            numInputs, new ClampedValue(0), V(1.4, 2),
             positioner, undefined, InitialProps
         );
     }

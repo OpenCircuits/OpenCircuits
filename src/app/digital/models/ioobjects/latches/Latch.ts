@@ -26,7 +26,7 @@ export abstract class Latch extends DigitalComponent {
     protected state = false;
 
     protected constructor(numInputs: number, inputPositioner?: Positioner<InputPort>) {
-        super(new ClampedValue(numInputs+1), new ClampedValue(2), V(70, 70), inputPositioner);
+        super(new ClampedValue(numInputs+1), new ClampedValue(2), V(1.4, 1.4), inputPositioner);
 
         this.getOutputPort(Latch.Q_PORT).setName("Q ");
         this.getOutputPort(Latch.Q2_PORT).setName("Q'");

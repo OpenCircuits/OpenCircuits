@@ -30,7 +30,7 @@ export class Label extends DigitalComponent {
         super(
             new ClampedValue(0),
             new ClampedValue(0),
-            V(60, 30), undefined, undefined,
+            V(1.2, 0.6), undefined, undefined,
             InitialProps,
         );
     }

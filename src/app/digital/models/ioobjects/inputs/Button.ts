@@ -21,8 +21,7 @@ export class Button extends PressableComponent {
     public constructor() {
         super(new ClampedValue(0),
               new ClampedValue(1),
-              V(50, 50),
-              V(50, 50));
+              V(1, 1), V(1, 1));
     }
 
     /**

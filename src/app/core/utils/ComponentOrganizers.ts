@@ -3,8 +3,8 @@ import {Vector} from "Vector";
 import {CreateGraph, IOObjectSet} from "./ComponentUtils";
 
 
-const ORGANIZE_SEP_X = 250;
-const ORGANIZE_SEP_Y = 150;
+const ORGANIZE_SEP_X = 5;
+const ORGANIZE_SEP_Y = 3;
 
 function OrganizeCore(groups: IOObjectSet, start: Vector, depths: number[][]): void {
     // Depths is a 2d array where the index of the inner array indicates the depth of all of the nodes inside that array
