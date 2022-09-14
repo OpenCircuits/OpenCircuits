@@ -13,7 +13,10 @@ export const GridRenderer = ({
     render(renderer: Renderer, { camera }: CircuitInfo): void {
         const step = GRID_SIZE/camera.getZoom();
 
-        const cpos = camera.getPos().scale(1/camera.getZoom()).sub(renderer.getSize().scale(0.5));
+        const cpos = camera
+            .getPos()
+            .scale(V(1/camera.getScale().x, 1/camera.getScale().y))
+            .sub(renderer.getSize().scale(0.5));
 
         let cpx = cpos.x - Math.floor(cpos.x / step) * step;
         if (cpx < 0)

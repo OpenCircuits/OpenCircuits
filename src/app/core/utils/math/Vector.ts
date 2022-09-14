@@ -181,7 +181,7 @@ export class Vector {
         return this.dot(this);
     }
     /**
-     * Return the angel of 'this' that respects to the x-axis.
+     * Return the angle of 'this' that respects to the x-axis.
      *
      * @returns The arctan value of 'this''s 'x' and 'y'.
      */

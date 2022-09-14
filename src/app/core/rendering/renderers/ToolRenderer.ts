@@ -36,8 +36,7 @@ export const ToolRenderer = (() => {
         const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
         const thickness = ROTATION_CIRCLE_THICKNESS / camera.getZoom();
 
-        renderer.draw(new Circle(pos, radius),
-                      new Style(undefined, ROTATION_CIRCLE_COLOR, thickness), 0.5);
+        renderer.draw(new Circle(pos, radius), new Style(undefined, ROTATION_CIRCLE_COLOR, thickness), 0.5);
     }
 
     const drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector,

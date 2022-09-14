@@ -34,11 +34,13 @@ export class Renderer {
         this.context.restore();
     }
     public transform(camera: Camera, transform: Transform): void {
-        const m = transform.getMatrix().copy();
-        m.setTranslation(camera.getScreenPos(m.getTranslation()));
-        m.scale(1/camera.getZoom());
-        this.context.setTransform(m.get(0), m.get(1), m.get(2),
-                                  m.get(3), m.get(4), m.get(5));
+        const m = camera.getInverseMatrix().mult(transform.getMatrix());
+        this.context.setTransform(
+            m.get(0), m.get(1),
+            m.get(2), m.get(3),
+            // Shift over to the center
+            m.get(4) + camera.getCenter().x, m.get(5) + camera.getCenter().y
+        );
     }
     public translate(v: Vector): void {
         this.context.translate(v.x, v.y);
@@ -75,7 +77,8 @@ export class Renderer {
     public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
         const col = (tint ? parseColor(tint) : undefined);
 
-        img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
+        // Flip y-axis scale
+        img.draw(this.context, pos.x, pos.y, size.x, -size.y, col);
     }
 
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign,
@@ -85,6 +88,9 @@ export class Renderer {
         this.context.fillStyle = color;
         this.context.textAlign = textAlign;
         this.context.textBaseline = textBaseline;
+
+        // Flip y-axis scale
+        this.context.scale(1, -1);
 
         this.translate(pos);
         if (angle !== 0)

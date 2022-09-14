@@ -60,15 +60,16 @@ export class Camera extends BaseObject {
 
         this.dirty = false;
 
+        // Create matrix (w/ flipped y-axis)
         this.mat = new Matrix2x3();
-        this.mat.translate(this.props["pos"] as Vector);
-        this.mat.scale(V(this.props["zoom"] as number));
+        this.mat.translate(this.getPos());
+        this.mat.scale(this.getScale());
         this.inv = this.mat.inverse();
 
         const p1 = this.getWorldPos(V(0, 0));
         const p2 = this.getWorldPos(V(this.width, this.height));
         this.transform.setPos(p2.add(p1).scale(0.5));
-        this.transform.setSize(p2.sub(p1));
+        this.transform.setSize(p2.sub(p1).abs());
     }
 
     /**
@@ -128,7 +129,7 @@ export class Camera extends BaseObject {
         this.zoomBy(z);
         const pos1 = this.getScreenPos(pos0);
         const dPos = pos1.sub(c);
-        this.translate(dPos.scale(this.getZoom()));
+        this.translate(dPos.scale(this.getScale()));
     }
 
     /**
@@ -172,6 +173,9 @@ export class Camera extends BaseObject {
      */
     public getPos(): Vector {
         return V(this.props["pos"] as Vector);
+    }
+    public getScale(): Vector {
+        return V(this.getZoom(), -this.getZoom());
     }
     /**
      * Return how much the screen is zoomed in/out by.
