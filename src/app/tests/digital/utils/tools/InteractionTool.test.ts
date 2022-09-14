@@ -30,8 +30,8 @@ describe("Selection Tool", () => {
 
         test("Clicking on nothing should NOT create an action", () => {
             input.click(V(0, 0));
-            input.click(V(50, 0));
-            input.click(V(0, 50));
+            input.click(V(1, 0));
+            input.click(V(0, 1));
 
             expect(history.getActions()).toHaveLength(0);
         });
@@ -43,7 +43,7 @@ describe("Selection Tool", () => {
             expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(gate);
 
-            input.move(V(100, 0), 10)
+            input.move(V(2, 0), 10)
                     .click();
             expect(selections.get()).toHaveLength(0);
 
@@ -53,12 +53,12 @@ describe("Selection Tool", () => {
         test("Drag to Select then Click to Deselect ANDGate", () => {
             const [gate] = Place(new ANDGate());
 
-            input.drag(V(-100, 100),
-                       V(100, -100));
+            input.drag(V(-2, 2),
+                       V(2, -2));
             expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(gate);
 
-            input.move(V(0, 100), 10)
+            input.move(V(0, 2), 10)
                     .click();
             expect(selections.get()).toHaveLength(0);
 
@@ -72,7 +72,7 @@ describe("Selection Tool", () => {
             expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(gate);
 
-            input.tap(V(0, -100));
+            input.tap(V(0, -2));
             expect(selections.get()).toHaveLength(0);
 
             expect(history.getActions()).toHaveLength(2);
@@ -94,13 +94,13 @@ describe("Selection Tool", () => {
         test("Drag with Finger to Select then Tap to Deselect ANDGate", () => {
             const [gate] = Place(new ANDGate());
 
-            input.touch(V(-100, -100))
-                    .moveTouches(V(200, 200), 5)
+            input.touch(V(-2, -2))
+                    .moveTouches(V(4, 4), 5)
                     .releaseTouch();
             expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(gate);
 
-            input.tap(V(-100, 0));
+            input.tap(V(-2, 0));
             expect(selections.get()).toHaveLength(0);
 
             expect(history.getActions()).toHaveLength(2);
@@ -122,11 +122,11 @@ describe("Selection Tool", () => {
 
         test("Click to Select Wire", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
-            obj2.setPos(V(200, 0));
+            obj2.setPos(V(4, 0));
 
             const wire = Connect(obj1, obj2)[0].getWire();
 
-            input.click(V(100, 0));
+            input.click(V(2, 0));
             expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(wire);
 
@@ -140,11 +140,11 @@ describe("Selection Tool", () => {
             obj1.setPos(V(-IO_PORT_LENGTH - obj1.getSize().x/2, 0));
             expect(obj1.getOutputPortPos(0)).toApproximatelyEqual(V(0, 0));
 
-            obj2.setPos(V(200, 0));
+            obj2.setPos(V(4, 0));
 
             Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
-            input.click(V(20, 0));
+            input.click(V(0.4, 0));
             expect(selections.get()).toHaveLength(1);
 
             expect(history.getActions()).toHaveLength(1);
@@ -157,13 +157,13 @@ describe("Selection Tool", () => {
             obj1.setPos(V(-IO_PORT_LENGTH - obj1.getSize().x/2, 0));
             expect(obj1.getOutputPortPos(0)).toApproximatelyEqual(V(0, 0));
 
-            // Move obj2 s.t. the Port is on the origin + 200 vertically
-            obj2.setPos(V(IO_PORT_LENGTH + obj2.getSize().x/2, 200));
-            expect(obj2.getInputPortPos(0)).toApproximatelyEqual(V(0, 200));
+            // Move obj2 s.t. the Port is on the origin + 4 vertically
+            obj2.setPos(V(IO_PORT_LENGTH + obj2.getSize().x/2, 4));
+            expect(obj2.getInputPortPos(0)).toApproximatelyEqual(V(0, 4));
 
             Connect(obj1, obj2)[0].getWire().setIsStraight(true);
 
-            input.click(V(0, 20));
+            input.click(V(0, 0.4));
             expect(selections.get()).toHaveLength(1);
 
             expect(history.getActions()).toHaveLength(1);
@@ -172,8 +172,8 @@ describe("Selection Tool", () => {
         test("Select then Delete ANDGate", () => {
             Place(new ANDGate());
 
-            input.drag(V(-100, 100),
-                       V(100, -100))
+            input.drag(V(-2, 2),
+                       V(2, -2))
                     .pressKey("Delete");
             expect(selections.get()).toHaveLength(0);
             expect(designer.getObjects()).toHaveLength(0);
@@ -184,8 +184,8 @@ describe("Selection Tool", () => {
         test("Select then Delete ANDGate w/ Backspace", () => {
             Place(new ANDGate());
 
-            input.drag(V(-100, 100),
-                       V(100, -100))
+            input.drag(V(-2, 2),
+                       V(2, -2))
                     .pressKey("Backspace");
             expect(selections.get()).toHaveLength(0);
             expect(designer.getObjects()).toHaveLength(0);
@@ -195,14 +195,14 @@ describe("Selection Tool", () => {
 
         test("Select then Delete Wire", () => {
             const [obj1, obj2] = Place(new Switch(), new BUFGate());
-            obj2.setPos(V(200, 0));
+            obj2.setPos(V(4, 0));
 
             const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires()).toHaveLength(1);
 
             expect(selections.get()).toHaveLength(0);
 
-            input.click(V(100, 0));
+            input.click(V(2, 0));
             expect(selections.get()).toHaveLength(1);
             expect(selections.get()).toContain(wire);
             expect(history.getActions()).toHaveLength(1);
@@ -220,7 +220,7 @@ describe("Selection Tool", () => {
 
         test("Click with Shift to Select Objects then Deselect", () => {
             const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
-            obj1.setPos(V(100, 0));
+            obj1.setPos(V(2, 0));
 
             input.click(V(0, 0));
             input.pressKey("Shift");
@@ -231,7 +231,7 @@ describe("Selection Tool", () => {
             expect(selections.get()).toContain(obj1);
             expect(selections.get()).toContain(obj2);
 
-            input.move(V(0, -100), 10)
+            input.move(V(0, -2), 10)
                     .click();
             expect(selections.get()).toHaveLength(0);
 
@@ -272,7 +272,7 @@ describe("Selection Tool", () => {
 
         test("Click with Shift to Select Objects then Delete", () => {
             const [obj1, obj2] = Place(new ANDGate(), new BUFGate());
-            obj2.setPos(V(200, 0));
+            obj2.setPos(V(4, 0));
             obj1.setPos(V(0, 0));
 
             const wire = Connect(obj1, obj2)[0].getWire();
@@ -288,7 +288,7 @@ describe("Selection Tool", () => {
             input.click(obj2.getPos());
             expect(selections.get()).toHaveLength(2);
 
-            input.click(V(100, 0));
+            input.click(V(2, 0));
             input.releaseKey("Shift");
             expect(selections.get()).toHaveLength(3);
             expect(selections.get()).toContain(wire);
@@ -301,7 +301,7 @@ describe("Selection Tool", () => {
 
         test("Select All then Delete", () => {
             const [obj1, obj2] = Place(new ANDGate(), new Multiplexer());
-            obj1.setPos(V(100, 0));
+            obj1.setPos(V(2, 0));
 
             const wire = Connect(obj1, obj2)[0].getWire();
             expect(designer.getWires()).toHaveLength(1);
@@ -333,8 +333,8 @@ describe("Selection Tool", () => {
 
         test("Snip Single Port", () => {
             const [sw, led] = Place(new Switch(), new LED());
-            sw.setPos(V(-60, 0));
-            led.setPos(V(400, -100));
+            sw.setPos(V(-1.2, 0));
+            led.setPos(V(8, -2));
 
             // Connect Switch -> LED
             input.drag(sw.getOutputPort(0).getWorldTargetPos(),
@@ -342,7 +342,7 @@ describe("Selection Tool", () => {
 
             const wire = sw.getOutputs()[0];
             input.press(wire.getShape().getPos(0.5))
-                    .move(V(20, 0))
+                    .move(V(0.4, 0))
                     .release();
 
             expect(designer.getObjects()).toHaveLength(3);
@@ -362,8 +362,8 @@ describe("Selection Tool", () => {
 
         test("Snip 2 Single Ports", () => {
             const [sw, led] = Place(new Switch(), new LED());
-            sw.setPos(V(-60, 0));
-            led.setPos(V(400, -100));
+            sw.setPos(V(-1.2, 0));
+            led.setPos(V(8, -2));
 
             // Connect Switch -> LED
             input.drag(sw.getOutputPort(0).getWorldTargetPos(),
@@ -371,10 +371,10 @@ describe("Selection Tool", () => {
 
             const wire = sw.getOutputs()[0];
             input.press(wire.getShape().getPos(0.25))
-                    .move(V(20, 0))
+                    .move(V(0.4, 0))
                     .release()
                     .press(wire.getShape().getPos(0.75))
-                    .move(V(-20, 0))
+                    .move(V(-0.4, 0))
                     .release();
 
             expect(designer.getObjects()).toHaveLength(4);
@@ -407,8 +407,8 @@ describe("Selection Tool", () => {
 
         test("Snip Multiple Ports (x2)", () => {
             const [sw, led] = Place(new Switch(), new LED());
-            sw.setPos(V(-60, 0));
-            led.setPos(V(400, -100));
+            sw.setPos(V(-1.2, 0));
+            led.setPos(V(8, -2));
 
             // Connect Switch -> LED
             input.drag(sw.getOutputPort(0).getWorldTargetPos(),
@@ -416,10 +416,10 @@ describe("Selection Tool", () => {
 
             const wire = sw.getOutputs()[0];
             input.press(wire.getShape().getPos(0.25))
-                    .move(V(20, 0))
+                    .move(V(0.4, 0))
                     .release()
                     .press(wire.getShape().getPos(0.75))
-                    .move(V(-20, 0))
+                    .move(V(-0.4, 0))
                     .release()
                     .pressKey("Shift")
                     .click(designer.getObjects()[2].getPos())
