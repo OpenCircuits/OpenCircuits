@@ -23,7 +23,16 @@ export class Switch extends PressableComponent {
      * Toggles Switch.
      */
     public override click(): void {
-        this.activate(!this.outputs.first.getIsOn());
+        this.activate(!this.isOn());
+    }
+
+    /**
+     * Utility function to check if this Switch is on or not.
+     *
+     * @returns True if the Switch is toggled, false otherwise.
+     */
+    public isOn(): boolean {
+        return this.outputs.first.getIsOn();
     }
 
     /**
@@ -36,6 +45,6 @@ export class Switch extends PressableComponent {
     }
 
     public override getImageName(): string | undefined {
-        return this.outputs.first.getIsOn() ? "switchDown.svg" : "switchUp.svg";
+        return this.isOn() ? "switchDown.svg" : "switchUp.svg";
     }
 }

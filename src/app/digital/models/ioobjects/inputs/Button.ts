@@ -37,6 +37,15 @@ export class Button extends PressableComponent {
     }
 
     /**
+     * Utility function to check if this Button is on or not.
+     *
+     * @returns True if the Button is toggled, false otherwise.
+     */
+    public isOn(): boolean {
+        return this.outputs.first.getIsOn();
+    }
+
+    /**
      * Activates the button (makes the output true) by calling activate.
      */
     public override press(): void {
@@ -60,6 +69,6 @@ export class Button extends PressableComponent {
     }
 
     public override getImageName(): string | undefined {
-        return this.outputs.first.getIsOn() ? "buttonDown.svg" : "buttonUp.svg";
+        return this.isOn() ? "buttonDown.svg" : "buttonUp.svg";
     }
 }
