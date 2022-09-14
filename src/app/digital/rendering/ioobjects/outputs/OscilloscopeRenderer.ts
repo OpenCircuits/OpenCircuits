@@ -16,7 +16,7 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 import {Oscilloscope} from "digital/models/ioobjects";
 
 
-const GRAPH_LINE_WIDTH = 4;
+const GRAPH_LINE_WIDTH = 0.08;
 
 export const OscilloscopeRenderer = ({
     render(renderer: Renderer, _: Camera, o: Oscilloscope, selected: boolean): void {

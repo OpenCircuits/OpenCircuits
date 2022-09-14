@@ -40,7 +40,7 @@ export class ANDGate extends Gate {
      * @returns The display name ("NAND Gate" or "AND Gate").
      */
     public getDisplayName(): string {
-        return this.not ? "NAND Gate" : "AND Gate";
+        return this.getProp("not") ? "NAND Gate" : "AND Gate";
     }
 
     /**

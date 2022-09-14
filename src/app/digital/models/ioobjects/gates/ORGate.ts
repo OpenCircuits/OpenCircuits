@@ -59,7 +59,7 @@ export class ORGate extends Gate {
      * @returns The string "NOR Gate" or "OR Gate".
      */
     public getDisplayName(): string {
-        return this.not ? "NOR Gate" : "OR Gate";
+        return this.getProp("not") ? "NOR Gate" : "OR Gate";
     }
 
     /**

@@ -39,7 +39,7 @@ export const GateRenderer = (() => {
         const amt = 2 * Math.floor(inputs / 4) + 1;
 
         // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
-        const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.7, 0]) : ([0, 0.6]);
+        const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.014, 0]) : ([0, 0.012]);
         for (let i = 0; i < amt; i++) {
             const d = (i - Math.floor(amt / 2)) * size.y;
             const h = DEFAULT_BORDER_WIDTH;
@@ -85,9 +85,9 @@ export const GateRenderer = (() => {
             const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
             const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
 
-            if (gate.isNot()) {
+            if (gate.getProp("not") === true) {
                 const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
-                const l = transform.getSize().x/2 + 5;
+                const l = transform.getSize().x/2 + GATE_NOT_CIRCLE_RADIUS;
                 renderer.draw(new Circle(V(l, 0), GATE_NOT_CIRCLE_RADIUS), style);
             }
 
@@ -101,11 +101,9 @@ export const GateRenderer = (() => {
             }
             else if (gate instanceof XORGate) {
                 // Draw curves to visually match input ports
-                drawQuadCurve(renderer, 0, transform.getSize(), gate.numInputs(), borderCol);
-                drawQuadCurve(renderer, -12, transform.getSize(), gate.numInputs(), borderCol);
+                drawQuadCurve(renderer,     0, transform.getSize(), gate.numInputs(), borderCol);
+                drawQuadCurve(renderer, -0.24, transform.getSize(), gate.numInputs(), borderCol);
             }
-
-
         },
     };
 })();

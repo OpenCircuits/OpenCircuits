@@ -1,6 +1,8 @@
+import {ROTATION_ARC_STYLE,
+        ROTATION_CIRCLE_COLOR,
+        SELECTION_BOX_STYLE} from "core/rendering/Styles";
 import {ROTATION_CIRCLE_RADIUS,
         ROTATION_CIRCLE_THICKNESS} from "core/utils/Constants";
-
 
 import {Vector} from "Vector";
 
@@ -8,18 +10,14 @@ import {Camera} from "math/Camera";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-
 import {InteractionTool}  from "core/tools/InteractionTool";
 import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
 import {ToolManager}      from "core/tools/ToolManager";
 import {WiringTool}       from "core/tools/WiringTool";
 
-import {Renderer}            from "core/rendering/Renderer";
-import {Style}               from "core/rendering/Style";
-import {ROTATION_ARC_STYLE,
-        ROTATION_CIRCLE_COLOR,
-        SELECTION_BOX_STYLE} from "core/rendering/Styles";
+import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
 
 import {ArcCircle} from "core/rendering/shapes/ArcCircle";
 import {Circle}    from "core/rendering/shapes/Circle";
