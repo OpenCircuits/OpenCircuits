@@ -35,7 +35,7 @@ export class BUFGate extends Gate {
      * @returns The display name ("NOT Gate" or "Buffer Gate").
      */
     public getDisplayName(): string {
-        return this.not ? "NOT Gate" : "Buffer Gate";
+        return this.getProp("not") ? "NOT Gate" : "Buffer Gate";
     }
 
     /**

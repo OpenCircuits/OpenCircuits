@@ -47,7 +47,7 @@ export class XORGate extends Gate {
      * @returns The display name of the gate.
      */
     public getDisplayName(): string {
-        return this.not ? "XNOR Gate" : "XOR Gate";
+        return this.getProp("not") ? "XNOR Gate" : "XOR Gate";
     }
     /**
      * Returns the name of the image used to display in the frontend.

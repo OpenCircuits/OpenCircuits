@@ -51,39 +51,15 @@ export class Button extends PressableComponent {
     }
 
     /**
-     * Activates or deactivates the output.
-     *
-     * @param signal True makes it activate the output,
-     *         false deactivates.
-     */
-    public override activate(signal: boolean): void {
-        super.activate(signal, 0);
-    }
-
-    /**
      * Returns the name of the object.
      *
      * @returns The string "Button".
      */
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "Button";
     }
 
-    /**
-     * Returns the name of the file for when the button *is* pressed.
-     *
-     * @returns The string "buttonUp.svg".
-     */
-    public getOffImageName(): string {
-        return "buttonUp.svg";
-    }
-
-    /**
-     * Returns the name of the file for when the button *is not* pressed.
-     *
-     * @returns The filename "buttonDown.svg".
-     */
-    public getOnImageName(): string {
-        return "buttonDown.svg";
+    public override getImageName(): string | undefined {
+        return this.outputs.first.getIsOn() ? "buttonDown.svg" : "buttonUp.svg";
     }
 }

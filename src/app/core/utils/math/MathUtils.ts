@@ -217,7 +217,7 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
 }
 
 
-const WIRE_DIST_THRESHOLD  = 5;
+const WIRE_DIST_THRESHOLD  = 0.1;
 const WIRE_DIST_THRESHOLD2 = WIRE_DIST_THRESHOLD ** 2;
 const WIRE_DIST_ITERATIONS = 10;
 const WIRE_NEWTON_ITERATIONS = 5;

@@ -37,7 +37,7 @@ const [Info, InitialInfo] = GenPropInfo({
 
 export abstract class Component extends CullableObject {
     protected transform: Transform;
-    private dirtyTransform: boolean;
+    protected dirtyTransform: boolean;
 
     protected constructor(size: Vector, initialProps: Record<string, Prop> = {}) {
         super({ ...InitialInfo, size, ...initialProps });

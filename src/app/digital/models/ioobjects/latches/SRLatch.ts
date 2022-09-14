@@ -31,7 +31,7 @@ export class SRLatch extends Latch {
             return false;
         }
 
-        return this.state;
+        return this.getProp("state") as boolean;
     }
 
     public getDisplayName(): string {

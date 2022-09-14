@@ -6,7 +6,6 @@ import {V, Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
 
-import {Name}        from "core/utils/Name";
 import {GenPropInfo} from "core/utils/PropInfoUtils";
 
 import {Prop, PropInfo} from "core/models/PropInfo";
@@ -59,14 +58,8 @@ export class SegmentDisplay extends DigitalComponent {
     public override setProp(key: string, val: Prop): void {
         super.setProp(key, val);
 
-        if (key === "segmentCount") {
+        if (key === "segmentCount")
             this.setInputPortCount(val as number);
-
-            // Update name, but only if the name isn't set by the user
-            //  otherwise it would overwrite it
-            if (!this.name.isSet())
-                this.name = new Name(this.getDisplayName());
-        }
     }
 
     /**

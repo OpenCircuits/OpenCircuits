@@ -19,9 +19,6 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {Component} from "core/models/Component";
 
-
-
-
 import {PressableComponent} from "digital/models/ioobjects/PressableComponent";
 
 import {FlipFlop} from "digital/models/ioobjects/flipflops/FlipFlop";
@@ -43,7 +40,6 @@ import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
 import {LED}            from "digital/models/ioobjects/outputs/LED";
 import {Oscilloscope}   from "digital/models/ioobjects/outputs/Oscilloscope";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
-
 
 import {GateRenderer}           from "./gates/GateRenderer";
 import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
