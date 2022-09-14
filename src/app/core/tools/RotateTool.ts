@@ -105,6 +105,7 @@ export const RotateTool = (() => {
             const components = selections.get() as Component[];
 
             const midpoint = selections.midpoint();
+
             const dAngle = getAngle(worldMousePos, midpoint) - prevAngle;
 
             // Calculate new angles

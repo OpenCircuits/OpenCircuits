@@ -39,7 +39,7 @@ export class LED extends DigitalComponent {
 
         // Make port face down instead of sideways
         this.inputs.first.setOriginPos(V());
-        this.inputs.first.setTargetPos(V(0, 2));
+        this.inputs.first.setTargetPos(V(0, -2));
     }
 
     /**
