@@ -139,9 +139,9 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
 
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
-    const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
+    // const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
     // TODO: Replace with a better (action based) way of organizing a circuit
-    OrganizeMinDepth(circuit, startPos);
+    OrganizeMinDepth(circuit, info.camera.getPos());
 
     const circuitComponents = circuit.getComponents();
 
