@@ -79,7 +79,7 @@ export class IC extends DigitalComponent {
 
     public update(): void {
         // Update size
-        this.transform.setSize(this.data.getSize());
+        this.setSize(this.data.getSize());
 
         // Update port positions
         this.copyPorts();
