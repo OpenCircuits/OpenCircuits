@@ -23,6 +23,8 @@ tests/index.js
 app.yaml
 yarn-error.log
 
+.eslintcache
+
 # IntelliJ
 .idea/
 
