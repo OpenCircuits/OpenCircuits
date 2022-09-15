@@ -12,7 +12,7 @@ import {Port, Wire} from "core/models";
 
 
 export const WiringTool = (() => {
-    enum StateType {
+    const enum StateType {
         CLICKED,
         DRAGGED,
     }
