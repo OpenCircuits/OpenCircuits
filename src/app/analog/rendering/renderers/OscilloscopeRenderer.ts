@@ -1,3 +1,4 @@
+import {GRID_LINE_COLOR}     from "core/rendering/Styles";
 import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
         SELECTED_BORDER_COLOR,
@@ -8,9 +9,8 @@ import {V} from "Vector";
 import {linspace, linspaceDX} from "math/MathUtils";
 import {Margin, Rect}         from "math/Rect";
 
-import {Renderer}        from "core/rendering/Renderer";
-import {Style}           from "core/rendering/Style";
-import {GRID_LINE_COLOR} from "core/rendering/Styles";
+import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
 
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
