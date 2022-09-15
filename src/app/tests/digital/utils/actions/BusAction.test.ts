@@ -9,8 +9,8 @@ import {Bus, GetComponentBusPorts} from "digital/actions/compositions/Bus";
 
 import {DigitalCircuitDesigner, InputPort, OutputPort} from "digital/models";
 
-import {ANDGate, BCDDisplay, BUFGate, ConstantNumber, IC,
-        ICData, LED, Multiplexer, Switch} from "digital/models/ioobjects";
+import {ANDGate, BCDDisplay, BUFGate, ConstantNumber,
+        IC, ICData, LED, Multiplexer, Switch} from "digital/models/ioobjects";
 
 
 describe("Bus Action", () => {
@@ -55,17 +55,17 @@ describe("Bus Action", () => {
     test("Simple 1-port connection", () => {
         const [i1, o1] = Place(new Switch(), new LED());
 
-        i1.setPos(V(-100, 0));
-        o1.setPos(V(100, 0));
+        i1.setPos(V(-2, 0));
+        o1.setPos(V(2, 0));
 
         expectBusConnections([i1.getOutputPort(0)], [o1.getInputPort(0)]);
     });
     test("Simple 2-port connection", () => {
         const [i1, i2, g1] = Place(new Switch(), new Switch(), new ANDGate());
 
-        i1.setPos(V(-100, -50));
-        i2.setPos(V(-100,  50));
-        g1.setPos(V(100, 0));
+        i1.setPos(V(-2,  1));
+        i2.setPos(V(-2, -1));
+        g1.setPos(V( 2,  0));
 
         expectBusConnections([i1.getOutputPort(0), i2.getOutputPort(0)], g1.getInputPorts());
 
@@ -76,8 +76,8 @@ describe("Bus Action", () => {
     test("Basic Constant Number -> BCD 4-port", () => {
         const [i1, o1] = Place(new ConstantNumber(), new BCDDisplay());
 
-        i1.setPos(V(-100, 0));
-        o1.setPos(V( 100, 0));
+        i1.setPos(V(-2, 0));
+        o1.setPos(V( 2, 0));
 
         expectBusConnections(i1.getOutputPorts(), o1.getInputPorts());
 
@@ -91,8 +91,8 @@ describe("Bus Action", () => {
         const [i1, o1] = Place(new ConstantNumber(), new BCDDisplay());
 
         // From issue #882
-        i1.setPos(V(-250, -17));
-        o1.setPos(V( -40, -31));
+        i1.setPos(V(-5, 0.34));
+        o1.setPos(V(-0.8, 0.62));
 
         expectBusConnections(i1.getOutputPorts(), o1.getInputPorts());
 
@@ -106,9 +106,9 @@ describe("Bus Action", () => {
         const [i1, o1] = Place(new ConstantNumber(), new BCDDisplay());
 
         // From PR #1020 (https://github.com/OpenCircuits/OpenCircuits/pull/1020#pullrequestreview-914672445)
-        i1.setPos(V(-100, -100));
+        i1.setPos(V(-2, 2));
         i1.setAngle(-Math.PI/2);
-        o1.setPos(V( 100,  100));
+        o1.setPos(V(2, -2));
 
         expectBusConnections(i1.getOutputPorts(), o1.getInputPorts());
 
@@ -121,17 +121,17 @@ describe("Bus Action", () => {
     test("Multiple Rotated Switches -> BCD 4-port", () => {
         const [i1, i2, i3, i4, o1] = Place(new Switch(), new Switch(), new Switch(), new Switch(), new BCDDisplay());
 
-        i1.setPos(V(-100, -200));
-        i2.setPos(V(-100, -100));
-        i3.setPos(V(-100,  100));
-        i4.setPos(V(-100,  200));
+        i1.setPos(V(-2,  4));
+        i2.setPos(V(-2,  2));
+        i3.setPos(V(-2, -2));
+        i4.setPos(V(-2, -4));
 
         i1.setAngle( 0.25);
         i2.setAngle(-0.3);
         i3.setAngle( 0.2);
         i4.setAngle(-0.1);
 
-        o1.setPos(V( 100,    0));
+        o1.setPos(V(2, 0));
 
         expectBusConnections([i1,i2,i3,i4].map((i) => i.getOutputPort(0)), o1.getInputPorts());
 
@@ -145,12 +145,12 @@ describe("Bus Action", () => {
         const [i1, i2, i3, i4, i5, i6, o1] = Place(new Switch(), new Switch(), new Switch(), new Switch(),
                                                    new Switch(), new Switch(), new Multiplexer());
 
-        i1.setPos(V(-100, -300));
-        i2.setPos(V(-100, -200));
-        i3.setPos(V(-100, -100));
-        i4.setPos(V(-100,  100));
-        i5.setPos(V(-100,  200));
-        i6.setPos(V(-100,  300));
+        i1.setPos(V(-2,  6));
+        i2.setPos(V(-2,  4));
+        i3.setPos(V(-2,  2));
+        i4.setPos(V(-2, -2));
+        i5.setPos(V(-2, -4));
+        i6.setPos(V(-2, -6));
 
         i1.setAngle(0.25);
         i2.setAngle(-0.3);
@@ -159,7 +159,7 @@ describe("Bus Action", () => {
         i5.setAngle( 0.3);
         i6.setAngle(-0.17);
 
-        o1.setPos(V( 100,    0));
+        o1.setPos(V(2, 0));
         o1.setAngle(-0.21);
 
         expectBusConnections([i1,i2,i3,i4,i5,i6].map((i) => i.getOutputPort(0)),
@@ -176,15 +176,15 @@ describe("Bus Action", () => {
     test("Multiple Rotated Switches + Constant Number -> Mux 6-port", () => {
         const [i1, i2, i3, o1] = Place(new Switch(), new Switch(), new ConstantNumber(), new Multiplexer());
 
-        i1.setPos(V(-100, -200));
-        i2.setPos(V(-100, -100));
-        i3.setPos(V(-100,  100));
+        i1.setPos(V(-2,  4));
+        i2.setPos(V(-2,  2));
+        i3.setPos(V(-2, -2));
 
         i1.setAngle(0.25);
         i2.setAngle(-0.3);
         i3.setAngle( 0.2);
 
-        o1.setPos(V( 100,    0));
+        o1.setPos(V(2, 0));
         o1.setAngle(-0.21);
 
         expectBusConnections([i1,i2,i3].flatMap((i) => i.getOutputPorts()),
@@ -211,24 +211,24 @@ describe("Bus Action", () => {
 
         const [i1, i2, i3, i4] = Place(new Switch(), new Switch(), new Switch(), new Switch());
 
-        i1.setPos(V(-200, -200));
-        i2.setPos(V(-200, -100));
-        i3.setPos(V(-200,  100));
-        i4.setPos(V(-200,  200));
+        i1.setPos(V(-4,  4));
+        i2.setPos(V(-4,  2));
+        i3.setPos(V(-4, -2));
+        i4.setPos(V(-4, -4));
 
         // Create IC
         const icdata = ICData.Create([i1,i2,i3,i4]);
         {
-            icdata?.setSize(V(200, 100));
+            icdata?.setSize(V(4, 2));
 
             const setPort = (p: number, pos: Vector, dir: Vector) => {
                 icdata!.getPorts()[p].setOriginPos(pos);
                 icdata!.getPorts()[p].setTargetPos(pos.add(dir.normalize().scale(IO_PORT_LENGTH)));
             }
-            setPort(0, V(-100, -50), V(-1, 0));
-            setPort(1, V(  50,  50), V( 0, 1));
-            setPort(2, V(-100,  50), V(-1, 0));
-            setPort(3, V( -50,  50), V( 0, 1));
+            setPort(0, V(-2,  1), V(-1,  0));
+            setPort(1, V( 1, -1), V( 0, -1));
+            setPort(2, V(-2, -1), V(-1,  0));
+            setPort(3, V(-1, -1), V( 0, -1));
         }
 
         const [ic] = Place(new IC(icdata));
@@ -254,25 +254,25 @@ describe("Bus Action", () => {
 
         const [i1, i2, i3, i4] = Place(new Switch(), new Switch(), new Switch(), new Switch());
 
-        i1.setPos(V(-200, -200));
-        i2.setPos(V(-200, -100));
-        i3.setPos(V(-200,  100));
-        i4.setPos(V(-200,  200));
+        i1.setPos(V(-4,  4));
+        i2.setPos(V(-4,  2));
+        i3.setPos(V(-4, -2));
+        i4.setPos(V(-4, -4));
 
         // Create IC
         const icdata = ICData.Create([i1,i2,i3,i4]);
         {
-            icdata?.setSize(V(200, 100));
+            icdata?.setSize(V(4, 2));
 
             const setPort = (p: number, pos: Vector, dir: Vector) => {
                 icdata!.getPorts()[p].setOriginPos(pos);
                 icdata!.getPorts()[p].setTargetPos(pos.add(dir.normalize().scale(IO_PORT_LENGTH)));
             }
 
-            setPort(0, V(-100, -50), V(-1, 0));
-            setPort(1, V( 100,  50), V( 1, 1)); // Diagonal
-            setPort(2, V(-100,  50), V(-1, 0));
-            setPort(3, V( -50,  50), V( 0, 1));
+            setPort(0, V(-2,  1), V(-1,  0));
+            setPort(1, V( 2, -1), V( 1, -1)); // Diagonal
+            setPort(2, V(-2, -1), V(-1,  0));
+            setPort(3, V(-1, -1), V( 0, -1));
         }
 
         const [ic] = Place(new IC(icdata));
@@ -293,7 +293,7 @@ describe("Bus Action", () => {
         i2.setPos(V(0,0));
         i3.setPos(V(0,0));
         i4.setPos(V(0,0));
-        bcd1.setPos(V(200,0));
+        bcd1.setPos(V(4,0));
 
         // Expect every single switch to connect, but we can't assert anything about the order of connections
         expectBusConnections([i1,i2,i3,i4].flatMap((i) => i.getOutputPorts()), bcd1.getInputPorts());

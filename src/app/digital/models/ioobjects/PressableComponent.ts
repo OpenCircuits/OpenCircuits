@@ -6,7 +6,7 @@ import {Transform}    from "math/Transform";
 
 import {Pressable} from "core/utils/Pressable";
 
-import {DigitalComponent} from "../DigitalComponent";
+import {DigitalComponent} from "../index";
 
 
 export abstract class PressableComponent extends DigitalComponent implements Pressable {
