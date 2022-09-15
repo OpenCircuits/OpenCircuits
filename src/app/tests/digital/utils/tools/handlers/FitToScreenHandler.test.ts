@@ -67,6 +67,6 @@ describe("FitToScreenHandler", () => {
             .releaseKey("f");
 
         expect(selections.amount()).toBe(1);
-        expect(camera.getPos()).toApproximatelyEqual(V(0, 0.81));
+        expect(camera.getPos()).toApproximatelyEqual(V(0, -0.81));
     });
 });

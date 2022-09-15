@@ -73,14 +73,14 @@ describe("Pan Tool", () => {
                 .releaseKey("ArrowUp")
                 .pressKey("ArrowRight")
                 .releaseKey("ArrowRight");
-        expect(camera.getPos()).toEqual(V(1.5, -1.5));
+        expect(camera.getPos()).toEqual(V(1.5, 1.5));
         camera.setPos(V(0, 0));
 
         input.pressKey("ArrowDown")
                 .releaseKey("ArrowDown")
                 .pressKey("ArrowLeft")
                 .releaseKey("ArrowLeft");
-        expect(camera.getPos()).toEqual(V(-1.5, 1.5));
+        expect(camera.getPos()).toEqual(V(-1.5, -1.5));
         camera.setPos(V(0, 0));
     });
 
@@ -94,7 +94,7 @@ describe("Pan Tool", () => {
                 .pressKey("ArrowRight")
                 .releaseKey("ArrowRight")
                 .releaseKey("Shift");
-        expect(camera.getPos()).toEqual(V(0.1, -0.1));
+        expect(camera.getPos()).toEqual(V(0.1, 0.1));
         camera.setPos(V(0, 0));
 
         input.pressKey("Shift")
@@ -103,7 +103,7 @@ describe("Pan Tool", () => {
                 .pressKey("ArrowLeft")
                 .releaseKey("ArrowLeft")
                 .releaseKey("Shift");
-        expect(camera.getPos()).toEqual(V(-0.1, 0.1));
+        expect(camera.getPos()).toEqual(V(-0.1, -0.1));
         camera.setPos(V(0, 0));
     });
 

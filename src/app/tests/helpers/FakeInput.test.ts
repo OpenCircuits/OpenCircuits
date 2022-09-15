@@ -35,7 +35,7 @@ describe("Fake Input", () => {
         input.moveTo(V(1, 1), 5);
 
         expect(steps).toBe(5);
-        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, 50));
+        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, -50));
     });
 
     test("Move", () => {
@@ -45,13 +45,13 @@ describe("Fake Input", () => {
         input.move(V(1, 1), 5);
 
         expect(steps).toBe(10);
-        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, 50));
+        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, -50));
 
         // Move is in world position
         input.move(V(2, 3), 5);
 
         expect(steps).toBe(15);
-        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(150, 200));
+        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(150, -200));
     });
 
     test("Drag", () => {
@@ -59,9 +59,9 @@ describe("Fake Input", () => {
                    V(1, -1), 5);
 
         expect(steps).toBe(7);
-        expect(positions[0].sub(camera.getCenter())).toApproximatelyEqual(V(-50, 50));
-        expect(input.getMouseDownPos().sub(camera.getCenter())).toApproximatelyEqual(V(-50, 50));
-        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, -50));
+        expect(positions[0].sub(camera.getCenter())).toApproximatelyEqual(V(-50, -50));
+        expect(input.getMouseDownPos().sub(camera.getCenter())).toApproximatelyEqual(V(-50, -50));
+        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, 50));
     });
 
     test("Camera Move", () => {
@@ -73,10 +73,10 @@ describe("Fake Input", () => {
 
         input.moveTo(V(2, 0), 1);
 
-        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, -50));
+        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(50, 50));
 
         input.moveTo(V(4, 0), 1);
 
-        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(150, -50));
+        expect(input.getMousePos().sub(camera.getCenter())).toApproximatelyEqual(V(150, 50));
     });
 });

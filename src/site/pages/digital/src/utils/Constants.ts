@@ -7,5 +7,5 @@ export const THUMBNAIL_ZOOM_PADDING_RATIO = 1.025;
 
 export const OVERWRITE_CIRCUIT_MESSAGE = "Are you sure you want to overwrite your current scene?";
 
-export const AUTO_PLACE_SWITCH_SPACE = 125;
-export const AUTO_PLACE_LED_SPACE = 50;
+export const AUTO_PLACE_SWITCH_SPACE = 2.5;
+export const AUTO_PLACE_LED_SPACE = 1;

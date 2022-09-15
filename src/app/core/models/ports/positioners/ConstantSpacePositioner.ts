@@ -29,8 +29,9 @@ export class ConstantSpacePositioner<T extends Port> extends Positioner<T> {
             const width = port.getParent().getSize().x;
             const height = port.getParent().getSize().y;
 
-            const sY = this.calcSpacingPos(i, ports.length, this.spacing);
-            const sX = this.calcSpacingPos(i, ports.length, this.spacing);
+            // Flip around y-axis since numbering from top -> down is standard for ports
+            const sY = -this.calcSpacingPos(i, ports.length, this.spacing);
+            const sX =  this.calcSpacingPos(i, ports.length, this.spacing);
 
             const p0 = this.calcOriginPos(sX, sY, width, height);
             const p1 = this.calcTargetPos(sX, sY, width, height);

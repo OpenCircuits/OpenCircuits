@@ -24,8 +24,8 @@ export class Positioner<T extends Port> {
     public static readonly DIRS: Record<Dir, Vector> = {
         "left":   V(-1, 0),
         "right":  V(1,  0),
-        "top":    V(0, -1),
-        "bottom": V(0,  1),
+        "top":    V(0,  1),
+        "bottom": V(0, -1),
     };
 
     /**
@@ -129,8 +129,9 @@ export class Positioner<T extends Port> {
             const width = port.getParent().getSize().x;
             const height = port.getParent().getSize().y;
 
-            const sY = this.calcSpacingPos(i, ports.length, height);
-            const sX = this.calcSpacingPos(i, ports.length, width);
+            // Flip around y-axis since numbering from top -> down is standard for ports
+            const sY = -this.calcSpacingPos(i, ports.length, height);
+            const sX =  this.calcSpacingPos(i, ports.length, width);
 
             const p0 = this.calcOriginPos(sX, sY, width, height);
             const p1 = this.calcTargetPos(sX, sY, width, height);
