@@ -20,7 +20,7 @@ describe("Split Wire Tool", () => {
     test("Connect Switch -> LED then Split and then Undo/Redo", () => {
         const [sw, led] = Place(new Switch(), new LED());
         sw.setPos(V(-1, 0));
-        led.setPos(V(4, -2));
+        led.setPos(V(4, 2));
 
         // Connect Switch -> LED
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
@@ -47,7 +47,7 @@ describe("Split Wire Tool", () => {
     test("Connect Switch -> LED then Split and Snap then Unsnap and move Down", () => {
         const [sw, led] = Place(new Switch(), new LED());
         sw.setPos(V(-1, 0));
-        led.setPos(V(4, -2));
+        led.setPos(V(4, 2));
 
         // Connect Switch -> LED
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),
@@ -76,7 +76,7 @@ describe("Split Wire Tool", () => {
     test("Connect Switch -> LED then Split Twice into Snapped Rectangle", () => {
         const [sw, led] = Place(new Switch(), new LED());
         sw.setPos(V(-1.32, 0)); // 66 is from size of Switch (1.24)/2 + IO_PORT_LENGTH (0.7)
-        led.setPos(V(8, -2));
+        led.setPos(V(8, 2));
 
         // Connect Switch -> LED
         input.drag(sw.getOutputPort(0).getWorldTargetPos(),

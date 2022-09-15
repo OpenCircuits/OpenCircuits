@@ -16,7 +16,7 @@ export const DEFAULT_BORDER_WIDTH = 0.04;
 export const DEFAULT_CURVE_BORDER_WIDTH = 0.042;
 export const SEGMENT_DISPLAY_WIDTH = 0.7;
 
-export const MULTIPLEXER_HEIGHT_OFFSET = 0.25;
+export const MULTIPLEXER_HEIGHT_OFFSET = 0.5;
 
 export const DRAG_TIME = 50;
 

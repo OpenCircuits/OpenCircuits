@@ -33,23 +33,25 @@ export const MultiplexerRenderer = ({
         //
         // Creates the Multiplexer and Demultiplexer the correct size
         //
-        if (mul instanceof Multiplexer){
-            const p1 = V(-transform.getSize().x/2 , transform.getSize().y/2);
-            const p2 = V(-transform.getSize().x/2 , -transform.getSize().y/2);
-            const p3 = V(transform.getSize().x/2 , -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
-            const p4 = V(transform.getSize().x/2 , transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
+        /* eslint-disable space-in-parens */
+        if (mul instanceof Multiplexer) {
+            const p1 = V(-transform.getSize().x/2,  transform.getSize().y/2);
+            const p2 = V(-transform.getSize().x/2, -transform.getSize().y/2);
+            const p3 = V( transform.getSize().x/2, -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
+            const p4 = V( transform.getSize().x/2,  transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
             // Renders to the beginning two points again in order to fully connect the last corner
             renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
         }
         else {
-            const p1 = V(transform.getSize().x/2 , transform.getSize().y/2);
-            const p2 = V(transform.getSize().x/2 , -transform.getSize().y/2);
+            const p1 = V( transform.getSize().x/2,  transform.getSize().y/2);
+            const p2 = V( transform.getSize().x/2, -transform.getSize().y/2);
             const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
-            const p4 = V(-transform.getSize().x/2, transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
+            const p4 = V(-transform.getSize().x/2,  transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
 
             // Renders to the beginning two points again in order to fully connect the last corner
             renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
         }
+        /* eslint-enable space-in-parens */
     },
 });

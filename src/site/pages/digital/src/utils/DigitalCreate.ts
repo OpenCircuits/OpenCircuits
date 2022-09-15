@@ -119,7 +119,7 @@ export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuit
 
         inputs.forEach((s, i) => {
             s.setPos(V(-comp.getCullBox().getSize().x/2 - AUTO_PLACE_SWITCH_SPACE,
-                       (i - (inputs.length-1)/2)*s.getCullBox().getSize().y).add(comp.getPos()));
+                       ((inputs.length-1)/2 - i)*s.getCullBox().getSize().y).add(comp.getPos()));
         });
         outputs.forEach((l, i) => {
             l.setPos(V(comp.getCullBox().getSize().x/2 + AUTO_PLACE_LED_SPACE*(i+1),

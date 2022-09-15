@@ -31,13 +31,13 @@ export class FlipFlopPositioner extends Positioner<InputPort> {
 
         {
             const PRE = ports[FlipFlop.PRE_PORT];
-            PRE.setOriginPos(V(0, -height/2));
-            PRE.setTargetPos(V(0, -height/2 - IO_PORT_LENGTH));
+            PRE.setOriginPos(V(0, height/2));
+            PRE.setTargetPos(V(0, height/2 + IO_PORT_LENGTH));
         }
         {
             const CLR = ports[FlipFlop.CLR_PORT];
-            CLR.setOriginPos(V(0, height/2));
-            CLR.setTargetPos(V(0, height/2 + IO_PORT_LENGTH));
+            CLR.setOriginPos(V(0, -height/2));
+            CLR.setTargetPos(V(0, -height/2 - IO_PORT_LENGTH));
         }
     }
 

@@ -27,7 +27,6 @@ export class Multiplexer extends Mux {
                 p.setName(`I${i}`);
         });
         this.outputs.getPorts()[0].setName("O0");
-
     }
 
     /**
