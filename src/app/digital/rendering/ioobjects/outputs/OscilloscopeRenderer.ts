@@ -16,7 +16,7 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 import {Oscilloscope} from "digital/models/ioobjects";
 
 
-const GRAPH_LINE_WIDTH = 4;
+const GRAPH_LINE_WIDTH = 0.08;
 
 export const OscilloscopeRenderer = ({
     render(renderer: Renderer, _: Camera, o: Oscilloscope, selected: boolean): void {
@@ -43,7 +43,7 @@ export const OscilloscopeRenderer = ({
             const signals = allSignal.slice(0, numSamples);
 
             // Get y-offset for i'th graph
-            const dy = -size.y/2 + (i + 0.5)*displaySize.y;
+            const dy = -size.y/2 + ((allSignals.length - 1 - i) + 0.5)*displaySize.y;
 
             if (signals.length <= 1)
                 continue;
@@ -55,7 +55,7 @@ export const OscilloscopeRenderer = ({
             const dx = (size.x - 2*offset)/(numSamples - 1);
             const positions = signals.map((s, i) => V(
                 -displaySize.x/2 + offset + i*dx,      // x-position: linear space
-                    displaySize.y * (s ? -1/3 : 1/3) + dy // y-position: based on signal value
+                 displaySize.y * (s ? 1/3 : -1/3) + dy // y-position: based on signal value
             ));
 
             // Draw the graph

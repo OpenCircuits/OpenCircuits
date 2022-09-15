@@ -79,7 +79,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(tools.defaultTool, ...tools.tools!);
-    const input = new FakeInput(camera.getCenter());
+    const input = new FakeInput(camera);
 
     const info = {
         locked: false,
@@ -101,7 +101,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
         // Utility function to reset the state of the CircuitInfo
         reset: (resetDesigner = false) => {
             history.reset();
-            camera.setPos(V()); camera.setZoom(1); // Reset camera
+            camera.setPos(V()); camera.setZoom(0.02); // Reset camera
             if (resetDesigner)
                 designer.reset();
             input.reset();

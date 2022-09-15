@@ -1,8 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE,
-        LED_LIGHT_RADIUS,
-        LED_WIDTH} from "core/utils/Constants";
+import {LED_LIGHT_RADIUS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -36,12 +34,12 @@ export class LED extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(1),
               new ClampedValue(0),
-              V(50, 50), undefined, undefined,
+              V(1, 1), undefined, undefined,
               InitialInfo);
 
         // Make port face down instead of sideways
         this.inputs.first.setOriginPos(V());
-        this.inputs.first.setTargetPos(V(0, 2*DEFAULT_SIZE));
+        this.inputs.first.setTargetPos(V(0, -2));
     }
 
     /**
@@ -62,7 +60,7 @@ export class LED extends DigitalComponent {
      */
     public override getOffset(): Vector {
         // Add extra offset if this LED is on (to account for light)
-        return super.getOffset().add((this.isOn() ? (LED_LIGHT_RADIUS - LED_WIDTH/2) : (0)));
+        return super.getOffset().add((this.isOn() ? (LED_LIGHT_RADIUS - this.getSize().x/2) : (0)));
     }
 
     /**
@@ -75,7 +73,7 @@ export class LED extends DigitalComponent {
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     /**

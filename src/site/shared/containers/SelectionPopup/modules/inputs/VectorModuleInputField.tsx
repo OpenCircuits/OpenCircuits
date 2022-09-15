@@ -37,13 +37,14 @@ export const VectorModuleInputField = ({
         getAction: (newVals) => getAction(newVals.map(([x, y]) => V(x, y))),
 
         onSubmit,
-        getCustomDisplayVal: (getCustomDisplayVal
-            ? (([x,y], i) => {
-                const display = getCustomDisplayVal!(V(x,y));
-                return [display.x, display.y][i];
-            })
-            : undefined
-        ),
+        getCustomDisplayVal: (([x,y], i) => {
+            // Default to rounding to two digits
+            const display = (getCustomDisplayVal ?? ((v) => V(
+                parseFloat(v.x.toFixed(2)),
+                parseFloat(v.y.toFixed(2))
+            )))(V(x,y));
+            return [display.x, display.y][i];
+        }),
     });
 
     return (<>

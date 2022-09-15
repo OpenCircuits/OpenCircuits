@@ -17,7 +17,7 @@ export class ConstantLow extends DigitalComponent {
      * Creates a Constant Low input with 0 inputs, 1 output, and initial transform size of 50px by 50px.
      */
     public constructor() {
-        super(new ClampedValue(0), new ClampedValue(1), V(50, 50));
+        super(new ClampedValue(0), new ClampedValue(1), V(1, 1));
         super.activate(false);
     }
 

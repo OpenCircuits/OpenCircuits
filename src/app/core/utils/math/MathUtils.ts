@@ -1,7 +1,3 @@
-import {WIRE_DIST_ITERATIONS,
-        WIRE_DIST_THRESHOLD2,
-        WIRE_NEWTON_ITERATIONS} from "../Constants";
-
 import {BezierCurve} from "./BezierCurve";
 import {Transform}   from "./Transform";
 import {V, Vector}   from "./Vector";
@@ -219,6 +215,12 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
     } while ((iterations--) > 0);
     return t;
 }
+
+
+const WIRE_DIST_THRESHOLD  = 0.1;
+const WIRE_DIST_THRESHOLD2 = WIRE_DIST_THRESHOLD ** 2;
+const WIRE_DIST_ITERATIONS = 10;
+const WIRE_NEWTON_ITERATIONS = 5;
 
 /**
  * Finds if the given position is within

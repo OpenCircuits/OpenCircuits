@@ -1,7 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE,
-        GRID_SIZE,
+import {GRID_SIZE,
         IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
@@ -71,12 +70,11 @@ export class ICData {
             longestName = Math.max(obj.getName().length, longestName);
         longestName += this.getName().length; // Add name of IC
 
-        const w = DEFAULT_SIZE + 15*longestName;
-        const h = DEFAULT_SIZE/2*(Math.max(inputs.length, outputs.length));
+        const w = 1 + 0.3*longestName;
+        const h = Math.max(inputs.length, outputs.length)/2;
 
         // Only set size if the current size is too small
-        this.transform.setSize(V(w < this.getSize().x ? this.getSize().x : w,
-                                 h < this.getSize().y ? this.getSize().y : h));
+        this.transform.setSize(Vector.Max(V(w, h), this.getSize()));
     }
 
     private createPorts(type: typeof InputPort | typeof OutputPort, ports: Port[], arr: IOObject[], side: -1 | 1) {
@@ -85,15 +83,15 @@ export class ICData {
         for (let i = 0; i < arr.length; i++) {
             const port = new type(undefined);
 
-            let l = -DEFAULT_SIZE/2*(i - (arr.length)/2 + 0.5);
+            let l = -(i - (arr.length)/2 + 0.5)/2;
             if (i === 0)
-                l -= 1;
+                l -= 0.02;
             if (i === arr.length-1)
-                l += 1;
+                l += 0.02;
 
             port.setName(arr[i].getName());
             port.setOriginPos(V(0, l));
-            port.setTargetPos(V(side*(IO_PORT_LENGTH + (w/2 - DEFAULT_SIZE/2)), l));
+            port.setTargetPos(V(side*(IO_PORT_LENGTH + (w/2 - 0.5)), l));
             ports.push(port);
         }
     }

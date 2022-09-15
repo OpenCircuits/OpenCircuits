@@ -1,7 +1,5 @@
 import {serializable, serialize} from "serialeazy";
 
-import {DEFAULT_SIZE} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
@@ -28,7 +26,7 @@ export class IC extends DigitalComponent {
     public constructor(data?: ICData) {
         // If data if undefined (because we're deserealizing it, then use 0)
         super(new ClampedValue(data ? data.getInputCount()  : 0),
-              new ClampedValue(data ? data.getOutputCount() : 0), V(DEFAULT_SIZE));
+              new ClampedValue(data ? data.getOutputCount() : 0), V(1));
         if (!data)
             return;
         this.data = data;
@@ -81,7 +79,7 @@ export class IC extends DigitalComponent {
 
     public update(): void {
         // Update size
-        this.transform.setSize(this.data.getSize());
+        this.setSize(this.data.getSize());
 
         // Update port positions
         this.copyPorts();

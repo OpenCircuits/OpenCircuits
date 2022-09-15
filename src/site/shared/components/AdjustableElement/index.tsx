@@ -1,5 +1,6 @@
-import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH} from "core/utils/Constants";
-import {HEADER_HEIGHT}                 from "shared/utils/Constants";
+import {HEADER_HEIGHT,
+        ITEMNAV_HEIGHT,
+        ITEMNAV_WIDTH} from "shared/utils/Constants";
 
 import {Rect} from "math/Rect";
 

@@ -16,7 +16,6 @@ import {LoginPopup}     from "shared/containers/LoginPopup";
 import {SelectionPopup} from "shared/containers/SelectionPopup";
 import {SideNav}        from "shared/containers/SideNav";
 
-import {PositionModule} from "shared/containers/SelectionPopup/modules/PositionModule";
 import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
@@ -40,7 +39,6 @@ import {InputCountModule}               from "site/digital/containers/SelectionP
 import {OscilloscopeModule}             from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
 import {OutputCountModule}              from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
 import {ReplaceComponentDropdownModule} from "site/digital/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
-import {SegmentCountModule}             from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
 import {SelectPortCountModule}          from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
 import {ViewICButtonModule}             from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
@@ -92,14 +90,12 @@ export const App = ({ info, helpers, canvas }: Props) => {
 
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
-                        <PositionModule info={info} />
                         <PropertyModule info={info} />
                         <InputCountModule info={info} />
                         <ComparatorInputCountModule info={info} />
                         <SelectPortCountModule info={info} />
                         <DecoderInputCountModule info={info} />
                         <OutputCountModule info={info} />
-                        <SegmentCountModule info={info} />
                         <OscilloscopeModule info={info} />
                         <ClockSyncButtonModule info={info} />
                         <BusButtonModule info={info} />

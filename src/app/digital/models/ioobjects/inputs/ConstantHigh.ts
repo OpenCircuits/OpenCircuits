@@ -18,7 +18,7 @@ export class ConstantHigh extends DigitalComponent {
      * Constant highs are active, so sets active to true.
      */
     public constructor() {
-        super(new ClampedValue(0), new ClampedValue(1), V(50, 50));
+        super(new ClampedValue(0), new ClampedValue(1), V(1, 1));
         super.activate(true);
     }
     /**

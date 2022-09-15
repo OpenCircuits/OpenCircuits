@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useLayoutEffect, useRef, useState} from "react";
 
-import {IC_VIEWER_ZOOM_PADDING_RATIO}   from "core/utils/Constants";
 import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "site/digital/utils/Constants";
 
 import {CircuitInfo}             from "core/utils/CircuitInfo";
@@ -11,7 +10,7 @@ import {isPressable}             from "core/utils/Pressable";
 
 import {AddGroup} from "core/actions/compositions/AddGroup";
 
-import {MoveCamera} from "core/actions/units/MoveCamera";
+import {SetProperty} from "core/actions/units/SetProperty";
 
 import {InteractionTool} from "core/tools/InteractionTool";
 import {PanTool}         from "core/tools/PanTool";
@@ -35,6 +34,8 @@ import {CloseICViewer} from "site/digital/state/ICViewer";
 
 import "./index.scss";
 
+
+const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
 function CheckForInteraction(ev: Event, { toolManager, camera, designer, input, currentlyPressedObject }: CircuitInfo) {
     if (toolManager.getCurrentTool() instanceof InteractionTool) {
@@ -163,7 +164,8 @@ export const ICViewer = (() => {
             const [pos, zoom] = GetCameraFit(
                 info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
             );
-            MoveCamera(info.camera, pos, zoom);
+            SetProperty(info.camera, "pos", pos);
+            SetProperty(info.camera, "zoom", zoom);
 
             updateViewer();
             info.renderer.render();

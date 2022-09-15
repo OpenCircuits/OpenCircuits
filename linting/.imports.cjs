@@ -31,6 +31,8 @@ function getSubdirectories(prefix, topDir) {
  * @param {string} pattern the new pattern to add
  */
 function addPath(pathGroupsIn, pattern) {
+    if (pattern === "core/rendering/Styles")
+        return;
     pathGroupsIn.push({"pattern": pattern, "group": "external", "position": "after"});
     pathGroupsIn.push({"pattern": pattern + "/*", "group": "external", "position": "after"});
 }
@@ -41,7 +43,7 @@ const siteDirectories = ["shared", "analog", "digital", "landing"];
 const siteSubDirectories = ["utils", "api", "state", "components", "containers", "tests"];
 const pathGroups = [
     {"pattern": "react", "group": "external"},
-    {"pattern": "{**,**/,,./,../,*}{C,c}onstants{**,/**,,*}", "group": "external", "position": "after"},
+    {"pattern": "{**,**/,,./,../,*}{Constants,constants,core/rendering/Styles}{**,/**,,*}", "group": "external", "position": "after"},
     {"pattern": "Vector", "group": "external", "position": "after"},
     {"pattern": "math/**", "group": "external", "position": "after"},
     {"pattern": "test/helpers/*", "group": "external", "position": "after"},

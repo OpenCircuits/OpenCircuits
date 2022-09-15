@@ -181,7 +181,7 @@ export class Vector {
         return this.dot(this);
     }
     /**
-     * Return the angel of 'this' that respects to the x-axis.
+     * Return the angle of 'this' that respects to the x-axis.
      *
      * @returns The arctan value of 'this''s 'x' and 'y'.
      */
@@ -207,6 +207,19 @@ export class Vector {
         return this.x * v.x + this.y * v.y;
     }
     /**
+     * Returns a new vector rotated `a` radians from this one.
+     *
+     * @param a The angle in radians.
+     * @returns   A new, rotated vector.
+     */
+    public rotate(a: number): Vector {
+        const cos = Math.cos(a), sin = Math.sin(a);
+        return V(
+            (this.x * cos - this.y * sin),
+            (this.x * sin + this.y * cos)
+        );
+    }
+    /**
      * Return the projection of 'this' on 'v'.
      *
      * @param v The vector that 'this' projects to.
@@ -230,6 +243,10 @@ export class Vector {
      */
     public copy(): Vector {
         return new Vector(this.x, this.y);
+    }
+
+    public toString(): string {
+        return `(${Math.round(this.x)}, ${Math.round(this.y)})`;
     }
     /**
      * Return a vector that has mininum 'x' and 'y' components from

@@ -1,21 +1,20 @@
 import {Action} from "core/actions/Action";
 
-import {IOObject} from "core/models";
-
-import {Prop} from "core/models/PropInfo";
+import {BaseObject} from "core/models/BaseObject";
+import {Prop}       from "core/models/PropInfo";
 
 
 class SetPropertyAction implements Action {
-    private readonly obj: IOObject;
+    private readonly obj: BaseObject;
 
     private readonly propKey: string;
 
     private readonly initialProp: Prop;
     private readonly targetProp: Prop;
 
-    public constructor(obj: IOObject, key: string, prop: Prop) {
+    public constructor(obj: BaseObject, key: string, prop: Prop) {
         if (!obj.hasProp(key))
-            throw new Error(`Cannot find property ${key} in ${obj.getName()}!`);
+            throw new Error(`Cannot find property ${key} in ${obj}!`);
 
         this.obj = obj;
         this.propKey = key;
@@ -46,6 +45,6 @@ class SetPropertyAction implements Action {
     }
 }
 
-export function SetProperty(obj: IOObject, key: string, prop: Prop) {
+export function SetProperty(obj: BaseObject, key: string, prop: Prop) {
     return new SetPropertyAction(obj, key, prop);
 }

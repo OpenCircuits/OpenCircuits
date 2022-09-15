@@ -21,8 +21,7 @@ export class Button extends PressableComponent {
     public constructor() {
         super(new ClampedValue(0),
               new ClampedValue(1),
-              V(50, 50),
-              V(50, 50));
+              V(1, 1), V(1, 1));
     }
 
     /**
@@ -35,6 +34,15 @@ export class Button extends PressableComponent {
      */
     public override isWithinPressBounds(v: Vector): boolean {
         return CircleContains(this.getPos(), this.getSize().x/2, v);
+    }
+
+    /**
+     * Utility function to check if this Button is on or not.
+     *
+     * @returns True if the Button is toggled, false otherwise.
+     */
+    public isOn(): boolean {
+        return this.outputs.first.getIsOn();
     }
 
     /**
@@ -52,39 +60,15 @@ export class Button extends PressableComponent {
     }
 
     /**
-     * Activates or deactivates the output.
-     *
-     * @param signal True makes it activate the output,
-     *         false deactivates.
-     */
-    public override activate(signal: boolean): void {
-        super.activate(signal, 0);
-    }
-
-    /**
      * Returns the name of the object.
      *
      * @returns The string "Button".
      */
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "Button";
     }
 
-    /**
-     * Returns the name of the file for when the button *is* pressed.
-     *
-     * @returns The string "buttonUp.svg".
-     */
-    public getOffImageName(): string {
-        return "buttonUp.svg";
-    }
-
-    /**
-     * Returns the name of the file for when the button *is not* pressed.
-     *
-     * @returns The filename "buttonDown.svg".
-     */
-    public getOnImageName(): string {
-        return "buttonDown.svg";
+    public override getImageName(): string | undefined {
+        return this.isOn() ? "buttonDown.svg" : "buttonUp.svg";
     }
 }

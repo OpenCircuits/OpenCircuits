@@ -21,7 +21,7 @@ export class ANDGate extends Gate {
      * @param not True if this should be a NAND gate.
      */
     public constructor(not = false) {
-        super(not, new ClampedValue(2,2,8), V(50, 50));
+        super(not, new ClampedValue(2,2,8), V(1, 1));
     }
 
     /**
@@ -40,7 +40,7 @@ export class ANDGate extends Gate {
      * @returns The display name ("NAND Gate" or "AND Gate").
      */
     public getDisplayName(): string {
-        return this.not ? "NAND Gate" : "AND Gate";
+        return this.getProp("not") ? "NAND Gate" : "AND Gate";
     }
 
     /**

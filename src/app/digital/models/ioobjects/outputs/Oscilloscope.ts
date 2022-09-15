@@ -26,10 +26,10 @@ const [Info, InitialProps] = GenPropInfo({
         "displaySize": {
             type:    "veci",
             label:   "Display Size",
-            initial: V(400,  200),
-            min:     V(100,  50),
-            max:     V(1000, 500),
-            step:    V(50,   50),
+            initial: V(8, 4),
+            min:     V(2, 1),
+            max:     V(20, 10),
+            step:    V(1, 1),
         },
     },
 });
@@ -40,8 +40,8 @@ export class Oscilloscope extends TimedComponent {
     private signals: boolean[][];
 
     public constructor() {
-        super(100, new ClampedValue(1, 1, 8), new ClampedValue(0), V(400, 200),
-              new ConstantSpacePositioner<InputPort>("left", 400), undefined,
+        super(100, new ClampedValue(1, 1, 8), new ClampedValue(0), V(8, 4),
+              new ConstantSpacePositioner<InputPort>("left", 8), undefined,
               InitialProps);
 
         this.signals = [[]];
@@ -94,9 +94,7 @@ export class Oscilloscope extends TimedComponent {
     }
 
     public override getPropInfo(key: string) {
-        if (!(key in Info))
-            return super.getPropInfo(key);
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public getSignals(): boolean[][] {

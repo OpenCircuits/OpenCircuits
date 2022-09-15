@@ -21,7 +21,7 @@ export class XORGate extends Gate {
      * @param not True for XNOR gate, false for XOR gate.
      */
     public constructor(not = false) {
-        super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());
+        super(not, new ClampedValue(2,2,8), V(1.2, 1), new QuadraticCurvePositioner());
     }
     /**
      * Activates the XOR gate only when one of the inputs is true but not when both inputs are true.
@@ -47,7 +47,7 @@ export class XORGate extends Gate {
      * @returns The display name of the gate.
      */
     public getDisplayName(): string {
-        return this.not ? "XNOR Gate" : "XOR Gate";
+        return this.getProp("not") ? "XNOR Gate" : "XOR Gate";
     }
     /**
      * Returns the name of the image used to display in the frontend.

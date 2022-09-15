@@ -10,6 +10,8 @@ import {Port} from "core/models/ports/Port";
 export type Dir = "left" | "right" | "top" | "bottom";
 
 
+const SHORTEN_AMT = 0.02;
+
 /**
  * Places the ports depending on the type of Positioner.
  * Each component assigns its own Positioner.
@@ -22,8 +24,8 @@ export class Positioner<T extends Port> {
     public static readonly DIRS: Record<Dir, Vector> = {
         "left":   V(-1, 0),
         "right":  V(1,  0),
-        "top":    V(0, -1),
-        "bottom": V(0,  1),
+        "top":    V(0,  1),
+        "bottom": V(0, -1),
     };
 
     /**
@@ -77,9 +79,9 @@ export class Positioner<T extends Port> {
         let l = this.scale * size/2 * (i - midpoint);
 
         if (this.shortenEdges && i === 0)
-            l++;
+            l += SHORTEN_AMT;
         if (this.shortenEdges && i === numPorts-1)
-            l--;
+            l -= SHORTEN_AMT;
 
         return l;
     }
@@ -127,8 +129,9 @@ export class Positioner<T extends Port> {
             const width = port.getParent().getSize().x;
             const height = port.getParent().getSize().y;
 
-            const sY = this.calcSpacingPos(i, ports.length, height);
-            const sX = this.calcSpacingPos(i, ports.length, width);
+            // Flip around y-axis since numbering from top -> down is standard for ports
+            const sY = -this.calcSpacingPos(i, ports.length, height);
+            const sX =  this.calcSpacingPos(i, ports.length, width);
 
             const p0 = this.calcOriginPos(sX, sY, width, height);
             const p1 = this.calcTargetPos(sX, sY, width, height);

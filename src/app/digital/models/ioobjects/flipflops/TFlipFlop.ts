@@ -1,9 +1,5 @@
 import {serializable} from "serialeazy";
 
-import {V} from "Vector";
-
-import {FlipFlopPositioner} from "digital/models/ports/positioners/FlipFlopPositioner";
-
 import {FlipFlop} from "./FlipFlop";
 
 
@@ -12,7 +8,7 @@ export class TFlipFlop extends FlipFlop {
     public static readonly TGL_PORT = 2;
 
     public constructor() {
-        super(1, V(100, 120), new FlipFlopPositioner(2));
+        super(1, 2);
 
         this.getInputPort(TFlipFlop.TGL_PORT).setName("T");
     }
@@ -22,9 +18,9 @@ export class TFlipFlop extends FlipFlop {
         const toggle = this.inputs.get(TFlipFlop.TGL_PORT).getIsOn();
 
         if (this.up() && toggle)
-            return !this.state;
+            return !this.getProp("state");
 
-        return this.state;
+        return this.getProp("state") as boolean;
     }
 
     public getDisplayName(): string {

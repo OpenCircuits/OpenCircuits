@@ -37,7 +37,7 @@ export class Label extends AnalogComponent {
     }
 
     public override getPropInfo(key: string): PropInfo {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public override getDisplayName(): string {

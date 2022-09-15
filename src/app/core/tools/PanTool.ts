@@ -1,6 +1,4 @@
-import {ARROW_PAN_DISTANCE_NORMAL,
-        ARROW_PAN_DISTANCE_SMALL,
-        MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
+import {MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector} from "Vector";
 
@@ -9,6 +7,9 @@ import {Event}       from "core/utils/Events";
 
 import {Tool} from "core/tools/Tool";
 
+
+const ARROW_PAN_DISTANCE_NORMAL = 75;
+const ARROW_PAN_DISTANCE_SMALL = 5;
 
 export const PanTool: Tool = (() => {
     let isDragging = false;
@@ -48,7 +49,7 @@ export const PanTool: Tool = (() => {
                 isDragging = true;
 
                 const dPos = input.getDeltaMousePos();
-                camera.translate(dPos.scale(-1 * camera.getZoom()));
+                camera.translate(dPos.scale(camera.getScale().scale(-1)));
 
                 return true;
             }
@@ -68,9 +69,9 @@ export const PanTool: Tool = (() => {
                 if (input.isKeyDown("ArrowRight"))
                     dPos = dPos.add(1, 0);
                 if (input.isKeyDown("ArrowUp"))
-                    dPos = dPos.add(0, -1);
-                if (input.isKeyDown("ArrowDown"))
                     dPos = dPos.add(0, 1);
+                if (input.isKeyDown("ArrowDown"))
+                    dPos = dPos.add(0, -1);
 
                 // Screen gets moved different amounts depending on if the shift key is held
                 const factor = (input.isShiftKeyDown() ? ARROW_PAN_DISTANCE_SMALL : ARROW_PAN_DISTANCE_NORMAL);
