@@ -74,8 +74,7 @@ export class ICData {
         const h = Math.max(inputs.length, outputs.length)/2;
 
         // Only set size if the current size is too small
-        this.transform.setSize(V(w < this.getSize().x ? this.getSize().x : w,
-                                 h < this.getSize().y ? this.getSize().y : h));
+        this.transform.setSize(Vector.Max(V(w, h), this.getSize()));
     }
 
     private createPorts(type: typeof InputPort | typeof OutputPort, ports: Port[], arr: IOObject[], side: -1 | 1) {
