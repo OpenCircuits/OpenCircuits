@@ -26,6 +26,8 @@ jobs:
         node-version: 16.x
         cache: yarn
 
+    - run: yarn
+
     - name: Build backend [Golang]
       run: yarn build --ci server
 
@@ -48,6 +50,8 @@ jobs:
         node-version: 16.x
         cache: yarn
 
+    - run: yarn
+
     - name: Run tests (App) [TypeScript]
       run: yarn test  --ci app
 
@@ -61,6 +65,8 @@ jobs:
       with:
         node-version: 16.x
         cache: yarn
+
+    - run: yarn
 
     - name: Run tests (Shared) [TypeScript]
       run: yarn test  --ci shared
@@ -80,6 +86,8 @@ jobs:
       with:
         node-version: 16.x
         cache: yarn
+
+    - run: yarn
 
     - name: Lint files [TypeScript]
       run: yarn lint
