@@ -20,7 +20,7 @@ import yargs       from "yargs";
     const files: string[] = [];
     if (!all) {
         const git = simpleGit();
-        const diff = await git.diff(["--name-only", "master..."]);
+        const diff = await git.diff(["--name-only", "master...HEAD"]);
         diff.split("\n").filter((file) => (file.endsWith(".ts") || file.endsWith(".tsx"))).forEach((file) => {
             if (file.endsWith(".ts") || file.endsWith(".tsx"))
                 files.push(file);
