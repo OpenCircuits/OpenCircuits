@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Set up Go
       uses: actions/setup-go@v2
@@ -21,11 +21,10 @@ jobs:
         go-version: 1.13
 
     - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
-
-    - run: yarn
+        cache: yarn
 
     - name: Build backend [Golang]
       run: yarn build --ci server
@@ -41,14 +40,13 @@ jobs:
   test-app:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
-
-    - run: yarn
+        cache: yarn
 
     - name: Run tests (App) [TypeScript]
       run: yarn test  --ci app
@@ -56,14 +54,13 @@ jobs:
   test-frontend:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
-
-    - run: yarn
+        cache: yarn
 
     - name: Run tests (Shared) [TypeScript]
       run: yarn test  --ci shared
@@ -79,11 +76,10 @@ jobs:
         fetch-depth: 0
 
     - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
-
-    - run: yarn
+        cache: yarn
 
     - name: Lint files [TypeScript]
       run: yarn lint
