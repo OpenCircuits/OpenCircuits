@@ -59,13 +59,5 @@ module.exports = {
         "arrow-body-style": "error",
         "arrow-spacing": "error",
         "eol-last": "error",
-
-        "no-restricted-syntax": [
-            "error",
-            {
-                "selector": "TSEnumDeclaration:not([const=true])",
-                "message": "Don't declare non-const enums",
-            },
-        ],
     },
 }
