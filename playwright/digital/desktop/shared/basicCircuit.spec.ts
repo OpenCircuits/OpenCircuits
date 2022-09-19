@@ -11,6 +11,7 @@ test("Basic Switch/LED Test", async ({ page }, testInfo) => {
     await page.goto("http://localhost:3000/");
 
     const main = page.locator("main");
+    const canvas = page.locator("main >> canvas");
     await expect(main).toBeVisible();
 
     // Open itemnav
@@ -18,7 +19,7 @@ test("Basic Switch/LED Test", async ({ page }, testInfo) => {
         position: ITEMNAV_OPEN_BUTTON,
     });
     // toHaveScreenshot skips the css opening animation
-    await expect(main).toHaveScreenshot("itemnavOpen.png");
+    // await expect(canvas).toHaveScreenshot("itemnavOpen.png");
 
     // TODO: Figure out why drag and drop doesn't work
     // await page.dragAndDrop("nav >> text=Button >> button", "main", {
@@ -34,7 +35,7 @@ test("Basic Switch/LED Test", async ({ page }, testInfo) => {
             y: 200,
         },
     });
-    await expect(main).toHaveScreenshot("switchPlaced.png");
+    // await expect(canvas).toHaveScreenshot("switchPlaced.png");
 
     await page.locator("nav >> text=LED >> button").click();
     await main.click({
@@ -43,13 +44,13 @@ test("Basic Switch/LED Test", async ({ page }, testInfo) => {
             y: 200,
         },
     });
-    await expect(main).toHaveScreenshot("ledPlaced.png");
+    // await expect(canvas).toHaveScreenshot("ledPlaced.png");
 
     // Close itemnav
     await main.click({
         position: ITEMNAV_CLOSE_BUTTON,
     });
-    await expect(main).toHaveScreenshot("itemnavClosed.png");
+    // await expect(canvas).toHaveScreenshot("itemnavClosed.png");
 
     // Connect components
     await main.click({
@@ -64,7 +65,7 @@ test("Basic Switch/LED Test", async ({ page }, testInfo) => {
             y: 300,
         },
     });
-    await expect(main).toHaveScreenshot("connectedOff.png");
+    await expect(canvas).toHaveScreenshot("connectedOff.png");
 
     // Toggle on and off
     await main.click({
@@ -73,12 +74,12 @@ test("Basic Switch/LED Test", async ({ page }, testInfo) => {
             y: 200,
         },
     });
-    await expect(main).toHaveScreenshot("connectedOn.png");
+    await expect(canvas).toHaveScreenshot("connectedOn.png");
     await main.click({
         position: {
             x: 400,
             y: 200,
         },
     });
-    await expect(main).toHaveScreenshot("connectedOff.png");
+    await expect(canvas).toHaveScreenshot("connectedOff.png");
 });

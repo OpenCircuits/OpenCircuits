@@ -17,7 +17,7 @@
     "coverage": "node ./build/scripts/test.js --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build"
+    "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build && npx playwright install"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
