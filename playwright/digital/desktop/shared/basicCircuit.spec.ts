@@ -5,7 +5,7 @@ import {ITEMNAV_CLOSE_BUTTON, ITEMNAV_OPEN_BUTTON} from "../DesktopConstants.js"
 
 test("Basic Switch/LED Test", async ({ page }, testInfo) => {
     // Remove OS extension from snapshot file name
-    testInfo.snapshotSuffix = "";
+    // testInfo.snapshotSuffix = "";
 
     // await page.goto("http://opencircuits.io/");
     await page.goto("http://localhost:3000/");
