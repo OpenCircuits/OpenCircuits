@@ -28,58 +28,67 @@ test("Basic Switch/LED Test", async ({ page }, testInfo) => {
     //         y: 100,
     //     },
     // });
-    await page.locator("nav >> text=Switch >> button").click();
+    // await page.locator("nav >> text=Switch >> button").click();
+    // await main.click({
+    //     position: {
+    //         x: 400,
+    //         y: 200,
+    //     },
+    // });
+    // // await expect(canvas).toHaveScreenshot("switchPlaced.png");
+
+    // await page.locator("nav >> text=LED >> button").click();
+    // await main.click({
+    //     position: {
+    //         x: 600,
+    //         y: 200,
+    //     },
+    // });
+    // // await expect(canvas).toHaveScreenshot("ledPlaced.png");
+
+    // // Close itemnav
+    // await main.click({
+    //     position: ITEMNAV_CLOSE_BUTTON,
+    // });
+    // // await expect(canvas).toHaveScreenshot("itemnavClosed.png");
+
+    // // Connect components
+    // await main.click({
+    //     position: {
+    //         x: 465,
+    //         y: 200,
+    //     },
+    // });
+    // await main.click({
+    //     position: {
+    //         x: 600,
+    //         y: 300,
+    //     },
+    // });
+    // await expect(canvas).toHaveScreenshot("connectedOff.png");
+
+    // // Toggle on and off
+    // await main.click({
+    //     position: {
+    //         x: 400,
+    //         y: 200,
+    //     },
+    // });
+    // await expect(canvas).toHaveScreenshot("connectedOn.png");
+    // await main.click({
+    //     position: {
+    //         x: 400,
+    //         y: 200,
+    //     },
+    // });
+    // await expect(canvas).toHaveScreenshot("connectedOff.png");
+
+    await page.locator("nav >> text=Demux >> button").click();
     await main.click({
         position: {
             x: 400,
-            y: 200,
+            y: 600,
         },
     });
-    // await expect(canvas).toHaveScreenshot("switchPlaced.png");
-
-    await page.locator("nav >> text=LED >> button").click();
-    await main.click({
-        position: {
-            x: 600,
-            y: 200,
-        },
-    });
-    // await expect(canvas).toHaveScreenshot("ledPlaced.png");
-
-    // Close itemnav
-    await main.click({
-        position: ITEMNAV_CLOSE_BUTTON,
-    });
-    // await expect(canvas).toHaveScreenshot("itemnavClosed.png");
-
-    // Connect components
-    await main.click({
-        position: {
-            x: 465,
-            y: 200,
-        },
-    });
-    await main.click({
-        position: {
-            x: 600,
-            y: 300,
-        },
-    });
-    await expect(canvas).toHaveScreenshot("connectedOff.png");
-
-    // Toggle on and off
-    await main.click({
-        position: {
-            x: 400,
-            y: 200,
-        },
-    });
-    await expect(canvas).toHaveScreenshot("connectedOn.png");
-    await main.click({
-        position: {
-            x: 400,
-            y: 200,
-        },
-    });
-    await expect(canvas).toHaveScreenshot("connectedOff.png");
+    await expect(canvas).toHaveScreenshot("demultiplexer.png");
 });
