@@ -1,5 +1,6 @@
-import {GUID}       from "core/utils/GUID";
-import {Observable} from "core/utils/Observable";
+import {GetDebugInfo} from "core/utils/Debug";
+import {GUID}         from "core/utils/GUID";
+import {Observable}   from "core/utils/Observable";
 
 import {Circuit} from "core/models/Circuit";
 import {AnyObj}  from "core/models/types";
@@ -9,9 +10,13 @@ import {Port} from "core/models/types/base/Port";
 
 export type ObjEvent<Obj extends AnyObj> = {
     type: "obj";
-    op:   "added" | "removed" | "edited";
-    obj:  Obj;
-}
+    obj: Obj;
+} & ({
+    op: "added" | "removed";
+} | {
+    op: "edited";
+    prop: string;
+})
 export type ICDataEvent = {
     type: "ic";
     op:   "added" | "removed";
@@ -33,21 +38,46 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
     }
 
     public addObject(obj: Obj): void {
-        if (this.hasObject(obj.id)) {
-            throw new Error(`CircuitController: Attempted to add Object ${obj.kind}`+
-                            `[${obj.id}](${obj.name}) which already exists!`);
-        }
+        if (this.hasObject(obj.id))
+            throw new Error(`CircuitController: Attempted to add ${GetDebugInfo(obj)} which already exists!`);
         this.circuit.objects.set(obj.id, obj);
         this.publish({ type: "obj", op: "added", obj });
     }
 
-    public removeObject(obj: Obj): void {
-        if (!this.hasObject(obj.id)) {
-            throw new Error(`CircuitController: Attempted to remove Object ${obj.kind}`+
-                            `[${obj.id}](${obj.name}) which isn't in the circuit!`);
+    public setPropFor(objID: GUID, key: string, val: string | boolean | number): void {
+        const obj = this.getObject(objID);
+        if (!obj) {
+            throw new Error(`CircuitController: Attempted to set prop ${key} `
+                            + `for [${objID}] which isn't in the circuit!`);
         }
+        if (!(key in obj)) {
+            throw new Error(`CircuitController: Attempted to set prop ${key} `
+                            + `from ${GetDebugInfo(obj)} which doesn't exist!`);
+        }
+        // TODO: fix the need for this cast?
+        (obj as Record<string, string | boolean | number>)[key] = val;
+        this.publish({ type: "obj", op: "edited", obj, prop: key });
+    }
+
+    public removeObject(obj: Obj): void {
+        if (!this.hasObject(obj.id))
+            throw new Error(`CircuitController: Attempted to remove ${GetDebugInfo(obj)}) which isn't in the circuit!`);
         this.circuit.objects.delete(obj.id);
         this.publish({ type: "obj", op: "removed", obj });
+    }
+
+    public getPropFrom(objID: GUID, key: string): string | boolean | number {
+        const obj = this.getObject(objID);
+        if (!obj) {
+            throw new Error(`CircuitController: Attempted to get prop ${key} `
+                            + `from [${objID}] which isn't in the circuit!`);
+        }
+        if (!(key in obj)) {
+            throw new Error(`CircuitController: Attempted to get prop ${key} `
+                            + `from ${GetDebugInfo(obj)} which doesn't exist!`);
+        }
+        // TODO: fix the need for this cast?
+        return (obj as Record<string, string | boolean | number>)[key];
     }
 
     public getObject(objID: GUID): Obj | undefined {

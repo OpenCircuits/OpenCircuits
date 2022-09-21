@@ -48,6 +48,11 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         this.depthMap.set(m.id, depth);
     }
 
+    public onEditObj(m: Obj, propKey: string) {
+        const v = this.getView(m.id);
+        v.onPropChange(propKey);
+    }
+
     public onRemoveObj(m: Obj) {
         if (!this.depthMap.has(m.id))
             throw new Error(`ViewManager: Failed to remove view for ${m.kind}[${m.id}](${m.name})! No depth found!`);
@@ -73,6 +78,6 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         const depth = this.depthMap.get(id)!;
         if (!this.views[depth].has(id))
             throw new Error(`ViewManager: Failed to get view for [${id}]! Not found!`);
-        return this.views[depth].get(id);
+        return this.views[depth].get(id)!;
     }
 }

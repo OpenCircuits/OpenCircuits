@@ -41,7 +41,7 @@ export abstract class BaseView<Obj extends AnyObj, Circuit extends CircuitContro
     }
 
     // TODO: pass in prop-key that changed and only respond to that
-    public onPropChange(): void {
+    public onPropChange(propKey: string): void {
         this.cullTransform.setDirty();
     }
 
