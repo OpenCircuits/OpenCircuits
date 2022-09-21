@@ -1,7 +1,5 @@
-import {serializable, serialize} from "serialeazy";
-
 import {Clamp}     from "./MathUtils";
-import {Transform} from "./Transform";
+import {Rect}      from "./Rect";
 import {V, Vector} from "./Vector";
 
 
@@ -15,37 +13,32 @@ import {V, Vector} from "./Vector";
  * Link to an interactive cubic bezier curve with formulas:
  * https://www.desmos.com/calculator/rptlhv5rx8.
  */
- @serializable("BezierCurve")
 export class BezierCurve {
 
     /**
      * The x, y coordinates of the start point.
      */
-    @serialize
     private p1: Vector;
 
     /**
      * The x, y coordinates of the end point.
      */
-    @serialize
     private p2: Vector;
 
     /**
      * The x, y coordinates of the first control point.
      */
-    @serialize
     private c1: Vector;
 
     /**
      * The x, y coordinates of the second control point.
      */
-    @serialize
     private c2: Vector;
 
     /**
      * The Bounding Box that encases the entire curve.
      */
-    private readonly boundingBox: Transform;
+    private boundingBox: Rect;
 
     /**
      * Whether the curve's data has been updated.
@@ -69,7 +62,7 @@ export class BezierCurve {
         this.c2 = c2.copy();
 
         this.dirty = true;
-        this.boundingBox = new Transform(V(0), V(0));
+        this.boundingBox = new Rect(V(0), V(0));
     }
 
     /**
@@ -119,8 +112,7 @@ export class BezierCurve {
         max.x = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
         min.x = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
 
-        this.boundingBox.setSize(V(max.x - min.x, max.y - min.y));
-        this.boundingBox.setPos(V((max.x - min.x)/2 + min.x, (max.y - min.y)/2 + min.y));
+        this.boundingBox = Rect.FromPoints(min, max);
     }
 
     /**
@@ -302,8 +294,8 @@ export class BezierCurve {
      *
      * @returns A Transform that contains the bounding box of the curve.
      */
-    public getBoundingBox(): Transform {
+    public getBoundingBox(): Rect {
         this.updateBoundingBox();
-        return this.boundingBox.copy();
+        return this.boundingBox;
     }
 }

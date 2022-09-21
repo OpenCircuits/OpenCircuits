@@ -4,7 +4,9 @@ import {V, Vector} from "Vector";
 
 import {linspace} from "math/MathUtils";
 
-import {AnyComponent} from "core/models/types";
+import {AnyComponent, AnyObj, AnyPort} from "core/models/types";
+
+import {CircuitController} from "core/controllers/CircuitController";
 
 
 // export const PortInfo: Record<AnyComponent["kind"],
@@ -17,6 +19,36 @@ const CalcPortPositions = (amt: number, spacing: number) => (
     linspace(-amt/2*spacing/2, +amt/2*spacing/2, amt)
         .map((h) => CalcPortPos(V(-0.5, h), V(-1, 0)))
 );
+
+export function CalcPortGroupingID(circuit: CircuitController<AnyObj>, port: AnyPort) {
+    const parent = circuit.getPortParent(port.id);
+    const ports = circuit.getPortsFor(parent.id);
+    // Grouping IDs are comma separated strings of the number
+    //  of ports in each `group` for a specific component
+    return ports.reduce(
+        // Count each group
+        (arr, { group }) => {
+            arr[group] = ((arr[group] ?? 0) + 1);
+            return arr;
+        },
+        [] as number[]
+    ).join(",");
+}
+
+export function GetPortPos(circuit: CircuitController<AnyObj>, port: AnyPort) {
+    const parent = circuit.getPortParent(port.id);
+    const grouping = CalcPortGroupingID(circuit, port);
+    return PortInfo[parent.kind][grouping][`${port.group}:${port.index}`];
+}
+
+export function GetPortWorldPos(circuit: CircuitController<AnyObj>, port: AnyPort) {
+    const parent = circuit.getPortParent(port.id);
+    const pos = GetPortPos(circuit, port);
+    return {
+        origin: pos.origin.rotate(parent.angle).add(V(parent.x, parent.y)),
+        target: pos.target.rotate(parent.angle).add(V(parent.x, parent.y)),
+    };
+}
 
 export const PortInfo: Record<AnyComponent["kind"], Record<string, Record<`${number}:${number}`, PortPos>>> = {
     "ANDGate": {

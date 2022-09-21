@@ -2,10 +2,11 @@ import {GetDebugInfo} from "core/utils/Debug";
 import {GUID}         from "core/utils/GUID";
 import {Observable}   from "core/utils/Observable";
 
-import {Circuit} from "core/models/Circuit";
-import {AnyObj}  from "core/models/types";
+import {Circuit}         from "core/models/Circuit";
+import {AnyObj, AnyPort} from "core/models/types";
 
-import {Port} from "core/models/types/base/Port";
+import {Component} from "core/models/types/base/Component";
+import {Port}      from "core/models/types/base/Port";
 
 
 export type ObjEvent<Obj extends AnyObj> = {
@@ -23,6 +24,12 @@ export type ICDataEvent = {
     icID: GUID;
 }
 export type CircuitEvent<Obj extends AnyObj> = ObjEvent<Obj> | ICDataEvent;
+
+type Comp<T extends AnyObj> = (T extends Component ? T : never);
+type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+type ExpandRecursively<T> = T extends object
+  ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
+  : T;
 
 export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEvent<Obj>> {
     protected circuit: Circuit<Obj>;
@@ -86,6 +93,22 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
 
     public getObjs(): GUID[] {
         return [...this.circuit.objects.keys()];
+    }
+
+    public getPortParent(portID: GUID): Comp<Obj> {
+        const port = this.getObject(portID);
+        if (!port)
+            throw new Error(`CircuitController: Failed to find port [${portID}]!`);
+        if (port.baseKind !== "Port")
+            throw new Error(`CircuitController: Attempted to get port but found ${GetDebugInfo(port)}`);
+        if (!this.hasObject(port.parent)) {
+            throw new Error("CircuitController: Failed to find parent " +
+                            `[${port.parent}] for ${GetDebugInfo(port)}!`);
+        }
+        const parent = this.getObject(port.parent)!;
+        if (parent.baseKind !== "Component")
+            throw new Error(`CircuitController: Received a non-component parent for ${GetDebugInfo(port)}!`);
+        return parent as Comp<Obj>;
     }
 
     public getPortsFor(objID: GUID): Port[] {

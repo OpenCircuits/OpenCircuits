@@ -1,10 +1,11 @@
 import {GUID}      from "core/utils/GUID";
 import {AngleInfo} from "core/utils/Units";
 
-import {ANDGate, DigitalPort} from "core/models/types/digital";
+import {ANDGate, DigitalPort, DigitalWire} from "core/models/types/digital";
 
 import {DefaultComponent} from "core/models/types/base/Component";
 import {DefaultPort}      from "core/models/types/base/Port";
+import {DefaultWire}      from "core/models/types/base/Wire";
 
 import {Signal} from "../utils/Signal";
 
@@ -62,6 +63,10 @@ const DigitalPort = {
     Default: (id: GUID, parent: GUID, group: number, index: number): DigitalPort =>
         ({ kind: "DigitalPort", ...DefaultPort(id, parent, group, index) }),
 }
+const DigitalWire = {
+    Default: (id: GUID, p1: GUID, p2: GUID): DigitalWire =>
+        ({ kind: "DigitalWire", ...DefaultWire(id, p1, p2) }),
+}
 
 const ANDGate = {
     Default: (id: GUID): ANDGate => ({ kind: "ANDGate", ...DefaultComponent(id) }),
@@ -86,6 +91,7 @@ const ANDGate = {
 export const Models = {
     "ANDGate":     ANDGate,
     "DigitalPort": DigitalPort,
+    "DigitalWire": DigitalWire,
 } as const;
 
 
