@@ -120,14 +120,18 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
         const p1 = this.circuit.getObject(this.obj.p1)!;
         const p2 = this.circuit.getObject(this.obj.p2)!;
         if (p1.baseKind !== "Port")
-            throw new Error(`DigitalPortView: Received a non-port p1 for ${GetDebugInfo(this.obj)}!`);
+            throw new Error(`DigitalWireView: Received a non-port p1 for ${GetDebugInfo(this.obj)}!`);
         if (p2.baseKind !== "Port")
-            throw new Error(`DigitalPortView: Received a non-port p2 for ${GetDebugInfo(this.obj)}!`);
+            throw new Error(`DigitalWireView: Received a non-port p2 for ${GetDebugInfo(this.obj)}!`);
         return [p1, p2];
     }
 
     protected override getBounds(): Rect {
-        return this.curve.get().getBoundingBox();
+        return this.curve.get().getBoundingBox().expand(V(WIRE_THICKNESS/2));
+    }
+
+    public override getDepth(): number {
+        return -2;
     }
 }
 
@@ -156,6 +160,10 @@ class DigitalPortView extends BaseView<DigitalPort, DigitalCircuitController> {
         return Rect.FromPoints(pos.origin, pos.target)
             .shift(dir, V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2))
             .expand(dir.negativeReciprocal().scale(V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2)));
+    }
+
+    public override getDepth(): number {
+        return -1;
     }
 }
 
