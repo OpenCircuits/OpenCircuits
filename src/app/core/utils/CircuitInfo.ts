@@ -4,7 +4,11 @@ import {HistoryManager} from "core/actions/HistoryManager";
 
 import {ToolManager} from "core/tools/ToolManager";
 
-import {CircuitDesigner} from "core/models";
+import {AnyObj} from "core/models/types";
+
+import {CircuitController} from "core/controllers/CircuitController";
+import {RenderInfo}        from "core/views/BaseView";
+import {ViewManager}       from "core/views/ViewManager";
 
 import {Input}             from "./Input";
 import {RenderQueue}       from "./RenderQueue";
@@ -19,8 +23,19 @@ export type Cursor =
     "w-resize" | "ew-resize" | "ns-resize" | "nesw-resize" | "nwse-resize" | "col-resize" | "row-resize" |
     "all-scroll" | "zoom-in" | "zoom-out" | "grab" | "grabbing";
 
+// type UserState = {
+//     locked: boolean;
+//     cursor?: Cursor;
+//     camera: Camera;
+//     selections: SelectionsWrapper;
+// }
 
-export type CircuitInfo = {
+// type AppState<Obj extends AnyObj = AnyObj> = {
+//     user: UserState;
+//     circuit: Circu
+// }
+
+export type CircuitInfo<Obj extends AnyObj = AnyObj> = {
     locked: boolean;
     cursor?: Cursor;
 
@@ -29,7 +44,8 @@ export type CircuitInfo = {
 
     history: HistoryManager;
 
-    designer: CircuitDesigner;
+    circuit: CircuitController<Obj>;
+    viewManager: ViewManager<Obj, CircuitController<Obj>>;
 
     selections: SelectionsWrapper;
     currentlyPressedObject?: Selectable;

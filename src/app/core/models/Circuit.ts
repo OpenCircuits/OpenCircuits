@@ -1,31 +1,31 @@
-import {Serialize, serializable} from "serialeazy";
+import {SAVE_VERSION} from "core/utils/Constants";
 
-import {Camera} from "math/Camera";
+import {GUID} from "core/utils/GUID";
 
-import {CircuitDesigner}    from "./CircuitDesigner";
-import {CircuitMetadataDef} from "./CircuitMetadata";
+import {AnyObj} from "./types";
 
-// THIS IS ALL A HACK
-// TODO: improve serialeazy to allow specifying set ids for reference
-//  so that it's easier to interface with and we can just Deserialize<Circuit>
 
-@serializable("ContentsData")
-export class ContentsData {
-    public designer: CircuitDesigner;
-    public camera: Camera;
+export type Circuit<Obj extends AnyObj> = {
+    objects: Map<GUID, Obj>;
 
-    public constructor(designer?: CircuitDesigner, camera?: Camera) {
-        this.designer = designer!;
-        this.camera = camera!;
-    }
+    ics: Map<GUID, Circuit<Obj>>;
+
+    metadata: {
+        id: GUID;
+        name: string;
+        thumbnail: string;
+        version: string;
+    };
 }
 
-export class Circuit {
-    public metadata: CircuitMetadataDef;
-    public contents: string;
-
-    public constructor(metadata?: CircuitMetadataDef, designer?: CircuitDesigner, camera?: Camera) {
-        this.metadata = metadata!;
-        this.contents = Serialize(new ContentsData(designer, camera));
-    }
-}
+export const DefaultCircuit =
+    <Obj extends AnyObj>(): Circuit<Obj> => ({
+        objects:  new Map(),
+        ics:      new Map(),
+        metadata: {
+            id:        "", // TODO: generate
+            name:      "",
+            thumbnail: "",
+            version:   SAVE_VERSION,
+        },
+    });

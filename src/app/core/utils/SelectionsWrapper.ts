@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {Component, Port, Wire} from "core/models";
+// import {Component, Port, Wire} from "core/models";
 
 import {Selectable} from "./Selectable";
 
@@ -139,22 +139,23 @@ export class SelectionsWrapper {
         if (this.amount() === 0)
             return V();
 
-        // Filter out selections that we can get the position of
-        const selections =
-            [...this.selections]
-                 .filter((s) => (all ? (s instanceof Component || s instanceof Wire || s instanceof Port)
-                                   : (s instanceof Component))) as Array<Component | Wire | Port>;
+        return V();
+        // // Filter out selections that we can get the position of
+        // const selections =
+        //     [...this.selections]
+        //          .filter((s) => (all ? (s instanceof Component || s instanceof Wire || s instanceof Port)
+        //                            : (s instanceof Component))) as Array<Component | Wire | Port>;
 
-        // Get positions from Selectables
-        const positions = selections
-            .map((s) => (s instanceof Component ? s.getPos() :
-                       s instanceof Wire      ? s.getShape().getPos(0.5) :
-                                                s.getWorldTargetPos()));
+        // // Get positions from Selectables
+        // const positions = selections
+        //     .map((s) => (s instanceof Component ? s.getPos() :
+        //                s instanceof Wire      ? s.getShape().getPos(0.5) :
+        //                                         s.getWorldTargetPos()));
 
-        // Calculate midpoint
-        return positions
-            .reduce((sum, cur) => sum.add(cur), V())
-            .scale(1 / positions.length);
+        // // Calculate midpoint
+        // return positions
+        //     .reduce((sum, cur) => sum.add(cur), V())
+        //     .scale(1 / positions.length);
     }
 
     /**

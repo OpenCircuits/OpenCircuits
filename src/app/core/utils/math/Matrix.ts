@@ -1,5 +1,3 @@
-import {serializable} from "serialeazy";
-
 import {V, Vector} from "./Vector";
 
 
@@ -14,7 +12,6 @@ import {V, Vector} from "./Vector";
  * $$
  * .
  */
-@serializable("Matrix2x3")
 export class Matrix2x3 {
     private mat: number[];
 

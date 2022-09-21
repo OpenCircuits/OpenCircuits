@@ -3,8 +3,8 @@ import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {Action} from "core/actions/Action";
 
-import {ReversableAction} from "../bases/ReversableAction";
 import {GroupAction}      from "../GroupAction";
+import {ReversableAction} from "../ReversableAction";
 
 
 class SelectAction extends ReversableAction {

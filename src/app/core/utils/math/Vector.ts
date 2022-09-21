@@ -1,4 +1,3 @@
-import {serializable, serialize} from "serialeazy";
 
 /**
  * A representation of a vector in 2D space. Commonly used to represent points,
@@ -8,19 +7,16 @@ import {serializable, serialize} from "serialeazy";
  *  (since its `x` and `y` properties are settable), all methods on the Vector
  *  will return new Vectors with the performed operation.
  */
-@serializable("Vector")
 export class Vector {
 
     /**
      * The x-component of this Vector.
      */
-    @serialize
     public x: number;
 
     /**
      * The y-component of this Vector.
      */
-    @serialize
     public y: number;
 
     /**
