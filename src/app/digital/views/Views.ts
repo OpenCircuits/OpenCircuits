@@ -4,9 +4,10 @@ import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, 
 
 import {V, Vector} from "Vector";
 
-import {BezierCurve} from "math/BezierCurve";
-import {Rect}        from "math/Rect";
-import {Transform}   from "math/Transform";
+import {BezierCurve}                    from "math/BezierCurve";
+import {BezierContains, CircleContains} from "math/MathUtils";
+import {Rect}                           from "math/Rect";
+import {Transform}                      from "math/Transform";
 
 import {GetDebugInfo} from "core/utils/Debug";
 import {DirtyVar}     from "core/utils/DirtyVar";
@@ -85,6 +86,10 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
         );
     }
 
+    public override isWithinSelectBounds(pt: Vector): boolean {
+        return BezierContains(this.curve.get(), pt);
+    }
+
     protected override renderInternal({ renderer }: RenderInfo): void {
         const selected = false; // selections.has(this.obj);
 
@@ -109,16 +114,16 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
     }
 
     protected getPorts(): [DigitalPort, DigitalPort] {
-        if (!this.circuit.hasObject(this.obj.p1)) {
+        if (!this.circuit.hasObj(this.obj.p1)) {
             throw new Error("DigitalWireView: Failed to find port 1 " +
                             `[${this.obj.p1}] for ${GetDebugInfo(this.obj)}!`);
         }
-        if (!this.circuit.hasObject(this.obj.p2)) {
+        if (!this.circuit.hasObj(this.obj.p2)) {
             throw new Error("DigitalWireView: Failed to find port 2 " +
                             `[${this.obj.p2}] for ${GetDebugInfo(this.obj)}!`);
         }
-        const p1 = this.circuit.getObject(this.obj.p1)!;
-        const p2 = this.circuit.getObject(this.obj.p2)!;
+        const p1 = this.circuit.getObj(this.obj.p1)!;
+        const p2 = this.circuit.getObj(this.obj.p2)!;
         if (p1.baseKind !== "Port")
             throw new Error(`DigitalWireView: Received a non-port p1 for ${GetDebugInfo(this.obj)}!`);
         if (p2.baseKind !== "Port")
@@ -153,6 +158,10 @@ class DigitalPortView extends BaseView<DigitalPort, DigitalCircuitController> {
         renderer.draw(new Circle(target, IO_PORT_RADIUS), circleStyle);
     }
 
+    public override isWithinSelectBounds(pt: Vector): boolean {
+        return CircleContains(GetPortWorldPos(this.circuit, this.obj).target, IO_PORT_RADIUS, pt);
+    }
+
     protected override getBounds(): Rect {
         // Bounds are the Rectangle between the points + offset from the port circle
         const pos = GetPortWorldPos(this.circuit, this.obj);
@@ -162,9 +171,9 @@ class DigitalPortView extends BaseView<DigitalPort, DigitalCircuitController> {
             .expand(dir.negativeReciprocal().scale(V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2)));
     }
 
-    public override getDepth(): number {
-        return -1;
-    }
+    // public override getDepth(): number {
+    //     return -1;
+    // }
 }
 
 

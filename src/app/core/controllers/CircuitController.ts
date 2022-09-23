@@ -7,6 +7,7 @@ import {AnyObj, AnyPort} from "core/models/types";
 
 import {Component} from "core/models/types/base/Component";
 import {Port}      from "core/models/types/base/Port";
+import {Wire}      from "core/models/types/base/Wire";
 
 
 export type ObjEvent<Obj extends AnyObj> = {
@@ -25,11 +26,9 @@ export type ICDataEvent = {
 }
 export type CircuitEvent<Obj extends AnyObj> = ObjEvent<Obj> | ICDataEvent;
 
-type Comp<T extends AnyObj> = (T extends Component ? T : never);
-type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
-type ExpandRecursively<T> = T extends object
-  ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
-  : T;
+type c_Comp<T extends AnyObj> = (T extends Component ? T : never);
+type c_Port<T extends AnyObj> = (T extends Port ? T : never);
+type c_Wire<T extends AnyObj> = (T extends Wire ? T : never);
 
 export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEvent<Obj>> {
     protected circuit: Circuit<Obj>;
@@ -40,19 +39,19 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         this.circuit = circuit;
     }
 
-    public hasObject(objID: GUID): boolean {
+    public hasObj(objID: GUID): boolean {
         return (this.circuit.objects.has(objID));
     }
 
-    public addObject(obj: Obj): void {
-        if (this.hasObject(obj.id))
+    public addObj(obj: Obj): void {
+        if (this.hasObj(obj.id))
             throw new Error(`CircuitController: Attempted to add ${GetDebugInfo(obj)} which already exists!`);
         this.circuit.objects.set(obj.id, obj);
         this.publish({ type: "obj", op: "added", obj });
     }
 
     public setPropFor(objID: GUID, key: string, val: string | boolean | number): void {
-        const obj = this.getObject(objID);
+        const obj = this.getObj(objID);
         if (!obj) {
             throw new Error(`CircuitController: Attempted to set prop ${key} `
                             + `for [${objID}] which isn't in the circuit!`);
@@ -66,15 +65,15 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         this.publish({ type: "obj", op: "edited", obj, prop: key });
     }
 
-    public removeObject(obj: Obj): void {
-        if (!this.hasObject(obj.id))
+    public removeObj(obj: Obj): void {
+        if (!this.hasObj(obj.id))
             throw new Error(`CircuitController: Attempted to remove ${GetDebugInfo(obj)}) which isn't in the circuit!`);
         this.circuit.objects.delete(obj.id);
         this.publish({ type: "obj", op: "removed", obj });
     }
 
     public getPropFrom(objID: GUID, key: string): string | boolean | number {
-        const obj = this.getObject(objID);
+        const obj = this.getObj(objID);
         if (!obj) {
             throw new Error(`CircuitController: Attempted to get prop ${key} `
                             + `from [${objID}] which isn't in the circuit!`);
@@ -87,7 +86,7 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         return (obj as Record<string, string | boolean | number>)[key];
     }
 
-    public getObject(objID: GUID): Obj | undefined {
+    public getObj(objID: GUID): Obj | undefined {
         return (this.circuit.objects.get(objID));
     }
 
@@ -95,30 +94,43 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         return [...this.circuit.objects.keys()];
     }
 
-    public getPortParent(portID: GUID): Comp<Obj> {
-        const port = this.getObject(portID);
+    public getPortParent(portID: GUID): c_Comp<Obj> {
+        const port = this.getObj(portID);
         if (!port)
             throw new Error(`CircuitController: Failed to find port [${portID}]!`);
         if (port.baseKind !== "Port")
             throw new Error(`CircuitController: Attempted to get port but found ${GetDebugInfo(port)}`);
-        if (!this.hasObject(port.parent)) {
+        if (!this.hasObj(port.parent)) {
             throw new Error("CircuitController: Failed to find parent " +
                             `[${port.parent}] for ${GetDebugInfo(port)}!`);
         }
-        const parent = this.getObject(port.parent)!;
+        const parent = this.getObj(port.parent)!;
         if (parent.baseKind !== "Component")
             throw new Error(`CircuitController: Received a non-component parent for ${GetDebugInfo(port)}!`);
-        return parent as Comp<Obj>;
+        return parent as c_Comp<Obj>;
     }
 
-    public getPortsFor(objID: GUID): Port[] {
-        if (!this.hasObject(objID)) {
-            throw new Error(`CircuitController: Attempted to get Ports for [${objID}]`+
-                            " which doesn't exist!");
-        }
+    public getPortsFor(objID: GUID): Array<c_Port<Obj>> {
+        if (!this.hasObj(objID))
+            throw new Error(`CircuitController: Attempted to get Ports for [${objID}] which doesn't exist!`);
+        // TODO: make this more efficient with some map to cache this relation
         return (
             [...this.circuit.objects.values()]
-                .filter((obj) => (obj.baseKind === "Port" && obj.parent === objID)) as Port[]
+                .filter((obj) => (obj.baseKind === "Port" && obj.parent === objID)) as Array<c_Port<Obj>>
+        );
+    }
+
+    public getWiresFor(portID: GUID): Array<c_Wire<Obj>> {
+        const port = this.getObj(portID);
+        if (!port)
+            throw new Error(`CircuitController: Failed to find port [${portID}]!`);
+        if (port.baseKind !== "Port")
+            throw new Error(`CircuitController: Attempted to get port but found ${GetDebugInfo(port)}`);
+
+        // TODO: make this more efficient with some map to cache this relation
+        return (
+            [...this.circuit.objects.values()]
+                .filter((o) => (o.baseKind === "Wire" && (o.p1 === portID || o.p2 === portID))) as Array<c_Wire<Obj>>
         );
     }
 }

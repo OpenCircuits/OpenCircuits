@@ -45,6 +45,8 @@ export abstract class BaseView<Obj extends AnyObj, Circuit extends CircuitContro
         this.cullTransform.setDirty();
     }
 
+    public abstract isWithinSelectBounds(pt: Vector): boolean;
+
     public render(info: RenderInfo): void {
         const { camera, renderer } = info;
 

@@ -1,3 +1,5 @@
+import {Vector} from "Vector";
+
 import {GUID} from "core/utils/GUID";
 
 import {AnyObj} from "core/models/types";
@@ -79,5 +81,18 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         if (!this.views[depth].has(id))
             throw new Error(`ViewManager: Failed to get view for [${id}]! Not found!`);
         return this.views[depth].get(id)!;
+    }
+
+    public findNearestObj(pos: Vector, ignorePorts = false): undefined | { obj: AnyObj, bounds: "select" | "press" } {
+        for (const layer of this.views) {
+            if (!layer)
+                continue;
+            for (const [id, view] of layer) {
+                if (ignorePorts && this.circuit.getObj(id)!.baseKind === "Port")
+                    continue;
+                if (view.isWithinSelectBounds(pos))
+                    return { obj: this.circuit.getObj(id)!, bounds: "select" };
+            }
+        }
     }
 }

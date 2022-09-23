@@ -4,8 +4,9 @@ import {DEFAULT_BORDER_WIDTH, SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
-import {Rect}      from "math/Rect";
-import {Transform} from "math/Transform";
+import {RectContains} from "math/MathUtils";
+import {Rect}         from "math/Rect";
+import {Transform}    from "math/Transform";
 
 import {DirtyVar} from "core/utils/DirtyVar";
 import {Images}   from "core/utils/Images";
@@ -45,6 +46,10 @@ export abstract class ComponentView<
     // TODO: pass in prop-key that changed and only respond to that
     public override onPropChange(): void {
         this.transform.setDirty();
+    }
+
+    public override isWithinSelectBounds(pt: Vector): boolean {
+        return RectContains(this.transform.get(), pt);
     }
 
     protected override renderInternal(info: RenderInfo): void {

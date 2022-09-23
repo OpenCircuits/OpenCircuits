@@ -10,6 +10,7 @@ import {CircuitController} from "core/controllers/CircuitController";
 import {RenderInfo}        from "core/views/BaseView";
 import {ViewManager}       from "core/views/ViewManager";
 
+import {GUID}              from "./GUID";
 import {Input}             from "./Input";
 import {RenderQueue}       from "./RenderQueue";
 import {Selectable}        from "./Selectable";
@@ -48,7 +49,7 @@ export type CircuitInfo<Obj extends AnyObj = AnyObj> = {
     viewManager: ViewManager<Obj, CircuitController<Obj>>;
 
     selections: SelectionsWrapper;
-    currentlyPressedObject?: Selectable;
+    curPressedObjID?: GUID;
 
     toolManager: ToolManager;
 

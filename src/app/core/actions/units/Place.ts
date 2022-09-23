@@ -38,7 +38,7 @@ class PlaceAction extends ReversableAction {
      * @throws If `this.obj` is already in the circuit.
      */
     public normalExecute(): Action {
-        this.circuit.addObject(this.obj);
+        this.circuit.addObj(this.obj);
 
         return this;
     }
@@ -50,7 +50,7 @@ class PlaceAction extends ReversableAction {
      * @throws If `this.obj` isn't in the circuit.
      */
     public normalUndo(): Action {
-        this.circuit.removeObject(this.obj);
+        this.circuit.removeObj(this.obj);
 
         return this;
     }
