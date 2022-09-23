@@ -53,9 +53,9 @@ export abstract class ComponentView<
     }
 
     protected override renderInternal(info: RenderInfo): void {
-        const { renderer } = info;
+        const { renderer, selections } = info;
 
-        const selected = false; // selections.has(this.obj.id);
+        const selected = selections.has(this.obj.id);
 
         // Transform into local space
         renderer.transform(this.transform.get());

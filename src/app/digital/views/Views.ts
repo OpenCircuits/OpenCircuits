@@ -44,8 +44,8 @@ class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
         super(circuit, obj, V(1, 1), "and.svg");
     }
 
-    protected override renderComponent({ renderer }: RenderInfo): void {
-        const selected = false; // selections.has(this.obj);
+    protected override renderComponent({ renderer, selections }: RenderInfo): void {
+        const selected = selections.has(this.obj.id);
 
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
 
@@ -90,8 +90,8 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
         return BezierContains(this.curve.get(), pt);
     }
 
-    protected override renderInternal({ renderer }: RenderInfo): void {
-        const selected = false; // selections.has(this.obj);
+    protected override renderInternal({ renderer, selections }: RenderInfo): void {
+        const selected = selections.has(this.obj.id);
 
         // Changes color of wires: when wire is selected it changes to the color
         //  selected blended with constant color SELECTED_FILL_COLOR
@@ -142,9 +142,9 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
 
 
 class DigitalPortView extends BaseView<DigitalPort, DigitalCircuitController> {
-    protected override renderInternal({ renderer }: RenderInfo): void {
-        const parentSelected = false; // selections.has(this.obj.parent);
-        const selected = false; // selections.has(this.obj);
+    protected override renderInternal({ renderer, selections }: RenderInfo): void {
+        const parentSelected = selections.has(this.obj.parent);
+        const selected = selections.has(this.obj.id);
 
         const { origin, target } = GetPortWorldPos(this.circuit, this.obj);
 
