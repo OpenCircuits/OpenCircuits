@@ -61,11 +61,11 @@ export const useSelectionProps = <T extends BaseType, V extends Selectable = Sel
 
     useEffect(() => {
         info.history.addCallback(updateState);
-        info.selections.addChangeListener(updateState);
+        info.selections.subscribe(updateState);
 
         return () => {
             info.history.removeCallback(updateState);
-            info.selections.addChangeListener(updateState);
+            info.selections.unsubscribe(updateState);
         }
     }, [updateState]);
 

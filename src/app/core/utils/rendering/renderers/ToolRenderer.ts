@@ -18,11 +18,11 @@ import {ArcCircle} from "core/utils/rendering/shapes/ArcCircle";
 import {Circle}    from "core/utils/rendering/shapes/Circle";
 import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
 
-import {InteractionTool}  from "core/tools/InteractionTool";
-import {RotateTool}       from "core/tools/RotateTool";
+import {InteractionTool} from "core/tools/InteractionTool";
+// import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
-import {ToolManager}      from "core/tools/ToolManager";
-import {WiringTool}       from "core/tools/WiringTool";
+// import {ToolManager}      from "core/tools/ToolManager";
+// import {WiringTool}       from "core/tools/WiringTool";
 
 // import {WireRenderer} from "./WireRenderer";
 
