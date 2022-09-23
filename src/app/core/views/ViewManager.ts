@@ -1,5 +1,7 @@
 import {Vector} from "Vector";
 
+import {Transform} from "math/Transform";
+
 import {GUID} from "core/utils/GUID";
 
 import {AnyObj} from "core/models/types";
@@ -84,15 +86,32 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
     }
 
     public findNearestObj(pos: Vector, ignorePorts = false): undefined | { obj: AnyObj, bounds: "select" | "press" } {
-        for (const layer of this.views) {
+        // Reverse order so that we loop through the top-most views first
+        for (let i = this.views.length-1; i >= 0; i--) {
+            const layer = this.views[i];
             if (!layer)
                 continue;
             for (const [id, view] of layer) {
                 if (ignorePorts && this.circuit.getObj(id)!.baseKind === "Port")
                     continue;
-                if (view.isWithinSelectBounds(pos))
+                if (view.contains(pos, "select"))
                     return { obj: this.circuit.getObj(id)!, bounds: "select" };
             }
         }
+    }
+
+    public findObjects(bounds: Transform): AnyObj[] {
+        const objs: AnyObj[] = [];
+        // Reverse order so that we loop through the top-most views first
+        for (let i = this.views.length-1; i >= 0; i--) {
+            const layer = this.views[i];
+            if (!layer)
+                continue;
+            for (const [id, view] of layer) {
+                if (view.isWithinBounds(bounds))
+                    objs.push(this.circuit.getObj(id)!);
+            }
+        }
+        return objs;
     }
 }

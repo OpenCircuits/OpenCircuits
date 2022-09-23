@@ -4,10 +4,10 @@ import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, 
 
 import {V, Vector} from "Vector";
 
-import {BezierCurve}                    from "math/BezierCurve";
-import {BezierContains, CircleContains} from "math/MathUtils";
-import {Rect}                           from "math/Rect";
-import {Transform}                      from "math/Transform";
+import {BezierCurve}                                  from "math/BezierCurve";
+import {BezierContains, CircleContains, RectContains} from "math/MathUtils";
+import {Rect}                                         from "math/Rect";
+import {Transform}                                    from "math/Transform";
 
 import {GetDebugInfo} from "core/utils/Debug";
 import {DirtyVar}     from "core/utils/DirtyVar";
@@ -86,8 +86,11 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
         );
     }
 
-    public override isWithinSelectBounds(pt: Vector): boolean {
+    public override contains(pt: Vector): boolean {
         return BezierContains(this.curve.get(), pt);
+    }
+    public override isWithinBounds(bounds: Transform): boolean {
+        return false;
     }
 
     protected override renderInternal({ renderer, selections }: RenderInfo): void {
@@ -131,6 +134,10 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
         return [p1, p2];
     }
 
+    public override getMidpoint(): Vector {
+        return this.curve.get().getPos(0.5);
+    }
+
     protected override getBounds(): Rect {
         return this.curve.get().getBoundingBox().expand(V(WIRE_THICKNESS/2));
     }
@@ -158,8 +165,11 @@ class DigitalPortView extends BaseView<DigitalPort, DigitalCircuitController> {
         renderer.draw(new Circle(target, IO_PORT_RADIUS), circleStyle);
     }
 
-    public override isWithinSelectBounds(pt: Vector): boolean {
+    public override contains(pt: Vector): boolean {
         return CircleContains(GetPortWorldPos(this.circuit, this.obj).target, IO_PORT_RADIUS, pt);
+    }
+    public override isWithinBounds(bounds: Transform): boolean {
+        return RectContains(bounds, GetPortWorldPos(this.circuit, this.obj).target);
     }
 
     protected override getBounds(): Rect {
@@ -169,6 +179,10 @@ class DigitalPortView extends BaseView<DigitalPort, DigitalCircuitController> {
         return Rect.FromPoints(pos.origin, pos.target)
             .shift(dir, V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2))
             .expand(dir.negativeReciprocal().scale(V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2)));
+    }
+
+    public override getMidpoint(): Vector {
+        return GetPortWorldPos(this.circuit, this.obj).target;
     }
 
     // public override getDepth(): number {

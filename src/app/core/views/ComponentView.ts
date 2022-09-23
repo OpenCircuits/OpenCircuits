@@ -4,9 +4,9 @@ import {DEFAULT_BORDER_WIDTH, SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
-import {RectContains} from "math/MathUtils";
-import {Rect}         from "math/Rect";
-import {Transform}    from "math/Transform";
+import {RectContains, TransformContains} from "math/MathUtils";
+import {Rect}                            from "math/Rect";
+import {Transform}                       from "math/Transform";
 
 import {DirtyVar} from "core/utils/DirtyVar";
 import {Images}   from "core/utils/Images";
@@ -48,8 +48,12 @@ export abstract class ComponentView<
         this.transform.setDirty();
     }
 
-    public override isWithinSelectBounds(pt: Vector): boolean {
+    public override contains(pt: Vector): boolean {
         return RectContains(this.transform.get(), pt);
+    }
+
+    public override isWithinBounds(bounds: Transform): boolean {
+        return TransformContains(bounds, this.transform.get());
     }
 
     protected override renderInternal(info: RenderInfo): void {
@@ -70,6 +74,10 @@ export abstract class ComponentView<
     }
 
     protected abstract renderComponent(info: RenderInfo): void;
+
+    public override getMidpoint(): Vector {
+        return this.transform.get().getPos();
+    }
 
     protected override getBounds(): Rect {
         const t = this.transform.get();

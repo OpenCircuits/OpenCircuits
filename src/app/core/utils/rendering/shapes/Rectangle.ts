@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {Transform} from "math/Transform";
+import {Rect} from "math/Rect";
 
 import {Shape} from "./Shape";
 
@@ -9,15 +9,14 @@ import {Shape} from "./Shape";
  * A representation of a Rectangle shape.
  */
 export class Rectangle implements Shape {
-    protected pos: Vector;
-    protected size: Vector;
+    protected rect: Rect;
 
     /**
      * Constructor for Rectangle.
      *
-     * @param transform Transform spatial information.
+     * @param rect Rectangle bounds.
      */
-    public constructor(transform: Transform);
+    public constructor(rect: Rect);
     /**
      * Constructor for Rectangle.
      *
@@ -28,16 +27,16 @@ export class Rectangle implements Shape {
     /**
      * Constructor for Rectangle.
      *
-     * @param pos  Position or transform spatial information.
-     * @param size Dimensions.
+     * @param args The arguments.
      */
-    public constructor(pos: Vector | Transform, size?: Vector) {
-        if (pos instanceof Transform) {
-            this.pos  = pos.getPos();
-            this.size = pos.getSize();
-        } else {
-            this.pos  = pos;
-            this.size = size!;
+    public constructor(...args: [Rect] | [Vector, Vector]) {
+        switch (args.length) {
+            case 1:
+                this.rect = args[0];
+                break;
+            case 2:
+                this.rect = new Rect(...args);
+                break;
         }
     }
 
@@ -47,9 +46,9 @@ export class Rectangle implements Shape {
      * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
-        const center = this.pos.sub(this.size.scale(0.5));
+        const { bottomLeft, size } = this.rect;
 
-        ctx.rect(center.x, center.y, this.size.x, this.size.y);
+        ctx.rect(bottomLeft.x, bottomLeft.y, size.x, size.y);
     }
 
 }

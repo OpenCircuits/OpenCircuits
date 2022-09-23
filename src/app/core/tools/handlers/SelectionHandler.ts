@@ -22,10 +22,12 @@ export const SelectionHandler: EventHandler = ({
         // const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];
         const results = viewManager.findNearestObj(worldMousePos);
 
+        const deselectAll = (!input.isShiftKeyDown());
+
         // If nothing was clicked, check if we should deselect and exit
         if (!results) {
             // Clear selections if not holding shift
-            if (!input.isShiftKeyDown())
+            if (deselectAll)
                 history.add(DeselectAll(selections));
             return;
         }
@@ -40,8 +42,6 @@ export const SelectionHandler: EventHandler = ({
         // //  if we clicked a port but also hit a wire, we want to prioritize
         // //  the port (for WiringTool), so do NOT select
         // if (!(hitPort && isWire)) {
-
-        const deselectAll = (!input.isShiftKeyDown());
 
         // Boolean to decide if we should select or deselect the object
         const select = (!input.isShiftKeyDown() || !selections.has(obj.id));

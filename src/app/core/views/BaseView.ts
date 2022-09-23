@@ -45,7 +45,8 @@ export abstract class BaseView<Obj extends AnyObj, Circuit extends CircuitContro
         this.cullTransform.setDirty();
     }
 
-    public abstract isWithinSelectBounds(pt: Vector): boolean;
+    public abstract contains(pt: Vector, bounds: "select" | "press"): boolean;
+    public abstract isWithinBounds(bounds: Transform): boolean;
 
     public render(info: RenderInfo): void {
         const { camera, renderer } = info;
@@ -63,6 +64,8 @@ export abstract class BaseView<Obj extends AnyObj, Circuit extends CircuitContro
     protected abstract renderInternal(info: RenderInfo): void;
 
     protected abstract getBounds(): Rect;
+
+    public abstract getMidpoint(): Vector;
 
     public getCullbox(): Transform {
         return this.cullTransform.get();
