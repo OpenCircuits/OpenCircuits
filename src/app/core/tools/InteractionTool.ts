@@ -28,7 +28,10 @@ export class InteractionTool extends DefaultTool {
         // const wires = designer.getWires().reverse();
         // return [...objs, ...wires].find((o) => (isPressable(o) && o.isWithinPressBounds(pos) ||
         //                                      o.isWithinSelectBounds(pos)));
-        return viewManager.findNearestObj(pos, true)?.obj;
+        return viewManager.findNearestObj(
+            pos,
+            ((o) => (o.baseKind !== "Port"))
+        )?.obj;
     }
 
     public override onActivate(event: Event, info: CircuitInfo): boolean {

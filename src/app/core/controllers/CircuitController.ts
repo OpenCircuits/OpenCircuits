@@ -31,11 +31,14 @@ type c_Port<T extends AnyObj> = (T extends Port ? T : never);
 type c_Wire<T extends AnyObj> = (T extends Wire ? T : never);
 
 export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEvent<Obj>> {
+    protected readonly wireKind: c_Wire<Obj>["kind"];
+
     protected circuit: Circuit<Obj>;
 
-    public constructor(circuit: Circuit<Obj>) {
+    public constructor(circuit: Circuit<Obj>, wireKind: c_Wire<Obj>["kind"]) {
         super();
 
+        this.wireKind = wireKind;
         this.circuit = circuit;
     }
 
@@ -132,5 +135,9 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
             [...this.circuit.objects.values()]
                 .filter((o) => (o.baseKind === "Wire" && (o.p1 === portID || o.p2 === portID))) as Array<c_Wire<Obj>>
         );
+    }
+
+    public getWireKind(): c_Wire<Obj>["kind"] {
+        return this.wireKind;
     }
 }

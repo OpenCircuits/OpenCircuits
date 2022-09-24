@@ -20,7 +20,7 @@ import {BaseView, RenderInfo} from "./BaseView";
 
 export abstract class ComponentView<
     Obj extends AnyComponent,
-    Circuit extends CircuitController<AnyObj>,
+    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
 > extends BaseView<Obj, Circuit> {
     protected transform: DirtyVar<Transform>;
     protected img?: SVGDrawing;

@@ -85,29 +85,43 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         return this.views[depth].get(id)!;
     }
 
-    public findNearestObj(pos: Vector, ignorePorts = false): undefined | { obj: AnyObj, bounds: "select" | "press" } {
-        // Reverse order so that we loop through the top-most views first
+    // Allow `this` to be iterable, and iterate through each view
+    //  in order from top-bottom, so that the views on top are iterated before
+    //  the views on the bottom.
+    public *[Symbol.iterator]() {
+        // Reverse order so that we loop through the top-most layers first
         for (let i = this.views.length-1; i >= 0; i--) {
             const layer = this.views[i];
             if (!layer)
                 continue;
-            for (const [id, view] of layer) {
-                if (ignorePorts && this.circuit.getObj(id)!.baseKind === "Port")
-                    continue;
-                if (view.contains(pos, "select"))
-                    return { obj: this.circuit.getObj(id)!, bounds: "select" };
-            }
+            // Reverse order so we loop through top-most views first
+            for (const [_, view] of [...layer.entries()].reverse())
+                yield view;
+        }
+    }
+
+    public findNearestObj(
+        pos: Vector,
+        filter = (_: AnyObj) => true,
+    ): undefined | { obj: AnyObj, bounds: "select" | "press" } {
+        // Loop through each view
+        for (const view of this) {
+            if (!filter(view.getObj()))
+                continue;
+            if (view.contains(pos, "select"))
+                return { obj: view.getObj(), bounds: "select" };
         }
     }
 
     public findObjects(bounds: Transform): AnyObj[] {
         const objs: AnyObj[] = [];
-        // Reverse order so that we loop through the top-most views first
+        // Reverse order so that we loop through the top-most layers first
         for (let i = this.views.length-1; i >= 0; i--) {
             const layer = this.views[i];
             if (!layer)
                 continue;
-            for (const [id, view] of layer) {
+            // Reverse order so we loop through top-most views first
+            for (const [id, view] of [...layer.entries()].reverse()) {
                 if (view.isWithinBounds(bounds))
                     objs.push(this.circuit.getObj(id)!);
             }

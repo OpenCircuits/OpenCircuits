@@ -1,5 +1,6 @@
 import {ROTATION_CIRCLE_RADIUS,
-    ROTATION_CIRCLE_THICKNESS} from "core/utils/Constants";
+    ROTATION_CIRCLE_THICKNESS,
+    WIRE_THICKNESS} from "core/utils/Constants";
 
 import {Vector} from "Vector";
 
@@ -22,13 +23,19 @@ import {InteractionTool} from "core/tools/InteractionTool";
 // import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
 // import {ToolManager}      from "core/tools/ToolManager";
-// import {WiringTool}       from "core/tools/WiringTool";
+import {WiringTool} from "core/tools/WiringTool";
+
+import {AnyPort} from "core/models/types";
+
+import {GetPortWorldPos} from "core/views/PortInfo";
+
+import {Curve} from "../shapes/Curve";
 
 // import {WireRenderer} from "./WireRenderer";
 
 
 
-const drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, midpoint: Vector): void {
+function drawRotationCircleOutline(renderer: Renderer, camera: Camera, midpoint: Vector): void {
     // Get position, radius, and thickness
     const pos = camera.getScreenPos(midpoint);
     const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
@@ -37,14 +44,28 @@ const drawRotationCircleOutline = function(renderer: Renderer, camera: Camera, m
     renderer.draw(new Circle(pos, radius), new Style(undefined, ROTATION_CIRCLE_COLOR, thickness), 0.5);
 }
 
-const drawRotationCircleArc = function(renderer: Renderer, camera: Camera, midpoint: Vector,
-                                    a0: number, a1: number): void {
+function drawRotationCircleArc(renderer: Renderer, camera: Camera, midpoint: Vector, a0: number, a1: number): void {
     // Get position, radius, and angles
     const pos = camera.getScreenPos(midpoint);
     const radius = ROTATION_CIRCLE_RADIUS / camera.getZoom();
 
     // Draw arc'd circle
     renderer.draw(new ArcCircle(pos, radius, a0, a1), ROTATION_ARC_STYLE, 0.4);
+}
+
+function drawWireToMouse(renderer: Renderer, { camera, circuit, input }: CircuitInfo, originPort: AnyPort): void {
+    const portPos = GetPortWorldPos(circuit, originPort);
+    const portDir = portPos.target.sub(portPos.origin).normalize();
+
+    const p1 = camera.getScreenPos(portPos.target);
+    const p2 = input.getMousePos();
+
+    const c1 = p1.add(portDir.scale(1 / camera.getZoom()));
+    const c2 = p2;
+
+    const style = new Style(undefined, "#ffffff", WIRE_THICKNESS / camera.getZoom());
+
+    renderer.draw(new Curve(p1, p2, c1, c2), style);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -76,9 +97,9 @@ export namespace ToolRenderer {
         //                               RotateTool.getStartAngle(), RotateTool.getPrevAngle());
         //     }
         // }
-        // else if (tool === WiringTool) {
-        //     // Draw fake wire
-        //     WireRenderer.render(renderer, info, WiringTool.getWire());
-        // }
+        else if (tool === WiringTool) {
+            // Draw fake wire
+            drawWireToMouse(renderer, info, WiringTool.getPort()!);
+        }
     }
 }

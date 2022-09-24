@@ -1,6 +1,6 @@
 import {Color, blend, parseColor} from "svg2canvas";
 
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, DEFAULT_FILL_COLOR, IO_PORT_BORDER_WIDTH, IO_PORT_LINE_WIDTH, IO_PORT_RADIUS, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR, WIRE_THICKNESS} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, DEFAULT_FILL_COLOR, IO_PORT_BORDER_WIDTH, IO_PORT_LINE_WIDTH, IO_PORT_RADIUS, IO_PORT_SELECT_RADIUS, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR, WIRE_THICKNESS} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -18,12 +18,16 @@ import {Circle} from "core/utils/rendering/shapes/Circle";
 import {Curve}  from "core/utils/rendering/shapes/Curve";
 import {Line}   from "core/utils/rendering/shapes/Line";
 
-import {ANDGate, DigitalComponent, DigitalObj, DigitalPort, DigitalWire} from "core/models/types/digital";
+import {AllInfo} from "core/models/info";
+import {AnyPort} from "core/models/types";
+
+import {ANDGate, DigitalComponent, DigitalObj, DigitalPort, DigitalPortGroup, DigitalWire} from "core/models/types/digital";
 
 import {CircuitController}                             from "core/controllers/CircuitController";
 import {BaseView, RenderInfo}                          from "core/views/BaseView";
 import {ComponentView}                                 from "core/views/ComponentView";
 import {CalcPortGroupingID, GetPortWorldPos, PortInfo} from "core/views/PortInfo";
+import {PortView}                                      from "core/views/PortView";
 import {ViewRecord}                                    from "core/views/ViewManager";
 
 
@@ -147,48 +151,26 @@ class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
     }
 }
 
-
-class DigitalPortView extends BaseView<DigitalPort, DigitalCircuitController> {
-    protected override renderInternal({ renderer, selections }: RenderInfo): void {
-        const parentSelected = selections.has(this.obj.parent);
-        const selected = selections.has(this.obj.id);
-
-        const { origin, target } = GetPortWorldPos(this.circuit, this.obj);
-
-        const lineCol       = (parentSelected && !selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const borderCol     = (parentSelected ||  selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const circleFillCol = (parentSelected ||  selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-        const lineStyle   = new Style(undefined, lineCol, IO_PORT_LINE_WIDTH);
-        const circleStyle = new Style(circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
-
-        renderer.draw(new Line(origin, target), lineStyle);
-        renderer.draw(new Circle(target, IO_PORT_RADIUS), circleStyle);
+class DigitalPortView extends PortView<DigitalPort, DigitalCircuitController> {
+    public override isWireable(): boolean {
+        // Output ports always can have new connections
+        if (this.obj.group === DigitalPortGroup.Output)
+            return true;
+        // Input and select ports can only have new connections if they don't already have any
+        const wires = this.circuit.getWiresFor(this.obj.id);
+        return (wires.length === 0);
     }
 
-    public override contains(pt: Vector): boolean {
-        return CircleContains(GetPortWorldPos(this.circuit, this.obj).target, IO_PORT_RADIUS, pt);
+    public override isWireableWith(p: AnyPort): boolean {
+        return (
+            // We can wire it with `p` if we are an output port and they are an input/select port
+            //  or we are an input/select port and they are an output port
+            (this.obj.group === DigitalPortGroup.Output && (p.group !== DigitalPortGroup.Output)) ||
+            (this.obj.group !== DigitalPortGroup.Output && (p.group === DigitalPortGroup.Output))
+        );
     }
-    public override isWithinBounds(bounds: Transform): boolean {
-        return RectContains(bounds, GetPortWorldPos(this.circuit, this.obj).target);
-    }
-
-    protected override getBounds(): Rect {
-        // Bounds are the Rectangle between the points + offset from the port circle
-        const pos = GetPortWorldPos(this.circuit, this.obj);
-        const dir = pos.target.sub(pos.origin).normalize();
-        return Rect.FromPoints(pos.origin, pos.target)
-            .shift(dir, V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2))
-            .expand(dir.negativeReciprocal().scale(V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2)));
-    }
-
-    public override getMidpoint(): Vector {
-        return GetPortWorldPos(this.circuit, this.obj).target;
-    }
-
-    // public override getDepth(): number {
-    //     return -1;
-    // }
 }
+
 
 
 // export type ViewRecord = Record<

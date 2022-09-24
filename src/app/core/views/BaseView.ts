@@ -26,7 +26,10 @@ export type RenderInfo = {
  *  which are set automatically. This would also be things for efficiency purposes like transform
  *  matrices and bezier curve bounds and such.
  */
-export abstract class BaseView<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> {
+export abstract class BaseView<
+    Obj extends AnyObj,
+    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>
+> {
     protected readonly circuit: Circuit;
     protected readonly obj: Obj;
 
@@ -66,6 +69,10 @@ export abstract class BaseView<Obj extends AnyObj, Circuit extends CircuitContro
     protected abstract getBounds(): Rect;
 
     public abstract getMidpoint(): Vector;
+
+    public getObj(): Obj {
+        return this.obj;
+    }
 
     public getCullbox(): Transform {
         return this.cullTransform.get();
