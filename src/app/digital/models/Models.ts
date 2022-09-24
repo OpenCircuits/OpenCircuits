@@ -59,40 +59,40 @@ const AND = BOOL((a, b) => (a && b));
 // function Component<Kind extends string>(kind: Kind) {}
 
 
-const DigitalPort = {
-    Default: (id: GUID, parent: GUID, group: number, index: number): DigitalPort =>
-        ({ kind: "DigitalPort", ...DefaultPort(id, parent, group, index) }),
-}
-const DigitalWire = {
-    Default: (id: GUID, p1: GUID, p2: GUID): DigitalWire =>
-        ({ kind: "DigitalWire", ...DefaultWire(id, p1, p2) }),
-}
+// const DigitalPort = {
+//     Default: (id: GUID, parent: GUID, group: number, index: number): DigitalPort =>
+//         ({ kind: "DigitalPort", ...DefaultPort(id, parent, group, index) }),
+// }
+// const DigitalWire = {
+//     Default: (id: GUID, p1: GUID, p2: GUID): DigitalWire =>
+//         ({ kind: "DigitalWire", ...DefaultWire(id, p1, p2) }),
+// }
 
-const ANDGate = {
-    Default: (id: GUID): ANDGate => ({ kind: "ANDGate", ...DefaultComponent(id) }),
+// const ANDGate = {
+//     Default: (id: GUID): ANDGate => ({ kind: "ANDGate", ...DefaultComponent(id) }),
 
-    Info: {
-        props: {
-            "x": {
-                type:  "float",
-                label: "X Position",
-                step:  1,
-            },
-            "y": {
-                type:  "float",
-                label: "X Position",
-                step:  1,
-            },
-            ...AngleInfo("angle", "Angle", 0, "deg", 45),
-        },
-    },
-} as const;
+//     Info: {
+//         props: {
+//             "x": {
+//                 type:  "float",
+//                 label: "X Position",
+//                 step:  1,
+//             },
+//             "y": {
+//                 type:  "float",
+//                 label: "X Position",
+//                 step:  1,
+//             },
+//             ...AngleInfo("angle", "Angle", 0, "deg", 45),
+//         },
+//     },
+// } as const;
 
-export const Models = {
-    "ANDGate":     ANDGate,
-    "DigitalPort": DigitalPort,
-    "DigitalWire": DigitalWire,
-} as const;
+// export const Models = {
+//     "ANDGate":     ANDGate,
+//     "DigitalPort": DigitalPort,
+//     "DigitalWire": DigitalWire,
+// } as const;
 
 
 // export const Models = {
