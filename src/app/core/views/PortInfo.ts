@@ -11,9 +11,13 @@ import {CircuitController} from "core/controllers/CircuitController";
 
 // export const PortInfo: Record<AnyComponent["kind"],
 
-export type PortPos = { origin: Vector, target: Vector }
+export type PortPos = { origin: Vector, target: Vector, dir: Vector }
 
-const CalcPortPos = (origin: Vector, dir: Vector) =>  ({ origin, target: origin.add(dir.scale(IO_PORT_LENGTH)) });
+const CalcPortPos = (origin: Vector, dir: Vector) =>  ({
+    origin,
+    target: origin.add(dir.scale(IO_PORT_LENGTH)),
+    dir,
+});
 
 const CalcPortPositions = (amt: number, spacing: number) => (
     linspace(-amt/2*spacing/2, +amt/2*spacing/2, amt)
@@ -35,22 +39,29 @@ export function CalcPortGroupingID(circuit: CircuitController<AnyObj>, port: Any
     ).join(",");
 }
 
-export function GetPortPos(circuit: CircuitController<AnyObj>, port: AnyPort) {
+export function GetPortPos(circuit: CircuitController<AnyObj>, port: AnyPort): PortPos {
     const parent = circuit.getPortParent(port);
     const grouping = CalcPortGroupingID(circuit, port);
     return PortInfo[parent.kind][grouping][`${port.group}:${port.index}`];
 }
 
-export function GetPortWorldPos(circuit: CircuitController<AnyObj>, port: AnyPort) {
+export function GetPortWorldPos(circuit: CircuitController<AnyObj>, port: AnyPort): PortPos {
     const parent = circuit.getPortParent(port);
-    const pos = GetPortPos(circuit, port);
+    const { origin, target, dir } = GetPortPos(circuit, port);
     return {
-        origin: pos.origin.rotate(parent.angle).add(V(parent.x, parent.y)),
-        target: pos.target.rotate(parent.angle).add(V(parent.x, parent.y)),
+        origin: origin.rotate(parent.angle).add(V(parent.x, parent.y)),
+        target: target.rotate(parent.angle).add(V(parent.x, parent.y)),
+        dir:    dir.rotate(parent.angle),
     };
 }
 
 export const PortInfo: Record<AnyComponent["kind"], Record<string, Record<`${number}:${number}`, PortPos>>> = {
+    "DigitalNode": {
+        "1,1": {
+            "0:0": { origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) },
+            "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(1, 0) },
+        },
+    },
     "ANDGate": {
         // "Grouping"
         "2,1": {

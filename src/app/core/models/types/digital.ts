@@ -9,12 +9,15 @@ export enum DigitalPortGroup {
     Select = 2,
 }
 
-export type DigitalPort = Port & { kind: "DigitalPort", group: DigitalPortGroup }
-export type DigitalWire = Wire & { kind: "DigitalWire" }
+export type DigitalPort = Port & { kind: "DigitalPort", group: DigitalPortGroup };
+export type DigitalWire = Wire & { kind: "DigitalWire" };
 
-export type ANDGate = Component & { kind: "ANDGate" }
+export type DigitalNode = Component & { kind: "DigitalNode" };
+
+export type ANDGate = Component & { kind: "ANDGate" };
 
 export type DigitalComponent =
+    | DigitalNode
     | ANDGate;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;

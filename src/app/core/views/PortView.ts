@@ -26,17 +26,11 @@ export abstract class PortView<
     Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
 > extends BaseView<Port, Circuit> {
     protected pos: DirtyVar<PortPos>;
-    protected dir: DirtyVar<Vector>;
 
     public constructor(circuit: Circuit, obj: Port) {
         super(circuit, obj);
 
-        this.pos = new DirtyVar(
-            () => GetPortWorldPos(this.circuit, this.obj)
-        );
-        this.dir = new DirtyVar(
-            () => (this.pos.get().target.sub(this.pos.get().origin).normalize())
-        );
+        this.pos = new DirtyVar(() => GetPortWorldPos(this.circuit, this.obj));
     }
 
     protected override renderInternal({ renderer, selections }: RenderInfo): void {
@@ -58,31 +52,33 @@ export abstract class PortView<
     public override onPropChange(propKey: string): void {
         super.onPropChange(propKey);
 
-        if (["x", "y", "angle"].includes(propKey)) {
+        if (["x", "y", "angle"].includes(propKey))
             this.pos.setDirty();
-            this.dir.setDirty();
-        }
     }
 
     public override contains(pt: Vector): boolean {
         return CircleContains(this.getMidpoint(), IO_PORT_SELECT_RADIUS, pt);
     }
     public override isWithinBounds(bounds: Transform): boolean {
-        return RectContains(bounds, this.pos.get().target);
+        return RectContains(bounds, this.getTargetPos());
     }
 
     protected override getBounds(): Rect {
         const offset = V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2);
         // Bounds are the Rectangle between the points + offset from the port circle
-        return Rect.FromPoints(this.pos.get().origin, this.pos.get().target)
-            .shift(this.dir.get(), offset)
-            .expand(this.dir.get().negativeReciprocal().scale(offset));
+        return Rect.FromPoints(this.getOriginPos(), this.getTargetPos())
+            .shift(this.getDir(), offset)
+            .expand(this.getDir().negativeReciprocal().scale(offset));
     }
 
     public abstract isWireable(): boolean;
     public abstract isWireableWith(p: AnyPort): boolean;
 
+    public getTargetPos(): Vector { return this.pos.get().target; }
+    public getOriginPos(): Vector { return this.pos.get().origin; }
+    public getDir(): Vector { return this.pos.get().dir; }
+
     public override getMidpoint(): Vector {
-        return this.pos.get().target;
+        return this.getTargetPos();
     }
 }

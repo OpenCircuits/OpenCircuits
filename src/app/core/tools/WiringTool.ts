@@ -48,41 +48,6 @@ export const WiringTool = (() => {
             .map((view) => ({ port: view.getObj(), dist: worldMousePos.distanceTo(view.getMidpoint()) }))
             .reduce((prev, cur) => ((prev.dist <= cur.dist) ? prev : cur)).port;
     }
-    // function findNearestPort({ input, camera }: CircuitInfo, ports: Port[]): Port | undefined {
-    //     const worldMousePos = camera.getWorldPos(input.getMousePos());
-    //     // Look through all ports in array
-    //     //  and find closest one to the mouse
-    //     if (ports.length === 0)
-    //         return undefined;
-
-    //     let nearestport = ports[0];
-    //     let dist = worldMousePos.distanceTo(nearestport.getWorldTargetPos());
-    //     for (const port of ports) {
-    //         const test = worldMousePos.distanceTo(port.getWorldTargetPos());
-    //         if (test <= IO_PORT_RADIUS)
-    //             return port;
-    //         if (test < dist) {
-    //             nearestport = port;
-    //             dist = test;
-    //         }
-    //     }
-    //     return nearestport;
-    // }
-    // function setWirePoint(v: Vector): void {
-    //     // The wiring tool always starts with 1 port connected
-    //     //  and the other point should be following the mouse
-    //     //  so this figures out if it's the 1st or 2nd port
-    //     const shape = wire.getShape();
-    //     if (wire.getP1() === undefined) {
-    //         shape.setP1(v);
-    //         shape.setC1(v);
-    //     } else if (wire.getP2() === undefined) {
-    //         shape.setP2(v);
-    //         shape.setC2(v);
-    //     } else {
-    //         throw new Error("Both ports are set in WiringTool!");
-    //     }
-    // }
 
     return {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
@@ -118,10 +83,6 @@ export const WiringTool = (() => {
 
         onActivate(event: Event, info: CircuitInfo): void {
             port = findPort(info);
-
-            // // Create wire and set it's other point to be at `port`
-            // wire = info.designer.createWire(port, undefined);
-            // setWirePoint(port.getWorldTargetPos());
 
             stateType = (event.type === "click" ? StateType.CLICKED : StateType.DRAGGED);
         },

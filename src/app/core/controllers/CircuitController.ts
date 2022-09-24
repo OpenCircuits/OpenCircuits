@@ -2,8 +2,8 @@ import {GetDebugInfo} from "core/utils/Debug";
 import {GUID}         from "core/utils/GUID";
 import {Observable}   from "core/utils/Observable";
 
-import {Circuit}                  from "core/models/Circuit";
-import {AnyObj, AnyPort, AnyWire} from "core/models/types";
+import {Circuit}                           from "core/models/Circuit";
+import {AnyNode, AnyObj, AnyPort, AnyWire} from "core/models/types";
 
 import {Component} from "core/models/types/base/Component";
 import {Port}      from "core/models/types/base/Port";
@@ -29,17 +29,20 @@ export type CircuitEvent<Obj extends AnyObj> = ObjEvent<Obj> | ICDataEvent;
 type c_Comp<T extends AnyObj> = (T extends Component ? T : never);
 type c_Port<T extends AnyObj> = (T extends Port ? T : never);
 type c_Wire<T extends AnyObj> = (T extends Wire ? T : never);
+type c_Node<T extends AnyObj> = (T extends AnyNode ? T : never);
 
 
 export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEvent<Obj>> {
     protected readonly wireKind: c_Wire<Obj>["kind"];
+    protected readonly nodeKind: c_Node<Obj>["kind"];
 
     protected circuit: Circuit<Obj>;
 
-    public constructor(circuit: Circuit<Obj>, wireKind: c_Wire<Obj>["kind"]) {
+    public constructor(circuit: Circuit<Obj>, wireKind: c_Wire<Obj>["kind"], nodeKind: c_Node<Obj>["kind"]) {
         super();
 
         this.wireKind = wireKind;
+        this.nodeKind = nodeKind;
         this.circuit = circuit;
     }
 
@@ -142,5 +145,9 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
 
     public getWireKind(): c_Wire<Obj>["kind"] {
         return this.wireKind;
+    }
+
+    public getNodeKind(): c_Node<Obj>["kind"] {
+        return this.nodeKind;
     }
 }

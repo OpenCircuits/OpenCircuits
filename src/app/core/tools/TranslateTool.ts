@@ -94,17 +94,9 @@ export const TranslateTool: Tool = (() => {
             this.onEvent(event, info);
         },
         onDeactivate({}: Event, { history }: CircuitInfo): void {
-            // const finalPositions = components.map((o) => o.getPos());
-
-            // // Translate back to original position, so that it undo's properly
-            // Translate(components, initalPositions);
             if (!tempAction)
                 return;
-
-            history.add(
-                action.add(tempAction)
-            );
-
+            history.add(action.add(tempAction));
             tempAction = undefined;
         },
 

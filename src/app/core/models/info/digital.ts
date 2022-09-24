@@ -1,10 +1,11 @@
-import {GUID}      from "core/utils/GUID";
-import {AngleInfo} from "core/utils/Units";
+import {GUID} from "core/utils/GUID";
 
-import {DefaultComponent}                  from "../types/base/Component";
-import {DefaultPort}                       from "../types/base/Port";
-import {DefaultWire}                       from "../types/base/Wire";
-import {ANDGate, DigitalPort, DigitalWire} from "../types/digital";
+import {AnyComponent, AnyPort}    from "../types";
+import {DefaultComponent}         from "../types/base/Component";
+import {DefaultPort}              from "../types/base/Port";
+import {DefaultWire}              from "../types/base/Wire";
+import {ANDGate, DigitalComponent, DigitalNode,
+        DigitalPort, DigitalWire} from "../types/digital";
 
 
 const DigitalPort = {
@@ -16,33 +17,53 @@ const DigitalWire = {
         ({ kind: "DigitalWire", ...DefaultWire(id, p1, p2) }),
 }
 
-const ANDGate = {
-    Default: (id: GUID): ANDGate => ({ kind: "ANDGate", ...DefaultComponent(id) }),
 
+
+type ComponentInfo<C extends AnyComponent> = {
+    Default:     (id: GUID) => C;
+    DefaultPort: (id: GUID, parent: GUID, group: number, index: number) => AnyPort;
+
+    InitialPortGrouping: string;
+}
+
+const ANDGate: ComponentInfo<ANDGate> = {
+    Default:     (id) => ({ kind: "ANDGate", ...DefaultComponent(id) }),
     DefaultPort: DigitalPort.Default,
 
     InitialPortGrouping: "2,1",
 
-    Info: {
-        props: {
-            "x": {
-                type:  "float",
-                label: "X Position",
-                step:  1,
-            },
-            "y": {
-                type:  "float",
-                label: "X Position",
-                step:  1,
-            },
-            ...AngleInfo("angle", "Angle", 0, "deg", 45),
-        },
-    },
-} as const;
+    // Info: {
+    //     props: {
+    //         "x": {
+    //             type:  "float",
+    //             label: "X Position",
+    //             step:  1,
+    //         },
+    //         "y": {
+    //             type:  "float",
+    //             label: "X Position",
+    //             step:  1,
+    //         },
+    //         ...AngleInfo("angle", "Angle", 0, "deg", 45),
+    //     },
+    // },
+};
 
-export const DigitalComponentInfo = {
-    "ANDGate": ANDGate,
-} as const;
+const DigitalNode: ComponentInfo<DigitalNode> = {
+    Default:     (id) => ({ kind: "DigitalNode", ...DefaultComponent(id) }),
+    DefaultPort: DigitalPort.Default,
+
+    InitialPortGrouping: "1,1",
+}
+
+
+type ComponentInfoRecord<Comps extends AnyComponent> = {
+    [K in Comps as K["kind"]]: ComponentInfo<K>;
+}
+export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
+    "ANDGate":     ANDGate,
+    "DigitalNode": DigitalNode,
+};
 
 export const DigitalInfo = {
     "DigitalPort": DigitalPort,

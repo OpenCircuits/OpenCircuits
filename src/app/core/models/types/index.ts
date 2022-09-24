@@ -1,5 +1,5 @@
-import {AnalogObj, AnalogPort, AnalogWire}                      from "./analog";
-import {DigitalComponent, DigitalObj, DigitalPort, DigitalWire} from "./digital";
+import {AnalogObj, AnalogPort, AnalogWire}                                   from "./analog";
+import {DigitalComponent, DigitalNode, DigitalObj, DigitalPort, DigitalWire} from "./digital";
 
 
 export type AnyComponent =
@@ -12,6 +12,9 @@ export type AnyPort =
 export type AnyWire =
     | DigitalWire
     | AnalogWire;
+
+export type AnyNode =
+    | DigitalNode;
 
 export type AnyObj =
     | DigitalObj

@@ -9,8 +9,7 @@ import {BezierContains} from "math/MathUtils";
 import {Rect}           from "math/Rect";
 import {Transform}      from "math/Transform";
 
-import {GetDebugInfo} from "core/utils/Debug";
-import {DirtyVar}     from "core/utils/DirtyVar";
+import {DirtyVar} from "core/utils/DirtyVar";
 
 import {Style} from "core/utils/rendering/Style";
 
@@ -75,8 +74,7 @@ export class WireView<
     }
 
     protected getCurvePoints(port: AnyPort): [Vector, Vector] {
-        const { origin, target } = GetPortWorldPos(this.circuit, port);
-        const dir = target.sub(origin).normalize();
+        const { target, dir } = GetPortWorldPos(this.circuit, port);
         return [target, target.add(dir.scale(1))];
     }
 

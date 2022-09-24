@@ -1,9 +1,11 @@
 import {Color} from "svg2canvas";
 
 import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH,
-        DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
+        DEFAULT_CURVE_BORDER_WIDTH, IO_PORT_RADIUS, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
+
+import {CircleContains} from "math/MathUtils";
 
 import {Style} from "core/utils/rendering/Style";
 
@@ -11,7 +13,7 @@ import {Line} from "core/utils/rendering/shapes/Line";
 
 import {AnyPort} from "core/models/types";
 
-import {ANDGate, DigitalObj, DigitalPort, DigitalPortGroup, DigitalWire} from "core/models/types/digital";
+import {ANDGate, DigitalNode, DigitalObj, DigitalPort, DigitalPortGroup, DigitalWire} from "core/models/types/digital";
 
 import {CircuitController} from "core/controllers/CircuitController";
 import {RenderInfo}        from "core/views/BaseView";
@@ -63,6 +65,19 @@ class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
     }
 }
 
+class DigitalNodeView extends ComponentView<DigitalNode, DigitalCircuitController> {
+    public constructor(circuit: CircuitController<DigitalObj>, obj: DigitalNode) {
+        super(circuit, obj, V(2*IO_PORT_RADIUS));
+    }
+
+    public override contains(pt: Vector): boolean {
+        return CircleContains(this.getMidpoint(), IO_PORT_RADIUS, pt);
+    }
+
+    protected override renderComponent(): void {
+        // Nothing to draw, the port drawing will draw it
+    }
+}
 
 export class DigitalWireView extends WireView<DigitalWire, DigitalCircuitController> {}
 
@@ -95,7 +110,8 @@ class DigitalPortView extends PortView<DigitalPort, DigitalCircuitController> {
 // >;
 
 export const Views: ViewRecord<DigitalObj, DigitalCircuitController> = {
-    "ANDGate":     (c: DigitalCircuitController, o: ANDGate)     => new ANDGateView(c, o),
     "DigitalWire": (c: DigitalCircuitController, o: DigitalWire) => new DigitalWireView(c, o),
     "DigitalPort": (c: DigitalCircuitController, o: DigitalPort) => new DigitalPortView(c, o),
+    "DigitalNode": (c: DigitalCircuitController, o: DigitalNode) => new DigitalNodeView(c, o),
+    "ANDGate":     (c: DigitalCircuitController, o: ANDGate)     => new ANDGateView(c, o),
 };
