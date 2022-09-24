@@ -3,6 +3,7 @@ import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 import {V} from "Vector";
 
 import {CircuitInfo}                   from "core/utils/CircuitInfo";
+import {CalcWorldMousePos}             from "core/utils/CircuitInfoUtils";
 import {Event}                         from "core/utils/Events";
 import {SnapToConnections, SnapToGrid} from "core/utils/SnapUtils";
 
@@ -120,12 +121,11 @@ export const TranslateTool: Tool = (() => {
                     if (activatedButton !== LEFT_MOUSE_BUTTON)
                         break;
 
-                    const worldMousePos = camera.getWorldPos(input.getMousePos());
+                    const worldMousePos = CalcWorldMousePos(info);
 
                     const dPos = worldMousePos.sub(worldMouseDownPos);
 
-                    if (tempAction)
-                        tempAction.undo();
+                    tempAction?.undo();
 
                     const snapToGrid = input.isShiftKeyDown();
                     const snapToConnections = !input.isShiftKeyDown();

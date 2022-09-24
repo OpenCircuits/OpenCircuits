@@ -75,6 +75,10 @@ export abstract class ComponentView<
 
     protected abstract renderComponent(info: RenderInfo): void;
 
+    public getTransform(): Transform {
+        return this.transform.get();
+    }
+
     public override getMidpoint(): Vector {
         return this.transform.get().getPos();
     }

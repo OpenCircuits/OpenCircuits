@@ -7,13 +7,11 @@ import {ToolManager} from "core/tools/ToolManager";
 import {AnyObj} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
-import {RenderInfo}        from "core/views/BaseView";
 import {ViewManager}       from "core/views/ViewManager";
 
 import {GUID}              from "./GUID";
 import {Input}             from "./Input";
 import {RenderQueue}       from "./RenderQueue";
-import {Selectable}        from "./Selectable";
 import {SelectionsWrapper} from "./SelectionsWrapper";
 
 

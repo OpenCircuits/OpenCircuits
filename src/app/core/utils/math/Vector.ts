@@ -206,14 +206,25 @@ export class Vector {
      * Returns a new vector rotated `a` radians from this one.
      *
      * @param a The angle in radians.
+     * @param o The origin to rotate around.
      * @returns   A new, rotated vector.
      */
-    public rotate(a: number): Vector {
+    public rotate(a: number, o = V()): Vector {
         const cos = Math.cos(a), sin = Math.sin(a);
         return V(
-            (this.x * cos - this.y * sin),
-            (this.x * sin + this.y * cos)
+            ((this.x - o.x) * cos - (this.y - o.y) * sin) + o.x,
+            ((this.x - o.x) * sin + (this.y - o.y) * cos) + o.y
         );
+    }
+    /**
+     * Returns a new vector with a set rotation of `a` radians from the origin.
+     *
+     * @param a The angle in radians.
+     * @param o The origin to rotate around.
+     * @returns   A new, rotated vector.
+     */
+    public withRotation(a: number, o = V()): Vector {
+        return this.rotate(a - this.sub(o).angle(), o);
     }
     /**
      * Return the projection of 'this' on 'v'.
