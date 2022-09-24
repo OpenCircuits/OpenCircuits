@@ -1,34 +1,24 @@
-import {Color, blend, parseColor} from "svg2canvas";
+import {Color} from "svg2canvas";
 
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, DEFAULT_FILL_COLOR, IO_PORT_BORDER_WIDTH, IO_PORT_LINE_WIDTH, IO_PORT_RADIUS, IO_PORT_SELECT_RADIUS, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR, WIRE_THICKNESS} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH,
+        DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
-import {V, Vector} from "Vector";
-
-import {BezierCurve}                                  from "math/BezierCurve";
-import {BezierContains, CircleContains, RectContains} from "math/MathUtils";
-import {Rect}                                         from "math/Rect";
-import {Transform}                                    from "math/Transform";
-
-import {GetDebugInfo} from "core/utils/Debug";
-import {DirtyVar}     from "core/utils/DirtyVar";
+import {V} from "Vector";
 
 import {Style} from "core/utils/rendering/Style";
 
-import {Circle} from "core/utils/rendering/shapes/Circle";
-import {Curve}  from "core/utils/rendering/shapes/Curve";
-import {Line}   from "core/utils/rendering/shapes/Line";
+import {Line} from "core/utils/rendering/shapes/Line";
 
-import {AllInfo} from "core/models/info";
 import {AnyPort} from "core/models/types";
 
-import {ANDGate, DigitalComponent, DigitalObj, DigitalPort, DigitalPortGroup, DigitalWire} from "core/models/types/digital";
+import {ANDGate, DigitalObj, DigitalPort, DigitalPortGroup, DigitalWire} from "core/models/types/digital";
 
-import {CircuitController}                             from "core/controllers/CircuitController";
-import {BaseView, RenderInfo}                          from "core/views/BaseView";
-import {ComponentView}                                 from "core/views/ComponentView";
-import {CalcPortGroupingID, GetPortWorldPos, PortInfo} from "core/views/PortInfo";
-import {PortView}                                      from "core/views/PortView";
-import {ViewRecord}                                    from "core/views/ViewManager";
+import {CircuitController} from "core/controllers/CircuitController";
+import {RenderInfo}        from "core/views/BaseView";
+import {ComponentView}     from "core/views/ComponentView";
+import {PortView}          from "core/views/PortView";
+import {ViewRecord}        from "core/views/ViewManager";
+import {WireView}          from "core/views/WireView";
 
 
 // @TODO @leon - Move this function to "svg2canvas"
@@ -74,82 +64,8 @@ class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
 }
 
 
-class DigitalWireView extends BaseView<DigitalWire, DigitalCircuitController> {
-    protected curve: DirtyVar<BezierCurve>;
+export class DigitalWireView extends WireView<DigitalWire, DigitalCircuitController> {}
 
-    public constructor(circuit: CircuitController<DigitalObj>, obj: DigitalWire) {
-        super(circuit, obj);
-
-        this.curve = new DirtyVar(
-            () => {
-                const [port1, port2] = this.getPorts();
-                const [p1, c1] = this.getCurvePoints(port1);
-                const [p2, c2] = this.getCurvePoints(port2);
-                return new BezierCurve(p1, p2, c1, c2);
-            }
-        );
-    }
-
-    public override contains(pt: Vector): boolean {
-        return BezierContains(this.curve.get(), pt);
-    }
-    public override isWithinBounds(bounds: Transform): boolean {
-        return false;
-    }
-
-    protected override renderInternal({ renderer, selections }: RenderInfo): void {
-        const selected = selections.has(this.obj.id);
-
-        // Changes color of wires: when wire is selected it changes to the color
-        //  selected blended with constant color SELECTED_FILL_COLOR
-        const selectedColor = ColorToHex(blend(
-            parseColor(this.obj.color),
-            parseColor(SELECTED_FILL_COLOR!), 0.2
-        ));
-
-        // @TODO move to function for getting color based on being selection/on/off
-        const color = (selected ? selectedColor : this.obj.color);
-        const style = new Style(undefined, color, WIRE_THICKNESS);
-
-        renderer.draw(new Curve(this.curve.get()), style);
-    }
-
-    protected getCurvePoints(port: DigitalPort): [Vector, Vector] {
-        const { origin, target } = GetPortWorldPos(this.circuit, port);
-        const dir = target.sub(origin).normalize();
-        return [target, target.add(dir.scale(1))];
-    }
-
-    protected getPorts(): [DigitalPort, DigitalPort] {
-        if (!this.circuit.hasObj(this.obj.p1)) {
-            throw new Error("DigitalWireView: Failed to find port 1 " +
-                            `[${this.obj.p1}] for ${GetDebugInfo(this.obj)}!`);
-        }
-        if (!this.circuit.hasObj(this.obj.p2)) {
-            throw new Error("DigitalWireView: Failed to find port 2 " +
-                            `[${this.obj.p2}] for ${GetDebugInfo(this.obj)}!`);
-        }
-        const p1 = this.circuit.getObj(this.obj.p1)!;
-        const p2 = this.circuit.getObj(this.obj.p2)!;
-        if (p1.baseKind !== "Port")
-            throw new Error(`DigitalWireView: Received a non-port p1 for ${GetDebugInfo(this.obj)}!`);
-        if (p2.baseKind !== "Port")
-            throw new Error(`DigitalWireView: Received a non-port p2 for ${GetDebugInfo(this.obj)}!`);
-        return [p1, p2];
-    }
-
-    public override getMidpoint(): Vector {
-        return this.curve.get().getPos(0.5);
-    }
-
-    protected override getBounds(): Rect {
-        return this.curve.get().getBoundingBox().expand(V(WIRE_THICKNESS/2));
-    }
-
-    public override getDepth(): number {
-        return -2;
-    }
-}
 
 class DigitalPortView extends PortView<DigitalPort, DigitalCircuitController> {
     public override isWireable(): boolean {
