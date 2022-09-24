@@ -59,13 +59,13 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
 
         // Also, if the object is a component, update it's ports too
         if (m.baseKind === "Component") {
-            this.circuit.getPortsFor(m.id).forEach((p) => this.onEditObj(p as Obj, propKey));
+            this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, propKey));
             return;
         }
 
         // And if the object is a port, then update it's wires
         if (m.baseKind === "Port") {
-            this.circuit.getWiresFor(m.id).forEach((w) => this.onEditObj(w as Obj, propKey));
+            this.circuit.getWiresFor(m).forEach((w) => this.onEditObj(w as Obj, propKey));
         }
     }
 

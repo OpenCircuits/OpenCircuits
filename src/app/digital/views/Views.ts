@@ -49,7 +49,7 @@ class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
         const size = this.transform.get().getSize();
 
         // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj.id).length;
+        const inputs = this.circuit.getPortsFor(this.obj).length;
 
         // Draw line to visually match input ports
         const l1 = -(size.y/2)*(0.5-inputs/2);
@@ -73,7 +73,7 @@ class DigitalPortView extends PortView<DigitalPort, DigitalCircuitController> {
         if (this.obj.group === DigitalPortGroup.Output)
             return true;
         // Input and select ports can only have new connections if they don't already have any
-        const wires = this.circuit.getWiresFor(this.obj.id);
+        const wires = this.circuit.getWiresFor(this.obj);
         return (wires.length === 0);
     }
 

@@ -2,8 +2,8 @@ import {GetDebugInfo} from "core/utils/Debug";
 import {GUID}         from "core/utils/GUID";
 import {Observable}   from "core/utils/Observable";
 
-import {Circuit}         from "core/models/Circuit";
-import {AnyObj, AnyPort} from "core/models/types";
+import {Circuit}                  from "core/models/Circuit";
+import {AnyObj, AnyPort, AnyWire} from "core/models/types";
 
 import {Component} from "core/models/types/base/Component";
 import {Port}      from "core/models/types/base/Port";
@@ -30,6 +30,7 @@ type c_Comp<T extends AnyObj> = (T extends Component ? T : never);
 type c_Port<T extends AnyObj> = (T extends Port ? T : never);
 type c_Wire<T extends AnyObj> = (T extends Wire ? T : never);
 
+
 export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEvent<Obj>> {
     protected readonly wireKind: c_Wire<Obj>["kind"];
 
@@ -42,23 +43,18 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         this.circuit = circuit;
     }
 
-    public hasObj(objID: GUID): boolean {
-        return (this.circuit.objects.has(objID));
+    public hasObj(obj: Obj): boolean {
+        return (this.circuit.objects.has(obj.id));
     }
 
     public addObj(obj: Obj): void {
-        if (this.hasObj(obj.id))
+        if (this.hasObj(obj))
             throw new Error(`CircuitController: Attempted to add ${GetDebugInfo(obj)} which already exists!`);
         this.circuit.objects.set(obj.id, obj);
         this.publish({ type: "obj", op: "added", obj });
     }
 
-    public setPropFor(objID: GUID, key: string, val: string | boolean | number): void {
-        const obj = this.getObj(objID);
-        if (!obj) {
-            throw new Error(`CircuitController: Attempted to set prop ${key} `
-                            + `for [${objID}] which isn't in the circuit!`);
-        }
+    public setPropFor(obj: Obj, key: string, val: string | boolean | number): void {
         if (!(key in obj)) {
             throw new Error(`CircuitController: Attempted to set prop ${key} `
                             + `from ${GetDebugInfo(obj)} which doesn't exist!`);
@@ -69,18 +65,13 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
     }
 
     public removeObj(obj: Obj): void {
-        if (!this.hasObj(obj.id))
+        if (!this.hasObj(obj))
             throw new Error(`CircuitController: Attempted to remove ${GetDebugInfo(obj)}) which isn't in the circuit!`);
         this.circuit.objects.delete(obj.id);
         this.publish({ type: "obj", op: "removed", obj });
     }
 
-    public getPropFrom(objID: GUID, key: string): string | boolean | number {
-        const obj = this.getObj(objID);
-        if (!obj) {
-            throw new Error(`CircuitController: Attempted to get prop ${key} `
-                            + `from [${objID}] which isn't in the circuit!`);
-        }
+    public getPropFrom(obj: Obj, key: string): string | boolean | number {
         if (!(key in obj)) {
             throw new Error(`CircuitController: Attempted to get prop ${key} `
                             + `from ${GetDebugInfo(obj)} which doesn't exist!`);
@@ -97,44 +88,56 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         return [...this.circuit.objects.keys()];
     }
 
-    public getPortParent(portID: GUID): c_Comp<Obj> {
-        const port = this.getObj(portID);
-        if (!port)
-            throw new Error(`CircuitController: Failed to find port [${portID}]!`);
-        if (port.baseKind !== "Port")
-            throw new Error(`CircuitController: Attempted to get port but found ${GetDebugInfo(port)}`);
-        if (!this.hasObj(port.parent)) {
+    public getPortParent(port: c_Port<Obj>): c_Comp<Obj> {
+        const parent = this.getObj(port.parent);
+        if (!parent) {
             throw new Error("CircuitController: Failed to find parent " +
                             `[${port.parent}] for ${GetDebugInfo(port)}!`);
         }
-        const parent = this.getObj(port.parent)!;
         if (parent.baseKind !== "Component")
             throw new Error(`CircuitController: Received a non-component parent for ${GetDebugInfo(port)}!`);
         return parent as c_Comp<Obj>;
     }
 
-    public getPortsFor(objID: GUID): Array<c_Port<Obj>> {
-        if (!this.hasObj(objID))
-            throw new Error(`CircuitController: Attempted to get Ports for [${objID}] which doesn't exist!`);
+    public getPortsFor(comp: c_Comp<Obj>): Array<c_Port<Obj>> {
+        // if (!this.hasObj(objID))
+        //     throw new Error(`CircuitController: Attempted to get Ports for [${objID}] which doesn't exist!`);
         // TODO: make this more efficient with some map to cache this relation
         return (
             [...this.circuit.objects.values()]
-                .filter((obj) => (obj.baseKind === "Port" && obj.parent === objID)) as Array<c_Port<Obj>>
+                .filter((obj) =>
+                    (obj.baseKind === "Port" && obj.parent === comp.id)) as Array<c_Port<Obj>>
         );
     }
 
-    public getWiresFor(portID: GUID): Array<c_Wire<Obj>> {
-        const port = this.getObj(portID);
-        if (!port)
-            throw new Error(`CircuitController: Failed to find port [${portID}]!`);
-        if (port.baseKind !== "Port")
-            throw new Error(`CircuitController: Attempted to get port but found ${GetDebugInfo(port)}`);
-
+    public getWiresFor(port: c_Port<Obj>): Array<c_Wire<Obj>> {
         // TODO: make this more efficient with some map to cache this relation
         return (
             [...this.circuit.objects.values()]
-                .filter((o) => (o.baseKind === "Wire" && (o.p1 === portID || o.p2 === portID))) as Array<c_Wire<Obj>>
+                .filter((o) =>
+                    (o.baseKind === "Wire" &&
+                     (o.p1 === port.id || o.p2 === port.id))) as Array<c_Wire<Obj>>
         );
+    }
+
+    public getPortsForWire(wire: c_Wire<Obj>): [c_Port<Obj>, c_Port<Obj>] {
+        const p1 = this.getObj(wire.p1);
+        const p2 = this.getObj(wire.p2);
+        if (!p1) {
+            throw new Error("CircuitController: Failed to find port 1 " +
+                            `[${wire.p1}] for ${GetDebugInfo(wire)}!`);
+        }
+        if (!p2) {
+            throw new Error("CircuitController: Failed to find port 2 " +
+                            `[${wire.p2}] for ${GetDebugInfo(wire)}!`);
+        }
+        if (p1.baseKind !== "Port")
+            throw new Error("DigitalWireView: Received a non-port p1 of " +
+                            `${GetDebugInfo(p1)} for ${GetDebugInfo(wire)}!`);
+        if (p2.baseKind !== "Port")
+            throw new Error("DigitalWireView: Received a non-port p2 of " +
+                            `${GetDebugInfo(p2)} for ${GetDebugInfo(wire)}!`);
+        return [p1 as c_Port<Obj>, p2 as c_Port<Obj>];
     }
 
     public getWireKind(): c_Wire<Obj>["kind"] {

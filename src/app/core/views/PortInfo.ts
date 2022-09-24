@@ -21,8 +21,8 @@ const CalcPortPositions = (amt: number, spacing: number) => (
 );
 
 export function CalcPortGroupingID(circuit: CircuitController<AnyObj>, port: AnyPort) {
-    const parent = circuit.getPortParent(port.id);
-    const ports = circuit.getPortsFor(parent.id);
+    const parent = circuit.getPortParent(port);
+    const ports = circuit.getPortsFor(parent);
     // Grouping IDs are comma separated strings of the number
     //  of ports in each `group` for a specific component
     return ports.reduce(
@@ -36,13 +36,13 @@ export function CalcPortGroupingID(circuit: CircuitController<AnyObj>, port: Any
 }
 
 export function GetPortPos(circuit: CircuitController<AnyObj>, port: AnyPort) {
-    const parent = circuit.getPortParent(port.id);
+    const parent = circuit.getPortParent(port);
     const grouping = CalcPortGroupingID(circuit, port);
     return PortInfo[parent.kind][grouping][`${port.group}:${port.index}`];
 }
 
 export function GetPortWorldPos(circuit: CircuitController<AnyObj>, port: AnyPort) {
-    const parent = circuit.getPortParent(port.id);
+    const parent = circuit.getPortParent(port);
     const pos = GetPortPos(circuit, port);
     return {
         origin: pos.origin.rotate(parent.angle).add(V(parent.x, parent.y)),

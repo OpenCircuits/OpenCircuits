@@ -30,7 +30,7 @@ export function SnapToConnections(circuit: CircuitController<AnyObj>, pos: Vecto
     const v = V(pos);
     for (const port of ports) {
         const pos = GetPortWorldPos(circuit, port).target.sub(oPos);
-        const wires = circuit.getWiresFor(port.id);
+        const wires = circuit.getWiresFor(port);
         for (const w of wires) {
             // Gets the port that isn't the current port, calculates new position (v).
             const port2 = circuit.getObj((w.p1 === port.id ? w.p2 : w.p1)) as AnyPort;

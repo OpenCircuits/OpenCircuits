@@ -137,7 +137,7 @@ export const TranslateTool: Tool = (() => {
                             if (snapToGrid)
                                 newPos = SnapToGrid(newPos);
                             if (snapToConnections)
-                                newPos = SnapToConnections(circuit, newPos, circuit.getPortsFor(c.id));
+                                newPos = SnapToConnections(circuit, newPos, circuit.getPortsFor(c));
                             // Very specifically Translate as we go
                             //  as to correctly apply `SnapToConnections`
                             return new GroupAction([

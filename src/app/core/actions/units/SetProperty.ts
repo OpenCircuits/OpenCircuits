@@ -22,20 +22,20 @@ class SetPropertyAction implements Action {
         this.circuit = circuit;
         this.objID = objID;
         this.propKey = key;
-        this.initialProp = circuit.getPropFrom(objID, key);
+        this.initialProp = circuit.getPropFrom(circuit.getObj(objID)!, key);
         this.targetProp = prop;
 
         this.execute();
     }
 
     public execute(): Action {
-        this.circuit.setPropFor(this.objID, this.propKey, this.targetProp);
+        this.circuit.setPropFor(this.circuit.getObj(this.objID)!, this.propKey, this.targetProp);
 
         return this;
     }
 
     public undo(): Action {
-        this.circuit.setPropFor(this.objID, this.propKey, this.initialProp);
+        this.circuit.setPropFor(this.circuit.getObj(this.objID)!, this.propKey, this.initialProp);
 
         return this;
     }

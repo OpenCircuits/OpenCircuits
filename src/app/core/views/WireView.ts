@@ -35,7 +35,7 @@ export class WireView<
 
         this.curve = new DirtyVar(
             () => {
-                const [port1, port2] = this.getPorts();
+                const [port1, port2] = this.circuit.getPortsForWire(this.obj);
                 const [p1, c1] = this.getCurvePoints(port1);
                 const [p2, c2] = this.getCurvePoints(port2);
                 return new BezierCurve(p1, p2, c1, c2);
@@ -78,24 +78,6 @@ export class WireView<
         const { origin, target } = GetPortWorldPos(this.circuit, port);
         const dir = target.sub(origin).normalize();
         return [target, target.add(dir.scale(1))];
-    }
-
-    protected getPorts(): [AnyPort, AnyPort] {
-        if (!this.circuit.hasObj(this.obj.p1)) {
-            throw new Error("DigitalWireView: Failed to find port 1 " +
-                            `[${this.obj.p1}] for ${GetDebugInfo(this.obj)}!`);
-        }
-        if (!this.circuit.hasObj(this.obj.p2)) {
-            throw new Error("DigitalWireView: Failed to find port 2 " +
-                            `[${this.obj.p2}] for ${GetDebugInfo(this.obj)}!`);
-        }
-        const p1 = this.circuit.getObj(this.obj.p1)!;
-        const p2 = this.circuit.getObj(this.obj.p2)!;
-        if (p1.baseKind !== "Port")
-            throw new Error(`DigitalWireView: Received a non-port p1 for ${GetDebugInfo(this.obj)}!`);
-        if (p2.baseKind !== "Port")
-            throw new Error(`DigitalWireView: Received a non-port p2 for ${GetDebugInfo(this.obj)}!`);
-        return [p1, p2];
     }
 
     public override getMidpoint(): Vector {
