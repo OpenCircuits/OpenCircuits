@@ -11,7 +11,7 @@ import {CircuitController} from "core/controllers/CircuitController";
 
 // export const PortInfo: Record<AnyComponent["kind"],
 
-type PortPos = { origin: Vector, target: Vector }
+export type PortPos = { origin: Vector, target: Vector }
 
 const CalcPortPos = (origin: Vector, dir: Vector) =>  ({ origin, target: origin.add(dir.scale(IO_PORT_LENGTH)) });
 

@@ -6,28 +6,44 @@ import {CircleContains, RectContains} from "math/MathUtils";
 import {Rect}                         from "math/Rect";
 import {Transform}                    from "math/Transform";
 
+import {DirtyVar} from "core/utils/DirtyVar";
+
 import {Style} from "core/utils/rendering/Style";
 
 import {Circle} from "core/utils/rendering/shapes/Circle";
 import {Line}   from "core/utils/rendering/shapes/Line";
 
-import {AnyObj, AnyPort, AnyWire} from "core/models/types";
+import {AnyObj, AnyPort} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo} from "./BaseView";
-import {GetPortWorldPos}      from "./PortInfo";
+import {BaseView, RenderInfo}     from "./BaseView";
+import {GetPortWorldPos, PortPos} from "./PortInfo";
 
 
 export abstract class PortView<
     Port extends AnyPort,
     Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
 > extends BaseView<Port, Circuit> {
+    protected pos: DirtyVar<PortPos>;
+    protected dir: DirtyVar<Vector>;
+
+    public constructor(circuit: Circuit, obj: Port) {
+        super(circuit, obj);
+
+        this.pos = new DirtyVar(
+            () => GetPortWorldPos(this.circuit, this.obj)
+        );
+        this.dir = new DirtyVar(
+            () => (this.pos.get().target.sub(this.pos.get().origin).normalize())
+        );
+    }
+
     protected override renderInternal({ renderer, selections }: RenderInfo): void {
         const parentSelected = selections.has(this.obj.parent);
         const selected = selections.has(this.obj.id);
 
-        const { origin, target } = GetPortWorldPos(this.circuit, this.obj);
+        const { origin, target } = this.pos.get();
 
         const lineCol       = (parentSelected && !selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const borderCol     = (parentSelected ||  selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
@@ -39,30 +55,34 @@ export abstract class PortView<
         renderer.draw(new Circle(target, IO_PORT_RADIUS), circleStyle);
     }
 
-    public override contains(pt: Vector, bounds: "select" | "press"): boolean {
-        return CircleContains(
-            GetPortWorldPos(this.circuit, this.obj).target,
-            ((bounds === "select") ? IO_PORT_SELECT_RADIUS : IO_PORT_RADIUS),
-            pt
-        );
+    public override onPropChange(propKey: string): void {
+        super.onPropChange(propKey);
+
+        if (["x", "y", "angle"].includes(propKey)) {
+            this.pos.setDirty();
+            this.dir.setDirty();
+        }
+    }
+
+    public override contains(pt: Vector): boolean {
+        return CircleContains(this.getMidpoint(), IO_PORT_SELECT_RADIUS, pt);
     }
     public override isWithinBounds(bounds: Transform): boolean {
-        return RectContains(bounds, GetPortWorldPos(this.circuit, this.obj).target);
+        return RectContains(bounds, this.pos.get().target);
     }
 
     protected override getBounds(): Rect {
+        const offset = V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2);
         // Bounds are the Rectangle between the points + offset from the port circle
-        const pos = GetPortWorldPos(this.circuit, this.obj);
-        const dir = pos.target.sub(pos.origin).normalize();
-        return Rect.FromPoints(pos.origin, pos.target)
-            .shift(dir, V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2))
-            .expand(dir.negativeReciprocal().scale(V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2)));
+        return Rect.FromPoints(this.pos.get().origin, this.pos.get().target)
+            .shift(this.dir.get(), offset)
+            .expand(this.dir.get().negativeReciprocal().scale(offset));
     }
 
     public abstract isWireable(): boolean;
     public abstract isWireableWith(p: AnyPort): boolean;
 
     public override getMidpoint(): Vector {
-        return GetPortWorldPos(this.circuit, this.obj).target;
+        return this.pos.get().target;
     }
 }

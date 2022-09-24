@@ -35,7 +35,7 @@ export const WiringTool = (() => {
         const allPorts = [...viewManager]
             .filter((view) => (view.getObj().baseKind === "Port")) as Array<PortView<AnyPort>>;
         const validPorts = allPorts
-            .filter((view) => view.contains(worldMousePos, "select"))
+            .filter((view) => view.contains(worldMousePos))
             // Make sure port is wireable and (if we have a current port) is also
             //  wireable with our current port.
             .filter((view) => view.isWireable() && (port ? view.isWireableWith(port) : true));

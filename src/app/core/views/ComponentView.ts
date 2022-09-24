@@ -43,9 +43,11 @@ export abstract class ComponentView<
         }
     }
 
-    // TODO: pass in prop-key that changed and only respond to that
-    public override onPropChange(): void {
-        this.transform.setDirty();
+    public override onPropChange(propKey: string): void {
+        super.onPropChange(propKey);
+
+        if (["x", "y", "angle"].includes(propKey))
+            this.transform.setDirty();
     }
 
     public override contains(pt: Vector): boolean {

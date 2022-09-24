@@ -43,6 +43,13 @@ export class WireView<
         );
     }
 
+    public override onPropChange(propKey: string): void {
+        super.onPropChange(propKey);
+
+        if (["x", "y", "angle"].includes(propKey))
+            this.curve.setDirty();
+    }
+
     public override contains(pt: Vector): boolean {
         return BezierContains(this.curve.get(), pt);
     }

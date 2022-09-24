@@ -53,8 +53,20 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
     }
 
     public onEditObj(m: Obj, propKey: string) {
+        // Update the view for the object
         const v = this.getView(m.id);
         v.onPropChange(propKey);
+
+        // Also, if the object is a component, update it's ports too
+        if (m.baseKind === "Component") {
+            this.circuit.getPortsFor(m.id).forEach((p) => this.onEditObj(p as Obj, propKey));
+            return;
+        }
+
+        // And if the object is a port, then update it's wires
+        if (m.baseKind === "Port") {
+            this.circuit.getWiresFor(m.id).forEach((w) => this.onEditObj(w as Obj, propKey));
+        }
     }
 
     public onRemoveObj(m: Obj) {

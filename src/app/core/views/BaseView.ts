@@ -43,9 +43,9 @@ export abstract class BaseView<
         );
     }
 
-    // TODO: pass in prop-key that changed and only respond to that
     public onPropChange(propKey: string): void {
-        this.cullTransform.setDirty();
+        if (["x", "y", "angle"].includes(propKey))
+            this.cullTransform.setDirty();
     }
 
     public abstract contains(pt: Vector, bounds: "select" | "press"): boolean;
