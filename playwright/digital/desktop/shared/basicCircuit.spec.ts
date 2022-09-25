@@ -3,7 +3,7 @@ import {expect, test} from "@playwright/test";
 import {ITEMNAV_CLOSE_BUTTON, ITEMNAV_OPEN_BUTTON} from "../DesktopConstants.js";
 
 
-test("Basic Switch/LED Test", async ({ page }, testInfo) => {
+test("Basic Switch/LED Test", async ({ page }) => {
     // Remove OS extension from snapshot file name
     // testInfo.snapshotSuffix = "";
 

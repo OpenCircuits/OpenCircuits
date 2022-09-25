@@ -2,6 +2,7 @@ import {devices} from "@playwright/test";
 
 import type {PlaywrightTestConfig} from "@playwright/test";
 
+
 /**
  * Read environment variables from file.
  * See https://github.com/motdotla/dotenv for more.
@@ -55,36 +56,44 @@ const config: PlaywrightTestConfig = {
             name: "chromium",
             use:  {
                 ...devices["Desktop Chrome"],
+                viewport: { width: 1280, height: 720 },
             },
+            testMatch: "*/desktop/{shared,chromium}/*.spec.ts",
         },
 
         {
             name: "firefox",
             use:  {
                 ...devices["Desktop Firefox"],
+                viewport: { width: 1280, height: 720 },
             },
+            testMatch: "*/desktop/{shared,firefox}/*.spec.ts",
         },
 
         {
             name: "webkit",
             use:  {
                 ...devices["Desktop Safari"],
+                viewport: { width: 1280, height: 720 },
             },
+            testMatch: "*/desktop/{shared,webkit}/*.spec.ts",
         },
 
         /* Test against mobile viewports. */
-        // {
-        //   name: 'Mobile Chrome',
-        //   use: {
-        //     ...devices['Pixel 5'],
-        //   },
-        // },
-        // {
-        //   name: 'Mobile Safari',
-        //   use: {
-        //     ...devices['iPhone 12'],
-        //   },
-        // },
+        {
+            name: "Mobile Chrome",
+            use:  {
+                ...devices["Pixel 5"],
+            },
+            testMatch: "*/mobile/{shared,android}/*.spec.ts",
+        },
+        {
+            name: "Mobile Safari",
+            use:  {
+                ...devices["iPhone 12"],
+            },
+            testMatch: "*/mobile/{shared,iphone}/*.spec.ts",
+        },
 
         /* Test against branded browsers. */
         // {
