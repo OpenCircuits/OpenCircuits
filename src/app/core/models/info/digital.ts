@@ -1,71 +1,32 @@
-import {GUID} from "core/utils/GUID";
-
-import {AnyComponent, AnyPort}    from "../types";
-import {DefaultComponent}         from "../types/base/Component";
-import {DefaultPort}              from "../types/base/Port";
-import {DefaultWire}              from "../types/base/Wire";
 import {ANDGate, DigitalComponent, DigitalNode,
-        DigitalPort, DigitalWire} from "../types/digital";
+        DigitalObj, DigitalPort, DigitalWire} from "../types/digital";
+
+import {ComponentInfoRecord, ObjInfoRecord, WireInfo} from "./base";
+import {GenComponentInfo, GenPortInfo, GenWireInfo}   from "./utils";
 
 
-const DigitalPort = {
-    Default: (id: GUID, parent: GUID, group: number, index: number): DigitalPort =>
-        ({ kind: "DigitalPort", ...DefaultPort(id, parent, group, index) }),
-}
-const DigitalWire = {
-    Default: (id: GUID, p1: GUID, p2: GUID): DigitalWire =>
-        ({ kind: "DigitalWire", ...DefaultWire(id, p1, p2) }),
-}
-
-
-
-type ComponentInfo<C extends AnyComponent> = {
-    Default:     (id: GUID) => C;
-    DefaultPort: (id: GUID, parent: GUID, group: number, index: number) => AnyPort;
-
-    InitialPortGrouping: string;
-}
-
-const ANDGate: ComponentInfo<ANDGate> = {
-    Default:     (id) => ({ kind: "ANDGate", ...DefaultComponent(id) }),
+const GenDigitalComponentInfo = <C extends DigitalComponent>(
+    kind: C["kind"],
+    InitialPortGrouping: string,
+) => ({
+    ...GenComponentInfo<C>(kind, InitialPortGrouping),
     DefaultPort: DigitalPort.Default,
-
-    InitialPortGrouping: "2,1",
-
-    // Info: {
-    //     props: {
-    //         "x": {
-    //             type:  "float",
-    //             label: "X Position",
-    //             step:  1,
-    //         },
-    //         "y": {
-    //             type:  "float",
-    //             label: "X Position",
-    //             step:  1,
-    //         },
-    //         ...AngleInfo("angle", "Angle", 0, "deg", 45),
-    //     },
-    // },
-};
-
-const DigitalNode: ComponentInfo<DigitalNode> = {
-    Default:     (id) => ({ kind: "DigitalNode", ...DefaultComponent(id) }),
-    DefaultPort: DigitalPort.Default,
-
-    InitialPortGrouping: "1,1",
-}
+} as const);
 
 
-type ComponentInfoRecord<Comps extends AnyComponent> = {
-    [K in Comps as K["kind"]]: ComponentInfo<K>;
-}
+const DigitalPort = GenPortInfo<DigitalPort>("DigitalPort");
+const DigitalWire: WireInfo<DigitalWire> = GenWireInfo<DigitalWire>("DigitalWire");
+
+const DigitalNode = GenDigitalComponentInfo<DigitalNode>("DigitalNode", "1,1");
+const ANDGate = GenDigitalComponentInfo<ANDGate>("ANDGate", "2,1");
+
+
 export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
     "ANDGate":     ANDGate,
     "DigitalNode": DigitalNode,
 };
 
-export const DigitalInfo = {
+export const DigitalInfo: ObjInfoRecord<DigitalObj> = {
     "DigitalPort": DigitalPort,
     "DigitalWire": DigitalWire,
     ...DigitalComponentInfo,

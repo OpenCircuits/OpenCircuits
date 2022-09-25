@@ -2,13 +2,10 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
-import {V} from "Vector";
+import {Clamp} from "math/MathUtils";
 
-import {CalculateMidpoint, Clamp} from "math/MathUtils";
-
-import {CircuitInfo} from "core/utils/CircuitInfo";
-
-import {AnyComponent} from "core/models/types";
+import {CircuitInfo}            from "core/utils/CircuitInfo";
+import {CalcSelectionsMidpoint} from "core/utils/CircuitInfoUtils";
 
 import {useEvent}          from "shared/utils/hooks/useEvent";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
@@ -24,7 +21,7 @@ type Props = {
     children: React.ReactNode;
 }
 export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
-    const { input, camera, circuit, history, selections, viewManager } = info;
+    const { input, circuit, history, selections } = info;
 
     const itemNavCurItem = useSharedSelector((state) => state.itemNav.curItemID);
 
@@ -45,14 +42,7 @@ export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
 
 
     const [pos, setPos] = useState({ x: 0, y: 0 });
-    const updatePos = useCallback(() => {
-        // Get midpoint
-        const midpoint = CalculateMidpoint(
-            selections.get()
-                .map((id) => viewManager.getView(id).getMidpoint())
-        );
-        setPos(camera.getScreenPos(midpoint));
-    }, [camera, selections, viewManager, setPos]);
+    const updatePos = useCallback(() => setPos(CalcSelectionsMidpoint(info, "screen")), [info]);
 
     useEffect(() => {
         // Subscribe to history for translation/selection changes

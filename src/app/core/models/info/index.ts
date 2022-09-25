@@ -1,4 +1,7 @@
+import {AnyObj} from "../types";
+
 import {AnalogComponentInfo, AnalogInfo}   from "./analog";
+import {ObjInfoRecord}                     from "./base";
 import {DigitalComponentInfo, DigitalInfo} from "./digital";
 
 
@@ -7,7 +10,7 @@ export const AllComponentInfo = {
     ...AnalogComponentInfo,
 };
 
-export const AllInfo = {
+export const AllInfo: ObjInfoRecord<AnyObj> = {
     ...DigitalInfo,
     ...AnalogInfo,
 };

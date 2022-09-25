@@ -6,4 +6,4 @@ export type BaseObject = {
     name?: string;
 }
 
-export const DefaultBaseObject = (id: GUID): BaseObject => ({ id });
+export const DefaultBaseObject = (id: GUID): BaseObject => ({ id, name: undefined });

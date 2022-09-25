@@ -1,13 +1,13 @@
-import {useCallback, useEffect, useState} from "react";
-
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
 import {SetProperty} from "core/actions/units/SetProperty";
 
+import {AnyObj} from "core/models/types";
+
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
-// import {useSelectionProps}    from "./useSelectionProps";
+import {useSelectionProps}    from "./useSelectionProps";
 
 
 type Props = {
@@ -16,32 +16,13 @@ type Props = {
 export const TitleModule = ({ info }: Props) => {
     const { circuit, selections, renderer, history } = info;
 
-    const [names, setNames] = useState([] as string[]);
+    const [props] = useSelectionProps(
+        info,
+        (o): o is AnyObj => true,
+        (o) => ({ name: (o.name ?? o.kind) })
+    );
 
-    const updateState = useCallback(() => {
-        setNames(
-            info.selections.get()
-                .map((id) => info.circuit.getObj(id)!)
-                .map((o) => (o.name ?? o.kind))
-        );
-    }, [info]);
-
-    useEffect(() => {
-        info.history.addCallback(updateState);
-        info.selections.subscribe(updateState);
-
-        return () => {
-            info.history.removeCallback(updateState);
-            info.selections.unsubscribe(updateState);
-        }
-    }, [info, updateState]);
-    // const [props] = useSelectionProps(
-    //     info,
-    //     (s): s is Selectable => true,
-    //     (s) => ({ name: s.getName() })
-    // );
-
-    if (names.length === 0)
+    if (!props)
         return null;
 
     const s = selections.get();
@@ -49,7 +30,7 @@ export const TitleModule = ({ info }: Props) => {
     return (<div>
         <label>
             <TextModuleInputField
-                props={names}
+                props={props.name}
                 placeholder="<Multiple>"
                 alt="Name of object(s)"
                 getAction={(newNames) => new GroupAction(
