@@ -56,6 +56,25 @@ yarn coverage
 
 ---
 
+## Playwright Testing
+
+Before running any Playwright tests, be sure to install the browser engines using
+```bash
+npx install playwright
+```
+
+Then use the command
+```bash
+yarn playwright digital
+yarn playwright analog
+yarn playwright landing
+```
+to run playwright tests for digital, analog, or landing respectively. 
+
+For more details on working with Playwright tests in OpenCircuits, [click here](./Playwright)
+
+---
+
 ## Documentation
 
 To run this documentation site locally, simply run
