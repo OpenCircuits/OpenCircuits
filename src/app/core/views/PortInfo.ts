@@ -1,4 +1,4 @@
-import {IO_PORT_LENGTH} from "core/utils/Constants";
+import {DEFAULT_BORDER_WIDTH, IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -89,14 +89,11 @@ const GenPortInfo = (N: number, groupInfo: Record<number, PortPos | { amts: numb
                         // Single PortPos means it's only always a single port
                         return [group, { amt: 1, calcPos: () => [info] }];
                     })
-            )
+            );
 
             const config = GenConfig(newGroupInfo);
 
-            return {
-                ...prev,
-                ...config,
-            };
+            return { ...prev, ...config };
         }, {}) as Record<string, Record<`${number}:${number}`, PortPos>>
 );
 
@@ -107,8 +104,11 @@ export const PortInfo: Record<AnyComponent["kind"], Record<string, Record<`${num
             "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(1, 0) },
         },
     },
-    "ANDGate": GenPortInfo(6, {
-        0: { amts: linspaceDX(2,8,1), calcPos: (amt) => CalcPortPositions(amt, 0.48) },
+    "ANDGate": GenPortInfo(7, {
+        0: {
+            amts:    linspaceDX(2,9,1),
+            calcPos: (amt) => CalcPortPositions(amt, 0.5 - DEFAULT_BORDER_WIDTH/2),
+        },
         1: CalcPortPos(V(0.5, 0), V(1, 0)),
     }),
 };

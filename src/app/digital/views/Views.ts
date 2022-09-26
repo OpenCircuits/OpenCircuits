@@ -51,11 +51,12 @@ class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
         const size = this.transform.get().getSize();
 
         // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj).length;
+        const inputs = this.circuit.getPortsFor(this.obj)
+            .filter((p) => p.group === DigitalPortGroup.Input).length;
 
         // Draw line to visually match input ports
-        const l1 = -(size.y/2)*(0.5-inputs/2);
-        const l2 =  (size.y/2)*(0.5-inputs/2);
+        const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
+        const l2 =  (inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2;
 
         const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
         const p1 = V(-s, l1);
