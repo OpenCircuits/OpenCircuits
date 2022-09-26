@@ -22,7 +22,7 @@ export const SelectionHandler: EventHandler = ({
         // const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];
         const results = viewManager.findNearestObj(worldMousePos);
 
-        const deselectAll = (!input.isShiftKeyDown());
+        const deselectAll = (!input.isShiftKeyDown() && selections.amount() > 0);
 
         // If nothing was clicked, check if we should deselect and exit
         if (!results) {
