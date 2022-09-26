@@ -1,31 +1,49 @@
+import {CalcPortConfigID, PortInfo} from "core/views/PortInfo";
+
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {SetInputPortCount} from "digital/actions/units/SetInputPortCount";
+import {SetPortConfig} from "core/actions/compositions/SetPortConfig";
 
-import {BUFGate} from "digital/models/ioobjects";
-
-import {Gate} from "digital/models/ioobjects/gates/Gate";
+import {AllComponentInfo} from "core/models/info";
+import {AnyComponent}     from "core/models/types";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
+
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
+
 
 
 type Props = {
     info: CircuitInfo;
 }
 export const InputCountModule = ({ info }: Props) => {
-    const { history, renderer } = info;
+    const { circuit, history, renderer } = info;
 
     const [props, cs] = useSelectionProps(
         info,
-        (c): c is Gate => (c instanceof Gate && !(c instanceof BUFGate)),
-        (c) => ({ numInputs: c.getInputPortCount().getValue() })
+        (c): c is AnyComponent => (
+            (c.baseKind === "Component") &&
+            // Only allow components that allow changes to their port config
+            (c.kind in AllComponentInfo && AllComponentInfo[c.kind].PortInfo.AllowChanges)
+        ),
+        (c) => (() => {
+            const changeGroup = AllComponentInfo[c.kind].PortInfo.ChangeGroup ?? 0;
+            const curConfig = CalcPortConfigID(circuit, c);
+            const portAmt = parseInt(curConfig.split(",")[changeGroup]);
+            return { [`${changeGroup}`]: portAmt } as Record<`${number}`, number>;
+        })(),
     );
 
     if (!props)
+        return null;
+
+    const group = 0;
+
+    const inputs = props[`${group}`];
+    if (!inputs)
         return null;
 
     return (<div>
@@ -33,11 +51,16 @@ export const InputCountModule = ({ info }: Props) => {
         <label>
             <NumberModuleInputField
                 kind="int" min={2} max={8} step={1}
-                props={props.numInputs}
+                props={inputs}
                 alt="Number of inputs object(s) have"
                 getAction={(newCounts) =>
                     new GroupAction(
-                        cs.map((o,i) => SetInputPortCount(o, newCounts[i])),
+                        newCounts.map((newAmt, i) => {
+                            const configs = Object.keys(PortInfo[cs[i].kind]);
+                            return configs.find((c) =>
+                                (parseInt(c.split(",")[group]) === newAmt)
+                            )!;
+                        }).map((newConfig, i) => SetPortConfig(circuit, cs[i], newConfig)),
                         "Input Count Module"
                     )}
                 onSubmit={({ isFinal, action }) => {

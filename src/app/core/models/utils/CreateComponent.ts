@@ -20,10 +20,10 @@ export function CreateComponent(kind: keyof typeof AllComponentInfo, compID = uu
     const comp = info.Default(compID);
 
     // Create ports
-    const portConfig = PortInfo[kind][info.InitialPortGrouping];
+    const portConfig = PortInfo[kind][info.PortInfo.InitialConfig];
     const ports = Object.keys(portConfig).map((s) => {
         const [group, index] = s.split(":").map((s) => parseInt(s));
-        return info.DefaultPort(uuid(), compID, group, index);
+        return info.PortInfo.Default(uuid(), compID, group, index);
     });
 
     return [comp, ports] as const;

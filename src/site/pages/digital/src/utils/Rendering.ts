@@ -1,16 +1,12 @@
 import {RenderOptions} from "core/utils/RenderQueue";
 
-import {CreateRenderers} from "core/rendering/CreateRenderers";
-import {Renderer}        from "core/rendering/Renderer";
+import {Renderer} from "core/utils/rendering/Renderer";
 
-import {DebugRenderer} from "core/rendering/renderers/DebugRenderer";
-import {GridRenderer}  from "core/rendering/renderers/GridRenderer";
-import {ToolRenderer}  from "core/rendering/renderers/ToolRenderer";
-import {WireRenderer}  from "core/rendering/renderers/WireRenderer";
+import {DebugRenderer} from "core/utils/rendering/renderers/DebugRenderer";
+import {GridRenderer}  from "core/utils/rendering/renderers/GridRenderer";
+import {ToolRenderer}  from "core/utils/rendering/renderers/ToolRenderer";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-
-import {ComponentRenderer} from "digital/rendering/ioobjects/ComponentRenderer";
 
 
 type Info = {
@@ -20,28 +16,19 @@ type Info = {
 export function GetRenderFunc({ canvas, info }: Info) {
     const renderer = new Renderer(canvas);
 
-    const renderers = CreateRenderers(renderer, info, {
-        gridRenderer:      GridRenderer,
-        wireRenderer:      WireRenderer,
-        componentRenderer: ComponentRenderer,
-        toolRenderer:      ToolRenderer,
-        debugRenderer:     DebugRenderer,
-    });
-
     return function render({ useGrid }: RenderOptions = { useGrid: true }) {
-        const { Grid, Wires, Components, Tools, Debug } = renderers;
-        const { designer, selections, toolManager } = info;
-
         renderer.clear();
 
         if (useGrid)
-            Grid.render();
+            GridRenderer.render(renderer, info);
 
-        Wires.renderAll(designer.getWires(), selections.get());
-        Components.renderAll(designer.getObjects(), selections.get());
+        info.viewManager.render({
+            ...info,
+            renderer,
+        });
 
-        Tools.render(toolManager);
+        ToolRenderer.render(renderer, info);
 
-        Debug.render();
+        DebugRenderer.render(renderer, info);
     }
 }

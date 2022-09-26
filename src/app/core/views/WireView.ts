@@ -45,7 +45,7 @@ export class WireView<
     public override onPropChange(propKey: string): void {
         super.onPropChange(propKey);
 
-        if (["x", "y", "angle"].includes(propKey))
+        if (["x", "y", "angle", "portConfig"].includes(propKey))
             this.curve.setDirty();
     }
 

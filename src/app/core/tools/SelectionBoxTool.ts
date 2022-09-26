@@ -34,14 +34,14 @@ export const SelectionBoxTool = (() => {
             p1 = input.getMouseDownPos();
             p2 = input.getMousePos();
         },
-        onDeactivate({}: Event, { input, camera, circuit, history, selections,viewManager }: CircuitInfo): void {
+        onDeactivate({}: Event, { input, camera, history, selections,viewManager }: CircuitInfo): void {
             // Get bounding box for the selections
             const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
             // Find all objects within the selection box
             const objects = viewManager.findObjects(box);
 
-            const deselectAll = (!input.isShiftKeyDown());
+            const deselectAll = (!input.isShiftKeyDown() && selections.amount() > 0);
 
             // If nothing was clicked, check if we should deselect and exit
             if (objects.length === 0) {

@@ -2,19 +2,26 @@ import React, {useCallback, useEffect, useState} from "react";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
+import {Prop}   from "core/models/PropInfo";
 import {AnyObj} from "core/models/types";
 
 
 // type ToArray<T> = T extends T ? T[] : never;
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type RecordOfArrays<Obj extends AnyObj, Props extends Partial<Obj>> = {
+type RecordOfArrays<Props extends Record<string, Prop>> = {
+    // Get every key from all records (if it's a union of records)
     [Key in KeysOfUnion<Props>]:
+        // And map it to an array of non-nullable props
         Array<NonNullable<
+            // Get each prop that is associated with the current Key
             (Props extends { [k in Key]?: unknown }
+                // Do this distributively otherwise it'll only get the
+                //  intersection props that all the Records have
                 ? Props[Key]
                 : never)
         >>;
 }
+
 // type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 
 // // expands object types recursively
@@ -25,14 +32,14 @@ type RecordOfArrays<Obj extends AnyObj, Props extends Partial<Obj>> = {
 
 // type Test2 = Expand<keyof Test>;
 
-export const useSelectionProps = <Obj extends AnyObj, Props extends Partial<Obj>>(
+export const useSelectionProps = <Obj extends AnyObj, Props extends Record<string, Prop>>(
     info: CircuitInfo,
     validTypes: (s: AnyObj) => s is Obj,
     getProps: (s: Obj) => Props,
     deps: React.DependencyList = [],
     ignore: (s: AnyObj) => boolean = () => false,
 ) => {
-    const [props, setProps] = useState(undefined as RecordOfArrays<Obj, Props> | undefined);
+    const [props, setProps] = useState(undefined as RecordOfArrays<Props> | undefined);
 
     // This function is theoretically called anytime the Selections
     //  or their properties change
@@ -65,7 +72,7 @@ export const useSelectionProps = <Obj extends AnyObj, Props extends Partial<Obj>
         const props = Object.fromEntries(
             keys.map((key) =>
                 [key, allProps.map((p) => p[key])])
-        ) as RecordOfArrays<Obj, Props>;
+        ) as RecordOfArrays<Props>;
 
         setProps(props);
     }, deps);

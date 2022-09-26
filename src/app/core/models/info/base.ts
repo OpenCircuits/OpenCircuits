@@ -5,10 +5,16 @@ import {AnyComponent, AnyObj, AnyPort, AnyWire} from "../types";
 
 
 export type ComponentInfo<C extends AnyComponent> = {
-    Default:     (id: GUID) => C;
-    DefaultPort: (id: GUID, parent: GUID, group: number, index: number) => AnyPort;
+    Default: (id: GUID) => C;
 
-    InitialPortGrouping: string;
+    PortInfo: {
+        Default: (id: GUID, parent: GUID, group: number, index: number) => AnyPort;
+        InitialConfig: string;
+        AllowChanges: boolean;
+         // The group that should dictate the changes
+         //  i.e. Input count, Select count, Output count
+        ChangeGroup?: number;
+    };
 
     // Why can't I re-use????
     PropInfo: Partial<Record<keyof C, PropInfo>>;

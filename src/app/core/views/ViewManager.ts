@@ -50,6 +50,13 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         this.views[depth].set(m.id, view);
         // Add to depth map as well
         this.depthMap.set(m.id, depth);
+
+        // If added a port, let sibling ports know to update
+        if (m.baseKind === "Port") {
+            const siblings = this.circuit.getPortsFor(this.circuit.getPortParent(m))
+                .filter((p) => ((p !== m) && this.depthMap.has(p.id)));
+            siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig"));
+        }
     }
 
     public onEditObj(m: Obj, propKey: string) {
@@ -76,6 +83,13 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         this.depthMap.delete(m.id);
         if (!this.views[depth].delete(m.id))
             throw new Error(`ViewManager: Failed to remove view for ${m.kind}[${m.id}](${m.name})! Not found!`);
+
+        // If remove a port, let sibling ports know to update
+        if (m.baseKind === "Port") {
+            const siblings = this.circuit.getPortsFor(this.circuit.getPortParent(m))
+                .filter((p) => ((p !== m) && this.depthMap.has(p.id)));
+            siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig"));
+        }
     }
 
     public render(info: RenderInfo) {

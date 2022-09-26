@@ -1,6 +1,8 @@
 import {GUID}      from "core/utils/GUID";
 import {AngleInfo} from "core/utils/Units";
 
+import {CHANGEABLE_PORT_COMPONENTS} from "core/views/PortInfo";
+
 import {AnyComponent, AnyPort, AnyWire} from "../types";
 import {DefaultComponent}               from "../types/base/Component";
 import {DefaultPort}                    from "../types/base/Port";
@@ -11,10 +13,17 @@ import {ComponentInfo, PortInfo, WireInfo} from "./base";
 
 export const GenComponentInfo = <C extends AnyComponent>(
     kind: C["kind"],
-    InitialPortGrouping: string,
+    DefaultPort: ComponentInfo<C>["PortInfo"]["Default"],
+    InitialPortConfig: string,
+    ChangeGroup?: number,
 ) => ({
     Default:  (id: GUID) => ({ kind, ...DefaultComponent(id) }),
-    InitialPortGrouping,
+    PortInfo: {
+        Default:       DefaultPort,
+        InitialConfig: InitialPortConfig,
+        AllowChanges:  (CHANGEABLE_PORT_COMPONENTS.includes(kind)),
+        ChangeGroup,
+    },
     PropInfo: {
         "x": { type: "float", label: "X Position", step: 1 },
         "y": { type: "float", label: "Y Position", step: 1 },

@@ -1,3 +1,7 @@
+import {CircuitController} from "core/controllers/CircuitController";
+import {ViewManager}       from "core/views/ViewManager";
+import {Views}             from "digital/views/Views";
+
 import {Camera} from "math/Camera";
 
 import {Input}             from "core/utils/Input";
@@ -10,15 +14,27 @@ import {DefaultTool} from "core/tools/DefaultTool";
 import {Tool}        from "core/tools/Tool";
 import {ToolManager} from "core/tools/ToolManager";
 
+import {DefaultCircuit} from "core/models/Circuit";
+
+import {DigitalObj} from "core/models/types/digital";
+
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {DigitalCircuitDesigner} from "digital/models";
+
+// import {DigitalCircuitDesigner} from "digital/models";
 
 
 export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalCircuitInfo {
     const camera = new Camera();
     const history = new HistoryManager();
-    const designer = new DigitalCircuitDesigner(1);
+    // const designer = new DigitalCircuitDesigner(1);
+
+    const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
+    const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>(
+        circuit,
+        (c, m) => (Views[m.kind](c, m))
+    );
+
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(defaultTool, ...tools);
@@ -27,7 +43,10 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalC
         locked: false,
         history,
         camera,
-        designer,
+
+        circuit,
+        viewManager,
+        // designer,
 
         // This is necessary because input is created later in the pipeline because it requires canvas
         input: undefined as unknown as Input,

@@ -2,12 +2,10 @@ import {GetDebugInfo} from "core/utils/Debug";
 import {GUID}         from "core/utils/GUID";
 import {Observable}   from "core/utils/Observable";
 
-import {Circuit}                           from "core/models/Circuit";
-import {AnyNode, AnyObj, AnyPort, AnyWire} from "core/models/types";
+import {Circuit}         from "core/models/Circuit";
+import {AnyNode, AnyObj} from "core/models/types";
 
-import {Component} from "core/models/types/base/Component";
-import {Port}      from "core/models/types/base/Port";
-import {Wire}      from "core/models/types/base/Wire";
+import {AnyComponentFrom, AnyPortFrom, AnyWireFrom} from "core/models/types/utils";
 
 
 export type ObjEvent<Obj extends AnyObj> = {
@@ -26,19 +24,17 @@ export type ICDataEvent = {
 }
 export type CircuitEvent<Obj extends AnyObj> = ObjEvent<Obj> | ICDataEvent;
 
-type c_Comp<T extends AnyObj> = (T extends Component ? T : never);
-type c_Port<T extends AnyObj> = (T extends Port ? T : never);
-type c_Wire<T extends AnyObj> = (T extends Wire ? T : never);
+// TODO: find better name and place for these
 type c_Node<T extends AnyObj> = (T extends AnyNode ? T : never);
 
 
 export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEvent<Obj>> {
-    protected readonly wireKind: c_Wire<Obj>["kind"];
+    protected readonly wireKind: AnyWireFrom<Obj>["kind"];
     protected readonly nodeKind: c_Node<Obj>["kind"];
 
     protected circuit: Circuit<Obj>;
 
-    public constructor(circuit: Circuit<Obj>, wireKind: c_Wire<Obj>["kind"], nodeKind: c_Node<Obj>["kind"]) {
+    public constructor(circuit: Circuit<Obj>, wireKind: AnyWireFrom<Obj>["kind"], nodeKind: c_Node<Obj>["kind"]) {
         super();
 
         this.wireKind = wireKind;
@@ -91,7 +87,12 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         return [...this.circuit.objects.keys()];
     }
 
-    public getPortParent(port: c_Port<Obj>): c_Comp<Obj> {
+    public findPort(parent: AnyComponentFrom<Obj>, group: number, index: number): AnyPortFrom<Obj> | undefined {
+        return this.getPortsFor(parent)
+            .find((port) => (port.group === group && port.index === index));
+    }
+
+    public getPortParent(port: AnyPortFrom<Obj>): AnyComponentFrom<Obj> {
         const parent = this.getObj(port.parent);
         if (!parent) {
             throw new Error("CircuitController: Failed to find parent " +
@@ -99,31 +100,31 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         }
         if (parent.baseKind !== "Component")
             throw new Error(`CircuitController: Received a non-component parent for ${GetDebugInfo(port)}!`);
-        return parent as c_Comp<Obj>;
+        return parent as AnyComponentFrom<Obj>;
     }
 
-    public getPortsFor(comp: c_Comp<Obj>): Array<c_Port<Obj>> {
+    public getPortsFor(comp: AnyComponentFrom<Obj>): Array<AnyPortFrom<Obj>> {
         // if (!this.hasObj(objID))
         //     throw new Error(`CircuitController: Attempted to get Ports for [${objID}] which doesn't exist!`);
         // TODO: make this more efficient with some map to cache this relation
         return (
             [...this.circuit.objects.values()]
                 .filter((obj) =>
-                    (obj.baseKind === "Port" && obj.parent === comp.id)) as Array<c_Port<Obj>>
+                    (obj.baseKind === "Port" && obj.parent === comp.id)) as Array<AnyPortFrom<Obj>>
         );
     }
 
-    public getWiresFor(port: c_Port<Obj>): Array<c_Wire<Obj>> {
+    public getWiresFor(port: AnyPortFrom<Obj>): Array<AnyWireFrom<Obj>> {
         // TODO: make this more efficient with some map to cache this relation
         return (
             [...this.circuit.objects.values()]
                 .filter((o) =>
                     (o.baseKind === "Wire" &&
-                     (o.p1 === port.id || o.p2 === port.id))) as Array<c_Wire<Obj>>
+                     (o.p1 === port.id || o.p2 === port.id))) as Array<AnyWireFrom<Obj>>
         );
     }
 
-    public getPortsForWire(wire: c_Wire<Obj>): [c_Port<Obj>, c_Port<Obj>] {
+    public getPortsForWire(wire: AnyWireFrom<Obj>): [AnyPortFrom<Obj>, AnyPortFrom<Obj>] {
         const p1 = this.getObj(wire.p1);
         const p2 = this.getObj(wire.p2);
         if (!p1) {
@@ -140,10 +141,10 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         if (p2.baseKind !== "Port")
             throw new Error("DigitalWireView: Received a non-port p2 of " +
                             `${GetDebugInfo(p2)} for ${GetDebugInfo(wire)}!`);
-        return [p1 as c_Port<Obj>, p2 as c_Port<Obj>];
+        return [p1 as AnyPortFrom<Obj>, p2 as AnyPortFrom<Obj>];
     }
 
-    public getWireKind(): c_Wire<Obj>["kind"] {
+    public getWireKind(): AnyWireFrom<Obj>["kind"] {
         return this.wireKind;
     }
 

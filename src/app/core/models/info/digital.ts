@@ -1,29 +1,29 @@
 import {ANDGate, DigitalComponent, DigitalNode,
-        DigitalObj, DigitalPort, DigitalWire} from "../types/digital";
+        DigitalObj, DigitalPort, DigitalPortGroup, DigitalWire} from "../types/digital";
 
-import {ComponentInfoRecord, ObjInfoRecord, WireInfo} from "./base";
-import {GenComponentInfo, GenPortInfo, GenWireInfo}   from "./utils";
+import {ComponentInfoRecord, ObjInfoRecord}         from "./base";
+import {GenComponentInfo, GenPortInfo, GenWireInfo} from "./utils";
 
 
 const GenDigitalComponentInfo = <C extends DigitalComponent>(
     kind: C["kind"],
-    InitialPortGrouping: string,
-) => ({
-    ...GenComponentInfo<C>(kind, InitialPortGrouping),
-    DefaultPort: DigitalPort.Default,
-} as const);
-
+    InitialPortConfig: string,
+    ChangeGroup?: number,
+) => (
+    GenComponentInfo<C>(
+        kind,
+        DigitalPort.Default,
+        InitialPortConfig,
+        ChangeGroup,
+    )
+);
 
 const DigitalPort = GenPortInfo<DigitalPort>("DigitalPort");
-const DigitalWire: WireInfo<DigitalWire> = GenWireInfo<DigitalWire>("DigitalWire");
-
-const DigitalNode = GenDigitalComponentInfo<DigitalNode>("DigitalNode", "1,1");
-const ANDGate = GenDigitalComponentInfo<ANDGate>("ANDGate", "2,1");
-
+const DigitalWire = GenWireInfo<DigitalWire>("DigitalWire");
 
 export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
-    "ANDGate":     ANDGate,
-    "DigitalNode": DigitalNode,
+    "ANDGate":     GenDigitalComponentInfo<ANDGate>("ANDGate", "2,1", DigitalPortGroup.Input),
+    "DigitalNode": GenDigitalComponentInfo<DigitalNode>("DigitalNode", "1,1"),
 };
 
 export const DigitalInfo: ObjInfoRecord<DigitalObj> = {

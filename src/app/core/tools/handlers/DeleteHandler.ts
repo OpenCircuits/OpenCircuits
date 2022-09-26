@@ -7,8 +7,6 @@ import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
 
 import {DeselectAll} from "core/actions/units/Select";
 
-import {IOObject} from "core/models";
-
 import {EventHandler} from "../EventHandler";
 
 
@@ -24,12 +22,16 @@ export const DeleteHandler: EventHandler = ({
          (event.key === "Delete" || event.key === "Backspace") &&
          selections.amount() > 0),
 
-    getResponse: ({ history, designer, selections }: CircuitInfo) => {
-        const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
+    getResponse: ({ circuit, history, selections }: CircuitInfo) => {
+        const objs = selections.get()
+            .map((id) => circuit.getObj(id)!)
+            // Don't allow user to explicitly delete ports
+            .filter((o) => (o.baseKind !== "Port"));
+
         // Deselect the objects then remove them
         history.add(new GroupAction([
             DeselectAll(selections),
-            DeleteGroup(designer, objs),
+            DeleteGroup(circuit, objs),
         ], "Delete Handler"));
     },
 });
