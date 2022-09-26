@@ -21,13 +21,9 @@ import {DigitalObj} from "core/models/types/digital";
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 
-// import {DigitalCircuitDesigner} from "digital/models";
-
-
 export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalCircuitInfo {
     const camera = new Camera();
     const history = new HistoryManager();
-    // const designer = new DigitalCircuitDesigner(1);
 
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
     const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>(
@@ -46,7 +42,6 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]): DigitalC
 
         circuit,
         viewManager,
-        // designer,
 
         // This is necessary because input is created later in the pipeline because it requires canvas
         input: undefined as unknown as Input,

@@ -6,11 +6,13 @@ import {Action}      from "../Action";
 import {GroupAction} from "../GroupAction";
 import {Delete}      from "../units/Place";
 
+import {DeleteGroup} from "./DeleteGroup";
+
 
 export function DeletePort(circuit: CircuitController<AnyObj>, port: AnyPort): Action {
     return new GroupAction([
         // Delete all connections as well
-        ...circuit.getWiresFor(port).map((w) => Delete(circuit, w)),
+        DeleteGroup(circuit, circuit.getWiresFor(port)),
         Delete(circuit, port),
     ], "Remove Port");
 }
