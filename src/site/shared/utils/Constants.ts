@@ -8,3 +8,5 @@ export const ITEMNAV_HEIGHT = 255;
 export const DOUBLE_CLICK_DURATION = 500; // ms
 export const AUTO_SAVE_COOKIE_KEY = "IS_AUTO_SAVE";
 export const DEV_CACHED_CIRCUIT_FILE = "devCached.circuit";
+
+export const OVERWRITE_CIRCUIT_MESSAGE = "Are you sure you want to overwrite your current scene?";

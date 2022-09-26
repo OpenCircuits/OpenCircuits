@@ -23,7 +23,7 @@ export namespace DebugRenderer {
         const objs = circuit.getObjs();
 
         if (debugCullboxes) {
-            const cullboxes = objs.map((o) => viewManager.getView(o)!.getCullbox());
+            const cullboxes = objs.map((o) => viewManager.getView(o.id)!.getCullbox());
             renderer.save();
             renderer.transform(camera);
             for (const cullBox of cullboxes) {

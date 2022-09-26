@@ -2,8 +2,8 @@ import {GetDebugInfo} from "core/utils/Debug";
 import {GUID}         from "core/utils/GUID";
 import {Observable}   from "core/utils/Observable";
 
-import {Circuit}         from "core/models/Circuit";
-import {AnyNode, AnyObj} from "core/models/types";
+import {Circuit, DefaultCircuit} from "core/models/Circuit";
+import {AnyNode, AnyObj}         from "core/models/types";
 
 import {AnyComponentFrom, AnyPortFrom, AnyWireFrom} from "core/models/types/utils";
 
@@ -22,7 +22,10 @@ export type ICDataEvent = {
     op:   "added" | "removed";
     icID: GUID;
 }
-export type CircuitEvent<Obj extends AnyObj> = ObjEvent<Obj> | ICDataEvent;
+export type ResetEvent = {
+    type: "reset";
+}
+export type CircuitEvent<Obj extends AnyObj> = ObjEvent<Obj> | ICDataEvent | ResetEvent;
 
 // TODO: find better name and place for these
 type c_Node<T extends AnyObj> = (T extends AnyNode ? T : never);
@@ -43,14 +46,18 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
     }
 
     public hasObj(obj: Obj): boolean {
-        return (this.circuit.objects.has(obj.id));
+        return (obj.id in this.circuit.objects);
     }
 
     public addObj(obj: Obj): void {
         if (this.hasObj(obj))
             throw new Error(`CircuitController: Attempted to add ${GetDebugInfo(obj)} which already exists!`);
-        this.circuit.objects.set(obj.id, obj);
+        this.circuit.objects[obj.id] = obj;
         this.publish({ type: "obj", op: "added", obj });
+    }
+
+    public setMetadata<K extends keyof Circuit<Obj>["metadata"]>(key: K, val: Circuit<Obj>["metadata"][K]) {
+        this.circuit.metadata[key] = val;
     }
 
     public setPropFor(obj: Obj, key: string, val: string | boolean | number): void {
@@ -66,7 +73,7 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
     public removeObj(obj: Obj): void {
         if (!this.hasObj(obj))
             throw new Error(`CircuitController: Attempted to remove ${GetDebugInfo(obj)}) which isn't in the circuit!`);
-        this.circuit.objects.delete(obj.id);
+        delete this.circuit.objects[obj.id];
         this.publish({ type: "obj", op: "removed", obj });
     }
 
@@ -80,11 +87,11 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
     }
 
     public getObj(objID: GUID): Obj | undefined {
-        return (this.circuit.objects.get(objID));
+        return (this.circuit.objects[objID]);
     }
 
-    public getObjs(): GUID[] {
-        return [...this.circuit.objects.keys()];
+    public getObjs(): Obj[] {
+        return Object.values(this.circuit.objects);
     }
 
     public findPort(parent: AnyComponentFrom<Obj>, group: number, index: number): AnyPortFrom<Obj> | undefined {
@@ -108,7 +115,7 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         //     throw new Error(`CircuitController: Attempted to get Ports for [${objID}] which doesn't exist!`);
         // TODO: make this more efficient with some map to cache this relation
         return (
-            [...this.circuit.objects.values()]
+            this.getObjs()
                 .filter((obj) =>
                     (obj.baseKind === "Port" && obj.parent === comp.id)) as Array<AnyPortFrom<Obj>>
         );
@@ -117,7 +124,7 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
     public getWiresFor(port: AnyPortFrom<Obj>): Array<AnyWireFrom<Obj>> {
         // TODO: make this more efficient with some map to cache this relation
         return (
-            [...this.circuit.objects.values()]
+            this.getObjs()
                 .filter((o) =>
                     (o.baseKind === "Wire" &&
                      (o.p1 === port.id || o.p2 === port.id))) as Array<AnyWireFrom<Obj>>
@@ -142,6 +149,19 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
             throw new Error("DigitalWireView: Received a non-port p2 of " +
                             `${GetDebugInfo(p2)} for ${GetDebugInfo(wire)}!`);
         return [p1 as AnyPortFrom<Obj>, p2 as AnyPortFrom<Obj>];
+    }
+
+    public reset(replacement: Circuit<Obj> = DefaultCircuit()): void {
+        this.circuit = replacement;
+        this.publish({ type: "reset" });
+    }
+
+    public getMetadata(): Readonly<Circuit<Obj>["metadata"]> {
+        return this.circuit.metadata;
+    }
+
+    public getRawModel(): Readonly<Circuit<Obj>> {
+        return this.circuit;
     }
 
     public getWireKind(): AnyWireFrom<Obj>["kind"] {

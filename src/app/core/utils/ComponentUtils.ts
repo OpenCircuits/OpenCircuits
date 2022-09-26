@@ -74,5 +74,4 @@ export function GetAllPaths(
 
     // Get all distinct paths
     return [...new Set(wires.flatMap((w) => GetPath(circuit, w, full)))];
-
 }

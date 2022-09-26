@@ -6,9 +6,9 @@ import {AnyObj} from "./types";
 
 
 export type Circuit<Obj extends AnyObj> = {
-    objects: Map<GUID, Obj>;
+    objects: Record<GUID, Obj>;
 
-    ics: Map<GUID, Circuit<Obj>>;
+    ics: Record<GUID, Circuit<Obj>>;
 
     metadata: {
         id: GUID;
@@ -20,8 +20,8 @@ export type Circuit<Obj extends AnyObj> = {
 
 export const DefaultCircuit =
     <Obj extends AnyObj>(): Circuit<Obj> => ({
-        objects:  new Map(),
-        ics:      new Map(),
+        objects:  {},
+        ics:      {},
         metadata: {
             id:        "", // TODO: generate
             name:      "",

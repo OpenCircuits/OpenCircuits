@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
+import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
@@ -24,8 +24,12 @@ type Props = {
     extraUtilities: Utility[];
 }
 export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
-    const { curMenu, isLocked } = useSharedSelector(
-        (state) => ({ curMenu: state.header.curMenu, isLocked: state.circuit.isLocked })
+    const { curMenu, isLocked, isSaved } = useSharedSelector(
+        (state) => ({
+            curMenu:  state.header.curMenu,
+            isLocked: state.circuit.isLocked,
+            isSaved:  state.circuit.isSaved,
+        })
     );
     const dispatch = useSharedDispatch();
 
@@ -36,6 +40,12 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
             setEnableReload(result.includes(DEV_CACHED_CIRCUIT_FILE));
         })
     }, [setEnableReload]);
+
+    const load = () => {
+        dispatch(CloseHeaderMenus());
+        if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
+            helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+    }
 
     return (
         <Dropdown open={(curMenu === "utilities")}
@@ -70,10 +80,7 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
                 </div>
                 {enableReload && (
                     <div role="button" tabIndex={0}
-                         onClick={() => {
-                            dispatch(CloseHeaderMenus());
-                            helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-                         }}>
+                         onClick={load}>
                         <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Reload Circuit Icon" />
                         <span>Reload Circuit</span>
                     </div>

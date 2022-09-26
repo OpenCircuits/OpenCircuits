@@ -16,5 +16,5 @@ export const SelectAllHandler: EventHandler = ({
          circuit.getObjs().length !== selections.amount()),
 
     getResponse: ({ history, circuit, selections }: CircuitInfo) =>
-        history.add(SelectGroup(selections, circuit.getObjs())),
+        history.add(SelectGroup(selections, circuit.getObjs().map((o) => o.id))),
 });

@@ -38,7 +38,7 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         this.depthMap = new Map();
     }
 
-    public onAddObj(m: Obj) {
+    private addObj(m: Obj) {
         const view = this.genView(this.circuit, m);
         const depth = view.getDepth() + DEPTH_OFFSET; // Shift so we can have "negative" depths
         if (depth < 0)
@@ -50,6 +50,18 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         this.views[depth].set(m.id, view);
         // Add to depth map as well
         this.depthMap.set(m.id, depth);
+    }
+
+    public reset(c?: ReturnType<Circuit["getRawModel"]>): void {
+        this.views = [];
+        this.depthMap = new Map();
+
+        if (c)
+            Object.values(c.objects).forEach((o: Obj) => this.addObj(o));
+    }
+
+    public onAddObj(m: Obj) {
+        this.addObj(m);
 
         // If added a port, let sibling ports know to update
         if (m.baseKind === "Port") {

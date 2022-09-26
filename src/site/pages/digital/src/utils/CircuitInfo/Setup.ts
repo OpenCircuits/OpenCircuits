@@ -17,7 +17,7 @@ import {GetDigitalCircuitInfoHelpers} from "./DigitalCircuitInfoHelpers";
 
 export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, defaultTool: DefaultTool,
                       ...tools: Tool[]): [DigitalCircuitInfo, CircuitInfoHelpers] {
-    const info = CreateInfo(defaultTool, ...tools);
+    const [info, reset] = CreateInfo(defaultTool, ...tools);
 
     // Setup view
     info.circuit.subscribe((ev) => {
@@ -31,5 +31,5 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, def
         }
     });
 
-    return [info, GetDigitalCircuitInfoHelpers(store, canvas, info)];
+    return [info, GetDigitalCircuitInfoHelpers(store, canvas, info, reset)];
 }
