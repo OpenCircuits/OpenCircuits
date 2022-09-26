@@ -2,7 +2,7 @@ import {IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
-import {linspace} from "math/MathUtils";
+import {linspace, linspaceDX} from "math/MathUtils";
 
 import {AnyComponent, AnyObj, AnyPort} from "core/models/types";
 
@@ -48,8 +48,56 @@ const CalcPortPos = (origin: Vector, dir: Vector) =>  ({
 });
 
 const CalcPortPositions = (amt: number, spacing: number) => (
-    linspace(-amt/2*spacing/2, +amt/2*spacing/2, amt)
+    linspace(-(amt-1)/2*spacing, +(amt-1)/2*spacing, amt)
         .map((h) => CalcPortPos(V(-0.5, h), V(-1, 0)))
+);
+
+
+type Positioner = (amt: number) => PortPos[];
+
+const GenConfig = (groupInfo: Record<number, { amt: number, calcPos: Positioner }>) => {
+    const groups = Object.keys(groupInfo).map((v) => parseInt(v)).sort();
+
+    // Generate comma separated config ID
+    const configID = (() => {
+        const g = new Array(Math.max(...groups));
+        groups.forEach((v) => (g[v] = groupInfo[v].amt));
+        return g.join(",");
+    })();
+
+    return {
+        [configID]: Object.fromEntries(
+            // Go through each group
+            groups.flatMap((group) => (
+                // And then calculate the position at each index
+                groupInfo[group].calcPos(groupInfo[group].amt)
+                    // And then map it with its associated ID
+                    .map((p, index) => [`${group}:${index}`, p] as const)
+            ))
+        ) as Record<`${number}:${number}`, PortPos>,
+    }
+}
+
+const GenPortInfo = (N: number, groupInfo: Record<number, PortPos | { amts: number[], calcPos: Positioner }>) => (
+    new Array(N).fill(0)
+        .reduce((prev, _, i) => {
+            const newGroupInfo = Object.fromEntries(
+                Object.entries(groupInfo)
+                    .map(([group, info]) => {
+                        if ("amts" in info)
+                            return [group, { amt: info.amts[i], calcPos: info.calcPos }] as const;
+                        // Single PortPos means it's only always a single port
+                        return [group, { amt: 1, calcPos: () => [info] }];
+                    })
+            )
+
+            const config = GenConfig(newGroupInfo);
+
+            return {
+                ...prev,
+                ...config,
+            };
+        }, {}) as Record<string, Record<`${number}:${number}`, PortPos>>
 );
 
 export const PortInfo: Record<AnyComponent["kind"], Record<string, Record<`${number}:${number}`, PortPos>>> = {
@@ -59,20 +107,10 @@ export const PortInfo: Record<AnyComponent["kind"], Record<string, Record<`${num
             "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(1, 0) },
         },
     },
-    "ANDGate": {
-        // "Config"
-        "2,1": {
-            "0:0": CalcPortPositions(2, 0.5)[0],
-            "0:1": CalcPortPositions(2, 0.5)[1],
-            "1:0": CalcPortPos(V(0.5, 0), V(1, 0)),
-        },
-        "3,1": {
-            "0:0": CalcPortPositions(3, 0.5)[0],
-            "0:1": CalcPortPositions(3, 0.5)[1],
-            "0:2": CalcPortPositions(3, 0.5)[2],
-            "1:0": CalcPortPos(V(0.5, 0), V(1, 0)),
-        },
-    },
+    "ANDGate": GenPortInfo(6, {
+        0: { amts: linspaceDX(2,8,1), calcPos: (amt) => CalcPortPositions(amt, 0.48) },
+        1: CalcPortPos(V(0.5, 0), V(1, 0)),
+    }),
 };
 
 // This is a list of all components that have more than one port configuration
