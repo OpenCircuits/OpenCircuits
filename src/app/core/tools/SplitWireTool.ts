@@ -54,7 +54,7 @@ export const SplitWireTool: Tool = (() => {
 
             action = new GroupAction([
                 DeselectAll(selections),
-                Split(circuit, wire, nodeID),
+                Split(circuit, wire, info.viewManager.getTopDepth() + 1, nodeID),
                 Select(selections, nodeID),
             ], "Split Wire");
 

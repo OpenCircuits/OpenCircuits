@@ -16,6 +16,7 @@ export type ObjEvent<Obj extends AnyObj> = {
 } | {
     op: "edited";
     prop: string;
+    val: string | boolean | number;
 })
 export type ICDataEvent = {
     type: "ic";
@@ -37,12 +38,13 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
 
     protected circuit: Circuit<Obj>;
 
+    // It's assumed that this circuit has no objects yet
     public constructor(circuit: Circuit<Obj>, wireKind: AnyWireFrom<Obj>["kind"], nodeKind: c_Node<Obj>["kind"]) {
         super();
 
         this.wireKind = wireKind;
         this.nodeKind = nodeKind;
-        this.circuit = circuit;
+        this.circuit  = circuit;
     }
 
     public hasObj(obj: Obj): boolean {
@@ -60,14 +62,17 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
         this.circuit.metadata[key] = val;
     }
 
+    // TODO: Have the key/vals be type-safe?
     public setPropFor(obj: Obj, key: string, val: string | boolean | number): void {
         if (!(key in obj)) {
             throw new Error(`CircuitController: Attempted to set prop ${key} `
                             + `from ${GetDebugInfo(obj)} which doesn't exist!`);
         }
+
+        this.publish({ type: "obj", op: "edited", obj, prop: key, val });
+
         // TODO: fix the need for this cast?
-        (obj as Record<string, string | boolean | number>)[key] = val;
-        this.publish({ type: "obj", op: "edited", obj, prop: key });
+        obj[key as keyof Obj] = val as Obj[keyof Obj];
     }
 
     public removeObj(obj: Obj): void {

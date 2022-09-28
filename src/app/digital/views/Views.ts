@@ -6,6 +6,7 @@ import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH,
 import {V, Vector} from "Vector";
 
 import {CircleContains} from "math/MathUtils";
+import {Rect}           from "math/Rect";
 
 import {Style} from "core/utils/rendering/Style";
 
@@ -63,6 +64,13 @@ class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
         const p2 = V(-s, l2);
 
         renderer.draw(new Line(p1, p2), style);
+    }
+
+    protected override getBounds(): Rect {
+        // Get current number of inputs
+        const inputs = this.circuit.getPortsFor(this.obj)
+            .filter((p) => p.group === DigitalPortGroup.Input).length;
+        return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }
 

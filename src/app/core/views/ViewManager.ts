@@ -2,7 +2,8 @@ import {Vector} from "Vector";
 
 import {Transform} from "math/Transform";
 
-import {GUID} from "core/utils/GUID";
+import {GetDebugInfo} from "core/utils/Debug";
+import {GUID}         from "core/utils/GUID";
 
 import {AnyObj} from "core/models/types";
 
@@ -11,7 +12,61 @@ import {CircuitController} from "core/controllers/CircuitController";
 import {BaseView, RenderInfo} from "./BaseView";
 
 
-const DEPTH_OFFSET = 100;
+const LAYER_OFFSET = 100;
+
+
+class DepthMap<T> {
+    // TODO: MAKE THIS MORE EFFICIENT WITH INSERTION SORT OR SOME SHIT
+    private readonly depths: Array<Set<T>>;
+
+    public constructor() {
+        this.depths = [];
+    }
+
+    // Allows this to be iterable.
+    //  Iterates in order of depth.
+    public *[Symbol.iterator]() {
+        for (const vals of this.depths) {
+            if (!vals)
+                continue;
+            for (const val of vals)
+                yield val;
+        }
+    }
+
+    public addEntry(t: T, depth: number) {
+        if (!this.depths[depth])
+            this.depths[depth] = new Set();
+        this.depths[depth].add(t);
+    }
+
+    public editEntry(t: T, oldDepth: number, newDepth: number) {
+        this.removeEntry(t, oldDepth);
+        this.addEntry(t, newDepth);
+    }
+
+    public removeEntry(t: T, depth: number) {
+        this.depths[depth].delete(t);
+    }
+
+    public getMinDepth() {
+        // Return 1st non-empty depth entry
+        for (let i = 0; i < this.depths.length; i++) {
+            if (this.depths[i]?.size > 0)
+                return i;
+        }
+        return 0;
+    }
+    public getMaxDepth() {
+        // Return 1st non-empty depth entry in reverse order
+        for (let i = this.depths.length-1; i >= 0; i--) {
+            if (this.depths[i]?.size > 0)
+                return i;
+        }
+        return 0;
+    }
+}
+
 
 type ViewFactory<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> =
     (c: Circuit, o: Obj) => BaseView<Obj, Circuit>;
@@ -24,37 +79,43 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
 
     protected readonly circuit: Circuit;
 
-    // Array of views, by layer sorted by depth
-    // So views[1] means all the views at depth = 1
-    protected views: Array<Map<GUID, BaseView<Obj, Circuit>>>;
+    protected views: Map<GUID, BaseView<Obj, Circuit>>;
 
-    // Keep mapping of each entry and their associated depth for fast lookup
-    protected depthMap: Map<GUID, number>;
+    // Array of depth maps, sorted by layer.
+    //  So depthMap[1] is depth map at layer = 1
+    // Wires and Components/Port by default live on separate layers
+    //  so that wires are always drawn undernearth Components/Ports.
+    // The depth map itself is then a sorted map of each object ID by their zIndex.
+    protected depthMap: Array<DepthMap<GUID>>;
 
+    // It's assumed that this circuit has no objects yet
     public constructor(circuit: Circuit, genView: ViewFactory<Obj, Circuit>) {
         this.circuit = circuit;
         this.genView = genView;
-        this.views = [];
-        this.depthMap = new Map();
+        this.views = new Map();
+        this.depthMap = [];
     }
 
     private addObj(m: Obj) {
         const view = this.genView(this.circuit, m);
-        const depth = view.getDepth() + DEPTH_OFFSET; // Shift so we can have "negative" depths
-        if (depth < 0)
-            throw new Error(`ViewManager: Received depth of ${depth} from view for ${m.kind}[${m.id}](${m.name})!`);
-        // Add layer at depth if it doesn't exist
-        if (!(depth in this.views))
-            this.views[depth] = new Map();
-        // Push this view to the layer
-        this.views[depth].set(m.id, view);
-        // Add to depth map as well
-        this.depthMap.set(m.id, depth);
+
+        // Register to view map
+        this.views.set(m.id, view);
+
+        // Register to depthMap
+        const layer = view.getLayer() + LAYER_OFFSET; // Shift so we can have "negative" depths
+        if (layer < 0)
+            throw new Error(`ViewManager: Received layer of ${layer} from view for ${GetDebugInfo(m)}!`);
+        // Add layer if it doesn't exist
+        if (!(layer in this.depthMap))
+            this.depthMap[layer] = new DepthMap();
+        // Add this obj to the layer
+        this.depthMap[layer].addEntry(m.id, m.zIndex);
     }
 
     public reset(c?: ReturnType<Circuit["getRawModel"]>): void {
-        this.views = [];
-        this.depthMap = new Map();
+        this.views.clear();
+        this.depthMap = [];
 
         if (c)
             Object.values(c.objects).forEach((o: Obj) => this.addObj(o));
@@ -66,61 +127,63 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         // If added a port, let sibling ports know to update
         if (m.baseKind === "Port") {
             const siblings = this.circuit.getPortsFor(this.circuit.getPortParent(m))
-                .filter((p) => ((p !== m) && this.depthMap.has(p.id)));
-            siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig"));
+                .filter((p) => ((p !== m) && this.views.has(p.id)));
+            siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig", ""));
         }
     }
 
-    public onEditObj(m: Obj, propKey: string) {
+    public onEditObj(m: Obj, key: string, val: string | number | boolean) {
         // Update the view for the object
         const v = this.getView(m.id);
-        v.onPropChange(propKey);
+        v.onPropChange(key);
+
+        if (key === "zIndex")
+            this.depthMap[v.getLayer() + LAYER_OFFSET].editEntry(m.id, m.zIndex, val as number);
 
         // Also, if the object is a component, update it's ports too
         if (m.baseKind === "Component") {
-            this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, propKey));
+            this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, key, val));
             return;
         }
 
         // And if the object is a port, then update it's wires
         if (m.baseKind === "Port") {
-            this.circuit.getWiresFor(m).forEach((w) => this.onEditObj(w as Obj, propKey));
+            this.circuit.getWiresFor(m).forEach((w) => this.onEditObj(w as Obj, key, val));
         }
     }
 
     public onRemoveObj(m: Obj) {
-        if (!this.depthMap.has(m.id))
-            throw new Error(`ViewManager: Failed to remove view for ${m.kind}[${m.id}](${m.name})! No depth found!`);
-        const depth = this.depthMap.get(m.id)!;
-        this.depthMap.delete(m.id);
-        if (!this.views[depth].delete(m.id))
-            throw new Error(`ViewManager: Failed to remove view for ${m.kind}[${m.id}](${m.name})! Not found!`);
+        const view = this.views.get(m.id);
+        if (!view)
+            throw new Error(`ViewManager: Failed to remove view for ${GetDebugInfo(m)}! No view found!`);
+        // Remove from view map
+        this.views.delete(m.id);
+
+        // Remove from depthMap
+        this.depthMap[view.getLayer() + LAYER_OFFSET].removeEntry(m.id, m.zIndex);
 
         // If remove a port, let sibling ports know to update
         if (m.baseKind === "Port") {
             const siblings = this.circuit.getPortsFor(this.circuit.getPortParent(m))
-                .filter((p) => ((p !== m) && this.depthMap.has(p.id)));
-            siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig"));
+                .filter((p) => ((p !== m) && this.views.has(p.id)));
+            siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig", ""));
         }
     }
 
     public render(info: RenderInfo) {
-        // Render by layer: lower depths rendered before higher ones since
-        //  a higher depth indicates it should be on-top
-        this.views.forEach((layer, d) => {
-            layer.forEach((view, id) => {
-                view.render(info);
-            });
+        // Render by layer: lower layers rendered before higher ones since
+        //  a higher layer indicates it should be on-top
+        this.depthMap.forEach((layer) => {
+            for (const id of layer)
+                this.views.get(id)!.render(info);
         });
     }
 
     public getView(id: GUID) {
-        if (!this.depthMap.has(id))
-            throw new Error(`ViewManager: Failed to get view for [${id}]! No depth found!`);
-        const depth = this.depthMap.get(id)!;
-        if (!this.views[depth].has(id))
+        const view = this.views.get(id);
+        if (!view)
             throw new Error(`ViewManager: Failed to get view for [${id}]! Not found!`);
-        return this.views[depth].get(id)!;
+        return view;
     }
 
     // Allow `this` to be iterable, and iterate through each view
@@ -128,13 +191,16 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
     //  the views on the bottom.
     public *[Symbol.iterator]() {
         // Reverse order so that we loop through the top-most layers first
-        for (let i = this.views.length-1; i >= 0; i--) {
-            const layer = this.views[i];
+        for (let i = this.depthMap.length-1; i >= 0; i--) {
+            const layer = this.depthMap[i];
             if (!layer)
                 continue;
-            // Reverse order so we loop through top-most views first
-            for (const [_, view] of [...layer.entries()].reverse())
-                yield view;
+            const ids = [...layer].reverse();
+            for (const id of ids)
+                yield this.views.get(id)!;
+            // // Reverse order so we loop through top-most views first
+            // for (const [_, view] of [...layer.entries()].reverse())
+            //     yield view;
         }
     }
 
@@ -153,17 +219,25 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
 
     public findObjects(bounds: Transform): AnyObj[] {
         const objs: AnyObj[] = [];
-        // Reverse order so that we loop through the top-most layers first
-        for (let i = this.views.length-1; i >= 0; i--) {
-            const layer = this.views[i];
-            if (!layer)
-                continue;
-            // Reverse order so we loop through top-most views first
-            for (const [id, view] of [...layer.entries()].reverse()) {
-                if (view.isWithinBounds(bounds))
-                    objs.push(this.circuit.getObj(id)!);
-            }
+        for (const view of this) {
+            if (view.isWithinBounds(bounds))
+                objs.push(this.circuit.getObj(view.getObj().id)!);
         }
+        // // Reverse order so that we loop through the top-most layers first
+        // for (let i = this.views.length-1; i >= 0; i--) {
+        //     const layer = this.views[i];
+        //     if (!layer)
+        //         continue;
+        //     // Reverse order so we loop through top-most views first
+        //     for (const [id, view] of [...layer.entries()].reverse()) {
+        //         if (view.isWithinBounds(bounds))
+        //             objs.push(this.circuit.getObj(id)!);
+        //     }
+        // }
         return objs;
+    }
+
+    public getTopDepth() {
+        return this.depthMap.reduce((cur, d) => Math.max(cur, d.getMaxDepth()), 0);
     }
 }

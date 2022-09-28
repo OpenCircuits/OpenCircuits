@@ -78,7 +78,7 @@ export abstract class BaseView<
         return this.cullTransform.get();
     }
 
-    public getDepth(): number {
+    public getLayer(): number {
         return 0;
     }
 }

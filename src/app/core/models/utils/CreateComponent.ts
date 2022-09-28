@@ -13,7 +13,7 @@ import {GroupAction} from "../../actions/GroupAction";
 import {Place}       from "../../actions/units/Place";
 
 
-export function CreateComponent(kind: keyof typeof AllComponentInfo, compID = uuid()) {
+export function CreateComponent(kind: keyof typeof AllComponentInfo, zIndex: number, compID = uuid()) {
     const info = AllComponentInfo[kind];
 
     // Create component
@@ -25,6 +25,9 @@ export function CreateComponent(kind: keyof typeof AllComponentInfo, compID = uu
         const [group, index] = s.split(":").map((s) => parseInt(s));
         return info.PortInfo.Default(uuid(), compID, group, index);
     });
+
+    // Set z-index
+    [comp, ...ports].forEach((o) => (o.zIndex = zIndex));
 
     return [comp, ports] as const;
 }

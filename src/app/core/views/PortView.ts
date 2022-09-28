@@ -52,8 +52,10 @@ export abstract class PortView<
     public override onPropChange(propKey: string): void {
         super.onPropChange(propKey);
 
-        if (["x", "y", "angle", "portConfig"].includes(propKey))
+        if (["x", "y", "angle", "portConfig"].includes(propKey)) {
             this.pos.setDirty();
+            this.cullTransform.setDirty();
+        }
     }
 
     public override contains(pt: Vector): boolean {

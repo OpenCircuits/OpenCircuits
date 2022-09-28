@@ -16,6 +16,8 @@ import {Tool} from "core/tools/Tool";
 
 import {AnyComponent} from "core/models/types";
 
+import {ShiftComponents} from "core/models/utils/ShiftComponent";
+
 
 const ARROW_TRANSLATE_DISTANCE_NORMAL = 50;
 const ARROW_TRANSLATE_DISTANCE_SMALL = 11;
@@ -85,7 +87,7 @@ export const TranslateTool: Tool = (() => {
             );
 
             action = new GroupAction([
-                // TODO: Shift
+                ShiftComponents(info, components),
             ], "Translate Tool", components.map((c) => `Translated ${c.name}.`));
 
             // initalPositions = components.map((o) => o.getPos());

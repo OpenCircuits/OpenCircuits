@@ -19,10 +19,10 @@ class SplitWireAction implements Action {
 
     private readonly action: GroupAction;
 
-    public constructor(circuit: CircuitController<AnyObj>, wire: AnyWire, nodeID = uuid()) {
+    public constructor(circuit: CircuitController<AnyObj>, wire: AnyWire, zIndex: number, nodeID = uuid()) {
         this.wire = wire;
 
-        const [node, ports] = CreateComponent(circuit.getNodeKind(), nodeID);
+        const [node, ports] = CreateComponent(circuit.getNodeKind(), zIndex, nodeID);
 
         const newWire1 = CreateWire(circuit.getWireKind(), wire.p1, ports[0].id);
         const newWire2 = CreateWire(circuit.getWireKind(), ports[1].id, wire.p2);
@@ -58,6 +58,6 @@ class SplitWireAction implements Action {
     }
 }
 
-export function Split(circuit: CircuitController<AnyObj>, wire: AnyWire, nodeID = uuid()) {
-    return new SplitWireAction(circuit, wire, nodeID);
+export function Split(circuit: CircuitController<AnyObj>, wire: AnyWire, zIndex: number, nodeID = uuid()) {
+    return new SplitWireAction(circuit, wire, zIndex, nodeID);
 }
