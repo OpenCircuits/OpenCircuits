@@ -16,7 +16,7 @@ const LAYER_OFFSET = 100;
 
 
 class DepthMap<T> {
-    // TODO: MAKE THIS MORE EFFICIENT WITH INSERTION SORT OR SOME SHIT
+    // TODO: MAKE THIS MORE EFFICIENT WITH BINARY SEARCH
     private readonly depths: Array<Set<T>>;
 
     public constructor() {
@@ -174,8 +174,12 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         // Render by layer: lower layers rendered before higher ones since
         //  a higher layer indicates it should be on-top
         this.depthMap.forEach((layer) => {
-            for (const id of layer)
-                this.views.get(id)!.render(info);
+            for (const id of layer) {
+                const view = this.views.get(id);
+                if (!view)
+                    throw new Error(`ViewManager: Failed to find view for ${id} on layer ${layer}`);
+                view.render(info);
+            }
         });
     }
 
