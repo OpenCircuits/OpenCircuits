@@ -89,7 +89,7 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                                         return;
                                     if (!auth)
                                         throw new Error("Sidenav failed: auth is undefined");
-                                    await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
+                                    await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit["id"]));
                                     dispatch(ToggleSideNav());
                                 }}
                                 onDelete={() => {

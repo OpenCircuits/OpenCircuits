@@ -1,7 +1,6 @@
 import {AUTO_SAVE_COOKIE_KEY} from "shared/utils/Constants";
 
-import {CircuitMetadata} from "core/models/CircuitMetadata";
-
+import {CircuitMetadata} from "core/models/Circuit";
 
 import {GetCookie, SetCookie} from "shared/utils/Cookies";
 import {CreateState}          from "shared/utils/CreateState";
