@@ -1,22 +1,22 @@
-import {CircuitMetadata} from "core/models/CircuitMetadata";
+import {CircuitMetadata} from "core/models/Circuit";
 
 import "./index.scss";
 
 
 type CircuitPreviewProps = {
     readonly?: boolean;
-    data: CircuitMetadata;
+    data: Readonly<CircuitMetadata>;
     onClick: () => void;
     onDelete: () => void;
 }
 export const CircuitPreview = ({ readonly, data, onClick, onDelete }: CircuitPreviewProps) => (
     <div role="button" tabIndex={0} className="circuit__preview" title="Load circuit" onClick={onClick}>
         <span className="circuit__preview__icon">
-            <img src={data.getThumbnail()} alt={`Thumbnail for example circuit, ${data.getName()}`} />
+            <img src={data["thumbnail"]} alt={`Thumbnail for example circuit, ${data["name"]}`} />
         </span>
         <span className="circuit__preview__text">
-            <div className="circuit__preview__text__name">{data.getName()}</div>
-            <div className="circuit__preview__text__desc">{data.getDesc()}</div>
+            <div className="circuit__preview__text__name">{data["name"]}</div>
+            <div className="circuit__preview__text__desc">{data["desc"]}</div>
         </span>
         {/* Don't show 'x' if readonly */}
         {!readonly &&
