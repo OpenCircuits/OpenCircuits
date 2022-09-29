@@ -10,6 +10,8 @@ import {Event}                                     from "core/utils/Events";
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
+import {SetTransform} from "core/actions/compositions/SetTransform";
+
 import {SetProperty} from "core/actions/units/SetProperty";
 
 import {AnyComponent} from "core/models/types";
@@ -124,11 +126,8 @@ export const RotateTool = (() => {
                 .map((v) => v.rotate(snappedAroundAngle, midpoint));
 
             tempAction = new GroupAction(
-                selections.get().map((id, i) => new GroupAction([
-                    SetProperty(circuit, id, "x", snappedPositions[i].x),
-                    SetProperty(circuit, id, "y", snappedPositions[i].y),
-                    SetProperty(circuit, id, "angle", snappedAngles[i]),
-                ]))
+                selections.get().map((id, i) =>
+                    SetTransform(circuit, id, snappedPositions[i], snappedAngles[i]))
             );
 
             curAngles = newAngles;

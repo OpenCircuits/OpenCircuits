@@ -10,6 +10,8 @@ import {DeselectAll} from "core/actions/units/Select";
 
 import {IOObject} from "core/models";
 
+import {AnyComponent} from "core/models/types";
+
 import {EventHandler} from "../EventHandler";
 
 
@@ -25,25 +27,38 @@ export const CopyHandler: EventHandler = ({
         (document.getSelection()?.anchorNode?.nodeName !== "LABEL" ||
          document.getSelection()?.type === "Caret"),
 
-    getResponse: ({ selections, designer, history }: CircuitInfo, { type, ev }: CopyPasteEvent) => {
-        const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
-
-        const str = SerializeForCopy(objs);
-
+    getResponse: ({ circuit, selections, history }: CircuitInfo, { type, ev }: CopyPasteEvent) => {
         if (!ev.clipboardData)
-            throw new Error("CopyHandler.getResponse failed: ev.clipboardData is null");
+            throw new Error("CopyHandler.getResponse failed: ev.clipboardData is unavailable");
 
-        // We don't copy the data from the json since it will cause
-        // some weird error, which will cause the issue #746
-        ev.clipboardData.setData("text/plain", str);
-        ev.preventDefault(); // Necessary to copy correctly
+        const comps = selections.get()
+            .map((id) => circuit.getObj(id)!)
+            .filter((o) => (o.baseKind === "Component"))
+            // Filter out nodes since we can't strictly copy them
+            .filter((c) => (c.kind !== circuit.getNodeKind())) as AnyComponent[];
 
-        if (type === "cut") {
-            // Delete selections
-            history.add(new GroupAction([
-                DeselectAll(selections),
-                DeleteGroup(designer, objs),
-            ], "Copy Handler"));
-        }
+        if (comps.length === 0)
+            return;
+
+
+        // const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
+
+        // const str = SerializeForCopy(objs);
+
+        // if (!ev.clipboardData)
+        //     throw new Error("CopyHandler.getResponse failed: ev.clipboardData is null");
+
+        // // We don't copy the data from the json since it will cause
+        // // some weird error, which will cause the issue #746
+        // ev.clipboardData.setData("text/plain", str);
+        // ev.preventDefault(); // Necessary to copy correctly
+
+        // if (type === "cut") {
+        //     // Delete selections
+        //     history.add(new GroupAction([
+        //         DeselectAll(selections),
+        //         DeleteGroup(designer, objs),
+        //     ], "Copy Handler"));
+        // }
     },
 });

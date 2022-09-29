@@ -2,8 +2,6 @@ import {v4 as uuid} from "uuid";
 
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {V} from "Vector";
-
 import {CircuitInfo}       from "core/utils/CircuitInfo";
 import {CalcWorldMousePos} from "core/utils/CircuitInfoUtils";
 import {Event}             from "core/utils/Events";
@@ -12,8 +10,9 @@ import {SnapToGrid}        from "core/utils/SnapUtils";
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
+import {SetPos} from "core/actions/compositions/SetTransform";
+
 import {DeselectAll, Select} from "core/actions/units/Select";
-import {SetProperty}         from "core/actions/units/SetProperty";
 import {Split}               from "core/actions/units/Split";
 
 import {Tool} from "core/tools/Tool";
@@ -86,10 +85,7 @@ export const SplitWireTool: Tool = (() => {
             if (input.isShiftKeyDown())
                 newPos = SnapToGrid(newPos);
 
-            tempAction = new GroupAction([
-                SetProperty(circuit, node.id, "x", newPos.x),
-                SetProperty(circuit, node.id, "y", newPos.y),
-            ]);
+            tempAction = SetPos(circuit, node.id, newPos);
 
             return true;
         },

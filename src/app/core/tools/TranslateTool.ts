@@ -10,7 +10,7 @@ import {SnapToConnections, SnapToGrid} from "core/utils/SnapUtils";
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {SetProperty} from "core/actions/units/SetProperty";
+import {SetPos} from "core/actions/compositions/SetTransform";
 
 import {Tool} from "core/tools/Tool";
 
@@ -134,10 +134,7 @@ export const TranslateTool: Tool = (() => {
                                 newPos = SnapToConnections(circuit, newPos, circuit.getPortsFor(c));
                             // Very specifically Translate as we go
                             //  as to correctly apply `SnapToConnections`
-                            return new GroupAction([
-                                SetProperty(circuit, c.id, "x", newPos.x),
-                                SetProperty(circuit, c.id, "y", newPos.y),
-                            ]);
+                            return SetPos(circuit, c.id, newPos);
                         })
                     );
 
