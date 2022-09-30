@@ -27,7 +27,7 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, def
             else if (ev.op === "removed")
                 info.viewManager.onRemoveObj(ev.obj);
             else if (ev.op === "edited")
-                info.viewManager.onEditObj(ev.obj, ev.prop);
+                info.viewManager.onEditObj(ev.obj, ev.prop, ev.val);
         }
     });
 

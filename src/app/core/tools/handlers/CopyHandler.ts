@@ -40,25 +40,9 @@ export const CopyHandler: EventHandler = ({
         if (comps.length === 0)
             return;
 
-
-        // const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
-
-        // const str = SerializeForCopy(objs);
-
-        // if (!ev.clipboardData)
-        //     throw new Error("CopyHandler.getResponse failed: ev.clipboardData is null");
-
-        // // We don't copy the data from the json since it will cause
-        // // some weird error, which will cause the issue #746
-        // ev.clipboardData.setData("text/plain", str);
-        // ev.preventDefault(); // Necessary to copy correctly
-
-        // if (type === "cut") {
-        //     // Delete selections
-        //     history.add(new GroupAction([
-        //         DeselectAll(selections),
-        //         DeleteGroup(designer, objs),
-        //     ], "Copy Handler"));
-        // }
+        // Go through each component
+        //  Get each path (wires + nodes) to every other component (if it exists)
+        // This set of components/nodes, ports, and wires is what we should serialize
+        // Make sure to delete the original if "cutting"
     },
 });

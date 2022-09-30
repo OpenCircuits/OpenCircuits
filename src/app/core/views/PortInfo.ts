@@ -41,6 +41,16 @@ export function GetPortWorldPos(circuit: CircuitController<AnyObj>, port: AnyPor
     };
 }
 
+export function ParseConfig(config: string) {
+    return config.split(",").map((a) => parseInt(a)).map((v) => (isNaN(v) ? 0 : v));
+}
+
+// TODO: Come up with better name, "GetPortAmount" maybe?
+export function GetConfigAmount(config: string, group: number) {
+    const val = parseInt(config.split(",")[group]);
+    return (isNaN(val) ? 0 : val);
+}
+
 const CalcPortPos = (origin: Vector, dir: Vector) =>  ({
     origin,
     target: origin.add(dir.scale(IO_PORT_LENGTH)),

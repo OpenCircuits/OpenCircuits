@@ -5,17 +5,20 @@ import {GUID} from "core/utils/GUID";
 import {AnyObj} from "./types";
 
 
+export type CircuitMetadata = {
+    id: GUID;
+    name: string;
+    desc: string;
+    thumbnail: string;
+    version: string;
+}
+
 export type Circuit<Obj extends AnyObj> = {
     objects: Record<GUID, Obj>;
 
     ics: Record<GUID, Circuit<Obj>>;
 
-    metadata: {
-        id: GUID;
-        name: string;
-        thumbnail: string;
-        version: string;
-    };
+    metadata: CircuitMetadata;
 }
 
 export const DefaultCircuit =
@@ -25,6 +28,7 @@ export const DefaultCircuit =
         metadata: {
             id:        "", // TODO: generate
             name:      "",
+            desc:      "",
             thumbnail: "",
             version:   SAVE_VERSION,
         },

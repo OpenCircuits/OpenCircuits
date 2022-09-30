@@ -3,8 +3,8 @@ import {uuid} from "core/utils/GUID";
 import {AllComponentInfo}     from "core/models/info";
 import {AnyComponent, AnyObj} from "core/models/types";
 
-import {CircuitController} from "core/controllers/CircuitController";
-import {CalcPortConfigID}  from "core/views/PortInfo";
+import {CircuitController}             from "core/controllers/CircuitController";
+import {CalcPortConfigID, ParseConfig} from "core/views/PortInfo";
 
 import {Action}      from "../Action";
 import {GroupAction} from "../GroupAction";
@@ -17,8 +17,8 @@ export function SetPortConfig(circuit: CircuitController<AnyObj>, c: AnyComponen
     const curConfig = CalcPortConfigID(circuit, c);
 
     // Get the number of ports there should be for each group currently and in the new config
-    const curGroups = curConfig.split(",").map((v) => parseInt(v));
-    const newGroups = newConfig.split(",").map((v) => parseInt(v));
+    const curGroups = ParseConfig(curConfig);
+    const newGroups = ParseConfig(newConfig);
 
     const CreatePort = AllComponentInfo[c.kind].PortInfo.Default;
 
