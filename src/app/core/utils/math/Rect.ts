@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {Clamp} from "./MathUtils";
+import {CalculateMidpoint, Clamp} from "./MathUtils";
 
 
 // Turn union of keys to union of records with that key
@@ -78,6 +78,19 @@ export class Rect {
             pt.y <= this.top   &&
             pt.y >= this.bottom
         );
+    }
+
+    public expand(amt: Vector): Rect {
+        return new Rect(this.center, this.size.add(amt.scale(2)), (this.yIsUp === +1));
+    }
+
+    public addMargin(margin: Margin) {
+        const result = new Rect(this.center, this.size, (this.yIsUp === +1));
+        result.left   -= (margin.left   ?? 0);
+        result.right  += (margin.right  ?? 0);
+        result.bottom -= (margin.bottom ?? 0) * this.yIsUp;
+        result.top    += (margin.top    ?? 0) * this.yIsUp;
+        return result;
     }
 
     public subMargin(margin: Margin) {
@@ -255,6 +268,18 @@ export class Rect {
     }
     public get size() {
         return V(this.width, this.height);
+    }
+
+    /**
+     * Utility method to create a rectangle from two given points.
+     * This rectangle will be the closest bounding rectangle of the two points.
+     *
+     * @param p1 The first point.
+     * @param p2 The second point.
+     * @returns    The closest bounding Rect between p1 and p2.
+     */
+    public static FromPoints(p1: Vector, p2: Vector): Rect {
+        return new Rect(p1.add(p2).scale(0.5), p2.sub(p1).abs());
     }
 
     /**

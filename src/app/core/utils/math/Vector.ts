@@ -1,4 +1,3 @@
-import {serializable, serialize} from "serialeazy";
 
 /**
  * A representation of a vector in 2D space. Commonly used to represent points,
@@ -8,19 +7,16 @@ import {serializable, serialize} from "serialeazy";
  *  (since its `x` and `y` properties are settable), all methods on the Vector
  *  will return new Vectors with the performed operation.
  */
-@serializable("Vector")
 export class Vector {
 
     /**
      * The x-component of this Vector.
      */
-    @serialize
     public x: number;
 
     /**
      * The y-component of this Vector.
      */
-    @serialize
     public y: number;
 
     /**
@@ -210,14 +206,25 @@ export class Vector {
      * Returns a new vector rotated `a` radians from this one.
      *
      * @param a The angle in radians.
+     * @param o The origin to rotate around.
      * @returns   A new, rotated vector.
      */
-    public rotate(a: number): Vector {
+    public rotate(a: number, o = V()): Vector {
         const cos = Math.cos(a), sin = Math.sin(a);
         return V(
-            (this.x * cos - this.y * sin),
-            (this.x * sin + this.y * cos)
+            ((this.x - o.x) * cos - (this.y - o.y) * sin) + o.x,
+            ((this.x - o.x) * sin + (this.y - o.y) * cos) + o.y
         );
+    }
+    /**
+     * Returns a new vector with a set rotation of `a` radians from the origin.
+     *
+     * @param a The angle in radians.
+     * @param o The origin to rotate around.
+     * @returns   A new, rotated vector.
+     */
+    public withRotation(a: number, o = V()): Vector {
+        return this.rotate(a - this.sub(o).angle(), o);
     }
     /**
      * Return the projection of 'this' on 'v'.

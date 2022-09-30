@@ -1,7 +1,7 @@
 import {Vector} from "Vector";
 
 import {BooleanPropInfo, ButtonPropInfo, ColorPropInfo, NumberPropInfo, NumberSelectPropInfo,
-        Prop, PropInfo, Props, StringPropInfo, StringSelectPropInfo, VectorPropInfo} from "core/models/PropInfo";
+        Prop, PropInfo, Props, StringPropInfo, StringSelectPropInfo} from "core/models/PropInfo";
 
 
 const merge = (a1: PropInfoLayout["isActive"], a2: PropInfoLayout["isActive"]): PropInfoLayout["isActive"] => {
@@ -14,7 +14,7 @@ export type PropInfoWithInitial = (
     { initial: boolean } & (BooleanPropInfo)                                       |
     { initial: Prop    } & (ButtonPropInfo)                                        |
     { initial: number  } & (NumberPropInfo | NumberSelectPropInfo)                 |
-    { initial: Vector  } & (VectorPropInfo)                                        |
+    // { initial: Vector  } & (VectorPropInfo)                                        |
     { initial: string  } & (StringPropInfo | ColorPropInfo | StringSelectPropInfo)
 )
 export type PropInfoLayout = {

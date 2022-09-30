@@ -36,8 +36,6 @@ import {ResizeTool} from "analog/tools/ResizeTool";
 
 import {CursorHandler} from "analog/tools/handlers/CursorHandler";
 
-import "analog/models/eeobjects";
-
 import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
 
 import {GetCookie}     from "shared/utils/Cookies";

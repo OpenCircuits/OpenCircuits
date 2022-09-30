@@ -2,191 +2,191 @@
     "imgRoot": "img/itemnav",
     "sections": [
       {
-        "id": "inputs",
+        "kind": "inputs",
         "label": "Inputs",
         "items": [
           {
-            "id": "Button",
+            "kind": "Button",
             "label": "Button",
             "icon": "button.svg"
           },
           {
-            "id": "Switch",
+            "kind": "Switch",
             "label": "Switch",
             "icon": "switch.svg"
           },
           {
-            "id": "ConstantLow",
+            "kind": "ConstantLow",
             "label": "Constant Low",
             "icon": "constantlow.svg"
           },
           {
-            "id": "ConstantHigh",
+            "kind": "ConstantHigh",
             "label": "Constant High",
             "icon": "constanthigh.svg"
           },
           {
-            "id": "ConstantNumber",
+            "kind": "ConstantNumber",
             "label": "Constant Number",
             "icon": "constantnumber.svg"
           },
           {
-            "id": "Clock",
+            "kind": "Clock",
             "label": "Clock",
             "icon": "clock.svg"
           }
         ]
       },
       {
-        "id": "outputs",
+        "kind": "outputs",
         "label": "Outputs",
         "items": [
           {
-            "id": "LED",
+            "kind": "LED",
             "label": "LED",
             "icon": "led.svg"
           },
           {
-            "id": "SegmentDisplay",
+            "kind": "SegmentDisplay",
             "label": "Segment Display",
             "icon": "sevensegmentdisplay.svg"
           },
           {
-            "id": "BCDDisplay",
+            "kind": "BCDDisplay",
             "label": "BCD Display",
             "icon": "sevensegmentdisplay.svg"
           },
           {
-            "id": "ASCIIDisplay",
+            "kind": "ASCIIDisplay",
             "label": "ASCII Display",
             "icon": "sevensegmentdisplay.svg"
           },
           {
-            "id": "Oscilloscope",
+            "kind": "Oscilloscope",
             "label": "Oscillo-scope",
             "icon": "oscilloscope.svg"
           }
         ]
       },
       {
-        "id": "gates",
+        "kind": "gates",
         "label": "Logic Gates",
         "items": [
           {
-            "id": "BUFGate",
+            "kind": "BUFGate",
             "label": "Buffer",
             "icon": "bufgate.svg"
           },
           {
-            "id": "NOTGate",
+            "kind": "NOTGate",
             "label": "NOT",
             "icon": "notgate.svg"
           },
           {
-            "id": "ANDGate",
+            "kind": "ANDGate",
             "label": "AND",
             "icon": "andgate.svg"
           },
           {
-            "id": "NANDGate",
+            "kind": "NANDGate",
             "label": "NAND",
             "icon": "nandgate.svg"
           },
           {
-            "id": "ORGate",
+            "kind": "ORGate",
             "label": "OR",
             "icon": "orgate.svg"
           },
           {
-            "id": "NORGate",
+            "kind": "NORGate",
             "label": "NOR",
             "icon": "norgate.svg"
           },
           {
-            "id": "XORGate",
+            "kind": "XORGate",
             "label": "XOR",
             "icon": "xorgate.svg"
           },
           {
-            "id": "XNORGate",
+            "kind": "XNORGate",
             "label": "XNOR",
             "icon": "xnorgate.svg"
           }
         ]
       },
       {
-        "id": "flipflops",
+        "kind": "flipflops",
         "label": "Flip Flops",
         "items": [
           {
-            "id": "SRFlipFlop",
+            "kind": "SRFlipFlop",
             "label": "SR",
             "icon": "srflipflop.svg"
           },
           {
-            "id": "JKFlipFlop",
+            "kind": "JKFlipFlop",
             "label": "JK",
             "icon": "jkflipflop.svg"
           },
           {
-            "id": "DFlipFlop",
+            "kind": "DFlipFlop",
             "label": "D",
             "icon": "dflipflop.svg"
           },
           {
-            "id": "TFlipFlop",
+            "kind": "TFlipFlop",
             "label": "T",
             "icon": "tflipflop.svg"
           }
         ]
       },
       {
-        "id": "latches",
+        "kind": "latches",
         "label": "Latches",
         "items": [
           {
-            "id": "DLatch",
+            "kind": "DLatch",
             "label": "D",
             "icon": "dlatch.svg"
           },
           {
-            "id": "SRLatch",
+            "kind": "SRLatch",
             "label": "SR",
             "icon": "srlatch.svg"
           }
         ]
       },
       {
-        "id": "other",
+        "kind": "other",
         "label": "Other",
         "items": [
           {
-            "id": "Multiplexer",
+            "kind": "Multiplexer",
             "label": "Mux",
             "icon": "multiplexer.svg"
           },
           {
-            "id": "Demultiplexer",
+            "kind": "Demultiplexer",
             "label": "Demux",
             "icon": "demultiplexer.svg"
           },
           {
-            "id": "Encoder",
+            "kind": "Encoder",
             "label": "Encoder",
             "icon": "encoder.svg"
           },
           {
-            "id": "Decoder",
+            "kind": "Decoder",
             "label": "Decoder",
             "icon": "decoder.svg"
           },
           {
-            "id": "Comparator",
+            "kind": "Comparator",
             "label": "Comparator",
             "icon": "decoder.svg"
           },
           {
-            "id": "Label",
+            "kind": "Label",
             "label": "Label",
             "icon": "label.svg"
           }

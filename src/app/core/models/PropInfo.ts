@@ -1,7 +1,7 @@
 import {Vector} from "Vector";
 
 
-export type Prop = number | string | Vector | boolean;
+export type Prop = number | string | boolean;// | Vector;
 
 export type Props = Record<string, Prop>;
 
@@ -33,12 +33,12 @@ export type NumberPropInfo = BasePropInfo & {
     max?: number;
     step?: number;
 }
-export type VectorPropInfo = BasePropInfo & {
-    type: "veci" | "vecf";
-    min?: Vector;
-    max?: Vector;
-    step?: Vector;
-}
+// export type VectorPropInfo = BasePropInfo & {
+//     type: "veci" | "vecf";
+//     min?: Vector;
+//     max?: Vector;
+//     step?: Vector;
+// }
 export type StringPropInfo = BasePropInfo & {
     type: "string";
     constraint?: RegExp; // TODO: use this
@@ -63,4 +63,4 @@ export type NumberSelectPropInfo = BasePropInfo & {
 
 export type PropInfo =
     | BooleanPropInfo | ButtonPropInfo | NumberPropInfo | StringPropInfo
-    | ColorPropInfo | StringSelectPropInfo | NumberSelectPropInfo | VectorPropInfo;
+    | ColorPropInfo | StringSelectPropInfo | NumberSelectPropInfo; // | VectorPropInfo;

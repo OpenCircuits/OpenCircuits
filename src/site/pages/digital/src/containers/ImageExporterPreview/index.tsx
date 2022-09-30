@@ -1,20 +1,20 @@
 import {useEffect, useLayoutEffect} from "react";
-import {Deserialize, Serialize}     from "serialeazy";
 
 import {Input} from "core/utils/Input";
 
 import {InteractionTool} from "core/tools/InteractionTool";
 import {PanTool}         from "core/tools/PanTool";
 
-import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
+// import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {DigitalCircuitDesigner} from "digital/models";
+// import {DigitalCircuitDesigner} from "digital/models";
+
+import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
-import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
 
@@ -25,7 +25,7 @@ type Props = ImageExporterPreviewProps & {
     mainInfo: DigitalCircuitInfo;
 }
 export const ImageExporterPreview = (() => {
-    const info = CreateInfo(new InteractionTool([FitToScreenHandler]), PanTool);
+    const [info] = CreateInfo(new InteractionTool([]), PanTool);
 
     // eslint-disable-next-line react/display-name
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
@@ -67,8 +67,8 @@ export const ImageExporterPreview = (() => {
             // Input should be blocked initially
             info.input.block();
 
-            // Add render callbacks and set render function
-            info.designer.addCallback(() => info.renderer.render());
+            // // Add render callbacks and set render function
+            // info.designer.addCallback(() => info.renderer.render());
 
             info.renderer.setRenderFunction(renderFunc);
             info.renderer.render();
@@ -76,20 +76,20 @@ export const ImageExporterPreview = (() => {
 
         // Happens when de/activated
         useLayoutEffect(() => {
-            const { camera, input, debugOptions, designer } = mainInfo;
+            const { camera, input, debugOptions } = mainInfo;
 
             if (!isActive) {
                 info.input?.block();
                 input?.unblock();
-                info.designer.reset();
+                // info.designer.reset();
                 return;
             }
 
             info.debugOptions = debugOptions;
 
-            // Make a deep copy of the entire designer so that they don't share components
-            const copy = Deserialize<DigitalCircuitDesigner>(Serialize(designer));
-            info.designer.replace(copy);
+            // // Make a deep copy of the entire designer so that they don't share components
+            // const copy = Deserialize<DigitalCircuitDesigner>(Serialize(designer));
+            // info.designer.replace(copy);
 
             // info.camera.resize(width, height);
             info.camera.setPos(camera.getPos());
@@ -109,7 +109,7 @@ export const ImageExporterPreview = (() => {
                  className="image-exporter-preview__button"
                  alt="Fit to screen"
                  onClick={() => {
-                    FitToScreenHandler.getResponse(info);
+                    // FitToScreenHandler.getResponse(info);
                     info.renderer.render();
                  }} />
             <canvas ref={canvas}

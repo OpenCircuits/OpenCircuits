@@ -30,9 +30,13 @@ import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
 import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
 import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 
+import {DefaultCircuit} from "core/models/Circuit";
+
+import {DigitalObj} from "core/models/types/digital";
+
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {DigitalCircuitDesigner} from "digital/models";
+import {CircuitController} from "core/controllers/CircuitController";
 
 import {FakeInput} from "./FakeInput";
 
@@ -67,7 +71,7 @@ type Props = {
  * @param props.screenSize      The size fo the test screen.
  * @returns                       Everything in DigitalCircuitInfo except "input", a fake input, and a reset function.
  */
-export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
+export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input" | "viewManager"> &
                                       {input: FakeInput, reset: (d?: boolean) => void} {
     const propagationTime = props?.propagationTime ?? 0;
     const screenSize = props?.screenSize ?? [500, 500];
@@ -75,7 +79,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
 
     const camera = new Camera(...screenSize);
     const history = new HistoryManager();
-    const designer = new DigitalCircuitDesigner(propagationTime);
+    const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(tools.defaultTool, ...tools.tools!);
@@ -85,7 +89,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
         locked: false,
         history,
         camera,
-        designer,
+        circuit,
         input,
         selections,
         toolManager,
@@ -103,14 +107,16 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input"> &
             history.reset();
             camera.setPos(V()); camera.setZoom(0.02); // Reset camera
             if (resetDesigner)
-                designer.reset();
+                circuit.reset();
             input.reset();
             selections.get().forEach((s) => selections.deselect(s)); // Reset selections
-            toolManager.reset(info);
+            // @TODO
+            toolManager.reset(info as any);
         },
     };
 
-    input.addListener((ev) => toolManager.onEvent(ev, info));
+    // @TODO
+    // input.addListener((ev) => toolManager.onEvent(ev, info));
 
     return info;
 }

@@ -32,13 +32,10 @@ import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
 import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
 import {UndoHandler}          from "core/tools/handlers/UndoHandler";
 
-import "digital/models/ioobjects";
-
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {DevGetFile, DevListFiles} from "shared/api/Dev";
-
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
 
@@ -143,7 +140,7 @@ async function Init(): Promise<void> {
                 ]),
                 PanTool, RotateTool,
                 TranslateTool, WiringTool,
-                SplitWireTool, SelectionBoxTool
+                SelectionBoxTool, SplitWireTool
             );
 
             info.history.addCallback(() => {

@@ -1,9 +1,10 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Selectable}  from "core/utils/Selectable";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {SetName} from "core/actions/units/SetName";
+import {SetProperty} from "core/actions/units/SetProperty";
+
+import {AnyObj} from "core/models/types";
 
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
 import {useSelectionProps}    from "./useSelectionProps";
@@ -13,12 +14,12 @@ type Props = {
     info: CircuitInfo;
 }
 export const TitleModule = ({ info }: Props) => {
-    const { selections, renderer, history } = info;
+    const { circuit, selections, renderer, history } = info;
 
     const [props] = useSelectionProps(
         info,
-        (s): s is Selectable => true,
-        (s) => ({ name: s.getName() })
+        (o): o is AnyObj => true,
+        (o) => ({ name: (o.name ?? o.kind) })
     );
 
     if (!props)
@@ -33,7 +34,7 @@ export const TitleModule = ({ info }: Props) => {
                 placeholder="<Multiple>"
                 alt="Name of object(s)"
                 getAction={(newNames) => new GroupAction(
-                    s.map((o,i) => SetName(o, newNames[i])),
+                    s.map((id, i) => SetProperty(circuit, id, "name", newNames[i])),
                     "Title Module"
                 )}
                 onSubmit={({ isFinal, action }) => {

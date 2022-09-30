@@ -1,29 +1,20 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
 
-import {Rect} from "math/Rect";
+import {Event} from "core/utils/Events";
 
-import {Cursor} from "core/utils/CircuitInfo";
-import {Event}  from "core/utils/Events";
-
-import {Action}      from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
-
-import {SetProperty} from "core/actions/units/SetProperty";
-import {Shift}       from "core/actions/units/Shift";
-import {Translate}   from "core/actions/units/Translate";
+import {Action} from "core/actions/Action";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-
-import {Oscilloscope} from "analog/models/eeobjects";
 
 import {FindEdge} from "./handlers/CursorHandler";
 
 
 export const ResizeTool = (() => {
     let dir: Vector | undefined;
-    let obj: Oscilloscope | undefined;
+    // @TOOD
+    let obj: undefined; // | Oscilloscope
 
     let tempAction: Action | undefined;
 
@@ -41,10 +32,10 @@ export const ResizeTool = (() => {
         },
 
         onActivate(event: Event, info: AnalogCircuitInfo): void {
-            let cursor: Cursor | undefined;
-            [cursor, dir, obj] = FindEdge(info);
+            // let cursor: Cursor | undefined;
+            // [cursor, dir, obj] = FindEdge(info);
 
-            info.cursor = cursor;
+            // info.cursor = cursor;
 
             if (event.type === "mousedrag")
                 this.onEvent(event, info); // Explicitly call drag event
@@ -60,7 +51,7 @@ export const ResizeTool = (() => {
             tempAction = undefined;
         },
 
-        onEvent(event: Event, { camera, input, designer }: AnalogCircuitInfo): boolean {
+        onEvent(event: Event, { camera, input, circuit }: AnalogCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 
@@ -70,19 +61,20 @@ export const ResizeTool = (() => {
             // Undo previous temp action
             tempAction?.undo();
 
-            const curRect = new Rect(obj!.getPos(), obj!.getSize());
+            // @TODO
+            // const curRect = new Rect(obj!.getPos(), obj!.getSize());
 
-            // Shift each x/y direction separately so that corners work as expected
-            const amtX = worldMouseDiff.dot(V(dir!.x, 0));
-            const amtY = worldMouseDiff.dot(V(0, dir!.y));
+            // // Shift each x/y direction separately so that corners work as expected
+            // const amtX = worldMouseDiff.dot(V(dir!.x, 0));
+            // const amtY = worldMouseDiff.dot(V(0, dir!.y));
 
-            const newRect = curRect.shift(dir!, V(amtX, amtY));
+            // const newRect = curRect.shift(dir!, V(amtX, amtY));
 
-            tempAction = new GroupAction([
-                Shift(designer, obj!),
-                Translate([obj!], [newRect.center]),
-                SetProperty(obj!, "size", Vector.Max(V(400, 200), newRect.size)),
-            ]);
+            // tempAction = new GroupAction([
+            //     Shift(designer, obj!),
+            //     Translate([obj!], [newRect.center]),
+            //     SetProperty(obj!, "size", Vector.Max(V(400, 200), newRect.size)),
+            // ]);
 
             // Return true since we did something
             //  that requires a re-render

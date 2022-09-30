@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {GetIDFor}                                        from "serialeazy";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {Clamp} from "math/MathUtils";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo}            from "core/utils/CircuitInfo";
+import {CalcSelectionsMidpoint} from "core/utils/CircuitInfoUtils";
 
 import {useEvent}          from "shared/utils/hooks/useEvent";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
@@ -21,7 +21,7 @@ type Props = {
     children: React.ReactNode;
 }
 export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
-    const { input, camera, history, selections } = info;
+    const { input, circuit, history, selections } = info;
 
     const itemNavCurItem = useSharedSelector((state) => state.itemNav.curItemID);
 
@@ -32,19 +32,17 @@ export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
             setIsVisible(selections.amount() > 0);
 
             // Make sure all components have same ID
-            const ids = selections.get().map(GetIDFor);
-            setID((ids.length > 0 && ids.every((id) => id === ids[0])) ? ids[0]! : "");
+            const kinds = selections.get().map((id) => circuit.getObj(id)!.kind);
+            setID((kinds.length > 0 && kinds.every((id) => id === kinds[0])) ? kinds[0]! : "");
         }
 
-        selections.addChangeListener(update);
-        return () => selections.removeChangeListener(update);
-    }, [selections, setIsVisible]);
+        selections.subscribe(update);
+        return () => selections.unsubscribe(update);
+    }, [circuit, selections, setIsVisible]);
 
 
     const [pos, setPos] = useState({ x: 0, y: 0 });
-    const updatePos = useCallback(() => {
-        setPos(camera.getScreenPos(selections.midpoint(true)));
-    }, [camera, selections, setPos]);
+    const updatePos = useCallback(() => setPos(CalcSelectionsMidpoint(info, "screen")), [info]);
 
     useEffect(() => {
         // Subscribe to history for translation/selection changes

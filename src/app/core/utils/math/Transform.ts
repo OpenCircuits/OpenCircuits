@@ -1,6 +1,5 @@
-import {serializable, serialize} from "serialeazy";
-
 import {Matrix2x3} from "./Matrix";
+import {Rect}      from "./Rect";
 import {V, Vector} from "./Vector";
 
 /**
@@ -11,21 +10,11 @@ import {V, Vector} from "./Vector";
  * For performance reasons the transform also stores a list of corners
  *  to be able to quickly apply intersection testing.
  */
-@serializable("Transform")
 export class Transform {
-    @serialize
     private parent?: Transform;
-
-    @serialize
     private pos: Vector;
-
-    @serialize
     private scale: Vector;
-
-    @serialize
     private angle: number;
-
-    @serialize
     private size: Vector;
 
     private corners: Vector[];
@@ -237,6 +226,9 @@ export class Transform {
         this.updateSize();
         return [...this.localCorners]; // Shallow copy array
     }
+    public asRect(): Rect {
+        return new Rect(this.getPos(), this.getSize());
+    }
 
     public copy(): Transform {
         const trans = new Transform(this.pos.copy(), this.size.copy(), this.angle);
@@ -247,5 +239,8 @@ export class Transform {
 
     public static FromCorners(p1: Vector, p2: Vector): Transform {
         return new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
+    }
+    public static FromRect(rect: Rect): Transform {
+        return Transform.FromCorners(rect.bottomLeft, rect.topRight);
     }
 }

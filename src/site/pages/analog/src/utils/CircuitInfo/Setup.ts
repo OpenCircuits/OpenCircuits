@@ -17,6 +17,19 @@ import {CreateInfo}                  from "./CreateInfo";
 
 export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, ngSpiceLib: NGSpiceLib,
                       defaultTool: DefaultTool, ...tools: Tool[]): [AnalogCircuitInfo, CircuitInfoHelpers] {
-    const info = CreateInfo(ngSpiceLib, defaultTool, ...tools);
-    return [info, GetAnalogCircuitInfoHelpers(store, canvas, info)];
+    const [info, reset] = CreateInfo(ngSpiceLib, defaultTool, ...tools);
+
+    // Setup view
+    info.circuit.subscribe((ev) => {
+        if (ev.type === "obj") {
+            if (ev.op === "added")
+                info.viewManager.onAddObj(ev.obj);
+            else if (ev.op === "removed")
+                info.viewManager.onRemoveObj(ev.obj);
+            else if (ev.op === "edited")
+                info.viewManager.onEditObj(ev.obj, ev.prop, ev.val);
+        }
+    });
+
+    return [info, GetAnalogCircuitInfoHelpers(store, canvas, info, reset)];
 }

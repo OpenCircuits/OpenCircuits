@@ -1,8 +1,6 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {DigitalCircuitDesigner} from "digital/models";
+import {DigitalObj} from "core/models/types/digital";
 
 
-export type DigitalCircuitInfo = Omit<CircuitInfo, "designer"> & {
-    designer: DigitalCircuitDesigner;
-}
+export type DigitalCircuitInfo = CircuitInfo<DigitalObj>;

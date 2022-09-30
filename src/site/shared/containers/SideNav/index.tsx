@@ -1,4 +1,6 @@
-import {CircuitMetadata} from "core/models/CircuitMetadata";
+import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
+
+import {CircuitMetadata} from "core/models/Circuit";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 import {Request}            from "shared/utils/Request";
@@ -20,7 +22,7 @@ import "./index.scss";
 function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
     return Request({
         method:  "GET",
-        url:     `/examples/${data.getId()}`,
+        url:     `/examples/${data["id"]}`,
         headers: {},
     });
 }
@@ -30,12 +32,25 @@ type Props = {
     exampleCircuits: CircuitMetadata[];
 }
 export const SideNav = ({ helpers, exampleCircuits }: Props) => {
-    const { auth, circuits, isOpen, loading, loadingCircuits } = useSharedSelector(
-        (state) => ({ ...state.user, isOpen:          state.sideNav.isOpen,
-                    loading:         state.circuit.loading, loadingCircuits: state.user.loading })
+    const { auth, circuits, isOpen, loading, isSaved, loadingCircuits } = useSharedSelector(
+        (state) => ({
+            ...state.user,
+            isOpen:          state.sideNav.isOpen,
+            isSaved:         state.circuit.isSaved,
+            loading:         state.circuit.loading,
+            loadingCircuits: state.user.loading,
+        })
     );
 
     const dispatch = useSharedDispatch();
+
+    const onReset = () => {
+        const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
+        if (!open)
+            return;
+        helpers.ResetCircuit();
+        dispatch(ToggleSideNav());
+    }
 
     return (<>
         <Overlay
@@ -56,47 +71,48 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                     <SignInOutButtons />
                 </div>
             </div>
-            <button type="button" onClick={() => helpers.ResetCircuit()}>
+            <button type="button" onClick={onReset}>
                 <span>+</span>
                 New Circuit
             </button>
             <div className="sidenav__content">
                 <h4 unselectable="on">My Circuits</h4>
                 <div>
-                    {loadingCircuits ?
-                        <div className="sidenav__content__circuits-loading"></div> :
-                    circuits.map((circuit, i) =>
-                        (<CircuitPreview
-                            key={`sidenav-user-circuit-${i}`}
-                            data={circuit}
-                            onClick={async () => {
-                                if (loading) // Don't load another circuit if already loading
-                                    return;
-                                if (!auth)
-                                    throw new Error("Sidenav failed: auth is undefined");
-                                await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit.getId()));
-                                dispatch(ToggleSideNav());
-                            }}
-                            onDelete={() => {
-                                if (loading) // Don't let user delete circuit while loading
-                                    return;
-                                helpers.DeleteCircuitRemote(circuit);
-                            }} />)
-                )}
+                    {loadingCircuits
+                        ? <div className="sidenav__content__circuits-loading"></div>
+                        : circuits.map((circuit, i) =>
+                            (<CircuitPreview
+                                key={`sidenav-user-circuit-${i}`}
+                                data={circuit}
+                                onClick={async () => {
+                                    if (loading) // Don't load another circuit if already loading
+                                        return;
+                                    if (!auth)
+                                        throw new Error("Sidenav failed: auth is undefined");
+                                    await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit["id"]));
+                                    dispatch(ToggleSideNav());
+                                }}
+                                onDelete={() => {
+                                    if (loading) // Don't let user delete circuit while loading
+                                        return;
+                                    helpers.DeleteCircuitRemote(circuit);
+                                }} />)
+                    )}
                 </div>
                 <h4 unselectable="on">Examples</h4>
                 <div>
                     {exampleCircuits.map((example, i) =>
-                    (<CircuitPreview key={`sidenav-example-circuit-${i}`}
-                                     data={example}
-                                     readonly
-                                     onDelete={() => { /* Do nothing */ }}
-                                     onClick={async () => {
-                                        if (loading) // Don't load another circuit if already loading
-                                            return;
-                                        await helpers.LoadCircuit(() => LoadExampleCircuit(example));
-                                        dispatch(ToggleSideNav());
-                                    }} />)
+                        (<CircuitPreview
+                            key={`sidenav-example-circuit-${i}`}
+                            data={example}
+                            readonly
+                            onDelete={() => { /* Do nothing */ }}
+                            onClick={async () => {
+                                if (loading) // Don't load another circuit if already loading
+                                    return;
+                                await helpers.LoadCircuit(() => LoadExampleCircuit(example));
+                                dispatch(ToggleSideNav());
+                            }} />)
                 )}
                 </div>
                 <div className="sidenav__content__footer">
