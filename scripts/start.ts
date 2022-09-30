@@ -40,16 +40,16 @@ function StartClient(dir: string, project: string, open: boolean) {
 
 // CLI
 (async () => {
-    const { open, digital } = await yargs(process.argv.slice(2))
-        .boolean("open")
-        .boolean("digital")
-        .argv;
-
     const dirs = getDirs(true, false, false);
 
-    let dir;
-    if (digital) {
-        dir = "digital";
+    const { open, project } = await yargs(process.argv.slice(2))
+        .boolean("open")
+        .choices("project", dirs.map((dir) => dir.value as string))
+        .argv;
+
+    let dir: string;
+    if (project) {
+        dir = project;
     } else {
         // Prompt for project type
         const { value } = await prompts({
