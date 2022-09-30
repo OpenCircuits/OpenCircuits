@@ -1,6 +1,6 @@
 import {CircuitController} from "core/controllers/CircuitController";
 import {ViewManager}       from "core/views/ViewManager";
-import {Views}             from "digital/views/Views";
+import {Views}             from "digital/views";
 
 import {SAVE_VERSION} from "core/utils/Constants";
 

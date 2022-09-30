@@ -21,3 +21,13 @@ export namespace Signal {
         return (s !== Signal.Metastable);
     }
 }
+
+// DISCUSS: better name for this
+const BOOL = (func: (a: boolean, b: boolean) => boolean) => (
+    (a: Signal, b: Signal) => {
+        if (a === Signal.Metastable || b === Signal.Metastable)
+            return Signal.Metastable;
+        return Signal.fromBool(func(Signal.isOn(a), Signal.isOn(b)));
+    }
+);
+const AND = BOOL((a, b) => (a && b));

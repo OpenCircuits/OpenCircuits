@@ -32,7 +32,7 @@ export type CircuitEvent<Obj extends AnyObj> = ObjEvent<Obj> | ICDataEvent | Res
 type c_Node<T extends AnyObj> = (T extends AnyNode ? T : never);
 
 
-export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEvent<Obj>> {
+export class CircuitController<Obj extends AnyObj = AnyObj> extends Observable<CircuitEvent<Obj>> {
     protected readonly wireKind: AnyWireFrom<Obj>["kind"];
     protected readonly nodeKind: c_Node<Obj>["kind"];
 
@@ -148,10 +148,10 @@ export class CircuitController<Obj extends AnyObj> extends Observable<CircuitEve
                             `[${wire.p2}] for ${GetDebugInfo(wire)}!`);
         }
         if (p1.baseKind !== "Port")
-            throw new Error("DigitalWireView: Received a non-port p1 of " +
+            throw new Error("CircuitController: Received a non-port p1 of " +
                             `${GetDebugInfo(p1)} for ${GetDebugInfo(wire)}!`);
         if (p2.baseKind !== "Port")
-            throw new Error("DigitalWireView: Received a non-port p2 of " +
+            throw new Error("CircuitController: Received a non-port p2 of " +
                             `${GetDebugInfo(p2)} for ${GetDebugInfo(wire)}!`);
         return [p1 as AnyPortFrom<Obj>, p2 as AnyPortFrom<Obj>];
     }

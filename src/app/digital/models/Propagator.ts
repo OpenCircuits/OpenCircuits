@@ -1,6 +1,6 @@
-import {Signal} from "digital/utils/Signal";
-
 import {DigitalComponent} from "core/models/types/digital";
+
+import {Signal} from "digital/utils/Signal";
 
 
 export type PropagatorFunc<T extends DigitalComponent, S = unknown> = (
