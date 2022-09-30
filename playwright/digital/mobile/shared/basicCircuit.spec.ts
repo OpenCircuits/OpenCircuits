@@ -8,7 +8,7 @@ test("Basic Switch/LED Test", async ({ page }) => {
     // testInfo.snapshotSuffix = "";
 
     // await page.goto("http://opencircuits.io/");
-    await page.goto("http://localhost:3000/");
+    await page.goto("/");
 
     const main = page.locator("main");
     const canvas = page.locator("main >> canvas");
