@@ -22,11 +22,11 @@ import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyM
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 
-import {DigitalHeader}  from "site/digital/containers/DigitalHeader";
-import {DigitalItemNav} from "site/digital/containers/DigitalItemNav";
-// import {ExprToCircuitPopup}     from "site/digital/containers/ExprToCircuitPopup";
-// import {ICDesigner}             from "site/digital/containers/ICDesigner";
-// import {ICViewer}               from "site/digital/containers/ICViewer";
+import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
+import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
+import {ExprToCircuitPopup}     from "site/digital/containers/ExprToCircuitPopup";
+import {ICDesigner}             from "site/digital/containers/ICDesigner";
+import {ICViewer}               from "site/digital/containers/ICViewer";
 import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
@@ -101,14 +101,14 @@ export const App = ({ info, helpers, canvas }: Props) => {
                 </main>
             </div>
 
-            {/* <ICDesigner mainInfo={info} />
-            <ICViewer mainInfo={info} /> */}
+            <ICDesigner mainInfo={info} />
+            <ICViewer mainInfo={info} />
 
             <QuickStartPopup />
             <KeyboardShortcutsPopup />
             <ImageExporterPopup preview={imageExporterPreview} />
 
-            {/* <ExprToCircuitPopup mainInfo={info} /> */}
+            <ExprToCircuitPopup mainInfo={info} />
 
             <LoginPopup />
         </div>
