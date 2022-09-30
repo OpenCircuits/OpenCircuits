@@ -1,14 +1,5 @@
 import {CircuitInfo}           from "core/utils/CircuitInfo";
-import {SerializeForCopy}      from "core/utils/ComponentUtils";
 import {CopyPasteEvent, Event} from "core/utils/Events";
-
-import {GroupAction} from "core/actions/GroupAction";
-
-import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
-
-import {DeselectAll} from "core/actions/units/Select";
-
-import {IOObject} from "core/models";
 
 import {AnyComponent} from "core/models/types";
 
@@ -40,6 +31,7 @@ export const CopyHandler: EventHandler = ({
         if (comps.length === 0)
             return;
 
+        // @TODO
         // Go through each component
         //  Get each path (wires + nodes) to every other component (if it exists)
         // This set of components/nodes, ports, and wires is what we should serialize
