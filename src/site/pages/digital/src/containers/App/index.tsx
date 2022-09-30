@@ -1,6 +1,8 @@
 import {useCallback} from "react";
 
-import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+import {SAVE_VERSION} from "core/utils/Constants";
+
+import {CircuitMetadata} from "core/models/Circuit";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -20,11 +22,11 @@ import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyM
 
 import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 
-import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
-import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
-import {ExprToCircuitPopup}     from "site/digital/containers/ExprToCircuitPopup";
-import {ICDesigner}             from "site/digital/containers/ICDesigner";
-import {ICViewer}               from "site/digital/containers/ICViewer";
+import {DigitalHeader}  from "site/digital/containers/DigitalHeader";
+import {DigitalItemNav} from "site/digital/containers/DigitalItemNav";
+// import {ExprToCircuitPopup}     from "site/digital/containers/ExprToCircuitPopup";
+// import {ICDesigner}             from "site/digital/containers/ICDesigner";
+// import {ICViewer}               from "site/digital/containers/ICViewer";
 import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {MainDesigner}           from "site/digital/containers/MainDesigner";
@@ -32,14 +34,10 @@ import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
 import {BusButtonModule}                from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 import {ClockSyncButtonModule}          from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
-import {ComparatorInputCountModule}     from "site/digital/containers/SelectionPopup/modules/ComparatorInputCountModule";
 import {CreateICButtonModule}           from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
-import {DecoderInputCountModule}        from "site/digital/containers/SelectionPopup/modules/DecoderInputCountModule";
-import {InputCountModule}               from "site/digital/containers/SelectionPopup/modules/InputCountModule";
 import {OscilloscopeModule}             from "site/digital/containers/SelectionPopup/modules/OscilloscopeModules";
-import {OutputCountModule}              from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
+import {PortCountModule}                from "site/digital/containers/SelectionPopup/modules/PortCountModule";
 import {ReplaceComponentDropdownModule} from "site/digital/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
-import {SelectPortCountModule}          from "site/digital/containers/SelectionPopup/modules/SelectPortCountModule";
 import {ViewICButtonModule}             from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
 import docsConfig    from "site/digital/data/docsUrlConfig.json";
@@ -48,15 +46,13 @@ import exampleConfig from "site/digital/data/examples.json";
 import "./index.scss";
 
 
-const exampleCircuits = exampleConfig.examples.map((example) =>
-    new CircuitMetadataBuilder()
-        .withId(example.file)
-        .withName(example.name)
-        .withOwner("Example")
-        .withDesc("Example Circuit")
-        .withThumbnail(example.thumbnail)
-        .build()
-);
+const exampleCircuits = exampleConfig.examples.map((example) => ({
+    id:        example.file,
+    name:      example.name,
+    desc:      "Example Circuit",
+    thumbnail: example.thumbnail,
+    version:   SAVE_VERSION,
+} as CircuitMetadata));
 
 type Props = {
     info: DigitalCircuitInfo;
@@ -91,11 +87,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
                         <PropertyModule info={info} />
-                        <InputCountModule info={info} />
-                        <ComparatorInputCountModule info={info} />
-                        <SelectPortCountModule info={info} />
-                        <DecoderInputCountModule info={info} />
-                        <OutputCountModule info={info} />
+                        <PortCountModule info={info} labels={{ 0: "Input", 1: "Output", 2: "Select" }} />
                         <OscilloscopeModule info={info} />
                         <ClockSyncButtonModule info={info} />
                         <BusButtonModule info={info} />
@@ -109,14 +101,14 @@ export const App = ({ info, helpers, canvas }: Props) => {
                 </main>
             </div>
 
-            <ICDesigner mainInfo={info} />
-            <ICViewer mainInfo={info} />
+            {/* <ICDesigner mainInfo={info} />
+            <ICViewer mainInfo={info} /> */}
 
             <QuickStartPopup />
             <KeyboardShortcutsPopup />
             <ImageExporterPopup preview={imageExporterPreview} />
 
-            <ExprToCircuitPopup mainInfo={info} />
+            {/* <ExprToCircuitPopup mainInfo={info} /> */}
 
             <LoginPopup />
         </div>
