@@ -11,9 +11,10 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 // import {DigitalCircuitDesigner} from "digital/models";
 
+import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
+
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
-import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
 

@@ -2,64 +2,64 @@
     "imgRoot": "img/itemnav",
     "sections": [
       {
-        "id": "sources",
+        "kind": "sources",
         "label": "Sources",
         "items": [
           {
-            "id": "VoltageSource",
+            "kind": "VoltageSource",
             "label": "Voltage Source",
             "icon": "voltagesource.svg"
           },
           {
-            "id": "CurrentSource",
+            "kind": "CurrentSource",
             "label": "Current Source",
             "icon": "currentsource.svg"
           }
         ]
       },
       {
-        "id": "essentials",
+        "kind": "essentials",
         "label": "Essentials",
         "items": [
           {
-            "id": "Ground",
+            "kind": "Ground",
             "label": "Ground",
             "icon": "ground.svg"
           },
           {
-            "id": "Resistor",
+            "kind": "Resistor",
             "label": "Resistor",
             "icon": "resistor.svg"
           },
           {
-            "id": "Capacitor",
+            "kind": "Capacitor",
             "label": "Capacitor",
             "icon": "capacitor.svg"
           },
           {
-            "id": "Inductor",
+            "kind": "Inductor",
             "label": "Inductor",
             "icon": "inductor.svg"
           }
         ]
       },
       {
-        "id": "measurements",
+        "kind": "measurements",
         "label": "Measurements",
         "items": [
           {
-            "id": "Oscilloscope",
+            "kind": "Oscilloscope",
             "label": "Oscillo-scope",
             "icon": "oscilloscope.svg"
           }
         ]
       },
       {
-        "id": "other",
+        "kind": "other",
         "label": "Other",
         "items": [
           {
-            "id": "Label",
+            "kind": "Label",
             "label": "Label",
             "icon": "label.svg"
           }

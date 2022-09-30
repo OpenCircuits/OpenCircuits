@@ -1,4 +1,5 @@
-import {CircuitController} from "core/controllers/CircuitController";
+import {CircuitController}        from "core/controllers/CircuitController";
+import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
 import {AUTO_PLACE_LED_SPACE, AUTO_PLACE_SWITCH_SPACE} from "./Constants";
 
@@ -25,7 +26,7 @@ import {DigitalComponent, DigitalObj} from "core/models/types/digital";
  * @returns          The DigitalComponent associated with the given Kind.
  * @throws If the itemId is an invalid item or IC.
  */
-export function DigitalCreate(itemKind: DigitalComponent["kind"], circuit: CircuitController<DigitalObj>): DigitalComponent {
+export function DigitalCreate(itemKind: DigitalComponent["kind"], circuit: DigitalCircuitController): DigitalComponent {
     let component: DigitalComponent;
 
     // if (itemId.startsWith("ic")) {
@@ -55,7 +56,7 @@ export function DigitalCreate(itemKind: DigitalComponent["kind"], circuit: Circu
  * @returns          The list of DigitalComponents associated with the given ID and of length `N`.
  * @throws If the itemId is an invalid item or IC.
  */
-export function DigitalCreateN(pos: Vector, itemKind: string, circuit: CircuitController<DigitalObj>,
+export function DigitalCreateN(pos: Vector, itemKind: string, circuit: DigitalCircuitController,
                                N: number): DigitalComponent[] {
     // for (let i = 0; i < N; i++) {
     //     const comp = DigitalCreate(itemId, designer);

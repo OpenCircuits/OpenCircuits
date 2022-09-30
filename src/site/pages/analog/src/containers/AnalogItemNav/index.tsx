@@ -1,7 +1,6 @@
 import {useCallback} from "react";
-import {GetIDFor}    from "serialeazy";
 
-import {Component} from "core/models";
+import {GUID} from "core/utils/GUID";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
@@ -14,17 +13,16 @@ type Props = {
     info: AnalogCircuitInfo;
 }
 export const AnalogItemNav = ({ info }: Props) => {
-    const getImgSrc = useCallback((c: Component) => {
-        // Get ID
-        const id = GetIDFor(c);
-        if (!id)
-            throw new Error(`AnalogItemNav: Can't find ID for component ${c.getName()}`);
+    const getImgSrc = useCallback((id: GUID) => {
+        const obj = info.circuit.getObj(id);
+        if (!obj)
+            throw new Error(`AnalogItemNav: Failed to find object with ID ${id}!`);
 
         // Get path within config of ItemNav icon
-        const section = itemNavConfig.sections.find((s) => (s.items.find((i) => i.id === id)));
-        const item = section?.items.find((i) => (i.id === id));
+        const section = itemNavConfig.sections.find((s) => (s.items.find((i) => (i.kind === obj.kind))));
+        const item = section?.items.find((i) => (i.kind === obj.kind));
 
-        return `${itemNavConfig.imgRoot}/${section?.id}/${item?.icon}`;
+        return `${itemNavConfig.imgRoot}/${section?.kind}/${item?.icon}`;
     }, []);
 
     return (

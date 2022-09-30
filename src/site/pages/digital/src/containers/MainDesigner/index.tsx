@@ -11,9 +11,13 @@ import {DeselectAll} from "core/actions/units/Select";
 
 import {AllComponentInfo} from "core/models/info";
 
+import {DigitalComponentInfo} from "core/models/info/digital";
+
 import {CreateComponent} from "core/models/utils/CreateComponent";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+
+import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
 
 import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
 import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
@@ -21,7 +25,6 @@ import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 // import {DigitalCreateN, SmartPlace, SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
-import {GetRenderFunc} from "site/digital/utils/Rendering";
 
 import {useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 
@@ -98,14 +101,14 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                 num = num ?? 1;
                 if (!itemKind || !(typeof itemKind === "string") || !(typeof num === "number"))
                     return;
-                if (!(itemKind in AllComponentInfo)) {
+                if (!(itemKind in DigitalComponentInfo)) {
                     console.warn(`Attempted to place item of kind: ${itemKind} which doesn't have info.`);
                     return;
                 }
                 pos = info.camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
                 const [comp, ports] = CreateComponent(
-                    itemKind as keyof typeof AllComponentInfo,
+                    itemKind as keyof typeof DigitalComponentInfo,
                     info.viewManager.getTopDepth() + 1
                 );
                 comp.x = pos.x;

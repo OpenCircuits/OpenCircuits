@@ -9,7 +9,7 @@ import {RefObject} from "react";
 
 import {Circuit} from "core/models/Circuit";
 
-import {DigitalComponent, DigitalObj} from "core/models/types/digital";
+import {DigitalObj} from "core/models/types/digital";
 
 import {DigitalCircuitInfo}      from "digital/utils/DigitalCircuitInfo";
 import {VersionConflictResolver} from "digital/utils/DigitalVersionConflictResolver";
@@ -20,14 +20,15 @@ import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 // import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
 
+import {GenerateThumbnail} from "shared/utils/GenerateThumbnail";
+
 import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
 
 // import {SaveCircuit}      from "shared/state/thunks/SaveCircuit";
 // import {LoadUserCircuits} from "shared/state/thunks/User";
 
 
-import {AppStore}          from "../../state";
-import {GenerateThumbnail} from "../GenerateThumbnail";
+import {AppStore} from "../../state";
 
 
 export function GetDigitalCircuitInfoHelpers(
@@ -48,7 +49,7 @@ export function GetDigitalCircuitInfoHelpers(
 
             const circuitData = VersionConflictResolver(rawCircuitData);
 
-            const circuit = JSON.parse(circuitData) as Circuit<DigitalComponent>;
+            const circuit = JSON.parse(circuitData) as Circuit<DigitalObj>;
 
             reset(circuit);
 

@@ -30,7 +30,7 @@ export function SaveCircuit(data: string): ThunkResult<Promise<boolean>> {
                                         CreateUserCircuit(auth!, data));
             if (!newData)
                 throw new Error("SaveCircuit failed: newData is undefined");
-            dispatch(SetCircuitId(newData.getId()));
+            dispatch(SetCircuitId(newData.id));
             dispatch(_SetCircuitSavingFinish());
 
             return true; // Success

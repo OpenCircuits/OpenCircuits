@@ -1,4 +1,3 @@
-import {CreateGroupPlaceAction}    from "core/actions/addition/PlaceAction";
 import {useLayoutEffect, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
@@ -9,16 +8,20 @@ import {Cursor} from "core/utils/CircuitInfo";
 import {Input}  from "core/utils/Input";
 
 
+import {PlaceGroup}  from "core/actions/units/Place";
 import {DeselectAll} from "core/actions/units/Select";
 
+import {AnalogComponentInfo} from "core/models/info/analog";
+
+import {CreateComponent} from "core/models/utils/CreateComponent";
+
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
+
+import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 import {Droppable} from "shared/components/DragDroppable/Droppable";
-
-import {AnalogCreateN} from "site/analog/utils/AnalogCreate";
-import {GetRenderFunc} from "site/analog/utils/Rendering";
 
 import {useAnalogSelector} from "site/analog/utils/hooks/useAnalog";
 
@@ -68,8 +71,8 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                 info.renderer.render();
         });
 
-        // Add render callbacks and set render function
-        info.designer.addCallback(() => info.renderer.render());
+        // // Add render callbacks and set render function
+        // info.designer.addCallback(() => info.renderer.render());
 
         info.renderer.setRenderFunction(() => renderFunc());
         info.renderer.render();
@@ -89,16 +92,28 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     return (
         <Droppable
             ref={canvas}
-            onDrop={(pos, itemId, num = 1) => {
+            onDrop={(pos, itemKind, num = 1) => {
                 if (!canvas.current)
                     throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
-                if (!itemId || !(typeof itemId === "string") || !(typeof num === "number"))
+                if (!itemKind || !(typeof itemKind === "string") || !(typeof num === "number"))
                     return;
+                if (!(itemKind in AnalogComponentInfo)) {
+                    console.warn(`Attempted to place item of kind: ${itemKind} which doesn't have analog info.`);
+                    return;
+                }
                 pos = info.camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
-                info.history.add(
-                    CreateGroupPlaceAction(info.designer, AnalogCreateN(pos, itemId, info.designer, num))
+                // info.history.add(
+                //     CreateGroupPlaceAction(info.designer, AnalogCreateN(pos, itemId, info.designer, num))
+                // );
+                const [comp, ports] = CreateComponent(
+                    itemKind as keyof typeof AnalogComponentInfo,
+                    info.viewManager.getTopDepth() + 1
                 );
+                comp.x = pos.x;
+                comp.y = pos.y;
+                info.history.add(PlaceGroup(info.circuit, [comp, ...ports]));
+
                 info.renderer.render();
             }}>
             <canvas

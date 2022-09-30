@@ -3,8 +3,6 @@ import {ColorToHex}          from "svg2canvas";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
-import {Oscilloscope} from "analog/models/eeobjects";
-
 import {NetlistAnalysis}  from "analog/models/sim/Netlist";
 import {CircuitToNetlist} from "analog/models/sim/NetlistGenerator";
 
@@ -46,29 +44,30 @@ export const SimButtons = ({ info }: Props) => {
     });
 
     const Simulate = () => {
-        info.sim?.run();
-        info.renderer.render();
+        // @TODO
+        // info.sim?.run();
+        // info.renderer.render();
 
-        // Add all current plots to all current Oscilloscopes
-        const o = info.designer.getObjects().filter((a) => a instanceof Oscilloscope) as Oscilloscope[];
-        o.forEach((o) => {
-            o.setConfig({
-                ...o.getConfig(),
-                vecs: Object.fromEntries(info.sim!.getFullVecIDs().map(
-                    (key, i, arr) => [key, {
-                        // Last data-array is x/time data, disabled by default
-                        enabled: (i < arr.length-1),
-                        color:   GetCol(i, arr.length),
-                    }]
-                )),
-            });
-        });
+        // // Add all current plots to all current Oscilloscopes
+        // const o = info.designer.getObjects().filter((a) => a instanceof Oscilloscope) as Oscilloscope[];
+        // o.forEach((o) => {
+        //     o.setConfig({
+        //         ...o.getConfig(),
+        //         vecs: Object.fromEntries(info.sim!.getFullVecIDs().map(
+        //             (key, i, arr) => [key, {
+        //                 // Last data-array is x/time data, disabled by default
+        //                 enabled: (i < arr.length-1),
+        //                 color:   GetCol(i, arr.length),
+        //             }]
+        //         )),
+        //     });
+        // });
 
-        dispatch(SetHasData(true));
+        // dispatch(SetHasData(true));
     };
 
     const Upload = () => {
-        const [netlist, data] = CircuitToNetlist(name, analysis!, info.designer);
+        const [netlist, data] = CircuitToNetlist(name, analysis!, info.circuit);
         info.sim?.uploadNetlist(netlist);
 
         dispatch(SetSimMappings(data));
@@ -77,14 +76,14 @@ export const SimButtons = ({ info }: Props) => {
 
     // INITIALLY UPLOAD CAUSE IM TIRED OF DOING IT MANUALLY
     useEffect(() => {
-        if (info.designer.getAll().length > 0) {
-            try {
-                Upload();
-                Simulate();
-            } catch (e) {
-                console.error("Failed to upload:", e);
-            }
-        }
+        // if (info.designer.getAll().length > 0) {
+        //     try {
+        //         Upload();
+        //         Simulate();
+        //     } catch (e) {
+        //         console.error("Failed to upload:", e);
+        //     }
+        // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     // --------------

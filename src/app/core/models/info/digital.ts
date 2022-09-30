@@ -22,8 +22,8 @@ const DigitalPort = GenPortInfo<DigitalPort>("DigitalPort");
 const DigitalWire = GenWireInfo<DigitalWire>("DigitalWire");
 
 export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
-    "ANDGate":     GenDigitalComponentInfo<ANDGate>("ANDGate", "2,1", DigitalPortGroup.Input),
     "DigitalNode": GenDigitalComponentInfo<DigitalNode>("DigitalNode", "1,1"),
+    "ANDGate":     GenDigitalComponentInfo<ANDGate>("ANDGate", "2,1", DigitalPortGroup.Input),
 };
 
 export const DigitalInfo: ObjInfoRecord<DigitalObj> = {

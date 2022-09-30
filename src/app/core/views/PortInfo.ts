@@ -111,7 +111,13 @@ export const PortInfo: Record<AnyComponent["kind"], Record<string, Record<`${num
     "DigitalNode": {
         "1,1": {
             "0:0": { origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) },
-            "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(1, 0) },
+            "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) },
+        },
+    },
+    "AnalogNode": {
+        "1,1": {
+            "0:0": { origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) },
+            "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) },
         },
     },
     "ANDGate": GenPortInfo(7, {
@@ -121,6 +127,12 @@ export const PortInfo: Record<AnyComponent["kind"], Record<string, Record<`${num
         },
         1: CalcPortPos(V(0.5, 0), V(1, 0)),
     }),
+    "Resistor": {
+        "1,1": {
+            "0:0": { origin: V(-0.6, 0), target: V(-1, 0), dir: V(-1, 0) },
+            "1:0": { origin: V(+0.6, 0), target: V(+1, 0), dir: V(+1, 0) },
+        },
+    },
 };
 
 // This is a list of all components that have more than one port configuration

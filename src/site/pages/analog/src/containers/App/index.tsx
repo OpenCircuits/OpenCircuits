@@ -1,6 +1,8 @@
 import {useCallback} from "react";
 
-import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+import {SAVE_VERSION} from "core/utils/Constants";
+
+import {CircuitMetadata} from "core/models/Circuit";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
@@ -36,15 +38,13 @@ import {OscilloscopePlotsModule} from "../SelectionPopup/modules/OscilloscopePlo
 import "./index.scss";
 
 
-const exampleCircuits = exampleConfig.examples.map((example) =>
-    new CircuitMetadataBuilder()
-        .withId(example.file)
-        .withName(example.name)
-        .withOwner("Example")
-        .withDesc("Example Circuit")
-        .withThumbnail(example.thumbnail)
-        .build()
-);
+const exampleCircuits = exampleConfig.examples.map((example) => ({
+    id:        example.file,
+    name:      example.name,
+    desc:      "Example Circuit",
+    thumbnail: example.thumbnail,
+    version:   SAVE_VERSION,
+} as CircuitMetadata));
 
 type Props = {
     info: AnalogCircuitInfo;
