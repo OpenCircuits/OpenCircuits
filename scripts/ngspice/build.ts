@@ -1,17 +1,23 @@
-
-
-// build and run Docker install
-
 import {execSync} from "node:child_process";
 import path       from "node:path";
 
+import CopyDir from "../utils/copyDir.js";
 
+
+// Build docker image and NGSpice
 execSync("docker build -t ngspice:make .", {
     cwd:   path.resolve(process.cwd(), "scripts/ngspice"),
     stdio: "inherit",
 });
+
+// Run container w/ image to output the files
 execSync("docker run --rm -v $(pwd):/mnt ngspice:make", {
     cwd:   path.resolve(process.cwd(), "scripts/ngspice"),
     stdio: "inherit",
 });
-// execSync("docker build -t ngspice:make .");
+
+// Copy files to analog site
+CopyDir(
+    path.resolve(process.cwd(), "scripts/ngspice/build"),
+    path.resolve(process.cwd(), "src/site/pages/analog/src/lib"),
+);
