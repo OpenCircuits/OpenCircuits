@@ -1,3 +1,4 @@
+import {AnalogComponentInfo}       from "core/views/info/analog";
 import {useLayoutEffect, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
@@ -11,7 +12,6 @@ import {Input}  from "core/utils/Input";
 import {PlaceGroup}  from "core/actions/units/Place";
 import {DeselectAll} from "core/actions/units/Select";
 
-import {AnalogComponentInfo} from "core/models/info/analog";
 
 import {CreateComponent} from "core/models/utils/CreateComponent";
 

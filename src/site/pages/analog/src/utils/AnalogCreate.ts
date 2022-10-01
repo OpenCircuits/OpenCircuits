@@ -1,10 +1,9 @@
 import {AnalogCircuitController} from "analog/controllers/AnalogCircuitController";
+import {AnalogComponentInfo}     from "core/views/info/analog";
 
 import {Vector} from "Vector";
 
 import {uuid} from "core/utils/GUID";
-
-import {AnalogComponentInfo} from "core/models/info/analog";
 
 import {AnalogComponent} from "core/models/types/analog";
 
