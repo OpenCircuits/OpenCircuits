@@ -27,12 +27,9 @@ import {WiringTool} from "core/tools/WiringTool";
 
 import {AnyPort} from "core/models/types";
 
-import {GetPortWorldPos} from "core/views/PortInfo";
+import {GetPortWorldPos} from "core/views/portinfo/utils";
 
 import {Curve} from "../shapes/Curve";
-
-// import {WireRenderer} from "./WireRenderer";
-
 
 
 function drawRotationCircleOutline(renderer: Renderer, camera: Camera, pos: Vector): void {

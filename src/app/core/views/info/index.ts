@@ -1,4 +1,4 @@
-import {AnyObj} from "../types";
+import {AnyObj} from "../../models/types";
 
 import {AnalogComponentInfo, AnalogInfo}   from "./analog";
 import {ObjInfoRecord}                     from "./base";
