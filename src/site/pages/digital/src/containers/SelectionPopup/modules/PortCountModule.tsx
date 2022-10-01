@@ -15,13 +15,6 @@ import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSel
 import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 
 
-
-const GetNewPortConfig = (c: AnyComponent, group: number, newAmt: number) => (
-    Object.keys(AllPortInfo[c.kind]).find((c) =>
-        (parseInt(c.split(",")[group]) === newAmt)
-    )!
-);
-
 type Props = {
     info: CircuitInfo;
     labels?: Record<number, string>;
@@ -40,8 +33,8 @@ export const PortCountModule = ({ info, labels }: Props) => {
             const info = AllPortInfo[c.kind];
             const changeGroup = (info.AllowChanges ? info.ChangeGroup : 0);
             const curConfig = CalcPortConfigID(circuit, c);
-            const portAmt = parseInt(curConfig.split(",")[changeGroup]);
-            return { [`${changeGroup}`]: portAmt } as Record<`${number}`, number>;
+            const portAmt = curConfig.split(",")[changeGroup];
+            return { [`${changeGroup}`]: portAmt } as Record<`${number}`, string>;
         })(),
     );
 
@@ -53,9 +46,8 @@ export const PortCountModule = ({ info, labels }: Props) => {
             const group = parseInt(sGroup);
 
             // Get all possible values for this group (from component 0)
-            const values = Object.keys(AllPortInfo[cs[0].kind])
-                .map((s) => parseInt(s.split(",")[group]));
-            const options = values.map((v) => [`${v}`, v] as const);
+            const options = Object.keys(AllPortInfo[cs[0].kind].Positions)
+                .map((s) => [s.split(",")[group], s] as const);
 
             const label = labels?.[group] ?? "Port";
 
@@ -64,12 +56,12 @@ export const PortCountModule = ({ info, labels }: Props) => {
                     {label} Count
                     <label>
                         <SelectModuleInputField
-                            kind="number[]" options={options}
+                            kind="string[]" options={options}
                             props={inputs}
-                            getAction={(newCounts) =>
+                            getAction={(newConfigs) =>
                                 new GroupAction(
-                                    newCounts.map((newAmt, i) =>
-                                        SetPortConfig(circuit, cs[i], GetNewPortConfig(cs[i], group, newAmt))),
+                                    newConfigs.map((newConfig, i) =>
+                                        SetPortConfig(circuit, cs[i], newConfig)),
                                     "Port Count Change"
                                 )}
                             onSubmit={({ isFinal, action }) => {
