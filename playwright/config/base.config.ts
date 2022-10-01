@@ -19,7 +19,7 @@ type WebServer = {
 }
 
 /* Configure projects for major browsers */
-const baseProjects = [
+const baseProjects: Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>> = [
     {
         name: "chromium",
         use:  {
@@ -86,28 +86,33 @@ function modifiyTestMatchRegExp(match: RegExp, _page: string): RegExp {
     return match;
 }
 
-function getProjectDefinitions(pageName: string, port: number) {
-    return baseProjects.map((project) => {
-        const name = project.name + "-" + pageName;
-        let testMatch: string | RegExp | Array<string | RegExp> | undefined;
-        if (project.testMatch === undefined) {
-            testMatch = undefined;
-        } else if (typeof project.testMatch === "string") {
-            testMatch = modifiyTestMatchString(project.testMatch, pageName);
-        } else if (project.testMatch instanceof RegExp) {
-            testMatch = modifiyTestMatchRegExp(project.testMatch, pageName);
-        } else {
-            testMatch = project.testMatch.map((matcher) =>
-                typeof matcher === "string"
-                    ? modifiyTestMatchString(matcher, pageName)
-                    : modifiyTestMatchRegExp(matcher, pageName))
-        }
-        return {
-            name,
-            testMatch,
-            use: { ...project.use, baseURL: `http://localhost:${port}` },
-        };
-    });
+function generateProjectDefinition(pageName: string, port: number,
+    project: Project<PlaywrightTestOptions, PlaywrightWorkerOptions>):
+    Project<PlaywrightTestOptions, PlaywrightWorkerOptions> {
+    const name = project.name + "-" + pageName;
+    let testMatch: string | RegExp | Array<string | RegExp> | undefined;
+    if (project.testMatch === undefined) {
+        testMatch = undefined;
+    } else if (typeof project.testMatch === "string") {
+        testMatch = modifiyTestMatchString(project.testMatch, pageName);
+    } else if (project.testMatch instanceof RegExp) {
+        testMatch = modifiyTestMatchRegExp(project.testMatch, pageName);
+    } else {
+        testMatch = project.testMatch.map((matcher) =>
+            typeof matcher === "string"
+                ? modifiyTestMatchString(matcher, pageName)
+                : modifiyTestMatchRegExp(matcher, pageName))
+    }
+    return {
+        name,
+        testMatch,
+        use: { ...project.use, baseURL: `http://localhost:${port}` },
+    }
+}
+
+function getProjectDefinitions(pageName: string, port: number):
+    Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>> {
+    return baseProjects.map((project) => generateProjectDefinition(pageName, port, project));
 }
 
 const devPages: Readonly<Record<DevPageNames, PageDetails>> = {
