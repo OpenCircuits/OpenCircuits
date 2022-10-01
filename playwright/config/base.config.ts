@@ -1,7 +1,171 @@
 import {devices} from "@playwright/test";
 
-import type {PlaywrightTestConfig} from "@playwright/test";
+import type {PlaywrightTestConfig, PlaywrightTestOptions, PlaywrightWorkerOptions, Project} from "@playwright/test";
 
+
+type DevPageNames = "digital" | "landing";
+type ProdPageNames = "digital";
+type PageDetails = {
+    port: number;
+    command: string;
+}
+// TODO: How do I just import the interface TestConfigWebServer from "@playwright/test"?
+type WebServer = {
+    reuseExistingServer: boolean;
+    timeout: number;
+    command: string;
+    port: number;
+    cwd: string;
+}
+
+/* Configure projects for major browsers */
+const baseProjects = [
+    {
+        name: "chromium",
+        use:  {
+            ...devices["Desktop Chrome"],
+            viewport: { width: 1280, height: 720 },
+        },
+        testMatch: ["*/desktop/{shared,chromium}/*.spec.ts", "*/shared/*.spec.ts"],
+    },
+
+    {
+        name: "firefox",
+        use:  {
+            ...devices["Desktop Firefox"],
+            viewport: { width: 1280, height: 720 },
+        },
+        testMatch: ["*/desktop/{shared,firefox}/*.spec.ts", "*/shared/*.spec.ts"],
+    },
+
+    {
+        name: "webkit",
+        use:  {
+            ...devices["Desktop Safari"],
+            viewport: { width: 1280, height: 720 },
+        },
+        testMatch: ["*/desktop/{shared,webkit}/*.spec.ts", "*/shared/*.spec.ts"],
+    },
+
+    /* Test against mobile viewports. */
+    {
+        name: "Mobile Chrome",
+        use:  {
+            ...devices["Pixel 5"],
+        },
+        testMatch: ["*/mobile/{shared,android}/*.spec.ts", "*/shared/*.spec.ts"],
+    },
+    {
+        name: "Mobile Safari",
+        use:  {
+            ...devices["iPhone 12"],
+        },
+        testMatch: ["*/mobile/{shared,iphone}/*.spec.ts", "*/shared/*.spec.ts"],
+    },
+
+    /* Test against branded browsers. */
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: {
+    //     channel: 'msedge',
+    //   },
+    // },
+    // {
+    //   name: 'Google Chrome',
+    //   use: {
+    //     channel: 'chrome',
+    //   },
+    // },
+];
+
+function modifiyTestMatchString(match: string, page: string): string {
+    return match.replace("*", "*/" + page);
+}
+function modifiyTestMatchRegExp(match: RegExp, _page: string): RegExp {
+    // TODO: Figure out how to actually do this
+    return match;
+}
+
+function getProjectDefinitions(pageName: string, port: number) {
+    return baseProjects.map((project) => {
+        const name = project.name + "-" + pageName;
+        let testMatch: string | RegExp | Array<string | RegExp> | undefined;
+        if (project.testMatch === undefined) {
+            testMatch = undefined;
+        } else if (typeof project.testMatch === "string") {
+            testMatch = modifiyTestMatchString(project.testMatch, pageName);
+        } else if (project.testMatch instanceof RegExp) {
+            testMatch = modifiyTestMatchRegExp(project.testMatch, pageName);
+        } else {
+            testMatch = project.testMatch.map((matcher) =>
+                typeof matcher === "string"
+                    ? modifiyTestMatchString(matcher, pageName)
+                    : modifiyTestMatchRegExp(matcher, pageName))
+        }
+        return {
+            name,
+            testMatch,
+            use: { ...project.use, baseURL: `http://localhost:${port}` },
+        };
+    });
+}
+
+const devPages: Readonly<Record<DevPageNames, PageDetails>> = {
+    digital: {
+        port:    3000,
+        command: "node ./build/scripts/start.js --project=digital",
+    },
+    landing: {
+        port:    3000,
+        command: "node ./build/scripts/start.js --project=landing",
+    },
+}
+
+const prodPages: Readonly<Record<ProdPageNames, PageDetails>> = {
+    digital: {
+        port:    8080,
+        command: "node ./build/scripts/build.js server digital " +
+                 "&& node ./build/scripts/start.js --project=server",
+    },
+}
+
+export const DevProjects: Readonly<Record<DevPageNames,
+    Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>>>> = {
+    digital: getProjectDefinitions("digital", devPages.digital.port),
+    landing: getProjectDefinitions("landing", devPages.landing.port),
+}
+
+export const ProdProjects: Readonly<Record<ProdPageNames,
+    Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>>>> = {
+    digital: getProjectDefinitions("digital", prodPages.digital.port),
+}
+
+export const DevWebServers: Readonly<Record<DevPageNames, WebServer>> = {
+    digital: {
+        reuseExistingServer: true,
+        timeout:             100_000,
+        command:             devPages.digital.command,
+        port:                devPages.digital.port,
+        cwd:                 "../../",
+    },
+    landing: {
+        reuseExistingServer: true,
+        timeout:             100_000,
+        command:             devPages.landing.command,
+        port:                devPages.landing.port,
+        cwd:                 "../../",
+    },
+}
+
+export const ProdWebServers: Readonly<Record<ProdPageNames, WebServer>> = {
+    digital: {
+        reuseExistingServer: !!process.env.CI,
+        timeout:             150_000,
+        command:             prodPages.digital.command,
+        port:                prodPages.digital.port,
+        cwd:                 "../../",
+    },
+}
 
 /**
  * Read environment variables from file.
@@ -13,7 +177,7 @@ import type {PlaywrightTestConfig} from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration for more.
  */
 const config: PlaywrightTestConfig = {
-    testDir: "./playwright",
+    testDir: "../",
     /* Maximum time one test can run for. */
     timeout: 30 * 10_000,
     expect:  {
@@ -39,9 +203,6 @@ const config: PlaywrightTestConfig = {
         /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
         actionTimeout: 0,
 
-        /* Base URL to use in actions like `await page.goto('/')`. */
-        baseURL: "http://localhost:3000",
-
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: "on-first-retry",
 
@@ -49,66 +210,6 @@ const config: PlaywrightTestConfig = {
             ignoreDefaultArgs: ["--hide-scrollbars"],
         },
     },
-
-    /* Configure projects for major browsers */
-    projects: [
-        {
-            name: "chromium",
-            use:  {
-                ...devices["Desktop Chrome"],
-                viewport: { width: 1280, height: 720 },
-            },
-            testMatch: "*/desktop/{shared,chromium}/*.spec.ts",
-        },
-
-        {
-            name: "firefox",
-            use:  {
-                ...devices["Desktop Firefox"],
-                viewport: { width: 1280, height: 720 },
-            },
-            testMatch: "*/desktop/{shared,firefox}/*.spec.ts",
-        },
-
-        {
-            name: "webkit",
-            use:  {
-                ...devices["Desktop Safari"],
-                viewport: { width: 1280, height: 720 },
-            },
-            testMatch: "*/desktop/{shared,webkit}/*.spec.ts",
-        },
-
-        /* Test against mobile viewports. */
-        {
-            name: "Mobile Chrome",
-            use:  {
-                ...devices["Pixel 5"],
-            },
-            testMatch: "*/mobile/{shared,android}/*.spec.ts",
-        },
-        {
-            name: "Mobile Safari",
-            use:  {
-                ...devices["iPhone 12"],
-            },
-            testMatch: "*/mobile/{shared,iphone}/*.spec.ts",
-        },
-
-        /* Test against branded browsers. */
-        // {
-        //   name: 'Microsoft Edge',
-        //   use: {
-        //     channel: 'msedge',
-        //   },
-        // },
-        // {
-        //   name: 'Google Chrome',
-        //   use: {
-        //     channel: 'chrome',
-        //   },
-        // },
-    ],
 
     /* Folder for test artifacts such as screenshots, videos, traces, etc. */
     // outputDir: 'test-results/',
