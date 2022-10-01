@@ -1,10 +1,10 @@
 import {CircuitEvent}                              from "core/controllers/CircuitController";
-import {GetConfigAmount, ParseConfig}              from "core/views/PortInfo";
+import {AllPortInfo}                               from "core/views/portinfo";
+import {GetConfigAmount}                           from "core/views/portinfo/utils";
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {GUID} from "core/utils/GUID";
 
-import {AllComponentInfo}     from "core/models/info";
 import {AnyComponent, AnyObj} from "core/models/types";
 
 import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
@@ -18,8 +18,6 @@ import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
 import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
-
-
 
 
 /**
@@ -39,7 +37,7 @@ function GetNumInputsAndOutputs(itemKind: AnyComponent["kind"], info: DigitalCir
     //     return [icData.getInputCount(), icData.getOutputCount()];
     // }
 
-    const portConfig = AllComponentInfo[itemKind].PortInfo.InitialConfig;
+    const portConfig = AllPortInfo[itemKind].InitialConfig;
     return [
         GetConfigAmount(portConfig, DigitalPortGroup.Input) + GetConfigAmount(portConfig, DigitalPortGroup.Select),
         GetConfigAmount(portConfig, DigitalPortGroup.Output),

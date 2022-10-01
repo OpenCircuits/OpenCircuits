@@ -17,8 +17,9 @@ import {AnyObj, AnyPort} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo}     from "./BaseView";
-import {GetPortWorldPos, PortPos} from "./PortInfo";
+import {BaseView, RenderInfo} from "./BaseView";
+import {PortPos}              from "./portinfo/types";
+import {GetPortWorldPos}      from "./portinfo/utils";
 
 
 export abstract class PortView<

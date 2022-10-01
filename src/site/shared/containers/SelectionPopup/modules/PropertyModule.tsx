@@ -1,3 +1,5 @@
+import {AllInfo} from "core/views/info";
+
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Action}      from "core/actions/Action";
@@ -5,7 +7,6 @@ import {GroupAction} from "core/actions/GroupAction";
 
 import {SetProperty} from "core/actions/units/SetProperty";
 
-import {AllInfo}        from "core/models/info";
 import {Prop, PropInfo} from "core/models/PropInfo";
 import {AnyObj}         from "core/models/types";
 

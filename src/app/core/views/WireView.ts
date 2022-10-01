@@ -20,7 +20,7 @@ import {AnyObj, AnyPort, AnyWire} from "core/models/types";
 import {CircuitController} from "core/controllers/CircuitController";
 
 import {BaseView, RenderInfo} from "./BaseView";
-import {GetPortWorldPos}      from "./PortInfo";
+import {GetPortWorldPos}      from "./portinfo/utils";
 
 
 export class WireView<
