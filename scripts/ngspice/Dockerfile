@@ -41,7 +41,7 @@ COPY ./src/* /src/
 # Build the final WASM binary
 RUN mkdir /build/
 RUN source /emsdk/emsdk_env.sh && \
-    em++ -lpthread -o /build/ngspice.js /src/*.cpp /ngspice/release/src/.libs/libngspice.so.0.0.2 \
+    em++ -lpthread -o /build/ngspice.js /src/*.cpp /ngspice/release/src/.libs/libngspice.so.0.0.* \
          -s ENVIRONMENT='web' -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1
 
 # Default command will copy the build files into /mnt/build/

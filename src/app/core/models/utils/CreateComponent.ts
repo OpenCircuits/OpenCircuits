@@ -1,29 +1,21 @@
 import {v4 as uuid} from "uuid";
 
-import {Vector} from "Vector";
-
-import {AllComponentInfo} from "core/models/info";
-import {AnyObj}           from "core/models/types";
-
-import {CircuitController} from "core/controllers/CircuitController";
-import {PortInfo}          from "core/views/PortInfo";
-
-import {Action}      from "../../actions/Action";
-import {GroupAction} from "../../actions/GroupAction";
-import {Place}       from "../../actions/units/Place";
+import {AllComponentInfo} from "core/views/info";
+import {AllPortInfo}      from "core/views/portinfo";
 
 
 export function CreateComponent(kind: keyof typeof AllComponentInfo, zIndex: number, compID = uuid()) {
     const info = AllComponentInfo[kind];
+    const portInfo = AllPortInfo[kind];
 
     // Create component
     const comp = info.Default(compID);
 
     // Create ports
-    const portConfig = PortInfo[kind][info.PortInfo.InitialConfig];
+    const portConfig = portInfo.Positions[AllPortInfo[kind].InitialConfig];
     const ports = Object.keys(portConfig).map((s) => {
         const [group, index] = s.split(":").map((s) => parseInt(s));
-        return info.PortInfo.Default(uuid(), compID, group, index);
+        return portInfo.Default(uuid(), compID, group, index);
     });
 
     // Set z-index
@@ -32,6 +24,7 @@ export function CreateComponent(kind: keyof typeof AllComponentInfo, zIndex: num
     return [comp, ports] as const;
 }
 
+// @TODO
 // export function CreateComponentN(pos: Vector, kind: keyof typeof AllComponentInfo, N: number) {
 //     return Array(N).fill(0).map((_, i) => {
 //         const [comp, ports] = CreateComponent(kind);

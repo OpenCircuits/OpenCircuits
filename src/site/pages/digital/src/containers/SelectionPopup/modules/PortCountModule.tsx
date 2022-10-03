@@ -1,4 +1,6 @@
-import {CalcPortConfigID, PortInfo} from "core/views/PortInfo";
+import {AllComponentInfo} from "core/views/info";
+import {AllPortInfo}      from "core/views/portinfo";
+import {CalcPortConfigID} from "core/views/portinfo/utils";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
@@ -6,19 +8,12 @@ import {GroupAction} from "core/actions/GroupAction";
 
 import {SetPortConfig} from "core/actions/compositions/SetPortConfig";
 
-import {AllComponentInfo} from "core/models/info";
-import {AnyComponent}     from "core/models/types";
+import {AnyComponent} from "core/models/types";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
 import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 
-
-const GetNewPortConfig = (c: AnyComponent, group: number, newAmt: number) => (
-    Object.keys(PortInfo[c.kind]).find((c) =>
-        (parseInt(c.split(",")[group]) === newAmt)
-    )!
-);
 
 type Props = {
     info: CircuitInfo;
@@ -32,13 +27,14 @@ export const PortCountModule = ({ info, labels }: Props) => {
         (c): c is AnyComponent => (
             (c.baseKind === "Component") &&
             // Only allow components that allow changes to their port config
-            (c.kind in AllComponentInfo && AllComponentInfo[c.kind].PortInfo.AllowChanges)
+            (c.kind in AllComponentInfo && AllPortInfo[c.kind].AllowChanges)
         ),
         (c) => (() => {
-            const changeGroup = AllComponentInfo[c.kind].PortInfo.ChangeGroup ?? 0;
+            const info = AllPortInfo[c.kind];
+            const changeGroup = (info.AllowChanges ? info.ChangeGroup : 0);
             const curConfig = CalcPortConfigID(circuit, c);
-            const portAmt = parseInt(curConfig.split(",")[changeGroup]);
-            return { [`${changeGroup}`]: portAmt } as Record<`${number}`, number>;
+            const portAmt = curConfig.split(",")[changeGroup];
+            return { [`${changeGroup}`]: portAmt } as Record<`${number}`, string>;
         })(),
     );
 
@@ -50,9 +46,8 @@ export const PortCountModule = ({ info, labels }: Props) => {
             const group = parseInt(sGroup);
 
             // Get all possible values for this group (from component 0)
-            const values = Object.keys(PortInfo[cs[0].kind])
-                .map((s) => parseInt(s.split(",")[group]));
-            const options = values.map((v) => [`${v}`, v] as const);
+            const options = Object.keys(AllPortInfo[cs[0].kind].Positions)
+                .map((s) => [s.split(",")[group], s] as const);
 
             const label = labels?.[group] ?? "Port";
 
@@ -61,12 +56,12 @@ export const PortCountModule = ({ info, labels }: Props) => {
                     {label} Count
                     <label>
                         <SelectModuleInputField
-                            kind="number[]" options={options}
+                            kind="string[]" options={options}
                             props={inputs}
-                            getAction={(newCounts) =>
+                            getAction={(newConfigs) =>
                                 new GroupAction(
-                                    newCounts.map((newAmt, i) =>
-                                        SetPortConfig(circuit, cs[i], GetNewPortConfig(cs[i], group, newAmt))),
+                                    newConfigs.map((newConfig, i) =>
+                                        SetPortConfig(circuit, cs[i], newConfig)),
                                     "Port Count Change"
                                 )}
                             onSubmit={({ isFinal, action }) => {

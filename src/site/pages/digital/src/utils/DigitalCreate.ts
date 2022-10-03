@@ -1,4 +1,5 @@
 import {CircuitController}        from "core/controllers/CircuitController";
+import {DigitalComponentInfo}     from "core/views/info/digital";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
 import {AUTO_PLACE_LED_SPACE, AUTO_PLACE_SWITCH_SPACE} from "./Constants";
@@ -8,8 +9,6 @@ import {V, Vector} from "Vector";
 import {uuid} from "core/utils/GUID";
 
 import {GroupAction} from "core/actions/GroupAction";
-
-import {DigitalComponentInfo} from "core/models/info/digital";
 
 import {DigitalComponent, DigitalObj} from "core/models/types/digital";
 

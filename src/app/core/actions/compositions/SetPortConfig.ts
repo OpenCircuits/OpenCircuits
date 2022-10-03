@@ -1,10 +1,10 @@
 import {uuid} from "core/utils/GUID";
 
-import {AllComponentInfo}     from "core/models/info";
 import {AnyComponent, AnyObj} from "core/models/types";
 
 import {CircuitController}             from "core/controllers/CircuitController";
-import {CalcPortConfigID, ParseConfig} from "core/views/PortInfo";
+import {AllPortInfo}                   from "core/views/portinfo";
+import {CalcPortConfigID, ParseConfig} from "core/views/portinfo/utils";
 
 import {Action}      from "../Action";
 import {GroupAction} from "../GroupAction";
@@ -20,7 +20,7 @@ export function SetPortConfig(circuit: CircuitController<AnyObj>, c: AnyComponen
     const curGroups = ParseConfig(curConfig);
     const newGroups = ParseConfig(newConfig);
 
-    const CreatePort = AllComponentInfo[c.kind].PortInfo.Default;
+    const CreatePort = AllPortInfo[c.kind].Default;
 
     return new GroupAction(
         newGroups.flatMap((newNumPorts, group) => {

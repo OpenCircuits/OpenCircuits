@@ -1,4 +1,5 @@
-import {useLayoutEffect} from "react";
+import {DigitalComponentInfo} from "core/views/info/digital";
+import {useLayoutEffect}      from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -8,10 +9,6 @@ import {Input} from "core/utils/Input";
 
 import {PlaceGroup}  from "core/actions/units/Place";
 import {DeselectAll} from "core/actions/units/Select";
-
-import {AllComponentInfo} from "core/models/info";
-
-import {DigitalComponentInfo} from "core/models/info/digital";
 
 import {CreateComponent} from "core/models/utils/CreateComponent";
 

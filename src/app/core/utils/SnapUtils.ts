@@ -5,7 +5,7 @@ import {V, Vector} from "Vector";
 import {AnyObj, AnyPort} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
-import {GetPortWorldPos}   from "core/views/PortInfo";
+import {GetPortWorldPos}   from "core/views/portinfo/utils";
 
 
 /**
