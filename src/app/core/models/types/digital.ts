@@ -21,6 +21,7 @@ export type TFlipFlop = Component & { kind: "TFlipFlop" };
 
 export type DigitalComponent =
     | DigitalNode
-    | ANDGate;
+    | ANDGate
+    | TFlipFlop;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;

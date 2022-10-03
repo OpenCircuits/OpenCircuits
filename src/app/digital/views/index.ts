@@ -1,10 +1,11 @@
-import {ANDGate, DigitalNode, DigitalObj, DigitalPort, DigitalWire} from "core/models/types/digital";
+import {ANDGate, DigitalNode, DigitalObj, DigitalPort, DigitalWire, TFlipFlop} from "core/models/types/digital";
 
 import {NodeView}                 from "core/views/NodeView";
 import {ViewRecord}               from "core/views/ViewManager";
 import {WireView}                 from "core/views/WireView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
+import {TFlipFlopView} from "./components/TFlipFlopView";
 import {ANDGateView}     from "./components/ANDGateView";
 import {DigitalPortView} from "./DigitalPortView";
 
@@ -17,4 +18,5 @@ export const Views: ViewRecord<DigitalObj, DigitalCircuitController> = {
     "DigitalPort": (c: DigitalCircuitController, o: DigitalPort) => new DigitalPortView(c, o),
     "DigitalNode": (c: DigitalCircuitController, o: DigitalNode) => new DigitalNodeView(c, o),
     "ANDGate":     (c: DigitalCircuitController, o: ANDGate)     => new ANDGateView(c, o),
+    "TFlipFlop":   (c: DigitalCircuitController, o: TFlipFlop)   => new TFlipFlopView(c, o),
 };
