@@ -14,7 +14,10 @@ export type DigitalWire = Wire & { kind: "DigitalWire" };
 
 export type DigitalNode = Component & { kind: "DigitalNode" };
 
+// components
 export type ANDGate = Component & { kind: "ANDGate" };
+
+export type TFlipFlop = Component & { kind: "TFlipFlop" };
 
 export type DigitalComponent =
     | DigitalNode
