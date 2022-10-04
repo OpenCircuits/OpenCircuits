@@ -74,7 +74,7 @@ async function Init(): Promise<void> {
             ngSpiceLib = await NGSpice();
             if (!ngSpiceLib)
                 throw new Error("Failed to load NGSpice WASM binary!");
-            ngSpiceLib.init();
+            ngSpiceLib.OC_init();
         }],
 
         [85, "Initializing redux", async () => {

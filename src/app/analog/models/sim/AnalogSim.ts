@@ -24,7 +24,7 @@ export class AnalogSim {
     }
 
     public init() {
-        this.lib.init();
+        this.lib.OC_init();
     }
 
     public uploadNetlist(netlist: Netlist) {
@@ -39,20 +39,20 @@ export class AnalogSim {
 
         // Upload data to NGSpice
         this.netlistPtrs = this.lib.create_str_array(ngNetList);
-        this.lib.set_data(this.netlistPtrs[0]);
+        this.lib.OC_set_data(this.netlistPtrs[0]);
     }
 
     public run() {
         // Happens sychronously which is fine for now but needs to change
-        this.lib.run();
+        this.lib.OC_run();
 
         // Gather data (slice off end which has "const" plot/data)
-        const plotIDPtrs = this.lib.get_array(this.lib.get_plot_ids(), { type: "string*" }).slice(0, -1);
+        const plotIDPtrs = this.lib.get_array(this.lib.OC_get_plot_ids(), { type: "string*" }).slice(0, -1);
         this.plotIDs = plotIDPtrs.map((ptr) => this.lib.get_array(ptr, { type: "char" }));
-        this.curPlotID = this.lib.get_array(this.lib.get_cur_plot(), { type: "char" });
+        this.curPlotID = this.lib.get_array(this.lib.OC_get_cur_plot(), { type: "char" });
         { // Get vec IDs
             this.vecIDs = Object.fromEntries(plotIDPtrs.map((plotIDPtr, i) =>
-                [this.plotIDs[i], this.lib.get_array(this.lib.get_vector_ids(plotIDPtr), { type: "string" })]
+                [this.plotIDs[i], this.lib.get_array(this.lib.OC_get_vector_ids(plotIDPtr), { type: "string" })]
             ));
         }
         { // Get vec data
@@ -60,8 +60,8 @@ export class AnalogSim {
             this.vecs = allIDs.reduce((prev, id) => {
                 const idPtr = this.lib.create_array("string", id);
 
-                const len = this.lib.get_vector_len(idPtr);
-                const data = this.lib.get_array(this.lib.get_vector_data(idPtr), { type: "double", len });
+                const len = this.lib.OC_get_vector_len(idPtr);
+                const data = this.lib.get_array(this.lib.OC_get_vector_data(idPtr), { type: "double", len });
 
                 // TODO: free `idPtr`
 
@@ -110,7 +110,7 @@ export class AnalogSim {
     }
 
     public printData() {
-        this.lib.print_data();
+        this.lib.OC_print_data();
     }
 }
 
