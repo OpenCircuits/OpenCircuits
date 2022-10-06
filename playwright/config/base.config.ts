@@ -10,7 +10,7 @@ type PageDetails = {
     command: string;
 }
 // TODO: How do I just import the interface TestConfigWebServer from "@playwright/test"?
-type WebServer = {
+export type WebServer = {
     reuseExistingServer: boolean;
     timeout: number;
     command: string;
@@ -79,7 +79,7 @@ const baseProjects: Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions
 ];
 
 function modifiyTestMatchString(match: string, page: string): string {
-    return match.replace("*", "*/" + page);
+    return match.replace("*", "**/" + page);
 }
 function modifiyTestMatchRegExp(match: RegExp, _page: string): RegExp {
     // TODO: Figure out how to actually do this

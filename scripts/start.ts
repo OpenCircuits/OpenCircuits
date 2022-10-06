@@ -33,8 +33,8 @@ function StartServer() {
     });
 }
 
-function StartClient(dir: string, project: string, open: boolean) {
-    startWebpack(dir, project, "development", open);
+function StartClient(dir: string, project: string, open: boolean, forcePort?: number) {
+    startWebpack(dir, project, "development", open, forcePort);
 }
 
 
@@ -42,9 +42,10 @@ function StartClient(dir: string, project: string, open: boolean) {
 (async () => {
     const dirs = getDirs(true, false, false);
 
-    const { open, project } = await yargs(process.argv.slice(2))
+    const { open, project, port } = await yargs(process.argv.slice(2))
         .boolean("open")
         .choices("project", dirs.map((dir) => dir.value as string))
+        .number("port")
         .argv;
 
     let dir: string;
@@ -72,5 +73,5 @@ function StartClient(dir: string, project: string, open: boolean) {
     }
 
     // Start digital/analog/landing page
-    StartClient(`src/site/pages/${dir}`, dir, open);
+    StartClient(`src/site/pages/${dir}`, dir, open, port);
 })();
