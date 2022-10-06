@@ -17,12 +17,14 @@ import customDevServer from "./customDevServer.js";
 /**
  * Basic webpack creation.
  *
- * @param dir     The directory to launch the webpack instance in.
- * @param project The project that is being started, i.e. "digital" or "analog".
- * @param mode    The webpack-mode: development or production.
- * @param open    Boolean indicating whether or not we should auto-open the browser on start.
+ * @param dir       The directory to launch the webpack instance in.
+ * @param project   The project that is being started, i.e. "digital" or "analog".
+ * @param mode      The webpack-mode: development or production.
+ * @param open      Boolean indicating whether or not we should auto-open the browser on start.
+ * @param forcePort The port that must be used.
  */
-export default async (dir: string, project: string, mode: "development" | "production", open: boolean) => {
+export default async (dir: string, project: string, mode: "development" | "production",
+                      open: boolean, forcePort?: number) => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);
@@ -59,7 +61,7 @@ export default async (dir: string, project: string, mode: "development" | "produ
         const pathname = publicRoot.slice(0, -1);
 
         // Start dev server
-        const port = await choosePort("0.0.0.0", 3000);
+        const port = forcePort ?? (await choosePort("0.0.0.0", 3000));
         if (!port)
             return; // No port found
 

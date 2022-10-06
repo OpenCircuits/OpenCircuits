@@ -32,6 +32,7 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.2.1",
     "@types/jest": "^29.0.0",
+    "@types/minimatch": "^5.1.2",
     "@types/node": "^18.7.16",
     "@types/prompts": "^2.0.14",
     "@types/react": "^18.0.18",
