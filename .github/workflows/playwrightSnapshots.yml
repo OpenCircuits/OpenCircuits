@@ -23,14 +23,14 @@ on:
 
 jobs:
   updatesnapshots:
-    # Run this job only on comments of pull requests that strictly match
+    # Run this job only on comments of pull requests that start with
     # the "/update-snapshots" string
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/update-snapshots') }}
+    timeout-minutes: 60
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/update-snapshots') && contains(github.event.comment.body, matrix.os) }}
-    timeout-minutes: 60
-    runs-on: ${{ matrix.os }}
 
     steps:
       # Checkout and do a deep fetch to load all commit IDs
@@ -44,6 +44,7 @@ jobs:
       - name: Get SHA and branch name
         id: get-branch-and-sha
         shell: bash
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
         run: |
           sha_and_branch=$(\
             curl \
@@ -55,27 +56,33 @@ jobs:
       # Checkout the comment's branch
       - name: Fetch Branch
         shell: bash
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
         run: git fetch
       - name: Checkout Branch
         shell: bash
         run: git checkout ${{ steps.get-branch-and-sha.outputs.branch }}
       # Setup testing environment
       - uses: actions/setup-node@v2
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
         with:
           node-version: "16.x"
       - name: Install dependencies
         shell: bash
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
         run: yarn
       - name: Install Playwright browsers
         shell: bash
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
         run: npx playwright install --with-deps
       # Update the snapshots based on the current UI
       - name: Update snapshots
         shell: bash
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
         env:
           UPDATE_SNAPSHOTS_COMMAND: ${{ github.event.comment.body }}
         run: yarn playwright:ci --update-snapshots
       # Commit the changes to the pull request branch
       - uses: stefanzweifel/git-auto-commit-action@v4
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
         with:
           commit_message: "[CI] Update Snapshots"
