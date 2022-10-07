@@ -86,4 +86,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ contains(github.event.comment.body, matrix.os) }}
         with:
-          commit_message: ${{ join(['[CI] Update Snapshots ', matrix.os]) }}
+          commit_message: ${{ format('{0} {1}', '[CI] Update Snapshots', matrix.os) }}
