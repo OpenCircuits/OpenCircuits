@@ -50,9 +50,11 @@ export abstract class DigitalComponent extends Component {
     }
 
 
-    public setInputPortCount(val: number): void {
+    public setInputPortCount(val: number): void { // elephant
+        console.log("## " + this.getInputPortCount().getValue());
         this.inputs.setPortCount(val);
         this.onTransformChange();
+        console.log("%% " + this.getInputPortCount().getValue());
     }
 
     public setOutputPortCount(val: number): void {

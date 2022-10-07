@@ -212,6 +212,7 @@ export const ICEditor = (() => {
 
                 let inputObjs: Component[] = [];
                 ic.getInputPorts().forEach((p) => {
+                    console.log(p);
                     inputObjs.push(p.getWires()[0].getP1Component());
                 });
                 console.log("Input Objects: " + inputObjs);
@@ -246,16 +247,20 @@ export const ICEditor = (() => {
                     )
                 ], "Edit IC Action");
 
-                mainInfo.history.add(editICAction.execute());
+                // mainInfo.history.add(editICAction.execute());
 
-                for (let i = oldInputCount - 1; i >= newInputCount; --i) {
-                    console.log(inputObjs[i].getName());
-                    editICAction.add(new DisconnectAction(mainInfo.designer, inputObjs[i].getConnections()[0]));
+                if (oldInputCount > newInputCount) {
+                    for (let i = oldInputCount - 1; i >= newInputCount; --i) {
+                        console.log(inputObjs[i].getName());
+                        editICAction.add(new DisconnectAction(mainInfo.designer, inputObjs[i].getConnections()[0]));
+                    }
                 }
 
-                for (let i = oldOutputCount - 1; i >= newOutputCount; --i) {
-                    console.log(outputObjs[i].getName());
-                    editICAction.add(new DisconnectAction(mainInfo.designer, outputObjs[i].getConnections()[0]));
+                if (oldOutputCount > newInputCount) {
+                    for (let i = oldOutputCount - 1; i >= newOutputCount; --i) {
+                        console.log(outputObjs[i].getName());
+                        editICAction.add(new DisconnectAction(mainInfo.designer, outputObjs[i].getConnections()[0]));
+                    }
                 }
 
                 ic.setInputPortCount(newInputCount);

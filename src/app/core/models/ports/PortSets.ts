@@ -43,7 +43,9 @@ export class PortSet<T extends Port> {
      *  will be updated.
      * @param val The new number of ports
      */
-    public setPortCount(newVal: number): void {
+    public setPortCount(newVal: number): void { // elephant
+
+        console.log("@@" + this.currentPorts.length + " >> " + newVal);
         // no need to update if value is already
         //  the current amount
         if (newVal == this.currentPorts.length)
@@ -60,6 +62,8 @@ export class PortSet<T extends Port> {
 
         // update positions
         this.positioner.updatePortPositions(this.currentPorts);
+
+        console.log("@@ new val should have changed: " + this.currentPorts.length);
     }
 
     /**

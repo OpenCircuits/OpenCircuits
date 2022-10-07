@@ -10,6 +10,7 @@ import {DigitalComponent} from "digital/models/DigitalComponent";
 import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 
 import {ICData} from "./ICData";
+import { Port } from "core/models";
 
 
 @serializable("IC", {
@@ -57,15 +58,33 @@ export class IC extends DigitalComponent {
         });
     }
 
-    private copyPorts(): void {
+    private copyPorts(): void { // elephant
+        console.log("COPY PORTS");
+        const newInputCount = this.data.getInputCount();
+        const newOutputCount = this.data.getOutputCount();
+
+        console.log((newInputCount + newOutputCount) + " = " + newInputCount + " + " + newOutputCount);
+
+        this.setInputPortCount(newInputCount);
+        this.setOutputPortCount(newOutputCount);
+
         const ports = this.data.getPorts();
         const myPorts = this.getPorts();
 
+        console.log("  ports:");
+        console.log(ports);
+        console.log("  myPorts:");
+        console.log(myPorts);
+
         // Copy names and positions of ports
         for (let i = 0; i < ports.length; i++) {
-            myPorts[i].setName     (ports[i].getName());
-            myPorts[i].setOriginPos(ports[i].getOriginPos());
-            myPorts[i].setTargetPos(ports[i].getTargetPos());
+            if (i > ports.length) {
+                console.log(">>> fucked");
+            } else {
+                myPorts[i].setName     (ports[i].getName());
+                myPorts[i].setOriginPos(ports[i].getOriginPos());
+                myPorts[i].setTargetPos(ports[i].getTargetPos());
+            }
         }
     }
 
