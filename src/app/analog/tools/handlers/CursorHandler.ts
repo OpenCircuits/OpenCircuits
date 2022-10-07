@@ -4,25 +4,21 @@ import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {Event} from "core/utils/Events";
 import {Cursor} from "core/utils/CircuitInfo";
+import {Event}  from "core/utils/Events";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
 import {Oscilloscope} from "analog/models/eeobjects";
 
 
-export type Corner = "topleft" | "topright" | "bottomleft" | "bottomright";
-export type Edge = "left" | "right" | "top" | "bottom";
-export type ResizeArea = Edge | Corner;
-
 const EDGE_SIZE = DEFAULT_BORDER_WIDTH*5;
 
-const CURSORS_MAP = ["sw", "w", "nw", "s", "n", "se", "e", "ne"].map(s => `${s}-resize` as Cursor);
+const CURSORS_MAP = ["sw", "w", "nw", "s", "n", "se", "e", "ne"].map((s) => `${s}-resize` as Cursor);
 
 export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undefined] | [Cursor, Vector, Oscilloscope] {
     const objs = designer.getObjects();
-    const resizables = objs.filter(a => a instanceof Oscilloscope) as Oscilloscope[];
+    const resizables = objs.filter((a) => a instanceof Oscilloscope) as Oscilloscope[];
 
     const worldMousePos = camera.getWorldPos(input.getMousePos());
 
@@ -38,7 +34,7 @@ export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undef
         // Creates 8 rectangle areas
         const areas = rect1.sub(rect2);
 
-        const areaI = areas.findIndex(a => a.contains(worldMousePos));
+        const areaI = areas.findIndex((a) => a.contains(worldMousePos));
         if (areaI === -1)
             continue;
 
@@ -55,7 +51,7 @@ export function FindEdge({ input, camera, designer }: AnalogCircuitInfo): [undef
 }
 
 export const CursorHandler = ({
-    conditions: (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
+    conditions:  (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
     getResponse: (info: AnalogCircuitInfo, _: Event) => {
         const [cursor] = FindEdge(info);
         info.cursor = cursor;

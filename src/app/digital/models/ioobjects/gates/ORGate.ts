@@ -1,14 +1,15 @@
 import {serializable} from "serialeazy";
 
-import {GATE_OR_CULLBOX_OFFSET} from "core/utils/Constants";
+import {V, Vector} from "Vector";
 
-import {Vector, V} from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {QuadraticCurvePositioner} from "digital/models/ports/positioners/QuadraticCurvePositioner";
 
 import {Gate} from "./Gate";
 
+
+ const GATE_OR_CULLBOX_OFFSET = 50;
 
 export function GetQuadraticOffset(numInputs: number): number {
     // The wire extensions stay the same for inputs 4-6 so the offset is constant
@@ -27,41 +28,46 @@ export function GetQuadraticOffset(numInputs: number): number {
 @serializable("ORGate")
 export class ORGate extends Gate {
     /**
-     * Creates an OR Gate with a default of 2 ports, a minimum of two ports, a maximum of 8 ports, and a size of 60 by 50 pixels.
+     * Creates an OR Gate with a default of 2 ports, a minimum of two ports, a maximum of 8 ports,
+     * and a size of 60 by 50 pixels.
+     *
+     * @param not Negates this gate.
      */
-    public constructor(not: boolean = false) {
-        super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());
+    public constructor(not = false) {
+        super(not, new ClampedValue(2,2,8), V(1.2, 1), new QuadraticCurvePositioner());
     }
+
     /**
      * Checks if some of the inputs are on, and if they are, activates the gate.
      */
-    // @Override
-    public activate(): void {
+    public override activate(): void {
         const on = this.getInputPorts().some((input) => input.getIsOn());
         super.activate(on);
     }
 
     /**
-     * Calculates a height offset to account for more inputs than the default height can hold
-     * @returns A vector with the symmetric offset based on the current input number
+     * Calculates a height offset to account for more inputs than the default height can hold.
+     *
+     * @returns A vector with the symmetric offset based on the current input number.
      */
-    // @Override
-    public getOffset(): Vector {
+    public override getOffset(): Vector {
         return super.getOffset().add(0, GetQuadraticOffset(this.numInputs()));
     }
     /**
-     * Returns the name of the gate, depending on if the instance is an or gate or a nor gate 
-     * @returns 'NOR Gate' or 'OR Gate'
+     * Returns the name of the gate, depending on if the instance is an or gate or a nor gate.
+     *
+     * @returns The string "NOR Gate" or "OR Gate".
      */
     public getDisplayName(): string {
-        return this.not ? "NOR Gate" : "OR Gate";
+        return this.getProp("not") ? "NOR Gate" : "OR Gate";
     }
 
     /**
-     * Returns the name of the image displayed in the UI for the gate
-     * @returns "or.svg"
+     * Returns the name of the image displayed in the UI for the gate.
+     *
+     * @returns The string "or.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "or.svg";
     }
 }

@@ -1,16 +1,30 @@
-import {DEFAULT_SIZE,
-        WIRE_SNAP_THRESHOLD,
+import {serialize} from "serialeazy";
+
+import {WIRE_SNAP_THRESHOLD,
         WIRE_THICKNESS} from "core/utils/Constants";
 
-import {V,Vector} from "Vector";
-import {BezierContains} from "math/MathUtils";
-import {BezierCurve} from "math/BezierCurve";
+import {V, Vector} from "Vector";
 
-import {CullableObject}   from "./CullableObject";
-import {Component}  from "./Component";
-import {Port} from "./ports/Port";
-import {Node} from "./Node";
-import {serialize} from "serialeazy";
+import {BezierCurve}    from "math/BezierCurve";
+import {BezierContains} from "math/MathUtils";
+
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
+import {Component}      from "./Component";
+import {CullableObject} from "./CullableObject";
+import {Node}           from "./Node";
+import {Port}           from "./ports/Port";
+
+
+const [Info, InitialInfo] = GenPropInfo({
+    infos: {
+        "color": {
+            type:    "color",
+            label:   "Color",
+            initial: "#ffffff",
+        },
+    },
+});
 
 export abstract class Wire extends CullableObject {
     @serialize
@@ -22,14 +36,11 @@ export abstract class Wire extends CullableObject {
     protected shape: BezierCurve;
     @serialize
     protected straight: boolean;
-    @serialize
-    private color: string;
 
     protected dirtyShape: boolean;
 
     public constructor(p1: Port, p2: Port) {
-        super();
-        this.color = "#ffffff";
+        super(InitialInfo);
 
         this.p1 = p1;
         this.p2 = p2;
@@ -60,7 +71,7 @@ export abstract class Wire extends CullableObject {
         const dir = port.getWorldDir();
 
         // For straight bezier curves, Control point needs to be at the Point
-        const c = (this.straight) ? (pos) : (pos.add(dir.scale(DEFAULT_SIZE)));
+        const c = (this.straight) ? (pos) : (pos.add(dir.scale(1)));
 
         return [pos, c];
     }
@@ -84,7 +95,7 @@ export abstract class Wire extends CullableObject {
         }
     }
 
-    public onTransformChange(): void {
+    public override onTransformChange(): void {
         super.onTransformChange();
         this.dirtyShape = true;
     }
@@ -106,23 +117,19 @@ export abstract class Wire extends CullableObject {
     }
 
     public setIsStraight(straight: boolean): void {
-        if (straight == this.straight)
+        if (straight === this.straight)
             return;
 
         this.straight = straight;
         this.onTransformChange();
     }
 
-    public setColor(color: string): void {
-        this.color = color;
-    }
-
-    public getColor(): string {
-        return this.color;
+    public override getPropInfo(key: string) {
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public getDisplayColor(): string {
-        return this.getColor();
+        return this.props["color"] as string;
     }
 
     public getP1(): Port {

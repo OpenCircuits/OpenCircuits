@@ -1,15 +1,18 @@
-import {GRID_SIZE, LEFT_MOUSE_BUTTON}  from "core/utils/Constants";
+import {GRID_SIZE, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {V, Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
-import {GroupAction}           from "core/actions/GroupAction";
-import {CreateSplitWireAction} from "core/actions/addition/SplitWireAction";
-import {TranslateAction}       from "core/actions/transform/TranslateAction";
-import {CreateDeselectAllAction,
-        SelectAction}          from "core/actions/selection/SelectAction";
-import {Tool}                  from "core/tools/Tool";
+import {GroupAction} from "core/actions/GroupAction";
+
+import {SplitWire} from "core/actions/compositions/SplitWire";
+
+import {DeselectAll, Select} from "core/actions/units/Select";
+import {Translate}           from "core/actions/units/Translate";
+
+import {Tool} from "core/tools/Tool";
 
 import {Node, Wire} from "core/models";
 
@@ -25,7 +28,7 @@ export const SplitWireTool: Tool = (() => {
     }
 
     return {
-        shouldActivate(event: Event, {locked, input, currentlyPressedObject}: CircuitInfo): boolean {
+        shouldActivate(event: Event, { locked, input, currentlyPressedObject }: CircuitInfo): boolean {
             if (locked)
                 return false;
             // Activate if the user dragged over a wire with 1 touch/finger
@@ -40,7 +43,7 @@ export const SplitWireTool: Tool = (() => {
 
 
         onActivate({}: Event, info: CircuitInfo): void {
-            const {input, camera, designer, selections, currentlyPressedObject} = info;
+            const { input, camera, designer, selections, currentlyPressedObject } = info;
 
             const wire = currentlyPressedObject as Wire;
 
@@ -51,17 +54,17 @@ export const SplitWireTool: Tool = (() => {
             action = new GroupAction([], "Split Wire Tool");
 
             // Set wireport as selection and being pressed
-            action.add(CreateDeselectAllAction(selections).execute());
-            action.add(new SelectAction(selections, port).execute());
-            action.add(CreateSplitWireAction(designer, wire, port));
+            action.add(DeselectAll(selections));
+            action.add(Select(selections, port));
+            action.add(SplitWire(designer, wire, port));
 
             info.currentlyPressedObject = port;
 
             // Set initial position
             initialPosition = camera.getWorldPos(input.getMouseDownPos());
         },
-        onDeactivate({}: Event, {history}: CircuitInfo): void {
-            history.add(action.add(new TranslateAction([port], [initialPosition], [port.getPos()])));
+        onDeactivate({}: Event, { history }: CircuitInfo): void {
+            history.add(action.add(Translate([port], [port.getPos()])));
         },
 
 
@@ -69,7 +72,7 @@ export const SplitWireTool: Tool = (() => {
             if (event.type !== "mousedrag")
                 return false;
 
-            const {input, camera} = info;
+            const { input, camera } = info;
 
             const worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
             const worldMousePos = camera.getWorldPos(input.getMousePos());
@@ -82,9 +85,9 @@ export const SplitWireTool: Tool = (() => {
 
             // Execute translate but don't save to group
             //  action since we do that onDeactivate
-            new TranslateAction([port], [initialPosition], [newPosition]).execute();
+            Translate([port], [newPosition]);
 
             return true;
-        }
+        },
     }
 })();

@@ -7,16 +7,16 @@ import {Shape} from "./Shape";
  * A representation of a QuadCurve shape.
  */
 export class QuadCurve implements Shape {
-    private p1: Vector;
-    private p2: Vector;
-    private c: Vector;
+    private readonly p1: Vector;
+    private readonly p2: Vector;
+    private readonly c: Vector;
 
     /**
-     * Constructor for QuadCurve
-     * 
-     * @param p1 start point
-     * @param p2 end point
-     * @param c control point
+     * Constructor for QuadCurve.
+     *
+     * @param p1 The start point.
+     * @param p2 The end point.
+     * @param c  The control point.
      */
     public constructor(p1: Vector, p2: Vector, c: Vector) {
         this.p1 = p1;
@@ -25,9 +25,9 @@ export class QuadCurve implements Shape {
     }
 
     /**
-     * Draws the QuadCurve on the canvas
-     * 
-     * @param ctx provides the 2D rendering context for the drawing surface of an element
+     * Draws the QuadCurve on the canvas.
+     *
+     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         const p1 = this.p1;

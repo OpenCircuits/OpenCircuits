@@ -20,20 +20,20 @@ export class Multiplexer extends Mux {
      * Sets default names for the select and input ports so the user can easily
      * tell what they are used for.
      */
-    protected updatePortNames(): void {
+    protected override updatePortNames(): void {
         super.updatePortNames();
         this.inputs.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName(`I${i}`);
+            if (p.getName() === "")
+                p.setName(`I${i}`);
         });
         this.outputs.getPorts()[0].setName("O0");
-
     }
 
     /**
      * Activate function that allows the multiplexer
-     * 	to give desired output
+     *  to give desired output.
      */
-    public activate(): void {
+    public override activate(): void {
         let num = 0;
         for (let i = 0; i < this.selects.length; i++)
             num = num | ((this.selects.get(i).getIsOn() ? 1 : 0) << i);

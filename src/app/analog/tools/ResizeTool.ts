@@ -1,19 +1,20 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
+
 import {Rect} from "math/Rect";
 
-import {Event} from "core/utils/Events";
 import {Cursor} from "core/utils/CircuitInfo";
+import {Event}  from "core/utils/Events";
 
-import {Action} from "core/actions/Action";
+import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
-import {ShiftAction} from "core/actions/ShiftAction";
-import {TranslateAction} from "core/actions/transform/TranslateAction";
+
+import {SetProperty} from "core/actions/units/SetProperty";
+import {Shift}       from "core/actions/units/Shift";
+import {Translate}   from "core/actions/units/Translate";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-
-import {SetPropertyAction} from "analog/actions/SetPropertyAction";
 
 import {Oscilloscope} from "analog/models/eeobjects";
 
@@ -78,10 +79,10 @@ export const ResizeTool = (() => {
             const newRect = curRect.shift(dir!, V(amtX, amtY));
 
             tempAction = new GroupAction([
-                new ShiftAction(designer, obj!),
-                new TranslateAction([obj!], [obj!.getPos()], [newRect.center]),
-                new SetPropertyAction(obj!, "size", Vector.max(V(400, 200), newRect.size)),
-            ]).execute();
+                Shift(designer, obj!),
+                Translate([obj!], [newRect.center]),
+                SetProperty(obj!, "size", Vector.Max(V(400, 200), newRect.size)),
+            ]);
 
             // Return true since we did something
             //  that requires a re-render

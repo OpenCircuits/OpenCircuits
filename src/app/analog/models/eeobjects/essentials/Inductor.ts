@@ -1,17 +1,23 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {AnalogComponent} from "analog/models";
-import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
+
 import {InductanceInfo} from "analog/models/Units";
-import {GenInitialInfo} from "analog/models/AnalogComponent";
+
+import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
 
 
-const Info = {
-    ...InductanceInfo("L", "Inductance", 10, "m"),
-};
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        ...InductanceInfo("L", "Inductance", 10, "m"),
+    },
+});
 
 @serializable("Inductor")
 export class Inductor extends AnalogComponent {
@@ -19,7 +25,7 @@ export class Inductor extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(40, 240*40/104), new TopBottomPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 
@@ -32,20 +38,22 @@ export class Inductor extends AnalogComponent {
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     /**
-     * Returns name of Component
-     * @returns "Inductor"
+     * Returns name of Component.
+     *
+     * @returns The string "Inductor".
      */
     public override getDisplayName(): string {
         return "Inductor";
     }
 
     /**
-     * Returns name of image file
-     * @returns "inductor.svg"
+     * Returns name of image file.
+     *
+     * @returns The string "inductor.svg".
      */
     public override getImageName(): string {
         return "inductor.svg";

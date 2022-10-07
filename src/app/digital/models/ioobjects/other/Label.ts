@@ -1,42 +1,45 @@
-import {serializable, serialize} from "serialeazy";
+import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
+
+import {GenPropInfo} from "core/utils/PropInfoUtils";
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
 
+
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        "color": {
+            type:    "color",
+            label:   "Color",
+            initial: "#ffffff",
+        },
+        "textColor": {
+            type:    "color",
+            label:   "Text Color",
+            initial: "#000000",
+        },
+    },
+});
+
 @serializable("Label")
 export class Label extends DigitalComponent {
-    @serialize
-    private color: string;
-    @serialize
-    private textColor: string;
-
     public constructor() {
-        super(new ClampedValue(0), new ClampedValue(0), V(60, 30));
-
-        this.color = "#ffffff";
-        this.textColor = "#000000";
+        super(
+            new ClampedValue(0),
+            new ClampedValue(0),
+            V(1.2, 0.6), undefined, undefined,
+            InitialProps,
+        );
     }
 
-    public setColor(color: string): void {
-        this.color = color;
+    public override getPropInfo(key: string) {
+        return Info[key] ?? super.getPropInfo(key);
     }
 
-    public setTextColor(textColor: string): void {
-        this.textColor = textColor;
-    }
-
-    public getColor(): string {
-        return this.color;
-    }
-
-    public getTextColor(): string {
-        return this.textColor;
-    }
-
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "LABEL";
     }
-
 }

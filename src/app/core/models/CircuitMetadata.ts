@@ -2,6 +2,7 @@ import {serializable} from "serialeazy";
 
 import {SAVE_VERSION} from "core/utils/Constants";
 
+
 @serializable("CircuitMetadataDef")
 export class CircuitMetadataDef {
     public id: string;
@@ -14,7 +15,7 @@ export class CircuitMetadataDef {
 
 @serializable("CircuitMetadata")
 export class CircuitMetadata {
-    private data: CircuitMetadataDef;
+    private readonly data: CircuitMetadataDef;
 
     public constructor(data?: CircuitMetadataDef) {
         this.data = data!;

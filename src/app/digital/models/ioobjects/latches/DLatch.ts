@@ -1,5 +1,7 @@
-import {Latch} from "./Latch";
 import {serializable} from "serialeazy";
+
+import {Latch} from "./Latch";
+
 
 @serializable("DLatch")
 export class DLatch extends Latch {
@@ -12,8 +14,7 @@ export class DLatch extends Latch {
     }
 
     protected getNextState(): boolean {
-        const data = this.inputs.get(DLatch.DATA_PORT).getIsOn();
-        return data;
+        return this.inputs.get(DLatch.DATA_PORT).getIsOn();
     }
 
     public getDisplayName(): string {

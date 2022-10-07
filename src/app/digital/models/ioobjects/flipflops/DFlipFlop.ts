@@ -1,15 +1,14 @@
-import {V} from "Vector";
 import {serializable} from "serialeazy";
 
 import {FlipFlop} from "./FlipFlop";
-import {FlipFlopPositioner} from "digital/models/ports/positioners/FlipFlopPositioner";
+
 
 @serializable("DFlipFlop")
 export class DFlipFlop extends FlipFlop {
     public static readonly DATA_PORT = 2;
 
     public constructor() {
-        super(1, V(100, 120), new FlipFlopPositioner(2));
+        super(1, 2);
 
         this.getInputPort(DFlipFlop.DATA_PORT).setName("D");
     }
@@ -21,7 +20,7 @@ export class DFlipFlop extends FlipFlop {
         if (this.up())
             return data;
 
-        return this.state;
+        return this.getProp("state") as boolean;
     }
 
     public getDisplayName(): string {

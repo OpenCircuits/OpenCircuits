@@ -6,10 +6,11 @@
             "Vector":         ["../../../app/core/utils/math/Vector"],
             "math/*":         ["../../../app/core/utils/math/*"],
             "core/*":         ["../../../app/core/*"],
-            "digital/*":      ["../../../app/digital/*"],
-            "shared/*":       ["../../shared/*"],
             "site/digital/*": ["./src/*"],
+            "digital/*":      ["../../../app/digital/*"],
+            "test/helpers/*": ["../../../app/tests/helpers/*"],
+            "shared/*":       ["../../shared/*"],
         }
     },
-    "include": ["src"],
+    "include": ["src", "../../shared/utils/types", "tests"],
 }

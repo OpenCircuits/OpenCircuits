@@ -1,11 +1,12 @@
-import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON, IO_PORT_RADIUS} from "core/utils/Constants";
+import {IO_PORT_RADIUS, LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {GetAllPorts} from "core/utils/ComponentUtils";
+import {Event}       from "core/utils/Events";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Connect} from "core/actions/units/Connect";
 
 import {Port, Wire} from "core/models";
 
@@ -13,26 +14,26 @@ import {Port, Wire} from "core/models";
 export const WiringTool = (() => {
     enum StateType {
         CLICKED,
-        DRAGGED
+        DRAGGED,
     }
 
     let port: Port;
     let wire: Wire;
     let stateType: StateType;
 
-    function findPorts({input, camera, designer}: CircuitInfo): Port[] {
+    function findPorts({ input, camera, designer }: CircuitInfo): Port[] {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         const objects = designer.getObjects().reverse();
 
         // Look through all ports in all objects
         //  and find one where the mouse is over
-        return GetAllPorts(objects).filter(p => p.isWithinSelectBounds(worldMousePos));
+        return GetAllPorts(objects).filter((p) => p.isWithinSelectBounds(worldMousePos));
     }
-    function findNearestPort({input, camera}: CircuitInfo, ports: Port[]): Port | undefined {
+    function findNearestPort({ input, camera }: CircuitInfo, ports: Port[]): Port | undefined {
         const worldMousePos = camera.getWorldPos(input.getMousePos());
         // Look through all ports in array
         //  and find closest one to the mouse
-        if (ports.length < 1)
+        if (ports.length === 0)
             return undefined;
 
         let nearestport = ports[0];
@@ -66,7 +67,7 @@ export const WiringTool = (() => {
 
     return {
         shouldActivate(event: Event, info: CircuitInfo): boolean {
-            const {locked, input, designer} = info;
+            const { locked, input, designer } = info;
             if (locked)
                 return false;
             const ports = findPorts(info);
@@ -102,16 +103,16 @@ export const WiringTool = (() => {
             stateType = (event.type === "click" ? StateType.CLICKED : StateType.DRAGGED);
         },
         onDeactivate({}: Event, info: CircuitInfo): void {
-            const {history, designer} = info;
-            const list = findPorts(info).filter(p => wire.canConnectTo(p));
+            const { history, designer } = info;
+            const list = findPorts(info).filter((p) => wire.canConnectTo(p));
             // See if we ended on a port
             const port2 = findNearestPort(info,list);
             if (port2 !== undefined)
-                history.add(new ConnectionAction(designer, port, port2).execute());
+                history.add(Connect(designer, port, port2));
         },
 
 
-        onEvent(event: Event, {input, camera}: CircuitInfo): boolean {
+        onEvent(event: Event, { input, camera }: CircuitInfo): boolean {
             if (event.type !== "mousemove")
                 return false;
 
@@ -122,6 +123,6 @@ export const WiringTool = (() => {
 
         getWire(): Wire {
             return wire;
-        }
+        },
     }
 })();

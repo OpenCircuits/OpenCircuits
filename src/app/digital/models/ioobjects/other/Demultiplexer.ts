@@ -20,16 +20,17 @@ export class Demultiplexer extends Mux {
      * Sets default names for the select and output ports so the user can easily
      * tell what they are used for.
      */
-    protected updatePortNames(): void {
+    protected override updatePortNames(): void {
         super.updatePortNames();
         this.outputs.getPorts().forEach((p, i) => {
-            if (p.getName() == "") p.setName(`O${i}`);
+            if (p.getName() === "")
+                p.setName(`O${i}`);
         });
         this.inputs.getPorts()[0].setName("I0");
     }
 
-    public activate(): void {
-        const values = this.selects.getPorts().map(p => (p.getIsOn() ? 1 : 0)) as number[];
+    public override activate(): void {
+        const values = this.selects.getPorts().map((p) => (p.getIsOn() ? 1 : 0)) as number[];
 
         const num = values.reduce((acc, cur, i) => acc = acc | (cur << i), 0);
 

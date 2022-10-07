@@ -1,5 +1,6 @@
 import {AuthType} from "./AuthTypes";
 
+
 export interface AuthState {
     // Gets auth type
     getType(): AuthType;

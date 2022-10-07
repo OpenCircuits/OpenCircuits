@@ -1,6 +1,6 @@
 import {serializable} from "serialeazy";
 
-import {Vector,V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Port} from "core/models/ports/Port";
 
@@ -9,24 +9,24 @@ import {DigitalComponent, DigitalWire} from "../index";
 
 @serializable("DigitalInputPort")
 export class InputPort extends Port {
-    protected parent: DigitalComponent;
-    protected connections: DigitalWire[];
+    protected override parent: DigitalComponent;
+    protected override connections: DigitalWire[];
 
     /**
-     * Constructs the input port with no connections
+     * Constructs the input port with no connections.
      *
-     * @param parent the parent component of the port
+     * @param parent The parent component of the port.
      */
     public constructor(parent?: DigitalComponent) {
         super(parent!);
         this.parent = parent!;
         this.connections = [];
     }
-    
+
     /**
-     * Activates the port and propagates the signal to all connections
+     * Activates the port and propagates the signal to all connections.
      *
-     * @param signal is the signal to be propagated
+     * @param signal The signal to be propagated.
      */
     public activate(signal: boolean): void {
         // Don't do anything if signal is same as current state
@@ -45,7 +45,8 @@ export class InputPort extends Port {
     /**
      * Connects the input wire to the port if the wire is not already connected.
      *
-     * @param wire new input wire
+     * @param wire The new input wire.
+     * @throws Error if the there is already a wire connected to this port.
      */
     public connect(wire: DigitalWire): void {
         if (this.connections.length === 1)
@@ -53,9 +54,9 @@ export class InputPort extends Port {
         this.connections = [wire];
         this.activate(wire.getIsOn());
     }
-    
+
     /**
-     * Disconnects the input port from the input wire and changes the signal
+     * Disconnects the input port from the input wire and changes the signal.
      */
     public disconnect(): void {
         // remove input and propagate false signal
@@ -64,39 +65,39 @@ export class InputPort extends Port {
     }
 
     /**
-     * Gets the input wire of the port
+     * Gets the input wire of the port.
      *
-     * @returns the input wire 
+     * @returns The input wire.
      */
     public getInput(): DigitalWire {
         return this.connections[0];
     }
 
     /**
-     * Gets initial direction of the input port as a vector. 
+     * Gets initial direction of the input port as a vector.
      * Value is -1 because it's an input port (facing left).
      *
-     * @returns vector that represents the direction of the input port
+     * @returns A vector that represents the direction of the input port.
      */
     public getInitialDir(): Vector {
         return V(-1, 0);
     }
-    
+
     /**
-     * Gets the parent component of the port
+     * Gets the parent component of the port.
      *
-     * @returns the parent component
+     * @returns The parent component.
      */
-    public getParent(): DigitalComponent {
+    public override getParent(): DigitalComponent {
         return this.parent;
     }
-    
+
     /**
-     * Gets all the wires the port is connected to
+     * Gets all the wires the port is connected to.
      *
-     * @returns the wire connections 
+     * @returns The wire connections.
      */
-    public getWires(): DigitalWire[] {
+    public override getWires(): DigitalWire[] {
         return this.connections;
     }
 

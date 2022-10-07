@@ -1,20 +1,19 @@
-import "jest";
-
 import {V} from "Vector";
 
-import {Setup} from "test/helpers/Setup";
 import {GetHelpers} from "test/helpers/Helpers";
+import {Setup}      from "test/helpers/Setup";
+
 import {ConstantHigh, ConstantLow} from "digital/models/ioobjects";
 
 
 describe("SelectionHandler", () => {
-    const {input, designer, selections} = Setup();
-    const {Place} = GetHelpers(designer);
+    const { input, designer, selections } = Setup();
+    const { Place } = GetHelpers(designer);
 
 
     afterEach(() => {
         designer.reset();
-        selections.get().forEach(s => selections.deselect(s));
+        selections.get().forEach((s) => selections.deselect(s));
     });
 
     test("Select Single Object", () => {
@@ -27,7 +26,7 @@ describe("SelectionHandler", () => {
         expect(selections.get()[0]).toBe(lo);
     });
     test("Select Object ontop of Other", () => {
-        const [lo, hi] = Place(new ConstantLow(), new ConstantHigh());
+        const [, hi] = Place(new ConstantLow(), new ConstantHigh());
 
         expect(selections.amount()).toBe(0);
         input.click(V(0, 0));
@@ -42,12 +41,12 @@ describe("SelectionHandler", () => {
     });
     test("Select Two Objects", () => {
         const [lo, hi] = Place(new ConstantLow(), new ConstantHigh());
-        hi.setPos(V(100, 0));
+        hi.setPos(V(2, 0));
 
         expect(selections.amount()).toBe(0);
         input.click(V(0, 0))
             .pressKey("Shift")
-            .click(V(100, 0))
+            .click(V(2, 0))
             .releaseKey("Shift");
         expect(selections.amount()).toBe(2);
 

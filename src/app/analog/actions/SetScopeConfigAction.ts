@@ -4,15 +4,17 @@ import {Oscilloscope, ScopeConfig} from "analog/models/eeobjects";
 
 
 export class SetScopeConfigAction implements Action {
-    private o: Oscilloscope;
+    private readonly o: Oscilloscope;
 
-    private targetConfig: ScopeConfig;
-    private prevConfig: ScopeConfig;
+    private readonly targetConfig: ScopeConfig;
+    private readonly prevConfig: ScopeConfig;
 
     public constructor(o: Oscilloscope, targetConfig: ScopeConfig) {
         this.o = o;
         this.targetConfig = targetConfig;
         this.prevConfig = o.getConfig();
+
+        this.execute();
     }
 
     public execute(): Action {

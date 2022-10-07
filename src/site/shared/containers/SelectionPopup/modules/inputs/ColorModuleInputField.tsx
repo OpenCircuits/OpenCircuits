@@ -2,29 +2,29 @@ import {useRef} from "react";
 
 import {InputField} from "shared/components/InputField";
 
-import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
+import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
 type Props = SharedModuleInputFieldProps<string>;
-export const ColorModuleInputField = ({ placeholder, alt, ...props }: Props) => {
+export const ColorModuleInputField = ({
+    placeholder, alt, ...props
+}: Props) => {
     const ref = useRef<HTMLInputElement>(null);
 
-    const [state, setState] = useBaseModule<string>({
-        ...props,
-
-        parseVal:      (val) => val,
-        isValid:        (_)  => true,
+    const [state, setState] = useBaseModule<[string]>({
+        parseVal: (val) => val,
+        ...DefaultConfig(props),
     });
 
     return (
         <InputField
             ref={ref}
             type="color"
-            value={state.value}
-            placeholder={state.allSame ? "" : (placeholder ?? "-")}
+            value={state.values}
+            placeholder={state.allSame[0] ? "" : (placeholder ?? "-")}
+            alt={alt}
             onChange={(ev) => setState.onChange(ev.target.value)}
             onFocus={() => setState.onFocus()}
-            onBlur={() => setState.onBlur()}
-            alt={alt} />
-    )
+            onBlur={() => setState.onBlur()} />
+    );
 }

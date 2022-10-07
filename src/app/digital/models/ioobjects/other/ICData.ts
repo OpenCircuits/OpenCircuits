@@ -1,46 +1,49 @@
-import {DEFAULT_SIZE,
-        GRID_SIZE,
+import {serializable} from "serialeazy";
+
+import {GRID_SIZE,
         IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {Vector, V} from "Vector";
-import {Transform} from "math/Transform";
+import {V, Vector} from "Vector";
 
 import {GetNearestPointOnRect} from "math/MathUtils";
-import {serializable} from "serialeazy";
+import {Transform}             from "math/Transform";
 
 import {CopyGroup,
         CreateGroup} from "core/utils/ComponentUtils";
 
-import {IOObject} from "core/models/IOObject";
 import {Component} from "core/models/Component";
+import {IOObject}  from "core/models/IOObject";
+
 import {Port} from "core/models/ports/Port";
 
-import {InputPort} from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
 import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
 
-import {Switch} from "digital/models/ioobjects/inputs/Switch";
 import {Button} from "digital/models/ioobjects/inputs/Button";
-import {LED}    from "digital/models/ioobjects/outputs/LED";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
+import {LED}            from "digital/models/ioobjects/outputs/LED";
+import {Oscilloscope}   from "digital/models/ioobjects/outputs/Oscilloscope";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
-import {Oscilloscope} from "digital/models/ioobjects/outputs/Oscilloscope";
+
+import {InputPort}  from "digital/models/ports/InputPort";
+import {OutputPort} from "digital/models/ports/OutputPort";
 
 
 @serializable("ICData")
 export class ICData {
     private name: string;
 
-    private transform: Transform;
+    private readonly transform: Transform;
 
-    private collection: DigitalObjectSet;
+    private readonly collection: DigitalObjectSet;
 
-    private inputPorts:  InputPort[];
-    private outputPorts: OutputPort[];
+    private readonly inputPorts:  InputPort[];
+    private readonly outputPorts: OutputPort[];
 
     /**
      * The sole constructor for ICData, it is recommended to use the Create function instead.
      *
-     * @param collection the circuit to create an instance of ICData of
+     * @param collection The circuit to create an instance of ICData of.
      */
     public constructor(collection?: DigitalObjectSet) {
         this.name = ""; // TODO: have names
@@ -63,31 +66,32 @@ export class ICData {
 
         // Set start size based on length of names and amount of ports
         let longestName = 0;
-        for (const obj of inputs.concat(outputs))
+        for (const obj of [...inputs, ...outputs])
             longestName = Math.max(obj.getName().length, longestName);
         longestName += this.getName().length; // Add name of IC
 
-        const w = DEFAULT_SIZE + 15*longestName;
-        const h = DEFAULT_SIZE/2*(Math.max(inputs.length, outputs.length));
+        const w = 1 + 0.3*longestName;
+        const h = Math.max(inputs.length, outputs.length)/2;
 
         // Only set size if the current size is too small
-        this.transform.setSize(V(w < this.getSize().x ? this.getSize().x : w,
-                                 h < this.getSize().y ? this.getSize().y : h));
+        this.transform.setSize(Vector.Max(V(w, h), this.getSize()));
     }
 
-    private createPorts(type: typeof InputPort | typeof OutputPort, ports: Port[], arr: IOObject[], side: -1 | 1): void {
+    private createPorts(type: typeof InputPort | typeof OutputPort, ports: Port[], arr: IOObject[], side: -1 | 1) {
         const w = this.transform.getSize().x;
 
         for (let i = 0; i < arr.length; i++) {
             const port = new type(undefined);
 
-            let l = -DEFAULT_SIZE/2*(i - (arr.length)/2 + 0.5);
-            if (i === 0) l -= 1;
-            if (i === arr.length-1) l += 1;
+            let l = -(i - (arr.length)/2 + 0.5)/2;
+            if (i === 0)
+                l -= 0.02;
+            if (i === arr.length-1)
+                l += 0.02;
 
             port.setName(arr[i].getName());
             port.setOriginPos(V(0, l));
-            port.setTargetPos(V(side*(IO_PORT_LENGTH + (w/2 - DEFAULT_SIZE/2)), l));
+            port.setTargetPos(V(side*(IO_PORT_LENGTH + (w/2 - 0.5)), l));
             ports.push(port);
         }
     }
@@ -101,10 +105,10 @@ export class ICData {
             //  is not in the rectangle of the IC
             const target = this.transform.getMatrix().mul(port.getTargetPos());
             const origin = this.transform.getMatrix().mul(port.getOriginPos());
-            const pos = target.add(target.sub(origin).normalize().scale(10000));
+            const pos = target.add(target.sub(origin).normalize().scale(10_000));
 
             const p = GetNearestPointOnRect(size.scale(-0.5), size.scale(0.5), pos);
-            const v = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH+size.x/2-0, IO_PORT_LENGTH+size.y/2-0))).add(p);
+            const v = p.sub(pos).normalize().scale(size.scale(0.5).sub(V(IO_PORT_LENGTH).add(size.scale(0.5)))).add(p);
 
             port.setOriginPos(p);
             port.setTargetPos(v);
@@ -135,6 +139,14 @@ export class ICData {
 
     public getSize(): Vector {
         return this.transform.getSize();
+    }
+
+    public getInputPortCount(): number {
+        return this.inputPorts.length;
+    }
+
+    public getOutputPortCount(): number {
+        return this.outputPorts.length;
     }
 
     public getInputPort(i: number): InputPort {
@@ -177,16 +189,18 @@ export class ICData {
     }
 
     private static CreateSet(objs: IOObject[]): DigitalObjectSet {
-        const copies = DigitalObjectSet.from(CopyGroup(objs).toList());
+        const copies = DigitalObjectSet.From(CopyGroup(objs).toList());
 
         // Move non-whitelisted inputs to regular components list
         //  So that the ports that come out of the IC are useful inputs and not
         //  things like ConstantHigh and ConstantLow which aren't interactive
         const INPUT_WHITELIST = [Switch, Button];
         const OUTPUT_WHITELIST = [LED];
-        const inputs  = copies.getInputs().filter( i => INPUT_WHITELIST.some( (type) => i instanceof type));
-        const outputs = copies.getOutputs().filter(o => OUTPUT_WHITELIST.some((type) => o instanceof type));
-        const others  = copies.getComponents().filter(c => (!inputs.includes(c) && !outputs.includes(c)));
+        /* eslint-disable space-in-parens */
+        const inputs  = copies.getInputs().filter( (i) =>  INPUT_WHITELIST.some((type) => i instanceof type));
+        const outputs = copies.getOutputs().filter((o) => OUTPUT_WHITELIST.some((type) => o instanceof type));
+        const others  = copies.getComponents().filter((c) => (!inputs.includes(c) && !outputs.includes(c)));
+        /* eslint-enable space-in-parens */
 
         // Sort inputs/outputs by their position
         const sortByPos = (a: Component, b: Component) => {
@@ -214,20 +228,18 @@ export class ICData {
             return false;
 
         // Make sure all wires connected to components are in the group
-        const allWires = objs.flatMap(o => o.getConnections());
-        if (allWires.some((w) => !wires.includes(w)))
-            return false;
+        const allWires = objs.flatMap((o) => o.getConnections());
 
-        return true;
+        return !(allWires.some((w) => !wires.includes(w)));
     }
 
     /**
-     * This function is the preferred way to create an instance of ICData
+     * This function is the preferred way to create an instance of ICData.
      *
      * @param objects The circuit to create the ICData from. If it is an IOObject[], then the objects are copied.
-     *  If it is a DigitalObjectSet, then the objects input will be modified so that Switch and Button are considered
-     *  as the only inputs.
-     * @returns The newly created ICData
+     *          If it is a DigitalObjectSet, then the objects input will be modified so that Switch and Button are
+     *          considered as the only inputs.
+     * @returns         The newly created ICData.
      */
     public static Create(objects: IOObject[] | DigitalObjectSet): ICData | undefined {
         objects = (objects instanceof DigitalObjectSet ? objects.toList() : objects);

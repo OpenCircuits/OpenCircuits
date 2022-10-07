@@ -1,47 +1,48 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
+
+import {AddICData} from "digital/actions/units/AddICData";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {Switch} from "digital/models/ioobjects/inputs/Switch";
-import {LED}    from "digital/models/ioobjects/outputs/LED";
+
 import {ICData} from "digital/models/ioobjects/other/ICData";
 
-import {CreateICDataAction} from "digital/actions/CreateICDataAction";
-
-import {GetHelpers} from "test/helpers/Helpers";
+import {LED} from "digital/models/ioobjects/outputs/LED";
 
 
 describe("IC Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [a, b] = Place(new Switch(), new LED());
-        Connect(a, 0, b, 0);
+        Connect(a, b);
 
         // before ic creation
-        expect(designer.getWires().length).toBe(1);
-        expect(designer.getObjects().length).toBe(2);
-        expect(designer.getICData().length).toBe(0);
+        expect(designer.getWires()).toHaveLength(1);
+        expect(designer.getObjects()).toHaveLength(2);
+        expect(designer.getICData()).toHaveLength(0);
 
         // connect
         const data = ICData.Create([a, b])!;
-        const ac = new CreateICDataAction(data, designer).execute();
+        const ac = AddICData(data, designer);
 
         // initial
-        expect(designer.getWires().length).toBe(1);
-        expect(designer.getObjects().length).toBe(2);
-        expect(designer.getICData().length).toBe(1);
+        expect(designer.getWires()).toHaveLength(1);
+        expect(designer.getObjects()).toHaveLength(2);
+        expect(designer.getICData()).toHaveLength(1);
 
         // reverted
         ac.undo();
-        expect(designer.getWires().length).toBe(1);
-        expect(designer.getObjects().length).toBe(2);
-        expect(designer.getICData().length).toBe(0);
+        expect(designer.getWires()).toHaveLength(1);
+        expect(designer.getObjects()).toHaveLength(2);
+        expect(designer.getICData()).toHaveLength(0);
 
         // back to initial
         ac.execute();
-        expect(designer.getWires().length).toBe(1);
-        expect(designer.getObjects().length).toBe(2);
-        expect(designer.getICData().length).toBe(1);
+        expect(designer.getWires()).toHaveLength(1);
+        expect(designer.getObjects()).toHaveLength(2);
+        expect(designer.getICData()).toHaveLength(1);
     });
 });

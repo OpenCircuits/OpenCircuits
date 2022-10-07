@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 
 export type WASMModule = {
     _malloc: (length: number) => number;
@@ -47,7 +48,7 @@ function CreateArray(module: WASMModule, ...params: CreateArrayParams) {
     return arrPointer;
 }
 function CreateStringArray(module: WASMModule, strs: string[]): [number, ...number[]] {
-    const ptrs = strs.map(s => CreateArray(module, "string", s));
+    const ptrs = strs.map((s) => CreateArray(module, "string", s));
     const res = new Uint32Array(ptrs);
 
     const arrPointer = module._malloc(res.byteLength);
@@ -91,7 +92,7 @@ function GetArray<T extends GetArrayParams>(
         let len = o.len;
         if (!len) {
             let pos = ptr;
-            while(module.HEAPU8[pos++] !== 0);
+            while (module.HEAPU8[pos++] !== 0);
             len = pos - ptr - 1;
         }
         const arr = module.HEAPU8.subarray(ptr, ptr + len);
@@ -102,21 +103,21 @@ function GetArray<T extends GetArrayParams>(
         let len = o.len;
         if (!len) {
             let pos = ptr;
-            while(module.HEAPU32[pos++] !== 0);
+            while (module.HEAPU32[pos++] !== 0);
             len = pos - ptr - 1;
         }
         const arr = module.HEAPU32.subarray(ptr, ptr + len);
         if (o.type === "string*")
-            return Array.from(arr) as GetArrayReturn<T>;
-        return Array.from(arr, ptr => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
+            return [...arr] as GetArrayReturn<T>;
+        return [...arr].map((ptr) => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
     }
     if (o.type === "int") {
         ptr = ptr / module.HEAP32.BYTES_PER_ELEMENT;
-        return Array.from(module.HEAP32.subarray(ptr, ptr + o.len)) as GetArrayReturn<T>;
+        return [...module.HEAP32.subarray(ptr, ptr + o.len)] as GetArrayReturn<T>;
     }
     if (o.type === "double") {
         ptr = ptr / module.HEAPF64.BYTES_PER_ELEMENT;
-        return Array.from(module.HEAPF64.subarray(ptr, ptr + o.len)) as GetArrayReturn<T>;
+        return [...module.HEAPF64.subarray(ptr, ptr + o.len)] as GetArrayReturn<T>;
     }
     assertNever(o);
 }
@@ -126,9 +127,9 @@ function assertNever(x: never): never {
 }
 
 export const CreateWASMInstance = <T extends WASMModule>(module: T) => ({
-    create_array: (...params: CreateArrayParams) => CreateArray(module, ...params),
+    create_array:     (...params: CreateArrayParams) => CreateArray(module, ...params),
     create_str_array: (strs: string[]) => CreateStringArray(module, strs),
-    free_array: (arr: number) => module._free(arr),
-    get_array: <T extends GetArrayParams>(arr: number, o: T) => GetArray<T>(module, arr,  o),
+    free_array:       (arr: number) => module._free(arr),
+    get_array:        <T extends GetArrayParams>(arr: number, o: T) => GetArray<T>(module, arr,  o),
     ...module,
 });

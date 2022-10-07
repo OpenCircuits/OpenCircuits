@@ -1,10 +1,11 @@
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
-import {serialize} from "serialeazy";
 
 import {Positioner} from "core/models/ports/positioners/Positioner"
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+
 import {InputPort} from "digital/models/ports/InputPort";
 
 //
@@ -16,14 +17,13 @@ export abstract class Latch extends DigitalComponent {
     public static readonly Q_PORT = 0;
     public static readonly Q2_PORT = 1;
 
-    @serialize
-    protected enabled: boolean = false;
-
-    @serialize
-    protected state: boolean = false;
-
     protected constructor(numInputs: number, inputPositioner?: Positioner<InputPort>) {
-        super(new ClampedValue(numInputs+1), new ClampedValue(2), V(70, 70), inputPositioner);
+        super(
+            new ClampedValue(numInputs+1), new ClampedValue(2),
+            V(1.4, 1.4),
+            inputPositioner, undefined,
+            { enabled: false, state: false },
+        );
 
         this.getOutputPort(Latch.Q_PORT).setName("Q ");
         this.getOutputPort(Latch.Q2_PORT).setName("Q'");
@@ -37,14 +37,15 @@ export abstract class Latch extends DigitalComponent {
 
     protected abstract getNextState(): boolean;
 
-    public activate(): void {
-        this.enabled = this.inputs.get(Latch.E_PORT).getIsOn();
+    public override activate(): void {
+        this.setProp("enabled", this.inputs.get(Latch.E_PORT).getIsOn());
 
-        if (this.enabled)
-            this.state = this.getNextState();
+        if (this.getProp("enabled"))
+            this.setProp("state", this.getNextState());
 
-        super.activate(this.state, Latch.Q_PORT);
-        super.activate(!this.state, Latch.Q2_PORT);
+        const state = this.getProp("state") as boolean;
+        super.activate(state , Latch.Q_PORT);
+        super.activate(!state, Latch.Q2_PORT);
     }
 
 }

@@ -1,9 +1,10 @@
 import {Action} from "core/actions/Action";
 
+
 export class GroupAction implements Action {
     private actions: Action[];
-    private customName?: string;
-    private customInfo?: string[];
+    private readonly customName?: string;
+    private readonly customInfo?: string[];
 
     public constructor(actions?: Action[], customName?: string, customInfo?: string[]) {
         this.actions = actions || [];
@@ -12,8 +13,8 @@ export class GroupAction implements Action {
     }
 
     public add(action: Action | Action[]): GroupAction {
-        if (action instanceof Array)
-            this.actions = this.actions.concat(action);
+        if (Array.isArray(action))
+            this.actions = [...this.actions, ...action];
         else
             this.actions.push(action);
 

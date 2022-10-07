@@ -1,63 +1,73 @@
 import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
-        SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "core/utils/Constants";
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {Transform} from "math/Transform";
 
 import {CircuitInfo} from "core/utils/CircuitInfo";
 import {Images}      from "core/utils/Images";
 
-import {Component} from "core/models/Component";
-
-import {Renderer}  from "core/rendering/Renderer";
-import {Rectangle} from "core/rendering/shapes/Rectangle";
-import {Style}     from "core/rendering/Style";
+import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
 
 import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
+import {IOPortRenderer}  from "core/rendering/renderers/IOPortRenderer";
 
-import {FlipFlop}           from "digital/models/ioobjects/flipflops/FlipFlop";
-import {Latch}              from "digital/models/ioobjects/latches/Latch";
-import {Encoder}            from "digital/models/ioobjects/other/Encoder";
-import {Decoder}            from "digital/models/ioobjects/other/Decoder";
-import {Multiplexer}        from "digital/models/ioobjects/other/Multiplexer";
-import {Demultiplexer}      from "digital/models/ioobjects/other/Demultiplexer";
-import {Label}              from "digital/models/ioobjects/other/Label";
-import {IC}                 from "digital/models/ioobjects/other/IC";
-import {Comparator}         from "digital/models/ioobjects/other/Comparator";
+import {Rectangle} from "core/rendering/shapes/Rectangle";
+
+import {Component} from "core/models/Component";
+
 import {PressableComponent} from "digital/models/ioobjects/PressableComponent";
-import {Gate}               from "digital/models/ioobjects/gates/Gate";
-import {LED}                from "digital/models/ioobjects/outputs/LED";
-import {SegmentDisplay}     from "digital/models/ioobjects/outputs/SegmentDisplay";
-import {Oscilloscope}       from "digital/models/ioobjects/outputs/Oscilloscope";
-import {ConstantNumber}     from "digital/models/ioobjects/inputs/ConstantNumber";
 
-import {IOPortRenderer}         from "./IOPortRenderer";
-import {MultiplexerRenderer}    from "./other/MultiplexerRenderer";
-import {ICRenderer}             from "./other/ICRenderer";
+import {FlipFlop} from "digital/models/ioobjects/flipflops/FlipFlop";
+
+import {Gate} from "digital/models/ioobjects/gates/Gate";
+
+import {ConstantNumber} from "digital/models/ioobjects/inputs/ConstantNumber";
+
+import {Latch} from "digital/models/ioobjects/latches/Latch";
+
+import {Comparator}    from "digital/models/ioobjects/other/Comparator";
+import {Decoder}       from "digital/models/ioobjects/other/Decoder";
+import {Demultiplexer} from "digital/models/ioobjects/other/Demultiplexer";
+import {Encoder}       from "digital/models/ioobjects/other/Encoder";
+import {IC}            from "digital/models/ioobjects/other/IC";
+import {Label}         from "digital/models/ioobjects/other/Label";
+import {Multiplexer}   from "digital/models/ioobjects/other/Multiplexer";
+
+import {LED}            from "digital/models/ioobjects/outputs/LED";
+import {Oscilloscope}   from "digital/models/ioobjects/outputs/Oscilloscope";
+import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
+
 import {GateRenderer}           from "./gates/GateRenderer";
-import {LEDRenderer}            from "./outputs/LEDRenderer";
-import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
+import {ICRenderer}             from "./other/ICRenderer";
+import {MultiplexerRenderer}    from "./other/MultiplexerRenderer";
+import {LEDRenderer}            from "./outputs/LEDRenderer";
 import {OscilloscopeRenderer}   from "./outputs/OscilloscopeRenderer";
+import {SegmentDisplayRenderer} from "./outputs/SegmentDisplayRenderer";
 
 
 /**
- * Renders Components
- * * Check if object to be rendered is on the screen, quit if not
- * * Transform renderer to object transform
- * * Draw all object ports first using IOPortRenderer
- * * If object is PressableComponent or Label, handle special case to draw each
- * * If object is FlipFlop, Latch, Encoder, or Decoder, use drawBox func to draw
- * * Else if object is a Gate, Multiplexer/Demultiplexer, SegmentDisplay, IC, or LED call upon respective renderers to draw
- * * LEDs are not tinted regardless of selection status, but for others, determine whether selected and tint appropriately
- * * Render IOLabels if not blank
- * * Restore
+ * Renders Components:
+ * - Check if object to be rendered is on the screen, quit if not
+ * - Transform renderer to object transform
+ * - Draw all object ports first using IOPortRenderer
+ * - If object is PressableComponent or Label, handle special case to draw each
+ * - If object is FlipFlop, Latch, Encoder, or Decoder, use drawBox func to draw
+ * - Else if object is a Gate, Multiplexer/Demultiplexer, SegmentDisplay, IC, or LED call upon
+ * - respective renderers to draw
+ * - LEDs are not tinted regardless of selection status, but for others, determine whether selected
+ * - and tint appropriately
+ * - Render IOLabels if not blank
+ * - Restore the renderer.
  */
 export const ComponentRenderer = (() => {
 
-    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol: string = "#ffffff"): void {
+    const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol = "#ffffff"): void {
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const fillCol   = (selected ? SELECTED_FILL_COLOR   : fillcol);
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
@@ -65,7 +75,7 @@ export const ComponentRenderer = (() => {
     }
 
     return {
-        render(renderer: Renderer, {camera, selections}: CircuitInfo, object: Component): void {
+        render(renderer: Renderer, { camera, selections }: CircuitInfo, object: Component): void {
             // Check if object is on the screen
             if (!camera.cull(object.getCullBox()))
                 return;
@@ -102,12 +112,12 @@ export const ComponentRenderer = (() => {
             //  TODO: figure out how to get around this
             if (object instanceof Label) {
                 // Calculate size
-                const width = renderer.getTextWidth(object.getName()) + 20;
+                const width = renderer.getTextWidth(object.getName()) + 0.4;
                 object.setSize(V(width, size.y));
 
-                drawBox(renderer, object.getTransform(), selected, object.getColor());
+                drawBox(renderer, object.getTransform(), selected, object.getProp("color") as string);
 
-                renderer.text(object.getName(), V(), "center", object.getTextColor());
+                renderer.text(object.getName(), V(), "center", object.getProp("textColor") as string);
             }
 
             // Specific renderers
@@ -150,6 +160,6 @@ export const ComponentRenderer = (() => {
         renderAll(renderer: Renderer, info: CircuitInfo, objects: Component[]): void {
             for (const obj of objects)
                 ComponentRenderer.render(renderer, info, obj);
-        }
+        },
     };
 })();

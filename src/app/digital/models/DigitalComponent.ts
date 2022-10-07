@@ -1,15 +1,18 @@
 import {serialize} from "serialeazy";
 
 import {Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Component} from "core/models/Component";
+import {Prop}      from "core/models/PropInfo";
 
-import {Port} from "core/models/ports/Port";
+import {Port}    from "core/models/ports/Port";
 import {PortSet} from "core/models/ports/PortSets";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
 
-import {DigitalWire, DigitalCircuitDesigner, InputPort, OutputPort} from "./index";
+import {DigitalCircuitDesigner, DigitalWire, InputPort, OutputPort} from "./index";
 
 
 export abstract class DigitalComponent extends Component {
@@ -23,8 +26,9 @@ export abstract class DigitalComponent extends Component {
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector,
                           inputPositioner:  Positioner<InputPort>  = new Positioner<InputPort>("left"),
-                          outputPositioner: Positioner<OutputPort> = new Positioner<OutputPort>("right")) {
-        super(size);
+                          outputPositioner: Positioner<OutputPort> = new Positioner<OutputPort>("right"),
+                          initialProps: Record<string, Prop> = {}) {
+        super(size, initialProps);
 
         this.inputs  = new PortSet<InputPort> (this, inputPortCount, inputPositioner, InputPort);
         this.outputs = new PortSet<OutputPort>(this, outputPortCount, outputPositioner, OutputPort);
@@ -32,11 +36,12 @@ export abstract class DigitalComponent extends Component {
 
     /**
      * Activates this component with the given signal
-     *  through the output port at index i
-     * @param signal The signal (on or off)
-     * @param i      The index of the output port, must be $\in [0, outputs.length)$
+     *  through the output port at index i.
+     *
+     * @param signal The signal (on or off).
+     * @param i      The index of the output port, must be $\in [0, outputs.length)$.
      */
-    public activate(signal: boolean, i: number = 0): void {
+    public activate(signal: boolean, i = 0): void {
         // Don't try to activate an Output component since it has no outputs
         if (this.outputs.isEmpty())
             return;
@@ -83,7 +88,7 @@ export abstract class DigitalComponent extends Component {
         // Get each wire connected to each InputPort
         //  and then filter out the null ones
         return this.getInputPorts().map((p) => p.getInput())
-                .filter((w) => w != null);
+                .filter((w) => !!w);
     }
 
     public numInputs(): number {
@@ -109,7 +114,7 @@ export abstract class DigitalComponent extends Component {
 
     public getOutputs(): DigitalWire[] {
         // Accumulate all the OutputPort connections
-        return this.getOutputPorts().flatMap(p => p.getConnections());
+        return this.getOutputPorts().flatMap((p) => p.getConnections());
     }
 
     public numOutputs(): number {
@@ -117,11 +122,11 @@ export abstract class DigitalComponent extends Component {
     }
 
     public getPorts(): Port[] {
-        return (this.getInputPorts() as Port[]).concat(this.getOutputPorts());
+        return [...this.getInputPorts(), ...this.getOutputPorts()];
     }
 
-    public getConnections(): DigitalWire[] {
-        return this.getInputs().concat(this.getOutputs());
+    public override getConnections(): DigitalWire[] {
+        return [...this.getInputs(), ...this.getOutputs()];
     }
 
 

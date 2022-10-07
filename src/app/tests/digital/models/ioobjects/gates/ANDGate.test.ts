@@ -1,17 +1,17 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
+
 import {ANDGate} from "digital/models/ioobjects/gates/ANDGate";
 
-import {GetHelpers} from "test/helpers/Helpers";
 
 
 describe("ANDGate", () => {
     describe("ANDGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
-        const [g, [a, b], [o]] = AutoPlace(new ANDGate());
+        const [, [a, b], [o]] = AutoPlace(new ANDGate());
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(false);
@@ -44,9 +44,9 @@ describe("ANDGate", () => {
 
     describe("NANDGate", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {AutoPlace} = GetHelpers(designer);
+        const { AutoPlace } = GetHelpers(designer);
 
-        const [g, [a, b], [o]] = AutoPlace(new ANDGate(true));
+        const [, [a, b], [o]] = AutoPlace(new ANDGate(true));
 
         test("Initial State", () => {
             expect(o.isOn()).toBe(true);

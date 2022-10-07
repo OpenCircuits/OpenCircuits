@@ -1,9 +1,11 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {AnalogComponent} from "analog/models";
+
 import {SidePositioner} from "analog/models/ports/positioners/SidePositioner";
 
 
@@ -11,7 +13,7 @@ import {SidePositioner} from "analog/models/ports/positioners/SidePositioner";
 export class Ground extends AnalogComponent {
 
     /**
-     * Initializes ground
+     * Initializes ground.
      */
     public constructor() {
         super(
@@ -21,18 +23,20 @@ export class Ground extends AnalogComponent {
     }
 
     /**
-     * Returns name of Component
-     * @returns "Ground"
+     * Returns name of Component.
+     *
+     * @returns The string "Ground".
      */
     public getDisplayName(): string {
         return "Ground";
     }
 
     /**
-     * Returns name of image file
-     * @returns "ground.svg"
+     * Returns name of image file.
+     *
+     * @returns The string "ground.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "ground.svg";
     }
 }

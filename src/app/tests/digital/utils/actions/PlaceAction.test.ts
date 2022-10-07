@@ -1,9 +1,9 @@
-import "jest";
-
-import {PlaceAction} from "core/actions/addition/PlaceAction";
+import {Place} from "core/actions/units/Place";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
+
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
+
 
 
 describe("Place Action", () => {
@@ -11,16 +11,16 @@ describe("Place Action", () => {
         const designer = new DigitalCircuitDesigner(0);
         const a = new Switch();
 
-        const a1 = new PlaceAction(designer, a).execute();
+        const a1 = Place(designer, a);
 
-        expect(designer.getObjects().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(1);
         expect(designer.getObjects()[0]).toBe(a);
 
         a1.undo();
-        expect(designer.getObjects().length).toBe(0);
+        expect(designer.getObjects()).toHaveLength(0);
 
         a1.execute();
-        expect(designer.getObjects().length).toBe(1);
+        expect(designer.getObjects()).toHaveLength(1);
         expect(designer.getObjects()[0]).toBe(a);
     });
 });

@@ -1,17 +1,23 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
 import {AnalogComponent} from "analog/models";
+
 import {CapacitanceInfo} from "analog/models/Units";
-import {GenInitialInfo} from "analog/models/AnalogComponent";
+
 import {LeftRightPositioner} from "analog/models/ports/positioners/LeftRightPositioner";
 
 
-const Info = {
-    ...CapacitanceInfo("C", "Capacitance", 1, "u"),
-};
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        ...CapacitanceInfo("C", "Capacitance", 1, "u"),
+    },
+});
 
 @serializable("Capacitor")
 export class Capacitor extends AnalogComponent {
@@ -19,7 +25,7 @@ export class Capacitor extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(20, 60), new LeftRightPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 
@@ -31,23 +37,25 @@ export class Capacitor extends AnalogComponent {
         return [`${this.props["C"]}`];
     }
 
-    public getPropInfo(key: string) {
-        return Info[key];
+    public override getPropInfo(key: string) {
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     /**
-     * Returns name of Component
-     * @returns "Capacitor"
+     * Returns name of Component.
+     *
+     * @returns The string "Capacitor".
      */
     public getDisplayName(): string {
         return "Capacitor";
     }
 
     /**
-     * Returns name of image file
-     * @returns "capacitor.svg"
+     * Returns name of image file.
+     *
+     * @returns The string "capacitor.svg".
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "capacitor.svg";
     }
 }

@@ -1,6 +1,7 @@
+import {serializable} from "serialeazy";
+
 import {IO_PORT_LENGTH} from "core/utils/Constants";
 
-import {serializable} from "serialeazy";
 
 import {V} from "Vector";
 
@@ -11,7 +12,7 @@ import {AnalogPort} from "analog/models";
 
 @serializable("SidePositioner")
 export class SidePositioner extends Positioner<AnalogPort> {
-    private side: "left" | "right" | "top" | "bottom";
+    private readonly side: "left" | "right" | "top" | "bottom";
 
     public constructor(side: "left" | "right" | "top" | "bottom" = "left") {
         super();
@@ -19,11 +20,12 @@ export class SidePositioner extends Positioner<AnalogPort> {
     }
 
     /**
-     * Position ports with constant space but put blank space in the middle
+     * Position ports with constant space but put blank space in the middle.
      *
-     * @param arr The array of input ports
+     * @param arr     The array of input ports.
+     * @param arr."0" The input port.
      */
-    public updatePortPositions([p1]: AnalogPort[]): void {
+    public override updatePortPositions([p1]: AnalogPort[]): void {
         const size = (
             this.side === "left" || this.side === "right"
             ? p1.getParent().getSize().x

@@ -1,12 +1,14 @@
-import {THUMBNAIL_ZOOM_PADDING_RATIO,
-        DEFAULT_THUMBNAIL_SIZE} from "./Constants";
+import {DEFAULT_THUMBNAIL_SIZE,
+        THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
+
 import {Camera} from "math/Camera";
 
-import {CullableObject} from "core/models";
 import {GetCameraFit} from "core/utils/ComponentUtils";
 
-import {ToolManager} from "core/tools/ToolManager";
 import {DefaultTool} from "core/tools/DefaultTool";
+import {ToolManager} from "core/tools/ToolManager";
+
+import {CullableObject} from "core/models";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -15,13 +17,13 @@ import {GetRenderFunc} from "./Rendering";
 
 type Info = {
     info: DigitalCircuitInfo;
-    size?: {w: number; h: number};
+    size?: {w: number, h: number};
 }
 export const GenerateThumbnail = (() => {
     const canvas = document.createElement("canvas");
     const camera = new Camera(DEFAULT_THUMBNAIL_SIZE, DEFAULT_THUMBNAIL_SIZE);
 
-    return ({info, size}: Info): string => {
+    return ({ info, size }: Info): string => {
         canvas.width  = size?.w ?? DEFAULT_THUMBNAIL_SIZE;
         canvas.height = size?.h ?? DEFAULT_THUMBNAIL_SIZE;
 
@@ -38,8 +40,8 @@ export const GenerateThumbnail = (() => {
             info: {
                 ...info,
                 camera,
-                toolManager: new ToolManager(new DefaultTool())
-            }
+                toolManager: new ToolManager(new DefaultTool()),
+            },
         });
 
         render();

@@ -1,24 +1,28 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
+
+import {Camera} from "math/Camera";
+
 import {Input} from "core/utils/Input";
-import {Key} from "core/utils/Key";
+import {Key}   from "core/utils/Key";
 
 
 export class FakeInput extends Input {
     private touches: Vector[];
-    private center: Vector;
+    private readonly camera: Camera;
 
-    public constructor(cameraCenter: Vector = V()) {
+    public constructor(camera: Camera) {
         // Fake canvas and instant drag time
         super({
-            addEventListener: () => {},
-            getBoundingClientRect: () => ({left: 0, top: 0, width: 1, height: 1}),
-            width: 1, height: 1,
-        } as any, -1);
+            addEventListener:      () => {},
+            getBoundingClientRect: () => ({ left: 0, top: 0, width: camera.getSize().x, height: camera.getSize().y }),
+
+            width: camera.getSize().x, height: camera.getSize().y,
+        } as unknown as HTMLCanvasElement, -1);
 
         this.touches = [];
-        this.center = cameraCenter;
+        this.camera = camera;
     }
 
     public pressKey(code: Key): FakeInput {
@@ -31,7 +35,7 @@ export class FakeInput extends Input {
     }
 
     public click(pos?: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
-        pos = (pos == undefined ? super.getMousePos() : pos.add(this.center));
+        pos = (pos === undefined ? super.getMousePos() : this.camera.getScreenPos(pos));
         super.onMouseDown(pos, button);
         super.onMouseUp(button);
         super.onClick(pos, button);
@@ -47,25 +51,26 @@ export class FakeInput extends Input {
         return this;
     }
 
+    // Note that `pos` is in WORLD COORDINATES for testing purposes
     public press(pos?: Vector, button: number = LEFT_MOUSE_BUTTON): FakeInput {
-        pos = (pos == undefined ? super.getMousePos() : pos.add(this.center));
+        pos = (pos === undefined ? super.getMousePos() : this.camera.getScreenPos(pos));
         super.onMouseDown(pos, button);
         return this;
     }
-    public move(amt: Vector, steps: number = 1): FakeInput {
-        const step = amt.scale(1.0 / steps);
+    public move(amt: Vector, steps = 1): FakeInput {
+        const step = this.camera.getScreenPos(amt).sub(this.camera.getScreenPos(V())).scale(1 / steps);
         for (let i = 1; i <= steps; i++)
             super.onMouseMove(super.getMousePos().add(step));
         return this;
     }
-    public moveTo(target: Vector, steps: number = 5): FakeInput {
+    public moveTo(target: Vector, steps = 5): FakeInput {
         // Calculate step Vector
-        const pos = this.getMousePos();
-        const step = target.add(this.center).sub(pos).scale(1.0 / steps);
+        // Keep in world coordinates since we're passing to `move`
+        const step = target.sub(this.camera.getWorldPos(this.getMousePos())).scale(1 / steps);
 
         // Move a bit for each step
         for (let i = 1; i <= steps; i++)
-            this.move(step);
+            this.move(step, 1);
 
         return this;
     }
@@ -74,7 +79,7 @@ export class FakeInput extends Input {
         return this;
     }
 
-    public drag(start: Vector, target: Vector, button: number = LEFT_MOUSE_BUTTON, steps: number = 5): FakeInput {
+    public drag(start: Vector, target: Vector, button: number = LEFT_MOUSE_BUTTON, steps = 5): FakeInput {
         this.press(start, button);
         this.moveTo(target, steps);
         this.release(button);
@@ -82,35 +87,35 @@ export class FakeInput extends Input {
         return this;
     }
 
-    public onMouseEnter(): FakeInput {
+    public override onMouseEnter(): FakeInput {
         super.onMouseEnter();
         return this;
     }
-    public onMouseLeave(): FakeInput {
+    public override onMouseLeave(): FakeInput {
         super.onMouseLeave();
         return this;
     }
 
     public touch(pos: Vector): FakeInput {
-        this.touches.push(V(pos.add(this.center)));
+        this.touches.push(this.camera.getScreenPos(pos));
         super.onTouchStart(this.touches);
         return this;
     }
-    public moveTouch(i: number, amt: Vector, steps: number = 1): FakeInput {
-        const step = amt.scale(1.0 / steps);
+    public moveTouch(i: number, amt: Vector, steps = 1): FakeInput {
+        const step = this.camera.getScreenPos(amt).sub(this.camera.getScreenPos(V())).scale(1 / steps);
         for (let s = 1; s <= steps; s++) {
             this.touches[i] = this.touches[i].add(step);
             super.onTouchMove(this.touches);
         }
         return this;
     }
-    public moveTouches(amt: Vector, steps: number = 1): FakeInput {
-        const step = amt.scale(1.0 / steps);
+    public moveTouches(amt: Vector, steps = 1): FakeInput {
+        const step = amt.scale(1 / steps);
         for (let i = 1; i <= steps; i++)
             this.touches.forEach((_, i) => this.moveTouch(i, step));
         return this;
     }
-    public releaseTouch(i: number = 0): FakeInput {
+    public releaseTouch(i = 0): FakeInput {
         super.onTouchEnd();
         this.touches.splice(i, 1);
         return this;
@@ -119,16 +124,16 @@ export class FakeInput extends Input {
     public tap(pos: Vector): FakeInput {
         this.touch(pos);
         this.releaseTouch();
-        super.onClick(pos.add(this.center));
+        super.onClick(this.camera.getScreenPos(pos));
         return this;
     }
 
-    public onBlur(): FakeInput {
+    public override onBlur(): FakeInput {
         super.onBlur();
         return this;
     }
 
-    public reset(): FakeInput {
+    public override reset(): FakeInput {
         super.reset();
         this.touches = [];
         return this;

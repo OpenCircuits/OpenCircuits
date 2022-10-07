@@ -1,17 +1,17 @@
-import {parseColor, SVGDrawing} from "svg2canvas";
+import {SVGDrawing, parseColor} from "svg2canvas";
 
-import {Vector,V} from "Vector";
+import {V, Vector} from "Vector";
+
+import {Camera}    from "math/Camera";
 import {Transform} from "math/Transform";
-import {Camera} from "math/Camera";
-
-import {FONT} from "./Styles";
-import {Style} from "./Style";
 
 import {Shape} from "./shapes/Shape";
+import {Style} from "./Style";
+import {FONT}  from "./Styles";
 
 
 export class Renderer {
-    private canvas: HTMLCanvasElement;
+    private readonly canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
 
     public constructor(canvas: HTMLCanvasElement) {
@@ -34,17 +34,16 @@ export class Renderer {
         this.context.restore();
     }
     public transform(camera: Camera, transform: Transform): void {
-        const m = transform.getMatrix().copy();
-        m.setTranslation(camera.getScreenPos(m.getTranslation()));
-        m.scale(1.0/camera.getZoom());
-        this.context.setTransform(m.get(0), m.get(1), m.get(2),
-                                  m.get(3), m.get(4), m.get(5));
+        const m = camera.getInverseMatrix().mult(transform.getMatrix());
+        this.context.setTransform(
+            m.get(0), m.get(1),
+            m.get(2), m.get(3),
+            // Shift over to the center
+            m.get(4) + camera.getCenter().x, m.get(5) + camera.getCenter().y
+        );
     }
     public translate(v: Vector): void {
         this.context.translate(v.x, v.y);
-    }
-    public scale(s: Vector): void {
-        this.context.scale(s.x, s.y);
     }
     public rotate(a: number): void {
         this.context.rotate(a);
@@ -58,7 +57,7 @@ export class Renderer {
     public stroke(): void {
         this.context.stroke();
     }
-    public draw(shape: Shape, style: Style, alpha: number = 1): void {
+    public draw(shape: Shape, style: Style, alpha = 1): void {
         this.save();
         this.setStyle(style, alpha);
 
@@ -78,7 +77,8 @@ export class Renderer {
     public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
         const col = (tint ? parseColor(tint) : undefined);
 
-        img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
+        // Flip y-axis scale
+        img.draw(this.context, pos.x, pos.y, size.x, -size.y, col);
     }
 
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign,
@@ -88,6 +88,9 @@ export class Renderer {
         this.context.fillStyle = color;
         this.context.textAlign = textAlign;
         this.context.textBaseline = textBaseline;
+
+        // Flip y-axis scale
+        this.context.scale(1, -1);
 
         this.translate(pos);
         if (angle !== 0)
@@ -122,7 +125,7 @@ export class Renderer {
             this.pathLine(pos, pos.add(len, 0));
     }
     public hLines(ys: number[], x0: number, len: number, align: "left"|"center") {
-        ys.forEach(y => this.hLine(V(x0, y), len, align));
+        ys.forEach((y) => this.hLine(V(x0, y), len, align));
     }
     public strokeHLines(...args: Parameters<typeof this.hLines>) {
         this.beginPath();
@@ -137,7 +140,7 @@ export class Renderer {
             this.pathLine(pos, pos.sub(0, len));
     }
     public vLines(xs: number[], y0: number, len: number, baseline: "bottom"|"middle") {
-        xs.forEach(x => this.vLine(V(x, y0), len, baseline));
+        xs.forEach((x) => this.vLine(V(x, y0), len, baseline));
     }
     public strokeVLines(...args: Parameters<typeof this.vLines>) {
         this.beginPath();

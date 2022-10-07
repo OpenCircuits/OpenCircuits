@@ -1,5 +1,6 @@
 import {Input} from "./Input";
 
+
 export interface MouseListener {
 
     onMouseDown(input: Input, button: number): boolean;

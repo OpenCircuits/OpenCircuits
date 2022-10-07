@@ -1,11 +1,13 @@
-import {Vector}       from "Vector";
+import {Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
-import {serialize}    from "serialeazy";
-import {Name}         from "core/utils/Name";
+
+import {Prop} from "core/models/PropInfo";
 
 import {Positioner} from "core/models/ports/positioners/Positioner"
 
 import {DigitalComponent} from "digital/models/DigitalComponent";
+
 import {InputPort} from "digital/models/ports/InputPort";
 
 //
@@ -13,32 +15,28 @@ import {InputPort} from "digital/models/ports/InputPort";
 // Gate should always be a component with exactly 1 output port
 //
 export abstract class Gate extends DigitalComponent {
-    @serialize
-    protected not: boolean = false;
 
-    public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector, inputPositioner?: Positioner<InputPort>) {
-        super(inputPortCount, new ClampedValue(1), size, inputPositioner);
-        this.setNot(not);
+    public constructor(not: boolean, inputPortCount: ClampedValue, size: Vector,
+                       inputPositioner?: Positioner<InputPort>) {
+        super(inputPortCount, new ClampedValue(1), size, inputPositioner, undefined, { not });
+        this.setProp("not", not);
     }
 
     // @Override
-    public activate(on: boolean, i: number = 0): void {
-        super.activate((this.not ? !on : on), i);
+    public override activate(on: boolean, i = 0): void {
+        super.activate((this.getProp("not") ? !on : on), i);
     }
 
-    private setNot(not: boolean): void {
+    public override setProp(key: string, val: Prop): void {
+        super.setProp(key, val);
+
         // if flipped then flip output
-        if (not !== this.not)
-            this.outputs.first.activate(!this.outputs.first.getIsOn());
-        this.not = not;
-
-        // change name to be the not'd name if name wasn't manually set by user
-        if (!this.name.isSet())
-            this.name = new Name(this.getDisplayName());
-    }
-
-    public isNot(): boolean {
-        return this.not;
+        if (key === "not") {
+            this.outputs.first.activate(
+                 !val &&  this.outputs.first.getIsOn() ||
+                !!val && !this.outputs.first.getIsOn()
+            );
+        }
     }
 
 }

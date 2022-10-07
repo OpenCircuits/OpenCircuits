@@ -51,8 +51,10 @@
         margin-top: 6px;
         margin-bottom: 2px;
     }
-    & input {
+    & label > div, input {
         width: calc(100% - 2*2px - 2*2px);
+    }
+    & input {
         margin-bottom: 1px;
         padding: 2px;
 

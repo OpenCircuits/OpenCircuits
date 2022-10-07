@@ -1,10 +1,13 @@
 import {useEffect} from "react";
+
 import {SAVE_TIME} from "shared/utils/Constants";
 
-import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
+import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+
 import {SetAutoSave} from "shared/state/UserInfo";
+
 import {SwitchToggle} from "shared/components/SwitchToggle";
 
 
@@ -13,7 +16,7 @@ type Props = {
 }
 export const AutoSaveToggle = ({ helpers }: Props) => {
     const { isLoggedIn, isSaved, autoSave } = useSharedSelector(
-        state => ({ ...state.user, isSaved: state.circuit.isSaved })
+        (state) => ({ ...state.user, isSaved: state.circuit.isSaved })
     );
     const dispatch = useSharedDispatch();
 

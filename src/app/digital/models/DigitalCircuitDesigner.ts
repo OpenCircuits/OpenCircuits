@@ -1,13 +1,11 @@
-import {serializable, serialize} from "serialeazy";
-
-import {IOObjectSet} from "core/utils/ComponentUtils";
+import {GetIDFor, serializable, serialize} from "serialeazy";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {IOObject}  from "core/models/IOObject";
-
-import {DigitalWire, DigitalComponent, DigitalObjectSet, InputPort, OutputPort, Propagation} from "./index";
+import {IOObject}        from "core/models/IOObject";
 
 import {ICData} from "./ioobjects/other/ICData";
+
+import {DigitalComponent, DigitalObjectSet, DigitalWire, InputPort, OutputPort, Propagation} from "./index";
 
 
 export type PropagationEvent = {
@@ -38,13 +36,13 @@ export type DigitalEvent =
 @serializable("DigitalCircuitDesigner")
 export class DigitalCircuitDesigner extends CircuitDesigner {
     @serialize
-    private ics: ICData[];
+    private readonly ics: ICData[];
 
     @serialize
-    private objects: DigitalComponent[];
+    private readonly objects: DigitalComponent[];
 
     @serialize
-    private wires: DigitalWire[];
+    private readonly wires: DigitalWire[];
 
     @serialize
     private propagationQueue: Propagation[];
@@ -57,11 +55,11 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
     private paused: boolean;
 
-    private updateCallbacks: ((ev: DigitalEvent) => void)[];
+    private readonly updateCallbacks: Array<(ev: DigitalEvent) => void>;
 
     private timeout?: number;
 
-    public constructor(propagationTime: number = 1) {
+    public constructor(propagationTime = 1) {
         super();
 
         this.propagationTime = propagationTime;
@@ -101,13 +99,13 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     private callback(ev: DigitalEvent): void {
-        this.updateCallbacks.forEach(c => c(ev));
+        this.updateCallbacks.forEach((c) => c(ev));
     }
 
     /**
      * Method to call when you want to force an update
-     * 	Used when something changed but isn't propagated
-     * 	(i.e. Clock updated but wasn't connected to anything)
+     *  Used when something changed but isn't propagated
+     *  (i.e. Clock updated but wasn't connected to anything).
      */
     public forceUpdate(): void {
         this.callback({ type: "forced" });
@@ -116,11 +114,10 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     /**
      * Add a propagation request to the queue.
      * Also checks if there are currently no requests and starts the cycle if
-     *  there aren't
+     *  there aren't.
      *
-     * @param sender
-     * @param receiver
-     * @param signal
+     * @param receiver The propagating component.
+     * @param signal   The signal to propagate.
      */
     public propagate(receiver: DigitalComponent | DigitalWire, signal: boolean): void {
         if (this.paused)
@@ -141,9 +138,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         // Else if propagation time is < 0 then don't propagate at all
     }
 
-    /**
-     * @return True if the updated component(s) require rendering
-     */
+    // Returns true if the updated component(s) require rendering.
     private update(): boolean {
         if (this.paused)
             return false;
@@ -199,17 +194,9 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         const output = (p1 instanceof OutputPort ? p1 : p2) as OutputPort;
 
         // Return undefined if InputPort already has a connection
-        if (input && input.getWires().length !== 0)
+        if (input && input.getWires().length > 0)
             return;
         return new DigitalWire(output, input);
-    }
-
-    public addGroup(group: IOObjectSet): void {
-        for (const a of group.getComponents())
-            this.addObject(a as DigitalComponent);
-
-        for (const b of group.getWires())
-            this.addWire(b as DigitalWire);
     }
 
     public addICData(data: ICData): void {
@@ -234,16 +221,16 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
     public addObject(obj: DigitalComponent): void {
         if (this.objects.includes(obj))
-            throw new Error("Attempted to add an object that already existed!");
+            throw new Error(`Attempted to add an object with id "${GetIDFor(obj)}" that already existed!`);
 
         obj.setDesigner(this);
         this.objects.push(obj);
 
         this.callback({ type: "obj", op: "added", obj });
 
-        // checking all ports (issue #613)
-        for (let p of obj.getPorts().filter(r => r instanceof InputPort) as InputPort[])
-            p.activate(p.getInput() != null && p.getInput().getIsOn());
+        // Checking all ports (issue #613)
+        for (const p of obj.getPorts().filter((r) => r instanceof InputPort) as InputPort[])
+            p.activate(p.getInput() !== undefined && p.getInput().getIsOn());
     }
 
     public addWire(wire: DigitalWire): void {
@@ -281,7 +268,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
         this.callback({ type: "wire", op: "removed", wire });
     }
 
-    public replace(designer: DigitalCircuitDesigner): void {
+    public override replace(designer: DigitalCircuitDesigner): void {
         super.replace(designer);
 
         for (const ic of designer.getICData())
@@ -291,7 +278,7 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
 
         // Copy propagations so that circuit will continue
         //  propagating if it was previously doing so
-        this.propagationQueue = designer.propagationQueue.slice();
+        this.propagationQueue = [...designer.propagationQueue];
         this.updateRequests = designer.updateRequests;
 
         this.update();
@@ -317,18 +304,18 @@ export class DigitalCircuitDesigner extends CircuitDesigner {
     }
 
     public getGroup(): DigitalObjectSet {
-        return DigitalObjectSet.from([...this.objects, ...this.wires]);
+        return DigitalObjectSet.From([...this.objects, ...this.wires]);
     }
 
     public getObjects(): DigitalComponent[] {
-        return this.objects.slice(); // Shallow copy array
+        return [...this.objects]; // Shallow copy array
     }
 
     public getWires(): DigitalWire[] {
-        return this.wires.slice(); // Shallow copy array
+        return [...this.wires]; // Shallow copy array
     }
 
     public getICData(): ICData[] {
-        return this.ics.slice(); // Shallow copy array
+        return [...this.ics]; // Shallow copy array
     }
 }

@@ -1,13 +1,15 @@
-import {MIDDLE_MOUSE_BUTTON,
-        ARROW_PAN_DISTANCE_NORMAL,
-        ARROW_PAN_DISTANCE_SMALL} from "core/utils/Constants";
+import {MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
+
 import {Vector} from "Vector";
 
-import {Event}       from "core/utils/Events";
 import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Event}       from "core/utils/Events";
 
 import {Tool} from "core/tools/Tool";
 
+
+const ARROW_PAN_DISTANCE_NORMAL = 75;
+const ARROW_PAN_DISTANCE_SMALL = 5;
 
 export const PanTool: Tool = (() => {
     let isDragging = false;
@@ -19,7 +21,7 @@ export const PanTool: Tool = (() => {
             //  or if the user pressed one of of the arrow keys while no components are selected
             return ((event.type === "keydown" && ((event.key === "Alt") ||
                                                   (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
-                                                   event.key === "ArrowUp" || event.key === "ArrowDown" ))) ||
+                                                   event.key === "ArrowUp" || event.key === "ArrowDown"))) ||
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
                                                    input.getTouchCount() === 2)));
         },
@@ -47,7 +49,7 @@ export const PanTool: Tool = (() => {
                 isDragging = true;
 
                 const dPos = input.getDeltaMousePos();
-                camera.translate(dPos.scale(-1 * camera.getZoom()));
+                camera.translate(dPos.scale(camera.getScale().scale(-1)));
 
                 return true;
             }
@@ -67,9 +69,9 @@ export const PanTool: Tool = (() => {
                 if (input.isKeyDown("ArrowRight"))
                     dPos = dPos.add(1, 0);
                 if (input.isKeyDown("ArrowUp"))
-                    dPos = dPos.add(0, -1);
-                if (input.isKeyDown("ArrowDown"))
                     dPos = dPos.add(0, 1);
+                if (input.isKeyDown("ArrowDown"))
+                    dPos = dPos.add(0, -1);
 
                 // Screen gets moved different amounts depending on if the shift key is held
                 const factor = (input.isShiftKeyDown() ? ARROW_PAN_DISTANCE_SMALL : ARROW_PAN_DISTANCE_NORMAL);

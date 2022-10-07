@@ -1,12 +1,16 @@
 import {serializable} from "serialeazy";
 
-import {BCDFont} from "./BCDFont";
 
 import {ClampedValue} from "math/ClampedValue";
-import {PortsToDecimal} from "digital/utils/ComponentUtils";
-import {SegmentDisplay} from "./SegmentDisplay";
+
 import {Positioner} from "core/models/ports/positioners/Positioner";
+
+import {PortsToDecimal} from "digital/utils/ComponentUtils";
+
 import {InputPort} from "digital/models/ports/InputPort";
+
+import {BCDFont}        from "./BCDFont";
+import {SegmentDisplay} from "./SegmentDisplay";
 
 /**
  * A representation of a BCD Display, which takes a Binary Coded Decimal
@@ -25,27 +29,16 @@ export class BCDDisplay extends SegmentDisplay {
     }
 
     /**
-     * Changes the number of segments used to display the input value.
-     * Does not change the input port count.
-     * @param val number of segments.
-     */
-    public setInputPortCount(val: number): void {
-        // don't change input port count since we
-        //  have a constant number of inputs
-        //  but change number of segments instead
-        this.setSegmentCount(val);
-    }
-
-    /**
      * Given a specific segment, returns true if that segment
      * should be on, accoring to the input ports.
-     * @param segment the index of a segment.
-     * @returns true if the segment is on, false otherwise.
+     *
+     * @param segment The index of a segment.
+     * @returns         True if the segment is on, false otherwise.
      */
-    public isSegmentOn(segment: number): boolean {
+    public override isSegmentOn(segment: number): boolean {
         const dec = PortsToDecimal(this.getInputPorts());
 
-        const font = BCDFont[`${this.segmentCount}`];
+        const font = BCDFont[`${this.getSegmentCount()}`];
         if (!font)
             return false;
 
@@ -59,9 +52,10 @@ export class BCDDisplay extends SegmentDisplay {
     /**
      * Gets the display name of the BCD Display which includes
      * the number of segments it has.
-     * @returns the display name.
+     *
+     * @returns The display name.
      */
-    public getDisplayName(): string {
-        return `${this.segmentCount} BCD Display`;
+    public override getDisplayName(): string {
+        return `${this.getSegmentCount()} BCD Display`;
     }
 }

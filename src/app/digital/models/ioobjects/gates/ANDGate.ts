@@ -1,6 +1,7 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
 import {Gate} from "./Gate";
@@ -16,17 +17,18 @@ export class ANDGate extends Gate {
 
     /**
      * Creates an AND (or NAND) gate.
+     *
      * @param not True if this should be a NAND gate.
      */
-    public constructor(not: boolean = false) {
-        super(not, new ClampedValue(2,2,8), V(50, 50));
+    public constructor(not = false) {
+        super(not, new ClampedValue(2,2,8), V(1, 1));
     }
 
     /**
      * Uses the inputs to determine the output signal from this logic gate, that
      * is, on only when all of the inputs are on.
      */
-    public activate(): void {
+    public override activate(): void {
         const on = this.getInputPorts().every((input) => input.getIsOn());
         super.activate(on);
     }
@@ -34,17 +36,19 @@ export class ANDGate extends Gate {
     /**
      * Returns the display name for this logic gate, either "AND Gate" or
      * "NAND Gate".
-     * @returns The display name
+     *
+     * @returns The display name ("NAND Gate" or "AND Gate").
      */
     public getDisplayName(): string {
-        return this.not ? "NAND Gate" : "AND Gate";
+        return this.getProp("not") ? "NAND Gate" : "AND Gate";
     }
 
     /**
      * Returns the filename for the image used by this logic gate.
-     * @returns The image filename
+     *
+     * @returns The image filename.
      */
-    public getImageName(): string {
+    public override getImageName(): string {
         return "and.svg";
     }
 }

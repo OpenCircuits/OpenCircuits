@@ -1,17 +1,18 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE} from "core/utils/Constants";
+import {V} from "Vector";
 
-import {V}            from "Vector";
 import {ClampedValue} from "math/ClampedValue";
 
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
 
-import {DigitalComponent}     from "digital/models/DigitalComponent";
-import {OutputPort}           from "digital/models/ports/OutputPort";
-import {ComparatorPositioner} from "digital/models/ports/positioners/ComparatorPositioner";
-
 import {PortsToDecimal} from "digital/utils/ComponentUtils";
+
+import {DigitalComponent} from "digital/models/DigitalComponent";
+
+import {OutputPort} from "digital/models/ports/OutputPort";
+
+import {ComparatorPositioner} from "digital/models/ports/positioners/ComparatorPositioner";
 
 
 @serializable("Comparator")
@@ -21,23 +22,25 @@ export class Comparator extends DigitalComponent {
     public static readonly GT_PORT = 2;
 
     public constructor() {
-        super(new ClampedValue(4, 2, 16),
-              new ClampedValue(3),
-              V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*2),
-              new ComparatorPositioner("left", DEFAULT_SIZE),
-              new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
+        super(new ClampedValue(4, 2, 16), new ClampedValue(3),
+              V(1.25, 2),
+              new ComparatorPositioner("left", 1),
+              new ConstantSpacePositioner<OutputPort>("right", 1));
 
         this.activate();
         this.setInputPortCount(2);
-        
-        this.getOutputPort(Comparator.LT_PORT).setName("<");        
+
+        this.getOutputPort(Comparator.LT_PORT).setName("<");
         this.getOutputPort(Comparator.EQ_PORT).setName("=");
         this.getOutputPort(Comparator.GT_PORT).setName(">");
     }
 
-    public setInputPortCount(val: number): void {
-        this.setSize(V(DEFAULT_SIZE*1.25, DEFAULT_SIZE*(val+0.5)));
-        super.setInputPortCount(2*val);
+    public override setInputPortCount(val: number): void {
+        if (val % 2 !== 0)
+            throw new Error(`Attempted to set Comparator inputs to be odd! ${val}!`);
+
+        this.setSize(V(1.25, val/2+0.5));
+        super.setInputPortCount(val);
 
         this.getInputPorts()
             .slice(0,this.getInputPortCount().getValue()/2)
@@ -47,7 +50,7 @@ export class Comparator extends DigitalComponent {
             .forEach((port, i) => port.setName("b"+i));
     }
 
-    public activate(): void {
+    public override activate(): void {
         const a = PortsToDecimal(this.getInputPorts().slice(0,this.getInputPortCount().getValue()/2));
         const b = PortsToDecimal(this.getInputPorts().slice(this.getInputPortCount().getValue()/2));
         super.activate(a  <  b, Comparator.LT_PORT);
@@ -55,7 +58,7 @@ export class Comparator extends DigitalComponent {
         super.activate(a  >  b, Comparator.GT_PORT);
     }
 
-    public getDisplayName(): string {
+    public override getDisplayName(): string {
         return "Comparator";
     }
 }

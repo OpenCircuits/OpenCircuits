@@ -1,11 +1,12 @@
 import {IC} from "digital/models/ioobjects";
+
 import {CreateState} from "shared/utils/CreateState";
 
 
 const [initialState, actions, reducer] = CreateState()(
     {
         isActive: false,
-        ic: undefined as IC | undefined,
+        ic:       undefined as IC | undefined,
     },
     {
         OpenICViewer:  (data: IC) => ({ type: "OPEN_ICVIEWER_ID", data }) as const,
@@ -18,5 +19,5 @@ const [initialState, actions, reducer] = CreateState()(
 );
 
 export type ICViewerState = typeof initialState;
-export const {OpenICViewer, CloseICViewer} = actions;
+export const { OpenICViewer, CloseICViewer } = actions;
 export const icViewerReducer = reducer;

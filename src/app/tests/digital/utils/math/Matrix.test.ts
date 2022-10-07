@@ -1,7 +1,7 @@
-import "jest";
-
 import {Vector} from "Vector";
+
 import {Matrix2x3} from "math/Matrix";
+
 
 describe("Matrix2x3", () => {
     describe("Constructor", () => {
@@ -24,6 +24,7 @@ describe("Matrix2x3", () => {
             expect(m2["mat"]).toEqual([6, 5, 4, 3, 2, 1]);
         });
     });
+
     describe("Modifiers", () => {
         test("Zero", () => {
             const m = new Matrix2x3();
@@ -67,10 +68,12 @@ describe("Matrix2x3", () => {
                 m.rotate(Math.PI / 2);
                                         // [0 -1 0]
                                         // [1  0 0]
+                /* eslint-disable space-in-parens */
                 expect(m["mat"][0]).toBeCloseTo( 0, 1e-3);
                 expect(m["mat"][1]).toBeCloseTo( 1, 1e-3);
                 expect(m["mat"][2]).toBeCloseTo(-1, 1e-3);
                 expect(m["mat"][3]).toBeCloseTo( 0, 1e-3);
+                /* eslint-enable space-in-parens */
                 expect(m["mat"][4]).toBe(0);
                 expect(m["mat"][5]).toBe(0);
             }
@@ -79,10 +82,12 @@ describe("Matrix2x3", () => {
                 m.rotate(Math.PI / 4);
                                         // [0.707 -0.707 0]
                                         // [0.707  0.707 0]
+                /* eslint-disable space-in-parens */
                 expect(m["mat"][0]).toBeCloseTo( Math.sqrt(2)/2, 1e-3);
                 expect(m["mat"][1]).toBeCloseTo( Math.sqrt(2)/2, 1e-3);
                 expect(m["mat"][2]).toBeCloseTo(-Math.sqrt(2)/2, 1e-3);
                 expect(m["mat"][3]).toBeCloseTo( Math.sqrt(2)/2, 1e-3);
+                /* eslint-enable space-in-parens */
                 expect(m["mat"][4]).toBe(0);
                 expect(m["mat"][5]).toBe(0);
             }
@@ -111,6 +116,7 @@ describe("Matrix2x3", () => {
             }
         });
     });
+
     describe("Operators", () => {
         test("Mul", () => {
             const m = new Matrix2x3();

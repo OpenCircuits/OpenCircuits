@@ -1,35 +1,39 @@
 import {DEFAULT_BORDER_COLOR,
         DEFAULT_BORDER_WIDTH,
-        SELECTED_FILL_COLOR,
-        SELECTED_BORDER_COLOR} from "core/utils/Constants";
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
+
 import {Transform} from "math/Transform";
 
-import {Images}      from "core/utils/Images";
+import {Images} from "core/utils/Images";
 
-import {Component} from "core/models/Component";
 
-import {Renderer}  from "core/rendering/Renderer";
-import {Rectangle} from "core/rendering/shapes/Rectangle";
-import {Style}     from "core/rendering/Style";
+import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
 
 import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
 import {IOPortRenderer}  from "core/rendering/renderers/IOPortRenderer";
 
+import {Rectangle} from "core/rendering/shapes/Rectangle";
+
+import {Component} from "core/models/Component";
+
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-import {Oscilloscope, Label} from "analog/models/eeobjects";
+
+import {Label, Oscilloscope} from "analog/models/eeobjects";
 
 import {OscilloscopeRenderer} from "./OscilloscopeRenderer";
 
 
 /**
- * Renders Components
- * * Check if object to be rendered is on the screen, quit if not
- * * Transform renderer to object transform
- * * Draw all object ports first using IOPortRenderer
- * * Render IOLabels if not blank
- * * Restore
+ * Renders Components:
+ * - Check if object to be rendered is on the screen, quit if not,
+ * - Transform renderer to object transform,
+ * - Draw all object ports first using IOPortRenderer,
+ * - Render IOLabels if not blank,
+ * - Restore.
  */
 export const ComponentRenderer = (() => {
     const drawBox = function(renderer: Renderer, transform: Transform, selected: boolean, fillcol = "#ffffff") {

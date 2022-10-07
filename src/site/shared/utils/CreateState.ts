@@ -1,5 +1,7 @@
 
-export type ActionType = {readonly type: string};
+export type ActionType = { readonly type: string };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionCreatorType = ((...args: any[]) => ActionType);
 
 
@@ -28,10 +30,10 @@ type GetTypes<A extends Record<string, ActionCreatorType>, X extends ActionCreat
         [Name in keyof A]: ReturnType<A[Name]>["type"]
     }[keyof A];
 
-// Finds action of given type `k`
-type FindAction<A extends Record<string, ActionCreatorType>, X extends ActionCreatorType, k> =
-    ( ReturnType<X> extends {type: k} ? ReturnType<X> : never ) | {
-        [Name in keyof A]: (ReturnType<A[Name]>["type"] extends k ? ReturnType<A[Name]> : never)
+// Finds action of given type `K`
+type FindAction<A extends Record<string, ActionCreatorType>, X extends ActionCreatorType, K> =
+    (ReturnType<X> extends {type: K} ? ReturnType<X> : never) | {
+        [Name in keyof A]: (ReturnType<A[Name]>["type"] extends K ? ReturnType<A[Name]> : never)
     }[keyof A];
 
 
@@ -45,7 +47,8 @@ export function CreateState<X extends ActionCreatorType = never>() {
         return [initialState, actions, (state: S = initialState, action: GetActions<A,X>) => {
             const type = action.type;
             if (type in reducers)
-                    /* i cannot figure out the correct cast here  vvvv  for the life of me */
+                /* i cannot figure out the correct cast here  vvvv  for the life of me */
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return reducers[type as GetTypes<A,X>]!(state, action as any);
             return state;
         }] as const;

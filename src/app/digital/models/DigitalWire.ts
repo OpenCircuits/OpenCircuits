@@ -1,20 +1,23 @@
 import {serializable, serialize} from "serialeazy";
 
+import {DEFAULT_ON_COLOR} from "core/utils/Constants";
+
 import {Port} from "core/models";
+
 import {Wire} from "core/models/Wire";
+
+import {DigitalNode} from "./ioobjects/other/DigitalNode";
 
 import {DigitalComponent, InputPort, OutputPort} from "./index";
 
-import {DigitalNode} from "./ioobjects/other/DigitalNode";
-import {DEFAULT_ON_COLOR} from "core/utils/Constants";
 
 
 @serializable("DigitalWire")
 export class DigitalWire extends Wire {
     @serialize
-    protected p1: OutputPort;
+    protected override p1: OutputPort;
     @serialize
-    protected p2: InputPort;
+    protected override p2: InputPort;
 
     @serialize
     private isOn: boolean;
@@ -33,11 +36,11 @@ export class DigitalWire extends Wire {
             return;
 
         this.isOn = signal;
-        if (this.p2 != null)
+        if (this.p2 !== undefined)
             this.p2.activate(signal);
     }
 
-    public canConnectTo(port: Port): boolean {
+    public override canConnectTo(port: Port): boolean {
         if (!super.canConnectTo(port))
             return false;
 
@@ -72,8 +75,8 @@ export class DigitalWire extends Wire {
         return this.p2.getParent();
     }
 
-    public getDisplayColor(): string {
-        return (this.getInput()?.getIsOn() ? DEFAULT_ON_COLOR : this.getColor());
+    public override getDisplayColor(): string {
+        return (this.getInput()?.getIsOn() ? DEFAULT_ON_COLOR : super.getDisplayColor());
     }
 
     public getIsOn(): boolean {

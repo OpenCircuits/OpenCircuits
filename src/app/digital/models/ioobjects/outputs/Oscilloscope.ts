@@ -1,86 +1,104 @@
 import {serializable, serialize} from "serialeazy";
 
 import {V, Vector} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
-import {TimedComponent} from "../TimedComponent";
+import {GenPropInfo} from "core/utils/PropInfoUtils";
+
+import {Prop} from "core/models/PropInfo";
+
 import {ConstantSpacePositioner} from "core/models/ports/positioners/ConstantSpacePositioner";
+
 import {InputPort} from "digital/models";
 
+import {TimedComponent} from "../TimedComponent";
+
+
+const [Info, InitialProps] = GenPropInfo({
+    infos: {
+        "samples": {
+            type:  "int",
+            label: "Samples",
+
+            initial: 100, min: 10, max: 400, step: 10,
+        },
+        "displaySize": {
+            type:    "veci",
+            label:   "Display Size",
+            initial: V(8, 4),
+            min:     V(2, 1),
+            max:     V(20, 10),
+            step:    V(1, 1),
+        },
+    },
+});
 
 @serializable("Oscilloscope")
 export class Oscilloscope extends TimedComponent {
     @serialize
-    private numSamples: number;
-    @serialize
     private signals: boolean[][];
-    @serialize
-    private displaySize: Vector;
 
     public constructor() {
-        super(100, new ClampedValue(1, 1, 8), new ClampedValue(0), V(400, 200),
-              new ConstantSpacePositioner<InputPort>("left", 400));
+        super(100, new ClampedValue(1, 1, 8), new ClampedValue(0), V(8, 4),
+              new ConstantSpacePositioner<InputPort>("left", 8), undefined,
+              InitialProps);
 
-        this.numSamples = 100;
-        this.displaySize = V(400, 200);
         this.signals = [[]];
 
         this.reset();
     }
 
     protected onTick(): void {
+        const numSamples = this.props["samples"] as number;
         // Add signals
         for (let i = 0; i < this.numInputs(); i++) {
             this.signals[i].push(this.inputs.get(i).getIsOn());
-            if (this.signals[i].length > this.numSamples)
-                this.signals[i].splice(0, (this.signals[i].length-this.numSamples));
+            if (this.signals[i].length > numSamples)
+                this.signals[i].splice(0, (this.signals[i].length-numSamples));
         }
     }
 
     // @Override
-    public setInputPortCount(val: number): void {
+    public override setInputPortCount(val: number): void {
         // Update size (first so that ports update positions properly)
-        super.setSize(this.displaySize.scale(V(1, val)));
+        super.setSize((this.props["displaySize"] as Vector).scale(V(1, val)));
 
         super.setInputPortCount(val);
 
         while (val > this.signals.length)
-            this.signals.push(this.signals[0].map(_ => false));
+            this.signals.push(this.signals[0].map((_) => false));
         while (val < this.signals.length)
             this.signals.pop();
     }
 
-    public setNumSamples(num: number): void {
-        this.numSamples = num;
+    public override setProp(key: string, val: Prop): void {
+        super.setProp(key, val);
+
+        if (key === "displaySize") {
+            const size = val as Vector;
+
+            super.setSize(size.scale(V(1, this.numInputs())));
+
+            // Update spacing amount for port-positioner
+            (this.inputs.getPositioner() as ConstantSpacePositioner<InputPort>).spacing = size.y*2;
+
+            this.inputs.updatePortPositions();
+        }
     }
 
-    public setDisplaySize(size: Vector): void {
-        this.displaySize = size;
-
-        super.setSize(this.displaySize.scale(V(1, this.numInputs())));
-
-        // Update spacing amount for port-positioner
-        (this.inputs.getPositioner() as ConstantSpacePositioner<InputPort>).spacing = size.y*2;
-
-        this.inputs.updatePortPositions();
-    }
-
-    public reset(): void {
+    public override reset(): void {
         for (let i = 0; i < this.signals.length; i++)
             this.signals[i] = [];
         super.reset();
     }
 
-    public getNumSamples(): number {
-        return this.numSamples;
+    public override getPropInfo(key: string) {
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public getSignals(): boolean[][] {
-        return this.signals.slice();
-    }
-
-    public getDisplaySize(): Vector {
-        return V(this.displaySize);
+        return [...this.signals];
     }
 
     public getDisplayName(): string {

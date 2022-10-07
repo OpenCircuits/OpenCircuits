@@ -1,21 +1,21 @@
-import "jest";
+import {GetHelpers} from "test/helpers/Helpers";
 
-import {ConnectionAction} from "core/actions/addition/ConnectionAction";
+import {Connect as CreateConnection} from "core/actions/units/Connect";
+
+import {SetMuxPortCount} from "digital/actions/compositions/SetMuxPortCount";
 
 import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
-import {Switch}                 from "digital/models/ioobjects/inputs/Switch";
-import {Multiplexer}            from "digital/models/ioobjects/other/Multiplexer";
-import {DigitalNode}            from "digital/models/ioobjects/other/DigitalNode";
 
-import {MuxPortChangeAction} from "digital/actions/ports/MuxPortChangeAction";
+import {Switch} from "digital/models/ioobjects/inputs/Switch";
 
-import {GetHelpers} from "test/helpers/Helpers";
+import {DigitalNode} from "digital/models/ioobjects/other/DigitalNode";
+import {Multiplexer} from "digital/models/ioobjects/other/Multiplexer";
 
 
 describe("Select Port Change Action", () => {
     test("Undo/Redo 1", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place} = GetHelpers(designer);
+        const { Place } = GetHelpers(designer);
 
         const [mux] = Place(new Multiplexer());
 
@@ -25,7 +25,7 @@ describe("Select Port Change Action", () => {
         expect(mux.getOutputPortCount().getValue()).toBe(1);
 
         // change select port count
-        const a1 = new MuxPortChangeAction(mux, mux.getSelectPortCount().getValue(), 4).execute();
+        const a1 = SetMuxPortCount(mux, 4);
 
         // initial
         expect(mux.getSelectPortCount().getValue()).toBe(4);
@@ -44,22 +44,22 @@ describe("Select Port Change Action", () => {
         expect(mux.getInputPortCount().getValue()).toBe(16);
         expect(mux.getOutputPortCount().getValue()).toBe(1);
     });
-    test("Undo/Redo 1", () => {
+    test("Undo/Redo 2", () => {
         const designer = new DigitalCircuitDesigner(0);
-        const {Place, Connect} = GetHelpers(designer);
+        const { Place, Connect } = GetHelpers(designer);
 
         const [sw, n, mux] = Place(new Switch(), new DigitalNode(), new Multiplexer());
 
         // Connect switch to node and then then to input and select ports of Mux
-        Connect(sw, 0, n, 0);
+        Connect(sw, n);
         Connect(n, 0, mux, 3);
-        new ConnectionAction(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]).execute();
+        CreateConnection(designer, n.getOutputPorts()[0], mux.getSelectPorts()[1]);
 
         expect(designer.getObjects()).toHaveLength(3);
         expect(designer.getWires()).toHaveLength(3);
 
         // change select port count
-        const a1 = new MuxPortChangeAction(mux, mux.getSelectPortCount().getValue(), 1).execute();
+        const a1 = SetMuxPortCount(mux, 1);
 
         // initial
         expect(designer.getObjects()).toHaveLength(2);

@@ -3,9 +3,9 @@ import {serializable, serialize} from "serialeazy";
 import {IOObjectSet} from "core/utils/ComponentUtils";
 
 import {CircuitDesigner} from "core/models/CircuitDesigner";
-import {IOObject}  from "core/models/IOObject";
+import {IOObject}        from "core/models/IOObject";
 
-import {AnalogWire, AnalogComponent, AnalogPort} from "./index";
+import {AnalogComponent, AnalogPort, AnalogWire} from "./index";
 
 
 
@@ -29,12 +29,12 @@ export type AnalogEvent =
 @serializable("AnalogCircuitDesigner")
 export class AnalogCircuitDesigner extends CircuitDesigner {
     @serialize
-    private objects: AnalogComponent[];
+    private readonly objects: AnalogComponent[];
 
     @serialize
-    private wires: AnalogWire[];
+    private readonly wires: AnalogWire[];
 
-    private updateCallbacks: ((ev: AnalogEvent) => void)[];
+    private readonly updateCallbacks: Array<(ev: AnalogEvent) => void>;
 
     public constructor() {
         super();
@@ -63,13 +63,13 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     }
 
     private callback(ev: AnalogEvent): void {
-        this.updateCallbacks.forEach(c => c(ev));
+        this.updateCallbacks.forEach((c) => c(ev));
     }
 
     /**
-     * Method to call when you want to force an update
-     * 	Used when something changed but isn't propagated
-     * 	(i.e. Clock updated but wasn't connected to anything)
+     * Method to call when you want to force an update.
+     *  Used when something changed but isn't propagated
+     *  (i.e. Clock updated but wasn't connected to anything).
      */
     public forceUpdate(): void {
         this.callback({ type: "forced" });
@@ -77,14 +77,6 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
 
     public createWire(p1: AnalogPort, p2?: AnalogPort): AnalogWire {
         return new AnalogWire(p1, p2);
-    }
-
-    public addGroup(group: IOObjectSet): void {
-        for (const a of group.getComponents())
-            this.addObject(a as AnalogComponent);
-
-        for (const b of group.getWires())
-            this.addWire(b as AnalogWire);
     }
 
     public addObjects(objects: AnalogComponent[]): void {
@@ -137,7 +129,7 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
         this.callback({ type: "wire", op: "removed", wire });
     }
 
-    public replace(designer: AnalogCircuitDesigner): void {
+    public override replace(designer: AnalogCircuitDesigner): void {
         super.replace(designer);
     }
 
@@ -165,10 +157,10 @@ export class AnalogCircuitDesigner extends CircuitDesigner {
     }
 
     public getObjects(): AnalogComponent[] {
-        return this.objects.slice(); // Shallow copy array
+        return [...this.objects]; // Shallow copy array
     }
 
     public getWires(): AnalogWire[] {
-        return this.wires.slice(); // Shallow copy array
+        return [...this.wires]; // Shallow copy array
     }
 }

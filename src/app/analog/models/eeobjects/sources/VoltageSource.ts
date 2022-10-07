@@ -1,25 +1,31 @@
 import {serializable} from "serialeazy";
 
 import {V} from "Vector";
+
 import {ClampedValue} from "math/ClampedValue";
 
+import {GenPropInfo, PropInfoLayout}        from "core/utils/PropInfoUtils";
+import {AngleInfo, FrequencyInfo, TimeInfo} from "core/utils/Units";
+
 import {AnalogComponent} from "analog/models";
-import {VoltageInfo, TimeInfo, AngleInfo, FrequencyInfo} from "analog/models/Units";
-import {GenInitialInfo, GenPropInfo, GroupPropInfo} from "analog/models/AnalogComponent";
+
+import {VoltageInfo} from "analog/models/Units";
+
 import {TopBottomPositioner} from "analog/models/ports/positioners/TopBottomPositioner";
 
 
-const ConstInfo: GroupPropInfo = {
-    type: "group",
-    isActive: (state) => (state["waveform"] === "DC"),
+const ConstInfo: PropInfoLayout = {
+    isActive: (states) => (states.every((state) => state["waveform"] === "DC")),
+
     infos: {
         ...VoltageInfo("V", "Voltage", 5),
     },
 };
 
-const PulseInfo: GroupPropInfo = {
-    type: "group",
-    isActive: (state) => (state["waveform"] === "DC PULSE"),
+const PulseInfo: PropInfoLayout = {
+    isActive: (states) => (states.every((state) => state["waveform"] === "DC PULSE")),
+
+    /* eslint-disable space-in-parens */
     infos: {
         ...VoltageInfo("v1", "Low Voltage",  0),
         ...VoltageInfo( "V", "High Voltage", 5),
@@ -30,11 +36,12 @@ const PulseInfo: GroupPropInfo = {
            ...TimeInfo( "p", "Period",       0.2),
           ...AngleInfo("ph", "Phase",        0),
     },
+    /* eslint-enable space-in-parens */
 };
 
-const SineInfo: GroupPropInfo = {
-    type: "group",
-    isActive: (state) => (state["waveform"] === "DC SINE"),
+const SineInfo: PropInfoLayout = {
+    isActive: (states) => (states.every((state) => state["waveform"] === "DC SINE")),
+
     infos: {
         ...VoltageInfo("v1", "Offset Voltage", 0),
         ...VoltageInfo("V", "Amplitude Voltage", 5),
@@ -43,17 +50,16 @@ const SineInfo: GroupPropInfo = {
         //  each-other as they update
         ...FrequencyInfo("f", "Frequency", 5),
         ...TimeInfo("td", "Delay Time", 0),
-         "d": { display: "Damping Factor", initial: 0, type: "float", min: 0 },
+         "d": { label: "Damping Factor", initial: 0, type: "float", min: 0 },
         ...AngleInfo("ph", "Phase", 0),
     },
 };
 
-const Info = GenPropInfo([{
-    type: "group",
+const [Info, InitialProps] = GenPropInfo({
     infos: {
         "waveform": { // Select
-            display: "Waveform",
-            type: "string[]",
+            label:   "Waveform",
+            type:    "string[]",
             initial: "DC",
             options: [
                 ["Const",  "DC"],
@@ -62,8 +68,8 @@ const Info = GenPropInfo([{
             ],
         },
     },
-    subgroups: [ ConstInfo, PulseInfo, SineInfo ],
-}]);
+    sublayouts: [ ConstInfo, PulseInfo, SineInfo ],
+});
 
 @serializable("VoltageSource")
 export class VoltageSource extends AnalogComponent {
@@ -71,7 +77,7 @@ export class VoltageSource extends AnalogComponent {
         super(
             new ClampedValue(2),
             V(50, 50), new TopBottomPositioner(),
-            GenInitialInfo(Info),
+            InitialProps,
         );
     }
 
@@ -81,7 +87,7 @@ export class VoltageSource extends AnalogComponent {
 
     public override getNetlistValues() {
         const InfoMap = {
-            "DC":    ConstInfo,
+            "DC":       ConstInfo,
             "DC PULSE": PulseInfo,
             "DC SINE":  SineInfo,
         };
@@ -89,26 +95,28 @@ export class VoltageSource extends AnalogComponent {
         const type = this.props["waveform"] as "DC"|"DC PULSE"|"DC SINE";
 
         // Filter out unit keys
-        const keys = Object.keys(InfoMap[type].infos).filter(key => !key.endsWith("_U"));
+        const keys = Object.keys(InfoMap[type].infos).filter((key) => !key.endsWith("_U"));
 
-        return [`${type}(${keys.map(k => this.props[k]!).join(" ")})`];
+        return [`${type}(${keys.map((k) => this.props[k]!).join(" ")})`];
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     /**
-     * Returns name of Component
-     * @returns "Voltage Source"
+     * Returns name of Component.
+     *
+     * @returns The string "Voltage Source".
      */
     public override getDisplayName(): string {
         return "Voltage Source";
     }
 
     /**
-     * Returns name of image file
-     * @returns "voltagesource.svg"
+     * Returns name of image file.
+     *
+     * @returns The string "voltagesource.svg".
      */
     public override getImageName(): string {
         return "voltagesource.svg";

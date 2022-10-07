@@ -1,10 +1,19 @@
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, DEFAULT_ON_COLOR, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
-import {V, Vector} from "Vector";
-import {Renderer} from "core/rendering/Renderer";
-import {Line} from "core/rendering/shapes/Line";
-import {Rectangle} from "core/rendering/shapes/Rectangle";
-import {Style} from "core/rendering/Style";
 import {FONT_CONSTANT_NUMBER} from "core/rendering/Styles";
+import {DEFAULT_BORDER_COLOR,
+        DEFAULT_BORDER_WIDTH,
+        DEFAULT_FILL_COLOR,
+        DEFAULT_ON_COLOR,
+        SELECTED_BORDER_COLOR,
+        SELECTED_FILL_COLOR}  from "core/utils/Constants";
+
+import {V, Vector} from "Vector";
+
+import {Renderer} from "core/rendering/Renderer";
+import {Style}    from "core/rendering/Style";
+
+import {Line}      from "core/rendering/shapes/Line";
+import {Rectangle} from "core/rendering/shapes/Rectangle";
+
 import {ConstantNumber} from "digital/models/ioobjects";
 
 
@@ -24,7 +33,7 @@ export const ConstantNumberRenderer = (() => {
     // Function to draw the input value on the component
     const drawInputText = function(renderer: Renderer, value: number): void {
         // to adjust for cap-height of the Arial font (see https://stackoverflow.com/questions/61747006)
-        const FONT_CAP_OFFSET = 3;
+        const FONT_CAP_OFFSET = 0.06;
 
         const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
         renderer.text(text, V(0, FONT_CAP_OFFSET), "center", DEFAULT_ON_COLOR, FONT_CONSTANT_NUMBER);
@@ -44,7 +53,7 @@ export const ConstantNumberRenderer = (() => {
 
             // Connect the output lines together and draw the text
             drawOutputConnector(renderer, transform.getSize(), borderColor);
-            drawInputText(renderer, object.getInputNum());
-        }
+            drawInputText(renderer, object.getProp("inputNum") as number);
+        },
     };
 })();

@@ -1,8 +1,6 @@
-import {useRef} from "react";
-
 import {Clamp} from "math/MathUtils";
 
-import {InputField} from "shared/components/InputField";
+import {NumberInputField} from "shared/components/InputField";
 
 import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
@@ -13,30 +11,40 @@ type Props = SharedModuleInputFieldProps<number> & {
     min?: number;
     max?: number;
 }
-export const NumberModuleInputField = ({ kind, step, min, max, placeholder, alt, ...props }: Props) => {
-    const ref = useRef<HTMLInputElement>(null);
-
+export const NumberModuleInputField = ({
+    kind, step, min, max, placeholder, alt, props, getAction, onSubmit, getCustomDisplayVal,
+}: Props) => {
     const Min = min ?? -Infinity;
     const Max = max ?? +Infinity;
 
-    const [state, setState] = useBaseModule<number>({
-        ...props,
+    const [state, setState] = useBaseModule<[number]>({
+        props: props.map((v) => [v]),
 
-        parseVal:      (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
-        parseFinalVal: (val) => Clamp(val, Min, Max),
-        isValid:       (val) => (!isNaN(val) && (Min <= val && val <= Max)),
+        isValid:  (val) => (!isNaN(val) && (Min <= val && val <= Max)),
+        parseVal: (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
+        fixVal:   (val) => Clamp(val, Min, Max),
+
+        applyModifier:   (val, step) => (val + (step ?? 0)),
+        reverseModifier: (val, step) => (val - (step ?? 0)),
+
+        getAction: (newVals) => getAction(newVals.map(([v]) => v)),
+
+        onSubmit,
+        getCustomDisplayVal: (([v]) =>
+            // Default to rounding to two digits
+            (getCustomDisplayVal ?? ((v) => parseFloat(v.toFixed(2))))(v)
+        ),
     });
 
-    // TODO: Fix to 2 digits
     return (
-        <InputField
-            ref={ref}
+        <NumberInputField
             type="number"
-            value={state.value}
-            placeholder={state.allSame ? "" : (placeholder ?? "-")}
+            value={state.values[0]}
+            min={min} max={max} step={step} alt={alt}
+            placeholder={state.allSame[0] ? "" : (placeholder ?? "-")}
             onChange={(ev) => setState.onChange(ev.target.value)}
+            onIncrement={(step) => setState.onModify(step)}
             onFocus={() => setState.onFocus()}
-            onBlur={() => setState.onBlur()}
-            min={min} max={max} step={step} alt={alt} />
-    )
+            onBlur={() => setState.onBlur()} />
+    );
 }
