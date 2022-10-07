@@ -69,13 +69,16 @@ jobs:
           node-version: "16.x"
       - name: Install dependencies
         if: ${{ contains(github.event.comment.body, matrix.os) }}
+        shell: bash
         run: yarn
       - name: Install Playwright browsers
         if: ${{ contains(github.event.comment.body, matrix.os) }}
+        shell: bash
         run: npx playwright install --with-deps
       # Update the snapshots based on the current UI
       - name: Update snapshots
         if: ${{ contains(github.event.comment.body, matrix.os) }}
+        shell: bash
         env:
           UPDATE_SNAPSHOTS_COMMAND: ${{ github.event.comment.body }}
         run: yarn playwright:ci --update-snapshots
