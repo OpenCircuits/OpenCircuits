@@ -56,11 +56,9 @@ jobs:
           echo "::set-output name=branch::$(echo $sha_and_branch | cut -d " " -f 2)"
       # Checkout the comment's branch
       - name: Fetch Branch
-        shell: bash
         if: ${{ contains(github.event.comment.body, matrix.os) }}
         run: git fetch
       - name: Checkout Branch
-        shell: bash
         run: git checkout ${{ steps.get-branch-and-sha.outputs.branch }}
       # Setup testing environment
       - uses: actions/setup-node@v2
@@ -68,16 +66,13 @@ jobs:
         with:
           node-version: "16.x"
       - name: Install dependencies
-        shell: bash
         if: ${{ contains(github.event.comment.body, matrix.os) }}
         run: yarn
       - name: Install Playwright browsers
-        shell: bash
         if: ${{ contains(github.event.comment.body, matrix.os) }}
         run: npx playwright install --with-deps
       # Update the snapshots based on the current UI
       - name: Update snapshots
-        shell: bash
         if: ${{ contains(github.event.comment.body, matrix.os) }}
         env:
           UPDATE_SNAPSHOTS_COMMAND: ${{ github.event.comment.body }}
