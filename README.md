@@ -46,7 +46,6 @@ OpenCircuits is hosted on [GitHub](https://github.com/OpenCircuits/OpenCircuits)
 
 If you have a question or would like to recommend a feature, please reach out to contact@opencircuits.io.
 
-
 ## LICENSING
 OpenCircuits is under the GPL-3.0 license.
 

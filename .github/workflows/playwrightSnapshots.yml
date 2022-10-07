@@ -25,12 +25,12 @@ jobs:
   updatesnapshots:
     # Run this job only on comments of pull requests that strictly match
     # the "/update-snapshots" string
-    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/update-snapshots') && contains(github.event.comment.body, matrix.os) }}
-    timeout-minutes: 60
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/update-snapshots') && contains(github.event.comment.body, matrix.os) }}
+    timeout-minutes: 60
+    runs-on: ${{ matrix.os }}
 
     steps:
       # Checkout and do a deep fetch to load all commit IDs
