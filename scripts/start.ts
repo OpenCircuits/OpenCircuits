@@ -33,37 +33,45 @@ function StartServer() {
     });
 }
 
-function StartClient(dir: string, project: string, open: boolean) {
-    startWebpack(dir, project, "development", open);
+function StartClient(dir: string, project: string, open: boolean, forcePort?: number) {
+    startWebpack(dir, project, "development", open, forcePort);
 }
 
 
 // CLI
 (async () => {
-    const { open } = await yargs(process.argv.slice(2))
-        .boolean("open")
-        .argv;
-
     const dirs = getDirs(true, false, false);
 
-    // Prompt for project type
-    const { value } = await prompts({
-        type:    "select",
-        name:    "value",
-        message: "Pick a project",
-        choices: dirs,
-        initial: dirs.findIndex((dir) => (dir.title === "Digital")),
-    });
+    const { open, project, port } = await yargs(process.argv.slice(2))
+        .boolean("open")
+        .choices("project", dirs.map((dir) => dir.value as string))
+        .number("port")
+        .argv;
 
-    if (!value)
+    let dir: string;
+    if (project) {
+        dir = project;
+    } else {
+        // Prompt for project type
+        const { value } = await prompts({
+            type:    "select",
+            name:    "value",
+            message: "Pick a project",
+            choices: dirs,
+            initial: dirs.findIndex((dir) => (dir.title === "Digital")),
+        });
+        dir = value;
+    }
+
+    if (!dir)
         return;
 
     // Start server
-    if (value === "server") {
+    if (dir === "server") {
         StartServer();
         return;
     }
 
     // Start digital/analog/landing page
-    StartClient(`src/site/pages/${value}`, value, open);
+    StartClient(`src/site/pages/${dir}`, dir, open, port);
 })();
