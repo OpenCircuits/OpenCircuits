@@ -148,14 +148,14 @@ export const ProdProjects: Readonly<Record<ProdPageNames,
 export const DevWebServers: Readonly<Record<DevPageNames, WebServer>> = {
     digital: {
         reuseExistingServer: true,
-        timeout:             100_000,
+        timeout:             150_000,
         command:             devPages.digital.command,
         port:                devPages.digital.port,
         cwd:                 "../../",
     },
     landing: {
         reuseExistingServer: true,
-        timeout:             100_000,
+        timeout:             150_000,
         command:             devPages.landing.command,
         port:                devPages.landing.port,
         cwd:                 "../../",
@@ -165,7 +165,7 @@ export const DevWebServers: Readonly<Record<DevPageNames, WebServer>> = {
 export const ProdWebServers: Readonly<Record<ProdPageNames, WebServer>> = {
     digital: {
         reuseExistingServer: !!process.env.CI,
-        timeout:             150_000,
+        timeout:             250_000,
         command:             prodPages.digital.command,
         port:                prodPages.digital.port,
         cwd:                 "../../",
