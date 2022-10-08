@@ -39,29 +39,25 @@ jobs:
         with:
           fetch-depth: 0 # Load all commits
           token: ${{ secrets.GITHUB_TOKEN }}
-      # Get the SHA and branch name of the comment's pull request
-      # We must use the GitHub API to retrieve these information because they're
-      # not accessibile within workflows triggered by "issue_comment"
-      - name: Get SHA and branch name
-        id: get-branch-and-sha
-        shell: bash
-        if: ${{ contains(github.event.comment.body, matrix.os) }}
-        run: |
-          sha_and_branch=$(\
-            curl \
-              -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
-              https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.issue.number }} \
-            | jq -r '.head.sha," ",.head.ref');
-          echo "::set-output name=sha::$(echo $sha_and_branch | cut -d " " -f 1)";
-          echo "::set-output name=branch::$(echo $sha_and_branch | cut -d " " -f 2)"
+      - uses: actions/github-script@v6
+        id: get-branch-name
+        with:
+          result-encoding: string
+          script: |
+            const result = github.rest.pulls.get({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+            console.log(result)
+            console.log("PLEASE WORK: " + result.head.ref)
+            return result.head.ref
       # Checkout the comment's branch
       - name: Fetch Branch
         if: ${{ contains(github.event.comment.body, matrix.os) }}
-        shell: bash
         run: git fetch
       - name: Checkout Branch
-        shell: bash
-        run: git checkout ${{ steps.get-branch-and-sha.outputs.branch }}
+        run: git checkout ${{ steps.get-branch-name.outputs.result }}
       # Setup testing environment
       - uses: actions/setup-node@v2
         if: ${{ contains(github.event.comment.body, matrix.os) }}
@@ -69,16 +65,13 @@ jobs:
           node-version: "16.x"
       - name: Install dependencies
         if: ${{ contains(github.event.comment.body, matrix.os) }}
-        shell: bash
         run: yarn
       - name: Install Playwright browsers
         if: ${{ contains(github.event.comment.body, matrix.os) }}
-        shell: bash
         run: npx playwright install --with-deps
       # Update the snapshots based on the current UI
       - name: Update snapshots
         if: ${{ contains(github.event.comment.body, matrix.os) }}
-        shell: bash
         env:
           UPDATE_SNAPSHOTS_COMMAND: ${{ github.event.comment.body }}
         run: yarn playwright:ci --update-snapshots
