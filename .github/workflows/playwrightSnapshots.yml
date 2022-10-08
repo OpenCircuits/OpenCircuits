@@ -50,8 +50,8 @@ jobs:
               repo: context.repo.repo,
             })
             console.log(result)
-            console.log("PLEASE WORK: " + result.head.ref)
-            return result.head.ref
+            console.log("PLEASE WORK: " + result.data.head.ref)
+            return result.data.head.ref
       # Checkout the comment's branch
       - name: Fetch Branch
         if: ${{ contains(github.event.comment.body, matrix.os) }}
