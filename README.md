@@ -42,11 +42,10 @@ OpenCircuits is hosted on [GitHub](https://github.com/OpenCircuits/OpenCircuits)
 <img src="https://imgur.com/UUPyzcx.png" width="80%" />
 <img src="https://imgur.com/gQPQACz.png" width="80%" />
 
-
 ## Contact Us
 
 If you have a question or would like to recommend a feature, please reach out to contact@opencircuits.io.
 
+
 ## LICENSING
 OpenCircuits is under the GPL-3.0 license.
-

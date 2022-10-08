@@ -65,13 +65,12 @@ npx install playwright
 
 Then use the command
 ```bash
-yarn playwright digital
-yarn playwright analog
-yarn playwright landing
+yarn playwright:digital
+yarn playwright:landing
 ```
-to run playwright tests for digital, analog, or landing respectively. 
+to run playwright tests for digital or landing respectively. 
 
-For more details on working with Playwright tests in OpenCircuits, [click here](./Playwright)
+For more details on working with Playwright tests in OpenCircuits, [click here](../Guides/Playwright)
 
 ---
 
