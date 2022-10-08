@@ -65,8 +65,8 @@ npx install playwright
 
 Then use the command
 ```bash
-yarn playwright:digital
-yarn playwright:landing
+yarn test-e2e:digital
+yarn test-e2e:landing
 ```
 to run playwright tests for digital or landing respectively. 
 

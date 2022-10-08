@@ -1,4 +1,5 @@
 # Adapted from https://mmazzarolo.com/blog/2022-09-09-visual-regression-testing-with-playwright-and-github-actions/#updating-the-snapshots-in-ci-with-a-pull-request-comment
+# WHEN THIS WORKFLOW IS RUN, IT USES THE VERSION ON THE MASTER BRANCH.
 # This workflow's goal is forcing an update of the reference snapshots used
 # by Playwright tests. It runs whenever you post a new pull request comment
 # that starts with "/update-snapshots". It can run for Linux (ubuntu-latest),
@@ -82,7 +83,7 @@ jobs:
         # Passing in the command as an environment variable is more secure than as a parameter
         env:
           UPDATE_SNAPSHOTS_COMMAND: ${{ github.event.comment.body }}
-        run: yarn playwright:ci --update-snapshots
+        run: yarn test-e2e:ci --update-snapshots
       # Commit the changes to the pull request branch
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ contains(github.event.comment.body, matrix.os) }}

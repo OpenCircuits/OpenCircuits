@@ -10,8 +10,8 @@ Playwright is an end-to-end testing framework that allows us to write tests that
 
 To run the tests, you can use the commands
 ```bash
-yarn playwright:digital
-yarn playwright:landing
+yarn test-e2e:digital
+yarn test-e2e:landing
 ```
 to execute the tests for the digital site and the landing site, respectively.
 
@@ -23,7 +23,7 @@ to run the tests using whichever config is loaded into `playwright.config.ts`, w
 
 Options such as `--debug` can be passed into those yarn wrapper commands, and the syntax would simply look like
 ```bash
-yarn playwright:digital --debug
+yarn test-e2e:digital --debug
 ```
 
 ---
@@ -51,7 +51,7 @@ A test in a `shared` folder will run for all the relevant browsers. For example,
 
 To run the tests under the version of the site compiled for prod, use
 ```bash
-yarn playwright:ci
+yarn test-e2e:ci
 ```
 This is how the tests are run in the GitHub action on prs.
 
@@ -86,3 +86,5 @@ will generate the Windows and Linux snapshots for the tests `./playwright/digita
 `./playwright/digital/mobile/shared/basicCircuit.spec.ts`.
 
 After that example action executes, you will see the commits `[CI] Update Snapshots windows-latest` and `[CI] Update Snapshots ubuntu-latest` added to your pull request (assuming there were snapshots to create/update).
+
+When the action itself is executed, it uses the version found on the master branch. That means if you make changes to `playwrightSnapshots.yml`, you will have to test/debug it on a fork. This is only needed if you are modifying `playwrightSnapshots.yml`, which should not need to be done very often if at all.
