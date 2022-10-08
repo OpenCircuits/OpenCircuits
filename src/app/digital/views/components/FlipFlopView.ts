@@ -14,36 +14,15 @@ import {RenderInfo}               from "core/views/BaseView";
 import {ComponentView}            from "core/views/ComponentView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
-
+/**
+ * Should not be directly called. Only exist as flipflops are the same shape. Can't do abstract class tho
+ */
 export class FlipFlopView extends ComponentView<FlipFlop, DigitalCircuitController> {
     public constructor(circuit: DigitalCircuitController, obj: FlipFlop, V: Vector, svg: string) {
         super(circuit, obj, V, svg);
     }
 
-    protected override renderComponent({ renderer, selections }: RenderInfo): void {
-        const selected = selections.has(this.obj.id);
-
-        const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-
-        const style = new Style(undefined, borderCol, DEFAULT_CURVE_BORDER_WIDTH);
-
-        // Get size of model
-        const size = this.transform.get().getSize();
-
-        // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
-
-        // Draw line to visually match input ports
-        const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
-        const l2 =  (inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2;
-
-        const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
-        const p1 = V(-s, l1);
-        const p2 = V(-s, l2);
-
-        renderer.draw(new Line(p1, p2), style);
-    }
+    protected override renderComponent({ renderer, selections }: RenderInfo): void {}
 
     protected override getBounds(): Rect {
         // Get current number of inputs

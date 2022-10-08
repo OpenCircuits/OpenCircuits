@@ -25,6 +25,5 @@ export type DigitalComponent =
     | DigitalNode
     | ANDGate
     | FlipFlop
-    | TFlipFlop;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;

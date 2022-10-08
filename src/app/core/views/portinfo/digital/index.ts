@@ -41,7 +41,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
     },
     "TFlipFlop": {
         Default:       DigitalInfo["DigitalPort"].Default,
-        InitialConfig: "2,1",
+        InitialConfig: "2,2",
         AllowChanges:  true,
         ChangeGroup:   DigitalPortGroup.Input,
 
