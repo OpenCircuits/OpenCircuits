@@ -39,4 +39,18 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             1: CalcPortPos(V(0.5, 0), V(1, 0)),
         }),
     },
+    "TFlipFlop": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "2,1",
+        AllowChanges:  true,
+        ChangeGroup:   DigitalPortGroup.Input,
+
+        Positions: GenPortInfo(7, {
+            0: {
+                amts:    linspaceDX(2,9,1),
+                calcPos: (amt) => CalcPortPositions(amt, 0.5 - DEFAULT_BORDER_WIDTH/2),
+            },
+            1: CalcPortPos(V(0.5, 0), V(1, 0)),
+        }),
+    },
 };

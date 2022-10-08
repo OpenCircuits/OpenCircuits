@@ -16,12 +16,15 @@ export type DigitalNode = Component & { kind: "DigitalNode" };
 
 // components
 export type ANDGate = Component & { kind: "ANDGate" };
-
 export type TFlipFlop = Component & { kind: "TFlipFlop" };
+
+
+export type FlipFlop = TFlipFlop;
 
 export type DigitalComponent =
     | DigitalNode
     | ANDGate
+    | FlipFlop
     | TFlipFlop;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;
