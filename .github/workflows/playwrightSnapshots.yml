@@ -44,7 +44,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const result = github.rest.pulls.get({
+            const result = await github.rest.pulls.get({
             pull_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
