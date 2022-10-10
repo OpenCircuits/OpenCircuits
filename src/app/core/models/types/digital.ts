@@ -16,11 +16,13 @@ export type DigitalNode = Component & { kind: "DigitalNode" };
 export type ANDGate = Component & { kind: "ANDGate" };
 export type Switch  = Component & { kind: "Switch"  };
 export type LED     = Component & { kind: "LED", color: string };
+export type JKFlipFlop = Component & { kind: "JKFlipFlop" }
 
 export type DigitalComponent =
     | DigitalNode
     | Switch
     | LED
-    | ANDGate;
+    | ANDGate
+    | JKFlipFlop;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;

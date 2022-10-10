@@ -26,6 +26,10 @@ export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
         Default:  (id) => ({ kind: "ANDGate", ...DefaultComponent(id) }),
         PropInfo: DefaultComponentPropInfo,
     },
+    "JKFlipFlop": {
+        Default:  (id) => ({ kind: "JKFlipFlop", ...DefaultComponent(id) }),
+        PropInfo: DefaultComponentPropInfo,
+    },
 };
 
 export const DigitalInfo: ObjInfoRecord<DigitalObj> = {
