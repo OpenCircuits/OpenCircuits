@@ -8,16 +8,19 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Line} from "core/utils/rendering/shapes/Line";
 
-import {DigitalPortGroup, TFlipFlop} from "core/models/types/digital";
+import {DigitalPortGroup, FlipFlop, TFlipFlop} from "core/models/types/digital";
 
 import {RenderInfo}               from "core/views/BaseView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 import {FlipFlopView}             from "digital/views/components/FlipFlopView";
+import {ComponentView} from "core/views/ComponentView";
 
 
-export class TFlipFlopView extends FlipFlopView{
+export class TFlipFlopView extends ComponentView<TFlipFlop, DigitalCircuitController>{
+    private readonly flipflop: FlipFlopView;
     public constructor(circuit: DigitalCircuitController, obj: TFlipFlop) {
         super(circuit, obj, V(1, 1), "tflipflop.svg");
+        this.flipflop = new FlipFlopView(circuit, obj, V(1, 1), "tflipflop.svg");
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
@@ -43,5 +46,8 @@ export class TFlipFlopView extends FlipFlopView{
         const p2 = V(-s, l2);
 
         renderer.draw(new Line(p1, p2), style);
+    }
+    protected override getBounds(): Rect {
+        return this.flipflop.getBounds()
     }
 }

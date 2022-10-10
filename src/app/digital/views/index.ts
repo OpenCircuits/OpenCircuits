@@ -19,6 +19,5 @@ export const Views: ViewRecord<DigitalObj, DigitalCircuitController> = {
     "DigitalPort": (c: DigitalCircuitController, o: DigitalPort) => new DigitalPortView(c, o),
     "DigitalNode": (c: DigitalCircuitController, o: DigitalNode) => new DigitalNodeView(c, o),
     "ANDGate":     (c: DigitalCircuitController, o: ANDGate)     => new ANDGateView(c, o),
-    "FlipFlop":    (c: DigitalCircuitController, o: FlipFlop)    => new FlipFlopView(c, o),
     "TFlipFlop":   (c: DigitalCircuitController, o: TFlipFlop)   => new TFlipFlopView(c, o),
 };

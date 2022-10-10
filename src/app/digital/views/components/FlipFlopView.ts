@@ -24,7 +24,7 @@ export class FlipFlopView extends ComponentView<FlipFlop, DigitalCircuitControll
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {}
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === DigitalPortGroup.Input).length;

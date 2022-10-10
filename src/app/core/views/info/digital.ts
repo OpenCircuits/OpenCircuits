@@ -1,5 +1,7 @@
-import {ANDGate, DigitalComponent, DigitalNode,
-        DigitalObj, DigitalPort, DigitalWire} from "core/models/types/digital";
+import {
+    ANDGate, DigitalComponent, DigitalNode,
+    DigitalObj, DigitalPort, DigitalWire, TFlipFlop
+} from "core/models/types/digital";
 
 import {ComponentInfoRecord, ObjInfoRecord}         from "./base";
 import {GenComponentInfo, GenPortInfo, GenWireInfo} from "./utils";
@@ -15,6 +17,7 @@ const DigitalWire = GenWireInfo<DigitalWire>("DigitalWire");
 export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
     "DigitalNode": GenDigitalComponentInfo<DigitalNode>("DigitalNode"),
     "ANDGate":     GenDigitalComponentInfo<ANDGate>("ANDGate"),
+    "TFlipFlop":   GenDigitalComponentInfo<TFlipFlop>("TFlipFlop"),
 };
 
 export const DigitalInfo: ObjInfoRecord<DigitalObj> = {
