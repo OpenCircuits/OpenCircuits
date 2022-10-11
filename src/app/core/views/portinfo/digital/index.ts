@@ -11,7 +11,9 @@ import {DigitalInfo} from "core/views/info/digital";
 import {CalcPortPos, CalcPortPositions, GenPortInfo} from "../positioning/utils";
 import {PortInfoRecord}                              from "../types";
 
-
+/**
+ * @type {Record<{kind:string}, PortInfo>}
+ */
 export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
     "DigitalNode": {
         Default:       DigitalInfo["DigitalPort"].Default,
@@ -50,7 +52,10 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 amts:    linspaceDX(2,9,1),
                 calcPos: (amt) => CalcPortPositions(amt, 0.5 - DEFAULT_BORDER_WIDTH/2),
             },
-            1: CalcPortPos(V(0.5, 0), V(1, 0)),
+            1: {
+                amts:    linspaceDX(-2,9,1),
+                calcPos: (amt) => CalcPortPositions(amt, 0.5 - DEFAULT_BORDER_WIDTH/2),
+            },
         }),
     },
 };
