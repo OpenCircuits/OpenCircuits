@@ -15,9 +15,11 @@ export type DigitalWire = Wire & { kind: "DigitalWire" };
 export type DigitalNode = Component & { kind: "DigitalNode" };
 
 export type ANDGate = Component & { kind: "ANDGate" };
+export type XNORGate = Component & { kind: "XNORGate" };
 
 export type DigitalComponent =
     | DigitalNode
-    | ANDGate;
+    | ANDGate
+    | XNORGate;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;

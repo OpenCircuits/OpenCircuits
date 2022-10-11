@@ -1,4 +1,4 @@
-import {IO_PORT_LENGTH} from "core/utils/Constants";
+import {DEFAULT_BORDER_WIDTH, IO_PORT_LENGTH} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -18,7 +18,22 @@ export const CalcPortPositions = (amt: number, spacing: number) => (
         .map((h) => CalcPortPos(V(-0.5, h), V(-1, 0)))
 );
 
+export const updatePortPositionsQuadCurve = (ports: PortPos[]) => (
+    ports.forEach((port) => {
+        let t = ((port.origin.y) / port.target.y + 0.5) % 1;
+        if (t < 0)
+            t += 1;
 
+        // @TODO move to a MathUtils QuadCurve function or something
+        const s = port.target.x/2 - DEFAULT_BORDER_WIDTH;
+        const l = port.target.x/5 - DEFAULT_BORDER_WIDTH;
+        const t2 = 1 - t;
+
+        // Calculate x position along quadratic curve
+        const x = (t2*t2)*(-s) + 2*t*(t2)*(-l) + (t*t)*(-s);
+        port.origin = (V(x, port.origin.y));
+    })
+)
 export type Positioner = (amt: number) => PortPos[];
 
 export const GenConfig = (groupInfo: Record<number, { amt: number, calcPos: Positioner }>) => {
