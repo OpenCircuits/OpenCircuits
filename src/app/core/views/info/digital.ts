@@ -14,6 +14,14 @@ export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
         Default:  (id) => ({ kind: "DigitalNode", ...DefaultComponent(id) }),
         PropInfo: DefaultComponentPropInfo,
     },
+    "Switch": {
+        Default:  (id) => ({ kind: "Switch", ...DefaultComponent(id) }),
+        PropInfo: DefaultComponentPropInfo,
+    },
+    "LED": {
+        Default:  (id) => ({ kind: "LED", ...DefaultComponent(id), color: "#ffffff" }),
+        PropInfo: DefaultComponentPropInfo,
+    },
     "ANDGate": {
         Default:  (id) => ({ kind: "ANDGate", ...DefaultComponent(id) }),
         PropInfo: DefaultComponentPropInfo,

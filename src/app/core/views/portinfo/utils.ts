@@ -10,16 +10,17 @@ import {AllPortInfo} from ".";
 
 
 export function CalcPortConfigID(circuit: CircuitController, parent: AnyComponent) {
-    const ports = circuit.getPortsFor(parent);
+    const groups = circuit.getPortsFor(parent).map((p) => p.group);
     // Grouping IDs are comma separated strings of the number
     //  of ports in each `group` for a specific component
-    return ports.reduce(
+    return groups.reduce(
         // Count each group
-        (arr, { group }) => {
-            arr[group] = ((arr[group] ?? 0) + 1);
-            return arr;
-        },
-        [] as number[]
+        (arr, group) => [
+            ...arr.slice(0, group),
+            arr[group] + 1,
+            ...arr.slice(group+1),
+        ],
+        new Array(Math.max(...groups)+1).fill(0),
     ).join(",");
 }
 
@@ -40,11 +41,10 @@ export function GetPortWorldPos(circuit: CircuitController, port: AnyPort): Port
 }
 
 export function ParseConfig(config: string) {
-    return config.split(",").map((a) => parseInt(a)).map((v) => (isNaN(v) ? 0 : v));
+    return config.split(",").map((a) => parseInt(a));
 }
 
 // TODO: Come up with better name, "GetPortAmount" maybe?
 export function GetConfigAmount(config: string, group: number) {
-    const val = parseInt(config.split(",")[group]);
-    return (isNaN(val) ? 0 : val);
+    return parseInt(config.split(",")[group]);
 }

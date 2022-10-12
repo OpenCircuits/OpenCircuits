@@ -68,11 +68,12 @@ class DepthMap<T> {
 }
 
 
-type ViewFactory<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> =
+export type ViewFactory<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> =
     (c: Circuit, o: Obj) => BaseView<Obj, Circuit>;
 
-export type ViewRecord<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> =
-    Record<Obj["kind"], ViewFactory<Obj, Circuit>>;
+export type ViewRecord<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> = {
+    [O in Obj as O["kind"]]: ViewFactory<O, Circuit>;
+}
 
 export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> {
     protected readonly genView: ViewFactory<Obj, Circuit>;

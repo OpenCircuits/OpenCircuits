@@ -59,19 +59,26 @@ export class ComponentView<
     }
 
     protected override renderInternal(info: RenderInfo): void {
-        const { renderer, selections } = info;
-
-        const selected = selections.has(this.obj.id);
+        const { renderer } = info;
 
         // Transform into local space
         renderer.transform(this.transform.get());
 
         this.renderComponent(info);
 
+        this.drawImg(info);
+    }
+
+    protected drawImg(info: RenderInfo): void {
         // Check if we should draw image
         if (!this.img)
             return;
+
+        const { renderer, selections } = info;
+
+        const selected = selections.has(this.obj.id);
         const tint = (selected ? SELECTED_FILL_COLOR : undefined);
+
         renderer.image(this.img, V(), this.transform.get().getSize(), tint);
     }
 
@@ -79,6 +86,10 @@ export class ComponentView<
 
     public getTransform(): Transform {
         return this.transform.get();
+    }
+
+    public getSize(): Vector {
+        return this.transform.get().getSize();
     }
 
     public override getMidpoint(): Vector {

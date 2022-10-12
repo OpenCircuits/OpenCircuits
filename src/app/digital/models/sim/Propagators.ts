@@ -49,6 +49,8 @@ const AND = SignalReducer((a, b) => (a && b));
  */
 export const AllPropagators: PropagatorRecord = {
     "DigitalNode": InputOutputPropagator((inputs) => (inputs)),
+    "Switch":      InputOutputPropagator((inputs) => (inputs)),
+    "LED":         InputOutputPropagator((inputs) => (inputs)),
     "ANDGate":     InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 };
 

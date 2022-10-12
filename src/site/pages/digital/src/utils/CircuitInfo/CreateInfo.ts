@@ -1,8 +1,6 @@
 import {CircuitController} from "core/controllers/CircuitController";
 import {ViewManager}       from "core/views/ViewManager";
-import {Views}             from "digital/views";
-
-import {SAVE_VERSION} from "core/utils/Constants";
+import {CreateView}        from "digital/views";
 
 import {V} from "Vector";
 
@@ -31,10 +29,7 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
     const history = new HistoryManager();
 
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
-    const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>(
-        circuit,
-        (c, m) => (Views[m.kind](c, m))
-    );
+    const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>(circuit, CreateView);
 
     const propagationManager = new PropagationManager(circuit);
 

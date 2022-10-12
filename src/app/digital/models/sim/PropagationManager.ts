@@ -10,7 +10,7 @@ import {DigitalCircuitController} from "digital/controllers/DigitalCircuitContro
 import {Propagate} from "./Propagators";
 
 
-type PropagationEvent = undefined;
+type PropagationEvent = {};
 
 export class PropagationManager extends Observable<PropagationEvent> {
     private readonly circuit: DigitalCircuitController;
@@ -119,5 +119,7 @@ export class PropagationManager extends Observable<PropagationEvent> {
             if (nextState !== state)
                 this.setState(comp, nextState);
         }
+
+        this.publish({});
     }
 }
