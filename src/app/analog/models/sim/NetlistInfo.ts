@@ -1,6 +1,6 @@
 import {AnalogComponent} from "core/models/types/analog";
 
-import {NetlistElement} from "./sim/Netlist";
+import {NetlistElement} from "./Netlist";
 
 
 // Netlist info is a function that returns a tuple of its NGSpice symbol and values

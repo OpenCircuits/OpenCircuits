@@ -7,9 +7,9 @@ import {AnalogComponent, AnalogNode, AnalogPort, AnalogWire, Ground} from "core/
 
 import {AnalogCircuitController} from "analog/controllers/AnalogCircuitController";
 
-import {AllNetlistInfo, GetNetlistInfo} from "../NetlistInfo";
+import {Netlist, NetlistAnalysis}       from "./Netlist";
+import {AllNetlistInfo, GetNetlistInfo} from "./NetlistInfo";
 
-import {Netlist, NetlistAnalysis} from "./Netlist";
 
 
 type PathPart = AnalogWire | AnalogNode | AnalogPort; // <--- PORT !!
