@@ -1,20 +1,23 @@
-import {ANDGate, DigitalComponent, DigitalNode,
-        DigitalObj, DigitalPort, DigitalWire} from "core/models/types/digital";
+import {DigitalComponent, DigitalObj, DigitalPort, DigitalWire} from "core/models/types/digital";
 
-import {ComponentInfoRecord, ObjInfoRecord}         from "./base";
-import {GenComponentInfo, GenPortInfo, GenWireInfo} from "./utils";
+import {DefaultComponent} from "core/models/types/base/Component";
 
+import {ComponentInfoRecord, ObjInfoRecord}                 from "./base";
+import {DefaultComponentPropInfo, GenPortInfo, GenWireInfo} from "./utils";
 
-const GenDigitalComponentInfo = <C extends DigitalComponent>(kind: C["kind"]) => (
-    GenComponentInfo<C>(kind)
-);
 
 const DigitalPort = GenPortInfo<DigitalPort>("DigitalPort");
 const DigitalWire = GenWireInfo<DigitalWire>("DigitalWire");
 
 export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
-    "DigitalNode": GenDigitalComponentInfo<DigitalNode>("DigitalNode"),
-    "ANDGate":     GenDigitalComponentInfo<ANDGate>("ANDGate"),
+    "DigitalNode": {
+        Default:  (id) => ({ kind: "DigitalNode", ...DefaultComponent(id) }),
+        PropInfo: DefaultComponentPropInfo,
+    },
+    "ANDGate": {
+        Default:  (id) => ({ kind: "ANDGate", ...DefaultComponent(id) }),
+        PropInfo: DefaultComponentPropInfo,
+    },
 };
 
 export const DigitalInfo: ObjInfoRecord<DigitalObj> = {
