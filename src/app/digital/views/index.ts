@@ -1,5 +1,6 @@
 import {DigitalNode, DigitalObj, DigitalWire} from "core/models/types/digital";
 
+import {ViewCircuitInfo}          from "core/views/BaseView";
 import {NodeView}                 from "core/views/NodeView";
 import {ViewFactory, ViewRecord}  from "core/views/ViewManager";
 import {WireView}                 from "core/views/WireView";
@@ -24,7 +25,7 @@ export const Views: ViewRecord<DigitalObj, DigitalCircuitController> = {
     "ANDGate": (c, o) => new ANDGateView(c, o),
 };
 
-export function CreateView(c: DigitalCircuitController, obj: DigitalObj) {
+export function CreateView(info: ViewCircuitInfo<DigitalCircuitController>, obj: DigitalObj) {
     const view = Views[obj.kind] as ViewFactory<DigitalObj, DigitalCircuitController>;
-    return (view(c, obj));
+    return (view(info, obj));
 }

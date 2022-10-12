@@ -9,7 +9,7 @@ import {AnyObj} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo} from "./BaseView";
+import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
 
 
 const LAYER_OFFSET = 100;
@@ -67,17 +67,29 @@ class DepthMap<T> {
     }
 }
 
+export type ViewFactory<
+    Obj extends AnyObj,
+    Circuit extends CircuitController<AnyObj>,
+    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+> =
+    (info: Info, o: Obj) => BaseView<Obj, Circuit>;
 
-export type ViewFactory<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> =
-    (c: Circuit, o: Obj) => BaseView<Obj, Circuit>;
-
-export type ViewRecord<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> = {
-    [O in Obj as O["kind"]]: ViewFactory<O, Circuit>;
+export type ViewRecord<
+    Obj extends AnyObj,
+    Circuit extends CircuitController<AnyObj>,
+    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+> = {
+    [O in Obj as O["kind"]]: ViewFactory<O, Circuit, Info>;
 }
 
-export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> {
+export class ViewManager<
+    Obj extends AnyObj,
+    Circuit extends CircuitController<AnyObj>,
+    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+> {
     protected readonly genView: ViewFactory<Obj, Circuit>;
 
+    protected readonly info: Info;
     protected readonly circuit: Circuit;
 
     protected views: Map<GUID, BaseView<Obj, Circuit>>;
@@ -90,15 +102,16 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
     protected depthMap: Array<DepthMap<GUID>>;
 
     // It's assumed that this circuit has no objects yet
-    public constructor(circuit: Circuit, genView: ViewFactory<Obj, Circuit>) {
-        this.circuit = circuit;
+    public constructor(info: Info, genView: ViewFactory<Obj, Circuit>) {
+        this.info = info;
+        this.circuit = info.circuit;
         this.genView = genView;
         this.views = new Map();
         this.depthMap = [];
     }
 
     private addObj(m: Obj) {
-        const view = this.genView(this.circuit, m);
+        const view = this.genView(this.info, m);
 
         // Register to view map
         this.views.set(m.id, view);

@@ -13,19 +13,20 @@ import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
 
 import {AnyComponent, AnyObj} from "core/models/types";
 
-import {CircuitController} from "core/controllers/CircuitController";
-import {RenderInfo}        from "core/views/BaseView";
-import {ComponentView}     from "core/views/ComponentView";
+import {CircuitController}           from "core/controllers/CircuitController";
+import {RenderInfo, ViewCircuitInfo} from "core/views/BaseView";
+import {ComponentView}               from "core/views/ComponentView";
 
 
 export class PressableComponentView<
     Obj extends AnyComponent,
     Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-> extends ComponentView<Obj, Circuit> {
+    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+> extends ComponentView<Obj, Circuit, Info> {
     protected pressableTransform: DirtyVar<Transform>;
 
-    public constructor(circuit: Circuit, obj: Obj, size: Vector, pressableSize: Vector) {
-        super(circuit, obj, size);
+    public constructor(info: Info, obj: Obj, size: Vector, pressableSize: Vector) {
+        super(info, obj, size);
 
         this.pressableTransform = new DirtyVar(
             () => new Transform(

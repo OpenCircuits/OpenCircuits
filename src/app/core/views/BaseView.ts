@@ -14,6 +14,10 @@ import {AnyObj} from "core/models/types";
 import {CircuitController} from "core/controllers/CircuitController";
 
 
+export type ViewCircuitInfo<Circuit extends CircuitController<AnyObj>> = {
+    circuit: Circuit;
+}
+
 export type RenderInfo = {
     camera: Camera;
     renderer: Renderer;
@@ -28,15 +32,18 @@ export type RenderInfo = {
  */
 export abstract class BaseView<
     Obj extends AnyObj,
-    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>
+    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
+    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
 > {
+    protected readonly info: Info;
     protected readonly circuit: Circuit;
     protected readonly obj: Obj;
 
     protected cullTransform: DirtyVar<Transform>;
 
-    public constructor(circuit: Circuit, obj: Obj) {
-        this.circuit = circuit;
+    public constructor(info: Info, obj: Obj) {
+        this.info = info;
+        this.circuit = info.circuit;
         this.obj = obj;
         this.cullTransform = new DirtyVar(
             () => Transform.FromRect(this.getBounds()),

@@ -29,7 +29,7 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
     const history = new HistoryManager();
 
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
-    const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>(circuit, CreateView);
+    const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>({ circuit }, CreateView);
 
     const propagationManager = new PropagationManager(circuit);
 

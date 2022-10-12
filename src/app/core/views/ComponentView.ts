@@ -15,18 +15,19 @@ import {AnyComponent, AnyObj} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo} from "./BaseView";
+import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
 
 
 export class ComponentView<
     Obj extends AnyComponent,
     Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-> extends BaseView<Obj, Circuit> {
+    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+> extends BaseView<Obj, Circuit, Info> {
     protected transform: DirtyVar<Transform>;
     protected img?: SVGDrawing;
 
-    public constructor(circuit: Circuit, obj: Obj, size?: Vector, imgName?: string) {
-        super(circuit, obj);
+    public constructor(info: Info, obj: Obj, size?: Vector, imgName?: string) {
+        super(info, obj);
 
         this.transform = new DirtyVar(
             () => new Transform(V(obj.x, obj.y), size, obj.angle),

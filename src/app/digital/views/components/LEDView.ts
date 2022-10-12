@@ -1,4 +1,4 @@
-import {SVGDrawing, blend, parseColor} from "svg2canvas";
+import {blend, parseColor} from "svg2canvas";
 
 import {LED_LIGHT_INTENSITY, LED_LIGHT_RADIUS, SELECTED_FILL_COLOR} from "core/utils/Constants";
 
@@ -6,22 +6,20 @@ import {V} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {Images} from "core/utils/Images";
-
 import {Style} from "core/utils/rendering/Style";
 
 import {Circle} from "core/utils/rendering/shapes/Circle";
 
 import {LED} from "core/models/types/digital";
 
-import {RenderInfo}               from "core/views/BaseView";
-import {ComponentView}            from "core/views/ComponentView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {RenderInfo, ViewCircuitInfo} from "core/views/BaseView";
+import {ComponentView}               from "core/views/ComponentView";
+import {DigitalCircuitController}    from "digital/controllers/DigitalCircuitController";
 
 
 export class LEDView extends ComponentView<LED, DigitalCircuitController> {
-    public constructor(circuit: DigitalCircuitController, obj: LED) {
-        super(circuit, obj, V(1, 1), "led.svg");
+    public constructor(info: ViewCircuitInfo<DigitalCircuitController>, obj: LED) {
+        super(info, obj, V(1, 1), "led.svg");
     }
 
     public isOn(): boolean {

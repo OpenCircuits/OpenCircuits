@@ -19,18 +19,19 @@ import {AnyObj, AnyPort, AnyWire} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo} from "./BaseView";
-import {GetPortWorldPos}      from "./portinfo/utils";
+import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
+import {GetPortWorldPos}                       from "./portinfo/utils";
 
 
 export class WireView<
     Wire extends AnyWire,
     Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-> extends BaseView<Wire, Circuit> {
+    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+> extends BaseView<Wire, Circuit, Info> {
     protected curve: DirtyVar<BezierCurve>;
 
-    public constructor(circuit: Circuit, obj: Wire) {
-        super(circuit, obj);
+    public constructor(info: Info, obj: Wire) {
+        super(info, obj);
 
         this.curve = new DirtyVar(
             () => {
