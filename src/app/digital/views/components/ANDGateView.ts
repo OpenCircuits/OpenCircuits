@@ -10,13 +10,15 @@ import {Line} from "core/utils/rendering/shapes/Line";
 
 import {ANDGate, DigitalPortGroup} from "core/models/types/digital";
 
-import {RenderInfo, ViewCircuitInfo} from "core/views/BaseView";
-import {ComponentView}               from "core/views/ComponentView";
-import {DigitalCircuitController}    from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}               from "core/views/BaseView";
+import {ComponentView}            from "core/views/ComponentView";
+import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+
+import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
-    public constructor(info: ViewCircuitInfo<DigitalCircuitController>, obj: ANDGate) {
+export class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController, DigitalViewInfo> {
+    public constructor(info: DigitalViewInfo, obj: ANDGate) {
         super(info, obj, V(1, 1), "and.svg");
     }
 

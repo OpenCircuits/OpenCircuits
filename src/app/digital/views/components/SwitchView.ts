@@ -8,18 +8,20 @@ import {Images} from "core/utils/Images";
 
 import {Switch} from "core/models/types/digital";
 
-import {RenderInfo, ViewCircuitInfo} from "core/views/BaseView";
-import {PressableComponentView}      from "core/views/PressableComponentView";
-import {DigitalCircuitController}    from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}               from "core/views/BaseView";
+import {PressableComponentView}   from "core/views/PressableComponentView";
+import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+
+import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class SwitchView extends PressableComponentView<Switch, DigitalCircuitController> {
+export class SwitchView extends PressableComponentView<Switch, DigitalCircuitController, DigitalViewInfo> {
     protected onImg: SVGDrawing;
     protected offImg: SVGDrawing;
 
     protected isOn: boolean;
 
-    public constructor(info: ViewCircuitInfo<DigitalCircuitController>, obj: Switch) {
+    public constructor(info: DigitalViewInfo, obj: Switch) {
         super(info, obj, V(1.24, 1.54), V(0.96, 1.2));
 
         this.onImg  = Images.GetImage("switchDown.svg");

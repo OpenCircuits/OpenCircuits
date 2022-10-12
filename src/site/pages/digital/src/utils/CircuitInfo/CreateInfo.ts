@@ -1,6 +1,8 @@
-import {CircuitController} from "core/controllers/CircuitController";
-import {ViewManager}       from "core/views/ViewManager";
-import {CreateView}        from "digital/views";
+import {CircuitController}        from "core/controllers/CircuitController";
+import {ViewManager}              from "core/views/ViewManager";
+import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {CreateView}               from "digital/views";
+import {DigitalViewInfo}          from "digital/views/DigitalViewInfo";
 
 import {V} from "Vector";
 
@@ -29,9 +31,11 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
     const history = new HistoryManager();
 
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
-    const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>({ circuit }, CreateView);
-
     const propagationManager = new PropagationManager(circuit);
+
+    const viewManager = new ViewManager<DigitalObj, DigitalCircuitController, DigitalViewInfo>(
+        { circuit, propagationManager }, CreateView
+    );
 
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();

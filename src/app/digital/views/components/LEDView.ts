@@ -12,13 +12,15 @@ import {Circle} from "core/utils/rendering/shapes/Circle";
 
 import {LED} from "core/models/types/digital";
 
-import {RenderInfo, ViewCircuitInfo} from "core/views/BaseView";
-import {ComponentView}               from "core/views/ComponentView";
-import {DigitalCircuitController}    from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}               from "core/views/BaseView";
+import {ComponentView}            from "core/views/ComponentView";
+import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+
+import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class LEDView extends ComponentView<LED, DigitalCircuitController> {
-    public constructor(info: ViewCircuitInfo<DigitalCircuitController>, obj: LED) {
+export class LEDView extends ComponentView<LED, DigitalCircuitController, DigitalViewInfo> {
+    public constructor(info: DigitalViewInfo, obj: LED) {
         super(info, obj, V(1, 1), "led.svg");
     }
 

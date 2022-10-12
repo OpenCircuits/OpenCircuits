@@ -5,8 +5,10 @@ import {DigitalPort, DigitalPortGroup} from "core/models/types/digital";
 import {PortView}                 from "core/views/PortView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
+import {DigitalViewInfo} from "./DigitalViewInfo";
 
-export class DigitalPortView extends PortView<DigitalPort, DigitalCircuitController> {
+
+export class DigitalPortView extends PortView<DigitalPort, DigitalCircuitController, DigitalViewInfo> {
     public override isWireable(): boolean {
         // Output ports always can have new connections
         if (this.obj.group === DigitalPortGroup.Output)
