@@ -1,8 +1,7 @@
-import {DigitalNode, DigitalObj, DigitalWire} from "core/models/types/digital";
+import {DigitalNode, DigitalObj} from "core/models/types/digital";
 
 import {NodeView}                 from "core/views/NodeView";
 import {ViewFactory, ViewRecord}  from "core/views/ViewManager";
-import {WireView}                 from "core/views/WireView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
 import {ANDGateView}     from "./components/ANDGateView";
@@ -10,9 +9,9 @@ import {LEDView}         from "./components/LEDView";
 import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
 import {DigitalViewInfo} from "./DigitalViewInfo";
+import {DigitalWireView} from "./DigitalWireView";
 
 
-class DigitalWireView extends WireView<DigitalWire, DigitalCircuitController> {}
 class DigitalNodeView extends NodeView<DigitalNode, DigitalCircuitController> {}
 
 export const Views: ViewRecord<DigitalObj, DigitalCircuitController, DigitalViewInfo> = {

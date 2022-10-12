@@ -49,9 +49,14 @@ const AND = SignalReducer((a, b) => (a && b));
  */
 export const AllPropagators: PropagatorRecord = {
     "DigitalNode": InputOutputPropagator((inputs) => (inputs)),
-    "Switch":      InputOutputPropagator((inputs) => (inputs)),
-    "LED":         InputOutputPropagator((inputs) => (inputs)),
-    "ANDGate":     InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+
+    // Switch has state which represents the user-defined isOn/isOff
+    "Switch": ({ state }) => ({ nextSignals: [[], [state as Signal], []], nextState: state }),
+
+    // LEDs don't propagate a signal
+    "LED": InputOutputPropagator((inputs) => (inputs)),
+
+    "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {

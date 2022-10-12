@@ -68,10 +68,15 @@ export class WireView<
         ));
 
         // @TODO move to function for getting color based on being selection/on/off
-        const color = (selected ? selectedColor : this.obj.color);
+         // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
+        const color = (selected ? selectedColor : this.getColor());
         const style = new Style(undefined, color, WIRE_THICKNESS);
 
         renderer.draw(new Curve(this.curve.get()), style);
+    }
+
+    protected getColor(): string {
+        return this.obj.color;
     }
 
     protected getCurvePoints(port: AnyPort): [Vector, Vector] {

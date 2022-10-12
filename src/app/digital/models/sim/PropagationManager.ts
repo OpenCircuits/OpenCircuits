@@ -45,7 +45,7 @@ export class PropagationManager extends Observable<PropagationEvent> {
         ports.forEach((p) => this.propagationQueue.add(p.parent));
     }
 
-    private setState(comp: DigitalComponent, state: unknown): void {
+    public setState(comp: DigitalComponent, state: unknown): void {
         this.states.set(comp.id, state);
 
         // If state changed, update the component
@@ -121,5 +121,13 @@ export class PropagationManager extends Observable<PropagationEvent> {
         }
 
         this.publish({});
+    }
+
+    public getSignal(p: DigitalPort): Signal {
+        return this.signals.get(p.id)!;
+    }
+
+    public getState(c: DigitalComponent): unknown {
+        return this.states.get(c.id);
     }
 }
