@@ -3,14 +3,14 @@ import {AnalogComponent} from "core/models/types/analog";
 import {NetlistElement} from "./sim/Netlist";
 
 
+// Netlist info is a function that returns a tuple of its NGSpice symbol and values
+type NetlistInfo<C extends AnalogComponent> = ((c: C) => [NetlistElement["symbol"], NetlistElement["values"]]);
+
 type NetlistInfoRecord = {
     // The kind of every analog component
     [Comp in AnalogComponent as Comp["kind"]]:
         // Mapped to a callback function (or undefined)
-        ((comp: Comp) =>
-            // That returns the Netlist info as a tuple of its NGSpice symbol and values
-            [NetlistElement["symbol"], NetlistElement["values"]])
-        | undefined;
+        NetlistInfo<Comp> | undefined;
 }
 
 /**
@@ -30,5 +30,15 @@ export const AllNetlistInfo: NetlistInfoRecord = {
     // AnalogNode is purely a user-facing component and has no effect on the actual circuit sim
     "AnalogNode": undefined,
 
+    // Ground is a very special case so has no specified information
+    "Ground": undefined,
+
     "Resistor": (r) => ["R", [`${r.resistance}`]],
 };
+
+export function GetNetlistInfo(comp: AnalogComponent) {
+    const info = AllNetlistInfo[comp.kind] as NetlistInfo<AnalogComponent> | undefined;
+    if (!info)
+        return;
+    return (info(comp));
+}
