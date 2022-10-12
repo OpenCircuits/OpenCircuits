@@ -28,6 +28,7 @@ export const Views: ViewRecord<AnalogObj, AnalogCircuitController> = {
     "AnalogWire": (c: AnalogCircuitController, o: AnalogWire) => new AnalogWireView(c, o),
     "AnalogPort": (c: AnalogCircuitController, o: AnalogPort) => new AnalogPortView(c, o),
     "AnalogNode": (c: AnalogCircuitController, o: AnalogNode) => new AnalogNodeView(c, o),
-    "Ground":     (c: AnalogCircuitController, o: Ground)     => new ComponentView(c, o, V(1.2, 0.6), "ground.svg"),
-    "Resistor":   (c: AnalogCircuitController, o: Resistor)   => new ComponentView(c, o, V(1.2, 1), "resistor.svg"),
+
+    "Ground":   (c: AnalogCircuitController, o: Ground)     => new ComponentView(c, o, V(1.2, 0.6), "ground.svg"),
+    "Resistor": (c: AnalogCircuitController, o: Resistor)   => new ComponentView(c, o, V(1.2, 1), "resistor.svg"),
 };
