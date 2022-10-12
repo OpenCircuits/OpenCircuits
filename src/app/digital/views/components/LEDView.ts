@@ -10,7 +10,9 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Circle} from "core/utils/rendering/shapes/Circle";
 
-import {LED} from "core/models/types/digital";
+import {DigitalPort, LED} from "core/models/types/digital";
+
+import {Signal} from "digital/models/sim/Signal";
 
 import {RenderInfo}               from "core/views/BaseView";
 import {ComponentView}            from "core/views/ComponentView";
@@ -24,9 +26,12 @@ export class LEDView extends ComponentView<LED, DigitalCircuitController, Digita
         super(info, obj, V(1, 1), "led.svg");
     }
 
-    public isOn(): boolean {
-        // TODO: check if input is on
-        return false;
+    public getInputPort(): DigitalPort {
+        return this.circuit.getPortsFor(this.obj)[0];
+    }
+
+    public getInputSignal(): Signal {
+        return this.info.sim.getSignal(this.getInputPort());
     }
 
     protected override drawImg({ renderer, selections }: RenderInfo): void {
@@ -36,7 +41,7 @@ export class LEDView extends ComponentView<LED, DigitalCircuitController, Digita
         renderer.image(this.img!, V(), this.getSize(), this.obj.color);
 
         // Draw LED light
-        if (this.isOn()) {
+        if (Signal.isOn(this.getInputSignal())) {
             // Parse colors and blend them if selected
             const ledColor = parseColor(this.obj.color);
             const selectedColor = parseColor(SELECTED_FILL_COLOR!);
@@ -53,7 +58,7 @@ export class LEDView extends ComponentView<LED, DigitalCircuitController, Digita
     }
 
     protected override getBounds(): Rect {
-        if (this.isOn())
+        if (Signal.isOn(this.getInputSignal()))
             return super.getBounds().expand(V(LED_LIGHT_RADIUS));
         return super.getBounds();
     }
