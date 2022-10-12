@@ -1,9 +1,15 @@
-import {Vector} from "Vector";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
+
+import {V, Vector} from "Vector";
 
 import {RectContains} from "math/MathUtils";
 import {Transform}    from "math/Transform";
 
 import {DirtyVar} from "core/utils/DirtyVar";
+
+import {Style} from "core/utils/rendering/Style";
+
+import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
 
 import {AnyComponent, AnyObj} from "core/models/types";
 
@@ -28,11 +34,6 @@ export class PressableComponentView<
                 this.transform.get().getAngle(),
             )
         );
-
-        // this.onImg  = Images.GetImage("switchDown.svg");
-        // this.offImg = Images.GetImage("switchUp.svg");
-
-        // this.isOn = false;
     }
 
     public override onPropChange(propKey: string): void {
@@ -53,17 +54,12 @@ export class PressableComponentView<
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
 
-        // const tint      = (selected ? SELECTED_FILL_COLOR   : undefined);
-        // const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        // const fillCol   = (selected ? SELECTED_FILL_COLOR   : "#ffffff");
-        // const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+        const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        const fillCol   = (selected ? SELECTED_FILL_COLOR   : "#ffffff");
+        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
-        // // Draw box behind Switch
-        // renderer.draw(new Rectangle(V(), this.transform.get().getSize()), style);
-
-        // // const img = (propagator.getState(this.circuit.getPortsFor(this.obj.id)[0].id));
-        // const img = (this.isOn ? this.onImg : this.offImg);
-        // renderer.image(img, V(), this.pressableTransform.get().getSize(), tint);
+        // Draw box behind pressable component
+        renderer.draw(new Rectangle(V(), this.transform.get().getSize()), style);
     }
 
     public isWithinPressBounds(pt: Vector): boolean {

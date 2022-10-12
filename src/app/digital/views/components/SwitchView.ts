@@ -44,27 +44,16 @@ export class SwitchView extends PressableComponentView<Switch, DigitalCircuitCon
     // TODO: move this to a SwitchController or something?
     //  it also should be causing a propagation change, not an image change
     //  and the image will be calculated based on the propagation
-    // public onClick(): void {
-    //     this.isOn = !this.isOn;
-    // }
+    public override onClick(): void {
+        this.isOn = !this.isOn;
+    }
 
-    protected override renderComponent({ renderer, selections }: RenderInfo): void {
+    protected override drawImg({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
-
-        const tint      = (selected ? SELECTED_FILL_COLOR   : undefined);
-        const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const fillCol   = (selected ? SELECTED_FILL_COLOR   : "#ffffff");
-        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
-
-        // Draw box behind Switch
-        renderer.draw(new Rectangle(V(), this.transform.get().getSize()), style);
+        const tint = (selected ? SELECTED_FILL_COLOR : undefined);
 
         // const img = (propagator.getState(this.circuit.getPortsFor(this.obj.id)[0].id));
         const img = (this.isOn ? this.onImg : this.offImg);
         renderer.image(img, V(), this.pressableTransform.get().getSize(), tint);
     }
-
-    // public isWithinPressBounds(pt: Vector): boolean {
-    //     return RectContains(this.pressableTransform.get(), pt);
-    // }
 }
