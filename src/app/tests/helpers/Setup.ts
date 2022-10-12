@@ -38,7 +38,8 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {DigitalSim} from "digital/models/sim/DigitalSim";
 
-import {CircuitController} from "core/controllers/CircuitController";
+import {CircuitController}     from "core/controllers/CircuitController";
+import {PropagationController} from "digital/controllers/PropagationController";
 
 import {FakeInput} from "./FakeInput";
 
@@ -83,6 +84,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input" | "viewMa
     const history = new HistoryManager();
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
     const sim = new DigitalSim(circuit);
+    const propagationController = new PropagationController(-1, sim);
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(tools.defaultTool, ...tools.tools!);
@@ -94,6 +96,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input" | "viewMa
         camera,
         circuit,
         sim,
+        propagationController,
         input,
         selections,
         toolManager,

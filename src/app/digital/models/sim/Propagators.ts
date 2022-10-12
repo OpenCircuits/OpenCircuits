@@ -51,10 +51,10 @@ export const AllPropagators: PropagatorRecord = {
     "DigitalNode": InputOutputPropagator((inputs) => (inputs)),
 
     // Switch has state which represents the user-defined isOn/isOff
-    "Switch": ({ state }) => ({ nextSignals: [[], [state as Signal], []], nextState: state }),
+    "Switch": ({ state = Signal.Off }) => ({ nextSignals: [[], [state as Signal], []], nextState: state }),
 
     // LEDs don't propagate a signal
-    "LED": InputOutputPropagator((inputs) => (inputs)),
+    "LED": ({ signals }) => ({ nextSignals: signals }),
 
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 };

@@ -10,9 +10,15 @@ import {DigitalCircuitController} from "digital/controllers/DigitalCircuitContro
 import {Propagate} from "./Propagators";
 
 
-type PropagationEvent = {};
+type DigitalSimEvent = {
+    type: "step";
+    queueEmpty: boolean;
+} | {
+    type: "queue";
+    id: GUID;
+}
 
-export class DigitalSim extends Observable<PropagationEvent> {
+export class DigitalSim extends Observable<DigitalSimEvent> {
     private readonly circuit: DigitalCircuitController;
 
     // Map of every port in the circuit to its associated signal.
@@ -42,14 +48,17 @@ export class DigitalSim extends Observable<PropagationEvent> {
             const [p1, p2] = this.circuit.getPortsForWire(w);
             return ((p1 === port) ? (p2) : (p1));
         });
-        ports.forEach((p) => this.propagationQueue.add(p.parent));
+        ports.forEach((p) => {
+            this.signals.set(p.id, signal);
+            this.queuePropagation(p.parent);
+        });
     }
 
     public setState(comp: DigitalComponent, state: unknown): void {
         this.states.set(comp.id, state);
 
         // If state changed, update the component
-        this.propagationQueue.add(comp.id);
+        this.queuePropagation(comp.id);
     }
 
     public onAddObj(m: DigitalObj) {
@@ -58,8 +67,13 @@ export class DigitalSim extends Observable<PropagationEvent> {
             this.signals.set(m.id, Signal.Off);
 
             // Add to propagation queue (@TODO: might need to callback this event / move to method)
-            this.propagationQueue.add(m.parent);
+            this.queuePropagation(m.parent);
         }
+    }
+
+    public queuePropagation(id: GUID): void {
+        this.propagationQueue.add(id);
+        this.publish({ type: "queue", id });
     }
 
     // @TODO: might need onEditObj, for instance, if a Port is changed to a `not` port
@@ -69,7 +83,7 @@ export class DigitalSim extends Observable<PropagationEvent> {
             this.signals.delete(m.id);
 
             // Queue parent for propagation
-            this.propagationQueue.add(m.parent);
+            this.queuePropagation(m.parent);
         }
         if (m.baseKind === "Component") {
             this.states.delete(m.id);
@@ -120,7 +134,10 @@ export class DigitalSim extends Observable<PropagationEvent> {
                 this.setState(comp, nextState);
         }
 
-        this.publish({});
+        this.publish({
+            type:       "step",
+            queueEmpty: (this.propagationQueue.size === 0),
+        });
     }
 
     public getSignal(p: DigitalPort): Signal {
