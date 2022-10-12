@@ -12,7 +12,7 @@ import {Propagate} from "./Propagators";
 
 type PropagationEvent = {};
 
-export class PropagationManager extends Observable<PropagationEvent> {
+export class DigitalSim extends Observable<PropagationEvent> {
     private readonly circuit: DigitalCircuitController;
 
     // Map of every port in the circuit to its associated signal.

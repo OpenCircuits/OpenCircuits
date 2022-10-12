@@ -39,7 +39,7 @@ export class SwitchView extends PressableComponentView<Switch, DigitalCircuitCon
     //  it also should be causing a propagation change, not an image change
     //  and the image will be calculated based on the propagation
     public override onClick(): void {
-        this.info.propagationManager.setState(this.obj, Signal.fromBool(!this.isOn()));
+        this.info.sim.setState(this.obj, Signal.fromBool(!this.isOn()));
     }
 
     protected override drawImg({ renderer, selections }: RenderInfo): void {
@@ -52,6 +52,6 @@ export class SwitchView extends PressableComponentView<Switch, DigitalCircuitCon
     }
 
     public isOn(): boolean {
-        return Signal.isOn(this.info.propagationManager.getState(this.obj) as Signal);
+        return Signal.isOn(this.info.sim.getState(this.obj) as Signal);
     }
 }

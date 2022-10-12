@@ -19,7 +19,7 @@ export class DigitalWireView extends WireView<DigitalWire, DigitalCircuitControl
     }
 
     protected override getColor(): string {
-        const isOn = this.info.propagationManager.getSignal(this.getInputPort());
+        const isOn = this.info.sim.getSignal(this.getInputPort());
         if (isOn)
             return DEFAULT_ON_COLOR;
         return this.obj.color;

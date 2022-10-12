@@ -36,7 +36,7 @@ import {DigitalObj} from "core/models/types/digital";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {PropagationManager} from "digital/models/sim/PropagationManager";
+import {DigitalSim} from "digital/models/sim/DigitalSim";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
@@ -82,7 +82,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input" | "viewMa
     const camera = new Camera(...screenSize);
     const history = new HistoryManager();
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
-    const propagationManager = new PropagationManager(circuit);
+    const sim = new DigitalSim(circuit);
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(tools.defaultTool, ...tools.tools!);
@@ -93,7 +93,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input" | "viewMa
         history,
         camera,
         circuit,
-        propagationManager,
+        sim,
         input,
         selections,
         toolManager,

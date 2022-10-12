@@ -66,7 +66,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
         });
 
         // Add render callbacks and set render function
-        info.propagationManager.subscribe(() => info.renderer.render());
+        info.sim.subscribe(() => info.renderer.render());
 
         info.renderer.setRenderFunction(() => renderFunc());
         info.renderer.render();

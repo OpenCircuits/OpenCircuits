@@ -35,9 +35,9 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, def
     info.circuit.subscribe((ev) => {
         if (ev.type === "obj") {
             if (ev.op === "added")
-                info.propagationManager.onAddObj(ev.obj);
+                info.sim.onAddObj(ev.obj);
             else if (ev.op === "removed")
-                info.propagationManager.onRemoveObj(ev.obj);
+                info.sim.onRemoveObj(ev.obj);
             // @TODO: Maybe onEditObj?
         }
     });

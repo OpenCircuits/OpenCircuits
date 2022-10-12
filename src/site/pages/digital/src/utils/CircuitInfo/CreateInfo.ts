@@ -24,17 +24,17 @@ import {DigitalObj} from "core/models/types/digital";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
-import {PropagationManager} from "digital/models/sim/PropagationManager";
+import {DigitalSim} from "digital/models/sim/DigitalSim";
 
 
 export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
     const history = new HistoryManager();
 
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
-    const propagationManager = new PropagationManager(circuit);
+    const sim = new DigitalSim(circuit);
 
     const viewManager = new ViewManager<DigitalObj, DigitalCircuitController, DigitalViewInfo>(
-        { circuit, propagationManager }, CreateView
+        { circuit, sim }, CreateView
     );
 
     const selections = new SelectionsWrapper();
@@ -48,7 +48,7 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
 
         circuit,
         viewManager,
-        propagationManager,
+        sim,
 
         // This is necessary because input is created later in the pipeline because it requires canvas
         input: undefined as unknown as Input,
