@@ -2,10 +2,9 @@ import {V} from "Vector";
 
 import {AnyPort} from "core/models/types";
 
-import {AnalogNode, AnalogObj, AnalogPort, AnalogWire, Resistor} from "core/models/types/analog";
+import {AnalogNode, AnalogObj, AnalogPort, AnalogWire, Ground, Resistor} from "core/models/types/analog";
 
 import {AnalogCircuitController} from "analog/controllers/AnalogCircuitController";
-import {RenderInfo}              from "core/views/BaseView";
 import {ComponentView}           from "core/views/ComponentView";
 import {NodeView}                from "core/views/NodeView";
 import {PortView}                from "core/views/PortView";
@@ -25,16 +24,10 @@ class AnalogPortView extends PortView<AnalogPort, AnalogCircuitController> {
     }
 }
 
-class ResistorView extends ComponentView<Resistor, AnalogCircuitController> {
-    public constructor(circuit: AnalogCircuitController, obj: Resistor) {
-        super(circuit, obj, V(1.2, 1), "resistor.svg");
-    }
-    protected override renderComponent(_: RenderInfo): void {}
-}
-
 export const Views: ViewRecord<AnalogObj, AnalogCircuitController> = {
     "AnalogWire": (c: AnalogCircuitController, o: AnalogWire) => new AnalogWireView(c, o),
     "AnalogPort": (c: AnalogCircuitController, o: AnalogPort) => new AnalogPortView(c, o),
     "AnalogNode": (c: AnalogCircuitController, o: AnalogNode) => new AnalogNodeView(c, o),
-    "Resistor":   (c: AnalogCircuitController, o: Resistor)   => new ResistorView(c, o),
+    "Ground":     (c: AnalogCircuitController, o: Ground)     => new ComponentView(c, o, V(1.2, 0.6), "ground.svg"),
+    "Resistor":   (c: AnalogCircuitController, o: Resistor)   => new ComponentView(c, o, V(1.2, 1), "resistor.svg"),
 };

@@ -18,7 +18,7 @@ import {CircuitController} from "core/controllers/CircuitController";
 import {BaseView, RenderInfo} from "./BaseView";
 
 
-export abstract class ComponentView<
+export class ComponentView<
     Obj extends AnyComponent,
     Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
 > extends BaseView<Obj, Circuit> {
@@ -75,7 +75,7 @@ export abstract class ComponentView<
         renderer.image(this.img, V(), this.transform.get().getSize(), tint);
     }
 
-    protected abstract renderComponent(info: RenderInfo): void;
+    protected renderComponent(_: RenderInfo): void {}
 
     public getTransform(): Transform {
         return this.transform.get();

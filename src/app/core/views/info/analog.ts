@@ -11,6 +11,10 @@ export const AnalogComponentInfo: ComponentInfoRecord<AnalogComponent> = {
         Default:  (id) => ({ kind: "AnalogNode", ...DefaultComponent(id) }),
         PropInfo: DefaultComponentPropInfo,
     }),
+    "Ground": ({
+        Default:  (id) => ({ kind: "Ground", ...DefaultComponent(id) }),
+        PropInfo: DefaultComponentPropInfo,
+    }),
     "Resistor": ({
         Default:  (id) => ({ kind: "Resistor", ...DefaultComponent(id), resistance: 1000 }),
         PropInfo: {
