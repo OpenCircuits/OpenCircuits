@@ -126,8 +126,7 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
 
         // If added a port, let sibling ports know to update
         if (m.baseKind === "Port") {
-            const siblings = this.circuit.getPortsFor(this.circuit.getPortParent(m))
-                .filter((p) => ((p !== m) && this.views.has(p.id)));
+            const siblings = this.circuit.getSiblingPorts(m).filter((p) => this.views.has(p.id));
             siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig", ""));
         }
     }
