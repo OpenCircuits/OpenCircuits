@@ -48,7 +48,7 @@ export abstract class BaseView<
             this.cullTransform.setDirty();
     }
 
-    public abstract contains(pt: Vector, bounds: "select" | "press"): boolean;
+    public abstract contains(pt: Vector): boolean;
     public abstract isWithinBounds(bounds: Transform): boolean;
 
     public render(info: RenderInfo): void {

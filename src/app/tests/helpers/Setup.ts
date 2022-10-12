@@ -8,7 +8,6 @@ import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 import {HistoryManager} from "core/actions/HistoryManager";
 
 import {DefaultTool}      from "core/tools/DefaultTool";
-import {InteractionTool}  from "core/tools/InteractionTool";
 import {PanTool}          from "core/tools/PanTool";
 import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
@@ -23,6 +22,7 @@ import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
 import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
 import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
 import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
+import {PressableHandler}     from "core/tools/handlers/PressableHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
 import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
 import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
@@ -45,12 +45,12 @@ import {FakeInput} from "./FakeInput";
 
 export function GetDefaultTools() {
     return {
-        defaultTool: new InteractionTool([
+        defaultTool: new DefaultTool(
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-            SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CleanUpHandler,
-        ]),
+            PressableHandler, SelectionHandler, SelectPathHandler,
+            RedoHandler, UndoHandler, CleanUpHandler,
+        ),
         tools: [PanTool, RotateTool, TranslateTool,
                 WiringTool, SplitWireTool, SelectionBoxTool],
     };

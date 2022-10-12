@@ -211,13 +211,13 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
     public findNearestObj(
         pos: Vector,
         filter = (_: AnyObj) => true,
-    ): undefined | { obj: AnyObj, bounds: "select" | "press" } {
+    ): undefined | AnyObj {
         // Loop through each view
         for (const view of this) {
             if (!filter(view.getObj()))
                 continue;
-            if (view.contains(pos, "select"))
-                return { obj: view.getObj(), bounds: "select" };
+            if (view.contains(pos))
+                return view.getObj();
         }
     }
 

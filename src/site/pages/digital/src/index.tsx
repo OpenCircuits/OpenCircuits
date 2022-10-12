@@ -9,7 +9,7 @@ import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
 import {Images} from "core/utils/Images";
 
-import {InteractionTool}  from "core/tools/InteractionTool";
+import {DefaultTool}      from "core/tools/DefaultTool";
 import {PanTool}          from "core/tools/PanTool";
 import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
@@ -24,6 +24,7 @@ import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
 import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
 import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
 import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+import {PressableHandler}     from "core/tools/handlers/PressableHandler";
 import {RedoHandler}          from "core/tools/handlers/RedoHandler";
 import {SaveHandler}          from "core/tools/handlers/SaveHandler";
 import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
@@ -130,14 +131,14 @@ async function Init(): Promise<void> {
             // Setup circuit and get the CircuitInfo and helpers
             const [info, helpers] = Setup(
                 store, canvas,
-                new InteractionTool([
+                new DefaultTool(
                     SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-                    SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                    CleanUpHandler, CopyHandler,
+                    PressableHandler, SelectionHandler, SelectPathHandler,
+                    RedoHandler, UndoHandler, CleanUpHandler, CopyHandler,
                     PasteHandler((data) => DigitalPaste(data, info, undefined)),
                     SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-                ]),
+                ),
                 PanTool, RotateTool,
                 TranslateTool, WiringTool,
                 SelectionBoxTool, SplitWireTool

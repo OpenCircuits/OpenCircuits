@@ -1,22 +1,16 @@
 import {SVGDrawing} from "svg2canvas";
 
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH,
-        SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
 import {Images} from "core/utils/Images";
 
-import {Style} from "core/utils/rendering/Style";
-
-import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
-
 import {Switch} from "core/models/types/digital";
 
 import {RenderInfo}               from "core/views/BaseView";
+import {PressableComponentView}   from "core/views/PressableComponentView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
-
-import {PressableComponentView} from "../PressableComponentView";
 
 
 export class SwitchView extends PressableComponentView<Switch, DigitalCircuitController> {

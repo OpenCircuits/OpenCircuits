@@ -2,8 +2,8 @@ import {useEffect, useLayoutEffect} from "react";
 
 import {Input} from "core/utils/Input";
 
-import {InteractionTool} from "core/tools/InteractionTool";
-import {PanTool}         from "core/tools/PanTool";
+import {DefaultTool} from "core/tools/DefaultTool";
+import {PanTool}     from "core/tools/PanTool";
 
 // import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
@@ -25,7 +25,7 @@ type Props = ImageExporterPreviewProps & {
     mainInfo: DigitalCircuitInfo;
 }
 export const ImageExporterPreview = (() => {
-    const [info] = CreateInfo(new InteractionTool([]), PanTool);
+    const [info] = CreateInfo(new DefaultTool(), PanTool);
 
     // eslint-disable-next-line react/display-name
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
