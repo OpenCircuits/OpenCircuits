@@ -66,7 +66,10 @@ export const MainDesigner = ({ info, canvas }: Props) => {
         });
 
         // Add render callbacks and set render function
-        info.sim.subscribe(() => info.renderer.render());
+        info.sim.subscribe((ev) => {
+            if (ev.type === "step") // Re-render when the propagation steps
+                info.renderer.render();
+        });
 
         info.renderer.setRenderFunction(() => renderFunc());
         info.renderer.render();
