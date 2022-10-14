@@ -1,7 +1,7 @@
 import {GUID}       from "core/utils/GUID";
 import {Observable} from "core/utils/Observable";
 
-import {DigitalComponent, DigitalObj, DigitalPort} from "core/models/types/digital";
+import {DigitalComponent, DigitalObj, DigitalPort, DigitalPortGroup} from "core/models/types/digital";
 
 import {Signal} from "digital/models/sim/Signal";
 
@@ -42,6 +42,13 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
     private setSignal(port: DigitalPort, signal: Signal): void {
         this.signals.set(port.id, signal);
 
+        // If we're an input port then just set the signal and queue a propagation to the parent
+        if (port.group !== DigitalPortGroup.Output) {
+            this.queuePropagation(port.parent);
+            return;
+        }
+
+        // If we're an output port, then find all connections and propagate down the line
         // Find connections and add them to propagation queue
         const wires = this.circuit.getWiresFor(port);
         const ports = wires.map((w) => {
@@ -69,9 +76,22 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
             // Add to propagation queue (@TODO: might need to callback this event / move to method)
             this.queuePropagation(m.parent);
         }
+        if (m.baseKind === "Wire") {
+            // Get output port from the wire connections and propagate that signal
+            const [p1, p2] = this.circuit.getPortsForWire(m);
+            const outputPort = (p1.group === DigitalPortGroup.Output ? p1 : p2);
+            const signal = this.signals.get(outputPort.id)!;
+
+            // No need to propagate if signal is the same already
+            if (this.signals.get(p1.id) === signal && this.signals.get(p2.id) === signal)
+                return;
+            this.setSignal(outputPort, signal);
+        }
     }
 
     public queuePropagation(id: GUID): void {
+        if (this.propagationQueue.has(id)) // Do nothing if this obj is already queued
+            return;
         this.propagationQueue.add(id);
         this.publish({ type: "queue", id });
     }
@@ -84,6 +104,12 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
 
             // Queue parent for propagation
             this.queuePropagation(m.parent);
+        }
+        if (m.baseKind === "Wire") {
+            // Get input port from the connections and set its signal to off since it has no connection now
+            const [p1, p2] = this.circuit.getPortsForWire(m);
+            const inputPort = (p1.group === DigitalPortGroup.Output ? p2 : p1);
+            this.setSignal(inputPort, Signal.Off);
         }
         if (m.baseKind === "Component") {
             this.states.delete(m.id);

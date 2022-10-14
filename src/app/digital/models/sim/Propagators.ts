@@ -33,7 +33,7 @@ const InputOutputPropagator = (propagator: (inputs: Signal[]) => Signal[]): Prop
             ],
         };
     }
-)
+);
 
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
