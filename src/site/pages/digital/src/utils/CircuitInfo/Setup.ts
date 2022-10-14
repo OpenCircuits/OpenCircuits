@@ -31,5 +31,16 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, def
         }
     });
 
+    // Setup propagation
+    info.circuit.subscribe((ev) => {
+        if (ev.type === "obj") {
+            if (ev.op === "added")
+                info.sim.onAddObj(ev.obj);
+            else if (ev.op === "removed")
+                info.sim.onRemoveObj(ev.obj);
+            // @TODO: Maybe onEditObj?
+        }
+    });
+
     return [info, GetDigitalCircuitInfoHelpers(store, canvas, info, reset)];
 }

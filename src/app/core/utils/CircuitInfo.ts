@@ -7,6 +7,7 @@ import {ToolManager} from "core/tools/ToolManager";
 import {AnyObj} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
+import {ViewCircuitInfo}   from "core/views/BaseView";
 import {ViewManager}       from "core/views/ViewManager";
 
 import {GUID}              from "./GUID";
@@ -44,7 +45,7 @@ export type CircuitInfo<Obj extends AnyObj = AnyObj> = {
     history: HistoryManager;
 
     circuit: CircuitController<Obj>;
-    viewManager: ViewManager<Obj, CircuitController<Obj>>;
+    viewManager: ViewManager<Obj, ViewCircuitInfo<CircuitController<Obj>>>;
 
     selections: SelectionsWrapper;
     curPressedObjID?: GUID;

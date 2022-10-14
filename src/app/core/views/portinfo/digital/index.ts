@@ -25,6 +25,28 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             },
         },
     },
+    "Switch": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "0,1",
+        AllowChanges:  false,
+
+        Positions: {
+            "0,1": {
+                "1:0": { origin: V(0.62, 0), target: V(1.32, 0), dir: V(+1, 0) },
+            },
+        },
+    },
+    "LED": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "1",
+        AllowChanges:  false,
+
+        Positions: {
+            "1": {
+                "0:0": { origin: V(0, -0.5), target: V(0, -2), dir: V(0, -1) },
+            },
+        },
+    },
     "ANDGate": {
         Default:       DigitalInfo["DigitalPort"].Default,
         InitialConfig: "2,1",

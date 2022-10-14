@@ -1,5 +1,5 @@
-import {InteractionTool} from "core/tools/InteractionTool";
-import {PanTool}         from "core/tools/PanTool";
+import {DefaultTool} from "core/tools/DefaultTool";
+import {PanTool}     from "core/tools/PanTool";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -34,7 +34,7 @@ type Props = {
 }
 // @TODO
 export const ICViewer = (() => {
-    const info = CreateInfo(new InteractionTool([]), PanTool);
+    const info = CreateInfo(new DefaultTool(), PanTool);
 
     // eslint-disable-next-line react/display-name, arrow-body-style
     return ({ mainInfo }: Props) => {

@@ -15,22 +15,22 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Curve} from "core/utils/rendering/shapes/Curve";
 
-import {AnyObj, AnyPort, AnyWire} from "core/models/types";
+import {AnyPort, AnyWire} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo} from "./BaseView";
-import {GetPortWorldPos}      from "./portinfo/utils";
+import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
+import {GetPortWorldPos}                       from "./portinfo/utils";
 
 
 export class WireView<
     Wire extends AnyWire,
-    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-> extends BaseView<Wire, Circuit> {
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> extends BaseView<Wire, Info> {
     protected curve: DirtyVar<BezierCurve>;
 
-    public constructor(circuit: Circuit, obj: Wire) {
-        super(circuit, obj);
+    public constructor(info: Info, obj: Wire) {
+        super(info, obj);
 
         this.curve = new DirtyVar(
             () => {
@@ -67,10 +67,15 @@ export class WireView<
         ));
 
         // @TODO move to function for getting color based on being selection/on/off
-        const color = (selected ? selectedColor : this.obj.color);
+         // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
+        const color = (selected ? selectedColor : this.getColor());
         const style = new Style(undefined, color, WIRE_THICKNESS);
 
         renderer.draw(new Curve(this.curve.get()), style);
+    }
+
+    protected getColor(): string {
+        return this.obj.color;
     }
 
     protected getCurvePoints(port: AnyPort): [Vector, Vector] {

@@ -23,7 +23,7 @@ type NetlistInfoRecord = {
  * The symbol must be a NGSpice netlist symbol found in in https://ngspice.sourceforge.io/docs/ngspice-manual.pdf
  * And the values must be a list of strings representing the NGSpice parameters for that element.
  *
- * Note that you can also specify `undefiend` to represent a component that doesn't need NGSpice info
+ * Note that you can also specify `undefined` to represent a component that doesn't need NGSpice info
  *  (and should be ignored).
  */
 export const AllNetlistInfo: NetlistInfoRecord = {
