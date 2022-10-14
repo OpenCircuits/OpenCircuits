@@ -11,7 +11,7 @@ import {Transform}                       from "math/Transform";
 import {DirtyVar} from "core/utils/DirtyVar";
 import {Images}   from "core/utils/Images";
 
-import {AnyComponent, AnyObj} from "core/models/types";
+import {AnyComponent} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
@@ -20,9 +20,8 @@ import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
 
 export class ComponentView<
     Obj extends AnyComponent,
-    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
-> extends BaseView<Obj, Circuit, Info> {
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> extends BaseView<Obj, Info> {
     protected transform: DirtyVar<Transform>;
     protected img?: SVGDrawing;
 

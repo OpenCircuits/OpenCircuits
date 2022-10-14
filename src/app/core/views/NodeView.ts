@@ -14,9 +14,8 @@ import {ComponentView}   from "./ComponentView";
 
 export abstract class NodeView<
     Node extends AnyNode,
-    Circuit extends CircuitController = CircuitController,
-    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
-> extends ComponentView<Node, Circuit, Info> {
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> extends ComponentView<Node, Info> {
     public constructor(info: Info, obj: Node) {
         super(info, obj, V(2*IO_PORT_RADIUS));
     }

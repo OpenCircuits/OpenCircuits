@@ -14,14 +14,13 @@ import {DigitalPort, LED} from "core/models/types/digital";
 
 import {Signal} from "digital/models/sim/Signal";
 
-import {RenderInfo}               from "core/views/BaseView";
-import {ComponentView}            from "core/views/ComponentView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}    from "core/views/BaseView";
+import {ComponentView} from "core/views/ComponentView";
 
 import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class LEDView extends ComponentView<LED, DigitalCircuitController, DigitalViewInfo> {
+export class LEDView extends ComponentView<LED, DigitalViewInfo> {
     public constructor(info: DigitalViewInfo, obj: LED) {
         super(info, obj, V(1, 1), "led.svg");
     }

@@ -10,14 +10,13 @@ import {Switch} from "core/models/types/digital";
 
 import {Signal} from "digital/models/sim/Signal";
 
-import {RenderInfo}               from "core/views/BaseView";
-import {PressableComponentView}   from "core/views/PressableComponentView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}             from "core/views/BaseView";
+import {PressableComponentView} from "core/views/PressableComponentView";
 
 import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class SwitchView extends PressableComponentView<Switch, DigitalCircuitController, DigitalViewInfo> {
+export class SwitchView extends PressableComponentView<Switch, DigitalViewInfo> {
     protected onImg: SVGDrawing;
     protected offImg: SVGDrawing;
 

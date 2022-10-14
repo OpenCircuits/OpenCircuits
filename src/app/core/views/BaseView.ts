@@ -32,11 +32,10 @@ export type RenderInfo = {
  */
 export abstract class BaseView<
     Obj extends AnyObj,
-    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+    Info extends ViewCircuitInfo<CircuitController<AnyObj>> = ViewCircuitInfo<CircuitController<AnyObj>>,
 > {
     protected readonly info: Info;
-    protected readonly circuit: Circuit;
+    protected readonly circuit: Info["circuit"];
     protected readonly obj: Obj;
 
     protected cullTransform: DirtyVar<Transform>;

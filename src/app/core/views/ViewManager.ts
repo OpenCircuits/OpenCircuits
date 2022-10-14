@@ -69,30 +69,27 @@ class DepthMap<T> {
 
 export type ViewFactory<
     Obj extends AnyObj,
-    Circuit extends CircuitController<AnyObj>,
-    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
 > =
-    (info: Info, o: Obj) => BaseView<Obj, Circuit>;
+    (info: Info, o: Obj) => BaseView<Obj, Info>;
 
 export type ViewRecord<
     Obj extends AnyObj,
-    Circuit extends CircuitController<AnyObj>,
-    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
 > = {
-    [O in Obj as O["kind"]]: ViewFactory<O, Circuit, Info>;
+    [O in Obj as O["kind"]]: ViewFactory<O, Info>;
 }
 
 export class ViewManager<
     Obj extends AnyObj,
-    Circuit extends CircuitController<AnyObj>,
-    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
 > {
-    protected readonly genView: ViewFactory<Obj, Circuit>;
+    protected readonly genView: ViewFactory<Obj, Info>;
 
     protected readonly info: Info;
-    protected readonly circuit: Circuit;
+    protected readonly circuit: Info["circuit"];
 
-    protected views: Map<GUID, BaseView<Obj, Circuit>>;
+    protected views: Map<GUID, BaseView<Obj, Info>>;
 
     // Array of depth maps, sorted by layer.
     //  So depthMap[1] is depth map at layer = 1
@@ -102,7 +99,7 @@ export class ViewManager<
     protected depthMap: Array<DepthMap<GUID>>;
 
     // It's assumed that this circuit has no objects yet
-    public constructor(info: Info, genView: ViewFactory<Obj, Circuit>) {
+    public constructor(info: Info, genView: ViewFactory<Obj, Info>) {
         this.info = info;
         this.circuit = info.circuit;
         this.genView = genView;
@@ -127,7 +124,7 @@ export class ViewManager<
         this.depthMap[layer].addEntry(m.id, m.zIndex);
     }
 
-    public reset(c?: ReturnType<Circuit["getRawModel"]>): void {
+    public reset(c?: ReturnType<Info["circuit"]["getRawModel"]>): void {
         this.views.clear();
         this.depthMap = [];
 

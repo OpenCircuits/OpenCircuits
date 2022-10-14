@@ -2,13 +2,12 @@ import {DEFAULT_ON_COLOR} from "core/utils/Constants";
 
 import {DigitalPort, DigitalPortGroup, DigitalWire} from "core/models/types/digital";
 
-import {WireView}                 from "core/views/WireView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {WireView} from "core/views/WireView";
 
 import {DigitalViewInfo} from "./DigitalViewInfo";
 
 
-export class DigitalWireView extends WireView<DigitalWire, DigitalCircuitController, DigitalViewInfo> {
+export class DigitalWireView extends WireView<DigitalWire, DigitalViewInfo> {
     protected getInputPort(): DigitalPort {
         const [p1, p2] = this.circuit.getPortsForWire(this.obj);
         return (p1.group === DigitalPortGroup.Output ? p1 : p2);

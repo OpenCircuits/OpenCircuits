@@ -12,9 +12,9 @@ import {DigitalViewInfo} from "./DigitalViewInfo";
 import {DigitalWireView} from "./DigitalWireView";
 
 
-class DigitalNodeView extends NodeView<DigitalNode, DigitalCircuitController> {}
+class DigitalNodeView extends NodeView<DigitalNode, DigitalViewInfo> {}
 
-export const Views: ViewRecord<DigitalObj, DigitalCircuitController, DigitalViewInfo> = {
+export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
     "DigitalWire": (c, o) => new DigitalWireView(c, o),
     "DigitalPort": (c, o) => new DigitalPortView(c, o),
     "DigitalNode": (c, o) => new DigitalNodeView(c, o),
@@ -25,6 +25,6 @@ export const Views: ViewRecord<DigitalObj, DigitalCircuitController, DigitalView
 };
 
 export function CreateView(info: DigitalViewInfo, obj: DigitalObj) {
-    const view = Views[obj.kind] as ViewFactory<DigitalObj, DigitalCircuitController, DigitalViewInfo>;
+    const view = Views[obj.kind] as ViewFactory<DigitalObj, DigitalViewInfo>;
     return (view(info, obj));
 }

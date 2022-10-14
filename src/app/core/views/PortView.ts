@@ -13,7 +13,7 @@ import {Style} from "core/utils/rendering/Style";
 import {Circle} from "core/utils/rendering/shapes/Circle";
 import {Line}   from "core/utils/rendering/shapes/Line";
 
-import {AnyObj, AnyPort} from "core/models/types";
+import {AnyPort} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
@@ -24,9 +24,8 @@ import {GetPortWorldPos}                       from "./portinfo/utils";
 
 export abstract class PortView<
     Port extends AnyPort,
-    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-    Info extends ViewCircuitInfo<Circuit> = ViewCircuitInfo<Circuit>,
-> extends BaseView<Port, Circuit, Info> {
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> extends BaseView<Port, Info> {
     protected pos: DirtyVar<PortPos>;
 
     public constructor(info: Info, obj: Port) {

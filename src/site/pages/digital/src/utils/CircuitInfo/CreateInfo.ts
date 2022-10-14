@@ -36,7 +36,7 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
 
     const propagationController = new PropagationController(1, sim);
 
-    const viewManager = new ViewManager<DigitalObj, DigitalCircuitController, DigitalViewInfo>(
+    const viewManager = new ViewManager<DigitalObj, DigitalViewInfo>(
         { circuit, sim }, CreateView
     );
 

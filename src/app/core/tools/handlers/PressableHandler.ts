@@ -37,8 +37,7 @@ export const PressableHandler: EventHandler = ({
         const { viewManager } = info;
 
         const pos = CalcWorldMousePos(info);
-        const view = viewManager.getView(viewManager.findNearestObj(pos)!.id) as
-            PressableComponentView<AnyComponent, CircuitController>;
+        const view = viewManager.getView(viewManager.findNearestObj(pos)!.id) as PressableComponentView<AnyComponent>;
 
         switch (event.type) {
             case "mousedown":
