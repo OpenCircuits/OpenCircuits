@@ -1,15 +1,14 @@
-import {CircuitController}        from "core/controllers/CircuitController";
-import {ViewManager}              from "core/views/ViewManager";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
-import {PropagationController}    from "digital/controllers/PropagationController";
-import {CreateView}               from "digital/views";
-import {DigitalViewInfo}          from "digital/views/DigitalViewInfo";
+import {CircuitController}     from "core/controllers/CircuitController";
+import {ViewManager}           from "core/views/ViewManager";
+import {PropagationController} from "digital/controllers/PropagationController";
+import {CreateView}            from "digital/views";
+import {DigitalViewInfo}       from "digital/views/DigitalViewInfo";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {Input}             from "core/utils/Input";
+import {InputManager}      from "core/utils/InputManager";
 import {RenderQueue}       from "core/utils/RenderQueue";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
@@ -40,6 +39,8 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
         { circuit, sim }, CreateView
     );
 
+    const input = new InputManager();
+
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(defaultTool, ...tools);
@@ -54,8 +55,7 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
         sim,
         propagationController,
 
-        // This is necessary because input is created later in the pipeline because it requires canvas
-        input: undefined as unknown as Input,
+        input,
         selections,
         toolManager,
         renderer,

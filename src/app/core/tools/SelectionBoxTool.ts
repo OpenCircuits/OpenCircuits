@@ -3,8 +3,8 @@ import {V, Vector} from "Vector";
 import {Rect}      from "math/Rect";
 import {Transform} from "math/Transform";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -15,7 +15,7 @@ export const SelectionBoxTool = (() => {
     let p1: Vector, p2: Vector;
 
     return {
-        shouldActivate(event: Event, { locked, input, selections, curPressedObjID }: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, { locked, input, selections, curPressedObjID }: CircuitInfo): boolean {
             if (locked)
                 return false;
             // Activate if the user began dragging on empty canvas
@@ -24,17 +24,17 @@ export const SelectionBoxTool = (() => {
                     !selections.isDisabled() &&
                     curPressedObjID === undefined);
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Deactivate if stopped dragging
             return (event.type === "mouseup");
         },
 
 
-        onActivate({}: Event, { input }: CircuitInfo): void {
+        onActivate({}: InputManagerEvent, { input }: CircuitInfo): void {
             p1 = input.getMouseDownPos();
             p2 = input.getMousePos();
         },
-        onDeactivate({}: Event, { input, camera, history, selections,viewManager }: CircuitInfo): void {
+        onDeactivate({}: InputManagerEvent, { input, camera, history, selections,viewManager }: CircuitInfo): void {
             // Get bounding box for the selections
             const box = Transform.FromCorners(camera.getWorldPos(p1), camera.getWorldPos(p2));
 
@@ -67,7 +67,7 @@ export const SelectionBoxTool = (() => {
         },
 
 
-        onEvent(event: Event, { input }: CircuitInfo): boolean {
+        onEvent(event: InputManagerEvent, { input }: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 

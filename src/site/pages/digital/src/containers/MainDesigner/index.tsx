@@ -5,8 +5,6 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
 
-import {Input} from "core/utils/Input";
-
 import {PlaceGroup}  from "core/actions/units/Place";
 import {DeselectAll} from "core/actions/units/Select";
 
@@ -52,28 +50,16 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     useLayoutEffect(() => {
         if (!canvas.current)
             throw new Error("MainDesigner.useLayoutEffect failed: canvas is null");
-        // Create input w/ canvas
-        info.input = new Input(canvas.current);
 
         // Get render function
         const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
 
-        // Add input listener
-        info.input.addListener((event) => {
-            const change = info.toolManager.onEvent(event, info);
-            if (change)
-                info.renderer.render();
-        });
-
-        // Add render callbacks and set render function
-        info.sim.subscribe((ev) => {
-            if (ev.type === "step") // Re-render when the propagation steps
-                info.renderer.render();
-        });
-
         info.renderer.setRenderFunction(() => renderFunc());
         info.renderer.render();
-    }, [info, canvas]); // Pass empty array so that this only runs once on mount
+
+        // Setup input w/ canvas and return a tear down
+        return info.input.setupOn(canvas.current);
+    }, [info, canvas]);
 
 
     // Lock/unlock circuit

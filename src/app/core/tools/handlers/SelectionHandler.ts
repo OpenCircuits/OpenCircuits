@@ -1,7 +1,7 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -11,7 +11,7 @@ import {EventHandler} from "../EventHandler";
 
 
 export const SelectionHandler: EventHandler = ({
-    conditions: (event: Event, {}: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, {}: CircuitInfo) =>
         (event.type === "click" && event.button === LEFT_MOUSE_BUTTON),
 
     getResponse: ({ input, camera, history, selections, viewManager }: CircuitInfo) => {

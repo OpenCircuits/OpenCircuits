@@ -31,5 +31,12 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, ngS
         }
     });
 
+    // Add input listener
+    info.input.subscribe((ev) => {
+        const change = info.toolManager.onEvent(ev, info);
+        if (change)
+            info.renderer.render();
+    });
+
     return [info, GetAnalogCircuitInfoHelpers(store, canvas, info, reset)];
 }

@@ -2,8 +2,8 @@ import {MIDDLE_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector} from "Vector";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {Tool} from "core/tools/Tool";
 
@@ -14,7 +14,7 @@ const ARROW_PAN_DISTANCE_SMALL = 5;
 export const PanTool: Tool = (() => {
     let isDragging = false;
     return {
-        shouldActivate(event: Event, { input }: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, { input }: CircuitInfo): boolean {
             // Activate if the user just pressed the "option key"
             //  or if the user began dragging with either 2 fingers
             //                           or the middle mouse button
@@ -25,7 +25,7 @@ export const PanTool: Tool = (() => {
                    (event.type === "mousedrag" && (event.button === MIDDLE_MOUSE_BUTTON ||
                                                    input.getTouchCount() === 2)));
         },
-        shouldDeactivate(event: Event, { input }: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, { input }: CircuitInfo): boolean {
             //  Deactivate user stopped dragging
             //   and the alt key isn't currently pressed
             //  or if one of the arrow keys were released
@@ -35,16 +35,16 @@ export const PanTool: Tool = (() => {
         },
 
 
-        onActivate(event: Event, info: CircuitInfo): void {
+        onActivate(event: InputManagerEvent, info: CircuitInfo): void {
             if (event.type === "mousedrag" || event.type === "keydown")
                 this.onEvent(event, info); // Explicitly call drag event
         },
-        onDeactivate({}: Event, {}: CircuitInfo): void {
+        onDeactivate({}: InputManagerEvent, {}: CircuitInfo): void {
             isDragging = false;
         },
 
 
-        onEvent(event: Event, { input, camera }: CircuitInfo): boolean {
+        onEvent(event: InputManagerEvent, { input, camera }: CircuitInfo): boolean {
             if (event.type === "mousedrag") {
                 isDragging = true;
 

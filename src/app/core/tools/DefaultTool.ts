@@ -1,5 +1,5 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {EventHandler} from "./EventHandler";
 
@@ -11,12 +11,12 @@ export class DefaultTool {
         this.handlers = handlers;
     }
 
-    public onActivate(event: Event, info: CircuitInfo): void {
+    public onActivate(event: InputManagerEvent, info: CircuitInfo): void {
         this.onEvent(event, info);
     }
 
     // Method called when this tool is currently active and an event occurs
-    public onEvent(event: Event, info: CircuitInfo): boolean {
+    public onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
         const { locked, input, camera, viewManager } = info;
 
         if (locked)

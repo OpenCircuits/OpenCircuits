@@ -1,6 +1,6 @@
 import {CircuitInfo}       from "core/utils/CircuitInfo";
 import {CalcWorldMousePos} from "core/utils/CircuitInfoUtils";
-import {Event}             from "core/utils/Events";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {EventHandler} from "core/tools/EventHandler";
 
@@ -14,7 +14,7 @@ import {PressableComponentView} from "core/views/PressableComponentView";
 //  of pressable objects
 // Right now this is just Switchs and Buttons
 export const PressableHandler: EventHandler = ({
-    conditions: (event: Event, info: CircuitInfo) => {
+    conditions: (event: InputManagerEvent, info: CircuitInfo) => {
         if (!(event.type === "mousedown"
             || event.type === "mouseup"
             || event.type === "click"
@@ -33,7 +33,7 @@ export const PressableHandler: EventHandler = ({
         return (view.isWithinPressBounds(pos))
     },
 
-    getResponse: (info: CircuitInfo, event: Event) => {
+    getResponse: (info: CircuitInfo, event: InputManagerEvent) => {
         const { viewManager } = info;
 
         const pos = CalcWorldMousePos(info);

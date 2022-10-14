@@ -7,7 +7,7 @@ import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {Input}             from "core/utils/Input";
+import {InputManager}      from "core/utils/InputManager";
 import {RenderQueue}       from "core/utils/RenderQueue";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
@@ -40,6 +40,8 @@ export function CreateInfo(ngSpiceLib: NGSpiceLib | undefined,
         { circuit, sim }, CreateView
     );
 
+    const input = new InputManager();
+
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(defaultTool, ...tools);
@@ -53,7 +55,7 @@ export function CreateInfo(ngSpiceLib: NGSpiceLib | undefined,
         sim,
 
         // This is necessary because input is created later in the pipeline because it requires canvas
-        input: undefined as unknown as Input,
+        input,
         selections,
         toolManager,
         renderer,

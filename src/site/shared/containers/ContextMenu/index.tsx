@@ -2,7 +2,8 @@ import {useEffect, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {V, Vector} from "core/utils/math/Vector";
 
@@ -49,12 +50,15 @@ export const ContextMenu = ({ info, paste }: Props) => {
         if (!input)
             return;
 
-        input.addListener((ev) => {
+        const listener = (ev: InputManagerEvent) => {
             if (ev.type === "contextmenu")
                 dispatch(OpenContextMenu());
             else if (ev.type === "mousedown")
                 dispatch(CloseContextMenu());
-        });
+        }
+
+        input.subscribe(listener);
+        return () => input.unsubscribe(listener);
     }, [input, dispatch]);
 
     // Position changes are calculated using the react hook so that the

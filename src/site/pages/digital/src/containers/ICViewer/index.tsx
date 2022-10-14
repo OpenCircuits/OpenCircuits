@@ -10,7 +10,7 @@ import "./index.scss";
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
-// function CheckForInteraction(ev: Event, { toolManager, camera, designer, input, currentlyPressedObject }: CircuitInfo) {
+// function CheckForInteraction(ev: InputManagerEvent, { toolManager, camera, designer, input, currentlyPressedObject }: CircuitInfo) {
 //     if (toolManager.getCurrentTool() instanceof InteractionTool) {
 //         const worldMousePos = camera.getWorldPos(input.getMousePos());
 //         const obj = designer.getObjects().reverse()

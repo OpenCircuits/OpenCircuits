@@ -1,5 +1,5 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {DeselectAll} from "core/actions/units/Select";
 
@@ -7,7 +7,7 @@ import {EventHandler} from "../EventHandler";
 
 
 export const DeselectAllHandler: EventHandler = ({
-    conditions: (event: Event, { selections }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "Escape" &&
          selections.amount() > 0),

@@ -123,7 +123,7 @@ export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input" | "viewMa
     };
 
     // @TODO
-    // input.addListener((ev) => toolManager.onEvent(ev, info));
+    // input.subscribe((ev) => toolManager.onEvent(ev, info));
 
     return info;
 }

@@ -6,12 +6,9 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 import {V} from "Vector";
 
 import {Cursor} from "core/utils/CircuitInfo";
-import {Input}  from "core/utils/Input";
-
 
 import {PlaceGroup}  from "core/actions/units/Place";
 import {DeselectAll} from "core/actions/units/Select";
-
 
 import {CreateComponent} from "core/models/utils/CreateComponent";
 
@@ -54,29 +51,25 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     useLayoutEffect(() => {
         if (!canvas.current)
             throw new Error("MainDesigner.useLayoutEffect failed: canvas is null");
-        // Create input w/ canvas
-        info.input = new Input(canvas.current);
-
         // Get render function
         const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
-
-        // Add input listener
-        info.input.addListener((event) => {
-            const change = info.toolManager.onEvent(event, info);
-
-            // Update cursor
-            setCursor(info.cursor);
-
-            if (change)
-                info.renderer.render();
-        });
 
         // // Add render callbacks and set render function
         // info.designer.addCallback(() => info.renderer.render());
 
         info.renderer.setRenderFunction(() => renderFunc());
         info.renderer.render();
+
+        return info.input.setupOn(canvas.current);
     }, [info, canvas]); // Pass empty array so that this only runs once on mount
+
+
+    // Setup listener to keep cursor in-sync with info.cursor
+    useLayoutEffect(() => {
+        const listener = () => setCursor(info.cursor);
+        info.input.subscribe(listener);
+        return () => info.input.unsubscribe(listener);
+    }, [info, setCursor]);
 
 
     // Lock/unlock circuit
