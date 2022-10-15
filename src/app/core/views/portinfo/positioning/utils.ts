@@ -44,6 +44,13 @@ export const GenConfig = (groupInfo: Record<number, { amt: number, calcPos: Posi
     }
 }
 
+/**
+ * ToDO: Doc pls.
+ *
+ * @param N         Number that specfies something
+ * @param groupInfo Record of thingys
+ * @returns         thing
+ */
 export const GenPortInfo = (
     N: number,
     groupInfo: Record<number, PortPos | { amts: number[], calcPos: Positioner }>

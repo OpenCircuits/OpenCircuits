@@ -12,7 +12,7 @@ export type PortPos = { origin: Vector, target: Vector, dir: Vector };
 //  In digital this would mean 1 input port and 2 output ports
 // Something like "1,,2" would mean 1 port at group 0, 0 ports at group 1,
 //  and 2 ports at group 2. In digital this would mean 1 input port and 2 select ports.
-export type PortConfig = string;
+export type PortConfig = string; // `${number|},${number|},${number|}` could be a candidate replacement
 
 // Represents a unique port with respect to its parent in form of it's group:index
 //  So "0:0" represents a port at group 0, index 0. In digital this means the first

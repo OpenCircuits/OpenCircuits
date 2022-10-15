@@ -8,12 +8,12 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Line} from "core/utils/rendering/shapes/Line";
 
-import {DigitalPortGroup, FlipFlop, TFlipFlop} from "core/models/types/digital";
+import {DigitalPortGroup, TFlipFlop} from "core/models/types/digital";
 
 import {RenderInfo}               from "core/views/BaseView";
+import {ComponentView}            from "core/views/ComponentView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 import {FlipFlopView}             from "digital/views/components/FlipFlopView";
-import {ComponentView} from "core/views/ComponentView";
 
 
 export class TFlipFlopView extends ComponentView<TFlipFlop, DigitalCircuitController>{
