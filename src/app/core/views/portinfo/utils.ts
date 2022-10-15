@@ -46,5 +46,8 @@ export function ParseConfig(config: string) {
 
 // TODO: Come up with better name, "GetPortAmount" maybe?
 export function GetConfigAmount(config: string, group: number) {
-    return parseInt(config.split(",")[group]);
+    const cfg = config.split(",");
+    if (group >= cfg.length)
+        return 0;
+    return parseInt(cfg[group]);
 }

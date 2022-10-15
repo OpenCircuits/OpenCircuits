@@ -87,7 +87,7 @@ export class WireView<
         return this.curve.get().getPos(0.5);
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         return this.curve.get().getBoundingBox().expand(V(WIRE_THICKNESS/2));
     }
 

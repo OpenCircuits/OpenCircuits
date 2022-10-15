@@ -72,7 +72,7 @@ export abstract class BaseView<
 
     protected abstract renderInternal(info: RenderInfo): void;
 
-    protected abstract getBounds(): Rect;
+    public abstract getBounds(): Rect;
 
     public abstract getMidpoint(): Vector;
 

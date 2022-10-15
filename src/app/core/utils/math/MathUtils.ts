@@ -295,19 +295,20 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 /**
  * Calculates the BCD representation of the input number.
  *
- * @param decimal The number to convert (`decimal >= 0`).
+ * @param decimal    The number to convert (`decimal >= 0`).
+ * @param outputSize A specified output size for the BCD.
  * @throws An Error if decimal is not a valid integer `>= 0`.
- * @returns         The BCD representation of the input.
+ * @returns            The BCD representation of the input.
  */
-export function DecimalToBCD(decimal: number): boolean[] {
+export function DecimalToBCD(decimal: number, outputSize?: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
         throw "input must be a nonnegative integer";
-    const result: boolean[] = [];
-    while (decimal) {
-        result.push(decimal % 2 === 1);
-        decimal = Math.floor(decimal / 2);
-    }
-    return result;
+    // Minimum number of digits for BCD
+    const minSize = (decimal === 0 ? 1 : Math.floor(Math.log2(decimal)+1));
+    return new Array<boolean>(outputSize ?? minSize)
+        .fill(false)
+        .map((_, i) => ((decimal & (1 << i)) >> i))
+        .map((bit) => (bit === 1));
 }
 
 /**
@@ -320,6 +321,8 @@ export function DecimalToBCD(decimal: number): boolean[] {
  * @returns    An array of n uniform points on the domain [x0, xf].
  */
 export function linspace(x0: number, xf: number, n: number) {
+    if (n === 1)
+        return [(x0 + xf)/2];
     return new Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
 }
 

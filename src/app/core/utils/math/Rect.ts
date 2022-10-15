@@ -337,4 +337,11 @@ export class Rect {
             yIsUp
         );
     }
+
+    // Compute bounding rectangle over all the given sub-rectangles.
+    public static Bounding(rects: Rect[]): Rect {
+        const min = Vector.Min(...rects.map((r) => r.bottomLeft));
+        const max = Vector.Max(...rects.map((r) => r.topRight));
+        return Rect.FromPoints(min, max);
+    }
 }

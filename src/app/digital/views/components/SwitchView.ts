@@ -17,6 +17,8 @@ import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
 export class SwitchView extends PressableComponentView<Switch, DigitalViewInfo> {
+    public static BOUNDING_HEIGHT = 1.54;
+
     protected onImg: SVGDrawing;
     protected offImg: SVGDrawing;
 

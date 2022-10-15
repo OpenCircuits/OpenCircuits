@@ -96,7 +96,7 @@ export class ComponentView<
         return this.transform.get().getPos();
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         const t = this.transform.get();
         return new Rect(t.getPos(), t.getSize());
     }

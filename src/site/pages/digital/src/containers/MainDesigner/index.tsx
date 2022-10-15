@@ -5,10 +5,9 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V} from "Vector";
 
-import {PlaceGroup}  from "core/actions/units/Place";
 import {DeselectAll} from "core/actions/units/Select";
 
-import {CreateComponent} from "core/models/utils/CreateComponent";
+import {DigitalComponent} from "core/models/types/digital";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -19,7 +18,7 @@ import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 
 import {Droppable} from "shared/components/DragDroppable/Droppable";
 
-// import {DigitalCreateN, SmartPlace, SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
+import {DigitalCreateN, SmartPlace, SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
 import {useDigitalSelector} from "site/digital/utils/hooks/useDigital";
 
@@ -81,7 +80,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
     return (
         <Droppable
             ref={canvas}
-            onDrop={(pos, itemKind, num) => {
+            onDrop={(pos, itemKind: DigitalComponent["kind"], num, smartPlaceOptions: SmartPlaceOptions) => {
                 if (!canvas.current)
                     throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
                 num = num ?? 1;
@@ -93,26 +92,14 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                 }
                 pos = info.camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
-                const [comp, ports] = CreateComponent(
-                    itemKind as keyof typeof DigitalComponentInfo,
-                    info.viewManager.getTopDepth() + 1
-                );
-                comp.x = pos.x;
-                comp.y = pos.y;
-                info.history.add(PlaceGroup(info.circuit, [comp, ...ports]));
-                // info.history.add(
-                //     PlaceComponent(info.circuit, itemID as keyof typeof AllComponentInfo),
-                // );
-                // info.history.add(
+                const z = info.viewManager.getTopDepth() + 1;
 
-                // );
-                // if (smartPlaceOptions !== SmartPlaceOptions.Off) {
-                //     info.history.add(SmartPlace(pos, itemId, info.designer, num, smartPlaceOptions));
-                // } else {
-                //     info.history.add(
-                //         PlaceGroup(info.designer, DigitalCreateN(pos, itemId, info.designer, num))
-                //     );
-                // }
+                if (smartPlaceOptions !== SmartPlaceOptions.Off) {
+                    info.history.add(SmartPlace(info, itemKind, smartPlaceOptions, num, pos, z));
+                } else {
+                    info.history.add(DigitalCreateN(info, itemKind, num, pos, z));
+                }
+
                 info.renderer.render();
             }}>
             <canvas className="main__canvas"
