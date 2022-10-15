@@ -13,14 +13,11 @@ import {DigitalPortGroup, TFlipFlop} from "core/models/types/digital";
 import {RenderInfo}               from "core/views/BaseView";
 import {ComponentView}            from "core/views/ComponentView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
-import {FlipFlopView}             from "digital/views/components/FlipFlopView";
 
 
 export class TFlipFlopView extends ComponentView<TFlipFlop, DigitalCircuitController>{
-    private readonly flipflop: FlipFlopView;
     public constructor(circuit: DigitalCircuitController, obj: TFlipFlop) {
         super(circuit, obj, V(1, 1), "tflipflop.svg");
-        this.flipflop = new FlipFlopView(circuit, obj, V(1, 1), "tflipflop.svg");
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
@@ -47,7 +44,10 @@ export class TFlipFlopView extends ComponentView<TFlipFlop, DigitalCircuitContro
 
         renderer.draw(new Line(p1, p2), style);
     }
-    protected override getBounds(): Rect {
-        return this.flipflop.getBounds()
+    public override getBounds(): Rect {
+        // Get current number of inputs
+        const inputs = this.circuit.getPortsFor(this.obj)
+            .filter((p) => p.group === DigitalPortGroup.Input).length;
+        return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }

@@ -1,12 +1,8 @@
 import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
-import {V, Vector} from "Vector";
+import {V} from "Vector";
 
 import {Rect} from "math/Rect";
-
-import {Style} from "core/utils/rendering/Style";
-
-import {Line} from "core/utils/rendering/shapes/Line";
 
 import {DigitalPortGroup, FlipFlop} from "core/models/types/digital";
 
@@ -15,11 +11,11 @@ import {ComponentView}            from "core/views/ComponentView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
 /**
- * Should not be directly called. Only exist as flipflops are the same shape. Can't do abstract class tho
+ * Should not be directly called. Only exist as flipflops share code. Can't do abstract class tho
  */
 export class FlipFlopView extends ComponentView<FlipFlop, DigitalCircuitController> {
-    public constructor(circuit: DigitalCircuitController, obj: FlipFlop, V: Vector, svg: string) {
-        super(circuit, obj, V, svg);
+    public constructor(circuit: DigitalCircuitController, obj: FlipFlop) {
+        super(circuit, obj);
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {}
