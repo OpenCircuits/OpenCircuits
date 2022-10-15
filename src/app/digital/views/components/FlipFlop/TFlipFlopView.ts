@@ -10,14 +10,14 @@ import {Line} from "core/utils/rendering/shapes/Line";
 
 import {DigitalPortGroup, TFlipFlop} from "core/models/types/digital";
 
-import {RenderInfo}               from "core/views/BaseView";
-import {ComponentView}            from "core/views/ComponentView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}      from "core/views/BaseView";
+import {ComponentView}   from "core/views/ComponentView";
+import {DigitalViewInfo} from "digital/views/DigitalViewInfo";
 
 
-export class TFlipFlopView extends ComponentView<TFlipFlop, DigitalCircuitController>{
-    public constructor(circuit: DigitalCircuitController, obj: TFlipFlop) {
-        super(circuit, obj, V(1, 1), "tflipflop.svg");
+export class TFlipFlopView extends ComponentView<TFlipFlop, DigitalViewInfo>{
+    public constructor(info: DigitalViewInfo, obj: TFlipFlop) {
+        super(info, obj, V(1, 1), "tflipflop.svg");
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
@@ -44,7 +44,8 @@ export class TFlipFlopView extends ComponentView<TFlipFlop, DigitalCircuitContro
 
         renderer.draw(new Line(p1, p2), style);
     }
-    public override getBounds(): Rect {
+
+    protected override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === DigitalPortGroup.Input).length;

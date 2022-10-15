@@ -25,7 +25,7 @@ export type PortInfo = {
 
     Positions: Record<
         PortConfig,
-        Record<`${number}:${number}`, PortPos>
+        Record<PortIndex, PortPos>
     >;
 } & ({
     AllowChanges: false;
