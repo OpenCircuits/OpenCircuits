@@ -2,14 +2,12 @@ import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
-import {linspaceDX} from "math/MathUtils";
-
 import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
 
 import {DigitalInfo} from "core/views/info/digital";
 
-import {CalcPortPos, CalcPortPositions, GenPortInfo} from "../positioning/utils";
-import {PortInfoRecord}                              from "../types";
+import {CalcPortPos, CalcPortPositions, GenPortConfig} from "../positioning/utils";
+import {PortInfoRecord}                                from "../types";
 
 
 export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
@@ -53,12 +51,12 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         AllowChanges:  true,
         ChangeGroup:   DigitalPortGroup.Input,
 
-        Positions: GenPortInfo(7, {
-            0: {
-                amts:    linspaceDX(2,9,1),
-                calcPos: (amt) => CalcPortPositions(amt, 0.5 - DEFAULT_BORDER_WIDTH/2),
-            },
-            1: CalcPortPos(V(0.5, 0), V(1, 0)),
-        }),
+        Positions: GenPortConfig(
+            [2,3,4,5,6,7,8],
+            (numInputs) => ({
+                0: CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
+                1: [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
+            }),
+        ),
     },
 };
