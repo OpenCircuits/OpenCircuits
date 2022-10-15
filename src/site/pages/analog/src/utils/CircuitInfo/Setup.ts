@@ -15,7 +15,7 @@ import {GetAnalogCircuitInfoHelpers} from "./AnalogCircuitInfoHelpers";
 import {CreateInfo}                  from "./CreateInfo";
 
 
-export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, ngSpiceLib: NGSpiceLib,
+export function Setup(store: AppStore, ngSpiceLib: NGSpiceLib,
                       defaultTool: DefaultTool, ...tools: Tool[]): [AnalogCircuitInfo, CircuitInfoHelpers] {
     const [info, reset] = CreateInfo(ngSpiceLib, defaultTool, ...tools);
 
@@ -38,5 +38,5 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, ngS
             info.renderer.render();
     });
 
-    return [info, GetAnalogCircuitInfoHelpers(store, canvas, info, reset)];
+    return [info, GetAnalogCircuitInfoHelpers(store, info, reset)];
 }

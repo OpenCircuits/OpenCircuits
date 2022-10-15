@@ -25,24 +25,6 @@ export function DigitalCreate(itemKind: DigitalComponent["kind"], pos: Vector, z
     return [component, ...ports] as [DigitalComponent, ...DigitalPort[]];
 }
 
-export function DigitalCreateN(info: DigitalCircuitInfo, itemKind: DigitalComponent["kind"],
-                               N: number, pos: Vector, zIndex: number) {
-    return new GroupAction(
-        new Array(N).fill(0).map((_) => {
-            // Create and place the component + ports
-            const [comp, ...ports] = DigitalCreate(itemKind, pos, zIndex);
-            const action = PlaceGroup(info.circuit, [comp, ...ports]);
-
-            // Calculate bounds of the placed group to offset the position for the next group
-            const bounds = info.viewManager.calcBoundsOf([comp, ...ports]);
-            pos = pos.sub(0, bounds.height);
-
-            return action;
-        }),
-        "Create Components",
-    );
-}
-
 export enum SmartPlaceOptions {
     Off     = 0,
     Inputs  = 1 << 0,

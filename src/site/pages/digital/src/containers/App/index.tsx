@@ -24,12 +24,12 @@ import {DigitalPaste} from "site/digital/utils/DigitalPaste";
 
 import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
 import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
+import {DigitalMainDesigner}    from "site/digital/containers/DigitalMainDesigner";
 import {ExprToCircuitPopup}     from "site/digital/containers/ExprToCircuitPopup";
 import {ICDesigner}             from "site/digital/containers/ICDesigner";
 import {ICViewer}               from "site/digital/containers/ICViewer";
 import {ImageExporterPreview}   from "site/digital/containers/ImageExporterPreview";
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
-import {MainDesigner}           from "site/digital/containers/MainDesigner";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 
 import {BusButtonModule}                from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
@@ -57,10 +57,9 @@ const exampleCircuits = exampleConfig.examples.map((example) => ({
 type Props = {
     info: DigitalCircuitInfo;
     helpers: CircuitInfoHelpers;
-    canvas: React.RefObject<HTMLCanvasElement>;
 }
 
-export const App = ({ info, helpers, canvas }: Props) => {
+export const App = ({ info, helpers }: Props) => {
     const { h } = useWindowSize();
 
     // Memoize for eslint(react/no-unstable-nested-components)
@@ -79,7 +78,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
                                info={info} />
 
                 <main>
-                    <MainDesigner info={info} canvas={canvas} />
+                    <DigitalMainDesigner info={info} />
 
                     <DigitalItemNav info={info} />
                     <HistoryBox info={info} />

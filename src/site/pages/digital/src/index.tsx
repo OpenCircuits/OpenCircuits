@@ -125,12 +125,9 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            // Setup
-            const canvas = createRef<HTMLCanvasElement>();
-
             // Setup circuit and get the CircuitInfo and helpers
             const [info, helpers] = Setup(
-                store, canvas,
+                store,
                 new DefaultTool(
                     SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
@@ -158,7 +155,7 @@ async function Init(): Promise<void> {
             ReactDOM.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        <App info={info} helpers={helpers} canvas={canvas} />
+                        <App info={info} helpers={helpers} />
                     </Provider>
                 </React.StrictMode>,
                 document.getElementById("root")
