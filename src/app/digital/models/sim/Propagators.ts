@@ -35,6 +35,18 @@ const InputOutputPropagator = (propagator: (inputs: Signal[]) => Signal[]): Prop
     }
 );
 
+const Placeholder = (propagator: (inputs: Signal[]) => Signal[]): Propagator<DigitalComponent, unknown> => (
+    ({ signals }) => {
+        const outputs = propagator(signals[DigitalPortGroup.Input]);
+        return {
+            // Insert the new outputs into the `Output` group index
+            nextSignals: [
+                outputs,
+            ],
+        };
+    }
+);
+
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
 
@@ -57,6 +69,8 @@ export const AllPropagators: PropagatorRecord = {
     "LED": ({ signals }) => ({ nextSignals: signals }),
 
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+
+    "TFlipFlop": Placeholder((inputs) => [inputs.reduce(AND)]),
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {
