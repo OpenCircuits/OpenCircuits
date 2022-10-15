@@ -8,18 +8,46 @@ import {V, Vector} from "Vector";
 
 import {CalculateMidpoint} from "math/MathUtils";
 
-import {Event} from "./Events";
-import {Key}   from "./Key";
+import {Key}        from "./Key";
+import {Observable} from "./Observable";
 
 
-export type Listener = (event: Event) => void;
+export type MouseInputEvent = {
+    type: "click" | "dblclick" | "mousedown" | "mousedrag" | "mouseup";
+    button: number;
+}
+export type KeyboardInputEvent = {
+    type: "keydown" | "keyup";
+    key: Key;
+}
+export type ZoomInputEvent = {
+    type: "zoom";
+    factor: number;
+    pos: Vector;
+}
+export type CopyPasteInputEvent = {
+    type: "paste" | "copy" | "cut";
+    ev: ClipboardEvent;
+}
+export type OtherInputEvent = {
+    type: "mouseenter" | "mousemove" | "mouseleave" | "contextmenu" | "unknown";
+}
+
+export type InputManagerEvent =
+    MouseInputEvent | KeyboardInputEvent | ZoomInputEvent | CopyPasteInputEvent | OtherInputEvent;
+export type InputManagerEventType = InputManagerEvent["type"];
+
 
 /**
  * Class to handle user input, and trigger appropriate event listeners.
  */
-export class Input {
+export class InputManager extends Observable<InputManagerEvent> {
+    /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
+    private readonly dragTime: number;
+
     /** The canvas the user is performing inputs on. */
-    private readonly canvas: HTMLCanvasElement;
+    private canvas?: HTMLCanvasElement;
+
     /** A vector representing the previous position of the mouse. */
     private prevMousePos: Vector;
     /** A vector representing the current position of the mouse. */
@@ -40,35 +68,46 @@ export class Input {
     /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device). */
     private touchCount: number;
 
-    /** Stores the Listeners for events that may be triggered by user input. */
-    private readonly listeners: Listener[];
     /** Map with keycodes as keys and booleans representing whether that key is held as values. */
     private keysDown: Map<Key, boolean>;
-
-    /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
-    private readonly dragTime: number;
-
-    /** If true, "blocks" Input, stopping listeners from triggering events. */
-    private blocked: boolean;
 
     /**
      * Initializes Input with given canvas and dragTime.
      *
-     * @param canvas   The canvas input is being applied to.
      * @param dragTime The minimum length of time a mousedown must last to be considered a drag rather than a click.
      */
-    public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
-        this.canvas = canvas;
+    public constructor(dragTime: number = DRAG_TIME) {
+        super();
         this.dragTime = dragTime;
-        this.blocked = false;
-        this.listeners = [];
-
         this.reset();
+    }
 
-        this.hookupKeyboardEvents();
-        this.hookupMouseEvents();
-        this.hookupTouchEvents();
-        this.setupHammer();
+    /**
+     * Set ups event listeners on the given canvas and returns a tear down callback.
+     *
+     * @param canvas The canvas to setup on.
+     * @returns        A callback that tears down the setup event listeners.
+     * @throws If the canvas was already setup and not torn down.
+     */
+    public setupOn(canvas: HTMLCanvasElement): () => void {
+        if (this.canvas)
+            throw new Error("Attempted to setup Input when previously setup! This is undefined behaviour!");
+
+        this.canvas = canvas;
+
+        const tearDownKeyboardEvents = this.hookupKeyboardEvents();
+        const tearDownMouseEvents    = this.hookupMouseEvents(canvas);
+        const tearDownTouchEvents    = this.hookupTouchEvents(canvas);
+        const tearDownHammer         = this.setupHammer(canvas);
+
+        return () => {
+            tearDownHammer();
+            tearDownTouchEvents();
+            tearDownMouseEvents();
+            tearDownKeyboardEvents();
+
+            this.canvas = undefined;
+        }
     }
 
     /**
@@ -101,10 +140,15 @@ export class Input {
 
     /**
      * Sets up Listeners for all keyboard Events.
+     *
+     * @returns A callback to tear down these event listeners.
+     * @throws If canvas is undefined.
      */
-    private hookupKeyboardEvents(): void {
-        // Keyboard events
-        window.addEventListener("keydown", (e) => {
+    private hookupKeyboardEvents(): () => void {
+        if (!this.canvas)
+            throw new Error("Input: Attempted to hookup keyboard events before a canvas was set!");
+
+        const onKeyDown = (e: KeyboardEvent) => {
             // Check for "Alt" to fix issue #943
             if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) {
                 this.onKeyDown(e.key as Key);
@@ -112,8 +156,8 @@ export class Input {
                 if (this.isPreventedCombination(e.key as Key))
                     e.preventDefault();
             }
-        }, false);
-        window.addEventListener("keyup",   (e) => {
+        }
+        const onKeyUp = (e: KeyboardEvent) => {
             // Check for "Alt" to fix issue #943
             if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
                 this.onKeyUp(e.key as Key);
@@ -126,106 +170,172 @@ export class Input {
                     .map(([k]) => k)
                     .forEach((k) => this.onKeyUp(k));
             }
-        }, false);
+        }
+        const onBlur = () => this.onBlur();
 
-        window.addEventListener("blur", (_) => this.onBlur());
+        const onPaste = (ev: ClipboardEvent) => this.publish({ type: "paste", ev });
+        const onCopy  = (ev: ClipboardEvent) => this.publish({ type: "copy",  ev });
+        const onCut   = (ev: ClipboardEvent) => this.publish({ type: "cut",   ev });
 
-        window.addEventListener("paste", (ev: ClipboardEvent) => this.callListeners({ type: "paste", ev }));
-        window.addEventListener("copy",  (ev: ClipboardEvent) => this.callListeners({ type: "copy",  ev }));
-        window.addEventListener("cut",   (ev: ClipboardEvent) => this.callListeners({ type: "cut",   ev }));
+
+        window.addEventListener("keydown", onKeyDown, false);
+        window.addEventListener("keyup",   onKeyUp,   false);
+        window.addEventListener("blur",    onBlur);
+        window.addEventListener("paste",   onPaste);
+        window.addEventListener("copy",    onCopy);
+        window.addEventListener("cut",     onCut);
+
+        return () => {
+            window.removeEventListener("cut",     onCut);
+            window.removeEventListener("copy",    onCopy);
+            window.removeEventListener("paste",   onPaste);
+            window.removeEventListener("blur",    onBlur);
+            window.removeEventListener("keyup",   onKeyUp,   false);
+            window.removeEventListener("keydown", onKeyDown, false);
+        }
     }
 
     /**
      * Sets up Listeners for mouse Events.
+     *
+     * @param canvas The canvas to attach the event listeners to.
+     * @returns        A callback to tear down these event listeners.
      */
-    private hookupMouseEvents(): void {
-        // Mouse events
-        this.canvas.addEventListener("click",    (e) => this.onClick(V(e.clientX, e.clientY), e.button), false);
-        this.canvas.addEventListener("dblclick", (e) => this.onDoubleClick(e.button), false);
-        this.canvas.addEventListener("wheel",    (e) => this.onScroll(e.deltaY), false);
-
-        this.canvas.addEventListener("mousedown", (e) => {
+    private hookupMouseEvents(canvas: HTMLCanvasElement): () => void {
+        const onMouseDown = (e: MouseEvent) => {
             this.onMouseDown(V(e.clientX, e.clientY), e.button);
 
             // Fixes issue #777, stops Firefox from scrolling and allows panning
             if (e.button === MIDDLE_MOUSE_BUTTON)
                 e.preventDefault();
-        }, false);
+        };
 
-        this.canvas.addEventListener("mouseup",    (e) => this.onMouseUp(e.button), false);
-        this.canvas.addEventListener("mousemove",  (e) => this.onMouseMove(V(e.clientX, e.clientY)), false);
-        this.canvas.addEventListener("mouseenter", (_) => this.onMouseEnter(), false);
-        this.canvas.addEventListener("mouseleave", (_) => this.onMouseLeave(), false);
+        const onClick      = (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button);
+        const onDblClick   = (e: MouseEvent) => this.onDoubleClick(e.button);
+        const onMouseUp    = (e: MouseEvent) => this.onMouseUp(e.button);
+        const onMouseMove  = (e: MouseEvent) => this.onMouseMove(V(e.clientX, e.clientY));
+        const onMouseEnter = (_: MouseEvent) => this.onMouseEnter();
+        const onMouseLeave = (_: MouseEvent) => this.onMouseLeave();
+        const onWheel      = (e: WheelEvent) => this.onScroll(e.deltaY);
 
-        this.canvas.addEventListener("contextmenu", (e) => {
+        const onContextMenu = (e: MouseEvent) => {
             e.preventDefault();
-            this.callListeners({ type: "contextmenu" });
-        });
+            this.publish({ type: "contextmenu" });
+        }
+
+        // Mouse events
+        canvas.addEventListener("click",       onClick,      false);
+        canvas.addEventListener("dblclick",    onDblClick,   false);
+        canvas.addEventListener("wheel",       onWheel,      false);
+        canvas.addEventListener("mousedown",   onMouseDown,  false);
+        canvas.addEventListener("mouseup",     onMouseUp,    false);
+        canvas.addEventListener("mousemove",   onMouseMove,  false);
+        canvas.addEventListener("mouseenter",  onMouseEnter, false);
+        canvas.addEventListener("mouseleave",  onMouseLeave, false);
+        canvas.addEventListener("contextmenu", onContextMenu);
+
+        return () => {
+            canvas.removeEventListener("contextmenu", onContextMenu);
+            canvas.removeEventListener("mouseleave",  onMouseLeave, false);
+            canvas.removeEventListener("mouseenter",  onMouseEnter, false);
+            canvas.removeEventListener("mousemove",   onMouseMove,  false);
+            canvas.removeEventListener("mouseup",     onMouseUp,    false);
+            canvas.removeEventListener("mousedown",   onMouseDown,  false);
+            canvas.removeEventListener("wheel",       onWheel,      false);
+            canvas.removeEventListener("dblclick",    onDblClick,   false);
+            canvas.removeEventListener("click",       onClick,      false);
+        }
     }
 
     /**
      * Sets up Listeners for touch events.
+     *
+     * @param canvas The canvas to attach the event listeners to.
+     * @returns        A callback to tear down these event listeners.
      */
-    private hookupTouchEvents(): void {
+    private hookupTouchEvents(canvas: HTMLCanvasElement): () => void {
         const getTouchPositions = (touches: TouchList): Vector[] => [...touches].map((t) => V(t.clientX, t.clientY));
 
-        // Touch screen events
-        this.canvas.addEventListener("touchstart", (e) => {
+        const onTouchStart = (e: TouchEvent) => {
             this.onTouchStart(getTouchPositions(e.touches));
             e.preventDefault();
-        }, false);
-
-        this.canvas.addEventListener("touchmove", (e) => {
+        }
+        const onTouchMove = (e: TouchEvent) => {
             this.onTouchMove(getTouchPositions(e.touches));
             e.preventDefault();
-        }, false);
-
-        this.canvas.addEventListener("touchend", (e) => {
+        }
+        const onTouchEnd = (e: TouchEvent) => {
             this.onTouchEnd();
             e.preventDefault();
-        }, false);
+        }
+
+        canvas.addEventListener("touchstart", onTouchStart, false);
+        canvas.addEventListener("touchmove",  onTouchMove,  false);
+        canvas.addEventListener("touchend",   onTouchEnd,   false);
+
+        return () => {
+            canvas.removeEventListener("touchend",   onTouchEnd,   false);
+            canvas.removeEventListener("touchmove",  onTouchMove,  false);
+            canvas.removeEventListener("touchstart", onTouchStart, false);
+        }
     }
 
     /**
      * Sets up touchManagers for pinching and tapping.
+     *
+     * @param canvas The canvas to attach the event listeners to.
+     * @returns        A callback to tear down these event listeners.
      */
-    private setupHammer(): void {
-        // Pinch to zoom
-        const touchManager = new Hammer.Manager(this.canvas, { recognizers: [], domEvents: true });
+    private setupHammer(canvas: HTMLCanvasElement): () => void {
         let lastScale = 1;
 
-        touchManager.add(new Hammer.Pinch());
-
-        touchManager.on("pinch", (e) => {
-            this.callListeners({
+        // Used for pinch to zoom
+        const pinch = new Hammer.Pinch();
+        const onPinch = (e: HammerInput) => {
+            this.publish({
                 type:   "zoom",
                 factor: lastScale/e.scale,
                 pos:    this.mousePos,
             });
             lastScale = e.scale;
-        });
-
-        touchManager.on("pinchend", (_) => {
+        }
+        const onPinchEnd = (_: HammerInput) => {
             lastScale = 1;
-        });
+        }
 
-        touchManager.add(new Hammer.Tap());
-        touchManager.on("tap", (e) => {
+        const tap = new Hammer.Tap();
+        const onTap = (e: HammerInput) => {
             if (e.pointerType === "mouse")
                 return;
 
             this.onClick(V(e.center.x, e.center.y));
-        });
+        }
 
-        // This function is used to prevent default zoom in gesture for all browsers
-        //  Fixes #745
-        document.addEventListener("wheel",
-            (e) => {
-                if (e.ctrlKey)
-                    e.preventDefault();
-            },
-            { passive: false }
-        );
+        // Used to prevent default zoom in gesture for all browsers. Fixes #745.
+        const onWheel = (e: WheelEvent) => {
+            if (e.ctrlKey)
+                e.preventDefault();
+        }
+
+
+        const touchManager = new Hammer.Manager(canvas, { recognizers: [], domEvents: true });
+        touchManager.add(pinch);
+        touchManager.on("pinch", onPinch);
+        touchManager.on("pinchend", onPinchEnd);
+        touchManager.add(tap);
+        touchManager.on("tap", onTap);
+        document.addEventListener("wheel", onWheel, { passive: false });
+
+        return () => {
+            document.removeEventListener("wheel", onWheel);
+
+            touchManager.off("tap", onTap);
+            touchManager.remove(tap);
+            touchManager.off("pinchend", onPinchEnd);
+            touchManager.off("pinch", onPinch);
+            touchManager.remove(pinch);
+            touchManager.destroy();
+        }
     }
 
     /**
@@ -245,38 +355,7 @@ export class Input {
 
         this.touchCount = 0;
 
-        this.keysDown  = new Map();
-    }
-
-    /**
-     * Sets blocked to true, prevents Listeners from triggering Events.
-     */
-    public block(): void {
-        this.blocked = true;
-    }
-    /**
-     * Sets blocked to false, allows Listeners to trigger Events again.
-     */
-    public unblock(): void {
-        this.blocked = false;
-    }
-
-    /**
-     * Adds a Listener to the list of Listeners Events are checked against.
-     *
-     * @param listener The Listener being added.
-     */
-    public addListener(listener: Listener): void {
-        this.listeners.push(listener);
-    }
-
-    /**
-     * Removes a Listener from the list of Listeners Events are checked against.
-     *
-     * @param listener The Listener being removed.
-     */
-    public removeListener(listener: Listener): void {
-        this.listeners.splice(this.listeners.indexOf(listener), 1);
+        this.keysDown = new Map();
     }
 
     /**
@@ -377,7 +456,7 @@ export class Input {
         this.keysDown.set(key.toLowerCase() as Key, true); // Lower case so that letters are the same despite SHIFT
 
         // call each listener
-        this.callListeners({ type: "keydown", key });
+        this.publish({ type: "keydown", key });
     }
     /**
      * Sets the given key as up, and calls each Listener on Event "keyup", key.
@@ -388,7 +467,7 @@ export class Input {
         this.keysDown.set(key.toLowerCase() as Key, false); // Lower case so that letters are the same despite SHIFT
 
         // call each listener
-        this.callListeners({ type: "keyup", key });
+        this.publish({ type: "keyup", key });
     }
 
     /**
@@ -405,7 +484,7 @@ export class Input {
         }
 
         // call each listener
-        this.callListeners({ type: "click", button });
+        this.publish({ type: "click", button });
     }
     /**
      * Calls each Listener on Event "dbclick", button.
@@ -415,7 +494,7 @@ export class Input {
     protected onDoubleClick(button: number): void {
 
         // call each listener
-        this.callListeners({ type: "dblclick", button });
+        this.publish({ type: "dblclick", button });
     }
 
     /**
@@ -430,7 +509,7 @@ export class Input {
         if (delta >= 0)
             zoomFactor = 1 / zoomFactor;
 
-        this.callListeners({
+        this.publish({
             type:   "zoom",
             factor: zoomFactor,
             pos:    this.mousePos,
@@ -443,8 +522,12 @@ export class Input {
      *
      * @param pos    Represents the position of the mouse being pressed.
      * @param button Represents the mouse button being pressed (0 by default).
+     * @throws If canvas is undefined.
      */
     protected onMouseDown(pos: Vector, button = 0): void {
+        if (!this.canvas)
+            throw new Error("Input: Attempted to call onMouseDown before a canvas was set!");
+
         const rect = this.canvas.getBoundingClientRect();
 
         this.touchCount++;
@@ -461,7 +544,7 @@ export class Input {
         this.mousePos = V(this.mouseDownPos);
         this.mouseDownButton = button;
 
-        this.callListeners({ type: "mousedown", button });
+        this.publish({ type: "mousedown", button });
     }
     /**
      * Triggered on mouse movement, calculates new mouse position,
@@ -469,8 +552,12 @@ export class Input {
      * on Event "mousedrag", [current mouse button down] if the user is clicking.
      *
      * @param pos Represents the new absolute position of the mouse.
+     * @throws If canvas is undefined.
      */
     protected onMouseMove(pos: Vector): void {
+        if (!this.canvas)
+            throw new Error("Input: Attempted to call onMouseMove before a canvas was set!");
+
         const rect = this.canvas.getBoundingClientRect();
 
         // get raw and relative mouse positions
@@ -484,12 +571,12 @@ export class Input {
                            Date.now() - this.startTapTime > this.dragTime);
 
         if (this.isDragging) {
-            this.callListeners({
+            this.publish({
                 type:   "mousedrag",
                 button: this.mouseDownButton,
             });
         }
-        this.callListeners({ type: "mousemove" });
+        this.publish({ type: "mousemove" });
     }
     /**
      * Calls each Listener on Event "mouseup", button
@@ -502,14 +589,14 @@ export class Input {
         this.mouseDown = false;
         this.mouseDownButton = -1;
 
-        this.callListeners({ type: "mouseup", button });
+        this.publish({ type: "mouseup", button });
     }
 
     /**
      * Calls each Listener on Event "mouseenter".
      */
     protected onMouseEnter(): void {
-        this.callListeners({ type: "mouseenter" });
+        this.publish({ type: "mouseenter" });
     }
     /**
      * Calls each Listener on Event "mouseleave".
@@ -519,12 +606,12 @@ export class Input {
         this.touchCount = 0;
         this.mouseDown = false;
 
-        this.callListeners({ type: "mouseleave" });
+        this.publish({ type: "mouseleave" });
 
         // call mouse up as well so that
         //  up events get called when the
         //  mouse leaves
-        this.callListeners({
+        this.publish({
             type:   "mouseup",
             button: this.mouseDownButton,
         });
@@ -562,18 +649,5 @@ export class Input {
             if (down)
                 this.onKeyUp(key);
         });
-    }
-
-    /**
-     * Calls the Listeners in 'listeners' for Event 'event', if Input not blocked.
-     *
-     * @param event Event being given to the Listeners.
-     */
-    private callListeners(event: Event): void {
-        if (this.blocked)
-            return;
-
-        for (const listener of this.listeners)
-            listener(event);
     }
 }

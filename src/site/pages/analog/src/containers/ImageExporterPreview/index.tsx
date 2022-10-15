@@ -1,9 +1,7 @@
 import {useEffect, useLayoutEffect} from "react";
 
-import {Input} from "core/utils/Input";
-
-import {InteractionTool} from "core/tools/InteractionTool";
-import {PanTool}         from "core/tools/PanTool";
+import {DefaultTool} from "core/tools/DefaultTool";
+import {PanTool}     from "core/tools/PanTool";
 
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
@@ -22,7 +20,14 @@ type Props = ImageExporterPreviewProps & {
     mainInfo: AnalogCircuitInfo;
 }
 export const ImageExporterPreview = (() => {
-    const [info] = CreateInfo(undefined, new InteractionTool([FitToScreenHandler]), PanTool);
+    const [info] = CreateInfo(undefined, new DefaultTool(FitToScreenHandler), PanTool);
+
+    // Add input listener
+    info.input.subscribe((event) => {
+        const change = info.toolManager.onEvent(event, info);
+        if (change)
+            info.renderer.render();
+    });
 
     // eslint-disable-next-line react/display-name
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
@@ -48,18 +53,8 @@ export const ImageExporterPreview = (() => {
         useEffect(() => {
             if (!canvas.current)
                 throw new Error("ImageExporterPreview.useEffect failed: canvas.current is null");
-            // Create input w/ canvas
-            info.input = new Input(canvas.current);
-
             // Get render function
             const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
-
-            // Add input listener
-            info.input.addListener((event) => {
-                const change = info.toolManager.onEvent(event, info);
-                if (change)
-                    info.renderer.render();
-            });
 
             // Input should be blocked initially
             info.input.block();
@@ -69,6 +64,8 @@ export const ImageExporterPreview = (() => {
 
             info.renderer.setRenderFunction(renderFunc);
             info.renderer.render();
+
+            return info.input.setupOn(canvas.current);
         }, [canvas]); // Pass empty array so that this only runs once on mount
 
         // Happens when de/activated

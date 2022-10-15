@@ -31,5 +31,29 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, def
         }
     });
 
+    // Setup propagation
+    info.circuit.subscribe((ev) => {
+        if (ev.type === "obj") {
+            if (ev.op === "added")
+                info.sim.onAddObj(ev.obj);
+            else if (ev.op === "removed")
+                info.sim.onRemoveObj(ev.obj);
+            // @TODO: Maybe onEditObj?
+        }
+    });
+
+    // Setup input listener
+    info.input.subscribe((ev) => {
+        const change = info.toolManager.onEvent(ev, info);
+        if (change)
+            info.renderer.render();
+    });
+
+    // Add render callbacks and set render function
+    info.sim.subscribe((ev) => {
+        if (ev.type === "step") // Re-render when the propagation steps
+            info.renderer.render();
+    });
+
     return [info, GetDigitalCircuitInfoHelpers(store, canvas, info, reset)];
 }

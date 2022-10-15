@@ -9,7 +9,7 @@ import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
 import {Images} from "core/utils/Images";
 
-import {InteractionTool}  from "core/tools/InteractionTool";
+import {DefaultTool}      from "core/tools/DefaultTool";
 import {PanTool}          from "core/tools/PanTool";
 import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
@@ -74,7 +74,7 @@ async function Init(): Promise<void> {
             ngSpiceLib = await NGSpice();
             if (!ngSpiceLib)
                 throw new Error("Failed to load NGSpice WASM binary!");
-            ngSpiceLib.init();
+            ngSpiceLib.OC_init();
         }],
 
         [85, "Initializing redux", async () => {
@@ -145,14 +145,14 @@ async function Init(): Promise<void> {
             // Setup circuit and get the CircuitInfo and helpers
             const [info, helpers] = Setup(
                 store, canvas, ngSpiceLib,
-                new InteractionTool([
+                new DefaultTool(
                     SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-                    SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                    CleanUpHandler, CopyHandler, CursorHandler,
+                    SelectionHandler, SelectPathHandler,
+                    RedoHandler, UndoHandler, CleanUpHandler, CopyHandler, CursorHandler,
                     PasteHandler((data) => AnalogPaste(data, info, undefined)),
                     SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-                ]),
+                ),
                 PanTool, RotateTool, ResizeTool,
                 TranslateTool, WiringTool,
                 SplitWireTool, SelectionBoxTool

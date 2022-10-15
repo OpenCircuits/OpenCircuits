@@ -1,4 +1,3 @@
-import {AllComponentInfo} from "core/views/info";
 import {AllPortInfo}      from "core/views/portinfo";
 import {CalcPortConfigID} from "core/views/portinfo/utils";
 
@@ -27,7 +26,7 @@ export const PortCountModule = ({ info, labels }: Props) => {
         (c): c is AnyComponent => (
             (c.baseKind === "Component") &&
             // Only allow components that allow changes to their port config
-            (c.kind in AllComponentInfo && AllPortInfo[c.kind].AllowChanges)
+            (AllPortInfo[c.kind].AllowChanges)
         ),
         (c) => (() => {
             const info = AllPortInfo[c.kind];

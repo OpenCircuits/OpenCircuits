@@ -26,7 +26,7 @@ export const GenConfig = (groupInfo: Record<number, { amt: number, calcPos: Posi
 
     // Generate comma separated config ID
     const configID = (() => {
-        const g = new Array(Math.max(...groups));
+        const g = new Array(Math.max(...groups)+1).fill(0);
         groups.forEach((v) => (g[v] = groupInfo[v].amt));
         return g.join(",");
     })();

@@ -1,6 +1,11 @@
+import {Graph} from "math/Graph";
+
 import {AnyComponent, AnyNode, AnyObj, AnyPort, AnyWire} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
+
+import {GUID}   from "./GUID";
+import {ObjSet} from "./ObjSet";
 
 
 /**
@@ -74,4 +79,30 @@ export function GetAllPaths(
 
     // Get all distinct paths
     return [...new Set(wires.flatMap((w) => GetPath(circuit, w, full)))];
+}
+
+/**
+ * Helper function to create a directed graph from a given
+ *  collection of components.
+ *
+ * The Graph stores Nodes as their UUIDs and Edges by their UUID.
+ *
+ * @param groups            The SeparatedComponentCollection of components.
+ * @param groups.components The components from the ObjSet.
+ * @param groups.wires      The wires from the ObjSet.
+ * @param groups.ports      The ports from the ObjSet.
+ * @returns                   A graph corresponding to the given circuit.
+ */
+ export function CreateGraph({ components, ports, wires }: ObjSet): Graph<GUID, GUID> {
+    const graph = new Graph<GUID, GUID>();
+
+    // Create nodes which are all components and ports
+    components.forEach((c) => graph.createNode(c.id));
+    ports.forEach((p) => graph.createNode(p.id));
+
+    // Create edges which are the connections between ports and the connections from ports to their parents
+    ports.forEach((p) => graph.createEdge(p.parent, p.id, p.id));
+    wires.forEach((w) => graph.createEdge(w.p1, w.p2, w.id));
+
+    return graph;
 }

@@ -1,5 +1,5 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {EventHandler} from "../EventHandler";
 
@@ -7,7 +7,7 @@ import {EventHandler} from "../EventHandler";
 const FIT_PADDING_RATIO = 1.2;
 
 export const FitToScreenHandler: EventHandler = ({
-    conditions: (event: Event, {}: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, {}: CircuitInfo) =>
         (event.type === "keyup" && event.key === "f"),
 
     getResponse: ({ camera, circuit, history, selections }: CircuitInfo) => {

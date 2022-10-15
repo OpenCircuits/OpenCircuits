@@ -4,15 +4,17 @@ import path       from "node:path";
 import CopyDir from "../utils/copyDir.js";
 
 
+const pwd = path.resolve(process.cwd(), "scripts/ngspice");
+
 // Build docker image and NGSpice
 execSync("docker build -t ngspice:make .", {
-    cwd:   path.resolve(process.cwd(), "scripts/ngspice"),
+    cwd:   pwd,
     stdio: "inherit",
 });
 
 // Run container w/ image to output the files
-execSync("docker run --rm -v $(pwd):/mnt ngspice:make", {
-    cwd:   path.resolve(process.cwd(), "scripts/ngspice"),
+execSync(`docker run --rm -v ${pwd}:/mnt ngspice:make`, {
+    cwd:   pwd,
     stdio: "inherit",
 });
 

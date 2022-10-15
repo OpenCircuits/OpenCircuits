@@ -8,19 +8,19 @@
 
 
 extern "C" {
-    void init();
-    int set_data(char** data);
-    void run();
+    void OC_init();
+    int OC_set_data(char** data);
+    void OC_run();
 
-    char** get_plot_ids();
-    char* get_cur_plot();
+    char** OC_get_plot_ids();
+    char* OC_get_cur_plot();
 
-    char** get_vector_ids(char* plot);
-    int get_vector_len(char* id);
-    double* get_vector_data(char* id);
-    ngcomplex_t* get_vector_data_im(char* id);
+    char** OC_get_vector_ids(char* plot);
+    int OC_get_vector_len(char* id);
+    double* OC_get_vector_data(char* id);
+    ngcomplex_t* OC_get_vector_data_im(char* id);
 
-    void print_data();
+    void OC_print_data();
 }
 
 EMSCRIPTEN_KEEPALIVE
@@ -66,7 +66,7 @@ int OC_BGThreadRunning(bool running, int id, void* p) {
 
 
 EMSCRIPTEN_KEEPALIVE
-void init() {
+void OC_init() {
     ngSpice_Init(
         &OC_SendChar, &OC_SendStat, &OC_ControlledExit,
         &OC_SendData, &OC_SendInitData, &OC_BGThreadRunning,
@@ -75,54 +75,54 @@ void init() {
 }
 
 EMSCRIPTEN_KEEPALIVE
-int set_data(char** data) {
+int OC_set_data(char** data) {
     return ngSpice_Circ(data);
 }
 
 EMSCRIPTEN_KEEPALIVE
-void run() {
+void OC_run() {
     ngSpice_Command("run");
 }
 
 
 EMSCRIPTEN_KEEPALIVE
-char** get_plot_ids() {
+char** OC_get_plot_ids() {
     return ngSpice_AllPlots();
 }
 
 EMSCRIPTEN_KEEPALIVE
-char* get_cur_plot() {
+char* OC_get_cur_plot() {
     return ngSpice_CurPlot();
 }
 
 
 EMSCRIPTEN_KEEPALIVE
-char** get_vector_ids(char* plot) {
-    return ngSpice_AllVecs(get_cur_plot());
+char** OC_get_vector_ids(char* plot) {
+    return ngSpice_AllVecs(OC_get_cur_plot());
 }
 
 // Note, id is of the form: `PLOT.VECID`
 EMSCRIPTEN_KEEPALIVE
-int get_vector_len(char* id) {
+int OC_get_vector_len(char* id) {
     pvector_info vec_info = ngGet_Vec_Info(id);
     return vec_info->v_length;
 }
 
 EMSCRIPTEN_KEEPALIVE
-double* get_vector_data(char* id) {
+double* OC_get_vector_data(char* id) {
     pvector_info vec_info = ngGet_Vec_Info(id);
     return vec_info->v_realdata;
 }
 
 EMSCRIPTEN_KEEPALIVE
-ngcomplex_t* get_vector_data_im(char* id) {
+ngcomplex_t* OC_get_vector_data_im(char* id) {
     pvector_info vec_info = ngGet_Vec_Info(id);
     return vec_info->v_compdata;
 }
 
 
 EMSCRIPTEN_KEEPALIVE
-void print_data() {
+void OC_print_data() {
     char *current_plot = ngSpice_CurPlot ();
     printf ("Current plot is %s\n", current_plot);
     char **all_plots = ngSpice_AllPlots ();

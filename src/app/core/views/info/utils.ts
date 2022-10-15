@@ -1,25 +1,19 @@
 import {GUID}      from "core/utils/GUID";
 import {AngleInfo} from "core/utils/Units";
 
-import {AnyComponent, AnyPort, AnyWire} from "core/models/types";
+import {AnyPort, AnyWire} from "core/models/types";
 
-import {DefaultComponent} from "core/models/types/base/Component";
-import {DefaultPort}      from "core/models/types/base/Port";
-import {DefaultWire}      from "core/models/types/base/Wire";
+import {DefaultPort} from "core/models/types/base/Port";
+import {DefaultWire} from "core/models/types/base/Wire";
 
-import {ComponentInfo, PortInfo, WireInfo} from "./base";
+import {PortInfo, WireInfo} from "./base";
 
 
-export const GenComponentInfo = <C extends AnyComponent>(
-    kind: C["kind"]
-) => ({
-    Default:  (id: GUID) => ({ kind, ...DefaultComponent(id) }),
-    PropInfo: {
-        "x": { type: "float", label: "X Position", step: 1 },
-        "y": { type: "float", label: "Y Position", step: 1 },
-        ...AngleInfo("angle", "Angle", 0, "deg", 45),
-    } as ComponentInfo<C>["PropInfo"],
-});
+export const DefaultComponentPropInfo = {
+    "x": { type: "float", label: "X Position", step: 1 },
+    "y": { type: "float", label: "Y Position", step: 1 },
+    ...AngleInfo("angle", "Angle", 0, "deg", 45),
+} as const;
 
 export const GenWireInfo = <W extends AnyWire>(
     kind: W["kind"],

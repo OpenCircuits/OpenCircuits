@@ -9,7 +9,7 @@ import {AnyObj} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo} from "./BaseView";
+import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
 
 
 const LAYER_OFFSET = 100;
@@ -67,19 +67,29 @@ class DepthMap<T> {
     }
 }
 
+export type ViewFactory<
+    Obj extends AnyObj,
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> =
+    (info: Info, o: Obj) => BaseView<Obj, Info>;
 
-type ViewFactory<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> =
-    (c: Circuit, o: Obj) => BaseView<Obj, Circuit>;
+export type ViewRecord<
+    Obj extends AnyObj,
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> = {
+    [O in Obj as O["kind"]]: ViewFactory<O, Info>;
+}
 
-export type ViewRecord<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> =
-    Record<Obj["kind"], ViewFactory<Obj, Circuit>>;
+export class ViewManager<
+    Obj extends AnyObj,
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> {
+    protected readonly genView: ViewFactory<Obj, Info>;
 
-export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<AnyObj>> {
-    protected readonly genView: ViewFactory<Obj, Circuit>;
+    protected readonly info: Info;
+    protected readonly circuit: Info["circuit"];
 
-    protected readonly circuit: Circuit;
-
-    protected views: Map<GUID, BaseView<Obj, Circuit>>;
+    protected views: Map<GUID, BaseView<Obj, Info>>;
 
     // Array of depth maps, sorted by layer.
     //  So depthMap[1] is depth map at layer = 1
@@ -89,15 +99,16 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
     protected depthMap: Array<DepthMap<GUID>>;
 
     // It's assumed that this circuit has no objects yet
-    public constructor(circuit: Circuit, genView: ViewFactory<Obj, Circuit>) {
-        this.circuit = circuit;
+    public constructor(info: Info, genView: ViewFactory<Obj, Info>) {
+        this.info = info;
+        this.circuit = info.circuit;
         this.genView = genView;
         this.views = new Map();
         this.depthMap = [];
     }
 
     private addObj(m: Obj) {
-        const view = this.genView(this.circuit, m);
+        const view = this.genView(this.info, m);
 
         // Register to view map
         this.views.set(m.id, view);
@@ -113,7 +124,7 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
         this.depthMap[layer].addEntry(m.id, m.zIndex);
     }
 
-    public reset(c?: ReturnType<Circuit["getRawModel"]>): void {
+    public reset(c?: ReturnType<Info["circuit"]["getRawModel"]>): void {
         this.views.clear();
         this.depthMap = [];
 
@@ -126,8 +137,7 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
 
         // If added a port, let sibling ports know to update
         if (m.baseKind === "Port") {
-            const siblings = this.circuit.getPortsFor(this.circuit.getPortParent(m))
-                .filter((p) => ((p !== m) && this.views.has(p.id)));
+            const siblings = this.circuit.getSiblingPorts(m).filter((p) => this.views.has(p.id));
             siblings.forEach((p) => this.onEditObj(p as Obj, "portConfig", ""));
         }
     }
@@ -211,13 +221,13 @@ export class ViewManager<Obj extends AnyObj, Circuit extends CircuitController<A
     public findNearestObj(
         pos: Vector,
         filter = (_: AnyObj) => true,
-    ): undefined | { obj: AnyObj, bounds: "select" | "press" } {
+    ): undefined | AnyObj {
         // Loop through each view
         for (const view of this) {
             if (!filter(view.getObj()))
                 continue;
-            if (view.contains(pos, "select"))
-                return { obj: view.getObj(), bounds: "select" };
+            if (view.contains(pos))
+                return view.getObj();
         }
     }
 
