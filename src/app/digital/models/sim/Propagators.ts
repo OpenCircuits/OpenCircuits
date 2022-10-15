@@ -35,6 +35,9 @@ const InputOutputPropagator = (propagator: (inputs: Signal[]) => Signal[]): Prop
     }
 );
 
+const Noprop: Propagator<DigitalComponent, unknown> =
+    ({ signals, state }) => ({ nextSignals: signals, nextState: state });
+
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
 
@@ -54,7 +57,7 @@ export const AllPropagators: PropagatorRecord = {
     "Switch": ({ state = Signal.Off }) => ({ nextSignals: [[], [state as Signal], []], nextState: state }),
 
     // LEDs don't propagate a signal
-    "LED": ({ signals }) => ({ nextSignals: signals }),
+    "LED": Noprop,
 
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 };
