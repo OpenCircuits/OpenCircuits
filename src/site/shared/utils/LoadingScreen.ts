@@ -56,11 +56,11 @@ export async function LoadingScreen(
                     `Auto-generated error:\nError occurred while "${label}"\n${e.name}: ${e.message}\n` +
                         `${getStackTrace(e).join("\n")}\n`
                 );
+                issueURL.searchParams.set(
+                    "title",
+                    e.toString()
+                );
             }
-            issueURL.searchParams.set(
-                "title",
-                e.toString()
-            );
 
             // Set loading bar to red w/ Error and link to create issue for the error
             loadingBar.style.backgroundColor = "#f44336";

@@ -1,5 +1,7 @@
 import {ThunkAction} from "redux-thunk";
 
+import {isError} from "shared/utils/Errors";
+
 import {QueryUserCircuits} from "shared/api/Circuits";
 
 import {AuthState} from "shared/api/auth/AuthState";
@@ -27,7 +29,8 @@ export function LoadUserCircuits(): ThunkResult<Promise<boolean>> {
 
             return true; // success
         } catch (e) {
-            dispatch(_LoadCircuitsFinish([], e));
+            if (isError(e))
+                dispatch(_LoadCircuitsFinish([], e.message));
 
             return false; // failure
         }

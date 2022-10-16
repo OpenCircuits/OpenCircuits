@@ -5,6 +5,8 @@ import {FORMATS}                             from "digital/utils/ExpressionParse
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
+import {isError} from "shared/utils/Errors";
+
 import {useSharedDispatch,
         useSharedSelector} from "shared/utils/hooks/useShared";
 
@@ -120,7 +122,9 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                                 });
                                 reset();
                             } catch (e) {
-                                setErrorMessage(e.message);
+                                if (isError(e)) {
+                                    setErrorMessage(e.message);
+                                }
                                 console.error(e);
                             }
                         }}>

@@ -25,5 +25,8 @@
         "strict": false,
         "sourceMap": true,
         "strictNullChecks": true,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "useUnknownInCatchVariables": true,
     },
 }
