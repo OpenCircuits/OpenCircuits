@@ -22,7 +22,7 @@ import customDevServer from "./customDevServer.js";
  * @param mode    The webpack-mode: development or production.
  * @param open    Boolean indicating whether or not we should auto-open the browser on start.
  */
-export default async (dir: string, project: string, mode: "development" | "production", open: boolean) => {
+export default async (dir: string, project: string, mode: "development" | "production", open?: boolean) => {
     const publicRoot = "/";
     const rootPath = process.cwd();
     const dirPath = path.resolve(rootPath, dir);

@@ -18,6 +18,15 @@
         "inlineSourceMap": false,
         "inlineSources": true,
         "declaration": false,
-        "outDir": "../build/scripts"
+        "outDir": "../build/scripts",
+        "noImplicitOverride": true,
+        "alwaysStrict": true,
+        "strictNullChecks": true,
+        "useUnknownInCatchVariables": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "noImplicitThis": true,
+        // "noImplicitAny": true,
     },
 }

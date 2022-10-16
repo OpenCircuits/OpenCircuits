@@ -33,7 +33,7 @@ function StartServer() {
     });
 }
 
-function StartClient(dir: string, project: string, open: boolean) {
+function StartClient(dir: string, project: string, open?: boolean) {
     startWebpack(dir, project, "development", open);
 }
 

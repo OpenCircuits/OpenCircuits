@@ -31,9 +31,10 @@ export default async function choosePort(host: string, defaultPort: number) {
 
         return (changePort ? port : undefined);
     } catch (e) {
+        const errorMessage = (e instanceof Error && e.message) ? e.message : e;
         throw new Error(
             chalk.red(`Could not find an open port at ${chalk.bold(host)}.\n`) +
-            `Network error message: ${e.message || e}\n`
+            `Network error message: ${errorMessage}\n`
         );
     }
 }

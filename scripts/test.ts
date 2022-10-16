@@ -1,11 +1,12 @@
 /* eslint-disable jest/no-jest-import */
 import path from "node:path";
 
-import chalk   from "chalk";
-import jest    from "jest";
-import open    from "open";
-import prompts from "prompts";
-import yargs   from "yargs/yargs";
+import {AggregatedResult} from "@jest/test-result";
+import chalk              from "chalk";
+import jest               from "jest";
+import open               from "open";
+import prompts            from "prompts";
+import yargs              from "yargs/yargs";
 
 import getEnv     from "./utils/env.js";
 import getAliases from "./utils/getAliases.js";
@@ -74,10 +75,10 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
         watch: (dirs.length === 1 && !ci) && !coverage,
 
         collectCoverageFrom: "**/*.{js,ts,tsx}",
-        coverageDirectory:   undefined,
+        coverageDirectory:   undefined as undefined | string,
     };
 
-    const results = [];
+    const results: AggregatedResult[] = [];
 
     // Launch test in each directory
     for (const dir of dirs) {

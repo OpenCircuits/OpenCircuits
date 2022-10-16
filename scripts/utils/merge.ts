@@ -10,7 +10,7 @@
 export default function mergeDeep(...objects: Object[]): Object {
     const isObject = (
         (obj: unknown): obj is Object =>
-            (obj && typeof obj === "object")
+            (!!obj && typeof obj === "object")
     );
 
     return objects.reduce((prev, obj) => {

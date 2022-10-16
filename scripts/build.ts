@@ -21,7 +21,7 @@ const DIRS = getDirs(true, false, false);
 const DIR_MAP = Object.fromEntries(DIRS.map((d) => [d.value, d]));
 
 
-function BuildServer(prod: boolean) {
+function BuildServer(prod?: boolean) {
     return new Promise<void>((resolve, _) => {
         // GCP requires raw go files, so no need to build server
         if (prod) {

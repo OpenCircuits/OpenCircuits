@@ -11,11 +11,11 @@ import open  from "open";
 // https://github.com/sindresorhus/open#app
 const OSX_CHROME = "google chrome";
 
-const Actions = Object.freeze({
-    NONE:    0,
-    BROWSER: 1,
-    SCRIPT:  2,
-});
+const enum Actions {
+    NONE    = 0,
+    BROWSER = 1,
+    SCRIPT  = 2,
+}
 
 function getBrowserEnv() {
     // Attempt to honor this environment variable.
@@ -25,7 +25,7 @@ function getBrowserEnv() {
     const args = process.env.BROWSER_ARGS
         ? process.env.BROWSER_ARGS.split(" ")
         : [];
-    let action;
+    let action: Actions;
     if (!value) {
       // Default.
         action = Actions.BROWSER;
@@ -39,7 +39,7 @@ function getBrowserEnv() {
     return { action, value, args };
 }
 
-function executeNodeScript(scriptPath, url) {
+function executeNodeScript(scriptPath: string, url: string) {
     const extraArgs = process.argv.slice(2);
     const child = spawn(process.execPath, [scriptPath, ...extraArgs, url], {
         stdio: "inherit",
@@ -147,7 +147,7 @@ function openBrowser(url: string) {
             // Special case: BROWSER="none" will prevent opening completely.
             return false;
         case Actions.SCRIPT:
-            return executeNodeScript(value, url);
+            return executeNodeScript(value!, url);
         case Actions.BROWSER:
             return startBrowserProcess(value, url, args);
         default:
