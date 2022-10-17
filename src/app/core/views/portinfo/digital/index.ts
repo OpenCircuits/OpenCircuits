@@ -71,10 +71,10 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
 
         Positions: {
             "1,2,1": {
-                "0:0": { origin: V(0, 0), target: V(1, 1), dir: V(-1, 0) },
-                "1:0": { origin: V(0, 1), target: V(1, 0), dir: V(+1, 0) },
-                "1:1": { origin: V(1, 0), target: V(0, 1), dir: V(-1, 0) },
-                "2:0": { origin: V(1, 1), target: V(0, 0), dir: V(+1, 0) },
+                "0:0": { origin: V(-0.5, 0.5), target: V(-1, 0.5), dir: V(-1, 0) }, // T
+                "1:0": { origin: V(0.5, 0.5), target: V(1, 0.5), dir: V(+1, 0) }, // Q
+                "1:1": { origin: V(0.5, -0.5), target: V(1, -0.5), dir: V(+1, 0) }, // !Q
+                "2:0": { origin: V(-0.5, -0.5), target: V(-1, -0.5), dir: V(-1, 0) }, // CLK
             },
         },
     },
