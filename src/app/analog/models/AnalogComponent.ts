@@ -30,7 +30,6 @@ export abstract class AnalogComponent extends Component {
         super(size, initialProps);
 
         this.ports = new PortSet<AnalogPort>(this, portCount, portPositioner, AnalogPort);
-        this.props = initialProps;
     }
 
     public setDesigner(designer?: AnalogCircuitDesigner): void {

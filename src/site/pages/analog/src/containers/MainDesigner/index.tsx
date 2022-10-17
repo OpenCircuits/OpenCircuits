@@ -1,4 +1,3 @@
-import {CreateGroupPlaceAction}    from "core/actions/addition/PlaceAction";
 import {useLayoutEffect, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
@@ -8,7 +7,7 @@ import {V} from "Vector";
 import {Cursor} from "core/utils/CircuitInfo";
 import {Input}  from "core/utils/Input";
 
-
+import {PlaceGroup}  from "core/actions/units/Place";
 import {DeselectAll} from "core/actions/units/Select";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -97,7 +96,7 @@ export const MainDesigner = ({ info, canvas }: Props) => {
                 pos = info.camera.getWorldPos(pos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
                 info.history.add(
-                    CreateGroupPlaceAction(info.designer, AnalogCreateN(pos, itemId, info.designer, num))
+                    PlaceGroup(info.designer, AnalogCreateN(pos, itemId, info.designer, num))
                 );
                 info.renderer.render();
             }}>

@@ -24,9 +24,9 @@ const [Info, InitialProps] = GenPropInfo({
         "size": {
             type:    "veci",
             label:   "Display Size",
-            initial: V(800, 400),
-            min:     V(400, 200),
-            step:    V(100, 100),
+            initial: V(16, 8),
+            min:     V(8, 4),
+            step:    V(2, 2),
         },
     },
 });

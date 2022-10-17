@@ -76,7 +76,7 @@ export class VoltageSource extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(2),
-            V(50, 50), new TopBottomPositioner(),
+            V(1, 1), new TopBottomPositioner(),
             InitialProps,
         );
     }

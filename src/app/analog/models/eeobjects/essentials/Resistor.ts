@@ -24,7 +24,7 @@ export class Resistor extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(2),
-            V(60, 50), new LeftRightPositioner(),
+            V(1.2, 1), new LeftRightPositioner(),
             InitialProps,
         );
     }

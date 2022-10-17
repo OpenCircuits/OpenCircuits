@@ -49,7 +49,7 @@ export const FrequencyInfo = (key: string, label: string, initial = 0, initialU:
 );
 
 export const AngleInfo = (key: string, label: string, initial = 0,
-                          initialU: "rad" | "deg" = "deg", step = 1) => ({
+                          initialU: "rad" | "deg" = "deg", step = 1): Record<string, PropInfoWithInitial> => ({
     [key]: {
         type: "float" as const,
         label, initial, step,

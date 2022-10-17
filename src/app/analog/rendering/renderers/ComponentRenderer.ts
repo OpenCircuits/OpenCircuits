@@ -74,7 +74,7 @@ export const ComponentRenderer = (() => {
             //  TODO: figure out how to get around this
             if (object instanceof Label) {
                 // Calculate size
-                const width = renderer.getTextWidth(object.getName()) + 20;
+                const width = renderer.getTextWidth(object.getName()) + 0.4;
                 object.setSize(V(width, size.y));
 
                 drawBox(renderer, object.getTransform(), selected, object.getProp("color") as string);

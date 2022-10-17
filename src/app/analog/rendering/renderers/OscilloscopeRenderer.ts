@@ -12,6 +12,7 @@ import {Margin, Rect}         from "math/Rect";
 import {Renderer} from "core/rendering/Renderer";
 import {Style}    from "core/rendering/Style";
 
+import {Line}      from "core/rendering/shapes/Line";
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -19,40 +20,42 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {Oscilloscope} from "analog/models/eeobjects";
 
 
-const GRAPH_LINE_WIDTH = 1;
+const GRAPH_LINE_WIDTH = 0.02;
+const AXIS_LINE_WIDTH = 0.02;
+const GRID_LINE_WIDTH = 0.01;
 
-const DISPLAY_PADDING = Margin(15, 15);
+const DISPLAY_PADDING = Margin(0.3, 0.3);
 
-const AXIS_PTS = 5 / 400; // 5 pts / 400 units of size
-const AXIS_MARK_FONT_SIZE = 12;
-const AXIS_LABEL_FONT_SIZE = 15;
+const AXIS_PTS = 5 / 8; // 5 pts / 8 units of size
+const AXIS_MARK_FONT_SIZE = 0.25;
+const AXIS_LABEL_FONT_SIZE = 0.3;
 
-const AXIS_MARK_LENGTH = 8;
+const AXIS_MARK_LENGTH = 0.16;
 
 const AXIS_MARK_FONT = `lighter ${AXIS_MARK_FONT_SIZE}px arial`;
 const AXIS_LABEL_FONT = `lighter ${AXIS_LABEL_FONT_SIZE}px arial`;
-const AXIS_TEXT_OFFSET = AXIS_MARK_LENGTH/2 + 4;
+const AXIS_TEXT_OFFSET = AXIS_MARK_LENGTH/2 + 0.08;
 
 const AXES_INFO_MARGIN = Margin(
-    12 + AXIS_LABEL_FONT_SIZE*2 + AXIS_MARK_FONT_SIZE,
+    0.24 + AXIS_LABEL_FONT_SIZE*2 + AXIS_MARK_FONT_SIZE,
     0,
-    12 + AXIS_LABEL_FONT_SIZE + AXIS_MARK_FONT_SIZE,
+    0.24 + AXIS_LABEL_FONT_SIZE + AXIS_MARK_FONT_SIZE,
     0,
 );
 const AXES_MARGIN = Margin(
-    AXIS_MARK_LENGTH/2 + 4,
-    10,
-    AXIS_MARK_LENGTH/2 + 4,
-    10,
+    AXIS_MARK_LENGTH/2 + 0.08,
+    0.2,
+    AXIS_MARK_LENGTH/2 + 0.08,
+    0.2,
 );
 
 
 const GRID_PTS = 2; // (N+1) grid points / 1 axis pt
 
-const LEGEND_AREA = 100;
-const LEGEND_PADDING = Margin(10, 10, 0, 0);
-const LEGEND_TITLE_FONT_SIZE = 15;
-const LEGEND_ENTRY_FONT_SIZE = 10;
+const LEGEND_AREA = 2;
+const LEGEND_PADDING = Margin(0.2, 0.2, 0, 0);
+const LEGEND_TITLE_FONT_SIZE = 0.3;
+const LEGEND_ENTRY_FONT_SIZE = 0.2;
 const LEGEND_TITLE_FONT = `normal ${LEGEND_TITLE_FONT_SIZE}px arial`;
 const LEGEND_ENTRY_FONT = `lighter ${LEGEND_ENTRY_FONT_SIZE}px arial`;
 
@@ -118,7 +121,7 @@ export const OscilloscopeRenderer = ({
         //   axesGridRect: => Area just for axes + grid + plot
         //   plotRect    : => Area just for the plot
         //   legendRect  : => Area for the legend
-        const baseRect = new Rect(V(0, 0), size, false);
+        const baseRect = new Rect(V(0, 0), size);
         const innerRect = baseRect.subMargin(DISPLAY_PADDING);
         const axesInfoRect = innerRect.subMargin((showLegend ? { right: LEGEND_AREA } : {}));
         const axesGridRect = axesInfoRect.subMargin((showAxes ? AXES_INFO_MARGIN : {}));
@@ -127,12 +130,12 @@ export const OscilloscopeRenderer = ({
 
         // Debug drawing
         if (info.debugOptions.debugSelectionBounds) {
-            renderer.draw(toShape(baseRect), new Style("#999999", "#000000", 1));
-            renderer.draw(toShape(innerRect), new Style("#ff0000", "#000000", 1));
-            renderer.draw(toShape(axesInfoRect), new Style("#00ff00", "#000000", 1));
-            renderer.draw(toShape(axesGridRect), new Style("#0000ff", "#000000", 1));
-            renderer.draw(toShape(plotRect), new Style("#ff00ff", "#000000", 1));
-            renderer.draw(toShape(legendRect), new Style("#00ffff", "#000000", 1));
+            renderer.draw(toShape(baseRect), new Style("#999999", "#000000", 0.02));
+            renderer.draw(toShape(innerRect), new Style("#ff0000", "#000000", 0.02));
+            renderer.draw(toShape(axesInfoRect), new Style("#00ff00", "#000000", 0.02));
+            renderer.draw(toShape(axesGridRect), new Style("#0000ff", "#000000", 0.02));
+            renderer.draw(toShape(plotRect), new Style("#ff00ff", "#000000", 0.02));
+            renderer.draw(toShape(legendRect), new Style("#00ffff", "#000000", 0.02));
         }
 
         if (showGrid)
@@ -148,8 +151,8 @@ export const OscilloscopeRenderer = ({
 
         function getMarks(bounds: Rect) {
             const num = V(
-                Math.max(5, Math.ceil(AXIS_PTS * size.x)),
-                Math.max(5, Math.ceil(AXIS_PTS * size.y))
+                Math.max(0.1, Math.ceil(AXIS_PTS * size.x)),
+                Math.max(0.1, Math.ceil(AXIS_PTS * size.y))
             );
             return {
                 xs:    linspace(bounds.left, bounds.right, num.x),
@@ -162,7 +165,7 @@ export const OscilloscopeRenderer = ({
         function drawGrid(bounds: Rect, innerBounds: Rect) {
             renderer.save();
             renderer.setPathStyle({ lineCap: "square" });
-            renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, 0.5), 0.5);
+            renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, GRID_LINE_WIDTH), 0.5);
 
             const marks = getMarks(innerBounds);
 
@@ -183,7 +186,7 @@ export const OscilloscopeRenderer = ({
         function drawAxes(outerBounds: Rect, bounds: Rect, innerBounds: Rect) {
             renderer.save();
             renderer.setPathStyle({ lineCap: "square" });
-            renderer.setStyle(new Style(undefined, "#000000", 1));
+            renderer.setStyle(new Style(undefined, "#000000", AXIS_LINE_WIDTH));
 
             // Draw each axis
             renderer.strokePath([bounds.topLeft, bounds.bottomLeft, bounds.bottomRight]);
@@ -196,7 +199,7 @@ export const OscilloscopeRenderer = ({
 
             // Draw axis mark text
             marks.xVals.forEach((text, i) => {
-                const pos = V(marks.xs[i], bounds.bottom + AXIS_TEXT_OFFSET);
+                const pos = V(marks.xs[i], bounds.bottom - AXIS_TEXT_OFFSET);
                 renderer.text(text, pos, "center", "#000000", AXIS_MARK_FONT, "top");
             });
             marks.yVals.forEach((text, i) => {
@@ -218,10 +221,10 @@ export const OscilloscopeRenderer = ({
 
             renderer.text("Legend", V(bounds.left, bounds.top), "left", "#000000", LEGEND_TITLE_FONT, "top");
 
-            const boxSize = 10;
+            const boxSize = 0.2;
             enabledVecIDs.forEach((id, i) => {
                 const color = vecs[id].color;
-                const y = bounds.top + 20 + i * (boxSize + 5);
+                const y = bounds.top - i * (boxSize + 0.1) - 0.7;
 
                 // Draw box
                 const box = Rect.From({
@@ -233,7 +236,7 @@ export const OscilloscopeRenderer = ({
                 renderer.draw(toShape(box), new Style(color), 1);
 
                 // Draw text
-                renderer.text(id, V(box.right + 5, box.y), "left", "#000000", LEGEND_ENTRY_FONT, "middle");
+                renderer.text(id, V(box.right + 0.1, box.y), "left", "#000000", LEGEND_ENTRY_FONT, "middle");
             });
 
             renderer.restore();
@@ -244,14 +247,14 @@ export const OscilloscopeRenderer = ({
             renderer.setPathStyle({ lineCap: "round" });
 
             // Get data bounds as a rectangle
-            const dataBounds = Rect.From({ left: minX, right: maxX, bottom: minVal, top: maxVal }, false);
+            const dataBounds = Rect.From({ left: minX, right: maxX, bottom: minVal, top: maxVal });
 
             const scale = V(bounds.width / dataBounds.width, bounds.height / dataBounds.height);
 
             sampledData.forEach((data, i) => {
                 // Calculate position for each data point
                 const positions = data.map(
-                    (s, i) => V(xData[i], -s)
+                    (s, i) => V(xData[i], s)
                         .sub(dataBounds.center)
                         .scale(scale)
                         .add(bounds.center)
