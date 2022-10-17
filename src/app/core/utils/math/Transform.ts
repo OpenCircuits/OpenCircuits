@@ -106,7 +106,7 @@ export class Transform {
      *
      * @param a The angle to rotate.
      * @param c The axis to rotate about.
-     * @returns   The new position and angle to set to perform this rotation.
+     * @returns The new position and angle to set to perform this rotation.
      */
     public calcRotationAbout(a: number, c: Vector) {
         return [
@@ -158,7 +158,7 @@ export class Transform {
      *  to this transform.
      *
      * @param v The vector to transform, must be in world coordinates.
-     * @returns   The local space vector.
+     * @returns The local space vector.
      */
     public toLocalSpace(v: Vector): Vector { // v must be in world coords
         return this.getInverseMatrix().mul(v);
@@ -169,7 +169,7 @@ export class Transform {
      *  to this transform.
      *
      * @param v The vector to transform, must be in local coordinates.
-     * @returns   The world space vector.
+     * @returns The world space vector.
      */
     public toWorldSpace(v: Vector): Vector {
         return this.getMatrix().mul(v);

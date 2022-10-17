@@ -19,7 +19,7 @@ const gateInversion = {
  * Gets the string id of the inverted version of the supplied gate.
  *
  * @param oldGate The gate to get the inverted version of.
- * @returns         `NANDGate` when supplied with an ANDGate, `NORGate` when supplied with an ORGate, etc.
+ * @returns       `NANDGate` when supplied with an ANDGate, `NORGate` when supplied with an ORGate, etc.
  * @throws When the ID for oldGate cannot be found.
  */
 export function GetInvertedGate(oldGate: DigitalComponent): string {

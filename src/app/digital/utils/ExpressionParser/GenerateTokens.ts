@@ -7,7 +7,7 @@ import {InputToken, OperatorFormat, Token, TokenType} from "./Constants/DataStru
  * @param input    The input string that a substring of will be examined.
  * @param index    The starting index of input to compare at.
  * @param sequence The sequence to check equality with.
- * @returns          True if input has a substring starting at index that matches sequence, false otherwise.
+ * @returns        True if input has a substring starting at index that matches sequence, false otherwise.
  */
 function SubStrEquals(input: string, index: number, sequence: string): boolean {
     return input.slice(index, index + sequence.length) === sequence;
@@ -21,7 +21,7 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
  * @param expression The expression to extract the input name from.
  * @param index      The index at which the input starts.
  * @param ops        The representation format for the operations used in this expression.
- * @returns            An InputToken with the input name in it.
+ * @returns          An InputToken with the input name in it.
  */
 function getInput(expression: string, index: number, ops: OperatorFormat): InputToken {
     const endIndex = Array.from({ length: expression.length - index - 1 }, (_, i) => i + index + 1)
@@ -44,8 +44,8 @@ function getInput(expression: string, index: number, ops: OperatorFormat): Input
  * @param expression The expression to extract the token from.
  * @param index      The index where the token starts.
  * @param ops        The representation format for the operations used in this expression.
- * @returns            The token extracted from the expression or null if the index points to the starting location of
- *             a separator (like " ").
+ * @returns          The token extracted from the expression or null if the index points to the starting location of
+ *                   a separator (like " ").
  */
 function getToken(expression: string, index: number, ops: OperatorFormat): Token | undefined {
     const tokenType = TokenTypesArray.find((tokenType) => SubStrEquals(expression, index, ops.ops[tokenType]));

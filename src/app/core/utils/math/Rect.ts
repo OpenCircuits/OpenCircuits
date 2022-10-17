@@ -133,7 +133,7 @@ export class Rect {
      *  calculates all possible 8 rectangles from each side and corner.
      *
      * @param rect Rectangle to subtract from this rectangle.
-     * @returns      The remaining rectangles after the subtraction.
+     * @returns    The remaining rectangles after the subtraction.
      */
     public sub(rect: Rect): Rect[] {
         if (!this.intersects(rect))
@@ -165,7 +165,7 @@ export class Rect {
      * @param constraints.minSize.width  The minimum width the rectangle can have.
      * @param constraints.minSize.height The minimum height the rectangle can have.
      * @param constraints.bounds         The bounds that the rectangle must stay within.
-     * @returns                            A new rectangle which is a shifted version of this one.
+     * @returns                          A new rectangle which is a shifted version of this one.
      */
     public shift(dir: Vector, amt: Vector,
                  constraints?: { minSize?: { width: number, height: number }, bounds?: Rect }): Rect {
@@ -276,7 +276,7 @@ export class Rect {
      *
      * @param p1 The first point.
      * @param p2 The second point.
-     * @returns    The closest bounding Rect between p1 and p2.
+     * @returns  The closest bounding Rect between p1 and p2.
      */
     public static FromPoints(p1: Vector, p2: Vector): Rect {
         return new Rect(p1.add(p2).scale(0.5), p2.sub(p1).abs());
@@ -288,7 +288,7 @@ export class Rect {
      *
      * @param bounds Attributes of rectangle.
      * @param yIsUp  Whether this rectangle has +y or -y.
-     * @returns        A Rect from the given bounds/attributes and yIsUp direction.
+     * @returns      A Rect from the given bounds/attributes and yIsUp direction.
      */
     public static From(bounds: RectProps, yIsUp = true): Rect {
         type BoundKeys = "min" | "max" | "center" | "size";
