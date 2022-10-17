@@ -1,6 +1,6 @@
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
-import {V, Vector} from "Vector";
+import {V} from "Vector";
 
 import {Rect} from "math/Rect";
 
@@ -18,8 +18,19 @@ export class FlipFlopView<
     Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
     > extends ComponentView<Obj, Info> {
 
-    public constructor(info: Info, obj: Obj, V: Vector) {
-        super(info, obj, V(1, 1), "flipflop.svg"); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
+    /**
+     * This is a constructor for the FlopFlop superclass, which is a subclass of the Component class.
+     * It takes two parameters, info and obj, and passes them to the superclass constructor, along with two other parameters.
+     *
+     * The first parameter, info, is an object that contains information about the item.
+     * The second parameter, obj, is an object that contains information about the object that the item is in.
+     *
+     * @param info - Info - This is the info object that is passed to the constructor of the Item class.
+     *                      It contains the following properties:
+     * @param obj  - The object that the item is attached to.
+     */
+    public constructor(info: Info, obj: Obj) {
+        super(info, obj, V(1, 1), "and.svg"); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
     }
 
     protected override getBounds(): Rect {
