@@ -1,4 +1,5 @@
-import {useCallback} from "react";
+import {AnalogPropInfo} from "analog/views/info";
+import {useCallback}    from "react";
 
 import {SAVE_VERSION} from "core/utils/Constants";
 
@@ -80,7 +81,7 @@ export const App = ({ info, helpers }: Props) => {
 
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
-                        <PropertyModule info={info} />
+                        <PropertyModule info={info} propInfo={AnalogPropInfo} />
                         <OscilloscopePlotsModule info={info} />
                     </SelectionPopup>
 

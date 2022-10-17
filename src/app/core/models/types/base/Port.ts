@@ -11,6 +11,7 @@ export type Port = BaseObject & {
     index: number;
 }
 
-export const DefaultPort =
-    (id: GUID, parent: GUID, group: number, index: number): Port =>
-        ({ baseKind: "Port", parent, group, index, ...DefaultBaseObject(id) });
+export type PortFactory<P extends Port> = (id: GUID, parent: GUID, group: number, index: number) => P;
+
+export const DefaultPort: PortFactory<Port> =
+    (id, parent, group, index) => ({ ...DefaultBaseObject(id), baseKind: "Port", parent, group, index });

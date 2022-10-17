@@ -1,6 +1,6 @@
-import {Component} from "./base/Component";
-import {Port}      from "./base/Port";
-import {Wire}      from "./base/Wire";
+import {Component, ComponentFactory, DefaultComponent} from "./base/Component";
+import {DefaultPort, Port, PortFactory}                from "./base/Port";
+import {DefaultWire, Wire, WireFactory}                from "./base/Wire";
 
 
 export enum DigitalPortGroup {
@@ -24,3 +24,17 @@ export type DigitalComponent =
     | ANDGate;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;
+
+
+export const DefaultDigitalComponent: { [C in DigitalComponent as C["kind"]]: ComponentFactory<C> } = {
+    "DigitalNode": (id) => ({ ...DefaultComponent(id), kind: "DigitalNode"           }),
+    "Switch":      (id) => ({ ...DefaultComponent(id), kind: "Switch"                }),
+    "LED":         (id) => ({ ...DefaultComponent(id), kind: "LED", color: "#ffffff" }),
+    "ANDGate":     (id) => ({ ...DefaultComponent(id), kind: "ANDGate"               }),
+};
+
+export const DefaultDigitalPort: PortFactory<DigitalPort> =
+    (id, parent, group, index) => ({ ...DefaultPort(id, parent, group, index), kind: "DigitalPort" });
+
+export const DefaultDigitalWire: WireFactory<DigitalWire> =
+    (id, p1, p2) => ({ ...DefaultWire(id, p1, p2), kind: "DigitalWire" });

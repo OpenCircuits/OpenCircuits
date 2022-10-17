@@ -1,15 +1,13 @@
 import {V} from "Vector";
 
-import {AnalogComponent} from "core/models/types/analog";
-
-import {AnalogInfo} from "core/views/info/analog";
+import {AnalogComponent, DefaultAnalogPort} from "core/models/types/analog";
 
 import {PortInfoRecord} from "../types";
 
 
 export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
     "AnalogNode": {
-        Default:       AnalogInfo["AnalogPort"].Default,
+        Default:       DefaultAnalogPort,
         InitialConfig: "2",
         AllowChanges:  false,
 
@@ -21,7 +19,7 @@ export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
         },
     },
     "Ground": {
-        Default:       AnalogInfo["AnalogPort"].Default,
+        Default:       DefaultAnalogPort,
         InitialConfig: "1",
         AllowChanges:  false,
 
@@ -32,7 +30,7 @@ export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
         },
     },
     "Resistor": {
-        Default:       AnalogInfo["AnalogPort"].Default,
+        Default:       DefaultAnalogPort,
         InitialConfig: "2",
         AllowChanges:  false,
 
