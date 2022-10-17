@@ -1,14 +1,12 @@
 import {DigitalNode, DigitalObj} from "core/models/types/digital";
 
-import {NodeView}                 from "core/views/NodeView";
-import {ViewFactory, ViewRecord}  from "core/views/ViewManager";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {NodeView}                from "core/views/NodeView";
+import {ViewFactory, ViewRecord} from "core/views/ViewManager";
 
 import {ANDGateView}     from "./components/ANDGateView";
+import {TFlipFlopView}   from "./components/FlipFlop/TFlipFlopView";
 import {LEDView}         from "./components/LEDView";
 import {SwitchView}      from "./components/SwitchView";
-import {TFlipFlopView}   from "./components/FlipFlop/TFlipFlopView";
-import {FlipFlopView}    from "./components/FlipFlopView";
 import {DigitalPortView} from "./DigitalPortView";
 import {DigitalViewInfo} from "./DigitalViewInfo";
 import {DigitalWireView} from "./DigitalWireView";
@@ -21,9 +19,9 @@ export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
     "DigitalPort": (c, o) => new DigitalPortView(c, o),
     "DigitalNode": (c, o) => new DigitalNodeView(c, o),
 
-    "Switch":  (c, o) => new SwitchView(c, o),
-    "LED":     (c, o) => new LEDView(c, o),
-    "ANDGate": (c, o) => new ANDGateView(c, o),
+    "Switch":    (c, o) => new SwitchView(c, o),
+    "LED":       (c, o) => new LEDView(c, o),
+    "ANDGate":   (c, o) => new ANDGateView(c, o),
     "TFlipFlop": (c, o) => new TFlipFlopView(c, o),
 };
 

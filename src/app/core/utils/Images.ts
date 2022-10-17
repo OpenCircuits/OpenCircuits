@@ -3,6 +3,11 @@ import {CreateDrawingFromSVG, SVGDrawing} from "svg2canvas";
 import {DEBUG_NO_FILL} from "core/utils/Constants";
 
 
+/**
+ * It's a self-invoking function that returns an object with two functions: GetImage and Load.
+ *
+ * @type {function}
+ */
 export const Images = (() => {
     const images: Map<string, SVGDrawing> = new Map();
 
