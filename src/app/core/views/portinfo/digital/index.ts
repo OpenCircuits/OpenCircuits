@@ -75,4 +75,20 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             },
         },
     },
+    "JKFlipFlop": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "2,2,2",
+        AllowChanges:  false,
+
+        Positions: {
+            "2,2,2": {
+                "0:0": { origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) },
+                "0:1": { origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) },
+                "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) },
+                "1:1": { origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) },
+                "2:0": { origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) },
+                "2:1": { origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) },
+            },
+        },
+    },
 };
