@@ -27,7 +27,7 @@ export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
         PropInfo: DefaultComponentPropInfo,
     },
     "JKFlipFlop": {
-        Default:  (id) => ({ kind: "JKFlipFlop", ...DefaultComponent(id)}),
+        Default:  (id) => ({ kind: "JKFlipFlop", ...DefaultComponent(id) }),
         PropInfo: DefaultComponentPropInfo,
     },
 };
