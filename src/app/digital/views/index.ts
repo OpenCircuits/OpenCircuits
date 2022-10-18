@@ -17,4 +17,5 @@ export const Views: ViewRecord<DigitalObj, DigitalCircuitController> = {
     "DigitalPort": (c: DigitalCircuitController, o: DigitalPort) => new DigitalPortView(c, o),
     "DigitalNode": (c: DigitalCircuitController, o: DigitalNode) => new DigitalNodeView(c, o),
     "ANDGate":     (c: DigitalCircuitController, o: ANDGate)     => new ANDGateView(c, o),
+    "BUFGate":     (c: DigitalCircuitController, o: BUFGate)     => new BUFGateView(c, o),
 };

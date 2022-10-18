@@ -15,6 +15,7 @@ const DigitalWire = GenWireInfo<DigitalWire>("DigitalWire");
 export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
     "DigitalNode": GenDigitalComponentInfo<DigitalNode>("DigitalNode"),
     "ANDGate":     GenDigitalComponentInfo<ANDGate>("ANDGate"),
+    "BUFGate":     GenDigitalComponentInfo<BUFGate>("BUFGate"),
 };
 
 export const DigitalInfo: ObjInfoRecord<DigitalObj> = {
