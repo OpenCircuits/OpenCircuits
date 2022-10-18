@@ -61,6 +61,7 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 
+    //  TODO fix propagation for flip flops
     "DFlipFlop": Noprop,
 
     "JKFlipFlop": Noprop,
