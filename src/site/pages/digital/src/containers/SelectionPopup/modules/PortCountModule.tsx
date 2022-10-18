@@ -1,4 +1,3 @@
-import {AllComponentInfo} from "core/views/info";
 import {AllPortInfo}      from "core/views/portinfo";
 import {CalcPortConfigID} from "core/views/portinfo/utils";
 
@@ -27,14 +26,13 @@ export const PortCountModule = ({ info, labels }: Props) => {
         (c): c is AnyComponent => (
             (c.baseKind === "Component") &&
             // Only allow components that allow changes to their port config
-            (c.kind in AllComponentInfo && AllPortInfo[c.kind].AllowChanges)
+            (AllPortInfo[c.kind].AllowChanges)
         ),
         (c) => (() => {
             const info = AllPortInfo[c.kind];
-            const changeGroup = (info.AllowChanges ? info.ChangeGroup : 0);
-            const curConfig = CalcPortConfigID(circuit, c);
-            const portAmt = curConfig.split(",")[changeGroup];
-            return { [`${changeGroup}`]: portAmt } as Record<`${number}`, string>;
+            if (!info.AllowChanges)
+                return {};
+            return { [`${info.ChangeGroup}`]: CalcPortConfigID(circuit, c) } as Record<`${number}`, string>;
         })(),
     );
 

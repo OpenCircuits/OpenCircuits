@@ -73,7 +73,7 @@ export function Delete(circuit: CircuitController<AnyObj>, obj: AnyObj) {
  *
  * @param circuit The CircuitDesigner the actions are being done on.
  * @param objs    The Components of each action.
- * @returns         A GroupAction representing the PlaceActions of every Component.
+ * @returns       A GroupAction representing the PlaceActions of every Component.
  */
 export function PlaceGroup(circuit: CircuitController<AnyObj>, objs: AnyObj[]): GroupAction {
     return new GroupAction(

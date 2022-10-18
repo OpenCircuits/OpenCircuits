@@ -1,14 +1,14 @@
-import {CircuitController} from "core/controllers/CircuitController";
-import {ViewManager}       from "core/views/ViewManager";
-import {Views}             from "digital/views";
-
-import {SAVE_VERSION} from "core/utils/Constants";
+import {CircuitController}     from "core/controllers/CircuitController";
+import {ViewManager}           from "core/views/ViewManager";
+import {PropagationController} from "digital/controllers/PropagationController";
+import {CreateView}            from "digital/views";
+import {DigitalViewInfo}       from "digital/views/DigitalViewInfo";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {Input}             from "core/utils/Input";
+import {InputManager}      from "core/utils/InputManager";
 import {RenderQueue}       from "core/utils/RenderQueue";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
@@ -24,15 +24,22 @@ import {DigitalObj} from "core/models/types/digital";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
+import {DigitalSim} from "digital/models/sim/DigitalSim";
+
 
 export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
     const history = new HistoryManager();
 
     const circuit = new CircuitController<DigitalObj>(DefaultCircuit(), "DigitalWire", "DigitalNode");
-    const viewManager = new ViewManager<DigitalObj, CircuitController<DigitalObj>>(
-        circuit,
-        (c, m) => (Views[m.kind](c, m))
+    const sim = new DigitalSim(circuit);
+
+    const propagationController = new PropagationController(1, sim);
+
+    const viewManager = new ViewManager<DigitalObj, DigitalViewInfo>(
+        { circuit, sim }, CreateView
     );
+
+    const input = new InputManager();
 
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
@@ -45,9 +52,10 @@ export function CreateInfo(defaultTool: DefaultTool, ...tools: Tool[]) {
 
         circuit,
         viewManager,
+        sim,
+        propagationController,
 
-        // This is necessary because input is created later in the pipeline because it requires canvas
-        input: undefined as unknown as Input,
+        input,
         selections,
         toolManager,
         renderer,

@@ -8,15 +8,16 @@ import {AnyNode} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {ComponentView} from "./ComponentView";
+import {ViewCircuitInfo} from "./BaseView";
+import {ComponentView}   from "./ComponentView";
 
 
 export abstract class NodeView<
     Node extends AnyNode,
-    Circuit extends CircuitController = CircuitController,
-> extends ComponentView<Node, Circuit> {
-    public constructor(circuit: Circuit, obj: Node) {
-        super(circuit, obj, V(2*IO_PORT_RADIUS));
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> extends ComponentView<Node, Info> {
+    public constructor(info: Info, obj: Node) {
+        super(info, obj, V(2*IO_PORT_RADIUS));
     }
 
     public override contains(pt: Vector): boolean {

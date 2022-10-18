@@ -1,22 +1,32 @@
-import {ANDGate, Multiplexer, DigitalNode, DigitalObj, DigitalPort, DigitalWire} from "core/models/types/digital";
+import {DigitalNode, DigitalObj} from "core/models/types/digital";
 
 import {NodeView}                 from "core/views/NodeView";
-import {ViewRecord}               from "core/views/ViewManager";
-import {WireView}                 from "core/views/WireView";
+import {ViewFactory, ViewRecord}  from "core/views/ViewManager";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
 import {ANDGateView}     from "./components/ANDGateView";
 import {MultiplexerView} from "./components/MultiplexerView";
+import {LEDView}         from "./components/LEDView";
+import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
+import {DigitalViewInfo} from "./DigitalViewInfo";
+import {DigitalWireView} from "./DigitalWireView";
 
 
-class DigitalWireView extends WireView<DigitalWire, DigitalCircuitController> {}
-class DigitalNodeView extends NodeView<DigitalNode, DigitalCircuitController> {}
+class DigitalNodeView extends NodeView<DigitalNode, DigitalViewInfo> {}
 
-export const Views: ViewRecord<DigitalObj, DigitalCircuitController> = {
-    "DigitalWire": (c: DigitalCircuitController, o: DigitalWire) => new DigitalWireView(c, o),
-    "DigitalPort": (c: DigitalCircuitController, o: DigitalPort) => new DigitalPortView(c, o),
-    "DigitalNode": (c: DigitalCircuitController, o: DigitalNode) => new DigitalNodeView(c, o),
-    "ANDGate":     (c: DigitalCircuitController, o: ANDGate)     => new ANDGateView(c, o),
-    "Multiplexer": (c: DigitalCircuitController, o: Multiplexer) => new MultiplexerView(c, o),
+export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
+    "DigitalWire": (c, o) => new DigitalWireView(c, o),
+    "DigitalPort": (c, o) => new DigitalPortView(c, o),
+    "DigitalNode": (c, o) => new DigitalNodeView(c, o),
+
+    "Switch":      (c, o) => new SwitchView(c, o),
+    "LED":         (c, o) => new LEDView(c, o),
+    "ANDGate":     (c, o) => new ANDGateView(c, o),
+    "Multiplexer": (c, o) => new MultiplexerView(c, o),
 };
+
+export function CreateView(info: DigitalViewInfo, obj: DigitalObj) {
+    const view = Views[obj.kind] as ViewFactory<DigitalObj, DigitalViewInfo>;
+    return (view(info, obj));
+}

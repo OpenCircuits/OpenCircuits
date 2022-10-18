@@ -15,9 +15,12 @@ import {RenderInfo}               from "core/views/BaseView";
 import {ComponentView}            from "core/views/ComponentView";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
+import {DigitalViewInfo} from "../DigitalViewInfo";
 
-export class MultiplexerView extends ComponentView<Multiplexer, DigitalCircuitController> {
-    public constructor(circuit: DigitalCircuitController, obj: Multiplexer) {
+
+
+export class MultiplexerView extends ComponentView<Multiplexer, DigitalViewInfo> {
+    public constructor(circuit: DigitalViewInfo, obj: Multiplexer) {
         super(circuit, obj, V(1,1));
     }
 
@@ -43,7 +46,7 @@ export class MultiplexerView extends ComponentView<Multiplexer, DigitalCircuitCo
         renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === DigitalPortGroup.Input).length;

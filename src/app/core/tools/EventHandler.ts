@@ -1,8 +1,8 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 
 export type EventHandler = {
-    conditions: (event: Event, info: CircuitInfo) => boolean;
-    getResponse: (info: CircuitInfo, ev?: Event) => void;
+    conditions: (event: InputManagerEvent, info: CircuitInfo) => boolean;
+    getResponse: (info: CircuitInfo, ev?: InputManagerEvent) => void;
 }

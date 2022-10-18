@@ -7,6 +7,7 @@ export const GRID_SIZE = 1;
 export const DEFAULT_FILL_COLOR    = (DEBUG_NO_FILL ? undefined : "#ffffff");
 export const DEFAULT_BORDER_COLOR  = "#000000";
 export const DEFAULT_ON_COLOR      = "#3cacf2";
+export const METASTABLE_COLOR      = "#cc5e5e";
 export const SELECTED_FILL_COLOR   = (DEBUG_NO_FILL ? undefined : "#1cff3e");
 export const SELECTED_BORDER_COLOR = "#0d7f1f";
 

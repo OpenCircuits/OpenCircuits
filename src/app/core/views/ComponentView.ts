@@ -11,22 +11,22 @@ import {Transform}                       from "math/Transform";
 import {DirtyVar} from "core/utils/DirtyVar";
 import {Images}   from "core/utils/Images";
 
-import {AnyComponent, AnyObj} from "core/models/types";
+import {AnyComponent} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
 
-import {BaseView, RenderInfo} from "./BaseView";
+import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
 
 
-export abstract class ComponentView<
+export class ComponentView<
     Obj extends AnyComponent,
-    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>,
-> extends BaseView<Obj, Circuit> {
+    Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
+> extends BaseView<Obj, Info> {
     protected transform: DirtyVar<Transform>;
     protected img?: SVGDrawing;
 
-    public constructor(circuit: Circuit, obj: Obj, size?: Vector, imgName?: string) {
-        super(circuit, obj);
+    public constructor(info: Info, obj: Obj, size?: Vector, imgName?: string) {
+        super(info, obj);
 
         this.transform = new DirtyVar(
             () => new Transform(V(obj.x, obj.y), size, obj.angle),
@@ -59,33 +59,44 @@ export abstract class ComponentView<
     }
 
     protected override renderInternal(info: RenderInfo): void {
-        const { renderer, selections } = info;
-
-        const selected = selections.has(this.obj.id);
+        const { renderer } = info;
 
         // Transform into local space
         renderer.transform(this.transform.get());
 
         this.renderComponent(info);
 
+        this.drawImg(info);
+    }
+
+    protected drawImg(info: RenderInfo): void {
         // Check if we should draw image
         if (!this.img)
             return;
+
+        const { renderer, selections } = info;
+
+        const selected = selections.has(this.obj.id);
         const tint = (selected ? SELECTED_FILL_COLOR : undefined);
+
         renderer.image(this.img, V(), this.transform.get().getSize(), tint);
     }
 
-    protected abstract renderComponent(info: RenderInfo): void;
+    protected renderComponent(_: RenderInfo): void {}
 
     public getTransform(): Transform {
         return this.transform.get();
+    }
+
+    public getSize(): Vector {
+        return this.transform.get().getSize();
     }
 
     public override getMidpoint(): Vector {
         return this.transform.get().getPos();
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         const t = this.transform.get();
         return new Rect(t.getPos(), t.getSize());
     }

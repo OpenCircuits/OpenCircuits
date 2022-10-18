@@ -1,5 +1,5 @@
-import {InteractionTool} from "core/tools/InteractionTool";
-import {PanTool}         from "core/tools/PanTool";
+import {DefaultTool} from "core/tools/DefaultTool";
+import {PanTool}     from "core/tools/PanTool";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -10,7 +10,7 @@ import "./index.scss";
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
-// function CheckForInteraction(ev: Event, { toolManager, camera, designer, input, currentlyPressedObject }: CircuitInfo) {
+// function CheckForInteraction(ev: InputManagerEvent, { toolManager, camera, designer, input, currentlyPressedObject }: CircuitInfo) {
 //     if (toolManager.getCurrentTool() instanceof InteractionTool) {
 //         const worldMousePos = camera.getWorldPos(input.getMousePos());
 //         const obj = designer.getObjects().reverse()
@@ -34,7 +34,7 @@ type Props = {
 }
 // @TODO
 export const ICViewer = (() => {
-    const info = CreateInfo(new InteractionTool([]), PanTool);
+    const info = CreateInfo(new DefaultTool(), PanTool);
 
     // eslint-disable-next-line react/display-name, arrow-body-style
     return ({ mainInfo }: Props) => {
