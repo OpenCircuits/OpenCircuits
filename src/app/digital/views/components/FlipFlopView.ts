@@ -37,7 +37,7 @@ export class FlipFlopView<
      * @param obj  - The object that the item is attached to.
      */
     public constructor(info: Info, obj: Obj) {
-        super(info, obj, V(1, 1), "and.svg"); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
+        super(info, obj, V(1, 1), "flipflop.svg"); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
