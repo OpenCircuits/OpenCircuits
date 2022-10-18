@@ -2,22 +2,24 @@ import {
     DEFAULT_BORDER_COLOR,
     DEFAULT_BORDER_WIDTH,
     DEFAULT_CURVE_BORDER_WIDTH,
-    SELECTED_BORDER_COLOR
+    SELECTED_BORDER_COLOR,
 } from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
+
+import {Style} from "core/utils/rendering/Style";
+
+import {Line} from "core/utils/rendering/shapes/Line";
 
 import {AnyComponent} from "core/models/types";
 
 import {DigitalPortGroup} from "core/models/types/digital";
 
-import {CircuitController} from "core/controllers/CircuitController";
+import {CircuitController}           from "core/controllers/CircuitController";
 import {RenderInfo, ViewCircuitInfo} from "core/views/BaseView";
-import {ComponentView}     from "core/views/ComponentView";
-import {Style} from "core/utils/rendering/Style";
-import {Line} from "core/utils/rendering/shapes/Line";
+import {ComponentView}               from "core/views/ComponentView";
 
 
 export class FlipFlopView<
@@ -32,12 +34,13 @@ export class FlipFlopView<
      * The first parameter, info, is an object that contains information about the item.
      * The second parameter, obj, is an object that contains information about the object that the item is in.
      *
-     * @param info - Info - This is the info object that is passed to the constructor of the Item class.
-     *                      It contains the following properties:
-     * @param obj  - The object that the item is attached to.
+     * @param info               - Info - This is the info object that is passed to the constructor of the Item class.
+     * @param obj                - The object that the item is attached to.
+     * @param v                  - Vector = V(1, 1).
+     * @param [svg=flipflop.svg] - The name of the svg file.
      */
-    public constructor(info: Info, obj: Obj) {
-        super(info, obj, V(1, 1), "flipflop.svg"); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
+    public constructor(info: Info, obj: Obj, v: Vector = V(1, 1), svg = "flipflop.svg") {
+        super(info, obj, v, svg); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
