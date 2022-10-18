@@ -16,8 +16,11 @@ export type DigitalNode = Component & { kind: "DigitalNode" };
 
 export type ANDGate = Component & { kind: "ANDGate" };
 
+export type Multiplexer = Component & { kind: "Multiplexer" };
+
 export type DigitalComponent =
     | DigitalNode
-    | ANDGate;
+    | ANDGate
+    | Multiplexer;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;

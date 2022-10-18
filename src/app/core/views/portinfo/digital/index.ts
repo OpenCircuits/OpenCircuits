@@ -39,4 +39,22 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             1: CalcPortPos(V(0.5, 0), V(1, 0)),
         }),
     },
+    "Multiplexer": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "4,1",
+        AllowChanges:  true,
+        ChangeGroup:   DigitalPortGroup.Input,
+
+        Positions: GenPortInfo(7, {
+            0: {
+                amts:    linspaceDX(2,256,1),
+                calcPos: (amt) => CalcPortPositions(amt, 0.5 - DEFAULT_BORDER_WIDTH/2),
+            },
+            1: CalcPortPos(V(0.5, 0), V(1, 0)),
+            2: {
+                amts:    linspaceDX(2, 8, 1),
+                calcPos:  (amt) => CalcPortPositions(0.5 - DEFAULT_BORDER_WIDTH/2, amt)
+            }
+        }),
+    },
 };
