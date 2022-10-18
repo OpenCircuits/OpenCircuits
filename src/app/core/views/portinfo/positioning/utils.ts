@@ -48,7 +48,7 @@ export type Positioner = (amt: number) => Record<number, PortPos[]>;
  *
  * @param basisAmts  An array of possible port counts for the basis group of this component.
  * @param positioner A positioner that should return the positions for each port at each basis amount.
- * @returns            A full port positioning config.
+ * @returns          A full port positioning config.
  */
 export const GenPortConfig = (
     basisAmts: number[],
