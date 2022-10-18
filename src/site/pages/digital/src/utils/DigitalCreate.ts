@@ -44,7 +44,7 @@ export enum SmartPlaceOptions {
  * @param N        The number of items to create.
  * @param pos      The position of the first component.
  * @param zIndex   The zIndex of the items.
- * @returns          An action that performs this placement.
+ * @returns        An action that performs this placement.
  * @throws If the itemId is an invalid item or IC.
  */
 export function SmartPlace(info: DigitalCircuitInfo, itemKind: DigitalComponent["kind"], options: SmartPlaceOptions,

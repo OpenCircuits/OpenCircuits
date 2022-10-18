@@ -86,7 +86,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Set ups event listeners on the given canvas and returns a tear down callback.
      *
      * @param canvas The canvas to setup on.
-     * @returns        A callback that tears down the setup event listeners.
+     * @returns      A callback that tears down the setup event listeners.
      * @throws If the canvas was already setup and not torn down.
      */
     public setupOn(canvas: HTMLCanvasElement): () => void {
@@ -114,7 +114,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Checks if newKey is a prevented combination of keys.
      *
      * @param newKey Represents the key combination being pressed.
-     * @returns        True if newKey is a prevented combination, false otherwise.
+     * @returns      True if newKey is a prevented combination, false otherwise.
      */
     private isPreventedCombination(newKey: Key): boolean {
         // Some browsers map shorcuts (for example - to CTRL+D but we use it to duplicate elements)
@@ -199,7 +199,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Sets up Listeners for mouse Events.
      *
      * @param canvas The canvas to attach the event listeners to.
-     * @returns        A callback to tear down these event listeners.
+     * @returns      A callback to tear down these event listeners.
      */
     private hookupMouseEvents(canvas: HTMLCanvasElement): () => void {
         const onMouseDown = (e: MouseEvent) => {
@@ -251,7 +251,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Sets up Listeners for touch events.
      *
      * @param canvas The canvas to attach the event listeners to.
-     * @returns        A callback to tear down these event listeners.
+     * @returns      A callback to tear down these event listeners.
      */
     private hookupTouchEvents(canvas: HTMLCanvasElement): () => void {
         const getTouchPositions = (touches: TouchList): Vector[] => [...touches].map((t) => V(t.clientX, t.clientY));
@@ -284,7 +284,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Sets up touchManagers for pinching and tapping.
      *
      * @param canvas The canvas to attach the event listeners to.
-     * @returns        A callback to tear down these event listeners.
+     * @returns      A callback to tear down these event listeners.
      */
     private setupHammer(canvas: HTMLCanvasElement): () => void {
         let lastScale = 1;
@@ -370,7 +370,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Checks if the given key is held down.
      *
      * @param key Represents the key being checked.
-     * @returns     True if key is down, false otherwise.
+     * @returns   True if key is down, false otherwise.
      */
     public isKeyDown(key: Key): boolean {
         return (this.keysDown.has(key.toLowerCase() as Key) &&

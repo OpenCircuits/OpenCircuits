@@ -30,7 +30,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
  * Gets the component that the first wire of the first output port of the supplied component is connected to.
  *
  * @param component The component whose output is wanted.
- * @returns           The component that is the "first" connected from the supplied component.
+ * @returns         The component that is the "first" connected from the supplied component.
  */
 function getOutputComponent(component: DigitalComponent): DigitalComponent {
     return component.getOutputPort(0).getWires()[0].getOutputComponent();

@@ -10,7 +10,7 @@ import dotEnvExpand from "dotenv-expand";
  *
  * @param dir        The directory of the environment variable file.
  * @param publicRoot Public root path to be included as a default environment variable.
- * @returns            Record of environment variables.
+ * @returns          Record of environment variables.
  */
 export default function getEnv(dir: string, publicRoot: string) {
     const NODE_ENV = process.env.NODE_ENV || "development";
