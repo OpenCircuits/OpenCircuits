@@ -61,7 +61,7 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 
-    "JKFlipFlop": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+    "JKFlipFlop": Noprop,
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {
