@@ -56,7 +56,7 @@ export class LEDView extends ComponentView<LED, DigitalViewInfo> {
         }
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         if (Signal.isOn(this.getInputSignal()))
             return super.getBounds().expand(V(LED_LIGHT_RADIUS));
         return super.getBounds();

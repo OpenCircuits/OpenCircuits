@@ -66,7 +66,7 @@ export abstract class PortView<
         return RectContains(bounds, this.getTargetPos());
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         const offset = V(IO_PORT_RADIUS + IO_PORT_BORDER_WIDTH/2);
         // Bounds are the Rectangle between the points + offset from the port circle
         return Rect.FromPoints(this.getOriginPos(), this.getTargetPos())

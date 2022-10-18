@@ -15,8 +15,8 @@ import {ObjSet} from "./ObjSet";
  * @param circuit The circuit.
  * @param w       The wire to start from.
  * @param full    True if you want to return everything in the circuit otherwise returns
- *          only the wires/nodes connected to the wire.
- * @returns         The array of wires/WirePorts in this path (including w).
+ *                only the wires/nodes connected to the wire.
+ * @returns       The array of wires/WirePorts in this path (including w).
  */
  export function GetPath(
     circuit: CircuitController<AnyObj>,
@@ -63,8 +63,8 @@ import {ObjSet} from "./ObjSet";
  * @param circuit The circuit.
  * @param obj     The component.
  * @param full    True if you want to return everything in the circuit otherwise
- *          returns only the wires/nodes connected to the selected wire.
- * @returns         An array of connections + WirePorts.
+ *                returns only the wires/nodes connected to the selected wire.
+ * @returns       An array of connections + WirePorts.
  */
 export function GetAllPaths(
     circuit: CircuitController<AnyObj>,
@@ -91,7 +91,7 @@ export function GetAllPaths(
  * @param groups.components The components from the ObjSet.
  * @param groups.wires      The wires from the ObjSet.
  * @param groups.ports      The ports from the ObjSet.
- * @returns                   A graph corresponding to the given circuit.
+ * @returns                 A graph corresponding to the given circuit.
  */
  export function CreateGraph({ components, ports, wires }: ObjSet): Graph<GUID, GUID> {
     const graph = new Graph<GUID, GUID>();

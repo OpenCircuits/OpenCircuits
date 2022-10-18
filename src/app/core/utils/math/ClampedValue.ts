@@ -114,7 +114,7 @@ export class ClampedValue {
      * Checks whether the supplied value is within the bounds of this clamped value.
      *
      * @param value The number to evaluate.
-     * @returns       True if value is between the minimum and maximum allowed values.
+     * @returns     True if value is between the minimum and maximum allowed values.
      */
     public contains(value: number): boolean {
         return (this.minValue <= value && this.maxValue >= value);

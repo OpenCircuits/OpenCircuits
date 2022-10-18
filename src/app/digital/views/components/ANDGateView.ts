@@ -46,7 +46,7 @@ export class ANDGateView extends ComponentView<ANDGate, DigitalViewInfo> {
         renderer.draw(new Line(p1, p2), style);
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === DigitalPortGroup.Input).length;

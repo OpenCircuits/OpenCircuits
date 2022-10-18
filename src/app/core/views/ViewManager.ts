@@ -1,5 +1,6 @@
 import {Vector} from "Vector";
 
+import {Rect}      from "math/Rect";
 import {Transform} from "math/Transform";
 
 import {GetDebugInfo} from "core/utils/Debug";
@@ -220,8 +221,8 @@ export class ViewManager<
 
     public findNearestObj(
         pos: Vector,
-        filter = (_: AnyObj) => true,
-    ): undefined | AnyObj {
+        filter = (_: Obj) => true,
+    ): undefined | Obj {
         // Loop through each view
         for (const view of this) {
             if (!filter(view.getObj()))
@@ -231,11 +232,11 @@ export class ViewManager<
         }
     }
 
-    public findObjects(bounds: Transform): AnyObj[] {
-        const objs: AnyObj[] = [];
+    public findObjects(bounds: Transform): Obj[] {
+        const objs: Obj[] = [];
         for (const view of this) {
             if (view.isWithinBounds(bounds))
-                objs.push(this.circuit.getObj(view.getObj().id)!);
+                objs.push(this.circuit.getObj(view.getObj().id)! as Obj);
         }
         // // Reverse order so that we loop through the top-most layers first
         // for (let i = this.views.length-1; i >= 0; i--) {
@@ -249,6 +250,15 @@ export class ViewManager<
         //     }
         // }
         return objs;
+    }
+
+    public calcBoundsOf(objs: Obj[]): Rect {
+        return Rect.Bounding(
+            // Get views from each obj
+            objs.map((o) => this.getView(o.id))
+            // Then get their bounds
+            .map((v) => v.getBounds())
+        );
     }
 
     public getTopDepth() {

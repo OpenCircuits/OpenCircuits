@@ -1,5 +1,3 @@
-import {RefObject} from "react";
-
 import {DefaultTool} from "core/tools/DefaultTool";
 import {Tool}        from "core/tools/Tool";
 
@@ -14,8 +12,7 @@ import {CreateInfo}                   from "./CreateInfo";
 import {GetDigitalCircuitInfoHelpers} from "./DigitalCircuitInfoHelpers";
 
 
-
-export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, defaultTool: DefaultTool,
+export function Setup(store: AppStore, defaultTool: DefaultTool,
                       ...tools: Tool[]): [DigitalCircuitInfo, CircuitInfoHelpers] {
     const [info, reset] = CreateInfo(defaultTool, ...tools);
 
@@ -55,5 +52,5 @@ export function Setup(store: AppStore, canvas: RefObject<HTMLCanvasElement>, def
             info.renderer.render();
     });
 
-    return [info, GetDigitalCircuitInfoHelpers(store, canvas, info, reset)];
+    return [info, GetDigitalCircuitInfoHelpers(store, info, reset)];
 }
