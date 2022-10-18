@@ -25,10 +25,8 @@ export class ComponentView<
     protected transform: DirtyVar<Transform>;
     protected img?: SVGDrawing;
 
-
     /**
-     * It creates a new ComponentView object, which is a subclass of View
-     *
+     * It creates a new ComponentView object, which is a subclass of View.
      * @param info    - Info - the Info object that contains the game state
      * @param obj     - The object that this view is for.
      * @param [size]  - The size of the component. If not specified, the size of the image will be used.

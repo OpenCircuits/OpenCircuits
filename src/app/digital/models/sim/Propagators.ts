@@ -19,7 +19,7 @@ type PropagatorRecord = {
  *  any state or information from the component itself.
  *
  * @param propagator The simple propagator that takes in a list of signals and outputs a list of signals.
- * @returns          The propagator function to facilitate this propagation.
+ * @returns            The propagator function to facilitate this propagation.
  */
 const InputOutputPropagator = (propagator: (inputs: Signal[]) => Signal[]): Propagator<DigitalComponent, unknown> => (
     ({ signals }) => {
@@ -60,6 +60,8 @@ export const AllPropagators: PropagatorRecord = {
     "LED": Noprop,
 
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+
+    "TFlipFlop": Noprop, // ToDo: write prop here later
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {
