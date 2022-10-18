@@ -18,6 +18,7 @@ import {CircuitController} from "core/controllers/CircuitController";
 import {BaseView, RenderInfo, ViewCircuitInfo} from "./BaseView";
 
 
+/* It's a view for a component that has an image */
 export class ComponentView<
     Obj extends AnyComponent,
     Info extends ViewCircuitInfo<CircuitController> = ViewCircuitInfo<CircuitController>,
