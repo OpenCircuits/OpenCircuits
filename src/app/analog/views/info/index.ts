@@ -9,10 +9,15 @@ export const AnalogPropInfo: PropInfoRecord<AnalogObj> = {
     "AnalogPort": DefaultPortPropInfo,
     "AnalogWire": DefaultWirePropInfo,
     "AnalogNode": DefaultComponentPropInfo,
-
+    "Capacitor": {
+        ...DefaultComponentPropInfo,
+        "capacitance": { type: "float", label: "Capacitance", step: 100, min: 0 },
+    },
     "Resistor": {
         ...DefaultComponentPropInfo,
         "resistance": { type: "float", label: "Resistance", step: 100, min: 0 },
     },
     "Ground": DefaultComponentPropInfo,
+
+
 } as const;

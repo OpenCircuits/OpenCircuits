@@ -12,10 +12,13 @@ export type Ground = Component & { kind: "Ground" };
 
 export type Resistor = Component & { kind: "Resistor", resistance: number };
 
+export type Capacitor = Component & { kind: "Capacitor", capacitance: number };
+
 export type AnalogComponent =
     | AnalogNode
     | Ground
-    | Resistor;
+    | Resistor
+    | Capacitor;
 
 export type AnalogObj = AnalogPort | AnalogWire | AnalogComponent;
 
@@ -24,6 +27,7 @@ export const DefaultAnalogComponent: { [C in AnalogComponent as C["kind"]]: Comp
     "AnalogNode": (id) => ({ ...DefaultComponent(id), kind: "AnalogNode"                 }),
     "Ground":     (id) => ({ ...DefaultComponent(id), kind: "Ground"                     }),
     "Resistor":   (id) => ({ ...DefaultComponent(id), kind: "Resistor", resistance: 1000 }),
+    "Capacitor":   (id) => ({ ...DefaultComponent(id), kind: "Capacitor", capacitance: 1000 }),
 };
 
 export const DefaultAnalogPort: PortFactory<AnalogPort> =
