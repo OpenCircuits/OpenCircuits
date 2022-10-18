@@ -6,7 +6,7 @@ import {Rect} from "math/Rect";
 
 import {Style} from "core/utils/rendering/Style";
 
-import {Line} from "core/utils/rendering/shapes/Line";
+import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
 
 import {DigitalPortGroup, JKFlipFlop} from "core/models/types/digital";
 
@@ -18,7 +18,7 @@ import {DigitalViewInfo} from "../DigitalViewInfo";
 
 export class JKFlipFlopView extends ComponentView<JKFlipFlop, DigitalViewInfo> {
     public constructor(info: DigitalViewInfo, obj: JKFlipFlop) {
-        super(info, obj, V(1, 1), "and.svg");
+        super(info, obj, V(2, 2.4));
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
@@ -31,19 +31,9 @@ export class JKFlipFlopView extends ComponentView<JKFlipFlop, DigitalViewInfo> {
         // Get size of model
         const size = this.transform.get().getSize();
 
-        // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+        const rect = new Rect(V(0,0), size)
 
-        // Draw line to visually match input ports
-        const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
-        const l2 =  (inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2;
-
-        const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
-        const p1 = V(-s, l1);
-        const p2 = V(-s, l2);
-
-        renderer.draw(new Line(p1, p2), style);
+        renderer.draw(new Rectangle(rect), style);
     }
 
     public override getBounds(): Rect {
