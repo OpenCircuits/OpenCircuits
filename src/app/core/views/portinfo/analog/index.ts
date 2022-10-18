@@ -41,4 +41,16 @@ export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
             },
         },
     },
+    "Inductor": {
+        Default:       DefaultAnalogPort,
+        InitialConfig: "2",
+        AllowChanges:  false,
+
+        Positions: {
+            "2": {
+                "0:0": { origin: V(0, -0.925), target: V(0, -1.425), dir: V(0, -1) },
+                "0:1": { origin: V(0, +0.925), target: V(0, +1.425), dir: V(0, +1) },
+            },
+        },
+    },
 };

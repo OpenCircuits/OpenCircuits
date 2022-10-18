@@ -32,6 +32,7 @@ export const Views: ViewRecord<AnalogObj, AnalogViewInfo> = {
 
     "Ground":   (c, o) => new ComponentView(c, o, V(1.2, 0.6), "ground.svg"),
     "Resistor": (c, o) => new ComponentView(c, o, V(1.2, 1), "resistor.svg"),
+    "Inductor": (c, o) => new ComponentView(c, o, V(0.8, 240*0.8/104), "inductor.svg"),
 };
 
 export function CreateView(info: AnalogViewInfo, obj: AnalogObj) {
