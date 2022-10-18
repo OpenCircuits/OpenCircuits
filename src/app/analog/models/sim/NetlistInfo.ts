@@ -35,6 +35,7 @@ export const AllNetlistInfo: NetlistInfoRecord = {
 
     "Resistor": (r) => ["R", [`${r.resistance}`]],
 
+    // Adding a note for commit
     "Inductor": (l) => ["L", [`${l.inductance}`]],
 };
 
