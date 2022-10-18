@@ -8,7 +8,7 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
 
-import {DigitalPortGroup, JKFlipFlop} from "core/models/types/digital";
+import {JKFlipFlop} from "core/models/types/digital";
 
 import {RenderInfo}    from "core/views/BaseView";
 import {ComponentView} from "core/views/ComponentView";
@@ -34,12 +34,5 @@ export class JKFlipFlopView extends ComponentView<JKFlipFlop, DigitalViewInfo> {
         const rect = new Rect(V(0,0), size)
 
         renderer.draw(new Rectangle(rect), style);
-    }
-
-    public override getBounds(): Rect {
-        // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
-        return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }

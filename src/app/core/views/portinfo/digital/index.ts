@@ -59,6 +59,22 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             }),
         ),
     },
+    "DFlipFlop": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "3,2,2",
+        AllowChanges:  false,
+
+        Positions: {
+            "3,2,2": {
+                "0:0": { origin: V(-1, 0.75), target: V(-1.7, 0.75), dir: V(-1, 0) },
+                "0:1": { origin: V(-1, -0.75), target: V(-1.7, -0.75), dir: V(-1, 0) },
+                "1:0": { origin: V(1, 0.6), target: V(1.7, 0.6), dir: V(1, 0) },
+                "1:1": { origin: V(1, -0.6), target: V(1.7, -0.6), dir: V(1, 0) },
+                "2:0": { origin: V(0, 1.2), target: V(0, 1.9), dir: V(0, 1) },
+                "2:1": { origin: V(0, -1.2), target: V(0, -1.9), dir: V(0, -1) },
+            },
+        },
+    },
     "JKFlipFlop": {
         Default:       DigitalInfo["DigitalPort"].Default,
         InitialConfig: "3,2,2",
@@ -69,6 +85,39 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 "0:0": { origin: V(-1, 0.9), target: V(-1.7, 0.9), dir: V(-1, 0) },
                 "0:1": { origin: V(-1, 0), target: V(-1.7, 0), dir: V(-1, 0) },
                 "0:2": { origin: V(-1, -0.9), target: V(-1.7, -0.9), dir: V(-1, 0) },
+                "1:0": { origin: V(1, 0.6), target: V(1.7, 0.6), dir: V(1, 0) },
+                "1:1": { origin: V(1, -0.6), target: V(1.7, -0.6), dir: V(1, 0) },
+                "2:0": { origin: V(0, 1.2), target: V(0, 1.9), dir: V(0, 1) },
+                "2:1": { origin: V(0, -1.2), target: V(0, -1.9), dir: V(0, -1) },
+            },
+        },
+    },
+    "SRFlipFlop": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "3,2,2",
+        AllowChanges:  false,
+
+        Positions: {
+            "3,2,2": {
+                "0:0": { origin: V(-1, 0.9), target: V(-1.7, 0.9), dir: V(-1, 0) },
+                "0:1": { origin: V(-1, 0), target: V(-1.7, 0), dir: V(-1, 0) },
+                "0:2": { origin: V(-1, -0.9), target: V(-1.7, -0.9), dir: V(-1, 0) },
+                "1:0": { origin: V(1, 0.6), target: V(1.7, 0.6), dir: V(1, 0) },
+                "1:1": { origin: V(1, -0.6), target: V(1.7, -0.6), dir: V(1, 0) },
+                "2:0": { origin: V(0, 1.2), target: V(0, 1.9), dir: V(0, 1) },
+                "2:1": { origin: V(0, -1.2), target: V(0, -1.9), dir: V(0, -1) },
+            },
+        },
+    },
+    "TFlipFlop": {
+        Default:       DigitalInfo["DigitalPort"].Default,
+        InitialConfig: "3,2,2",
+        AllowChanges:  false,
+
+        Positions: {
+            "3,2,2": {
+                "0:0": { origin: V(-1, 0.75), target: V(-1.7, 0.75), dir: V(-1, 0) },
+                "0:1": { origin: V(-1, -0.75), target: V(-1.7, -0.75), dir: V(-1, 0) },
                 "1:0": { origin: V(1, 0.6), target: V(1.7, 0.6), dir: V(1, 0) },
                 "1:1": { origin: V(1, -0.6), target: V(1.7, -0.6), dir: V(1, 0) },
                 "2:0": { origin: V(0, 1.2), target: V(0, 1.9), dir: V(0, 1) },
