@@ -18,6 +18,11 @@ export const CalcPortPositions = (amt: number, spacing: number, width: number, d
         .map((h) => CalcPortPos(V(dir.x*width/2, h), dir))
 );
 
+export const CalcMuxPortPositions = (amt: number, spacing: number, width: number, dir: Vector) => (
+    linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt)
+        .map((h,i) => CalcPortPos(V(h, (dir.x*width/2 - 0.86) + (-0.24 * (i-1))), dir))
+);
+
 export type Positioner = (amt: number) => Record<number, PortPos[]>;
 
 

@@ -4,7 +4,7 @@ import {V} from "Vector";
 
 import {DefaultDigitalPort, DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
 
-import {CalcPortPos, CalcPortPositions, GenPortConfig} from "../positioning/utils";
+import {CalcMuxPortPositions, CalcPortPos, CalcPortPositions, GenPortConfig} from "../positioning/utils";
 import {PortInfoRecord}                                from "../types";
 
 
@@ -59,15 +59,16 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
     },
     "Multiplexer": {
         Default:       DefaultDigitalPort,
-        InitialConfig: "4,1",
+        InitialConfig: "4,1,2",
         AllowChanges:  true,
-        ChangeGroup:   DigitalPortGroup.Input,
+        ChangeGroup:   DigitalPortGroup.Select,
 
         Positions: GenPortConfig(
             [1,2,3,4,5,6,7,8],
-            (numInputs) => ({
-                0: CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
+            (numSelects) => ({
+                0: CalcPortPositions(Math.pow(2,numSelects), 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
                 1: [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
+                2: CalcMuxPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(0, -1)), // 2 selectors
             }),
         ),
     },
