@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, DEFAULT_FILL_COLOR, SELECTED_BORDER_COLOR} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, DEFAULT_FILL_COLOR, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -26,7 +26,9 @@ export class DFlipFlopView extends ComponentView<DFlipFlop, DigitalViewInfo> {
 
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
 
-        const style = new Style(DEFAULT_FILL_COLOR , borderCol, DEFAULT_CURVE_BORDER_WIDTH);
+        const fillcol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
+
+        const style = new Style(fillcol , borderCol, DEFAULT_CURVE_BORDER_WIDTH);
 
         // Get size of model
         const size = this.transform.get().getSize();
