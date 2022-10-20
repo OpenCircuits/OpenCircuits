@@ -31,8 +31,6 @@ jobs:
     timeout-minutes: 60
     runs-on: ${{ matrix.os }}
     strategy:
-      # Can only run one at a time otherwise the commit action can hit a bit of a race condition
-      max-parallel: 1
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
@@ -85,6 +83,11 @@ jobs:
           UPDATE_SNAPSHOTS_COMMAND: ${{ github.event.comment.body }}
         run: yarn test-e2e:ci --update-snapshots
       # Commit the changes to the pull request branch
+      # Theoretically, this could have an issue if 2+ OSes pull/commit/push at the exact same time.
+      # Chance of this happening should be extremely low so ¯\_(ツ)_/¯
+      - name: Pull Branch
+        if: ${{ contains(github.event.comment.body, matrix.os) }}
+        run: git pull
       - uses: stefanzweifel/git-auto-commit-action@v4
         if: ${{ contains(github.event.comment.body, matrix.os) }}
         with:
