@@ -2,9 +2,7 @@ import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
-import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
-
-import {DigitalInfo} from "core/views/info/digital";
+import {DefaultDigitalPort, DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
 
 import {CalcPortPos, CalcPortPositions, GenPortConfig} from "../positioning/utils";
 import {PortInfoRecord}                                from "../types";
@@ -12,7 +10,7 @@ import {PortInfoRecord}                                from "../types";
 
 export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
     "DigitalNode": {
-        Default:       DigitalInfo["DigitalPort"].Default,
+        Default:       DefaultDigitalPort,
         InitialConfig: "1,1",
         AllowChanges:  false,
 
@@ -24,7 +22,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         },
     },
     "Switch": {
-        Default:       DigitalInfo["DigitalPort"].Default,
+        Default:       DefaultDigitalPort,
         InitialConfig: "0,1",
         AllowChanges:  false,
 
@@ -35,7 +33,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         },
     },
     "LED": {
-        Default:       DigitalInfo["DigitalPort"].Default,
+        Default:       DefaultDigitalPort,
         InitialConfig: "1",
         AllowChanges:  false,
 
@@ -46,7 +44,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         },
     },
     "ANDGate": {
-        Default:       DigitalInfo["DigitalPort"].Default,
+        Default:       DefaultDigitalPort,
         InitialConfig: "2,1",
         AllowChanges:  true,
         ChangeGroup:   DigitalPortGroup.Input,

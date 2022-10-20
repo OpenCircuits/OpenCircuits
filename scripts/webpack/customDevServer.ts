@@ -10,7 +10,7 @@ import Server, {Middleware} from "webpack-dev-server";
  *  for digital and analog.
  *
  * @param project The project directory in `.devCache`, i.e. "digital" or "analog".
- * @returns         The Webpack-compatible middleware and dev-server.
+ * @returns       The Webpack-compatible middleware and dev-server.
  */
 export default (project: string) => {
     const CACHE_PATH = path.resolve(process.cwd(), ".devCache", project);
@@ -22,7 +22,7 @@ export default (project: string) => {
      *
      * @param middlewares Middlewares to be returned at the end of the funciton.
      * @param devServer   The instance of the development server.
-     * @returns             The passed in middlewares.
+     * @returns           The passed in middlewares.
      * @throws If one of the underlying functions throws an error.
      */
     return (middlewares: Middleware[], devServer: Server) => {

@@ -1,4 +1,3 @@
-import {AllComponentInfo}                  from "core/views/info";
 import {useLayoutEffect, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
@@ -9,8 +8,7 @@ import {CircuitInfo, Cursor} from "core/utils/CircuitInfo";
 
 import {DeselectAll} from "core/actions/units/Select";
 
-import {AnyComponent} from "core/models/types";
-
+import {AnyComponent, DefaultComponent} from "core/models/types";
 
 import {CreateNComponents} from "shared/utils/CreateN";
 import {GetRenderFunc}     from "shared/utils/GetRenderingFunc";
@@ -85,7 +83,7 @@ export const MainDesigner = ({ info, otherPlace }: Props) => {
                 num = num ?? 1;
                 if (!itemKind || !(typeof itemKind === "string") || !(typeof num === "number"))
                     return;
-                if (!(itemKind in AllComponentInfo)) {
+                if (!(itemKind in DefaultComponent)) {
                     console.warn(`Attempted to place item of kind: ${itemKind} which doesn't have info.`);
                     return;
                 }

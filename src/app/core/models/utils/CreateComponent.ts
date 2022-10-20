@@ -1,20 +1,18 @@
 import {v4 as uuid} from "uuid";
 
-import {AllComponentInfo} from "core/views/info";
-import {AllPortInfo}      from "core/views/portinfo";
+import {AllPortInfo} from "core/views/portinfo";
 
-import {AnyComponent, AnyPort} from "../types";
+import {AnyComponent, AnyPort, DefaultComponent} from "../types";
 
 
-export function CreateComponent(kind: keyof typeof AllComponentInfo, zIndex: number, compID = uuid()) {
-    const info = AllComponentInfo[kind];
+export function CreateComponent(kind: AnyComponent["kind"], zIndex: number, compID = uuid()) {
     const portInfo = AllPortInfo[kind];
 
     // Create component
-    const comp = info.Default(compID);
+    const comp = DefaultComponent[kind](compID);
 
     // Create ports
-    const portConfig = portInfo.Positions[AllPortInfo[kind].InitialConfig];
+    const portConfig = portInfo.Positions[portInfo.InitialConfig];
     const ports = Object.keys(portConfig).map((s) => {
         const [group, index] = s.split(":").map((s) => parseInt(s));
         return portInfo.Default(uuid(), compID, group, index);
