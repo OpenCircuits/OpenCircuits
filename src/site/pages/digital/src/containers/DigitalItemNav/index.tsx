@@ -7,7 +7,7 @@ import {GUID} from "core/utils/GUID";
 
 import {AnyComponent, AnyObj} from "core/models/types";
 
-import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
+import {DefaultDigitalComponent, DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -108,12 +108,12 @@ export const DigitalItemNav = ({ info }: Props) => {
         ],
     }), [ics]);
 
-    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemID: DigitalComponent["kind"]) => {
-        if (!curItemID || (smartPlace === SmartPlaceOptions.Off))
+    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemID: string) => {
+        if (!(curItemID in DefaultDigitalComponent) || (smartPlace === SmartPlaceOptions.Off))
             return;
 
         // This function shows the display for 'Smart Place' (issue #689)
-        const [numInputs, numOutputs] = GetNumInputsAndOutputs(curItemID, info);
+        const [numInputs, numOutputs] = GetNumInputsAndOutputs(curItemID as DigitalComponent["kind"], info);
         return (<>
             {!!(smartPlace & SmartPlaceOptions.Inputs) &&
                 new Array(numInputs).fill(0).map((_, i) => (

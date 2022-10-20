@@ -18,7 +18,8 @@ export const CopyHandler: EventHandler = ({
         (document.getSelection()?.anchorNode?.nodeName !== "LABEL" ||
          document.getSelection()?.type === "Caret"),
 
-    getResponse: ({ circuit, selections, history }: CircuitInfo, { type, ev }: CopyPasteInputEvent) => {
+    getResponse: ({ circuit, selections }, event) => {
+        const { ev } = event as CopyPasteInputEvent;
         if (!ev.clipboardData)
             throw new Error("CopyHandler.getResponse failed: ev.clipboardData is unavailable");
 

@@ -52,11 +52,21 @@ const ModulePropInputField = ({
     case "color":
         return <ColorModuleInputField {...otherProps} props={vals as string[]} />
     case "number[]":
+        return (
+            <SelectModuleInputField
+                {...otherProps}
+                kind={type} props={vals as number[]} options={info.options}
+                onSubmit={(info) => {
+                    otherProps.onSubmit(info);
+                    forceUpdate(); // Need to force update since these can trigger info-state changes
+                                   //  and feel less inituitive to the user about focus/blur
+                }} />
+        );
     case "string[]":
         return (
             <SelectModuleInputField
                 {...otherProps}
-                kind={type} props={vals as string[] | number[]} options={info.options}
+                kind={type} props={vals as string[]} options={info.options}
                 onSubmit={(info) => {
                     otherProps.onSubmit(info);
                     forceUpdate(); // Need to force update since these can trigger info-state changes

@@ -22,13 +22,15 @@
         "isolatedModules": true,
         "sourceMap": true,
 
-        "strict": false,
-        "noImplicitAny": true,
-        "noImplicitOverride": true,
-        "strictNullChecks": true,
-        "alwaysStrict": true,
-        "strictBindCallApply": true,
-        "useUnknownInCatchVariables": true,
-        "strictPropertyInitialization": true,
+        // Strict enables the following commented rules
+        "strict": true,
+        // "noImplicitAny": true,
+        // "noImplicitOverride": true,
+        // "strictNullChecks": true,
+        // "alwaysStrict": true,
+        // "strictBindCallApply": true,
+        // "useUnknownInCatchVariables": true,
+        // "strictPropertyInitialization": true,
+        // "strictFunctionTypes": true,
     },
 }

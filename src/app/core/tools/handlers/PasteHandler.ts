@@ -9,7 +9,8 @@ export const PasteHandler = (paste: (text: string) => boolean): EventHandler => 
             (!!event.ev.clipboardData) &&
             (event.ev.clipboardData.getData("text/plain").length > 0)),
 
-    getResponse: (_, { ev }: CopyPasteInputEvent) => {
+    getResponse: (_, event) => {
+        const { ev } = event as CopyPasteInputEvent;
         paste(ev.clipboardData!.getData("text/plain"));
     },
 });

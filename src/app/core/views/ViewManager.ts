@@ -130,7 +130,7 @@ export class ViewManager<
         this.depthMap = [];
 
         if (c)
-            Object.values(c.objects).forEach((o: Obj) => this.addObj(o));
+            Object.values(c.objects).forEach((o) => this.addObj(o as Obj));
     }
 
     public onAddObj(m: Obj) {

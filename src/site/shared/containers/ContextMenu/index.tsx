@@ -131,17 +131,17 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
     /* Context Menu "Focus" */
     const onFocus = async () => {
-        FitToScreenHandler.getResponse(info);
+        FitToScreenHandler.getResponse(info, { type: "unknown" });
     }
 
     /* Context Menu "Clean Up" */
     const onCleanUp = async () => {
-        CleanUpHandler.getResponse(info);
+        CleanUpHandler.getResponse(info, { type: "unknown" });
     }
 
     /* Context Menu "Duplicate" */
     const onDuplicate = async () => {
-        DuplicateHandler.getResponse(info);
+        DuplicateHandler.getResponse(info, { type: "unknown" });
     }
 
     /* Context Menu "Undo/Redo" */

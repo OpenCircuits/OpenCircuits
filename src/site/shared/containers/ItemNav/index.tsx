@@ -102,7 +102,7 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, getImgSrc,
             return;
         // If pressed object is part of selections, do a default deselect and delete of all selections
         if (info.selections.has(curPressedObjID)) {
-            DeleteHandler.getResponse(info);
+            DeleteHandler.getResponse(info, { type: "unknown" });
             return;
         }
         // Else just delete

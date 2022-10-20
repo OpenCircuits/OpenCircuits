@@ -10,10 +10,10 @@ type Props = {
     onDrop: (pos: Vector, ...data: unknown[]) => void;
 };
 export const Droppable = React.forwardRef(
-    <T extends HTMLElement>({ children, onDrop }: Props, forwardedRed: React.RefObject<T>
+    <T extends HTMLElement>({ children, onDrop }: Props, forwardedRef: React.ForwardedRef<T>
 ) => {
     const defaultRef = useRef<T>();
-    const ref = forwardedRed ?? defaultRef;
+    const ref = (forwardedRef ?? defaultRef) as React.RefObject<T>;
 
     useEffect(() => {
         const { current } = ref;

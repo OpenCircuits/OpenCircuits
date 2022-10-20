@@ -181,14 +181,16 @@ export class InputManager extends Observable<InputManagerEvent> {
         window.addEventListener("keydown", onKeyDown, false);
         window.addEventListener("keyup",   onKeyUp,   false);
         window.addEventListener("blur",    onBlur);
-        window.addEventListener("paste",   onPaste);
-        window.addEventListener("copy",    onCopy);
-        window.addEventListener("cut",     onCut);
+
+        document.addEventListener("paste", onPaste);
+        document.addEventListener("copy",  onCopy);
+        document.addEventListener("cut",   onCut);
 
         return () => {
-            window.removeEventListener("cut",     onCut);
-            window.removeEventListener("copy",    onCopy);
-            window.removeEventListener("paste",   onPaste);
+            document.removeEventListener("cut",   onCut);
+            document.removeEventListener("copy",  onCopy);
+            document.removeEventListener("paste", onPaste);
+
             window.removeEventListener("blur",    onBlur);
             window.removeEventListener("keyup",   onKeyUp,   false);
             window.removeEventListener("keydown", onKeyDown, false);
