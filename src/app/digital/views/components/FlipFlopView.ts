@@ -34,13 +34,12 @@ export class FlipFlopView<
      * The first parameter, info, is an object that contains information about the item.
      * The second parameter, obj, is an object that contains information about the object that the item is in.
      *
-     * @param info               - Info - This is the info object that is passed to the constructor of the Item class.
-     * @param obj                - The object that the item is attached to.
-     * @param v                  - Vector = V(1, 1).
-     * @param [svg=flipflop.svg] - The name of the svg file.
+     * @param info - Info - This is the info object that is passed to the constructor of the Item class.
+     * @param obj  - The object that the item is attached to.
+     * @param v    - Vector = V(1, 1).
      */
-    public constructor(info: Info, obj: Obj, v: Vector = V(1, 1), svg = "flipflop.svg") {
-        super(info, obj, v, svg); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
+    public constructor(info: Info, obj: Obj, v: Vector = V(2, 2.4)) {
+        super(info, obj, v); // file location: src/site/pages/digital/public/img/items. Also temp placeholder as I figure the positioning.
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
