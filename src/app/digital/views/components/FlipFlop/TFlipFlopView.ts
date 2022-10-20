@@ -8,6 +8,6 @@ import {DigitalViewInfo} from "digital/views/DigitalViewInfo";
 // flipflops share much of the same model. Need to get in contact with the other flipflop people, or I do all of them.
 export class TFlipFlopView extends FlipFlopView<TFlipFlop, DigitalViewInfo>{
     public constructor(info: DigitalViewInfo, obj: TFlipFlop) {
-        super(info, obj, V(1,1.5));
+        super(info, obj, V(2, 2.4));
     }
 }

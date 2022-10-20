@@ -10,7 +10,11 @@ export const DigitalPropInfo: PropInfoRecord<DigitalObj> = {
     "DigitalWire": DefaultWirePropInfo,
     "DigitalNode": DefaultComponentPropInfo,
 
-    "Switch":  DefaultComponentPropInfo,
-    "LED":     DefaultComponentPropInfo,
-    "ANDGate": DefaultComponentPropInfo,
+    "Switch":     DefaultComponentPropInfo,
+    "LED":        DefaultComponentPropInfo,
+    "ANDGate":    DefaultComponentPropInfo,
+    "DFlipFlop":  DefaultComponentPropInfo,
+    "JKFlipFlop": DefaultComponentPropInfo,
+    "SRFlipFlop": DefaultComponentPropInfo,
+    "TFlipFlop":  DefaultComponentPropInfo,
 } as const;

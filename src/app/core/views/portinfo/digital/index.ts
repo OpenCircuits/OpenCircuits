@@ -59,18 +59,70 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             }),
         ),
     },
-    "TFlipFlop": {
+
+    "DFlipFlop": {
         Default:       DefaultDigitalPort,
-        InitialConfig: "1,2,1",
-        AllowChanges:  true,
-        ChangeGroup:   DigitalPortGroup.Input,
+        InitialConfig: "2,2,2",
+        AllowChanges:  false,
 
         Positions: {
-            "1,2,1": {
-                "0:0": { origin: V(-0.5, 0.5), target: V(-1, 0.5), dir: V(-1, 0) }, // T
-                "1:0": { origin: V(0.5, 0.5), target: V(1, 0.5), dir: V(+1, 0) }, // Q
-                "1:1": { origin: V(0.5, -0.5), target: V(1, -0.5), dir: V(+1, 0) }, // !Q
-                "2:0": { origin: V(-0.5, -0.5), target: V(-1, -0.5), dir: V(-1, 0) }, // CLK
+            "2,2,2": {
+                "0:0": CalcPortPos(V(-1, 0.6), V(-1, 0)),
+                "0:1": CalcPortPos(V(-1, -0.6), V(-1, 0)),
+                "1:0": CalcPortPos(V(1, 0.6), V(1, 0)),
+                "1:1": CalcPortPos(V(1, -0.6), V(1, 0)),
+                "2:0": CalcPortPos(V(0, 1.2), V(0, 1)),
+                "2:1": CalcPortPos(V(0, -1.2), V(0, -1)),
+            },
+        },
+    },
+    "JKFlipFlop": {
+        Default:       DefaultDigitalPort,
+        InitialConfig: "3,2,2",
+        AllowChanges:  false,
+
+        Positions: {
+            "3,2,2": {
+                "0:0": CalcPortPos(V(-1, 0.9), V(-1, 0)),
+                "0:1": CalcPortPos(V(-1, 0), V(-1, 0)),
+                "0:2": CalcPortPos(V(-1, -0.9), V(-1, 0)),
+                "1:0": CalcPortPos(V(1, 0.6), V(1, 0)),
+                "1:1": CalcPortPos(V(1, -0.6), V(1, 0)),
+                "2:0": CalcPortPos(V(0, 1.2), V(0, 1)),
+                "2:1": CalcPortPos(V(0, -1.2), V(0, -1)),
+            },
+        },
+    },
+    "SRFlipFlop": {
+        Default:       DefaultDigitalPort,
+        InitialConfig: "3,2,2",
+        AllowChanges:  false,
+
+        Positions: {
+            "3,2,2": {
+                "0:0": CalcPortPos(V(-1, 0.9), V(-1, 0)),
+                "0:1": CalcPortPos(V(-1, 0), V(-1, 0)),
+                "0:2": CalcPortPos(V(-1, -0.9), V(-1, 0)),
+                "1:0": CalcPortPos(V(1, 0.6), V(1, 0)),
+                "1:1": CalcPortPos(V(1, -0.6), V(1, 0)),
+                "2:0": CalcPortPos(V(0, 1.2), V(0, 1)),
+                "2:1": CalcPortPos(V(0, -1.2), V(0, -1)),
+            },
+        },
+    },
+    "TFlipFlop": {
+        Default:       DefaultDigitalPort,
+        InitialConfig: "2,2,2",
+        AllowChanges:  false,
+
+        Positions: {
+            "2,2,2": {
+                "0:0": CalcPortPos(V(-1, 0.6), V(-1, 0)),
+                "0:1": CalcPortPos(V(-1, -0.6), V(-1, 0)),
+                "1:0": CalcPortPos(V(1, 0.6), V(1, 0)),
+                "1:1": CalcPortPos(V(1, -0.6), V(1, 0)),
+                "2:0": CalcPortPos(V(0, 1.2), V(0, 1)),
+                "2:1": CalcPortPos(V(0, -1.2), V(0, -1)),
             },
         },
     },
