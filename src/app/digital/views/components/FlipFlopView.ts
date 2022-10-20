@@ -15,8 +15,6 @@ import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
 
 import {AnyComponent} from "core/models/types";
 
-import {DigitalPortGroup} from "core/models/types/digital";
-
 import {CircuitController}           from "core/controllers/CircuitController";
 import {RenderInfo, ViewCircuitInfo} from "core/views/BaseView";
 import {ComponentView}               from "core/views/ComponentView";
@@ -29,8 +27,8 @@ export class FlipFlopView<
 
     /**
      * This is a constructor for the FlopFlop superclass, which is a subclass of the Component class.
-     * It takes two parameters, info and obj, and passes them to the superclass constructor, along with two other parameters.
-     *
+     * It takes two parameters, info and obj, and passes them to the superclass constructor,
+     * along with two other parameters.
      * The first parameter, info, is an object that contains information about the item.
      * The second parameter, obj, is an object that contains information about the object that the item is in.
      *
@@ -57,12 +55,5 @@ export class FlipFlopView<
         const rect = new Rect(V(0,0), size)
 
         renderer.draw(new Rectangle(rect), style);
-    }
-
-    public override getBounds(): Rect {
-        // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
-        return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }
