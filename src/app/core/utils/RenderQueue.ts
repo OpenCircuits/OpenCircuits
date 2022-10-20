@@ -13,7 +13,7 @@ export type RenderOptions = {
 export class RenderQueue {
     private queued: number;
     private renderFunction?: (options?: RenderOptions) => void;
-    private lastFrameId: number;
+    private lastFrameId?: number;
     private options: RenderOptions;
 
     /**
@@ -56,7 +56,8 @@ export class RenderQueue {
     }
 
     public cancel(): void {
-        cancelAnimationFrame(this.lastFrameId);
+        if (this.lastFrameId !== undefined)
+            cancelAnimationFrame(this.lastFrameId);
     }
 
 }

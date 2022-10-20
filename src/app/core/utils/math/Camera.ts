@@ -1,3 +1,5 @@
+import {DirtyVar} from "../DirtyVar";
+
 import {TransformContains} from "./MathUtils";
 import {Matrix2x3}         from "./Matrix";
 import {Transform}         from "./Transform";
@@ -16,12 +18,9 @@ export class Camera {
     private width: number;
     private height: number;
 
-    private readonly transform: Transform;
+    private readonly transform: DirtyVar<Transform>;
 
-    private mat: Matrix2x3;
-    private inv: Matrix2x3;
-
-    private dirty: boolean;
+    private readonly mats: DirtyVar<[Matrix2x3, Matrix2x3]>;
 
     private margin: Margin;
 
@@ -41,32 +40,20 @@ export class Camera {
         this.width = width;
         this.height = height;
 
-        this.transform = new Transform(V(0,0), V(0,0), 0);
+        this.transform = new DirtyVar(() => {
+            const p1 = this.getWorldPos(V(0, 0));
+            const p2 = this.getWorldPos(V(this.width, this.height));
+            return Transform.FromCorners(p1, p2);
+        });
 
-        this.dirty = true;
         this.margin = { left: 0, right: 0, bottom: 0, top: 0 };
-    }
+        this.mats = new DirtyVar(() => {
+            const mat = new Matrix2x3();
+            mat.translate(this.getPos());
+            mat.scale(this.getScale());
 
-    /**
-     * If dirty is true then it updates and recalculates the matrix to the new position, height, and width.
-     * `dirty` represents whether the screen has been changed/moved or not.
-     */
-    private updateMatrix(): void {
-        if (!this.dirty)
-            return;
-
-        this.dirty = false;
-
-        // Create matrix (w/ flipped y-axis)
-        this.mat = new Matrix2x3();
-        this.mat.translate(this.getPos());
-        this.mat.scale(this.getScale());
-        this.inv = this.mat.inverse();
-
-        const p1 = this.getWorldPos(V(0, 0));
-        const p2 = this.getWorldPos(V(this.width, this.height));
-        this.transform.setPos(p2.add(p1).scale(0.5));
-        this.transform.setSize(p2.sub(p1).abs());
+            return [mat, mat.inverse()];
+        })
     }
 
     /**
@@ -76,7 +63,8 @@ export class Camera {
      * @param height The new height of screen.
      */
     public resize(width: number, height: number): void {
-        this.dirty = true;
+        this.mats.setDirty();
+        this.transform.setDirty();
         this.width = width;
         this.height = height;
     }
@@ -88,7 +76,8 @@ export class Camera {
      */
     public setPos(pos: Vector): void {
         this.pos = pos;
-        this.dirty = true;
+        this.mats.setDirty();
+        this.transform.setDirty();
     }
 
     /**
@@ -98,7 +87,8 @@ export class Camera {
      */
     public setZoom(zoom: number): void {
         this.zoom = zoom;
-        this.dirty = true;
+        this.mats.setDirty();
+        this.transform.setDirty();
     }
 
     /**
@@ -107,7 +97,8 @@ export class Camera {
      * @param dv A vector that represents by how much the position will be moved.
      */
     public translate(dv: Vector): void {
-        this.dirty = true;
+        this.mats.setDirty();
+        this.transform.setDirty();
         this.setPos(this.getPos().add(dv));
     }
 
@@ -132,7 +123,8 @@ export class Camera {
      * @param s The amount to zoom by.
      */
     public zoomBy(s: number): void {
-        this.dirty = true;
+        this.mats.setDirty();
+        this.transform.setDirty();
         this.setZoom(this.getZoom() * s);
     }
     /**
@@ -185,8 +177,7 @@ export class Camera {
      * @returns Copy of this.transform.
      */
     public getTransform(): Transform {
-        this.updateMatrix();
-        return this.transform.copy();
+        return this.transform.get();
     }
     /**
      * Returns copy of current matrix and updates the matrix as needed.
@@ -194,8 +185,7 @@ export class Camera {
      * @returns Returns copy of mat.
      */
     public getMatrix(): Matrix2x3 {
-        this.updateMatrix();
-        return this.mat.copy();
+        return this.mats.get()[0];
     }
     /**
      * Returns a copy of the inverse of the matrix and updates the matrix.
@@ -203,8 +193,7 @@ export class Camera {
      * @returns Returned copy of inv.
      */
     public getInverseMatrix(): Matrix2x3 {
-        this.updateMatrix();
-        return this.inv.copy();
+        return this.mats.get()[1];
     }
     /**
      * Returns the current screen position with formula using the vector v and getCenter.

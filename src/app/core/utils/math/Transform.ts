@@ -26,9 +26,10 @@ export class Transform {
 
     private prevParentMatrix?: Matrix2x3;
 
-    private matrix: Matrix2x3;
-    private inverse: Matrix2x3;
-    private radius: number;
+    // TODO @Leon: Use DirtyVar
+    private matrix!: Matrix2x3;
+    private inverse!: Matrix2x3;
+    private radius!: number;
 
     /**
      * Constructs a new Transform object.

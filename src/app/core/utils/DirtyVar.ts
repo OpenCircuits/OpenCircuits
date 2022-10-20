@@ -2,7 +2,7 @@
 
 export class DirtyVar<T> {
     private isDirty: boolean;
-    private variable: T;
+    private variable!: T;
 
     private readonly update: () => T;
 

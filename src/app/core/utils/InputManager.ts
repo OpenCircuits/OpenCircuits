@@ -49,27 +49,27 @@ export class InputManager extends Observable<InputManagerEvent> {
     private canvas?: HTMLCanvasElement;
 
     /** A vector representing the previous position of the mouse. */
-    private prevMousePos: Vector;
+    private prevMousePos!: Vector;
     /** A vector representing the current position of the mouse. */
-    private mousePos: Vector;
+    private mousePos!: Vector;
 
     /** True if a mousebutton is held down, false otherwise. */
-    private mouseDown: boolean;
+    private mouseDown!: boolean;
     /** A vector representing the position the mouse was when the mousebutton first became pressed. */
-    private mouseDownPos: Vector;
+    private mouseDownPos!: Vector;
     /** Represents the mousebutton being pressed (left, middle, right, etc.). */
-    private mouseDownButton: number;
+    private mouseDownButton!: number;
 
     /** True if the mouse is being dragged, false otherwise. (a "drag" being distinct from a "click"). */
-    private isDragging: boolean;
+    private isDragging!: boolean;
     /** Represents the time at which the mouse button became held down. */
-    private startTapTime: number;
+    private startTapTime!: number;
 
     /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device). */
-    private touchCount: number;
+    private touchCount!: number;
 
     /** Map with keycodes as keys and booleans representing whether that key is held as values. */
-    private keysDown: Map<Key, boolean>;
+    private keysDown!: Map<Key, boolean>;
 
     /**
      * Initializes Input with given canvas and dragTime.
