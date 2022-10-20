@@ -101,5 +101,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "deepmerge": "^4.2.2",
+    "webpack-merge": "^5.8.0"
   }
 }

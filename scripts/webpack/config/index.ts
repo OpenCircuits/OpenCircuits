@@ -1,7 +1,7 @@
 import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
 import webpack                     from "webpack";
+import {merge}                     from "webpack-merge";
 
-import mergeDeep from "../../utils/merge.js";
 
 import CSSConfig  from "./css.js";
 import HTMLConfig from "./html.js";
@@ -22,7 +22,7 @@ import type {Configuration} from "webpack";
 export default (config: Config): Configuration => {
     const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;
 
-    return mergeDeep(
+    return merge(
         {
             mode, target, entry, stats,
 

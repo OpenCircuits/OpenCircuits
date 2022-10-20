@@ -6,7 +6,6 @@
         "allowJs": true,
         "module": "esnext",
         "target": "es2021",
-        "strict": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
@@ -19,6 +18,8 @@
         "inlineSources": true,
         "declaration": false,
         "outDir": "../build/scripts",
+
+        "strict": true,
         "noImplicitOverride": true,
         "alwaysStrict": true,
         "strictNullChecks": true,
@@ -27,6 +28,6 @@
         "strictFunctionTypes": true,
         "strictPropertyInitialization": true,
         "noImplicitThis": true,
-        // "noImplicitAny": true,
+        "noImplicitAny": true,
     },
 }
