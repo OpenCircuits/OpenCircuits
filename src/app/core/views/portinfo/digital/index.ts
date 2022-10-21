@@ -57,4 +57,18 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             }),
         ),
     },
+    "NANDGate": {
+        Default:       DefaultDigitalPort,
+        InitialConfig: "2,1",
+        AllowChanges:  true,
+        ChangeGroup:   DigitalPortGroup.Input,
+
+        Positions: GenPortConfig(
+            [2,3,4,5,6,7,8],
+            (numInputs) => ({
+                0: CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
+                1: [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
+            }),
+        ),
+    },
 };

@@ -59,7 +59,8 @@ export const AllPropagators: PropagatorRecord = {
     // LEDs don't propagate a signal
     "LED": Noprop,
 
-    "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+    "ANDGate":  InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+    "NANDGate": Noprop,
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {
