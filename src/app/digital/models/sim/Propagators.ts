@@ -60,6 +60,8 @@ export const AllPropagators: PropagatorRecord = {
     "LED": Noprop,
 
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+
+    "ConstantLow": Noprop,
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {

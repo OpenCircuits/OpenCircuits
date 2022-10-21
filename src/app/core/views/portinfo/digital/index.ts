@@ -57,4 +57,15 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             }),
         ),
     },
+    "ConstantLow": {
+        Default:       DefaultDigitalPort,
+        InitialConfig: "0,1",
+        AllowChanges:  false,
+
+        Positions: {
+            "0,1": {
+                "1:0": { origin: V(0.5, 0), target: V(1.25, 0), dir: V(+1, 0) },
+            },
+        },
+    },
 };
