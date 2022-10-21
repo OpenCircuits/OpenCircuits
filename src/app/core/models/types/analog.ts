@@ -14,12 +14,16 @@ export type Resistor = Component & { kind: "Resistor", resistance: number };
 
 export type Inductor = Component & { kind: "Inductor", inductance: number };
 
+export type CurrentSource = Component & { kind: "CurrentSource", amperage: number };
+
+
 
 export type AnalogComponent =
     | AnalogNode
     | Ground
     | Resistor
-    | Inductor;
+    | Inductor
+    | CurrentSource;
 
 export type AnalogObj = AnalogPort | AnalogWire | AnalogComponent;
 
@@ -29,6 +33,8 @@ export const DefaultAnalogComponent: { [C in AnalogComponent as C["kind"]]: Comp
     "Ground":     (id) => ({ ...DefaultComponent(id), kind: "Ground"                     }),
     "Resistor":   (id) => ({ ...DefaultComponent(id), kind: "Resistor", resistance: 1000 }),
     "Inductor":   (id) => ({ ...DefaultComponent(id), kind: "Inductor", inductance: 10 }),
+    "CurrentSource": (id) => ({ ...DefaultComponent(id), kind: "CurrentSource", amperage: 1 }),
+
 
 };
 
