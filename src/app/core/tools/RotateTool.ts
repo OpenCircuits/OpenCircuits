@@ -5,7 +5,7 @@ import {V} from "Vector";
 
 import {CircuitInfo}                               from "core/utils/CircuitInfo";
 import {CalcSelectionsMidpoint, CalcWorldMousePos} from "core/utils/CircuitInfoUtils";
-import {Event}                                     from "core/utils/Events";
+import {InputManagerEvent}                         from "core/utils/InputManager";
 
 import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
@@ -40,7 +40,7 @@ export const RotateTool = (() => {
     }
 
     return {
-        shouldActivate(event: Event, info: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, info: CircuitInfo): boolean {
             const { input, circuit, selections, locked } = info;
             if (locked)
                 return false;
@@ -53,12 +53,12 @@ export const RotateTool = (() => {
                     selections.all((s) => (circuit.getObj(s)!.baseKind === "Component")) &&
                     isMouseOnCircle(info));
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Deactivate only mouse release
             return (event.type === "mouseup");
         },
 
-        onActivate({}: Event, info: CircuitInfo): void {
+        onActivate({}: InputManagerEvent, info: CircuitInfo): void {
             const { circuit, selections } = info;
 
             const worldMousePos = CalcWorldMousePos(info);
@@ -72,7 +72,7 @@ export const RotateTool = (() => {
             startAngle = worldMousePos.sub(CalcSelectionsMidpoint(info, "world")).angle();
             prevAngle = startAngle;
         },
-        onDeactivate({}: Event, { history }: CircuitInfo): void {
+        onDeactivate({}: InputManagerEvent, { history }: CircuitInfo): void {
             if (!tempAction)
                 return;
 
@@ -81,7 +81,7 @@ export const RotateTool = (() => {
             tempAction = undefined;
         },
 
-        onEvent(event: Event, info: CircuitInfo): boolean {
+        onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 

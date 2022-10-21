@@ -17,7 +17,7 @@ import type {Configuration} from "webpack";
  * Creates the webpack configuration.
  *
  * @param config The current configuration.
- * @returns        The webpack configuration.
+ * @returns      The webpack configuration.
  */
 export default (config: Config): Configuration => {
     const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;

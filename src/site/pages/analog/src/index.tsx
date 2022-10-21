@@ -1,4 +1,4 @@
-import React, {createRef}             from "react";
+import React                          from "react";
 import ReactDOM                       from "react-dom";
 import ReactGA                        from "react-ga";
 import {Provider}                     from "react-redux";
@@ -9,7 +9,7 @@ import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
 import {Images} from "core/utils/Images";
 
-import {InteractionTool}  from "core/tools/InteractionTool";
+import {DefaultTool}      from "core/tools/DefaultTool";
 import {PanTool}          from "core/tools/PanTool";
 import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
@@ -139,20 +139,17 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            // Setup
-            const canvas = createRef<HTMLCanvasElement>();
-
             // Setup circuit and get the CircuitInfo and helpers
             const [info, helpers] = Setup(
-                store, canvas, ngSpiceLib,
-                new InteractionTool([
+                store, ngSpiceLib,
+                new DefaultTool(
                     SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                     DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-                    SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                    CleanUpHandler, CopyHandler, CursorHandler,
+                    SelectionHandler, SelectPathHandler,
+                    RedoHandler, UndoHandler, CleanUpHandler, CopyHandler, CursorHandler,
                     PasteHandler((data) => AnalogPaste(data, info, undefined)),
                     SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-                ]),
+                ),
                 PanTool, RotateTool, ResizeTool,
                 TranslateTool, WiringTool,
                 SplitWireTool, SelectionBoxTool
@@ -172,7 +169,7 @@ async function Init(): Promise<void> {
             ReactDOM.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        <App info={info} helpers={helpers} canvas={canvas} />
+                        <App info={info} helpers={helpers} />
                     </Provider>
                 </React.StrictMode>,
                 document.getElementById("root")

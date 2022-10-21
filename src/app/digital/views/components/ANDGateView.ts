@@ -10,14 +10,15 @@ import {Line} from "core/utils/rendering/shapes/Line";
 
 import {ANDGate, DigitalPortGroup} from "core/models/types/digital";
 
-import {RenderInfo}               from "core/views/BaseView";
-import {ComponentView}            from "core/views/ComponentView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}    from "core/views/BaseView";
+import {ComponentView} from "core/views/ComponentView";
+
+import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController> {
-    public constructor(circuit: DigitalCircuitController, obj: ANDGate) {
-        super(circuit, obj, V(1, 1), "and.svg");
+export class ANDGateView extends ComponentView<ANDGate, DigitalViewInfo> {
+    public constructor(info: DigitalViewInfo, obj: ANDGate) {
+        super(info, obj, V(1, 1), "and.svg");
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
@@ -45,7 +46,7 @@ export class ANDGateView extends ComponentView<ANDGate, DigitalCircuitController
         renderer.draw(new Line(p1, p2), style);
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === DigitalPortGroup.Input).length;

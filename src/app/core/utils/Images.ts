@@ -28,8 +28,11 @@ export const Images = (() => {
     };
 
     return {
-        GetImage: function(img: string): SVGDrawing | undefined {
-            return images.get(img);
+        GetImage: function(imgName: string): SVGDrawing {
+            const img = images.get(imgName);
+            if (!img)
+                throw new Error(`Images: Failed to get image ${imgName}!`);
+            return img;
         },
         Load: async function(imageFileNames: string[], onprogress: (percentDone: number) => void): Promise<void> {
             let numLoaded = 0;

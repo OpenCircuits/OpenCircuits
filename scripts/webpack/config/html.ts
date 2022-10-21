@@ -13,7 +13,7 @@ import type {Configuration} from "webpack";
  * @param config            The current configuration.
  * @param config.env        The current environment.
  * @param config.publicPath The public path leading to index.html.
- * @returns                   The webpack configuration for the HTML-specific rules.
+ * @returns                 The webpack configuration for the HTML-specific rules.
  */
 export default ({ env, publicPath }: Config): Configuration => ({
     plugins: [

@@ -1,5 +1,5 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {SelectGroup} from "core/actions/units/Select";
 
@@ -7,7 +7,7 @@ import {EventHandler} from "../EventHandler";
 
 
 export const SelectAllHandler: EventHandler = ({
-    conditions: (event: Event, { input, circuit, selections }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { input, circuit, selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "a" &&
          input.isModifierKeyDown() &&

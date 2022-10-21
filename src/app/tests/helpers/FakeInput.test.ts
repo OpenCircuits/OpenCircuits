@@ -18,7 +18,7 @@ describe("Fake Input", () => {
         steps++;
     }
 
-    input.addListener(({ type }) => {
+    input.subscribe(({ type }) => {
         if (type === "mousedown" || type ==="mousemove" || type === "mouseup")
             step();
     });

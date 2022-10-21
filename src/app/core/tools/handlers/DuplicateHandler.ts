@@ -1,11 +1,11 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {EventHandler} from "../EventHandler";
 
 
 export const DuplicateHandler: EventHandler = ({
-    conditions: (event: Event, { input, selections }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { input, selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "d" &&
          input.isModifierKeyDown() &&

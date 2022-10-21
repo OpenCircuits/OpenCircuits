@@ -10,8 +10,8 @@ import {getStackTrace, isError} from "./Errors";
  * @param id             The HTML id of the loading screen div.
  * @param initialPercent The percent to start the loading screen at.
  * @param segments       An array with the percentage at which loading that segment ends, a text label to
- *                 indicate to the user what is currently loading, and the function itself along with an optional
- *                 function to call to update for progress that happens between segments.
+ *                       indicate to the user what is currently loading, and the function itself along with an optional
+ *                       function to call to update for progress that happens between segments.
  */
 export async function LoadingScreen(
     id: string,
