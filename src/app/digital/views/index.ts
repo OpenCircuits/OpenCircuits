@@ -5,6 +5,7 @@ import {ViewFactory, ViewRecord}  from "core/views/ViewManager";
 import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 
 import {ANDGateView}     from "./components/ANDGateView";
+import {BUFGateView}     from "./components/BUFGateView";
 import {LEDView}         from "./components/LEDView";
 import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
@@ -22,6 +23,7 @@ export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
     "Switch":  (c, o) => new SwitchView(c, o),
     "LED":     (c, o) => new LEDView(c, o),
     "ANDGate": (c, o) => new ANDGateView(c, o),
+    "BUFGate": (c, o) => new BUFGateView(c, o),
 };
 
 export function CreateView(info: DigitalViewInfo, obj: DigitalObj) {

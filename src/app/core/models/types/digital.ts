@@ -21,7 +21,10 @@ export type BUFGate = Component & { kind: "BUFGate" };
 
 export type DigitalComponent =
     | DigitalNode
-    | ANDGate;
+    | Switch
+    | LED
+    | ANDGate
+    | BUFGate;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;
 
@@ -31,6 +34,7 @@ export const DefaultDigitalComponent: { [C in DigitalComponent as C["kind"]]: Co
     "Switch":      (id) => ({ ...DefaultComponent(id), kind: "Switch"                }),
     "LED":         (id) => ({ ...DefaultComponent(id), kind: "LED", color: "#ffffff" }),
     "ANDGate":     (id) => ({ ...DefaultComponent(id), kind: "ANDGate"               }),
+    "BUFGate":     (id) => ({ ...DefaultComponent(id), kind: "BUFGate"               }),
 };
 
 export const DefaultDigitalPort: PortFactory<DigitalPort> =

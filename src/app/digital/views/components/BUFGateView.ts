@@ -8,16 +8,17 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Line} from "core/utils/rendering/shapes/Line";
 
-import {DigitalPortGroup} from "core/models/types/digital";
+import {BUFGate, DigitalPortGroup} from "core/models/types/digital";
 
-import {RenderInfo}               from "core/views/BaseView";
-import {ComponentView}            from "core/views/ComponentView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {RenderInfo}    from "core/views/BaseView";
+import {ComponentView} from "core/views/ComponentView";
+
+import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class BUFGateView extends ComponentView<BUFGate, DigitalCircuitController> {
-    public constructor(circuit: DigitalCircuitController, obj: BUFGate) {
-        super(circuit, obj, V(1, 1), "and.svg");
+export class BUFGateView extends ComponentView<BUFGate, DigitalViewInfo> {
+    public constructor(circuit: DigitalViewInfo, obj: BUFGate) {
+        super(circuit, obj, V(1, 1), "buf.svg");
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
@@ -45,7 +46,7 @@ export class BUFGateView extends ComponentView<BUFGate, DigitalCircuitController
         renderer.draw(new Line(p1, p2), style);
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === DigitalPortGroup.Input).length;
