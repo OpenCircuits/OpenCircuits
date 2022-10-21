@@ -30,6 +30,8 @@ export const Views: ViewRecord<AnalogObj, AnalogViewInfo> = {
     "AnalogPort": (c, o) => new AnalogPortView(c, o),
     "AnalogNode": (c, o) => new AnalogNodeView(c, o),
 
+    "Oscilliscope":   (c, o) => new ComponentView(c, o, V(1.2, 0.6), "oscilliscope.svg"),
+
     "Ground":   (c, o) => new ComponentView(c, o, V(1.2, 0.6), "ground.svg"),
     "Resistor": (c, o) => new ComponentView(c, o, V(1.2, 1), "resistor.svg"),
 };
