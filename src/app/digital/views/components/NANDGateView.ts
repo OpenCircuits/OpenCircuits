@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR, GATE_NOT_CIRCLE_RADIUS, SELECTED_FILL_COLOR, DEFAULT_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -6,7 +6,8 @@ import {Rect} from "math/Rect";
 
 import {Style} from "core/utils/rendering/Style";
 
-import {Line} from "core/utils/rendering/shapes/Line";
+import {Line}       from "core/utils/rendering/shapes/Line";
+import {Circle}     from "core/utils/rendering/shapes/Circle";
 
 import {NANDGate, DigitalPortGroup} from "core/models/types/digital";
 
@@ -42,6 +43,14 @@ export class NANDGateView extends ComponentView<NANDGate, DigitalViewInfo> {
         const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
         const p1 = V(-s, l1);
         const p2 = V(-s, l2);
+
+        
+
+        // Draw not circle
+        const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
+        const l = s + GATE_NOT_CIRCLE_RADIUS;
+        const styleCircle = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+        renderer.draw(new Circle(V(l, 0), GATE_NOT_CIRCLE_RADIUS), styleCircle);
 
         renderer.draw(new Line(p1, p2), style);
     }

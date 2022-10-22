@@ -1,6 +1,6 @@
 import {SVGDrawing} from "svg2canvas";
 
-import {DEFAULT_BORDER_WIDTH, SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -64,6 +64,7 @@ export class ComponentView<
         // Transform into local space
         renderer.transform(this.transform.get());
 
+        
         this.renderComponent(info);
 
         this.drawImg(info);
