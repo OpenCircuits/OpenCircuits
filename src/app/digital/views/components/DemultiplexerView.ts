@@ -43,10 +43,10 @@ export class DemultiplexerView extends ComponentView<Demultiplexer, DigitalViewI
         //
         /* eslint-disable space-in-parens */
     
-        const p1 = V(size.x/2,  size.y/2 - MULTIPLEXER_HEIGHT_OFFSET);
-        const p2 = V(size.x/2, -size.y/2 + MULTIPLEXER_HEIGHT_OFFSET);
-        const p3 = V(-size.x/2, -size.y/2);
-        const p4 = V(-size.x/2,  size.y/2);
+        const p1 = V(size.x/2,  size.y/2);
+        const p2 = V(size.x/2, -size.y/2);
+        const p3 = V(-size.x/2, -size.y/2 + MULTIPLEXER_HEIGHT_OFFSET);
+        const p4 = V(-size.x/2,  size.y/2 - MULTIPLEXER_HEIGHT_OFFSET);
         // Renders to the beginning two points again in order to fully connect the last corner
         renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
 

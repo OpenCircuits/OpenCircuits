@@ -126,10 +126,10 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         Positions: GenPortConfig(
             [1,2,3,4,5,6,7,8],
             (numSelects) => ({
-                0: [CalcPortPos(V((0.5 + numSelects/2)/2, 0), V((0.5 + numSelects/2)/2 + 0.25,0))], // 1 input
+                0: [CalcPortPos(V(-(0.5 + numSelects/2)/2, 0), V(-(0.5 + numSelects/2)/2 - 0.25,0))], // 1 input
                 1: (() => {
                     const size = V((0.5 + numSelects/2), (1 + Math.pow(2, numSelects - 1)));
-                    const x = -size.x / 2;
+                    const x = size.x / 2;
                     const ports = [];
                     const outputs = Math.pow(2,numSelects);
                     for (let i = 0; i < outputs; i++) {
@@ -138,8 +138,8 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                         const y = -spacingPos + 1/4;
                         ports[i] = {
                             origin: V(x, y),
-                            target: V(x - IO_PORT_LENGTH, y),
-                            dir: V(-1, 0)
+                            target: V(x + IO_PORT_LENGTH, y),
+                            dir: V(1, 0)
                         }
                     }
 
