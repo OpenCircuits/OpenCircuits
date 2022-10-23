@@ -29,6 +29,11 @@ export class MultiplexerView extends ComponentView<Multiplexer, DigitalViewInfo>
         const selected = selections.has(this.obj.id);
 
         const transform = this.getTransform();
+
+        const numSelectPorts = this.circuit.getPortsFor(this.obj).filter(p => p.group === DigitalPortGroup.Select).length-1;
+
+        const size = V((0.5 + numSelectPorts/2), (1 + Math.pow(2, numSelectPorts - 1)));
+
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const fillCol   = (selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
@@ -38,12 +43,15 @@ export class MultiplexerView extends ComponentView<Multiplexer, DigitalViewInfo>
         //
         /* eslint-disable space-in-parens */
     
-        const p1 = V(transform.getSize().x/2,  transform.getSize().y/2);
-        const p2 = V(transform.getSize().x/2, -transform.getSize().y/2);
-        const p3 = V(-transform.getSize().x/2, -transform.getSize().y/2 - MULTIPLEXER_HEIGHT_OFFSET);
-        const p4 = V(-transform.getSize().x/2,  transform.getSize().y/2 + MULTIPLEXER_HEIGHT_OFFSET);
+        const p1 = V(size.x/2,  size.y/2);
+        const p2 = V(size.x/2, -size.y/2);
+        const p3 = V(-size.x/2, -size.y/2 - MULTIPLEXER_HEIGHT_OFFSET);
+        const p4 = V(-size.x/2,  size.y/2 + MULTIPLEXER_HEIGHT_OFFSET);
         // Renders to the beginning two points again in order to fully connect the last corner
         renderer.draw(new Polygon([p1, p2, p3, p4, p1, p2]), style);
+
+        const bbox = super.getBounds().expand(V(0, ((numSelectPorts-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
+        renderer.draw(new Polygon([bbox.topLeft, bbox.topRight, bbox.bottomRight, bbox.bottomLeft, bbox.topLeft, bbox.topRight]), style);
     }
 
     public override getBounds(): Rect {
