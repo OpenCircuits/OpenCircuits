@@ -4,7 +4,11 @@ import {V} from "Vector";
 
 import {DefaultDigitalPort, DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
 
+<<<<<<< HEAD
 import {CalcPortPos, CalcPortPositions, CalcMuxPortPositions, GenPortConfig} from "../positioning/utils";
+=======
+import {CalcMuxPortPositions, CalcPortPos, CalcPortPositions, GenPortConfig} from "../positioning/utils";
+>>>>>>> 66c3b2abc3e21afab53db53257284882fe96a1b9
 import {PortInfoRecord}                                from "../types";
 
 
@@ -84,7 +88,6 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                     // const height = size.y;
                     // const slope = this.slopeMultiplier * MULTIPLEXER_HEIGHT_OFFSET / width;
                     // const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
-
                     // ports.forEach((port, i) => {
                     //     const x = this.calcSpacingPos(i, ports.length, 1);
                     //     const y = midPortOriginOffset - slope * x;
