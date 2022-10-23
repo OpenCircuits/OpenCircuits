@@ -1,4 +1,4 @@
-import {IO_PORT_LENGTH} from "core/utils/Constants";
+import {IO_PORT_LENGTH, MULTIPLEXER_HEIGHT_OFFSET} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -17,6 +17,13 @@ export const CalcPortPositions = (amt: number, spacing: number, width: number, d
     linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt)
         .map((h) => CalcPortPos(V(dir.x*width/2, h), dir))
 );
+
+
+export const CalcMuxPortPositions = (amt: number, spacing: number, width: number, dir: Vector) => {
+    return linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt)
+        .map((h, i) => CalcPortPos(V(h, (dir.x*width/2 - 1) - (0.25*i)), V(0, -1-0.35*(amt-i))))
+};
+
 
 export type Positioner = (amt: number) => Record<number, PortPos[]>;
 
