@@ -21,7 +21,7 @@ export const CalcPortPositions = (amt: number, spacing: number, width: number, d
 
 export const CalcMuxPortPositions = (amt: number, spacing: number, width: number, dir: Vector) => {
     return linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt)
-        .map((h, i) => CalcPortPos(V(h, (dir.x*width/2 - 1) - (0.25*i)), V(0, -1-0.35*(amt-i))))
+        .map((h, i) => CalcPortPos(V(h, (dir.x*width/2 - 1.12) - (0.25*i)), V(0, -0.75-0.35*(amt-i))))
 };
 
 
