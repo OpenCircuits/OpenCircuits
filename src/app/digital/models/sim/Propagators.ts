@@ -62,6 +62,8 @@ export const AllPropagators: PropagatorRecord = {
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 
     "Multiplexer": Noprop,
+
+    "Demultiplexer": Noprop,
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {

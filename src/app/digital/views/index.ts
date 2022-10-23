@@ -11,6 +11,7 @@ import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
 import {DigitalViewInfo} from "./DigitalViewInfo";
 import {DigitalWireView} from "./DigitalWireView";
+import { DemultiplexerView } from "./components/DemultiplexerView";
 
 
 class DigitalNodeView extends NodeView<DigitalNode, DigitalViewInfo> {}
@@ -24,6 +25,7 @@ export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
     "LED":         (c, o) => new LEDView(c, o),
     "ANDGate":     (c, o) => new ANDGateView(c, o),
     "Multiplexer": (c, o) => new MultiplexerView(c, o),
+    "Demultiplexer": (c, o) => new DemultiplexerView(c, o),
 };
 
 export function CreateView(info: DigitalViewInfo, obj: DigitalObj) {
