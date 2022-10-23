@@ -4,11 +4,7 @@ import {V} from "Vector";
 
 import {DefaultDigitalPort, DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
 
-<<<<<<< HEAD
 import {CalcPortPos, CalcPortPositions, CalcMuxPortPositions, GenPortConfig} from "../positioning/utils";
-=======
-import {CalcMuxPortPositions, CalcPortPos, CalcPortPositions, GenPortConfig} from "../positioning/utils";
->>>>>>> 66c3b2abc3e21afab53db53257284882fe96a1b9
 import {PortInfoRecord}                                from "../types";
 
 
