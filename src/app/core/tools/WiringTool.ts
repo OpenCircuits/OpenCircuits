@@ -7,6 +7,8 @@ import {Place} from "core/actions/units/Place";
 
 import {AnyPort} from "core/models/types";
 
+import {DigitalPortGroup} from "core/models/types/digital";
+
 import {CreateWire} from "core/models/utils/CreateWire";
 
 import {PortView} from "core/views/PortView";
@@ -91,8 +93,14 @@ export const WiringTool = (() => {
 
             const port2 = findPort(info);
             if (port2 !== undefined) {
-                const wire = CreateWire(circuit.getWireKind(), port!.id, port2.id);
-                history.add(Place(circuit, wire));
+                if (port2.group === DigitalPortGroup.Output) {
+                    const wire = CreateWire(circuit.getWireKind(), port2.id, port!.id);
+                    history.add(Place(circuit, wire));
+                }
+                else {
+                    const wire = CreateWire(circuit.getWireKind(), port!.id, port2.id);
+                    history.add(Place(circuit, wire));
+                }
             }
 
             port = undefined;
