@@ -58,6 +58,7 @@ const PropInfoEntryInputField = ({
             return (
                 <NumberModuleInputField
                     kind={entry.type} props={vals as number[]}
+                    step={entry.step} min={entry.min} max={entry.max}
                     getAction={getAction} onSubmit={onSubmit} />
             );
         case "string":

@@ -66,7 +66,7 @@
             }
         }
     }
-    & label > div, input {
+    & div > div, input {
         width: calc(100% - 2*2px - 2*2px);
     }
     & input {
