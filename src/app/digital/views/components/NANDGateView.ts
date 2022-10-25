@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR, GATE_NOT_CIRCLE_RADIUS, SELECTED_FILL_COLOR, DEFAULT_FILL_COLOR} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -6,8 +6,7 @@ import {Rect} from "math/Rect";
 
 import {Style} from "core/utils/rendering/Style";
 
-import {Circle} from "core/utils/rendering/shapes/Circle";
-import {Line}   from "core/utils/rendering/shapes/Line";
+import {Line} from "core/utils/rendering/shapes/Line";
 
 import {DigitalPortGroup, NANDGate} from "core/models/types/digital";
 
