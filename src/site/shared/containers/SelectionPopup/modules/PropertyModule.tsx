@@ -1,5 +1,3 @@
-import {AllInfo} from "core/views/info";
-
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
 import {Action}      from "core/actions/Action";
@@ -7,8 +5,8 @@ import {GroupAction} from "core/actions/GroupAction";
 
 import {SetProperty} from "core/actions/units/SetProperty";
 
-import {Prop, PropInfo} from "core/models/PropInfo";
-import {AnyObj}         from "core/models/types";
+import {Prop, PropInfo, PropInfoRecord} from "core/models/PropInfo";
+import {AnyObj}                         from "core/models/types";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
@@ -143,10 +141,11 @@ const PropertyModuleWrapper = ({ label, children }: PropertyModuleWrapperProps) 
 }
 
 
-type Props = {
+type Props<Obj extends AnyObj> = {
     info: CircuitInfo;
+    propInfo: PropInfoRecord<Obj>;
 }
-export const PropertyModule = ({ info }: Props) => {
+export const PropertyModule = <Obj extends AnyObj>({ info, propInfo }: Props<Obj>) => {
     const { circuit, history, renderer } = info;
 
     const [props, objs, forceUpdate] = useSelectionProps(
@@ -158,7 +157,7 @@ export const PropertyModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    const infoList = AllInfo[objs[0].kind].PropInfo;
+    const infoList = propInfo[objs[0].kind as Obj["kind"]];
 
     return (<>{Object.entries(props)
         // Filter out props that are without info, since they are private

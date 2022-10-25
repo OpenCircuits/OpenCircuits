@@ -22,7 +22,7 @@ class SplitWireAction implements Action {
     public constructor(circuit: CircuitController<AnyObj>, wire: AnyWire, zIndex: number, nodeID = uuid()) {
         this.wire = wire;
 
-        const [node, ports] = CreateComponent(circuit.getNodeKind(), zIndex, nodeID);
+        const [node, ...ports] = CreateComponent(circuit.getNodeKind(), zIndex, nodeID);
 
         const newWire1 = CreateWire(circuit.getWireKind(), wire.p1, ports[0].id);
         const newWire2 = CreateWire(circuit.getWireKind(), ports[1].id, wire.p2);

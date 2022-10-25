@@ -1,5 +1,3 @@
-import {RefObject} from "react";
-
 import {Circuit} from "core/models/Circuit";
 
 import {AnalogObj} from "core/models/types/analog";
@@ -16,7 +14,6 @@ import {AppStore} from "../../state";
 
 export function GetAnalogCircuitInfoHelpers(
     store: AppStore,
-    canvas: RefObject<HTMLCanvasElement>,
     info: AnalogCircuitInfo,
     reset: (c?: Circuit<AnalogObj>) => void
 ): CircuitInfoHelpers {

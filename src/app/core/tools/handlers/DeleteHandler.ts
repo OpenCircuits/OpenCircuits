@@ -1,5 +1,5 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -17,7 +17,7 @@ import {EventHandler} from "../EventHandler";
  * @param selections Are the selected objects that the action is being done on.
  */
 export const DeleteHandler: EventHandler = ({
-    conditions: (event: Event, { selections }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { selections }: CircuitInfo) =>
          (event.type === "keydown" &&
          (event.key === "Delete" || event.key === "Backspace") &&
          selections.amount() > 0),

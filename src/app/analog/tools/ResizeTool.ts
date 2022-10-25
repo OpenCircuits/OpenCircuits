@@ -2,7 +2,7 @@ import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {Vector} from "Vector";
 
-import {Event} from "core/utils/Events";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {Action} from "core/actions/Action";
 
@@ -19,19 +19,19 @@ export const ResizeTool = (() => {
     let tempAction: Action | undefined;
 
     return {
-        shouldActivate(event: Event, info: AnalogCircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, info: AnalogCircuitInfo): boolean {
             // Activate if the user began dragging over an edge
             return (event.type === "mousedrag" &&
                     event.button === LEFT_MOUSE_BUTTON &&
                     info.input.getTouchCount() === 1 &&
                     !!FindEdge(info)[0]);
         },
-        shouldDeactivate(event: Event, _: AnalogCircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, _: AnalogCircuitInfo): boolean {
             // Deactivate if stopped dragging by releasing mouse
             return (event.type === "mouseup");
         },
 
-        onActivate(event: Event, info: AnalogCircuitInfo): void {
+        onActivate(event: InputManagerEvent, info: AnalogCircuitInfo): void {
             // let cursor: Cursor | undefined;
             // [cursor, dir, obj] = FindEdge(info);
 
@@ -40,7 +40,7 @@ export const ResizeTool = (() => {
             if (event.type === "mousedrag")
                 this.onEvent(event, info); // Explicitly call drag event
         },
-        onDeactivate(_: Event, info: AnalogCircuitInfo): void {
+        onDeactivate(_: InputManagerEvent, info: AnalogCircuitInfo): void {
             info.cursor = undefined;
 
             // Last temp action was final
@@ -51,7 +51,7 @@ export const ResizeTool = (() => {
             tempAction = undefined;
         },
 
-        onEvent(event: Event, { camera, input, circuit }: AnalogCircuitInfo): boolean {
+        onEvent(event: InputManagerEvent, { camera, input, circuit }: AnalogCircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 

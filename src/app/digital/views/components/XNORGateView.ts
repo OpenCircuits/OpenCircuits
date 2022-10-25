@@ -12,14 +12,14 @@ import {XNORGate, DigitalPortGroup} from "core/models/types/digital";
 
 import {RenderInfo}               from "core/views/BaseView";
 import {ComponentView}            from "core/views/ComponentView";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
 import { Renderer } from "core/utils/rendering/Renderer";
 import { QuadCurve } from "core/utils/rendering/shapes/QuadCurve";
 import { Circle } from "core/utils/rendering/shapes/Circle";
+import { DigitalViewInfo } from "../DigitalViewInfo";
 
 
-export class XNORGateView extends ComponentView<XNORGate, DigitalCircuitController> {
-    public constructor(circuit: DigitalCircuitController, obj: XNORGate) {
+export class XNORGateView extends ComponentView<XNORGate, DigitalViewInfo> {
+    public constructor(circuit: DigitalViewInfo, obj: XNORGate) {
         super(circuit, obj, V(1.2, 1), "or.svg");
     }
 
@@ -76,7 +76,7 @@ export class XNORGateView extends ComponentView<XNORGate, DigitalCircuitControll
         drawQuadCurve(renderer, -0.24, size, inputs, borderCol);
     }
 
-    protected override getBounds(): Rect {
+    public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === DigitalPortGroup.Input).length;

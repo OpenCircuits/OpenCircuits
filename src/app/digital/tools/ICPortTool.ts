@@ -12,20 +12,20 @@ export const ICPortTool = (() => {
     // }
 
     // return {
-    //     shouldActivate(event: Event, info: ICCircuitInfo): boolean {
+    //     shouldActivate(event: InputManagerEvent, info: ICCircuitInfo): boolean {
     //         // Activate if the user began dragging over an edge
     //         return (event.type === "mousedrag" &&
     //                 event.button === LEFT_MOUSE_BUTTON &&
     //                 info.input.getTouchCount() === 1 &&
     //                 findPort(info) !== undefined);
     //     },
-    //     shouldDeactivate(event: Event, _: ICCircuitInfo): boolean {
+    //     shouldDeactivate(event: InputManagerEvent, _: ICCircuitInfo): boolean {
     //         // Deactivate if stopped dragging by releasing mouse
     //         return (event.type === "mouseup");
     //     },
 
 
-    //     onActivate(_: Event, info: ICCircuitInfo): void {
+    //     onActivate(_: InputManagerEvent, info: ICCircuitInfo): void {
     //         if (!info.ic)
     //             throw new Error("ICPortTool.onActivate failed: info.ic was undefined");
     //         const icPort = findPort(info);
@@ -36,7 +36,7 @@ export const ICPortTool = (() => {
     //     },
 
 
-    //     onEvent(event: Event, { input, camera, ic }: ICCircuitInfo): boolean {
+    //     onEvent(event: InputManagerEvent, { input, camera, ic }: ICCircuitInfo): boolean {
     //         if (event.type !== "mousedrag")
     //             return false;
 

@@ -1,8 +1,8 @@
 import {V} from "Vector";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
-import {SnapToGrid}  from "core/utils/SnapUtils";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
+import {SnapToGrid}        from "core/utils/SnapUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -14,7 +14,7 @@ import {EventHandler} from "../EventHandler";
 
 
 export const CleanUpHandler: EventHandler = ({
-    conditions: (event: Event, { circuit }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { circuit }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "k" &&
          // Don't want to clean up if nothing exists

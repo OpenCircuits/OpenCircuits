@@ -1,7 +1,7 @@
 import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {Place} from "core/actions/units/Place";
 
@@ -50,7 +50,7 @@ export const WiringTool = (() => {
     }
 
     return {
-        shouldActivate(event: Event, info: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, info: CircuitInfo): boolean {
             const { locked, input } = info;
             if (locked)
                 return false;
@@ -66,7 +66,7 @@ export const WiringTool = (() => {
                 ) && (port !== undefined)
             );
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Two possibilites for deactivating:
             //  1) if the port was initial clicked on,
             //      then a 2nd click is what will deactivate this
@@ -81,12 +81,12 @@ export const WiringTool = (() => {
         },
 
 
-        onActivate(event: Event, info: CircuitInfo): void {
+        onActivate(event: InputManagerEvent, info: CircuitInfo): void {
             port = findPort(info);
 
             stateType = (event.type === "click" ? StateType.CLICKED : StateType.DRAGGED);
         },
-        onDeactivate({}: Event, info: CircuitInfo): void {
+        onDeactivate({}: InputManagerEvent, info: CircuitInfo): void {
             const { circuit, history } = info;
 
             const port2 = findPort(info);
@@ -98,7 +98,7 @@ export const WiringTool = (() => {
             port = undefined;
         },
 
-        onEvent(event: Event): boolean {
+        onEvent(event: InputManagerEvent): boolean {
             // Re-draw on mouse move for wiring preview
             return (event.type === "mousemove");
         },

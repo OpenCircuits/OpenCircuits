@@ -115,6 +115,15 @@ export class CircuitController<Obj extends AnyObj = AnyObj> extends Observable<C
         return parent as AnyComponentFrom<Obj>;
     }
 
+    public getConnectedComponents(wire: AnyWireFrom<Obj>): [AnyComponentFrom<Obj>, AnyComponentFrom<Obj>] {
+        const [p1, p2] = this.getPortsForWire(wire);
+        return [this.getPortParent(p1), this.getPortParent(p2)];
+    }
+
+    public getConnectionsFor(comp: AnyComponentFrom<Obj>): Array<AnyWireFrom<Obj>> {
+        return this.getPortsFor(comp).flatMap((p) => this.getWiresFor(p));
+    }
+
     public getPortsFor(comp: AnyComponentFrom<Obj>): Array<AnyPortFrom<Obj>> {
         // if (!this.hasObj(objID))
         //     throw new Error(`CircuitController: Attempted to get Ports for [${objID}] which doesn't exist!`);
@@ -154,6 +163,10 @@ export class CircuitController<Obj extends AnyObj = AnyObj> extends Observable<C
             throw new Error("CircuitController: Received a non-port p2 of " +
                             `${GetDebugInfo(p2)} for ${GetDebugInfo(wire)}!`);
         return [p1 as AnyPortFrom<Obj>, p2 as AnyPortFrom<Obj>];
+    }
+
+    public getSiblingPorts(p: AnyPortFrom<Obj>): Array<AnyPortFrom<Obj>> {
+        return this.getPortsFor(this.getPortParent(p)).filter((q) => (q !== p));
     }
 
     public reset(replacement: Circuit<Obj> = DefaultCircuit()): void {

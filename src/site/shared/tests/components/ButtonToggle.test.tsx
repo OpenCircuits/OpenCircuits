@@ -10,7 +10,7 @@ import {ButtonToggle} from "shared/components/ButtonToggle";
  * The pressed image will be returned first and the unpressed second.
  *
  * @param id The id of the text to search for.
- * @returns    An array containing the pressed and unpressed images, respectively.
+ * @returns  An array containing the pressed and unpressed images, respectively.
  */
 function GetToggles(id: Matcher): [HTMLImageElement, HTMLImageElement] {
     const buttons = screen.getByText(id).parentNode!.querySelectorAll("img");

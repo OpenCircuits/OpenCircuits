@@ -177,6 +177,7 @@ module.exports = {
             // TODO: uncomment when this gets released
             // "considerComments": true,
         }],
+        "import/no-cycle": "error",
 
         "align-import/align-import": "error",
         "align-import/trim-import": "error",

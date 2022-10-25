@@ -1,5 +1,7 @@
 import {Vector} from "Vector";
 
+import {AnyObj} from "./types";
+
 
 export type Prop = number | string | boolean;// | Vector;
 
@@ -64,3 +66,6 @@ export type NumberSelectPropInfo = BasePropInfo & {
 export type PropInfo =
     | BooleanPropInfo | ButtonPropInfo | NumberPropInfo | StringPropInfo
     | ColorPropInfo | StringSelectPropInfo | NumberSelectPropInfo; // | VectorPropInfo;
+
+
+export type PropInfoRecord<Objs extends AnyObj> = Record<Objs["kind"], Record<string, PropInfo>>;

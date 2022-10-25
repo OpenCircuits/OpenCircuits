@@ -33,7 +33,6 @@ import {AppStore} from "../../state";
 
 export function GetDigitalCircuitInfoHelpers(
     store: AppStore,
-    canvas: RefObject<HTMLCanvasElement>,
     info: DigitalCircuitInfo,
     reset: (c?: Circuit<DigitalObj>) => void
 ): CircuitInfoHelpers {

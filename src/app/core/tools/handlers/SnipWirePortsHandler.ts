@@ -1,11 +1,11 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {EventHandler} from "../EventHandler";
 
 
 export const SnipWirePortsHandler: EventHandler = ({
-    conditions: (event: Event, { circuit, selections }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { circuit, selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "x" &&
          selections.amount() > 0 &&

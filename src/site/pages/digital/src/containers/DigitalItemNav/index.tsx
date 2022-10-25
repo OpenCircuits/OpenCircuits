@@ -28,7 +28,7 @@ import itemNavConfig from "site/digital/data/itemNavConfig.json";
  *
  * @param itemKind The kind of digital component.
  * @param info     The Digital Circuit Info.
- * @returns          A tuple of [numInputs, numOutputs].
+ * @returns        A tuple of [numInputs, numOutputs].
  */
 function GetNumInputsAndOutputs(itemKind: AnyComponent["kind"], info: DigitalCircuitInfo): [number, number] {
     // if (itemId.startsWith("ic")) {

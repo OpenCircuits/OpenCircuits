@@ -19,7 +19,7 @@ import {ArcCircle} from "core/utils/rendering/shapes/ArcCircle";
 import {Circle}    from "core/utils/rendering/shapes/Circle";
 import {Rectangle} from "core/utils/rendering/shapes/Rectangle";
 
-import {InteractionTool}  from "core/tools/InteractionTool";
+import {DefaultTool}      from "core/tools/DefaultTool";
 import {RotateTool}       from "core/tools/RotateTool";
 import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
 // import {ToolManager}      from "core/tools/ToolManager";
@@ -73,7 +73,7 @@ export namespace ToolRenderer {
         const midpoint = CalcSelectionsMidpoint(info, "screen");
         const hasOnlyComponents = selections.all((s) => (circuit.getObj(s)!.baseKind === "Component"));
 
-        if (tool instanceof InteractionTool) {
+        if (tool instanceof DefaultTool) {
             // Draw rotation circle outline
             if (hasOnlyComponents && selections.amount() > 0 && toolManager.hasTool(RotateTool))
                 drawRotationCircleOutline(renderer, camera, midpoint);

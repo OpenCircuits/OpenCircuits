@@ -12,6 +12,7 @@ export type Wire = BaseObject & {
     color: string;
 }
 
-export const DefaultWire =
-    (id: GUID, p1: GUID, p2: GUID): Wire =>
-        ({ baseKind: "Wire", p1, p2, color: "#ffffff", ...DefaultBaseObject(id) });
+export type WireFactory<W extends Wire> = (id: GUID, p1: GUID, p2: GUID) => W;
+
+export const DefaultWire: WireFactory<Wire> =
+    (id, p1, p2) => ({ ...DefaultBaseObject(id), baseKind: "Wire", p1, p2, color: "#ffffff" });

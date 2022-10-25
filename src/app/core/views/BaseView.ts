@@ -14,6 +14,10 @@ import {AnyObj} from "core/models/types";
 import {CircuitController} from "core/controllers/CircuitController";
 
 
+export type ViewCircuitInfo<Circuit extends CircuitController<AnyObj>> = {
+    circuit: Circuit;
+}
+
 export type RenderInfo = {
     camera: Camera;
     renderer: Renderer;
@@ -28,15 +32,17 @@ export type RenderInfo = {
  */
 export abstract class BaseView<
     Obj extends AnyObj,
-    Circuit extends CircuitController<AnyObj> = CircuitController<AnyObj>
+    Info extends ViewCircuitInfo<CircuitController<AnyObj>> = ViewCircuitInfo<CircuitController<AnyObj>>,
 > {
-    protected readonly circuit: Circuit;
+    protected readonly info: Info;
+    protected readonly circuit: Info["circuit"];
     protected readonly obj: Obj;
 
     protected cullTransform: DirtyVar<Transform>;
 
-    public constructor(circuit: Circuit, obj: Obj) {
-        this.circuit = circuit;
+    public constructor(info: Info, obj: Obj) {
+        this.info = info;
+        this.circuit = info.circuit;
         this.obj = obj;
         this.cullTransform = new DirtyVar(
             () => Transform.FromRect(this.getBounds()),
@@ -48,7 +54,7 @@ export abstract class BaseView<
             this.cullTransform.setDirty();
     }
 
-    public abstract contains(pt: Vector, bounds: "select" | "press"): boolean;
+    public abstract contains(pt: Vector): boolean;
     public abstract isWithinBounds(bounds: Transform): boolean;
 
     public render(info: RenderInfo): void {
@@ -66,7 +72,7 @@ export abstract class BaseView<
 
     protected abstract renderInternal(info: RenderInfo): void;
 
-    protected abstract getBounds(): Rect;
+    public abstract getBounds(): Rect;
 
     public abstract getMidpoint(): Vector;
 

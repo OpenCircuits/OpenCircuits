@@ -187,11 +187,11 @@ describe("CopyGroup", () => {
      *
      * @param types       The list of types of DigitalComponents to create.
      * @param connections The list of connections to connect different components.
-     *              Each connection is defined by 4 numbers:
-     *              0. The index of the first component (in types).
-     *              1. The index of the port from the first component.
-     *              2. The index of the second component (in types).
-     *              3. The index of the port from the second component.
+     *                    Each connection is defined by 4 numbers:
+     *                    0. The index of the first component (in types).
+     *                    1. The index of the port from the first component.
+     *                    2. The index of the second component (in types).
+     *                    3. The index of the port from the second component.
      */
     function expectCopy(types: Array<new () => DigitalComponent>,
                         connections: Array<[number, number, number, number]>): void {

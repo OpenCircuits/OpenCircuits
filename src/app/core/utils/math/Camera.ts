@@ -139,7 +139,7 @@ export class Camera {
      * This function returns true or false if this.transform contains the transform passed through.
      *
      * @param transform Comparing this with this.transform.
-     * @returns           True or false.
+     * @returns         True or false.
      */
     public cull(transform: Transform): boolean {
         return TransformContains(transform, this.getTransform());
@@ -210,7 +210,7 @@ export class Camera {
      * Returns the current screen position with formula using the vector v and getCenter.
      *
      * @param v The vector multiplied to inv.
-     * @returns   A vector of the screen position.
+     * @returns A vector of the screen position.
      */
     public getScreenPos(v: Vector): Vector {
         return this.getInverseMatrix().mul(v).add(this.getCenter());
@@ -219,7 +219,7 @@ export class Camera {
      * Returns the global position not the local screens position.
      *
      * @param v The current position.
-     * @returns   The global position.
+     * @returns The global position.
      */
     public getWorldPos(v: Vector): Vector {
         return this.getMatrix().mul(v.sub(this.getCenter()));

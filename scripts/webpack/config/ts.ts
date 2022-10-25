@@ -13,7 +13,7 @@ import type {Configuration} from "webpack";
  * @param config         The current configuration.
  * @param config.rootDir The current root directory.
  * @param config.isDev   Whether or not this is running in a development environment.
- * @returns                The webpack configuration for the TypeScript-specific rules.
+ * @returns              The webpack configuration for the TypeScript-specific rules.
  */
 export default ({ rootDir, isDev }: Config): Configuration => ({
     module: {

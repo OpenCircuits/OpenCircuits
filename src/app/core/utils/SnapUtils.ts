@@ -16,7 +16,7 @@ import {GetPortWorldPos}   from "core/views/portinfo/utils";
  * @param obj     The component that will be snapped.
  * @param pos
  * @param ports
- * @returns         The snapped position for `obj`.
+ * @returns       The snapped position for `obj`.
  */
 export function SnapToConnections(circuit: CircuitController<AnyObj>, pos: Vector, ports: AnyPort[]): Vector {
     // if x-c is less than the wire snap threshold,

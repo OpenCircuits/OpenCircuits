@@ -8,7 +8,7 @@ import {V, Vector}   from "./Vector";
  * @param x   The number to clamp.
  * @param min The minimum.
  * @param max The maximum.
- * @returns     The clamped number.
+ * @returns   The clamped number.
  */
 export function Clamp(x: number, min: number, max: number): number {
     return Math.max(Math.min(x, max), min);
@@ -21,8 +21,8 @@ export function Clamp(x: number, min: number, max: number): number {
  * @param bl  Bottom left corner of the rectangle.
  * @param tr  Top right corner of the rectangle.
  * @param pos The position to get the nearest point on.
- * @returns     The closest position on the edge of
- *      the rectangle from 'pos'.
+ * @returns   The closest position on the edge of
+ *            the rectangle from 'pos'.
  */
 export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
     // First clamp point to within the rectangle
@@ -47,10 +47,10 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
  *
  * @param transform The transform that represents the rectangle.
  * @param pos       Must be in world coordinates *
- *            The point to determine whether or not
- *            it's within the rectangle.
- * @returns           True if the point is within the rectangle,
- *            false otherwise.
+ *                  The point to determine whether or not
+ *                  it's within the rectangle.
+ * @returns         True if the point is within the rectangle,
+ *                  false otherwise.
  */
 export function RectContains(transform: Transform, pos: Vector): boolean {
     const tr = transform.getSize().scale(0.5);  // top right corner
@@ -70,14 +70,14 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
  * given transform.
  *
  * @param pos1 The center of the circle in world
- *       coordinates.
+ *             coordinates.
  * @param r    The radius of the circle in world
- *       units.
+ *             units.
  * @param pos2 Must be in world coordinates *
- *       The point to determine whether or not
- *       it's within the circle.
- * @returns      True if the point is within the rectangle,
- *       false otherwise.
+ *             The point to determine whether or not
+ *             it's within the circle.
+ * @returns    True if the point is within the rectangle,
+ *             false otherwise.
  */
 export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
     return (pos2.sub(pos1).len2() <= r*r);
@@ -95,8 +95,8 @@ export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
  * @param A The first transform.
  * @param B The second transform.
  * @returns
- *    True if the two transforms are overlapping,
- *    false otherwise.
+ *          True if the two transforms are overlapping,
+ *          false otherwise.
  */
 export function TransformContains(A: Transform, B: Transform): boolean {
     // If both transforms are non-rotated
@@ -189,17 +189,17 @@ export function TransformContains(A: Transform, B: Transform): boolean {
  * the function 'f' given a derivative 'df'.
  *
  * @param iterations The number of iterations to perform
- *             Newton's method with; the smaller
- *             the better but less accurate.
+ *                   Newton's method with; the smaller
+ *                   the better but less accurate.
  * @param t0         The starting root value parameter.
  * @param x          Parameter 1 for the function.
  * @param y          Parameter 2 for the function.
  * @param f          The function to find the roots of.
- *             In the form `f(t, x, y) = ...`.
+ *                   In the form `f(t, x, y) = ...`.
  * @param df         The derivative of the function
- *             In the form of `df(t, x, y)`.
- * @returns            The parameter 't' that results in
- *             `f(t, x, y) = 0`.
+ *                   In the form of `df(t, x, y)`.
+ * @returns          The parameter 't' that results in
+ *                   `f(t, x, y) = 0`.
  */
 export function FindRoots(iterations: number, t0: number, x: number, y: number,
                           f:  (t: number, x: number, y: number) => number,
@@ -236,8 +236,8 @@ const WIRE_NEWTON_ITERATIONS = 5;
  *
  * @param curve The bezier curve.
  * @param pos   The position.
- * @returns       True if position is within the bezier curve,
- *        false otherwise.
+ * @returns     True if position is within the bezier curve,
+ *              false otherwise.
  */
 export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
     let minDist = 1e20;
@@ -273,7 +273,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
  * Finds the midpoint from a list of positions.
  *
  * @param positions The list of positions.
- * @returns           The midpoint of all the given positions.
+ * @returns         The midpoint of all the given positions.
  */
 export function CalculateMidpoint(positions: Vector[]): Vector {
     if (positions.length === 0)
@@ -286,7 +286,7 @@ export function CalculateMidpoint(positions: Vector[]): Vector {
  *  represented by a list of booleans.
  *
  * @param bcd The binary-coded-decimal as a list of booleans.
- * @returns     The decimal equivalent of the binary-coded-decimal.
+ * @returns   The decimal equivalent of the binary-coded-decimal.
  */
 export function BCDtoDecimal(bcd: boolean[]): number {
     return bcd.reduce((sum, on, i) => sum + (on ? 1 << i : 0), 0);
@@ -295,19 +295,20 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 /**
  * Calculates the BCD representation of the input number.
  *
- * @param decimal The number to convert (`decimal >= 0`).
+ * @param decimal    The number to convert (`decimal >= 0`).
+ * @param outputSize A specified output size for the BCD.
  * @throws An Error if decimal is not a valid integer `>= 0`.
- * @returns         The BCD representation of the input.
+ * @returns          The BCD representation of the input.
  */
-export function DecimalToBCD(decimal: number): boolean[] {
+export function DecimalToBCD(decimal: number, outputSize?: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
         throw "input must be a nonnegative integer";
-    const result: boolean[] = [];
-    while (decimal) {
-        result.push(decimal % 2 === 1);
-        decimal = Math.floor(decimal / 2);
-    }
-    return result;
+    // Minimum number of digits for BCD
+    const minSize = (decimal === 0 ? 1 : Math.floor(Math.log2(decimal)+1));
+    return new Array<boolean>(outputSize ?? minSize)
+        .fill(false)
+        .map((_, i) => ((decimal & (1 << i)) >> i))
+        .map((bit) => (bit === 1));
 }
 
 /**
@@ -317,9 +318,11 @@ export function DecimalToBCD(decimal: number): boolean[] {
  * @param x0 Start point (inclusive).
  * @param xf End point (inclusive).
  * @param n  The number of points in the space.
- * @returns    An array of n uniform points on the domain [x0, xf].
+ * @returns  An array of n uniform points on the domain [x0, xf].
  */
 export function linspace(x0: number, xf: number, n: number) {
+    if (n === 1)
+        return [(x0 + xf)/2];
     return new Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
 }
 
@@ -329,7 +332,7 @@ export function linspace(x0: number, xf: number, n: number) {
  * @param x0 Start point (inclusive).
  * @param xf End point (exclusive).
  * @param dx The spacing between each point.
- * @returns    An array of n uniform points on the domain `[x0, xf)`.
+ * @returns  An array of n uniform points on the domain `[x0, xf)`.
  */
 export function linspaceDX(x0: number, xf: number, dx: number) {
     const N = Math.ceil((xf - x0) / dx);

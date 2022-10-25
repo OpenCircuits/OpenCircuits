@@ -1,4 +1,5 @@
-import {useCallback} from "react";
+import {AnalogPropInfo} from "analog/views/info";
+import {useCallback}    from "react";
 
 import {SAVE_VERSION} from "core/utils/Constants";
 
@@ -15,6 +16,7 @@ import {HistoryBox}                from "shared/containers/HistoryBox";
 import {ImageExporterPopup,
         ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 import {LoginPopup}     from "shared/containers/LoginPopup";
+import {MainDesigner}   from "shared/containers/MainDesigner";
 import {SelectionPopup} from "shared/containers/SelectionPopup";
 import {SideNav}        from "shared/containers/SideNav";
 
@@ -26,7 +28,6 @@ import {AnalogHeader}           from "site/analog/containers/AnalogHeader";
 import {AnalogItemNav}          from "site/analog/containers/AnalogItemNav";
 import {ImageExporterPreview}   from "site/analog/containers/ImageExporterPreview";
 import {KeyboardShortcutsPopup} from "site/analog/containers/KeyboardShortcutsPopup";
-import {MainDesigner}           from "site/analog/containers/MainDesigner";
 import {QuickStartPopup}        from "site/analog/containers/QuickStartPopup";
 import {SimButtons}             from "site/analog/containers/SimButtons";
 
@@ -49,9 +50,8 @@ const exampleCircuits = exampleConfig.examples.map((example) => ({
 type Props = {
     info: AnalogCircuitInfo;
     helpers: CircuitInfoHelpers;
-    canvas: React.RefObject<HTMLCanvasElement>;
 }
-export const App = ({ info, helpers, canvas }: Props) => {
+export const App = ({ info, helpers }: Props) => {
     const { h } = useWindowSize();
 
     // Memoize for eslint(react/no-unstable-nested-components)
@@ -72,7 +72,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
                     info={info} />
 
                 <main>
-                    <MainDesigner info={info} canvas={canvas} />
+                    <MainDesigner info={info} />
 
                     <AnalogItemNav info={info} />
                     <HistoryBox info={info} />
@@ -81,7 +81,7 @@ export const App = ({ info, helpers, canvas }: Props) => {
 
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
-                        <PropertyModule info={info} />
+                        <PropertyModule info={info} propInfo={AnalogPropInfo} />
                         <OscilloscopePlotsModule info={info} />
                     </SelectionPopup>
 

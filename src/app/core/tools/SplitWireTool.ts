@@ -4,7 +4,7 @@ import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {CircuitInfo}       from "core/utils/CircuitInfo";
 import {CalcWorldMousePos} from "core/utils/CircuitInfoUtils";
-import {Event}             from "core/utils/Events";
+import {InputManagerEvent} from "core/utils/InputManager";
 import {SnapToGrid}        from "core/utils/SnapUtils";
 
 import {Action}      from "core/actions/Action";
@@ -28,7 +28,7 @@ export const SplitWireTool: Tool = (() => {
     let tempAction: Action | undefined;
 
     return {
-        shouldActivate(event: Event, { locked, circuit, input, curPressedObjID }: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, { locked, circuit, input, curPressedObjID }: CircuitInfo): boolean {
             if (locked)
                 return false;
             if (!curPressedObjID)
@@ -38,12 +38,12 @@ export const SplitWireTool: Tool = (() => {
                     input.getTouchCount() === 1 &&
                     circuit.getObj(curPressedObjID)!.baseKind === "Wire");
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Deactivate if stopped dragging by releasing mouse
             return (event.type === "mouseup");
         },
 
-        onActivate(event: Event, info: CircuitInfo): void {
+        onActivate(event: InputManagerEvent, info: CircuitInfo): void {
             const { circuit, selections, curPressedObjID } = info;
 
             const wire = circuit.getObj(curPressedObjID!) as AnyWire;
@@ -64,7 +64,7 @@ export const SplitWireTool: Tool = (() => {
             // explicitly start a drag
             this.onEvent(event, info);
         },
-        onDeactivate({}: Event, { history }: CircuitInfo): void {
+        onDeactivate({}: InputManagerEvent, { history }: CircuitInfo): void {
             if (!tempAction)
                 throw new Error("No temp action for SplitWireTool?");
             history.add(action.add(tempAction));
@@ -72,7 +72,7 @@ export const SplitWireTool: Tool = (() => {
         },
 
         // Translate the noded
-        onEvent(event: Event, info: CircuitInfo): boolean {
+        onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 

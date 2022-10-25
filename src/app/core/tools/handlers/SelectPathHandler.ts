@@ -1,13 +1,13 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {EventHandler} from "../EventHandler";
 
 
 export const SelectPathHandler: EventHandler = ({
-    conditions: (event: Event, { input, camera, circuit }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { input, camera, circuit }: CircuitInfo) =>
         (event.type === "dblclick" &&
          event.button === LEFT_MOUSE_BUTTON),
         // @TODO

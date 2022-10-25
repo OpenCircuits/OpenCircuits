@@ -7,10 +7,11 @@ import {ToolManager} from "core/tools/ToolManager";
 import {AnyObj} from "core/models/types";
 
 import {CircuitController} from "core/controllers/CircuitController";
+import {ViewCircuitInfo}   from "core/views/BaseView";
 import {ViewManager}       from "core/views/ViewManager";
 
 import {GUID}              from "./GUID";
-import {Input}             from "./Input";
+import {InputManager}      from "./InputManager";
 import {RenderQueue}       from "./RenderQueue";
 import {SelectionsWrapper} from "./SelectionsWrapper";
 
@@ -38,13 +39,13 @@ export type CircuitInfo<Obj extends AnyObj = AnyObj> = {
     locked: boolean;
     cursor?: Cursor;
 
-    input: Input;
+    input: InputManager;
     camera: Camera;
 
     history: HistoryManager;
 
     circuit: CircuitController<Obj>;
-    viewManager: ViewManager<Obj, CircuitController<Obj>>;
+    viewManager: ViewManager<Obj, ViewCircuitInfo<CircuitController<Obj>>>;
 
     selections: SelectionsWrapper;
     curPressedObjID?: GUID;

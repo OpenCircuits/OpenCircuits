@@ -4,7 +4,7 @@ import {V} from "Vector";
 
 import {CircuitInfo}                   from "core/utils/CircuitInfo";
 import {CalcWorldMousePos}             from "core/utils/CircuitInfoUtils";
-import {Event}                         from "core/utils/Events";
+import {InputManagerEvent}             from "core/utils/InputManager";
 import {SnapToConnections, SnapToGrid} from "core/utils/SnapUtils";
 
 import {Action}      from "core/actions/Action";
@@ -33,7 +33,7 @@ export const TranslateTool: Tool = (() => {
     let tempAction: Action | undefined;
 
     return {
-        shouldActivate(event: Event, { locked, circuit, curPressedObjID, selections }: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, { locked, circuit, curPressedObjID, selections }: CircuitInfo): boolean {
             if (locked)
                 return false;
             const curPressedObj = circuit.getObj(curPressedObjID ?? "");
@@ -50,7 +50,7 @@ export const TranslateTool: Tool = (() => {
                 ))
             );
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Deactivate by releasing mouse or an arrow key
             return (
                 (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
@@ -62,7 +62,7 @@ export const TranslateTool: Tool = (() => {
         },
 
 
-        onActivate(event: Event, info: CircuitInfo): void {
+        onActivate(event: InputManagerEvent, info: CircuitInfo): void {
             const { camera, circuit, input, selections, curPressedObjID } = info;
 
             const curPressedObj = circuit.getObj(curPressedObjID ?? "") as AnyComponent;
@@ -95,7 +95,7 @@ export const TranslateTool: Tool = (() => {
             // explicitly start a drag
             this.onEvent(event, info);
         },
-        onDeactivate({}: Event, { history }: CircuitInfo): void {
+        onDeactivate({}: InputManagerEvent, { history }: CircuitInfo): void {
             if (!tempAction)
                 return;
             history.add(action.add(tempAction));
@@ -103,7 +103,7 @@ export const TranslateTool: Tool = (() => {
         },
 
 
-        onEvent(event: Event, info: CircuitInfo): boolean {
+        onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
             const { camera, circuit, input } = info;
 
             switch (event.type) {

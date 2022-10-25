@@ -19,8 +19,8 @@ const DefaultPrecedences: TokenType[] = ["|", "^", "&", "!", "("];
  * @param tree    The tree to check.
  * @param op      The operation the tree should have.
  * @param isFinal Whether or not the tree can be modified.
- * @returns         True if tree has kind "binop", tree's type is op, and isFinal is false or undefined,
- *          false otherwise.
+ * @returns       True if tree has kind "binop", tree's type is op, and isFinal is false or undefined,
+ *                false otherwise.
  */
 function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal?: boolean): tree is InputTreeBinOpNode {
     return tree.kind === "binop" && tree.type === op && !isFinal;
@@ -31,7 +31,7 @@ function isTreeExtendable(tree: InputTree, op: InputTreeBinOpType, isFinal?: boo
  *
  * @param children  The array of children to turn into a nested structure.
  * @param currentOp The operand all these nodes have.
- * @returns           The properly nested tree structure.
+ * @returns         The properly nested tree structure.
  */
 function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpType): InputTree[] {
     if (children.length <= 8)
@@ -52,7 +52,7 @@ function generateNestedTrees(children: InputTree[], currentOp: InputTreeBinOpTyp
  * @param prev The name of the first token.
  * @param next The name of the second token.
  * @param ops  The represenation of the operands in the original expression.
- * @returns      The generate error message.
+ * @returns    The generate error message.
  */
 function generateErrorMessage(prev: string, next: string, ops: Record<TokenType, string>): string {
     let errorMessage = `No valid operator between "${prev}" and "${next}"`;

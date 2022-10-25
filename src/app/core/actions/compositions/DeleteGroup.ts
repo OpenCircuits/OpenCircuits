@@ -17,8 +17,8 @@ import {CircuitController} from "core/controllers/CircuitController";
  * @param circuit The circuit.
  * @param objects The list of objects.
  * @param full    True if you want to return everything in the circuit otherwise
- *          returns only the wires/nodes connected to the selected wire.
- * @returns         A SeparatedComponentCollection of the objects.
+ *                returns only the wires/nodes connected to the selected wire.
+ * @returns       A SeparatedComponentCollection of the objects.
  */
  function GatherDeleteGroup(circuit: CircuitController<AnyObj>, objects: AnyObj[], full = true) {
     const group = new ObjSet(objects);

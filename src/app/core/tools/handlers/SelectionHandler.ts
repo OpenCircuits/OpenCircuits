@@ -1,7 +1,7 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {GroupAction} from "core/actions/GroupAction";
 
@@ -11,7 +11,7 @@ import {EventHandler} from "../EventHandler";
 
 
 export const SelectionHandler: EventHandler = ({
-    conditions: (event: Event, {}: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, {}: CircuitInfo) =>
         (event.type === "click" && event.button === LEFT_MOUSE_BUTTON),
 
     getResponse: ({ input, camera, history, selections, viewManager }: CircuitInfo) => {
@@ -20,23 +20,17 @@ export const SelectionHandler: EventHandler = ({
 
         // const ports = GetAllPorts(designer.getObjects());
         // const objs = [...designer.getObjects().reverse(), ...designer.getWires().reverse()];
-        const results = viewManager.findNearestObj(worldMousePos);
+        const obj = viewManager.findNearestObj(worldMousePos);
 
         const deselectAll = (!input.isShiftKeyDown() && selections.amount() > 0);
 
         // If nothing was clicked, check if we should deselect and exit
-        if (!results) {
+        if (!obj) {
             // Clear selections if not holding shift
             if (deselectAll)
                 history.add(DeselectAll(selections));
             return;
         }
-
-        // Don't select/deselect if they clicked the Pressable bounds of an object
-        if (results.bounds === "press")
-            return;
-
-        const { obj } = results;
 
         // // Only select if object was hit and
         // //  if we clicked a port but also hit a wire, we want to prioritize

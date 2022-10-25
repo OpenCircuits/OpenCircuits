@@ -27,20 +27,20 @@ export const ICResizeTool = (() => {
     // }
 
     // return {
-    //     shouldActivate(event: Event, info: ICCircuitInfo): boolean {
+    //     shouldActivate(event: InputManagerEvent, info: ICCircuitInfo): boolean {
     //         // Activate if the user began dragging over an edge
     //         return (event.type === "mousedrag" &&
     //                 event.button === LEFT_MOUSE_BUTTON &&
     //                 info.input.getTouchCount() === 1 &&
     //                 findEdge(info) !== "none");
     //     },
-    //     shouldDeactivate(event: Event, _: ICCircuitInfo): boolean {
+    //     shouldDeactivate(event: InputManagerEvent, _: ICCircuitInfo): boolean {
     //         // Deactivate if stopped dragging by releasing mouse
     //         return (event.type === "mouseup");
     //     },
 
 
-    //     onActivate(event: Event, info: ICCircuitInfo): void {
+    //     onActivate(event: InputManagerEvent, info: ICCircuitInfo): void {
     //         edge = findEdge(info);
     //         if (event.type === "mousedrag")
     //             this.onEvent(event, info); // Explicitly call drag event
@@ -50,7 +50,7 @@ export const ICResizeTool = (() => {
     //     },
 
 
-    //     onEvent(event: Event, { input, camera, ic }: ICCircuitInfo): boolean {
+    //     onEvent(event: InputManagerEvent, { input, camera, ic }: ICCircuitInfo): boolean {
     //         if (event.type !== "mousedrag")
     //             return false;
 

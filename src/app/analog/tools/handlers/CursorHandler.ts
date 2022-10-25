@@ -1,7 +1,7 @@
 import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
-import {Cursor} from "core/utils/CircuitInfo";
-import {Event}  from "core/utils/Events";
+import {Cursor}            from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
@@ -47,8 +47,8 @@ export function FindEdge({ input, camera, circuit }: AnalogCircuitInfo): [undefi
 }
 
 export const CursorHandler = ({
-    conditions:  (ev: Event, _: AnalogCircuitInfo) => ev.type === "mousemove",
-    getResponse: (info: AnalogCircuitInfo, _: Event) => {
+    conditions:  (ev: InputManagerEvent, _: AnalogCircuitInfo) => ev.type === "mousemove",
+    getResponse: (info: AnalogCircuitInfo, _: InputManagerEvent) => {
         const [cursor] = FindEdge(info);
         info.cursor = cursor;
     },

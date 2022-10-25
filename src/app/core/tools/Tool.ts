@@ -1,22 +1,22 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 
 export type Tool = {
     // Conditional method to see if the current state should transition to this tool
-    shouldActivate(event: Event, info: CircuitInfo): boolean;
+    shouldActivate(event: InputManagerEvent, info: CircuitInfo): boolean;
 
     // Conditional method to see if the current state should transition out of this tool
-    shouldDeactivate(event: Event, info: CircuitInfo): boolean;
+    shouldDeactivate(event: InputManagerEvent, info: CircuitInfo): boolean;
 
 
     // Method called when this tool is initially activated
-    onActivate(event: Event, info: CircuitInfo): void;
+    onActivate(event: InputManagerEvent, info: CircuitInfo): void;
 
     // Method called when this tool is deactivated
-    onDeactivate(event: Event, info: CircuitInfo): void;
+    onDeactivate(event: InputManagerEvent, info: CircuitInfo): void;
 
 
     // Method called when this tool is currently active and an event occurs
-    onEvent(event: Event, info: CircuitInfo): boolean;
+    onEvent(event: InputManagerEvent, info: CircuitInfo): boolean;
 }

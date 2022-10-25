@@ -1,23 +1,22 @@
 import {useEffect} from "react";
 
-import {Event} from "core/utils/Events";
-import {Input} from "core/utils/Input";
-import {Key}   from "core/utils/Key";
+import {InputManager, InputManagerEvent} from "core/utils/InputManager";
+import {Key}                             from "core/utils/Key";
 
 
-export const useKeyDownEvent = (input: Input, key: Key, f: () => void, deps?: React.DependencyList) => {
+export const useKeyDownEvent = (input: InputManager, key: Key, f: () => void, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
             return;
 
-        const LookForKey = (ev: Event) => {
+        const LookForKey = (ev: InputManagerEvent) => {
             if (ev.type === "keydown" && ev.key === key)
                 f();
         }
 
-        input.addListener(LookForKey);
+        input.subscribe(LookForKey);
 
-        return () => input.removeListener(LookForKey);
+        return () => input.unsubscribe(LookForKey);
     }, [input, key, ...(deps ?? [])]);
 }
 

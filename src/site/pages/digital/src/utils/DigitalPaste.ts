@@ -60,7 +60,7 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
  * @param data    Clipboard data.
  * @param info    Circuit info.
  * @param menuPos Top left of context menu if being pasted using context menu.
- * @returns         True if successful paste.
+ * @returns       True if successful paste.
  */
 export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: Vector): boolean {
     try {

@@ -1,13 +1,13 @@
-import {AnalogCircuitController} from "analog/controllers/AnalogCircuitController";
-import {Views}                   from "analog/views";
-import {CircuitController}       from "core/controllers/CircuitController";
-import {ViewManager}             from "core/views/ViewManager";
+import {CreateView}        from "analog/views";
+import {AnalogViewInfo}    from "analog/views/AnalogViewInfo";
+import {CircuitController} from "core/controllers/CircuitController";
+import {ViewManager}       from "core/views/ViewManager";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {Input}             from "core/utils/Input";
+import {InputManager}      from "core/utils/InputManager";
 import {RenderQueue}       from "core/utils/RenderQueue";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
@@ -34,16 +34,17 @@ export function CreateInfo(ngSpiceLib: NGSpiceLib | undefined,
     const history = new HistoryManager();
 
     const circuit = new CircuitController<AnalogObj>(DefaultCircuit(), "AnalogWire", "AnalogNode");
-    const viewManager = new ViewManager<AnalogObj, AnalogCircuitController>(
-        circuit,
-        (c, m) => (Views[m.kind](c, m))
+    const sim = (ngSpiceLib ? new AnalogSim(ngSpiceLib) : undefined);
+
+    const viewManager = new ViewManager<AnalogObj, AnalogViewInfo>(
+        { circuit, sim }, CreateView
     );
+
+    const input = new InputManager();
 
     const selections = new SelectionsWrapper();
     const renderer = new RenderQueue();
     const toolManager = new ToolManager(defaultTool, ...tools);
-
-    const sim = (ngSpiceLib ? new AnalogSim(ngSpiceLib) : undefined);
 
     const info: AnalogCircuitInfo = {
         locked: false,
@@ -54,7 +55,7 @@ export function CreateInfo(ngSpiceLib: NGSpiceLib | undefined,
         sim,
 
         // This is necessary because input is created later in the pipeline because it requires canvas
-        input: undefined as unknown as Input,
+        input,
         selections,
         toolManager,
         renderer,
