@@ -64,7 +64,7 @@ export class ComponentView<
         // Transform into local space
         renderer.transform(this.transform.get());
 
-        
+
         this.renderComponent(info);
 
         this.drawImg(info);
