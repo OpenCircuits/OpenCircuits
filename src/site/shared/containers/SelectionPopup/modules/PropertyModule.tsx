@@ -4,8 +4,8 @@ import {GroupAction} from "core/actions/GroupAction";
 
 import {SetProperty} from "core/actions/units/SetProperty";
 
-import {BasePropInfo, Prop, PropInfo, PropInfoEntry, PropInfoRecord} from "core/models/PropInfo";
-import {AnyObj}                                                      from "core/models/types";
+import {Prop, PropInfo, PropInfoEntry, PropInfoRecord} from "core/models/PropInfo";
+import {AnyObj}                                        from "core/models/types";
 
 import {RecordOfArrays, useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
@@ -17,16 +17,16 @@ import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/i
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
 
 
-type PropInputFieldProps<Obj extends AnyObj> = {
+type PropInputFieldProps = {
     info: CircuitInfo;
-    entry: PropInfoEntry<Obj>;
+    entry: PropInfoEntry<AnyObj>;
     props: RecordOfArrays<AnyObj>;
-    objs: Obj[];
+    objs: AnyObj[];
     forceUpdate: () => void;
 }
-const PropInfoEntryInputField = <Obj extends AnyObj>({
+const PropInfoEntryInputField = ({
     info, entry, props, objs, forceUpdate,
-}: PropInputFieldProps<Obj>) => {
+}: PropInputFieldProps) => {
     // If group entry, then return the sub-entries
     if (entry.type === "group") {
         return (<>{
@@ -40,7 +40,7 @@ const PropInfoEntryInputField = <Obj extends AnyObj>({
     }
 
     // Otherwise get the properties for this entry
-    const vals = props[entry.key as keyof RecordOfArrays<Obj>];
+    const vals = props[entry.key];
 
     // Create getAction and onSubmit callbacks
     const getAction = (newVals: Prop[]) => new GroupAction(
@@ -90,20 +90,20 @@ const PropInfoEntryInputField = <Obj extends AnyObj>({
 // Wrapper component for a PropInfoEntry
 //  That adds the label for the input field
 // Note: That fields/groups without a label will NOT be wrapped in a containing div
-const PropInfoEntryWrapper = <Obj extends AnyObj>(props: PropInputFieldProps<Obj>) => {
-    const { entry } = props;
+const PropInfoEntryWrapper = (allProps: PropInputFieldProps) => {
+    const { entry, props } = allProps;
 
     // Check if this module is active
-    const isActive = entry.isActive?.(props as Parameters<NonNullable<BasePropInfo<Obj>["isActive"]>>[0]) ?? true;
+    const isActive = entry.isActive?.(props) ?? true;
     if (!isActive)
         return null;
 
     if (!entry.label)
-        return (<PropInfoEntryInputField {...props} />);
+        return (<PropInfoEntryInputField {...allProps} />);
 
     return (<div>
         <label>{entry.label}</label>
-        <PropInfoEntryInputField {...props} />
+        <PropInfoEntryInputField {...allProps} />
     </div>);
 }
 
