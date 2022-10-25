@@ -9,7 +9,7 @@ import {Line}   from "core/utils/rendering/shapes/Line";
 
 import {AnyPort} from "core/models/types";
 
-import {DefaultDigitalComponent, DigitalPort, DigitalPortGroup} from "core/models/types/digital";
+import {DigitalPort, DigitalPortGroup} from "core/models/types/digital";
 
 import {RenderInfo} from "core/views/BaseView";
 import {PortView}   from "core/views/PortView";
