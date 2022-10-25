@@ -8,7 +8,7 @@ import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
 
 import {DigitalInfo} from "core/views/info/digital";
 
-import {CalcPortPos, CalcPortPositions, GenPortInfo, updatePortPositionsQuadCurve} from "../positioning/utils";
+import {CalcPortPos, CalcPortPositions, CalcQuadCurvePortPositions, GenPortInfo} from "../positioning/utils";
 import {PortInfoRecord}                              from "../types";
 
 
@@ -48,10 +48,9 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         Positions: GenPortInfo(7, {
             0: {
                 amts:    linspaceDX(2,9,1),
-                calcPos: (amt) => CalcPortPositions(amt, 0.5),
+                calcPos: (amt) => CalcQuadCurvePortPositions(amt, 0.5),
             },
             1: CalcPortPos(V(.8, 0), V(.7, 0)),
-            2: updatePortPositionsQuadCurve()
         }),
     },
 };

@@ -5,6 +5,7 @@ import {V, Vector} from "Vector";
 import {linspace} from "math/MathUtils";
 
 import {PortPos} from "../types";
+import { PortView } from "core/views/PortView";
 
 
 export const CalcPortPos = (origin: Vector, dir: Vector) =>  ({
@@ -13,27 +14,37 @@ export const CalcPortPos = (origin: Vector, dir: Vector) =>  ({
     dir,
 });
 
+export const CalcQuadCurvePortPos = (origin: Vector, dir: Vector, size: Vector) => {
+    let t = ((origin.y) / size.y + 0.5) % 1;
+    if (t < 0)
+        t += 1;
+
+    // @TODO move to a MathUtils QuadCurve function or something
+    const s = size.x/2 - DEFAULT_BORDER_WIDTH;
+    const l = size.x/5 - DEFAULT_BORDER_WIDTH;
+    const t2 = 1 - t;
+
+    // Calculate x position along quadratic curve
+    const x = (t2*t2)*(-s) + 2*t*(t2)*(-l) + (t*t)*(-s);
+    return {
+        origin: V(x, origin.y),
+        target: origin.add(dir.scale(IO_PORT_LENGTH)),
+        dir,
+    }
+};
+
 export const CalcPortPositions = (amt: number, spacing: number) => (
     linspace(-(amt-1)/2*spacing, +(amt-1)/2*spacing, amt)
         .map((h) => CalcPortPos(V(-0.5, h), V(-1, 0)))
 );
 
-export const updatePortPositionsQuadCurve = (ports: PortPos[]) => (
-    ports.forEach((port) => {
-        let t = ((port.origin.y) / port.target.y + 0.5) % 1;
-        if (t < 0)
-            t += 1;
+export const CalcQuadCurvePortPositions = (amt: number, spacing: number) => (
+    linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt)
+        .map((h) => CalcQuadCurvePortPos(V(-.6, h), V(-1, 0), V(1.2, 1)))
+);
 
-        // @TODO move to a MathUtils QuadCurve function or something
-        const s = port.target.x/2 - DEFAULT_BORDER_WIDTH;
-        const l = port.target.x/5 - DEFAULT_BORDER_WIDTH;
-        const t2 = 1 - t;
 
-        // Calculate x position along quadratic curve
-        const x = (t2*t2)*(-s) + 2*t*(t2)*(-l) + (t*t)*(-s);
-        port.origin = (V(x, port.origin.y));
-    })
-)
+
 export type Positioner = (amt: number) => PortPos[];
 
 export const GenConfig = (groupInfo: Record<number, { amt: number, calcPos: Positioner }>) => {
