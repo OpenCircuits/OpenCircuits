@@ -22,6 +22,7 @@ export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
     "Switch":  (c, o) => new SwitchView(c, o),
     "LED":     (c, o) => new LEDView(c, o),
     "ANDGate": (c, o) => new ANDGateView(c, o),
+    "SRLatch": (c, o) => new SRLatchView(c, o),
 };
 
 export function CreateView(info: DigitalViewInfo, obj: DigitalObj) {
