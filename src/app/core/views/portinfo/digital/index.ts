@@ -57,4 +57,17 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             }),
         ),
     },
+    "NOTGate": {
+        Default:       DefaultDigitalPort,
+        InitialConfig: "2,1",
+        AllowChanges:  false,
+
+        Positions: GenPortConfig(
+            [1],
+            (numInputs) => ({
+                0: CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
+                1: [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
+            }),
+        ),
+    },
 };
