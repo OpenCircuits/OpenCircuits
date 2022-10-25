@@ -8,7 +8,7 @@ import {AnyObj} from "core/models/types";
 
 // type ToArray<T> = T extends T ? T[] : never;
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-type RecordOfArrays<Props extends Record<string, Prop>> = {
+export type RecordOfArrays<Props extends Record<string, Prop>> = {
     // Get every key from all records (if it's a union of records)
     [Key in KeysOfUnion<Props>]:
         // And map it to an array of non-nullable props
@@ -31,6 +31,19 @@ type RecordOfArrays<Props extends Record<string, Prop>> = {
 // type Test = ExpandRecursively<RecordOfArrays<AnyObj, AnyObj>>;
 
 // type Test2 = Expand<keyof Test>;
+
+const propsEquals = (oldProps: Record<string, Prop[]> | undefined, newProps: Record<string, Prop[]>): boolean => {
+    if (!oldProps)
+        return false;
+    // Check if every key is the same
+    if (!Object.keys(newProps).every((key) => (key in oldProps)))
+        return false;
+    // Make sure every entry has equal values
+    return Object.entries(newProps).every(([key, arr]) => (
+        (arr.length === oldProps[key].length) &&
+        (arr.every((val, i) => (val === oldProps[key][i])))
+    ));
+}
 
 export const useSelectionProps = <Obj extends AnyObj, Props extends Record<string, Prop>>(
     info: CircuitInfo,
@@ -69,12 +82,15 @@ export const useSelectionProps = <Obj extends AnyObj, Props extends Record<strin
             return;
         }
 
-        const props = Object.fromEntries(
+        const newProps = Object.fromEntries(
             keys.map((key) =>
                 [key, allProps.map((p) => p[key])])
         ) as RecordOfArrays<Props>;
 
-        setProps(props);
+        // Check if the props are the same, and if so, don't set
+        //  so we don't cause unnecessary updates and potential flickers
+        //  from a `forceUpdate`
+        setProps((oldProps) => (propsEquals(oldProps, newProps) ? oldProps : newProps));
     }, deps);
 
     useEffect(() => {
