@@ -30,8 +30,6 @@ function BuildServer(prod: boolean) {
             return;
         }
 
-        CopyDir("src/server/data/sql/sqlite", "build/sql/sqlite");
-
         const isWin = (os.platform() === "win32");
         spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {
             shell: true, stdio: "inherit",
