@@ -16,12 +16,15 @@ export type DigitalNode = Component & { kind: "DigitalNode" };
 export type ANDGate = Component & { kind: "ANDGate" };
 export type Switch  = Component & { kind: "Switch"  };
 export type LED     = Component & { kind: "LED", color: string };
+export type DLatch = Component & { kind: "DLatch"};
+
 
 export type DigitalComponent =
     | DigitalNode
     | Switch
     | LED
-    | ANDGate;
+    | ANDGate
+    | DLatch;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;
 
@@ -31,6 +34,7 @@ export const DefaultDigitalComponent: { [C in DigitalComponent as C["kind"]]: Co
     "Switch":      (id) => ({ ...DefaultComponent(id), kind: "Switch"                }),
     "LED":         (id) => ({ ...DefaultComponent(id), kind: "LED", color: "#ffffff" }),
     "ANDGate":     (id) => ({ ...DefaultComponent(id), kind: "ANDGate"               }),
+    "DLatch":     (id) => ({ ...DefaultComponent(id), kind: "DLatch"               }),
 };
 
 export const DefaultDigitalPort: PortFactory<DigitalPort> =
