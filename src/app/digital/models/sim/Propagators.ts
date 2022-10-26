@@ -1,10 +1,11 @@
-import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
+import {DigitalComponent} from "core/models/types/digital";
 
 import {Signal, SignalReducer} from "digital/models/sim/Signal";
 
 
 type Propagator<C extends DigitalComponent, S> =
-    (props: { c: C, signals: Signal[][], state?: S }) => ({ nextSignals: Signal[][], nextState?: S });
+    (props: { c: C, signals: Record<string, Signal[]>, state?: S }) =>
+        ({ nextSignals: Record<string, Signal[]>, nextState?: S });
 
 type PropagatorRecord = {
     // The kind of every digital component
@@ -19,20 +20,17 @@ type PropagatorRecord = {
  *  any state or information from the component itself.
  *
  * @param propagator The simple propagator that takes in a list of signals and outputs a list of signals.
- * @returns          The propagator function to facilitate this propagation.
+ * @returns            The propagator function to facilitate this propagation.
  */
 const InputOutputPropagator = (propagator: (inputs: Signal[]) => Signal[]): Propagator<DigitalComponent, unknown> => (
-    ({ signals }) => {
-        const outputs = propagator(signals[DigitalPortGroup.Input]);
-        return {
-            // Insert the new outputs into the `Output` group index
-            nextSignals: [
-                ...signals.slice(0, DigitalPortGroup.Output),
-                outputs,
-                ...signals.slice(DigitalPortGroup.Output+1),
-            ],
-        };
-    }
+    ({ signals }) => ({
+        // Insert the new outputs into the `Output` group index
+        nextSignals: {
+            ...signals,
+            // TODOnow: fix
+            ["outputs"]: propagator(signals["inputs"]),
+        },
+    })
 );
 
 const Noprop: Propagator<DigitalComponent, unknown> =
@@ -54,7 +52,10 @@ export const AllPropagators: PropagatorRecord = {
     "DigitalNode": InputOutputPropagator((inputs) => (inputs)),
 
     // Switch has state which represents the user-defined isOn/isOff
-    "Switch": ({ state = Signal.Off }) => ({ nextSignals: [[], [state as Signal], []], nextState: state }),
+    "Switch": ({ state = Signal.Off }) => ({
+        nextSignals: { "outputs": [state as Signal] },
+        nextState:   state,
+    }),
 
     // LEDs don't propagate a signal
     "LED": Noprop,
@@ -62,7 +63,7 @@ export const AllPropagators: PropagatorRecord = {
     "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
 };
 
-export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {
+export function Propagate<S = unknown>(c: DigitalComponent, signals: Record<string, Signal[]>, state?: S) {
     const propagator = AllPropagators[c.kind] as Propagator<DigitalComponent, S>;
     return (propagator({ c, signals, state }));
 }
