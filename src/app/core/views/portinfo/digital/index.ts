@@ -67,12 +67,12 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
 
         Positions: {
             "2,2,2": {
-                "0:0": CalcPortPos(V(-1, 0.6), V(-1, 0)),
-                "0:1": CalcPortPos(V(-1, -0.6), V(-1, 0)),
-                "1:0": CalcPortPos(V(1, 0.6), V(1, 0)),
-                "1:1": CalcPortPos(V(1, -0.6), V(1, 0)),
-                "2:0": CalcPortPos(V(0, 1.2), V(0, 1)),
-                "2:1": CalcPortPos(V(0, -1.2), V(0, -1)),
+                "0:0": CalcPortPos(V(-1, 0.6), V(-1, 0)),  // D
+                "0:1": CalcPortPos(V(-1, -0.6), V(-1, 0)), // >
+                "1:0": CalcPortPos(V(1, 0.6), V(1, 0)),    // Q
+                "1:1": CalcPortPos(V(1, -0.6), V(1, 0)),   // !Q
+                "2:0": CalcPortPos(V(0, 1.2), V(0, 1)),    // S
+                "2:1": CalcPortPos(V(0, -1.2), V(0, -1)),  // R
             },
         },
     },
