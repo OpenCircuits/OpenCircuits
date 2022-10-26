@@ -1,8 +1,7 @@
 import {DigitalNode, DigitalObj} from "core/models/types/digital";
 
-import {NodeView}                 from "core/views/NodeView";
-import {ViewFactory, ViewRecord}  from "core/views/ViewManager";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {NodeView}                from "core/views/NodeView";
+import {ViewFactory, ViewRecord} from "core/views/ViewManager";
 
 import {ANDGateView}     from "./components/ANDGateView";
 import {BUFGateView}     from "./components/BUFGateView";

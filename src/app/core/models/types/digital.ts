@@ -16,7 +16,6 @@ export type DigitalNode = Component & { kind: "DigitalNode" };
 export type ANDGate = Component & { kind: "ANDGate" };
 export type Switch  = Component & { kind: "Switch"  };
 export type LED     = Component & { kind: "LED", color: string };
-
 export type BUFGate = Component & { kind: "BUFGate" };
 
 export type DigitalComponent =

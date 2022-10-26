@@ -62,12 +62,11 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         InitialConfig: "1,1",
         AllowChanges:  false,
 
-        Positions: GenPortConfig(
-            [1],
-            (numInputs) => ({
-                0: CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
-                1: [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
-            }),
-        ),
+        Positions: {
+            "1,1": {
+                "0:0": { origin: V(-0.5, 0), target: V(-1.2, 0), dir: V(-1, 0) },
+                "1:0": { origin: V(0.45, 0), target: V(+1.2, 0), dir: V(+1, 0) },
+            },
+        },
     },
 };
