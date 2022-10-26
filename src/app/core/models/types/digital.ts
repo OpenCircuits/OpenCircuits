@@ -9,22 +9,21 @@ export enum DigitalPortGroup {
     Select = 2,
 }
 
-export type DigitalPort = Port & { kind: "DigitalPort", group: DigitalPortGroup };
-export type DigitalWire = Wire & { kind: "DigitalWire" };
+export type DigitalPort = Port      & { kind: "DigitalPort", group: DigitalPortGroup };
+export type DigitalWire = Wire      & { kind: "DigitalWire" };
 export type DigitalNode = Component & { kind: "DigitalNode" };
 
 // components
 export type ANDGate = Component & { kind: "ANDGate" };
-export type Switch = Component & { kind: "Switch" };
-export type LED = Component & { kind: "LED", color: string };
+export type Switch  = Component & { kind: "Switch" };
+export type LED     = Component & { kind: "LED", color: string };
 
-export type DFlipFlop = Component & { kind: "DFlipFlop" };
-export type TFlipFlop = Component & { kind: "TFlipFlop" };
+export type DFlipFlop  = Component & { kind: "DFlipFlop" };
+export type TFlipFlop  = Component & { kind: "TFlipFlop" };
 export type JKFlipFlop = Component & { kind: "JKFlipFlop" };
 export type SRFlipFlop = Component & { kind: "SRFlipFlop" };
 
-export type FlipFlop = Component &
-    (|{ kind: "DFlipFlop" }|{ kind: "TFlipFlop" }|{ kind: "JKFlipFlop" }|{ kind: "SRFlipFlop" });
+export type FlipFlop = DFlipFlop|TFlipFlop|JKFlipFlop|SRFlipFlop;
 
 export type DigitalComponent =
     | DigitalNode
