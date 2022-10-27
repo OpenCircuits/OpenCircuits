@@ -5,7 +5,7 @@ import {Signal, SignalReducer} from "digital/models/sim/Signal";
 
 type Propagator<C extends DigitalComponent, S> =
     (props: { c: C, signals: Record<string, Signal[]>, state?: S }) =>
-        ({ nextSignals: Record<string, Signal[]>, nextState?: S });
+        [Record<string, Signal[]>, S] | [Record<string, Signal[]>];
 
 type PropagatorRecord = {
     // The kind of every digital component
@@ -14,27 +14,7 @@ type PropagatorRecord = {
         Propagator<Comp, unknown>;
 }
 
-/**
- * High-order utility function to generate a simple input/output propagator function that only needs to
- *  deal with signals from `Input` ports (i.e. not `Select` ports) and `Output` ports and doesn't need
- *  any state or information from the component itself.
- *
- * @param propagator The simple propagator that takes in a list of signals and outputs a list of signals.
- * @returns            The propagator function to facilitate this propagation.
- */
-const InputOutputPropagator = (propagator: (inputs: Signal[]) => Signal[]): Propagator<DigitalComponent, unknown> => (
-    ({ signals }) => ({
-        // Insert the new outputs into the `Output` group index
-        nextSignals: {
-            ...signals,
-            // TODOnow: fix
-            ["outputs"]: propagator(signals["inputs"]),
-        },
-    })
-);
-
-const Noprop: Propagator<DigitalComponent, unknown> =
-    ({ signals, state }) => ({ nextSignals: signals, nextState: state });
+const Noprop: Propagator<DigitalComponent, unknown> = ({ signals, state }) => ([signals, state]);
 
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
@@ -49,18 +29,15 @@ const AND = SignalReducer((a, b) => (a && b));
  *  FlipFlops which need to have their current state as a stored internal value.
  */
 export const AllPropagators: PropagatorRecord = {
-    "DigitalNode": InputOutputPropagator((inputs) => (inputs)),
+    "DigitalNode": ({ signals }) => [{ "outputs": signals["inputs"] }],
 
     // Switch has state which represents the user-defined isOn/isOff
-    "Switch": ({ state = Signal.Off }) => ({
-        nextSignals: { "outputs": [state as Signal] },
-        nextState:   state,
-    }),
+    "Switch": ({ state = Signal.Off }) => [{ "outputs": [state as Signal] }, state],
 
     // LEDs don't propagate a signal
     "LED": Noprop,
 
-    "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+    "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 };
 
 export function Propagate<S = unknown>(c: DigitalComponent, signals: Record<string, Signal[]>, state?: S) {

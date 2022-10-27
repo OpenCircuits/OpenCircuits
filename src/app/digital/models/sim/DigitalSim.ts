@@ -153,7 +153,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
             );
             const state = curStates.get(comp.id);
 
-            const { nextSignals, nextState } = Propagate(comp, groupedSignals, state);
+            const [nextSignals, nextState] = Propagate(comp, groupedSignals, state);
 
             // Update signals
             Object.entries(nextSignals).forEach(([group, signals]) => (
