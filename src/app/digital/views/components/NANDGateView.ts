@@ -8,7 +8,7 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Line} from "core/utils/rendering/shapes/Line";
 
-import {DigitalPortGroup, NANDGate} from "core/models/types/digital";
+import {NANDGate} from "core/models/types/digital";
 
 import {RenderInfo}    from "core/views/BaseView";
 import {ComponentView} from "core/views/ComponentView";
@@ -33,7 +33,7 @@ export class NANDGateView extends ComponentView<NANDGate, DigitalViewInfo> {
 
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+            .filter((p) => p.group === "inputs").length;
 
         // Draw line to visually match input ports
         const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
@@ -49,7 +49,7 @@ export class NANDGateView extends ComponentView<NANDGate, DigitalViewInfo> {
     public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+            .filter((p) => p.group === "inputs").length;
         return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }
