@@ -47,11 +47,26 @@
             margin-right: 0;
         }
     }
+    & label {
+        display: block;
+    }
     & > div {
         margin-top: 6px;
         margin-bottom: 2px;
+
+        & > label {
+            font-size: 16px;
+        }
+
+        & div {
+            margin-left: 2px;
+
+            & label {
+                font-size: 14px;
+            }
+        }
     }
-    & label > div, input {
+    & div > div, input {
         width: calc(100% - 2*2px - 2*2px);
     }
     & input {

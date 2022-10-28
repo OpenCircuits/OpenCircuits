@@ -1,13 +1,12 @@
 import {CircuitEvent}                              from "core/controllers/CircuitController";
 import {AllPortInfo}                               from "core/views/portinfo";
-import {GetConfigAmount}                           from "core/views/portinfo/utils";
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {GUID} from "core/utils/GUID";
 
 import {AnyComponent, AnyObj} from "core/models/types";
 
-import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
+import {DigitalComponent} from "core/models/types/digital";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
@@ -28,7 +27,7 @@ import itemNavConfig from "site/digital/data/itemNavConfig.json";
  *
  * @param itemKind The kind of digital component.
  * @param info     The Digital Circuit Info.
- * @returns        A tuple of [numInputs, numOutputs].
+ * @returns          A tuple of [numInputs, numOutputs].
  */
 function GetNumInputsAndOutputs(itemKind: AnyComponent["kind"], info: DigitalCircuitInfo): [number, number] {
     // if (itemId.startsWith("ic")) {
@@ -37,10 +36,12 @@ function GetNumInputsAndOutputs(itemKind: AnyComponent["kind"], info: DigitalCir
     //     return [icData.getInputCount(), icData.getOutputCount()];
     // }
 
-    const portConfig = AllPortInfo[itemKind].InitialConfig;
+    const portConfig = AllPortInfo[itemKind].PositionConfigs[AllPortInfo[itemKind].InitialConfig];
+
+    // TODOnow fix
     return [
-        GetConfigAmount(portConfig, DigitalPortGroup.Input) + GetConfigAmount(portConfig, DigitalPortGroup.Select),
-        GetConfigAmount(portConfig, DigitalPortGroup.Output),
+        (portConfig["inputs"]?.length ?? 0) + (portConfig["selects"]?.length ?? 0),
+        (portConfig["outputs"]?.length ?? 0),
     ];
 }
 
