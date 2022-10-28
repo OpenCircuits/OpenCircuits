@@ -32,13 +32,14 @@ export const AllPropagators: PropagatorRecord = {
     "DigitalNode": ({ signals }) => [{ "outputs": signals["inputs"] }],
 
     // Switch has state which represents the user-defined isOn/isOff
-    "Switch": ({ state = [Signal.Off] }) => [{ "outputs": state }, state],
+    "Switch": ({ state = [Signal.Off ] }) => [{ "outputs": state }, state],
 
     // LEDs don't propagate a signal
     "LED": Noprop,
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
-    "NOTGate": ({ signals }) => [{ "outputs": signals["inputs"] }],
+
+    "NOTGate": ({ signals }) => [{ "outputs": [...signals["inputs"]].map((x) => (Signal.fromBool(Signal.isOff(x)))) }],
 };
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
