@@ -1,7 +1,3 @@
-// copied from ANDGateView.ts
-
-
-
 import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
