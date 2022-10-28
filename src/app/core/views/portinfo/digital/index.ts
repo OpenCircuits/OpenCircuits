@@ -66,7 +66,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         Positions: GenPortConfig(
             [2,3,4,5,6,7,8],
             (numInputs) => ({
-                0: CalcQuadCurvePortPositions(numInputs, 1.2, .5, V(-1, 0)),
+                0: CalcQuadCurvePortPositions(numInputs, 1.2, .48, V(-1, 0)),
                 1: [CalcPortPos(V(.8, 0), V(.7, 0))], // 1 output
             }),
         ),
