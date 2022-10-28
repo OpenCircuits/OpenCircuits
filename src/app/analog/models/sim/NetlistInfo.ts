@@ -33,6 +33,8 @@ export const AllNetlistInfo: NetlistInfoRecord = {
     // Ground is a very special case so has no specified information
     "Ground": undefined,
 
+    "Oscilloscope": undefined,
+
     "Resistor": (r) => ["R", [`${r.resistance}`]],
 };
 

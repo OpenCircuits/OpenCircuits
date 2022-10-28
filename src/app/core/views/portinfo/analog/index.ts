@@ -41,4 +41,16 @@ export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
             },
         },
     },
+    "Oscilloscope": {
+        Default:       DefaultAnalogPort,
+        InitialConfig: "2",
+        AllowChanges:  false,
+
+        Positions: {
+            "2": {
+                "0:0": { origin: V(-0.6, 0), target: V(-1.3, 0), dir: V(-1, 0) },
+                "0:1": { origin: V(+0.6, 0), target: V(+1.3, 0), dir: V(+1, 0) },
+            },
+        },
+    },
 };
