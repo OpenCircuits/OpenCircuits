@@ -2,9 +2,9 @@ import {uuid} from "core/utils/GUID";
 
 import {AnyComponent, AnyObj} from "core/models/types";
 
-import {CircuitController}             from "core/controllers/CircuitController";
-import {AllPortInfo}                   from "core/views/portinfo";
-import {CalcPortConfigID, ParseConfig} from "core/views/portinfo/utils";
+import {CircuitController}                 from "core/controllers/CircuitController";
+import {AllPortInfo}                       from "core/views/portinfo";
+import {CalcPortAmounts, CalcPortConfigID} from "core/views/portinfo/utils";
 
 import {Action}      from "../Action";
 import {GroupAction} from "../GroupAction";
@@ -13,25 +13,24 @@ import {Place}       from "../units/Place";
 import {DeletePort} from "./DeletePort";
 
 
-export function SetPortConfig(circuit: CircuitController<AnyObj>, c: AnyComponent, newConfig: string): Action {
-    const curConfig = CalcPortConfigID(circuit, c);
+export function SetPortConfig(circuit: CircuitController<AnyObj>, c: AnyComponent, newConfigID: number): Action {
+    const curConfig = AllPortInfo[c.kind].PositionConfigs[CalcPortConfigID(circuit, c)];
+    const newConfig = AllPortInfo[c.kind].PositionConfigs[newConfigID];
 
     // Get the number of ports there should be for each group currently and in the new config
-    const curGroups = ParseConfig(curConfig);
-    const newGroups = ParseConfig(newConfig);
+    const curGroups = CalcPortAmounts(curConfig);
+    const newGroups = CalcPortAmounts(newConfig);
 
     const CreatePort = AllPortInfo[c.kind].Default;
 
-    return new GroupAction(
-        newGroups.flatMap((newNumPorts, group) => {
-            // Irrelevant grouping
-            if (isNaN(newNumPorts))
-                return [];
+    // Get the list of ALL unique groups, in the case that curGroups has a group that
+    //  newGroups does not have, or vice-versa.
+    const allGroups = [...new Set([...Object.keys(curGroups), ...Object.keys(newGroups)])];
 
-            // If one group is not NaN, then they should both be
-            const curNumPorts = curGroups[group];
-            if (isNaN(curNumPorts))
-                throw new Error(`SetPortConfig: Config mismatch! ${newConfig} vs ${curConfig}`);
+    return new GroupAction(
+        allGroups.flatMap((group) => {
+            const curNumPorts = (curGroups[group] ?? 0);
+            const newNumPorts = (newGroups[group] ?? 0);
 
             // Need to add new ports for this group
             if (curNumPorts < newNumPorts) {
