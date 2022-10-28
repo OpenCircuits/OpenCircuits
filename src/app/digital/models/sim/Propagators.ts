@@ -1,42 +1,20 @@
-import {DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
+import {DigitalComponent} from "core/models/types/digital";
 
 import {Signal, SignalReducer} from "digital/models/sim/Signal";
 
 
-type Propagator<C extends DigitalComponent, S> =
-    (props: { c: C, signals: Signal[][], state?: S }) => ({ nextSignals: Signal[][], nextState?: S });
+type Propagator<C extends DigitalComponent> =
+    (props: { c: C, signals: Record<string, Signal[]>, state: Signal[] }) =>
+        [Record<string, Signal[]>, Signal[]] | [Record<string, Signal[]>];
 
 type PropagatorRecord = {
     // The kind of every digital component
     [Comp in DigitalComponent as Comp["kind"]]:
         // Mapped to a propagator function
-        Propagator<Comp, unknown>;
+        Propagator<Comp>;
 }
 
-/**
- * High-order utility function to generate a simple input/output propagator function that only needs to
- *  deal with signals from `Input` ports (i.e. not `Select` ports) and `Output` ports and doesn't need
- *  any state or information from the component itself.
- *
- * @param propagator The simple propagator that takes in a list of signals and outputs a list of signals.
- * @returns          The propagator function to facilitate this propagation.
- */
-const InputOutputPropagator = (propagator: (inputs: Signal[]) => Signal[]): Propagator<DigitalComponent, unknown> => (
-    ({ signals }) => {
-        const outputs = propagator(signals[DigitalPortGroup.Input]);
-        return {
-            // Insert the new outputs into the `Output` group index
-            nextSignals: [
-                ...signals.slice(0, DigitalPortGroup.Output),
-                outputs,
-                ...signals.slice(DigitalPortGroup.Output+1),
-            ],
-        };
-    }
-);
-
-const Noprop: Propagator<DigitalComponent, unknown> =
-    ({ signals, state }) => ({ nextSignals: signals, nextState: state });
+const Noprop: Propagator<DigitalComponent> = ({ signals, state }) => ([signals, state]);
 
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
@@ -51,18 +29,18 @@ const AND = SignalReducer((a, b) => (a && b));
  *  FlipFlops which need to have their current state as a stored internal value.
  */
 export const AllPropagators: PropagatorRecord = {
-    "DigitalNode": InputOutputPropagator((inputs) => (inputs)),
+    "DigitalNode": ({ signals }) => [{ "outputs": signals["inputs"] }],
 
     // Switch has state which represents the user-defined isOn/isOff
-    "Switch": ({ state = Signal.Off }) => ({ nextSignals: [[], [state as Signal], []], nextState: state }),
+    "Switch": ({ state = [Signal.Off] }) => [{ "outputs": state }, state],
 
     // LEDs don't propagate a signal
     "LED": Noprop,
 
-    "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+    "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 };
 
-export function Propagate<S = unknown>(c: DigitalComponent, signals: Signal[][], state?: S) {
-    const propagator = AllPropagators[c.kind] as Propagator<DigitalComponent, S>;
+export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
+    const propagator = AllPropagators[c.kind] as Propagator<DigitalComponent>;
     return (propagator({ c, signals, state }));
 }
