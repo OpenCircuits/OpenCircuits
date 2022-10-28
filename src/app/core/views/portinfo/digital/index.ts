@@ -93,50 +93,6 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 return positions;
             })()
         }))
-        // Positions: GenPortConfig(
-        //     [1,2,3,4,5,6,7,8],
-        //     (numSelects) => ({
-        //         0: (() => {
-        //             const size = V((0.5 + numSelects/2), (1 + Math.pow(2, numSelects - 1)));
-        //             const x = -size.x / 2;
-        //             const ports = [];
-        //             const inputs = Math.pow(2,numSelects);
-        //             for (let i = 0; i < inputs; i++) {
-        //                 const midpoint = (inputs-1)/2;
-        //                 const spacingPos = 1/2 * (i-midpoint);
-        //                 const y = -spacingPos + 1/4;
-        //                 ports[i] = {
-        //                     origin: V(x, y),
-        //                     target: V(x - IO_PORT_LENGTH, y),
-        //                     dir: V(-1, 0)
-        //                 }
-        //             }
-
-        //             return ports;
-        //         })(),
-        //         1: [CalcPortPos(V((0.5 + numSelects/2)/2, 0), V((0.5 + numSelects/2)/2 + 0.25,0))], // 1 output
-        //         2: (() => {
-        //             // Calculations for parameters to use in determining origin positions
-        //             // const size = ports[0].getParent().getSize();
-        //             // const width = size.x;
-        //             // const height = size.y;
-        //             // const slope = this.slopeMultiplier * MULTIPLEXER_HEIGHT_OFFSET / width;
-        //             // const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
-        //             // ports.forEach((port, i) => {
-        //             //     const x = this.calcSpacingPos(i, ports.length, 1);
-        //             //     const y = midPortOriginOffset - slope * x;
-        //             //     port.setOriginPos(V(x, y));
-        //             //     port.setTargetPos(V(x, -height/2 - IO_PORT_LENGTH));
-        //             // });
-        //             const positions = CalcMuxPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
-        //             //console.log(positions);
-        //             // positions.forEach((position, i) => {
-        //             //     position.target.x 
-        //             // })
-        //             return positions;
-        //         })() //CalcPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0)),
-        //     }),
-        // ),
     },
     "Demultiplexer": {
         Default:       DefaultDigitalPort,
@@ -185,49 +141,5 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 return positions;
             })()
         }))
-        // Positions: GenPortConfig(
-        //     [1,2,3,4,5,6,7,8],
-        //     (numSelects) => ({
-        //         0: [CalcPortPos(V(-(0.5 + numSelects/2)/2, 0), V(-(0.5 + numSelects/2)/2 - 0.25,0))], // 1 input
-        //         1: (() => {
-        //             const size = V((0.5 + numSelects/2), (1 + Math.pow(2, numSelects - 1)));
-        //             const x = size.x / 2;
-        //             const ports = [];
-        //             const outputs = Math.pow(2,numSelects);
-        //             for (let i = 0; i < outputs; i++) {
-        //                 const midpoint = (outputs-1)/2;
-        //                 const spacingPos = 1/2 * (i-midpoint);
-        //                 const y = -spacingPos + 1/4;
-        //                 ports[i] = {
-        //                     origin: V(x, y),
-        //                     target: V(x + IO_PORT_LENGTH, y),
-        //                     dir: V(1, 0)
-        //                 }
-        //             }
-
-        //             return ports;
-        //         })(),
-        //         2: (() => {
-        //             // Calculations for parameters to use in determining origin positions
-        //             // const size = ports[0].getParent().getSize();
-        //             // const width = size.x;
-        //             // const height = size.y;
-        //             // const slope = this.slopeMultiplier * MULTIPLEXER_HEIGHT_OFFSET / width;
-        //             // const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
-        //             // ports.forEach((port, i) => {
-        //             //     const x = this.calcSpacingPos(i, ports.length, 1);
-        //             //     const y = midPortOriginOffset - slope * x;
-        //             //     port.setOriginPos(V(x, y));
-        //             //     port.setTargetPos(V(x, -height/2 - IO_PORT_LENGTH));
-        //             // });
-        //             const positions = CalcMuxPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
-        //             //console.log(positions);
-        //             // positions.forEach((position, i) => {
-        //             //     position.target.x 
-        //             // })
-        //             return positions;
-        //         })() //CalcPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0)),
-        //     }),
-        // ),
     },
 };
