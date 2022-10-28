@@ -1,6 +1,6 @@
 import {DEFAULT_ON_COLOR, METASTABLE_COLOR} from "core/utils/Constants";
 
-import {DigitalPort, DigitalPortGroup, DigitalWire} from "core/models/types/digital";
+import {DigitalPort, DigitalWire} from "core/models/types/digital";
 
 import {Signal} from "digital/models/sim/Signal";
 
@@ -12,11 +12,11 @@ import {DigitalViewInfo} from "./DigitalViewInfo";
 export class DigitalWireView extends WireView<DigitalWire, DigitalViewInfo> {
     protected getInputPort(): DigitalPort {
         const [p1, p2] = this.circuit.getPortsForWire(this.obj);
-        return (p1.group === DigitalPortGroup.Output ? p1 : p2);
+        return (p1.group === "outputs" ? p1 : p2); // TODOnow: fix
     }
     protected getOutputPort(): DigitalPort {
         const [p1, p2] = this.circuit.getPortsForWire(this.obj);
-        return (p1.group === DigitalPortGroup.Output ? p2 : p1);
+        return (p1.group === "outputs" ? p2 : p1);
     }
 
     protected override getColor(): string {
