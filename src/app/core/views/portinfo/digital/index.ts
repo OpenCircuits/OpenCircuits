@@ -46,15 +46,11 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         })),
     },
     "NOTGate": {
-        Default:       DefaultDigitalPort,
-        InitialConfig: "1,1",
-        AllowChanges:  false,
+        ...DefaultDigitalPortInfo,
 
-        Positions: {
-            "1,1": {
-                "0:0": { origin: V(-0.5, 0), target: V(-1.2, 0), dir: V(-1, 0) },
-                "1:0": { origin: V(0.45, 0), target: V(1.2, 0), dir: V(+1, 0) },
-            },
-        },
+        PositionConfigs: [{
+                "inputs":  [{ origin: V(-0.5, 0), target: V(-1.2, 0), dir: V(-1, 0) }],
+                "outputs": [{ origin: V(0.45, 0), target: V(1.2, 0), dir: V(+1, 0) }],
+        }],
     },
 };
