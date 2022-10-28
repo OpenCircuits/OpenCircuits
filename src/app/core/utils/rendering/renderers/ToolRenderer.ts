@@ -2,7 +2,7 @@ import {ROTATION_CIRCLE_RADIUS,
     ROTATION_CIRCLE_THICKNESS,
     WIRE_THICKNESS} from "core/utils/Constants";
 
-import {Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Camera} from "math/Camera";
 
@@ -48,24 +48,37 @@ function drawRotationCircleArc(renderer: Renderer, camera: Camera, pos: Vector, 
     renderer.draw(new ArcCircle(pos, radius, a0, a1), ROTATION_ARC_STYLE, 0.4);
 }
 
-function drawWireToMouse(renderer: Renderer, { camera, circuit, input }: CircuitInfo, originPort: AnyPort): void {
-    const portPos = GetPortWorldPos(circuit, originPort);
-    const portDir = portPos.target.sub(portPos.origin).normalize();
+function drawWireToMouse(
+    renderer: Renderer,
+    { camera, circuit, input }: CircuitInfo,
+    originPort: AnyPort,
+    customWiringToolColor?: (originPort: AnyPort) => string,
+): void {
+    const { target, dir } = GetPortWorldPos(circuit, originPort);
 
-    const p1 = camera.getScreenPos(portPos.target);
+    const p1 = camera.getScreenPos(target);
     const p2 = input.getMousePos();
 
-    const c1 = p1.add(portDir.scale(1 / camera.getZoom()));
+    const c1 = p1.add(dir.scale(1 / camera.getZoom()).scale(V(1, -1)));
     const c2 = p2;
 
-    const style = new Style(undefined, "#ffffff", WIRE_THICKNESS / camera.getZoom());
+    const style = new Style(
+        undefined,
+        (customWiringToolColor?.(originPort) ?? "#ffffff"),
+        WIRE_THICKNESS / camera.getZoom()
+    );
 
     renderer.draw(new Curve(p1, p2, c1, c2), style);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ToolRenderer {
-    export function render(renderer: Renderer, info: CircuitInfo): void {
+    export function render(
+        renderer: Renderer,
+        info: CircuitInfo,
+        // This is a hack so that digital wires can draw on/off when being wired
+        customWiringToolColor?: (originPort: AnyPort) => string,
+    ): void {
         const { camera, circuit, selections, toolManager } = info;
 
         const tool = toolManager.getCurrentTool();
@@ -88,7 +101,7 @@ export namespace ToolRenderer {
         }
         else if (tool === WiringTool) {
             // Draw fake wire
-            drawWireToMouse(renderer, info, WiringTool.getPort()!);
+            drawWireToMouse(renderer, info, WiringTool.getPort()!, customWiringToolColor);
         }
     }
 }

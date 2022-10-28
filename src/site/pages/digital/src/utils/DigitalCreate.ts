@@ -10,7 +10,7 @@ import {GroupAction} from "core/actions/GroupAction";
 
 import {Place, PlaceGroup} from "core/actions/units/Place";
 
-import {DigitalComponent, DigitalPort, DigitalPortGroup} from "core/models/types/digital";
+import {DigitalComponent, DigitalPort} from "core/models/types/digital";
 
 import {CreateComponent} from "core/models/utils/CreateComponent";
 import {CreateWire}      from "core/models/utils/CreateWire";
@@ -44,7 +44,7 @@ export enum SmartPlaceOptions {
  * @param N        The number of items to create.
  * @param pos      The position of the first component.
  * @param zIndex   The zIndex of the items.
- * @returns        An action that performs this placement.
+ * @returns          An action that performs this placement.
  * @throws If the itemId is an invalid item or IC.
  */
 export function SmartPlace(info: DigitalCircuitInfo, itemKind: DigitalComponent["kind"], options: SmartPlaceOptions,
@@ -58,11 +58,12 @@ export function SmartPlace(info: DigitalCircuitInfo, itemKind: DigitalComponent[
             const compBounds = info.viewManager.calcBoundsOf([comp, ...ports]);
 
             // Get all input/output ports
+            // TODOnow: fix
             const inputPorts = (options & SmartPlaceOptions.Inputs)
-                ? ports.filter((p) => (p.group !== DigitalPortGroup.Output))
+                ? ports.filter((p) => (p.group !== "outputs"))
                 : [];
             const outputPorts = (options & SmartPlaceOptions.Outputs)
-                ? ports.filter((p) => (p.group === DigitalPortGroup.Output))
+                ? ports.filter((p) => (p.group === "outputs"))
                 : [];
 
             // Create and place switches
@@ -78,7 +79,7 @@ export function SmartPlace(info: DigitalCircuitInfo, itemKind: DigitalComponent[
             const placeSwitchesAction = PlaceGroup(info.circuit, switchesAndPorts.flat());
 
             // Create and place LEDs
-            const ledPortY = DigitalPortInfo["LED"].Positions["1"]["0:0"].target.y;
+            const ledPortY = DigitalPortInfo["LED"].PositionConfigs[0]["inputs"][0].target.y;
             const ledsAndPorts = outputPorts.map((port, j) => {
                 const newPos = V(
                     // Move LEDs to the right as j increases
