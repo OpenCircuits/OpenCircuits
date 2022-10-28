@@ -3,18 +3,18 @@ import {DigitalComponent} from "core/models/types/digital";
 import {Signal, SignalReducer} from "digital/models/sim/Signal";
 
 
-type Propagator<C extends DigitalComponent, S> =
-    (props: { c: C, signals: Record<string, Signal[]>, state?: S }) =>
-        [Record<string, Signal[]>, S] | [Record<string, Signal[]>];
+type Propagator<C extends DigitalComponent> =
+    (props: { c: C, signals: Record<string, Signal[]>, state: Signal[] }) =>
+        [Record<string, Signal[]>, Signal[]] | [Record<string, Signal[]>];
 
 type PropagatorRecord = {
     // The kind of every digital component
     [Comp in DigitalComponent as Comp["kind"]]:
         // Mapped to a propagator function
-        Propagator<Comp, unknown>;
+        Propagator<Comp>;
 }
 
-const Noprop: Propagator<DigitalComponent, unknown> = ({ signals, state }) => ([signals, state]);
+const Noprop: Propagator<DigitalComponent> = ({ signals, state }) => ([signals, state]);
 
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
@@ -32,7 +32,7 @@ export const AllPropagators: PropagatorRecord = {
     "DigitalNode": ({ signals }) => [{ "outputs": signals["inputs"] }],
 
     // Switch has state which represents the user-defined isOn/isOff
-    "Switch": ({ state = Signal.Off }) => [{ "outputs": [state as Signal] }, state],
+    "Switch": ({ state = [Signal.Off] }) => [{ "outputs": state }, state],
 
     // LEDs don't propagate a signal
     "LED": Noprop,
@@ -40,7 +40,7 @@ export const AllPropagators: PropagatorRecord = {
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 };
 
-export function Propagate<S = unknown>(c: DigitalComponent, signals: Record<string, Signal[]>, state?: S) {
-    const propagator = AllPropagators[c.kind] as Propagator<DigitalComponent, S>;
+export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
+    const propagator = AllPropagators[c.kind] as Propagator<DigitalComponent>;
     return (propagator({ c, signals, state }));
 }

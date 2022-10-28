@@ -26,7 +26,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
     private readonly signals: Map<GUID, Signal>;
 
     // States for each component, needed for things like FlipFlops which store a signal as a state.
-    private readonly states: Map<GUID, unknown>;
+    private readonly states: Map<GUID, Signal[]>;
 
     // Propagation is IDs of components to propagate a signal through.
     private readonly propagationQueue: Set<GUID>;
@@ -63,7 +63,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         });
     }
 
-    public setState(comp: DigitalComponent, state: unknown): void {
+    public setState(comp: DigitalComponent, state: Signal[]): void {
         this.states.set(comp.id, state);
 
         // If state changed, update the component
@@ -89,6 +89,9 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
             if (this.signals.get(p1.id) === signal && this.signals.get(p2.id) === signal)
                 return;
             this.setSignal(outputPort, signal);
+        }
+        if (m.baseKind === "Component") {
+            this.states.set(m.id, []);
         }
     }
 
@@ -151,7 +154,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
                 groupedPorts,
                 ([_, ports]) => ports.map((p) => curSignals.get(p.id)!)
             );
-            const state = curStates.get(comp.id);
+            const state = curStates.get(comp.id)!;
 
             const [nextSignals, nextState] = Propagate(comp, groupedSignals, state);
 
@@ -170,8 +173,8 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
             ));
 
             // Update state if it changed
-            if (nextState !== state)
-                this.setState(comp, nextState);
+            if ((nextState ?? []).every((val, i) => (state[i] === val)))
+                this.setState(comp, (nextState ?? []));
         }
 
         this.publish({
@@ -184,7 +187,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         return this.signals.get(p.id)!;
     }
 
-    public getState(c: DigitalComponent): unknown {
-        return this.states.get(c.id);
+    public getState(c: DigitalComponent): Signal[] {
+        return this.states.get(c.id)!;
     }
 }
