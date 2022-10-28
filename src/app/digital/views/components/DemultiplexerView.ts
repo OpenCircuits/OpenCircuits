@@ -9,7 +9,7 @@ import {Style} from "core/utils/rendering/Style";
 import {Line} from "core/utils/rendering/shapes/Line";
 import { Polygon } from "core/utils/rendering/shapes/Polygon";
 
-import {Demultiplexer, DigitalPortGroup} from "core/models/types/digital";
+import {Demultiplexer} from "core/models/types/digital";
 
 import {RenderInfo}               from "core/views/BaseView";
 import {ComponentView}            from "core/views/ComponentView";
@@ -30,7 +30,7 @@ export class DemultiplexerView extends ComponentView<Demultiplexer, DigitalViewI
 
         const transform = this.getTransform();
 
-        const numSelectPorts = this.circuit.getPortsFor(this.obj).filter(p => p.group === DigitalPortGroup.Select).length;
+        const numSelectPorts = this.circuit.getPortsFor(this.obj).filter(p => p.group === "selects").length;
 
         const size = V((0.5 + numSelectPorts/2), (1  + Math.pow(2, numSelectPorts-1)));
 
@@ -55,7 +55,7 @@ export class DemultiplexerView extends ComponentView<Demultiplexer, DigitalViewI
     public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+            .filter((p) => p.group === "inputs").length;
         return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }
