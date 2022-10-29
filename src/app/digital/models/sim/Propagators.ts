@@ -3,9 +3,11 @@ import {DigitalComponent} from "core/models/types/digital";
 import {Signal, SignalReducer} from "digital/models/sim/Signal";
 
 
+// ToDo: need to be stricter
+type SignalMap = Record<string, Signal[]>;
 type Propagator<C extends DigitalComponent> =
-    (props: { c: C, signals: Record<string, Signal[]>, state: Signal[] }) =>
-        [Record<string, Signal[]>, Signal[]] | [Record<string, Signal[]>];
+    (props: { c: C, signals: SignalMap, state: Signal[] }) =>
+        [SignalMap, Signal[]] | [SignalMap];
 
 type PropagatorRecord = {
     // The kind of every digital component
@@ -20,18 +22,15 @@ const Noprop: Propagator<DigitalComponent> = ({ signals, state }) => ([signals, 
 const AND = SignalReducer((a, b) => (a && b));
 
 // TODO
-// broke with new port function and style
-/*
 // flipflops
-const DFF: Propagator<DFlipFlop, unknown> = ({ signals , state }) => {
-    const input = signals[DigitalPortGroup.Input];
-    const sel = signals[DigitalPortGroup.Select];
+const DFF: ({ signals }: { signals: SignalMap }) => { nextSignals: SignalMap } = ({ signals  }) => {
+    const input = signals["Input"];
+    // const sel = signals[DigitalPortGroup.Select];
 
     // run boolean logic
 
-    return { nextSignals: signals , nextState: state }
+    return { nextSignals: signals }
 }
-*/
 
 /**
  * This is a list of all the propagators for every digital component in the circuit.
@@ -54,7 +53,7 @@ export const AllPropagators: PropagatorRecord = {
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 
      // ToDo: Add prop here later
-     "DFlipFlop":  Noprop,
+     "DFlipFlop":  DFF,
      "TFlipFlop":  Noprop,
      "JKFlipFlop": Noprop,
      "SRFlipFlop": Noprop,
