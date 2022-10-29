@@ -23,13 +23,13 @@ const AND = SignalReducer((a, b) => (a && b));
 
 // TODO
 // flipflops
-const DFF: ({ signals }: { signals: SignalMap }) => { nextSignals: SignalMap } = ({ signals  }) => {
+const DFF: ({ signals }: { signals: any }) => [SignalMap] = ({ signals }) => {
     const input = signals["Input"];
     // const sel = signals[DigitalPortGroup.Select];
 
     // run boolean logic
 
-    return [signals,input]
+    return [signals]
 }
 
 /**
