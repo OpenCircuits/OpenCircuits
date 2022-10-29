@@ -29,7 +29,7 @@ const DFF: ({ signals }: { signals: SignalMap }) => { nextSignals: SignalMap } =
 
     // run boolean logic
 
-    return { nextSignals: signals }
+    return [signals,input]
 }
 
 /**
