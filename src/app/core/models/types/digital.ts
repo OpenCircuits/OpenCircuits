@@ -3,13 +3,7 @@ import {DefaultPort, Port, PortFactory}                from "./base/Port";
 import {DefaultWire, Wire, WireFactory}                from "./base/Wire";
 
 
-export enum DigitalPortGroup {
-    Input  = 0,
-    Output = 1,
-    Select = 2,
-}
-
-export type DigitalPort = Port      & { kind: "DigitalPort", group: DigitalPortGroup };
+export type DigitalPort = Port      & { kind: "DigitalPort" };
 export type DigitalWire = Wire      & { kind: "DigitalWire" };
 export type DigitalNode = Component & { kind: "DigitalNode" };
 

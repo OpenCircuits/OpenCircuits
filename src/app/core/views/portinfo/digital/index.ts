@@ -2,87 +2,69 @@ import {DEFAULT_BORDER_WIDTH} from "core/utils/Constants";
 
 import {V} from "Vector";
 
-import {DefaultDigitalPort, DigitalComponent, DigitalPortGroup} from "core/models/types/digital";
+import {DefaultDigitalPort, DigitalComponent} from "core/models/types/digital";
 
-import {CalcPortPos, CalcPortPositions, CalcQuadCurvePortPositions, GenPortConfig} from "../positioning/utils";
-import {PortInfoRecord}                              from "../types";
+import {CalcPortPos, CalcPortPositions, CalcQuadCurvePortPositions} from "../positioning/utils";
+import {PortInfoRecord}                 from "../types";
 
+
+const DefaultDigitalPortInfo = {
+    Default:       DefaultDigitalPort,
+    InitialConfig: 0,
+    AllowChanges:  false,
+} as const;
 
 export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
     "DigitalNode": {
-        Default:       DefaultDigitalPort,
-        InitialConfig: "1,1",
-        AllowChanges:  false,
-
-        Positions: {
-            "1,1": {
-                "0:0": { origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) },
-                "1:0": { origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) },
-            },
-        },
+        ...DefaultDigitalPortInfo,
+        PositionConfigs: [{
+            "inputs":  [{ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }],
+            "outputs": [{ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }],
+        }],
     },
     "Switch": {
-        Default:       DefaultDigitalPort,
-        InitialConfig: "0,1",
-        AllowChanges:  false,
-
-        Positions: {
-            "0,1": {
-                "1:0": { origin: V(0.62, 0), target: V(1.32, 0), dir: V(+1, 0) },
-            },
-        },
+        ...DefaultDigitalPortInfo,
+        PositionConfigs: [{
+            "outputs": [{ origin: V(0.62, 0), target: V(1.32, 0), dir: V(+1, 0) }],
+        }],
     },
     "LED": {
-        Default:       DefaultDigitalPort,
-        InitialConfig: "1",
-        AllowChanges:  false,
-
-        Positions: {
-            "1": {
-                "0:0": { origin: V(0, -0.5), target: V(0, -2), dir: V(0, -1) },
-            },
-        },
+        ...DefaultDigitalPortInfo,
+        PositionConfigs: [{
+            "inputs": [{ origin: V(0, -0.5), target: V(0, -2), dir: V(0, -1) }],
+        }],
     },
     "ANDGate": {
-        Default:       DefaultDigitalPort,
-        InitialConfig: "2,1",
-        AllowChanges:  true,
-        ChangeGroup:   DigitalPortGroup.Input,
+        ...DefaultDigitalPortInfo,
+        AllowChanges: true,
+        ChangeGroup:  "inputs",
 
-        Positions: GenPortConfig(
-            [2,3,4,5,6,7,8],
-            (numInputs) => ({
-                0: CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
-                1: [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
-            }),
-        ),
+        // Generate configs for 2->8 input ports
+        PositionConfigs: [2,3,4,5,6,7,8].map((numInputs) => ({
+            "inputs":  CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
+            "outputs": [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
+        })),
     },
     "XORGate": {
-        Default:       DefaultDigitalPort,
-        InitialConfig: "2,1",
-        AllowChanges:  true,
-        ChangeGroup:   DigitalPortGroup.Input,
+        ...DefaultDigitalPortInfo,
+        AllowChanges: true,
+        ChangeGroup:  "inputs",
 
-        Positions: GenPortConfig(
-            [2,3,4,5,6,7,8],
-            (numInputs) => ({
-                0: CalcQuadCurvePortPositions(numInputs, 1.2, .48, V(-1, 0)),
-                1: [CalcPortPos(V(.58, 0), V(1, 0))], // 1 output
-            }),
-        ),
+        // Generate configs for 2->8 input ports
+        PositionConfigs: [2,3,4,5,6,7,8].map((numInputs) => ({
+            "inputs":  CalcQuadCurvePortPositions(numInputs, 1.2, .48, V(-1, 0)),
+            "outputs": [CalcPortPos(V(.58, 0), V(1, 0))], // 1 output
+        })),
     },
     "XNORGate": {
-        Default:       DefaultDigitalPort,
-        InitialConfig: "2,1",
-        AllowChanges:  true,
-        ChangeGroup:   DigitalPortGroup.Input,
+        ...DefaultDigitalPortInfo,
+        AllowChanges: true,
+        ChangeGroup:  "inputs",
 
-        Positions: GenPortConfig(
-            [2,3,4,5,6,7,8],
-            (numInputs) => ({
-                0: CalcQuadCurvePortPositions(numInputs, 1.2, .48, V(-1, 0)),
-                1: [CalcPortPos(V(.8, 0), V(.7, 0))], // 1 output
-            }),
-        ),
+        // Generate configs for 2->8 input ports
+        PositionConfigs: [2,3,4,5,6,7,8].map((numInputs) => ({
+            "inputs":  CalcQuadCurvePortPositions(numInputs, 1.2, .48, V(-1, 0)),
+            "outputs": [CalcPortPos(V(.8, 0), V(.7, 0))], // 1 output
+        })),
     },
 };

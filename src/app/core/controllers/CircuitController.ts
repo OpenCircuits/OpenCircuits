@@ -99,7 +99,7 @@ export class CircuitController<Obj extends AnyObj = AnyObj> extends Observable<C
         return Object.values(this.circuit.objects);
     }
 
-    public findPort(parent: AnyComponentFrom<Obj>, group: number, index: number): AnyPortFrom<Obj> | undefined {
+    public findPort(parent: AnyComponentFrom<Obj>, group: string, index: number): AnyPortFrom<Obj> | undefined {
         return this.getPortsFor(parent)
             .find((port) => (port.group === group && port.index === index));
     }

@@ -6,7 +6,7 @@ import {Rect} from "math/Rect";
 
 import {Style} from "core/utils/rendering/Style";
 
-import {DigitalPortGroup, XNORGate} from "core/models/types/digital";
+import {XNORGate} from "core/models/types/digital";
 
 import {RenderInfo}               from "core/views/BaseView";
 import {ComponentView}            from "core/views/ComponentView";
@@ -35,7 +35,7 @@ export class XNORGateView extends ComponentView<XNORGate, DigitalViewInfo> {
 
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+            .filter((p) => p.group === "inputs").length;
 
         //Draw curves to visually match input ports
         XORGateView.drawQuadCurve(renderer,     0, size, inputs, borderCol);
@@ -45,7 +45,7 @@ export class XNORGateView extends ComponentView<XNORGate, DigitalViewInfo> {
     public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+            .filter((p) => p.group === "inputs").length;
         return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }
