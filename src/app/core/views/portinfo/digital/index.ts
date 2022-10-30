@@ -57,6 +57,20 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             }),
         ),
     },
+    "XORGate": {
+        Default:       DefaultDigitalPort,
+        InitialConfig: "2,1",
+        AllowChanges:  true,
+        ChangeGroup:   DigitalPortGroup.Input,
+
+        Positions: GenPortConfig(
+            [2,3,4,5,6,7,8],
+            (numInputs) => ({
+                0: CalcQuadCurvePortPositions(numInputs, 1.2, .48, V(-1, 0)),
+                1: [CalcPortPos(V(.58, 0), V(1, 0))], // 1 output
+            }),
+        ),
+    },
     "XNORGate": {
         Default:       DefaultDigitalPort,
         InitialConfig: "2,1",

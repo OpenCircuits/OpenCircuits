@@ -14,6 +14,7 @@ export type DigitalWire = Wire      & { kind: "DigitalWire" };
 export type DigitalNode = Component & { kind: "DigitalNode" };
 
 export type ANDGate = Component & { kind: "ANDGate" };
+export type XORGate = Component & { kind: "XORGate" };
 export type XNORGate = Component & { kind: "XNORGate" };
 export type Switch  = Component & { kind: "Switch"  };
 export type LED     = Component & { kind: "LED", color: string };
@@ -23,6 +24,7 @@ export type DigitalComponent =
     | Switch
     | LED
     | ANDGate
+    | XORGate
     | XNORGate;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;
@@ -33,7 +35,8 @@ export const DefaultDigitalComponent: { [C in DigitalComponent as C["kind"]]: Co
     "Switch":      (id) => ({ ...DefaultComponent(id), kind: "Switch"                }),
     "LED":         (id) => ({ ...DefaultComponent(id), kind: "LED", color: "#ffffff" }),
     "ANDGate":     (id) => ({ ...DefaultComponent(id), kind: "ANDGate"               }),
-    "XNORGate":    (id) => ({ ...DefaultComponent(id), kind: "XNORGate"               }),
+    "XORGate":     (id) => ({ ...DefaultComponent(id), kind: "XORGate"               }),
+    "XNORGate":    (id) => ({ ...DefaultComponent(id), kind: "XNORGate"              }),
 };
 
 export const DefaultDigitalPort: PortFactory<DigitalPort> =

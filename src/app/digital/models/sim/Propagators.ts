@@ -41,7 +41,8 @@ const Noprop: Propagator<DigitalComponent, unknown> =
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
 
-// XNOR reducer
+// XOR and XNOR reducer
+const XOR = SignalReducer((a, b) => (!(a && b) && (a || b)));
 const XNOR = SignalReducer((a, b) => (!(a || b) || (a && b)));
 
 /**
@@ -62,8 +63,8 @@ export const AllPropagators: PropagatorRecord = {
     // LEDs don't propagate a signal
     "LED": Noprop,
 
-    "ANDGate": InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
-
+    "ANDGate":  InputOutputPropagator((inputs) => [inputs.reduce(AND)]),
+    "XORGate":  InputOutputPropagator((inputs) => [inputs.reduce(XOR)]),
     "XNORGate": InputOutputPropagator((inputs) => [inputs.reduce(XNOR)]),
 };
 
