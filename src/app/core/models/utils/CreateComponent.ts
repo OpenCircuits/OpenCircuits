@@ -12,11 +12,12 @@ export function CreateComponent(kind: AnyComponent["kind"], zIndex: number, comp
     const comp = DefaultComponent[kind](compID);
 
     // Create ports
-    const portConfig = portInfo.Positions[portInfo.InitialConfig];
-    const ports = Object.keys(portConfig).map((s) => {
-        const [group, index] = s.split(":").map((s) => parseInt(s));
-        return portInfo.Default(uuid(), compID, group, index);
-    });
+    const portConfig = portInfo.PositionConfigs[portInfo.InitialConfig];
+    const ports = Object.entries(portConfig)
+        .flatMap(([group, positions]) =>
+            positions.map((_, index) =>
+                portInfo.Default(uuid(), compID, group, index))
+        );
 
     // Set z-index
     [comp, ...ports].forEach((o) => (o.zIndex = zIndex));

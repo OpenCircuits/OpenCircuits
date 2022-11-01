@@ -7,12 +7,16 @@ import {DebugRenderer} from "core/utils/rendering/renderers/DebugRenderer";
 import {GridRenderer}  from "core/utils/rendering/renderers/GridRenderer";
 import {ToolRenderer}  from "core/utils/rendering/renderers/ToolRenderer";
 
+import {AnyPort} from "core/models/types";
+
 
 type Info = {
     canvas: HTMLCanvasElement;
     info: CircuitInfo;
+    // This is a hack so that digital wires can draw on/off when being wired
+    customWiringToolColor?: (originPort: AnyPort) => string;
 }
-export function GetRenderFunc({ canvas, info }: Info) {
+export function GetRenderFunc({ canvas, info, customWiringToolColor }: Info) {
     const renderer = new Renderer(canvas);
 
     return function render({ useGrid }: RenderOptions = { useGrid: true }) {
@@ -26,7 +30,7 @@ export function GetRenderFunc({ canvas, info }: Info) {
             renderer,
         });
 
-        ToolRenderer.render(renderer, info);
+        ToolRenderer.render(renderer, info, customWiringToolColor);
 
         DebugRenderer.render(renderer, info);
     }

@@ -10,17 +10,17 @@ export const AnalogPropInfo: PropInfoRecord<AnalogObj> = {
     "AnalogWire": DefaultWirePropInfo,
     "AnalogNode": DefaultComponentPropInfo,
 
-    "Resistor": {
+    "Resistor": [
         ...DefaultComponentPropInfo,
-        "resistance": { type: "float", label: "Resistance", step: 100, min: 0 },
-    },
-    "Inductor": {
+        { id: "resistance", type: "float", key: "resistance", label: "Resistance", step: 100, min: 0 },
+    ],
+    "Inductor": [
         ...DefaultComponentPropInfo,
-        "inductance": { type: "float", label: "Inductance", step: 10, min: 0 },
-    },
-    "CurrentSource": {
+        { id: "inductance", type: "float", key: "inductance", label: "Inductance", step: 10, min: 0 },
+    ],
+    "CurrentSource": [
         ...DefaultComponentPropInfo,
-        "amperage": { type: "float", label: "Amperage", step: 1, min: 0 },
-    },
+        { id: "amperage", type: "float", key: "amperage", label: "Amperage", step: 1, min: 0 },
+    ],
     "Ground": DefaultComponentPropInfo,
-} as const;
+}

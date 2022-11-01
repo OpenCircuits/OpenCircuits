@@ -1,142 +1,110 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
 import {SetProperty} from "core/actions/units/SetProperty";
 
-import {Prop, PropInfo, PropInfoRecord} from "core/models/PropInfo";
-import {AnyObj}                         from "core/models/types";
+import {Prop, PropInfo, PropInfoEntry, PropInfoRecord} from "core/models/PropInfo";
+import {AnyObj}                                        from "core/models/types";
 
-import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
+import {RecordOfArrays, useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
-import {ButtonModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/ButtonModuleInputField";
 import {ColorModuleInputField}  from "shared/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 import {ModuleSubmitInfo}       from "shared/containers/SelectionPopup/modules/inputs/ModuleInputField";
 import {NumberModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
-import {TextModuleInputField}   from "shared/containers/SelectionPopup/modules/inputs/TextModuleInputField";
+
+import {TextModuleInputField} from "./inputs/TextModuleInputField";
 
 
 type PropInputFieldProps = {
-    propKey: string;
-    info: PropInfo;
-
+    info: CircuitInfo;
+    entry: PropInfoEntry<AnyObj>;
+    props: RecordOfArrays<AnyObj>;
     objs: AnyObj[];
-
-    vals: string[] | number[] | boolean[];
-
-    alt?: string;
-
     forceUpdate: () => void;
-    getAction: (newVals: Prop[]) => Action;
-    onSubmit: (info: ModuleSubmitInfo) => void;
 }
-const ModulePropInputField = ({
-    propKey, info, objs, vals, forceUpdate, ...otherProps
+const PropInfoEntryInputField = ({
+    info, entry, props, objs, forceUpdate,
 }: PropInputFieldProps) => {
-    const { type } = info;
+    // If group entry, then return the sub-entries
+    if (entry.type === "group") {
+        return (<>{
+            entry.info.map((subentry) => (
+                <PropInfoEntryWrapper
+                    key={subentry.id}
+                    info={info} entry={subentry}
+                    props={props} objs={objs} forceUpdate={forceUpdate} />
+            ))
+        }</>);
+    }
 
-    switch (type) {
-    case "button":
-        return (
-            <ButtonModuleInputField
-                {...otherProps}
-                props={vals as Array<string | number | boolean>}
-                getText={info.getText} getNewState={info.getNewState} />
-        );
-    case "boolean":
-        return null; // TODO
-    case "string":
-        return <TextModuleInputField {...otherProps} props={vals as string[]} />
-    case "color":
-        return <ColorModuleInputField {...otherProps} props={vals as string[]} />
-    case "number[]":
-    case "string[]":
-        return (
-            <SelectModuleInputField
-                {...otherProps}
-                kind={type} props={vals as string[] | number[]} options={info.options}
-                onSubmit={(info) => {
-                    otherProps.onSubmit(info);
-                    forceUpdate(); // Need to force update since these can trigger info-state changes
-                                   //  and feel less inituitive to the user about focus/blur
-                }} />
-        );
-    case "int":
-    case "float":
-        // const unit = info.unit;
-        // if (!unit) {
+    // Otherwise get the properties for this entry
+    const vals = props[entry.key];
+
+    // Create getAction and onSubmit callbacks
+    const getAction = (newVals: Prop[]) => new GroupAction(
+        objs.map((o,i) => SetProperty(info.circuit, o.id, entry.key, newVals[i]))
+    );
+    const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
+        info.renderer.render();
+        if (isFinal)
+            info.history.add(action);
+    };
+
+    switch (entry.type) {
+        case "float":
+        case "int":
             return (
                 <NumberModuleInputField
-                    {...otherProps}
-                    kind={type} min={info.min} max={info.max} step={info.step}
-                    props={vals as number[]} />
+                    kind={entry.type} props={vals as number[]}
+                    step={entry.step} min={entry.min} max={entry.max}
+                    getAction={getAction} onSubmit={onSubmit} />
             );
-        // }
-
-        // const units = vals.map((_, i) => objs[i].getProp(`${propKey}_U`)) as string[];
-        // const transformedVals = vals.map((v, i) => (v as number) / unit[units[i]].val);
-
-        // // val is ALWAYS the unit value, and gets transformed on UI-end to unit-full value
-        // return (<div>
-        //     <span style={{ display: "inline-block", width: "70%" }}>
-        //         <NumberModuleInputField
-        //             {...otherProps}
-        //             kind={type} min={info.min} max={info.max} step={info.step}
-        //             props={transformedVals}
-        //             getAction={(newVals) => (
-        //                 // Scale new value by the current unit
-        //                 otherProps.getAction(newVals.map((v) => (v * unit[units[0]].val)))
-        //             )} />
-        //     </span>
-        //     <span style={{ display: "inline-block", width: "30%" }}>
-        //         <SelectModuleInputField
-        //             {...otherProps}
-        //             kind="string[]" props={units}
-        //             options={Object.entries(unit).map(([key, u]) => [u.display, key])}
-        //             getAction={(newVals) => new GroupAction(
-        //                 // objs.map((a,i) => SetProperty(a, `${propKey}_U`, newVals[i]))
-        //             )}
-        //             onSubmit={(info) => {
-        //                 otherProps.onSubmit(info);
-        //                 forceUpdate(); // Need to force update since these can trigger info-state changes
-        //                                //  and feel less inituitive to the user about focus/blur
-        //             }} />
-        //     </span>
-        // </div>);
-    // case "veci":
-    // case "vecf":
-    //     const kind = (type === "veci" ? "int" : "float");
-    //     const vvals = vals as Vector[];
-    //     return (
-    //         <VectorModuleInputField
-    //             {...otherProps}
-    //             kind={kind} min={info.min} max={info.max} step={info.step}
-    //             props={vvals}
-    //             getAction={(vals) => new GroupAction(
-    //                 objs.map((a,i) => SetProperty(a, propKey, vals[i]))
-    //             )} />
-    //     );
+        case "string":
+            return (
+                <TextModuleInputField
+                    props={vals as string[]}
+                    getAction={getAction} onSubmit={onSubmit} />
+            );
+        case "string[]":
+            return (
+                <SelectModuleInputField
+                    kind="string[]"
+                    props={vals as string[]} options={entry.options}
+                    getAction={getAction}
+                    onSubmit={(i) => {
+                        onSubmit(i);
+                        forceUpdate(); // Need to force update since these can trigger info-state changes
+                                       //  and feel less inituitive to the user about focus/blur
+                    }} />
+            );
+        case "color":
+            return (
+                <ColorModuleInputField
+                    props={vals as string[]}
+                    getAction={getAction} onSubmit={onSubmit} />
+            );
     }
 }
 
+// Wrapper component for a PropInfoEntry
+//  That adds the label for the input field
+// Note: That fields/groups without a label will NOT be wrapped in a containing div
+const PropInfoEntryWrapper = (allProps: PropInputFieldProps) => {
+    const { entry, props } = allProps;
 
-type PropertyModuleWrapperProps = {
-    label?: string;
+    // Check if this module is active
+    const isActive = entry.isActive?.(props) ?? true;
+    if (!isActive)
+        return null;
 
-    children: React.ReactNode;
-}
-const PropertyModuleWrapper = ({ label, children }: PropertyModuleWrapperProps) => {
-    if (!label)
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        return <>{children}</>;
+    if (!entry.label)
+        return (<PropInfoEntryInputField {...allProps} />);
 
     return (<div>
-        {label}
-        <label>
-            {children}
-        </label>
+        <label>{entry.label}</label>
+        <PropInfoEntryInputField {...allProps} />
     </div>);
 }
 
@@ -146,8 +114,8 @@ type Props<Obj extends AnyObj> = {
     propInfo: PropInfoRecord<Obj>;
 }
 export const PropertyModule = <Obj extends AnyObj>({ info, propInfo }: Props<Obj>) => {
-    const { circuit, history, renderer } = info;
-
+    // Props is now a record of every key that EVERY object in `objs` has
+    //  associated with an array of the values for each object.
     const [props, objs, forceUpdate] = useSelectionProps(
         info,
         (o): o is AnyObj => (true),
@@ -157,56 +125,26 @@ export const PropertyModule = <Obj extends AnyObj>({ info, propInfo }: Props<Obj
     if (!props)
         return null;
 
-    const infoList = propInfo[objs[0].kind as Obj["kind"]];
+    // Just get first entry's propInfo since the only actual props that will show
+    //  are the ones that every object's info has.
+    const info0 = propInfo[objs[0].kind as Obj["kind"]] as PropInfo<AnyObj>;
 
-    return (<>{Object.entries(props)
-        // Filter out props that are without info, since they are private
-        .filter(([key]) => (key in infoList))
-        .map(([key, vals]) => {
-            // Assumes all Info's are the same for each key and obj
-            const info = infoList[key as keyof typeof infoList];
-            if (!info)
-                throw new Error(`Failed to get prop info for ${key}!`);
+    const isValidInfoEntry = (entry: PropInfoEntry<AnyObj>): boolean => (
+        entry.type !== "group"
+            // Get the info entries that have an associated key in the props
+            ? (entry.key in props)
+            // Or if they are groups, then make sure that EVERY sub-entry
+            //  has their key in the props
+            : (entry.info.every(isValidInfoEntry))
+    );
+    const infoList = info0.filter(isValidInfoEntry);
 
-            // Get state of props
-            const allProps = objs;
-
-            // Check if this property should be active, if the info defines an `isActive`
-            //  function, then we need to make sure all components satisfy it
-            const isActive = (info.isActive) ? (info.isActive(allProps)) : (true);
-            if (!isActive)
-                return null;
-
-            const label = (
-                typeof info.label === "string"
-                ? info.label
-                : info.label?.(allProps) // Dynamic display based on prop states
-            );
-
-            const getAction = (newVals: Prop[]) => new GroupAction(
-                objs.map((a,i) => SetProperty(circuit, a.id, key, newVals[i]))
-            );
-            const onSubmit = ({ isFinal, action }: ModuleSubmitInfo) => {
-                renderer.render();
-                if (isFinal)
-                    history.add(action);
-            }
-
-            return (
-                <PropertyModuleWrapper
-                    key={`property-module-${key}`}
-                    label={label}>
-                    { info.readonly
-                    ? ((vals as Prop[]).every((v) => v === vals[0]) ? vals[0].toString() : "-")
-                    : (
-                        <ModulePropInputField
-                            propKey={key} info={info} objs={objs} vals={vals}
-                            forceUpdate={forceUpdate}
-                            alt={`${key} property of object`}
-                            getAction={getAction}
-                            onSubmit={onSubmit} />
-                    )}
-                </PropertyModuleWrapper>
-            )
-        })}</>)
+    // Map each info entry to
+    return (<>{infoList.map((entry) => (
+        <PropInfoEntryWrapper
+            key={entry.id}
+            info={info} entry={entry}
+            props={props} objs={objs} forceUpdate={forceUpdate} />
+    ))}</>);
 }
+

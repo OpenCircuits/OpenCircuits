@@ -8,7 +8,7 @@ import {CircuitInfo, Cursor} from "core/utils/CircuitInfo";
 
 import {DeselectAll} from "core/actions/units/Select";
 
-import {AnyComponent, DefaultComponent} from "core/models/types";
+import {AnyComponent, AnyPort, DefaultComponent} from "core/models/types";
 
 import {CreateNComponents} from "shared/utils/CreateN";
 import {GetRenderFunc}     from "shared/utils/GetRenderingFunc";
@@ -24,8 +24,10 @@ import "./index.scss";
 type Props = {
     info: CircuitInfo;
     otherPlace?: (pos: Vector, itemKind: AnyComponent["kind"], num: number, ...otherData: unknown[]) => boolean;
+    // This is a hack so that digital wires can draw on/off when being wired
+    customWiringToolColor?: (originPort: AnyPort) => string;
 }
-export const MainDesigner = ({ info, otherPlace }: Props) => {
+export const MainDesigner = ({ info, otherPlace, customWiringToolColor }: Props) => {
     const { isLocked } = useSharedSelector(
         (state) => ({ isLocked: state.circuit.isLocked })
     );
@@ -46,7 +48,7 @@ export const MainDesigner = ({ info, otherPlace }: Props) => {
         if (!canvas.current)
             throw new Error("MainDesigner.useLayoutEffect failed: canvas is null");
         // Get render function
-        const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
+        const renderFunc = GetRenderFunc({ canvas: canvas.current, info, customWiringToolColor });
 
         info.renderer.setRenderFunction(() => renderFunc());
         info.renderer.render();
