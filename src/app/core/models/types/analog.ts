@@ -3,7 +3,13 @@ import {DefaultPort, Port, PortFactory}                from "./base/Port";
 import {DefaultWire, Wire, WireFactory}                from "./base/Wire";
 
 
-export type AnalogPort = Port & { kind: "AnalogPort" }
+export enum AnalogPortGroup {
+    Input  = 0,
+    Output = 1,
+    Select = 2,
+}
+
+export type AnalogPort = Port & { kind: "AnalogPort",group: AnalogPortGroup }
 export type AnalogWire = Wire & { kind: "AnalogWire" }
 
 export type AnalogNode = Component & { kind: "AnalogNode" };
