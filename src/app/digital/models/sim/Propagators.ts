@@ -18,6 +18,7 @@ const Noprop: Propagator<DigitalComponent> = ({ signals, state }) => ([signals, 
 
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
+const OR = SignalReducer((a, b) => (a && b));
 
 /**
  * This is a list of all the propagators for every digital component in the circuit.
@@ -38,6 +39,7 @@ export const AllPropagators: PropagatorRecord = {
     "LED": Noprop,
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
+    "ORGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(OR)] }],
 };
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
