@@ -75,84 +75,109 @@ function toShape(rect: Rect): Rectangle {
     return new Rectangle(rect.center, rect.size);
 }
 
+export type ScopeConfig = {
+    showAxes: boolean;
+    showLegend: boolean;
+    showGrid: boolean;
+    vecs: Record<`${string}.${string}`, {
+        enabled: boolean;
+        color: string;
+    }>;
+}
+export type ScopeProp = {
+    //nothing
+}
+// export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
+//     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
+//         super(info, obj, V(1, 1), "oscilloscope.svg");
+//     }
+
+//     protected override renderComponent({ renderer, selections }: RenderInfo): void {
+//         const selected = selections.has(this.obj.id);
+
+//         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+
+//         const style = new Style(undefined, borderCol, DEFAULT_CURVE_BORDER_WIDTH);
+
+//         // Get size of model
+//         const size = this.transform.get().getSize();
+
+//         // Get current number of inputs
+//         const inputs = this.circuit.getPortsFor(this.obj)
+//             .filter((p) => p.group === AnalogPortGroup.Input).length;
+
+//         // Draw line to visually match input ports
+//         const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
+//         const l2 =  (inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2;
+
+//         const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
+//         const p1 = V(-s, l1);
+//         const p2 = V(-s, l2);
+
+//         renderer.draw(new Line(p1, p2), style);
+//     }
+
+//     public override getBounds(): Rect {
+//         // Get current number of inputs
+//         const inputs = this.circuit.getPortsFor(this.obj)
+//             .filter((p) => p.group === AnalogPortGroup.Input).length;
+//         return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
+//     }
+// }
+
 export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
+    private config: ScopeConfig;
+    private prop: ScopeProp;
     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
         super(info, obj, V(1, 1), "oscilloscope.svg");
+        this.config = {
+            showAxes:   true,
+            showLegend: true,
+            showGrid:   true,
+            vecs:       {},
+        };
     }
 
+    public getConfig() {
+        return this.config;
+    }
+    public getProp() {
+        return this.prop;
+    }
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
 
+        const transform = this.getTransform();
+        const size = transform.getSize();
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
 
-        const style = new Style(undefined, borderCol, DEFAULT_CURVE_BORDER_WIDTH);
-
-        // Get size of model
-        const size = this.transform.get().getSize();
-
-        // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === AnalogPortGroup.Input).length;
-
-        // Draw line to visually match input ports
-        const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
-        const l2 =  (inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2;
-
-        const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
-        const p1 = V(-s, l1);
-        const p2 = V(-s, l2);
-
-        renderer.draw(new Line(p1, p2), style);
-    }
-
-    public override getBounds(): Rect {
-        // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === AnalogPortGroup.Input).length;
-        return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
-    }
-}
-
-
-
-
-
-
-
-
-    
-export const OscilloscopeRenderer = ({
-    render(renderer: Renderer, info: AnalogCircuitInfo, o: Oscilloscope, selected: boolean): void {
-        // const transform = o.getTransform();
-        const size = this.transform.get().getSize();
-
-        const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const fillCol = (selected ? SELECTED_FILL_COLOR : "#ffffff");
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
         renderer.draw(new Rectangle(V(), size), style);
 
-        if (!info.sim || !info.sim.hasData())
+        if (!this.info.sim || !this.info.sim.hasData())
             return;
-        const curPlot = info.sim.getCurPlotID();
+        const curPlot = this.info.sim.getCurPlotID();
         if (!curPlot)
             return;
 
-        const { showAxes, showLegend, showGrid, vecs } = o.getConfig();
+        const { showAxes, showLegend, showGrid, vecs } = this.getConfig();
+
 
         const enabledVecIDs = (Object.keys(vecs) as Array<`${string}.${string}`>).filter((id) => vecs[id].enabled);
-        const allData = enabledVecIDs.map((id) => info.sim!.getVecData(id));
+        const allData = enabledVecIDs.map((id) => this.info.sim!.getVecData(id));
 
         if (!allData || Object.entries(allData).length === 0)
             return;
 
         // Indepdendent axis data is always last element
-        const xDataRaw = info.sim!.getVecData(info.sim!.getFullVecIDs()[info.sim!.getFullVecIDs().length - 1]);
+        const xDataRaw = this.info.sim!.getVecData(this.info.sim!.getFullVecIDs()[this.info.sim!.getFullVecIDs().length - 1]);
 
         // Get sampled data
         //  - uniform samples of `xData`
         const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
-            const samples = Math.min(data.length, o.getProp("samples") as number);
+            const samples = Math.min(data.length, this.getProp() as number);
 
             return new Array(samples).fill(0)
                 .map((_, i) => data[Math.floor(i * data.length / samples)]);
@@ -185,15 +210,15 @@ export const OscilloscopeRenderer = ({
         const plotRect = axesGridRect.subMargin((showAxes ? AXES_MARGIN : {}));
         const legendRect = innerRect.subMargin({ left: axesInfoRect.width }).subMargin(LEGEND_PADDING);
 
-        // Debug drawing
-        if (info.debugOptions.debugSelectionBounds) {
-            renderer.draw(toShape(baseRect), new Style("#999999", "#000000", 0.02));
-            renderer.draw(toShape(innerRect), new Style("#ff0000", "#000000", 0.02));
-            renderer.draw(toShape(axesInfoRect), new Style("#00ff00", "#000000", 0.02));
-            renderer.draw(toShape(axesGridRect), new Style("#0000ff", "#000000", 0.02));
-            renderer.draw(toShape(plotRect), new Style("#ff00ff", "#000000", 0.02));
-            renderer.draw(toShape(legendRect), new Style("#00ffff", "#000000", 0.02));
-        }
+        // Debug drawing  FIXING LATER
+        // if (this.info.debugOptions.debugSelectionBounds) {
+        //     renderer.draw(toShape(baseRect), new Style("#999999", "#000000", 0.02));
+        //     renderer.draw(toShape(innerRect), new Style("#ff0000", "#000000", 0.02));
+        //     renderer.draw(toShape(axesInfoRect), new Style("#00ff00", "#000000", 0.02));
+        //     renderer.draw(toShape(axesGridRect), new Style("#0000ff", "#000000", 0.02));
+        //     renderer.draw(toShape(plotRect), new Style("#ff00ff", "#000000", 0.02));
+        //     renderer.draw(toShape(legendRect), new Style("#00ffff", "#000000", 0.02));
+        // }
 
         if (showGrid)
             drawGrid(axesGridRect, plotRect);
@@ -323,5 +348,7 @@ export const OscilloscopeRenderer = ({
 
             renderer.restore();
         }
-    },
-});
+
+        
+    }
+};
