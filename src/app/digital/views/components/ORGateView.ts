@@ -57,7 +57,15 @@ export class ORGateView extends ComponentView<ORGate, DigitalViewInfo> {
             const p1 = V(-s + dx, l1 + d);
             const p2 = V(-s + dx, l2 + d);
             const c = V(-l + dx, d);
-            
+            if (amt === 1 && dx !== 0) {
+                renderer.draw(new QuadCurve(p1, p2, c), style);
+            }
+            else if (amt !== 1 || dx !== 0) {
+                renderer.save();
+                renderer.setPathStyle({ lineCap: "round" });
+                renderer.draw(new QuadCurve(p1, p2, c), style);
+                renderer.restore();
+            }
         }
     }
 
