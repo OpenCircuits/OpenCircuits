@@ -87,55 +87,20 @@ export type ScopeConfig = {
 export type ScopeProp = {
     //nothing
 }
-// export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
-//     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
-//         super(info, obj, V(1, 1), "oscilloscope.svg");
-//     }
-
-//     protected override renderComponent({ renderer, selections }: RenderInfo): void {
-//         const selected = selections.has(this.obj.id);
-
-//         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-
-//         const style = new Style(undefined, borderCol, DEFAULT_CURVE_BORDER_WIDTH);
-
-//         // Get size of model
-//         const size = this.transform.get().getSize();
-
-//         // Get current number of inputs
-//         const inputs = this.circuit.getPortsFor(this.obj)
-//             .filter((p) => p.group === AnalogPortGroup.Input).length;
-
-//         // Draw line to visually match input ports
-//         const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
-//         const l2 =  (inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2;
-
-//         const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
-//         const p1 = V(-s, l1);
-//         const p2 = V(-s, l2);
-
-//         renderer.draw(new Line(p1, p2), style);
-//     }
-
-//     public override getBounds(): Rect {
-//         // Get current number of inputs
-//         const inputs = this.circuit.getPortsFor(this.obj)
-//             .filter((p) => p.group === AnalogPortGroup.Input).length;
-//         return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
-//     }
-// }
 
 export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
     private config: ScopeConfig;
     private prop: ScopeProp;
     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
-        super(info, obj, V(1, 1), "oscilloscope.svg");
+        super(info, obj, V(1, 1));
         this.config = {
             showAxes:   true,
             showLegend: true,
             showGrid:   true,
             vecs:       {},
         };
+
+        
     }
 
     public getConfig() {
@@ -274,7 +239,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
             const marks = getMarks(innerBounds);
 
-            // Create and draw marks on the axes
+            //   and draw marks on the axes
             renderer.strokeVLines(marks.xs, bounds.bottom, AXIS_MARK_LENGTH, "middle");
             renderer.strokeHLines(marks.ys, bounds.left, AXIS_MARK_LENGTH, "center");
 
