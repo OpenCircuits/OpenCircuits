@@ -64,7 +64,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         // Generate configs for 2->8 input ports
         PositionConfigs: [2,3,4,5,6,7,8].map((numInputs) => ({
             "inputs":  CalcQuadCurvePortPositions(numInputs, 1.2, .48, V(-1, 0)),
-            "outputs": [CalcPortPos(V(0.58, 0), V(1, 0))], // 1 output
+            "outputs": [CalcPortPos(V(0.8, 0), V(1, 0))], // 1 output
         })),
     },
 };
