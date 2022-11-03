@@ -18,8 +18,8 @@ const Noprop: Propagator<DigitalComponent> = ({ signals, state }) => ([signals, 
 
 // AND reducer
 const AND = SignalReducer((a, b) => (a && b));
-const OR = SignalReducer((a, b) => (a && b));
-const NOR = SignalReducer((a, b) => (a && b));
+const OR = SignalReducer((a, b) => (a || b));
+const NOR = SignalReducer((a, b) => !(a || b));
 
 /**
  * This is a list of all the propagators for every digital component in the circuit.
