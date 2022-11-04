@@ -82,6 +82,7 @@ export class Rect {
 
     public expand(amt: Vector): Rect {
         return new Rect(this.center, this.size.add(amt.scale(2)), (this.yIsUp === +1));
+        
     }
 
     public addMargin(margin: Margin) {

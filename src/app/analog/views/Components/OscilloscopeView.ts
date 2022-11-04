@@ -109,6 +109,9 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
     public getProp() {
         return this.prop;
     }
+
+    
+
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
 

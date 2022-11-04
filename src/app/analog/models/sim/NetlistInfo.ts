@@ -33,9 +33,11 @@ export const AllNetlistInfo: NetlistInfoRecord = {
     // Ground is a very special case so has no specified information
     "Ground": undefined,
 
+    //"Oscilloscope": (o) => ["L", [`${o.length}`],   "W", [`${o.width}`], "I", [`${o.inputs}`],      "D", [`${o.delay}`],    "S", [`${o.samples}`] ],
     "Oscilloscope": undefined,
-
     "Resistor": (r) => ["R", [`${r.resistance}`]],
+
+    
 };
 
 export function GetNetlistInfo(comp: AnalogComponent) {
