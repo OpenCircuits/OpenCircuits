@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 import {Transform} from "math/Transform";
 import {Renderer} from "core/utils/rendering/Renderer";
@@ -57,3 +58,6 @@ export class ANDGateView extends ComponentView<ANDGate, DigitalViewInfo> {
         return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }
+=======
+import {DLatch} from "core/models/types/digital";
+>>>>>>> 0db663d43ca84fc7291132e2b528a1d8e71db3e2

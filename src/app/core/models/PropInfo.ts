@@ -1,71 +1,54 @@
-import {Vector} from "Vector";
-
 import {AnyObj} from "./types";
 
 
-export type Prop = number | string | boolean;// | Vector;
-
+export type Prop = number | string | boolean;
 export type Props = Record<string, Prop>;
 
-
-export type UnitInfo = Record<string, {
-    name: string;
-    display: string;
-    val: number;
-}>;
-
-export type BasePropInfo = {
-    readonly?: boolean;
-    label?: string | ((states: Props[]) => string);
-
-    isActive?: (states: Props[]) => boolean;
+export type BasePropInfo<Obj extends AnyObj> = {
+    id: string;
+    label?: string;
+    isActive?: (props: Partial<{ [K in (keyof Obj & string)]: Array<Obj[K]> }>) => boolean;
 }
-export type BooleanPropInfo = BasePropInfo & {
-    type: "boolean";
+export type BaseFieldPropInfo<Obj extends AnyObj> = BasePropInfo<Obj> & {
+    key: keyof Obj & string;
 }
-export type ButtonPropInfo = BasePropInfo & {
-    type: "button";
-    getText: (states: Prop[]) => string;
-    getNewState: (states: Prop[]) => Prop;
-}
-export type NumberPropInfo = BasePropInfo & {
+
+export type NumberPropInfo<Obj extends AnyObj> = BaseFieldPropInfo<Obj> & {
     type: "int" | "float";
-    unit?: UnitInfo;
     min?: number;
     max?: number;
     step?: number;
+    transform?: [
+        (v: number) => number, // Forward transform
+        (v: number) => number, // Inverse transform
+    ];
 }
-// export type VectorPropInfo = BasePropInfo & {
-//     type: "veci" | "vecf";
-//     min?: Vector;
-//     max?: Vector;
-//     step?: Vector;
-// }
-export type StringPropInfo = BasePropInfo & {
+export type StringPropInfo<Obj extends AnyObj> = BaseFieldPropInfo<Obj> & {
     type: "string";
-    constraint?: RegExp; // TODO: use this
+    // TODO: Add a RegEx constraint option if this gets used
 }
-export type ColorPropInfo = BasePropInfo & {
-    type: "color";
-}
-export type StringSelectPropInfo = BasePropInfo & {
+export type StringSelectPropInfo<Obj extends AnyObj> = BaseFieldPropInfo<Obj> & {
     type: "string[]";
     options: Array<[
         string, // Display value
         string, // Option value
     ]>;
 }
-export type NumberSelectPropInfo = BasePropInfo & {
-    type: "number[]";
-    options: Array<[
-        string, // Display value
-        number, // Option value
-    ]>;
+export type ColorPropInfo<Obj extends AnyObj> = BaseFieldPropInfo<Obj> & {
+    type: "color";
 }
 
-export type PropInfo =
-    | BooleanPropInfo | ButtonPropInfo | NumberPropInfo | StringPropInfo
-    | ColorPropInfo | StringSelectPropInfo | NumberSelectPropInfo; // | VectorPropInfo;
+export type GroupPropInfo<Obj extends AnyObj> = BasePropInfo<Obj> & {
+    type: "group";
+    info: PropInfo<Obj>;
+}
 
+export type PropInfoEntry<Obj extends AnyObj> =
+    | NumberPropInfo<Obj> | StringSelectPropInfo<Obj> | ColorPropInfo<Obj>
+    | StringPropInfo<Obj> | GroupPropInfo<Obj>;
 
-export type PropInfoRecord<Objs extends AnyObj> = Record<Objs["kind"], Record<string, PropInfo>>;
+export type PropInfo<Obj extends AnyObj> = Array<PropInfoEntry<Obj>>;
+
+export type PropInfoRecord<Obj extends AnyObj> = {
+    [O in Obj as O["kind"]]: PropInfo<O>;
+}
