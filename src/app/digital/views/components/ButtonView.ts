@@ -23,7 +23,7 @@ export class ButtonView extends PressableComponentView<Button, DigitalViewInfo> 
     protected offImg: SVGDrawing;
 
     public constructor(info: DigitalViewInfo, obj: Button) {
-        super(info, obj, V(1.24, 1.54), V(0.96, 1.2));
+        super(info, obj, V(1, 1), V(1, 1));
 
         this.onImg  = Images.GetImage("buttonDown.svg");
         this.offImg = Images.GetImage("buttonUp.svg");
