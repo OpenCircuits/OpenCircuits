@@ -44,7 +44,7 @@ export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
         renderer.draw(new Circle(target, IO_PORT_RADIUS), circleStyle);
 
         if (this.circuit.getPortParent(this.obj).kind === "NOTGate" && this.obj.group === "outputs"){
-            const l = origin.x + GATE_NOT_CIRCLE_RADIUS;
+            const l = origin.x + GATE_NOT_CIRCLE_RADIUS + 0.05;
             const notCircleStyle = new Style(circleFillCol, borderCol, DEFAULT_BORDER_WIDTH);
             renderer.draw(new Circle(V(l, origin.y), GATE_NOT_CIRCLE_RADIUS), notCircleStyle);
         }
