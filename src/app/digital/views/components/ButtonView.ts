@@ -32,14 +32,12 @@ export class ButtonView extends PressableComponentView<Button, DigitalViewInfo> 
     public override onPropChange(propKey: string): void {
         super.onPropChange(propKey);
 
-        if (["x", "y", "angle"].includes(propKey))
-            this.pressableTransform.setDirty();
     }
 
     // TODO: move this to a SwitchController or something?
     //  it also should be causing a propagation change, not an image change
     //  and the image will be calculated based on the propagation
-    public override onClick(): void {
+    public override onPress(): void {
         this.info.sim.setState(this.obj, [Signal.fromBool(!this.isOn())]);
     }
 

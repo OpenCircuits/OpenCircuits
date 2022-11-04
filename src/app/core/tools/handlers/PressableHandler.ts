@@ -41,14 +41,15 @@ export const PressableHandler: EventHandler = ({
 
         switch (event.type) {
             case "mousedown":
-                // TODO button
+                view.onPress();
                 break;
             case "mouseup":
-                // TODO button
+                view.onPress();
                 break;
             case "click":
                 view.onClick();
                 break;
+            
         }
     },
 });
