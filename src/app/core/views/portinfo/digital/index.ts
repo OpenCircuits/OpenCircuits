@@ -28,6 +28,12 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             "outputs": [{ origin: V(0.62, 0), target: V(1.32, 0), dir: V(+1, 0) }],
         }],
     },
+    "Button": {
+        ...DefaultDigitalPortInfo,
+        PositionConfigs: [{
+            "outputs": [{ origin: V(0.62, 0), target: V(1.32, 0), dir: V(+1, 0) }],
+        }],
+    },
     "LED": {
         ...DefaultDigitalPortInfo,
         PositionConfigs: [{

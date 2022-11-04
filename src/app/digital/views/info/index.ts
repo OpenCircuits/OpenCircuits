@@ -11,6 +11,7 @@ export const DigitalPropInfo: PropInfoRecord<DigitalObj> = {
     "DigitalNode": DefaultComponentPropInfo,
 
     "Switch":  DefaultComponentPropInfo,
+    "Button":  DefaultComponentPropInfo,
     "LED":     DefaultComponentPropInfo,
     "ANDGate": DefaultComponentPropInfo,
 } as const;
