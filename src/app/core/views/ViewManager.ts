@@ -148,19 +148,20 @@ export class ViewManager<
         const v = this.getView(m.id);
         v.onPropChange(key);
 
-        if (key === "zIndex")
+        if (key === "zIndex"){
             this.depthMap[v.getLayer() + LAYER_OFFSET].editEntry(m.id, m.zIndex, val as number);
-
-        // Also, if the object is a component, update it's ports too
-        if (m.baseKind === "Component") {
-            this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, key, val));
             return;
-        }
+         }
+        // Also, if the object is a component, update it's ports too
+         if (m.baseKind === "Component") {
+             this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, key, val));
+             return;
+         }
 
-        // And if the object is a port, then update it's wires
-        if (m.baseKind === "Port") {
-            this.circuit.getWiresFor(m).forEach((w) => this.onEditObj(w as Obj, key, val));
-        }
+         // And if the object is a port, then update it's wires
+         if (m.baseKind === "Port") {
+             this.circuit.getWiresFor(m).forEach((w) => this.onEditObj(w as Obj, key, val));
+         }
     }
 
     public onRemoveObj(m: Obj) {
