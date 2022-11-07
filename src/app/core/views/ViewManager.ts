@@ -153,6 +153,11 @@ export class ViewManager<
             return;
          }
         // Also, if the object is a component, update it's ports too
+        // The problem with this is that the action/event for an edited object
+        // already goes through and gets all the ports and updates their zIndex
+        // so in those cases the below is redundant and creates errors. But the
+        //action's behavior is probably how it should be handled, so the return
+        //above was added as a bandaid fix
          if (m.baseKind === "Component") {
              this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, key, val));
              return;
