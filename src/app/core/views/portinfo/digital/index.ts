@@ -42,7 +42,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         // Generate configs for 2->8 input ports
         PositionConfigs: [2,3,4,5,6,7,8].map((numInputs) => ({
             "inputs":  CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
-            "outputs": [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
+            "outputs": [CalcPortPos(V(0.47, 0), V(1, 0))], // 1 output
         })),
     },
 };
