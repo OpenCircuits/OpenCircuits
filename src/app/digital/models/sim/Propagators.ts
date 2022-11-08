@@ -1,10 +1,11 @@
 import {DigitalComponent} from "core/models/types/digital";
 
 import {Signal, SignalReducer} from "digital/models/sim/Signal";
+import {DFF, JKFF, SRFF, TFF}  from "digital/models/sim/propagators/FlipFlopProp";
 
 
 // ToDo: need to be stricter
-type SignalMap = Record<"inputs"|string, Signal[]>;
+export type SignalMap = Record<"inputs"|string, Signal[]>;
 type Propagator<C extends DigitalComponent> =
     (props: { c: C, signals: SignalMap, state: Signal[] }) =>
         [SignalMap, Signal[]] | [SignalMap];
@@ -23,14 +24,7 @@ const AND = SignalReducer((a, b) => (a && b));
 
 // TODO
 // flipflops
-const DFF: ({ signals }: { signals: SignalMap }) => [SignalMap] = ({ signals }) => {
-    const input = signals["inputs"];
-    const sel = signals["select"];
-    // split input into specific gates
-    // run boolean logic
 
-    return [signals]
-}
 
 /**
  * This is a list of all the propagators for every digital component in the circuit.
@@ -54,9 +48,9 @@ export const AllPropagators: PropagatorRecord = {
 
      // ToDo: Add prop here later
      "DFlipFlop":  DFF,
-     "TFlipFlop":  Noprop,
-     "JKFlipFlop": Noprop,
-     "SRFlipFlop": Noprop,
+     "TFlipFlop":  TFF,
+     "JKFlipFlop": JKFF,
+     "SRFlipFlop": SRFF,
 };
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
