@@ -20,6 +20,11 @@ export namespace Signal {
     export function isStable(s: Signal): boolean {
         return (s !== Signal.Metastable);
     }
+    export function flip(s: Signal): Signal {
+        if (!Signal.isStable(s))
+            return Signal.Metastable;
+        return (Signal.isOff(s)) ? (Signal.On) : (Signal.Off)
+    }
 }
 
 /**

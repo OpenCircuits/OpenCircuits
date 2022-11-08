@@ -39,7 +39,7 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 
-    "NOTGate": ({ signals }) => [{ "outputs": [...signals["inputs"]].map((x) => (Signal.fromBool(Signal.isOff(x)))) }],
+    "NOTGate": ({ signals }) => [{ "outputs": [Signal.flip(signals["inputs"][0])] }],
 };
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
