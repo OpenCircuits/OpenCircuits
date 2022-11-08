@@ -7,8 +7,6 @@ import {Place} from "core/actions/units/Place";
 
 import {AnyPort} from "core/models/types";
 
-import {DigitalPortGroup} from "core/models/types/digital";
-
 import {CreateWire} from "core/models/utils/CreateWire";
 
 import {PortView} from "core/views/PortView";
@@ -92,8 +90,14 @@ export const WiringTool = (() => {
             const { circuit, history } = info;
 
             const port2 = findPort(info);
+
+
+            //TODO
+            //the below group check shouldn't be necessary in future versions
+            //currently CreateWire doesn't determine input vs output
+            //so we do a quick check here. CreateWire should eventually though
             if (port2 !== undefined) {
-                if (port2.group === DigitalPortGroup.Output) {
+                if (port2.group === "outputs") {
                     const wire = CreateWire(circuit.getWireKind(), port2.id, port!.id);
                     history.add(Place(circuit, wire));
                 }
