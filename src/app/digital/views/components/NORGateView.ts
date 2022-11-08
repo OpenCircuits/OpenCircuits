@@ -15,7 +15,7 @@ import {QuadCurve} from "core/utils/rendering/shapes/QuadCurve";
 import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-// // sheesh
+
 export class NORGateView extends ComponentView<NORGate, DigitalViewInfo> {
     public constructor(circuit: DigitalViewInfo, obj: NORGate) {
         super(circuit, obj, V(1.2, 1), "or.svg");
@@ -40,8 +40,7 @@ export class NORGateView extends ComponentView<NORGate, DigitalViewInfo> {
         NORGateView.drawQuadCurve(renderer,     0, size, inputs, borderCol);
         const s = (size.x-DEFAULT_BORDER_WIDTH)/2;
 
-        const l = size.x/2 + GATE_NOT_CIRCLE_RADIUS;
-        renderer.draw(new Circle(V(l, 0), GATE_NOT_CIRCLE_RADIUS), style)
+        
   
         
     }
