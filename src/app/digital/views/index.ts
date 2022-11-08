@@ -1,10 +1,12 @@
-import {DigitalNode, DigitalObj} from "core/models/types/digital";
+import {V} from "Vector";
 
+import {BUFGate, DigitalNode, DigitalObj} from "core/models/types/digital";
+
+import {ComponentView}           from "core/views/ComponentView";
 import {NodeView}                from "core/views/NodeView";
 import {ViewFactory, ViewRecord} from "core/views/ViewManager";
 
 import {ANDGateView}     from "./components/ANDGateView";
-import {BUFGateView}     from "./components/BUFGateView";
 import {LEDView}         from "./components/LEDView";
 import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
@@ -22,7 +24,7 @@ export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
     "Switch":  (c, o) => new SwitchView(c, o),
     "LED":     (c, o) => new LEDView(c, o),
     "ANDGate": (c, o) => new ANDGateView(c, o),
-    "BUFGate": (c, o) => new BUFGateView(c, o),
+    "BUFGate": (c, o) => new ComponentView<BUFGate, DigitalViewInfo>(c, o, V(1, 1), "buf.svg"),
 };
 
 export function CreateView(info: DigitalViewInfo, obj: DigitalObj) {
