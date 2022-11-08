@@ -1,9 +1,41 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {Action} from "core/actions/Action";
 
 import {Prop} from "core/models/PropInfo";
 
+
+const usePrevious = (value: any, initialValue: any) => {
+    const ref = useRef(initialValue);
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  };
+const useEffectDebugger = (effectHook: any, dependencies: any, dependencyNames: string[] = []) => {
+    const previousDeps = usePrevious(dependencies, []);
+
+    const changedDeps = dependencies.reduce((accum: any, dependency: any, index: number) => {
+      if (dependency !== previousDeps[index]) {
+        const keyName = dependencyNames[index] || index;
+        return {
+          ...accum,
+          [keyName]: {
+            before: previousDeps[index],
+            after:  dependency,
+          },
+        };
+      }
+
+      return accum;
+    }, {});
+
+    if (Object.keys(changedDeps).length > 0) {
+      console.log("[use-effect-debugger]", changedDeps);
+    }
+
+    useEffect(effectHook, dependencies);
+};
 
 export type ModuleSubmitInfo = {
     isFinal: boolean;

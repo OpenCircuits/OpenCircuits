@@ -1,7 +1,8 @@
+import {MapObj}     from "core/utils/Functions";
 import {GUID}       from "core/utils/GUID";
 import {Observable} from "core/utils/Observable";
 
-import {DigitalComponent, DigitalObj, DigitalPort, DigitalPortGroup} from "core/models/types/digital";
+import {DigitalComponent, DigitalObj, DigitalPort} from "core/models/types/digital";
 
 import {Signal} from "digital/models/sim/Signal";
 
@@ -25,7 +26,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
     private readonly signals: Map<GUID, Signal>;
 
     // States for each component, needed for things like FlipFlops which store a signal as a state.
-    private readonly states: Map<GUID, unknown>;
+    private readonly states: Map<GUID, Signal[]>;
 
     // Propagation is IDs of components to propagate a signal through.
     private readonly propagationQueue: Set<GUID>;
@@ -43,7 +44,8 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         this.signals.set(port.id, signal);
 
         // If we're an input port then just set the signal and queue a propagation to the parent
-        if (port.group !== DigitalPortGroup.Output) {
+        // TODOnow: fix
+        if (port.group !== "outputs") {
             this.queuePropagation(port.parent);
             return;
         }
@@ -61,7 +63,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         });
     }
 
-    public setState(comp: DigitalComponent, state: unknown): void {
+    public setState(comp: DigitalComponent, state: Signal[]): void {
         this.states.set(comp.id, state);
 
         // If state changed, update the component
@@ -79,13 +81,17 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         if (m.baseKind === "Wire") {
             // Get output port from the wire connections and propagate that signal
             const [p1, p2] = this.circuit.getPortsForWire(m);
-            const outputPort = (p1.group === DigitalPortGroup.Output ? p1 : p2);
+            // TODOnow: fix
+            const outputPort = (p1.group === "outputs" ? p1 : p2);
             const signal = this.signals.get(outputPort.id)!;
 
             // No need to propagate if signal is the same already
             if (this.signals.get(p1.id) === signal && this.signals.get(p2.id) === signal)
                 return;
             this.setSignal(outputPort, signal);
+        }
+        if (m.baseKind === "Component") {
+            this.states.set(m.id, []);
         }
     }
 
@@ -108,7 +114,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         if (m.baseKind === "Wire") {
             // Get input port from the connections and set its signal to off since it has no connection now
             const [p1, p2] = this.circuit.getPortsForWire(m);
-            const inputPort = (p1.group === DigitalPortGroup.Output ? p2 : p1);
+            const inputPort = (p1.group === "outputs" ? p2 : p1);
             this.setSignal(inputPort, Signal.Off);
         }
         if (m.baseKind === "Component") {
@@ -132,20 +138,31 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         for (const comp of comps) {
             // Group every port by their group and sort by their index
             const ports = this.circuit.getPortsFor(comp);
-            const groupedPorts = new Array(3).fill(0) // TODO: Maybe don't hardcode the `3`, use max-group
-                .map((_, g) => ports.filter((p) => (p.group === g)).sort((a, b) => (a.index - b.index)));
+
+            const groups = [...new Set(ports.map((p) => p.group))];
+            const groupedPorts = groups.reduce((prev, group) => ({
+                ...prev,
+                [group]: (
+                    ports.filter((p) => (p.group === group))
+                        // Sort so they are in order of index
+                        .sort((a, b) => (a.index - b.index))
+                ),
+            }), {} as Record<string, DigitalPort[]>)
 
             // And then get associated signals and state
-            const groupedSignals = groupedPorts.map((g) => g.map((p) => curSignals.get(p.id)!));
-            const state = curStates.get(comp.id);
+            const groupedSignals = MapObj(
+                groupedPorts,
+                ([_, ports]) => ports.map((p) => curSignals.get(p.id)!)
+            );
+            const state = curStates.get(comp.id)!;
 
-            const { nextSignals, nextState } = Propagate(comp, groupedSignals, state);
+            const [nextSignals, nextState] = Propagate(comp, groupedSignals, state);
 
             // Update signals
-            nextSignals.forEach((group, g) => (
-                group.forEach((nextSignal, i) => {
+            Object.entries(nextSignals).forEach(([group, signals]) => (
+                signals.forEach((nextSignal, i) => {
                     // Get associated port with new signal
-                    const port = groupedPorts[g][i];
+                    const port = groupedPorts[group][i];
 
                     // If signal is the same, don't do anything
                     if (curSignals.get(port.id) === nextSignal)
@@ -156,8 +173,8 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
             ));
 
             // Update state if it changed
-            if (nextState !== state)
-                this.setState(comp, nextState);
+            if ((nextState ?? []).every((val, i) => (state[i] === val)))
+                this.setState(comp, (nextState ?? []));
         }
 
         this.publish({
@@ -170,7 +187,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
         return this.signals.get(p.id)!;
     }
 
-    public getState(c: DigitalComponent): unknown {
-        return this.states.get(c.id);
+    public getState(c: DigitalComponent): Signal[] {
+        return this.states.get(c.id)!;
     }
 }
