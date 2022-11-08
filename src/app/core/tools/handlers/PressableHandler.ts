@@ -44,12 +44,11 @@ export const PressableHandler: EventHandler = ({
                 view.onPress();
                 break;
             case "mouseup":
-                view.onPress();
+                view.onRelease();
                 break;
             case "click":
                 view.onClick();
-                break;
-            
+                break; 
         }
     },
 });

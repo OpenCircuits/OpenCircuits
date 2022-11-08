@@ -40,7 +40,9 @@ export class ButtonView extends PressableComponentView<Button, DigitalViewInfo> 
     public override onPress(): void {
         this.info.sim.setState(this.obj, [Signal.fromBool(!this.isOn())]);
     }
-
+    public override onRelease(): void {
+        this.info.sim.setState(this.obj, [Signal.fromBool(this.isOff())]);
+    }
     protected override drawImg({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
         const tint = (selected ? SELECTED_FILL_COLOR : undefined);
@@ -52,5 +54,9 @@ export class ButtonView extends PressableComponentView<Button, DigitalViewInfo> 
 
     public isOn(): boolean {
         return Signal.isOn(this.info.sim.getState(this.obj)[0]);
+
+    }
+    public isOff(): boolean {
+        return Signal.isOff(this.info.sim.getState(this.obj)[1]);
     }
 }
