@@ -6,7 +6,7 @@ import {DFF, JKFF, SRFF, TFF}  from "digital/models/sim/propagators/FlipFlopProp
 
 // ToDo: need to be stricter
 export type SignalMap = Record<"inputs"|string, Signal[]>;
-type Propagator<C extends DigitalComponent> =
+export type Propagator<C extends DigitalComponent> =
     (props: { c: C, signals: SignalMap, state: Signal[] }) =>
         [SignalMap, Signal[]] | [SignalMap];
 

@@ -1,8 +1,8 @@
-import {SignalMap} from "../Propagators"
-import {Signal} from "digital/models/sim/Signal";
+import {DigitalComponent} from "core/models/types/digital";
+import {Propagator} from "../Propagators"
 
 // ToDo: actually get these implemented
-export const DFF: ({ signals }: { signals: SignalMap , state: Signal[] }) => [SignalMap] = ({ signals }) => {
+export const DFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["select"];
@@ -11,7 +11,7 @@ export const DFF: ({ signals }: { signals: SignalMap , state: Signal[] }) => [Si
 
     return [signals]
 }
-export const TFF: ({ signals }: { signals: SignalMap , state: Signal[] }) => [SignalMap] = ({ signals }) => {
+export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["select"];
@@ -20,7 +20,7 @@ export const TFF: ({ signals }: { signals: SignalMap , state: Signal[] }) => [Si
 
     return [signals]
 }
-export const JKFF: ({ signals }: { signals: SignalMap , state: Signal[] }) => [SignalMap] = ({ signals }) => {
+export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["select"];
@@ -29,7 +29,7 @@ export const JKFF: ({ signals }: { signals: SignalMap , state: Signal[] }) => [S
 
     return [signals]
 }
-export const SRFF: ({ signals }: { signals: SignalMap , state: Signal[] }) => [SignalMap] = ({ signals }) => {
+export const SRFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["select"];
