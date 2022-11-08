@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "core/models/CircuitMetadata";
+import {CircuitMetadata} from "core/models/Circuit";
 
 
 export type CircuitInfoHelpers = {

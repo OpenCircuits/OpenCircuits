@@ -1,52 +1,72 @@
-import {GatherGroup} from "core/utils/ComponentUtils";
+import {GetAllPaths, GetPath} from "core/utils/ComponentUtils";
+import {ObjSet}               from "core/utils/ObjSet";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {Disconnect} from "core/actions/units/Connect";
-import {Delete}     from "core/actions/units/Place";
+import {Delete} from "core/actions/units/Place";
 
-import {CircuitDesigner, IOObject, Node, isNode} from "core/models";
+import {AnyNode, AnyObj, AnyPort} from "core/models/types";
+
+import {CircuitController} from "core/controllers/CircuitController";
 
 
 /**
- * Goes through group of selected IOObjects and deletes them along with other connected objects that need to be deleted.
+ * Creates a Separated group from the given list of objects.
+ *  It also retrieves all "paths" going out from each object.
  *
- * @param designer Is the CircuitDesigner the action is being done on.
- * @param objects  Are the IOObjects that are being added to the DeleteGroupAction.
- * @returns          An action to delete the entire bundle of objects/connections.
+ * @param circuit The circuit.
+ * @param objects The list of objects.
+ * @param full    True if you want to return everything in the circuit otherwise
+ *                returns only the wires/nodes connected to the selected wire.
+ * @returns       A SeparatedComponentCollection of the objects.
  */
-export function DeleteGroup(designer: CircuitDesigner, objects: IOObject[]): GroupAction {
-    const action = new GroupAction([], "Delete Group Action");
+ function GatherDeleteGroup(circuit: CircuitController<AnyObj>, objects: AnyObj[], full = true) {
+    const group = new ObjSet(objects);
 
-    const allDeletions = GatherGroup(objects,false);
+    // Gather all connecting paths
+    const { components, wires } = group;
 
-    const components = allDeletions.getComponents();
-    const wires = allDeletions.getWires();
+    const paths = [...new Set([
+             ...wires.flatMap((w) => GetPath(circuit, w, full)),
+        ...components.flatMap((c) => GetAllPaths(circuit, c, full)),
+    ])];
+
+    return new ObjSet<AnyObj>([...objects, ...paths]);
+}
+
+export function DeleteGroup(circuit: CircuitController<AnyObj>, objects: AnyObj[]): GroupAction {
+    const { components, wires } = GatherDeleteGroup(circuit, objects, false);
 
     // go through all wires and get their input component
-    const inputComps = wires.map((wire) => wire.getP1Component());
+    const inputComps = wires
+        .flatMap((wire) => [wire.p1, wire.p2])
+        .map((portID) => circuit.getPortParent(circuit.getObj(portID) as AnyPort));
 
     // filter out duplicates and non-nodes
-    const inputNodes = inputComps.filter((comp) => isNode(comp)) as Node[];
+    const inputNodes = inputComps.filter((comp) => (comp.kind === circuit.getNodeKind())) as AnyNode[];
     const inputNodesNoDuplicates = new Set(inputNodes.filter((node) => !objects.includes(node)));
 
     // loop through each input component and check if all of its output wires are in `wires`
-    for (const inputComp of inputNodesNoDuplicates) {
-        const found = inputComp.getP2().getWires().every((wire) => wires.includes(wire));
+    for (const inputNode of inputNodesNoDuplicates) {
+        const [p1, p2] = circuit.getPortsFor(inputNode);
+        const found = circuit.getWiresFor(p1).every((wire) => wires.includes(wire)) ||
+                      circuit.getWiresFor(p2).every((wire) => wires.includes(wire));
 
         // if so then we want to also delete it
         // call CreateDeleteGroupAction again but with the current node includes in `objects`
         // and then just return early
         if (found) // TODO: Make this better cause it's pretty inefficient
-            return DeleteGroup(designer, [inputComp as IOObject, ...objects]);
+            return DeleteGroup(circuit, [inputNode, ...objects]);
     }
+
+    // Get all ports to delete from each component
+    const ports = [...new Set(components.flatMap((c) => circuit.getPortsFor(c)))];
 
     // Create actions for deletion of wires then objects
     //  order matters because the components need to be added
     //  (when undoing) before the wires can be connected
-    // eslint-disable-next-line space-in-parens
-    action.add(     wires.map((wire) => Disconnect(designer, wire)));
-    action.add(components.map((obj)  =>     Delete(designer, obj)));
-
-    return action;
+    return new GroupAction(
+        [...wires, ...ports, ...components].map((o) => Delete(circuit, o)),
+        "Delete Group"
+    );
 }

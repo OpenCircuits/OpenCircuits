@@ -10,5 +10,5 @@
             "test/helpers/*": ["./tests/helpers/*"],
         },
     },
-    "include": ["."]
+    "include": [".", "./core/utils/math"]
 }

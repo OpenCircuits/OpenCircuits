@@ -1,4 +1,4 @@
-import {CircuitMetadata, CircuitMetadataDef} from "core/models/CircuitMetadata";
+import {CircuitMetadata} from "core/models/Circuit";
 
 import {Request} from "shared/utils/Request";
 
@@ -6,7 +6,7 @@ import {AuthState} from "./auth/AuthState";
 
 
 export async function CreateUserCircuit(auth: AuthState, data: string): Promise<CircuitMetadata | undefined> {
-    return new CircuitMetadata(JSON.parse(await Request({
+    return JSON.parse(await Request({
         method:  "POST",
         url:     "api/circuits",
         headers: {
@@ -14,12 +14,12 @@ export async function CreateUserCircuit(auth: AuthState, data: string): Promise<
             "authId":   auth.getId(),
         },
         data,
-    })) as CircuitMetadataDef);
+    })) as CircuitMetadata;
 }
 
 export async function UpdateUserCircuit(auth: AuthState, circuitId: string,
                                         data: string): Promise<CircuitMetadata | undefined> {
-    return new CircuitMetadata(JSON.parse(await Request({
+    return JSON.parse(await Request({
         method:  "PUT",
         url:     `api/circuits/${circuitId}`,
         headers: {
@@ -27,7 +27,7 @@ export async function UpdateUserCircuit(auth: AuthState, circuitId: string,
             "authId":   auth.getId(),
         },
         data,
-    })) as CircuitMetadataDef);
+    })) as CircuitMetadata;
 }
 
 export async function LoadUserCircuit(auth: AuthState, circuitId: string): Promise<string | undefined> {
@@ -42,15 +42,14 @@ export async function LoadUserCircuit(auth: AuthState, circuitId: string): Promi
 }
 
 export async function QueryUserCircuits(auth: AuthState): Promise<CircuitMetadata[] | undefined> {
-    const arr = JSON.parse(await Request({
+    return JSON.parse(await Request({
         method:  "GET",
         url:     "api/circuits",
         headers: {
             "authType": auth.getType(),
             "authId":   auth.getId(),
         },
-    })) as CircuitMetadataDef[];
-    return arr.map((data) => new CircuitMetadata(data));
+    })) as CircuitMetadata[];
 }
 
 export async function DeleteUserCircuit(auth: AuthState, circuitId: string): Promise<boolean> {

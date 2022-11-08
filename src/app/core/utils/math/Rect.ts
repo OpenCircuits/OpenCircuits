@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {Clamp} from "./MathUtils";
+import {CalculateMidpoint, Clamp} from "./MathUtils";
 
 
 // Turn union of keys to union of records with that key
@@ -80,6 +80,19 @@ export class Rect {
         );
     }
 
+    public expand(amt: Vector): Rect {
+        return new Rect(this.center, this.size.add(amt.scale(2)), (this.yIsUp === +1));
+    }
+
+    public addMargin(margin: Margin) {
+        const result = new Rect(this.center, this.size, (this.yIsUp === +1));
+        result.left   -= (margin.left   ?? 0);
+        result.right  += (margin.right  ?? 0);
+        result.bottom -= (margin.bottom ?? 0) * this.yIsUp;
+        result.top    += (margin.top    ?? 0) * this.yIsUp;
+        return result;
+    }
+
     public subMargin(margin: Margin) {
         const result = new Rect(this.center, this.size, (this.yIsUp === +1));
         result.left   += (margin.left   ?? 0);
@@ -120,7 +133,7 @@ export class Rect {
      *  calculates all possible 8 rectangles from each side and corner.
      *
      * @param rect Rectangle to subtract from this rectangle.
-     * @returns      The remaining rectangles after the subtraction.
+     * @returns    The remaining rectangles after the subtraction.
      */
     public sub(rect: Rect): Rect[] {
         if (!this.intersects(rect))
@@ -152,7 +165,7 @@ export class Rect {
      * @param constraints.minSize.width  The minimum width the rectangle can have.
      * @param constraints.minSize.height The minimum height the rectangle can have.
      * @param constraints.bounds         The bounds that the rectangle must stay within.
-     * @returns                            A new rectangle which is a shifted version of this one.
+     * @returns                          A new rectangle which is a shifted version of this one.
      */
     public shift(dir: Vector, amt: Vector,
                  constraints?: { minSize?: { width: number, height: number }, bounds?: Rect }): Rect {
@@ -258,12 +271,24 @@ export class Rect {
     }
 
     /**
+     * Utility method to create a rectangle from two given points.
+     * This rectangle will be the closest bounding rectangle of the two points.
+     *
+     * @param p1 The first point.
+     * @param p2 The second point.
+     * @returns  The closest bounding Rect between p1 and p2.
+     */
+    public static FromPoints(p1: Vector, p2: Vector): Rect {
+        return new Rect(p1.add(p2).scale(0.5), p2.sub(p1).abs());
+    }
+
+    /**
      * Utility method to create a rectangle from any combination of valid rectangle attributes, i.e. allows
      *  specification of size + center, or bottom left + top right, or any other valid combination.
      *
      * @param bounds Attributes of rectangle.
      * @param yIsUp  Whether this rectangle has +y or -y.
-     * @returns        A Rect from the given bounds/attributes and yIsUp direction.
+     * @returns      A Rect from the given bounds/attributes and yIsUp direction.
      */
     public static From(bounds: RectProps, yIsUp = true): Rect {
         type BoundKeys = "min" | "max" | "center" | "size";
@@ -311,5 +336,12 @@ export class Rect {
             V(GetSize(boundsX), GetSize(boundsY)),
             yIsUp
         );
+    }
+
+    // Compute bounding rectangle over all the given sub-rectangles.
+    public static Bounding(rects: Rect[]): Rect {
+        const min = Vector.Min(...rects.map((r) => r.bottomLeft));
+        const max = Vector.Max(...rects.map((r) => r.topRight));
+        return Rect.FromPoints(min, max);
     }
 }

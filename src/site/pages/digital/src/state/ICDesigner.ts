@@ -1,16 +1,17 @@
-import {ICData} from "digital/models/ioobjects";
+// import {ICData} from "digital/models/ioobjects";
 
 import {CreateState} from "shared/utils/CreateState";
 
 
+// @TODO
 const [initialState, actions, reducer] = CreateState()(
     {
         isActive: false,
-        ic:       undefined as ICData | undefined,
+        ic:       undefined as any | undefined,
     },
     {
-        OpenICDesigner:  (data: ICData) => ({ type: "OPEN_ICDESIGNER_ID", data }) as const,
-        CloseICDesigner: ()             => ({ type: "CLOSE_ICDESIGNER_ID"      }) as const,
+        OpenICDesigner:  (data: any) => ({ type: "OPEN_ICDESIGNER_ID", data }) as const,
+        CloseICDesigner: ()          => ({ type: "CLOSE_ICDESIGNER_ID"      }) as const,
     },
     {
         "OPEN_ICDESIGNER_ID":  (_, action) => ({ isActive: true, ic: action.data }),

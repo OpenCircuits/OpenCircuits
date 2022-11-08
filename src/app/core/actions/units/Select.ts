@@ -1,17 +1,17 @@
-import {Selectable}        from "core/utils/Selectable";
+import {GUID}              from "core/utils/GUID";
 import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
 
 import {Action} from "core/actions/Action";
 
-import {ReversableAction} from "../bases/ReversableAction";
 import {GroupAction}      from "../GroupAction";
+import {ReversableAction} from "../ReversableAction";
 
 
 class SelectAction extends ReversableAction {
     private readonly selections: SelectionsWrapper;
-    private readonly obj: Selectable;
+    private readonly obj: GUID;
 
-    public constructor(selections: SelectionsWrapper, obj: Selectable, flip = false) {
+    public constructor(selections: SelectionsWrapper, obj: GUID, flip = false) {
         super(flip);
 
         this.selections = selections;
@@ -33,20 +33,20 @@ class SelectAction extends ReversableAction {
     }
 
     public getName(): string {
-        return `Selected ${this.obj.getName()}`;
+        return `Selected ${this.obj}`;
     }
 
 }
 
-export function Select(selections: SelectionsWrapper, obj: Selectable) {
+export function Select(selections: SelectionsWrapper, obj: GUID) {
     return new SelectAction(selections, obj);
 }
-export function Deselect(selections: SelectionsWrapper, obj: Selectable) {
+export function Deselect(selections: SelectionsWrapper, obj: GUID) {
     return new SelectAction(selections, obj, true);
 }
 
 
-export function SelectGroup(selections: SelectionsWrapper, objs: Selectable[]): GroupAction {
+export function SelectGroup(selections: SelectionsWrapper, objs: GUID[]): GroupAction {
     return new GroupAction(
         objs.map((o) => Select(selections, o)),
         "Select Group",

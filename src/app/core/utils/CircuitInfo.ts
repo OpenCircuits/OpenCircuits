@@ -4,11 +4,15 @@ import {HistoryManager} from "core/actions/HistoryManager";
 
 import {ToolManager} from "core/tools/ToolManager";
 
-import {CircuitDesigner} from "core/models";
+import {AnyObj} from "core/models/types";
 
-import {Input}             from "./Input";
+import {CircuitController} from "core/controllers/CircuitController";
+import {ViewCircuitInfo}   from "core/views/BaseView";
+import {ViewManager}       from "core/views/ViewManager";
+
+import {GUID}              from "./GUID";
+import {InputManager}      from "./InputManager";
 import {RenderQueue}       from "./RenderQueue";
-import {Selectable}        from "./Selectable";
 import {SelectionsWrapper} from "./SelectionsWrapper";
 
 
@@ -19,20 +23,32 @@ export type Cursor =
     "w-resize" | "ew-resize" | "ns-resize" | "nesw-resize" | "nwse-resize" | "col-resize" | "row-resize" |
     "all-scroll" | "zoom-in" | "zoom-out" | "grab" | "grabbing";
 
+// type UserState = {
+//     locked: boolean;
+//     cursor?: Cursor;
+//     camera: Camera;
+//     selections: SelectionsWrapper;
+// }
 
-export type CircuitInfo = {
+// type AppState<Obj extends AnyObj = AnyObj> = {
+//     user: UserState;
+//     circuit: Circu
+// }
+
+export type CircuitInfo<Obj extends AnyObj = AnyObj> = {
     locked: boolean;
     cursor?: Cursor;
 
-    input: Input;
+    input: InputManager;
     camera: Camera;
 
     history: HistoryManager;
 
-    designer: CircuitDesigner;
+    circuit: CircuitController<Obj>;
+    viewManager: ViewManager<Obj, ViewCircuitInfo<CircuitController<Obj>>>;
 
     selections: SelectionsWrapper;
-    currentlyPressedObject?: Selectable;
+    curPressedObjID?: GUID;
 
     toolManager: ToolManager;
 

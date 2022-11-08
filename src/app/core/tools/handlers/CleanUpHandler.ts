@@ -1,37 +1,39 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Snap}        from "core/utils/ComponentUtils";
-import {Event}       from "core/utils/Events";
+import {V} from "Vector";
+
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
+import {SnapToGrid}        from "core/utils/SnapUtils";
 
 import {GroupAction} from "core/actions/GroupAction";
 
-import {Rotate}    from "core/actions/units/Rotate";
-import {Translate} from "core/actions/units/Translate";
+import {SetTransform} from "core/actions/compositions/SetTransform";
 
-import {Component} from "core/models";
+import {AnyComponent} from "core/models/types";
 
 import {EventHandler} from "../EventHandler";
 
 
 export const CleanUpHandler: EventHandler = ({
-    conditions: (event: Event, { designer }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { circuit }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "k" &&
-         // Don't want to select all if nothing to select or everything is already selected
-         designer.getObjects().length > 0),
+         // Don't want to clean up if nothing exists
+         circuit.getObjs().length > 0),
 
-    getResponse: ({ history,designer,selections }: CircuitInfo) => {
-        // Reset the selected units' angle to 0 and snap to grid
+    getResponse: ({ circuit, history, selections }: CircuitInfo) => {
         // If nothing is selected, select all units.
-        const components = (selections.amount() === 0 ?
-            designer.getObjects() :
-            selections.get().filter((o) => o instanceof Component)) as Component[];
+        const components = (
+            selections.amount() === 0
+            ? circuit.getObjs()
+            : selections.get().map((id) => circuit.getObj(id)!)
+        ).filter((o) => (o.baseKind === "Component")) as AnyComponent[];
 
         if (components.length === 0)
             return;
 
-        history.add(new GroupAction([
-            ...components.map((c) => Rotate(c, 0)),
-            Translate(components, components.map((o) => Snap(o.getPos()))),
-        ], "Clean Up Handler"));
+        history.add(new GroupAction(components.map((c) =>
+            // Snap pos to grid and set angle to 0
+            SetTransform(circuit, c.id, SnapToGrid(V(c.x, c.y)), 0)),
+        "Clean Up Handler"));
     },
 });

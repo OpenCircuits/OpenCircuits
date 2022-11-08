@@ -1,95 +1,110 @@
 import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {V, Vector} from "Vector";
+import {V} from "Vector";
 
-import {CircuitInfo}     from "core/utils/CircuitInfo";
-import {CopyGroup, Snap} from "core/utils/ComponentUtils";
-import {Event}           from "core/utils/Events";
+import {CircuitInfo}                   from "core/utils/CircuitInfo";
+import {CalcWorldMousePos}             from "core/utils/CircuitInfoUtils";
+import {InputManagerEvent}             from "core/utils/InputManager";
+import {SnapToConnections, SnapToGrid} from "core/utils/SnapUtils";
 
+import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {AddGroup} from "core/actions/compositions/AddGroup";
-
-import {Shift}     from "core/actions/units/Shift";
-import {Translate} from "core/actions/units/Translate";
+import {SetPos} from "core/actions/compositions/SetTransform";
 
 import {Tool} from "core/tools/Tool";
 
-import {Component} from "core/models";
+import {AnyComponent} from "core/models/types";
+
+import {ShiftComponents} from "core/models/utils/ShiftComponent";
 
 
 const ARROW_TRANSLATE_DISTANCE_NORMAL = 50;
 const ARROW_TRANSLATE_DISTANCE_SMALL = 11;
 
 export const TranslateTool: Tool = (() => {
-    let initalPositions = [] as Vector[];
-    let components = [] as Component[];
+    let components = [] as AnyComponent[];
+
     let worldMouseDownPos = V();
+
     let action: GroupAction;
     let activatedButton: string | number;
 
+    let tempAction: Action | undefined;
+
     return {
-        shouldActivate(event: Event, { locked, currentlyPressedObject, selections }: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, { locked, circuit, curPressedObjID, selections }: CircuitInfo): boolean {
             if (locked)
                 return false;
+            const curPressedObj = circuit.getObj(curPressedObjID ?? "");
             // Activate if the user is pressing down on an object or an arrow key
-            return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
-                    currentlyPressedObject instanceof Component) ||
-                   (event.type === "keydown" && (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
-                                                  event.key === "ArrowUp"  || event.key === "ArrowDown")
-                                             && ((selections.any((c) => c instanceof Component) &&
-                                                  selections.get().length > 0)));
+            return (
+                (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
+                    curPressedObj?.baseKind === "Component") ||
+                (event.type === "keydown" && (
+                        event.key === "ArrowLeft" || event.key === "ArrowRight" ||
+                        event.key === "ArrowUp"  || event.key === "ArrowDown"
+                    ) && (
+                        selections.get().length > 0 &&
+                        selections.any((c) => (circuit.getObj(c)?.baseKind === "Component"))
+                ))
+            );
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Deactivate by releasing mouse or an arrow key
-            return (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
-            (event.type === "keyup" && event.key === activatedButton &&
-                                       (event.key === "ArrowLeft" || event.key === "ArrowRight" ||
-                                        event.key === "ArrowUp"   || event.key === "ArrowDown"));
+            return (
+                (event.type === "mouseup" && event.button === LEFT_MOUSE_BUTTON) ||
+                (event.type === "keyup" && event.key === activatedButton && (
+                        event.key === "ArrowLeft" || event.key === "ArrowRight" ||
+                        event.key === "ArrowUp"   || event.key === "ArrowDown"
+                ))
+            );
         },
 
 
-        onActivate(event: Event, info: CircuitInfo): void {
-            const { camera, input, selections, currentlyPressedObject, designer } = info;
+        onActivate(event: InputManagerEvent, info: CircuitInfo): void {
+            const { camera, circuit, input, selections, curPressedObjID } = info;
+
+            const curPressedObj = circuit.getObj(curPressedObjID ?? "") as AnyComponent;
 
             // The event that activates this will either be keydown or mousedrag, so
             //  we can save the key like this to use later
             activatedButton = (event.type === "keydown" ? event.key : LEFT_MOUSE_BUTTON);
 
+            // Necessary because `input` is mildly bugged and doing any other click
+            //  (right-click/middle-mouse) will reset where `getMouseDownPos` is
             worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
 
             // If the pressed objecet is part of the selected objects,
             //  then translate all of the selected objects
             //  otherwise, just translate the pressed object
             components = (
-                !currentlyPressedObject || selections.has(currentlyPressedObject) ?
-                        selections.get().filter((s) => s instanceof Component) :
-                        [currentlyPressedObject]
-            ) as Component[];
+                (!curPressedObjID || selections.has(curPressedObjID))
+                ? selections.get()
+                    .map((id) => circuit.getObj(id)!)
+                    .filter((s) => (s.baseKind === "Component")) as AnyComponent[]
+                : [curPressedObj!]
+            );
 
             action = new GroupAction([
-                new GroupAction(components.map((c) => Shift(designer, c)), "Shift Action"),
-            ], "Translate Tool", components.map((c) => `Translated ${c.getName()}.`));
+                ShiftComponents(info, components),
+            ], "Translate Tool", components.map((c) => `Translated ${c.name}.`));
 
-            initalPositions = components.map((o) => o.getPos());
+            // initalPositions = components.map((o) => o.getPos());
 
             // explicitly start a drag
             this.onEvent(event, info);
         },
-        onDeactivate({}: Event, { history }: CircuitInfo): void {
-            const finalPositions = components.map((o) => o.getPos());
-
-            // Translate back to original position, so that it undo's properly
-            Translate(components, initalPositions);
-
-            history.add(
-                action.add(Translate(components, finalPositions))
-            );
+        onDeactivate({}: InputManagerEvent, { history }: CircuitInfo): void {
+            if (!tempAction)
+                return;
+            history.add(action.add(tempAction));
+            tempAction = undefined;
         },
 
 
-        onEvent(event: Event, info: CircuitInfo): boolean {
-            const { input, camera, history, designer } = info;
+        onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
+            const { camera, circuit, input } = info;
 
             switch (event.type) {
                 // Using mousemove instead of mousedrag here because when a button besides
@@ -100,57 +115,65 @@ export const TranslateTool: Tool = (() => {
                     if (activatedButton !== LEFT_MOUSE_BUTTON)
                         break;
 
-                    const worldMousePos = camera.getWorldPos(input.getMousePos());
+                    const worldMousePos = CalcWorldMousePos(info);
 
                     const dPos = worldMousePos.sub(worldMouseDownPos);
 
-                    // Calculate new positions
-                    const curPositions = initalPositions.map((p) => p.add(dPos));
+                    tempAction?.undo();
 
-                    // Get snapped positions if shift is held
-                    const newPositions = input.isShiftKeyDown() ?
-                        curPositions.map((p) => Snap(p)):
-                        curPositions;
+                    const snapToGrid = input.isShiftKeyDown();
+                    const snapToConnections = !input.isShiftKeyDown();
 
-                    const snapToConnections = input.isShiftKeyDown() ? false : true;
                     // Execute translate but don't save to group
-                    Translate(components, newPositions, snapToConnections);
+                    tempAction = new GroupAction(
+                        components.map((c) => {
+                            let newPos = V(c.x, c.y).add(dPos);
+                            if (snapToGrid)
+                                newPos = SnapToGrid(newPos);
+                            if (snapToConnections)
+                                newPos = SnapToConnections(circuit, newPos, circuit.getPortsFor(c));
+                            // Very specifically Translate as we go
+                            //  as to correctly apply `SnapToConnections`
+                            return SetPos(circuit, c.id, newPos);
+                        })
+                    );
 
                     return true;
 
                 case "keyup":
-                    // Duplicate group when we press the spacebar
-                    if (event.key === " ") {
-                        const copies = CopyGroup(components);
-                        history.add(AddGroup(designer, copies));
-                        return true;
-                    }
+                    // // Duplicate group when we press the spacebar
+                    // if (event.key === " ") {
+                    //     const copies = CopyGroup(components);
+                    //     history.add(AddGroup(designer, copies));
+                    //     return true;
+                    // }
                     break;
 
                 case "keydown":
-                    if (activatedButton === LEFT_MOUSE_BUTTON)
-                        break;
+                    // TOOD: Consider moving to own tool (or Handler?)
+                    // if (activatedButton === LEFT_MOUSE_BUTTON)
+                    //     break;
 
-                    // Translate with the arrow keys
-                    let deltaPos = new Vector();
+                    // // Translate with the arrow keys
+                    // let deltaPos = new Vector();
 
-                    // No else if because it introduces bugs when
-                    //  multiple arrow keys are pressed
-                    if (input.isKeyDown("ArrowLeft"))
-                        deltaPos = deltaPos.add(-1, 0);
-                    if (input.isKeyDown("ArrowRight"))
-                        deltaPos = deltaPos.add(1, 0);
-                    if (input.isKeyDown("ArrowUp"))
-                        deltaPos = deltaPos.add(0, -1);
-                    if (input.isKeyDown("ArrowDown"))
-                        deltaPos = deltaPos.add(0, 1);
+                    // // No else if because it introduces bugs when
+                    // //  multiple arrow keys are pressed
+                    // if (input.isKeyDown("ArrowLeft"))
+                    //     deltaPos = deltaPos.add(-1, 0);
+                    // if (input.isKeyDown("ArrowRight"))
+                    //     deltaPos = deltaPos.add(1, 0);
+                    // if (input.isKeyDown("ArrowUp"))
+                    //     deltaPos = deltaPos.add(0, -1);
+                    // if (input.isKeyDown("ArrowDown"))
+                    //     deltaPos = deltaPos.add(0, 1);
 
-                    // Object gets moved different amounts depending on if the shift key is held
-                    const factor = (
-                        input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL
-                    );
+                    // // Object gets moved different amounts depending on if the shift key is held
+                    // const factor = (
+                    //     input.isShiftKeyDown() ? ARROW_TRANSLATE_DISTANCE_SMALL : ARROW_TRANSLATE_DISTANCE_NORMAL
+                    // );
 
-                    Translate(components, initalPositions.map((p) => p.add(deltaPos.scale(factor))));
+                    // Translate(components, positions.map((p) => p.add(deltaPos.scale(factor))));
 
                     return true;
             }

@@ -10,7 +10,7 @@ import type {Choice} from "prompts";
  * @param includeServer Whether or not to include the `server` folder.
  * @param includeApp    Whether or not to include the `app` folder.
  * @param includeShared Whether or not to include the `site/shared` folder.
- * @returns               The directories of the format for presentation using `prompts`.
+ * @returns             The directories of the format for presentation using `prompts`.
  */
 export default function getDirs(includeServer: boolean, includeApp: boolean, includeShared: boolean): Choice[] {
     const pagesDir = "src/site/pages";

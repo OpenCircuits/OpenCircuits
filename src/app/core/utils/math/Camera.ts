@@ -1,8 +1,3 @@
-import {serializable} from "serialeazy";
-
-import {BaseObject} from "core/models/BaseObject";
-import {Prop}       from "core/models/PropInfo";
-
 import {TransformContains} from "./MathUtils";
 import {Matrix2x3}         from "./Matrix";
 import {Transform}         from "./Transform";
@@ -14,8 +9,10 @@ type Margin = {left: number, right: number, bottom: number, top: number}
 /**
  * This code is for the camera object which is a representation of the screen while using OpenCircuits.
  */
-@serializable("Camera")
-export class Camera extends BaseObject {
+export class Camera {
+    private pos: Vector;
+    private zoom: number;
+
     private width: number;
     private height: number;
 
@@ -39,8 +36,8 @@ export class Camera extends BaseObject {
      * @param zoom   This initialzed zoom to 1.
      */
     public constructor(width = 0, height = 0, pos = V(0, 0), zoom = 0.02) {
-        super({ pos, zoom });
-
+        this.pos = pos;
+        this.zoom = zoom;
         this.width = width;
         this.height = height;
 
@@ -84,18 +81,14 @@ export class Camera extends BaseObject {
         this.height = height;
     }
 
-    public override setProp(key: string, val: Prop): void {
-        super.setProp(key, val);
-        this.dirty = true;
-    }
-
     /**
      * This sets the position of the screen (vector coordinates) and sets dirty to true.
      *
      * @param pos The new position vector.
      */
     public setPos(pos: Vector): void {
-        this.setProp("pos", pos);
+        this.pos = pos;
+        this.dirty = true;
     }
 
     /**
@@ -104,7 +97,8 @@ export class Camera extends BaseObject {
      * @param zoom The new zoom number (how much it's being zoomed in).
      */
     public setZoom(zoom: number): void {
-        this.setProp("zoom", zoom);
+        this.zoom = zoom;
+        this.dirty = true;
     }
 
     /**
@@ -145,7 +139,7 @@ export class Camera extends BaseObject {
      * This function returns true or false if this.transform contains the transform passed through.
      *
      * @param transform Comparing this with this.transform.
-     * @returns           True or false.
+     * @returns         True or false.
      */
     public cull(transform: Transform): boolean {
         return TransformContains(transform, this.getTransform());
@@ -172,7 +166,7 @@ export class Camera extends BaseObject {
      * @returns The position.
      */
     public getPos(): Vector {
-        return V(this.props["pos"] as Vector);
+        return V(this.pos as Vector);
     }
     public getScale(): Vector {
         return V(this.getZoom(), -this.getZoom());
@@ -183,7 +177,7 @@ export class Camera extends BaseObject {
      * @returns The zoom, which is data type Number.
      */
     public getZoom(): number {
-        return this.props["zoom"] as number;
+        return this.zoom as number;
     }
     /**
      * This returns a copy of the transform of camera and updates the matrix.
@@ -216,7 +210,7 @@ export class Camera extends BaseObject {
      * Returns the current screen position with formula using the vector v and getCenter.
      *
      * @param v The vector multiplied to inv.
-     * @returns   A vector of the screen position.
+     * @returns A vector of the screen position.
      */
     public getScreenPos(v: Vector): Vector {
         return this.getInverseMatrix().mul(v).add(this.getCenter());
@@ -225,7 +219,7 @@ export class Camera extends BaseObject {
      * Returns the global position not the local screens position.
      *
      * @param v The current position.
-     * @returns   The global position.
+     * @returns The global position.
      */
     public getWorldPos(v: Vector): Vector {
         return this.getMatrix().mul(v.sub(this.getCenter()));

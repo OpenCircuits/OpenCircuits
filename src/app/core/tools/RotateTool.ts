@@ -1,17 +1,20 @@
 import {ROTATION_CIRCLE_RADIUS,
         ROTATION_CIRCLE_THICKNESS} from "core/utils/Constants";
 
-import {Vector} from "Vector";
+import {V} from "Vector";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}                               from "core/utils/CircuitInfo";
+import {CalcSelectionsMidpoint, CalcWorldMousePos} from "core/utils/CircuitInfoUtils";
+import {InputManagerEvent}                         from "core/utils/InputManager";
 
+import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {Rotate}    from "core/actions/units/Rotate";
-import {Translate} from "core/actions/units/Translate";
+import {SetTransform} from "core/actions/compositions/SetTransform";
 
-import {Component} from "core/models";
+import {SetProperty} from "core/actions/units/SetProperty";
+
+import {AnyComponent} from "core/models/types";
 
 
 const ROTATION_SNAP_AMT = Math.PI/4;
@@ -20,26 +23,25 @@ const ROTATION_CIRCLE_R1 = (ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD) 
 const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) ** 2;
 
 export const RotateTool = (() => {
-    let initialPositions = [] as Vector[];
-
-    let initialAngles = [] as number[];
-    let currentAngles = [] as number[];
+    let curAngles = [] as number[];
+    let curAroundAngle = 0;
 
     let startAngle = 0;
     let prevAngle = 0;
 
-    function isMouseOnCircle({ camera, input, selections }: CircuitInfo): boolean {
-        const worldMousePos = camera.getWorldPos(input.getMousePos());
-        const d = worldMousePos.sub(selections.midpoint()).len2();
+    let tempAction: Action | undefined;
+
+    function isMouseOnCircle(info: CircuitInfo): boolean {
+        const worldMousePos = CalcWorldMousePos(info);
+        const midpoint = CalcSelectionsMidpoint(info, "world");
+
+        const d = worldMousePos.sub(midpoint).len2();
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2)
-    }
-    function getAngle(pos: Vector, mid: Vector): number {
-        return pos.sub(mid).angle();
     }
 
     return {
-        shouldActivate(event: Event, info: CircuitInfo): boolean {
-            const { input, selections, locked } = info;
+        shouldActivate(event: InputManagerEvent, info: CircuitInfo): boolean {
+            const { input, circuit, selections, locked } = info;
             if (locked)
                 return false;
             // Activate if the user pressed their mouse or finger down
@@ -48,79 +50,88 @@ export const RotateTool = (() => {
             return (event.type === "mousedown" &&
                     input.getTouchCount() === 1 &&
                     selections.amount() > 0 &&
-                    selections.all((s) => s instanceof Component) &&
+                    selections.all((s) => (circuit.getObj(s)!.baseKind === "Component")) &&
                     isMouseOnCircle(info));
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Deactivate only mouse release
             return (event.type === "mouseup");
         },
 
+        onActivate({}: InputManagerEvent, info: CircuitInfo): void {
+            const { circuit, selections } = info;
 
-        onActivate({}: Event, { camera, input, selections }: CircuitInfo): void {
-            const worldMousePos = camera.getWorldPos(input.getMousePos());
-            const components = selections.get() as Component[];
+            const worldMousePos = CalcWorldMousePos(info);
+            const components = selections.get().map((id) => circuit.getObj(id)) as AnyComponent[];
 
             // Get initial component angles
-            initialAngles = components.map((o) => o.getAngle());
-            currentAngles = [...initialAngles];
-
-            // Get initial positions as well since we can rotate around a point which moves the components
-            initialPositions = components.map((o) => o.getPos());
+            curAngles = components.map((c) => c.angle);
+            curAroundAngle = 0;
 
             // Get initial overall angle
-            startAngle = getAngle(worldMousePos, selections.midpoint());
+            startAngle = worldMousePos.sub(CalcSelectionsMidpoint(info, "world")).angle();
             prevAngle = startAngle;
         },
-        onDeactivate({}: Event, { history, selections }: CircuitInfo): void {
-            const components = selections.get() as Component[];
-            const finalAngles = components.map((o) => o.getAngle());
-            const finalPositions = components.map((o) => o.getPos());
+        onDeactivate({}: InputManagerEvent, { history }: CircuitInfo): void {
+            if (!tempAction)
+                return;
 
-            // Translate and rotate back to original position, so that it undo's properly
-            // TODO: use a `tempAction` instead so that they don't need to be stored
-            Translate(components, initialPositions);
-            components.forEach((c, i) => Rotate(c, initialAngles[i]));
+            history.add(tempAction);
 
-            history.add(
-                new GroupAction([
-                    Translate(components, finalPositions),
-                    new GroupAction(
-                        components.map((o,i) => Rotate(o, finalAngles[i])),
-                        "Rotation"
-                    ),
-                ], "Rotation")
-            );
+            tempAction = undefined;
         },
 
-
-        onEvent(event: Event, { camera, input, selections }: CircuitInfo): boolean {
+        onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
+
+            const { circuit, input, selections } = info;
+
+            tempAction?.undo();
 
             // Get whether z is presesed for independent rotation
             const isIndependent = input.isKeyDown("z");
 
-            const worldMousePos = camera.getWorldPos(input.getMousePos());
-            const components = selections.get() as Component[];
+            const worldMousePos = CalcWorldMousePos(info);
+            const midpoint = CalcSelectionsMidpoint(info, "world");
 
-            const midpoint = selections.midpoint();
+            const components = selections.get().map((id) => circuit.getObj(id)) as AnyComponent[];
 
-            const dAngle = getAngle(worldMousePos, midpoint) - prevAngle;
+            const dAngle = worldMousePos.sub(midpoint).angle() - prevAngle;
 
-            // Calculate new angles
-            currentAngles = currentAngles.map((a) => a + dAngle);
+            // Calculate new and snapped angles
+            const newAngles = curAngles.map((a) => (a + dAngle));
+            const snappedAngles = newAngles
+                .map((a) => (
+                    input.isShiftKeyDown()
+                    ? (Math.floor(a/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT)
+                    : a
+                ));
 
-            // Get snapped angles if shift is held
-            const newAngles = input.isShiftKeyDown() ?
-                currentAngles.map((a) => Math.floor(a/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT) :
-                currentAngles;
+            // Calculate new angle the rotation about the midpoint
+            const newAroundAngle = (
+                isIndependent
+                ? curAroundAngle
+                : curAroundAngle + dAngle
+            );
+            const snappedAroundAngle = (
+                input.isShiftKeyDown()
+                ? Math.floor(newAroundAngle/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT
+                : newAroundAngle
+            );
 
-            // Rotate independently if z is held
-            if (isIndependent)
-                components.forEach((c, i) => c.setAngle(newAngles[i]));
-            else
-                components.forEach((c, i) => c.setRotationAbout(newAngles[i], midpoint));
+            // Calculate new, snapped positions
+            const snappedPositions = components
+                .map((c) => V(c.x, c.y))
+                .map((v) => v.rotate(snappedAroundAngle, midpoint));
+
+            tempAction = new GroupAction(
+                selections.get().map((id, i) =>
+                    SetTransform(circuit, id, snappedPositions[i], snappedAngles[i]))
+            );
+
+            curAngles = newAngles;
+            curAroundAngle = newAroundAngle;
 
             prevAngle += dAngle;
 
