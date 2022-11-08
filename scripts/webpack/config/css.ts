@@ -10,7 +10,7 @@ import type {Configuration} from "webpack";
  * @param config            The current configuration.
  * @param config.isProd     Indicates whether or not this config is for prod.
  * @param config.publicPath The public path.
- * @returns                   The webpack configuration for the CSS-specific rules.
+ * @returns                 The webpack configuration for the CSS-specific rules.
  */
 export default ({ isProd, publicPath }: Config): Configuration => ({
     module: {

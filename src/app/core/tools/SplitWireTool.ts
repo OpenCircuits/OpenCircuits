@@ -1,91 +1,91 @@
-import {GRID_SIZE, LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+import {v4 as uuid} from "uuid";
 
-import {V, Vector} from "Vector";
+import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {CalcWorldMousePos} from "core/utils/CircuitInfoUtils";
+import {InputManagerEvent} from "core/utils/InputManager";
+import {SnapToGrid}        from "core/utils/SnapUtils";
 
+import {Action}      from "core/actions/Action";
 import {GroupAction} from "core/actions/GroupAction";
 
-import {SplitWire} from "core/actions/compositions/SplitWire";
+import {SetPos} from "core/actions/compositions/SetTransform";
 
 import {DeselectAll, Select} from "core/actions/units/Select";
-import {Translate}           from "core/actions/units/Translate";
+import {Split}               from "core/actions/units/Split";
 
 import {Tool} from "core/tools/Tool";
 
-import {Node, Wire} from "core/models";
+import {AnyNode, AnyWire} from "core/models/types";
 
 
 export const SplitWireTool: Tool = (() => {
-    let initialPosition: Vector;
-    let port: Node;
+    let node: AnyNode;
+
     let action: GroupAction;
 
-    function snap(p: Vector): Vector {
-        return V(Math.floor(p.x/GRID_SIZE + 0.5) * GRID_SIZE,
-                 Math.floor(p.y/GRID_SIZE + 0.5) * GRID_SIZE);
-    }
+    let tempAction: Action | undefined;
 
     return {
-        shouldActivate(event: Event, { locked, input, currentlyPressedObject }: CircuitInfo): boolean {
+        shouldActivate(event: InputManagerEvent, { locked, circuit, input, curPressedObjID }: CircuitInfo): boolean {
             if (locked)
+                return false;
+            if (!curPressedObjID)
                 return false;
             // Activate if the user dragged over a wire with 1 touch/finger
             return (event.type === "mousedrag" && event.button === LEFT_MOUSE_BUTTON &&
                     input.getTouchCount() === 1 &&
-                    currentlyPressedObject instanceof Wire);
+                    circuit.getObj(curPressedObjID)!.baseKind === "Wire");
         },
-        shouldDeactivate(event: Event, {}: CircuitInfo): boolean {
+        shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
             // Deactivate if stopped dragging by releasing mouse
             return (event.type === "mouseup");
         },
 
+        onActivate(event: InputManagerEvent, info: CircuitInfo): void {
+            const { circuit, selections, curPressedObjID } = info;
 
-        onActivate({}: Event, info: CircuitInfo): void {
-            const { input, camera, designer, selections, currentlyPressedObject } = info;
+            const wire = circuit.getObj(curPressedObjID!) as AnyWire;
 
-            const wire = currentlyPressedObject as Wire;
+            // Make UUID for the node ourselves so we can keep track of it
+            const nodeID = uuid();
 
-            // Create wireport and set its position to the mouse
-            port = wire.split();
-            port.setPos(camera.getWorldPos(input.getMouseDownPos()));
+            action = new GroupAction([
+                DeselectAll(selections),
+                Split(circuit, wire, info.viewManager.getTopDepth() + 1, nodeID),
+                Select(selections, nodeID),
+            ], "Split Wire");
 
-            action = new GroupAction([], "Split Wire Tool");
+            info.curPressedObjID = nodeID;
 
-            // Set wireport as selection and being pressed
-            action.add(DeselectAll(selections));
-            action.add(Select(selections, port));
-            action.add(SplitWire(designer, wire, port));
+            node = circuit.getObj(nodeID)! as AnyNode;
 
-            info.currentlyPressedObject = port;
-
-            // Set initial position
-            initialPosition = camera.getWorldPos(input.getMouseDownPos());
+            // explicitly start a drag
+            this.onEvent(event, info);
         },
-        onDeactivate({}: Event, { history }: CircuitInfo): void {
-            history.add(action.add(Translate([port], [port.getPos()])));
+        onDeactivate({}: InputManagerEvent, { history }: CircuitInfo): void {
+            if (!tempAction)
+                throw new Error("No temp action for SplitWireTool?");
+            history.add(action.add(tempAction));
+            tempAction = undefined;
         },
 
-
-        onEvent(event: Event, info: CircuitInfo): boolean {
+        // Translate the noded
+        onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
             if (event.type !== "mousedrag")
                 return false;
 
-            const { input, camera } = info;
+            const { input, circuit } = info;
 
-            const worldMouseDownPos = camera.getWorldPos(input.getMouseDownPos());
-            const worldMousePos = camera.getWorldPos(input.getMousePos());
+            tempAction?.undo();
 
-            const dPos = worldMousePos.sub(worldMouseDownPos);
+            // Move node onto cursor and snap if holding shift
+            let newPos = CalcWorldMousePos(info);
+            if (input.isShiftKeyDown())
+                newPos = SnapToGrid(newPos);
 
-            // Calculate new position and get snapped positions if shift is held
-            const curPosition = initialPosition.add(dPos);
-            const newPosition = input.isShiftKeyDown() ? snap(curPosition) : curPosition;
-
-            // Execute translate but don't save to group
-            //  action since we do that onDeactivate
-            Translate([port], [newPosition]);
+            tempAction = SetPos(circuit, node.id, newPos);
 
             return true;
         },

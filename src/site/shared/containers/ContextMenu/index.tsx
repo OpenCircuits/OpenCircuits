@@ -2,22 +2,16 @@ import {useEffect, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
-import {CircuitInfo}      from "core/utils/CircuitInfo";
-import {SerializeForCopy} from "core/utils/ComponentUtils";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {V, Vector} from "core/utils/math/Vector";
 
-import {GroupAction} from "core/actions/GroupAction";
-
-import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
-
-import {DeselectAll, SelectGroup} from "core/actions/units/Select";
+import {SelectGroup} from "core/actions/units/Select";
 
 import {CleanUpHandler}     from "core/tools/handlers/CleanUpHandler"
 import {DuplicateHandler}   from "core/tools/handlers/DuplicateHandler"
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
-
-import {IOObject} from "core/models";
 
 import {useDocEvent}                          from "shared/utils/hooks/useDocEvent";
 import {useHistory}                           from "shared/utils/hooks/useHistory";
@@ -41,10 +35,8 @@ type Props = {
     info: CircuitInfo;
     paste: (text: string, menuPos: Vector) => boolean;
 }
-
-
 export const ContextMenu = ({ info, paste }: Props) => {
-    const { locked, input, camera, history, designer, selections, renderer } = info;
+    const { locked, input, camera, circuit, history, selections, renderer } = info;
     const { undoHistory, redoHistory } = useHistory(info);
 
     const { isOpen } = useSharedSelector(
@@ -58,12 +50,15 @@ export const ContextMenu = ({ info, paste }: Props) => {
         if (!input)
             return;
 
-        input.addListener((ev) => {
+        const listener = (ev: InputManagerEvent) => {
             if (ev.type === "contextmenu")
                 dispatch(OpenContextMenu());
             else if (ev.type === "mousedown")
                 dispatch(CloseContextMenu());
-        });
+        }
+
+        input.subscribe(listener);
+        return () => input.unsubscribe(listener);
     }, [input, dispatch]);
 
     // Position changes are calculated using the react hook so that the
@@ -87,34 +82,37 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
 
     const copy = () => {
-        const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
-        return SerializeForCopy(objs);
+        // @TODO
+        // const objs = selections.get().filter((o) => o instanceof IOObject) as IOObject[];
+        // return SerializeForCopy(objs);
     }
 
 
     /* Context Menu "Cut" */
     const onCut = async () => {
-        if (!isClipboardSupported("write")) {
-            alert("Your web browser does not support right click CUT operation. Please use CTRL+X");
-            return;
-        }
-        await navigator.clipboard.writeText(copy());
+        // @TODO
+        // if (!isClipboardSupported("write")) {
+        //     alert("Your web browser does not support right click CUT operation. Please use CTRL+X");
+        //     return;
+        // }
+        // await navigator.clipboard.writeText(copy());
 
-        // Delete selections
-        const objs = selections.get().filter((s) => s instanceof IOObject) as IOObject[];
-        history.add(new GroupAction([
-            DeselectAll(selections),
-            DeleteGroup(designer, objs),
-        ], "Cut (Context Menu)"));
+        // // Delete selections
+        // const objs = selections.get().filter((s) => s instanceof IOObject) as IOObject[];
+        // history.add(new GroupAction([
+        //     DeselectAll(selections),
+        //     DeleteGroup(designer, objs),
+        // ], "Cut (Context Menu)"));
     }
 
     /* Context Menu "Copy" */
     const onCopy = async () => {
-        if (!isClipboardSupported("write")) {
-            alert("Your web browser does not support right click COPY operation. Please use CTRL+C");
-            return;
-        }
-        await navigator.clipboard.writeText(copy());
+        // @TODO
+        // if (!isClipboardSupported("write")) {
+        //     alert("Your web browser does not support right click COPY operation. Please use CTRL+C");
+        //     return;
+        // }
+        // await navigator.clipboard.writeText(copy());
     }
 
     /* Context Menu "Paste" */
@@ -128,7 +126,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
 
     /* Context Menu "Select All" */
     const onSelectAll = async () => {
-        history.add(SelectGroup(selections, designer.getObjects()));
+        history.add(SelectGroup(selections, circuit.getObjs().map((o) => o.id)));
     }
 
     /* Context Menu "Focus" */
@@ -198,7 +196,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
                     onClick={() => doFunc(onPaste)}>Paste</button>
             <button type="button"
                     title="Select All"
-                    disabled={designer.getObjects().length === 0}
+                    disabled={circuit.getObjs().length === 0}
                     onClick={() => doFunc(onSelectAll)}>Select All</button>
             <hr />
             <button type="button"
@@ -206,7 +204,7 @@ export const ContextMenu = ({ info, paste }: Props) => {
                     onClick={() => doFunc(onFocus)}>Focus</button>
             <button type="button"
                     title="CleanUp"
-                    disabled={designer.getObjects().length === 0}
+                    disabled={circuit.getObjs().length === 0}
                     onClick={() => doFunc(onCleanUp)}>Clean Up</button>
             <button type="button"
                     title="Duplicate"

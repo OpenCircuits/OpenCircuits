@@ -1,20 +1,15 @@
 import {useEffect, useLayoutEffect} from "react";
-import {Deserialize, Serialize}     from "serialeazy";
 
-import {Input} from "core/utils/Input";
-
-import {InteractionTool} from "core/tools/InteractionTool";
-import {PanTool}         from "core/tools/PanTool";
+import {DefaultTool} from "core/tools/DefaultTool";
+import {PanTool}     from "core/tools/PanTool";
 
 import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
-import {AnalogCircuitDesigner} from "analog/models";
+import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
-
-import {GetRenderFunc} from "site/analog/utils/Rendering";
 
 import {CreateInfo} from "site/analog/utils/CircuitInfo/CreateInfo";
 
@@ -25,7 +20,14 @@ type Props = ImageExporterPreviewProps & {
     mainInfo: AnalogCircuitInfo;
 }
 export const ImageExporterPreview = (() => {
-    const info = CreateInfo(undefined, new InteractionTool([FitToScreenHandler]), PanTool);
+    const [info] = CreateInfo(undefined, new DefaultTool(FitToScreenHandler), PanTool);
+
+    // Add input listener
+    info.input.subscribe((event) => {
+        const change = info.toolManager.onEvent(event, info);
+        if (change)
+            info.renderer.render();
+    });
 
     // eslint-disable-next-line react/display-name
     return ({ mainInfo, isActive, canvas, width, height, style, ...renderingOptions }: Props) => {
@@ -51,45 +53,37 @@ export const ImageExporterPreview = (() => {
         useEffect(() => {
             if (!canvas.current)
                 throw new Error("ImageExporterPreview.useEffect failed: canvas.current is null");
-            // Create input w/ canvas
-            info.input = new Input(canvas.current);
-
             // Get render function
             const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
-
-            // Add input listener
-            info.input.addListener((event) => {
-                const change = info.toolManager.onEvent(event, info);
-                if (change)
-                    info.renderer.render();
-            });
 
             // Input should be blocked initially
             info.input.block();
 
-            // Add render callbacks and set render function
-            info.designer.addCallback(() => info.renderer.render());
+            // // Add render callbacks and set render function
+            // info.designer.addCallback(() => info.renderer.render());
 
             info.renderer.setRenderFunction(renderFunc);
             info.renderer.render();
+
+            return info.input.setupOn(canvas.current);
         }, [canvas]); // Pass empty array so that this only runs once on mount
 
         // Happens when de/activated
         useLayoutEffect(() => {
-            const { camera, input, debugOptions, designer } = mainInfo;
+            const { camera, input, debugOptions, circuit } = mainInfo;
 
             if (!isActive) {
                 info.input?.block();
                 input?.unblock();
-                info.designer.reset();
+                // info.designer.reset();
                 return;
             }
 
             info.debugOptions = debugOptions;
 
-            // Make a deep copy of the entire designer so that they don't share components
-            const copy = Deserialize<AnalogCircuitDesigner>(Serialize(designer));
-            info.designer.replace(copy);
+            // // Make a deep copy of the entire designer so that they don't share components
+            // const copy = Deserialize<AnalogCircuitDesigner>(Serialize(designer));
+            // info.designer.replace(copy);
 
             // info.camera.resize(width, height);
             info.camera.setPos(camera.getPos());

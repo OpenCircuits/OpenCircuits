@@ -1,37 +1,41 @@
+import {GUID} from "core/utils/GUID";
+
 import {Action} from "core/actions/Action";
 
-import {BaseObject} from "core/models/BaseObject";
-import {Prop}       from "core/models/PropInfo";
+import {AnyObj} from "core/models/types";
 
+import {CircuitController} from "core/controllers/CircuitController";
+
+
+type TProp = string | number | boolean;
 
 class SetPropertyAction implements Action {
-    private readonly obj: BaseObject;
+    private readonly circuit: CircuitController<AnyObj>;
+    private readonly objID: GUID;
 
     private readonly propKey: string;
 
-    private readonly initialProp: Prop;
-    private readonly targetProp: Prop;
+    private readonly initialProp: TProp;
+    private readonly targetProp: TProp;
 
-    public constructor(obj: BaseObject, key: string, prop: Prop) {
-        if (!obj.hasProp(key))
-            throw new Error(`Cannot find property ${key} in ${obj}!`);
-
-        this.obj = obj;
+    public constructor(circuit: CircuitController<AnyObj>, objID: GUID, key: string, prop: TProp) {
+        this.circuit = circuit;
+        this.objID = objID;
         this.propKey = key;
-        this.initialProp = obj.getProp(key);
+        this.initialProp = circuit.getPropFrom(circuit.getObj(objID)!, key);
         this.targetProp = prop;
 
         this.execute();
     }
 
     public execute(): Action {
-        this.obj.setProp(this.propKey, this.targetProp);
+        this.circuit.setPropFor(this.circuit.getObj(this.objID)!, this.propKey, this.targetProp);
 
         return this;
     }
 
     public undo(): Action {
-        this.obj.setProp(this.propKey, this.initialProp);
+        this.circuit.setPropFor(this.circuit.getObj(this.objID)!, this.propKey, this.initialProp);
 
         return this;
     }
@@ -45,6 +49,6 @@ class SetPropertyAction implements Action {
     }
 }
 
-export function SetProperty(obj: BaseObject, key: string, prop: Prop) {
-    return new SetPropertyAction(obj, key, prop);
+export function SetProperty(circuit: CircuitController<AnyObj>, objID: GUID, key: string, prop: TProp) {
+    return new SetPropertyAction(circuit, objID, key, prop);
 }

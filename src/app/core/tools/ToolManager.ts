@@ -1,5 +1,5 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {DefaultTool} from "./DefaultTool";
 import {Tool}        from "./Tool";
@@ -22,7 +22,7 @@ export class ToolManager {
         this.currentTool = undefined;
     }
 
-    public onEvent(event: Event, info: CircuitInfo): boolean {
+    public onEvent(event: InputManagerEvent, info: CircuitInfo): boolean {
         // Call the current tool's (or default tool's) onEvent method
         if (this.currentTool) {
             const changed = this.currentTool.onEvent(event, info);

@@ -1,14 +1,10 @@
-import {Create} from "serialeazy";
-
 import {InputTree, InputTreeBinOpType, InputTreeOpType} from "./Constants/DataStructures";
 
-import {IOObject} from "core/models";
+import {DigitalComponent, DigitalObj} from "core/models/types/digital";
 
-import {LazyConnect} from "digital/utils/ComponentUtils";
+import {LazyConnect} from "./Utils";
 
-import {DigitalComponent} from "digital/models";
 
-import {Gate} from "digital/models/ioobjects/gates/Gate";
 
 
 /**
@@ -44,7 +40,11 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  * @throws {Error} When one of the leaf nodes of the InputTree references an input that is not inputs.
  * @see TreeToCircuit
  */
-function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
+function treeToCircuitCore(
+    node: InputTree,
+    inputs: Map<string, DigitalComponent>,
+    circuit: DigitalObj[],
+): DigitalObj[] {
     if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
         if (!inputs.has(node.ident))
             throw new Error("Input Not Found: \"" + node.ident + "\"");
@@ -54,26 +54,28 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
         return circuit;
     }
 
-    const ret = circuit;
-    const newGate = Create<Gate>((node.kind === "binop" && node.isNot)
-                                 ? NegatedTypeToGate[node.type]
-                                 : TypeToGate[node.type]);
-    if (node.kind === "unop") {
-        const prevNode = treeToCircuitCore(node.child, inputs, ret).at(-1) as DigitalComponent;
-        const wire = LazyConnect(prevNode, newGate);
-        ret.push(wire);
-    } else if (node.kind === "binop") {
-        newGate.setInputPortCount(node.children.length);
-        node.children.forEach((child) => {
-            if (!child)
-                throw new Error("treeToCircuitCore failed: child was undefined");
-            const prevNode = treeToCircuitCore(child, inputs, ret).at(-1) as DigitalComponent;
-            const wire = LazyConnect(prevNode, newGate);
-            ret.push(wire);
-        });
-    }
-    ret.push(newGate);
-    return ret;
+    return circuit;
+    // @TODO
+    // const ret = circuit;
+    // const newGate = Create<Gate>((node.kind === "binop" && node.isNot)
+    //                              ? NegatedTypeToGate[node.type]
+    //                              : TypeToGate[node.type]);
+    // if (node.kind === "unop") {
+    //     const prevNode = treeToCircuitCore(node.child, inputs, ret).at(-1) as DigitalComponent;
+    //     const wire = LazyConnect(prevNode, newGate);
+    //     ret.push(wire);
+    // } else if (node.kind === "binop") {
+    //     newGate.setInputPortCount(node.children.length);
+    //     node.children.forEach((child) => {
+    //         if (!child)
+    //             throw new Error("treeToCircuitCore failed: child was undefined");
+    //         const prevNode = treeToCircuitCore(child, inputs, ret).at(-1) as DigitalComponent;
+    //         const wire = LazyConnect(prevNode, newGate);
+    //         ret.push(wire);
+    //     });
+    // }
+    // ret.push(newGate);
+    // return ret;
 }
 
 /**
@@ -86,11 +88,11 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
  * @throws {Error} When one of the leaf nodes of the InputTree references an input that is not inputs.
  */
 export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, DigitalComponent>,
-                              output: DigitalComponent): IOObject[] {
+                              output: DigitalComponent): DigitalObj[] {
     if (!tree)
         return [];
 
-    let ret: IOObject[] = [...inputs.values()];
+    let ret: DigitalObj[] = [...inputs.values()];
 
     ret = treeToCircuitCore(tree, inputs, ret);
     const wire = LazyConnect(ret.at(-1) as DigitalComponent, output);

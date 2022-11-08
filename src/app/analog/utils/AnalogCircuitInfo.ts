@@ -1,13 +1,12 @@
 import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {AnalogCircuitDesigner} from "analog/models";
+import {AnalogObj} from "core/models/types/analog";
 
 import {AnalogSim}       from "analog/models/sim/AnalogSim";
 import {SimDataMappings} from "analog/models/sim/NetlistGenerator";
 
 
-export type AnalogCircuitInfo = Omit<CircuitInfo, "designer"> & {
-    designer: AnalogCircuitDesigner;
+export type AnalogCircuitInfo = CircuitInfo<AnalogObj> & {
     sim?: AnalogSim;
     simDataMappings?: SimDataMappings;
 }

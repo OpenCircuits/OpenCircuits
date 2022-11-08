@@ -1,20 +1,19 @@
 import {useEffect} from "react";
 
-import {Event, EventType} from "core/utils/Events";
-import {Input}            from "core/utils/Input";
+import {InputManager, InputManagerEvent, InputManagerEventType} from "core/utils/InputManager";
 
 
-export const useEvent = <T extends EventType>(type: T, f: (ev: Event & {type: T}) => void,
-                                              input?: Input, deps?: React.DependencyList) => {
+export const useEvent = <T extends InputManagerEventType>(type: T, f: (ev: InputManagerEvent & {type: T}) => void,
+                                              input?: InputManager, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
             return;
 
-        const update = (ev: Event) => {
+        const update = (ev: InputManagerEvent) => {
             if (ev.type === type)
-                f(ev as (Event & {type: T}));
+                f(ev as (InputManagerEvent & {type: T}));
         }
-        input.addListener(update);
-        return () => input.removeListener(update);
+        input.subscribe(update);
+        return () => input.unsubscribe(update);
     }, [input, type, f, ...(deps ?? [])]);
 }

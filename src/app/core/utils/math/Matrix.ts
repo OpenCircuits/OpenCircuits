@@ -1,5 +1,3 @@
-import {serializable} from "serialeazy";
-
 import {V, Vector} from "./Vector";
 
 
@@ -14,7 +12,6 @@ import {V, Vector} from "./Vector";
  * $$
  * .
  */
-@serializable("Matrix2x3")
 export class Matrix2x3 {
     private mat: number[];
 
@@ -68,7 +65,7 @@ export class Matrix2x3 {
      * Return the result of `this` Matrix multiplied by the `other` Vector, resulting in a Vector.
      *
      * @param other The vector to multiply with this.
-     * @returns       The resultant vector.
+     * @returns     The resultant vector.
      */
     public mul(other: Vector): Vector {
         const result = V(0,0);
@@ -81,7 +78,7 @@ export class Matrix2x3 {
      * Returns the result of `this` Matrix multiplied with the `other` Matrix, resulting in another 2x3 Matrix.
      *
      * @param other The other matrix to multiply with this.
-     * @returns       The resultant matrix.
+     * @returns     The resultant matrix.
      */
     public mult(other: Matrix2x3): Matrix2x3 {
         const result = new Matrix2x3();
@@ -196,7 +193,7 @@ export class Matrix2x3 {
      * Returns the matrix element at index `i`. ($i \in [0, 5]$).
      *
      * @param i The index that must be an integer $\in [0, 5]$.
-     * @returns   The matrix corresponding element value.
+     * @returns The matrix corresponding element value.
      */
     public get(i: number): number {
         return this.mat[i];
@@ -215,7 +212,7 @@ export class Matrix2x3 {
      * Returns whether or not `this` matrix has the same components as `other`.
      *
      * @param other The other matrix to compare with.
-     * @returns       True if the two matrices are equal, false otherwise.
+     * @returns     True if the two matrices are equal, false otherwise.
      */
     public equals(other: Matrix2x3): boolean {
         for (let i = 0; i < 2*3; i++) {

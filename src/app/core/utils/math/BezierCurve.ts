@@ -1,7 +1,5 @@
-import {serializable, serialize} from "serialeazy";
-
 import {Clamp}     from "./MathUtils";
-import {Transform} from "./Transform";
+import {Rect}      from "./Rect";
 import {V, Vector} from "./Vector";
 
 
@@ -15,37 +13,32 @@ import {V, Vector} from "./Vector";
  * Link to an interactive cubic bezier curve with formulas:
  * https://www.desmos.com/calculator/rptlhv5rx8.
  */
- @serializable("BezierCurve")
 export class BezierCurve {
 
     /**
      * The x, y coordinates of the start point.
      */
-    @serialize
     private p1: Vector;
 
     /**
      * The x, y coordinates of the end point.
      */
-    @serialize
     private p2: Vector;
 
     /**
      * The x, y coordinates of the first control point.
      */
-    @serialize
     private c1: Vector;
 
     /**
      * The x, y coordinates of the second control point.
      */
-    @serialize
     private c2: Vector;
 
     /**
      * The Bounding Box that encases the entire curve.
      */
-    private readonly boundingBox: Transform;
+    private boundingBox: Rect;
 
     /**
      * Whether the curve's data has been updated.
@@ -69,7 +62,7 @@ export class BezierCurve {
         this.c2 = c2.copy();
 
         this.dirty = true;
-        this.boundingBox = new Transform(V(0), V(0));
+        this.boundingBox = new Rect(V(0), V(0));
     }
 
     /**
@@ -80,7 +73,7 @@ export class BezierCurve {
      * @param c   The c value in the quadratic formula.
      * @param mod The +/- in the quadratic formula.
      * @param end Returns end if result is undefined.
-     * @returns     The value of t, where t represents how far along the bezier curve the given point is.
+     * @returns   The value of t, where t represents how far along the bezier curve the given point is.
      */
     private getT(a: number, b: number, c: number, mod: -1 | 1, end: number): number {
         if (a === 0)
@@ -119,8 +112,7 @@ export class BezierCurve {
         max.x = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
         min.x = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
 
-        this.boundingBox.setSize(V(max.x - min.x, max.y - min.y));
-        this.boundingBox.setPos(V((max.x - min.x)/2 + min.x, (max.y - min.y)/2 + min.y));
+        this.boundingBox = Rect.FromPoints(min, max);
     }
 
     /**
@@ -203,7 +195,7 @@ export class BezierCurve {
      * Calculates x coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The x coordinate of t.
+     * @returns The x coordinate of t.
      */
     public getX(t: number): number {
         const it = 1 - t;
@@ -214,7 +206,7 @@ export class BezierCurve {
      * Calculates y coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The y coordinate of t.
+     * @returns The y coordinate of t.
      */
     public getY(t: number): number {
         const it = 1 - t;
@@ -225,7 +217,7 @@ export class BezierCurve {
      * Calculates x and y coordinates of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The x and y coordinates of t.
+     * @returns The x and y coordinates of t.
      */
     public getPos(t: number): Vector {
         return V(this.getX(t), this.getY(t));
@@ -235,7 +227,7 @@ export class BezierCurve {
      * Calculates the 1st derivative of x coord of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The 1st derivative of x coord of t.
+     * @returns The 1st derivative of x coord of t.
      */
     public getDX(t: number): number {
         const it = 1 - t;
@@ -246,7 +238,7 @@ export class BezierCurve {
      * Calculates the 1st derivative of y coord of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The 1st derivative of y coord of t.
+     * @returns The 1st derivative of y coord of t.
      */
     public getDY(t: number): number {
         const it = 1 - t;
@@ -257,7 +249,7 @@ export class BezierCurve {
      * Calculates the 1st derivatives of x and y coordinates of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The 1st derivatives of x and y coordinates of t.
+     * @returns The 1st derivatives of x and y coordinates of t.
      */
     public getDerivative(t: number): Vector {
         return V(this.getDX(t), this.getDY(t));
@@ -267,7 +259,7 @@ export class BezierCurve {
      * Calculates the 2nd derivative of x coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The 2nd derivative of x coordinate of t.
+     * @returns The 2nd derivative of x coordinate of t.
      */
     public getDDX(t: number): number {
         const m = -this.p1.x + 3*this.c1.x - 3*this.c2.x + this.p2.x;
@@ -279,7 +271,7 @@ export class BezierCurve {
      * Calculates the 2nd derivative of y coordinate of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The 2nd derivative of y coordinate of t.
+     * @returns The 2nd derivative of y coordinate of t.
      */
     public getDDY(t: number): number {
         const m = -this.p1.y + 3*this.c1.y - 3*this.c2.y + this.p2.y;
@@ -291,7 +283,7 @@ export class BezierCurve {
      * Calculates the 2nd derivatives of x and y coordinates of t.
      *
      * @param t How far along the bezier curve the given point is.
-     * @returns   The 2nd derivative of x and y coordinates of t.
+     * @returns The 2nd derivative of x and y coordinates of t.
      */
     public get2ndDerivative(t: number): Vector {
         return V(this.getDDX(t), this.getDDY(t));
@@ -302,8 +294,8 @@ export class BezierCurve {
      *
      * @returns A Transform that contains the bounding box of the curve.
      */
-    public getBoundingBox(): Transform {
+    public getBoundingBox(): Rect {
         this.updateBoundingBox();
-        return this.boundingBox.copy();
+        return this.boundingBox;
     }
 }

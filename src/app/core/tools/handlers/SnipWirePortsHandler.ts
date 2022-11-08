@@ -1,31 +1,25 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {Event}       from "core/utils/Events";
-
-import {GroupAction} from "core/actions/GroupAction";
-
-import {SnipGroup} from "core/actions/compositions/SplitWire";
-
-import {DeselectAll} from "core/actions/units/Select";
-
-import {Node, isNode} from "core/models";
+import {CircuitInfo}       from "core/utils/CircuitInfo";
+import {InputManagerEvent} from "core/utils/InputManager";
 
 import {EventHandler} from "../EventHandler";
 
 
 export const SnipWirePortsHandler: EventHandler = ({
-    conditions: (event: Event, { selections }: CircuitInfo) =>
+    conditions: (event: InputManagerEvent, { circuit, selections }: CircuitInfo) =>
         (event.type === "keydown" &&
          event.key === "x" &&
          selections.amount() > 0 &&
-         selections.all((o) => isNode(o))),
+         // Check if only nodes are being selected
+         selections.all((id) => (circuit.getObj(id)?.kind === circuit.getNodeKind()))),
 
-    getResponse: ({ history, designer, selections }: CircuitInfo) => {
-        const ports = selections.get().filter((o) => isNode(o)) as Node[];
+    getResponse: ({ circuit, history, selections }: CircuitInfo) => {
+        // @TODO
+        // const ports = selections.get().filter((o) => isNode(o)) as Node[];
 
-        // Deselect the ports and then snip them
-        history.add(new GroupAction([
-            DeselectAll(selections),
-            SnipGroup(designer, ports),
-        ], "Snip Wire Ports Handler"));
+        // // Deselect the ports and then snip them
+        // history.add(new GroupAction([
+        //     DeselectAll(selections),
+        //     SnipGroup(designer, ports),
+        // ], "Snip Wire Ports Handler"));
     },
 });

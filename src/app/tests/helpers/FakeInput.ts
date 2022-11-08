@@ -4,25 +4,27 @@ import {V, Vector} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {Input} from "core/utils/Input";
-import {Key}   from "core/utils/Key";
+import {InputManager} from "core/utils/InputManager";
+import {Key}          from "core/utils/Key";
 
 
-export class FakeInput extends Input {
+export class FakeInput extends InputManager {
     private touches: Vector[];
     private readonly camera: Camera;
 
     public constructor(camera: Camera) {
         // Fake canvas and instant drag time
-        super({
+        super(-1);
+
+        this.touches = [];
+        this.camera = camera;
+
+        this.setupOn({
             addEventListener:      () => {},
             getBoundingClientRect: () => ({ left: 0, top: 0, width: camera.getSize().x, height: camera.getSize().y }),
 
             width: camera.getSize().x, height: camera.getSize().y,
-        } as unknown as HTMLCanvasElement, -1);
-
-        this.touches = [];
-        this.camera = camera;
+        } as unknown as HTMLCanvasElement);
     }
 
     public pressKey(code: Key): FakeInput {

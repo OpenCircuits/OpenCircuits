@@ -1,4 +1,3 @@
-import {serializable, serialize} from "serialeazy";
 
 /**
  * A representation of a vector in 2D space. Commonly used to represent points,
@@ -8,19 +7,16 @@ import {serializable, serialize} from "serialeazy";
  *  (since its `x` and `y` properties are settable), all methods on the Vector
  *  will return new Vectors with the performed operation.
  */
-@serializable("Vector")
 export class Vector {
 
     /**
      * The x-component of this Vector.
      */
-    @serialize
     public x: number;
 
     /**
      * The y-component of this Vector.
      */
-    @serialize
     public y: number;
 
     /**
@@ -82,7 +78,7 @@ export class Vector {
      *
      * @param x The x-component to add to `this`.
      * @param y The y-component to add to `this`.
-     * @returns   A vector with `this` added to `x` and `y`.
+     * @returns A vector with `this` added to `x` and `y`.
      */
     public add(x: number, y: number): Vector;
 
@@ -112,7 +108,7 @@ export class Vector {
      *
      * @param x The x-component to substract to 'this'.
      * @param y The y-component to substract to 'this'.
-     * @returns   A new vector with 'this' substracted to 'x' and 'y'.
+     * @returns A new vector with 'this' substracted to 'x' and 'y'.
      */
     public sub(x: number, y: number): Vector;
 
@@ -134,7 +130,7 @@ export class Vector {
      * scalar multiplied by number 'x'.
      *
      * @param x The number to scalar multiply to 'this'.
-     * @returns   A new vector with 'this' scalar multiplied by 'a'.
+     * @returns A new vector with 'this' scalar multiplied by 'a'.
      */
     public scale(x: number): Vector;
 
@@ -192,7 +188,7 @@ export class Vector {
      * Return the distance from 'this' to 'v'.
      *
      * @param v The vector we need to mearsure the distance to.
-     * @returns   The length of the vector of 'this' sub 'v'.
+     * @returns The length of the vector of 'this' sub 'v'.
      */
     public distanceTo(v: Vector): number {
         return this.sub(v).len();
@@ -201,7 +197,7 @@ export class Vector {
      * Return the dot product of 'this' and 'v'.
      *
      * @param v The vector to dot multiply to 'this'.
-     * @returns   'this' dot multiplied by 'v'.
+     * @returns 'this' dot multiplied by 'v'.
      */
     public dot(v: Vector): number {
         return this.x * v.x + this.y * v.y;
@@ -210,20 +206,31 @@ export class Vector {
      * Returns a new vector rotated `a` radians from this one.
      *
      * @param a The angle in radians.
-     * @returns   A new, rotated vector.
+     * @param o The origin to rotate around.
+     * @returns A new, rotated vector.
      */
-    public rotate(a: number): Vector {
+    public rotate(a: number, o = V()): Vector {
         const cos = Math.cos(a), sin = Math.sin(a);
         return V(
-            (this.x * cos - this.y * sin),
-            (this.x * sin + this.y * cos)
+            ((this.x - o.x) * cos - (this.y - o.y) * sin) + o.x,
+            ((this.x - o.x) * sin + (this.y - o.y) * cos) + o.y
         );
+    }
+    /**
+     * Returns a new vector with a set rotation of `a` radians from the origin.
+     *
+     * @param a The angle in radians.
+     * @param o The origin to rotate around.
+     * @returns A new, rotated vector.
+     */
+    public withRotation(a: number, o = V()): Vector {
+        return this.rotate(a - this.sub(o).angle(), o);
     }
     /**
      * Return the projection of 'this' on 'v'.
      *
      * @param v The vector that 'this' projects to.
-     * @returns   The projection of 'this' on vector 'v'.
+     * @returns The projection of 'this' on vector 'v'.
      */
     public project(v: Vector): Vector {
         return v.scale(this.dot(v) / v.len2())
@@ -253,8 +260,8 @@ export class Vector {
      * vectors within the array 'vectors'.
      *
      * @param vectors The array that holds vectors.
-     * @returns         A Vector with the smallest 'x' and 'y' that
-     *          from vector(s) in the array.
+     * @returns       A Vector with the smallest 'x' and 'y' that
+     *                from vector(s) in the array.
      */
     public static Min(...vectors: Vector[]): Vector {
         return new Vector(Math.min(...vectors.map((v) => v.x)),
@@ -265,8 +272,8 @@ export class Vector {
      * vectors within the array 'vectors'.
      *
      * @param vectors The array that holds vectors.
-     * @returns         A Vector with the biggest 'x' and 'y' that
-     *          from vector(s) in the array.
+     * @returns       A Vector with the biggest 'x' and 'y' that
+     *                from vector(s) in the array.
      */
     public static Max(...vectors: Vector[]): Vector {
         return new Vector(Math.max(...vectors.map((v) => v.x)),
@@ -278,11 +285,11 @@ export class Vector {
      * @param x  The vector that need to be examined.
      * @param lo The minimum vector of the range.
      * @param hi The maximum vector of the range.
-     * @returns    Return 'x' itself if it is in the range of 'lo' and 'hi'.
-     *     If one of the component of 'x' out of the range, it will
-     *     be respectively change to corresponding compoenent of 'lo' or 'hi' and return.
-     *     If both component of 'x' out of the range,
-     *     it will return 'lo' or 'hi' depend on the valueof 'x'.
+     * @returns  Return 'x' itself if it is in the range of 'lo' and 'hi'.
+     *           If one of the component of 'x' out of the range, it will
+     *           be respectively change to corresponding compoenent of 'lo' or 'hi' and return.
+     *           If both component of 'x' out of the range,
+     *           it will return 'lo' or 'hi' depend on the valueof 'x'.
      */
     public static Clamp(x: Vector, lo: Vector, hi: Vector): Vector {
         return Vector.Min(Vector.Max(x, lo), hi);
