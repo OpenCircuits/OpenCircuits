@@ -60,7 +60,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             "inputs": [CalcPortPos(V(-1, 0.9), V(-1, 0)), CalcPortPos(V(-1, 0), V(-1, 0)),
                        CalcPortPos(V(-1, -0.9), V(-1, 0))],
             "outputs": [CalcPortPos(V(1, 0.6), V(1, 0)), CalcPortPos(V(1, -0.6), V(1, 0))],
-            "slecets": [CalcPortPos(V(0, 1.2), V(0, 1)), CalcPortPos(V(0, -1.2), V(0, -1))],
+            "selects": [CalcPortPos(V(0, 1.2), V(0, 1)), CalcPortPos(V(0, -1.2), V(0, -1))],
         }],
     },
     "SRFlipFlop": {
@@ -69,7 +69,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             "inputs": [CalcPortPos(V(-1, 0.9), V(-1, 0)), CalcPortPos(V(-1, 0), V(-1, 0)),
                        CalcPortPos(V(-1, -0.9), V(-1, 0))],
             "outputs": [CalcPortPos(V(1, 0.6), V(1, 0)), CalcPortPos(V(1, -0.6), V(1, 0))],
-            "slecets": [CalcPortPos(V(0, 1.2), V(0, 1)), CalcPortPos(V(0, -1.2), V(0, -1))],
+            "selects": [CalcPortPos(V(0, 1.2), V(0, 1)), CalcPortPos(V(0, -1.2), V(0, -1))],
         }],
     },
     "TFlipFlop": {
