@@ -1,12 +1,10 @@
 import {DigitalNode, DigitalObj} from "core/models/types/digital";
 
-import {NodeView}                 from "core/views/NodeView";
-import {ViewFactory, ViewRecord}  from "core/views/ViewManager";
-import {DigitalCircuitController} from "digital/controllers/DigitalCircuitController";
+import {NodeView}                from "core/views/NodeView";
+import {ViewFactory, ViewRecord} from "core/views/ViewManager";
 
 import {ANDGateView}     from "./components/ANDGateView";
 import {LEDView}         from "./components/LEDView";
-import {NANDGateView}    from "./components/NANDGateView";
 import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
 import {DigitalViewInfo} from "./DigitalViewInfo";
@@ -23,7 +21,7 @@ export const Views: ViewRecord<DigitalObj, DigitalViewInfo> = {
     "Switch":   (c, o) => new SwitchView(c, o),
     "LED":      (c, o) => new LEDView(c, o),
     "ANDGate":  (c, o) => new ANDGateView(c, o),
-    "NANDGate": (c, o) => new NANDGateView(c, o),
+    "NANDGate": (c, o) => new ANDGateView(c, o),
 };
 
 export function CreateView(info: DigitalViewInfo, obj: DigitalObj) {

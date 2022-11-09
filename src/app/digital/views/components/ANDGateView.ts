@@ -8,7 +8,7 @@ import {Style} from "core/utils/rendering/Style";
 
 import {Line} from "core/utils/rendering/shapes/Line";
 
-import {ANDGate} from "core/models/types/digital";
+import {ANDGate, NANDGate} from "core/models/types/digital";
 
 import {RenderInfo}    from "core/views/BaseView";
 import {ComponentView} from "core/views/ComponentView";
@@ -16,8 +16,8 @@ import {ComponentView} from "core/views/ComponentView";
 import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class ANDGateView extends ComponentView<ANDGate, DigitalViewInfo> {
-    public constructor(info: DigitalViewInfo, obj: ANDGate) {
+export class ANDGateView extends ComponentView<ANDGate | NANDGate, DigitalViewInfo> {
+    public constructor(info: DigitalViewInfo, obj: ANDGate | NANDGate) {
         super(info, obj, V(1, 1), "and.svg");
     }
 

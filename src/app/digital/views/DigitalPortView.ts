@@ -5,7 +5,6 @@ import {V} from "Vector";
 import {Style} from "core/utils/rendering/Style";
 
 import {Circle} from "core/utils/rendering/shapes/Circle";
-import {Line}   from "core/utils/rendering/shapes/Line";
 
 import {AnyPort} from "core/models/types";
 
@@ -38,22 +37,27 @@ export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
         );
     }
 
-    protected override renderInternal({ renderer, selections }: RenderInfo): void {
+    // We need to override the renderInternal in PortView so that the not circle is drawn on top
+    // of the port rather than underneath it (happens if the not circle is drawn at the same time
+    // as the component)
+    protected override renderInternal(info: RenderInfo): void {
+        super.renderInternal(info);
+        const renderer = info.renderer;
+        const selections = info.selections;
+
         const parentSelected = selections.has(this.obj.parent);
         const selected = selections.has(this.obj.id);
 
-        const { origin, target } = this.pos.get();
+        const { origin } = this.pos.get();
 
-        const lineCol       = (parentSelected && !selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const borderCol     = (parentSelected ||  selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const circleFillCol = (parentSelected ||  selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
-        const lineStyle   = new Style(undefined, lineCol, IO_PORT_LINE_WIDTH);
-        const circleStyle = new Style(circleFillCol, borderCol, IO_PORT_BORDER_WIDTH);
 
-        renderer.draw(new Line(origin, target), lineStyle);
-        renderer.draw(new Circle(target, IO_PORT_RADIUS), circleStyle);
+        // This is necessary to make sure that the not circle is being drawn only for the NAND
+        // gate and not any other gate.
+        const parent = this.circuit.getPortParent(this.obj);
 
-        if (this.circuit.getPortParent(this.obj).kind === "NANDGate" && this.obj.group === "outputs"){
+        if (parent.kind === "NANDGate" && this.obj.group === "outputs"){
             const l = origin.x + GATE_NOT_CIRCLE_RADIUS;
             const notCircleStyle = new Style(circleFillCol, borderCol, DEFAULT_BORDER_WIDTH);
             renderer.draw(new Circle(V(l, origin.y), GATE_NOT_CIRCLE_RADIUS), notCircleStyle);
