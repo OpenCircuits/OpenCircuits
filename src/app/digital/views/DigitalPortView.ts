@@ -1,13 +1,32 @@
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, GATE_NOT_CIRCLE_RADIUS, IO_PORT_BORDER_WIDTH, IO_PORT_LINE_WIDTH, IO_PORT_RADIUS, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
+
+import {V} from "Vector";
+
+import {Style} from "core/utils/rendering/Style";
+
+import {Circle} from "core/utils/rendering/shapes/Circle";
+import {Line}   from "core/utils/rendering/shapes/Line";
+
 import {AnyPort} from "core/models/types";
 
 import {DigitalPort} from "core/models/types/digital";
 
-import {PortView} from "core/views/PortView";
+import {RenderInfo} from "core/views/BaseView";
+import {PortView}   from "core/views/PortView";
 
 import {DigitalViewInfo} from "./DigitalViewInfo";
 
 
+
 export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
+      public override isWireableWith(p: AnyPort): boolean {
+        return (
+            // We can wire it with `p` if we are an output port and they are an input/select port
+            //  or we are an input/select port and they are an output port
+            (this.obj.group === "outputs" && (p.group !== "outputs")) ||  // TODOnow: fix
+            (this.obj.group !== "outputs" && (p.group === "outputs"))     // TODOnow: fix
+        );
+    }
     public override isWireable(): boolean {
         // Output ports always can have new connections
         if (this.obj.group === "outputs") // TODOnow: fix
@@ -17,12 +36,25 @@ export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
         return (wires.length === 0);
     }
 
-    public override isWireableWith(p: AnyPort): boolean {
-        return (
-            // We can wire it with `p` if we are an output port and they are an input/select port
-            //  or we are an input/select port and they are an output port
-            (this.obj.group === "outputs" && (p.group !== "outputs")) ||  // TODOnow: fix
-            (this.obj.group !== "outputs" && (p.group === "outputs"))     // TODOnow: fix
-        );
+    protected override renderInternal( info: RenderInfo): void {
+        super.renderInternal(info);
+        const { renderer, selections } = info;
+        const parentSelected = selections.has(this.obj.parent);
+        const parent = this.circuit.getPortParent(this.obj);
+        const selected = selections.has(this.obj.id);
+
+        const { origin } = this.pos.get();
+        const borderCol     = (parentSelected || selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        const circleFillCol = (parentSelected || selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
+
+
+
+        if (parent.kind === "NORGate" && this.obj.group === "outputs"){
+            const l = origin.x + GATE_NOT_CIRCLE_RADIUS ;
+            const notCircleStyle = new Style(circleFillCol, borderCol, DEFAULT_BORDER_WIDTH);
+            renderer.draw(new Circle(V(l, origin.y), GATE_NOT_CIRCLE_RADIUS), notCircleStyle);
+        }
     }
+
+  
 }

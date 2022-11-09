@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, DEFAULT_FILL_COLOR, GATE_NOT_CIRCLE_RADIUS, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -23,9 +23,9 @@ export class ORGateView extends ComponentView<ORGate, DigitalViewInfo> {
         const selected = selections.has(this.obj.id);
 
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
+        
 
-        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+        
 
         // // Get size of model
         const size = this.transform.get().getSize();
