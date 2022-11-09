@@ -40,7 +40,7 @@ export const AllPropagators: PropagatorRecord = {
     "LED": Noprop,
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
-    "ORGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(OR)] }],
+    "ORGate":  ({ signals }) => [{ "outputs": [signals["inputs"].reduce(OR)]  }],
     "NORGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(NOR)] }],
 };
 
