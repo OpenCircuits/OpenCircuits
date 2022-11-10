@@ -26,7 +26,7 @@ export const DFF: Propagator<DigitalComponent> = ({ signals,state }) => {
         return state;
     })();
 
-    return [signals, state]
+    return [{ "outputs": state }, state]
 }
 export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     console.log(signals) // keep here for now
