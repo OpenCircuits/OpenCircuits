@@ -1,5 +1,7 @@
 import {DigitalComponent} from "core/models/types/digital";
+
 import {Signal} from "digital/models/sim/Signal";
+
 import {Propagator} from "../Propagators";
 
 // ToDo: actually get these implemented

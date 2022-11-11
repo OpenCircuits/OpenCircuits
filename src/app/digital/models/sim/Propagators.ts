@@ -1,6 +1,8 @@
 import {DigitalComponent} from "core/models/types/digital";
+
 import {Signal, SignalReducer} from "digital/models/sim/Signal";
-import {DFF, JKFF, SRFF, TFF}  from "digital/models/sim/propagators/FlipFlopProp";
+
+import {DFF, JKFF, SRFF, TFF} from "digital/models/sim/propagators/FlipFlopProp";
 
 
 // ToDo: need to be stricter
