@@ -92,7 +92,7 @@ export const WiringTool = (() => {
             const port2 = findPort(info);
 
 
-            //TODO
+            // TODO
             // the below group check shouldn't be necessary in future versions
             // currently CreateWire doesn't determine input vs output
             // so we do a quick check here. CreateWire should eventually though
