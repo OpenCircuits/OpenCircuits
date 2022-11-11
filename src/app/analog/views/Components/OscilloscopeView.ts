@@ -103,8 +103,6 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
             showGrid:   true,
             vecs:       {},
         };
-
-        
     }
 
     public getConfig() {
@@ -117,7 +115,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
     public override onPropChange(propKey: string): void {
         
         this.transform = new DirtyVar(
-            () => new Transform(V(this.obj.x, this.obj.y), this.obj.width,this.obj.height, this.obj.angle),
+            () => new Transform(V(this.obj.x, this.obj.y), V(this.obj.width,this.obj.height), this.obj.angle)
         );
 
 
