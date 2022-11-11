@@ -49,8 +49,8 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         ...DefaultDigitalPortInfo,
 
         PositionConfigs: [{
-                "inputs":  [{ origin: V(-0.49, 0), target: V(-1.2, 0), dir: V(-1, 0) }],
-                "outputs": [{ origin: V(0.45, 0), target: V(1.2, 0), dir: V(+1, 0) }],
+            "inputs":  [{ origin: V(-0.49, 0), target: V(-1.2, 0), dir: V(-1, 0) }],
+            "outputs": [{ origin: V(0.45, 0), target: V(1.2, 0), dir: V(+1, 0) }],
         }],
     },
 };

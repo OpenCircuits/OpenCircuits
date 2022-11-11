@@ -30,8 +30,7 @@ export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
 
     protected override renderInternal(info: RenderInfo): void {
         super.renderInternal(info);
-        const renderer = info.renderer;
-        const selections = info.selections;
+        const { renderer, selections } = info;
 
         const parent = this.circuit.getPortParent(this.obj);
 
@@ -40,8 +39,8 @@ export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
 
         const { origin } = this.pos.get();
 
-        const borderCol     = (parentSelected ||  selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const circleFillCol = (parentSelected ||  selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
+        const borderCol     = (parentSelected || selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        const circleFillCol = (parentSelected || selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
 
         if (parent.kind === "NOTGate" && this.obj.group === "outputs"){
             const l = origin.x + GATE_NOT_CIRCLE_RADIUS + 0.05;

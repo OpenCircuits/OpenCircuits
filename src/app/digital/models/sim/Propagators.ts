@@ -32,7 +32,7 @@ export const AllPropagators: PropagatorRecord = {
     "DigitalNode": ({ signals }) => [{ "outputs": signals["inputs"] }],
 
     // Switch has state which represents the user-defined isOn/isOff
-    "Switch": ({ state = [Signal.Off ] }) => [{ "outputs": state }, state],
+    "Switch": ({ state = [Signal.Off] }) => [{ "outputs": state }, state],
 
     // LEDs don't propagate a signal
     "LED": Noprop,

@@ -23,7 +23,7 @@ export namespace Signal {
     export function flip(s: Signal): Signal {
         if (!Signal.isStable(s))
             return Signal.Metastable;
-        return (Signal.isOff(s)) ? (Signal.On) : (Signal.Off)
+        return (Signal.isOff(s) ? (Signal.On) : (Signal.Off));
     }
 }
 
