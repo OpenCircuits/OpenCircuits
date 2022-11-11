@@ -4,9 +4,12 @@ import {Signal} from "digital/models/sim/Signal";
 
 import {Propagator} from "../Propagators";
 
+function up(clock: Signal, lastClock: Signal) {
+    return (clock && !lastClock) as boolean;
+}
+
 // ToDo: actually get these implemented
 export const DFF: Propagator<DigitalComponent> = ({ signals,state }) => {
-    console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["selects"];
 
@@ -23,7 +26,7 @@ export const DFF: Propagator<DigitalComponent> = ({ signals,state }) => {
         } else if (sel[1]) {
             return [0, clock];
         }
-        if(clock && !lastClock)
+        if(up(clock, lastClock))
             return [input[0], clock];
         return state;
     })();
@@ -31,7 +34,6 @@ export const DFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     return [{ "outputs": state }, state]
 }
 export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
-    console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["selects"];
     // split input into specific gates
@@ -40,7 +42,6 @@ export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     return [signals]
 }
 export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
-    console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["selects"];
     // split input into specific gates
@@ -49,7 +50,6 @@ export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     return [signals]
 }
 export const SRFF: Propagator<DigitalComponent> = ({ signals,state }) => {
-    console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["selects"];
     // split input into specific gates
