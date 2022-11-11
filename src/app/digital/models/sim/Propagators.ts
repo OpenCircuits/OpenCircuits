@@ -40,7 +40,7 @@ export const AllPropagators: PropagatorRecord = {
 
     // LEDs don't propagate a signal
     "LED": Noprop,
-    
+
     "ANDGate":  ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
     "XORGate":  ({ signals }) => [{ "outputs": [signals["inputs"].reduce(XOR)] }],
     "XNORGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(XNOR)] }],

@@ -4,28 +4,34 @@ import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {Style} from "core/utils/rendering/Style";
-
-import {XORGate} from "core/models/types/digital";
-import {RenderInfo}               from "core/views/BaseView";
-import {ComponentView}            from "core/views/ComponentView";
 import {Renderer} from "core/utils/rendering/Renderer";
+import {Style}    from "core/utils/rendering/Style";
+
 import {QuadCurve} from "core/utils/rendering/shapes/QuadCurve";
+
+import {XNORGate,XORGate} from "core/models/types/digital";
+
+
+import {RenderInfo}    from "core/views/BaseView";
+import {ComponentView} from "core/views/ComponentView";
+
 import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class XORGateView extends ComponentView<XORGate, DigitalViewInfo> {
-    public constructor(circuit: DigitalViewInfo, obj: XORGate) {
+// export class ANDGateView<Obj extends ANDGate | NANDGate> extends ComponentView<Obj, DigitalViewInfo>
+
+export class XORGateView<Obj extends XORGate | XNORGate> extends ComponentView<Obj, DigitalViewInfo> {
+    private readonly not: boolean;
+
+    public constructor(circuit: DigitalViewInfo, obj: Obj, not: boolean) {
         super(circuit, obj, V(1.2, 1), "or.svg");
+        this.not = not;
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
 
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
-
-        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
         // // Get size of model
         const size = this.transform.get().getSize();
@@ -34,7 +40,7 @@ export class XORGateView extends ComponentView<XORGate, DigitalViewInfo> {
         const inputs = this.circuit.getPortsFor(this.obj)
             .filter((p) => p.group === "inputs").length;
 
-        //Draw curves to visually match input ports
+        // Draw curves to visually match input ports
         XORGateView.drawQuadCurve(renderer,     0, size, inputs, borderCol);
         XORGateView.drawQuadCurve(renderer, -0.24, size, inputs, borderCol);
     }
