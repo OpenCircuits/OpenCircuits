@@ -9,11 +9,10 @@ export class SRLatchView extends ComponentView<SRLatch, DigitalViewInfo> {
         super(info, obj);
     }
 
-}export const ComponentRenderer = (() => {
-
     const drawBox = function(renderer:, transform: , selected: boolean, fillcol = ): void {
         const borderCol = (selected ?  : );
         const fillCol   = (selected ? : );
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
         renderer.draw(new Rectangle(V(), transform.getSize()), style);
     }
+}
