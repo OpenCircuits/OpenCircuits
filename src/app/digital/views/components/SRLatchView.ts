@@ -6,6 +6,14 @@ import {DigitalViewInfo} from "../DigitalViewInfo";
 
 export class SRLatchView extends ComponentView<SRLatch, DigitalViewInfo> {
     public constructor(info: DigitalViewInfo, obj: SRLatch) {
-        super(info, obj, V(1, 1), "and.svg");
+        super(info, obj);
     }
-}
+
+}export const ComponentRenderer = (() => {
+
+    const drawBox = function(renderer:, transform: , selected: boolean, fillcol = ): void {
+        const borderCol = (selected ?  : );
+        const fillCol   = (selected ? : );
+        const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
+        renderer.draw(new Rectangle(V(), transform.getSize()), style);
+    }
