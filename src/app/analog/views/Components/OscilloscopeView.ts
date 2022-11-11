@@ -75,6 +75,8 @@ function toShape(rect: Rect): Rectangle {
     return new Rectangle(rect.center, rect.size);
 }
 
+
+
 export type ScopeConfig = {
     showAxes: boolean;
     showLegend: boolean;
@@ -91,8 +93,9 @@ export type ScopeProp = {
 export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
     private config: ScopeConfig;
     private prop: ScopeProp;
+
     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
-        super(info, obj, V(1, 1));
+        super(info, obj, V(1));
         this.config = {
             showAxes:   true,
             showLegend: true,
@@ -108,6 +111,17 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
     }
     public getProp() {
         return this.prop;
+    }
+     
+    public override onPropChange(propKey: string): void {
+        super.onPropChange(propKey);
+        if (["x", "y", "angle", "width", "length", "inputs", "delay","samples"].includes(propKey))
+            this.transform.setDirty();
+            this.drawImg
+    }
+
+    public getWidth() {
+        return this.width;
     }
 
     
