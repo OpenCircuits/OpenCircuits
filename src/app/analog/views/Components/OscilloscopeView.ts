@@ -27,6 +27,8 @@ import { Oscilloscope, AnalogPortGroup } from "core/models/types/analog";
 import { AnalogViewInfo } from "../AnalogViewInfo";
 
 import { ComponentView } from "core/views/ComponentView";
+import {DirtyVar} from "core/utils/DirtyVar";
+import {Transform}                       from "math/Transform";
 
 import {RenderInfo}    from "core/views/BaseView";
 
@@ -93,9 +95,8 @@ export type ScopeProp = {
 export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
     private config: ScopeConfig;
     private prop: ScopeProp;
-
     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
-        super(info, obj, V(1));
+        super(info, obj, V(1,1));
         this.config = {
             showAxes:   true,
             showLegend: true,
@@ -114,15 +115,18 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
     }
      
     public override onPropChange(propKey: string): void {
+        
+        this.transform = new DirtyVar(
+            () => new Transform(V(this.obj.x, this.obj.y), this.obj.width,this.obj.height, this.obj.angle),
+        );
+
+
         super.onPropChange(propKey);
-        if (["x", "y", "angle", "width", "length", "inputs", "delay","samples"].includes(propKey))
+        if (["x", "y", "angle", "width", "height", "inputs", "delay","samples"].includes(propKey))
             this.transform.setDirty();
-            this.drawImg
     }
 
-    public getWidth() {
-        return this.width;
-    }
+ 
 
     
 

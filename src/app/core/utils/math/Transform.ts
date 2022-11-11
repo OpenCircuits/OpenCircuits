@@ -16,6 +16,8 @@ export class Transform {
     private scale: Vector;
     private angle: number;
     private size: Vector;
+    // private width: number;
+    // private height: number;
 
     private corners: Vector[];
     private localCorners: Vector[];
@@ -43,7 +45,6 @@ export class Transform {
         this.pos = V(pos.x, pos.y);
         this.size = V(size.x, size.y);
         this.angle = angle;
-
         this.scale = V(1, 1);
         this.corners = [];
         this.localCorners = [];
