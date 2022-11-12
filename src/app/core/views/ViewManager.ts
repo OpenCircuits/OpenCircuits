@@ -230,20 +230,18 @@ export class ViewManager<
         filter = (_: Obj) => true,
     ): undefined | Obj {
         // Loop through each view
-//         for (const view of this) {
-//             if (!filter(view.getObj()))
-//                 continue;
-//             if (view.contains(pos))
-//                 return view.getObj();
-//         }
-
-        const box = Transform.FromCorners(pos, pos);
-        const objects = this.findObjects(box);
-        const nonPortObjs = objects.filter((o) => (o.baseKind !== "Port"));
-        if(nonPortObjs.length !== 0)
-            return nonPortObjs[0];
-        if (objects.length !== 0)
-            return objects[0];
+        for (const view of this) {
+            if (!filter(view.getObj()))
+                continue;
+            if (view.contains(pos)){
+                if(view.getObj().baseKind === "Port"){
+                        if (this.getView(this.circuit.getPortParent(view.getObj()).id).contains(pos)){
+                            return this.circuit.getPortParent(view.getObj());
+                        }
+                    }
+                return view.getObj();
+            }
+        }
 
     }
 
