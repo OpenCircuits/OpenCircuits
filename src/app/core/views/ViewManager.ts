@@ -233,14 +233,8 @@ export class ViewManager<
         for (const view of this) {
             if (!filter(view.getObj()))
                 continue;
-            if (view.contains(pos)){
-                if(view.getObj().baseKind === "Port"){
-                        if (this.getView(this.circuit.getPortParent(view.getObj()).id).contains(pos)){
-                            return this.circuit.getPortParent(view.getObj());
-                        }
-                    }
+            if (view.contains(pos))
                 return view.getObj();
-            }
         }
 
     }
