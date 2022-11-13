@@ -1,4 +1,4 @@
-import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, GATE_NOT_CIRCLE_RADIUS, IO_PORT_BORDER_WIDTH, IO_PORT_LINE_WIDTH, IO_PORT_RADIUS, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
+import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_FILL_COLOR, GATE_NOT_CIRCLE_RADIUS, SELECTED_BORDER_COLOR, SELECTED_FILL_COLOR} from "core/utils/Constants";
 
 import {V} from "Vector";
 
@@ -42,8 +42,7 @@ export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
     // as the component)
     protected override renderInternal(info: RenderInfo): void {
         super.renderInternal(info);
-        const renderer = info.renderer;
-        const selections = info.selections;
+        const { renderer, selections } = info;
 
         const parentSelected = selections.has(this.obj.parent);
         const selected = selections.has(this.obj.id);
@@ -53,8 +52,7 @@ export class DigitalPortView extends PortView<DigitalPort, DigitalViewInfo> {
         const borderCol     = (parentSelected ||  selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const circleFillCol = (parentSelected ||  selected ? SELECTED_FILL_COLOR   : DEFAULT_FILL_COLOR);
 
-        // This is necessary to make sure that the not circle is being drawn only for the NAND
-        // gate and not any other gate.
+        // This is necessary to make sure that the not circle is only being drawn for the NAND gate
         const parent = this.circuit.getPortParent(this.obj);
 
         if (parent.kind === "NANDGate" && this.obj.group === "outputs"){
