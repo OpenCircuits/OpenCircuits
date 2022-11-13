@@ -236,7 +236,6 @@ export class ViewManager<
             if (view.contains(pos))
                 return view.getObj();
         }
-
     }
 
     public findObjects(bounds: Transform): Obj[] {
