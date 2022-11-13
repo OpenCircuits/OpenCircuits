@@ -16,8 +16,8 @@ import {ComponentView} from "core/views/ComponentView";
 import {DigitalViewInfo} from "../DigitalViewInfo";
 
 
-export class ANDGateView extends ComponentView<ANDGate | NANDGate, DigitalViewInfo> {
-    public constructor(info: DigitalViewInfo, obj: ANDGate | NANDGate) {
+export class ANDGateView<Gate extends ANDGate | NANDGate> extends ComponentView<Gate, DigitalViewInfo> {
+    public constructor(info: DigitalViewInfo, obj: Gate) {
         super(info, obj, V(1, 1), "and.svg");
     }
 
