@@ -225,6 +225,13 @@ export class ViewManager<
         }
     }
 
+    // TODO
+    // Add an exception for Nodes
+    // Currently if there are multiple Obj directly on top of each other
+    // this will select one of them arbitrarily. In most cases this isn't
+    // a big deal but nodes and their input and output ports all occupy the
+    // same x, y position so this will typically give you a port rather
+    // than the node
     public findNearestObj(
         pos: Vector,
         filter = (_: Obj) => true,
