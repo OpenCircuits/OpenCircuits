@@ -92,11 +92,14 @@ export type ScopeProp = {
     //nothing
 }
 
+
+//CUSTOM OSCILLOSCOPE VIEW (DIFFERENT FROM TYPICAL COMPONENT VIEW)
 export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
+    //Don't really know what scope COnfig is? We personally created it since we needed to reference it 
     private config: ScopeConfig;
     private prop: ScopeProp;
     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
-        super(info, obj, V(1,1));
+        super(info, obj, V(8,4));
         this.config = {
             showAxes:   true,
             showLegend: true,
@@ -112,6 +115,8 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         return this.prop;
     }
      
+
+    //OUR IMPLEMENTATION THAT CHANGES THE DIMENSIONS OF THE OSCILLOSCOPE 
     public override onPropChange(propKey: string): void {
         //create a new transform function "override" current dimensions and make a new box size for the oscilloscope.
         //width and height must be in a vector since Transform takes in three parameters.
@@ -124,21 +129,18 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
             this.transform.setDirty(); 
     }
 
-        public setProp(key: string, val: Prop): void {
-            // super.setProp(key, val);
-            if (key === "size") {
-                this.setSize(val as Vector);
-                this.onTransformChange();
-                this.ports.updatePortPositions();
-            }
-        } 
+        // public setProp(key: string, val: Prop): void {
+        //     // super.setProp(key, val);
+        //     if (key === "size") {
+        //         this.setSize(val as Vector);
+        //         this.onTransformChange();
+        //         this.ports.updatePortPositions();
+        //     }
+        // } 
 
 
- 
-
-    
-
-    protected override renderComponent({ renderer, selections }: RenderInfo): void {
+        //FUNCTION USED TO ACTUALLY RENDER THE OSCILLOSCOPE!! DRAWS THE disagram/ graph ON OSCILLOSCOPE 
+    public override renderComponent({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
 
         const transform = this.getTransform();
@@ -204,6 +206,8 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         const plotRect = axesGridRect.subMargin((showAxes ? AXES_MARGIN : {}));
         const legendRect = innerRect.subMargin({ left: axesInfoRect.width }).subMargin(LEGEND_PADDING);
 
+
+        //NOT NEEDED RIGHT NOW FOR RENDERING YET 
         // Debug drawing  FIXING LATER
         // if (this.info.debugOptions.debugSelectionBounds) {
         //     renderer.draw(toShape(baseRect), new Style("#999999", "#000000", 0.02));

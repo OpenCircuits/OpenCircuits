@@ -48,7 +48,7 @@ export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
 
         Positions: {
             "1": {
-                "0:0": { origin: V(-0.5, 0), target: V(-1, 0), dir: V(-1, 0) },
+                "0:0": { origin: V(-4, 0), target: V(-5, 0), dir: V(-1, 0) },
                 // "0:1": { origin: V(+0.5, 0), target: V(+3, 0), dir: V(+1, 0) },
             },
         },

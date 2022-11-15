@@ -34,7 +34,7 @@ export const DefaultAnalogComponent: { [C in AnalogComponent as C["kind"]]: Comp
     "AnalogNode": (id) => ({ ...DefaultComponent(id), kind: "AnalogNode"                 }),
     "Ground":     (id) => ({ ...DefaultComponent(id), kind: "Ground"                     }),
     "Resistor":   (id) => ({ ...DefaultComponent(id), kind: "Resistor", resistance: 1000 }),
-    "Oscilloscope": (id) => ({ ...DefaultComponent(id), kind: "Oscilloscope", height: 1, width: 1, inputs: 1 , delay: 100, samples: 100 }),
+    "Oscilloscope": (id) => ({ ...DefaultComponent(id), kind: "Oscilloscope", height: 4, width: 8, inputs: 1 , delay: 100, samples: 100 }),
 };
 
 export const DefaultAnalogPort: PortFactory<AnalogPort> =
