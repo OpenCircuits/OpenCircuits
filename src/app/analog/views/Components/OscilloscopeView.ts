@@ -113,15 +113,18 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
     }
      
     public override onPropChange(propKey: string): void {
-        
+        //create a new transform function "override" current dimensions and make a new box size for the oscilloscope.
+        //width and height must be in a vector since Transform takes in three parameters.
         this.transform = new DirtyVar(
             () => new Transform(V(this.obj.x, this.obj.y), V(this.obj.width,this.obj.height), this.obj.angle)
         );
 
-
         super.onPropChange(propKey);
         if (["x", "y", "angle", "width", "height", "inputs", "delay","samples"].includes(propKey))
             this.transform.setDirty();
+
+
+        
     }
 
  
