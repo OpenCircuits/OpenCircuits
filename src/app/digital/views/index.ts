@@ -10,7 +10,7 @@ import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
 import {DigitalViewInfo} from "./DigitalViewInfo";
 import {DigitalWireView} from "./DigitalWireView";
-
+import {SRLatchView}     from "./components/SRLatchView"
 
 class DigitalNodeView extends NodeView<DigitalNode, DigitalViewInfo> {}
 
