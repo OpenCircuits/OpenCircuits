@@ -2,7 +2,7 @@ import {PropInfoRecord} from "core/models/PropInfo";
 
 import {DigitalObj} from "core/models/types/digital";
 
-import {DefaultComponentPropInfo, DefaultPortPropInfo, DefaultWirePropInfo} from "core/views/DefaultPropInfo";
+import {ConstantNumberPropInfo, DefaultComponentPropInfo, DefaultPortPropInfo, DefaultWirePropInfo} from "core/views/DefaultPropInfo";
 
 
 export const DigitalPropInfo: PropInfoRecord<DigitalObj> = {
@@ -10,7 +10,8 @@ export const DigitalPropInfo: PropInfoRecord<DigitalObj> = {
     "DigitalWire": DefaultWirePropInfo,
     "DigitalNode": DefaultComponentPropInfo,
 
-    "Switch":  DefaultComponentPropInfo,
-    "LED":     DefaultComponentPropInfo,
-    "ANDGate": DefaultComponentPropInfo,
+    "Switch":         DefaultComponentPropInfo,
+    "LED":            DefaultComponentPropInfo,
+    "ANDGate":        DefaultComponentPropInfo,
+    "ConstantNumber": ConstantNumberPropInfo,
 } as const;

@@ -10,7 +10,7 @@ export type DigitalNode = Component & { kind: "DigitalNode" };
 export type ANDGate         = Component & { kind: "ANDGate" };
 export type Switch          = Component & { kind: "Switch"  };
 export type LED             = Component & { kind: "LED", color: string };
-export type ConstantNumber  = Component & { kind: "ConstantNumber"  };
+export type ConstantNumber  = Component & { kind: "ConstantNumber", inputNum: number };
 
 export type DigitalComponent =
     | DigitalNode
@@ -23,11 +23,11 @@ export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;
 
 
 export const DefaultDigitalComponent: { [C in DigitalComponent as C["kind"]]: ComponentFactory<C> } = {
-    "DigitalNode":    (id) => ({ ...DefaultComponent(id), kind: "DigitalNode"           }),
-    "Switch":         (id) => ({ ...DefaultComponent(id), kind: "Switch"                }),
-    "LED":            (id) => ({ ...DefaultComponent(id), kind: "LED", color: "#ffffff" }),
-    "ANDGate":        (id) => ({ ...DefaultComponent(id), kind: "ANDGate"               }),
-    "ConstantNumber": (id) => ({ ...DefaultComponent(id), kind: "ConstantNumber"        }),
+    "DigitalNode":    (id) => ({ ...DefaultComponent(id), kind: "DigitalNode"                 }),
+    "Switch":         (id) => ({ ...DefaultComponent(id), kind: "Switch"                      }),
+    "LED":            (id) => ({ ...DefaultComponent(id), kind: "LED", color: "#ffffff"       }),
+    "ANDGate":        (id) => ({ ...DefaultComponent(id), kind: "ANDGate"                     }),
+    "ConstantNumber": (id) => ({ ...DefaultComponent(id), kind: "ConstantNumber", inputNum: 0 }),
 };
 
 export const DefaultDigitalPort: PortFactory<DigitalPort> =

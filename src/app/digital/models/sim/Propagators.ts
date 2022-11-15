@@ -1,3 +1,5 @@
+import {DecimalToBCD} from "math/MathUtils";
+
 import {DigitalComponent} from "core/models/types/digital";
 
 import {Signal, SignalReducer} from "digital/models/sim/Signal";
@@ -37,8 +39,11 @@ export const AllPropagators: PropagatorRecord = {
     // LEDs don't propagate a signal
     "LED": Noprop,
 
-    "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
+    "ANDGate":        ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
+    // "ConstantNumber": ({ c }) => [{ "outputs": [DecimalToBCD(c.numInputs).map(Signal.fromBool)] }],
+    "ConstantNumber": ({ c }) => [{ "outputs": DecimalToBCD(c.inputNum).map(Signal.fromBool) }],
 };
+
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
     const propagator = AllPropagators[c.kind] as Propagator<DigitalComponent>;
