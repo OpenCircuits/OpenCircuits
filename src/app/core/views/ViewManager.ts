@@ -226,12 +226,7 @@ export class ViewManager<
     }
 
     // TODO
-    // Add an exception for Nodes
-    // Currently if there are multiple Obj directly on top of each other
-    // this will select one of them arbitrarily. In most cases this isn't
-    // a big deal but nodes and their input and output ports all occupy the
-    // same x, y position so this will typically give you a port rather
-    // than the node
+    // The node issue should eventually solve itself
     public findNearestObj(
         pos: Vector,
         filter = (_: Obj) => true,
@@ -240,8 +235,20 @@ export class ViewManager<
         for (const view of this) {
             if (!filter(view.getObj()))
                 continue;
-            if (view.contains(pos))
+            if (view.contains(pos)){
+                const obj = view.getObj();
+                if (obj.baseKind === "Port"){
+                    // Since nodes and their ports are directly on top of each other,
+                    // we check to see if the port's parent also contains pos and return
+                    // that instead
+                    const parent = this.circuit.getPortParent(obj);
+                    const parentView = this.getView(parent.id);
+                    if(parentView.contains(pos)){
+                        return parent as Obj;
+                    }
+                }
                 return view.getObj();
+            }
         }
     }
 
