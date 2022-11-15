@@ -226,7 +226,7 @@ export class ViewManager<
     }
 
     // TODO
-    // The node issue should eventually solve itself
+    // The node issue should eventually solve itself with the planned view refactor
     public findNearestObj(
         pos: Vector,
         filter = (_: Obj) => true,
