@@ -45,16 +45,6 @@ export const WiringTool = (() => {
         if (validPorts.length === 0)
             return undefined;
 
-        // The below is necessary because getNearestObj in viewManager always finds a port before their parent node
-        // so trying to select a node immediately starts wiring one of its ports. So here were check to see if there
-        // is also a node under the mouse and if there is we tell the tool there are no valid ports to start wiring
-        const allNodes = [...viewManager]
-            .filter((view) => (view.getObj().kind === "DigitalNode")) as Array<NodeView<AnyNode>>;
-        const validNodes = allNodes
-            .filter((view) => view.contains(worldMousePos));
-
-        if(validNodes.length !== 0)
-            return undefined;
 
         // Find closest port to the mouse
         return validPorts
@@ -77,6 +67,9 @@ export const WiringTool = (() => {
                         input.getTouchCount() === 1) ||
                     (event.type === "click")
                 ) && (port !== undefined)
+                // without this the wiring tool still takes priority over DefaultTool when
+                // trying to select a node
+                && (info.circuit.getPortParent(port).kind !== "DigitalNode")
             );
         },
         shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {
