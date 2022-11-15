@@ -41,7 +41,7 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate":        ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
     // "ConstantNumber": ({ c }) => [{ "outputs": [DecimalToBCD(c.numInputs).map(Signal.fromBool)] }],
-    "ConstantNumber": ({ c }) => [{ "outputs": DecimalToBCD(c.inputNum).map(Signal.fromBool) }],
+    "ConstantNumber": ({ c }) => [{ "outputs": DecimalToBCD(c.inputNum, 4).map(Signal.fromBool) }],
 };
 
 
