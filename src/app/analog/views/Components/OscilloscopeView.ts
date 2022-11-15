@@ -121,11 +121,18 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
         super.onPropChange(propKey);
         if (["x", "y", "angle", "width", "height", "inputs", "delay","samples"].includes(propKey))
-            this.transform.setDirty();
-
-
-        
+            this.transform.setDirty(); 
     }
+
+        public setProp(key: string, val: Prop): void {
+            // super.setProp(key, val);
+            if (key === "size") {
+                this.setSize(val as Vector);
+                this.onTransformChange();
+                this.ports.updatePortPositions();
+            }
+        } 
+
 
  
 

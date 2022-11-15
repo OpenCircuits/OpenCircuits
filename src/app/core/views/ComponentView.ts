@@ -42,7 +42,7 @@ export class ComponentView<
             this.img = img;
         }
     }
-
+    
     public override onPropChange(propKey: string): void {
         super.onPropChange(propKey);
 
