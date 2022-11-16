@@ -19,13 +19,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
 
-    - name: Setup GCloud
-      uses: google-github-actions/setup-gcloud@main
+    - name: GCloud Auth
+      uses: google-github-actions/auth@v1
       with:
-        version: '274.0.0'
-        service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
+        workload_identity_provider: 'projects/995513074839/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+        service_account: 'github-actions@opencircuits-nightly.iam.gserviceaccount.com'
+
+    - name: Setup GCloud
+      uses: google-github-actions/setup-gcloud@v1
 
     - name: Set Node.js 16.x
       uses: actions/setup-node@main
