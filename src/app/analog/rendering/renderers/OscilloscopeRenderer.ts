@@ -12,7 +12,6 @@ import {Margin, Rect}         from "math/Rect";
 import {Renderer} from "core/rendering/Renderer";
 import {Style}    from "core/rendering/Style";
 
-import {Line}      from "core/rendering/shapes/Line";
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
@@ -75,44 +74,53 @@ export const OscilloscopeRenderer = ({
 
         renderer.draw(new Rectangle(V(), size), style);
 
-        if (!info.sim || !info.sim.hasData())
-            return;
-        const curPlot = info.sim.getCurPlotID();
-        if (!curPlot)
-            return;
-
         const { showAxes, showLegend, showGrid, vecs } = o.getConfig();
 
         const enabledVecIDs = (Object.keys(vecs) as Array<`${string}.${string}`>).filter((id) => vecs[id].enabled);
         const allData = enabledVecIDs.map((id) => info.sim!.getVecData(id));
 
-        if (!allData || Object.entries(allData).length === 0)
-            return;
+        // Gather data
+        const [xData, sampledData] = (() => {
+            const sim = info.sim;
+            if (!sim || !sim.hasData())
+                return [[], []];
 
-        // Indepdendent axis data is always last element
-        const xDataRaw = info.sim!.getVecData(info.sim!.getFullVecIDs()[info.sim!.getFullVecIDs().length - 1]);
+            // Indepdendent axis data is always last element
+            const xDataRaw = sim.getVecData(sim.getFullVecIDs()[sim.getFullVecIDs().length - 1]);
 
-        // Get sampled data
-        //  - uniform samples of `xData`
-        const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
-            const samples = Math.min(data.length, o.getProp("samples") as number);
+            // Get sampled data
+            //  - uniform samples of `xData`
+            const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
+                const samples = Math.min(data.length, o.getProp("samples") as number);
 
-            return new Array(samples).fill(0)
-                .map((_, i) => data[Math.floor(i * data.length / samples)]);
-        });
+                return new Array(samples).fill(0)
+                    .map((_, i) => data[Math.floor(i * data.length / samples)]);
+            });
 
-        // TODO: Normalize data to best unit
+            return [xData, sampledData];
+        })();
 
-        // Find value range
-        const minX = xData[0], maxX = xData.at(-1)!;
-        const [minVal, maxVal] = sampledData.reduce<[number, number]>(
-            ([prevMin, prevMax], cur) =>
-                cur.reduce<[number, number]>(([prevMin, prevMax], cur) => [
-                    Math.min(prevMin, cur),
-                    Math.max(prevMax, cur),
-                ], [prevMin, prevMax]),
-            [Infinity, -Infinity]
-        );
+        // Calculate bounds from data
+        const [minX, maxX, minVal, maxVal] = (() => {
+            // If no data (i.e., no sim yet), return default bounds [0, 1] x [0, 1]
+            if (xData.length === 0 || sampledData.length === 0)
+                return [0, 1, 0, 1] as const;
+
+            // TODO: Normalize data to best unit
+
+            // Find value range
+            const minX = xData[0], maxX = xData.at(-1)!;
+            const [minVal, maxVal] = sampledData.reduce<[number, number]>(
+                ([prevMin, prevMax], cur) =>
+                    cur.reduce<[number, number]>(([prevMin, prevMax], cur) => [
+                        Math.min(prevMin, cur),
+                        Math.max(prevMax, cur),
+                    ], [prevMin, prevMax]),
+                [Infinity, -Infinity]
+            );
+
+            return [minX, maxX, minVal, maxVal] as const;
+        })();
 
         // Subdivide area into bounding box rectangles for each segment of the graph display
         //   baseRect    : => Area for entire graph display
