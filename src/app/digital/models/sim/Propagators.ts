@@ -40,11 +40,13 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 
-    "Multiplexer": ({ signals }) => {
-        return [{ "outputs": [signals['inputs'][parseInt(signals["selects"].join(''), 2)]] }]
-    },
+    "Multiplexer": ({ signals }) => [{ "outputs": [signals['inputs'][parseInt(signals["selects"].join(''), 2)]] }],
 
-    "Demultiplexer": Noprop,
+    "Demultiplexer": ({ signals }) => {
+        const outputs = Array(signals['outputs'].length).fill(0);
+        outputs[parseInt(signals["selects"].join(''), 2)] = signals['inputs'][0]
+        return [{"outputs": outputs}];
+    },
 };
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {
