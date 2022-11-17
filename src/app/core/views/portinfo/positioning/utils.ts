@@ -28,14 +28,17 @@ export const CalcMuxPortPositions2 = (amt: number, spacing: number, width: numbe
     const size = V((0.5 + amt/2), (1  + Math.pow(2, amt-1)));
     const w = size.x;
     const height = size.y;
-    const slope = MULTIPLEXER_HEIGHT_OFFSET / width;
+    const slope = -MULTIPLEXER_HEIGHT_OFFSET / width;
     const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
 
         //port.setOriginPos(V(x, y));
        // port.setTargetPos(V(x, -height/2 - IO_PORT_LENGTH));
-    return linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt).map((h, i) => ({
-        origin: V(100, midPortOriginOffset - slope * h),
+    const pos = linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt).map((h, i) => ({
+        origin: V(h, midPortOriginOffset - slope * h),
         target: V(h, -height/2 - IO_PORT_LENGTH),
         dir: dir
     }))
+
+    console.log(pos)
+    return pos
 };

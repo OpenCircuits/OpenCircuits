@@ -86,7 +86,8 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 //     port.setTargetPos(V(x, -height/2 - IO_PORT_LENGTH));
                 // });
                 console.log('num selects', numSelects)
-                const positions = CalcMuxPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
+                //const positions = CalcMuxPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
+                const positions = CalcMuxPortPositions2(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
                 //console.log(positions);
                 // positions.forEach((position, i) => {
                 //     position.target.x 
@@ -131,7 +132,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
 
                 return CalcMuxPortPositions2(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
-                
+
                 // ports.forEach((port, i) => {
                 //     const x = this.calcSpacingPos(i, ports.length, 1);
                 //     const y = midPortOriginOffset - slope * x;
