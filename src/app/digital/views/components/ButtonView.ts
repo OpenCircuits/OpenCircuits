@@ -2,7 +2,7 @@ import {SVGDrawing} from "svg2canvas";
 
 import {SELECTED_FILL_COLOR} from "core/utils/Constants";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Images} from "core/utils/Images";
 
@@ -14,7 +14,7 @@ import {RenderInfo}             from "core/views/BaseView";
 import {PressableComponentView} from "core/views/PressableComponentView";
 
 import {DigitalViewInfo} from "../DigitalViewInfo";
-
+import {CircleContains} from "math/MathUtils";
 
 export class ButtonView extends PressableComponentView<Button, DigitalViewInfo> {
     public static BOUNDING_HEIGHT = 1.54;
@@ -32,16 +32,21 @@ export class ButtonView extends PressableComponentView<Button, DigitalViewInfo> 
     public override onPropChange(propKey: string): void {
         super.onPropChange(propKey);
 
+        if (["x", "y", "angle"].includes(propKey))
+            this.pressableTransform.setDirty();
     }
-
+    public override isWithinPressBounds(pt: Vector): boolean {
+        return CircleContains(this.pressableTransform.get().getPos(), 0.45, pt); //reduces pressable area within the red area.
+    }
     // TODO: move this to a SwitchController or something?
     //  it also should be causing a propagation change, not an image change
     //  and the image will be calculated based on the propagation
-    public override onPress(): void {
-        this.info.sim.setState(this.obj, [Signal.fromBool(!this.isOn())]);
+    
+    public override onPress() : void {
+        this.info.sim.setState(this.obj,[Signal.On]);
     }
     public override onRelease(): void {
-        this.info.sim.setState(this.obj, [Signal.fromBool(this.isOff())]);
+        this.info.sim.setState(this.obj,[Signal.Off]);
     }
     protected override drawImg({ renderer, selections }: RenderInfo): void {
         const selected = selections.has(this.obj.id);
@@ -54,9 +59,5 @@ export class ButtonView extends PressableComponentView<Button, DigitalViewInfo> 
 
     public isOn(): boolean {
         return Signal.isOn(this.info.sim.getState(this.obj)[0]);
-
-    }
-    public isOff(): boolean {
-        return Signal.isOff(this.info.sim.getState(this.obj)[1]);
     }
 }
