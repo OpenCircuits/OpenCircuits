@@ -86,6 +86,7 @@ export class ComponentView<
 
     public getTransform(): Transform {
         return this.transform.get();
+        
     }
 
     public getSize(): Vector {

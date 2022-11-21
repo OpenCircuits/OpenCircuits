@@ -141,56 +141,66 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
         //FUNCTION USED TO ACTUALLY RENDER THE OSCILLOSCOPE!! DRAWS THE disagram/ graph ON OSCILLOSCOPE 
     public override renderComponent({ renderer, selections }: RenderInfo): void {
-        const selected = selections.has(this.obj.id);
-
         const transform = this.getTransform();
         const size = transform.getSize();
-        const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
 
-        const fillCol = (selected ? SELECTED_FILL_COLOR : "#ffffff");
+        // const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        const borderCol = (DEFAULT_BORDER_COLOR);
+
+        // const fillCol = (selected ? SELECTED_FILL_COLOR : "#ffffff");
+        const fillCol = ( "#ffffff");
+
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
         renderer.draw(new Rectangle(V(), size), style);
 
-        if (!this.info.sim || !this.info.sim.hasData())
-            return;
-        const curPlot = this.info.sim.getCurPlotID();
-        if (!curPlot)
-            return;
-
         const { showAxes, showLegend, showGrid, vecs } = this.getConfig();
-
 
         const enabledVecIDs = (Object.keys(vecs) as Array<`${string}.${string}`>).filter((id) => vecs[id].enabled);
         const allData = enabledVecIDs.map((id) => this.info.sim!.getVecData(id));
 
-        if (!allData || Object.entries(allData).length === 0)
-            return;
+        // Gather data
+        const [xData, sampledData] = (() => {
+            const sim = this.info.sim;
+            if (!sim || !sim.hasData())
+                return [[], []];
 
-        // Indepdendent axis data is always last element
-        const xDataRaw = this.info.sim!.getVecData(this.info.sim!.getFullVecIDs()[this.info.sim!.getFullVecIDs().length - 1]);
+            // Indepdendent axis data is always last element
+            const xDataRaw = sim.getVecData(sim.getFullVecIDs()[sim.getFullVecIDs().length - 1]);
 
-        // Get sampled data
-        //  - uniform samples of `xData`
-        const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
-            const samples = Math.min(data.length, this.getProp() as number);
+            // Get sampled data
+            //  - uniform samples of `xData`
+            const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
+                const samples = Math.min(data.length, o.getProp("samples") as number);
 
-            return new Array(samples).fill(0)
-                .map((_, i) => data[Math.floor(i * data.length / samples)]);
-        });
+                return new Array(samples).fill(0)
+                    .map((_, i) => data[Math.floor(i * data.length / samples)]);
+            });
 
-        // TODO: Normalize data to best unit
+            return [xData, sampledData];
+        })();
 
-        // Find value range
-        const minX = xData[0], maxX = xData.at(-1)!;
-        const [minVal, maxVal] = sampledData.reduce<[number, number]>(
-            ([prevMin, prevMax], cur) =>
-                cur.reduce<[number, number]>(([prevMin, prevMax], cur) => [
-                    Math.min(prevMin, cur),
-                    Math.max(prevMax, cur),
-                ], [prevMin, prevMax]),
-            [Infinity, -Infinity]
-        );
+        // Calculate bounds from data
+        const [minX, maxX, minVal, maxVal] = (() => {
+            // If no data (i.e., no sim yet), return default bounds [0, 1] x [0, 1]
+            if (xData.length === 0 || sampledData.length === 0)
+                return [0, 1, 0, 1] as const;
+
+            // TODO: Normalize data to best unit
+
+            // Find value range
+            const minX = xData[0], maxX = xData.at(-1)!;
+            const [minVal, maxVal] = sampledData.reduce<[number, number]>(
+                ([prevMin, prevMax], cur) =>
+                    cur.reduce<[number, number]>(([prevMin, prevMax], cur) => [
+                        Math.min(prevMin, cur),
+                        Math.max(prevMax, cur),
+                    ], [prevMin, prevMax]),
+                [Infinity, -Infinity]
+            );
+
+            return [minX, maxX, minVal, maxVal] as const;
+        })();
 
         // Subdivide area into bounding box rectangles for each segment of the graph display
         //   baseRect    : => Area for entire graph display
@@ -206,10 +216,8 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         const plotRect = axesGridRect.subMargin((showAxes ? AXES_MARGIN : {}));
         const legendRect = innerRect.subMargin({ left: axesInfoRect.width }).subMargin(LEGEND_PADDING);
 
-
-        //NOT NEEDED RIGHT NOW FOR RENDERING YET 
-        // Debug drawing  FIXING LATER
-        // if (this.info.debugOptions.debugSelectionBounds) {
+        // Debug drawing
+        // if (info.debugOptions.debugSelectionBounds) {
         //     renderer.draw(toShape(baseRect), new Style("#999999", "#000000", 0.02));
         //     renderer.draw(toShape(innerRect), new Style("#ff0000", "#000000", 0.02));
         //     renderer.draw(toShape(axesInfoRect), new Style("#00ff00", "#000000", 0.02));
@@ -246,6 +254,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
             renderer.save();
             renderer.setPathStyle({ lineCap: "square" });
             renderer.setStyle(new Style(undefined, GRID_LINE_COLOR, GRID_LINE_WIDTH), 0.5);
+
             const marks = getMarks(innerBounds);
 
             // We want to evenly space the grid such that it hits each axis-mark
@@ -272,7 +281,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
             const marks = getMarks(innerBounds);
 
-            //   and draw marks on the axes
+            // Create and draw marks on the axes
             renderer.strokeVLines(marks.xs, bounds.bottom, AXIS_MARK_LENGTH, "middle");
             renderer.strokeHLines(marks.ys, bounds.left, AXIS_MARK_LENGTH, "center");
 
@@ -346,7 +355,5 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
             renderer.restore();
         }
-
-        
-    }
+    },
 };
