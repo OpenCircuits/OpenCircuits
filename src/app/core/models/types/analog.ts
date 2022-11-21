@@ -24,10 +24,10 @@ export type AnalogObj = AnalogPort | AnalogWire | AnalogComponent;
 
 
 export const DefaultAnalogComponent: { [C in AnalogComponent as C["kind"]]: ComponentFactory<C> } = {
-    "AnalogNode": (id) => ({ ...DefaultComponent(id), kind: "AnalogNode"                 }),
-    "Ground":     (id) => ({ ...DefaultComponent(id), kind: "Ground"                     }),
-    "Resistor":   (id) => ({ ...DefaultComponent(id), kind: "Resistor", resistance: 1000 }),
-    "Capacitor":   (id) => ({ ...DefaultComponent(id), kind: "Capacitor", capacitance: 1000 }),
+    "AnalogNode": (id) => ({ ...DefaultComponent(id), kind: "AnalogNode"                   }),
+    "Ground":     (id) => ({ ...DefaultComponent(id), kind: "Ground"                       }),
+    "Resistor":   (id) => ({ ...DefaultComponent(id), kind: "Resistor", resistance: 1000   }),
+    "Capacitor":  (id) => ({ ...DefaultComponent(id), kind: "Capacitor", capacitance: 1000 }),
 };
 
 export const DefaultAnalogPort: PortFactory<AnalogPort> =
