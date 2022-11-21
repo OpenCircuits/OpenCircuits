@@ -31,7 +31,7 @@ import {DirtyVar} from "core/utils/DirtyVar";
 import {Transform}                       from "math/Transform";
 
 import {RenderInfo}    from "core/views/BaseView";
-
+import { Prop } from "core/models/PropInfo";
 
 const GRAPH_LINE_WIDTH = 0.02;
 const AXIS_LINE_WIDTH = 0.02;
@@ -72,12 +72,9 @@ const LEGEND_ENTRY_FONT_SIZE = 0.2;
 const LEGEND_TITLE_FONT = `normal ${LEGEND_TITLE_FONT_SIZE}px arial`;
 const LEGEND_ENTRY_FONT = `lighter ${LEGEND_ENTRY_FONT_SIZE}px arial`;
 
-
 function toShape(rect: Rect): Rectangle {
     return new Rectangle(rect.center, rect.size);
 }
-
-
 
 export type ScopeConfig = {
     showAxes: boolean;
@@ -88,17 +85,14 @@ export type ScopeConfig = {
         color: string;
     }>;
 }
-export type ScopeProp = {
-    //nothing
-}
-
 
 //CUSTOM OSCILLOSCOPE VIEW (DIFFERENT FROM TYPICAL COMPONENT VIEW)
 export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo> {
     //Don't really know what scope COnfig is? We personally created it since we needed to reference it 
     private config: ScopeConfig;
-    private prop: ScopeProp;
+    protected props: Record<string, Prop>;
     public constructor(info: AnalogViewInfo, obj: Oscilloscope) {
+        //Changing the values inside of the vector "V", changes the initial dimensions of the oscilloscope.
         super(info, obj, V(8,4));
         this.config = {
             showAxes:   true,
@@ -111,10 +105,12 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
     public getConfig() {
         return this.config;
     }
-    public getProp() {
-        return this.prop;
+
+    //takes a string as argument and returns the selected key. 
+    public getProp(key: string): Prop {
+        return this.props[key];
     }
-     
+
 
     //OUR IMPLEMENTATION THAT CHANGES THE DIMENSIONS OF THE OSCILLOSCOPE 
     public override onPropChange(propKey: string): void {
@@ -140,15 +136,17 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
 
         //FUNCTION USED TO ACTUALLY RENDER THE OSCILLOSCOPE!! DRAWS THE disagram/ graph ON OSCILLOSCOPE 
+        //TIP: if it doesn't work properly or has "red squiggles", make sure to change it to a variable we have on model_refactor.
     public override renderComponent({ renderer, selections }: RenderInfo): void {
         const transform = this.getTransform();
         const size = transform.getSize();
 
-        // const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
-        const borderCol = (DEFAULT_BORDER_COLOR);
+        
+        const borderCol = (selections ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
+        // const borderCol = (DEFAULT_BORDER_COLOR);
 
-        // const fillCol = (selected ? SELECTED_FILL_COLOR : "#ffffff");
-        const fillCol = ( "#ffffff");
+        const fillCol = (selections ? SELECTED_FILL_COLOR : "#ffffff");
+        // const fillCol = ( "#ffffff");
 
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
@@ -171,7 +169,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
             // Get sampled data
             //  - uniform samples of `xData`
             const [xData, ...sampledData] = [xDataRaw, ...allData].map((data) => {
-                const samples = Math.min(data.length, o.getProp("samples") as number);
+                const samples = Math.min(data.length, this.getProp("samples") as number);
 
                 return new Array(samples).fill(0)
                     .map((_, i) => data[Math.floor(i * data.length / samples)]);
@@ -216,6 +214,8 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         const plotRect = axesGridRect.subMargin((showAxes ? AXES_MARGIN : {}));
         const legendRect = innerRect.subMargin({ left: axesInfoRect.width }).subMargin(LEGEND_PADDING);
 
+
+        //Don't need debug for now. 
         // Debug drawing
         // if (info.debugOptions.debugSelectionBounds) {
         //     renderer.draw(toShape(baseRect), new Style("#999999", "#000000", 0.02));
@@ -355,5 +355,5 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
             renderer.restore();
         }
-    },
+    }
 };
