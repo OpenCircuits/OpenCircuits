@@ -65,9 +65,6 @@ export class ConstantNumberView extends ComponentView<ConstantNumber, DigitalVie
     }
 
     public override getBounds(): Rect {
-        // Get current number of inputs
-        const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === "inputs").length;
-        return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
+        return super.getBounds().expand(V(0, 0.5 - DEFAULT_BORDER_WIDTH));
     }
 }
