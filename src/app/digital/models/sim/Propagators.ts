@@ -40,12 +40,16 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 
-    "Multiplexer": ({ signals }) => [{ "outputs": [signals['inputs'][parseInt(signals["selects"].join(''), 2)]] }],
+    "Multiplexer": ({ signals }) => {
+        const input_port_num = signals["selects"].reduce((acc,cur) => (acc << 1)|cur);
+        return [{ "outputs": [signals['inputs'][input_port_num]] }]
+    },
 
     "Demultiplexer": ({ signals }) => {
-        const outputs = Array(signals['outputs'].length).fill(0);
-        outputs[parseInt(signals["selects"].join(''), 2)] = signals['inputs'][0]
-        return [{"outputs": outputs}];
+        const output_port_num = signals["selects"].reduce((acc,cur) => (acc << 1)|cur)
+        const outputs = Array(signals['outputs'].length).fill(0)
+        outputs[output_port_num] = signals['inputs'][0]
+        return [{outputs}]
     },
 };
 
