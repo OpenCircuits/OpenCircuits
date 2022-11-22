@@ -39,7 +39,21 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 
-    "Comparator": Noprop,
+    "Comparator": ({ signals }) => {
+        let a = 0, b = 0;
+        const len = signals["inputs"].length/2;
+        for (let i = 0; i < len; i += 1) {
+            a += signals["inputs"][i] * Math.pow(2, i);
+            b += signals["inputs"][i+len] * Math.pow(2, i);
+        }
+        if (a > b){
+            return [{ "outputs": [Signal.fromBool(false), Signal.fromBool(false), Signal.fromBool(true)] }];
+        }
+        else if (a < b){
+            return [{ "outputs": [Signal.fromBool(false), Signal.fromBool(true), Signal.fromBool(false)] }];
+        }
+        return [{ "outputs": [Signal.fromBool(true), Signal.fromBool(false), Signal.fromBool(false)] }];
+    },
 };
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {

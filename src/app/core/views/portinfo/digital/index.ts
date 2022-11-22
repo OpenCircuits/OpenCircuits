@@ -47,15 +47,16 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
     },
     "Comparator": {
         ...DefaultDigitalPortInfo,
-        AllowChanges: true,
-        ChangeGroup:  "inputs",
+        InitialConfig: 1,
+        AllowChanges:  true,
+        ChangeGroup:   "inputs",
 
         // Generate configs for 1->8 input ports
         PositionConfigs: [1,2,3,4,5,6,7,8].map((numInputs) => ({
             "inputs": (() => {
                 const ports = [];
                 for (let i = 0; i < numInputs; i += 1) {
-                    ports[i] = CalcPortPos(V(-0.625, 0.5*(i+1)),V(-1,0));
+                    ports[i] = CalcPortPos(V(-0.625, 0.5*(i+1)), V(-1,0));
                     ports[i+numInputs] = CalcPortPos(V(-0.625, -0.5*(i+1)),V(-1,0));
                 }
                 return ports;
