@@ -5,7 +5,7 @@ import {V} from "Vector";
 import {DefaultDigitalPort, DigitalComponent} from "core/models/types/digital";
 
 
-import {CalcPortPos, CalcPortPositions, CalcMuxPortPositions, CalcMuxPortPositions2} from "../positioning/utils";
+import {CalcPortPos, CalcPortPositions, CalcMuxSelectPortPositions} from "../positioning/utils";
 import {PortInfoRecord}                 from "../types";
 
 
@@ -72,29 +72,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 return ports;
             })(),
             "outputs": [CalcPortPos(V((0.5 + numSelects/2)/2, 0), V((0.5 + numSelects/2)/2 + 0.25,0))],
-            "selects": (() => {
-                // Calculations for parameters to use in determining origin positions
-                // const size = ports[0].getParent().getSize();
-                // const width = size.x;
-                // const height = size.y;
-                // const slope = this.slopeMultiplier * MULTIPLEXER_HEIGHT_OFFSET / width;
-                // const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
-                // ports.forEach((port, i) => {
-                //     const x = this.calcSpacingPos(i, ports.length, 1);
-                //     const y = midPortOriginOffset - slope * x;
-                //     port.setOriginPos(V(x, y));
-                //     port.setTargetPos(V(x, -height/2 - IO_PORT_LENGTH));
-                // });
-                console.log('num selects', numSelects)
-                //const positions = CalcMuxPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
-                const positions = CalcMuxPortPositions2(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
-                //console.log(positions);
-                // positions.forEach((position, i) => {
-                //     position.target.x 
-                // })
-                console.log(positions)
-                return positions;
-            })()
+            "selects": CalcMuxSelectPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0)),
         }))
     },
     "Demultiplexer": {
@@ -123,29 +101,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
 
                 return ports;
             })(),
-            "selects": (() => {
-                // Calculations for parameters to use in determining origin positions
-                const size = V((0.5 + numSelects/2), (1  + Math.pow(2, numSelects-1)));
-                const width = size.x;
-                const height = size.y;
-                const slope = MULTIPLEXER_HEIGHT_OFFSET / width;
-                const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
-
-                return CalcMuxPortPositions2(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
-
-                // ports.forEach((port, i) => {
-                //     const x = this.calcSpacingPos(i, ports.length, 1);
-                //     const y = midPortOriginOffset - slope * x;
-                //     port.setOriginPos(V(x, y));
-                //     port.setTargetPos(V(x, -height/2 - IO_PORT_LENGTH));
-                // });
-                //const positions = CalcMuxPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0));
-                //console.log(positions);
-                // positions.forEach((position, i) => {
-                //     position.target.x 
-                // }) 
-                //return positions;
-            })()
+            "selects": CalcMuxSelectPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0)),
         }))
     },
 };
