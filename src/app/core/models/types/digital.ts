@@ -1,3 +1,4 @@
+import { ConstantHighView } from "digital/views/components/ConstantHighView";
 import {Component, ComponentFactory, DefaultComponent} from "./base/Component";
 import {DefaultPort, Port, PortFactory}                from "./base/Port";
 import {DefaultWire, Wire, WireFactory}                from "./base/Wire";
@@ -8,6 +9,7 @@ export type DigitalWire = Wire      & { kind: "DigitalWire" };
 export type DigitalNode = Component & { kind: "DigitalNode" };
 
 export type ANDGate = Component & { kind: "ANDGate" };
+export type ConstantHigh = Component & { kind: "ConstantHigh" };
 export type Switch  = Component & { kind: "Switch"  };
 export type LED     = Component & { kind: "LED", color: string };
 
@@ -15,7 +17,8 @@ export type DigitalComponent =
     | DigitalNode
     | Switch
     | LED
-    | ANDGate;
+    | ANDGate
+    | ConstantHigh;
 
 export type DigitalObj = DigitalPort | DigitalWire | DigitalComponent;
 
@@ -25,6 +28,7 @@ export const DefaultDigitalComponent: { [C in DigitalComponent as C["kind"]]: Co
     "Switch":      (id) => ({ ...DefaultComponent(id), kind: "Switch"                }),
     "LED":         (id) => ({ ...DefaultComponent(id), kind: "LED", color: "#ffffff" }),
     "ANDGate":     (id) => ({ ...DefaultComponent(id), kind: "ANDGate"               }),
+    "ConstantHigh":     (id) => ({ ...DefaultComponent(id), kind: "ConstantHigh"               }),
 };
 
 export const DefaultDigitalPort: PortFactory<DigitalPort> =
