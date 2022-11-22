@@ -41,10 +41,10 @@ export const AllPropagators: PropagatorRecord = {
 
     "Comparator": ({ signals }) => {
         let a = 0, b = 0;
-        const len = signals["inputs"].length/2;
+        const len = signals["inputsA"].length;
         for (let i = 0; i < len; i += 1) {
-            a += signals["inputs"][i] * Math.pow(2, i);
-            b += signals["inputs"][i+len] * Math.pow(2, i);
+            a += signals["inputsA"][i] * Math.pow(2, i);
+            b += signals["inputsB"][i] * Math.pow(2, i);
         }
         if (a > b){
             return [{ "outputs": [Signal.fromBool(false), Signal.fromBool(false), Signal.fromBool(true)] }];

@@ -23,13 +23,13 @@ export class ComparatorView extends ComponentView<Comparator, DigitalViewInfo> {
         const selected = selections.has(this.obj.id);
 
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === "inputs").length;
+            .filter((p) => p.group === "inputsA").length;
 
         const borderCol = (selected ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         const fillCol = (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR);
 
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
-        renderer.draw(new Rectangle(V(0,0), V(1.25, inputs/2+0.5)), style);
+        renderer.draw(new Rectangle(V(0,0), V(1.25, inputs+0.5)), style);
     }
 }
