@@ -10,12 +10,18 @@ function up(clock: Signal, lastClock: Signal) {
 
 // ToDo: implement an 'intial' state to have 'Q' port start as active
 // ToDo2: possibly implement the use of clock and lastclock if needed
-export const DFF: Propagator<DigitalComponent> = ({ signals, state }) => {
+export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off, Signal.Off] }) => {
     const input = signals["inputs"];
     const sel = signals["selects"];
 
     const lastClock = state[1];
     const clock = input[1];
+
+    //Let state have two variables
+    //First one is Q, (can get 'Q as opposite of Q)
+    //Second one keeps track of the last clock cycle
+    //Only updates when the clock updates too
+    //(last clock and current clock are different)
 
     state = (() => {
         // If PRE or CLR are set, then don't care about data or clock since asynchronous
@@ -25,24 +31,20 @@ export const DFF: Propagator<DigitalComponent> = ({ signals, state }) => {
             return state;
         // If PRE or CLR are set one at a time, set state to refelect
         } else if (sel[0]) {
-            return [Signal.On, Signal.Off];
+            return [Signal.On, clock];
         } else if (sel[1]) {
-            return [Signal.Off, Signal.On];
+            return [Signal.Off, clock];
         }
 
-        // If clock and input port is set, set the first ouput to on and the second to off
-        if (input[0] && input[1]) {
-            return [Signal.On, Signal.Off]
-          // If just the second input port is set, activate the second port
-        } else if (input[1] && !input[0]) {
-            return [Signal.Off, Signal.On]
-        }
         if(clock && !lastClock)
             return [input[0], clock];
         return state;
     })();
 
-    return [{ "outputs": state }, state]
+    if(Signal.isOn(state[0])) {
+        return [{ "outputs": [Signal.On, Signal.Off] }, state]
+    }
+    return [{ "outputs": [Signal.Off, Signal.On] }, state]
 }
 // ToDo: Not working: need to set intial state and retest
 export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
