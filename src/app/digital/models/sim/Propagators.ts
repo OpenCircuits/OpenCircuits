@@ -38,6 +38,7 @@ export const AllPropagators: PropagatorRecord = {
     "LED": Noprop,
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
+    "DLatch": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 };
 
 export function Propagate(c: DigitalComponent, signals: Record<string, Signal[]>, state: Signal[]) {

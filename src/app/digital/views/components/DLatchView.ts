@@ -1,29 +1,20 @@
-<<<<<<< HEAD
 import {DEFAULT_BORDER_COLOR, DEFAULT_BORDER_WIDTH, DEFAULT_CURVE_BORDER_WIDTH, SELECTED_BORDER_COLOR} from "core/utils/Constants";
 import {Transform} from "math/Transform";
 import {Renderer} from "core/utils/rendering/Renderer";
 import {Rect} from "math/Rect";
-
-
 import {V} from "Vector";
-
-
-
 import {Style} from "core/utils/rendering/Style";
-
 import {Line} from "core/utils/rendering/shapes/Line";
-
-import {ANDGate, DigitalPortGroup} from "core/models/types/digital";
-
+import {DLatch} from "core/models/types/digital";
 import {RenderInfo}    from "core/views/BaseView";
 import {ComponentView} from "core/views/ComponentView";
-
 import {DigitalViewInfo} from "../DigitalViewInfo";
+import { Rectangle } from "core/utils/rendering/shapes/Rectangle";
 
 
-export class ANDGateView extends ComponentView<ANDGate, DigitalViewInfo> {
-    public constructor(info: DigitalViewInfo, obj: ANDGate) {
-        super(info, obj, V(1, 1), "and.svg");
+export class DLatchView extends ComponentView<DLatch, DigitalViewInfo> {
+    public constructor(info: DigitalViewInfo, obj: DLatch) {
+        super(info, obj, V(1, 1));
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
@@ -38,7 +29,7 @@ export class ANDGateView extends ComponentView<ANDGate, DigitalViewInfo> {
 
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+            .filter((p) => p.group === "inputs").length;
 
         // Draw line to visually match input ports
         const l1 = -(inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) - DEFAULT_BORDER_WIDTH/2;
@@ -54,10 +45,7 @@ export class ANDGateView extends ComponentView<ANDGate, DigitalViewInfo> {
     public override getBounds(): Rect {
         // Get current number of inputs
         const inputs = this.circuit.getPortsFor(this.obj)
-            .filter((p) => p.group === DigitalPortGroup.Input).length;
+            .filter((p) => p.group === "inputs").length;
         return super.getBounds().expand(V(0, ((inputs-1)/2*(0.5 - DEFAULT_BORDER_WIDTH/2) + DEFAULT_BORDER_WIDTH/2)));
     }
 }
-=======
-import {DLatch} from "core/models/types/digital";
->>>>>>> 0db663d43ca84fc7291132e2b528a1d8e71db3e2
