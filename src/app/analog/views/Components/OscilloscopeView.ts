@@ -259,13 +259,14 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
             // We want to evenly space the grid such that it hits each axis-mark
             //  and then has `GRID_PTS` number of lines in between each axis-mark
-            const dx = (marks.xs[1] - marks.xs[0]) / (GRID_PTS + 1);
+            const dx = ((marks.xs[1] - marks.xs[0]) / (GRID_PTS + 1));
             const dy = (marks.ys[1] - marks.ys[0]) / (GRID_PTS + 1);
 
-            const xGridPts = linspaceDX(innerBounds.left, bounds.right, dx);
+            //CHANGE GRID LINES ON OSCILLOSCOPE 
+            const xGridPts = linspaceDX(innerBounds.left, bounds.right, dx );
             const yGridPts = linspaceDX(innerBounds.bottom, bounds.top, dy);
 
-            renderer.strokeVLines(xGridPts, bounds.bottom, bounds.height, "bottom");
+            // renderer.strokeVLines(xGridPts, bounds.bottom, bounds.height, "bottom");
             renderer.strokeHLines(yGridPts, bounds.left, bounds.width, "left");
 
             renderer.restore();
@@ -282,22 +283,22 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
             const marks = getMarks(innerBounds);
 
             // Create and draw marks on the axes
-            renderer.strokeVLines(marks.xs, bounds.bottom, AXIS_MARK_LENGTH, "middle");
+            renderer.strokeVLines(marks.xs, bounds.bottom, AXIS_MARK_LENGTH , "middle");
             renderer.strokeHLines(marks.ys, bounds.left, AXIS_MARK_LENGTH, "center");
 
             // Draw axis mark text
             marks.xVals.forEach((text, i) => {
-                const pos = V(marks.xs[i], bounds.bottom - AXIS_TEXT_OFFSET);
+                const pos = V(marks.xs[i] , bounds.bottom - AXIS_TEXT_OFFSET + 2.25);
                 renderer.text(text, pos, "center", "#000000", AXIS_MARK_FONT, "top");
             });
             marks.yVals.forEach((text, i) => {
-                const pos = V(bounds.left - AXIS_TEXT_OFFSET, marks.ys[i]);
+                const pos = V(bounds.left - AXIS_TEXT_OFFSET , marks.ys[i] -0.75);
                 renderer.text(text, pos, "right", "#000000", AXIS_MARK_FONT, "middle");
             });
 
             // Label axes
-            const xLabelPos = V(innerBounds.x, outerBounds.bottom);
-            const yLabelPos = V(outerBounds.left, innerBounds.y);
+            const xLabelPos = V(innerBounds.x, outerBounds.bottom +3.5);
+            const yLabelPos = V(outerBounds.left -0.2, innerBounds.y -0.5 );
             renderer.text("time (s)", xLabelPos, "center", "#000000", AXIS_LABEL_FONT, "bottom");
             renderer.text("Voltage (V)", yLabelPos, "center", "#000000", AXIS_LABEL_FONT, "top", -Math.PI / 2);
 
@@ -307,7 +308,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         function drawLegend(bounds: Rect) {
             renderer.save();
 
-            renderer.text("Legend", V(bounds.left, bounds.top), "left", "#000000", LEGEND_TITLE_FONT, "top");
+            renderer.text("Legend", V(bounds.left+0.25, bounds.top-0.5), "left", "#000000", LEGEND_TITLE_FONT, "top");
 
             const boxSize = 0.2;
             enabledVecIDs.forEach((id, i) => {
