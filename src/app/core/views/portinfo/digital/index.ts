@@ -5,7 +5,7 @@ import {V} from "Vector";
 import {DefaultDigitalPort, DigitalComponent} from "core/models/types/digital";
 
 
-import {CalcPortPos, CalcPortPositions, CalcMuxSelectPortPositions} from "../positioning/utils";
+import {CalcPortPos, CalcPortPositions, CalcMuxSelectPortPositions, CalcMuxIOPortPositions} from "../positioning/utils";
 import {PortInfoRecord}                 from "../types";
 
 
@@ -53,24 +53,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         ChangeGroup:   "selects",
 
         PositionConfigs: [1,2,3,4,5,6,7,8].map((numSelects) => ({
-            "inputs": (() => {
-                const size = V((0.5 + numSelects/2), (1 + Math.pow(2, numSelects - 1)));
-                const x = -size.x / 2;
-                const ports = [];
-                const inputs = Math.pow(2,numSelects);
-                for (let i = 0; i < inputs; i++) {
-                    const midpoint = (inputs-1)/2;
-                    const spacingPos = 1/2 * (i-midpoint);
-                    const y = -spacingPos + 1/4;
-                    ports[i] = {
-                        origin: V(x, y),
-                        target: V(x - IO_PORT_LENGTH, y),
-                        dir: V(-1, 0)
-                    }
-                }
-
-                return ports;
-            })(),
+            "inputs": CalcMuxIOPortPositions(true, numSelects),
             "outputs": [CalcPortPos(V((0.5 + numSelects/2)/2, 0), V((0.5 + numSelects/2)/2 + 0.25,0))],
             "selects": CalcMuxSelectPortPositions(true, numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, V(1,0)),
         }))
@@ -83,24 +66,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
 
         PositionConfigs: [1,2,3,4,5,6,7,8].map((numSelects) => ({
             "inputs": [CalcPortPos(V(-(0.5 + numSelects/2)/2, 0), V(-(0.5 + numSelects/2)/2 - 0.25,0))],
-            "outputs": (() => {
-                const size = V((0.5 + numSelects/2), (1 + Math.pow(2, numSelects - 1)));
-                const x = size.x / 2;
-                const ports = [];
-                const outputs = Math.pow(2,numSelects);
-                for (let i = 0; i < outputs; i++) {
-                    const midpoint = (outputs-1)/2;
-                    const spacingPos = 1/2 * (i-midpoint);
-                    const y = -spacingPos + 1/4;
-                    ports[i] = {
-                        origin: V(x, y),
-                        target: V(x + IO_PORT_LENGTH, y),
-                        dir: V(1, 0)
-                    }
-                }
-
-                return ports;
-            })(),
+            "outputs": CalcMuxIOPortPositions(false, numSelects),
             "selects": CalcMuxSelectPortPositions(false, numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, V(1,0)),
         }))
     },

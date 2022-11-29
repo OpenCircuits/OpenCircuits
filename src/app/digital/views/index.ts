@@ -6,13 +6,12 @@ import {DigitalCircuitController} from "digital/controllers/DigitalCircuitContro
 
 import {ANDGateView}     from "./components/ANDGateView";
 import {MultiplexerView} from "./components/MultiplexerView";
+import {DemultiplexerView} from "./components/DemultiplexerView";
 import {LEDView}         from "./components/LEDView";
 import {SwitchView}      from "./components/SwitchView";
 import {DigitalPortView} from "./DigitalPortView";
 import {DigitalViewInfo} from "./DigitalViewInfo";
 import {DigitalWireView} from "./DigitalWireView";
-import { DemultiplexerView } from "./components/DemultiplexerView";
-
 
 class DigitalNodeView extends NodeView<DigitalNode, DigitalViewInfo> {}
 

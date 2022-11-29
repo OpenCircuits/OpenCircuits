@@ -31,3 +31,23 @@ export const CalcMuxSelectPortPositions = (isMultiplexer:boolean, amt: number, s
         dir: dir
     }))
 };
+
+export const CalcMuxIOPortPositions = (isMultiplexer:boolean, amt:number) => {
+    const muxTypeFactor = isMultiplexer ? -1 : 1;
+    const size = V((0.5 + amt/2), (1 + Math.pow(2, amt - 1)));
+    const x = muxTypeFactor * size.x / 2;
+    const ports = [];
+    const outputs = Math.pow(2,amt);
+    for (let i = 0; i < outputs; i++) {
+        const midpoint = (outputs-1)/2;
+        const spacingPos = 1/2 * (i-midpoint);
+        const y = -spacingPos + 1/4;
+        ports[i] = {
+            origin: V(x, y),
+            target: V(x + muxTypeFactor * IO_PORT_LENGTH, y),
+            dir: V(muxTypeFactor, 0)
+        }
+    }
+
+    return ports;
+}

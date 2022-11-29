@@ -16,6 +16,7 @@ export const DigitalComponentInfo: ComponentInfoRecord<DigitalComponent> = {
     "DigitalNode": GenDigitalComponentInfo<DigitalNode>("DigitalNode"),
     "ANDGate":     GenDigitalComponentInfo<ANDGate>("ANDGate"),
     "Multiplexer": GenDigitalComponentInfo<Multiplexer>("Multiplexer"),
+    "Demultiplexer": GenDigitalComponentInfo<Demultiplexer>("Demultiplexer"),
 };
 
 export const DigitalInfo: ObjInfoRecord<DigitalObj> = {
