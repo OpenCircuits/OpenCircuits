@@ -7,10 +7,11 @@ import {Line} from "core/utils/rendering/shapes/Line";
 import {V} from "Vector";
 import {DigitalViewInfo} from "../DigitalViewInfo";
 import {RenderInfo}    from "core/views/BaseView";
+import { Rectangle } from "core/utils/rendering/shapes/Rectangle";
 
 export class SRLatchView extends ComponentView<SRLatch, DigitalViewInfo> {
     public constructor(info: DigitalViewInfo, obj: SRLatch) {
-        super(info, obj, V(1, 1));
+        super(info, obj, V(1, 1) , "base.svg");
     }
 
     
@@ -36,7 +37,8 @@ export class SRLatchView extends ComponentView<SRLatch, DigitalViewInfo> {
         const p1 = V(-s, l1);
         const p2 = V(-s, l2);
 
-        renderer.draw(new Line(p1, p2), style);
+
+        renderer.draw(new Rectangle(V(0, 0), size), style);
     }
 
     public override getBounds(): Rect {

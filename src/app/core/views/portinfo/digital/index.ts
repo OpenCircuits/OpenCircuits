@@ -50,10 +50,10 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
         AllowChanges: true,
         ChangeGroup:  "inputs",
 
-        // Generate configs for 5 input ports
-        PositionConfigs: [5].map((numInputs) => ({
+        // Generate configs for 3 input ports
+        PositionConfigs: [3].map((numInputs) => ({
             "inputs":  CalcPortPositions(numInputs, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(-1, 0)),
-            "outputs": [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
+            "outputs": [CalcPortPos(V(0.5, 0.25), V(1, 0)), CalcPortPos(V(0.5, -0.25), V(1, 0))], // 2 output
         })),
     }
 };
