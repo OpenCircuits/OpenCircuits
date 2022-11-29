@@ -16,14 +16,14 @@ export const CalcPortPositions = (amt: number, spacing: number, width: number, d
         .map((h) => CalcPortPos(V(dir.x*width/2, h), dir))
 );
 
-export const CalcMuxSelectPortPositions = (amt: number, spacing: number, width: number, dir: Vector) => {
+export const CalcMuxSelectPortPositions = (isMultiplexer:boolean, amt: number, spacing: number, dir: Vector) => {
     const size = V((0.5 + amt/2), (1  + Math.pow(2, amt-1)));
     const height = size.y;
     const midPortOriginOffset = -height/2 + MULTIPLEXER_HEIGHT_OFFSET/2;
 
     const end = V(size.x/2, -size.y/2 + MULTIPLEXER_HEIGHT_OFFSET);
     const start = V(-size.x/2, -size.y/2);
-    const slope = -(end.y - start.y)/(end.x - start.x)
+    const slope = (isMultiplexer ? -1 : 1) * (end.y - start.y)/(end.x - start.x)
 
     return linspace((amt-1)/2*spacing, -(amt-1)/2*spacing, amt).map((h, i) => ({
         origin: V(h, midPortOriginOffset - slope * h),

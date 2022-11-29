@@ -42,14 +42,14 @@ export const AllPropagators: PropagatorRecord = {
 
     "Multiplexer": ({ signals }) => {
         const input_port_num = signals["selects"].reduce((acc,cur) => (acc << 1)|cur);
-        return [{ "outputs": [signals['inputs'][input_port_num]] }]
+        return [{ "outputs": [signals['inputs'][input_port_num]] }];
     },
 
     "Demultiplexer": ({ signals }) => {
-        const output_port_num = signals["selects"].reduce((acc,cur) => (acc << 1)|cur)
-        const outputs = Array(signals['outputs'].length).fill(0)
-        outputs[output_port_num] = signals['inputs'][0]
-        return [{outputs}]
+        const output_port_num = signals["selects"].reduce((acc,cur) => (acc << 1)|cur);
+        const outputs = Array(signals['outputs'].length).fill(0);
+        outputs[output_port_num] = signals['inputs'][0];
+        return [{outputs}];
     },
 };
 

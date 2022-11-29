@@ -72,7 +72,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
                 return ports;
             })(),
             "outputs": [CalcPortPos(V((0.5 + numSelects/2)/2, 0), V((0.5 + numSelects/2)/2 + 0.25,0))],
-            "selects": CalcMuxSelectPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0)),
+            "selects": CalcMuxSelectPortPositions(true, numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, V(1,0)),
         }))
     },
     "Demultiplexer": {
@@ -101,7 +101,7 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
 
                 return ports;
             })(),
-            "selects": CalcMuxSelectPortPositions(numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, 1, V(1,0)),
+            "selects": CalcMuxSelectPortPositions(false, numSelects, 0.5 - DEFAULT_BORDER_WIDTH/2, V(1,0)),
         }))
     },
 };
