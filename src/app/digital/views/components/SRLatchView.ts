@@ -36,7 +36,7 @@ export class SRLatchView extends ComponentView<SRLatch, DigitalViewInfo> {
         const p1 = V(-s, l1);
         const p2 = V(-s, l2);
 
-        renderer.draw();
+        renderer.draw(new Line(p1, p2), style);
     }
 
     public override getBounds(): Rect {
