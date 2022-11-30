@@ -75,41 +75,44 @@ export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
 }
 // TODO: implement the rest of the flipflop props
 export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
-    console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["selects"];
 
+    //save last clock
     const lastClock = state[1];
-    const clock = input[1];
+    
+    //update clock
+    state[1] = input[1];
 
-    state = (() => {
-        // If PRE or CLR are set, then don't care about data or clock since asynchronous
-        if (sel[0] && sel[1]) {
-            // undefined, just keep same state
-            return [state[0], clock];
-        } else if (sel[0]) {
-            return [Signal.On, clock];
-        } else if (sel[1]) {
-            return [Signal.Off, clock];
-        }
+    //Let state have two variables
+    //First one is Q, (can get 'Q as opposite of Q)
+    //Second one keeps track of the last clock cycle
 
-        if(up(clock, lastClock)) 
-        {
-            const set   = input[0];
-            const reset = input[2];
-
-            if (set && reset) {
-                return [state[0], clock];
-            } else if (set) {
-                return [Signal.On, clock];
-            } else if (reset) {
-                return [Signal.Off, clock];
+    //Only consider asynchronous ports if only one is active at a time
+    if (Signal.isOn(sel[0]) && Signal.isOff(sel[1])) {
+        state[0] = Signal.On;
+    } else if (Signal.isOff(sel[0]) && Signal.isOn(sel[1])) {
+        state[0] = Signal.Off;
+    } else if(Signal.isOff(sel[0]) && Signal.isOff(sel[0])) {
+        // check if we will update if no asynch
+        if(Signal.isOn(state[1]) && Signal.isOff(lastClock)) {
+            if(Signal.isOn(input[0]) && Signal.isOn(input[2])) {
+                if(Signal.isOn(state[0]))
+                    state[0] = Signal.Off;
+                else   
+                    state[0] = Signal.On;
             }
+            else if(Signal.isOn(input[0]) && Signal.isOff(input[2]))
+                state[0] = Signal.On;
+            else if(Signal.isOff(input[0]) && Signal.isOn(input[2]))
+                state[0] = Signal.Off;
         }
-        return state;
-    })();
+    }
 
-    return [{ "outputs": state }, state];
+    if(Signal.isOn(state[0])) {
+        return [{ "outputs": [Signal.On, Signal.Off] }, state];
+    }
+    return [{ "outputs": [Signal.Off, Signal.On] }, state];
 }
 export const SRFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     const input = signals["inputs"];
