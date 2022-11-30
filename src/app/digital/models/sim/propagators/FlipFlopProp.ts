@@ -8,28 +8,28 @@ function up(clock: Signal, lastClock: Signal) {
     return (clock && !lastClock) as boolean;
 }
 
-// ToDo: implement an 'intial' state to have 'Q' port start as active
-// ToDo2: possibly implement the use of clock and lastclock if needed
+// ToDo: test but I think DFF is working
 export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off, Signal.Off] }) => {
     const input = signals["inputs"];
     const sel = signals["selects"];
 
+    //save last clock
     const lastClock = state[1];
+    
+    //update clock
     state[1] = input[1];
 
     //Let state have two variables
     //First one is Q, (can get 'Q as opposite of Q)
     //Second one keeps track of the last clock cycle
-    //Only updates when the clock updates too
-    //(last clock and current clock are different)
 
-    // If PRE or CLR are set, then don't care about data or clock since asynchronous
-    // Return same state as before
+    //Only consider asynchronous ports if only one is active at a time
     if (Signal.isOn(sel[0]) && Signal.isOff(sel[1])) {
         state[0] = Signal.On;
     } else if (Signal.isOff(sel[0]) && Signal.isOn(sel[1])) {
         state[0] = Signal.Off;
-    } else {
+    } else if(Signal.isOff(sel[0]) && Signal.isOff(sel[0])) {
+        // check if we will update if no asynch
         if(Signal.isOn(state[1]) && Signal.isOff(lastClock))
             state[0] = input[0];
     }
