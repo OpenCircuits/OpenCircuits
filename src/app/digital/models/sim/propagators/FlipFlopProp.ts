@@ -41,29 +41,37 @@ export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off
 }
 // ToDo: Not working: need to set intial state and retest
 export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
-    console.log(signals) // keep here for now
     const input = signals["inputs"];
     const sel = signals["selects"];
 
-    state = (() => {
-        // If PRE or CLR are set, then don't care about data or clock since asynchronous
-        if (sel[0] && sel[1]) {
-            // undefined, just keep same state
-            return state;
-        } else if (sel[0]) {
-            return [Signal.On, Signal.Off];
-        } else if (sel[1]) {
-            return [Signal.Off, Signal.On];
-        }
-        // If both ports are set, switch the state to the opposite of what it is
-        if (input[0] && input[1]) {
-            return [state[1], state[0]]
-        }
+    //save last clock
+    const lastClock = state[1];
+    
+    //update clock
+    state[1] = input[1];
 
-        return state;
-    })();
+    //Let state have two variables
+    //First one is Q, (can get 'Q as opposite of Q)
+    //Second one keeps track of the last clock cycle
 
-    return [{ "outputs": state }, state];
+    //Only consider asynchronous ports if only one is active at a time
+    if (Signal.isOn(sel[0]) && Signal.isOff(sel[1])) {
+        state[0] = Signal.On;
+    } else if (Signal.isOff(sel[0]) && Signal.isOn(sel[1])) {
+        state[0] = Signal.Off;
+    } else if(Signal.isOff(sel[0]) && Signal.isOff(sel[0])) {
+        // check if we will update if no asynch
+        if(Signal.isOn(state[1]) && Signal.isOff(lastClock) && Signal.isOn(input[0]))
+            if(Signal.isOn(state[0]))
+                state[0] = Signal.Off;
+            else   
+                state[0] = Signal.On;
+    }
+
+    if(Signal.isOn(state[0])) {
+        return [{ "outputs": [Signal.On, Signal.Off] }, state];
+    }
+    return [{ "outputs": [Signal.Off, Signal.On] }, state];
 }
 // TODO: implement the rest of the flipflop props
 export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
