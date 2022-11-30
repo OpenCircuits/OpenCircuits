@@ -1,4 +1,3 @@
-import {log} from "node:console";
 import {DFlipFlop} from "core/models/types/digital";
 
 import {RenderInfo}      from "core/views/BaseView";
@@ -15,6 +14,5 @@ export class DFlipFlopView extends FlipFlopView<DFlipFlop, DigitalViewInfo> {
         const { renderer, selections } = info
         // draw the labels
         const ports = this.circuit.getPortsFor(this.obj)
-        log(ports)
     }
 }

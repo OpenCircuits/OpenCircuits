@@ -15,7 +15,7 @@ export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off
     const sel = signals["selects"];
 
     const lastClock = state[1];
-    const clock = input[1];
+    state[1] = input[1];
 
     //Let state have two variables
     //First one is Q, (can get 'Q as opposite of Q)
@@ -23,28 +23,21 @@ export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off
     //Only updates when the clock updates too
     //(last clock and current clock are different)
 
-    state = (() => {
-        // If PRE or CLR are set, then don't care about data or clock since asynchronous
-        // Return same state as before
-        if (sel[0] && sel[1]) {
-            // undefined, just keep same state
-            return state;
-        // If PRE or CLR are set one at a time, set state to refelect
-        } else if (sel[0]) {
-            return [Signal.On, clock];
-        } else if (sel[1]) {
-            return [Signal.Off, clock];
-        }
-
-        if(clock && !lastClock)
-            return [input[0], clock];
-        return state;
-    })();
+    // If PRE or CLR are set, then don't care about data or clock since asynchronous
+    // Return same state as before
+    if (Signal.isOn(sel[0]) && Signal.isOff(sel[1])) {
+        state[0] = Signal.On;
+    } else if (Signal.isOff(sel[0]) && Signal.isOn(sel[1])) {
+        state[0] = Signal.Off;
+    } else {
+        if(Signal.isOn(state[1]) && Signal.isOff(lastClock))
+            state[0] = input[0];
+    }
 
     if(Signal.isOn(state[0])) {
-        return [{ "outputs": [Signal.On, Signal.Off] }, state]
+        return [{ "outputs": [Signal.On, Signal.Off] }, state];
     }
-    return [{ "outputs": [Signal.Off, Signal.On] }, state]
+    return [{ "outputs": [Signal.Off, Signal.On] }, state];
 }
 // ToDo: Not working: need to set intial state and retest
 export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
@@ -70,7 +63,7 @@ export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
         return state;
     })();
 
-    return [{ "outputs": state }, state]
+    return [{ "outputs": state }, state];
 }
 // TODO: implement the rest of the flipflop props
 export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
@@ -108,7 +101,7 @@ export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
         return state;
     })();
 
-    return [{ "outputs": state }, state]
+    return [{ "outputs": state }, state];
 }
 export const SRFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     console.log(signals) // keep here for now
@@ -117,5 +110,5 @@ export const SRFF: Propagator<DigitalComponent> = ({ signals,state }) => {
     // split input into specific gates
     // run boolean logic
 
-    return [signals]
+    return [signals];
 }
