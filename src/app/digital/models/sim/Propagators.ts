@@ -1,15 +1,23 @@
+/**
+ * This file has the following:
+ *
+ * `PropagatorRecord` is a type that maps every `DigitalComponent`'s `kind` to a `Propagator` function.
+ *
+ * The `Propagator` function is a function that takes in a `DigitalComponent`, a set of inputs, and a state and returns the
+ * computed outputs and next state based on the inputs.
+ *
+ * The `AllPropagators.
+ *
+ * This was written by an AI ToDo: Write better doc here.
+ */
 import {DigitalComponent} from "core/models/types/digital";
 
-import {Signal, SignalReducer} from "digital/models/sim/Signal";
+import {Signal} from "digital/models/sim/Signal";
 
+import {AND}                  from "digital/models/sim/propagators/AND";
 import {DFF, JKFF, SRFF, TFF} from "digital/models/sim/propagators/FlipFlopProp";
+import {Noprop, Propagator}   from "digital/models/sim/propagators/typing";
 
-
-// ToDo: need to be stricter
-export type SignalMap = Record<"inputs"|string, Signal[]>;
-export type Propagator<C extends DigitalComponent> =
-    (props: { c: C, signals: SignalMap, state: Signal[] }) =>
-        [SignalMap, Signal[]] | [SignalMap];
 
 type PropagatorRecord = {
     // The kind of every digital component
@@ -17,15 +25,6 @@ type PropagatorRecord = {
         // Mapped to a propagator function
         Propagator<Comp>;
 }
-
-const Noprop: Propagator<DigitalComponent> = ({ signals, state }) => ([signals, state]);
-
-// AND reducer
-const AND = SignalReducer((a, b) => (a && b));
-
-// TODO
-// flipflops
-
 
 /**
  * This is a list of all the propagators for every digital component in the circuit.

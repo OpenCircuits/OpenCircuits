@@ -2,7 +2,8 @@ import {DigitalComponent} from "core/models/types/digital";
 
 import {Signal} from "digital/models/sim/Signal";
 
-import {Propagator} from "../Propagators";
+import {Propagator} from "digital/models/sim/propagators/typing";
+
 
 // toDo: Test all propagators
 
@@ -15,7 +16,7 @@ export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off
     const input = signals["inputs"];
     const sel = signals["selects"];
 
-    //save last clock
+    // save last clock
     const lastClock = state[1];
     
     //update clock part of state variable
@@ -72,9 +73,9 @@ export const JKFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Of
                 state[0] = Signal.isOn(state[0]) ? Signal.Off : Signal.On;
 
             }
-            else if(Signal.isOn(input[0]) && Signal.isOff(input[2]))
+            else if (Signal.isOn(input[0]) && Signal.isOff(input[2]))
                 state[0] = Signal.On;
-            else if(Signal.isOff(input[0]) && Signal.isOn(input[2]))
+            else if (Signal.isOff(input[0]) && Signal.isOn(input[2]))
                 state[0] = Signal.Off;
         }
     } else {
@@ -99,7 +100,7 @@ export const SRFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Of
         if(up(state[1],lastClock)) {
             if(Signal.isOn(input[0]) && Signal.isOff(input[2]))
                 state[0] = Signal.On;
-            else if(Signal.isOff(input[0]) && Signal.isOn(input[2]))
+            else if (Signal.isOff(input[0]) && Signal.isOn(input[2]))
                 state[0] = Signal.Off;
         }
     } else {
