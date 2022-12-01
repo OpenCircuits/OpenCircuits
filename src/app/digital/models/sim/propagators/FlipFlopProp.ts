@@ -35,6 +35,7 @@ export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off
                 state[0] = Signal.Off;
     }
 
+    //set outputs to be state[0] and it's opposite
     const tmp = Signal.isOn(state[0]) ? Signal.Off : Signal.On;
     return [{ "outputs": [state[0], tmp] }, state];
 }
