@@ -53,6 +53,10 @@ export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
 
     // save last clock
     const lastClock = state[1];
+    const lastQ = state[2]
+    console.log(state)
+
+    // xor and reuse D code
 
     // update clock
     state[1] = input[1];
@@ -70,10 +74,13 @@ export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
                Signal.isOn(state[1]) && Signal.isOff(lastClock) && Signal.isOn(input[0]))
         state[0] = Signal.isOn(state[0]) ? Signal.Off : Signal.On;
 
+
+    let out = { "outputs": [Signal.Off, Signal.On] }
     if (Signal.isOn(state[0])) {
-        return [{ "outputs": [Signal.On, Signal.Off] }, state];
+        out = { "outputs": [Signal.On, Signal.Off] };
     }
-    return [{ "outputs": [Signal.Off, Signal.On] }, state];
+    state[2] = out.outputs[1]
+    return [out, state];
 }
 // TODO: implement the rest of the flipflop props
 export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
@@ -95,7 +102,7 @@ export const JKFF: Propagator<DigitalComponent> = ({ signals,state }) => {
         state[0] = Signal.On;
     } else if (Signal.isOff(sel[0]) && Signal.isOn(sel[1])) {
         state[0] = Signal.Off;
-    } else if (Signal.isOff(sel[0]) && Signal.isOff(sel[0]) && // check if we will update if no asynch
+    } else if (Signal.isOff(sel[0]) && // check if we will update if no asynch
         Signal.isOn(state[1]) && Signal.isOff(lastClock)) {
             if (Signal.isOn(input[0]) && Signal.isOn(input[2])) {
                 state[0] = Signal.isOn(state[0]) ? Signal.Off : Signal.On;
