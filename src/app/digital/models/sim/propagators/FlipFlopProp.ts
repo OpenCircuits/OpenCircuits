@@ -76,7 +76,7 @@ export const TFF: Propagator<DigitalComponent> = ({ signals,state }) => {
 
 
     let out = { "outputs": [Signal.Off, Signal.On] }
-    if (Signal.isOn(state[0])) {
+    if (Signal.isOn(state[0] | lastQ)) { // todo: check
         out = { "outputs": [Signal.On, Signal.Off] };
     }
     state[2] = out.outputs[1]
