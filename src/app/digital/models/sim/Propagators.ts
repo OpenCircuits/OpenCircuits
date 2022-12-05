@@ -3,7 +3,8 @@
  *
  * `PropagatorRecord` is a type that maps every `DigitalComponent`'s `kind` to a `Propagator` function.
  *
- * The `Propagator` function is a function that takes in a `DigitalComponent`, a set of inputs, and a state and returns the
+ * The `Propagator` function is a function that takes in a `DigitalComponent`,
+ * a set of inputs, and a state and returns the
  * computed outputs and next state based on the inputs.
  *
  * The `AllPropagators.
@@ -46,7 +47,7 @@ export const AllPropagators: PropagatorRecord = {
 
     "ANDGate": ({ signals }) => [{ "outputs": [signals["inputs"].reduce(AND)] }],
 
-     // ToDo: Add prop here later
+     // FlipFlops store propagation in FlipFlipProp.ts
      "DFlipFlop":  DFF,
      "TFlipFlop":  TFF,
      "JKFlipFlop": JKFF,

@@ -12,30 +12,30 @@ function up(clock: Signal, lastClock: Signal) {
 }
 
 export const DFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off, Signal.Off] }) => {
-    //break up ports
+    // Break up ports
     const input = signals["inputs"];
     const sel = signals["selects"];
 
-    // save last clock
+    // Save last clock
     const lastClock = state[1];
 
-    //update clock part of state variable
+    // Update clock part of state variable
     state[1] = input[1];
 
-    //check if no asynchronous ports are active
-    if(Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
-        //if none are active we then check if we update
-        if(up(state[1],lastClock))
+    // Check if no asynchronous ports are active
+    if (Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
+        // If none are active we then check if we update
+        if (up(state[1],lastClock))
             state[0] = input[0];
     } else {
-        //asynchronous active so we have to act accordingly
+        // Asynchronous active so we have to act accordingly
         if (Signal.isOn(sel[0]) && Signal.isOff(sel[1]))
             state[0] = Signal.On;
         if (Signal.isOff(sel[0]) && Signal.isOn(sel[1]))
                 state[0] = Signal.Off;
     }
 
-    //set outputs to be state[0] and it's opposite
+    // Set outputs to be state[0] and it's opposite
     const tmp = Signal.isOn(state[0]) ? Signal.Off : Signal.On;
     return [{ "outputs": [state[0], tmp] }, state];
 }
@@ -47,9 +47,9 @@ export const TFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Off
     const lastClock = state[1];
     state[1] = input[1];
 
-    if(Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
-        if(up(state[1],lastClock) && Signal.isOn(input[0])) {
-            //if we update we will flip the current state
+    if (Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
+        if (up(state[1],lastClock) && Signal.isOn(input[0])) {
+            // If we update we will flip the current state
             state[0] = Signal.isOn(state[0]) ? Signal.Off : Signal.On;
         }
     } else {
@@ -70,13 +70,13 @@ export const JKFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Of
     const lastClock = state[1];
     state[1] = input[1];
 
-    if(Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
-        if(up(state[1],lastClock)) {
-            //if both inputs are active we flip the signal
-            if(Signal.isOn(input[0]) && Signal.isOn(input[2])) {
+    if (Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
+        if (up(state[1],lastClock)) {
+            // If both inputs are active we flip the signal
+            if (Signal.isOn(input[0]) && Signal.isOn(input[2])) {
                 state[0] = Signal.isOn(state[0]) ? Signal.Off : Signal.On;
             }
-            //if only one port is active we set it to that one
+            // If only one port is active we set it to that one
             else if (Signal.isOn(input[0]) && Signal.isOff(input[2]))
                 state[0] = Signal.On;
             else if (Signal.isOff(input[0]) && Signal.isOn(input[2]))
@@ -100,10 +100,10 @@ export const SRFF: Propagator<DigitalComponent> = ({ signals, state = [Signal.Of
     const lastClock = state[1];
     state[1] = input[1];
 
-    if(Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
-        if(up(state[1],lastClock)) {
-            //if only one input is active we set it to that one
-            if(Signal.isOn(input[0]) && Signal.isOff(input[2]))
+    if (Signal.isOff(sel[0]) && Signal.isOff(sel[1])) {
+        if (up(state[1],lastClock)) {
+            // If only one input is active we set it to that one
+            if (Signal.isOn(input[0]) && Signal.isOff(input[2]))
                 state[0] = Signal.On;
             else if (Signal.isOff(input[0]) && Signal.isOn(input[2]))
                 state[0] = Signal.Off;
