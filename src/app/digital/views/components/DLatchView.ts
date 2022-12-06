@@ -14,7 +14,7 @@ import { Rectangle } from "core/utils/rendering/shapes/Rectangle";
 
 export class DLatchView extends ComponentView<DLatch, DigitalViewInfo> {
     public constructor(info: DigitalViewInfo, obj: DLatch) {
-        super(info, obj, V(1, 1));
+        super(info, obj, V(1, 1), "base.svg");
     }
 
     protected override renderComponent({ renderer, selections }: RenderInfo): void {
