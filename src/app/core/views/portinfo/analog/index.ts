@@ -37,15 +37,12 @@ export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
         }],
     },
     "Capacitor": {
-        Default:       DefaultAnalogPort,
-        InitialConfig: "2",
-        AllowChanges:  false,
-
-        Positions: {
-            "2": {
-                "0:0": { origin: V(-.2, 0), target: V(-1, 0), dir: V(-1, 0) },
-                "0:1": { origin: V(+.2, 0), target: V(+1, 0), dir: V(+1, 0) },
-            },
-        },
+        ...DefaultAnalogPortInfo,
+        PositionConfigs: [{
+            "ports": [
+                { origin: V(-.2, 0), target: V(-1, 0), dir: V(-1, 0)   },
+                { origin: V(+.2, 0), target: V(+1, 0), dir: V(+1, 0)   },
+            ],
+        }],
     },
 };
