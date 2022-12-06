@@ -30,6 +30,8 @@ export const Views: ViewRecord<AnalogObj, AnalogViewInfo> = {
     "AnalogWire": (c, o) => new AnalogWireView(c, o),
     "AnalogPort": (c, o) => new AnalogPortView(c, o),
     "AnalogNode": (c, o) => new AnalogNodeView(c, o),
+    //can use ground.svg and resistor.svg since they are statically drawn components, meanign that they don't change over time like some other components 
+    //such as the capacitor.
     "Ground":   (c, o) => new ComponentView(c, o, V(1.2, 0.6), "ground.svg"),
     "Resistor": (c, o) => new ComponentView(c, o, V(1.2, 1), "resistor.svg"),
     //Note to change the "View" when creating a custom view, don't use ComponentView when making the Oscilloscope, otherwise it won't work when placing it down. 

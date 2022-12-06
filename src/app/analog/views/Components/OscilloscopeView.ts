@@ -1,3 +1,5 @@
+// make sure the default values are all imported
+// alot of the refactoring will be missing imports that are not included in the master code.
 import { GRID_LINE_COLOR } from "core/utils/rendering/Styles";
 
 import { DEFAULT_CURVE_BORDER_WIDTH } from "core/utils/Constants";
@@ -11,6 +13,7 @@ import {V} from "Vector";
 
 import {linspace, linspaceDX} from "math/MathUtils";
 import {Margin, Rect}         from "math/Rect";
+
 
 import { Renderer } from "core/utils/rendering/Renderer";
 
@@ -33,6 +36,7 @@ import {Transform}                       from "math/Transform";
 import {RenderInfo}    from "core/views/BaseView";
 import { Prop } from "core/models/PropInfo";
 
+//Just constant values, do not need to change these!
 const GRAPH_LINE_WIDTH = 0.02;
 const AXIS_LINE_WIDTH = 0.02;
 const GRID_LINE_WIDTH = 0.01;
@@ -64,7 +68,6 @@ const AXES_MARGIN = Margin(
 
 
 const GRID_PTS = 2; // (N+1) grid points / 1 axis pt
-
 const LEGEND_AREA = 2;
 const LEGEND_PADDING = Margin(0.2, 0.2, 0, 0);
 const LEGEND_TITLE_FONT_SIZE = 0.3;
@@ -72,6 +75,7 @@ const LEGEND_ENTRY_FONT_SIZE = 0.2;
 const LEGEND_TITLE_FONT = `normal ${LEGEND_TITLE_FONT_SIZE}px arial`;
 const LEGEND_ENTRY_FONT = `lighter ${LEGEND_ENTRY_FONT_SIZE}px arial`;
 
+// 
 function toShape(rect: Rect): Rectangle {
     return new Rectangle(rect.center, rect.size);
 }
@@ -102,6 +106,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         };
     }
 
+    
     public getConfig() {
         return this.config;
     }
@@ -141,7 +146,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         const transform = this.getTransform();
         const size = transform.getSize();
 
-        
+        //took out border col because the lines went out of the border
         const borderCol = (selections ? SELECTED_BORDER_COLOR : DEFAULT_BORDER_COLOR);
         // const borderCol = (DEFAULT_BORDER_COLOR);
 
@@ -150,6 +155,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
         const style = new Style(fillCol, borderCol, DEFAULT_BORDER_WIDTH);
 
+        //this is where the renderer draws the rectangular box.
         renderer.draw(new Rectangle(V(), size), style);
 
         const { showAxes, showLegend, showGrid, vecs } = this.getConfig();
@@ -304,6 +310,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
 
             renderer.restore();
         }
+
 
         function drawLegend(bounds: Rect) {
             renderer.save();
