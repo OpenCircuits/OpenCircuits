@@ -34,6 +34,7 @@ export const AllNetlistInfo: NetlistInfoRecord = {
     "Ground": undefined,
 
     "Resistor":  (r) => ["R", [`${r.resistance}` ]],
+    //Setting up the capacitor with capacitance for the functionality of the capacitor using the Netlist
     "Capacitor": (c) => ["C", [`${c.capacitance}`]],
 };
 

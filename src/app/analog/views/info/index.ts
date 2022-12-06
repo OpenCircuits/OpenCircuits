@@ -13,6 +13,7 @@ export const AnalogPropInfo: PropInfoRecord<AnalogObj> = {
         ...DefaultComponentPropInfo,
         { id: "resistance",  type: "float", key: "resistance",  label: "Resistance",  step: 100, min: 0 },
     ],
+    //Setting up the capcaitor prop info as a DefaultComponentPropInfo, sets it similarly to the resistor but with the capacitance instead.
     "Capacitor": [
         ...DefaultComponentPropInfo,
         { id: "capacitance", type: "float", key: "capacitance", label: "Capacitance", step: 100, min: 0 },
