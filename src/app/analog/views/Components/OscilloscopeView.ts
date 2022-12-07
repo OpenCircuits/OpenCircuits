@@ -272,7 +272,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
             const xGridPts = linspaceDX(innerBounds.left, bounds.right, dx );
             const yGridPts = linspaceDX(innerBounds.bottom, bounds.top, dy);
 
-            // renderer.strokeVLines(xGridPts, bounds.bottom, bounds.height, "bottom");
+            renderer.strokeVLines(xGridPts, bounds.bottom, bounds.height-5, "bottom");
             renderer.strokeHLines(yGridPts, bounds.left, bounds.width, "left");
 
             renderer.restore();
@@ -315,7 +315,7 @@ export class OscilloscopeView extends ComponentView<Oscilloscope, AnalogViewInfo
         function drawLegend(bounds: Rect) {
             renderer.save();
 
-            renderer.text("Legend", V(bounds.left+0.25, bounds.top-0.5), "left", "#000000", LEGEND_TITLE_FONT, "top");
+            renderer.text("Legend", V(bounds.left+0.25, bounds.top-3), "left", "#000000", LEGEND_TITLE_FONT, "top");
 
             const boxSize = 0.2;
             enabledVecIDs.forEach((id, i) => {
