@@ -1,9 +1,12 @@
+
 import {V} from "Vector";
 
 import {AnalogComponent, DefaultAnalogPort} from "core/models/types/analog";
 
 import {PortInfoRecord} from "../types";
 
+
+const INDUCTOR_HEIGHT = 240/104*0.8;
 
 const DefaultAnalogPortInfo = {
     Default:       DefaultAnalogPort,
@@ -40,8 +43,8 @@ export const AnalogPortInfo: PortInfoRecord<AnalogComponent> = {
         ...DefaultAnalogPortInfo,
         PositionConfigs: [{
             "ports": [
-                { origin: V(0, -0.925), target: V(0, -1.425), dir: V(0, -1) },
-                { origin: V(0, +0.925), target: V(0, +1.425), dir: V(0, +1) },
+                { origin: V(0, -INDUCTOR_HEIGHT/2), target: V(0, -INDUCTOR_HEIGHT), dir: V(0, -1) },
+                { origin: V(0, +INDUCTOR_HEIGHT/2), target: V(0, +INDUCTOR_HEIGHT), dir: V(0, +1) },
             ],
         }],
     },
