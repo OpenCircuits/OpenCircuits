@@ -17,8 +17,8 @@ class ConnectionAction extends ReversableAction {
     private readonly designer: CircuitDesigner;
     private readonly wire: Wire;
 
-    private readonly p1: Port;
-    private readonly p2: Port;
+    private p1: Port;
+    private p2: Port;
 
     /**
      * Initializes a ConnectionAction given the CircuitDesigner and a Wire.
@@ -116,6 +116,7 @@ export class DisconnectAction extends ConnectionAction {
     }
 
     public getName(): string {
+<<<<<<< Updated upstream:src/app/core/actions/units/Connect.ts
         return `Disconnected ${this.p1.getParent().getName()} to ${this.p2.getParent().getName()}`;
     }
 =======
@@ -126,6 +127,10 @@ export function Connect(designer: CircuitDesigner, p1: Port, p2: Port) {
 export function Disconnect(designer: CircuitDesigner, wire: Wire) {
     return new ConnectionAction(designer, wire);
 >>>>>>> master:src/app/core/actions/units/Connect.ts
+=======
+        return `Disconnected ${this.p1.getParent().getName()} from ${this.p2.getParent().getName()}`;
+    }
+>>>>>>> Stashed changes:src/app/core/actions/addition/ConnectionAction.ts
 }
 
 /**
