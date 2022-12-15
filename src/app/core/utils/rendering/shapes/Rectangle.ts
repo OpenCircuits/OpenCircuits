@@ -14,20 +14,20 @@ export class Rectangle implements Shape {
     /**
      * Constructor for Rectangle.
      *
-     * @param rect Rectangle bounds.
+     * @param rect - Rectangle bounds.
      */
     public constructor(rect: Rect);
     /**
      * Constructor for Rectangle.
      *
-     * @param pos  Position.
-     * @param size Dimensions.
+     * @param pos  - Position.
+     * @param size - Dimensions.
      */
     public constructor(pos: Vector, size: Vector);
     /**
      * Constructor for Rectangle.
      *
-     * @param args The arguments.
+     * @param args - The arguments.
      */
     public constructor(...args: [Rect] | [Vector, Vector]) {
         switch (args.length) {
@@ -43,7 +43,7 @@ export class Rectangle implements Shape {
     /**
      * Draws the Rectangle on the canvas.
      *
-     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
+     * @param ctx - Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         const { bottomLeft, size } = this.rect;

@@ -1,6 +1,7 @@
 module.exports = {
     "plugins": [
         "jsdoc",
+        "eslint-plugin-tsdoc",
     ],
     "rules": {
         "jsdoc/check-access": "error",
@@ -40,5 +41,7 @@ module.exports = {
         "jsdoc/require-yields-check": "error",
         "jsdoc/tag-lines": ["error", "never"],
         "jsdoc/valid-types": "error",
+
+        "tsdoc/syntax": "error",
     },
 }

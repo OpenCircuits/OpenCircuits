@@ -9,7 +9,7 @@ import {ButtonToggle} from "shared/components/ButtonToggle";
  * Gets the ButtonToggle or SwitchToggle image elements associated with the provided text.
  * The pressed image will be returned first and the unpressed second.
  *
- * @param id The id of the text to search for.
+ * @param id - The id of the text to search for.
  * @returns  An array containing the pressed and unpressed images, respectively.
  */
 function GetToggles(id: Matcher): [HTMLImageElement, HTMLImageElement] {

@@ -12,7 +12,7 @@ export class Polygon implements Shape {
     /**
      * Constructor for Polygon.
      *
-     * @param points List of vertices.
+     * @param points - List of vertices.
      */
     public constructor(points: Vector[]) {
         this.points = points;
@@ -21,7 +21,7 @@ export class Polygon implements Shape {
     /**
      * Draws the Polygon on the canvas.
      *
-     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
+     * @param ctx - Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.moveTo(this.points[0].x, this.points[0].y);

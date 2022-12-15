@@ -14,9 +14,9 @@ export class QuadCurve implements Shape {
     /**
      * Constructor for QuadCurve.
      *
-     * @param p1 The start point.
-     * @param p2 The end point.
-     * @param c  The control point.
+     * @param p1 - The start point.
+     * @param p2 - The end point.
+     * @param c  - The control point.
      */
     public constructor(p1: Vector, p2: Vector, c: Vector) {
         this.p1 = p1;
@@ -27,7 +27,7 @@ export class QuadCurve implements Shape {
     /**
      * Draws the QuadCurve on the canvas.
      *
-     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
+     * @param ctx - Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         const p1 = this.p1;

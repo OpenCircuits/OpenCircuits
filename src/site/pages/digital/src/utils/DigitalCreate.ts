@@ -38,13 +38,13 @@ export enum SmartPlaceOptions {
  *  output and automatically connect them together. Starts placing at position `pos`.
  * This function is directly used for implementation of issue #689.
  *
- * @param info     The circuit info.
- * @param itemKind The `kind` of item.
- * @param options  The options used to indicate what connected components to create.
- * @param N        The number of items to create.
- * @param pos      The position of the first component.
- * @param zIndex   The zIndex of the items.
- * @returns          An action that performs this placement.
+ * @param info     - The circuit info.
+ * @param itemKind - The `kind` of item.
+ * @param options  - The options used to indicate what connected components to create.
+ * @param N        - The number of items to create.
+ * @param pos      - The position of the first component.
+ * @param zIndex   - The zIndex of the items.
+ * @returns        An action that performs this placement.
  * @throws If the itemId is an invalid item or IC.
  */
 export function SmartPlace(info: DigitalCircuitInfo, itemKind: DigitalComponent["kind"], options: SmartPlaceOptions,

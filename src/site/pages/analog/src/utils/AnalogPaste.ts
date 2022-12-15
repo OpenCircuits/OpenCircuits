@@ -6,9 +6,9 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 /**
  * Performs paste action in an Analog Circuit.
  *
- * @param data    Clipboard data.
- * @param info    Circuit info.
- * @param menuPos Top left of context menu if being pasted using context menu.
+ * @param data    - Clipboard data.
+ * @param info    - Circuit info.
+ * @param menuPos - Top left of context menu if being pasted using context menu.
  * @returns       True if successful paste.
  */
 export function AnalogPaste(data: string, info: AnalogCircuitInfo, menuPos?: Vector): boolean {

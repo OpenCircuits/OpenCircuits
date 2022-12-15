@@ -5,8 +5,8 @@ import {UserEvent}       from "@testing-library/user-event/dist/types/setup";
 /**
  * Presses a button or switch toggle.
  *
- * @param id   The id of the text associated with the toggle.
- * @param user The UserEvent to use to press the toggle.
+ * @param id   - The id of the text associated with the toggle.
+ * @param user - The UserEvent to use to press the toggle.
  * @throws An error if neither of the toggle's images are visible.
  */
 export async function PressToggle(id: Matcher, user: UserEvent) {

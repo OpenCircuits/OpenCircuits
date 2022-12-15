@@ -31,7 +31,7 @@ export namespace Signal {
  * The reducer will return Metastable if and only if any of the values are Metastable, otherwise it will return
  *  the value of the given boolean reducer, using that `Signal.On` is `true` and `Signal.Off` is `false`.
  *
- * @param func A boolean reducer function to reduce signals that are `On` or `Off`.
+ * @param func - A boolean reducer function to reduce signals that are `On` or `Off`.
  * @returns    A reducer function that can reduce an array of `Signal`s to a single `Signal`.
  */
 export const SignalReducer = (func: (a: boolean, b: boolean) => boolean) => (

@@ -13,8 +13,8 @@ export class Circle implements Shape {
     /**
      * Constructor for Circle.
      *
-     * @param pos    The position.
-     * @param radius The radius.
+     * @param pos    - The position.
+     * @param radius - The radius.
      */
     public constructor(pos: Vector, radius: number) {
         this.pos = pos;
@@ -24,7 +24,7 @@ export class Circle implements Shape {
     /**
      * Draws the Circle on the canvas.
      *
-     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
+     * @param ctx - Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.arc(this.pos.x, this.pos.y, this.radius, 0, 2*Math.PI);

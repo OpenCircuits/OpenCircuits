@@ -4,9 +4,9 @@ import {InputToken, OperatorFormat, Token, TokenType} from "./Constants/DataStru
 /**
  * Checks if the substring of a given input starting at a given index is equal to a given sequence.
  *
- * @param input    The input string that a substring of will be examined.
- * @param index    The starting index of input to compare at.
- * @param sequence The sequence to check equality with.
+ * @param input    - The input string that a substring of will be examined.
+ * @param index    - The starting index of input to compare at.
+ * @param sequence - The sequence to check equality with.
  * @returns        True if input has a substring starting at index that matches sequence, false otherwise.
  */
 function SubStrEquals(input: string, index: number, sequence: string): boolean {
@@ -18,9 +18,9 @@ const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];
 /**
  * Extracts the input name from an expression starting at a certain location.
  *
- * @param expression The expression to extract the input name from.
- * @param index      The index at which the input starts.
- * @param ops        The representation format for the operations used in this expression.
+ * @param expression - The expression to extract the input name from.
+ * @param index      - The index at which the input starts.
+ * @param ops        - The representation format for the operations used in this expression.
  * @returns          An InputToken with the input name in it.
  */
 function getInput(expression: string, index: number, ops: OperatorFormat): InputToken {
@@ -41,9 +41,9 @@ function getInput(expression: string, index: number, ops: OperatorFormat): Input
 /**
  * Gets a token from a given expression starting at a certain index.
  *
- * @param expression The expression to extract the token from.
- * @param index      The index where the token starts.
- * @param ops        The representation format for the operations used in this expression.
+ * @param expression - The expression to extract the token from.
+ * @param index      - The index where the token starts.
+ * @param ops        - The representation format for the operations used in this expression.
  * @returns          The token extracted from the expression or null if the index points to the starting location of
  *                   a separator (like " ").
  */
@@ -59,11 +59,11 @@ function getToken(expression: string, index: number, ops: OperatorFormat): Token
 /**
  * Converts the given expression to an array of tokens.
  *
- * @param    expression The expression to convert.
- * @param    ops        The representation format for the operations used in this expression.
- * @returns             A list of tokens that represent the given expression.
- * @throws {Error} If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
- * @throws {Error} If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
+ * @param expression - The expression to convert.
+ * @param ops        - The representation format for the operations used in this expression.
+ * @returns          A list of tokens that represent the given expression.
+ * @throws If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
+ * @throws If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
  */
 export function GenerateTokens(expression: string, ops: OperatorFormat): Token[] {
     for (const tokenType of TokenTypesArray) {

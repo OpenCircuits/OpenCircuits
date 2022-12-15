@@ -27,22 +27,22 @@ export class Vector {
     /**
      * Creates a Vector with the x and y values of the `other` Vector.
      *
-     * @param other The vector to copy.
+     * @param other - The vector to copy.
      */
     public constructor(other: Vector);
 
     /**
      * Initialize a Vector with the same x and y values as `val`.
      *
-     * @param val The value to initialize the vector with.
+     * @param val - The value to initialize the vector with.
      */
     public constructor(val: number);
 
     /**
      * Initialize a Vector with x values `x` and y value `y`.
      *
-     * @param x The x-component.
-     * @param y The y-component.
+     * @param x - The x-component.
+     * @param y - The y-component.
      */
     public constructor(x: number, y: number);
 
@@ -60,7 +60,7 @@ export class Vector {
      * Returns a new Vector with `this` Vector's x and y
      *  components added to `other`'s components.
      *
-     * @param other The vector to add to `this`.
+     * @param other - The vector to add to `this`.
      */
     public add(other: Vector): Vector;
 
@@ -68,7 +68,7 @@ export class Vector {
      * Returns a new Vector with `this` Vector's x and y
      *  components added by `val` to each component.
      *
-     * @param val The value to add to `this`.
+     * @param val - The value to add to `this`.
      */
     public add(val: number): Vector;
 
@@ -76,8 +76,8 @@ export class Vector {
      * Return a new Vector with `this` Vector's x and y
      *  components added by `x` and `y` respectively.
      *
-     * @param x The x-component to add to `this`.
-     * @param y The y-component to add to `this`.
+     * @param x - The x-component to add to `this`.
+     * @param y - The y-component to add to `this`.
      * @returns A vector with `this` added to `x` and `y`.
      */
     public add(x: number, y: number): Vector;
@@ -91,14 +91,14 @@ export class Vector {
      * Return a new Vector with 'this' Vector's x and y
      *  components substracted by 'v''s components.
      *
-     * @param v The vector to substract ot 'this'.
+     * @param v - The vector to substract ot 'this'.
      */
     public sub(v: Vector): Vector;
     /**
      * Return a new vector with 'this' Vector's x and y
      *  components substracted by 'x' to each component.
      *
-     * @param x The x-component to substract to 'this'.
+     * @param x - The x-component to substract to 'this'.
      */
     public sub(x: number): Vector;
 
@@ -106,8 +106,8 @@ export class Vector {
      * Return a new vector with 'this' Vector's x and y
      *  components substracted by 'x' and 'y'respectively.
      *
-     * @param x The x-component to substract to 'this'.
-     * @param y The y-component to substract to 'this'.
+     * @param x - The x-component to substract to 'this'.
+     * @param y - The y-component to substract to 'this'.
      * @returns A new vector with 'this' substracted to 'x' and 'y'.
      */
     public sub(x: number, y: number): Vector;
@@ -121,7 +121,7 @@ export class Vector {
      * Return a new vector with 'this' vector's 'x' and 'y'
      * scalar multiplied by vector 'v''s 'x' and 'y' respectively.
      *
-     * @param v The vector to scalar multiply to 'this'.
+     * @param v - The vector to scalar multiply to 'this'.
      */
     public scale(v: Vector): Vector;
 
@@ -129,7 +129,7 @@ export class Vector {
      * Return a new vector with 'this' vector's 'x' and 'y'
      * scalar multiplied by number 'x'.
      *
-     * @param x The number to scalar multiply to 'this'.
+     * @param x - The number to scalar multiply to 'this'.
      * @returns A new vector with 'this' scalar multiplied by 'a'.
      */
     public scale(x: number): Vector;
@@ -187,7 +187,7 @@ export class Vector {
     /**
      * Return the distance from 'this' to 'v'.
      *
-     * @param v The vector we need to mearsure the distance to.
+     * @param v - The vector we need to mearsure the distance to.
      * @returns The length of the vector of 'this' sub 'v'.
      */
     public distanceTo(v: Vector): number {
@@ -196,7 +196,7 @@ export class Vector {
     /**
      * Return the dot product of 'this' and 'v'.
      *
-     * @param v The vector to dot multiply to 'this'.
+     * @param v - The vector to dot multiply to 'this'.
      * @returns 'this' dot multiplied by 'v'.
      */
     public dot(v: Vector): number {
@@ -205,8 +205,8 @@ export class Vector {
     /**
      * Returns a new vector rotated `a` radians from this one.
      *
-     * @param a The angle in radians.
-     * @param o The origin to rotate around.
+     * @param a - The angle in radians.
+     * @param o - The origin to rotate around.
      * @returns A new, rotated vector.
      */
     public rotate(a: number, o = V()): Vector {
@@ -219,8 +219,8 @@ export class Vector {
     /**
      * Returns a new vector with a set rotation of `a` radians from the origin.
      *
-     * @param a The angle in radians.
-     * @param o The origin to rotate around.
+     * @param a - The angle in radians.
+     * @param o - The origin to rotate around.
      * @returns A new, rotated vector.
      */
     public withRotation(a: number, o = V()): Vector {
@@ -229,7 +229,7 @@ export class Vector {
     /**
      * Return the projection of 'this' on 'v'.
      *
-     * @param v The vector that 'this' projects to.
+     * @param v - The vector that 'this' projects to.
      * @returns The projection of 'this' on vector 'v'.
      */
     public project(v: Vector): Vector {
@@ -259,7 +259,7 @@ export class Vector {
      * Return a vector that has mininum 'x' and 'y' components from
      * vectors within the array 'vectors'.
      *
-     * @param vectors The array that holds vectors.
+     * @param vectors - The array that holds vectors.
      * @returns       A Vector with the smallest 'x' and 'y' that
      *                from vector(s) in the array.
      */
@@ -271,7 +271,7 @@ export class Vector {
      * Return a vector that has maxium 'x' and 'y' components from
      * vectors within the array 'vectors'.
      *
-     * @param vectors The array that holds vectors.
+     * @param vectors - The array that holds vectors.
      * @returns       A Vector with the biggest 'x' and 'y' that
      *                from vector(s) in the array.
      */
@@ -282,9 +282,9 @@ export class Vector {
     /**
      * Keep the vector 'x' within the range that formed by 'lo' and 'hi'.
      *
-     * @param x  The vector that need to be examined.
-     * @param lo The minimum vector of the range.
-     * @param hi The maximum vector of the range.
+     * @param x  - The vector that need to be examined.
+     * @param lo - The minimum vector of the range.
+     * @param hi - The maximum vector of the range.
      * @returns  Return 'x' itself if it is in the range of 'lo' and 'hi'.
      *           If one of the component of 'x' out of the range, it will
      *           be respectively change to corresponding compoenent of 'lo' or 'hi' and return.
@@ -296,9 +296,6 @@ export class Vector {
     }
 }
 
-/**
- * The useful utils that make the claim of the vector much easier.
- */
 export function V(): Vector;
 export function V(v: Vector): Vector;
 export function V(x: number): Vector;

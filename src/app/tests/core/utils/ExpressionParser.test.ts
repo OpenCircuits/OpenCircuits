@@ -29,7 +29,7 @@ import {LED} from "digital/models/ioobjects/outputs/LED";
 /**
  * Gets the component that the first wire of the first output port of the supplied component is connected to.
  *
- * @param component The component whose output is wanted.
+ * @param component - The component whose output is wanted.
  * @returns         The component that is the "first" connected from the supplied component.
  */
 function getOutputComponent(component: DigitalComponent): DigitalComponent {
@@ -44,21 +44,21 @@ function getOutputComponent(component: DigitalComponent): DigitalComponent {
  * will be off. If it is anything else, it will be on.
  * For example, for a circuit with three Switches a, b, and c in inputs (in that order), expected[6] would
  * have Switches enabled according to the following:
- * (2**0 & 6) => 0 so Switch a will be off.
- * (2**1 & 6) => 2 so Switch b will be on.
- * (2**2 & 6) => 4 so Switch c will be on.
+ * (2**0 & 6) equals 0 so Switch a will be off.
+ * (2**1 & 6) equals 2 so Switch b will be on.
+ * (2**2 & 6) equals 4 so Switch c will be on.
  *
  * Currently, jest runs the test in the opposite order of how they are given in the expected array.
  * This is done to avoid an issue where circuits initial state is incorrect. This is likely due to
  * the same underlying issue as issues #468 and #613 and if those are fixed, this function should
  * also be modified.
  *
- * @param  inputs   An array of the names of the switches along with their corresponding Switch,
- *                  those same Switch objects must be present in circuit.
- * @param  circuit  The components and wires that make up the circuit being tested.
- * @param  output   The component whose state will be evaluated in the test, must be present in circuit.
- * @param  expected The expected states of the output LED for all the different switch combinations.
- * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
+ * @param inputs   - An array of the names of the switches along with their corresponding Switch,
+ *                 those same Switch objects must be present in circuit.
+ * @param circuit  - The components and wires that make up the circuit being tested.
+ * @param output   - The component whose state will be evaluated in the test, must be present in circuit.
+ * @param expected - The expected states of the output LED for all the different switch combinations.
+ * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  */
 function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
@@ -91,12 +91,12 @@ function testInputs(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, 
 /**
  * This function is similar to testInputs but only generates one test case rather than one for every state.
  *
- * @param  inputs   An array of the names of the switches along with their corresponding Switch,
- *                  those same Switch objects must be present in circuit.
- * @param  circuit  The components and wires that make up the circuit being tested.
- * @param  output   The component whose state will be evaluated in the test, must be present in circuit.
- * @param  expected The expected states of the output LED for all the different switch combinations.
- * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
+ * @param inputs   - An array of the names of the switches along with their corresponding Switch,
+ *                 those same Switch objects must be present in circuit.
+ * @param circuit  - The components and wires that make up the circuit being tested.
+ * @param output   - The component whose state will be evaluated in the test, must be present in circuit.
+ * @param expected - The expected states of the output LED for all the different switch combinations.
+ * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  */
 function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED,
@@ -126,19 +126,19 @@ function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjec
  * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
  * as input names.
  *
- * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the
+ * By default, with `numInputs <= 3` then a test is created for each state, otherwise one test is created for the
  * entire expression.
  * This behavior can be overwritten with the verbose argument.
  *
- * @param  numInputs  The number of switches that are used by this expression/test.
- * @param  expression The logical boolean expression to test.
- * @param  expected   The expected states of the output LED for all the different switch combinations
- *                    (see testInputs for order).
- * @param  ops        The strings used to represent the different operators.
- * @param  verbose    True to force creating a new test for every state, false to force creating one single test
- *                    encompassing all states.
- * @throws {Error} If numInputs > 8.
- * @throws {Error} If the length of expected is not equal to 2 to the power of the length of inputs.
+ * @param numInputs  - The number of switches that are used by this expression/test.
+ * @param expression - The logical boolean expression to test.
+ * @param expected   - The expected states of the output LED for all the different switch combinations
+ *                   (see testInputs for order).
+ * @param ops        - The strings used to represent the different operators.
+ * @param verbose    - True to force creating a new test for every state, false to force creating one single test
+ *                   encompassing all states.
+ * @throws If `numInputs > 8`.
+ * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  * @see ExpressionToCircuit
  */

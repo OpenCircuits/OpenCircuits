@@ -2,7 +2,7 @@
 /**
  * Utility to function to check if the given variable is an Error.
  *
- * @param e Any object.
+ * @param e - Any object.
  * @returns Whether or not `e` is an Error.
  */
 export function isError(e: unknown): e is Error {
@@ -13,7 +13,7 @@ export function isError(e: unknown): e is Error {
 /**
  * Utility function to get the stack trace from an Error.
  *
- * @param e An Error.
+ * @param e - An Error.
  * @returns The stack trace as a string from the error.
  */
 export function getStackTrace(e: Error): string[] {

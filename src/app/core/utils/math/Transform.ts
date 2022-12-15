@@ -33,9 +33,9 @@ export class Transform {
     /**
      * Constructs a new Transform object.
      *
-     * @param pos   The initial position of the transform.
-     * @param size  The initial size of the transform.
-     * @param angle The initial angle of the transform.
+     * @param pos   - The initial position of the transform.
+     * @param size  - The initial size of the transform.
+     * @param angle - The initial angle of the transform.
      */
     public constructor(pos: Vector = V(0), size: Vector = V(1), angle = 0) {
         this.parent = undefined;

@@ -13,8 +13,8 @@ export class Line implements Shape {
     /**
      * Constructor for Line.
      *
-     * @param p1 The start point.
-     * @param p2 The end point.
+     * @param p1 - The start point.
+     * @param p2 - The end point.
      */
     public constructor(p1: Vector, p2: Vector) {
         this.p1 = p1;
@@ -24,7 +24,7 @@ export class Line implements Shape {
     /**
      * Draws the Line on the canvas.
      *
-     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
+     * @param ctx - Provides the 2D rendering context for the drawing surface of an element.
      */
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.moveTo(this.p1.x, this.p1.y);

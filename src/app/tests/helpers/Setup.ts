@@ -69,9 +69,9 @@ type Props = {
 /**
  * This function generates basic objects usefule when testing.
  *
- * @param props                 Optional parameters to pass in.
- * @param props.propagationTime The propagation time for the designer. Defaults to 0 (no delay).
- * @param props.screenSize      The size fo the test screen.
+ * @param props                 - Optional parameters to pass in.
+ * @param props.propagationTime - The propagation time for the designer. Defaults to 0 (no delay).
+ * @param props.screenSize      - The size fo the test screen.
  * @returns                     Everything in DigitalCircuitInfo except "input", a fake input, and a reset function.
  */
 export function Setup(props?: Props): Omit<DigitalCircuitInfo, "input" | "viewManager"> &
