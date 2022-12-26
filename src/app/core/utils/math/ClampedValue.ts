@@ -27,27 +27,27 @@ export class ClampedValue {
     /**
      * Set the initial value for a number to be clamped, minimum and maximum values unspecified.
      *
-     * @param initialValue The inital value of the number.
-     * @param minValue     The minimum value the number can hold.
-     * @param maxValue     The maximum value the number can hold.
+     * @param initialValue - The inital value of the number.
+     * @param minValue     - The minimum value the number can hold.
+     * @param maxValue     - The maximum value the number can hold.
      */
     public constructor(initialValue?: number);
 
     /**
      * Set the initial value for a number and minimum and maximum values for clamping.
      *
-     * @param initialValue The inital value of the number.
-     * @param minValue     The minimum value the number can hold.
-     * @param maxValue     The maximum value the number can hold.
+     * @param initialValue - The inital value of the number.
+     * @param minValue     - The minimum value the number can hold.
+     * @param maxValue     - The maximum value the number can hold.
      */
     public constructor(initialValue: number, minValue: number, maxValue: number);
 
     /**
      * Set the initial value for a number with minimum and maximum values for clamping equal to the intial.
      *
-     * @param initialValue The initial value of the number.
-     * @param minValue     The minimum value the number can hold.
-     * @param maxValue     The maximum value the number can hold.
+     * @param initialValue - The initial value of the number.
+     * @param minValue     - The minimum value the number can hold.
+     * @param maxValue     - The maximum value the number can hold.
      */
     public constructor(initialValue?: number, minValue?: number, maxValue?: number) {
         this.value = initialValue!;
@@ -58,8 +58,8 @@ export class ClampedValue {
     /**
      * Update the number to a new value, or the closest clamp bound if outside allowed range.
      *
-     * @param  val The clamped value of the number.
-     * @throws {Error} If this.minValue or this.maxValue are undefined.
+     * @param val - The clamped value of the number.
+     * @throws If this.minValue or this.maxValue are undefined.
      */
     public setValue(val: number): void {
         this.value = Clamp(val, this.minValue!, this.maxValue!);
@@ -68,7 +68,7 @@ export class ClampedValue {
     /**
      * Set the minimum value the number can hold.
      *
-     * @param val The minimum value the number can hold.
+     * @param val - The minimum value the number can hold.
      */
     public setMinValue(val: number): void {
         this.minValue = val;
@@ -77,7 +77,7 @@ export class ClampedValue {
     /**
      * Set the maximum value the number can hold.
      *
-     * @param val The maximum value the number can hold.
+     * @param val - The maximum value the number can hold.
      */
     public setMaxValue(val: number): void {
         this.maxValue = val;
@@ -113,7 +113,7 @@ export class ClampedValue {
     /**
      * Checks whether the supplied value is within the bounds of this clamped value.
      *
-     * @param value The number to evaluate.
+     * @param value - The number to evaluate.
      * @returns     True if value is between the minimum and maximum allowed values.
      */
     public contains(value: number): boolean {

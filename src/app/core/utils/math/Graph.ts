@@ -1,7 +1,7 @@
 
 /**
- * @param V The type for the vertices of the edge.
- * @param E The type for weight of the edge.
+ * @param V - The type for the vertices of the edge.
+ * @param E - The type for weight of the edge.
  */
 export class Edge<V, E> {
     private readonly target: V;
@@ -23,8 +23,8 @@ export class Edge<V, E> {
 
 
 /**
- * @param V The type for the vertices of the graph.
- * @param E The type for the weight of the edges of the graph.
+ * @param V - The type for the vertices of the graph.
+ * @param E - The type for the weight of the edges of the graph.
  */
 export class Graph<V, E> {
     private readonly list: Map<V, Array<Edge<V, E>>>;

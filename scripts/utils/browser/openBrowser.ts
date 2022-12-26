@@ -136,7 +136,7 @@ function startBrowserProcess(browser: string | undefined, url: string, args: str
  * Reads the BROWSER environment variable and decides what to do with it. Returns
  * true if it opened a browser or ran a node.js script, otherwise false.
  *
- * @param url The url to perform the Action on.
+ * @param url - The url to perform the Action on.
  * @returns   The started process.
  * @throws Throws an error if an unimplemented Action is found.
  */

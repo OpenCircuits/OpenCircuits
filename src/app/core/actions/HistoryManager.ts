@@ -41,7 +41,7 @@ export class HistoryManager {
     /**
      * Add a new action to the undo stack.
      *
-     * @param action The new action.
+     * @param action - The new action.
      * @returns      This HistoryManager for method chaining.
      */
     public add(action: Action): HistoryManager {

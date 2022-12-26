@@ -9,7 +9,7 @@ import Server, {Middleware} from "webpack-dev-server";
  * HOC for dev-server, created by-project so there can be different directories
  *  for digital and analog.
  *
- * @param project The project directory in `.devCache`, i.e. "digital" or "analog".
+ * @param project - The project directory in `.devCache`, i.e. "digital" or "analog".
  * @returns       The Webpack-compatible middleware and dev-server.
  */
 export default (project: string) => {
@@ -20,8 +20,8 @@ export default (project: string) => {
      *
      * Specifically creates a dev API for saving/fetching files.
      *
-     * @param middlewares Middlewares to be returned at the end of the funciton.
-     * @param devServer   The instance of the development server.
+     * @param middlewares - Middlewares to be returned at the end of the funciton.
+     * @param devServer   - The instance of the development server.
      * @returns           The passed in middlewares.
      * @throws If one of the underlying functions throws an error.
      */

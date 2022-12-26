@@ -28,8 +28,12 @@ module.exports = {
         // TODO: If all the code has jsdoc comments, consider turning this on
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-param-description": "error",
-        "jsdoc/require-param-name": "error",
-        "jsdoc/require-param": "error",
+        "jsdoc/check-param-names": ["error", {
+            "checkDestructured": false,
+        }],
+        "jsdoc/require-param": ["error", {
+            "checkDestructured": false,
+        }],
         "jsdoc/require-property": "error",
         "jsdoc/require-property-description": "error",
         "jsdoc/require-property-name": "error",

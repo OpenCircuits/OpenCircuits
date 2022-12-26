@@ -6,11 +6,12 @@ import {V, Vector} from "./Vector";
  *  represents a 3x3 matrix with the last row being $[0, 0, 1]$. The first two columns represent the scale and rotation
  *  of the object (indices [0, 3]), while the last column represents the translation of the object (indices [4, 5]).
  *
- * The indices are laid out in column-major order:
+ * @example The indices are laid out in column-major order:
+ * ```latex
  * $$
  * \begin{bmatrix} 0 & 2 & 4 \\ 1 & 3 & 5 \end{bmatrix}
  * $$
- * .
+ * ```
  */
 export class Matrix2x3 {
     private mat: number[];
@@ -23,7 +24,7 @@ export class Matrix2x3 {
     /**
      * Creates a 2x3 Matrix with values copied from `other`.
      *
-     * @param other The other matrix in which to copy.
+     * @param other - The other matrix in which to copy.
      */
     public constructor(other: Matrix2x3);
 
@@ -64,7 +65,7 @@ export class Matrix2x3 {
     /**
      * Return the result of `this` Matrix multiplied by the `other` Vector, resulting in a Vector.
      *
-     * @param other The vector to multiply with this.
+     * @param other - The vector to multiply with this.
      * @returns     The resultant vector.
      */
     public mul(other: Vector): Vector {
@@ -77,7 +78,7 @@ export class Matrix2x3 {
     /**
      * Returns the result of `this` Matrix multiplied with the `other` Matrix, resulting in another 2x3 Matrix.
      *
-     * @param other The other matrix to multiply with this.
+     * @param other - The other matrix to multiply with this.
      * @returns     The resultant matrix.
      */
     public mult(other: Matrix2x3): Matrix2x3 {
@@ -94,7 +95,7 @@ export class Matrix2x3 {
     /**
      * Sets the translation of `t`his Matrix (last column) to `t`.
      *
-     * @param t The translation vector.
+     * @param t - The translation vector.
      */
     public setTranslation(t: Vector): void {
         this.mat[4] = t.x;
@@ -104,7 +105,7 @@ export class Matrix2x3 {
     /**
      * Translates `this` by `t` depending on the rotation of `this` matrix.
      *
-     * @param t The translation vector.
+     * @param t - The translation vector.
      */
     public translate(t: Vector): void {
         this.mat[4] += this.mat[0] * t.x + this.mat[2] * t.y;
@@ -114,7 +115,7 @@ export class Matrix2x3 {
     /**
      * Rotates `this` matrix by `theta` (in radians).
      *
-     * @param theta The angle to rotate by (in radians).
+     * @param theta - The angle to rotate by (in radians).
      */
     public rotate(theta: number): void {
         const c = Math.cos(theta);
@@ -132,14 +133,14 @@ export class Matrix2x3 {
     /**
      * Scales `this` matrix non-uniformly by the given vector, `s`.
      *
-     * @param s The vector to scale `this` matrix by.
+     * @param s - The vector to scale `this` matrix by.
      */
     public scale(s: Vector): void;
 
     /**
      * Scales `this` matrix uniformly by the given scalar, `s`.
      *
-     * @param s The vector to scale `this` matrix by.
+     * @param s - The vector to scale `this` matrix by.
      */
     public scale(s: number): void;
 
@@ -192,7 +193,7 @@ export class Matrix2x3 {
     /**
      * Returns the matrix element at index `i`. ($i \in [0, 5]$).
      *
-     * @param i The index that must be an integer $\in [0, 5]$.
+     * @param i - The index that must be an integer $\in [0, 5]$.
      * @returns The matrix corresponding element value.
      */
     public get(i: number): number {
@@ -211,7 +212,7 @@ export class Matrix2x3 {
     /**
      * Returns whether or not `this` matrix has the same components as `other`.
      *
-     * @param other The other matrix to compare with.
+     * @param other - The other matrix to compare with.
      * @returns     True if the two matrices are equal, false otherwise.
      */
     public equals(other: Matrix2x3): boolean {

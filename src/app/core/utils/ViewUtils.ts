@@ -23,9 +23,9 @@ export function CircuitBoundingBox({ viewManager }: CircuitInfo<AnyObj>, objs: A
  * the camera's view with adjustable padding. If objs
  * is empty, uses a default size.
  *
- * @param info    The circuit info.
- * @param objs    The objects to fit within the camera.
- * @param padding The amount of padding for the fit.
+ * @param info    - The circuit info.
+ * @param objs    - The objects to fit within the camera.
+ * @param padding - The amount of padding for the fit.
  * @returns       Tuple of desired camera position and zoom.
  */
 export function GetCameraFit(info: CircuitInfo<AnyObj>, objs: AnyObj[], padding: number): [Vector, number] {

@@ -27,7 +27,7 @@ export class SelectionsWrapper extends Observable {
     /**
      * Sets `this.disabled` equal to `disabled`.
      *
-     * @param disabled Boolean value to set `this.disabled` to (defaults to true).
+     * @param disabled - Boolean value to set `this.disabled` to (defaults to true).
      */
     public setDisabled(disabled = true): void {
         this.disabled = disabled;
@@ -36,7 +36,7 @@ export class SelectionsWrapper extends Observable {
     /**
      * If `s` is not in `this.selections`, adds `s` to `this.selections` then calls every function in `this.listeners`.
      *
-     * @param id Selectable to add to `this.selections`.
+     * @param id - Selectable to add to `this.selections`.
      * @returns  True if `this.disabled` is false and `s` is not in `this.selections`, and false otheriwse.
      */
     public select(id: GUID): boolean {
@@ -53,7 +53,7 @@ export class SelectionsWrapper extends Observable {
     /**
      * If `s` is in `this.selections`, removes `s` from `this.selections` then calls every function in `this.listeners`.
      *
-     * @param id Selectable to remove from `this.selections`.
+     * @param id - Selectable to remove from `this.selections`.
      * @returns  True if `this.disabled` is false and `s` is in `this.selections`, and false otheriwse.
      */
     public deselect(id: GUID): boolean {
@@ -69,7 +69,7 @@ export class SelectionsWrapper extends Observable {
     /**
      * Returns whether or not `f` returns true for every element of `this.selections`.
      *
-     * @param f A function that takes a Selectable `s` and returns a boolean.
+     * @param f - A function that takes a Selectable `s` and returns a boolean.
      * @returns Returns true if `f` returns true for every element in `this.selections` and false otherwise.
      */
     public all(f: (id: GUID) => boolean): boolean {
@@ -79,7 +79,7 @@ export class SelectionsWrapper extends Observable {
     /**
      * Returns whether or not `f` returns true for at least one element of `this.selections`.
      *
-     * @param f A function that takes a Selectable `s` and returns a boolean.
+     * @param f - A function that takes a Selectable `s` and returns a boolean.
      * @returns Returns true if `f` returns true for every element in `this.selections` and false otherwise.
      */
     public any(f: (s: GUID) => boolean): boolean {
@@ -89,7 +89,7 @@ export class SelectionsWrapper extends Observable {
     /**
      * Checks to see if the elements of `s` are also in `this.selections`.
      *
-     * @param s An array of type Selectable.
+     * @param s - An array of type Selectable.
      * @returns True if every Selectable in s is also in `this.selections` and false otherwise.
      */
     public has(...s: GUID[]): boolean {

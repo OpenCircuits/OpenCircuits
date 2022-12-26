@@ -5,7 +5,7 @@ import type {Configuration} from "webpack";
 /**
  * Creates the webpack configuration for Images.
  *
- * @param config The current configuration.
+ * @param config - The current configuration.
  * @returns      The webpack configuration for the Image-specific rules.
  */
 export default ({ }: Config): Configuration => ({

@@ -30,10 +30,10 @@ export class Camera {
      * and initializes all the variables.
      * It sets dirty to true which means that.
      *
-     * @param width  The width of the camera (screen).
-     * @param height The height of the camera (screen).
-     * @param pos    The starting position in the camera to 0,0 (vector).
-     * @param zoom   This initialzed zoom to 1.
+     * @param width  - The width of the camera (screen).
+     * @param height - The height of the camera (screen).
+     * @param pos    - The starting position in the camera to 0,0 (vector).
+     * @param zoom   - This initialzed zoom to 1.
      */
     public constructor(width = 0, height = 0, pos = V(0, 0), zoom = 0.02) {
         this.pos = pos;
@@ -72,8 +72,8 @@ export class Camera {
     /**
      * This function resizes the height and width and sets dirty to true when the screen is moved.
      *
-     * @param width  The new width of screen.
-     * @param height The new height of screen.
+     * @param width  - The new width of screen.
+     * @param height - The new height of screen.
      */
     public resize(width: number, height: number): void {
         this.dirty = true;
@@ -84,7 +84,7 @@ export class Camera {
     /**
      * This sets the position of the screen (vector coordinates) and sets dirty to true.
      *
-     * @param pos The new position vector.
+     * @param pos - The new position vector.
      */
     public setPos(pos: Vector): void {
         this.pos = pos;
@@ -94,7 +94,7 @@ export class Camera {
     /**
      * The sets the zoom variable to the new zoom number.
      *
-     * @param zoom The new zoom number (how much it's being zoomed in).
+     * @param zoom - The new zoom number (how much it's being zoomed in).
      */
     public setZoom(zoom: number): void {
         this.zoom = zoom;
@@ -104,7 +104,7 @@ export class Camera {
     /**
      * This moves the position of the screen by dv (Ex: pos=(10,10) dv=(5,0) then pos will = (15,10) after call).
      *
-     * @param dv A vector that represents by how much the position will be moved.
+     * @param dv - A vector that represents by how much the position will be moved.
      */
     public translate(dv: Vector): void {
         this.dirty = true;
@@ -114,8 +114,8 @@ export class Camera {
     /**
      * Zooms to a certain position on the screen by a certain amount z.
      *
-     * @param c The position it's zooming to.
-     * @param z The amount it is zooming.
+     * @param c - The position it's zooming to.
+     * @param z - The amount it is zooming.
      */
     public zoomTo(c: Vector, z: number): void {
         // Calculate position to zoom in/out of
@@ -129,7 +129,7 @@ export class Camera {
     /**
      * Zooms in or out at the current position.
      *
-     * @param s The amount to zoom by.
+     * @param s - The amount to zoom by.
      */
     public zoomBy(s: number): void {
         this.dirty = true;
@@ -138,7 +138,7 @@ export class Camera {
     /**
      * This function returns true or false if this.transform contains the transform passed through.
      *
-     * @param transform Comparing this with this.transform.
+     * @param transform - Comparing this with this.transform.
      * @returns         True or false.
      */
     public cull(transform: Transform): boolean {
@@ -209,7 +209,7 @@ export class Camera {
     /**
      * Returns the current screen position with formula using the vector v and getCenter.
      *
-     * @param v The vector multiplied to inv.
+     * @param v - The vector multiplied to inv.
      * @returns A vector of the screen position.
      */
     public getScreenPos(v: Vector): Vector {
@@ -218,7 +218,7 @@ export class Camera {
     /**
      * Returns the global position not the local screens position.
      *
-     * @param v The current position.
+     * @param v - The current position.
      * @returns The global position.
      */
     public getWorldPos(v: Vector): Vector {
@@ -237,11 +237,7 @@ export class Camera {
     /**
      * This sets the margin for the camera.
      *
-     * @param newMargin        The new margins for the camera.
-     * @param newMargin.left   The left margin of the camera.
-     * @param newMargin.right  The right margin of the camera.
-     * @param newMargin.bottom The bottom margin of the camera.
-     * @param newMargin.top    The top margin of the camera.
+     * @param newMargin - The new margins for the camera.
      */
     public setMargin(newMargin: Partial<Margin>): void{
         this.margin = { ...this.margin, ...newMargin };

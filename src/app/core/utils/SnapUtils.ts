@@ -12,10 +12,9 @@ import {GetPortWorldPos}   from "core/views/portinfo/utils";
  * Utility used for calculating positions of ports and wires when a component
  * gets moved.
  *
- * @param circuit The circuit that `obj` is apart of.
- * @param obj     The component that will be snapped.
- * @param pos
- * @param ports
+ * @param circuit - The circuit that `obj` is apart of.
+ * @param pos     - .
+ * @param ports   - .
  * @returns       The snapped position for `obj`.
  */
 export function SnapToConnections(circuit: CircuitController<AnyObj>, pos: Vector, ports: AnyPort[]): Vector {

@@ -6,8 +6,8 @@ import ts from "typescript";
 /**
  * Gets the file aliases.
  *
- * @param cwd    The directory that contains `tsconfig.json`.
- * @param format The format for the aliases: webpack or jest.
+ * @param cwd    - The directory that contains `tsconfig.json`.
+ * @param format - The format for the aliases: webpack or jest.
  * @returns      A record of the alias configuration from the TypeScript aliases.
  */
 export default function getAliases(cwd = process.cwd(), format: "webpack" | "jest" = "webpack") {

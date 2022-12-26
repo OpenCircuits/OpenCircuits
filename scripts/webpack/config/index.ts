@@ -16,7 +16,7 @@ import type {Configuration} from "webpack";
 /**
  * Creates the webpack configuration.
  *
- * @param config The current configuration.
+ * @param config - The current configuration.
  * @returns      The webpack configuration.
  */
 export default (config: Config): Configuration => {

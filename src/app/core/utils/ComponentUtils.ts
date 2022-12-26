@@ -12,9 +12,9 @@ import {ObjSet} from "./ObjSet";
  * Gets all the wires/WirePorts going out from this wire
  *  Note: this path is UN-ORDERED!
  *
- * @param circuit The circuit.
- * @param w       The wire to start from.
- * @param full    True if you want to return everything in the circuit otherwise returns
+ * @param circuit - The circuit.
+ * @param w       - The wire to start from.
+ * @param full    - True if you want to return everything in the circuit otherwise returns
  *                only the wires/nodes connected to the wire.
  * @returns       The array of wires/WirePorts in this path (including w).
  */
@@ -60,9 +60,9 @@ import {ObjSet} from "./ObjSet";
  * Gathers all wires + wireports in the path from the inputs/outputs
  *  of the given component.
  *
- * @param circuit The circuit.
- * @param obj     The component.
- * @param full    True if you want to return everything in the circuit otherwise
+ * @param circuit - The circuit.
+ * @param obj     - The component.
+ * @param full    - True if you want to return everything in the circuit otherwise
  *                returns only the wires/nodes connected to the selected wire.
  * @returns       An array of connections + WirePorts.
  */
@@ -87,11 +87,8 @@ export function GetAllPaths(
  *
  * The Graph stores Nodes as their UUIDs and Edges by their UUID.
  *
- * @param groups            The SeparatedComponentCollection of components.
- * @param groups.components The components from the ObjSet.
- * @param groups.wires      The wires from the ObjSet.
- * @param groups.ports      The ports from the ObjSet.
- * @returns                 A graph corresponding to the given circuit.
+ * @param groups - The SeparatedComponentCollection of components.
+ * @returns      A graph corresponding to the given circuit.
  */
  export function CreateGraph({ components, ports, wires }: ObjSet): Graph<GUID, GUID> {
     const graph = new Graph<GUID, GUID>();

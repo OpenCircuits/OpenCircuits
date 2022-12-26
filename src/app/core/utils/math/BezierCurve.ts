@@ -50,10 +50,10 @@ export class BezierCurve {
      * If no point(s) are given, then it will be initialized with a blank Vector.
      * Bounding Box holds meaningless values by default.
      *
-     * @param p1 Initializes start point with given coordinates.
-     * @param p2 Initializes end point with given coordinates.
-     * @param c1 Initializes first control point with given coordinates.
-     * @param c2 Initializes second control point with given coordinates.
+     * @param p1 - Initializes start point with given coordinates.
+     * @param p2 - Initializes end point with given coordinates.
+     * @param c1 - Initializes first control point with given coordinates.
+     * @param c2 - Initializes second control point with given coordinates.
      */
     public constructor(p1: Vector = V(), p2: Vector = V(), c1: Vector = V(), c2: Vector = V()) {
         this.p1 = p1.copy();
@@ -68,11 +68,11 @@ export class BezierCurve {
     /**
      * Calculates t by using the quadratic formula with the given a, b, and c.
      *
-     * @param a   The a value in the quadratic formula.
-     * @param b   The b value in the quadratic formula.
-     * @param c   The c value in the quadratic formula.
-     * @param mod The +/- in the quadratic formula.
-     * @param end Returns end if result is undefined.
+     * @param a   - The a value in the quadratic formula.
+     * @param b   - The b value in the quadratic formula.
+     * @param c   - The c value in the quadratic formula.
+     * @param mod - The +/- in the quadratic formula.
+     * @param end - Returns end if result is undefined.
      * @returns   The value of t, where t represents how far along the bezier curve the given point is.
      */
     private getT(a: number, b: number, c: number, mod: -1 | 1, end: number): number {
@@ -118,7 +118,7 @@ export class BezierCurve {
     /**
      * Changes start point (P1), for Bezier curve.
      *
-     * @param v The x, y coordinates to set the point to.
+     * @param v - The x, y coordinates to set the point to.
      */
     public setP1(v: Vector): void {
         this.dirty = true;
@@ -128,7 +128,7 @@ export class BezierCurve {
     /**
      * Changes end point (P2) for Bezier curve.
      *
-     * @param v The x, y coordinates to set the point to.
+     * @param v - The x, y coordinates to set the point to.
      */
     public setP2(v: Vector): void {
         this.dirty = true;
@@ -138,7 +138,7 @@ export class BezierCurve {
     /**
      * Changes first control point (C1) for Bezier curve.
      *
-     * @param v The x, y coordinates to set the point to.
+     * @param v - The x, y coordinates to set the point to.
      */
     public setC1(v: Vector): void {
         this.dirty = true;
@@ -148,7 +148,7 @@ export class BezierCurve {
     /**
      * Changes second control point (C2) for Bezier curve.
      *
-     * @param v The x, y coordinates to set the point to.
+     * @param v - The x, y coordinates to set the point to.
      */
     public setC2(v: Vector): void {
         this.dirty = true;
@@ -194,7 +194,7 @@ export class BezierCurve {
     /**
      * Calculates x coordinate of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The x coordinate of t.
      */
     public getX(t: number): number {
@@ -205,7 +205,7 @@ export class BezierCurve {
     /**
      * Calculates y coordinate of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The y coordinate of t.
      */
     public getY(t: number): number {
@@ -216,7 +216,7 @@ export class BezierCurve {
     /**
      * Calculates x and y coordinates of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The x and y coordinates of t.
      */
     public getPos(t: number): Vector {
@@ -226,7 +226,7 @@ export class BezierCurve {
     /**
      * Calculates the 1st derivative of x coord of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The 1st derivative of x coord of t.
      */
     public getDX(t: number): number {
@@ -237,7 +237,7 @@ export class BezierCurve {
     /**
      * Calculates the 1st derivative of y coord of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The 1st derivative of y coord of t.
      */
     public getDY(t: number): number {
@@ -248,7 +248,7 @@ export class BezierCurve {
     /**
      * Calculates the 1st derivatives of x and y coordinates of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The 1st derivatives of x and y coordinates of t.
      */
     public getDerivative(t: number): Vector {
@@ -258,7 +258,7 @@ export class BezierCurve {
     /**
      * Calculates the 2nd derivative of x coordinate of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The 2nd derivative of x coordinate of t.
      */
     public getDDX(t: number): number {
@@ -270,7 +270,7 @@ export class BezierCurve {
     /**
      * Calculates the 2nd derivative of y coordinate of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The 2nd derivative of y coordinate of t.
      */
     public getDDY(t: number): number {
@@ -282,7 +282,7 @@ export class BezierCurve {
     /**
      * Calculates the 2nd derivatives of x and y coordinates of t.
      *
-     * @param t How far along the bezier curve the given point is.
+     * @param t - How far along the bezier curve the given point is.
      * @returns The 2nd derivative of x and y coordinates of t.
      */
     public get2ndDerivative(t: number): Vector {

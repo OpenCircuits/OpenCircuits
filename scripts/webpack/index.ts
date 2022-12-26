@@ -17,10 +17,10 @@ import customDevServer from "./customDevServer.js";
 /**
  * Basic webpack creation.
  *
- * @param dir     The directory to launch the webpack instance in.
- * @param project The project that is being started, i.e. "digital" or "analog".
- * @param mode    The webpack-mode: development or production.
- * @param open    Boolean indicating whether or not we should auto-open the browser on start.
+ * @param dir     - The directory to launch the webpack instance in.
+ * @param project - The project that is being started, i.e. "digital" or "analog".
+ * @param mode    - The webpack-mode: development or production.
+ * @param open    - Boolean indicating whether or not we should auto-open the browser on start.
  */
 export default async (dir: string, project: string, mode: "development" | "production", open: boolean) => {
     const publicRoot = "/";

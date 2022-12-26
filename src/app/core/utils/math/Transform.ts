@@ -104,8 +104,8 @@ export class Transform {
      * Calculates the new position and angle
      *  after transforming this by 'a' radians about the axis 'c'.
      *
-     * @param a The angle to rotate.
-     * @param c The axis to rotate about.
+     * @param a - The angle to rotate.
+     * @param c - The axis to rotate about.
      * @returns The new position and angle to set to perform this rotation.
      */
     public calcRotationAbout(a: number, c: Vector) {
@@ -157,7 +157,7 @@ export class Transform {
      * Converts the given Vector, v, to local space relative
      *  to this transform.
      *
-     * @param v The vector to transform, must be in world coordinates.
+     * @param v - The vector to transform, must be in world coordinates.
      * @returns The local space vector.
      */
     public toLocalSpace(v: Vector): Vector { // v must be in world coords
@@ -168,7 +168,7 @@ export class Transform {
      * Converts the given Vector, v, to world space relative
      *  to this transform.
      *
-     * @param v The vector to transform, must be in local coordinates.
+     * @param v - The vector to transform, must be in local coordinates.
      * @returns The world space vector.
      */
     public toWorldSpace(v: Vector): Vector {

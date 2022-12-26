@@ -16,7 +16,7 @@ export function displaySpecial(text: string, color: string): string {
 
 export function displayType(type: Types): string {
     const isArray = (type.length > 0 && type[0].length > 0 && Array.isArray(type[0][0].type));
-
+    console.log(type);
     // If the type is a single array whose type is a union/intersection, then wrap with parenthesis
     const shouldWrap = (isArray &&
                             // Array's element has a union of >1 elements

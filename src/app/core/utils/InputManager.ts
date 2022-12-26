@@ -74,7 +74,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Initializes Input with given canvas and dragTime.
      *
-     * @param dragTime The minimum length of time a mousedown must last to be considered a drag rather than a click.
+     * @param dragTime - The minimum length of time a mousedown must last to be considered a drag rather than a click.
      */
     public constructor(dragTime: number = DRAG_TIME) {
         super();
@@ -85,7 +85,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Set ups event listeners on the given canvas and returns a tear down callback.
      *
-     * @param canvas The canvas to setup on.
+     * @param canvas - The canvas to setup on.
      * @returns      A callback that tears down the setup event listeners.
      * @throws If the canvas was already setup and not torn down.
      */
@@ -113,7 +113,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Checks if newKey is a prevented combination of keys.
      *
-     * @param newKey Represents the key combination being pressed.
+     * @param newKey - Represents the key combination being pressed.
      * @returns      True if newKey is a prevented combination, false otherwise.
      */
     private isPreventedCombination(newKey: Key): boolean {
@@ -198,7 +198,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Sets up Listeners for mouse Events.
      *
-     * @param canvas The canvas to attach the event listeners to.
+     * @param canvas - The canvas to attach the event listeners to.
      * @returns      A callback to tear down these event listeners.
      */
     private hookupMouseEvents(canvas: HTMLCanvasElement): () => void {
@@ -250,7 +250,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Sets up Listeners for touch events.
      *
-     * @param canvas The canvas to attach the event listeners to.
+     * @param canvas - The canvas to attach the event listeners to.
      * @returns      A callback to tear down these event listeners.
      */
     private hookupTouchEvents(canvas: HTMLCanvasElement): () => void {
@@ -283,7 +283,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Sets up touchManagers for pinching and tapping.
      *
-     * @param canvas The canvas to attach the event listeners to.
+     * @param canvas - The canvas to attach the event listeners to.
      * @returns      A callback to tear down these event listeners.
      */
     private setupHammer(canvas: HTMLCanvasElement): () => void {
@@ -369,7 +369,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Checks if the given key is held down.
      *
-     * @param key Represents the key being checked.
+     * @param key - Represents the key being checked.
      * @returns   True if key is down, false otherwise.
      */
     public isKeyDown(key: Key): boolean {
@@ -450,7 +450,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Sets the given key as down, and calls each Listener on Event "keydown", key.
      *
-     * @param key Represents the key being pressed.
+     * @param key - Represents the key being pressed.
      */
     protected onKeyDown(key: Key): void {
         this.keysDown.set(key.toLowerCase() as Key, true); // Lower case so that letters are the same despite SHIFT
@@ -461,7 +461,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Sets the given key as up, and calls each Listener on Event "keyup", key.
      *
-     * @param key Represents the key being released.
+     * @param key - Represents the key being released.
      */
     protected onKeyUp(key: Key): void {
         this.keysDown.set(key.toLowerCase() as Key, false); // Lower case so that letters are the same despite SHIFT
@@ -473,8 +473,8 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Calls each Listener on Event "click", button.
      *
-     * @param _      Unused position vector.
-     * @param button Represents the mouse button being clicked (left mouse button by default).
+     * @param _      - Unused position vector.
+     * @param button - Represents the mouse button being clicked (left mouse button by default).
      */
     protected onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
@@ -489,7 +489,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Calls each Listener on Event "dbclick", button.
      *
-     * @param button Represents the mouse button being double clicked.
+     * @param button - Represents the mouse button being double clicked.
      */
     protected onDoubleClick(button: number): void {
 
@@ -501,7 +501,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Calls each Listener on Event "zoom", zoomFactor, mousePos
      * where zoomFactor is calculated from delta.
      *
-     * @param delta Represents whether the user is zooming in or out (negative and positive, respectively).
+     * @param delta - Represents whether the user is zooming in or out (negative and positive, respectively).
      */
     protected onScroll(delta: number): void {
         // calculate zoom factor
@@ -520,8 +520,8 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Adjusts mouse variables (dragging, position, etc.),
      * and triggers Listeners on Event "mousedown", button.
      *
-     * @param pos    Represents the position of the mouse being pressed.
-     * @param button Represents the mouse button being pressed (0 by default).
+     * @param pos    - Represents the position of the mouse being pressed.
+     * @param button - Represents the mouse button being pressed (0 by default).
      * @throws If canvas is undefined.
      */
     protected onMouseDown(pos: Vector, button = 0): void {
@@ -551,7 +551,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * and triggers Listeners on Event "mousemove", as well as Listeners
      * on Event "mousedrag", [current mouse button down] if the user is clicking.
      *
-     * @param pos Represents the new absolute position of the mouse.
+     * @param pos - Represents the new absolute position of the mouse.
      * @throws If canvas is undefined.
      */
     protected onMouseMove(pos: Vector): void {
@@ -582,7 +582,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Calls each Listener on Event "mouseup", button
      * and adjusts variables tracking mouse buttons.
      *
-     * @param button Represents the mouse button being released (0 by default).
+     * @param button - Represents the mouse button being released (0 by default).
      */
     protected onMouseUp(button = 0): void {
         this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
@@ -620,7 +620,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /**
      * Calls onMouseDown for the midpoint of multiple touches.
      *
-     * @param touches Represents the positions of the touches.
+     * @param touches - Represents the positions of the touches.
      */
     protected onTouchStart(touches: Vector[]): void {
         this.onMouseDown(CalculateMidpoint(touches));
@@ -629,7 +629,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Called when a user moves a touch point (as when using a touchpad or mobile device).
      * Calls onMouseMove for the midpoint of multiple movements.
      *
-     * @param touches Represents the positions of the touches.
+     * @param touches - Represents the positions of the touches.
      */
     protected onTouchMove(touches: Vector[]): void {
         this.onMouseMove(CalculateMidpoint(touches));

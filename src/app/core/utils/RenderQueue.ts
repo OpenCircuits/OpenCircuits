@@ -19,8 +19,8 @@ export class RenderQueue {
     /**
      * Constructor for RenderQueue.
      *
-     * @param renderFunction The callback actual render function.
-     * @param options        Optional options for rendering.
+     * @param renderFunction - The callback actual render function.
+     * @param options        - Optional options for rendering.
      * @see RenderOptions
      */
     public constructor(renderFunction?: (options?: RenderOptions) => void, options: RenderOptions = { useGrid: true }) {

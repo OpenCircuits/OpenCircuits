@@ -10,10 +10,9 @@ import type {Configuration} from "webpack";
 /**
  * Creates the webpack configuration for HTML.
  *
- * @param config            The current configuration.
- * @param config.env        The current environment.
- * @param config.publicPath The public path leading to index.html.
- * @returns                 The webpack configuration for the HTML-specific rules.
+ * @param config - The current configuration, including the current environment and
+ *               the public path leading to index.html.
+ * @returns      The webpack configuration for the HTML-specific rules.
  */
 export default ({ env, publicPath }: Config): Configuration => ({
     plugins: [

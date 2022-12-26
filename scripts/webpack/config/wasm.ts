@@ -5,7 +5,7 @@ import type {Configuration} from "webpack";
 /**
  * Returns the wasm webpack configuration.
  *
- * @param config The current configuration.
+ * @param config - The current configuration.
  * @returns      The webpack configuration for the WASM-specific rules.
  */
 export default ({ }: Config): Configuration => ({

@@ -5,9 +5,9 @@ import {V, Vector}   from "./Vector";
 /**
  * Clamps a number between a given min and max.
  *
- * @param x   The number to clamp.
- * @param min The minimum.
- * @param max The maximum.
+ * @param x   - The number to clamp.
+ * @param min - The minimum.
+ * @param max - The maximum.
  * @returns   The clamped number.
  */
 export function Clamp(x: number, min: number, max: number): number {
@@ -18,9 +18,9 @@ export function Clamp(x: number, min: number, max: number): number {
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
- * @param bl  Bottom left corner of the rectangle.
- * @param tr  Top right corner of the rectangle.
- * @param pos The position to get the nearest point on.
+ * @param bl  - Bottom left corner of the rectangle.
+ * @param tr  - Top right corner of the rectangle.
+ * @param pos - The position to get the nearest point on.
  * @returns   The closest position on the edge of
  *            the rectangle from 'pos'.
  */
@@ -45,8 +45,8 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
  * within the rectangle defined by the
  * given transform.
  *
- * @param transform The transform that represents the rectangle.
- * @param pos       Must be in world coordinates *
+ * @param transform - The transform that represents the rectangle.
+ * @param pos       - Must be in world coordinates *
  *                  The point to determine whether or not
  *                  it's within the rectangle.
  * @returns         True if the point is within the rectangle,
@@ -69,11 +69,11 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
  * is within the circle defined by the
  * given transform.
  *
- * @param pos1 The center of the circle in world
+ * @param pos1 - The center of the circle in world
  *             coordinates.
- * @param r    The radius of the circle in world
+ * @param r    - The radius of the circle in world
  *             units.
- * @param pos2 Must be in world coordinates *
+ * @param pos2 - Must be in world coordinates *
  *             The point to determine whether or not
  *             it's within the circle.
  * @returns    True if the point is within the rectangle,
@@ -92,10 +92,9 @@ export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
  * to determine whether or not the two transforms
  * are intersecting.
  *
- * @param A The first transform.
- * @param B The second transform.
- * @returns
- *          True if the two transforms are overlapping,
+ * @param A - The first transform.
+ * @param B - The second transform.
+ * @returns True if the two transforms are overlapping,
  *          false otherwise.
  */
 export function TransformContains(A: Transform, B: Transform): boolean {
@@ -188,15 +187,15 @@ export function TransformContains(A: Transform, B: Transform): boolean {
  * Uses Newton's method to find the roots of
  * the function 'f' given a derivative 'df'.
  *
- * @param iterations The number of iterations to perform
+ * @param iterations - The number of iterations to perform
  *                   Newton's method with; the smaller
  *                   the better but less accurate.
- * @param t0         The starting root value parameter.
- * @param x          Parameter 1 for the function.
- * @param y          Parameter 2 for the function.
- * @param f          The function to find the roots of.
+ * @param t0         - The starting root value parameter.
+ * @param x          - Parameter 1 for the function.
+ * @param y          - Parameter 2 for the function.
+ * @param f          - The function to find the roots of.
  *                   In the form `f(t, x, y) = ...`.
- * @param df         The derivative of the function
+ * @param df         - The derivative of the function
  *                   In the form of `df(t, x, y)`.
  * @returns          The parameter 't' that results in
  *                   `f(t, x, y) = 0`.
@@ -234,8 +233,8 @@ const WIRE_NEWTON_ITERATIONS = 5;
  * the distance function between the line and `pos`.
  * `D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)`.
  *
- * @param curve The bezier curve.
- * @param pos   The position.
+ * @param curve - The bezier curve.
+ * @param pos   - The position.
  * @returns     True if position is within the bezier curve,
  *              false otherwise.
  */
@@ -272,7 +271,7 @@ export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
 /**
  * Finds the midpoint from a list of positions.
  *
- * @param positions The list of positions.
+ * @param positions - The list of positions.
  * @returns         The midpoint of all the given positions.
  */
 export function CalculateMidpoint(positions: Vector[]): Vector {
@@ -285,7 +284,7 @@ export function CalculateMidpoint(positions: Vector[]): Vector {
  * Calculates the decimal value of a binary-coded-decimal
  *  represented by a list of booleans.
  *
- * @param bcd The binary-coded-decimal as a list of booleans.
+ * @param bcd - The binary-coded-decimal as a list of booleans.
  * @returns   The decimal equivalent of the binary-coded-decimal.
  */
 export function BCDtoDecimal(bcd: boolean[]): number {
@@ -295,10 +294,10 @@ export function BCDtoDecimal(bcd: boolean[]): number {
 /**
  * Calculates the BCD representation of the input number.
  *
- * @param decimal    The number to convert (`decimal >= 0`).
- * @param outputSize A specified output size for the BCD.
- * @throws An Error if decimal is not a valid integer `>= 0`.
+ * @param decimal    - The number to convert (`decimal >= 0`).
+ * @param outputSize - A specified output size for the BCD.
  * @returns          The BCD representation of the input.
+ * @throws An Error if decimal is not a valid integer `>= 0`.
  */
 export function DecimalToBCD(decimal: number, outputSize?: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
@@ -315,9 +314,9 @@ export function DecimalToBCD(decimal: number, outputSize?: number): boolean[] {
  * Creates a "linear space" or uniform/collocated grid from [x0, xf] with n points
  *  uniformly between them.
  *
- * @param x0 Start point (inclusive).
- * @param xf End point (inclusive).
- * @param n  The number of points in the space.
+ * @param x0 - Start point (inclusive).
+ * @param xf - End point (inclusive).
+ * @param n  - The number of points in the space.
  * @returns  An array of n uniform points on the domain [x0, xf].
  */
 export function linspace(x0: number, xf: number, n: number) {
@@ -329,9 +328,9 @@ export function linspace(x0: number, xf: number, n: number) {
 /**
  * Creates a "linear space" or uniform/staggered grid from `[x0, xf)` with spacing dx.
  *
- * @param x0 Start point (inclusive).
- * @param xf End point (exclusive).
- * @param dx The spacing between each point.
+ * @param x0 - Start point (inclusive).
+ * @param xf - End point (exclusive).
+ * @param dx - The spacing between each point.
  * @returns  An array of n uniform points on the domain `[x0, xf)`.
  */
 export function linspaceDX(x0: number, xf: number, dx: number) {
