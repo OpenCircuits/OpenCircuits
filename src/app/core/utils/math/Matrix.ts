@@ -3,7 +3,7 @@ import {V, Vector} from "./Vector";
 
 /**
  * A representation of a 2x3 Matrix. Commonly used to represent the transform of a 2D object. This matrix really
- *  represents a 3x3 matrix with the last row being $[0, 0, 1]$. The first two columns represent the scale and rotation
+ *  represents a 3x3 matrix with the last row being `[0, 0, 1]`. The first two columns represent the scale and rotation
  *  of the object (indices [0, 3]), while the last column represents the translation of the object (indices [4, 5]).
  *
  * @example The indices are laid out in column-major order:
@@ -159,7 +159,11 @@ export class Matrix2x3 {
     }
 
     /**
-     * Returns a new matrix that is the inverse of `this` matrix which satisfies: $MM^{-1} = M^{-1}M = I$.
+     * Returns a new matrix that is the inverse of `this` matrix which satisfies:
+     * ```latex
+     * $MM^{-1} = M^{-1}M = I$
+     * ```
+     * .
      *
      * @returns The inverted matrix.
      */
@@ -191,9 +195,9 @@ export class Matrix2x3 {
     }
 
     /**
-     * Returns the matrix element at index `i`. ($i \in [0, 5]$).
+     * Returns the matrix element at index `i`.
      *
-     * @param i - The index that must be an integer $\in [0, 5]$.
+     * @param i - The index that must be an integer `0 <= i <= 5`.
      * @returns The matrix corresponding element value.
      */
     public get(i: number): number {
