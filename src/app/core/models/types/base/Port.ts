@@ -7,7 +7,7 @@ export type Port = BaseObject & {
     baseKind: "Port";
 
     parent: GUID;
-    group: string; // The group for the port would be like input/output/select port
+    group: string; // The group for the port would be like input/output/select port (ex: "inputs", outputs", or "selects")
     index: number;
 }
 

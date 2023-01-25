@@ -90,9 +90,21 @@ export const WiringTool = (() => {
             const { circuit, history } = info;
 
             const port2 = findPort(info);
+
+
+            // TODO
+            // the below group check shouldn't be necessary in future versions
+            // currently CreateWire doesn't determine input vs output
+            // so we do a quick check here. CreateWire should eventually though
             if (port2 !== undefined) {
-                const wire = CreateWire(circuit.getWireKind(), port!.id, port2.id);
-                history.add(Place(circuit, wire));
+                if (port2.group === "outputs") {
+                    const wire = CreateWire(circuit.getWireKind(), port2.id, port!.id);
+                    history.add(Place(circuit, wire));
+                }
+                else {
+                    const wire = CreateWire(circuit.getWireKind(), port!.id, port2.id);
+                    history.add(Place(circuit, wire));
+                }
             }
 
             port = undefined;
