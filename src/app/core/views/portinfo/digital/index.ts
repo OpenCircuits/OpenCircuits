@@ -45,4 +45,12 @@ export const DigitalPortInfo: PortInfoRecord<DigitalComponent> = {
             "outputs": [CalcPortPos(V(0.5, 0), V(1, 0))], // 1 output
         })),
     },
+    "NOTGate": {
+        ...DefaultDigitalPortInfo,
+
+        PositionConfigs: [{
+            "inputs":  [{ origin: V(-0.49, 0), target: V(-1.2, 0), dir: V(-1, 0) }],
+            "outputs": [{ origin: V(0.45, 0), target: V(1.2, 0), dir: V(+1, 0) }],
+        }],
+    },
 };
