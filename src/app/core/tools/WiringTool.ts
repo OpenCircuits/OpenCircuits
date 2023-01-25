@@ -5,11 +5,13 @@ import {InputManagerEvent} from "core/utils/InputManager";
 
 import {Place} from "core/actions/units/Place";
 
-import {AnyPort} from "core/models/types";
+import {AnyPort, AnyNode} from "core/models/types";
 
 import {CreateWire} from "core/models/utils/CreateWire";
 
 import {PortView} from "core/views/PortView";
+
+import {NodeView} from "core/views/NodeView";
 
 
 export const WiringTool = (() => {
@@ -43,6 +45,7 @@ export const WiringTool = (() => {
         if (validPorts.length === 0)
             return undefined;
 
+
         // Find closest port to the mouse
         return validPorts
             .map((view) => ({ port: view.getObj(), dist: worldMousePos.distanceTo(view.getMidpoint()) }))
@@ -64,6 +67,9 @@ export const WiringTool = (() => {
                         input.getTouchCount() === 1) ||
                     (event.type === "click")
                 ) && (port !== undefined)
+                // without this the wiring tool still takes priority over DefaultTool when
+                // trying to select a node
+                && (info.circuit.getPortParent(port).kind !== "DigitalNode")
             );
         },
         shouldDeactivate(event: InputManagerEvent, {}: CircuitInfo): boolean {

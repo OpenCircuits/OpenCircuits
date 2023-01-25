@@ -148,19 +148,25 @@ export class ViewManager<
         const v = this.getView(m.id);
         v.onPropChange(key);
 
-        if (key === "zIndex")
+        if (key === "zIndex"){
             this.depthMap[v.getLayer() + LAYER_OFFSET].editEntry(m.id, m.zIndex, val as number);
-
-        // Also, if the object is a component, update it's ports too
-        if (m.baseKind === "Component") {
-            this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, key, val));
             return;
-        }
+         }
+        // Also, if the object is a component, update it's ports too
+        // The problem with this is that the action/event for an edited object
+        // already goes through and gets all the ports and updates their zIndex
+        // so in those cases the below is redundant and creates errors. But the
+        //action's behavior is probably how it should be handled, so the return
+        //above was added as a bandaid fix
+         if (m.baseKind === "Component") {
+             this.circuit.getPortsFor(m).forEach((p) => this.onEditObj(p as Obj, key, val));
+             return;
+         }
 
-        // And if the object is a port, then update it's wires
-        if (m.baseKind === "Port") {
-            this.circuit.getWiresFor(m).forEach((w) => this.onEditObj(w as Obj, key, val));
-        }
+         // And if the object is a port, then update it's wires
+         if (m.baseKind === "Port") {
+             this.circuit.getWiresFor(m).forEach((w) => this.onEditObj(w as Obj, key, val));
+         }
     }
 
     public onRemoveObj(m: Obj) {
@@ -219,6 +225,8 @@ export class ViewManager<
         }
     }
 
+    // TODO
+    // The node issue should eventually solve itself with the planned view refactor
     public findNearestObj(
         pos: Vector,
         filter = (_: Obj) => true,
@@ -227,8 +235,20 @@ export class ViewManager<
         for (const view of this) {
             if (!filter(view.getObj()))
                 continue;
-            if (view.contains(pos))
+            if (view.contains(pos)){
+                const obj = view.getObj();
+                if (obj.baseKind === "Port"){
+                    // Since nodes and their ports are directly on top of each other,
+                    // we check to see if the port's parent also contains pos and return
+                    // that instead
+                    const parent = this.circuit.getPortParent(obj);
+                    const parentView = this.getView(parent.id);
+                    if(parentView.contains(pos)){
+                        return parent as Obj;
+                    }
+                }
                 return view.getObj();
+            }
         }
     }
 
