@@ -1,7 +1,5 @@
 
-export class ComponentInfo {
-    kind: string;
-
-    portGroups: string[];
+export interface ComponentInfo {
+    readonly kind: string;
+    readonly portGroups: string[];
 }
-

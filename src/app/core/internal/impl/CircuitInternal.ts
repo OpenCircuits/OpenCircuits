@@ -1,8 +1,10 @@
 import {GUID} from "core/schema/GUID";
-import {Schema} from "../../schema";
+
+import {Schema}       from "../../schema";
 import {GetDebugInfo} from "../utils/Debug";
-import {DebugOptions} from "./DebugOptions";
-import {HistoryManager} from "./HistoryManager";
+
+import {DebugOptions}      from "./DebugOptions";
+import {HistoryManager}    from "./HistoryManager";
 import {SelectionsManager} from "./SelectionsManager";
 
 
@@ -12,12 +14,12 @@ export class CircuitInternal {
     protected readonly selections: SelectionsManager;
     protected readonly history: HistoryManager;
 
+    public debugOptions: DebugOptions;
+    public isLocked: boolean;
+
     protected objMap: Map<GUID, Schema.Obj>;
     protected componentPortsMap: Map<GUID, Schema.Port[]>; // components to ports
     protected connectionsMap: Map<GUID, Schema.Wire[]>; // Ports to wires
-
-    public debugOptions: DebugOptions; 
-    public isLocked: boolean;
 
     public constructor() {
         this.circuit = Schema.DefaultCircuit();
@@ -28,8 +30,8 @@ export class CircuitInternal {
         this.componentPortsMap = new Map();
 
         this.debugOptions = {
-            debugCullboxes: false,
-            debugNoFill: false,
+            debugCullboxes:       false,
+            debugNoFill:          false,
             debugPressableBounds: false,
             debugSelectionBounds: false,
         };

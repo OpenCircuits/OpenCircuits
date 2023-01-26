@@ -1,6 +1,6 @@
 import {Component} from "./Component";
-import {Port} from "./Port";
-import {Wire} from "./Wire";
+import {Port}      from "./Port";
+import {Wire}      from "./Wire";
 
 
-export type Obj = Component | Wire | Port;
+export type Obj = Component | Port | Wire;

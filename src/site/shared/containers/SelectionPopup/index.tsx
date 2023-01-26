@@ -31,7 +31,7 @@ export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
         const update = () => {
             setIsVisible(selections.amount() > 0);
 
-            // Make sure all components have same ID
+            // Make sure all components have same kind
             const kinds = selections.get().map((id) => circuit.getObj(id)!.kind);
             setID((kinds.length > 0 && kinds.every((id) => id === kinds[0])) ? kinds[0]! : "");
         }

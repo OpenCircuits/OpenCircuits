@@ -1,3 +1,2 @@
-import * as Schema from "./export";
 
-export { Schema };
+export * as Schema from "./export";

@@ -1,97 +1,38 @@
-import {CircuitInternal} from "core/internal/impl/CircuitInternal";
 import {DebugOptions} from "core/internal/impl/DebugOptions";
-import {CircuitView} from "core/internal/view/CircuitView";
-import {Rect} from "../utils/math/Rect";
-import {Vector} from "../utils/math/Vector";
+import {Rect}         from "core/public/utils/math/Rect";
+import {Vector}       from "core/public/utils/math/Vector";
+
 import {Component} from "./Component";
-import {ICircuit} from "./interfaces/Circuit";
-import {Obj} from "./Obj";
-import {Port} from "./Port";
-import {Wire} from "./Wire";
+import {Obj}       from "./Obj";
+import {Port}      from "./Port";
+import {Wire}      from "./Wire";
 
 
-export class Circuit implements ICircuit {
-    protected circuit: CircuitInternal;
-    protected view: CircuitView;
+export interface Circuit {
+    beginTransaction(): void;
+    commitTransaction(): void;
+    cancelTransaction(): void;
 
-    public constructor(canvas: HTMLCanvasElement) {
-        this.circuit = new CircuitInternal();
-        this.view = new CircuitView(this.circuit, canvas);
-    }
-
-    // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)
-    // All queries within a transaction are coherent.
-    // All ops outside begin/commit are applied individually
-    public beginTransaction(): void {
-        throw new Error("Unimplemented");
-    }
-    public commitTransaction(): void {
-        throw new Error("Unimplemented");
-    }
-    public cancelTransaction(): void {
-        throw new Error("Unimplemented");
-    }
-
-    public set locked(val: boolean) {
-        throw new Error("Unimplemented");
-    }
-    public get locked(): boolean {
-        return this.circuit.isLocked;
-    }
-
-    public set simEnabled(val: boolean) {
-        throw new Error("Unimplemented");        
-    }
-    public get simEnabled(): boolean {
-        throw new Error("Unimplemented");
-    }
-
-    public set debugOptions(options: Partial<DebugOptions>) {
-        throw new Error("Unimplemented");
-    }
-    public get debugOptions(): DebugOptions {
-        throw new Error("Unimplemented");
-    }
+    locked: boolean;
+    simEnabled: boolean;
+    debugOptions: DebugOptions;
 
     // Queries
-    public pickObjectAt(pt: Vector, space: "screen" | "world"): Obj | undefined {
-        throw new Error("Unimplemented");
-    }
-    public pickObjectRange(bounds: Rect, space: "screen" | "world"): Obj[] {
-        throw new Error("Unimplemented");
-    }
-    public selectedObjs(): Obj[] {
-        throw new Error("Unimplemented");
-    }
+    pickObjectAt(pt: Vector, space: "screen" | "world"): Obj | undefined;
+    pickObjectRange(bounds: Rect, space: "screen" | "world"): Obj[];
+    selectedObjs(): Obj[];
 
     // Object manipulation
-    public placeComponentAt(pt: Vector, space: "screen" | "world", kind: string): Component {
-        throw new Error("Unimplemented");
-    }
-    public deleteObjs(objs: Obj[]): void {
-        throw new Error("Unimplemented");
-    }
-    public clearSelections(): void {
-        throw new Error("Unimplemented");
-    }
+    placeComponentAt(pt: Vector, space: "screen" | "world", kind: string): Component;
+    deleteObjs(objs: Obj[]): void;
+    clearSelections(): void;
 
-    // Wire connection can fail if i.e. p1 is reference-equal to p2
-    public connectWire(p1: Port, p2: Port): Wire | undefined {
-        throw new Error("Unimplemented");
-    }
+    connectWire(p1: Port, p2: Port): Wire | undefined;
 
-    public createIC(objs: Obj[]): Circuit | undefined {
-        throw new Error("Unimplemented");
-    }
+    createIC(objs: Obj[]): Circuit | undefined;
 
-    public undo(): boolean {
-        throw new Error("Unimplemented");
-    }
-    public redo(): boolean {
-        throw new Error("Unimplemented");
-    }
+    undo(): boolean;
+    redo(): boolean;
 
-    public addRenderCallback(cb: () => void): void {
-        throw new Error("Unimplemented");
-    }
+    addRenderCallback(cb: () => void): void;
 }

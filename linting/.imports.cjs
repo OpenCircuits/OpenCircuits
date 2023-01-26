@@ -4,7 +4,7 @@ const fs = require("fs");
 
 /**
  * Returns an array of subdirectory paths (not including prefix) found in a depth first search
- * 
+ *
  * @param {string} prefix prefix of the path to search
  * @param {string} topDir path to search
  * @returns {string[]} An array of all subdirectories in a depth first recursive manner
@@ -26,7 +26,7 @@ function getSubdirectories(prefix, topDir) {
 /**
  * Modifies pathGroupsIn, adding pattern to it both with and without "/*" appended to the end.
  * The "group" will be "external" and the "position" will be "after".
- * 
+ *
  * @param {string} pathGroupsIn the array of pathGroups to add to
  * @param {string} pattern the new pattern to add
  */
@@ -138,7 +138,7 @@ module.exports = {
         "import/first": "error",
         "import/exports-last": "off",
         "import/no-duplicates": "error",
-        "import/no-namespace": "error",
+        "import/no-namespace": "off",
         "import/extensions": [
             "error",
             "ignorePackages",
