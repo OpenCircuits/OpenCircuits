@@ -1,13 +1,9 @@
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
-import {CircuitMetadata} from "core/models/Circuit";
-
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {Request}            from "shared/utils/Request";
+import {useAPIMethods} from "shared/utils/APIMethods";
+import {Request}       from "shared/utils/Request";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
-
-import {LoadUserCircuit} from "shared/api/Circuits";
 
 import {ToggleSideNav} from "shared/state/SideNav";
 
@@ -18,20 +14,22 @@ import {SignInOutButtons} from "shared/containers/Header/Right/SignInOutButtons"
 
 import "./index.scss";
 
+import {Circuit, CircuitMetadata} from "core/public";
+
 
 function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
     return Request({
         method:  "GET",
-        url:     `/examples/${data["id"]}`,
+        url:     `/examples/${data.id}`,
         headers: {},
     });
 }
 
 type Props = {
-    helpers: CircuitInfoHelpers;
+    circuit: Circuit;
     exampleCircuits: CircuitMetadata[];
 }
-export const SideNav = ({ helpers, exampleCircuits }: Props) => {
+export const SideNav = ({ circuit, exampleCircuits }: Props) => {
     const { auth, circuits, isOpen, loading, isSaved, loadingCircuits } = useSharedSelector(
         (state) => ({
             ...state.user,
@@ -41,14 +39,14 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
             loadingCircuits: state.user.loading,
         })
     );
-
     const dispatch = useSharedDispatch();
+    const { LoadCircuit, LoadCircuitRemote, DeleteCircuitRemote } = useAPIMethods(circuit);
 
     const onReset = () => {
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
             return;
-        helpers.ResetCircuit();
+        circuit.reset();
         dispatch(ToggleSideNav());
     }
 
@@ -89,13 +87,17 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                                         return;
                                     if (!auth)
                                         throw new Error("Sidenav failed: auth is undefined");
-                                    await helpers.LoadCircuit(() => LoadUserCircuit(auth, circuit["id"]));
+                                    await LoadCircuitRemote(circuit["id"]);
                                     dispatch(ToggleSideNav());
                                 }}
                                 onDelete={() => {
                                     if (loading) // Don't let user delete circuit while loading
                                         return;
-                                    helpers.DeleteCircuitRemote(circuit);
+                                    const shouldDelete = window.confirm(
+                                        `Are you sure you want to delete circuit "${circuit.name}"?`);
+                                    if (!shouldDelete)
+                                        return;
+                                    DeleteCircuitRemote(circuit.id);
                                 }} />)
                     )}
                 </div>
@@ -110,7 +112,7 @@ export const SideNav = ({ helpers, exampleCircuits }: Props) => {
                             onClick={async () => {
                                 if (loading) // Don't load another circuit if already loading
                                     return;
-                                await helpers.LoadCircuit(() => LoadExampleCircuit(example));
+                                await LoadCircuit(LoadExampleCircuit(example));
                                 dispatch(ToggleSideNav());
                             }} />)
                 )}

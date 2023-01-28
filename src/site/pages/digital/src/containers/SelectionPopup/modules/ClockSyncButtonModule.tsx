@@ -1,11 +1,11 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Circuit} from "core/public";
 
 
 type Props = {
-    info: CircuitInfo;
+    circuit: Circuit;
 }
 // eslint-disable-next-line arrow-body-style
-export const ClockSyncButtonModule = ({ info }: Props) => {
+export const ClockSyncButtonModule = ({ circuit }: Props) => {
     // @TODO
     // const { renderer } = info;
 

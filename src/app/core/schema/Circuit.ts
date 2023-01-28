@@ -1,18 +1,11 @@
-import {Camera}     from "./Camera";
-import {GUID, uuid} from "./GUID";
-import {Obj}        from "./Obj";
-import {Prop}       from "./Prop";
+import {Camera}          from "./Camera";
+import {CircuitMetadata} from "./CircuitMetadata";
+import {uuid}            from "./GUID";
+import {Obj}             from "./Obj";
 
 
 export interface Circuit {
-    id: GUID;
-
-    metadata: Record<string, Prop> & {
-        name: string;
-        desc: string;
-        thumb: string;
-        version: `${string}/${string}`; // i.e. "digital/v0"
-    };
+    metadata: CircuitMetadata;
 
     camera: Camera;
 
@@ -22,8 +15,8 @@ export interface Circuit {
 }
 
 export const DefaultCircuit = (): Circuit => ({
-    id:       uuid(),
     metadata: {
+        id:      uuid(),
         name:    "",
         desc:    "",
         thumb:   "",

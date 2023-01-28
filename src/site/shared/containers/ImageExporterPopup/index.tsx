@@ -17,6 +17,8 @@ import {SwitchToggle} from "shared/components/SwitchToggle";
 
 import "./index.scss";
 
+import {Circuit} from "core/public";
+
 
 const MIN_IMG_SIZE = 50;
 const MAX_IMG_SIZE = 10_000;
@@ -31,9 +33,9 @@ export type ImageExporterPreviewProps = {
 }
 
 type Props = {
-    preview: (props: ImageExporterPreviewProps) => JSX.Element;
+    circuit: Circuit;
 }
-export const ImageExporterPopup = ({ preview }: Props) => {
+export const ImageExporterPopup = ({ circuit }: Props) => {
     const { curPopup, circuitName } = useSharedSelector(
         (state) => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
     );

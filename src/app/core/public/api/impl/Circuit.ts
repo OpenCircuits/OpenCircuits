@@ -15,9 +15,9 @@ export class CircuitImpl implements Circuit {
     protected circuit: CircuitInternal;
     protected view: CircuitView;
 
-    public constructor(canvas: HTMLCanvasElement) {
+    public constructor() {
         this.circuit = new CircuitInternal();
-        this.view = new CircuitView(this.circuit, canvas);
+        // this.view = new CircuitView(this.circuit, canvas);
     }
 
     // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)

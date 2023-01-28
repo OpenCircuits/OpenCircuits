@@ -2,16 +2,7 @@ import {useEffect, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
-import {CircuitInfo}       from "core/utils/CircuitInfo";
-import {InputManagerEvent} from "core/utils/InputManager";
-
-import {V, Vector} from "core/utils/math/Vector";
-
-import {SelectGroup} from "core/actions/units/Select";
-
-import {CleanUpHandler}     from "core/tools/handlers/CleanUpHandler"
-import {DuplicateHandler}   from "core/tools/handlers/DuplicateHandler"
-import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler"
+import {V} from "Vector";
 
 import {useDocEvent}                          from "shared/utils/hooks/useDocEvent";
 import {useHistory}                           from "shared/utils/hooks/useHistory";
@@ -20,6 +11,8 @@ import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared
 import {CloseContextMenu, OpenContextMenu} from "shared/state/ContextMenu";
 
 import "./index.scss";
+
+import {Circuit} from "core/public";
 
 
 function isClipboardSupported(type: "read" | "write"): boolean {
@@ -32,11 +25,9 @@ function isClipboardSupported(type: "read" | "write"): boolean {
 const CONTEXT_MENU_VERT_OFFSET = 4;
 
 type Props = {
-    info: CircuitInfo;
-    paste: (text: string, menuPos: Vector) => boolean;
+    circuit: Circuit;
 }
-export const ContextMenu = ({ info, paste }: Props) => {
-    const { locked, input, camera, circuit, history, selections, renderer } = info;
+export const ContextMenu = ({ circuit }: Props) => {
     const { undoHistory, redoHistory } = useHistory(info);
 
     const { isOpen } = useSharedSelector(

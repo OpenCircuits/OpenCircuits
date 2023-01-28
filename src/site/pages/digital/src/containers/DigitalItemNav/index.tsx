@@ -1,14 +1,5 @@
-import {CircuitEvent}                              from "core/controllers/CircuitController";
-import {AllPortInfo}                               from "core/views/portinfo";
+import {GUID}                                      from "core/public";
 import {useCallback, useEffect, useMemo, useState} from "react";
-
-import {GUID} from "core/utils/GUID";
-
-import {AnyComponent, AnyObj} from "core/models/types";
-
-import {DigitalComponent} from "core/models/types/digital";
-
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";
 
@@ -16,34 +7,10 @@ import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
 
 import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
+import {useMainDigitalCircuit} from "site/digital/utils/hooks/useDigitalCircuit";
+
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
-
-/**
- * Utility function to get the number of input ports and output ports
- *  that a given DigitalComponent has from the ID of the component.
- * This is used for the `Smart Place` feature (see below) to know how
- *  many Switches and LEDs to show.
- *
- * @param itemKind The kind of digital component.
- * @param info     The Digital Circuit Info.
- * @returns          A tuple of [numInputs, numOutputs].
- */
-function GetNumInputsAndOutputs(itemKind: AnyComponent["kind"], info: DigitalCircuitInfo): [number, number] {
-    // if (itemId.startsWith("ic")) {
-    //     const [_, idx] = itemId.split("/");
-    //     const icData = info.designer.getICData()[parseInt(idx)];
-    //     return [icData.getInputCount(), icData.getOutputCount()];
-    // }
-
-    const portConfig = AllPortInfo[itemKind].PositionConfigs[AllPortInfo[itemKind].InitialConfig];
-
-    // TODOnow fix
-    return [
-        (portConfig["inputs"]?.length ?? 0) + (portConfig["selects"]?.length ?? 0),
-        (portConfig["outputs"]?.length ?? 0),
-    ];
-}
 
 // List that represents the order of smart place options cycle
 const SmartPlaceOrder = [
@@ -55,12 +22,8 @@ const SmartPlaceOrder = [
 
 // type ICID = `ic/${number}`;
 
-
-type Props = {
-    info: DigitalCircuitInfo;
-}
-export const DigitalItemNav = ({ info }: Props) => {
-    const { circuit, history } = info;
+export const DigitalItemNav = () => {
+    const circuit = useMainDigitalCircuit();
     const [{ ics }, setState] = useState({ ics: [] as ItemNavItem[] });
 
     // State for if we should 'Smart Place' (issue #689)
@@ -74,47 +37,43 @@ export const DigitalItemNav = ({ info }: Props) => {
         );
     });
 
-    useEffect(() => {
-        // Subscribe to CircuitDesigner
-        //  and update the ItemNav w/
-        //  ICs whenever they're added/removed
-        const onEvent = (ev: CircuitEvent<AnyObj>) => {
-            if (ev.type !== "ic")
-                return;
-            // TOOD:
-            // setState({
-            //     ics: circuit.getICData().map((d, i) => ({
-            //         id:        `ic/${i}` as ICID,
-            //         label:     d.getName(),
-            //         icon:      "multiplexer.svg",
-            //         removable: true,
-            //     })),
-            // });
-        }
-
-        circuit.subscribe(onEvent);
-        return () => circuit.unsubscribe(onEvent);
-    }, [circuit]);
+    // Subscribe to CircuitDesigner
+    //  and update the ItemNav w/
+    //  ICs whenever they're added/removed
+    useEffect(() => circuit.subscribe((ev) => {
+        if (ev.type !== "ic")
+            return;
+        // TODO:
+        // setState({
+        //     ics: circuit.getICData().map((d, i) => ({
+        //         id:        `ic/${i}` as ICID,
+        //         label:     d.getName(),
+        //         icon:      "multiplexer.svg",
+        //         removable: true,
+        //     })),
+        // });
+    }));
 
     // Generate ItemNavConfig with ICs included
     const config = useMemo(() => ({
         imgRoot:  itemNavConfig.imgRoot,
         sections: [
             ...itemNavConfig.sections,
-            // ...(ics.length === 0 ? [] : [{
-            //     id:    "other",
-            //     label: "ICs",
-            //     items: ics,
-            // }]),
+            ...(ics.length === 0 ? [] : [{
+                kind:  "other",
+                label: "ICs",
+                items: ics,
+            }]),
         ],
     }), [ics]);
 
-    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemID: DigitalComponent["kind"]) => {
+    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemID: string) => {
         if (!curItemID || (smartPlace === SmartPlaceOptions.Off))
             return;
 
         // This function shows the display for 'Smart Place' (issue #689)
-        const [numInputs, numOutputs] = GetNumInputsAndOutputs(curItemID, info);
+        const { counts } = circuit.getComponentInfo(curItemID).defaultPortConfig;
+        const numInputs = counts["inputs"], numOutputs = counts["outputs"];
         return (<>
             {!!(smartPlace & SmartPlaceOptions.Inputs) &&
                 new Array(numInputs).fill(0).map((_, i) => (
@@ -143,11 +102,11 @@ export const DigitalItemNav = ({ info }: Props) => {
                          }} />
                 ))}
         </>)
-    }, [info]);
+    }, [circuit]);
 
     // Callbacks
     const getImgSrc = useCallback((id: GUID) => {
-        const obj = info.circuit.getObj(id);
+        const obj = circuit.getObj(id);
         if (!obj)
             throw new Error(`DigitalItemNav: Failed to find object with ID ${id}!`);
         // // Get ID
@@ -164,7 +123,7 @@ export const DigitalItemNav = ({ info }: Props) => {
         const item = section?.items.find((i) => (i.kind === obj.kind));
 
         return `${config.imgRoot}/${section!.kind}/${item!.icon}`;
-    }, [config.imgRoot, config.sections, info]);
+    }, [circuit, config.imgRoot, config.sections]);
 
     const onSmartPlaceOff = useCallback(() => setSmartPlace(SmartPlaceOptions.Off), [setSmartPlace]);
 
@@ -183,7 +142,7 @@ export const DigitalItemNav = ({ info }: Props) => {
     // Append regular ItemNav items with ICs
     return (
         <ItemNav
-            info={info}
+            circuit={circuit}
             config={config}
             additionalData={smartPlace}
             additionalPreview={additionalPreview}

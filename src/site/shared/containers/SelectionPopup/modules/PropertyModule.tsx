@@ -1,8 +1,7 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {SetProperty} from "core/actions/units/SetProperty";
+import {Circuit}     from "core/public";
 
 import {GroupAction} from "core/actions/GroupAction";
-
-import {SetProperty} from "core/actions/units/SetProperty";
 
 import {Prop, PropInfo, PropInfoEntry, PropInfoRecord} from "core/models/PropInfo";
 import {AnyObj}                                        from "core/models/types";
@@ -109,11 +108,10 @@ const PropInfoEntryWrapper = (allProps: PropInputFieldProps) => {
 }
 
 
-type Props<Obj extends AnyObj> = {
-    info: CircuitInfo;
-    propInfo: PropInfoRecord<Obj>;
+type Props = {
+    circuit: Circuit;
 }
-export const PropertyModule = <Obj extends AnyObj>({ info, propInfo }: Props<Obj>) => {
+export const PropertyModule = ({ circuit }: Props) => {
     // Props is now a record of every key that EVERY object in `objs` has
     //  associated with an array of the values for each object.
     const [props, objs, forceUpdate] = useSelectionProps(

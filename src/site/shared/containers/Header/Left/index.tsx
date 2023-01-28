@@ -1,7 +1,3 @@
-import {useCallback} from "react";
-
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {SetCircuitName, ToggleCircuitLocked} from "shared/state/CircuitInfo";
@@ -12,11 +8,13 @@ import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
 
+import {useMainCircuit} from "shared/utils/hooks/useCircuit";
 
-type Props = {
-    helpers: CircuitInfoHelpers;
-}
-export const HeaderLeft = ({ helpers }: Props) => {
+import {useAPIMethods} from "shared/utils/APIMethods";
+
+
+export const HeaderLeft = () => {
+    const circuit = useMainCircuit();
     const { id, name, isSaved, isLocked, isLoggedIn, isHistoryBoxOpen, saving, error } = useSharedSelector(
         (state) => ({
             ...state.circuit,
@@ -25,8 +23,7 @@ export const HeaderLeft = ({ helpers }: Props) => {
         })
     );
     const dispatch = useSharedDispatch();
-
-    const onEnter = useCallback(() => helpers.SaveCircuitRemote(), [helpers]);
+    const { SaveCircuitRemote, DuplicateCircuitRemote } = useAPIMethods(circuit);
 
     return (
         <div className="header__left">
@@ -54,17 +51,17 @@ export const HeaderLeft = ({ helpers }: Props) => {
             <InputField title="Circuit Name" type="text" value={name}
                         placeholder="Untitled Circuit*" alt="Name of project"
                         onChange={(s) => dispatch(SetCircuitName(s.target.value))}
-                        onEnter={onEnter} />
+                        onEnter={() => SaveCircuitRemote()} />
 
             <button type="button" title="Save the circuit remotely" disabled={saving}
                     className={`header__left__save ${isSaved || !isLoggedIn ? "hide" : ""}`}
-                    onClick={() => helpers.SaveCircuitRemote()}>
+                    onClick={() => SaveCircuitRemote()}>
                 Save
             </button>
 
             <button type="button" title="Duplicate the circuit"
                     className={`header__left__duplicate ${!isLoggedIn || id === "" ? "hide" : ""}`}
-                    onClick={() => helpers.DuplicateCircuitRemote()}>
+                    onClick={() => DuplicateCircuitRemote()}>
                 <img src="img/icons/content_copy.svg" height="100%" alt="Copy circuit" />
             </button>
 
