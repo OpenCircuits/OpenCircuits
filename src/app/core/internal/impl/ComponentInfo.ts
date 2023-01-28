@@ -28,13 +28,15 @@ export interface ComponentInfoProvider {
 
 // TODO: seems kind of heavy
 export function IsValidPortList(info: ComponentInfo, ports: Schema.Port[]): boolean {
+    // Count ports in each group
     const countMap = new Map<string, number>();
     ports.forEach(({ group }) =>
         countMap.set(group, (countMap.get(group) ?? 0) + 1));
 
-    const counts: Record<string, number> = {};
-    info.portGroups.forEach((g) =>
-        { counts[g] = countMap.get(g) ?? -1});
+    // Convert map to record
+    const counts = {} as Record<string, number>;
+    countMap.forEach((v, k) => counts[k] = v);
+
     return info.isValidPortConfig({ counts });
 }
 

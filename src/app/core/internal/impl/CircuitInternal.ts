@@ -34,9 +34,9 @@ export class CircuitInternal {
     // TODO: Can the emitted events be completely generated from this Ops list?
     protected transactionOps: CircuitOp[];
 
-    public constructor(componentsTypes: ComponentInfoProvider) {
+    public constructor(componentTypes: ComponentInfoProvider) {
         this.history = new HistoryManager();
-        this.componentTypes = componentsTypes;
+        this.componentTypes = componentTypes;
 
         this.objMap = new Map();
         this.componentPortsMap = new Map();
@@ -81,7 +81,7 @@ export class CircuitInternal {
         this.assertTransactionState(true);
         if (this.transactionOps.length > 0) {
             InvertMultiOp({ kind: "MultiOp", ops: this.transactionOps }).ops
-                .forEach((rollbackOp) => { this.applyOp(rollbackOp); });
+                .forEach((rollbackOp) => this.applyOp(rollbackOp));
             // TODO: Dump in-progress events
             this.transactionOps = [];
         }
@@ -153,10 +153,10 @@ export class CircuitInternal {
         if (!obj)
             throw new Error("Failed to set port config: invalid GUID");
         const componentInfo = this.componentTypes.get(obj.kind);
-        if (componentInfo === undefined)
+        if (!componentInfo)
             throw new Error("Failed to set port config: Unknown component type (this is really bad)");
         const ports = componentInfo.makePortsForConfig(id, portConfig);
-        if (ports === undefined)
+        if (!ports)
             throw new Error("Failed to set port config: Invalid port config");
 
         // NOTE: "applyOp" will need to double-check this list of ports is valid.
