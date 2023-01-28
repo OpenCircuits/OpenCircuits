@@ -1,6 +1,8 @@
-import {CircuitInternal} from "core/internal/impl/CircuitInternal";
-import {DebugOptions}    from "core/internal/impl/DebugOptions";
-import {CircuitView}     from "core/internal/view/CircuitView";
+import {CircuitInternal}                 from "core/internal/impl/CircuitInternal";
+import {NewExampleComponentInfoProvider} from "core/internal/impl/ComponentInfo";
+import {DebugOptions}                    from "core/internal/impl/DebugOptions";
+import {SelectionsManager}               from "core/internal/impl/SelectionsManager";
+import {CircuitView}                     from "core/internal/view/CircuitView";
 
 import {Rect}      from "../../utils/math/Rect";
 import {Vector}    from "../../utils/math/Vector";
@@ -13,31 +15,40 @@ import {Wire}      from "../Wire";
 
 export class CircuitImpl implements Circuit {
     protected circuit: CircuitInternal;
+
+    // Moved from CircuitInternal
+    protected readonly selections: SelectionsManager;
+    public isLocked: boolean;
+
     protected view: CircuitView;
 
-    public constructor() {
-        this.circuit = new CircuitInternal();
-        // this.view = new CircuitView(this.circuit, canvas);
+    public constructor(canvas: HTMLCanvasElement) {
+        this.circuit = new CircuitInternal(NewExampleComponentInfoProvider());
+        this.view = new CircuitView(this.circuit, canvas);
+
+        this.selections = new SelectionsManager();
+        this.isLocked = false;
     }
 
     // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)
     // All queries within a transaction are coherent.
     // All ops outside begin/commit are applied individually
     public beginTransaction(): void {
-        throw new Error("Unimplemented");
+        this.circuit.beginTransaction();
     }
     public commitTransaction(): void {
-        throw new Error("Unimplemented");
+        this.circuit.commitTransaction();
     }
     public cancelTransaction(): void {
-        throw new Error("Unimplemented");
+        this.circuit.cancelTransaction();
     }
 
     public set locked(val: boolean) {
         throw new Error("Unimplemented");
     }
     public get locked(): boolean {
-        return this.circuit.isLocked;
+        // TODO: Decide which level to enforce this at.  Is it serialized?
+        throw new Error("Unimplemented");
     }
 
     public set simEnabled(val: boolean) {
