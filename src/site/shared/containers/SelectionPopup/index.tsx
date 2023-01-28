@@ -4,9 +4,6 @@ import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {Clamp} from "math/MathUtils";
 
-import {CircuitInfo}            from "core/utils/CircuitInfo";
-import {CalcSelectionsMidpoint} from "core/utils/CircuitInfoUtils";
-
 import {useEvent}          from "shared/utils/hooks/useEvent";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 
@@ -14,41 +11,39 @@ import {TitleModule} from "./modules/TitleModule";
 
 import "./index.scss";
 
+import {Circuit} from "core/public";
+
 
 type Props = {
-    info: CircuitInfo;
+    circuit: Circuit;
     docsUrlConfig: Record<string, string>;
     children: React.ReactNode;
 }
-export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
-    const { input, circuit, history, selections } = info;
-
+export const SelectionPopup = ({ circuit, docsUrlConfig, children }: Props) => {
     const itemNavCurItem = useSharedSelector((state) => state.itemNav.curItemID);
 
     const [isVisible, setIsVisible] = useState(false);
     const [id, setID] = useState("");
-    useEffect(() => {
-        const update = () => {
-            setIsVisible(selections.amount() > 0);
+    useEffect(() => circuit.subscribe((ev) => {
+        if (ev.type !== "selected")
+            return;
+        const objs = circuit.selectedObjs();
+        setIsVisible(objs.length > 0);
 
-            // Make sure all components have same kind
-            const kinds = selections.get().map((id) => circuit.getObj(id)!.kind);
-            setID((kinds.length > 0 && kinds.every((id) => id === kinds[0])) ? kinds[0]! : "");
-        }
-
-        selections.subscribe(update);
-        return () => selections.unsubscribe(update);
-    }, [circuit, selections, setIsVisible]);
+        // Make sure all components have same kind
+        const kinds = objs.map((o) => o.kind);
+        setID((kinds.length > 0 && kinds.every((kind) => kind === kinds[0])) ? kinds[0]! : "");
+    }), [circuit, setIsVisible]);
 
 
     const [pos, setPos] = useState({ x: 0, y: 0 });
-    const updatePos = useCallback(() => setPos(CalcSelectionsMidpoint(info, "screen")), [info]);
+    const updatePos = useCallback(() => setPos(circuit.selectedMidpoint("screen")), [circuit]);
 
-    useEffect(() => {
-        // Subscribe to history for translation/selection changes
-        history.addCallback(updatePos);
-        return () => history.removeCallback(updatePos);
-    }, [history, updatePos]);
+    useEffect(() => circuit.subscribe((ev) => {
+        if (ev.type !== "history")
+            return;
+        updatePos();
+    }), [circuit, updatePos]);
     useEvent("zoom", updatePos, input, [updatePos]);
 
     const [isDragging, setIsDragging] = useState(false);
@@ -109,7 +104,7 @@ export const SelectionPopup = ({ info, docsUrlConfig, children }: Props) => {
                 <a href={infoLink} target="_blank" rel="noopener noreferrer"
                    title="Click for component information">?</a>
             </div>)}
-            <TitleModule info={info}  />
+            <TitleModule circuit={circuit}  />
             <hr />
             {children}
         </div>

@@ -1,10 +1,10 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Circuit} from "core/public";
 
 
 type Props = {
-    info: CircuitInfo;
+    circuit: Circuit;
 }
-export const OscilloscopeModule = ({ info }: Props) =>
+export const OscilloscopeModule = ({ circuit }: Props) =>
     // @TODO
     // const { history, renderer } = info;
 

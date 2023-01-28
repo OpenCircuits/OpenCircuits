@@ -1,4 +1,4 @@
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {Circuit} from "core/public";
 
 
 // const allBaseComponentIDs = [
@@ -7,10 +7,10 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 // ];
 
 type Props = {
-    info: DigitalCircuitInfo;
+    circuit: Circuit;
 }
 // eslint-disable-next-line arrow-body-style
-export const ReplaceComponentDropdownModule = ({ info }: Props) => {
+export const ReplaceComponentDropdownModule = ({ circuit }: Props) => {
     // @TODO
     // const { designer, history, renderer, selections } = info;
 

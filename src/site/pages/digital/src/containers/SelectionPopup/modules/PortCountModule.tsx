@@ -1,11 +1,9 @@
+import {SetPortConfig}    from "core/actions/compositions/SetPortConfig";
+import {Circuit}          from "core/public";
 import {AllPortInfo}      from "core/views/portinfo";
 import {CalcPortConfigID} from "core/views/portinfo/utils";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-
 import {GroupAction} from "core/actions/GroupAction";
-
-import {SetPortConfig} from "core/actions/compositions/SetPortConfig";
 
 import {AnyComponent} from "core/models/types";
 
@@ -15,12 +13,9 @@ import {SelectModuleInputField} from "shared/containers/SelectionPopup/modules/i
 
 
 type Props = {
-    info: CircuitInfo;
-    labels?: Record<string, string>;
+    circuit: Circuit;
 }
-export const PortCountModule = ({ info, labels }: Props) => {
-    const { circuit, history, renderer } = info;
-
+export const PortCountModule = ({ circuit }: Props) => {
     const [props, cs] = useSelectionProps(
         info,
         (c): c is AnyComponent => (

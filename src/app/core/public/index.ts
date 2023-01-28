@@ -1,5 +1,7 @@
 
-export type { GUID, Prop } from "core/internal";
+export * from "core/schema/GUID";
+export * from "core/schema/Prop";
+
 export * from "./api/ComponentInfo";
 export * from "./api/Component";
 export * from "./api/Wire";

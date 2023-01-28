@@ -1,23 +1,15 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
-
-import {GroupAction} from "core/actions/GroupAction";
-
-import {SetProperty} from "core/actions/units/SetProperty";
-
-import {AnyObj} from "core/models/types";
+import {Circuit} from "core/public";
 
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
 import {useSelectionProps}    from "./useSelectionProps";
 
 
 type Props = {
-    info: CircuitInfo;
+    circuit: Circuit;
 }
-export const TitleModule = ({ info }: Props) => {
-    const { circuit, selections, renderer, history } = info;
-
+export const TitleModule = ({ circuit }: Props) => {
     const [props] = useSelectionProps(
-        info,
+        circuit,
         (o): o is AnyObj => true,
         (o) => ({ name: (o.name ?? o.kind) })
     );
@@ -25,7 +17,7 @@ export const TitleModule = ({ info }: Props) => {
     if (!props)
         return null;
 
-    const s = selections.get();
+    const s = circuit.selectedObjs();
 
     return (<div>
         <label>
@@ -37,7 +29,7 @@ export const TitleModule = ({ info }: Props) => {
                     s.map((id, i) => SetProperty(circuit, id, "name", newNames[i])),
                     "Title Module"
                 )}
-                onSubmit={({ isFinal, action }) => {
+                onSubmit={({ isFinal, action }) => {å
                     renderer.render();
                     if (isFinal)
                         history.add(action);

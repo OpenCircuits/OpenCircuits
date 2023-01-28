@@ -1,9 +1,6 @@
 import {useEffect} from "react";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-
+import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {ToggleDebugCullboxes, ToggleDebugNoFill,
@@ -17,11 +14,8 @@ import {Dropdown} from "../Dropdown";
 import {AutoSaveToggle} from "./AutoSaveToggle";
 
 
-type Props = {
-    helpers: CircuitInfoHelpers;
-    info: CircuitInfo;
-}
-export const SettingsMenu = ({ helpers, info }: Props) => {
+export const SettingsMenu = () => {
+    const circuit = useMainCircuit();
     const { curMenu, debugInfo } = useSharedSelector(
         (state) => ({ curMenu: state.header.curMenu, debugInfo: state.debugInfo })
     );
@@ -30,9 +24,8 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
     // We need this to connect the Redux state to the CircuitInfo state
     // (keeps CircuitInfo in sync with the Redux state)
     useEffect(() => {
-        info.debugOptions = debugInfo;
-        info.renderer.render();
-    }, [info, debugInfo, debugInfo.debugCullboxes, debugInfo.debugPressableBounds,
+        circuit.debugOptions = debugInfo;
+    }, [circuit, debugInfo, debugInfo.debugCullboxes, debugInfo.debugPressableBounds,
         debugInfo.debugSelectionBounds, debugInfo.debugNoFill]); // Updates when any of the debugInfo values change
 
     return (
@@ -40,7 +33,7 @@ export const SettingsMenu = ({ helpers, info }: Props) => {
                   btnInfo={{ title: "User Settings", src: "img/icons/settings.svg" }}
                   onClick={() => dispatch(OpenHeaderMenu("settings"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
-            <AutoSaveToggle helpers={helpers} />
+            <AutoSaveToggle />
             {process.env.NODE_ENV === "development" &&
                 (<>
                     <h1>Debug</h1>

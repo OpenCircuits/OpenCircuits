@@ -2,25 +2,25 @@ import React from "react";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {LoadFile}           from "shared/utils/Importer";
+import {useAPIMethods} from "shared/utils/APIMethods";
+import {LoadFile}      from "shared/utils/Importer";
 
+import {useMainCircuit}    from "shared/utils/hooks/useCircuit";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {InputField} from "shared/components/InputField";
 
 
-type Props = {
-    helpers: CircuitInfoHelpers;
-}
-export const OpenFileButton = ({ helpers }: Props) => {
+export const OpenFileButton = () => {
+    const circuit = useMainCircuit();
     const isSaved = useSharedSelector((state) => state.circuit.isSaved);
+    const { LoadCircuit } = useAPIMethods(circuit);
 
     const fileInput = React.useRef<HTMLInputElement>(null);
 
     const load = (file: File) => {
         if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
-            helpers.LoadCircuit(() => LoadFile(file));
+            LoadCircuit(LoadFile(file));
     }
 
     return (<>
