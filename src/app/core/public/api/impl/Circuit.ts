@@ -1,6 +1,8 @@
-import {CircuitInternal} from "core/internal/impl/CircuitInternal";
-import {DebugOptions}    from "core/internal/impl/DebugOptions";
-import {CircuitView}     from "core/internal/view/CircuitView";
+import {CircuitInternal}                 from "core/internal/impl/CircuitInternal";
+import {NewExampleComponentInfoProvider} from "core/internal/impl/ComponentInfo";
+import {DebugOptions}                    from "core/internal/impl/DebugOptions";
+import {SelectionsManager}               from "core/internal/impl/SelectionsManager";
+import {CircuitView}                     from "core/internal/view/CircuitView";
 
 import {Rect}      from "../../utils/math/Rect";
 import {Vector}    from "../../utils/math/Vector";

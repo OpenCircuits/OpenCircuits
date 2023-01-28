@@ -1,12 +1,22 @@
-import { GUID } from "core/schema/GUID";
+import {GUID} from "core/schema/GUID";
 
-import { Schema } from "../../schema";
-import { GetDebugInfo } from "../utils/Debug";
-import { CircuitOp, InvertMultiOp, MultiOp } from "./CircuitOps";
-import { ComponentInfoProvider, PortConfig } from "./ComponentInfo";
+import {Schema}       from "../../schema";
+import {GetDebugInfo} from "../utils/Debug";
 
-import { HistoryManager } from "./HistoryManager";
+import {CircuitOp, InvertMultiOp, MultiOp} from "./CircuitOps";
+import {ComponentInfoProvider, PortConfig} from "./ComponentInfo";
+import {HistoryManager}                    from "./HistoryManager";
 
+
+// REFERENCE POLICY:
+//  OUTGOING REFERENCES:
+//      1. GUIDs: Retain these to reference Objects at a later time.
+//      2. Schema types: Only use these ephemerally.  They are not guaranteed to remain valid or
+//          up-to-date after mutations.
+//  INCOMING REFERENCES:
+//      1. GUIDs: Accepted as the primary reference type.
+//      2. Non-trivial types: No incoming references are retained.
+// TODO: Decide how to handle dangling GUIDs and how that relates to the TBD on-changed events.
 export class CircuitInternal {
     protected readonly history: HistoryManager;
     protected readonly componentTypes: ComponentInfoProvider;
@@ -45,8 +55,8 @@ export class CircuitInternal {
             throw new Error("Circuit does not own provided GUID");
     }
     // Public for use by i.e. the Renderer, Propagators.
-    public assertTransactionState(st: boolean): void {
-        if (this.transaction != st)
+    public assertTransactionState(state: boolean): void {
+        if (this.transaction !== state)
             throw new Error("Unexpectedly in transaction state");
     }
 
@@ -56,7 +66,7 @@ export class CircuitInternal {
     }
     public commitTransaction(): MultiOp | undefined {
         this.assertTransactionState(true);
-        let op: MultiOp | undefined = undefined;
+        let op: MultiOp | undefined;
         if (this.transactionOps.length > 0) {
             op = { kind: "MultiOp", ops: this.transactionOps };
             this.history.push(op);
@@ -70,9 +80,8 @@ export class CircuitInternal {
     public cancelTransaction(): void {
         this.assertTransactionState(true);
         if (this.transactionOps.length > 0) {
-            InvertMultiOp({ kind: "MultiOp", ops: this.transactionOps }).ops.forEach(rollbackOp => {
-                this.applyOp(rollbackOp);
-            });
+            InvertMultiOp({ kind: "MultiOp", ops: this.transactionOps }).ops
+                .forEach((rollbackOp) => { this.applyOp(rollbackOp); });
             // TODO: Dump in-progress events
             this.transactionOps = [];
         }
@@ -80,11 +89,11 @@ export class CircuitInternal {
     }
 
     private undoRedoHelper(op?: MultiOp): boolean {
-        if (op === undefined)
+        if (!op)
             return false;
 
         this.beginTransaction();
-        op.ops.forEach(o => this.applyOp(o));
+        op.ops.forEach((o) => this.applyOp(o));
         this.commitTransaction();
 
         return true;
@@ -108,22 +117,20 @@ export class CircuitInternal {
     //
 
     public placeComponent(kind: string, props: Schema.Component["props"]): void {
-        const g: GUID = ""; // TODO: generatre
         this.applyOp({
-            kind: "PlaceComponentOp",
+            kind:     "PlaceComponentOp",
             inverted: false,
-            c: {
+            c:        {
                 baseKind: "Component",
-                kind: kind,
-                id: g,
-                props: props,
+                kind:     kind,
+                id:       "", // TODO: Maybe generate in 'applyOp'?
+                props:    { ...props }, // Copy non-trivial object
             },
             wires: [],
             ports: [], // NOTE: Ports are added separately in "setPortConfig".
         });
     }
 
-    // TODO: Should this take a component object for type safety?
     public replaceComponent(id: GUID, newKind: string): void {
         // TODO: Check that component's current port list is compatable with the "newKind" ComponentInfo
         // TODO: Maybe this needs a dedicated Op b/c updating kind isn't covered by `SetPropertyOp`
@@ -131,24 +138,24 @@ export class CircuitInternal {
     }
 
     public deleteObject(id: GUID): void {
-        // TODO: one of these per type?
         throw new Error("Unimplemented");
     }
 
-    public setPropFor<O extends Schema.Obj, K extends keyof O["props"]>(obj: O, key: K, val?: O["props"][K]) {
+    // TODO: Find a way to do this without needing an "O" instance parameter.
+    public setPropFor<O extends Schema.Obj, K extends keyof O["props"] & string>(obj: O, key: K, val?: O["props"][K]) {
         this.assertOwnObject(obj);
-        const oldVal: O["props"][K] | undefined = obj[key];
-        this.applyOp({ kind: "SetPropertyOp", key: String(key), newVal: val, oldVal: oldVal });
+        const oldVal = obj[key] as O["props"][K] | undefined;
+        this.applyOp({ kind: "SetPropertyOp", key, newVal: val, oldVal });
     }
 
-    public setPortConfig(id: GUID, p: PortConfig): void {
+    public setPortConfig(id: GUID, portConfig: PortConfig): void {
         const obj = this.getCompByID(id);
         if (!obj)
             throw new Error("Failed to set port config: invalid GUID");
         const componentInfo = this.componentTypes.get(obj.kind);
         if (componentInfo === undefined)
             throw new Error("Failed to set port config: Unknown component type (this is really bad)");
-        const ports = componentInfo.makePortsForConfig(id, p);
+        const ports = componentInfo.makePortsForConfig(id, portConfig);
         if (ports === undefined)
             throw new Error("Failed to set port config: Invalid port config");
 
@@ -165,7 +172,7 @@ export class CircuitInternal {
         throw new Error("Unimplemented");
     }
 
-    public getObjs(): IterableIterator<Schema.Obj> {
+    public getObjs(): IterableIterator<Readonly<Schema.Obj>> {
         return this.objMap.values();
     }
 
@@ -177,24 +184,24 @@ export class CircuitInternal {
             throw new Error(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${GetDebugInfo(obj)}!`);
         return obj as O;
     }
-    public getCompByID(id: GUID): Schema.Component | undefined {
+    public getCompByID(id: GUID): Readonly<Schema.Component> | undefined {
         return this.getBaseKindByID<Schema.Component>(id, "Component");
     }
-    public getWireByID(id: GUID): Schema.Wire | undefined {
+    public getWireByID(id: GUID): Readonly<Schema.Wire> | undefined {
         return this.getBaseKindByID<Schema.Wire>(id, "Wire");
     }
-    public getPortByID(id: GUID): Schema.Port | undefined {
+    public getPortByID(id: GUID): Readonly<Schema.Port> | undefined {
         return this.getBaseKindByID<Schema.Port>(id, "Port");
     }
 
-    public getPortsForComponent(c: Schema.Component): readonly Schema.Port[] {
+    public getPortsForComponent(c: Schema.Component): ReadonlyArray<Readonly<Schema.Port>> {
         const ports = this.componentPortsMap.get(c.id);
         if (!ports)
             throw new Error(`CircuitInternal: Attempted to get ports for component ${GetDebugInfo(c)}, but failed to find an entry!`);
         return ports;
     }
 
-    public getPortsForWire(w: Schema.Wire): readonly [Schema.Port, Schema.Port] {
+    public getPortsForWire(w: Schema.Wire): readonly [Readonly<Schema.Port>, Readonly<Schema.Port>] {
         const p1 = this.getPortByID(w.p1);
         const p2 = this.getPortByID(w.p2);
         if (!p1)
@@ -204,7 +211,7 @@ export class CircuitInternal {
         return [p1, p2];
     }
 
-    public getWiresFor(p: Schema.Port): readonly Schema.Wire[] {
+    public getWiresFor(p: Schema.Port): ReadonlyArray<Readonly<Schema.Wire>> {
         const wires = this.connectionsMap.get(p.id);
         if (!wires)
             throw new Error(`CircuitInternal: Attempted to get wires for port ${GetDebugInfo(p)}, but failed to find an entry!`);

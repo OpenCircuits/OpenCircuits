@@ -1,13 +1,12 @@
-import {Schema}       from "core/schema";
-
+import {Schema} from "core/schema";
 
 import {V, Vector}     from "../../utils/math/Vector";
 import {Component}     from "../Component";
 import {ComponentInfo} from "../ComponentInfo";
 import {Port}          from "../Port";
 
-import { BaseObjectImpl } from "./BaseObject";
-import { PortImpl } from "./Port";
+import {BaseObjectImpl} from "./BaseObject";
+import {PortImpl}       from "./Port";
 
 
 export class ComponentImpl extends BaseObjectImpl implements Component {

@@ -1,4 +1,4 @@
-import { CircuitOp, InvertMultiOp, MultiOp } from "./CircuitOps";
+import {CircuitOp, InvertMultiOp, MultiOp} from "./CircuitOps";
 
 
 class MultiOpStack {
@@ -25,8 +25,8 @@ class MultiOpStack {
 
 export class HistoryManager {
 
-    private undoStack: MultiOpStack;
-    private redoStack: MultiOpStack;
+    private readonly undoStack: MultiOpStack;
+    private readonly redoStack: MultiOpStack;
 
     public constructor() {
         this.undoStack = new MultiOpStack();
@@ -41,22 +41,20 @@ export class HistoryManager {
 
     // Returns a MultiOp that undoes the most recent MultiOp
     public undo(): MultiOp | undefined {
-        let op = this.undoStack.pop();
-        if (op !== undefined) {
-            this.redoStack.push(op);
-            return InvertMultiOp(op);
-        }
-        return undefined;
+        const op = this.undoStack.pop();
+        if (!op)
+            return undefined;
+        this.redoStack.push(op);
+        return InvertMultiOp(op);
     }
 
     // Returns a MultiOp that re-does the most recently undone MultiOp
     public redo(): MultiOp | undefined {
-        let op = this.redoStack.pop();
-        if (op !== undefined) {
-            this.undoStack.push(op);
-            return op;
-        }
-        return undefined;
+        const op = this.redoStack.pop();
+        if (!op)
+            return undefined;
+        this.undoStack.push(op);
+        return op;
     }
 
 }

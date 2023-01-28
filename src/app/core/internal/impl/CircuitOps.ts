@@ -1,4 +1,4 @@
-import { Schema } from "core/schema"
+import {Schema} from "core/schema"
 
 // Sequence of ops that should be applied atomically.  This is not a proper op itself currently,
 // but maybe it should be?
@@ -38,7 +38,7 @@ export interface SetPropertyOp {
 
 export interface SetComponentPortsOp {
     kind: "SetComponentPortsOp";
-    component: Schema.GUID,
+    component: Schema.GUID;
     newPorts?: Schema.Port[];
     oldPorts?: Schema.Port[];
 }
@@ -58,6 +58,9 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
     }
 }
 
-export function InvertMultiOp(op: MultiOp): MultiOp {
-    return { kind: op.kind, ops: [...op.ops].reverse().map((a) => InvertCircuitOp(a)) };
+export function InvertMultiOp({ kind, ops }: MultiOp): MultiOp {
+    return {
+        kind,
+        ops: ops.map(InvertCircuitOp).reverse(),
+    }
 }
