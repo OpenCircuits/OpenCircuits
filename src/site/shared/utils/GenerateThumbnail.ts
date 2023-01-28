@@ -1,9 +1,10 @@
+import {Circuit} from "core/public";
+
 import {DEFAULT_THUMBNAIL_SIZE,
         THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
 
 import {Camera} from "math/Camera";
 
-import {CircuitInfo}  from "core/utils/CircuitInfo";
 import {GetCameraFit} from "core/utils/ViewUtils";
 
 import {DefaultTool} from "core/tools/DefaultTool";
@@ -16,7 +17,7 @@ export const GenerateThumbnail = (() => {
     const canvas = document.createElement("canvas");
     const camera = new Camera(DEFAULT_THUMBNAIL_SIZE, DEFAULT_THUMBNAIL_SIZE);
 
-    return (info: CircuitInfo, size?: { w: number, h: number }): string => {
+    return (circuit: Circuit, size?: { w: number, h: number }): string => {
         canvas.width  = size?.w ?? DEFAULT_THUMBNAIL_SIZE;
         canvas.height = size?.h ?? DEFAULT_THUMBNAIL_SIZE;
 

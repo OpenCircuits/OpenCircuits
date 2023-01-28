@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {SaveFile}           from "shared/utils/Exporter";
+import {SaveFile} from "shared/utils/Exporter";
 
+import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/state/Header";
@@ -9,17 +9,15 @@ import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/state/He
 import {Dropdown} from "./Dropdown";
 
 
-type Props = {
-    helpers: CircuitInfoHelpers;
-}
-export const DownloadMenuDropdown = ({ helpers: { GetSerializedCircuit } }: Props) => {
+export const DownloadMenuDropdown = () => {
+    const circuit = useMainCircuit();
     const { curMenu, circuitName } = useSharedSelector(
         (state) => ({ curMenu: state.header.curMenu, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 
     const onDownloadClick = () => {
-        const data = GetSerializedCircuit();
+        const data = circuit.serialized();
 
         // Convert to URL data
         const file = new Blob([data], { type: "text/json" });

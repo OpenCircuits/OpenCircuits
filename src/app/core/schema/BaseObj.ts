@@ -1,5 +1,5 @@
-import {Prop} from "core/public/Prop";
 import {GUID} from "core/schema/GUID";
+import {Prop} from "core/schema/Prop";
 
 
 export interface BaseObj {

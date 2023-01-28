@@ -2,8 +2,9 @@ import {useEffect} from "react";
 
 import {SAVE_TIME} from "shared/utils/Constants";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {useAPIMethods} from "shared/utils/APIMethods";
 
+import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {SetAutoSave} from "shared/state/UserInfo";
@@ -11,10 +12,9 @@ import {SetAutoSave} from "shared/state/UserInfo";
 import {SwitchToggle} from "shared/components/SwitchToggle";
 
 
-type Props = {
-    helpers: CircuitInfoHelpers;
-}
-export const AutoSaveToggle = ({ helpers }: Props) => {
+export const AutoSaveToggle = () => {
+    const circuit = useMainCircuit();
+    const { SaveCircuitRemote } = useAPIMethods(circuit);
     const { isLoggedIn, isSaved, autoSave } = useSharedSelector(
         (state) => ({ ...state.user, isSaved: state.circuit.isSaved })
     );
@@ -35,7 +35,7 @@ export const AutoSaveToggle = ({ helpers }: Props) => {
         let timeout: number;
 
         async function Save() {
-            const success = await helpers.SaveCircuitRemote();
+            const success = await SaveCircuitRemote();
             attempts++;
             if (!success)
                 // Wait longer each successsive, failed save
@@ -45,7 +45,7 @@ export const AutoSaveToggle = ({ helpers }: Props) => {
         timeout = window.setTimeout(Save, SAVE_TIME);
 
         return () => clearTimeout(timeout);
-     }, [isSaved, autoSave, isLoggedIn, helpers]);
+     }, [isSaved, autoSave, isLoggedIn, SaveCircuitRemote]);
 
     return (
         <SwitchToggle

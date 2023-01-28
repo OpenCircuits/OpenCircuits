@@ -1,13 +1,7 @@
-import {DigitalPropInfo} from "digital/views/info";
-import {useCallback}     from "react";
+import {DigitalCircuit} from "digital/public";
+import {useCallback}    from "react";
 
 import {SAVE_VERSION} from "core/utils/Constants";
-
-import {CircuitMetadata} from "core/models/Circuit";
-
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
@@ -46,6 +40,8 @@ import exampleConfig from "site/digital/data/examples.json";
 
 import "./index.scss";
 
+import {useDigitalCircuit} from "site/digital/utils/hooks/useDigitalCircuit";
+
 
 const exampleCircuits = exampleConfig.examples.map((example) => ({
     id:        example.file,
@@ -55,62 +51,46 @@ const exampleCircuits = exampleConfig.examples.map((example) => ({
     version:   SAVE_VERSION,
 } as CircuitMetadata));
 
-type Props = {
-    info: DigitalCircuitInfo;
-    helpers: CircuitInfoHelpers;
-}
-
-export const App = ({ info, helpers }: Props) => {
+export const App = () => {
+    const circuit = useDigitalCircuit("main");
     const { h } = useWindowSize();
-
-    // Memoize for eslint(react/no-unstable-nested-components)
-    const imageExporterPreview = useCallback((props: ImageExporterPreviewProps) => (
-        <ImageExporterPreview mainInfo={info} {...props} />
-    ), [info]);
 
     return (
         <div className="App">
-            <SideNav helpers={helpers}
-                     exampleCircuits={exampleCircuits} />
+            <SideNav circuit={circuit} exampleCircuits={exampleCircuits} />
 
             <div className="App__container" style={{ height: h+"px" }}>
-                <DigitalHeader img="img/icons/logo.svg"
-                               helpers={helpers}
-                               info={info} />
+                <DigitalHeader />
 
                 <main>
-                    <DigitalMainDesigner info={info} />
+                    <DigitalMainDesigner />
 
-                    <DigitalItemNav info={info} />
-                    <HistoryBox info={info} />
+                    <DigitalItemNav />
+                    <HistoryBox circuit={circuit} />
 
-                    <SelectionPopup info={info}
-                                    docsUrlConfig={docsConfig}>
-                        <PropertyModule info={info} propInfo={DigitalPropInfo} />
-                        <PortCountModule
-                            info={info}
-                            labels={{ "inputs": "Input", "outputs": "Output", "selects": "Select" }} />
-                        <OscilloscopeModule info={info} />
-                        <ClockSyncButtonModule info={info} />
-                        <BusButtonModule info={info} />
-                        <ReplaceComponentDropdownModule info={info} />
-                        <CreateICButtonModule info={info} />
-                        <ViewICButtonModule info={info} />
+                    <SelectionPopup circuit={circuit} docsUrlConfig={docsConfig}>
+                        <PropertyModule circuit={circuit} />
+                        <PortCountModule circuit={circuit} />
+                        <OscilloscopeModule circuit={circuit} />
+                        <ClockSyncButtonModule circuit={circuit} />
+                        <BusButtonModule circuit={circuit} />
+                        <ReplaceComponentDropdownModule circuit={circuit} />
+                        <CreateICButtonModule circuit={circuit} />
+                        <ViewICButtonModule circuit={circuit} />
                     </SelectionPopup>
 
-                    <ContextMenu info={info}
-                                 paste={(data, menuPos) => DigitalPaste(data, info, menuPos)} />
+                    <ContextMenu circuit={circuit} />
                 </main>
             </div>
 
-            <ICDesigner mainInfo={info} />
-            <ICViewer mainInfo={info} />
+            {/* <ICDesigner />
+            <ICViewer /> */}
 
             <QuickStartPopup />
             <KeyboardShortcutsPopup />
-            <ImageExporterPopup preview={imageExporterPreview} />
+            <ImageExporterPopup circuit={circuit} />
 
-            <ExprToCircuitPopup mainInfo={info} />
+            {/* <ExprToCircuitPopup /> */}
 
             <LoginPopup />
         </div>

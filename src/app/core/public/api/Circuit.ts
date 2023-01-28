@@ -8,6 +8,8 @@ import {Port}      from "./Port";
 import {Wire}      from "./Wire";
 
 
+export type {CircuitMetadata} from "core/schema/CircuitMetadata";
+
 export interface Circuit {
     beginTransaction(): void;
     commitTransaction(): void;

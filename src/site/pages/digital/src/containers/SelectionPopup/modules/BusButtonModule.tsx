@@ -1,11 +1,11 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {Circuit} from "core/public";
 
 
 type Props = {
-    info: CircuitInfo;
+    circuit: Circuit;
 }
 // eslint-disable-next-line arrow-body-style
-export const BusButtonModule = ({ info }: Props) => {
+export const BusButtonModule = ({ circuit }: Props) => {
     // @TODO
     // const { renderer, history } = info;
 

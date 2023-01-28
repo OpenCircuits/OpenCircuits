@@ -2,8 +2,9 @@ import {useEffect, useState} from "react";
 
 import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {useAPIMethods} from "shared/utils/APIMethods";
 
+import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {DevCreateFile, DevGetFile, DevListFiles} from "shared/api/Dev";
@@ -20,10 +21,10 @@ export type Utility = {
 }
 
 type Props = {
-    helpers: CircuitInfoHelpers;
     extraUtilities: Utility[];
 }
-export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
+export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
+    const circuit = useMainCircuit();
     const { curMenu, isLocked, isSaved } = useSharedSelector(
         (state) => ({
             curMenu:  state.header.curMenu,
@@ -31,6 +32,7 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
             isSaved:  state.circuit.isSaved,
         })
     );
+    const { LoadCircuit } = useAPIMethods(circuit);
     const dispatch = useSharedDispatch();
 
     const [enableReload, setEnableReload] = useState(false);
@@ -44,7 +46,7 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
     const load = () => {
         dispatch(CloseHeaderMenus());
         if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
-            helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE));
     }
 
     return (
@@ -72,7 +74,7 @@ export const UtilitiesDropdown = ({ helpers, extraUtilities }: Props) => {
                 <div role="button" tabIndex={0}
                      onClick={async () => {
                         dispatch(CloseHeaderMenus());
-                        await DevCreateFile(helpers.GetSerializedCircuit(), DEV_CACHED_CIRCUIT_FILE);
+                        await DevCreateFile(circuit.serialized(), DEV_CACHED_CIRCUIT_FILE);
                         setEnableReload(true);
                      }}>
                     <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />

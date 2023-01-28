@@ -1,3 +1,4 @@
+import {Circuit}                                   from "core/public";
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {RIGHT_MOUSE_BUTTON}            from "core/utils/Constants";
@@ -7,12 +8,7 @@ import {V, Vector} from "Vector";
 
 import {Clamp} from "math/MathUtils";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-import {GUID}        from "core/utils/GUID";
-
-import {DeleteGroup} from "core/actions/compositions/DeleteGroup";
-
-import {DeleteHandler} from "core/tools/handlers/DeleteHandler";
+import {GUID} from "core/utils/GUID";
 
 import {useDocEvent}           from "shared/utils/hooks/useDocEvent";
 import {useHistory}            from "shared/utils/hooks/useHistory";
@@ -23,12 +19,14 @@ import {useSharedDispatch,
         useSharedSelector}     from "shared/utils/hooks/useShared";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
+import {SetCurPressedObjID}                                                     from "shared/state/CircuitInfo";
 import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} from "shared/state/ItemNav";
 
 import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers";
 import {Draggable}        from "shared/components/DragDroppable/Draggable";
 
 import styles from "./index.scss";
+
 
 
 export type ItemNavItem = {
@@ -48,7 +46,7 @@ export type ItemNavConfig = {
 }
 
 type Props<D> = {
-    info: CircuitInfo;
+    circuit: Circuit;
     config: ItemNavConfig;
     additionalData?: D;
     getImgSrc: (id: GUID) => string;
@@ -57,10 +55,10 @@ type Props<D> = {
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, onDelete, getImgSrc,
+export const ItemNav = <D,>({ circuit, config, additionalData, onDelete, getImgSrc,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
-    const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
-        (state) => ({ ...state.itemNav })
+    const { isOpen, isEnabled, isHistoryBoxOpen, curItemID, curPressedObjID } = useSharedSelector(
+        (state) => ({ ...state.itemNav, curPressedObjID: state.circuit.curPressedObjID })
     );
     const dispatch = useSharedDispatch();
 
@@ -84,29 +82,22 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, getImgSrc,
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
-    // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
-    //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
-    const [curPressedObjID, setCurPressedObjID] = useState(undefined as (string | undefined));
-    useDocEvent("mousedown", () => {
-         // Update currentlyPressedObj if the user pressed an object
-        if (info.curPressedObjID)
-            setCurPressedObjID(info.curPressedObjID);
-    });
-    useDocEvent("mouseup",    () => setCurPressedObjID(undefined));
-    useDocEvent("mouseleave", () => setCurPressedObjID(undefined));
+    // Delete the object if its dragged over to the ItemNav (issue #478)
+    useDocEvent("mouseup",    () => dispatch(SetCurPressedObjID(undefined)));
+    useDocEvent("mouseleave", () => dispatch(SetCurPressedObjID(undefined)));
     function handleItemNavDrag() { // Issue #478
         if (!curPressedObjID)
             return;
-        const curPressedObj = info.circuit.getObj(curPressedObjID)!;
+        const curPressedObj = circuit.getObj(curPressedObjID)!;
         if (curPressedObj.baseKind !== "Component")
             return;
         // If pressed object is part of selections, do a default deselect and delete of all selections
-        if (info.selections.has(curPressedObjID)) {
-            DeleteHandler.getResponse(info);
+        if (curPressedObj.isSelected) {
+            circuit.deleteObjs(circuit.selectedObjs());
             return;
         }
         // Else just delete
-        info.history.add(DeleteGroup(info.circuit, [curPressedObj]));
+        circuit.deleteObjs([curPressedObj]);
     }
 
     // Resets the curItemID and numClicks
@@ -158,12 +149,12 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, getImgSrc,
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
-        info.camera.setMargin(
+        circuit.camera.setMargin(
             side === "left"
             ? { left: (isOpen ? ITEMNAV_WIDTH : 0), bottom: 0 }
             : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left: 0 }
         );
-    }, [info.camera, isOpen, side]);
+    }, [circuit, isOpen, side]);
 
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
@@ -224,11 +215,11 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, getImgSrc,
         // If not pressing a Component or not hovering the ItemNav, then returned undefined
         if (!hoveringNav || !curPressedObjID)
             return;
-        const obj = info.circuit.getObj(curPressedObjID)!;
+        const obj = circuit.getObj(curPressedObjID)!;
         if (obj.baseKind !== "Component")
             return;
         return getImgSrc(curPressedObjID);
-    }, [info, curPressedObjID, hoveringNav, getImgSrc]);
+    }, [circuit, curPressedObjID, hoveringNav, getImgSrc]);
 
     return (<>
         {/* Item Nav Deletion Preview (PR #1047) */}
@@ -292,19 +283,13 @@ export const ItemNav = <D,>({ info, config, additionalData, onDelete, getImgSrc,
                         <button type="button"
                                 title="Undo"
                                 disabled={undoHistory.length === 0}
-                                onClick={() => {
-                                    info.history.undo();
-                                    info.renderer.render(); // Re-render
-                                }}>
+                                onClick={() => circuit.undo()}>
                             <img src="img/icons/undo.svg" alt="" />
                         </button>
                         <button type="button"
                                 title="Redo"
                                 disabled={redoHistory.length === 0}
-                                onClick={() => {
-                                    info.history.redo();
-                                    info.renderer.render(); // Re-render
-                                }}>
+                                onClick={() => circuit.redo()}>
                             <img src="img/icons/redo.svg" alt="" />
                         </button>
                     </div>

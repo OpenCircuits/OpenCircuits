@@ -1,10 +1,5 @@
 import {useState} from "react";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
-
-import {Action}      from "core/actions/Action";
-import {GroupAction} from "core/actions/GroupAction";
-
 import {useDocEvent}                          from "shared/utils/hooks/useDocEvent";
 import {useEvent}                             from "shared/utils/hooks/useEvent";
 import {useHistory}                           from "shared/utils/hooks/useHistory";
@@ -15,6 +10,8 @@ import {CloseHistoryBox} from "shared/state/ItemNav";
 import {AdjustableElement} from "shared/components/AdjustableElement";
 
 import "./index.scss";
+
+import {Circuit} from "core/public";
 
 
 type HistoryEntryProps = {
@@ -94,9 +91,9 @@ const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
 
 
 type Props = {
-    info: CircuitInfo;
+    circuit: Circuit;
 }
-export const HistoryBox = ({ info }: Props) => {
+export const HistoryBox = ({ circuit }: Props) => {
     const { isOpen, isHistoryBoxOpen, curItemID } = useSharedSelector(
         (state) => ({ ...state.itemNav }),
     );
