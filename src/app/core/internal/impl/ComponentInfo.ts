@@ -1,6 +1,12 @@
 import {Schema} from "core/schema";
 
 
+export interface ObjInfo {
+    readonly baseKind: Schema.Obj["baseKind"];
+    readonly kind: string;
+    checkPropValue(key: string, value?: Schema.Prop): boolean;
+}
+
 export interface PortConfig {
     counts: Record<string, number>;
 }
@@ -8,8 +14,8 @@ export interface PortConfig {
 // Describes legal component configurations.
 // NOTE: The configuration wherein each port group has zero ports is IMPLICITLY LEGAL, because the
 //  component is UNREACHABLE in any propagator.
-export interface ComponentInfo {
-    readonly kind: string;
+export interface ComponentInfo extends ObjInfo {
+    readonly baseKind: "Component";
     readonly portGroups: string[];
     readonly defaultPortConfig: PortConfig;
 
@@ -22,10 +28,6 @@ export interface ComponentInfo {
     // Also i.e. thumbnail, display name, description, etc.
 }
 
-export interface ComponentInfoProvider {
-    get(kind: string): ComponentInfo | undefined;
-}
-
 // TODO: seems kind of heavy
 export function IsValidPortList(info: ComponentInfo, ports: Schema.Port[]): boolean {
     const counts = {} as Record<string, number>;
@@ -34,18 +36,30 @@ export function IsValidPortList(info: ComponentInfo, ports: Schema.Port[]): bool
     return info.isValidPortConfig({ counts });
 }
 
+export interface ObjInfoProvider {
+    get(kind: string): ObjInfo | undefined;
+    getComponent(kind: string): ComponentInfo | undefined;
+    // TODO: potentially:
+    // getWire(kind: string): WireInfo | undefined;
+    // getPort(kind: string): PortInfo | undefined;
+}
+
 //
 // Example "Digital" implementation
 //
 
+type TypeMap = Record<string, "string" | "number" | "boolean">;
 class BasicGateInfo implements ComponentInfo {
     private readonly kindInternal: string;
+    private readonly props: TypeMap;
 
     // i.e. with thumbnail, display name, description, etc.
-    public constructor(kind: string) {
+    public constructor(kind: string, props: TypeMap = {}) {
         this.kindInternal = kind;
+        this.props = props;
     }
 
+    public readonly baseKind = "Component";
     public get kind(): string {
         return this.kindInternal;
     }
@@ -85,15 +99,20 @@ class BasicGateInfo implements ComponentInfo {
             // Prevent fan-in on input ports
             if (me.group === "IN" && o.length > 1)
                 return false;
+            // TODO: prevent "IN" from being connected to other "IN" ports and similar.
         }
         return true;
+    }
+
+    public checkPropValue(key: string, value?: Schema.Prop): boolean {
+        return this.props[key] && (!value || this.props[key] === typeof value);
     }
 }
 const ANDGateInfo: ComponentInfo = new BasicGateInfo("ANDGate");
 const ORGateInfo: ComponentInfo = new BasicGateInfo("ORGate");
 // etc...
 
-class ExampleDigitalComponentInfoProvider implements ComponentInfoProvider {
+class ExampleDigitalInfoProvider implements ObjInfoProvider {
     private readonly map: Map<string, ComponentInfo>;
     public constructor() {
         this.map = new Map([
@@ -103,11 +122,14 @@ class ExampleDigitalComponentInfoProvider implements ComponentInfoProvider {
         ]);
     }
 
-    public get(kind: string): ComponentInfo | undefined {
+    public get(kind: string): ObjInfo | undefined {
+        return this.map.get(kind)
+    }
+    public getComponent(kind: string): ComponentInfo | undefined {
         return this.map.get(kind)
     }
 }
 
-export function NewExampleComponentInfoProvider(): ComponentInfoProvider {
-    return new ExampleDigitalComponentInfoProvider();
+export function NewExampleDigitalInfoProvider(): ObjInfoProvider {
+    return new ExampleDigitalInfoProvider();
 }

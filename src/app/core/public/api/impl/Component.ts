@@ -24,10 +24,9 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     }
 
     public set pos(val: Vector) {
-        const obj = this.getObj();
-
-        this.circuit.setPropFor(obj, "x", val.x);
-        this.circuit.setPropFor(obj, "y", val.y);
+        // TODO: make this type-safe
+        this.circuit.setPropForDyn(this.id, "x", val.x);
+        this.circuit.setPropForDyn(this.id, "y", val.y);
     }
     public get pos(): Vector {
         const obj = this.getObj();
@@ -36,14 +35,14 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     }
 
     public set angle(val: number) {
-        this.circuit.setPropFor(this.getObj(), "angle", val);
+        this.circuit.setPropForDyn(this.id, "angle", val);
     }
     public get angle(): number {
         return (this.getObj().props.angle ?? 0);
     }
 
     public get ports(): Port[] {
-        return this.circuit.getPortsForComponent(this.getObj())
-            .map((p) => new PortImpl(this.circuit, p.id));
+        return [...this.circuit.getPortsForComponent(this.id)]
+            .map((id) => new PortImpl(this.circuit, id));
     }
 }

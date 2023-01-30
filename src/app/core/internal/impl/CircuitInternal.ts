@@ -1,187 +1,392 @@
 import {GUID} from "core/schema/GUID";
 
-import {Schema}       from "../../schema";
-import {GetDebugInfo} from "../utils/Debug";
+import {Schema} from "../../schema";
 
-import {CircuitOp, InvertMultiOp, MultiOp} from "./CircuitOps";
-import {ComponentInfoProvider, PortConfig} from "./ComponentInfo";
-import {HistoryManager}                    from "./HistoryManager";
+import {CircuitLog}                                                           from "./CircuitLog";
+import {CircuitOp, InvertCircuitOp, TransformCircuitOps}                      from "./CircuitOps";
+import {ComponentInfo, IsValidPortList, ObjInfo, ObjInfoProvider, PortConfig} from "./ComponentInfo";
 
 
 // REFERENCE POLICY:
 //  OUTGOING REFERENCES:
 //      1. GUIDs: Retain these to reference Objects at a later time.
-//      2. Schema types: Only use these ephemerally.  They are not guaranteed to remain valid or
-//          up-to-date after mutations.
+//      2. Schema types: Guaranteed not to change, but MUST NOT be modified.
 //  INCOMING REFERENCES:
 //      1. GUIDs: Accepted as the primary reference type.
 //      2. Non-trivial types: No incoming references are retained.
-// TODO: Decide how to handle dangling GUIDs and how that relates to the TBD on-changed events.
 export class CircuitInternal {
-    protected readonly history: HistoryManager;
-    protected readonly componentTypes: ComponentInfoProvider;
+    protected readonly objInfo: ObjInfoProvider;
 
-    protected objMap: Map<GUID, Schema.Obj>;
-    protected componentPortsMap: Map<GUID, Schema.Port[]>; // components to ports
-    protected connectionsMap: Map<GUID, Schema.Wire[]>; // Ports to wires
+    private readonly log: CircuitLog;
+    private clock: number;
 
-    // Explicit variable only needed for asserts.  JS threading model means no mutex needed, but it
-    // is possible for an async call mid-transaction to yield control-flow to another task and break
-    // atomicity of transactions.  Any behavior that yields control-flow mid transaction is ILLEGAL,
-    // and thus guarded by asserts.
-    protected transaction: boolean;
+    private transaction: boolean;
+    private transactionOps: CircuitOp[];
 
-    // TODO: Can the emitted events be completely generated from this Ops list?
-    protected transactionOps: CircuitOp[];
+    // Object storage (up-in-the-air)
+    protected objStorage: Map<GUID, Schema.Obj>;
 
-    public constructor(componentTypes: ComponentInfoProvider) {
-        this.history = new HistoryManager();
-        this.componentTypes = componentTypes;
+    // Graph connectivity
+    protected componentPortsMap: Map<GUID, Set<GUID>>; // Components to ports
+    protected portPortMap: Map<GUID, Set<GUID>>; // Ports to other ports (bidirectional)
+    protected portWireMap: Map<GUID, Set<GUID>>; // Ports to their wires
 
-        this.objMap = new Map();
-        this.componentPortsMap = new Map();
-        this.connectionsMap = new Map();
+    // Placed here for proximity to member declarations
+    private applyOp(op: CircuitOp): void {
+        // TODO: optimize portPortMap/portWireMap usage when we know ports are being deleted.
+        const deleteWire = (w: Schema.Wire) => {
+            this.objStorage.delete(w.id);
+
+            this.portPortMap.get(w.p1)?.delete(w.p2);
+            this.portPortMap.get(w.p2)?.delete(w.p1);
+
+            this.portWireMap.get(w.p1)?.delete(w.id);
+            this.portWireMap.get(w.p2)?.delete(w.id);
+        };
+        const addWire = (w: Schema.Wire) => {
+            this.objStorage.set(w.id, w);
+
+            this.portPortMap.get(w.p1)?.add(w.p2);
+            this.portPortMap.get(w.p2)?.add(w.p1);
+
+            this.portWireMap.get(w.p1)?.add(w.id);
+            this.portWireMap.get(w.p2)?.add(w.id);
+        }
+        const deletePort = (p: Schema.Port) => {
+            this.objStorage.delete(p.id);
+
+            this.componentPortsMap.get(p.parent)?.delete(p.id);
+            this.portPortMap.delete(p.id);
+            this.portWireMap.delete(p.id);
+        }
+        const addPort = (p: Schema.Port) => {
+            this.objStorage.set(p.id, p);
+
+            this.componentPortsMap.get(p.parent)?.add(p.id);
+            this.portPortMap.set(p.id, new Set());
+            this.portWireMap.set(p.id, new Set());
+        }
+        const checkWireConnectivity = (p1: Schema.Port, p2: Schema.Port): void => {
+            const map = new Map([[p1, [p2]]]);
+            this.componentPortsMap.get(p1.parent)?.forEach((id) => {
+                const to = this.getPortPortMapChecked(id);
+                map.set(p1, [...to].map((id) => this.getPortByIDChecked(id)));
+            });
+            if (!this.getComponentInfo(p1.parent).isValidPortConnectivity(map))
+                throw new Error("Wire connectivity is not allowed");
+        };
+        switch (op.kind) {
+            case "PlaceComponentOp": {
+                if (op.inverted) {
+                    if (this.componentPortsMap.has(op.c.id))
+                        throw new Error("Deleted component should not have ports");
+
+                    this.objStorage.delete(op.c.id);
+                } else {
+                    if (this.componentPortsMap.has(op.c.id))
+                        throw new Error("Placed component should not have any ports");
+
+                    this.objStorage.set(op.c.id, op.c);
+                }
+                break;
+            }
+            case "SetComponentPortsOp": {
+                const [newPorts, oldPorts] = op.inverted ? [op.oldPorts, op.newPorts] : [op.newPorts, op.oldPorts];
+
+                if (newPorts && !IsValidPortList(this.getComponentInfo(op.component), newPorts))
+                    throw new Error("Invalid new port list for component");
+
+                // TODO: factor in overlap between new/old ports to preserve wires when possible.
+                if (!op.inverted)
+                    op.deadWires?.forEach(deleteWire);
+                oldPorts?.forEach(deletePort);
+                newPorts?.forEach(addPort);
+                if (op.inverted)
+                    op.deadWires?.forEach(addWire);
+                break;
+            }
+            case "ConnectWireOp": {
+                const port1 = this.getPortByID(op.w.p1);
+                const port2 = this.getPortByID(op.w.p2);
+                if (!port1 || !port2)
+                    throw new Error("Provided port GUIDs are invalid");
+
+                checkWireConnectivity(port1, port2);
+                checkWireConnectivity(port2, port1);
+
+                (op.inverted ? deleteWire : addWire)(op.w);
+                break;
+            }
+            case "SplitWireOp": {
+                throw new Error("Unimplemented");
+            }
+            case "SetPropertyOp": {
+                const obj = this.objStorage.get(op.id);
+                if (!obj)
+                    throw new Error("Object did not exist");
+
+                // Check the value is valid
+                const info = this.getObjectInfo(obj.kind);
+                if (!info.checkPropValue(op.key, op.newVal))
+                    throw new Error("Illegal prop value");
+
+                // Copy-on-write
+                obj.props = { ...obj.props };
+                if (op.newVal)
+                    obj.props[op.key] = op.newVal;
+                else
+                    delete obj.props[op.key];
+                break;
+            }
+            default:
+                throw new Error("TODO: impossible block");
+        }
+    }
+
+    private getPortPortMapChecked(id: GUID): Set<GUID> {
+        const p = this.portPortMap.get(id);
+        if (!p)
+            throw new Error("getPortPortMapChecked: invariant violation");
+        return p;
+    }
+    private getPortByIDChecked(id: GUID): Schema.Port {
+        const p = this.getPortByID(id);
+        if (!p)
+            throw new Error("getPortByIDChecked: invariant violation");
+        return p;
+    }
+
+
+    // TODO: load with some initial state
+    public constructor(objInfo: ObjInfoProvider, log: CircuitLog) {
+        this.objInfo = objInfo;
+
+        this.log = log;
+        this.clock = log.clock();
 
         this.transaction = false;
         this.transactionOps = [];
+
+        this.objStorage = new Map();
+
+        this.componentPortsMap = new Map();
+        this.portPortMap = new Map();
+        this.portWireMap = new Map();
+
+        this.log.addListener((evt) => {
+            this.clock = evt.clock;
+            // Optimization: If there are no remote entries then the ops are already applied.
+            if (evt.remote.length === 0)
+                return;
+
+            // TODO: If any exceptions are thrown by applying server-provided ops, this is a BUG
+            //  and the site should force reload to get back to a consistent state.
+
+            // Apply remote updates mid-transaction so this state is up-to-date.
+            if (this.transaction)
+                this.transformTransaction(evt.ops);
+            else
+                evt.ops.forEach((op) => this.applyOp(op));
+        })
     }
 
-    private assertOwnObject(obj: Schema.Obj): void {
-        if (this.objMap.get(obj.id) !== obj)
-            throw new Error("Circuit does not own provided object");
+    private transformTransaction(ops: CircuitOp[]): void {
+        // Revert tx ops
+        [...this.transactionOps].reverse().forEach((op) => this.applyOp(InvertCircuitOp(op)));
+
+        // Apply ops
+        ops.forEach((op) => this.applyOp(op));
+
+        // Transform tx ops
+        const transformedTx = TransformCircuitOps(this.transactionOps, ops);
+
+        if (transformedTx) {
+            // Reapply tx ops
+            this.transactionOps.forEach((op) => this.applyOp(op));
+        } else {
+            // Failed to transform partial transaction, so cancel it
+            this.transactionOps = [];
+            this.transaction = false;
+        }
     }
-    private assertHasGUID(id: GUID): void {
-        if (!this.objMap.has(id))
-            throw new Error("Circuit does not own provided GUID");
-    }
-    // Public for use by i.e. the Renderer, Propagators.
-    public assertTransactionState(state: boolean): void {
+
+    private assertTransactionState(state: boolean): void {
         if (this.transaction !== state)
             throw new Error("Unexpectedly in transaction state");
     }
+    private endTransactionHelper(f: (txOps: CircuitOp[]) => void): void {
+        this.assertTransactionState(true);
 
+        // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
+        this.transaction = false;
+        if (this.transactionOps.length > 0) {
+            const txOps = this.transactionOps;
+            this.transactionOps = [];
+            f(txOps);
+        }
+    }
+
+    //
+    // Transaction interface
+    //
+
+    // We need "read-your-writes" so functions like "setProp" can correctly get tombstones like "oldVal".
     public beginTransaction(): void {
         this.assertTransactionState(false);
         this.transaction = true;
     }
-    public commitTransaction(): MultiOp | undefined {
-        this.assertTransactionState(true);
-        let op: MultiOp | undefined;
-        if (this.transactionOps.length > 0) {
-            op = { kind: "MultiOp", ops: this.transactionOps };
-            this.history.push(op);
-            this.transactionOps = [];
-
-            // TODO: Emit events for changes...
-        }
-        this.transaction = false;
-        return op;
+    public commitTransaction(): void {
+        this.endTransactionHelper((txOps) => {
+            // Sanity check: Clock should be kept updated by the event handler.
+            if (this.clock !== this.log.clock())
+                throw new Error("Unexpected clock difference.  Maybe a missed event?");
+            this.log.propose(txOps);
+        });
     }
     public cancelTransaction(): void {
-        this.assertTransactionState(true);
-        if (this.transactionOps.length > 0) {
-            InvertMultiOp({ kind: "MultiOp", ops: this.transactionOps }).ops
-                .forEach((rollbackOp) => this.applyOp(rollbackOp));
-            // TODO: Dump in-progress events
-            this.transactionOps = [];
-        }
-        this.transaction = false;
+        this.endTransactionHelper(() => {});
+    }
+    // Check this before working with long-running transactions.  Long-running transactions are any transaction that
+    //  crosses an async/event boundary and some other task could have resumed in the mean time.
+    public isTransaction(): boolean {
+        return this.transaction;
     }
 
-    private undoRedoHelper(op?: MultiOp): boolean {
-        if (!op)
-            return false;
-
-        this.beginTransaction();
-        op.ops.forEach((o) => this.applyOp(o));
-        this.commitTransaction();
-
-        return true;
-    }
-    public undo(): boolean {
-        return this.undoRedoHelper(this.history.undo());
-    }
-    public redo(): boolean {
-        return this.undoRedoHelper(this.history.redo());
-    }
-
-    // Wrap all mutations in this proto-operational-transform function as guard-rails of our impl.
-    protected applyOp(op: CircuitOp): void {
-        this.transactionOps.push(op);
-        // TODO: Accumulate changes here / prepare events
-        switch (op.kind) { /* TODO: all of the mutate logic */ }
-    }
 
     //
     // Convenience functions around CircuitOps
     //
 
-    public placeComponent(kind: string, props: Schema.Component["props"]): void {
-        this.applyOp({
+    protected addTransactionOp(op: CircuitOp): void {
+        this.assertTransactionState(true);
+        this.transactionOps.push(op);
+        // read-your-writes
+        this.applyOp(op);
+    }
+
+    public placeComponent(kind: string, props: Schema.Component["props"]): GUID {
+        const id = Schema.uuid();
+        this.addTransactionOp({
             kind:     "PlaceComponentOp",
             inverted: false,
             c:        {
                 baseKind: "Component",
                 kind:     kind,
-                id:       "", // TODO: Maybe generate in 'applyOp'?
+                id:       id,
                 props:    { ...props }, // Copy non-trivial object
             },
-            wires: [],
-            ports: [], // NOTE: Ports are added separately in "setPortConfig".
         });
+        return id;
     }
 
-    public replaceComponent(id: GUID, newKind: string): void {
-        // TODO: Check that component's current port list is compatable with the "newKind" ComponentInfo
-        // TODO: Maybe this needs a dedicated Op b/c updating kind isn't covered by `SetPropertyOp`
-        throw new Error("Unimplemented");
+    // public replaceComponent(id: GUID, newKind: string): void {
+    //     // TODO: Check that component's current port list is compatable with the "newKind" ComponentInfo
+    //     // TODO: Maybe this needs a dedicated Op b/c updating kind isn't covered by `SetPropertyOp`
+    //     throw new Error("Unimplemented");
+    // }
+
+    public deleteComponent(id: GUID): void {
+        const obj = this.objStorage.get(id);
+        if (!obj || obj.baseKind !== "Component")
+            throw new Error("Invalid GUID");
+
+        this.addTransactionOp({
+            kind:     "PlaceComponentOp",
+            inverted: true,
+            c:        obj, // No copy needed
+        })
     }
 
-    public deleteObject(id: GUID): void {
-        throw new Error("Unimplemented");
+    public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"]): GUID {
+        const id = Schema.uuid();
+        this.addTransactionOp({
+            kind:     "ConnectWireOp",
+            inverted: false,
+            w:        {
+                baseKind: "Wire",
+                props:    { ...props }, // Copy non-trivial object
+                kind, id, p1, p2,
+            },
+        });
+        return id;
     }
 
-    // TODO: Find a way to do this without needing an "O" instance parameter.
-    public setPropFor<O extends Schema.Obj, K extends keyof O["props"] & string>(obj: O, key: K, val?: O["props"][K]) {
-        this.assertOwnObject(obj);
-        const oldVal = obj[key] as O["props"][K] | undefined;
-        this.applyOp({ kind: "SetPropertyOp", key, newVal: val, oldVal });
+    public deleteWire(id: GUID): void {
+        const obj = this.objStorage.get(id);
+        if (!obj || obj.baseKind !== "Wire")
+            throw new Error("Invalid GUID");
+
+        this.addTransactionOp({
+            kind:     "ConnectWireOp",
+            inverted: true,
+            w:        obj, // No copy needed
+        })
     }
 
-    public setPortConfig(id: GUID, portConfig: PortConfig): void {
-        const obj = this.getCompByID(id);
+    public setPropForDyn(id: GUID, key: string, newVal?: Schema.Prop): void {
+        const obj = this.objStorage.get(id);
         if (!obj)
-            throw new Error("Failed to set port config: invalid GUID");
-        const componentInfo = this.componentTypes.get(obj.kind);
-        if (!componentInfo)
-            throw new Error("Failed to set port config: Unknown component type (this is really bad)");
-        const ports = componentInfo.makePortsForConfig(id, portConfig);
-        if (!ports)
+            throw new Error("Bad GUID");
+        const oldVal = obj.props[key];
+
+        // NOTE: applyOp will check the ComponentInfo that it is the correct type
+        this.addTransactionOp({ id, kind: "SetPropertyOp", key, oldVal, newVal });
+    }
+
+    private getObjectInfo(id: GUID): ObjInfo {
+        const obj = this.objStorage.get(id);
+        if (!obj)
+            throw new Error("Invalid obj GUID");
+
+        const info = this.objInfo.get(obj.kind);
+        if (!info)
+            throw new Error("Unknown obj type (this is really bad)");
+
+        return info;
+    }
+
+    private getComponentInfo(id: GUID): ComponentInfo {
+        const obj = this.objStorage.get(id);
+        if (!obj || obj.baseKind !== "Component")
+            throw new Error("Invalid component GUID");
+
+        const info = this.objInfo.getComponent(obj.kind);
+        if (!info)
+            throw new Error("Unknown component type (this is really bad)");
+
+        return info;
+    }
+    public setPortConfig(id: GUID, portConfig: PortConfig): void {
+        // Make new ports
+        const newPorts = this.getComponentInfo(id).makePortsForConfig(id, portConfig);
+        if (!newPorts)
             throw new Error("Failed to set port config: Invalid port config");
 
+        // TODO: match old ports to new ports based on group/index so ID's / refs are reused.
+
+        // Collect old ports
+        const oldPorts = [] as Schema.Port[];
+        this.getPortsForComponent(id)?.forEach((id) => {
+            // Safe cast according to invariants
+            oldPorts.push(this.getPortByID(id) as Schema.Port);
+        });
+
+        // TODO: collect deleted wires
+
         // NOTE: "applyOp" will need to double-check this list of ports is valid.
-        this.applyOp({ kind: "SetComponentPortsOp", component: id, newPorts: ports })
+        this.addTransactionOp({ kind: "SetComponentPortsOp", inverted: false, component: id, newPorts, oldPorts })
     }
 
     //
-    // Getters below.  Returns references must only be used ephemerally!
-    //  (i.e. never across async/mutate boundaries)
+    // Getters below.  Returned objects should not be modified directly.
     //
-
-    public getPropFrom<O extends Schema.Obj, K extends keyof O["props"]>(id: GUID): O["props"][K] | undefined {
-        throw new Error("Unimplemented");
-    }
-
-    public getObjs(): IterableIterator<Readonly<Schema.Obj>> {
-        return this.objMap.values();
-    }
 
     private getBaseKindByID<O extends Schema.Obj>(id: GUID, kind: O["baseKind"]): O | undefined {
-        const obj = this.objMap.get(id);
+        const obj = this.objStorage.get(id);
         if (!obj)
             return;
         if (obj.baseKind !== kind)
-            throw new Error(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${GetDebugInfo(obj)}!`);
+            throw new Error(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${obj.baseKind}!`);
         return obj as O;
     }
     public getCompByID(id: GUID): Readonly<Schema.Component> | undefined {
@@ -194,27 +399,24 @@ export class CircuitInternal {
         return this.getBaseKindByID<Schema.Port>(id, "Port");
     }
 
-    public getPortsForComponent(c: Schema.Component): ReadonlyArray<Readonly<Schema.Port>> {
-        const ports = this.componentPortsMap.get(c.id);
+    public getPortsForComponent(id: GUID): ReadonlySet<GUID> {
+        const ports = this.componentPortsMap.get(id);
         if (!ports)
-            throw new Error(`CircuitInternal: Attempted to get ports for component ${GetDebugInfo(c)}, but failed to find an entry!`);
+            throw new Error(`CircuitInternal: Attempted to get ports for component ${id}, but failed to find an entry!`);
         return ports;
     }
 
-    public getPortsForWire(w: Schema.Wire): readonly [Readonly<Schema.Port>, Readonly<Schema.Port>] {
-        const p1 = this.getPortByID(w.p1);
-        const p2 = this.getPortByID(w.p2);
-        if (!p1)
-            throw new Error(`CircuitInternal: Attempted to get port 1 for ${GetDebugInfo(w)}, but received nothing! (ID ${w.p1})`);
-        if (!p2)
-            throw new Error(`CircuitInternal: Attempted to get port 2 for ${GetDebugInfo(w)}, but received nothing! (ID ${w.p2})`);
-        return [p1, p2];
+    public getPortsForWire(id: GUID): readonly [GUID, GUID] {
+        const ports = this.getWireByID(id);
+        if (!ports)
+            throw new Error(`CircuitInternal: Attempted to get ports for wire ${id}, but failed to find an entry!`);
+        return [ ports.p1, ports.p1 ];
     }
 
-    public getWiresFor(p: Schema.Port): ReadonlyArray<Readonly<Schema.Wire>> {
-        const wires = this.connectionsMap.get(p.id);
+    public getWiresForPort(id: GUID): ReadonlySet<GUID> {
+        const wires = this.portWireMap.get(id);
         if (!wires)
-            throw new Error(`CircuitInternal: Attempted to get wires for port ${GetDebugInfo(p)}, but failed to find an entry!`);
+            throw new Error(`CircuitInternal: Attempted to get wires for port ${id}, but failed to find an entry!`);
         return wires;
     }
 }
