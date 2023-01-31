@@ -49,7 +49,7 @@
     "eslint-import-resolver-typescript": "^3.5.1",
     "eslint-plugin-align-import": "^1.0.0",
     "eslint-plugin-deprecation": "^1.3.2",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jest": "^26.5.3",
     "eslint-plugin-jest-formatting": "^3.1.0",
     "eslint-plugin-jsdoc": "^39.3.13",
