@@ -1,17 +1,27 @@
 import {Rect} from "math/Rect";
 
 import {CircuitInternal, GUID, Prop} from "core/internal";
+import {SelectionsManager}           from "core/internal/impl/SelectionsManager";
 
 import {BaseObject} from "../BaseObject";
 
+import {CircuitState} from "./CircuitState";
+
 
 export abstract class BaseObjectImpl implements BaseObject {
-    protected circuit: CircuitInternal;
+    protected state: CircuitState;
     protected objID: GUID;
 
-    public constructor(circuit: CircuitInternal, objID: GUID) {
-        this.circuit = circuit;
+    public constructor(state: CircuitState, objID: GUID) {
+        this.state = state;
         this.objID = objID;
+    }
+
+    protected get circuit(): CircuitInternal {
+        return this.state.circuit;
+    }
+    protected get selections(): SelectionsManager {
+        return this.state.selections;
     }
 
     public get kind(): string {

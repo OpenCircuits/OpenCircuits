@@ -56,6 +56,6 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
 
     public get ports(): Port[] {
         return [...this.circuit.getPortsForComponent(this.id)]
-            .map((id) => new PortImpl(this.circuit, id));
+            .map((id) => new PortImpl(this.state, id));
     }
 }

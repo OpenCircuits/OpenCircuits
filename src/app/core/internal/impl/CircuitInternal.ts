@@ -78,15 +78,23 @@ export class CircuitInternal {
         switch (op.kind) {
             case "PlaceComponentOp": {
                 if (op.inverted) {
-                    if (this.componentPortsMap.has(op.c.id))
+                    if (!this.componentPortsMap.has(op.c.id))
+                        throw new Error("Deleted component should have componentPortsMap initialized!");
+                    if (this.componentPortsMap.get(op.c.id)!.size > 0)
                         throw new Error("Deleted component should not have ports");
 
                     this.objStorage.delete(op.c.id);
+
+                    // Delete port entry
+                    this.componentPortsMap.delete(op.c.id);
                 } else {
                     if (this.componentPortsMap.has(op.c.id))
                         throw new Error("Placed component should not have any ports");
 
                     this.objStorage.set(op.c.id, op.c);
+
+                    // Initialize blank port set
+                    this.componentPortsMap.set(op.c.id, new Set());
                 }
                 break;
             }
@@ -398,6 +406,23 @@ export class CircuitInternal {
     //
     // Getters below.  Returned objects should not be modified directly.
     //
+
+    private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {
+        const obj = this.objStorage.get(id);
+        if (!obj)
+            return false;
+        return (obj.baseKind === kind);
+
+    }
+    public hasComp(id: GUID): boolean {
+        return this.hasType(id, "Component");
+    }
+    public hasWire(id: GUID): boolean {
+        return this.hasType(id, "Wire");
+    }
+    public hasPort(id: GUID): boolean {
+        return this.hasType(id, "Port");
+    }
 
     private getBaseKindByID<O extends Schema.Obj>(id: GUID, kind: O["baseKind"]): O | undefined {
         const obj = this.objStorage.get(id);
