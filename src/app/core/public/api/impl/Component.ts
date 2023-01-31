@@ -25,13 +25,13 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     }
 
     public set x(val: number) {
-        this.circuit.setPropFor(this.getObj(), "x", val);
+        this.circuit.setPropFor(this.id, "x", val);
     }
     public get x(): number {
         return (this.getObj().props.x ?? 0);
     }
     public set y(val: number) {
-        this.circuit.setPropFor(this.getObj(), "y", val);
+        this.circuit.setPropFor(this.id, "y", val);
     }
     public get y(): number {
         return (this.getObj().props.y ?? 0);
@@ -56,6 +56,6 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
 
     public get ports(): Port[] {
         return [...this.circuit.getPortsForComponent(this.id)]
-            .map((id) => new PortImpl(this.circuit, id));
+            .map((id) => new PortImpl(this.state, id));
     }
 }

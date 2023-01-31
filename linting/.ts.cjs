@@ -65,7 +65,7 @@ module.exports = {
         "@typescript-eslint/no-angle-bracket-type-assertion": "off",
         "@typescript-eslint/no-array-constructor": "error",
         "@typescript-eslint/no-empty-function": "off",
-        "@typescript-eslint/no-empty-interface": "error",
+        "@typescript-eslint/no-empty-interface": "off",
         "@typescript-eslint/no-explicit-any": "warn",
         "@typescript-eslint/no-inferrable-types": "error",
         "@typescript-eslint/no-misused-new": "error",

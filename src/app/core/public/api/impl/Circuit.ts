@@ -2,11 +2,11 @@ import {Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {CircuitInternal}                 from "core/internal/impl/CircuitInternal";
-import {NewExampleComponentInfoProvider} from "core/internal/impl/ComponentInfo";
-import {DebugOptions}                    from "core/internal/impl/DebugOptions";
-import {SelectionsManager}               from "core/internal/impl/SelectionsManager";
-import {CircuitView}                     from "core/internal/view/CircuitView";
+import {CircuitInternal}   from "core/internal/impl/CircuitInternal";
+import {CircuitLog}        from "core/internal/impl/CircuitLog";
+import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
+import {DebugOptions}      from "core/internal/impl/DebugOptions";
+import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 
 import {Camera}        from "../Camera";
 import {Circuit}       from "../Circuit";
@@ -16,26 +16,31 @@ import {Obj}           from "../Obj";
 import {Port}          from "../Port";
 import {Wire}          from "../Wire";
 
+import {CircuitState}  from "./CircuitState";
 import {ComponentImpl} from "./Component";
 import {PortImpl}      from "./Port";
 import {WireImpl}      from "./Wire";
 
 
-export class CircuitImpl implements Circuit {
-    protected circuit: CircuitInternal;
+export abstract class CircuitImpl implements Circuit {
+    protected readonly state: CircuitState;
 
-    // Moved from CircuitInternal
-    protected readonly selections: SelectionsManager;
-    public isLocked: boolean;
+    public constructor(provider: ObjInfoProvider) {
+        this.state = {
+            circuit: new CircuitInternal(provider, new CircuitLog()),
+            view:    undefined,
 
-    protected view: CircuitView;
+            selections: new SelectionsManager(),
 
-    public constructor() {
-        this.circuit = new CircuitInternal(NewExampleComponentInfoProvider());
-        // this.view = new CircuitView(this.circuit, canvas);
+            isLocked: false,
+        };
+    }
 
-        this.selections = new SelectionsManager();
-        this.isLocked = false;
+    private get circuit(): CircuitInternal {
+        return this.state.circuit;
+    }
+    private get selections(): SelectionsManager {
+        return this.state.selections;
     }
 
     // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)
@@ -116,49 +121,74 @@ export class CircuitImpl implements Circuit {
     public getComponent(id: string): Component | undefined {
         if (!this.circuit.getCompByID(id))
             return undefined;
-        return new ComponentImpl(this.circuit, id);
+        return new ComponentImpl(this.state, id);
     }
     public getWire(id: string): Wire | undefined {
         if (!this.circuit.getWireByID(id))
             return undefined;
-        return new WireImpl(this.circuit, id);
+        return new WireImpl(this.state, id);
     }
     public getPort(id: string): Port | undefined {
         if (!this.circuit.getPortByID(id))
             return undefined;
-        return new PortImpl(this.circuit, id);
+        return new PortImpl(this.state, id);
     }
     public getObj(id: string): Obj | undefined {
-        return (this.getComponent(id) ?? this.getWire(id) ?? this.getPort(id));
+        if (this.circuit.hasComp(id))
+            return this.getComponent(id);
+        if (this.circuit.hasWire(id))
+            return this.getWire(id);
+        if (this.circuit.hasPort(id))
+            return this.getPort(id);
+        return undefined;
     }
     public getObjs(): Obj[] {
-        throw new Error("Method not implemented.");
+        return [...this.circuit.getObjs()]
+            .map((id) => this.getObj(id)!);
     }
     public getComponentInfo(kind: string): ComponentInfo | undefined {
         throw new Error("Method not implemented.");
     }
 
     public selectionsMidpoint(space: Vector.Spaces): Vector {
+        // TODO(renr)
+        //  For now, ignore the `space`, and ignore any non-Component
+        //   objects that are selected
+        //  From these components, average their positions
         throw new Error("Method not implemented.");
     }
 
     // Object manipulation
     public placeComponentAt(pt: Vector, kind: string): Component {
+        const info = this.circuit.getComponentInfo(kind);
+
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();
-        const comp = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y });
+
+        // Place raw component
+        const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y });
+
+        // Set its config to place ports
+        this.circuit.setPortConfig(id, info.defaultPortConfig);
+
         this.circuit.commitTransaction();
 
-        return new ComponentImpl(this.circuit, comp.id);
+        return new ComponentImpl(this.state, id);
     }
     // Wire connection can fail if i.e. p1 is reference-equal to p2
-    public connectWire(p1: Port, p2: Port): Wire | undefined {
-        throw new Error("Unimplemented");
-    }
+    public abstract connectWire(p1: Port, p2: Port): Wire | undefined;
+
     public deleteObjs(objs: Obj[]): void {
+        // TODO(friedj)
+        //  See `placeComponentAt` for some general guidance
+        //  Note that to delete a Component, you have to set its "Port Config" to `{}` first
+        //   which will remove all of its ports
+        //  Then it's safe to delete the Component directly
+        //  And also note that deleting Ports is a no-op, just ignore that case
         throw new Error("Unimplemented");
     }
     public clearSelections(): void {
+        // TODO(callac5)
         throw new Error("Unimplemented");
     }
 

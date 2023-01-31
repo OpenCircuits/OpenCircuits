@@ -19,9 +19,9 @@ export class WireImpl extends BaseObjectImpl implements Wire {
     }
 
     public get p1(): Port {
-        return new PortImpl(this.circuit, this.getObj().p1);
+        return new PortImpl(this.state, this.getObj().p1);
     }
     public get p2(): Port {
-        return new PortImpl(this.circuit, this.getObj().p2);
+        return new PortImpl(this.state, this.getObj().p2);
     }
 }

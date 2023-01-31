@@ -1,4 +1,5 @@
-import {Observable} from "core/public/utils/Observable";
+import {Observable} from "core/utils/Observable";
+
 import {GUID, uuid} from "core/schema/GUID";
 
 import {CircuitOp} from "./CircuitOps";
@@ -103,7 +104,7 @@ export class CircuitLog extends Observable<LogEvent> {
     // Backend response handler
     private acceptRemote(accepted: LogEntry[]): void {
         // TODO: accumulate event.
-        const evt: LogEvent;
+        const evt: LogEvent = undefined as unknown as LogEvent;
 
         // Assumes "accepted" is sorted by "clock"
         accepted.forEach((e) => {

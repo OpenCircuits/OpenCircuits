@@ -72,28 +72,36 @@ export class CircuitInternal {
                 const to = this.getPortPortMapChecked(id);
                 map.set(p1, [...to].map((id) => this.getPortByIDChecked(id)));
             });
-            if (!this.getComponentInfo(p1.parent).isValidPortConnectivity(map))
+            if (!this.getComponentInfoByID(p1.parent).isValidPortConnectivity(map))
                 throw new Error("Wire connectivity is not allowed");
         };
         switch (op.kind) {
             case "PlaceComponentOp": {
                 if (op.inverted) {
-                    if (this.componentPortsMap.has(op.c.id))
+                    if (!this.componentPortsMap.has(op.c.id))
+                        throw new Error("Deleted component should have componentPortsMap initialized!");
+                    if (this.componentPortsMap.get(op.c.id)!.size > 0)
                         throw new Error("Deleted component should not have ports");
 
                     this.objStorage.delete(op.c.id);
+
+                    // Delete port entry
+                    this.componentPortsMap.delete(op.c.id);
                 } else {
                     if (this.componentPortsMap.has(op.c.id))
                         throw new Error("Placed component should not have any ports");
 
                     this.objStorage.set(op.c.id, op.c);
+
+                    // Initialize blank port set
+                    this.componentPortsMap.set(op.c.id, new Set());
                 }
                 break;
             }
             case "SetComponentPortsOp": {
                 const [newPorts, oldPorts] = op.inverted ? [op.oldPorts, op.newPorts] : [op.newPorts, op.oldPorts];
 
-                if (newPorts && !IsValidPortList(this.getComponentInfo(op.component), newPorts))
+                if (newPorts && !IsValidPortList(this.getComponentInfoByID(op.component), newPorts))
                     throw new Error("Invalid new port list for component");
 
                 // TODO: factor in overlap between new/old ports to preserve wires when possible.
@@ -126,7 +134,7 @@ export class CircuitInternal {
                     throw new Error("Object did not exist");
 
                 // Check the value is valid
-                const info = this.getObjectInfo(obj.kind);
+                const info = this.getObjectInfoByID(obj.kind);
                 if (!info.checkPropValue(op.key, op.newVal))
                     throw new Error("Illegal prop value");
 
@@ -308,7 +316,7 @@ export class CircuitInternal {
         })
     }
 
-    public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"]): GUID {
+    public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"] = {}): GUID {
         const id = Schema.uuid();
         this.addTransactionOp({
             kind:     "ConnectWireOp",
@@ -348,32 +356,35 @@ export class CircuitInternal {
         this.addTransactionOp({ id, kind: "SetPropertyOp", key, oldVal, newVal });
     }
 
-    private getObjectInfo(id: GUID): ObjInfo {
-        const obj = this.objStorage.get(id);
-        if (!obj)
-            throw new Error("Invalid obj GUID");
-
-        const info = this.objInfo.get(obj.kind);
+    public getObjectInfo(kind: string): ObjInfo {
+        const info = this.objInfo.get(kind);
         if (!info)
-            throw new Error("Unknown obj type (this is really bad)");
-
+            throw new Error(`Unknown obj type ${kind}!`);
+        return info;
+    }
+    public getComponentInfo(kind: string): ComponentInfo {
+        const info = this.objInfo.getComponent(kind);
+        if (!info)
+            throw new Error(`Unknown component type ${kind}!`);
         return info;
     }
 
-    private getComponentInfo(id: GUID): ComponentInfo {
+    private getObjectInfoByID(id: GUID): ObjInfo {
+        const obj = this.objStorage.get(id);
+        if (!obj)
+            throw new Error(`Invalid obj GUID ${id}`);
+        return this.getObjectInfo(obj.kind);
+    }
+
+    private getComponentInfoByID(id: GUID): ComponentInfo {
         const obj = this.objStorage.get(id);
         if (!obj || obj.baseKind !== "Component")
-            throw new Error("Invalid component GUID");
-
-        const info = this.objInfo.getComponent(obj.kind);
-        if (!info)
-            throw new Error("Unknown component type (this is really bad)");
-
-        return info;
+            throw new Error(`Invalid component GUID ${id}`);
+        return this.getComponentInfo(obj.kind);
     }
     public setPortConfig(id: GUID, portConfig: PortConfig): void {
         // Make new ports
-        const newPorts = this.getComponentInfo(id).makePortsForConfig(id, portConfig);
+        const newPorts = this.getComponentInfoByID(id).makePortsForConfig(id, portConfig);
         if (!newPorts)
             throw new Error("Failed to set port config: Invalid port config");
 
@@ -396,6 +407,23 @@ export class CircuitInternal {
     // Getters below.  Returned objects should not be modified directly.
     //
 
+    private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {
+        const obj = this.objStorage.get(id);
+        if (!obj)
+            return false;
+        return (obj.baseKind === kind);
+
+    }
+    public hasComp(id: GUID): boolean {
+        return this.hasType(id, "Component");
+    }
+    public hasWire(id: GUID): boolean {
+        return this.hasType(id, "Wire");
+    }
+    public hasPort(id: GUID): boolean {
+        return this.hasType(id, "Port");
+    }
+
     private getBaseKindByID<O extends Schema.Obj>(id: GUID, kind: O["baseKind"]): O | undefined {
         const obj = this.objStorage.get(id);
         if (!obj)
@@ -405,7 +433,7 @@ export class CircuitInternal {
         return obj as O;
     }
     public getObjByID(id: GUID): Readonly<Schema.Obj> | undefined {
-        return this.objMap.get(id);
+        return this.objStorage.get(id);
     }
     public getCompByID(id: GUID): Readonly<Schema.Component> | undefined {
         return this.getBaseKindByID<Schema.Component>(id, "Component");
@@ -415,6 +443,9 @@ export class CircuitInternal {
     }
     public getPortByID(id: GUID): Readonly<Schema.Port> | undefined {
         return this.getBaseKindByID<Schema.Port>(id, "Port");
+    }
+    public getObjs(): IterableIterator<GUID> {
+        return this.objStorage.keys();
     }
 
     public getPortsForComponent(id: GUID): ReadonlySet<GUID> {

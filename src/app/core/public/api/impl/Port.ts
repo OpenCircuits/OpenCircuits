@@ -18,7 +18,7 @@ export class PortImpl extends BaseObjectImpl implements Port {
     }
 
     public get parent(): Component {
-        return new ComponentImpl(this.circuit, this.getObj().parent);
+        return new ComponentImpl(this.state, this.getObj().parent);
     }
     public get group(): string {
         return this.getObj().group;
