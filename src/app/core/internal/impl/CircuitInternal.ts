@@ -404,6 +404,9 @@ export class CircuitInternal {
             throw new Error(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${obj.baseKind}!`);
         return obj as O;
     }
+    public getObjByID(id: GUID): Readonly<Schema.Obj> | undefined {
+        return this.objMap.get(id);
+    }
     public getCompByID(id: GUID): Readonly<Schema.Component> | undefined {
         return this.getBaseKindByID<Schema.Component>(id, "Component");
     }

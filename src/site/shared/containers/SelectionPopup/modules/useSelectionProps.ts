@@ -1,9 +1,5 @@
+import {Circuit, Obj, Prop}                      from "core/public";
 import React, {useCallback, useEffect, useState} from "react";
-
-import {CircuitInfo} from "core/utils/CircuitInfo";
-
-import {Prop}   from "core/models/PropInfo";
-import {AnyObj} from "core/models/types";
 
 
 // type ToArray<T> = T extends T ? T[] : never;
@@ -45,12 +41,12 @@ const propsEquals = (oldProps: Record<string, Prop[]> | undefined, newProps: Rec
     ));
 }
 
-export const useSelectionProps = <Obj extends AnyObj, Props extends Record<string, Prop>>(
-    info: CircuitInfo,
-    validTypes: (s: AnyObj) => s is Obj,
-    getProps: (s: Obj) => Props,
+export const useSelectionProps = <O extends Obj, Props extends Record<string, Prop>>(
+    circuit: Circuit,
+    validTypes: (s: Obj) => s is O,
+    getProps: (s: O) => Props,
     deps: React.DependencyList = [],
-    ignore: (s: AnyObj) => boolean = () => false,
+    ignore: (s: Obj) => boolean = () => false,
 ) => {
     const [props, setProps] = useState(undefined as RecordOfArrays<Props> | undefined);
 
@@ -58,8 +54,7 @@ export const useSelectionProps = <Obj extends AnyObj, Props extends Record<strin
     //  or their properties change
     const updateState = useCallback(() => {
         // Get selections with ignored types filtered out
-        const selectedObjs = info.selections.get().map((id) => info.circuit.getObj(id)!);
-        const selections = selectedObjs.filter((s) => !ignore(s));
+        const selections = circuit.selectedObjs().filter((s) => !ignore(s));
         const filteredSelections = selections.filter(validTypes);
 
         // Ensure we only have the acceptable types selected
@@ -103,9 +98,5 @@ export const useSelectionProps = <Obj extends AnyObj, Props extends Record<strin
         }
     }, [updateState]);
 
-
-    const filteredSelections = info.selections.get()
-        .map((id) => info.circuit.getObj(id)!)
-        .filter(validTypes);
-    return [props, filteredSelections, updateState] as const;
+    return [props, circuit.selectedObjs().filter(validTypes), updateState] as const;
 }

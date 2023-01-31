@@ -1,10 +1,4 @@
-import {SetProperty} from "core/actions/units/SetProperty";
-import {Circuit}     from "core/public";
-
-import {GroupAction} from "core/actions/GroupAction";
-
-import {Prop, PropInfo, PropInfoEntry, PropInfoRecord} from "core/models/PropInfo";
-import {AnyObj}                                        from "core/models/types";
+import {Circuit, Obj, Prop} from "core/public";
 
 import {RecordOfArrays, useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 
@@ -17,14 +11,14 @@ import {TextModuleInputField} from "./inputs/TextModuleInputField";
 
 
 type PropInputFieldProps = {
-    info: CircuitInfo;
+    circuit: Circuit;
     entry: PropInfoEntry<AnyObj>;
     props: RecordOfArrays<AnyObj>;
-    objs: AnyObj[];
+    objs: Obj[];
     forceUpdate: () => void;
 }
 const PropInfoEntryInputField = ({
-    info, entry, props, objs, forceUpdate,
+    circuit, entry, props, objs, forceUpdate,
 }: PropInputFieldProps) => {
     // If group entry, then return the sub-entries
     if (entry.type === "group") {
@@ -32,7 +26,7 @@ const PropInfoEntryInputField = ({
             entry.info.map((subentry) => (
                 <PropInfoEntryWrapper
                     key={subentry.id}
-                    info={info} entry={subentry}
+                    circuit={circuit} entry={subentry}
                     props={props} objs={objs} forceUpdate={forceUpdate} />
             ))
         }</>);
@@ -84,6 +78,8 @@ const PropInfoEntryInputField = ({
                     props={vals as string[]}
                     getAction={getAction} onSubmit={onSubmit} />
             );
+        default:
+            throw new Error(`Unknown Property Type: ${entry.type}!`);
     }
 }
 
@@ -115,9 +111,9 @@ export const PropertyModule = ({ circuit }: Props) => {
     // Props is now a record of every key that EVERY object in `objs` has
     //  associated with an array of the values for each object.
     const [props, objs, forceUpdate] = useSelectionProps(
-        info,
-        (o): o is AnyObj => (true),
-        (o) => o,
+        circuit,
+        (o): o is Obj => (true),
+        (o) => o.getProps(),
     );
 
     if (!props)
@@ -125,9 +121,9 @@ export const PropertyModule = ({ circuit }: Props) => {
 
     // Just get first entry's propInfo since the only actual props that will show
     //  are the ones that every object's info has.
-    const info0 = propInfo[objs[0].kind as Obj["kind"]] as PropInfo<AnyObj>;
+    const info0 = propInfo[objs[0].kind as Obj["kind"]] as PropInfo<Obj>;
 
-    const isValidInfoEntry = (entry: PropInfoEntry<AnyObj>): boolean => (
+    const isValidInfoEntry = (entry: PropInfoEntry<Obj>): boolean => (
         entry.type !== "group"
             // Get the info entries that have an associated key in the props
             ? (entry.key in props)
@@ -141,7 +137,7 @@ export const PropertyModule = ({ circuit }: Props) => {
     return (<>{infoList.map((entry) => (
         <PropInfoEntryWrapper
             key={entry.id}
-            info={info} entry={entry}
+            circuit={circuit} entry={entry}
             props={props} objs={objs} forceUpdate={forceUpdate} />
     ))}</>);
 }

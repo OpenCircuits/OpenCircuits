@@ -1,4 +1,4 @@
-import {Rect} from "core/public/utils/math/Rect";
+import {Rect} from "math/Rect";
 
 import {Prop} from "../../schema/Prop";
 
@@ -10,6 +10,8 @@ export interface BaseObject {
 
     isSelected: boolean;
     zIndex: number;
+
+    exists(): boolean;
 
     setProp(key: string, val: Prop): void;
     getProp(key: string): Prop;
