@@ -1,3 +1,4 @@
+import {Observable} from "core/public/utils/Observable";
 import {GUID, uuid} from "core/schema/GUID";
 
 import {CircuitOp} from "./CircuitOps";
@@ -18,7 +19,6 @@ export interface LogEvent {
 
     // List of ops to apply this event.
     ops: CircuitOp[];
-
 
     // Remote accepted entries.
     remote: LogEntry[];
@@ -41,58 +41,63 @@ export interface LogEntry {
     clock: number;
 }
 
-export class CircuitLog {
+// CircuitLog is a one-way history of a circuit.  Each LogEntry represents a sequence of primitive changes,
+//  see CircuitOps types, that should be applied together.  Unlike the undo/redo model, entries are never removed from
+//  the end of the log.  Each "undo" will add an entry that reverts a change and each "redo" will add an entry that
+//  re-applies the change.  Entries may be trimmed from the start of the log to limit memory usage.
+//
+// Terminology used here is from the distributed systems field:
+//  `clock`: A counter used to assign an order to LogEntries
+//  `propose(...)`: This client proposes a local change to the server
+//  `accept(...)`: The server has accepted one or more changes from other clients, or one from this client
+//
+export class CircuitLog extends Observable<LogEvent> {
     private readonly log: LogEntry[];
-    private readonly cbs: Array<(evt: LogEvent) => void>;
 
-    private localEntries: LogEntry[];
+    private proposedEntries: LogEntry[];
 
 
     public constructor() {
+        super();
         this.log = [];
-        this.cbs = [];
-        this.localEntries = [];
+        this.proposedEntries = [];
     }
 
-    public clock(): number {
+    public get clock(): number {
         return this.log.length;
     }
     private proposeClock(): number {
-        return this.clock() + this.localEntries.length;
+        return this.clock + this.proposedEntries.length;
     }
 
     // NOTE: call-sites of propose should expect possible re-entrant calls.
     public propose(ops: CircuitOp[]): void {
         // Propose "entry" with a strictly increasing clock
         const entry: LogEntry = { id: uuid(), ops, clock: this.proposeClock() };
-        this.localEntries.push(entry);
+        this.proposedEntries.push(entry);
 
         const evt: LogEvent = {
-            clock:       this.clock(),
-            oldProposed: this.localEntries.slice(0, -1),
+            clock:       this.clock,
+            oldProposed: this.proposedEntries.slice(0, -1),
             accepted:    [],
-            proposed:    this.localEntries,
+            proposed:    this.proposedEntries,
             ops:         ops,
             remote:      [],
-            local:       this.localEntries,
+            local:       this.proposedEntries,
         };
-        this.cbs.forEach((cb) => cb(evt));
+        this.publish(evt);
 
         // simulated "accept" logic.  Normally triggered by "acceptRemote"
         this.acceptLocal(entry);
     }
 
-    public addListener(cb: (evt: LogEvent) => void): void {
-        this.cbs.push(cb);
-    }
-
     private acceptLocal(entry: LogEntry): void {
-        if (entry.id !== this.localEntries[0].id)
+        if (entry.id !== this.proposedEntries[0].id)
             throw new Error("acceptLocal called in unexpected order!");
 
-        entry.clock = this.clock();
+        entry.clock = this.clock;
         this.log.push(entry);
-        this.localEntries = this.localEntries.slice(1);
+        this.proposedEntries = this.proposedEntries.slice(1);
     }
 
     // Backend response handler
@@ -102,16 +107,15 @@ export class CircuitLog {
 
         // Assumes "accepted" is sorted by "clock"
         accepted.forEach((e) => {
-            if (this.localEntries.length > 0 && e.id === this.localEntries[0].id) {
+            if (this.proposedEntries.length > 0 && e.id === this.proposedEntries[0].id) {
                 // Local update was accepted
                 this.acceptLocal(e);
             } else {
                 // TODO: Remote update
             }
-
         });
 
-        this.cbs.forEach((cb) => cb(evt));
+        this.publish(evt);
     }
 
 }

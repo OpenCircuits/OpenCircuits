@@ -5,7 +5,8 @@ export interface PlaceComponentOp {
     kind: "PlaceComponentOp";
     inverted: boolean;
     c: Schema.Component;
-    // Components are born without ports
+    // Components are born without ports.  This helps reduce complexity of individual ops
+    // and does not introduce any problematic intermediary states.
 }
 
 export interface ConnectWireOp {
@@ -56,8 +57,8 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
 
 // Transforms "targetOp" to occur after "withOp".
 export function TransformCircuitOp(targetOp: CircuitOp | undefined, withOp: CircuitOp): CircuitOp | undefined {
-    if (targetOp === undefined)
-        return undefined;
+    if (!targetOp)
+        return;
     // IMPL NOTE: generate copies of all mutated objects.
     const _ = withOp;
     return targetOp;

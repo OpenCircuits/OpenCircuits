@@ -162,7 +162,7 @@ export class CircuitInternal {
         this.objInfo = objInfo;
 
         this.log = log;
-        this.clock = log.clock();
+        this.clock = log.clock;
 
         this.transaction = false;
         this.transactionOps = [];
@@ -173,7 +173,7 @@ export class CircuitInternal {
         this.portPortMap = new Map();
         this.portWireMap = new Map();
 
-        this.log.addListener((evt) => {
+        this.log.subscribe((evt) => {
             this.clock = evt.clock;
             // Optimization: If there are no remote entries then the ops are already applied.
             if (evt.remote.length === 0)
@@ -238,13 +238,15 @@ export class CircuitInternal {
     public commitTransaction(): void {
         this.endTransactionHelper((txOps) => {
             // Sanity check: Clock should be kept updated by the event handler.
-            if (this.clock !== this.log.clock())
+            if (this.clock !== this.log.clock)
                 throw new Error("Unexpected clock difference.  Maybe a missed event?");
             this.log.propose(txOps);
         });
     }
     public cancelTransaction(): void {
-        this.endTransactionHelper(() => {});
+        this.endTransactionHelper((txOps) => {
+            txOps.reverse().forEach((op) => this.applyOp(InvertCircuitOp(op)));
+        });
     }
     // Check this before working with long-running transactions.  Long-running transactions are any transaction that
     //  crosses an async/event boundary and some other task could have resumed in the mean time.
@@ -259,9 +261,18 @@ export class CircuitInternal {
 
     protected addTransactionOp(op: CircuitOp): void {
         this.assertTransactionState(true);
+
+        try {
+            // read-your-writes
+            this.applyOp(op);
+        } catch (e) {
+            // Cancel transaction in unsuccessful op
+            this.cancelTransaction();
+            throw e;
+        }
+
+        // Push only after successful op
         this.transactionOps.push(op);
-        // read-your-writes
-        this.applyOp(op);
     }
 
     public placeComponent(kind: string, props: Schema.Component["props"]): GUID {
@@ -323,7 +334,11 @@ export class CircuitInternal {
         })
     }
 
-    public setPropForDyn(id: GUID, key: string, newVal?: Schema.Prop): void {
+    // TODO: Re-add the type-safe-ish one, maybe rename this one, idk.
+    public setPropFor<
+        O extends Schema.Obj,
+        K extends keyof O["props"] & string
+    >(id: GUID, key: K, newVal?: O["props"][K]) {
         const obj = this.objStorage.get(id);
         if (!obj)
             throw new Error("Bad GUID");

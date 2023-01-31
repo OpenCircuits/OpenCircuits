@@ -24,9 +24,8 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     }
 
     public set pos(val: Vector) {
-        // TODO: make this type-safe
-        this.circuit.setPropForDyn(this.id, "x", val.x);
-        this.circuit.setPropForDyn(this.id, "y", val.y);
+        this.circuit.setPropFor<Schema.Component, "x">(this.id, "x", val.x);
+        this.circuit.setPropFor<Schema.Component, "y">(this.id, "y", val.y);
     }
     public get pos(): Vector {
         const obj = this.getObj();
@@ -35,7 +34,7 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     }
 
     public set angle(val: number) {
-        this.circuit.setPropForDyn(this.id, "angle", val);
+        this.circuit.setPropFor<Schema.Component, "angle">(this.id, "angle", val);
     }
     public get angle(): number {
         return (this.getObj().props.angle ?? 0);
