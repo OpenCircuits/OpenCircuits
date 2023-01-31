@@ -256,35 +256,35 @@ class VectorImpl implements Vector {
     public add(x: number, y: number): Vector;
     public add(other: Vector): Vector;
     public add(x: Vector | number, y?: number): Vector {
-        const dx = (typeof x !== "number" ? x.x : x);
-        const dy = (typeof x !== "number" ? x.y : (y === undefined ? x : y));
-        return new VectorImpl(this.x + dx, this.y + dy);
+        if (typeof x === "number")
+            return new VectorImpl(this.x + x, this.y + (y ?? x), this.space);
+        return new VectorImpl(this.x + x.x, this.y + x.y, this.space);
     }
 
     public sub(amt: number): Vector;
     public sub(x: number, y: number): Vector;
     public sub(other: Vector): Vector;
     public sub(x: Vector | number, y?: number): Vector {
-        const dx = (typeof x !== "number" ? x.x : x);
-        const dy = (typeof x !== "number" ? x.y : (y === undefined ? x : y));
-        return new VectorImpl(this.x - dx, this.y - dy);
+        if (typeof x === "number")
+            return new VectorImpl(this.x - x, this.y - (y ?? x), this.space);
+        return new VectorImpl(this.x - x.x, this.y - x.y, this.space);
     }
 
     public scale(amt: number): Vector;
     public scale(other: Vector): Vector;
     public scale(a: Vector | number): Vector {
-        if (typeof a !== "number")
-            return new VectorImpl(a.x * this.x, a.y * this.y);
-        return new VectorImpl(a * this.x, a * this.y);
+        if (typeof a === "number")
+            return new VectorImpl(this.x * a, this.y  * a, this.space);
+        return new VectorImpl(this.x * a.x, this.y * a.y, this.space);
     }
 
     public abs(): Vector {
-        return new VectorImpl(Math.abs(this.x), Math.abs(this.y));
+        return new VectorImpl(Math.abs(this.x), Math.abs(this.y), this.space);
     }
     public normalize(): Vector {
         const len = this.len();
         if (len === 0)
-            return new VectorImpl(0, 0);
+            return new VectorImpl(0, 0, this.space);
         return this.scale(1 / len);
     }
     public len(): number {
@@ -306,7 +306,8 @@ class VectorImpl implements Vector {
         const cos = Math.cos(a), sin = Math.sin(a);
         return new VectorImpl(
             ((this.x - o.x) * cos - (this.y - o.y) * sin) + o.x,
-            ((this.x - o.x) * sin + (this.y - o.y) * cos) + o.y
+            ((this.x - o.x) * sin + (this.y - o.y) * cos) + o.y,
+            this.space
         );
     }
     public withRotation(a: number, o = new VectorImpl(0, 0)): Vector {
@@ -316,11 +317,11 @@ class VectorImpl implements Vector {
         return v.scale(this.dot(v) / v.len2())
     }
     public negativeReciprocal(): Vector {
-        return new VectorImpl(this.y, -this.x);
+        return new VectorImpl(this.y, -this.x, this.space);
     }
 
     public toString(): string {
-        return `(${Math.round(this.x)}, ${Math.round(this.y)})`;
+        return `${this.space}(${Math.round(this.x)}, ${Math.round(this.y)})`;
     }
 }
 
