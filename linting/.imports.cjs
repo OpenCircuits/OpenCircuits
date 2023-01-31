@@ -228,7 +228,7 @@ module.exports = {
             },
         ],
         "import/newline-after-import": ["error", {
-            "count": 3,
+            "count": 2,
             // TODO: considerComments still doesn't seem to work. Investigate further and file issue?
             "considerComments": true,
         }],
