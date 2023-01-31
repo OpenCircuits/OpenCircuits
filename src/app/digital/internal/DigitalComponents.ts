@@ -40,9 +40,9 @@ class DigitalComponentInfo implements ComponentInfo {
     }
 
     public makePortsForConfig(componentID: string, p: PortConfig): Port[] | undefined {
-        return Object.entries(p.counts)
-            .flatMap(([group, counts]) =>
-                new Array(counts)
+        return Object.entries(p)
+            .flatMap(([group, count]) =>
+                new Array(count)
                     .fill(0)
                     .map((_, index) => ({
                         baseKind: "Port",

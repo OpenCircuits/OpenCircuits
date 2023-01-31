@@ -133,7 +133,8 @@ export abstract class CircuitImpl implements Circuit {
         return (this.getComponent(id) ?? this.getWire(id) ?? this.getPort(id));
     }
     public getObjs(): Obj[] {
-        throw new Error("Method not implemented.");
+        return [...this.circuit.getObjs()]
+            .map((id) => this.getObj(id)!);
     }
     public getComponentInfo(kind: string): ComponentInfo | undefined {
         throw new Error("Method not implemented.");
@@ -149,9 +150,17 @@ export abstract class CircuitImpl implements Circuit {
 
     // Object manipulation
     public placeComponentAt(pt: Vector, kind: string): Component {
+        const info = this.circuit.getComponentInfo(kind);
+
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();
+
+        // Place raw component
         const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y });
+
+        // Set its config to place ports
+        this.circuit.setPortConfig(id, info.defaultPortConfig);
+
         this.circuit.commitTransaction();
 
         return new ComponentImpl(this.circuit, id);
