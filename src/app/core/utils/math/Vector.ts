@@ -329,7 +329,6 @@ export function V(): Vector;
 export function V(space: Vector.Spaces): Vector;
 export function V(v: Vector): Vector;
 export function V(x: number): Vector;
-export function V(v: Vector, space: Vector.Spaces): Vector;
 export function V(x: number, space: Vector.Spaces): Vector;
 export function V(x: number, y: number): Vector;
 export function V(x: number, y: number, space?: Vector.Spaces): Vector;
@@ -343,7 +342,7 @@ export function V(a?: Vector.Spaces | Vector | number, b?: Vector.Spaces | numbe
         return new VectorImpl(a, a, b);
     }
     if (typeof a === "object") {
-        return new VectorImpl(a.x, a.y, b as Vector.Spaces | undefined);
+        return new VectorImpl(a.x, a.y, a.space);
     }
     if (typeof a === "string") {
         return new VectorImpl(0, 0, a);
