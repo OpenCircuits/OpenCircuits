@@ -3,8 +3,8 @@ import {V} from "Vector";
 import {CreateCircuit} from "digital/public";
 
 
-describe("Test", () => {
-    test("Placement", () => {
+describe("PlaceComponentAt", () => {
+    test("Basic Placement", () => {
         const circuit = CreateCircuit();
 
         const c = circuit.placeComponentAt(V(0, 0), "ANDGate");

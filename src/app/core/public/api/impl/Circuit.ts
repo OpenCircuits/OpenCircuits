@@ -2,11 +2,12 @@ import {Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {CircuitInternal}                 from "core/internal/impl/CircuitInternal";
-import {NewExampleComponentInfoProvider} from "core/internal/impl/ComponentInfo";
-import {DebugOptions}                    from "core/internal/impl/DebugOptions";
-import {SelectionsManager}               from "core/internal/impl/SelectionsManager";
-import {CircuitView}                     from "core/internal/view/CircuitView";
+import {CircuitInternal}   from "core/internal/impl/CircuitInternal";
+import {CircuitLog}        from "core/internal/impl/CircuitLog";
+import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
+import {DebugOptions}      from "core/internal/impl/DebugOptions";
+import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {CircuitView}       from "core/internal/view/CircuitView";
 
 import {Camera}        from "../Camera";
 import {Circuit}       from "../Circuit";
@@ -21,7 +22,7 @@ import {PortImpl}      from "./Port";
 import {WireImpl}      from "./Wire";
 
 
-export class CircuitImpl implements Circuit {
+export abstract class CircuitImpl implements Circuit {
     protected circuit: CircuitInternal;
 
     // Moved from CircuitInternal
@@ -30,8 +31,8 @@ export class CircuitImpl implements Circuit {
 
     protected view: CircuitView;
 
-    public constructor() {
-        this.circuit = new CircuitInternal(NewExampleComponentInfoProvider());
+    public constructor(provider: ObjInfoProvider) {
+        this.circuit = new CircuitInternal(provider, new CircuitLog());
         // this.view = new CircuitView(this.circuit, canvas);
 
         this.selections = new SelectionsManager();
@@ -139,6 +140,10 @@ export class CircuitImpl implements Circuit {
     }
 
     public selectionsMidpoint(space: Vector.Spaces): Vector {
+        // TODO(renr)
+        //  For now, ignore the `space`, and ignore any non-Component
+        //   objects that are selected
+        //  From these components, average their positions
         throw new Error("Method not implemented.");
     }
 
@@ -146,19 +151,25 @@ export class CircuitImpl implements Circuit {
     public placeComponentAt(pt: Vector, kind: string): Component {
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();
-        const comp = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y });
+        const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y });
         this.circuit.commitTransaction();
 
-        return new ComponentImpl(this.circuit, comp.id);
+        return new ComponentImpl(this.circuit, id);
     }
     // Wire connection can fail if i.e. p1 is reference-equal to p2
-    public connectWire(p1: Port, p2: Port): Wire | undefined {
-        throw new Error("Unimplemented");
-    }
+    public abstract connectWire(p1: Port, p2: Port): Wire | undefined;
+
     public deleteObjs(objs: Obj[]): void {
+        // TODO(friedj)
+        //  See `placeComponentAt` for some general guidance
+        //  Note that to delete a Component, you have to set its "Port Config" to `{}` first
+        //   which will remove all of its ports
+        //  Then it's safe to delete the Component directly
+        //  And also note that deleting Ports is a no-op, just ignore that case
         throw new Error("Unimplemented");
     }
     public clearSelections(): void {
+        // TODO(callac5)
         throw new Error("Unimplemented");
     }
 

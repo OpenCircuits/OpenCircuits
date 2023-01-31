@@ -308,7 +308,7 @@ export class CircuitInternal {
         })
     }
 
-    public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"]): GUID {
+    public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"] = {}): GUID {
         const id = Schema.uuid();
         this.addTransactionOp({
             kind:     "ConnectWireOp",
