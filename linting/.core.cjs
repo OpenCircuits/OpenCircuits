@@ -59,5 +59,10 @@ module.exports = {
         "arrow-body-style": "error",
         "arrow-spacing": "error",
         "eol-last": "error",
+        "no-multiple-empty-lines": ["error", {
+            "max": 2,
+            "maxEOF": 0,
+            "maxBOF": 0,
+        }],
     },
 }

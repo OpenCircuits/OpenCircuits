@@ -202,7 +202,8 @@ module.exports = {
             }
         ],
         "import/order": [
-            "error",
+            // TODO: Reenable after finalizing pathGroups post refactor
+            "off",
             {
                 "pathGroups": pathGroups,
                 "pathGroupsExcludedImportTypes": ["react"],
@@ -227,9 +228,9 @@ module.exports = {
             },
         ],
         "import/newline-after-import": ["error", {
-            "count": 2,
-            // TODO: uncomment when this gets released
-            // "considerComments": true,
+            "count": 3,
+            // TODO: considerComments still doesn't seem to work. Investigate further and file issue?
+            "considerComments": true,
         }],
         "import/no-cycle": "error",
 
