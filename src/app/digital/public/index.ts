@@ -1,11 +1,12 @@
-import {DigitalCircuit} from "./api/DigitalCircuit";
+import {DigitalCircuit}     from "./api/DigitalCircuit";
+import {DigitalCircuitImpl} from "./api/impl/DigitalCircuit";
 
 
 export * from "./api/DigitalCircuit";
 
 
 export function CreateCircuit(): DigitalCircuit {
-    throw new Error("Unimplemented");
+    return new DigitalCircuitImpl();
 }
 
 export function ParseCircuit(rawContents: string): DigitalCircuit {

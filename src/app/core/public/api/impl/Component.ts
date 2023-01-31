@@ -1,6 +1,7 @@
+import {V, Vector} from "Vector";
+
 import {Schema} from "core/schema";
 
-import {V, Vector}     from "../../utils/math/Vector";
 import {Component}     from "../Component";
 import {ComponentInfo} from "../ComponentInfo";
 import {Port}          from "../Port";
@@ -21,6 +22,19 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
 
     public get info(): ComponentInfo {
         throw new Error("Unimplemented");
+    }
+
+    public set x(val: number) {
+        this.circuit.setPropFor(this.getObj(), "x", val);
+    }
+    public get x(): number {
+        return (this.getObj().props.x ?? 0);
+    }
+    public set y(val: number) {
+        this.circuit.setPropFor(this.getObj(), "y", val);
+    }
+    public get y(): number {
+        return (this.getObj().props.y ?? 0);
     }
 
     public set pos(val: Vector) {

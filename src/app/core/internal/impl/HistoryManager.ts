@@ -4,6 +4,10 @@ import {CircuitOp, InvertMultiOp, MultiOp} from "./CircuitOps";
 class MultiOpStack {
     private stack: MultiOp[];
 
+    public constructor() {
+        this.stack = [];
+    }
+
     public push(op: CircuitOp | MultiOp): void {
         if (op.kind === "MultiOp")
             this.stack.push(op);

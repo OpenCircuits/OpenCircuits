@@ -1,4 +1,4 @@
-import {Vector} from "core/public/utils/math/Vector";
+import {Vector} from "Vector";
 
 import {BaseObject}    from "./BaseObject";
 import {ComponentInfo} from "./ComponentInfo";
@@ -9,6 +9,8 @@ export interface Component extends BaseObject {
     readonly baseKind: "Component";
     readonly info: ComponentInfo;
 
+    x: number;
+    y: number;
     pos: Vector;
     angle: number;
 

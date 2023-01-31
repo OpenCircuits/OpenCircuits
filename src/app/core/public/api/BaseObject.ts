@@ -1,4 +1,4 @@
-import {Rect} from "core/public/utils/math/Rect";
+import {Rect} from "math/Rect";
 
 import {Prop} from "../../schema/Prop";
 

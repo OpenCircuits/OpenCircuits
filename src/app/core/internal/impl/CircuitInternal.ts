@@ -116,19 +116,23 @@ export class CircuitInternal {
     // Convenience functions around CircuitOps
     //
 
-    public placeComponent(kind: string, props: Schema.Component["props"]): void {
+    public placeComponent(kind: string, props: Schema.Component["props"]): Schema.Component {
+        const component: Schema.Component = {
+            baseKind: "Component",
+            kind,
+            id:       "", // TODO: Maybe generate in 'applyOp'?
+            props:    { ...props }, // Copy non-trivial object
+        };
+
         this.applyOp({
             kind:     "PlaceComponentOp",
             inverted: false,
-            c:        {
-                baseKind: "Component",
-                kind:     kind,
-                id:       "", // TODO: Maybe generate in 'applyOp'?
-                props:    { ...props }, // Copy non-trivial object
-            },
-            wires: [],
-            ports: [], // NOTE: Ports are added separately in "setPortConfig".
+            c:        component,
+            wires:    [],
+            ports:    [], // NOTE: Ports are added separately in "setPortConfig".
         });
+
+        return component;
     }
 
     public replaceComponent(id: GUID, newKind: string): void {
@@ -144,7 +148,7 @@ export class CircuitInternal {
     // TODO: Find a way to do this without needing an "O" instance parameter.
     public setPropFor<O extends Schema.Obj, K extends keyof O["props"] & string>(obj: O, key: K, val?: O["props"][K]) {
         this.assertOwnObject(obj);
-        const oldVal = obj[key] as O["props"][K] | undefined;
+        const oldVal = obj.props[key] as O["props"][K] | undefined;
         this.applyOp({ kind: "SetPropertyOp", key, newVal: val, oldVal });
     }
 
@@ -183,6 +187,9 @@ export class CircuitInternal {
         if (obj.baseKind !== kind)
             throw new Error(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${GetDebugInfo(obj)}!`);
         return obj as O;
+    }
+    public getObjByID(id: GUID): Readonly<Schema.Obj> | undefined {
+        return this.objMap.get(id);
     }
     public getCompByID(id: GUID): Readonly<Schema.Component> | undefined {
         return this.getBaseKindByID<Schema.Component>(id, "Component");
