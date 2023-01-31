@@ -114,12 +114,18 @@ export class CircuitImpl implements Circuit {
     }
 
     public getComponent(id: string): Component | undefined {
+        if (!this.circuit.getCompByID(id))
+            return undefined;
         return new ComponentImpl(this.circuit, id);
     }
     public getWire(id: string): Wire | undefined {
+        if (!this.circuit.getWireByID(id))
+            return undefined;
         return new WireImpl(this.circuit, id);
     }
     public getPort(id: string): Port | undefined {
+        if (!this.circuit.getPortByID(id))
+            return undefined;
         return new PortImpl(this.circuit, id);
     }
     public getObj(id: string): Obj | undefined {

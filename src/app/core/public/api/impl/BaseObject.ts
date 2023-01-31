@@ -40,6 +40,10 @@ export abstract class BaseObjectImpl implements BaseObject {
         throw new Error("Unimplemented");
     }
 
+    public exists(): boolean {
+        return !!this.circuit.getObjByID(this.objID);
+    }
+
     public setProp(key: string, val: Prop): void {
         throw new Error("Unimplemented");
     }
