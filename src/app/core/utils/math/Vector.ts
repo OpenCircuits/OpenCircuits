@@ -314,7 +314,7 @@ class VectorImpl implements Vector {
         return this.rotate(a - this.sub(o).angle(), o);
     }
     public project(v: Vector): Vector {
-        return v.scale(this.dot(v) / v.len2())
+        return v.scale(this.dot(v) / v.len2());
     }
     public negativeReciprocal(): Vector {
         return new VectorImpl(this.y, -this.x, this.space);
