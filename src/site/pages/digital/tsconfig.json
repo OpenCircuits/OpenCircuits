@@ -12,6 +12,5 @@
             "shared/*":       ["../../shared/*"],
         }
     },
-    "include": ["../../shared/utils/types"],
-    "files": ["./src/index.tsx"]
+    "include": ["src", "../../shared/utils/types", "tests"],
 }
