@@ -107,23 +107,77 @@ module.exports = {
                     },
                     {
                         "target": "./src/site/shared/**",
-                        "from": "./src/app/!(core)/**",
-                    },
-                    {
-                        "target": "./src/site/shared/**",
-                        "from": "./src/site/pages/**",
+                        "from": ["./src/app/!(core)/**", "./src/site/pages/**"],
                     },
                     {
                         "target": "./src/site/pages/analog/**",
-                        "from": "./src/site/pages/!(analog)/**",
+                        "from": [
+                            "./src/site/pages/!(analog)/**",
+                            "./src/app/!(analog|core)/**",
+                            "./src/app/analog/!(public)/**",
+                            "./src/app/core/!(public)/**",
+                        ],
                     },
                     {
                         "target": "./src/site/pages/digital/**",
-                        "from": "./src/site/pages/!(digital)/**",
+                        "from": [
+                            "./src/site/pages/!(digital)/**",
+                            "./src/app/!(digital|core)/**",
+                            "./src/app/digital/!(public)/**",
+                            "./src/app/core/!(public)/**",
+                        ],
                     },
                     {
                         "target": "./src/site/pages/landing/**",
                         "from": "./src/site/pages/!(landing)/**",
+                    },
+                    {
+                        "target": "./src/app/core/schema/**",
+                        "from": ["./src/app/!(core)/**", "./src/app/core/!(schema)/**"],
+                    },
+                    {
+                        "target": "./src/app/digital/schema/**",
+                        "from": ["./src/app/core/!(schema)/**", "./src/app/digital/!(schema)/**"],
+                    },
+                    {
+                        "target": "./src/app/analog/schema/**",
+                        "from": ["./src/app/core/!(schema)/**", "./src/app/analog/!(schema)/**"],
+                    },
+                    {
+                        "target": "./src/app/core/internal/**",
+                        "from": ["./src/app/!(core)/**", "./src/app/core/!(internal|schema)/**"],
+                    },
+                    {
+                        "target": "./src/app/digital/internal/**",
+                        "from": [
+                            "./src/app/core/!(schema|internal)/**",
+                            "./src/app/digital/!(schema|internal)/**",
+                        ],
+                    },
+                    {
+                        "target": "./src/app/analog/internal/**",
+                        "from": [
+                            "./src/app/core/!(schema|internal)/**",
+                            "./src/app/analog/!(schema|internal)/**",
+                        ],
+                    },
+                    {
+                        "target": "./src/app/core/public/**",
+                        "from": ["./src/app/!(core)/**", "./src/app/core/!(internal|public)/**"],
+                    },
+                    {
+                        "target": "./src/app/digital/public/**",
+                        "from": [
+                            "./src/app/core/!(public|internal)/**",
+                            "./src/app/digital/!(public|internal)/**",
+                        ],
+                    },
+                    {
+                        "target": "./src/app/analog/public/**",
+                        "from": [
+                            "./src/app/core/!(public|internal)/**",
+                            "./src/app/analog/!(public|internal)/**",
+                        ],
                     },
                 ],
             },
@@ -148,7 +202,8 @@ module.exports = {
             }
         ],
         "import/order": [
-            "error",
+            // TODO: Reenable after finalizing pathGroups post refactor
+            "off",
             {
                 "pathGroups": pathGroups,
                 "pathGroupsExcludedImportTypes": ["react"],
@@ -174,8 +229,8 @@ module.exports = {
         ],
         "import/newline-after-import": ["error", {
             "count": 2,
-            // TODO: uncomment when this gets released
-            // "considerComments": true,
+            // TODO: considerComments still doesn't seem to work. Investigate further and file issue?
+            "considerComments": true,
         }],
         "import/no-cycle": "error",
 
