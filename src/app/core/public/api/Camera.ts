@@ -1,8 +1,8 @@
-import {Rect} from "math/Rect";
+import {Margin} from "math/Rect";
 
 
 export interface Camera {
     resize(w: number, h: number): void;
 
-    margin: Rect;
+    margin: Margin;
 }

@@ -1,7 +1,8 @@
 import {Port, Wire}  from "core/public";
 import {CircuitImpl} from "core/public/api/impl/Circuit";
 
-import {DigitalCircuit} from "../DigitalCircuit";
+import {DigitalCircuit}       from "../DigitalCircuit";
+import {DigitalComponentInfo} from "../DigitalComponentInfo";
 
 
 export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
@@ -23,4 +24,7 @@ export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
         throw new Error("Unimplemented");
     }
 
+    public override getComponentInfo(kind: string): DigitalComponentInfo | undefined {
+        throw new Error("Unimplmeneted");
+    }
 }

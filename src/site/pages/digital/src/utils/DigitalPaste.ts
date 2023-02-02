@@ -1,7 +1,5 @@
 import {Vector} from "Vector";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
-
 
 // /**
 //  * Finds and adds any new IC data upon paste.
@@ -62,7 +60,7 @@ import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
  * @param menuPos Top left of context menu if being pasted using context menu.
  * @returns       True if successful paste.
  */
-export function DigitalPaste(data: string, info: DigitalCircuitInfo, menuPos?: Vector): boolean {
+export function DigitalPaste(data: string, info: unknown, menuPos?: Vector): boolean {
     try {
         // const { history, designer, selections, renderer } = info;
         // const objs = Deserialize<IOObject[]>(data);

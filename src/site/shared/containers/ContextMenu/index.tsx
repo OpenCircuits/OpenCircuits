@@ -28,7 +28,7 @@ type Props = {
     circuit: Circuit;
 }
 export const ContextMenu = ({ circuit }: Props) => {
-    const { undoHistory, redoHistory } = useHistory(info);
+    const { undoHistory, redoHistory } = useHistory(circuit);
 
     const { isOpen } = useSharedSelector(
         (state) => ({ isOpen: state.contextMenu.isOpen })
@@ -37,31 +37,31 @@ export const ContextMenu = ({ circuit }: Props) => {
 
     const [{ posX, posY }, setPos] = useState({ posX: 0, posY: 0 });
 
-    useEffect(() => {
-        if (!input)
-            return;
+    // useEffect(() => {
+    //     if (!input)
+    //         return;
 
-        const listener = (ev: InputManagerEvent) => {
-            if (ev.type === "contextmenu")
-                dispatch(OpenContextMenu());
-            else if (ev.type === "mousedown")
-                dispatch(CloseContextMenu());
-        }
+    //     const listener = (ev: InputManagerEvent) => {
+    //         if (ev.type === "contextmenu")
+    //             dispatch(OpenContextMenu());
+    //         else if (ev.type === "mousedown")
+    //             dispatch(CloseContextMenu());
+    //     }
 
-        input.subscribe(listener);
-        return () => input.unsubscribe(listener);
-    }, [input, dispatch]);
+    //     input.subscribe(listener);
+    //     return () => input.unsubscribe(listener);
+    // }, [input, dispatch]);
 
-    // Position changes are calculated using the react hook so that the
-    // context menu does not jump around during other update events.
-    // fixes issue #914
-    useEffect(() => {
-        if (!isOpen)
-            return;
-        // Updates position state
-        const pos = input?.getMousePos();
-        setPos({ posX: pos.x, posY: pos.y });
-    }, [input, isOpen, setPos]);
+    // // Position changes are calculated using the react hook so that the
+    // // context menu does not jump around during other update events.
+    // // fixes issue #914
+    // useEffect(() => {
+    //     if (!isOpen)
+    //         return;
+    //     // Updates position state
+    //     const pos = input?.getMousePos();
+    //     setPos({ posX: pos.x, posY: pos.y });
+    // }, [input, isOpen, setPos]);
 
     useDocEvent("mousedown", (ev) => {
         if (!menu.current)
@@ -110,43 +110,43 @@ export const ContextMenu = ({ circuit }: Props) => {
     const onPaste = async () => {
         if (!isClipboardSupported("read")) {
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
-            return;
+
         }
-        paste(await navigator.clipboard.readText(), camera.getWorldPos(V(posX, posY)));
+        // paste(await navigator.clipboard.readText(), camera.getWorldPos(V(posX, posY)));
     }
 
     /* Context Menu "Select All" */
     const onSelectAll = async () => {
-        history.add(SelectGroup(selections, circuit.getObjs().map((o) => o.id)));
+        // history.add(SelectGroup(selections, circuit.getObjs().map((o) => o.id)));
     }
 
     /* Context Menu "Focus" */
     const onFocus = async () => {
-        FitToScreenHandler.getResponse(info);
+        // FitToScreenHandler.getResponse(info);
     }
 
     /* Context Menu "Clean Up" */
     const onCleanUp = async () => {
-        CleanUpHandler.getResponse(info);
+        // CleanUpHandler.getResponse(info);
     }
 
     /* Context Menu "Duplicate" */
     const onDuplicate = async () => {
-        DuplicateHandler.getResponse(info);
+        // DuplicateHandler.getResponse(info);
     }
 
     /* Context Menu "Undo/Redo" */
-    const onUndo = async () => history.undo();
-    const onRedo = async () => history.redo();
+    const onUndo = async () => { /* history.undo() */ };
+    const onRedo = async () => { /* history.redo() */ };
 
 
     /* Helper function for buttons to call the function and render/close the popup */
     const doFunc = (func: () => void) => {
         // Don't do anything if locked
-        if (locked)
+        if (circuit.locked)
             return;
         func();
-        renderer.render();
+        // renderer.render();
         dispatch(CloseContextMenu());
     }
 
@@ -154,17 +154,21 @@ export const ContextMenu = ({ circuit }: Props) => {
     const menu = useRef<HTMLDivElement>(null);
 
     // Adjusts position of menu to keep it on screen
-    const menuPos = V(posX, posY);
-    if (menu.current) {
-        const offset = 1;
-        const { width, height } = menu.current.getBoundingClientRect();
+    const menuPos = (() => {
+        let x = posX, y = posY;
+        if (menu.current) {
+            const offset = 1;
+            const { width, height } = menu.current.getBoundingClientRect();
 
-        if (menuPos.x + width > window.innerWidth)
-            menuPos.x -= width - offset;
+            if (x + width > window.innerWidth)
+                x -= width - offset;
 
-        if (menuPos.y + height + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
-            menuPos.y -= height - offset;
-    }
+            if (y + height + HEADER_HEIGHT - CONTEXT_MENU_VERT_OFFSET > window.innerHeight)
+                y -= height - offset;
+        }
+        return V(x, y);
+    })();
+
 
     return (
         <div ref={menu}
@@ -176,11 +180,11 @@ export const ContextMenu = ({ circuit }: Props) => {
              }}>
             <button type="button"
                     title="Cut"
-                    disabled={selections.amount() === 0}
+                    disabled={circuit.selectedObjs.length === 0}
                     onClick={() => doFunc(onCut)}>Cut</button>
             <button type="button"
                     title="Copy"
-                    disabled={selections.amount() === 0}
+                    disabled={circuit.selectedObjs.length === 0}
                     onClick={() => doFunc(onCopy)}>Copy</button>
             <button type="button"
                     title="Paste"
@@ -199,7 +203,7 @@ export const ContextMenu = ({ circuit }: Props) => {
                     onClick={() => doFunc(onCleanUp)}>Clean Up</button>
             <button type="button"
                     title="Duplicate"
-                    disabled={selections.amount() === 0}
+                    disabled={circuit.selectedObjs().length === 0}
                     onClick={() => doFunc(onDuplicate)}>Duplicate</button>
             <hr />
             <button type="button"

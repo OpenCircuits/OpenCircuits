@@ -1,8 +1,4 @@
-import {DigitalComponent, DigitalPort} from "core/models/types/digital";
-import {Signal}                        from "digital/models/sim/Signal";
-import {useLayoutEffect}               from "react";
-
-import {DEFAULT_ON_COLOR, METASTABLE_COLOR} from "core/utils/Constants";
+import {useLayoutEffect} from "react";
 
 import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
 
@@ -24,13 +20,13 @@ export const DigitalMainDesigner = () => {
         //     info.designer.resume();
         // else
         //     info.designer.pause();
-    }, [info, isPageVisible]);
+    }, [circuit, isPageVisible]);
 
     return (
         <MainDesigner
-            otherPlace={(pos, itemKind: DigitalComponent["kind"], num, smartPlaceOptions: SmartPlaceOptions) => {
+            otherPlace={(pos, itemKind: string, num, smartPlaceOptions: SmartPlaceOptions) => {
                 if (smartPlaceOptions !== SmartPlaceOptions.Off) {
-                    circuit.smartPlace(itemKind, smartPlaceOptions, num, pos);
+                    // circuit.smartPlace(itemKind, smartPlaceOptions, num, pos);
                     return true;
                 }
                 return false;

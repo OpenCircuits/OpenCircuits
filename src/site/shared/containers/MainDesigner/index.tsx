@@ -29,10 +29,10 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     useLayoutEffect(() => circuit.camera.resize(w, h-HEADER_HEIGHT), [circuit, w, h]);
 
     // Initial function called after the canvas first shows up
-    useLayoutEffect(() => circuit.setupCanvas(canvas), [circuit, canvas]);
+    // useLayoutEffect(() => circuit.setupCanvas(canvas), [circuit, canvas]);
 
     // Lock/unlock circuit
-    useLayoutEffect(() => (circuit.locked = isLocked), [circuit, isLocked]);
+    useLayoutEffect(() => { circuit.locked = isLocked; }, [circuit, isLocked]);
 
     return (
         <Droppable
@@ -42,10 +42,10 @@ export const MainDesigner = ({ otherPlace }: Props) => {
                     throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
                 pos = pos.sub(V(0, canvas.current.getBoundingClientRect().top));
 
-                // If other place options are specified then do those
-                //  otherwise default to CreateNComponents
-                if (!otherPlace?.(pos, itemKind, num ?? 1, otherData))
-                    circuit.placeN(itemKind, num ?? 1, pos, "screen");
+                // // If other place options are specified then do those
+                // //  otherwise default to CreateNComponents
+                // if (!otherPlace?.(pos, itemKind, num ?? 1, otherData))
+                //     circuit.placeN(itemKind, num ?? 1, pos, "screen");
             }}>
             <canvas
                 className="main__canvas"

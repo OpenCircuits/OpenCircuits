@@ -99,10 +99,10 @@ export const HistoryBox = ({ circuit }: Props) => {
     );
     const dispatch = useSharedDispatch();
 
-    const { undoHistory, redoHistory } = useHistory(info);
+    const { undoHistory, redoHistory } = useHistory(circuit);
 
     const [isDragging, setIsDragging] = useState(false);
-    useEvent("mousedrag", (_) => setIsDragging(true),  info.input, [setIsDragging]);
+    // useEvent("mousedrag", (_) => setIsDragging(true),  info.input, [setIsDragging]); // TODO
     useDocEvent("mouseup", () => setIsDragging(false), [setIsDragging]);
 
     // Make history box passthrough if dragging on canvas or from ItemNav

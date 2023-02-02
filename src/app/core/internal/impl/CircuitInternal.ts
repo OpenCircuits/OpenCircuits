@@ -247,7 +247,8 @@ export class CircuitInternal {
         this.endTransactionHelper((txOps) => {
             // Sanity check: Clock should be kept updated by the event handler.
             if (this.clock !== this.log.clock)
-                throw new Error("Unexpected clock difference.  Maybe a missed event?");
+                throw new Error(`Unexpected clock difference (${this.clock} vs ${this.log.clock})`
+                                + ". Maybe a missed event?");
             this.log.propose(txOps);
         });
     }

@@ -121,8 +121,7 @@ export class Transform {
         this.dirtyCorners = true;
     }
     public setPos(p: Vector): void {
-        this.pos.x = p.x;
-        this.pos.y = p.y;
+        this.pos = p;
         this.dirty = true;
         this.dirtyCorners = true;
     }
@@ -132,23 +131,21 @@ export class Transform {
         this.dirtyCorners = true;
     }
     public setScale(s: Vector): void {
-        this.scale.x = s.x;
-        this.scale.y = s.y;
+        this.scale = s;
         this.dirty = true;
     }
     public setSize(s: Vector): void {
-        this.size.x = s.x;
-        this.size.y = s.y;
+        this.size = s;
         this.dirtySize = true;
         this.dirtyCorners = true;
     }
     public setWidth(w: number): void {
-        this.size.x = w;
+        this.size = V(w, this.size.y);
         this.dirtySize = true;
         this.dirtyCorners = true;
     }
     public setHeight(h: number): void {
-        this.size.y = h;
+        this.size = V(this.size.x, h);
         this.dirtySize = true;
         this.dirtyCorners = true;
     }
@@ -179,16 +176,16 @@ export class Transform {
         return this.parent;
     }
     public getPos(): Vector {
-        return this.pos.copy();
+        return this.pos;
     }
     public getAngle(): number {
         return this.angle;
     }
     public getScale(): Vector {
-        return this.scale.copy();
+        return this.scale;
     }
     public getSize(): Vector {
-        return this.size.copy();
+        return this.size;
     }
     public getRadius(): number {
         this.updateSize();
@@ -231,8 +228,8 @@ export class Transform {
     }
 
     public copy(): Transform {
-        const trans = new Transform(this.pos.copy(), this.size.copy(), this.angle);
-        trans.scale = this.scale.copy();
+        const trans = new Transform(this.pos, this.size, this.angle);
+        trans.scale = this.scale;
         trans.dirty = true;
         return trans;
     }

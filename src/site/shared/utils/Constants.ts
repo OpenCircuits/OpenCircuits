@@ -13,3 +13,5 @@ export const AUTO_SAVE_COOKIE_KEY = "IS_AUTO_SAVE";
 export const DEV_CACHED_CIRCUIT_FILE = "devCached.circuit";
 
 export const OVERWRITE_CIRCUIT_MESSAGE = "Are you sure you want to overwrite your current scene?";
+
+export const DEBUG_NO_FILL = false;

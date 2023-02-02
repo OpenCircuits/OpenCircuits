@@ -10,7 +10,7 @@ import "./index.scss";
 
 import {useMainCircuit} from "shared/utils/hooks/useCircuit";
 
-import {useAPIMethods} from "shared/utils/APIMethods";
+import {useAPIMethods} from "shared/utils/ApiMethods";
 
 
 export const HeaderLeft = () => {

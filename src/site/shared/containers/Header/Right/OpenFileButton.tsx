@@ -2,7 +2,7 @@ import React from "react";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
-import {useAPIMethods} from "shared/utils/APIMethods";
+import {useAPIMethods} from "shared/utils/ApiMethods";
 import {LoadFile}      from "shared/utils/Importer";
 
 import {useMainCircuit}    from "shared/utils/hooks/useCircuit";

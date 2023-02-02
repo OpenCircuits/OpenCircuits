@@ -56,10 +56,10 @@ export class BezierCurve {
      * @param c2 Initializes second control point with given coordinates.
      */
     public constructor(p1: Vector = V(), p2: Vector = V(), c1: Vector = V(), c2: Vector = V()) {
-        this.p1 = p1.copy();
-        this.p2 = p2.copy();
-        this.c1 = c1.copy();
-        this.c2 = c2.copy();
+        this.p1 = p1;
+        this.p2 = p2;
+        this.c1 = c1;
+        this.c2 = c2;
 
         this.dirty = true;
         this.boundingBox = new Rect(V(0), V(0));
@@ -93,8 +93,6 @@ export class BezierCurve {
             return;
         this.dirty = false;
 
-        const min = V(0, 0);
-        const max = V(0, 0);
         const end1 = this.getPos(0);
         const end2 = this.getPos(1);
 
@@ -104,15 +102,15 @@ export class BezierCurve {
 
         const t1 = this.getT(a.y, b.y, c.y,  1, 0);
         const t2 = this.getT(a.y, b.y, c.y, -1, 1);
-        max.y = Math.max(this.getY(t1), this.getY(t2), end1.y, end2.y);
-        min.y = Math.min(this.getY(t1), this.getY(t2), end1.y, end2.y);
+        const maxY = Math.max(this.getY(t1), this.getY(t2), end1.y, end2.y);
+        const minY = Math.min(this.getY(t1), this.getY(t2), end1.y, end2.y);
 
         const t3 = this.getT(a.x, b.x, c.x,  1, 0);
         const t4 = this.getT(a.x, b.x, c.x, -1, 1);
-        max.x = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
-        min.x = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
+        const maxX = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
+        const minX = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
 
-        this.boundingBox = Rect.FromPoints(min, max);
+        this.boundingBox = Rect.FromPoints(V(minX, minY), V(maxX, maxY));
     }
 
     /**
@@ -161,7 +159,7 @@ export class BezierCurve {
      * @returns The x, y coordinates of the start point.
      */
     public getP1(): Vector {
-        return this.p1.copy();
+        return this.p1;
     }
 
     /**
@@ -170,7 +168,7 @@ export class BezierCurve {
      * @returns The x, y coordinates of the end point.
      */
     public getP2(): Vector {
-        return this.p2.copy();
+        return this.p2;
     }
 
     /**
@@ -179,7 +177,7 @@ export class BezierCurve {
      * @returns The x, y coordinates of the first control point.
      */
     public getC1(): Vector {
-        return this.c1.copy();
+        return this.c1;
     }
 
     /**
@@ -188,7 +186,7 @@ export class BezierCurve {
      * @returns The x, y coordinates of the second control point.
      */
     public getC2(): Vector {
-        return this.c2.copy();
+        return this.c2;
     }
 
     /**

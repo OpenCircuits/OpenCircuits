@@ -68,5 +68,5 @@ export interface Circuit {
 
     addRenderCallback(cb: () => void): void;
 
-    subscribe(cb: (ev) => void): () => void;
+    subscribe(cb: (ev: any) => void): () => void;
 }

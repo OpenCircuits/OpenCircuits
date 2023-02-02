@@ -9,13 +9,13 @@ type DigitalPortGroupInfo = Record<string, "input" | "output">
 
 type TypeMap = Record<string, "string" | "number" | "boolean">;
 
-class DigitalComponentInfo implements ComponentInfo {
+export class DigitalComponentInfo implements ComponentInfo {
     public readonly baseKind: "Component";
     public readonly kind: string;
     public readonly defaultPortConfig: PortConfig;
     public readonly portGroups: string[];
 
-    private readonly portGroupInfo: DigitalPortGroupInfo;
+    public readonly portGroupInfo: DigitalPortGroupInfo;
     private readonly validPortConfigs: PortConfig[];
     private readonly props: TypeMap;
 

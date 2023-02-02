@@ -1,23 +1,20 @@
 import {CreateCircuit}                from "digital/public";
-import React, {createRef}             from "react";
+import React                          from "react";
 import ReactDOM                       from "react-dom";
 import ReactGA                        from "react-ga";
 import {Provider}                     from "react-redux";
 import {applyMiddleware, createStore} from "redux";
 import thunk, {ThunkMiddleware}       from "redux-thunk";
 
-import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
-
 import {GetCookie}     from "shared/utils/Cookies";
+import {Images}        from "shared/utils/Images";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {storeCircuit} from "shared/utils/hooks/useCircuit";
 
-import {DevGetFile, DevListFiles} from "shared/api/Dev";
+import {DevListFiles} from "shared/api/Dev";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
-
-import {SetCircuitSaved} from "shared/state/CircuitInfo";
 
 import {Login} from "shared/state/thunks/User";
 
@@ -25,8 +22,6 @@ import {App}                from "./containers/App";
 import {AppState, AppStore} from "./state";
 import {AllActions}         from "./state/actions";
 import {reducers}           from "./state/reducers";
-import {Setup}              from "./utils/CircuitInfo/Setup";
-import {DigitalPaste}       from "./utils/DigitalPaste";
 
 import ImageFiles from "./data/images.json";
 
@@ -128,8 +123,8 @@ async function Init(): Promise<void> {
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
                 const files = await DevListFiles();
-                if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+                // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
+                //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             }
 
             ReactDOM.render(

@@ -11,6 +11,8 @@ import {useMainDigitalCircuit} from "site/digital/utils/hooks/useDigitalCircuit"
 
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
+import "core/utils/Array";
+
 
 // List that represents the order of smart place options cycle
 const SmartPlaceOrder = [
@@ -72,11 +74,12 @@ export const DigitalItemNav = () => {
             return;
 
         // This function shows the display for 'Smart Place' (issue #689)
-        const { counts } = circuit.getComponentInfo(curItemID).defaultPortConfig;
-        const numInputs = counts["inputs"], numOutputs = counts["outputs"];
+        const { defaultPortConfig: config, inputPortGroups, outputPortGroups } = circuit.getComponentInfo(curItemID)!;
+        const numInputPorts  = inputPortGroups .map((g) => config[g]).sum();
+        const numOutputPorts = outputPortGroups.map((g) => config[g]).sum();
         return (<>
             {!!(smartPlace & SmartPlaceOptions.Inputs) &&
-                new Array(numInputs).fill(0).map((_, i) => (
+                new Array(numInputPorts).fill(0).map((_, i) => (
                     // Show the Switches
                     <img key={`digital-itemnav-inputs-${i}`}
                          src={`/${itemNavConfig.imgRoot}/inputs/switch.svg`}
@@ -85,11 +88,11 @@ export const DigitalItemNav = () => {
                          style={{
                              position: "absolute",
                              left:     -100,
-                             top:      80*(i - (numInputs-1)/2),
+                             top:      80*(i - (numInputPorts-1)/2),
                          }} />
                 ))}
             {!!(smartPlace & SmartPlaceOptions.Outputs) &&
-                new Array(numOutputs).fill(0).map((_, i) => (
+                new Array(numOutputPorts).fill(0).map((_, i) => (
                     // Show the LEDs
                     <img key={`digital-itemnav-outputs-${i}`}
                          src={`/${itemNavConfig.imgRoot}/outputs/led.svg`}
@@ -98,7 +101,7 @@ export const DigitalItemNav = () => {
                          style={{
                              position: "absolute",
                              left:     100,
-                             top:      90*(i - (numOutputs-1)/2),
+                             top:      90*(i - (numOutputPorts-1)/2),
                          }} />
                 ))}
         </>)
