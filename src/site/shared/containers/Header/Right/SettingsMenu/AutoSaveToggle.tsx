@@ -2,7 +2,7 @@ import {useEffect} from "react";
 
 import {SAVE_TIME} from "shared/utils/Constants";
 
-import {useAPIMethods} from "shared/utils/APIMethods";
+import {useAPIMethods} from "shared/utils/ApiMethods";
 
 import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";

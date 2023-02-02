@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 
-import {InputManager, InputManagerEvent} from "core/utils/InputManager";
-import {Key}                             from "core/utils/Key";
+import {InputManager, InputManagerEvent} from "shared/utils/input/InputManager";
+import {Key}                             from "shared/utils/input/Key";
 
 
 export const useKeyDownEvent = (input: InputManager, key: Key, f: () => void, deps?: React.DependencyList) => {

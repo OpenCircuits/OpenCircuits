@@ -35,10 +35,10 @@ export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vect
     const DT = Math.abs(tr.y - pos.y), DB = Math.abs(bl.y - pos.y);
     const DX = Math.min(DR, DL), DY = Math.min(DT, DB);
 
-    pos.x = (DY > DX) ? (DR < DL ? tr.x : bl.x) : pos.x;
-    pos.y = (DX > DY) ? (DT < DB ? tr.y : bl.y) : pos.y;
-
-    return pos;
+    return V(
+        (DY > DX) ? (DR < DL ? tr.x : bl.x) : pos.x,
+        (DX > DY) ? (DT < DB ? tr.y : bl.y) : pos.y
+    );
 }
 
 /**
@@ -129,15 +129,12 @@ export function TransformContains(A: Transform, B: Transform): boolean {
 
     // Transform B's corners into A local space
     const bworld = B.getCorners();
-    const b = [];
-    for (let i = 0; i < 4; i++) {
-        b[i] = A.toLocalSpace(bworld[i]);
 
-        // Offsets x and y to fix perfect lines
-        // where b[0] = b[1] & b[2] = b[3]
-        b[i].x += 0.0001*i;
-        b[i].y += 0.0001*i;
-    }
+    // Turn to local-space
+    // and Offset x and y to fix perfect lines
+    //  where b[0] = b[1] & b[2] = b[3]
+    const b = bworld.map(A.toLocalSpace)
+        .map((v, i) => v.add(0.0001*i));
 
     const corners = [...a, ...b];
 

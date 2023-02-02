@@ -1,11 +1,11 @@
+import {Circuit}             from "core/public";
 import {useEffect, useState} from "react";
 
-import {CircuitInfo} from "core/utils/CircuitInfo";
 
-import {Action} from "core/actions/Action";
+interface Action {}
 
 
-export const useHistory = (info: CircuitInfo) => {
+export const useHistory = (circuit: Circuit) => {
     const [state, setState] = useState({
         undoHistory: [] as Action[],
         redoHistory: [] as Action[],
@@ -13,16 +13,16 @@ export const useHistory = (info: CircuitInfo) => {
 
     useEffect(() => {
         const onHistoryChange = () => {
-            setState({
-                undoHistory: info.history.getActions(),
-                redoHistory: info.history.getRedoActions(),
-            });
+            // setState({
+            //     undoHistory: info.history.getActions(),
+            //     redoHistory: info.history.getRedoActions(),
+            // });
         }
 
-        info.history.addCallback(onHistoryChange);
+        // info.history.addCallback(onHistoryChange);
 
-        return () => info.history.removeCallback(onHistoryChange);
-    }, [info, setState]);
+        // return () => info.history.removeCallback(onHistoryChange);
+    }, [circuit, setState]);
 
     return state;
 }

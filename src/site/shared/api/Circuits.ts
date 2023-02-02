@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "core/models/Circuit";
+import {CircuitMetadata} from "core/public";
 
 import {Request} from "shared/utils/Request";
 

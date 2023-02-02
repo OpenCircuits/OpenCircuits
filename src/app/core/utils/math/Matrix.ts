@@ -74,10 +74,10 @@ export class Matrix2x3 {
      * @returns     The resultant vector.
      */
     public mul(other: Vector): Vector {
-        const result = V(0,0);
-        result.x = this.mat[0] * other.x + this.mat[2] * other.y + this.mat[4];
-        result.y = this.mat[1] * other.x + this.mat[3] * other.y + this.mat[5];
-        return result;
+        return V(
+            this.mat[0] * other.x + this.mat[2] * other.y + this.mat[4],
+            this.mat[1] * other.x + this.mat[3] * other.y + this.mat[5]
+        );
     }
 
     /**
@@ -150,16 +150,16 @@ export class Matrix2x3 {
     public scale(s: number): void;
 
     public scale(s: Vector | number): void {
-        if (s instanceof Vector) {
-            this.mat[0] *= s.x;
-            this.mat[1] *= s.x;
-            this.mat[2] *= s.y;
-            this.mat[3] *= s.y;
-        } else {
+        if (typeof s === "number") {
             this.mat[0] *= s;
             this.mat[1] *= s;
             this.mat[2] *= s;
             this.mat[3] *= s;
+        } else {
+            this.mat[0] *= s.x;
+            this.mat[1] *= s.x;
+            this.mat[2] *= s.y;
+            this.mat[3] *= s.y;
         }
     }
 

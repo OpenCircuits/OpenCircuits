@@ -1,6 +1,6 @@
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
-import {useAPIMethods} from "shared/utils/APIMethods";
+import {useAPIMethods} from "shared/utils/ApiMethods";
 import {Request}       from "shared/utils/Request";
 
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";

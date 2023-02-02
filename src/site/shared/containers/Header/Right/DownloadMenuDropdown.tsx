@@ -17,7 +17,7 @@ export const DownloadMenuDropdown = () => {
     const dispatch = useSharedDispatch();
 
     const onDownloadClick = () => {
-        const data = circuit.serialized();
+        const data = circuit.serialize();
 
         // Convert to URL data
         const file = new Blob([data], { type: "text/json" });

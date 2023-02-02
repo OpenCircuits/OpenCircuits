@@ -1,14 +1,12 @@
-import {Circuit}                                   from "core/public";
+import {Circuit, GUID}                             from "core/public";
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-import {RIGHT_MOUSE_BUTTON}            from "core/utils/Constants";
 import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH} from "shared/utils/Constants";
+import {RIGHT_MOUSE_BUTTON}            from "shared/utils/input/Constants";
 
 import {V, Vector} from "Vector";
 
 import {Clamp} from "math/MathUtils";
-
-import {GUID} from "core/utils/GUID";
 
 import {useDocEvent}           from "shared/utils/hooks/useDocEvent";
 import {useHistory}            from "shared/utils/hooks/useHistory";
@@ -65,7 +63,7 @@ export const ItemNav = <D,>({ circuit, config, additionalData, onDelete, getImgS
     const { w, h } = useWindowSize();
     const side = (w > Number(styles.desktopWidth) || w > h) ? "left" : "bottom";
 
-    const { undoHistory, redoHistory } = useHistory(info);
+    const { undoHistory, redoHistory } = useHistory(circuit);
 
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
@@ -149,7 +147,7 @@ export const ItemNav = <D,>({ circuit, config, additionalData, onDelete, getImgS
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
-        circuit.camera.setMargin(
+        circuit.camera.margin = (
             side === "left"
             ? { left: (isOpen ? ITEMNAV_WIDTH : 0), bottom: 0 }
             : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left: 0 }

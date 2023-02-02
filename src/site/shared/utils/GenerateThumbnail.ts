@@ -5,13 +5,6 @@ import {DEFAULT_THUMBNAIL_SIZE,
 
 import {Camera} from "math/Camera";
 
-import {GetCameraFit} from "core/utils/ViewUtils";
-
-import {DefaultTool} from "core/tools/DefaultTool";
-import {ToolManager} from "core/tools/ToolManager";
-
-import {GetRenderFunc} from "./GetRenderingFunc";
-
 
 export const GenerateThumbnail = (() => {
     const canvas = document.createElement("canvas");
@@ -24,21 +17,21 @@ export const GenerateThumbnail = (() => {
         camera.resize(canvas.width, canvas.height);
 
         // Get final camera position and zoom
-        const objs = info.circuit.getObjs();
-        const [pos, zoom] = GetCameraFit(info, objs, THUMBNAIL_ZOOM_PADDING_RATIO);
-        camera.setPos(pos);
-        camera.setZoom(zoom);
+        const objs = circuit.getObjs();
+        // const [pos, zoom] = GetCameraFit(circuit, objs, THUMBNAIL_ZOOM_PADDING_RATIO);
+        // camera.setPos(pos);
+        // camera.setZoom(zoom);
 
-        const render = GetRenderFunc({
-            canvas,
-            info: {
-                ...info,
-                camera,
-                toolManager: new ToolManager(new DefaultTool()),
-            },
-        });
+        // const render = GetRenderFunc({
+        //     canvas,
+        //     info: {
+        //         ...info,
+        //         camera,
+        //         toolManager: new ToolManager(new DefaultTool()),
+        //     },
+        // });
 
-        render();
+        // render();
 
         return canvas.toDataURL("image/png", 0.9);
     }

@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 
 import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
-import {useAPIMethods} from "shared/utils/APIMethods";
+import {useAPIMethods} from "shared/utils/ApiMethods";
 
 import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
@@ -74,7 +74,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
                 <div role="button" tabIndex={0}
                      onClick={async () => {
                         dispatch(CloseHeaderMenus());
-                        await DevCreateFile(circuit.serialized(), DEV_CACHED_CIRCUIT_FILE);
+                        await DevCreateFile(circuit.serialize(), DEV_CACHED_CIRCUIT_FILE);
                         setEnableReload(true);
                      }}>
                     <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />

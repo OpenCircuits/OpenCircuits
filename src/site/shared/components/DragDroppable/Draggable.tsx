@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react"
 
-import {DRAG_TIME, RIGHT_MOUSE_BUTTON} from "core/utils/Constants";
+import {DRAG_TIME, RIGHT_MOUSE_BUTTON} from "shared/utils/input/Constants";
 
 import {V, Vector} from "Vector";
 

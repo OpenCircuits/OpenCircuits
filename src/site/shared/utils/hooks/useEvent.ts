@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 
-import {InputManager, InputManagerEvent, InputManagerEventType} from "core/utils/InputManager";
+import {InputManager, InputManagerEvent, InputManagerEventType} from "shared/utils/input/InputManager";
 
 
 export const useEvent = <T extends InputManagerEventType>(type: T, f: (ev: InputManagerEvent & {type: T}) => void,

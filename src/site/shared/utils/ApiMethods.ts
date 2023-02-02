@@ -26,7 +26,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         }
 
         try {
-            mainCircuit.loadFromFile(data);
+            mainCircuit.deserialize(data);
         } catch (e) {
             console.error(e);
             dispatch(_SetCircuitLoading(false));
@@ -66,7 +66,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         // Save the circuit and reload the user circuits
         return (
-            await dispatch(SaveCircuit(mainCircuit.serialized())) &&
+            await dispatch(SaveCircuit(mainCircuit.serialize())) &&
             await dispatch(LoadUserCircuits())
         );
     }
@@ -87,7 +87,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         circuitCopy.thumbnail = thumbnail;
 
         // Create circuit copy
-        const circuitCopyMetadata = await CreateUserCircuit(auth, circuitCopy);
+        const circuitCopyMetadata = await CreateUserCircuit(auth, circuitCopy.serialize());
         if (!circuitCopyMetadata)
             throw new Error("DuplicateCircuitRemote: circuitCopyMetadata is undefined!");
 
