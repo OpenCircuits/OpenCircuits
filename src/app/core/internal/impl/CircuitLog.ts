@@ -78,7 +78,7 @@ export class CircuitLog extends Observable<LogEvent> {
         this.proposedEntries.push(entry);
 
         const evt: LogEvent = {
-            clock:       this.clock + 1,
+            clock:       this.clock,
             oldProposed: this.proposedEntries.slice(0, -1),
             accepted:    [],
             proposed:    this.proposedEntries,
