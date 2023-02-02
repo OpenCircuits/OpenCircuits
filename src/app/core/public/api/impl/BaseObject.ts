@@ -8,24 +8,24 @@ import {BaseObject} from "../BaseObject";
 import {CircuitState} from "./CircuitState";
 
 
-export abstract class BaseObjectImpl implements BaseObject {
-    protected state: CircuitState;
+export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> implements BaseObject {
+    protected circuit: State;
     protected objID: GUID;
 
-    public constructor(state: CircuitState, objID: GUID) {
-        this.state = state;
+    public constructor(circuit: State, objID: GUID) {
+        this.circuit = circuit;
         this.objID = objID;
     }
 
-    protected get circuit(): CircuitInternal {
-        return this.state.circuit;
+    protected get internal(): CircuitInternal {
+        return this.circuit.circuit;
     }
     protected get selections(): SelectionsManager {
-        return this.state.selections;
+        return this.circuit.selections;
     }
 
     public get kind(): string {
-        throw new Error("Unimplemented");
+        return this.internal.getObjByID(this.id)!.kind;
     }
 
     public get id(): string {
@@ -51,7 +51,7 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
 
     public exists(): boolean {
-        return !!this.circuit.getObjByID(this.objID);
+        return !!this.internal.getObjByID(this.objID);
     }
 
     public setProp(key: string, val: Prop): void {

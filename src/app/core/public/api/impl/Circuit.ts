@@ -7,6 +7,7 @@ import {CircuitLog}        from "core/internal/impl/CircuitLog";
 import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
 import {DebugOptions}      from "core/internal/impl/DebugOptions";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {CircuitView}       from "core/internal/view/CircuitView";
 
 import {Camera}        from "../Camera";
 import {Circuit}       from "../Circuit";
@@ -16,32 +17,29 @@ import {Obj}           from "../Obj";
 import {Port}          from "../Port";
 import {Wire}          from "../Wire";
 
-import {CircuitState}  from "./CircuitState";
-import {ComponentImpl} from "./Component";
-import {PortImpl}      from "./Port";
-import {WireImpl}      from "./Wire";
+import {CircuitState} from "./CircuitState";
 
 
-export abstract class CircuitImpl implements Circuit {
-    protected readonly state: CircuitState;
+export abstract class CircuitImpl implements Circuit, CircuitState {
+    public circuit: CircuitInternal;
+    public view?: CircuitView;
+
+    public selections: SelectionsManager;
+
+    public isLocked: boolean;
 
     public constructor(provider: ObjInfoProvider) {
-        this.state = {
-            circuit: new CircuitInternal(provider, new CircuitLog()),
-            view:    undefined,
+        this.circuit = new CircuitInternal(provider, new CircuitLog());
+        this.view = undefined;
 
-            selections: new SelectionsManager(),
+        this.selections = new SelectionsManager();
 
-            isLocked: false,
-        };
+        this.isLocked = false;
     }
 
-    private get circuit(): CircuitInternal {
-        return this.state.circuit;
-    }
-    private get selections(): SelectionsManager {
-        return this.state.selections;
-    }
+    public abstract constructComponent(id: string): Component;
+    public abstract constructWire(id: string): Wire;
+    public abstract constructPort(id: string): Port;
 
     // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)
     // All queries within a transaction are coherent.
@@ -121,17 +119,17 @@ export abstract class CircuitImpl implements Circuit {
     public getComponent(id: string): Component | undefined {
         if (!this.circuit.getCompByID(id))
             return undefined;
-        return new ComponentImpl(this.state, id);
+        return this.constructComponent(id);
     }
     public getWire(id: string): Wire | undefined {
         if (!this.circuit.getWireByID(id))
             return undefined;
-        return new WireImpl(this.state, id);
+        return this.constructWire(id);
     }
     public getPort(id: string): Port | undefined {
         if (!this.circuit.getPortByID(id))
             return undefined;
-        return new PortImpl(this.state, id);
+        return this.constructPort(id);
     }
     public getObj(id: string): Obj | undefined {
         if (this.circuit.hasComp(id))
@@ -173,7 +171,7 @@ export abstract class CircuitImpl implements Circuit {
 
         this.circuit.commitTransaction();
 
-        return new ComponentImpl(this.state, id);
+        return this.constructComponent(id);
     }
     // Wire connection can fail if i.e. p1 is reference-equal to p2
     public abstract connectWire(p1: Port, p2: Port): Wire | undefined;

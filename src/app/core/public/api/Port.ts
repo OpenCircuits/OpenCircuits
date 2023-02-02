@@ -8,4 +8,6 @@ export interface Port extends BaseObject {
     readonly parent: Component;
     readonly group: string;
     readonly index: number;
+
+    connectTo(other: Port): void;
 }

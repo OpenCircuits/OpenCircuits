@@ -14,5 +14,7 @@ export interface Component extends BaseObject {
     pos: Vector;
     angle: number;
 
-    readonly ports: Port[];
+    readonly ports: Record<string, Port[]>;
+
+    firstAvailable(group: string): Port | undefined;
 }
