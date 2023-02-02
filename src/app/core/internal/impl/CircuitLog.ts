@@ -64,17 +64,15 @@ export class CircuitLog extends Observable<LogEvent> {
         this.proposedEntries = [];
     }
 
+    // The last accepted log entry's clock.  -1 if empty.
     public get clock(): number {
-        return this.log.length;
-    }
-    private proposeClock(): number {
-        return this.clock + this.proposedEntries.length;
+        return this.log.length - 1;
     }
 
     // NOTE: call-sites of propose should expect possible re-entrant calls.
     public propose(ops: CircuitOp[]): void {
-        // Propose "entry" with a strictly increasing clock
-        const entry: LogEntry = { id: uuid(), ops, clock: this.proposeClock() };
+        // Propose "entry" with an invalid clock.  The server will provide a clock.
+        const entry: LogEntry = { id: uuid(), ops, clock: -1 };
         this.proposedEntries.push(entry);
 
         const evt: LogEvent = {
@@ -96,9 +94,22 @@ export class CircuitLog extends Observable<LogEvent> {
         if (entry.id !== this.proposedEntries[0].id)
             throw new Error("acceptLocal called in unexpected order!");
 
-        entry.clock = this.clock;
+        entry.clock = this.clock + 1;
         this.log.push(entry);
+        const oldProposed = this.proposedEntries;
         this.proposedEntries = this.proposedEntries.slice(1);
+
+        // TODO: This would happen in "acceptRemote" normally
+        const evt: LogEvent = {
+            clock:    this.clock,
+            oldProposed,
+            accepted: [entry],
+            proposed: this.proposedEntries,
+            ops:      [], // TODO: this would unwind "oldProposed", apply "accepted", apply "proposed".
+            remote:   [],
+            local:    oldProposed,
+        };
+        this.publish(evt);
     }
 
     // Backend response handler
@@ -109,10 +120,11 @@ export class CircuitLog extends Observable<LogEvent> {
         // Assumes "accepted" is sorted by "clock"
         accepted.forEach((e) => {
             if (this.proposedEntries.length > 0 && e.id === this.proposedEntries[0].id) {
-                // Local update was accepted
-                this.acceptLocal(e);
+                // TODO: Local update was accepted
+                ((a) => {a})(undefined);
             } else {
                 // TODO: Remote update
+                ((b) => {b})(undefined);
             }
         });
 
