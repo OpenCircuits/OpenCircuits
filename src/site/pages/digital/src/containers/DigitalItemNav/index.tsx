@@ -11,6 +11,8 @@ import {useMainDigitalCircuit} from "site/digital/utils/hooks/useDigitalCircuit"
 
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
+import "core/utils/Array";
+
 
 // List that represents the order of smart place options cycle
 const SmartPlaceOrder = [
@@ -72,8 +74,9 @@ export const DigitalItemNav = () => {
             return;
 
         // This function shows the display for 'Smart Place' (issue #689)
-        const info = circuit.getComponentInfo(curItemID)!;
-        const { numInputPorts, numOutputPorts } = info.defaultPortConfig;
+        const { defaultPortConfig: config, inputPortGroups, outputPortGroups } = circuit.getComponentInfo(curItemID)!;
+        const numInputPorts  = inputPortGroups .map((g) => config[g]).sum();
+        const numOutputPorts = outputPortGroups.map((g) => config[g]).sum();
         return (<>
             {!!(smartPlace & SmartPlaceOptions.Inputs) &&
                 new Array(numInputPorts).fill(0).map((_, i) => (

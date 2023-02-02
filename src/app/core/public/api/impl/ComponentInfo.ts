@@ -1,15 +1,14 @@
-import {ComponentInfo as ComponentInfoInternal} from "core/internal/impl/ComponentInfo";
+import {ComponentInfo as ComponentInfoInternal, PortConfig} from "core/internal/impl/ComponentInfo";
 
 import {ComponentInfo} from "../ComponentInfo";
-import {PortConfig}    from "../PortConfig";
 
-import {CircuitState}   from "./CircuitState";
-import {PortConfigImpl} from "./PortConfig";
+import {CircuitState} from "./CircuitState";
 
 
 export class ComponentInfoImpl implements ComponentInfo {
     public readonly kind: string;
     public readonly portGroups: readonly string[];
+    public readonly defaultPortConfig: Readonly<PortConfig>;
 
     protected readonly info: ComponentInfoInternal;
     protected state: CircuitState;
@@ -21,9 +20,6 @@ export class ComponentInfoImpl implements ComponentInfo {
         this.info = info;
         this.kind = kind;
         this.portGroups = info.portGroups;
-    }
-
-    public get defaultPortConfig(): PortConfig {
-        return new PortConfigImpl(this.state, this.kind, this.info.defaultPortConfig);
+        this.defaultPortConfig = info.defaultPortConfig;
     }
 }
