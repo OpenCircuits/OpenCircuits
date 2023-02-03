@@ -1,3 +1,5 @@
+import {AddErrE} from "core/utils/MultiError";
+
 import {Schema} from "core/schema";
 
 import {Component} from "../Component";
@@ -11,10 +13,9 @@ export class PortImpl extends BaseObjectImpl implements Port {
     public readonly baseKind = "Port";
 
     protected getObj(): Schema.Port {
-        const obj = this.circuit.getPortByID(this.id);
-        if (!obj)
-            throw new Error(`API Port: Attempted to get port with ID ${this.id} could not find it!`);
-        return obj;
+        return this.circuit.getPortByID(this.id)
+            .mapErr(AddErrE(`API Port: Attempted to get port with ID ${this.id} could not find it!`))
+            .unwrap();
     }
 
     public get parent(): Component {

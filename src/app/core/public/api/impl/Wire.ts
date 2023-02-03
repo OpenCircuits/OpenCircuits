@@ -1,3 +1,5 @@
+import {AddErrE} from "core/utils/MultiError";
+
 import {GetDebugInfo} from "core/internal/utils/Debug";
 import {Schema}       from "core/schema";
 
@@ -12,10 +14,9 @@ export class WireImpl extends BaseObjectImpl implements Wire {
     public readonly baseKind = "Wire";
 
     protected getObj(): Schema.Wire {
-        const obj = this.circuit.getWireByID(this.id);
-        if (!obj)
-            throw new Error(`API Wire: Attempted to get wire with ID ${this.id} could not find it!`);
-        return obj;
+        return this.circuit.getWireByID(this.id)
+            .mapErr(AddErrE(`API Wire: Attempted to get wire with ID ${this.id} could not find it!`))
+            .unwrap();
     }
 
     public get p1(): Port {

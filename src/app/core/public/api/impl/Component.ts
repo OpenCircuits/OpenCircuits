@@ -1,5 +1,7 @@
 import {V, Vector} from "Vector";
 
+import {AddErrE} from "core/utils/MultiError";
+
 import {Schema} from "core/schema";
 
 import {Component}     from "../Component";
@@ -14,10 +16,9 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     public readonly baseKind = "Component";
 
     protected getObj(): Schema.Component {
-        const obj = this.circuit.getCompByID(this.id);
-        if (!obj)
-            throw new Error(`API Component: Attempted to get component with ID ${this.id} could not find it!`);
-        return obj;
+        return this.circuit.getCompByID(this.id)
+            .mapErr(AddErrE(`API Component: Attempted to get component with ID ${this.id} could not find it!`))
+            .unwrap();
     }
 
     public get info(): ComponentInfo {
@@ -38,8 +39,8 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     }
 
     public set pos(val: Vector) {
-        this.circuit.setPropFor<Schema.Component, "x">(this.id, "x", val.x);
-        this.circuit.setPropFor<Schema.Component, "y">(this.id, "y", val.y);
+        this.circuit.setPropFor<Schema.Component, "x">(this.id, "x", val.x).unwrap();
+        this.circuit.setPropFor<Schema.Component, "y">(this.id, "y", val.y).unwrap();
     }
     public get pos(): Vector {
         const obj = this.getObj();
@@ -48,14 +49,14 @@ export class ComponentImpl extends BaseObjectImpl implements Component {
     }
 
     public set angle(val: number) {
-        this.circuit.setPropFor<Schema.Component, "angle">(this.id, "angle", val);
+        this.circuit.setPropFor<Schema.Component, "angle">(this.id, "angle", val).unwrap();
     }
     public get angle(): number {
         return (this.getObj().props.angle ?? 0);
     }
 
     public get ports(): Port[] {
-        return [...this.circuit.getPortsForComponent(this.id)]
+        return [...this.circuit.getPortsForComponent(this.id).unwrap()]
             .map((id) => new PortImpl(this.state, id));
     }
 }

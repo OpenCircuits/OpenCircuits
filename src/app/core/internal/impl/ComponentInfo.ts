@@ -1,7 +1,9 @@
+import {Result} from "core/utils/Result";
+
 import {Schema} from "core/schema";
 
 
-export interface PortConfig extends Record<string, number> {}
+export type PortConfig = Record<string, number>
 
 export interface ObjInfo {
     readonly baseKind: Schema.Obj["baseKind"];
@@ -18,7 +20,7 @@ export interface ComponentInfo extends ObjInfo {
     readonly defaultPortConfig: PortConfig;
 
     isValidPortConfig(p: PortConfig): boolean;
-    makePortsForConfig(id: Schema.GUID, p: PortConfig): Schema.Port[] | undefined;
+    makePortsForConfig(id: Schema.GUID, p: PortConfig): Result<Schema.Port[]>;
 
     // i.e. Prevents fan-in on digital ports, could prevent illegal self-connectivity
     isValidPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): boolean;

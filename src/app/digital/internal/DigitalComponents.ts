@@ -1,3 +1,5 @@
+import {Ok, Result} from "core/utils/Result";
+
 import {Prop, uuid}                                          from "core/internal";
 import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from "core/internal/impl/ComponentInfo";
 import {Port}                                                from "core/schema/Port";
@@ -39,8 +41,8 @@ export class DigitalComponentInfo implements ComponentInfo {
         return (key in this.props && (!value || (this.props[key] === typeof value)));
     }
 
-    public makePortsForConfig(componentID: string, p: PortConfig): Port[] | undefined {
-        return Object.entries(p)
+    public makePortsForConfig(componentID: string, p: PortConfig): Result<Port[]> {
+        return Ok(Object.entries(p)
             .flatMap(([group, count]) =>
                 new Array(count)
                     .fill(0)
@@ -53,7 +55,7 @@ export class DigitalComponentInfo implements ComponentInfo {
                         group,
                         index,
                         props:  {}, // TODO: any manditory props for Digial ports
-                    })));
+                    }))));
     }
 
     public isValidPortConfig(p: PortConfig): boolean {

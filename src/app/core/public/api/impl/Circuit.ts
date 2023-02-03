@@ -165,11 +165,11 @@ export abstract class CircuitImpl implements Circuit {
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();
 
-        // Place raw component
-        const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y });
+        // Place raw component (TODO: unwrap...)
+        const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
 
         // Set its config to place ports
-        this.circuit.setPortConfig(id, info.defaultPortConfig);
+        this.circuit.setPortConfig(id, info.defaultPortConfig).unwrap();
 
         this.circuit.commitTransaction();
 
