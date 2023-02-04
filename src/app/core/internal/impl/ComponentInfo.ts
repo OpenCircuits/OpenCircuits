@@ -8,7 +8,7 @@ export type PortConfig = Record<string, number>
 export interface ObjInfo {
     readonly baseKind: Schema.Obj["baseKind"];
     readonly kind: string;
-    checkPropValue(key: string, value?: Schema.Prop): boolean;
+    checkPropValue(key: string, value?: Schema.Prop): Result;
 }
 
 // Describes legal component configurations.
@@ -19,24 +19,25 @@ export interface ComponentInfo extends ObjInfo {
     readonly portGroups: string[];
     readonly defaultPortConfig: PortConfig;
 
-    isValidPortConfig(p: PortConfig): boolean;
+    checkPortConfig(p: PortConfig): Result;
     makePortsForConfig(id: Schema.GUID, p: PortConfig): Result<Schema.Port[]>;
 
     // i.e. Prevents fan-in on digital ports, could prevent illegal self-connectivity
-    isValidPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): boolean;
+    checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result;
 
     // Also i.e. thumbnail, display name, description, etc.
 }
 
 // TODO: seems kind of heavy
-export function IsValidPortList(info: ComponentInfo, ports: Schema.Port[]): boolean {
+export function CheckPortList(info: ComponentInfo, ports: Schema.Port[]): Result {
     const counts = {} as Record<string, number>;
     ports.forEach(({ group }) =>
         counts[group] = (counts[group] ?? 0) + 1);
-    return info.isValidPortConfig(counts);
+    return info.checkPortConfig(counts);
 }
 
 export interface ObjInfoProvider {
+    // TODO: Maybe use i.e. Option<ObjInfo>
     get(kind: string): ObjInfo | undefined;
     getComponent(kind: string): ComponentInfo | undefined;
     // TODO: potentially:

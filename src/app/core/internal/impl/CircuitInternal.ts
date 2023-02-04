@@ -5,9 +5,9 @@ import {GUID} from "core/schema/GUID";
 
 import {Schema} from "../../schema";
 
-import {CircuitLog}                                                           from "./CircuitLog";
-import {CircuitOp, InvertCircuitOp, TransformCircuitOps}                      from "./CircuitOps";
-import {ComponentInfo, IsValidPortList, ObjInfo, ObjInfoProvider, PortConfig} from "./ComponentInfo";
+import {CircuitLog}                                                         from "./CircuitLog";
+import {CircuitOp, InvertCircuitOp, TransformCircuitOps}                    from "./CircuitOps";
+import {CheckPortList, ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from "./ComponentInfo";
 
 
 // REFERENCE POLICY:
@@ -79,16 +79,16 @@ export class CircuitInternal {
                 map.set(p1, [...to].map((id) => this.getPortByIDChecked(id)));
             });
             return this.getComponentAndInfoByID(p1.parent)
-                .andThen(([_, info]): Result => info.isValidPortConnectivity(map)
-                    ? ErrE("Wire connectivity is not allowed") : OkVoid());
+                .andThen(([_, info]) => info.checkPortConnectivity(map)
+                    .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`)));
         };
         switch (op.kind) {
             case "PlaceComponentOp": {
                 if (op.inverted) {
                     if (!this.componentPortsMap.has(op.c.id))
-                        throw new Error("Deleted component should have componentPortsMap initialized!");
+                        throw new Error(`Deleted component ${op.c.id} should have componentPortsMap initialized!`);
                     if (this.componentPortsMap.get(op.c.id)!.size > 0)
-                        throw new Error("Deleted component should not have ports");
+                        throw new Error(`Deleted component ${op.c.id} should not have ports`);
 
                     this.objStorage.delete(op.c.id);
 
@@ -96,7 +96,7 @@ export class CircuitInternal {
                     this.componentPortsMap.delete(op.c.id);
                 } else {
                     if (this.componentPortsMap.has(op.c.id))
-                        throw new Error("Placed component should not have any ports");
+                        throw new Error(`Placed component ${op.c.id} should not have any ports`);
 
                     this.objStorage.set(op.c.id, op.c);
 
@@ -110,11 +110,8 @@ export class CircuitInternal {
 
                 if (newPorts) {
                     const res = this.getComponentAndInfoByID(op.component)
-                        .andThen(([_, info]): Result => {
-                            if (!IsValidPortList(info, newPorts))
-                                return ErrE(`Invalid new port list ${newPorts} for component ${op.component}`)
-                            return OkVoid();
-                        });
+                        .andThen(([_, info]) => CheckPortList(info, newPorts)
+                            .mapErr(AddErrE(`Invalid new port list ${newPorts} for component ${op.component}`)));
                     if (!res.ok)
                         return res;
                 }
@@ -129,7 +126,6 @@ export class CircuitInternal {
                 return OkVoid();
             }
             case "ConnectWireOp": {
-                // TODO: indentation convention: This notation is required to capture all vars in this bind.
                 return this.getPortByID(op.w.p1)
                     .andThen((port1) => this.getPortByID(op.w.p2)
                         .andThen((port2) => checkWireConnectivity(port1, port2)
@@ -141,19 +137,16 @@ export class CircuitInternal {
             }
             case "SetPropertyOp": {
                 return this.getObjectAndInfoByID(op.id)
-                    .andThen(([obj, info]): Result => {
-                        // Check the value is valid
-                        if (!info.checkPropValue(op.key, op.newVal))
-                            return ErrE("Illegal prop value");
-
-                        // Copy-on-write
-                        obj.props = { ...obj.props };
-                        if (op.newVal)
-                            obj.props[op.key] = op.newVal;
-                        else
-                            delete obj.props[op.key];
-                        return OkVoid();
-                    });
+                    .andThen(([obj, info]) => info.checkPropValue(op.key, op.newVal)
+                        .uponOk(() => {
+                            // Copy-on-write
+                            obj.props = { ...obj.props };
+                            if (op.newVal)
+                                obj.props[op.key] = op.newVal;
+                            else
+                                delete obj.props[op.key];
+                            return OkVoid();
+                        }));
             }
             default:
                 throw new Error("TODO: impossible block");
@@ -163,7 +156,7 @@ export class CircuitInternal {
     private getPortPortMapChecked(id: GUID): Set<GUID> {
         const p = this.portPortMap.get(id);
         if (!p)
-            throw new Error("getPortPortMapChecked: invariant violation");
+            throw new Error(`Invariant Violation: getPortPortMapChecked(${id}) unexpectedly returned undefined`);
         return p;
     }
     private getPortByIDChecked(id: GUID): Schema.Port {
@@ -231,7 +224,7 @@ export class CircuitInternal {
 
     private assertTransactionState(state: boolean): void {
         if (this.transaction !== state)
-            throw new Error("Unexpectedly in transaction state");
+            throw new Error(`Unexpectedly in transaction state ${this.transaction}`);
     }
     private endTransactionHelper(f: (txOps: CircuitOp[]) => void): void {
         this.assertTransactionState(true);
@@ -285,11 +278,11 @@ export class CircuitInternal {
 
         // read-your-writes
         return this.applyOp(op)
-        .uponErr(this.cancelTransaction)
-        .uponOk(() => {
-            // Push only after successful op
-            this.transactionOps.push(op);
-        });
+            .uponErr(this.cancelTransaction)
+            .uponOk(() => {
+                // Push only after successful op
+                this.transactionOps.push(op);
+            });
     }
 
     public placeComponent(kind: string, props: Schema.Component["props"]): Result<GUID> {
@@ -313,15 +306,13 @@ export class CircuitInternal {
     // }
 
     public deleteComponent(id: GUID): Result {
-        const obj = this.objStorage.get(id);
-        if (!obj || obj.baseKind !== "Component")
-            return ErrE("Invalid GUID");
-
-        return this.addTransactionOp({
-            kind:     "PlaceComponentOp",
-            inverted: true,
-            c:        obj, // No copy needed
-        });
+        return this.getCompByID(id)
+            .andThen((c) =>
+                this.addTransactionOp({
+                    kind:     "PlaceComponentOp",
+                    inverted: true,
+                    c, // No copy needed
+                }));
     }
 
     public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"] = {}): Result<GUID> {
@@ -338,15 +329,13 @@ export class CircuitInternal {
     }
 
     public deleteWire(id: GUID): Result {
-        const obj = this.objStorage.get(id);
-        if (!obj || obj.baseKind !== "Wire")
-            return ErrE("Invalid GUID");
-
-        return this.addTransactionOp({
-            kind:     "ConnectWireOp",
-            inverted: true,
-            w:        obj, // No copy needed
-        });
+        return this.getWireByID(id)
+            .andThen((w) =>
+                this.addTransactionOp({
+                    kind:     "ConnectWireOp",
+                    inverted: true,
+                    w, // No copy needed
+                }));
     }
 
     public setPropFor<
@@ -354,7 +343,7 @@ export class CircuitInternal {
         K extends keyof O["props"] & string
     >(id: GUID, key: K, newVal?: O["props"][K]): Result {
         // NOTE: applyOp will check the ComponentInfo that it is the correct type
-        return WrapResOrE(this.objStorage.get(id), "BadGUID")
+        return this.getMutableObjByID(id)
             .andThen((obj) => this.addTransactionOp(
                 { id, kind: "SetPropertyOp", key, oldVal: obj.props[key], newVal }));
     }
@@ -373,43 +362,40 @@ export class CircuitInternal {
     }
 
     private getObjectAndInfoByID(id: GUID): Result<[Schema.Obj, ObjInfo]> {
-        return WrapResOrE(this.objStorage.get(id), `Invalid object GUID ${id}`)
+        return this.getMutableObjByID(id)
             .map((obj) => [obj, this.getObjectInfo(obj.kind)]);
     }
 
     private getComponentAndInfoByID(id: GUID): Result<[Schema.Component, ComponentInfo]> {
-        const obj = this.objStorage.get(id);
-        if (!obj || obj.baseKind !== "Component")
-            return ErrE(`Invalid component GUID ${id}`);
-        return Ok([obj, this.getComponentInfo(obj.kind)]);
+        return this.getCompByID(id)
+            .map((c) => [c, this.getComponentInfo(c.kind)]);
     }
 
     public setPortConfig(id: GUID, portConfig: PortConfig): Result {
         // Make new ports
         return this.getComponentAndInfoByID(id)
-        // Should the chain start w/o indentation?
-        .andThen(([_, info]) => info.makePortsForConfig(id, portConfig))
-        .andThen((newPorts) => {
-            // TODO: match old ports to new ports based on group/index so ID's / refs are reused.
+            .andThen(([_, info]) => info.makePortsForConfig(id, portConfig))
+            .andThen((newPorts) => {
+                // TODO: match old ports to new ports based on group/index so ID's / refs are reused.
 
-            // Collect old ports
-            const oldPorts = [] as Schema.Port[];
-            this.getPortsForComponent(id)
-                .map((ids) => ids.forEach((id) => {
-                    // Safe unwrap according to invariants
-                    oldPorts.push(this.getPortByID(id).unwrap());
-                }));
+                // Collect old ports
+                const oldPorts = [] as Schema.Port[];
+                this.getPortsForComponent(id)
+                    .uponOk((ids) => ids.forEach((id) => {
+                        // Safe unwrap according to invariants
+                        oldPorts.push(this.getPortByID(id).unwrap());
+                    })).unwrap();
 
-            // TODO: collect deleted wires
+                // TODO: collect deleted wires
 
-            // NOTE: "applyOp" will need to double-check this list of ports is valid.
-            return this.addTransactionOp({
-                kind:      "SetComponentPortsOp",
-                inverted:  false,
-                component: id,
-                newPorts, oldPorts,
+                // NOTE: "applyOp" will need to double-check this list of ports is valid.
+                return this.addTransactionOp({
+                    kind:      "SetComponentPortsOp",
+                    inverted:  false,
+                    component: id,
+                    newPorts, oldPorts,
+                });
             });
-        });
     }
 
     //
@@ -441,8 +427,11 @@ export class CircuitInternal {
                 return Ok(obj as O);
             });
     }
-    public getObjByID(id: GUID): Result<Readonly<Schema.Obj>> {
+    private getMutableObjByID(id: GUID): Result<Readonly<Schema.Obj>> {
         return WrapResOrE(this.objStorage.get(id), `Invalid object GUID ${id}`);
+    }
+    public getObjByID(id: GUID): Result<Readonly<Schema.Obj>> {
+        return this.getMutableObjByID(id);
     }
     public getCompByID(id: GUID): Result<Readonly<Schema.Component>> {
         return this.getBaseKindByID<Schema.Component>(id, "Component");

@@ -185,7 +185,7 @@ export function WrapResOrE<T>(t: T | undefined, e: string): Result<T, MultiError
     return WrapResOr(t, new MultiError([new Error(e)]));
 }
 
-const OK_VOID = Ok("VOID" as unknown as void);
+const OK_VOID = Ok<void, unknown>(undefined);
 export function OkVoid<E>(): ResultOk<void, E> {
     return OK_VOID as ResultOk<void, E>;
 }
@@ -402,6 +402,9 @@ export const ResultUtil = {
         }
         return Ok(u);
     },
+
+    reduceIterU: <T, E>(it: IterableIterator<T>, f: (t: T) => Result<void, E>): Result<void, E> =>
+        ResultUtil.reduceIter<T, void, E>(undefined, it, (_, t) => f(t)),
 }
 
 export const OptionUtil = {
