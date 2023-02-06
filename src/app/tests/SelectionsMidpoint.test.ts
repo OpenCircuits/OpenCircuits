@@ -1,23 +1,23 @@
 import {V} from "Vector";
 
 import {CreateCircuit} from "digital/public";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager"
+import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 
 import "./Extensions";
 
 
-describe("SelectionMidpoint", () => {
+describe("SelectionsMidpoint", () => {
     test("Single Selection", () => {
 
         // Create and place new component
         const circuit = CreateCircuit();
         const s1 = circuit.placeComponentAt(V(0, 0), "ANDGate");
-
+   
         // Select created component
-        const sEvent = new SelectionsManager();
-        sEvent.select(s1.id);
+        s1.isSelected = true;
+
         // Check component has been selected
-        expect(sEvent.isSelected(s1.id)).toEqual(true);
+        expect(s1.isSelected).toEqual(true);
 
         // Calculate midpoint position using method
         const sm1 = circuit.selectionsMidpoint("screen");
@@ -38,22 +38,23 @@ describe("SelectionMidpoint", () => {
         const l1 = circuit.placeComponentAt(V(5,   0), "LED");
 
         // Select created components
-        const sEvent = new SelectionsManager();
-        sEvent.select(s1.id);
-        sEvent.select(s2.id);
-        sEvent.select(c1.id);
-        sEvent.select(l1.id);
-        // Check components have been selected
-        expect(sEvent.isSelected(s1.id)).toEqual(true);
-        expect(sEvent.isSelected(s2.id)).toEqual(true);
-        expect(sEvent.isSelected(c1.id)).toEqual(true);
-        expect(sEvent.isSelected(l1.id)).toEqual(true);
+        s1.isSelected = true;
+        s2.isSelected = true;
+        c1.isSelected = true;
+        l1.isSelected = true;
+
+        // Check component has been selected
+        expect(s1.isSelected).toEqual(true);
+        expect(s2.isSelected).toEqual(true);
+        expect(c1.isSelected).toEqual(true);
+        expect(l1.isSelected).toEqual(true);
 
         // Calculate midpoint position using method
         const methodMidpoint = circuit.selectionsMidpoint("screen");
+
         // Calculate actual midpoint position
-        const xPosition = s1.pos.x + s2.pos.x + c1.pos.x + l1.pos.x;
-        const yPosition = s1.pos.y + s2.pos.y + c1.pos.y + l1.pos.y;
+        const xPosition = (s1.pos.x + s2.pos.x + c1.pos.x + l1.pos.x) / 4;
+        const yPosition = (s1.pos.y + s2.pos.y + c1.pos.y + l1.pos.y) / 4;
         const actualMidpoint = V(xPosition, yPosition);
 
         // Check that method is returning correct midpoint position
