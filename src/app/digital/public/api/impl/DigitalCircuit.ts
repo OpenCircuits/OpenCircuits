@@ -1,5 +1,6 @@
 import {Port, Wire}  from "core/public";
 import {CircuitImpl} from "core/public/api/impl/Circuit";
+import {WireImpl}    from "core/public/api/impl/Wire";
 
 import {DigitalCircuit}       from "../DigitalCircuit";
 import {DigitalComponentInfo} from "../DigitalComponentInfo";
@@ -14,6 +15,18 @@ export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
         //         if you try to connect a port to itself or something
         //         and we should handle this HERE and return undefined
         //         in that case
+        if (p1 == p2) {
+            return undefined;
+        }
+
+        const kind = "Wire";
+        const info = this.getComponentInfo(kind);
+
+        console.log("Wire info:", info);
+
+
+        // return new WireImpl(this.state, id);
+
         throw new Error("Unimplemented");
     }
 
