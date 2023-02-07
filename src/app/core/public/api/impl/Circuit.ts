@@ -118,11 +118,11 @@ export abstract class CircuitImpl implements Circuit {
     
     public selectedObjs(): Obj[] {
         const selectedIds = this.selections.get();
-        var selectedObjs = [];
+        let selectedObjs = [];
 
-        for (var id of selectedIds) {
-            var obj = this.getObj(id);
-            if (obj != undefined) {
+        for (let id of selectedIds) {
+            let obj = this.getObj(id);
+            if (obj !== undefined) {
                 selectedObjs.push(obj); 
             }
         }
@@ -167,23 +167,22 @@ export abstract class CircuitImpl implements Circuit {
         //   objects that are selected
         //  From these components, average their positions
 
-        var allComponents = this.selections.get();
+        const allComponents = this.selections.get();
 
-        var xPosition = 0;
-        var yPosition = 0;
-        var comp = null;
+        let xPosition = 0;
+        let yPosition = 0;
         
         // Case: only one component selected
-        if (allComponents.length == 1) {
-            comp = this.getComponent(allComponents[0]);
-            if (comp != undefined)
+        if (allComponents.length === 1) {
+            const comp = this.getComponent(allComponents[0]);
+            if (comp !== undefined)
                 return comp.pos;
         }
 
         // Case: multiple components are selected
-        for (var id of allComponents) {
-            comp = this.getComponent(id);
-            if (comp != undefined) {
+        for (let id of allComponents) {
+            const comp = this.getComponent(id);
+            if (comp !== undefined) {
                 xPosition += comp.pos.x;
                 yPosition += comp.pos.y;
             }
