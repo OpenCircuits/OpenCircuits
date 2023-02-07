@@ -37,10 +37,10 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
 
     public set isSelected(val: boolean) {
-        throw new Error("Unimplemented");
+        this.selections.select(this.objID);
     }
     public get isSelected(): boolean {
-        throw new Error("Unimplemented");
+        return this.selections.isSelected(this.objID);
     }
 
     public set zIndex(val: number) {
