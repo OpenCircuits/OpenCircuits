@@ -45,6 +45,15 @@ export interface Circuit {
     getObjs(): Obj[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
+    /**
+     * Returns the average of the positions of the components selected
+     * as a Vector object.
+     * 
+     * @param {String} space defines the coordinate-space which can be 
+     *                 either "screen space" or "world space."
+     * @returns {Vector} A Vector object where x and y are the averages 
+     *                   of the positions of the selected components.
+     */
     selectionsMidpoint(space: Vector.Spaces): Vector;
 
     // Object manipulation

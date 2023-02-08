@@ -117,16 +117,9 @@ export abstract class CircuitImpl implements Circuit {
     }
     
     public selectedObjs(): Obj[] {
-        const selectedIds = this.selections.get();
-        let selectedObjs = [];
-
-        for (let id of selectedIds) {
-            let obj = this.getObj(id);
-            if (obj !== undefined) {
-                selectedObjs.push(obj); 
-            }
-        }
-        return selectedObjs;
+        return this.selections.get()
+               .map((id) => this.getObj(id))
+               .filter((obj) => (obj !== undefined)) as Obj[];
     }
 
     public getComponent(id: string): Component | undefined {
@@ -166,34 +159,23 @@ export abstract class CircuitImpl implements Circuit {
         //  For now, ignore the `space`, and ignore any non-Component
         //   objects that are selected
         //  From these components, average their positions
-
         const allComponents = this.selections.get();
 
-        let xPosition = 0;
-        let yPosition = 0;
-        
-        // Case: only one component selected
-        if (allComponents.length === 1) {
-            const comp = this.getComponent(allComponents[0]);
-            if (comp !== undefined)
-                return comp.pos;
+        // Case: no components are selected
+        if (allComponents.length === 0) {
+            return V(0,0)
         }
 
-        // Case: multiple components are selected
-        for (let id of allComponents) {
-            const comp = this.getComponent(id);
-            if (comp !== undefined) {
-                xPosition += comp.pos.x;
-                yPosition += comp.pos.y;
-            }
-        }
+        // Case: One or more components are selected
+        let comps =  allComponents.map((id) => this.getComponent(id))
+                    .filter((comp) => (comp !== undefined)) as Component[];
+        let sumPositions = comps.reduce((vec1, vec2) => V(vec1.x, vec1.y).add(vec2.pos.x, vec2?.pos.y), V(0,0));
 
         // Calculate average position
-        xPosition = xPosition / allComponents.length;
-        yPosition = yPosition / allComponents.length;
+        let xPosition = sumPositions.x / allComponents.length;
+        let yPosition = sumPositions.y / allComponents.length;
 
         return V(xPosition, yPosition);
-        
     }
 
     // Object manipulation

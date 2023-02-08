@@ -37,7 +37,11 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
 
     public set isSelected(val: boolean) {
-        this.selections.select(this.objID);
+        if (val === true) {
+            this.selections.select(this.objID);
+        } else {
+            this.selections.deselect(this.objID);
+        }
     }
     public get isSelected(): boolean {
         return this.selections.isSelected(this.objID);
