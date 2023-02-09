@@ -1,5 +1,4 @@
-import {Vector} from "Vector";
-import {V} from "Vector";
+import {Vector, V} from "Vector";
 
 import {Rect} from "math/Rect";
 
@@ -159,23 +158,21 @@ export abstract class CircuitImpl implements Circuit {
         //  For now, ignore the `space`, and ignore any non-Component
         //   objects that are selected
         //  From these components, average their positions
-        const allComponents = this.selections.get();
+        const allComponents = this.selections.get()
+                              .map((id) => this.getComponent(id))
+                              .filter((comp) => (comp !== undefined)) as Component[];
 
         // Case: no components are selected
-        if (allComponents.length === 0) {
+        if (allComponents.length === 0) 
             return V(0,0)
-        }
 
         // Case: One or more components are selected
-        let comps =  allComponents.map((id) => this.getComponent(id))
-                    .filter((comp) => (comp !== undefined)) as Component[];
-        let sumPositions = comps.reduce((vec1, vec2) => V(vec1.x, vec1.y).add(vec2.pos.x, vec2?.pos.y), V(0,0));
+        const sumPosition = allComponents
+                            .map((c) => c.pos)
+                            .reduce((sum, v) => sum.add(v));
 
         // Calculate average position
-        let xPosition = sumPositions.x / allComponents.length;
-        let yPosition = sumPositions.y / allComponents.length;
-
-        return V(xPosition, yPosition);
+        return sumPosition.scale(1 / allComponents.length);
     }
 
     // Object manipulation
