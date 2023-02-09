@@ -1,4 +1,4 @@
-import {Vector} from "Vector";
+import {Vector, V} from "Vector";
 
 import {Rect} from "math/Rect";
 
@@ -114,8 +114,11 @@ export abstract class CircuitImpl implements Circuit {
     public pickObjectRange(bounds: Rect): Obj[] {
         throw new Error("Unimplemented");
     }
+    
     public selectedObjs(): Obj[] {
-        throw new Error("Unimplemented");
+        return this.selections.get()
+               .map((id) => this.getObj(id))
+               .filter((obj) => (obj !== undefined)) as Obj[];
     }
 
     public getComponent(id: string): Component | undefined {
@@ -155,7 +158,21 @@ export abstract class CircuitImpl implements Circuit {
         //  For now, ignore the `space`, and ignore any non-Component
         //   objects that are selected
         //  From these components, average their positions
-        throw new Error("Method not implemented.");
+        const allComponents = this.selections.get()
+                              .map((id) => this.getComponent(id))
+                              .filter((comp) => (comp !== undefined)) as Component[];
+
+        // Case: no components are selected
+        if (allComponents.length === 0) 
+            return V(0,0)
+
+        // Case: One or more components are selected
+        const sumPosition = allComponents
+                            .map((c) => c.pos)
+                            .reduce((sum, v) => sum.add(v));
+
+        // Calculate average position
+        return sumPosition.scale(1 / allComponents.length);
     }
 
     // Object manipulation
