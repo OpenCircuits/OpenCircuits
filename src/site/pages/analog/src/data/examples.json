@@ -8,15 +8,21 @@
         },
         {
             "id": "1",
-            "name": "SR-Latch Gate Implementation",
-            "file": "example2.circuit",
-            "thumbnail": "img/thumbnails/example2.png"
+            "name": "Series RC Cicuit",
+            "file": "Example_RC.circuit",
+            "thumbnail": "img/thumbnails/RC.png"
         },
         {
             "id": "2",
             "name": "Full Adder Circuit",
             "file": "example3.circuit",
             "thumbnail": "img/thumbnails/example3.png"
+        },
+        {
+            "id": "3",
+            "name": "Series RLC Circuit",
+            "file": "Example_RLC.circuit",
+            "thumbnail": "img/thumbnails/RLC.png"
         }
     ]
 }
