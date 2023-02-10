@@ -205,15 +205,12 @@ export abstract class CircuitImpl implements Circuit {
         //  And also note that deleting Ports is a no-op, just ignore that case
         for(let i = 0; i < objs.length; i++) 
         {
-            if(objs[i].baseKind == "Component") {
-                this.circuit.setPortConfig(objs[i].id, {});
+            //port = no-op
+            if(objs[i].baseKind != "Port") {
+                if(objs[i].baseKind == "Component") {
+                    this.circuit.setPortConfig(objs[i].id, {});
+                }
                 delete objs[i];
-            }
-            else if(objs[i].baseKind == "Wire") {
-                delete objs[i];
-            }
-            else if(objs[i].baseKind == "Port") {
-                //port = no-op
             }
         }
         this.circuit.commitTransaction();
