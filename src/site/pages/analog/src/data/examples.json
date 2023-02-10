@@ -2,9 +2,9 @@
     "examples": [
         {
             "id": "0",
-            "name": "Basic AND Gate Setup",
-            "file": "example1.circuit",
-            "thumbnail": "img/thumbnails/example1.png"
+            "name": "Voltage Divider/ Nodal Analysis Circuit Example",
+            "file": "example1new.circuit",
+            "thumbnail": "img/thumbnails/example1new.png"
         },
         {
             "id": "1",
@@ -14,15 +14,17 @@
         },
         {
             "id": "2",
-            "name": "Full Adder Circuit",
-            "file": "example3.circuit",
-            "thumbnail": "img/thumbnails/example3.png"
+            "name": "RL(Resistor-Inductor) Example Circuit (Series)",
+            "file": "example3new.circuit",
+            "thumbnail": "img/thumbnails/example3new.png"
+
         },
         {
             "id": "3",
             "name": "Series RLC Circuit",
             "file": "Example_RLC.circuit",
             "thumbnail": "img/thumbnails/RLC.png"
+
         }
     ]
 }
