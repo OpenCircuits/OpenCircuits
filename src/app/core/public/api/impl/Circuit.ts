@@ -196,13 +196,27 @@ export abstract class CircuitImpl implements Circuit {
     public abstract connectWire(p1: Port, p2: Port): Wire | undefined;
 
     public deleteObjs(objs: Obj[]): void {
+        this.circuit.beginTransaction();
         // TODO(friedj)
         //  See `placeComponentAt` for some general guidance
         //  Note that to delete a Component, you have to set its "Port Config" to `{}` first
         //   which will remove all of its ports
         //  Then it's safe to delete the Component directly
         //  And also note that deleting Ports is a no-op, just ignore that case
-        throw new Error("Unimplemented");
+        for(let i = 0; i < objs.length; i++) 
+        {
+            if(objs[i].baseKind == "Component") {
+                this.circuit.setPortConfig(objs[i].id, {});
+                delete objs[i];
+            }
+            else if(objs[i].baseKind == "Wire") {
+                delete objs[i];
+            }
+            else if(objs[i].baseKind == "Port") {
+                //port = no-op
+            }
+        }
+        this.circuit.commitTransaction();
     }
     public clearSelections(): void {
         // TODO(callac5)
