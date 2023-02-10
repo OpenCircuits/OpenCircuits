@@ -36,7 +36,7 @@ export abstract class CircuitImpl implements Circuit {
         };
     }
 
-    private get circuit(): CircuitInternal {
+    protected get circuit(): CircuitInternal {
         return this.state.circuit;
     }
     private get selections(): SelectionsManager {

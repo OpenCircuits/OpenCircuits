@@ -19,15 +19,16 @@ export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
             return undefined;
         }
 
-        const kind = "Wire";
-        const info = this.getComponentInfo(kind);
+        const kind = "DigitalWire";
 
-        console.log("Wire info:", info);
+        this.circuit.beginTransaction();
 
+        // Create a new raw Wire
+        const id = this.circuit.connectWire(kind, p1.id, p2.id, {});
+        
+        this.circuit.commitTransaction();
 
-        // return new WireImpl(this.state, id);
-
-        throw new Error("Unimplemented");
+        return new WireImpl(this.state, id);
     }
 
     public set propagationTime(val: number) {
