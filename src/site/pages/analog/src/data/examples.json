@@ -9,14 +9,22 @@
         {
             "id": "1",
             "name": "Series RC Cicuit",
-            "file": "example2.circuit",
-            "thumbnail": "img/thumbnails/example2.png"
+            "file": "Example_RC.circuit",
+            "thumbnail": "img/thumbnails/RC.png"
         },
         {
             "id": "2",
             "name": "RL(Resistor-Inductor) Example Circuit (Series)",
             "file": "example3new.circuit",
             "thumbnail": "img/thumbnails/example3new.png"
+
+        },
+        {
+            "id": "3",
+            "name": "Series RLC Circuit",
+            "file": "Example_RLC.circuit",
+            "thumbnail": "img/thumbnails/RLC.png"
+
         }
     ]
 }
