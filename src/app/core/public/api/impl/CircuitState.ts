@@ -9,7 +9,12 @@ import {Wire}      from "../Wire";
 
 
 // Utility object to pass around the Circuit API state to the API Component/Port/etc
-export interface CircuitState extends Circuit {
+export type CircuitState<
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+    CircuitT extends Circuit = Circuit,
+> = CircuitT & {
     circuit: CircuitInternal;
     view?: CircuitView;
 
@@ -17,7 +22,7 @@ export interface CircuitState extends Circuit {
 
     isLocked: boolean;
 
-    constructComponent(id: string): Component;
-    constructWire(id: string): Wire;
-    constructPort(id: string): Port;
+    constructComponent(id: string): ComponentT;
+    constructWire(id: string): WireT;
+    constructPort(id: string): PortT;
 }

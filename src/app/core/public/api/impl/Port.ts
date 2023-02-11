@@ -8,7 +8,12 @@ import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
 
 
-export class PortImpl<State extends CircuitState = CircuitState> extends BaseObjectImpl<State> implements Port {
+export class PortImpl<
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+    State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
+> extends BaseObjectImpl<State> implements Port {
     public readonly baseKind = "Port";
 
     protected getObj(): Schema.Port {
@@ -18,8 +23,8 @@ export class PortImpl<State extends CircuitState = CircuitState> extends BaseObj
         return obj;
     }
 
-    public get parent(): ReturnType<State["constructComponent"]> {
-        return this.circuit.constructComponent(this.getObj().parent) as ReturnType<State["constructComponent"]>;
+    public get parent(): ComponentT {
+        return this.circuit.constructComponent(this.getObj().parent);
     }
     public get group(): string {
         return this.getObj().group;
@@ -28,11 +33,11 @@ export class PortImpl<State extends CircuitState = CircuitState> extends BaseObj
         return this.getObj().index;
     }
 
-    public canConnectTo(other: Port): boolean {
+    public canConnectTo(other: PortT): boolean {
         throw new Error("Unimplemented");
     }
 
-    public connectTo(other: Port): Wire | undefined {
+    public connectTo(other: PortT): Wire | undefined {
         return this.circuit.connectWire(this, other);
     }
 }

@@ -28,7 +28,7 @@ export class Matrix2x3 {
     public constructor(other: Matrix2x3);
 
     public constructor(other?: Matrix2x3 | Vector, angle?: number, scale?: Vector) {
-        this.identity();
+        this.mat = [1,0,0,1,0,0];
 
         if (other instanceof Matrix2x3) {
             for (let i = 0; i < 2*3; i++)

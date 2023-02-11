@@ -12,7 +12,9 @@ import {DigitalPortImpl}      from "./DigitalPort";
 import {DigitalWireImpl}      from "./DigitalWire";
 
 
-export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
+export class DigitalCircuitImpl extends CircuitImpl<
+    DigitalComponent, DigitalWire, DigitalPort
+> implements DigitalCircuit {
 
     public constructComponent(id: string): DigitalComponent {
         return new DigitalComponentImpl(this, id);
@@ -24,7 +26,7 @@ export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
         return new DigitalPortImpl(this, id);
     }
 
-    public connectWire(p1: Port, p2: Port): Wire | undefined {
+    public connectWire(p1: DigitalPort, p2: DigitalPort): Wire | undefined {
         // TODO(chuh4)
         //  Connect the ports using a "DigitalWire"
         //  See `placeComponentAt` for a similar method

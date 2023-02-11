@@ -1,12 +1,19 @@
 import {Schema} from "core/schema";
 
-import {Port} from "../Port";
-import {Wire} from "../Wire";
+import {Component} from "../Component";
+import {Port}      from "../Port";
+import {Wire}      from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
+import {CircuitState}   from "./CircuitState";
 
 
-export class WireImpl extends BaseObjectImpl implements Wire {
+export class WireImpl<
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+    State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
+> extends BaseObjectImpl<State> implements Wire {
     public readonly baseKind = "Wire";
 
     protected getObj(): Schema.Wire {
@@ -16,10 +23,10 @@ export class WireImpl extends BaseObjectImpl implements Wire {
         return obj;
     }
 
-    public get p1(): Port {
+    public get p1(): PortT {
         return this.circuit.constructPort(this.getObj().p1);
     }
-    public get p2(): Port {
+    public get p2(): PortT {
         return this.circuit.constructPort(this.getObj().p2);
     }
 }

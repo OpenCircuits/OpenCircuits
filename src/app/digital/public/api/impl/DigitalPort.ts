@@ -1,12 +1,16 @@
 import {GUID}     from "core/internal";
 import {PortImpl} from "core/public/api/impl/Port";
 
-import {DigitalPort} from "../DigitalPort";
+import {DigitalComponent} from "../DigitalComponent";
+import {DigitalPort}      from "../DigitalPort";
+import {DigitalWire}      from "../DigitalWire";
 
 import {DigitalCircuitState} from "./DigitalCircuitState";
 
 
-export class DigitalPortImpl extends PortImpl<DigitalCircuitState> implements DigitalPort {
+export class DigitalPortImpl extends PortImpl<
+    DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
+> implements DigitalPort {
     public readonly isInputPort: boolean;
     public readonly isOutputPort: boolean;
 

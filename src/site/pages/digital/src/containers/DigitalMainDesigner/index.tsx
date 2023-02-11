@@ -24,7 +24,7 @@ export const DigitalMainDesigner = () => {
 
     return (
         <MainDesigner
-            otherPlace={(pos, itemKind: string, num, smartPlaceOptions: SmartPlaceOptions) => {
+            otherPlace={(pos, itemKind, num, smartPlaceOptions) => {
                 if (smartPlaceOptions !== SmartPlaceOptions.Off) {
                     // circuit.smartPlace(itemKind, smartPlaceOptions, num, pos);
                     return true;

@@ -59,7 +59,7 @@ export async function LoadingScreen(
             }
             issueURL.searchParams.set(
                 "title",
-                e.toString()
+                String(e)
             );
 
             // Set loading bar to red w/ Error and link to create issue for the error

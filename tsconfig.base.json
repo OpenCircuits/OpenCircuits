@@ -22,7 +22,7 @@
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
         "isolatedModules": true,
-        "strict": false,
+        "strict": true,
         "sourceMap": true,
         "strictNullChecks": true,
     },

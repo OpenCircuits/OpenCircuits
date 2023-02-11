@@ -6,13 +6,17 @@ import {Schema} from "core/schema";
 
 import {Component} from "../Component";
 import {Port}      from "../Port";
+import {Wire}      from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
 
 
 export abstract class ComponentImpl<
-    State extends CircuitState = CircuitState
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+    State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
 > extends BaseObjectImpl<State> implements Component {
     public readonly baseKind = "Component";
 
@@ -23,7 +27,7 @@ export abstract class ComponentImpl<
         return obj;
     }
 
-    public abstract get info(): ReturnType<State["constructComponent"]>["info"];
+    public abstract get info(): ComponentT["info"];
 
     public set x(val: number) {
         this.internal.setPropFor(this.id, "x", val);
@@ -55,7 +59,7 @@ export abstract class ComponentImpl<
         return (this.getObj().props.angle ?? 0);
     }
 
-    public get ports(): Record<string, Port[]> {
+    public get ports(): Record<string, PortT[]> {
         return FromConcatenatedEntries(
             [...this.internal.getPortsForComponent(this.id)]
             .map((id) => this.circuit.constructPort(id))
@@ -63,5 +67,5 @@ export abstract class ComponentImpl<
         );
     }
 
-    public abstract firstAvailable(group: string): Port | undefined;
+    public abstract firstAvailable(group: string): PortT | undefined;
 }
