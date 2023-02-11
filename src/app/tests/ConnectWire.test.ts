@@ -27,4 +27,19 @@ describe("PlaceComponentAt", () => {
           expect(wire.p2).toEqual(p2);
         }
     });
+    test("Basic Connect Wire of Same Ports", () => {
+      const circuit = CreateCircuit();
+      const c = circuit.placeComponentAt(V(0, 0), "ANDGate");
+      expect(c.pos).toEqual(V(0, 0));
+
+      // Get ports
+      const ports = c.ports;
+      const p1 = ports[0];
+      const p2 = ports[0];
+      expect(p1).toBe(p2);
+
+      // Test connect wire to same port
+      const wire = circuit.connectWire(p1,p2);
+      expect(wire).toBeUndefined();
+  });
 });
