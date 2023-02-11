@@ -67,5 +67,7 @@ export abstract class ComponentImpl<
         );
     }
 
-    public abstract firstAvailable(group: string): PortT | undefined;
+    public firstAvailable(group: string): PortT | undefined {
+        throw new Error("Unimplemented!");
+    }
 }

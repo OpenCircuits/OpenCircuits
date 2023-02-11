@@ -13,12 +13,7 @@ export class DigitalComponentImpl extends ComponentImpl<
     DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
 > implements DigitalComponent {
 
-    public get info(): DigitalComponentInfo {
+    public override get info(): DigitalComponentInfo {
         return new DigitalComponentInfoImpl(this.circuit, this.kind);
     }
-
-    public firstAvailable(group: string): DigitalPort | undefined {
-        throw new Error("Method not implemented.");
-    }
-
 }

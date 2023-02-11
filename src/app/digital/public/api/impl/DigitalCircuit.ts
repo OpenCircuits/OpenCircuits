@@ -1,4 +1,3 @@
-import {Port, Wire}  from "core/public";
 import {CircuitImpl} from "core/public/api/impl/Circuit";
 
 import {DigitalCircuit}       from "../DigitalCircuit";
@@ -26,7 +25,7 @@ export class DigitalCircuitImpl extends CircuitImpl<
         return new DigitalPortImpl(this, id);
     }
 
-    public connectWire(p1: DigitalPort, p2: DigitalPort): Wire | undefined {
+    public connectWire(p1: DigitalPort, p2: DigitalPort): DigitalWire | undefined {
         // TODO(chuh4)
         //  Connect the ports using a "DigitalWire"
         //  See `placeComponentAt` for a similar method
