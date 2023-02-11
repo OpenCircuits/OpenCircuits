@@ -15,10 +15,11 @@ export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
         //         if you try to connect a port to itself or something
         //         and we should handle this HERE and return undefined
         //         in that case
-        if (p1 == p2) {
+        if (p1 === p2) {
             return undefined;
         }
 
+        console.log("NOT Same wire!");
         const kind = "DigitalWire";
 
         this.circuit.beginTransaction();
