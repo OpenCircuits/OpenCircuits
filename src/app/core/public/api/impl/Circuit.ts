@@ -25,17 +25,22 @@ export abstract class CircuitImpl<
     PortT extends Port = Port,
 > implements Circuit, CircuitState<ComponentT, WireT, PortT> {
     public circuit: CircuitInternal;
-    public view?: CircuitView;
+    public view: CircuitView;
 
     public selections: SelectionsManager;
 
     public isLocked: boolean;
 
-    public constructor(provider: ObjInfoProvider) {
-        this.circuit = new CircuitInternal(provider, new CircuitLog());
-        this.view = undefined;
+    public constructor(
+        provider: ObjInfoProvider, 
+        circuit: CircuitInternal, 
+        view: CircuitView, 
+        selections: SelectionsManager
+    ) {
+        this.circuit = circuit
+        this.view = view;
 
-        this.selections = new SelectionsManager();
+        this.selections = selections;
 
         this.isLocked = false;
     }
@@ -220,6 +225,17 @@ export abstract class CircuitImpl<
     }
     public deserialize(data: string): void {
         throw new Error("Method not implemented.");
+    }
+
+    public resize(w: number, h: number): void {
+        this.view.resize(w, h);
+    }
+    public attachCanvas(canvas: HTMLCanvasElement): () => void {
+        this.view.setCanvas(canvas);
+        return () => this.detachCanvas();
+    }
+    public detachCanvas(): void {
+        this.view.setCanvas(undefined);
     }
 
     public addRenderCallback(cb: () => void): void {

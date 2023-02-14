@@ -1,5 +1,5 @@
-import {CreateCircuit}                from "digital/public";
-import React                          from "react";
+import {CreateCircuit, DigitalCircuit}                from "digital/public";
+import React, {useLayoutEffect, useRef}                          from "react";
 import ReactDOM                       from "react-dom";
 import ReactGA                        from "react-ga";
 import {Provider}                     from "react-redux";
@@ -24,7 +24,29 @@ import {AllActions}         from "./state/actions";
 import {reducers}           from "./state/reducers";
 
 import ImageFiles from "./data/images.json";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
+
+const MainCircuit = ({ circuit } : { circuit: DigitalCircuit }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { w, h } = useWindowSize();
+
+    useLayoutEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas)
+            return;
+        return circuit.attachCanvas(canvas);
+    }, [canvasRef]);
+
+    useLayoutEffect(() => circuit.resize(w, h), [w, h]);
+
+    return (
+        <canvas 
+            ref={canvasRef}
+            width={w}
+            height={h} />
+    );
+}
 
 async function Init(): Promise<void> {
     const startPercent = 30;
@@ -120,18 +142,19 @@ async function Init(): Promise<void> {
 
             storeCircuit("main", circuit);
 
-            if (process.env.NODE_ENV === "development") {
-                // Load dev state
-                const files = await DevListFiles();
-                // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-            }
+            // if (process.env.NODE_ENV === "development") {
+            //     // Load dev state
+            //     const files = await DevListFiles();
+            //     // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
+            //     //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            // }
 
             ReactDOM.render(
                 <React.StrictMode>
-                    <Provider store={store}>
+                    <MainCircuit circuit={circuit} />
+                    {/* <Provider store={store}>
                         <App />
-                    </Provider>
+                    </Provider> */}
                 </React.StrictMode>,
                 document.getElementById("root")
             );

@@ -5,6 +5,8 @@ import {V, Vector} from "./Vector";
  * A representation of a 2x3 Matrix. Commonly used to represent the transform of a 2D object. This matrix really
  *  represents a 3x3 matrix with the last row being $[0, 0, 1]$. The first two columns represent the scale and rotation
  *  of the object (indices [0, 3]), while the last column represents the translation of the object (indices [4, 5]).
+ * 
+ * Note that matrices are immutable.
  *
  * The indices are laid out in column-major order:
  * $$
@@ -13,58 +15,40 @@ import {V, Vector} from "./Vector";
  * .
  */
 export class Matrix2x3 {
-    private mat: number[];
+    private readonly mat: readonly number[];
+
+    // Store inverse matrix for efficiency since matrices are immutable
+    //  but only calculate on first call to `.inverse()`
+    private inv?: Matrix2x3;
 
     /**
-     * Initializes a 2x3 Identity Matrix with all zeros except indices 0, 3 as ones.
+     * Initializes an identity matrix with pos/angle/scale given.
      */
     public constructor(pos?: Vector, angle?: number, scale?: Vector);
 
     /**
-     * Creates a 2x3 Matrix with values copied from `other`.
+     * Creates a 2x3 Matrix with values copied from `mat`.
      *
-     * @param other The other matrix in which to copy.
+     * @param mat The matrix values in which to copy.
      */
-    public constructor(other: Matrix2x3);
+    public constructor(mat: number[]);
 
-    public constructor(other?: Matrix2x3 | Vector, angle?: number, scale?: Vector) {
+    public constructor(other?: number[] | Vector, angle?: number, scale?: Vector) {
         this.mat = [1,0,0,1,0,0];
 
-        if (other instanceof Matrix2x3) {
-            for (let i = 0; i < 2*3; i++)
-                this.mat[i] = other.mat[i];
+        if (other && "length" in other) {
+            this.mat = [...other];
         } else {
+            // This is kinda a hack, might want to in-line all the operations or something in the future
+            let mat: Matrix2x3 = this;
             if (other)
-                this.translate(other);
+                mat = this.translate(other);
             if (angle)
-                this.rotate(angle);
+                mat = this.rotate(angle);
             if (scale)
-                this.scale(scale);
+                mat = this.scale(scale);
+            this.mat = mat.mat;
         }
-    }
-
-    /**
-     * Sets all of the values in `this` Matrix to 0.
-     *
-     * @returns `this` for chaining.
-     */
-    public zero(): Matrix2x3 {
-        this.mat = [0,0,0,0,0,0];
-        return this;
-    }
-
-    /**
-     * Zeros all the values in `this` Matrix except at index 0 and 3 which are set to 1 to represent an Identity matrix.
-     *
-     * @returns `this` for chaining.
-     */
-    public identity(): Matrix2x3 {
-        this.mat = [
-            1,0,
-            0,1,
-            0,0,
-        ];
-        return this;
     }
 
     /**
@@ -87,79 +71,94 @@ export class Matrix2x3 {
      * @returns     The resultant matrix.
      */
     public mult(other: Matrix2x3): Matrix2x3 {
-        const result = new Matrix2x3();
-        result.mat[0] = this.mat[0]*other.mat[0] + this.mat[2]*other.mat[1];
-        result.mat[1] = this.mat[1]*other.mat[0] + this.mat[3]*other.mat[1];
-        result.mat[2] = this.mat[0]*other.mat[2] + this.mat[2]*other.mat[3];
-        result.mat[3] = this.mat[1]*other.mat[2] + this.mat[3]*other.mat[3];
-        result.mat[4] = this.mat[0]*other.mat[4] + this.mat[2]*other.mat[5] + this.mat[4];
-        result.mat[5] = this.mat[1]*other.mat[4] + this.mat[3]*other.mat[5] + this.mat[5];
-        return result;
-    }
-
-    /**
-     * Sets the translation of `t`his Matrix (last column) to `t`.
-     *
-     * @param t The translation vector.
-     */
-    public setTranslation(t: Vector): void {
-        this.mat[4] = t.x;
-        this.mat[5] = t.y;
+        return new Matrix2x3([
+            this.mat[0]*other.mat[0] + this.mat[2]*other.mat[1],
+            this.mat[1]*other.mat[0] + this.mat[3]*other.mat[1],
+            this.mat[0]*other.mat[2] + this.mat[2]*other.mat[3],
+            this.mat[1]*other.mat[2] + this.mat[3]*other.mat[3],
+            this.mat[0]*other.mat[4] + this.mat[2]*other.mat[5] + this.mat[4],
+            this.mat[1]*other.mat[4] + this.mat[3]*other.mat[5] + this.mat[5],
+        ]);
     }
 
     /**
      * Translates `this` by `t` depending on the rotation of `this` matrix.
      *
      * @param t The translation vector.
+     * @returns The resultant matrix.
      */
-    public translate(t: Vector): void {
-        this.mat[4] += this.mat[0] * t.x + this.mat[2] * t.y;
-        this.mat[5] += this.mat[1] * t.x + this.mat[3] * t.y;
+    public translate(t: Vector): Matrix2x3 {
+        const tx = this.mat[0] * t.x + this.mat[2] * t.y;
+        const ty = this.mat[1] * t.x + this.mat[3] * t.y;
+        return new Matrix2x3([
+            this.mat[0], this.mat[1],
+            this.mat[2], this.mat[3],
+            tx,          ty,
+        ]);
+    }
+
+    /**
+     * Returns this matrix with translation set to `t`.
+     *
+     * @param t The translation vector.
+     * @returns The resultant matrix.
+     */
+    public withTranslation(t: Vector): Matrix2x3 {
+        return new Matrix2x3([
+            this.mat[0], this.mat[1],
+            this.mat[2], this.mat[3],
+            t.x,         t.y
+        ]);
     }
 
     /**
      * Rotates `this` matrix by `theta` (in radians).
      *
      * @param theta The angle to rotate by (in radians).
+     * @returns     The resultant matrix.
      */
-    public rotate(theta: number): void {
-        const c = Math.cos(theta);
-        const s = Math.sin(theta);
-        const m11 = this.mat[0] * c + this.mat[2] * s;
-        const m12 = this.mat[1] * c + this.mat[3] * s;
+    public rotate(theta: number): Matrix2x3 {
+        const c = Math.cos(theta), s = Math.sin(theta);
+        const m11 = this.mat[0] *  c + this.mat[2] * s;
+        const m12 = this.mat[1] *  c + this.mat[3] * s;
         const m21 = this.mat[0] * -s + this.mat[2] * c;
         const m22 = this.mat[1] * -s + this.mat[3] * c;
-        this.mat[0] = m11;
-        this.mat[1] = m12;
-        this.mat[2] = m21;
-        this.mat[3] = m22;
+        return new Matrix2x3([
+            m11, m12,
+            m21, m22,
+            this.mat[4], this.mat[5],
+        ]);
     }
 
     /**
      * Scales `this` matrix non-uniformly by the given vector, `s`.
      *
      * @param s The vector to scale `this` matrix by.
+     * @returns The resultant matrix.
      */
-    public scale(s: Vector): void;
+    public scale(s: Vector): Matrix2x3;
 
     /**
      * Scales `this` matrix uniformly by the given scalar, `s`.
      *
      * @param s The vector to scale `this` matrix by.
+     * @returns The resultant matrix.
      */
-    public scale(s: number): void;
+    public scale(s: number): Matrix2x3;
 
-    public scale(s: Vector | number): void {
+    public scale(s: Vector | number): Matrix2x3 {
         if (typeof s === "number") {
-            this.mat[0] *= s;
-            this.mat[1] *= s;
-            this.mat[2] *= s;
-            this.mat[3] *= s;
+            return new Matrix2x3([
+                this.mat[0] * s, this.mat[1] * s,
+                this.mat[2] * s, this.mat[3] * s,
+                this.mat[4],     this.mat[5],
+            ]);
         } else {
-            this.mat[0] *= s.x;
-            this.mat[1] *= s.x;
-            this.mat[2] *= s.y;
-            this.mat[3] *= s.y;
+            return new Matrix2x3([
+                this.mat[0] * s.x, this.mat[1] * s.x,
+                this.mat[2] * s.y, this.mat[3] * s.y,
+                this.mat[4],       this.mat[5],                
+            ]);
         }
     }
 
@@ -169,30 +168,27 @@ export class Matrix2x3 {
      * @returns The inverted matrix.
      */
     public inverse(): Matrix2x3 {
-        const inv = new Array(3*2);
-        let det;
+        if (this.inv) // If already computed inverse, then return it
+            return this.inv;
 
-        inv[0] = this.mat[3];
-        inv[1] = -this.mat[1];
-        inv[2] = -this.mat[2];
-        inv[3] = this.mat[0];
-        inv[4] = this.mat[2] * this.mat[5] -
-                 this.mat[4] * this.mat[3];
-        inv[5] = this.mat[4] * this.mat[1] -
-                 this.mat[0] * this.mat[5];
-
-        det = this.mat[0]*this.mat[3] - this.mat[1]*this.mat[2];
-
-        if (det === 0)
+        // Calculate determinant
+        const det = this.mat[0]*this.mat[3] - this.mat[1]*this.mat[2];
+        if (det === 0) // undefined
             return new Matrix2x3();
 
-        det = 1 / det;
+        // Flip determinant since multiplication is typically faster than division
+        const detI = 1 / det;
+        this.inv = new Matrix2x3([
+            ( this.mat[3]) * detI,
+            (-this.mat[1]) * detI,
+            (-this.mat[2]) * detI,
+            ( this.mat[0]) * detI,
+            ( this.mat[2] * this.mat[5] - this.mat[4] * this.mat[3]) * detI,
+            ( this.mat[4] * this.mat[1] - this.mat[0] * this.mat[5]) * detI,
+        ]);
+        this.inv.inv = this; // Set the inverses' inverse to be us
 
-        const m = new Matrix2x3();
-        for (let i = 0; i < 2*3; i++)
-            m.mat[i] = inv[i] * det;
-
-        return m;
+        return this.inv;
     }
 
     /**
@@ -210,7 +206,7 @@ export class Matrix2x3 {
      *
      * @returns The translation vector.
      */
-    public getTranslation(): Vector {
+    public get pos(): Vector {
         return V(this.mat[4], this.mat[5]);
     }
 
@@ -228,12 +224,19 @@ export class Matrix2x3 {
         return true;
     }
 
-    /**
-     * Return a copy of this Matrix with the same components.
-     *
-     * @returns A copy of the matrix.
-     */
-    public copy(): Matrix2x3 {
-        return new Matrix2x3(this);
+
+    public static zero() {
+        return new Matrix2x3([
+            0,0,
+            0,0,
+            0,0,
+        ]);
+    }
+    public static identity() {
+        return new Matrix2x3([
+            1,0,
+            0,1,
+            0,0,
+        ]);
     }
 }

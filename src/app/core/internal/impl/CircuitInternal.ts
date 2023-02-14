@@ -23,6 +23,9 @@ export class CircuitInternal {
     private transaction: boolean;
     private transactionOps: CircuitOp[];
 
+    // Camera schema
+    protected camera: Schema.Camera;
+
     // Object storage (up-in-the-air)
     protected objStorage: Map<GUID, Schema.Obj>;
 
@@ -174,6 +177,12 @@ export class CircuitInternal {
 
         this.transaction = false;
         this.transactionOps = [];
+
+        this.camera = {
+            x: 0,
+            y: 0,
+            zoom: 0.02,
+        };
 
         this.objStorage = new Map();
 
@@ -447,6 +456,10 @@ export class CircuitInternal {
     }
     public getObjs(): IterableIterator<GUID> {
         return this.objStorage.keys();
+    }
+
+    public getCamera(): Readonly<Schema.Camera> {
+        return this.camera;
     }
 
     public getPortsForComponent(id: GUID): ReadonlySet<GUID> {

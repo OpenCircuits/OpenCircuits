@@ -1,4 +1,9 @@
+import {CircuitInternal} from "core/internal";
+import {CircuitLog} from "core/internal/impl/CircuitLog";
+import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {CircuitView} from "core/internal/view/CircuitView";
 import {CircuitImpl} from "core/public/api/impl/Circuit";
+import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
 
 import {DigitalCircuit}       from "../DigitalCircuit";
 import {DigitalComponent}     from "../DigitalComponent";
@@ -14,6 +19,14 @@ import {DigitalWireImpl}      from "./DigitalWire";
 export class DigitalCircuitImpl extends CircuitImpl<
     DigitalComponent, DigitalWire, DigitalPort
 > implements DigitalCircuit {
+    public constructor() {
+        const provider = CreateDigitalComponentInfoProvider();
+        const circuit = new CircuitInternal(provider, new CircuitLog());
+        const selections = new SelectionsManager();
+        const view = new CircuitView(circuit, selections);
+
+        super(provider, circuit, view, selections);
+    }
 
     public constructComponent(id: string): DigitalComponent {
         return new DigitalComponentImpl(this, id);

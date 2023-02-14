@@ -66,6 +66,10 @@ export interface Circuit {
     serialize(): string;
     deserialize(data: string): void;
 
+    resize(w: number, h: number): void;
+    attachCanvas(canvas: HTMLCanvasElement): () => void;
+    detachCanvas(): void;
+
     addRenderCallback(cb: () => void): void;
 
     subscribe(cb: (ev: any) => void): () => void;

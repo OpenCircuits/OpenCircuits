@@ -197,7 +197,7 @@ export class Transform {
     }
     public getMatrix(): Matrix2x3 {
         this.updateMatrix();
-        return this.matrix.copy();
+        return this.matrix;
     }
     public getInverseMatrix(): Matrix2x3 {
         this.updateMatrix();
