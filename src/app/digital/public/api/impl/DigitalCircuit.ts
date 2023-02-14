@@ -19,13 +19,10 @@ export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
             return undefined;
         }
 
-        console.log("NOT Same wire!");
-        const kind = "DigitalWire";
-
         this.circuit.beginTransaction();
 
         // Create a new raw Wire
-        const id = this.circuit.connectWire(kind, p1.id, p2.id, {});
+        const id = this.circuit.connectWire("DigitalWire", p1.id, p2.id, {});
         
         this.circuit.commitTransaction();
 
