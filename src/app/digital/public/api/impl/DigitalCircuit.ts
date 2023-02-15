@@ -15,18 +15,24 @@ export class DigitalCircuitImpl extends CircuitImpl implements DigitalCircuit {
         //         if you try to connect a port to itself or something
         //         and we should handle this HERE and return undefined
         //         in that case
-        if (p1 === p2) {
+        try {
+            if (p1 === p2) {
+                throw new Error("Incompatible wire ports");
+            }
+            
+            this.circuit.beginTransaction();
+    
+            // Create a new raw Wire
+            const id = this.circuit.connectWire("DigitalWire", p1.id, p2.id, {});
+            
+            this.circuit.commitTransaction();
+    
+            return new WireImpl(this.state, id);
+        } catch (error) {
             return undefined;
         }
 
-        this.circuit.beginTransaction();
-
-        // Create a new raw Wire
-        const id = this.circuit.connectWire("DigitalWire", p1.id, p2.id, {});
-        
-        this.circuit.commitTransaction();
-
-        return new WireImpl(this.state, id);
+       
     }
 
     public set propagationTime(val: number) {
