@@ -35,6 +35,6 @@ describe("PlaceComponentAt", () => {
       expect(p1).toBe(p2);
 
       // Test connect wire to same port
-      expect(circuit.connectWire(p1,p2)).toBeUndefined;
+      expect(circuit.connectWire(p1,p2)).toBeUndefined();
   });
 });
