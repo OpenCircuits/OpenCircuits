@@ -16,4 +16,13 @@ export class DigitalComponentImpl extends ComponentImpl<
     public override get info(): DigitalComponentInfo {
         return new DigitalComponentInfoImpl(this.circuit, this.kind);
     }
+
+    public override firstAvailable(portGroup: string): DigitalPort {
+        let inputPorts;
+        if (portGroup === "input") 
+            inputPorts = this.info.inputPortGroups;
+        else if (portGroup === "output") 
+            inputPorts = this.info.inputPortGroups;
+    
+    }
 }
