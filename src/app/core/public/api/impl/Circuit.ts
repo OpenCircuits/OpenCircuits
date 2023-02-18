@@ -7,41 +7,42 @@ import {CircuitLog}        from "core/internal/impl/CircuitLog";
 import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
 import {DebugOptions}      from "core/internal/impl/DebugOptions";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {CircuitView}       from "core/internal/view/CircuitView";
 
-import {Camera}        from "../Camera";
-import {Circuit}       from "../Circuit";
-import {Component}     from "../Component";
-import {ComponentInfo} from "../ComponentInfo";
-import {Obj}           from "../Obj";
-import {Port}          from "../Port";
-import {Wire}          from "../Wire";
+import {Camera}    from "../Camera";
+import {Circuit}   from "../Circuit";
+import {Component} from "../Component";
+import {Obj}       from "../Obj";
+import {Port}      from "../Port";
+import {Wire}      from "../Wire";
 
-import {CircuitState}  from "./CircuitState";
-import {ComponentImpl} from "./Component";
-import {PortImpl}      from "./Port";
-import {WireImpl}      from "./Wire";
+import {CircuitState} from "./CircuitState";
 
 
-export abstract class CircuitImpl implements Circuit {
-    protected readonly state: CircuitState;
+export abstract class CircuitImpl<
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
+    public circuit: CircuitInternal;
+    public view?: CircuitView;
+
+    public selections: SelectionsManager;
+
+    public isLocked: boolean;
 
     public constructor(provider: ObjInfoProvider) {
-        this.state = {
-            circuit: new CircuitInternal(provider, new CircuitLog()),
-            view:    undefined,
+        this.circuit = new CircuitInternal(provider, new CircuitLog());
+        this.view = undefined;
 
-            selections: new SelectionsManager(),
+        this.selections = new SelectionsManager();
 
-            isLocked: false,
-        };
+        this.isLocked = false;
     }
 
-    private get circuit(): CircuitInternal {
-        return this.state.circuit;
-    }
-    private get selections(): SelectionsManager {
-        return this.state.selections;
-    }
+    public abstract constructComponent(id: string): ComponentT;
+    public abstract constructWire(id: string): WireT;
+    public abstract constructPort(id: string): PortT;
 
     // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)
     // All queries within a transaction are coherent.
@@ -108,10 +109,10 @@ export abstract class CircuitImpl implements Circuit {
     }
 
     // Queries
-    public pickObjectAt(pt: Vector): Obj | undefined {
+    public pickObjectAt(pt: Vector): ComponentT | WireT | PortT | undefined {
         throw new Error("Unimplemented");
     }
-    public pickObjectRange(bounds: Rect): Obj[] {
+    public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
     
@@ -121,22 +122,22 @@ export abstract class CircuitImpl implements Circuit {
                .filter((obj) => (obj !== undefined)) as Obj[];
     }
 
-    public getComponent(id: string): Component | undefined {
+    public getComponent(id: string): ComponentT | undefined {
         if (!this.circuit.getCompByID(id))
             return undefined;
-        return new ComponentImpl(this.state, id);
+        return this.constructComponent(id);
     }
-    public getWire(id: string): Wire | undefined {
+    public getWire(id: string): WireT | undefined {
         if (!this.circuit.getWireByID(id))
             return undefined;
-        return new WireImpl(this.state, id);
+        return this.constructWire(id);
     }
-    public getPort(id: string): Port | undefined {
+    public getPort(id: string): PortT | undefined {
         if (!this.circuit.getPortByID(id))
             return undefined;
-        return new PortImpl(this.state, id);
+        return this.constructPort(id);
     }
-    public getObj(id: string): Obj | undefined {
+    public getObj(id: string): ComponentT | WireT | PortT | undefined {
         if (this.circuit.hasComp(id))
             return this.getComponent(id);
         if (this.circuit.hasWire(id))
@@ -149,7 +150,7 @@ export abstract class CircuitImpl implements Circuit {
         return [...this.circuit.getObjs()]
             .map((id) => this.getObj(id)!);
     }
-    public getComponentInfo(kind: string): ComponentInfo | undefined {
+    public getComponentInfo(kind: string): ComponentT["info"] | undefined {
         throw new Error("Method not implemented.");
     }
 
@@ -176,7 +177,7 @@ export abstract class CircuitImpl implements Circuit {
     }
 
     // Object manipulation
-    public placeComponentAt(pt: Vector, kind: string): Component {
+    public placeComponentAt(pt: Vector, kind: string): ComponentT {
         const info = this.circuit.getComponentInfo(kind);
 
         // TODO: Deal with `pt` being in screen space
@@ -190,12 +191,12 @@ export abstract class CircuitImpl implements Circuit {
 
         this.circuit.commitTransaction();
 
-        return new ComponentImpl(this.state, id);
+        return this.constructComponent(id);
     }
     // Wire connection can fail if i.e. p1 is reference-equal to p2
-    public abstract connectWire(p1: Port, p2: Port): Wire | undefined;
+    public abstract connectWire(p1: PortT, p2: PortT): WireT | undefined;
 
-    public deleteObjs(objs: Obj[]): void {
+    public deleteObjs(objs: Array<ComponentT | WireT | PortT>): void {
         // TODO(friedj)
         //  See `placeComponentAt` for some general guidance
         //  Note that to delete a Component, you have to set its "Port Config" to `{}` first
@@ -209,7 +210,7 @@ export abstract class CircuitImpl implements Circuit {
         throw new Error("Unimplemented");
     }
 
-    public createIC(objs: Obj[]): Circuit | undefined {
+    public createIC(objs: Array<ComponentT | WireT | PortT>): Circuit | undefined {
         throw new Error("Unimplemented");
     }
     public getICs(): Circuit[] {

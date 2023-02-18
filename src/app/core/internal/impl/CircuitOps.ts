@@ -67,7 +67,7 @@ export function TransformCircuitOp(targetOp: CircuitOp | undefined, withOp: Circ
 export function TransformCircuitOps(targetOps: CircuitOp[], withOps: CircuitOp[]): CircuitOp[] | undefined {
     if (withOps.length === 0)
         return targetOps;
-    const newOps = targetOps.map((op) => withOps.reduce((tgtOp, withOp) => TransformCircuitOp(tgtOp, withOp), op));
+    const newOps = targetOps.map((op) => withOps.reduce((tgtOp, withOp) => TransformCircuitOp(tgtOp, withOp)!, op));
     if (newOps.some((v) => !v))
         return undefined;
     return newOps as CircuitOp[];

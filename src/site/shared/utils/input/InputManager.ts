@@ -80,7 +80,20 @@ export class InputManager extends Observable<InputManagerEvent> {
     public constructor(dragTime: number = DRAG_TIME) {
         super();
         this.dragTime = dragTime;
-        this.reset();
+
+        this.prevMousePos = V();
+        this.mousePos = V();
+
+        this.mouseDown = false;
+        this.mouseDownPos = V();
+        this.mouseDownButton = 0;
+
+        this.isDragging = false;
+        this.startTapTime = 0;
+
+        this.touchCount = 0;
+
+        this.keysDown = new Map();
     }
 
     /**
@@ -182,14 +195,14 @@ export class InputManager extends Observable<InputManagerEvent> {
         window.addEventListener("keydown", onKeyDown, false);
         window.addEventListener("keyup",   onKeyUp,   false);
         window.addEventListener("blur",    onBlur);
-        window.addEventListener("paste",   onPaste);
-        window.addEventListener("copy",    onCopy);
-        window.addEventListener("cut",     onCut);
+        // window.addEventListener("paste",   onPaste);
+        // window.addEventListener("copy",    onCopy);
+        // window.addEventListener("cut",     onCut);
 
         return () => {
-            window.removeEventListener("cut",     onCut);
-            window.removeEventListener("copy",    onCopy);
-            window.removeEventListener("paste",   onPaste);
+            // window.removeEventListener("cut",     onCut);
+            // window.removeEventListener("copy",    onCopy);
+            // window.removeEventListener("paste",   onPaste);
             window.removeEventListener("blur",    onBlur);
             window.removeEventListener("keyup",   onKeyUp,   false);
             window.removeEventListener("keydown", onKeyDown, false);
