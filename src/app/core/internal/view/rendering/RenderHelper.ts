@@ -1,6 +1,8 @@
 import {Matrix2x3} from "math/Matrix";
+import {parseColor, SVGDrawing} from "svg2canvas";
 import {V, Vector} from "Vector";
 import {CameraView} from "../CameraView";
+import {Shape} from "./shapes/Shape";
 import {Style} from "./Style";
 
 
@@ -44,6 +46,31 @@ export class RenderHelper {
         this.transform(this.camera.matrix);
     }
 
+    public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
+        const col = (tint ? parseColor(tint) : undefined);
+
+        // Flip y-axis scale
+        img.draw(this.ctx, pos.x, pos.y, size.x, -size.y, col);
+    }
+
+    public draw(shape: Shape, style: Style, alpha = 1): void {
+        this.save();
+        this.setStyle(style, alpha);
+
+        // Begin path and draw the shape
+        this.ctx.beginPath();
+        shape.draw(this.ctx);
+
+        // Only fill or stroke if we have to
+        if (style.fill())
+            this.ctx.fill();
+        if (style.stroke())
+            this.ctx.stroke();
+
+        this.ctx.closePath();
+        this.restore();
+    }
+
     public beginPath() {
         this.ctx.beginPath();
     }
@@ -68,7 +95,7 @@ export class RenderHelper {
         this.ctx.globalAlpha = alpha;
 
         if (style.fillColor)
-            this.ctx.fillStyle ??= style.fillColor;
+            this.ctx.fillStyle = style.fillColor;
         if (style.strokeColor)
             this.ctx.strokeStyle = style.strokeColor;
         if (style.strokeSize)

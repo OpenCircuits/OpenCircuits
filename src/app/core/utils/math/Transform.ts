@@ -27,7 +27,6 @@ export class Transform {
     private prevParentMatrix?: Matrix2x3;
 
     private matrix: Matrix2x3;
-    private inverse: Matrix2x3;
     private radius: number;
 
     /**
@@ -54,7 +53,6 @@ export class Transform {
         this.dirtyCorners = true;
 
         this.matrix = new Matrix2x3();
-        this.inverse = new Matrix2x3();
         this.radius = 0;
     }
     private updateMatrix(): void {
@@ -67,17 +65,11 @@ export class Transform {
             return;
         this.dirty = false;
 
-        this.matrix = new Matrix2x3();
-        this.matrix.translate(this.pos);
-        this.matrix.rotate(this.angle);
-        this.matrix.scale(this.scale);
-
+        this.matrix = new Matrix2x3(this.pos, this.angle, this.scale);
         if (this.parent !== undefined) {
             this.matrix = this.parent.getMatrix().mult(this.matrix);
             this.prevParentMatrix = this.parent.getMatrix();
         }
-
-        this.inverse = this.matrix.inverse();
     }
     private updateSize(): void {
         if (!this.dirtySize)
@@ -201,7 +193,7 @@ export class Transform {
     }
     public getInverseMatrix(): Matrix2x3 {
         this.updateMatrix();
-        return this.inverse;
+        return this.matrix.inverse();
     }
     public getTopLeft(): Vector {
         this.updateCorners();

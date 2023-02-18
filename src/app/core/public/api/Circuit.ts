@@ -56,6 +56,8 @@ export interface Circuit {
     createIC(objs: Obj[]): Circuit | undefined;
     getICs(): Circuit[];
 
+    loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void>;
+
     undo(): boolean;
     redo(): boolean;
 

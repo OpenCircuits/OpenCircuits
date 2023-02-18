@@ -1,26 +1,29 @@
-import {Matrix2x3} from "math/Matrix";
-import {V} from "Vector";
+import {SVGDrawing} from "svg2canvas";
+import {GUID} from "..";
 import {CircuitInternal} from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";
 import {CameraView} from "./CameraView";
+import {ComponentView} from "./ComponentView";
 import {RenderGrid} from "./rendering/renderers/GridRenderer";
 import {RenderHelper} from "./rendering/RenderHelper";
-import {defaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
+import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderState} from "./rendering/RenderState";
-import {Style} from "./rendering/Style";
 import {RenderQueue} from "./RenderQueue";
 
 
-export class CircuitView {
-    private readonly circuit: CircuitInternal;
-    private readonly selections: SelectionsManager;
+export abstract class CircuitView {
+    protected readonly circuit: CircuitInternal;
+    protected readonly selections: SelectionsManager;
 
-    private readonly camera: CameraView;
+    protected readonly camera: CameraView;
 
-    private readonly options: RenderOptions;
+    protected readonly options: RenderOptions;
 
-    private readonly queue: RenderQueue;
-    private readonly renderer: RenderHelper;
+    protected readonly queue: RenderQueue;
+    protected readonly renderer: RenderHelper;
+
+    protected componentViews: Map<GUID, ComponentView>;
+    // protected wireViews: Map<GUID, WireView>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
         this.circuit = circuit;
@@ -28,43 +31,84 @@ export class CircuitView {
 
         this.camera = new CameraView(circuit);
 
-        this.options = { ...defaultRenderOptions };
+        this.options = new DefaultRenderOptions();
 
         this.queue = new RenderQueue();
         this.renderer = new RenderHelper(this.camera);
 
+        this.componentViews = new Map();
+        // this.wireViews = new Map();
+
         // Subscribe to renders, actually render
         this.queue.subscribe(() => this.renderInternal());
+
+        // Subscribe to circuit changes
+        circuit.subscribe(() => {
+            // TODO: Actually listen to the subscription event
+
+            for (const objID of circuit.getObjs()) {
+                if (circuit.hasComp(objID)) {
+                    const comp = circuit.getCompByID(objID)!;
+
+                    // Add to views map if we don't have it yet
+                    if (!this.componentViews.has(objID)) {
+                        this.componentViews.set(objID, this.constructComponentView(comp.kind, objID));
+                    } else {
+                        // Else edit
+                        this.componentViews.get(objID)!.setDirty();
+                    }
+                }
+            }
+
+            // Request a render on circuit change
+            this.queue.requestRender();
+        });
+
+        // Subscribe to selection changes
+        selections.subscribe((ev) => {
+            // ev.selections.forEach((id) => {
+            //     const obj = this.circuit.getObjByID(id);
+            //     if (!obj)
+            //         throw new Error(`CircuitView: Failed to find object in selection change with ID ${id}!`);
+                
+            //     // Dirty object
+            //     if (obj.baseKind === "Component")
+            //         this.componentViews.get(id)!.setDirty();
+            //     else if (obj.baseKind === "Port")
+            //         this.componentViews.get(obj.parent)!.setDirty();
+            //     // else
+            //     //    this.wireViews.get(id)!.setDirty();
+            // });
+
+            // Request a render on circuit change
+            this.queue.requestRender();
+        });
     }
 
-    protected renderInternal() {
-        const state: RenderState = {
+    protected get state(): RenderState {
+        return {
             circuit:    this.circuit,
             selections: this.selections,
             camera:     this.camera,
             options:    this.options,
             renderer:   this.renderer,
         };
+    }
+
+    protected abstract constructComponentView(kind: string, id: GUID): ComponentView;
+
+    protected renderInternal() {
         this.renderer.clear();
-
-        // console.log(this.camera.matrix.inverse().translate);
-
-        // this.renderer.save();
-        // this.renderer.toWorldSpace();
-        // // this.renderer.transform(new Matrix2x3([0,5, -5,0, 400,400]));
-        // this.renderer.setStyle(new Style(undefined, "#ff00ff", 0.02));
-        // this.renderer.beginPath();
-        // this.renderer.pathLine(V(0, 0), V(1, 1));
-        // this.renderer.stroke();
-        // this.renderer.restore();
 
         // Render grid
         if (this.options.showGrid)
-            RenderGrid(state);
+            RenderGrid(this.state);
 
         // Render wires
         
         // Render components
+        // TODO: Render by depth
+        this.componentViews.forEach((view) => view.render());
 
         // Debug rendering
 
@@ -81,5 +125,9 @@ export class CircuitView {
 
     public setCanvas(canvas?: HTMLCanvasElement) {
         this.renderer.setCanvas(canvas);
+    }
+
+    public addImage(imgSrc: string, img: SVGDrawing) {
+        this.options.addImage(imgSrc, img);
     }
 }

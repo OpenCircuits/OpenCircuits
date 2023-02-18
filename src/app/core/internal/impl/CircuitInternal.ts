@@ -1,4 +1,5 @@
 import {GUID} from "core/schema/GUID";
+import {Observable} from "core/utils/Observable";
 
 import {Schema} from "../../schema";
 
@@ -14,7 +15,7 @@ import {ComponentInfo, IsValidPortList, ObjInfo, ObjInfoProvider, PortConfig} fr
 //  INCOMING REFERENCES:
 //      1. GUIDs: Accepted as the primary reference type.
 //      2. Non-trivial types: No incoming references are retained.
-export class CircuitInternal {
+export class CircuitInternal extends Observable {
     protected readonly objInfo: ObjInfoProvider;
 
     private readonly log: CircuitLog;
@@ -78,6 +79,10 @@ export class CircuitInternal {
             if (!this.getComponentInfoByID(p1.parent).isValidPortConnectivity(map))
                 throw new Error("Wire connectivity is not allowed");
         };
+
+        // TODO: Publish actual event details
+        this.publish({});
+
         switch (op.kind) {
             case "PlaceComponentOp": {
                 if (op.inverted) {
@@ -170,6 +175,8 @@ export class CircuitInternal {
 
     // TODO: load with some initial state
     public constructor(objInfo: ObjInfoProvider, log: CircuitLog) {
+        super();
+
         this.objInfo = objInfo;
 
         this.log = log;

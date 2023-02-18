@@ -17,6 +17,7 @@ import {Port}      from "../Port";
 import {Wire}      from "../Wire";
 
 import {CircuitState} from "./CircuitState";
+import {CreateDrawingFromSVG} from "svg2canvas";
 
 
 export abstract class CircuitImpl<
@@ -203,6 +204,31 @@ export abstract class CircuitImpl<
     }
     public getICs(): Circuit[] {
         throw new Error("Method not implemented.");
+    }
+
+    public async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
+        let numLoaded = 0;
+        await Promise.all(
+            imgSrcs.map(async (src) => {
+                const svg = await fetch(`img/items/${src}`);
+                if (!svg.ok) // Make sure fetch worked
+                    throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
+        
+                const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
+                if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
+                    throw new Error(`Failed to parse XML for img/items/${src}` +
+                                    `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
+                }
+
+                const drawing = CreateDrawingFromSVG(svgXML, {});
+                if (!drawing)
+                    throw new Error(`Failed to create drawing for svg: img/items/${src}`);
+                this.view.addImage(src, drawing);
+
+                // Update progress on successful load
+                onProgress((++numLoaded) / imgSrcs.length);
+            })
+        );
     }
 
     public undo(): boolean {

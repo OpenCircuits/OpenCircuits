@@ -4,12 +4,15 @@ import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitView} from "core/internal/view/CircuitView";
 import {CircuitImpl} from "core/public/api/impl/Circuit";
 import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
+import {DigitalSim} from "digital/internal/sim/DigitalSim";
+import {DigitalCircuitView} from "digital/internal/views/DigitalCircuitView";
 
 import {DigitalCircuit}       from "../DigitalCircuit";
 import {DigitalComponent}     from "../DigitalComponent";
 import {DigitalComponentInfo} from "../DigitalComponentInfo";
 import {DigitalPort}          from "../DigitalPort";
 import {DigitalWire}          from "../DigitalWire";
+import {DigitalCircuitState} from "./DigitalCircuitState";
 
 import {DigitalComponentImpl} from "./DigitalComponent";
 import {DigitalPortImpl}      from "./DigitalPort";
@@ -18,14 +21,18 @@ import {DigitalWireImpl}      from "./DigitalWire";
 
 export class DigitalCircuitImpl extends CircuitImpl<
     DigitalComponent, DigitalWire, DigitalPort
-> implements DigitalCircuit {
+> implements DigitalCircuit, DigitalCircuitState {
+    public sim: DigitalSim;
+
     public constructor() {
         const provider = CreateDigitalComponentInfoProvider();
         const circuit = new CircuitInternal(provider, new CircuitLog());
         const selections = new SelectionsManager();
-        const view = new CircuitView(circuit, selections);
+        const view = new DigitalCircuitView(circuit, selections);
 
         super(provider, circuit, view, selections);
+
+        this.sim = new DigitalSim(circuit);
     }
 
     public constructComponent(id: string): DigitalComponent {

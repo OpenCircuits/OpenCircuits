@@ -16,6 +16,9 @@ export class DigitalComponentInfo implements ComponentInfo {
     public readonly portGroups: string[];
 
     public readonly portGroupInfo: DigitalPortGroupInfo;
+    public readonly inputPortGroups: readonly string[];
+    public readonly outputPortGroups: readonly string[];
+
     private readonly validPortConfigs: PortConfig[];
     private readonly props: TypeMap;
 
@@ -34,6 +37,9 @@ export class DigitalComponentInfo implements ComponentInfo {
 
         this.portGroupInfo = portGroupInfo;
         this.validPortConfigs = portConfigs;
+
+        this.inputPortGroups  = this.portGroups.filter((g) => (this.portGroupInfo[g] ===  "input"));
+        this.outputPortGroups = this.portGroups.filter((g) => (this.portGroupInfo[g] === "output"));
     }
 
     public checkPropValue(key: string, value?: Prop): boolean {
