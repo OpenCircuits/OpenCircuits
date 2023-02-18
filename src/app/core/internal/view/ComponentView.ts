@@ -91,7 +91,7 @@ export abstract class ComponentView extends BaseView {
         });
     }
 
-    protected abstract renderComponent(): void;
+    protected renderComponent(): void {}
 
     protected drawImg(): void {
         // Check if we should draw image

@@ -2,10 +2,12 @@ import {GUID} from "core/internal";
 import {CircuitView} from "core/internal/view/CircuitView";
 import {ComponentView} from "core/internal/view/ComponentView";
 import {ANDGateView} from "./components/ANDGateView";
+import {SwitchView} from "./components/SwitchView";
 
 
 const viewMap = {
     "ANDGate": ANDGateView,
+    "Switch": SwitchView,
 };
 
 

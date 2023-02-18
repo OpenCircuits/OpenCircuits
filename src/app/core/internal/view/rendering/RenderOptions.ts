@@ -30,6 +30,7 @@ export interface RenderOptions {
 
     lineStyle(selected: boolean): Style;
     curveStyle(selected: boolean): Style;
+    fillStyle(selected: boolean): Style;
 
     portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style };
 }
@@ -79,6 +80,13 @@ export class DefaultRenderOptions implements RenderOptions {
             undefined,
             (selected ? this.selectedBorderColor : this.defaultBorderColor),
             this.curveBorderWidth,
+        );
+    }
+    public fillStyle(selected: boolean): Style {
+        return new Style(
+            (selected ? this.selectedFillColor : this.defaultFillColor),
+            (selected ? this.selectedBorderColor : this.defaultBorderColor),
+            this.defaultBorderWidth,
         );
     }
 

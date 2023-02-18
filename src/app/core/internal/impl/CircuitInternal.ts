@@ -142,7 +142,7 @@ export class CircuitInternal extends Observable {
                     throw new Error("Object did not exist");
 
                 // Check the value is valid
-                const info = this.getObjectInfoByID(obj.kind);
+                const info = this.getObjectInfo(obj.kind);
                 if (!info.checkPropValue(op.key, op.newVal))
                     throw new Error("Illegal prop value");
 

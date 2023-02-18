@@ -91,8 +91,8 @@ export class DigitalComponentInfo implements ComponentInfo {
 const DigitalOutputComponentInfo = (kind: string, outputs: number[], props: TypeMap = {}) =>
     new DigitalComponentInfo(kind, props, { "outputs": "output" }, outputs.map((amt) => ({ "outputs": amt })));
 
-const SwitchInfo = DigitalOutputComponentInfo("Switch", [1]);
-const ButtonInfo = DigitalOutputComponentInfo("Button", [1]);
+const SwitchInfo = DigitalOutputComponentInfo("Switch", [1], { "isOn": "boolean" });
+const ButtonInfo = DigitalOutputComponentInfo("Button", [1], { "isOn": "boolean" });
 const ConstantLowInfo    = DigitalOutputComponentInfo("ConstantLow",    [1]);
 const ConstantHighInfo   = DigitalOutputComponentInfo("ConstantHigh",   [1]);
 const ConstantNumberInfo = DigitalOutputComponentInfo("ConstantNumber", [4], { "inputNum": "number" });

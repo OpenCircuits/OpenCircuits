@@ -58,10 +58,12 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public setProp(key: string, val: Prop): void {
-        throw new Error("Unimplemented");
+        this.circuit.beginTransaction();
+        this.internal.setPropFor(this.objID, key, val);
+        this.circuit.commitTransaction();
     }
-    public getProp(key: string): Prop {
-        throw new Error("Unimplemented");
+    public getProp(key: string): Prop | undefined {
+        return this.internal.getObjByID(this.objID)?.props[key];
     }
     public getProps(): Record<string, Prop> {
         throw new Error("Unimplemented");
