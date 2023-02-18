@@ -1,15 +1,16 @@
-import {GUID} from "core/internal";
-import {CircuitView} from "core/internal/view/CircuitView";
+import {GUID}          from "core/internal";
+import {CircuitView}   from "core/internal/view/CircuitView";
 import {ComponentView} from "core/internal/view/ComponentView";
-import {ANDGateView} from "./components/ANDGateView";
-import {SwitchView} from "./components/SwitchView";
+import {ANDGateView}   from "./components/ANDGateView";
+import {LEDView}       from "./components/LEDView";
+import {SwitchView}    from "./components/SwitchView";
 
 
 const viewMap = {
     "ANDGate": ANDGateView,
-    "Switch": SwitchView,
+    "Switch":  SwitchView,
+    "LED":     LEDView,
 };
-
 
 export class DigitalCircuitView extends CircuitView {
     protected constructComponentView(kind: string, id: GUID): ComponentView {

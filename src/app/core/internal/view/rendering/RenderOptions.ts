@@ -1,5 +1,5 @@
 import {SVGDrawing} from "svg2canvas";
-import {Style} from "./Style";
+import {Style}      from "./Style";
 
 
 export interface RenderOptions {
@@ -21,6 +21,9 @@ export interface RenderOptions {
     defaultPortRadius: number;
     portLineWidth: number;
     portBorderWidth: number;
+
+    ledLightRadius: number;
+    ledLightIntensity: number;
 
     addImage(key: string, img: SVGDrawing): void;
     getImage(key: string): SVGDrawing | undefined;
@@ -54,6 +57,9 @@ export class DefaultRenderOptions implements RenderOptions {
     public defaultPortRadius = 0.14;
     public portLineWidth = 0.04;
     public portBorderWidth = 0.02;
+
+    public ledLightRadius = 1.5;
+    public ledLightIntensity = 0.75;
 
     private images: Record<string, SVGDrawing>;
 
