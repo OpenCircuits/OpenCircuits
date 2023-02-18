@@ -1,3 +1,4 @@
+import {Rect} from "math/Rect";
 import {V, Vector} from "Vector";
 import {RenderState} from "../RenderState";
 
@@ -5,26 +6,22 @@ import {RenderState} from "../RenderState";
 export function RenderGrid({ camera, renderer, options }: RenderState) {
     const step = options.gridSize;
 
-    const size = Vector.Ceil(renderer.size.scale(camera.zoom * step / 2)).add(1);
-    const offset = Vector.Floor(camera.pos.scale(1 / step)).scale(step);
+    const size = renderer.size;
+
+    const bounds = Rect.FromPoints(
+        Vector.Ceil(size.scale(camera.zoom/2).sub(camera.pos)).scale(-1),
+        Vector.Ceil(size.scale(camera.zoom/2).add(camera.pos)),
+    );
 
     // Batch-render the lines = uglier code + way better performance
     renderer.save();
     renderer.toWorldSpace();
     renderer.setStyle(options.gridStyle);
     renderer.beginPath();
-    for (let x = -size.x; x <= size.x; x += step) {
-        renderer.pathLine(
-            V(x, -size.y).add(offset),
-            V(x,  size.y).add(offset)
-        );
-    }
-    for (let y = -size.y; y <= size.y; y += step) {
-        renderer.pathLine(
-            V(-size.x, y).add(offset),
-            V( size.x, y).add(offset)
-        );
-    }
+    for (let x = bounds.left; x <= bounds.right; x += step)
+        renderer.pathLine(V(x, bounds.bottom), V(x, bounds.top));
+    for (let y = bounds.bottom; y <= bounds.top; y += step)
+        renderer.pathLine(V(bounds.left, y), V(bounds.right, y));
     renderer.closePath();
     renderer.stroke();
     renderer.restore();
