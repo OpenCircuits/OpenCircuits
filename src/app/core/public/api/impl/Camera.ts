@@ -1,4 +1,5 @@
 import {Schema} from "core/schema";
+import {Clamp} from "math/MathUtils";
 import {Rect} from "math/Rect";
 import {V, Vector} from "Vector";
 
@@ -53,5 +54,20 @@ export class CameraImpl implements Camera {
     }
     public get margin(): Rect {
         throw new Error("Method not implemented.");
+    }
+
+    public translate(dPos: Vector): void {
+        if (dPos.space === "screen")
+            return this.translate(V(dPos.x * this.zoom, -dPos.y * this.zoom, "world"));
+        this.pos = this.pos.add(dPos);
+    }
+
+    public zoomTo(zoom: number, pos: Vector): void {
+        const cameraView = this.state.view!.getCamera();
+
+        const pos0 = cameraView.toWorldPos(pos);
+        this.zoom = Clamp(this.zoom * zoom, 1e-6, 200);
+        const dPos = cameraView.toScreenPos(pos0).sub(pos);
+        this.translate(V(dPos.x, dPos.y, "screen"));
     }
 }

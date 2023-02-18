@@ -1,5 +1,5 @@
 import {CreateCircuit, DigitalCircuit}                from "digital/public";
-import React, {useLayoutEffect, useRef}                          from "react";
+import React, {useEffect, useLayoutEffect, useRef}                          from "react";
 import ReactDOM                       from "react-dom";
 import ReactGA                        from "react-ga";
 import {Provider}                     from "react-redux";
@@ -7,7 +7,6 @@ import {applyMiddleware, createStore} from "redux";
 import thunk, {ThunkMiddleware}       from "redux-thunk";
 
 import {GetCookie}     from "shared/utils/Cookies";
-import {Images}        from "shared/utils/Images";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {storeCircuit} from "shared/utils/hooks/useCircuit";
@@ -25,16 +24,48 @@ import {reducers}           from "./state/reducers";
 
 import ImageFiles from "./data/images.json";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useDeltaMousePos, useMousePos} from "shared/utils/hooks/useMousePos";
+import {useKey} from "shared/utils/hooks/useKey";
+import {V} from "Vector";
+import {useDocEvent} from "shared/utils/hooks/useDocEvent";
 
+
+const useTranslateTool = (circuit: DigitalCircuit) => {
+    const { dx, dy } = useDeltaMousePos();
+    const altKey = useKey("Alt");
+
+    useEffect(() => {
+        if (!altKey)
+            return;
+        circuit.camera.translate(V(-dx, -dy, "screen"));
+    }, [circuit, dx, dy, altKey]);
+}
+
+const useZoomTool = (circuit: DigitalCircuit) => {
+    useDocEvent("wheel", (ev) => {
+        const dy = ev.deltaY;
+        const pos = V(ev.pageX, ev.pageY);
+
+        let zoomFactor = 0.95;
+        if (dy >= 0)
+            zoomFactor = 1 / zoomFactor;
+
+        circuit.camera.zoomTo(zoomFactor, pos);
+    }, [circuit]);
+}
 
 const MainCircuit = ({ circuit } : { circuit: DigitalCircuit }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { w, h } = useWindowSize();
 
+    useTranslateTool(circuit);
+    useZoomTool(circuit);
+
     useLayoutEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas)
             return;
+        (window as any).Circuit = circuit;
         return circuit.attachCanvas(canvas);
     }, [canvasRef]);
 
@@ -52,9 +83,11 @@ async function Init(): Promise<void> {
     const startPercent = 30;
     let store: AppStore;
 
+    const circuit = CreateCircuit();
+
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {
-            await Images.Load(ImageFiles.images, onProgress);
+            await circuit.loadImages(ImageFiles.images, onProgress);
         }],
 
         [85, "Initializing redux", async () => {
@@ -138,7 +171,6 @@ async function Init(): Promise<void> {
             // info.history.addCallback(() => {
             //     store.dispatch(SetCircuitSaved(false));
             // });
-            const circuit = CreateCircuit();
 
             storeCircuit("main", circuit);
 

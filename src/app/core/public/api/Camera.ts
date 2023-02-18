@@ -10,4 +10,7 @@ export interface Camera {
     zoom: number;
 
     margin: Margin;
+
+    translate(dPos: Vector): void;
+    zoomTo(zoom: number, pos: Vector): void;
 }

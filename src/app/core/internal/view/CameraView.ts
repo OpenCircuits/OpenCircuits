@@ -30,6 +30,13 @@ export class CameraView {
         this.screenSize = V(w, h);
     }
 
+    public toWorldPos(pos: Vector): Vector {
+        return this.matrix.mul(pos.sub(this.screenSize.scale(0.5)));
+    }
+    public toScreenPos(pos: Vector): Vector {
+        return this.matrix.inverse().mul(pos).add(this.screenSize.scale(0.5));
+    }
+
     public get matrix(): Matrix2x3 {
         return this.mat.get();
     }

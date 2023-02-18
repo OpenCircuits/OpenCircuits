@@ -24,9 +24,9 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     const { w, h } = useWindowSize();
     const canvas = useRef<HTMLCanvasElement>(null);
 
-    // On resize (useLayoutEffect happens sychronously so
-    //  there's no pause/glitch when resizing the screen)
-    useLayoutEffect(() => circuit.camera.resize(w, h-HEADER_HEIGHT), [circuit, w, h]);
+    // // On resize (useLayoutEffect happens sychronously so
+    // //  there's no pause/glitch when resizing the screen)
+    // useLayoutEffect(() => circuit.camera.resize(w, h-HEADER_HEIGHT), [circuit, w, h]);
 
     // Initial function called after the canvas first shows up
     // useLayoutEffect(() => circuit.setupCanvas(canvas), [circuit, canvas]);
