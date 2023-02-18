@@ -1,8 +1,13 @@
 import {Margin} from "math/Rect";
+import {Vector} from "Vector";
 
 
 export interface Camera {
-    resize(w: number, h: number): void;
+    cx: number;
+    cy: number;
+    pos: Vector;
+
+    zoom: number;
 
     margin: Margin;
 }

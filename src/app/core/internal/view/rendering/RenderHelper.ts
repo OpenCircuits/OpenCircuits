@@ -40,7 +40,8 @@ export class RenderHelper {
     }
 
     public toWorldSpace(): void {
-        this.transform(this.camera.matrix.inverse().withTranslation(this.size.scale(0.5)));
+        const inv = this.camera.matrix.inverse();
+        this.transform(inv.withTranslation(inv.pos.add(this.size.scale(0.5))));
     }
     public toScreenSpace(): void {
         this.transform(this.camera.matrix);

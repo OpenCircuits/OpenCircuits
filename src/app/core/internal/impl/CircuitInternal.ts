@@ -420,6 +420,14 @@ export class CircuitInternal extends Observable {
         this.addTransactionOp({ kind: "SetComponentPortsOp", inverted: false, component: id, newPorts, oldPorts })
     }
 
+    public setCameraProps(props: Partial<Schema.Camera>) {
+        this.camera.x = (props.x ?? this.camera.x);
+        this.camera.y = (props.y ?? this.camera.y);
+        this.camera.zoom = (props.zoom ?? this.camera.zoom);
+
+        this.publish({});
+    }
+
     //
     // Getters below.  Returned objects should not be modified directly.
     //

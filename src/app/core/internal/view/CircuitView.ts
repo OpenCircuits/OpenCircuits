@@ -60,6 +60,8 @@ export abstract class CircuitView {
                 }
             }
 
+            this.camera.setDirty();
+
             // Request a render on circuit change
             this.queue.requestRender();
         });
@@ -129,5 +131,9 @@ export abstract class CircuitView {
 
     public addImage(imgSrc: string, img: SVGDrawing) {
         this.options.addImage(imgSrc, img);
+    }
+
+    public getCamera(): CameraView {
+        return this.camera;
     }
 }

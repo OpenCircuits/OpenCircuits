@@ -18,6 +18,7 @@ import {Wire}      from "../Wire";
 
 import {CircuitState} from "./CircuitState";
 import {CreateDrawingFromSVG} from "svg2canvas";
+import {CameraImpl} from "./Camera";
 
 
 export abstract class CircuitImpl<
@@ -111,7 +112,7 @@ export abstract class CircuitImpl<
     }
 
     public get camera(): Camera {
-        throw new Error("Method not implemented.");
+        return new CameraImpl(this);
     }
 
     // Queries

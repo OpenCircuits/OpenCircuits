@@ -22,6 +22,10 @@ export class CameraView {
         return this.circuit.getCamera();
     }
 
+    public setDirty() {
+        this.mat.setDirty();
+    }
+
     public resize(w: number, h: number) {
         this.screenSize = V(w, h);
     }

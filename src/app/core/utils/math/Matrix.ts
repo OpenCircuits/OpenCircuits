@@ -42,11 +42,11 @@ export class Matrix2x3 {
             // This is kinda a hack, might want to in-line all the operations or something in the future
             let mat: Matrix2x3 = this;
             if (other)
-                mat = this.translate(other);
+                mat = mat.translate(other);
             if (angle)
-                mat = this.rotate(angle);
+                mat = mat.rotate(angle);
             if (scale)
-                mat = this.scale(scale);
+                mat = mat.scale(scale);
             this.mat = mat.mat;
         }
     }

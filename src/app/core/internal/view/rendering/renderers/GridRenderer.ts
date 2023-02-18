@@ -1,4 +1,4 @@
-import {V, Vector} from "Vector";
+import {V} from "Vector";
 import {RenderState} from "../RenderState";
 
 
