@@ -1,3 +1,5 @@
+import {Ok, Result, ResultUtil} from "core/utils/Result";
+
 import {Schema} from "core/schema"
 
 
@@ -56,19 +58,15 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
 }
 
 // Transforms "targetOp" to occur after "withOp".
-export function TransformCircuitOp(targetOp: CircuitOp | undefined, withOp: CircuitOp): CircuitOp | undefined {
-    if (!targetOp)
-        return;
+export function TransformCircuitOp(targetOp: CircuitOp, withOp: CircuitOp): Result<CircuitOp> {
     // IMPL NOTE: generate copies of all mutated objects.
     const _ = withOp;
-    return targetOp;
+    return Ok(targetOp);
 }
 
-export function TransformCircuitOps(targetOps: CircuitOp[], withOps: CircuitOp[]): CircuitOp[] | undefined {
+export function TransformCircuitOps(targetOps: CircuitOp[], withOps: CircuitOp[]): Result<CircuitOp[]> {
     if (withOps.length === 0)
-        return targetOps;
-    const newOps = targetOps.map((op) => withOps.reduce((tgtOp, withOp) => TransformCircuitOp(tgtOp, withOp)!, op));
-    if (newOps.some((v) => !v))
-        return undefined;
-    return newOps as CircuitOp[];
+        return Ok(targetOps);
+    return ResultUtil.mapIter(targetOps.values(), (op) =>
+        ResultUtil.reduceIter(op, withOps.values(), (tgtOp, withOp) => TransformCircuitOp(tgtOp, withOp)));
 }

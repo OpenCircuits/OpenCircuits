@@ -25,7 +25,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public get kind(): string {
-        return this.internal.getObjByID(this.id)!.kind;
+        return this.internal.getObjByID(this.id).unwrap().kind;
     }
 
     public get id(): string {
