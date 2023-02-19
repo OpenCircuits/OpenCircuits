@@ -1,5 +1,6 @@
 import {Schema}             from "core/schema";
 import {DirtyVar}           from "core/utils/DirtyVar";
+import {AddErrE}            from "core/utils/MultiError";
 import {BezierCurve}        from "math/BezierCurve";
 import {Rect}               from "math/Rect";
 import {Vector}             from "Vector";
@@ -21,7 +22,8 @@ export class WireView extends BaseView {
         this.components = comps;
 
         this.curve = new DirtyVar(() => {
-            const [port1, port2] = this.circuit.getPortsForWire(this.objID).map((p) => this.circuit.getPortByID(p)!);
+            const [port1, port2] = this.circuit.getPortsForWire(this.objID).unwrap()
+                .map((id) => this.circuit.getPortByID(id).unwrap());
             const [p1, c1] = this.getCurvePoints(port1);
             const [p2, c2] = this.getCurvePoints(port2);
             return new BezierCurve(p1, p2, c1, c2);
@@ -29,10 +31,9 @@ export class WireView extends BaseView {
     }
 
     protected get wire() {
-        const wire = this.circuit.getWireByID(this.objID);
-        if (!wire)
-            throw new Error(`WireView: Failed to find wire with ID: ${this.objID}`);
-        return wire;
+        return this.circuit.getWireByID(this.objID)
+            .mapErr(AddErrE(`WireView: Failed to find wire with ID ${this.objID}!`))
+            .unwrap();
     }
 
     protected get color(): string {

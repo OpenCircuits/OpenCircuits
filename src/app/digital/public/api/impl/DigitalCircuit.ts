@@ -56,7 +56,7 @@ export class DigitalCircuitImpl extends CircuitImpl<
 
         this.circuit.beginTransaction();
 
-        const id = this.circuit.connectWire("DigitalWire", p1.id, p2.id, {});
+        const id = this.circuit.connectWire("DigitalWire", p1.id, p2.id, {}).unwrap();
 
         this.circuit.commitTransaction();
 

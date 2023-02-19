@@ -1,5 +1,6 @@
 import {Schema}      from "core/schema";
 import {DirtyVar}    from "core/utils/DirtyVar";
+import {AddErrE}     from "core/utils/MultiError";
 import {Transform}   from "math/Transform";
 import {SVGDrawing}  from "svg2canvas";
 import {V, Vector}   from "Vector";
@@ -47,16 +48,20 @@ export abstract class ComponentView extends BaseView {
     }
 
     protected get component() {
-        const comp = this.circuit.getCompByID(this.objID);
-        if (!comp)
-            throw new Error(`ComponentView: Failed to find component with ID: ${this.objID}`);
-        return comp;
+        return this.circuit.getCompByID(this.objID)
+            .mapErr(AddErrE(`ComponentView: Failed to find component with ID ${this.objID}!`))
+            .unwrap();
+    }
+
+    protected getPorts(group: string) {
+        return this.circuit.getPortsForComponent(this.objID)
+            .map((ports) => [...ports]
+                .map((id) => this.circuit.getPortByID(id).unwrap())
+                .filter((p) => (p.group === group)));
     }
 
     protected numPorts(group: string) {
-        return [...this.circuit.getPortsForComponent(this.objID)]
-            .filter((p) => (this.circuit.getPortByID(p)?.group === group))
-            .length;
+        return this.getPorts(group).map((ports) => ports.length);
     }
 
     protected override renderInternal(): void {
@@ -73,14 +78,14 @@ export abstract class ComponentView extends BaseView {
     protected renderPorts(): void {
         const { renderer, selections, options } = this.state;
 
-        const ports = this.circuit.getPortsForComponent(this.objID);
+        const ports = this.circuit.getPortsForComponent(this.objID).unwrap();
 
         ports.forEach((id) => {
             const port = this.circuit.getPortByID(id);
-            if (!port)
+            if (!port.ok)
                 throw new Error(`ComponentView: Failed to find port with ID ${id}!`);
 
-            const { origin, target } = this.getPortPos(port);
+            const { origin, target } = this.getPortPos(port.unwrap());
             const { lineStyle, circleStyle } = options.portStyle(selections.has(id), this.isSelected);
 
             // Render port

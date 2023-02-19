@@ -49,7 +49,7 @@ export abstract class CircuitView {
 
             for (const objID of circuit.getObjs()) {
                 if (circuit.hasComp(objID)) {
-                    const comp = circuit.getCompByID(objID)!;
+                    const comp = circuit.getCompByID(objID).unwrap();
 
                     // Add to views map if we don't have it yet
                     if (!this.componentViews.has(objID)) {
@@ -59,7 +59,7 @@ export abstract class CircuitView {
                         this.componentViews.get(objID)!.setDirty();
                     }
                 } else if (circuit.hasWire(objID)) {
-                    const wire = circuit.getWireByID(objID)!;
+                    const wire = circuit.getWireByID(objID).unwrap();
 
                     // Add to views map if we don't have it yet
                     if (!this.wireViews.has(objID)) {
