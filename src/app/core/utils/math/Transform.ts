@@ -52,6 +52,10 @@ export class Transform {
         this.dirty = true;
         this.dirtySize = true;
         this.dirtyCorners = true;
+
+        this.matrix = new Matrix2x3();
+        this.inverse = new Matrix2x3();
+        this.radius = 0;
     }
     private updateMatrix(): void {
         // If parent changed then we need to recalculate matrix

@@ -28,6 +28,7 @@ export class DigitalComponentInfo implements ComponentInfo {
         portConfigs: DigitalPortConfig[],
         defaultConfig = 0
     ) {
+        this.baseKind = "Component";
         this.kind = kind;
         this.props = { ...props, "name": "string", "x": "number", "y": "number", "angle": "number" };
         this.defaultPortConfig = portConfigs[defaultConfig];
@@ -233,6 +234,7 @@ class DigitalWireInfo implements ObjInfo {
     private readonly props: TypeMap;
 
     public constructor(kind: string, props: TypeMap) {
+        this.baseKind = "Wire";
         this.kind = kind;
         this.props = { ...props, "name": "string" };
     }
@@ -255,6 +257,7 @@ class DigitalPortInfo implements ObjInfo {
     private readonly props: TypeMap;
 
     public constructor(kind: string, props: TypeMap) {
+        this.baseKind = "Port";
         this.kind = kind;
         this.props = { ...props, "name": "string" };
     }
