@@ -76,7 +76,7 @@ export class CircuitInternal {
             const map = new Map([[p1, [p2]]]);
             this.componentPortsMap.get(p1.parent)?.forEach((id) => {
                 const to = this.getPortPortMapChecked(id);
-                map.set(p1, [...to].map((id) => this.getPortByIDChecked(id)));
+                map.set(p1, [...to].map((id) => this.getPortByID(id).unwrap()));
             });
             return this.getComponentAndInfoByID(p1.parent)
                 .andThen(([_, info]) => info.checkPortConnectivity(map)
@@ -158,9 +158,6 @@ export class CircuitInternal {
         if (!p)
             throw new Error(`Invariant Violation: getPortPortMapChecked(${id}) unexpectedly returned undefined`);
         return p;
-    }
-    private getPortByIDChecked(id: GUID): Schema.Port {
-        return this.getPortByID(id).unwrap();
     }
 
 
