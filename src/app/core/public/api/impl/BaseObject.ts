@@ -25,7 +25,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public get kind(): string {
-        return this.internal.getObjByID(this.id)!.kind;
+        return this.internal.getObjByID(this.id).unwrap().kind;
     }
 
     public get id(): string {
@@ -37,9 +37,9 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public set isSelected(val: boolean) {
-        if (val) 
+        if (val)
             this.selections.select(this.objID);
-        else 
+        else
             this.selections.deselect(this.objID);
     }
     public get isSelected(): boolean {
