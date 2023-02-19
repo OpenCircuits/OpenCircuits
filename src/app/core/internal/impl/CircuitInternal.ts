@@ -127,10 +127,9 @@ export class CircuitInternal {
             }
             case "ConnectWireOp": {
                 return this.getPortByID(op.w.p1)
-                    .andThen((port1) => this.getPortByID(op.w.p2)
-                        .andThen((port2) => checkWireConnectivity(port1, port2)
-                            .andThen((_) => checkWireConnectivity(port2, port1)
-                                .map((_) => { (op.inverted ? deleteWire : addWire)(op.w); }))));
+                    .andThen((p1) => this.getPortByID(op.w.p2)
+                        .andThen((p2) => checkWireConnectivity(p1, p2).and(checkWireConnectivity(p2, p1)))
+                        .map((_) => { (op.inverted ? deleteWire : addWire)(op.w); }));
             }
             case "SplitWireOp": {
                 throw new Error("Unimplemented");
@@ -375,13 +374,8 @@ export class CircuitInternal {
             .andThen((newPorts) => {
                 // TODO: match old ports to new ports based on group/index so ID's / refs are reused.
 
-                // Collect old ports
-                const oldPorts = [] as Schema.Port[];
-                this.getPortsForComponent(id)
-                    .uponOk((ids) => ids.forEach((id) => {
-                        // Safe unwrap according to invariants
-                        oldPorts.push(this.getPortByID(id).unwrap());
-                    })).unwrap();
+                // Collect old ports.  unwraps are safe b/c invariants require component/ports exists.
+                const oldPorts = [...this.getPortsForComponent(id).unwrap()].map((id) => this.getPortByID(id).unwrap());
 
                 // TODO: collect deleted wires
 
