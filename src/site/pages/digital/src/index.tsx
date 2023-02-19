@@ -1,10 +1,10 @@
-import {CreateCircuit, DigitalCircuit}                from "digital/public";
-import React, {useEffect, useLayoutEffect, useRef}                          from "react";
-import ReactDOM                       from "react-dom";
-import ReactGA                        from "react-ga";
-import {Provider}                     from "react-redux";
-import {applyMiddleware, createStore} from "redux";
-import thunk, {ThunkMiddleware}       from "redux-thunk";
+import {CreateCircuit, DigitalCircuit}             from "digital/public";
+import React, {useEffect, useLayoutEffect, useRef} from "react";
+import ReactDOM                                    from "react-dom";
+import ReactGA                                     from "react-ga";
+import {Provider}                                  from "react-redux";
+import {applyMiddleware, createStore}              from "redux";
+import thunk, {ThunkMiddleware}                    from "redux-thunk";
 
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
@@ -22,23 +22,23 @@ import {AppState, AppStore} from "./state";
 import {AllActions}         from "./state/actions";
 import {reducers}           from "./state/reducers";
 
-import ImageFiles from "./data/images.json";
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
-import {useDeltaMousePos, useMousePos} from "shared/utils/hooks/useMousePos";
-import {useKey} from "shared/utils/hooks/useKey";
-import {V} from "Vector";
-import {useDocEvent} from "shared/utils/hooks/useDocEvent";
+import ImageFiles         from "./data/images.json";
+import {useWindowSize}    from "shared/utils/hooks/useWindowSize";
+import {useDeltaMousePos} from "shared/utils/hooks/useMousePos";
+import {useKey}           from "shared/utils/hooks/useKey";
+import {V}                from "Vector";
+import {useDocEvent}      from "shared/utils/hooks/useDocEvent";
 
 
-const useTranslateTool = (circuit: DigitalCircuit) => {
-    const { dx, dy } = useDeltaMousePos();
+const usePanTool = (circuit: DigitalCircuit) => {
+    const { dx, dy, isMouseDown } = useDeltaMousePos();
     const altKey = useKey("Alt");
 
     useEffect(() => {
-        if (!altKey)
+        if (!altKey || !isMouseDown)
             return;
         circuit.camera.translate(V(-dx, -dy, "screen"));
-    }, [circuit, dx, dy, altKey]);
+    }, [circuit, dx, dy, isMouseDown, altKey]);
 }
 
 const useZoomTool = (circuit: DigitalCircuit) => {
@@ -54,11 +54,11 @@ const useZoomTool = (circuit: DigitalCircuit) => {
     }, [circuit]);
 }
 
-const MainCircuit = ({ circuit } : { circuit: DigitalCircuit }) => {
+const MainCircuit = ({ circuit }: { circuit: DigitalCircuit }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { w, h } = useWindowSize();
 
-    useTranslateTool(circuit);
+    usePanTool(circuit);
     useZoomTool(circuit);
 
     useLayoutEffect(() => {
@@ -72,7 +72,7 @@ const MainCircuit = ({ circuit } : { circuit: DigitalCircuit }) => {
     useLayoutEffect(() => circuit.resize(w, h), [w, h]);
 
     return (
-        <canvas 
+        <canvas
             ref={canvasRef}
             width={w}
             height={h} />

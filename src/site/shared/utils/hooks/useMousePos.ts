@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useDocEvent} from "./useDocEvent";
+import {useDocEvent}         from "./useDocEvent";
 
 
 export const useMousePos = () => {
@@ -43,12 +43,14 @@ export const useMouseDownPos = () => {
 }
 
 export const useDeltaMousePos = () => {
-    const [{ x, y, px, py }, setState] = useState({
+    const [{ x, y, px, py, isMouseDown }, setState] = useState({
         x: 0,
         y: 0,
 
         px: 0,
         py: 0,
+
+        isMouseDown: false,
     });
 
     useEffect(() => {
@@ -58,16 +60,27 @@ export const useDeltaMousePos = () => {
                 y: ev.pageY,
 
                 px: prevState.x,
-                py: prevState.y
+                py: prevState.y,
+
+                isMouseDown: prevState.isMouseDown,
             }));
         }
+        const mouseUpListener   = () => setState((prevState) => ({ ...prevState, isMouseDown: false }));
+        const mouseDownListener = () => setState((prevState) => ({ ...prevState, isMouseDown: true }));
 
+        window.addEventListener("pointerup", mouseUpListener);
+        window.addEventListener("pointerdown", mouseDownListener);
         window.addEventListener("pointermove", mouseListener);
-        return () => window.removeEventListener("pointermove", mouseListener);
+        return () => {
+            window.removeEventListener("pointerup", mouseUpListener);
+            window.removeEventListener("pointerdown", mouseDownListener);
+            window.removeEventListener("pointermove", mouseListener);
+        }
     }, [setState]);
 
     return {
         dx: x - px,
-        dy: y - py
+        dy: y - py,
+        isMouseDown,
     };
 }
