@@ -1,14 +1,15 @@
-import {SVGDrawing} from "svg2canvas";
-import {GUID} from "..";
-import {CircuitInternal} from "../impl/CircuitInternal";
-import {SelectionsManager} from "../impl/SelectionsManager";
-import {CameraView} from "./CameraView";
-import {ComponentView} from "./ComponentView";
-import {RenderGrid} from "./rendering/renderers/GridRenderer";
-import {RenderHelper} from "./rendering/RenderHelper";
+import {SVGDrawing}                          from "svg2canvas";
+import {GUID}                                from "..";
+import {CircuitInternal}                     from "../impl/CircuitInternal";
+import {SelectionsManager}                   from "../impl/SelectionsManager";
+import {CameraView}                          from "./CameraView";
+import {ComponentView}                       from "./ComponentView";
+import {RenderGrid}                          from "./rendering/renderers/GridRenderer";
+import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
-import {RenderState} from "./rendering/RenderState";
-import {RenderQueue} from "./RenderQueue";
+import {RenderState}                         from "./rendering/RenderState";
+import {RenderQueue}                         from "./RenderQueue";
+import {WireView}                            from "./WireView";
 
 
 export abstract class CircuitView {
@@ -23,7 +24,7 @@ export abstract class CircuitView {
     protected readonly renderer: RenderHelper;
 
     protected componentViews: Map<GUID, ComponentView>;
-    // protected wireViews: Map<GUID, WireView>;
+    protected wireViews: Map<GUID, WireView>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
         this.circuit = circuit;
@@ -37,7 +38,7 @@ export abstract class CircuitView {
         this.renderer = new RenderHelper(this.camera);
 
         this.componentViews = new Map();
-        // this.wireViews = new Map();
+        this.wireViews = new Map();
 
         // Subscribe to renders, actually render
         this.queue.subscribe(() => this.renderInternal());
@@ -57,6 +58,16 @@ export abstract class CircuitView {
                         // Else edit
                         this.componentViews.get(objID)!.setDirty();
                     }
+                } else if (circuit.hasWire(objID)) {
+                    const wire = circuit.getWireByID(objID)!;
+
+                    // Add to views map if we don't have it yet
+                    if (!this.wireViews.has(objID)) {
+                        this.wireViews.set(objID, this.constructWireView(wire.kind, objID));
+                    } else {
+                        // Else edit
+                        this.wireViews.get(objID)!.setDirty();
+                    }
                 }
             }
 
@@ -72,7 +83,7 @@ export abstract class CircuitView {
             //     const obj = this.circuit.getObjByID(id);
             //     if (!obj)
             //         throw new Error(`CircuitView: Failed to find object in selection change with ID ${id}!`);
-                
+
             //     // Dirty object
             //     if (obj.baseKind === "Component")
             //         this.componentViews.get(id)!.setDirty();
@@ -98,6 +109,7 @@ export abstract class CircuitView {
     }
 
     protected abstract constructComponentView(kind: string, id: GUID): ComponentView;
+    protected abstract constructWireView(kind: string, id: GUID): WireView;
 
     protected renderInternal() {
         this.renderer.clear();
@@ -107,7 +119,8 @@ export abstract class CircuitView {
             RenderGrid(this.state);
 
         // Render wires
-        
+        this.wireViews.forEach((view) => view.render());
+
         // Render components
         // TODO: Render by depth
         this.componentViews.forEach((view) => view.render());

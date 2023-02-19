@@ -17,7 +17,7 @@ export class LEDView extends ComponentView {
     }
 
     protected get color(): string {
-        return (this.component.props["color"] as string);
+        return (this.component.props["color"] as string ?? "#ffffff");
     }
 
     protected get isOn(): boolean {

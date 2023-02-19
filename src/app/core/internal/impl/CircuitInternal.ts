@@ -1,4 +1,4 @@
-import {GUID} from "core/schema/GUID";
+import {GUID}       from "core/schema/GUID";
 import {Observable} from "core/utils/Observable";
 
 import {Schema} from "../../schema";
@@ -80,9 +80,6 @@ export class CircuitInternal extends Observable {
                 throw new Error("Wire connectivity is not allowed");
         };
 
-        // TODO: Publish actual event details
-        this.publish({});
-
         switch (op.kind) {
             case "PlaceComponentOp": {
                 if (op.inverted) {
@@ -157,6 +154,9 @@ export class CircuitInternal extends Observable {
             default:
                 throw new Error("TODO: impossible block");
         }
+
+        // TODO: Publish actual event details
+        this.publish({});
     }
 
     private getPortPortMapChecked(id: GUID): Set<GUID> {
@@ -186,8 +186,8 @@ export class CircuitInternal extends Observable {
         this.transactionOps = [];
 
         this.camera = {
-            x: 0,
-            y: 0,
+            x:    0,
+            y:    0,
             zoom: 0.02,
         };
 
@@ -488,7 +488,7 @@ export class CircuitInternal extends Observable {
         const ports = this.getWireByID(id);
         if (!ports)
             throw new Error(`CircuitInternal: Attempted to get ports for wire ${id}, but failed to find an entry!`);
-        return [ ports.p1, ports.p1 ];
+        return [ports.p1, ports.p2];
     }
 
     public getWiresForPort(id: GUID): ReadonlySet<GUID> {

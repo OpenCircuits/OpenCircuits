@@ -1,5 +1,5 @@
-import {SVGDrawing} from "svg2canvas";
-import {Style}      from "./Style";
+import {ColorToHex, SVGDrawing, blend, parseColor} from "svg2canvas";
+import {Style}                                     from "./Style";
 
 
 export interface RenderOptions {
@@ -25,6 +25,8 @@ export interface RenderOptions {
     ledLightRadius: number;
     ledLightIntensity: number;
 
+    wireThickness: number;
+
     addImage(key: string, img: SVGDrawing): void;
     getImage(key: string): SVGDrawing | undefined;
 
@@ -36,6 +38,7 @@ export interface RenderOptions {
     fillStyle(selected: boolean): Style;
 
     portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style };
+    wireStyle(selected: boolean, color: string): Style;
 }
 
 export class DefaultRenderOptions implements RenderOptions {
@@ -60,6 +63,8 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public ledLightRadius = 1.5;
     public ledLightIntensity = 0.75;
+
+    public wireThickness = 0.14;
 
     private images: Record<string, SVGDrawing>;
 
@@ -109,5 +114,22 @@ export class DefaultRenderOptions implements RenderOptions {
                 this.portBorderWidth,
             ),
         };
+    }
+    public wireStyle(selected: boolean, color: string): Style {
+        // Changes color of wires: when wire is selected it changes to the color
+        //  selected blended with constant color SELECTED_FILL_COLOR
+        const selectedColor = ColorToHex(blend(
+            parseColor(color),
+            parseColor(this.selectedFillColor),
+            0.2
+        ));
+
+        // @TODO move to function for getting color based on being selection/on/off
+         // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
+        return new Style(
+            undefined,
+            (selected ? selectedColor : color),
+            this.wireThickness
+        );
     }
 }

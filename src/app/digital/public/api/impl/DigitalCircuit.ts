@@ -1,18 +1,18 @@
-import {CircuitInternal} from "core/internal";
-import {CircuitLog} from "core/internal/impl/CircuitLog";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
-import {CircuitView} from "core/internal/view/CircuitView";
-import {CircuitImpl} from "core/public/api/impl/Circuit";
+import {CircuitInternal}                    from "core/internal";
+import {CircuitLog}                         from "core/internal/impl/CircuitLog";
+import {SelectionsManager}                  from "core/internal/impl/SelectionsManager";
+import {CircuitView}                        from "core/internal/view/CircuitView";
+import {CircuitImpl}                        from "core/public/api/impl/Circuit";
 import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
-import {DigitalSim} from "digital/internal/sim/DigitalSim";
-import {DigitalCircuitView} from "digital/internal/views/DigitalCircuitView";
+import {DigitalSim}                         from "digital/internal/sim/DigitalSim";
+import {DigitalCircuitView}                 from "digital/internal/views/DigitalCircuitView";
 
 import {DigitalCircuit}       from "../DigitalCircuit";
 import {DigitalComponent}     from "../DigitalComponent";
 import {DigitalComponentInfo} from "../DigitalComponentInfo";
 import {DigitalPort}          from "../DigitalPort";
 import {DigitalWire}          from "../DigitalWire";
-import {DigitalCircuitState} from "./DigitalCircuitState";
+import {DigitalCircuitState}  from "./DigitalCircuitState";
 
 import {DigitalComponentImpl} from "./DigitalComponent";
 import {DigitalPortImpl}      from "./DigitalPort";
@@ -53,7 +53,14 @@ export class DigitalCircuitImpl extends CircuitImpl<
         //         if you try to connect a port to itself or something
         //         and we should handle this HERE and return undefined
         //         in that case
-        throw new Error("Unimplemented");
+
+        this.circuit.beginTransaction();
+
+        const id = this.circuit.connectWire("DigitalWire", p1.id, p2.id, {});
+
+        this.circuit.commitTransaction();
+
+        return new DigitalWireImpl(this, id);
     }
 
     public set propagationTime(val: number) {

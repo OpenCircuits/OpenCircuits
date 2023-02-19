@@ -1,12 +1,13 @@
-import {DirtyVar} from "core/utils/DirtyVar";
-import {Transform} from "math/Transform";
-import {SVGDrawing} from "svg2canvas";
-import {V, Vector} from "Vector";
-import {GUID} from "..";
-import {BaseView} from "./BaseView";
+import {Schema}      from "core/schema";
+import {DirtyVar}    from "core/utils/DirtyVar";
+import {Transform}   from "math/Transform";
+import {SVGDrawing}  from "svg2canvas";
+import {V, Vector}   from "Vector";
+import {GUID}        from "..";
+import {BaseView}    from "./BaseView";
 import {RenderState} from "./rendering/RenderState";
-import {Circle} from "./rendering/shapes/Circle";
-import {Line} from "./rendering/shapes/Line";
+import {Circle}      from "./rendering/shapes/Circle";
+import {Line}        from "./rendering/shapes/Line";
 
 
 export interface PortPos {
@@ -57,7 +58,7 @@ export abstract class ComponentView extends BaseView {
             .filter((p) => (this.circuit.getPortByID(p)?.group === group))
             .length;
     }
-    
+
     protected override renderInternal(): void {
         const { renderer } = this.state;
 
@@ -66,7 +67,7 @@ export abstract class ComponentView extends BaseView {
 
         this.renderPorts();
         this.renderComponent();
-        this.drawImg();        
+        this.drawImg();
     }
 
     protected renderPorts(): void {
@@ -78,14 +79,11 @@ export abstract class ComponentView extends BaseView {
             const port = this.circuit.getPortByID(id);
             if (!port)
                 throw new Error(`ComponentView: Failed to find port with ID ${id}!`);
-            
-            const pPos = this.calcPortPosition(port.group, port.index);
-            const origin = pPos.origin;
-            const target = (pPos.target ?? origin.add(pPos.dir.scale(options.defaultPortLength)));
 
-            // Render port
+            const { origin, target } = this.getPortPos(port);
             const { lineStyle, circleStyle } = options.portStyle(selections.has(id), this.isSelected);
 
+            // Render port
             renderer.draw(new Line(origin, target), lineStyle);
             renderer.draw(new Circle(target, options.defaultPortRadius), circleStyle);
         });
@@ -108,6 +106,25 @@ export abstract class ComponentView extends BaseView {
     // Temporary hack
     public setDirty(): void {
         this.transform.setDirty();
+    }
+
+    public getPortPos(port: Readonly<Schema.Port>): PortPos {
+        const pPos = this.calcPortPosition(port.group, port.index);
+
+        const origin = pPos.origin;
+        const target = (pPos.target ?? origin.add(pPos.dir.scale(this.state.options.defaultPortLength)));
+        const dir    = (pPos.dir    ?? target.sub(origin).normalize());
+
+        return { origin, target, dir };
+    }
+
+    public getWorldPortPos(port: Readonly<Schema.Port>): PortPos {
+        const { origin, target, dir } = this.getPortPos(port);
+        return {
+            origin: this.transform.get().toWorldSpace(origin),
+            target: this.transform.get().toWorldSpace(target),
+            dir:    dir.rotate(this.transform.get().getAngle()),
+        };
     }
 
     protected abstract calcPortPosition(group: string, index: number): PartialPortPos;
