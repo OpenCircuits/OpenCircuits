@@ -97,6 +97,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     });
     // Loops through the shorcuts 2d array in AnalogItemNav to see if any shortcuts
     useDocEvent("keydown", (ev) => {
+        // Loop through each of the input shortcuts
         for (var short of shortcuts){
             if (ev.key === short[0]){
                 setCurPressedObj(info.currentlyPressedObject);
