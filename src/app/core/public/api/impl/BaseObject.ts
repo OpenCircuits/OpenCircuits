@@ -20,12 +20,16 @@ export abstract class BaseObjectImpl implements BaseObject {
     protected get circuit(): CircuitInternal {
         return this.state.circuit;
     }
+    
     protected get selections(): SelectionsManager {
         return this.state.selections;
     }
 
     public get kind(): string {
-        throw new Error("Unimplemented");
+        const tmp = this.circuit.getObjByID(this.objID);
+        if (!tmp)
+            throw new Error(`Object does not exist!`);
+        return tmp.kind;
     }
 
     public get id(): string {
@@ -42,6 +46,7 @@ export abstract class BaseObjectImpl implements BaseObject {
         else 
             this.selections.deselect(this.objID);
     }
+
     public get isSelected(): boolean {
         return this.selections.isSelected(this.objID);
     }
@@ -58,11 +63,13 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
 
     public setProp(key: string, val: Prop): void {
-        throw new Error("Unimplemented");
+        this.circuit.setPropFor(this.objID, key, val);
     }
+    
     public getProp(key: string): Prop {
         throw new Error("Unimplemented");
     }
+
     public getProps(): Record<string, Prop> {
         throw new Error("Unimplemented");
     }
