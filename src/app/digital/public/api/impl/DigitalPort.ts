@@ -20,4 +20,15 @@ export class DigitalPortImpl extends PortImpl<
         this.isInputPort  =  (this.parent.info.inputPortGroups.includes(this.group));
         this.isOutputPort = (this.parent.info.outputPortGroups.includes(this.group));
     }
+
+    // returns true if a port is available, false otherwise
+    public isAvailable(): boolean {
+        // output port is always available
+        if (this.isOutputPort) 
+            return true;
+        
+        // check if input port is connected ...
+
+        return this.isInputPort;
+    }
 }

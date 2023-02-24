@@ -8,4 +8,6 @@ export interface DigitalPort extends Port {
 
     readonly isInputPort: boolean;
     readonly isOutputPort: boolean;
+
+    isAvailable(): boolean;
 }

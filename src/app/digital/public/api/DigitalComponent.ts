@@ -6,7 +6,7 @@ import {DigitalComponentInfo} from "./DigitalComponentInfo";
 export interface DigitalComponent extends Component {
     readonly info: DigitalComponentInfo;
 
-    firstAvailable(portGroup: string): DigitalPort;
+    firstAvailable(portGroup: string): DigitalPort | undefined;
 
     // public function firstAvailable(portGroup: string): DigitalPort {
     //     let inputPorts;
