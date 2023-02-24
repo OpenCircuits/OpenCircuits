@@ -32,6 +32,8 @@ export const AnalogItemNav = ({ info }: Props) => {
             info={info}
             config={itemNavConfig}
             getImgSrc={getImgSrc} 
-            shortcuts = {[['r', "Resistor"]]}/>
+            shortcuts = {[['r', "Resistor"],
+                        ['c', "Capacitor"],
+                        ['g', "Ground"]]}/>
     );
 }

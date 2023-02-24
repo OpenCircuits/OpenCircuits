@@ -65,7 +65,7 @@ export const KeyboardShortcutsPopup = () => {
                 </thead>
                 <tbody>
                     <Shortcut os={os} label="Undo"          keys={["Z"]}          mod />
-                    <Shortcut os={os} label="Redo"          keys={["Shift", "Z"]} mod />
+                    <Shortcut os={os} label="Redo"          keys={["Y"]} mod />
                     <Shortcut os={os} label="Cut"           keys={["X"]}          mod />
                     <Shortcut os={os} label="Copy"          keys={["C"]}          mod />
                     <Shortcut os={os} label="Paste"         keys={["V"]}          mod />
