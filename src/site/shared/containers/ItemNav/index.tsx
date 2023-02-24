@@ -95,10 +95,12 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         if (info.currentlyPressedObject)
             setCurPressedObj(info.currentlyPressedObject);
     });
+    // Update currentlyPressedObj according to input keyboard shortcuts
     useDocEvent("keydown", (ev) => {
+        // Loop through each of the input shortcuts
         for (var short of shortcuts){
             if (ev.key === short[0]){
-
+                setCurPressedObj(undefined)
             }
         }
         
