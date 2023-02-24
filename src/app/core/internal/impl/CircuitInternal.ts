@@ -101,7 +101,7 @@ export class CircuitInternal {
             case "SetComponentPortsOp": {
                 const [newPorts, oldPorts] = op.inverted ? [op.oldPorts, op.newPorts] : [op.newPorts, op.oldPorts];
 
-                if (newPorts && newPorts.length != 0 && !IsValidPortList(this.getComponentInfoByID(op.component), newPorts))
+                if (newPorts && !IsValidPortList(this.getComponentInfoByID(op.component), newPorts))
                     throw new Error("Invalid new port list for component");
 
                 // TODO: factor in overlap between new/old ports to preserve wires when possible.

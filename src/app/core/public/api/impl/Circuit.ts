@@ -195,23 +195,25 @@ export abstract class CircuitImpl implements Circuit {
     // Wire connection can fail if i.e. p1 is reference-equal to p2
     public abstract connectWire(p1: Port, p2: Port): Wire | undefined;
 
+    /** Will delete all components and wires
+     * contained within the Obj[] array
+     * Ignores ports as deleting ports is a no-op
+     * 
+     * @param Obj[] should only contain 
+     * wires, components, and maybe ports
+    */
     public deleteObjs(objs: Obj[]): void {
         this.circuit.beginTransaction();
-        // TODO(friedj)
-        //  See `placeComponentAt` for some general guidance
-        //  Note that to delete a Component, you have to set its "Port Config" to `{}` first
-        //   which will remove all of its ports
-        //  Then it's safe to delete the Component directly
-        //  And also note that deleting Ports is a no-op, just ignore that case
-        for(let i = 0; i < objs.length; i++) 
+        for(const obj of objs) 
         {
-            //port = no-op
-            if(objs[i].baseKind != "Port") {
-                if(objs[i].baseKind == "Component") {
-                    this.circuit.setPortConfig(objs[i].id, {});
-                }
-                delete objs[i];
+            if(obj.baseKind == "Port") { continue; }
+            if(obj.baseKind == "Component") 
+            {
+                this.circuit.setPortConfig(obj.id, {});
+                this.circuit.deleteComponent(obj.id);
+                continue;
             }
+            this.circuit.deleteWire(obj.id);
         }
         this.circuit.commitTransaction();
     }
