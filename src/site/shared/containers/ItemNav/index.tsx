@@ -53,13 +53,14 @@ type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
     additionalData?: D;
+    shortcuts: string[][];
     getImgSrc: (c: Component) => string;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
+export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts,  onDelete,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
     const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
         (state) => ({ ...state.itemNav })
@@ -94,6 +95,14 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         if (info.currentlyPressedObject)
             setCurPressedObj(info.currentlyPressedObject);
     });
+    useDocEvent("keydown", (ev) => {
+        for (var short of shortcuts){
+            if (ev.key === short[0]){
+
+            }
+        }
+        
+    })
     useDocEvent("mouseup",    () => setCurPressedObj(undefined));
     useDocEvent("mouseleave", () => setCurPressedObj(undefined));
     function handleItemNavDrag() { // Issue #478
