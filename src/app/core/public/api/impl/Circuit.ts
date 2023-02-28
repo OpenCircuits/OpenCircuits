@@ -58,28 +58,28 @@ export abstract class CircuitImpl<
     }
 
     public get id(): string {
-        throw new Error("Method not implemented.");
+        return this.circuit.getCircuitMetadata().id;
     }
 
     public set name(val: string) {
         throw new Error("Method not implemented.");
     }
     public get name(): string {
-        throw new Error("Method not implemented.");
+        return this.circuit.getCircuitMetadata().name;
     }
 
     public set desc(val: string) {
         throw new Error("Method not implemented.");
     }
     public get desc(): string {
-        throw new Error("Method not implemented.");
+        return this.circuit.getCircuitMetadata().desc;
     }
 
     public set thumbnail(val: string) {
         throw new Error("Method not implemented.");
     }
     public get thumbnail(): string {
-        throw new Error("Method not implemented.");
+        return this.circuit.getCircuitMetadata().thumb;
     }
 
     public set locked(val: boolean) {

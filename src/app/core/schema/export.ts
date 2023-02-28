@@ -7,3 +7,4 @@ export * from "./Wire";
 export * from "./Port";
 export * from "./Obj";
 export * from "./Circuit";
+export * from "./CircuitMetadata";
