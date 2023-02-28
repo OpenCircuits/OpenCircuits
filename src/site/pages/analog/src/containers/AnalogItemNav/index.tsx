@@ -8,6 +8,7 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {ItemNav} from "shared/containers/ItemNav";
 
 import itemNavConfig from "site/analog/data/itemNavConfig.json";
+import { Resistor } from "analog/models/eeobjects";
 
 
 type Props = {
@@ -32,8 +33,11 @@ export const AnalogItemNav = ({ info }: Props) => {
             info={info}
             config={itemNavConfig}
             getImgSrc={getImgSrc} 
-            shortcuts = {[['r', "Resistor"],
-                        ['c', "Capacitor"],
-                        ['g', "Ground"]]}/>
+            shortcuts = {[["r", "Resistor"],
+                        ['c', "Capacitor"],	                        
+                        ['g', "Ground"],                     
+                        ["l", "Inductor"],
+                        ["v", "VoltageSource"],
+                        ["i", "CurrentSource"]]}/>
     );
 }
