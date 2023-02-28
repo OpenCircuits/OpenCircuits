@@ -37,6 +37,9 @@ export class CircuitInternal {
     protected portPortMap: Map<GUID, Set<GUID>>; // Ports to other ports (bidirectional)
     protected portWireMap: Map<GUID, Set<GUID>>; // Ports to their wires
 
+    // Circuit Metadata
+    protected CircuitMetadata: Schema.CircuitMetadata;
+
     // Placed here for proximity to member declarations
     private applyOp(op: CircuitOp): Result {
         // TODO: optimize portPortMap/portWireMap usage when we know ports are being deleted.
@@ -151,7 +154,7 @@ export class CircuitInternal {
                 throw new Error("TODO: impossible block");
         }
     }
-
+    
     private getPortPortMapChecked(id: GUID): Set<GUID> {
         const p = this.portPortMap.get(id);
         if (!p)
@@ -163,7 +166,7 @@ export class CircuitInternal {
     // TODO: load with some initial state
     public constructor(objInfo: ObjInfoProvider, log: CircuitLog) {
         this.objInfo = objInfo;
-
+        
         this.log = log;
         this.clock = log.clock;
 
@@ -175,6 +178,8 @@ export class CircuitInternal {
         this.componentPortsMap = new Map();
         this.portPortMap = new Map();
         this.portWireMap = new Map();
+
+        this.CircuitMetadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0"}
 
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
@@ -398,7 +403,6 @@ export class CircuitInternal {
         if (!obj)
             return false;
         return (obj.baseKind === kind);
-
     }
     public hasComp(id: GUID): boolean {
         return this.hasType(id, "Component");
@@ -449,5 +453,13 @@ export class CircuitInternal {
     public getWiresForPort(id: GUID): Result<ReadonlySet<GUID>> {
         return WrapResOrE(this.portWireMap.get(id),
             `CircuitInternal: Attempted to get wires for port ${id}, but failed to find an entry!`);
+    }
+
+    public setCircuitMetadata(metadata: Schema.CircuitMetadata) {
+      throw new Error("Unimplemented");
+    }
+
+    public getCircuitMetadata(): Readonly<Schema.CircuitMetadata> {
+      return this.CircuitMetadata;
     }
 }
