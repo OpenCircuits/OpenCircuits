@@ -23,12 +23,14 @@ export class DigitalPortImpl extends PortImpl<
 
     // returns true if a port is available, false otherwise
     public isAvailable(): boolean {
-        // output port is always available
-        if (this.isOutputPort) 
+        if (this.isOutputPort) { // output port case
             return true;
+        } else { // input port case 
+            const portWire = this.internal.getWiresForPort(this.id);
+            if (portWire === undefined)
+                return true;
+        }
         
-        // check if input port is connected ...
-
-        return this.isInputPort;
+        return false
     }
 }

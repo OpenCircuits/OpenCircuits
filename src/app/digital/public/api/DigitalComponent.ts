@@ -7,16 +7,4 @@ export interface DigitalComponent extends Component {
     readonly info: DigitalComponentInfo;
 
     firstAvailable(portGroup: string): DigitalPort | undefined;
-
-    // public function firstAvailable(portGroup: string): DigitalPort {
-    //     let inputPorts;
-    //     if (portGroup === "input") 
-    //         inputPorts = DigitalComponentInfo.inputPortGroups;
-    //     else if (portGroup === "output") 
-    //         inputPorts = DigitalComponentInfo.inputPortGroups;
-        
-        
-    //         return DigitalPortImpl;
-    
-    // }
 }

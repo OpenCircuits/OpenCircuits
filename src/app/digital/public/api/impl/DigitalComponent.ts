@@ -1,3 +1,4 @@
+import { CircuitInternal } from "core/internal";
 import {ComponentImpl} from "core/public/api/impl/Component";
 
 import {DigitalComponent}     from "../DigitalComponent";
@@ -30,15 +31,12 @@ export class DigitalComponentImpl extends ComponentImpl<
             return new DigitalPortImpl(this.circuit, Ports[0]);
         }
             
-        // Case: no "input" ports are available
-        if (Ports.length == 0) {
-            return undefined;
-        } 
-
+        // Find first open input port
         for (var portNum of Ports) {
-            
+            if (new DigitalPortImpl(this.circuit, portNum).isAvailable())
+                return new DigitalPortImpl(this.circuit, portNum);   
         }
-        return new DigitalPortImpl(this.circuit, Ports[0]);
-    
+
+        return undefined;
     }
 }
