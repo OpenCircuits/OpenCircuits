@@ -455,8 +455,8 @@ export class CircuitInternal {
             `CircuitInternal: Attempted to get wires for port ${id}, but failed to find an entry!`);
     }
 
-    public setCircuitMetadata(metadata: Schema.CircuitMetadata) {
-      throw new Error("Unimplemented");
+    public setCircuitMetadata(newMetadata: Schema.CircuitMetadata) {
+      this.CircuitMetadata = newMetadata;
     }
 
     public getCircuitMetadata(): Readonly<Schema.CircuitMetadata> {
