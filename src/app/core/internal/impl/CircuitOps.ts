@@ -11,6 +11,13 @@ export interface PlaceComponentOp {
     // and does not introduce any problematic intermediary states.
 }
 
+export interface ReplaceComponentOp {
+    kind: "ReplaceComponentOp";
+    component: Schema.GUID;
+    oldKind: string;
+    newKind: string;
+}
+
 export interface ConnectWireOp {
     kind: "ConnectWireOp";
     inverted: boolean;
@@ -38,12 +45,17 @@ export interface SetComponentPortsOp {
     kind: "SetComponentPortsOp";
     inverted: boolean;
     component: Schema.GUID;
-    newPorts?: Schema.Port[];
-    oldPorts?: Schema.Port[];
-    deadWires?: Schema.Wire[];
+    addedPorts: Schema.Port[];
+    removedPorts: Schema.Port[];
+    deadWires: Schema.Wire[];
 }
 
-export type CircuitOp = PlaceComponentOp | ConnectWireOp | SplitWireOp | SetPropertyOp | SetComponentPortsOp;
+export type CircuitOp = PlaceComponentOp
+                      | ReplaceComponentOp
+                      | ConnectWireOp
+                      | SplitWireOp
+                      | SetPropertyOp
+                      | SetComponentPortsOp;
 
 export function InvertCircuitOp(op: CircuitOp): CircuitOp {
     switch (op.kind) {
@@ -54,6 +66,8 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
             return { ...op, inverted: !op.inverted };
         case "SetPropertyOp":
             return { ...op, newVal: op.oldVal, oldVal: op.newVal };
+        case "ReplaceComponentOp":
+            return { ...op, newKind: op.oldKind, oldKind: op.newKind };
     }
 }
 
@@ -64,7 +78,10 @@ export function TransformCircuitOp(targetOp: CircuitOp, withOp: CircuitOp): Resu
     return Ok(targetOp);
 }
 
-export function TransformCircuitOps(targetOps: CircuitOp[], withOps: CircuitOp[]): Result<CircuitOp[]> {
+export function TransformCircuitOps(
+    targetOps: readonly CircuitOp[],
+    withOps: readonly CircuitOp[]
+): Result<readonly CircuitOp[]> {
     if (withOps.length === 0)
         return Ok(targetOps);
     return ResultUtil.mapIter(targetOps.values(), (op) =>

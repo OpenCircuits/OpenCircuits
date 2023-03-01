@@ -1,4 +1,4 @@
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
@@ -16,7 +16,8 @@ import {Obj}       from "../Obj";
 import {Port}      from "../Port";
 import {Wire}      from "../Wire";
 
-import {CircuitState} from "./CircuitState";
+import {CircuitState}    from "./CircuitState";
+import {CircuitDocument} from "core/internal/impl/CircuitDocument";
 
 
 export abstract class CircuitImpl<
@@ -32,7 +33,7 @@ export abstract class CircuitImpl<
     public isLocked: boolean;
 
     public constructor(provider: ObjInfoProvider) {
-        this.circuit = new CircuitInternal(provider, new CircuitLog());
+        this.circuit = new CircuitInternal(new CircuitLog(), new CircuitDocument(provider));
         this.view = undefined;
 
         this.selections = new SelectionsManager();
@@ -115,7 +116,7 @@ export abstract class CircuitImpl<
     public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
-    
+
     public selectedObjs(): Obj[] {
         return this.selections.get()
                .map((id) => this.getObj(id))
@@ -123,31 +124,31 @@ export abstract class CircuitImpl<
     }
 
     public getComponent(id: string): ComponentT | undefined {
-        if (!this.circuit.getCompByID(id))
+        if (!this.circuit.doc.getCompByID(id))
             return undefined;
         return this.constructComponent(id);
     }
     public getWire(id: string): WireT | undefined {
-        if (!this.circuit.getWireByID(id))
+        if (!this.circuit.doc.getWireByID(id))
             return undefined;
         return this.constructWire(id);
     }
     public getPort(id: string): PortT | undefined {
-        if (!this.circuit.getPortByID(id))
+        if (!this.circuit.doc.getPortByID(id))
             return undefined;
         return this.constructPort(id);
     }
     public getObj(id: string): ComponentT | WireT | PortT | undefined {
-        if (this.circuit.hasComp(id))
+        if (this.circuit.doc.hasComp(id))
             return this.getComponent(id);
-        if (this.circuit.hasWire(id))
+        if (this.circuit.doc.hasWire(id))
             return this.getWire(id);
-        if (this.circuit.hasPort(id))
+        if (this.circuit.doc.hasPort(id))
             return this.getPort(id);
         return undefined;
     }
     public getObjs(): Obj[] {
-        return [...this.circuit.getObjs()]
+        return [...this.circuit.doc.getObjs()]
             .map((id) => this.getObj(id)!);
     }
     public getComponentInfo(kind: string): ComponentT["info"] | undefined {
@@ -164,7 +165,7 @@ export abstract class CircuitImpl<
                               .filter((comp) => (comp !== undefined)) as Component[];
 
         // Case: no components are selected
-        if (allComponents.length === 0) 
+        if (allComponents.length === 0)
             return V(0,0)
 
         // Case: One or more components are selected
@@ -178,7 +179,7 @@ export abstract class CircuitImpl<
 
     // Object manipulation
     public placeComponentAt(pt: Vector, kind: string): ComponentT {
-        const info = this.circuit.getComponentInfo(kind);
+        const info = this.circuit.doc.getComponentInfo(kind);
 
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();

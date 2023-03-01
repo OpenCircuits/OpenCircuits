@@ -22,7 +22,7 @@ export abstract class ComponentImpl<
     public readonly baseKind = "Component";
 
     protected getObj(): Schema.Component {
-        return this.internal.getCompByID(this.id)
+        return this.internal.doc.getCompByID(this.id)
             .mapErr(AddErrE(`API Component: Attempted to get component with ID ${this.id} could not find it!`))
             .unwrap();
     }
@@ -61,7 +61,7 @@ export abstract class ComponentImpl<
 
     public get ports(): Record<string, PortT[]> {
         return FromConcatenatedEntries(
-            [...this.internal.getPortsForComponent(this.id).unwrap()]
+            [...this.internal.doc.getPortsForComponent(this.id).unwrap()]
             .map((id) => this.circuit.constructPort(id))
             .map((p) => [p.group, p])
         );

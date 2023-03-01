@@ -30,10 +30,14 @@ export interface ComponentInfo extends ObjInfo {
 
 // TODO: seems kind of heavy
 export function CheckPortList(info: ComponentInfo, ports: Schema.Port[]): Result {
+    return info.checkPortConfig(PortListToConfig(ports));
+}
+
+export function PortListToConfig(ports: Schema.Port[]): PortConfig {
     const counts = {} as Record<string, number>;
     ports.forEach(({ group }) =>
         counts[group] = (counts[group] ?? 0) + 1);
-    return info.checkPortConfig(counts);
+    return counts;
 }
 
 export interface ObjInfoProvider {
