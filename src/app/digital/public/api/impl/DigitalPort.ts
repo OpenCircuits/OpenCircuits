@@ -27,7 +27,7 @@ export class DigitalPortImpl extends PortImpl<
             return true;
         } else { // input port case 
             const portWire = this.internal.getWiresForPort(this.id);
-            if (portWire === undefined)
+            if (portWire.size === 0)
                 return true;
         }
         
