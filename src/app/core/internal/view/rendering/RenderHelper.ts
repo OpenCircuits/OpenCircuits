@@ -1,19 +1,18 @@
-import {Matrix2x3} from "math/Matrix";
-import {parseColor, SVGDrawing} from "svg2canvas";
-import {V, Vector} from "Vector";
-import {CameraView} from "../CameraView";
-import {Shape} from "./shapes/Shape";
-import {Style} from "./Style";
+import {Matrix2x3}              from "math/Matrix";
+import {SVGDrawing, parseColor} from "svg2canvas";
+import {V, Vector}              from "Vector";
+import {Prim}                   from "../Prim";
+import {Style}                  from "./Style";
 
 
 export class RenderHelper {
     protected canvas?: HTMLCanvasElement;
-    protected context?: CanvasRenderingContext2D | null;
+    protected context?: CanvasRenderingContext2D;
 
-    protected camera: CameraView;
+    // protected camera: CameraView;
 
-    public constructor(camera: CameraView) {
-        this.camera = camera;
+    public constructor() {
+        // this.camera = camera;
     }
 
     protected get ctx(): CanvasRenderingContext2D {
@@ -24,7 +23,7 @@ export class RenderHelper {
 
     public setCanvas(canvas?: HTMLCanvasElement) {
         this.canvas = canvas;
-        this.context = canvas?.getContext("2d");
+        this.context = canvas?.getContext("2d") as CanvasRenderingContext2D | undefined;
     }
 
     public clear(): void {
@@ -33,19 +32,19 @@ export class RenderHelper {
 
     public transform(m: Matrix2x3) {
         this.ctx.transform(
-            m.get(0), m.get(1), 
-            m.get(2), m.get(3), 
+            m.get(0), m.get(1),
+            m.get(2), m.get(3),
             m.get(4), m.get(5),
         );
     }
 
-    public toWorldSpace(): void {
-        const inv = this.camera.matrix.inverse();
+    public toWorldSpace(mat: Matrix2x3): void {
+        const inv = mat.inverse();
         this.transform(inv.withTranslation(inv.pos.add(this.size.scale(0.5))));
     }
-    public toScreenSpace(): void {
-        this.transform(this.camera.matrix);
-    }
+    // public toScreenSpace(): void {
+    //     this.transform(this.camera.matrix);
+    // }
 
     public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
         const col = (tint ? parseColor(tint) : undefined);
@@ -54,22 +53,23 @@ export class RenderHelper {
         img.draw(this.ctx, pos.x, pos.y, size.x, -size.y, col);
     }
 
-    public draw(shape: Shape, style: Style, alpha = 1): void {
-        this.save();
-        this.setStyle(style, alpha);
+    public draw(prim: Prim): void {
+        prim.render(this.ctx);
+        // this.save();
+        // this.setStyle(style, alpha);
 
-        // Begin path and draw the shape
-        this.ctx.beginPath();
-        shape.draw(this.ctx);
+        // // Begin path and draw the shape
+        // this.ctx.beginPath();
+        // shape.draw(this.ctx);
 
-        // Only fill or stroke if we have to
-        if (style.fill())
-            this.ctx.fill();
-        if (style.stroke())
-            this.ctx.stroke();
+        // // Only fill or stroke if we have to
+        // if (style.fill())
+        //     this.ctx.fill();
+        // if (style.stroke())
+        //     this.ctx.stroke();
 
-        this.ctx.closePath();
-        this.restore();
+        // this.ctx.closePath();
+        // this.restore();
     }
 
     public createRadialGradient(pos1: Vector, r1: number, pos2: Vector, r2: number): CanvasGradient {
@@ -86,7 +86,7 @@ export class RenderHelper {
         this.ctx.moveTo(p.x, p.y);
     }
     public lineTo(p: Vector) {
-        this.ctx.lineTo(p.x, p.y);        
+        this.ctx.lineTo(p.x, p.y);
     }
     public pathLine(p1: Vector, p2: Vector): void {
         this.moveTo(p1);

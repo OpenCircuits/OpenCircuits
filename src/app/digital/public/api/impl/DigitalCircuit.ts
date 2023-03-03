@@ -1,7 +1,6 @@
 import {CircuitInternal}                    from "core/internal";
 import {CircuitLog}                         from "core/internal/impl/CircuitLog";
 import {SelectionsManager}                  from "core/internal/impl/SelectionsManager";
-import {CircuitView}                        from "core/internal/view/CircuitView";
 import {CircuitImpl}                        from "core/public/api/impl/Circuit";
 import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
 import {DigitalSim}                         from "digital/internal/sim/DigitalSim";
@@ -25,14 +24,14 @@ export class DigitalCircuitImpl extends CircuitImpl<
     public sim: DigitalSim;
 
     public constructor() {
-        const provider = CreateDigitalComponentInfoProvider();
-        const circuit = new CircuitInternal(provider, new CircuitLog());
+        const circuit = new CircuitInternal(CreateDigitalComponentInfoProvider(), new CircuitLog());
         const selections = new SelectionsManager();
-        const view = new DigitalCircuitView(circuit, selections);
+        const sim = new DigitalSim(circuit);
+        const view = new DigitalCircuitView(circuit, selections, sim);
 
-        super(provider, circuit, view, selections);
+        super(circuit, view, selections);
 
-        this.sim = new DigitalSim(circuit);
+        this.sim = sim;
     }
 
     public constructComponent(id: string): DigitalComponent {

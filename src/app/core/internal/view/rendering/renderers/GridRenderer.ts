@@ -1,21 +1,22 @@
-import {Rect} from "math/Rect";
-import {V, Vector} from "Vector";
+import {Rect}        from "math/Rect";
+import {V, Vector}   from "Vector";
 import {RenderState} from "../RenderState";
 
 
-export function RenderGrid({ camera, renderer, options }: RenderState) {
+export function RenderGrid({ circuit, renderer, options }: RenderState) {
+    const camera = circuit.getCamera();
+
     const step = options.gridSize;
 
     const size = renderer.size;
 
     const bounds = Rect.FromPoints(
-        Vector.Ceil(size.scale(camera.zoom/2).sub(camera.pos)).scale(-1),
-        Vector.Ceil(size.scale(camera.zoom/2).add(camera.pos)),
+        Vector.Ceil(size.scale(camera.zoom/2).sub(camera.x, camera.y)).scale(-1),
+        Vector.Ceil(size.scale(camera.zoom/2).add(camera.x, camera.y)),
     );
 
     // Batch-render the lines = uglier code + way better performance
     renderer.save();
-    renderer.toWorldSpace();
     renderer.setStyle(options.gridStyle);
     renderer.beginPath();
     for (let x = bounds.left; x <= bounds.right; x += step)

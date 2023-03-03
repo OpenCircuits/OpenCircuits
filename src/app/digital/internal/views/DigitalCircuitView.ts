@@ -1,26 +1,35 @@
-import {GUID}            from "core/internal";
-import {CircuitView}     from "core/internal/view/CircuitView";
-import {ComponentView}   from "core/internal/view/ComponentView";
-import {WireView}        from "core/internal/view/WireView";
-import {ANDGateView}     from "./components/ANDGateView";
-import {LEDView}         from "./components/LEDView";
-import {SwitchView}      from "./components/SwitchView";
-import {DigitalWireView} from "./DigitalWireView";
+import {CircuitInternal}   from "core/internal";
+import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {Assembler}         from "core/internal/view/Assembler";
+import {CircuitView}       from "core/internal/view/CircuitView";
+import {Obj}               from "core/schema/Obj";
+import {DigitalSim}        from "../sim/DigitalSim";
+import {ANDGateAssembler}  from "./components/ANDGateAssembler";
 
 
-const viewMap = {
-    "ANDGate": ANDGateView,
-    "Switch":  SwitchView,
-    "LED":     LEDView,
+const assemblers = {
+    "ANDGate": ANDGateAssembler,
 };
 
 export class DigitalCircuitView extends CircuitView {
-    protected override constructComponentView(kind: string, id: GUID): ComponentView {
-        if (!(kind in viewMap))
-            throw new Error(`Failed to construct view for kind ${kind}! Unmapped!`);
-        return new viewMap[kind as keyof typeof viewMap](id, this.state);
+    protected sim: DigitalSim;
+    protected assemblers?: Record<string, Assembler>;
+
+    public constructor(circuit: CircuitInternal, selections: SelectionsManager, sim: DigitalSim) {
+        super(circuit, selections);
+        this.sim = sim;
     }
-    protected override constructWireView(kind: string, id: string): WireView {
-        return new DigitalWireView(id, this.state, this.componentViews);
+
+    protected getAssemblerFor(kind: string): Assembler<Obj> {
+        // Create assemblers on first call since some assemblers load images and so we need to defer it
+        if (!this.assemblers) {
+            this.assemblers = {
+                "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
+            };
+        }
+
+        if (!(kind in assemblers))
+            throw new Error(`Failed to get assembler for kind ${kind}! Unmapped!`);
+        return this.assemblers[kind];
     }
 }

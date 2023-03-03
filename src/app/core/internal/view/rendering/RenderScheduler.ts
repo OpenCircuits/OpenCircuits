@@ -4,10 +4,10 @@ import {Observable} from "core/utils/Observable";
 /**
  * Utility class to help cut down on render times by
  *  grouping together render calls into a single call
- *  by adding them to a queue and only rendering once
+ *  by adding them to a scheduler and only rendering once
  *  every 'requestAnimationFrame' time (usually 60fps).
  */
-export class RenderQueue extends Observable {
+export class RenderScheduler extends Observable {
     private queued: number;
     private lastFrameId: number;
 
@@ -16,7 +16,7 @@ export class RenderQueue extends Observable {
      */
     public constructor() {
         super();
-    
+
         this.queued = 0;
         this.lastFrameId = -1;
     }

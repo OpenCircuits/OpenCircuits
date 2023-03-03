@@ -1,3 +1,8 @@
+export interface Stroke {
+    color: string;
+    width: number;
+}
+export type FillStyle = string | CanvasGradient;
 
 
 export class Style {

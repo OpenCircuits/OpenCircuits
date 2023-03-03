@@ -1,9 +1,8 @@
-import {Schema} from "core/schema";
-import {Clamp} from "math/MathUtils";
-import {Rect} from "math/Rect";
 import {V, Vector} from "Vector";
+import {Clamp}     from "math/MathUtils";
+import {Rect}      from "math/Rect";
 
-import {Camera} from "../Camera";
+import {Camera}       from "../Camera";
 import {CircuitState} from "./CircuitState";
 
 
@@ -63,11 +62,11 @@ export class CameraImpl implements Camera {
     }
 
     public zoomTo(zoom: number, pos: Vector): void {
-        const cameraView = this.state.view!.getCamera();
+        const view = this.state.view!;
 
-        const pos0 = cameraView.toWorldPos(pos);
+        const pos0 = view.toWorldPos(pos);
         this.zoom = Clamp(this.zoom * zoom, 1e-6, 200);
-        const dPos = cameraView.toScreenPos(pos0).sub(pos);
+        const dPos = view.toScreenPos(pos0).sub(pos);
         this.translate(V(dPos.x, dPos.y, "screen"));
     }
 }

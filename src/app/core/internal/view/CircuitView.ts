@@ -1,152 +1,151 @@
-import {SVGDrawing}                          from "svg2canvas";
+import {V, Vector} from "Vector";
+import {Matrix2x3} from "math/Matrix";
+import {Transform} from "math/Transform";
+
 import {GUID}                                from "..";
 import {CircuitInternal}                     from "../impl/CircuitInternal";
 import {SelectionsManager}                   from "../impl/SelectionsManager";
-import {CameraView}                          from "./CameraView";
-import {ComponentView}                       from "./ComponentView";
+import {Assembler}                           from "./Assembler";
+import {Prims}                               from "./Prim";
 import {RenderGrid}                          from "./rendering/renderers/GridRenderer";
 import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
-import {RenderState}                         from "./rendering/RenderState";
-import {RenderQueue}                         from "./RenderQueue";
-import {WireView}                            from "./WireView";
+import {RenderScheduler}                     from "./rendering/RenderScheduler";
+import {SVGDrawing}                          from "svg2canvas";
+import {PortPos}                             from "./PortAssembler";
 
 
 export abstract class CircuitView {
-    protected readonly circuit: CircuitInternal;
-    protected readonly selections: SelectionsManager;
+    public readonly circuit: CircuitInternal;
+    public readonly selections: SelectionsManager;
 
-    protected readonly camera: CameraView;
+    public readonly options: RenderOptions;
 
-    protected readonly options: RenderOptions;
+    public readonly scheduler: RenderScheduler;
+    public readonly renderer: RenderHelper;
 
-    protected readonly queue: RenderQueue;
-    protected readonly renderer: RenderHelper;
+    public cameraMat: Matrix2x3;
 
-    protected componentViews: Map<GUID, ComponentView>;
-    protected wireViews: Map<GUID, WireView>;
+    public componentTransforms: Map<GUID, Transform>;
+    public componentPrims: Map<GUID, Prims>;
+
+    public localPortPositions: Map<GUID, PortPos>;
+    public portPositions: Map<GUID, PortPos>;
+    public portPrims: Map<GUID, Prims>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
         this.circuit = circuit;
         this.selections = selections;
 
-        this.camera = new CameraView(circuit);
-
         this.options = new DefaultRenderOptions();
 
-        this.queue = new RenderQueue();
-        this.renderer = new RenderHelper(this.camera);
+        this.scheduler = new RenderScheduler();
+        this.renderer = new RenderHelper();
 
-        this.componentViews = new Map();
-        this.wireViews = new Map();
+        this.cameraMat = this.calcCameraMat();
 
-        // Subscribe to renders, actually render
-        this.queue.subscribe(() => this.renderInternal());
+        this.componentTransforms = new Map();
+        this.componentPrims = new Map();
 
-        // Subscribe to circuit changes
-        circuit.subscribe(() => {
-            // TODO: Actually listen to the subscription event
+        this.localPortPositions = new Map();
+        this.portPositions = new Map();
+        this.portPrims = new Map();
 
+        this.scheduler.subscribe(() => {
+            this.render();
+        });
+
+        this.circuit.subscribe((ev) => {
+            // TODO: use event
+
+            // for now just update literally everything
             for (const objID of circuit.getObjs()) {
                 if (circuit.hasComp(objID)) {
                     const comp = circuit.getCompByID(objID).unwrap();
-
-                    // Add to views map if we don't have it yet
-                    if (!this.componentViews.has(objID)) {
-                        this.componentViews.set(objID, this.constructComponentView(comp.kind, objID));
-                    } else {
-                        // Else edit
-                        this.componentViews.get(objID)!.setDirty();
-                    }
+                    this.getAssemblerFor(comp.kind).assemble(comp, ev);
                 } else if (circuit.hasWire(objID)) {
                     const wire = circuit.getWireByID(objID).unwrap();
-
-                    // Add to views map if we don't have it yet
-                    if (!this.wireViews.has(objID)) {
-                        this.wireViews.set(objID, this.constructWireView(wire.kind, objID));
-                    } else {
-                        // Else edit
-                        this.wireViews.get(objID)!.setDirty();
-                    }
                 }
             }
 
-            this.camera.setDirty();
+            this.cameraMat = this.calcCameraMat();
 
-            // Request a render on circuit change
-            this.queue.requestRender();
+            this.scheduler.requestRender();
         });
 
-        // Subscribe to selection changes
-        selections.subscribe((ev) => {
-            // ev.selections.forEach((id) => {
-            //     const obj = this.circuit.getObjByID(id);
-            //     if (!obj)
-            //         throw new Error(`CircuitView: Failed to find object in selection change with ID ${id}!`);
-
-            //     // Dirty object
-            //     if (obj.baseKind === "Component")
-            //         this.componentViews.get(id)!.setDirty();
-            //     else if (obj.baseKind === "Port")
-            //         this.componentViews.get(obj.parent)!.setDirty();
-            //     // else
-            //     //    this.wireViews.get(id)!.setDirty();
-            // });
-
-            // Request a render on circuit change
-            this.queue.requestRender();
+        this.selections.subscribe((ev) => {
+            ev.selections.forEach((id) => {
+                const obj = circuit.getObjByID(id).unwrap();
+                this.getAssemblerFor(obj.kind).assemble(obj, ev);
+            });
         });
     }
 
-    protected get state(): RenderState {
-        return {
-            circuit:    this.circuit,
-            selections: this.selections,
-            camera:     this.camera,
-            options:    this.options,
-            renderer:   this.renderer,
-        };
+    protected calcCameraMat() {
+        const camera = this.circuit.getCamera();
+
+        return new Matrix2x3(V(camera.x, camera.y), 0, V(camera.zoom, -camera.zoom));
     }
 
-    protected abstract constructComponentView(kind: string, id: GUID): ComponentView;
-    protected abstract constructWireView(kind: string, id: GUID): WireView;
+    public toWorldPos(pos: Vector): Vector {
+        return this.cameraMat.mul(pos.sub(this.renderer.size.scale(0.5)));
+    }
+    public toScreenPos(pos: Vector): Vector {
+        return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
+    }
 
-    protected renderInternal() {
+    protected abstract getAssemblerFor(kind: string): Assembler;
+
+    protected render(): void {
+        // Clear canvas
         this.renderer.clear();
+
+        this.renderer.save();
+
+        // Transform to world-space
+        this.renderer.toWorldSpace(this.cameraMat);
 
         // Render grid
         if (this.options.showGrid)
-            RenderGrid(this.state);
+            RenderGrid(this);
 
         // Render wires
-        this.wireViews.forEach((view) => view.render());
+        // TODO
 
         // Render components
-        // TODO: Render by depth
-        this.componentViews.forEach((view) => view.render());
+        // TODO render by depth
+        this.componentPrims.forEach((prims, compID) => {
+            // Draw ports first
+            this.portPrims.get(compID)?.forEach((prim) => {
+                // if (!prim.cull(this.circuit.getCamera()))
+                //     return;
+                this.renderer.draw(prim);
+            })
+
+            // Draw prims for component
+            prims.forEach((prim) => {
+                // if (!prim.cull(this.circuit.getCamera()))
+                //     return;
+                this.renderer.draw(prim);
+            });
+        });
+        this.renderer.restore();
 
         // Debug rendering
 
-        // callback for rendering
+        // Callback for post-rendering
     }
 
     public resize(w: number, h: number) {
         // Request a render on resize
-        this.queue.requestRender();
-
-        // Update camera
-        this.camera.resize(w, h);
-    }
-
-    public setCanvas(canvas?: HTMLCanvasElement) {
-        this.renderer.setCanvas(canvas);
+        this.scheduler.requestRender();
     }
 
     public addImage(imgSrc: string, img: SVGDrawing) {
         this.options.addImage(imgSrc, img);
     }
 
-    public getCamera(): CameraView {
-        return this.camera;
+    public setCanvas(canvas?: HTMLCanvasElement) {
+        this.renderer.setCanvas(canvas);
     }
 }
