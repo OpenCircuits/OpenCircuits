@@ -12,3 +12,6 @@
     * Wires should naturally snap to 90 degree angles so wirings for more complicated circuits can be less confusing
 5. Deleting the Oscilloscope
     * Currently, removing the Oscilloscope also deletes all attached wires which should not be the case.
+6. Uploading Your Own Components/Models
+    * Expand functionalities and component libraries by allowing users to uploaded pre-formatted circuit component files that can be parsed into actual usable models.
+    * This can include modeling specific real-world components if the data reflects that components (expected) behaviors.
