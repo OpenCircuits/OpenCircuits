@@ -119,7 +119,7 @@ export class CircuitInternal {
                 if (!port1 || !port2)
                     throw new Error("Provided port GUIDs are invalid");
                 
-                if (op.w.p1 == op.w.p2)
+                if (op.w.p1 === op.w.p2)
                     throw new Error("Provided the same port GUIDs");
 
                 checkWireConnectivity(port1, port2);

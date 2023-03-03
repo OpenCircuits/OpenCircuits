@@ -5,11 +5,11 @@ import {CreateCircuit} from "digital/public";
 import "./Extensions";
 
 
-describe("connectWire", () => {
+describe("ConnectWire", () => {
     test("Basic Connect Wire Different Ports", () => {
         const circuit = CreateCircuit();
         const c = circuit.placeComponentAt(V(0, 0), "ANDGate");
-        const l1 = circuit.placeComponentAt(V(5,   0), "LED");
+        const l1 = circuit.placeComponentAt(V(5, 0), "LED");
         expect(c.pos).toEqual(V(0, 0));
         expect(l1.pos).toEqual(V(5, 0));
   
@@ -29,6 +29,6 @@ describe("connectWire", () => {
       expect(c.pos).toEqual(V(0, 0));
       
       // Test connect wire to same port
-      expect(circuit.connectWire(c.ports[0], c.ports[0])).toBeUndefined()
+      expect(circuit.connectWire(c.ports[0], c.ports[0])).toBeUndefined();
   });
 });
