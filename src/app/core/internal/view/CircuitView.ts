@@ -1,6 +1,10 @@
+import {SVGDrawing} from "svg2canvas";
+
 import {V, Vector} from "Vector";
-import {Matrix2x3} from "math/Matrix";
-import {Transform} from "math/Transform";
+
+import {BezierCurve} from "math/BezierCurve";
+import {Matrix2x3}   from "math/Matrix";
+import {Transform}   from "math/Transform";
 
 import {GUID}                                from "..";
 import {CircuitInternal}                     from "../impl/CircuitInternal";
@@ -11,7 +15,6 @@ import {RenderGrid}                          from "./rendering/renderers/GridRen
 import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
-import {SVGDrawing}                          from "svg2canvas";
 import {PortPos}                             from "./PortAssembler";
 
 
@@ -33,6 +36,9 @@ export abstract class CircuitView {
     public portPositions: Map<GUID, PortPos>;
     public portPrims: Map<GUID, Prims>;
 
+    public wireCurves: Map<GUID, BezierCurve>;
+    public wirePrims: Map<GUID, Prims>;
+
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
         this.circuit = circuit;
         this.selections = selections;
@@ -51,21 +57,24 @@ export abstract class CircuitView {
         this.portPositions = new Map();
         this.portPrims = new Map();
 
-        this.scheduler.subscribe(() => {
-            this.render();
-        });
+        this.wireCurves = new Map();
+        this.wirePrims = new Map();
+
+        this.scheduler.subscribe(() => this.render());
 
         this.circuit.subscribe((ev) => {
             // TODO: use event
 
-            // for now just update literally everything
-            for (const objID of circuit.getObjs()) {
-                if (circuit.hasComp(objID)) {
-                    const comp = circuit.getCompByID(objID).unwrap();
-                    this.getAssemblerFor(comp.kind).assemble(comp, ev);
-                } else if (circuit.hasWire(objID)) {
-                    const wire = circuit.getWireByID(objID).unwrap();
-                }
+            // update components first
+            for (const compID of circuit.getComponents()) {
+                const comp = circuit.getCompByID(compID).unwrap();
+                this.getAssemblerFor(comp.kind).assemble(comp, ev);
+            }
+
+            // then update wires
+            for (const wireID of circuit.getWires()) {
+                const wire = circuit.getWireByID(wireID).unwrap();
+                this.getAssemblerFor(wire.kind).assemble(wire, ev);
             }
 
             this.cameraMat = this.calcCameraMat();
@@ -110,7 +119,14 @@ export abstract class CircuitView {
             RenderGrid(this);
 
         // Render wires
-        // TODO
+        // TODO render by depth
+        this.wirePrims.forEach((prims) => {
+            prims.forEach((prim) => {
+                // if (!prim.cull(this.circuit.getCamera()))
+                //     return;
+                this.renderer.draw(prim);
+            });
+        });
 
         // Render components
         // TODO render by depth

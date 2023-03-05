@@ -24,7 +24,6 @@ export class Rectangle extends BaseShapePrim {
 
     public override renderShape(ctx: CanvasRenderingContext2D): void {
         const size = this.transform.getSize();
-        console.log(size);
         ctx.rect(-size.x/2, -size.y/2, size.x, size.y);
     }
 }

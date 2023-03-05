@@ -76,7 +76,7 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
         const selectionChanged = /* use ev to see if we were de/selected */ true;
         const portAmtChanged   = /* use ev to see if the number of ports changed */ true;
 
-        if (!transformChanged || !selectionChanged || !portAmtChanged)
+        if (!transformChanged && !selectionChanged && !portAmtChanged)
             return;
 
         if (transformChanged) {

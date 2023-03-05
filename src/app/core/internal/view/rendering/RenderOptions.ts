@@ -27,6 +27,9 @@ export interface RenderOptions {
 
     wireThickness: number;
 
+    defaultOnColor: string;
+    defaultMetastableColor: string;
+
     addImage(key: string, img: SVGDrawing): void;
     getImage(key: string): SVGDrawing | undefined;
 
@@ -65,6 +68,9 @@ export class DefaultRenderOptions implements RenderOptions {
     public ledLightIntensity = 0.75;
 
     public wireThickness = 0.14;
+
+    public defaultOnColor = "#3cacf2";
+    public defaultMetastableColor = "#cc5e5e";
 
     private images: Record<string, SVGDrawing>;
 

@@ -83,7 +83,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
         const colorChanged     = /* use ev to see if color prop changed */ true;
         const stateChanged     = /* use ev to see if the sim state changed for the LED */ true;
 
-        if (!transformChanged || !selectionChanged || !colorChanged || !stateChanged)
+        if (!transformChanged && !selectionChanged && !colorChanged && !stateChanged)
             return;
 
         if (transformChanged) {

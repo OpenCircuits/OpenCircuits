@@ -286,7 +286,7 @@ export class CircuitInternal extends Observable {
 
         // read-your-writes
         return this.applyOp(op)
-            .uponErr(this.cancelTransaction)
+            .uponErr(() => this.cancelTransaction())
             .uponOk(() => {
                 // Push only after successful op
                 this.transactionOps.push(op);
@@ -458,6 +458,12 @@ export class CircuitInternal extends Observable {
     }
     public getObjs(): IterableIterator<GUID> {
         return this.objStorage.keys();
+    }
+    public getComponents(): IterableIterator<GUID> {
+        return this.componentPortsMap.keys();
+    }
+    public getWires(): GUID[] {
+        return [...this.getObjs()].filter((id) => this.hasWire(id));
     }
 
     public getCamera(): Readonly<Schema.Camera> {

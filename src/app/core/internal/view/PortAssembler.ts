@@ -68,7 +68,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
         const selectionChanged = /* use ev to see if parent wwas de/selected */ true;
         const portAmtChanged   = /* use ev to see if the number of ports changed */ true;
 
-        if (!transformChanged || !selectionChanged || !portAmtChanged)
+        if (!transformChanged && !selectionChanged && !portAmtChanged)
             return;
 
         if (portAmtChanged) {
