@@ -20,30 +20,28 @@ export class DigitalComponentImpl extends ComponentImpl<
     }
 
     public override firstAvailable(portGroup: Port["group"]): DigitalPort | undefined {
+        if (!this.info.portGroups.includes(portGroup))
+            return undefined; // Invalid port group for the component
+        
         const ports = this.internal.getPortsForComponent(this.id);
 
-        const inputTypes = this.info.inputPortGroups;
-        const outputTypes = this.info.outputPortGroups;
+        // Find out if the portGroup is of type input or output
+        const isInputType = this.info.inputPortGroups.includes(portGroup);
+        const isOutputType = this.info.outputPortGroups.includes(portGroup);
 
-        const isInputType = inputTypes.includes(portGroup);
-        const isOutputType = outputTypes.includes(portGroup)
+        const firstAvailableHelper = (id: string) => {
+            const portObject = this.internal.getPortByID(id)!;
+            const portWire = this.internal.getWiresForPort(id); // no wires = available
 
-        if (!isInputType && !isOutputType) 
-            return undefined;
-
-        function firstAvailableHelper(comp: DigitalComponentImpl, id: string): Boolean {
-            let portObject = comp.internal.getPortByID(id);
-            let portWire = comp.internal.getWiresForPort(id); // no wires = available
-    
-            if (comp.info.inputPortGroups && portObject !== undefined && portObject.group === portGroup)
+            if (isInputType && portObject.group === portGroup)
                 return true;  
-            if (comp.info.outputPortGroups && portObject !== undefined && portObject.group === portGroup && portWire.size === 0) {
+            if (isOutputType && portObject.group === portGroup && portWire.size === 0)
                 return true;  
-            }
+        
             return false;
         }
 
-        const match = Array.from(ports.values()).find(p => firstAvailableHelper(this, p));
+        const match = [...ports].find(firstAvailableHelper);
         if (match !== undefined)
             return new DigitalPortImpl(this.circuit, match);  
         return undefined;

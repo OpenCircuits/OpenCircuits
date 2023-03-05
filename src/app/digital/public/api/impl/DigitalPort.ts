@@ -25,8 +25,8 @@ export class DigitalPortImpl extends PortImpl<
     public isAvailable(): boolean {
         // Output ports are always available for more connections
         if (this.isOutputPort)
-        return true;
-        
+            return true;
+
         // Input ports are only available if there isn't a connection already
         const wires = this.internal.getWiresForPort(this.id);
         return (wires.size === 0);

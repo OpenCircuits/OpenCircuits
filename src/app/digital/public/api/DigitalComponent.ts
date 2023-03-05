@@ -6,5 +6,12 @@ import {DigitalComponentInfo} from "./DigitalComponentInfo";
 export interface DigitalComponent extends Component {
     readonly info: DigitalComponentInfo;
 
-    firstAvailable(portGroup: string): DigitalPort | undefined;
+    /**
+     * Returns the first available port with the specified 
+     * port group that a component contains.
+     * 
+     * @param portGroup defines the desired port group.
+     * @returns A Port if there is one available, undefined otherwise. 
+     */
+    firstAvailable(portGroup: String): DigitalPort | undefined;
 }
