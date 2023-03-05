@@ -1,10 +1,3 @@
-export interface Stroke {
-    color: string;
-    width: number;
-}
-export type FillStyle = string | CanvasGradient;
-
-
 export class Style {
     public readonly fillColor?: string | CanvasGradient;
     public readonly strokeColor?: string;

@@ -1,54 +1,30 @@
-import {Vector} from "Vector";
+import {Transform} from "math/Transform";
 
-import {Rect} from "math/Rect";
-
-import {Shape} from "./Shape";
+import {Style}         from "../Style";
+import {BaseShapePrim} from "./BaseShapePrim";
 
 
 /**
  * A representation of a Rectangle shape.
  */
-export class Rectangle implements Shape {
-    protected rect: Rect;
+export class Rectangle extends BaseShapePrim {
+    protected transform: Transform;
 
-    /**
-     * Constructor for Rectangle.
-     *
-     * @param rect Rectangle bounds.
-     */
-    public constructor(rect: Rect);
-    /**
-     * Constructor for Rectangle.
-     *
-     * @param pos  Position.
-     * @param size Dimensions.
-     */
-    public constructor(pos: Vector, size: Vector);
-    /**
-     * Constructor for Rectangle.
-     *
-     * @param args The arguments.
-     */
-    public constructor(...args: [Rect] | [Vector, Vector]) {
-        switch (args.length) {
-            case 1:
-                this.rect = args[0];
-                break;
-            case 2:
-                this.rect = new Rect(...args);
-                break;
-        }
+    public constructor(transform: Transform, style: Style) {
+        super(style);
+
+        this.transform = transform;
     }
 
-    /**
-     * Draws the Rectangle on the canvas.
-     *
-     * @param ctx Provides the 2D rendering context for the drawing surface of an element.
-     */
-    public draw(ctx: CanvasRenderingContext2D): void {
-        const { bottomLeft, size } = this.rect;
-
-        ctx.rect(bottomLeft.x, bottomLeft.y, size.x, size.y);
+    protected override prePath(ctx: CanvasRenderingContext2D): void {
+        // Transform
+        const [a,b,c,d,e,f] = this.transform.getMatrix().mat;
+        ctx.transform(a,b,c,d,e,f);
     }
 
+    public override renderShape(ctx: CanvasRenderingContext2D): void {
+        const size = this.transform.getSize();
+        console.log(size);
+        ctx.rect(-size.x/2, -size.y/2, size.x, size.y);
+    }
 }

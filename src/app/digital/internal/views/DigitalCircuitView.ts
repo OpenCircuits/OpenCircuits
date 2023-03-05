@@ -5,11 +5,9 @@ import {CircuitView}       from "core/internal/view/CircuitView";
 import {Obj}               from "core/schema/Obj";
 import {DigitalSim}        from "../sim/DigitalSim";
 import {ANDGateAssembler}  from "./components/ANDGateAssembler";
+import {LEDAssembler}      from "./components/LEDAssembler";
+import {SwitchAssembler}   from "./components/SwitchAssembler";
 
-
-const assemblers = {
-    "ANDGate": ANDGateAssembler,
-};
 
 export class DigitalCircuitView extends CircuitView {
     protected sim: DigitalSim;
@@ -25,10 +23,12 @@ export class DigitalCircuitView extends CircuitView {
         if (!this.assemblers) {
             this.assemblers = {
                 "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
+                "LED":     new LEDAssembler(this.circuit, this, this.selections, this.sim),
+                "Switch":  new SwitchAssembler(this.circuit, this, this.selections, this.sim),
             };
         }
 
-        if (!(kind in assemblers))
+        if (!(kind in this.assemblers))
             throw new Error(`Failed to get assembler for kind ${kind}! Unmapped!`);
         return this.assemblers[kind];
     }

@@ -8,6 +8,8 @@ import {SelectionsManager} from "../impl/SelectionsManager";
 import {CircuitView}       from "./CircuitView";
 import {Circle}            from "./rendering/prims/Circle";
 import {Line}              from "./rendering/prims/Line";
+import {Assembler}         from "./Assembler";
+import {Style}             from "./rendering/Style";
 
 
 export interface PortPos {
@@ -31,24 +33,14 @@ export type PortFactory = Record<
 >;
 
 
-export class PortAssembler {
-    protected readonly circuit: CircuitInternal;
-    protected readonly view: CircuitView;
-    protected readonly selections: SelectionsManager;
-
+export class PortAssembler extends Assembler<Schema.Component> {
     private readonly factory: PortFactory;
 
     public constructor(circuit: CircuitInternal, view: CircuitView,
                        selections: SelectionsManager, factory: PortFactory) {
-        this.circuit = circuit;
-        this.view = view;
-        this.selections = selections;
+        super(circuit, view, selections);
 
         this.factory = factory;
-    }
-
-    protected get options() {
-        return this.view.options;
     }
 
     public calcPos(group: string, index: number, groupLen: number): PortPos {
@@ -113,14 +105,15 @@ export class PortAssembler {
                 const selected = this.selections.has(portID);
 
                 // Assemble the port-line and port-circle
-                const line = new Line(origin, target, {
-                    color: ((parentSelected && !selected) ? selectedBorderColor : defaultBorderColor),
-                    width: portLineWidth,
-                });
-                const circle = new Circle(target, defaultPortRadius, {
-                    color: ((parentSelected || selected) ? selectedBorderColor : defaultBorderColor),
-                    width: portBorderWidth,
-                }, ((parentSelected || selected) ? selectedFillColor : defaultFillColor));
+                const line = new Line(origin, target, new Style(undefined,
+                    ((parentSelected && !selected) ? selectedBorderColor : defaultBorderColor),
+                    portLineWidth,
+                ));
+                const circle = new Circle(target, defaultPortRadius, new Style(
+                    ((parentSelected || selected) ? selectedFillColor   : defaultFillColor),
+                    ((parentSelected || selected) ? selectedBorderColor : defaultBorderColor),
+                    portBorderWidth,
+                ));
                 return [line, circle];
             });
 

@@ -1,12 +1,13 @@
 import {Color, SVGDrawing, parseColor} from "svg2canvas";
 
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
+
+import {Transform} from "math/Transform";
 
 import {Camera} from "core/schema/Camera";
 
-import {Prim}      from "../../Prim";
-import {Style}     from "../Style";
-import {Transform} from "math/Transform";
+import {Prim}  from "../../Prim";
+import {Style} from "../Style";
 
 
 export class SVGPrim implements Prim {
@@ -30,13 +31,12 @@ export class SVGPrim implements Prim {
     }
     public render(ctx: CanvasRenderingContext2D): void {
         ctx.save();
-        const m = this.transform.getMatrix();
-        ctx.transform(
-            m.get(0), m.get(1),
-            m.get(2), m.get(3),
-            m.get(4), m.get(5),
-        );
+
+        const [a,b,c,d,e,f] = this.transform.getMatrix().mat;
+        ctx.transform(a,b,c,d,e,f);
+
         this.svg.draw(ctx, 0, 0, this.size.x, -this.size.y, this.tint);
+
         ctx.restore();
     }
     public updateStyle(style: Style): void {

@@ -100,7 +100,7 @@ export class RenderHelper {
         this.ctx.globalAlpha = alpha;
 
         if (style.fillColor)
-            this.ctx.fillStyle = style.fillColor;
+            this.ctx.fillStyle = style.fillColor as string;
         if (style.strokeColor)
             this.ctx.strokeStyle = style.strokeColor;
         if (style.strokeSize)

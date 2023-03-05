@@ -5,7 +5,7 @@ import {V, Vector} from "./Vector";
  * A representation of a 2x3 Matrix. Commonly used to represent the transform of a 2D object. This matrix really
  *  represents a 3x3 matrix with the last row being $[0, 0, 1]$. The first two columns represent the scale and rotation
  *  of the object (indices [0, 3]), while the last column represents the translation of the object (indices [4, 5]).
- * 
+ *
  * Note that matrices are immutable.
  *
  * The indices are laid out in column-major order:
@@ -15,7 +15,7 @@ import {V, Vector} from "./Vector";
  * .
  */
 export class Matrix2x3 {
-    private readonly mat: readonly number[];
+    public readonly mat: readonly number[];
 
     // Store inverse matrix for efficiency since matrices are immutable
     //  but only calculate on first call to `.inverse()`
@@ -107,7 +107,7 @@ export class Matrix2x3 {
         return new Matrix2x3([
             this.mat[0], this.mat[1],
             this.mat[2], this.mat[3],
-            t.x,         t.y
+            t.x,         t.y,
         ]);
     }
 
@@ -153,13 +153,12 @@ export class Matrix2x3 {
                 this.mat[2] * s, this.mat[3] * s,
                 this.mat[4],     this.mat[5],
             ]);
-        } else {
-            return new Matrix2x3([
-                this.mat[0] * s.x, this.mat[1] * s.x,
-                this.mat[2] * s.y, this.mat[3] * s.y,
-                this.mat[4],       this.mat[5],                
-            ]);
         }
+        return new Matrix2x3([
+            this.mat[0] * s.x, this.mat[1] * s.x,
+            this.mat[2] * s.y, this.mat[3] * s.y,
+            this.mat[4],       this.mat[5],
+        ]);
     }
 
     /**
@@ -179,12 +178,12 @@ export class Matrix2x3 {
         // Flip determinant since multiplication is typically faster than division
         const detI = 1 / det;
         this.inv = new Matrix2x3([
-            ( this.mat[3]) * detI,
+            (this.mat[3]) * detI,
             (-this.mat[1]) * detI,
             (-this.mat[2]) * detI,
-            ( this.mat[0]) * detI,
-            ( this.mat[2] * this.mat[5] - this.mat[4] * this.mat[3]) * detI,
-            ( this.mat[4] * this.mat[1] - this.mat[0] * this.mat[5]) * detI,
+            (this.mat[0]) * detI,
+            (this.mat[2] * this.mat[5] - this.mat[4] * this.mat[3]) * detI,
+            (this.mat[4] * this.mat[1] - this.mat[0] * this.mat[5]) * detI,
         ]);
         this.inv.inv = this; // Set the inverses' inverse to be us
 
@@ -225,14 +224,14 @@ export class Matrix2x3 {
     }
 
 
-    public static zero() {
+    public static Zero() {
         return new Matrix2x3([
             0,0,
             0,0,
             0,0,
         ]);
     }
-    public static identity() {
+    public static Identity() {
         return new Matrix2x3([
             1,0,
             0,1,

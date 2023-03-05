@@ -1,6 +1,6 @@
 import {CircuitInternal, GUID} from "core/internal";
-import {Observable} from "core/utils/Observable";
-import {Signal} from "./Signal";
+import {Observable}            from "core/utils/Observable";
+import {Signal}                from "./Signal";
 
 
 type DigitalSimEvent = {
@@ -29,7 +29,7 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
     }
 
     public getSignal(id: GUID): Signal {
-        throw new Error("Unimplemented");
+        return Signal.On;
     }
 
     public getState(id: GUID): Signal[] {

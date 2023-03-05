@@ -20,19 +20,13 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1, 1);
     public readonly img: SVGDrawing;
 
-    protected readonly circuit: CircuitInternal;
-    protected readonly view: CircuitView;
-    protected readonly selections: SelectionsManager;
     protected readonly sim: DigitalSim;
 
     protected portAssembler: PortAssembler;
 
     public constructor(circuit: CircuitInternal, view: CircuitView, selections: SelectionsManager, sim: DigitalSim) {
-        super();
+        super(circuit, view, selections);
 
-        this.circuit = circuit;
-        this.view = view;
-        this.selections = selections;
         this.sim = sim;
 
         this.img = view.options.getImage("and.svg")!;
@@ -44,10 +38,6 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
                 return { origin: V(-0.5, spacing*((total-1)/2 - index)), dir: V(-1, 0) };
             },
         });
-    }
-
-    protected get options() {
-        return this.view.options;
     }
 
     private assembleLine(gate: Schema.Component) {
@@ -73,10 +63,10 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
         return new Line(
             transform.toWorldSpace(V(x, y1)),
             transform.toWorldSpace(V(x, y2)),
-            {
-                color: (selected ? selectedBorderColor : defaultBorderColor),
-                width: defaultBorderWidth,
-            }
+            new Style(undefined,
+                (selected ? selectedBorderColor : defaultBorderColor),
+                defaultBorderWidth,
+            ),
         );
     }
 
@@ -105,7 +95,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         this.portAssembler.assemble(gate, ev);
 
-        const [prevLine, prevImg] = this.view.componentPrims.get(gate.id) ?? [undefined, undefined];
+        const [prevLine, prevImg] = (this.view.componentPrims.get(gate.id) ?? []);
 
         const line = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleLine(gate) : prevLine);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
@@ -114,8 +104,8 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
         if (selectionChanged) {
             const selected = this.selections.has(gate.id);
 
-            prevLine?.updateStyle(this.options.lineStyle(selected));
-            prevImg?.updateStyle(new Style((selected ? this.options.selectedFillColor : undefined)));
+            line.updateStyle(this.options.lineStyle(selected));
+            img.updateStyle(new Style((selected ? this.options.selectedFillColor : undefined)));
         }
 
         this.view.componentPrims.set(gate.id, [line, img]);

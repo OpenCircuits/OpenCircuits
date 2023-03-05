@@ -136,6 +136,13 @@ export abstract class CircuitView {
         // Callback for post-rendering
     }
 
+    public getContextUtils() {
+        return {
+            createRadialGradient: (pos: Vector, radius: number) =>
+                this.renderer.createRadialGradient(pos, 0, pos, radius),
+        };
+    }
+
     public resize(w: number, h: number) {
         // Request a render on resize
         this.scheduler.requestRender();
