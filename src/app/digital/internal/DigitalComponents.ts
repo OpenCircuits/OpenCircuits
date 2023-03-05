@@ -1,3 +1,5 @@
+import {ErrE, Ok, OkVoid, Result, ResultUtil} from "core/utils/Result";
+
 import {Prop, uuid}                                          from "core/internal";
 import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from "core/internal/impl/ComponentInfo";
 import {Port}                                                from "core/schema/Port";
@@ -36,12 +38,16 @@ export class DigitalComponentInfo implements ComponentInfo {
         this.validPortConfigs = portConfigs;
     }
 
-    public checkPropValue(key: string, value?: Prop): boolean {
-        return (key in this.props && (!value || (this.props[key] === typeof value)));
+    public checkPropValue(key: string, value?: Prop): Result {
+        if (!(key in this.props))
+            return ErrE(`DigitalComponentInfo: ${key} not a valid prop`);
+        if (value && (this.props[key] !== typeof value))
+            return ErrE(`DigitalComponentInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
+        return OkVoid();
     }
 
-    public makePortsForConfig(componentID: string, p: PortConfig): Port[] | undefined {
-        return Object.entries(p)
+    public makePortsForConfig(componentID: string, p: PortConfig): Result<Port[]> {
+        return Ok(Object.entries(p)
             .flatMap(([group, count]) =>
                 new Array(count)
                     .fill(0)
@@ -54,29 +60,31 @@ export class DigitalComponentInfo implements ComponentInfo {
                         group,
                         index,
                         props:  {}, // TODO: any manditory props for Digial ports
-                    })));
+                    }))));
     }
 
-    public isValidPortConfig(p: PortConfig): boolean {
+    public checkPortConfig(p: PortConfig): Result {
         // Doesn't have all the port groups
         if (this.portGroups.some((group) => !(group in p)))
-            return false;
+            return ErrE(`DigitalComponentInfo: Port config ${p} did not contain all groups ${this.portGroups}`);
 
         // Return is some valid config matches the given config
-        return this.validPortConfigs.some((counts) =>
+        const hasValidConfig = this.validPortConfigs.some((counts) =>
             // Check each port group in the valid config and the given config to see
             //  if the counts all match
             this.portGroups.every((group) => (counts[group] === p[group])));
+
+        return hasValidConfig ? OkVoid() : ErrE(`DigitalComponentInfo: Failed to find matching config for ${p}`);
     }
 
-    public isValidPortConnectivity(wires: Map<Port, Port[]>): boolean {
-        for (const [myPort, connectedPorts] of wires) {
+    public checkPortConnectivity(wires: Map<Port, Port[]>): Result {
+        return ResultUtil.reduceIterU(wires.entries(), ([myPort, connectedPorts]): Result<void> =>  {
             // Prevent multiple ports connecting to a single input port
             if (this.portGroupInfo[myPort.group] === "input" && connectedPorts.length > 1)
-                return false;
+                return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${myPort.id}`);
             // TODO: prevent "inputs" from being connected to other "IN" ports and similar.
-        }
-        return true;
+            return OkVoid();
+        });
     }
 }
 
@@ -231,8 +239,12 @@ class DigitalWireInfo implements ObjInfo {
         this.props = { ...props, "name": "string" };
     }
 
-    public checkPropValue(key: string, value?: Prop | undefined): boolean {
-        return (key in this.props && (!value || (this.props[key] === typeof value)));
+    public checkPropValue(key: string, value?: Prop | undefined): Result {
+        if (!(key in this.props))
+            return ErrE(`DigitalWireInfo: ${key} not a valid prop`);
+        if (value && (this.props[key] !== typeof value))
+            return ErrE(`DigitalWireInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
+        return OkVoid();
     }
 }
 const WireInfo = new DigitalWireInfo("DigitalWire", { "color": "string" });
@@ -250,8 +262,12 @@ class DigitalPortInfo implements ObjInfo {
         this.props = { ...props, "name": "string" };
     }
 
-    public checkPropValue(key: string, value?: Prop | undefined): boolean {
-        return (key in this.props && (!value || (this.props[key] === typeof value)));
+    public checkPropValue(key: string, value?: Prop | undefined): Result {
+        if (!(key in this.props))
+            return ErrE(`DigitalPortInfo: ${key} not a valid prop`);
+        if (value && (this.props[key] !== typeof value))
+            return ErrE(`DigitalPortInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
+        return OkVoid();
     }
 }
 const PortInfo = new DigitalPortInfo("DigitalPort", {});

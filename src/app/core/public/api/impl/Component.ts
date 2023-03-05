@@ -1,5 +1,6 @@
 import {V, Vector} from "Vector";
 
+import {AddErrE}                 from "core/utils/MultiError";
 import {FromConcatenatedEntries} from "core/utils/Functions";
 
 import {Schema} from "core/schema";
@@ -21,10 +22,9 @@ export abstract class ComponentImpl<
     public readonly baseKind = "Component";
 
     protected getObj(): Schema.Component {
-        const obj = this.internal.getCompByID(this.id);
-        if (!obj)
-            throw new Error(`API Component: Attempted to get component with ID ${this.id} could not find it!`);
-        return obj;
+        return this.internal.getCompByID(this.id)
+            .mapErr(AddErrE(`API Component: Attempted to get component with ID ${this.id} could not find it!`))
+            .unwrap();
     }
 
     public abstract get info(): ComponentT["info"];
@@ -43,8 +43,8 @@ export abstract class ComponentImpl<
     }
 
     public set pos(val: Vector) {
-        this.internal.setPropFor<Schema.Component, "x">(this.id, "x", val.x);
-        this.internal.setPropFor<Schema.Component, "y">(this.id, "y", val.y);
+        this.internal.setPropFor<Schema.Component, "x">(this.id, "x", val.x).unwrap();
+        this.internal.setPropFor<Schema.Component, "y">(this.id, "y", val.y).unwrap();
     }
     public get pos(): Vector {
         const obj = this.getObj();
@@ -53,7 +53,7 @@ export abstract class ComponentImpl<
     }
 
     public set angle(val: number) {
-        this.internal.setPropFor<Schema.Component, "angle">(this.id, "angle", val);
+        this.internal.setPropFor<Schema.Component, "angle">(this.id, "angle", val).unwrap();
     }
     public get angle(): number {
         return (this.getObj().props.angle ?? 0);
@@ -61,7 +61,7 @@ export abstract class ComponentImpl<
 
     public get ports(): Record<string, PortT[]> {
         return FromConcatenatedEntries(
-            [...this.internal.getPortsForComponent(this.id)]
+            [...this.internal.getPortsForComponent(this.id).unwrap()]
             .map((id) => this.circuit.constructPort(id))
             .map((p) => [p.group, p])
         );
