@@ -29,6 +29,6 @@ export class DigitalPortImpl extends PortImpl<
 
         // Input ports are only available if there isn't a connection already
         const wires = this.internal.getWiresForPort(this.id);
-        return (wires.size === 0);
+        return (wires.unwrap().size === 0);
     }
 }

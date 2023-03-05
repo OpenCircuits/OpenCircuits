@@ -33,17 +33,17 @@ export class DigitalComponentImpl extends ComponentImpl<
             const portObject = this.internal.getPortByID(id)!;
             const portWire = this.internal.getWiresForPort(id); // no wires = available
 
-            if (isInputType && portObject.group === portGroup)
+            if (isInputType && portObject.unwrap().group === portGroup)
                 return true;  
-            if (isOutputType && portObject.group === portGroup && portWire.size === 0)
+            if (isOutputType && portObject.unwrap().group === portGroup && portWire.unwrap().size === 0)
                 return true;  
         
             return false;
         }
 
-        const match = [...ports].find(firstAvailableHelper);
-        if (match !== undefined)
-            return new DigitalPortImpl(this.circuit, match);  
-        return undefined;
+        const match = [...ports.unwrap()].find(firstAvailableHelper)!;
+        if (!match)
+            return undefined;
+        return new DigitalPortImpl(this.circuit, match);
     }
 }

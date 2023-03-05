@@ -10,8 +10,12 @@ export interface DigitalComponent extends Component {
      * Returns the first available port with the specified 
      * port group that a component contains.
      * 
+     * Note: output port => always available.
+     *       input port => must NOT be connected via a wire to another
+     *                     to be available.
+     * 
      * @param portGroup defines the desired port group.
      * @returns A Port if there is one available, undefined otherwise. 
      */
-    firstAvailable(portGroup: String): DigitalPort | undefined;
+    firstAvailable(portGroup: string): DigitalPort | undefined;
 }
