@@ -23,25 +23,25 @@ export class DigitalComponentImpl extends ComponentImpl<
         if (!this.info.portGroups.includes(portGroup))
             return undefined; // Invalid port group for the component
         
-        const ports = this.internal.getPortsForComponent(this.id);
+        const ports = this.internal.getPortsForComponent(this.id).unwrap();
 
         // Find out if the portGroup is of type input or output
         const isInputType = this.info.inputPortGroups.includes(portGroup);
         const isOutputType = this.info.outputPortGroups.includes(portGroup);
 
         const firstAvailableHelper = (id: string) => {
-            const portObject = this.internal.getPortByID(id)!;
-            const portWire = this.internal.getWiresForPort(id); // no wires = available
+            const portObject = this.internal.getPortByID(id).unwrap();
+            const portWire = this.internal.getWiresForPort(id).unwrap(); // no wires = available
 
-            if (isInputType && portObject.unwrap().group === portGroup)
+            if (isInputType && portObject.group === portGroup)
                 return true;  
-            if (isOutputType && portObject.unwrap().group === portGroup && portWire.unwrap().size === 0)
+            if (isOutputType && portObject.group === portGroup && portWire.size === 0)
                 return true;  
         
             return false;
         }
 
-        const match = [...ports.unwrap()].find(firstAvailableHelper)!;
+        const match = [...ports].find(firstAvailableHelper)!;
         if (!match)
             return undefined;
         return new DigitalPortImpl(this.circuit, match);
