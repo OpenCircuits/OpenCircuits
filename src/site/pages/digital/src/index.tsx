@@ -1,10 +1,7 @@
 import {CreateCircuit, DigitalCircuit}                                             from "digital/public";
 import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
-import ReactDOM                                                                    from "react-dom";
+import {createRoot}                                                                from "react-dom/client";
 import ReactGA                                                                     from "react-ga";
-import {Provider}                                                                  from "react-redux";
-import {applyMiddleware, createStore}                                              from "redux";
-import thunk, {ThunkMiddleware}                                                    from "redux-thunk";
 
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
@@ -22,16 +19,15 @@ import {NoAuthState} from "shared/api/auth/NoAuthState";
 
 import {Login} from "shared/state/thunks/User";
 
-import {App}                from "./containers/App";
-import {AppState, AppStore} from "./state";
-import {AllActions}         from "./state/actions";
-import {reducers}           from "./state/reducers";
+import {AppStore} from "./state";
+import {reducers} from "./state/reducers";
 
 import ImageFiles          from "./data/images.json";
 import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 import {Circuit}           from "core/public";
 import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
 import {InputManager}      from "shared/utils/input/InputManager";
+import {configureStore}    from "@reduxjs/toolkit";
 
 
 interface ToolConfig {
@@ -55,8 +51,10 @@ const useInputEvents = (circuit: Circuit, handler: (ev: InputManagerEvent) => vo
     const inputManager = useMemo(() => new InputManager(), []);
 
     useEffect(() => {
-        if (circuit.canvas)
+        if (circuit.canvas) {
+            inputManager.tearDown();
             inputManager.setupOn(circuit.canvas);
+        }
 
         return circuit.subscribe((ev) => {
             if (ev.type === "attachCanvas")
@@ -148,7 +146,7 @@ async function Init(): Promise<void> {
         }],
 
         [85, "Initializing redux", async () => {
-            store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+            store = configureStore({ reducer: reducers });
         }],
 
         [95, "Initializing Authentication", async () => {
@@ -238,14 +236,14 @@ async function Init(): Promise<void> {
             //     //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             // }
 
-            ReactDOM.render(
+            const root = createRoot(document.getElementById("root")!);
+            root.render(
                 <React.StrictMode>
                     <MainCircuit circuit={circuit} />
                     {/* <Provider store={store}>
                         <App />
                     </Provider> */}
-                </React.StrictMode>,
-                document.getElementById("root")
+                </React.StrictMode>
             );
         }],
     ]);
