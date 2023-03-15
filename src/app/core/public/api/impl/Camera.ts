@@ -55,9 +55,9 @@ export class CameraImpl implements Camera {
         throw new Error("Method not implemented.");
     }
 
-    public translate(dPos: Vector): void {
-        if (dPos.space === "screen")
-            return this.translate(V(dPos.x * this.zoom, -dPos.y * this.zoom, "world"));
+    public translate(dPos: Vector, space: Vector.Spaces = "world"): void {
+        if (space === "screen")
+            return this.translate(V(dPos.x * this.zoom, -dPos.y * this.zoom));
         this.pos = this.pos.add(dPos);
     }
 
@@ -67,6 +67,10 @@ export class CameraImpl implements Camera {
         const pos0 = view.toWorldPos(pos);
         this.zoom = Clamp(this.zoom * zoom, 1e-6, 200);
         const dPos = view.toScreenPos(pos0).sub(pos);
-        this.translate(V(dPos.x, dPos.y, "screen"));
+        this.translate(V(dPos.x, dPos.y), "screen");
+    }
+
+    public toWorldPos(pos: Vector): Vector {
+        return this.state.view!.toWorldPos(pos);
     }
 }

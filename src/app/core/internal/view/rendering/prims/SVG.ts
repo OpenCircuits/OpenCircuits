@@ -6,8 +6,9 @@ import {Transform} from "math/Transform";
 
 import {Camera} from "core/schema/Camera";
 
-import {Prim}  from "../../Prim";
-import {Style} from "../Style";
+import {Prim}         from "../../Prim";
+import {Style}        from "../Style";
+import {RectContains} from "math/MathUtils";
 
 
 export class SVGPrim implements Prim {
@@ -27,7 +28,7 @@ export class SVGPrim implements Prim {
         throw new Error("Method not implemented.");
     }
     public hitTest(pt: Vector): boolean {
-        throw new Error("Method not implemented.");
+        return RectContains(this.transform, pt);
     }
     public render(ctx: CanvasRenderingContext2D): void {
         ctx.save();

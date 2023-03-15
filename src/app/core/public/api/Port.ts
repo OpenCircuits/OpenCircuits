@@ -1,5 +1,7 @@
+import {Vector}     from "Vector";
 import {BaseObject} from "./BaseObject";
 import {Component}  from "./Component";
+import {Wire}       from "./Wire";
 
 
 export interface Port extends BaseObject {
@@ -8,6 +10,12 @@ export interface Port extends BaseObject {
     readonly parent: Component;
     readonly group: string;
     readonly index: number;
+
+    readonly originPos: Vector;
+    readonly targetPos: Vector;
+
+    readonly connections: Wire[];
+    readonly connectedPorts: Port[]; // TODO: think of a better name for this ?
 
     connectTo(other: Port): void;
 }

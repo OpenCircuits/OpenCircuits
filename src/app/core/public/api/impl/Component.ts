@@ -60,11 +60,11 @@ export abstract class ComponentImpl<
     }
 
     public get ports(): Record<string, PortT[]> {
-        return FromConcatenatedEntries(
-            [...this.internal.getPortsForComponent(this.id).unwrap()]
-            .map((id) => this.circuit.constructPort(id))
-            .map((p) => [p.group, p])
-        );
+        return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
+    }
+    public get allPorts(): PortT[] {
+        return [...this.internal.getPortsForComponent(this.id).unwrap()]
+            .map((id) => this.circuit.constructPort(id));
     }
 
     public firstAvailable(group: string): PortT | undefined {

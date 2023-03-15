@@ -8,10 +8,11 @@ import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {storeCircuit} from "shared/utils/hooks/useCircuit";
 
-import {Tool}        from "shared/tools/Tool";
-import {DefaultTool} from "shared/tools/DefaultTool";
-import {PanTool}     from "shared/tools/PanTool";
-import {ZoomHandler} from "shared/tools/handlers/ZoomHandler";
+import {Tool, ToolState} from "shared/tools/Tool";
+import {DefaultTool}     from "shared/tools/DefaultTool";
+import {PanTool}         from "shared/tools/PanTool";
+import {TranslateTool}   from "shared/tools/TranslateTool";
+import {ZoomHandler}     from "shared/tools/handlers/ZoomHandler";
 
 import {DevListFiles} from "shared/api/Dev";
 
@@ -69,27 +70,28 @@ const useInputEvents = (circuit: Circuit, handler: (ev: InputManagerEvent) => vo
 
 const useTools = (circuit: DigitalCircuit, { defaultTool, tools }: ToolConfig) => {
     const [curTool, setCurTool] = useState(undefined as Tool | undefined);
+    const [state, setState] = useState({ curPressedObjID: undefined } as ToolState);
 
     const handler = useCallback((ev: InputManagerEvent) => {
         // Call the current tool's (or default tool's) onEvent method
         if (curTool) {
-            curTool.onEvent(ev, circuit);
+            curTool.onEvent(ev, circuit, state);
             // Check if we should deactivate the current tool
-            if (curTool.shouldDeactivate(ev, circuit)) {
+            if (curTool.shouldDeactivate(ev, circuit, state)) {
                 // Deactivate the tool
-                curTool.onDeactivate(ev, circuit);
+                curTool.onDeactivate(ev, circuit, state);
                 setCurTool(undefined);
-                defaultTool.onActivate(ev, circuit);
+                defaultTool.onActivate(ev, circuit, state, setState);
                 return;
             }
             return;
         }
 
         // Check if some other tool should be activated
-        const newTool = tools.find((t) => t.shouldActivate(ev, circuit));
+        const newTool = tools.find((t) => t.shouldActivate(ev, circuit, state));
         if (newTool !== undefined) {
             setCurTool(newTool);
-            newTool.onActivate(ev, circuit);
+            newTool.onActivate(ev, circuit, state);
             return;
         }
 
@@ -97,8 +99,8 @@ const useTools = (circuit: DigitalCircuit, { defaultTool, tools }: ToolConfig) =
         //  which means that Tool activations will take priority
         //  over the default behavior for things like Handlers
         //  Fixes #624
-        defaultTool.onEvent(ev, circuit);
-    }, [circuit, defaultTool, tools, curTool]);
+        defaultTool.onEvent(ev, circuit, state, setState);
+    }, [circuit, defaultTool, tools, curTool, state]);
 
     useInputEvents(circuit, handler);
 }
@@ -111,7 +113,7 @@ const MainCircuit = ({ circuit }: { circuit: DigitalCircuit }) => {
         defaultTool: new DefaultTool(
             ZoomHandler,
         ),
-        tools: [PanTool],
+        tools: [PanTool, new TranslateTool()],
     }), []);
 
     useTools(circuit, toolConfig);

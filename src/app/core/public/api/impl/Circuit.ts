@@ -118,17 +118,25 @@ export abstract class CircuitImpl<
     }
 
     // Queries
-    public pickObjectAt(pt: Vector): ComponentT | WireT | PortT | undefined {
-        throw new Error("Unimplemented");
+    public pickObjectAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
+        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
+        const objID = this.view.findNearestObj(pos);
+        if (!objID)
+            return undefined;
+        return this.getObj(objID);
     }
     public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
 
-    public selectedObjs(): Obj[] {
+    public get selectedObjs(): Obj[] {
         return this.selections.get()
                .map((id) => this.getObj(id))
                .filter((obj) => (obj !== undefined)) as Obj[];
+    }
+
+    public hasObj(obj: Obj): boolean {
+        return this.selections.has(obj.id);
     }
 
     public getComponent(id: string): ComponentT | undefined {

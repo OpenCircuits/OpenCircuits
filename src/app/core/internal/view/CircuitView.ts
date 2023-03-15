@@ -103,6 +103,19 @@ export abstract class CircuitView {
         return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
     }
 
+    public findNearestObj(pos: Vector): GUID | undefined {
+        for (const [id, prims] of this.componentPrims) {
+            if (prims.some((prim) => prim.hitTest(pos)))
+                return id;
+            // TODO: hit test the component's ports as well
+        }
+        for (const [id, prims] of this.wirePrims) {
+            if (prims.some((prim) => prim.hitTest(pos)))
+                return id;
+        }
+        return undefined;
+    }
+
     protected abstract getAssemblerFor(kind: string): Assembler;
 
     protected render(): void {
