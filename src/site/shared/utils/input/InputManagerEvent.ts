@@ -1,26 +1,30 @@
-import {Vector} from "Vector";
+import {Vector}            from "Vector";
+import {InputManagerState} from "./InputManagerState";
 
 import {Key} from "./Key";
 
 
-export type MouseInputEvent = {
+export interface BaseInputEvent {
+    state: InputManagerState;
+}
+export interface MouseInputEvent extends BaseInputEvent {
     type: "click" | "dblclick" | "mousedown" | "mousedrag" | "mouseup";
     button: number;
 }
-export type KeyboardInputEvent = {
+export interface KeyboardInputEvent extends BaseInputEvent {
     type: "keydown" | "keyup";
     key: Key;
 }
-export type ZoomInputEvent = {
+export interface ZoomInputEvent extends BaseInputEvent {
     type: "zoom";
     factor: number;
     pos: Vector;
 }
-export type CopyPasteInputEvent = {
+export interface CopyPasteInputEvent extends BaseInputEvent {
     type: "paste" | "copy" | "cut";
     ev: ClipboardEvent;
 }
-export type OtherInputEvent = {
+export interface OtherInputEvent extends BaseInputEvent {
     type: "mouseenter" | "mousemove" | "mouseleave" | "contextmenu" | "unknown";
 }
 

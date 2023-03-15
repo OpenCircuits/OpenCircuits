@@ -6,7 +6,8 @@ import {Style}                  from "./Style";
 
 
 export class RenderHelper {
-    protected canvas?: HTMLCanvasElement;
+    public canvas?: HTMLCanvasElement;
+
     protected context?: CanvasRenderingContext2D;
 
     // protected camera: CameraView;

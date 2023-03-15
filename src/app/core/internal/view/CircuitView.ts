@@ -171,4 +171,8 @@ export abstract class CircuitView {
     public setCanvas(canvas?: HTMLCanvasElement) {
         this.renderer.setCanvas(canvas);
     }
+
+    public getCanvas(): HTMLCanvasElement | undefined {
+        return this.renderer.canvas;
+    }
 }

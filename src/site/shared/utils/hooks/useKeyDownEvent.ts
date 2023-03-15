@@ -1,7 +1,8 @@
 import {useEffect} from "react";
 
-import {InputManager, InputManagerEvent} from "shared/utils/input/InputManager";
-import {Key}                             from "shared/utils/input/Key";
+import {InputManager}      from "shared/utils/input/InputManager";
+import {Key}               from "shared/utils/input/Key";
+import {InputManagerEvent} from "../input/InputManagerEvent";
 
 
 export const useKeyDownEvent = (input: InputManager, key: Key, f: () => void, deps?: React.DependencyList) => {
@@ -32,4 +33,3 @@ export const useWindowKeyDownEvent = (key: Key, f: () => void, deps?: React.Depe
         return () => window.removeEventListener("keydown", LookForKey);
     }, [key, ...(deps ?? [])]);
 }
-

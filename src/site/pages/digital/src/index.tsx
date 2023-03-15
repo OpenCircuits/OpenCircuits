@@ -1,15 +1,20 @@
-import {CreateCircuit, DigitalCircuit}             from "digital/public";
-import React, {useEffect, useLayoutEffect, useRef} from "react";
-import ReactDOM                                    from "react-dom";
-import ReactGA                                     from "react-ga";
-import {Provider}                                  from "react-redux";
-import {applyMiddleware, createStore}              from "redux";
-import thunk, {ThunkMiddleware}                    from "redux-thunk";
+import {CreateCircuit, DigitalCircuit}                                             from "digital/public";
+import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
+import ReactDOM                                                                    from "react-dom";
+import ReactGA                                                                     from "react-ga";
+import {Provider}                                                                  from "react-redux";
+import {applyMiddleware, createStore}                                              from "redux";
+import thunk, {ThunkMiddleware}                                                    from "redux-thunk";
 
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {storeCircuit} from "shared/utils/hooks/useCircuit";
+
+import {Tool}        from "shared/tools/Tool";
+import {DefaultTool} from "shared/tools/DefaultTool";
+import {PanTool}     from "shared/tools/PanTool";
+import {ZoomHandler} from "shared/tools/handlers/ZoomHandler";
 
 import {DevListFiles} from "shared/api/Dev";
 
@@ -22,54 +27,106 @@ import {AppState, AppStore} from "./state";
 import {AllActions}         from "./state/actions";
 import {reducers}           from "./state/reducers";
 
-import ImageFiles         from "./data/images.json";
-import {useWindowSize}    from "shared/utils/hooks/useWindowSize";
-import {useDeltaMousePos} from "shared/utils/hooks/useMousePos";
-import {useKey}           from "shared/utils/hooks/useKey";
-import {V}                from "Vector";
-import {useDocEvent}      from "shared/utils/hooks/useDocEvent";
+import ImageFiles          from "./data/images.json";
+import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
+import {Circuit}           from "core/public";
+import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputManager}      from "shared/utils/input/InputManager";
 
 
-const usePanTool = (circuit: DigitalCircuit) => {
-    const { dx, dy, isMouseDown } = useDeltaMousePos();
-    const altKey = useKey("Alt");
-
-    useEffect(() => {
-        if (!altKey || !isMouseDown)
-            return;
-        circuit.camera.translate(V(-dx, -dy, "screen"));
-    }, [circuit, dx, dy, isMouseDown, altKey]);
+interface ToolConfig {
+    defaultTool: DefaultTool;
+    tools: Tool[];
 }
 
-const useZoomTool = (circuit: DigitalCircuit) => {
-    useDocEvent("wheel", (ev) => {
-        const dy = ev.deltaY;
-        const pos = V(ev.pageX, ev.pageY);
+// const useCircuitEvent = <T extends string>(
+//     type: T,
+//     f: (ev: any & { type: T }) => void,
+//     circuit: Circuit,
+//     deps?: React.DependencyList,
+// ) => {
+//     useEffect(() => circuit.subscribe((ev) => {
+//         if (ev.type === type)
+//             f(ev);
+//     }), [circuit, type, f, ...(deps ?? [])]);
+// }
 
-        let zoomFactor = 0.95;
-        if (dy >= 0)
-            zoomFactor = 1 / zoomFactor;
+const useInputEvents = (circuit: Circuit, handler: (ev: InputManagerEvent) => void) => {
+    const inputManager = useMemo(() => new InputManager(), []);
 
-        circuit.camera.zoomTo(zoomFactor, pos);
-    }, [circuit]);
+    useEffect(() => {
+        if (circuit.canvas)
+            inputManager.setupOn(circuit.canvas);
+
+        return circuit.subscribe((ev) => {
+            if (ev.type === "attachCanvas")
+                inputManager.setupOn(ev.canvas);
+            if (ev.type === "detachCanvas")
+                inputManager.tearDown();
+        });
+    }, [circuit, inputManager]);
+
+    useEffect(() => inputManager.subscribe((ev) => handler(ev)), [inputManager, handler]);
+}
+
+const useTools = (circuit: DigitalCircuit, { defaultTool, tools }: ToolConfig) => {
+    const [curTool, setCurTool] = useState(undefined as Tool | undefined);
+
+    const handler = useCallback((ev: InputManagerEvent) => {
+        // Call the current tool's (or default tool's) onEvent method
+        if (curTool) {
+            curTool.onEvent(ev, circuit);
+            // Check if we should deactivate the current tool
+            if (curTool.shouldDeactivate(ev, circuit)) {
+                // Deactivate the tool
+                curTool.onDeactivate(ev, circuit);
+                setCurTool(undefined);
+                defaultTool.onActivate(ev, circuit);
+                return;
+            }
+            return;
+        }
+
+        // Check if some other tool should be activated
+        const newTool = tools.find((t) => t.shouldActivate(ev, circuit));
+        if (newTool !== undefined) {
+            setCurTool(newTool);
+            newTool.onActivate(ev, circuit);
+            return;
+        }
+
+        // Specifically do defaultTool's `onEvent` last
+        //  which means that Tool activations will take priority
+        //  over the default behavior for things like Handlers
+        //  Fixes #624
+        defaultTool.onEvent(ev, circuit);
+    }, [circuit, defaultTool, tools, curTool]);
+
+    useInputEvents(circuit, handler);
 }
 
 const MainCircuit = ({ circuit }: { circuit: DigitalCircuit }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { w, h } = useWindowSize();
 
-    usePanTool(circuit);
-    useZoomTool(circuit);
+    const toolConfig = useMemo<ToolConfig>(() => ({
+        defaultTool: new DefaultTool(
+            ZoomHandler,
+        ),
+        tools: [PanTool],
+    }), []);
+
+    useTools(circuit, toolConfig);
 
     useLayoutEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas)
             return;
-        (window as any).Circuit = circuit;
+        (window as unknown as { Circuit: Circuit }).Circuit = circuit;
         return circuit.attachCanvas(canvas);
-    }, [canvasRef]);
+    }, [circuit, canvasRef]);
 
-    useLayoutEffect(() => circuit.resize(w, h), [w, h]);
+    useLayoutEffect(() => circuit.resize(w, h), [circuit, w, h]);
 
     return (
         <canvas
