@@ -115,7 +115,7 @@ export abstract class CircuitImpl<
     public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
-    
+
     public selectedObjs(): Obj[] {
         return this.selections.get()
                .map((id) => this.getObj(id))

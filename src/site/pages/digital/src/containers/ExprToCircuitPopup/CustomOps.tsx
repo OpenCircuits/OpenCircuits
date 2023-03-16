@@ -1,6 +1,6 @@
 import React from "react";
 
-import {OperatorFormat, TokenType} from "digital/utils/ExpressionParser/Constants/DataStructures";
+import {OperatorFormat, TokenType} from "site/digital/utils/ExpressionParser/Constants/DataStructures";
 
 import {InputField} from "shared/components/InputField";
 

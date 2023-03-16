@@ -39,7 +39,9 @@ export interface Circuit {
     selectedObjs(): Obj[];
 
     getComponent(id: GUID): Component | undefined;
+    getComponents(): Component[];
     getWire(id: GUID): Wire | undefined;
+    getWires(): Wire[];
     getPort(id: GUID): Port | undefined;
     getObj(id: GUID): Obj | undefined;
     getObjs(): Obj[];

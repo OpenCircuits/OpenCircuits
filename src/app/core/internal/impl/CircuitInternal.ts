@@ -436,6 +436,9 @@ export class CircuitInternal {
     public getObjs(): IterableIterator<GUID> {
         return this.objStorage.keys();
     }
+    public getComps(): ReadonlyArray<Readonly<Schema.Component>> {
+        return [...this.objStorage.values()].filter((obj) => obj.baseKind === "Component") as Schema.Component[];
+    }
 
     public getPortsForComponent(id: GUID): Result<ReadonlySet<GUID>> {
         return WrapResOrE(this.componentPortsMap.get(id),

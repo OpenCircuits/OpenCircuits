@@ -9,26 +9,29 @@ import {LazyConnect} from "digital/utils/ComponentUtils";
 import {DigitalComponent} from "digital/models";
 
 import {Gate} from "digital/models/ioobjects/gates/Gate";
+import {CreateCircuit, DigitalCircuit} from "digital/public";
+import {V} from "Vector";
+import {DigitalCircuitImpl} from "digital/public/api/impl/DigitalCircuit";
 
 
 /**
  * Used to get the string for the Create funciton from the operation.
  */
-export const TypeToGate: Record<InputTreeOpType, string> = {
+export const TypeToGate = {
     "&": "ANDGate",
     "!": "NOTGate",
     "|": "ORGate",
     "^": "XORGate",
-}
+} as const;
 
 /**
  * Used to get the string for the Create funciton from the negated operation.
  */
-export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
+export const NegatedTypeToGate = {
     "&": "NANDGate",
     "|": "NORGate",
     "^": "XNORGate",
-}
+} as const;
 
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
@@ -44,7 +47,8 @@ export const NegatedTypeToGate: Record<InputTreeBinOpType, string> = {
  * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
  * @see TreeToCircuit
  */
-function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: IOObject[]): IOObject[] {
+function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: DigitalCircuit):
+    DigitalCircuit {
     if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
         if (!inputs.has(node.ident))
             throw new Error("Input Not Found: \"" + node.ident + "\"");
@@ -55,9 +59,10 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
     }
 
     const ret = circuit;
-    const newGate = Create<Gate>((node.kind === "binop" && node.isNot)
+    const newGate = ((node.kind === "binop" && node.isNot)
                                  ? NegatedTypeToGate[node.type]
                                  : TypeToGate[node.type]);
+    circuit.placeComponentAt(V(0, 0), newGate)
     if (node.kind === "unop") {
         const prevNode = treeToCircuitCore(node.child, inputs, ret).at(-1) as DigitalComponent;
         const wire = LazyConnect(prevNode, newGate);
@@ -90,7 +95,7 @@ export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, D
     if (!tree)
         return [];
 
-    let ret: IOObject[] = [...inputs.values()];
+    let ret = CreateCircuit();
 
     ret = treeToCircuitCore(tree, inputs, ret);
     const wire = LazyConnect(ret.at(-1) as DigitalComponent, output);
