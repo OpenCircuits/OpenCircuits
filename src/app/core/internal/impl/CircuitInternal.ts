@@ -394,6 +394,10 @@ export class CircuitInternal {
             });
     }
 
+    public setCircuitMetadata(newMetadata: Schema.CircuitMetadata) {
+        this.CircuitMetadata = newMetadata;
+    }
+
     //
     // Getters below.  Returned objects should not be modified directly.
     //
@@ -453,10 +457,6 @@ export class CircuitInternal {
     public getWiresForPort(id: GUID): Result<ReadonlySet<GUID>> {
         return WrapResOrE(this.portWireMap.get(id),
             `CircuitInternal: Attempted to get wires for port ${id}, but failed to find an entry!`);
-    }
-
-    public setCircuitMetadata(newMetadata: Schema.CircuitMetadata) {
-      this.CircuitMetadata = newMetadata;
     }
 
     public getCircuitMetadata(): Readonly<Schema.CircuitMetadata> {
