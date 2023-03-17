@@ -6,8 +6,8 @@ import {CreateCircuit} from "digital/public";
 import "./Extensions";
 
 
-describe("Acessors", () => {
-    test("getKind", () => {
+describe("APIMethods", () => {
+    test("Kind", () => {
         const circuit = CreateCircuit();
 
         const a = circuit.placeComponentAt(V(0, 0), "ANDGate");
@@ -16,7 +16,7 @@ describe("Acessors", () => {
         const b = circuit.placeComponentAt(V(1, 1), "ORGate");
         expect(b.kind).toEqual("ORGate");
     });
-    test("testProperties", () => {
+    test("Properties", () => {
         const circuit = CreateCircuit();
 
         const a = circuit.placeComponentAt(V(0, 0), "ANDGate");
@@ -25,5 +25,21 @@ describe("Acessors", () => {
 
         expect(a.getProps()['x']).toEqual(0);
         expect(a.getProps()['y']).toEqual(0);
+
+        const b = circuit.placeComponentAt(V(1, 1), "ORGate");
+        expect(b.getProp('x')).toEqual(1);
+        expect(b.getProp('y')).toEqual(1);
+
+        expect(b.getProps()['x']).toEqual(1);
+        expect(b.getProps()['y']).toEqual(1);
+    });
+    test("Exists", () => {
+        const circuit = CreateCircuit();
+
+        const a = circuit.placeComponentAt(V(0, 0), "ANDGate");
+
+        let cArray: Component[] = [a];
+        circuit.deleteObjs(cArray);
+        expect(a.exists()).toEqual(false);
     });
 });
