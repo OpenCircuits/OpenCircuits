@@ -31,6 +31,7 @@ import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers
 import {Draggable}        from "shared/components/DragDroppable/Draggable";
 
 import styles from "./index.scss";
+import { boolean } from "yargs";
 
 
 export type ItemNavItem = {
@@ -87,6 +88,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
+    let shortcut_flag:boolean = false;
+
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
     //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
     const [currentlyPressedObj, setCurPressedObj] = useState(undefined as (Selectable | undefined));
@@ -107,6 +110,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 setCurItemImg(`/${config.imgRoot}/${section?.id}/${id.toLowerCase().concat(".svg")}`)
                 onStart && onStart();
                 ev.stopPropagation();
+                shortcut_flag = true;
             }
         }
 
@@ -136,6 +140,12 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
 
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
+
+        if(shortcut_flag === true){
+            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
+            return;
+        }
+
         // If holding shift then drop only a single item (issue #1043)
         if (isShiftDown && numClicks > 1) {
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
