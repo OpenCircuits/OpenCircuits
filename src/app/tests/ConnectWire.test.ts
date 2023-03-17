@@ -14,8 +14,8 @@ describe("ConnectWire", () => {
         expect(l1.pos).toEqual(V(5, 0));
   
         // Connecting ports p1 and p2
-        const p1 = c.ports[0];
-        const p2 = l1.ports[0];
+        const p1 = c.ports["inputs"][0];
+        const p2 = l1.ports["inputs"][0];
         const wire = circuit.connectWire(p1,p2);
         expect(wire).not.toBeUndefined();
         
@@ -29,6 +29,6 @@ describe("ConnectWire", () => {
       expect(c.pos).toEqual(V(0, 0));
       
       // Test connect wire to same port
-      expect(circuit.connectWire(c.ports[0], c.ports[0])).toBeUndefined();
+      expect(circuit.connectWire(c.ports["inputs"][0], c.ports["inputs"][0])).toBeUndefined();
   });
 });
