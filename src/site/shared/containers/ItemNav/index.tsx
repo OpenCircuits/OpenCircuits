@@ -100,10 +100,13 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         // Loop through each of the input shortcuts
         for (var short of shortcuts){
             if (ev.key === short[0]){
-                setCurPressedObj(info.currentlyPressedObject);
                 const id = short[1];
                 const section = config.sections.find((s) => (s.items.find((i) => i.id === id)));
+                dispatch(SetCurItem(id));
+                setNumClicks(id.toLowerCase() === curItemID ? numClicks+1 : 1);
                 setCurItemImg(`/${config.imgRoot}/${section?.id}/${id.toLowerCase().concat(".svg")}`)
+                onStart && onStart();
+                ev.stopPropagation();
             }
         }
 
