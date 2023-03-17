@@ -60,6 +60,8 @@ type Props<D> = {
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
+let shortcut_flag:boolean = false
+
 export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts,  onDelete,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
     const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
@@ -106,6 +108,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 setNumClicks(id.toLowerCase() === curItemID ? numClicks+1 : 1);
                 setCurItemImg(`/${config.imgRoot}/${section?.id}/${id.toLowerCase().concat(".svg")}`)
                 onStart && onStart();
+                shortcut_flag = true
                 ev.stopPropagation();
             }
         }
@@ -136,6 +139,17 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
 
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
+        console.log("here", shortcut_flag)
+        if(shortcut_flag){
+            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
+            const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
+            dispatch(SetCurItem(curItemID));
+            setNumClicks(1);
+            setCurItemImg(`/${config.imgRoot}/${section?.id}/${curItemID.toLowerCase().concat(".svg")}`)
+            onStart && onStart();
+            return;
+        }
+
         // If holding shift then drop only a single item (issue #1043)
         if (isShiftDown && numClicks > 1) {
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
@@ -181,6 +195,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
         reset(true);
+        shortcut_flag = false
     });
 
     // Also cancel on Right Click
