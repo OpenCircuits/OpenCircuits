@@ -31,6 +31,7 @@ import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers
 import {Draggable}        from "shared/components/DragDroppable/Draggable";
 
 import styles from "./index.scss";
+import { boolean } from "yargs";
 
 
 export type ItemNavItem = {
@@ -89,6 +90,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
+    let shortcut_flag:boolean = false;
+
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
     //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
     const [currentlyPressedObj, setCurPressedObj] = useState(undefined as (Selectable | undefined));
@@ -110,6 +113,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 onStart && onStart();
                 shortcut_flag = true
                 ev.stopPropagation();
+                shortcut_flag = true;
             }
         }
 
