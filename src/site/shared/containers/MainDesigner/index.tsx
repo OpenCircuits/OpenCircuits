@@ -37,7 +37,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     return (
         <Droppable
             ref={canvas}
-            onDrop={(pos, itemKind: string, num?: number, ...otherData: unknown[]) => {
+            onDrop={(pos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {
                 if (!canvas.current)
                     throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
                 pos = pos.sub(V(0, canvas.current.getBoundingClientRect().top));

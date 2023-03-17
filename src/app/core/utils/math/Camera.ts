@@ -43,6 +43,9 @@ export class Camera {
 
         this.transform = new Transform(V(0,0), V(0,0), 0);
 
+        this.mat = new Matrix2x3();
+        this.inv = new Matrix2x3();
+
         this.dirty = true;
         this.margin = { left: 0, right: 0, bottom: 0, top: 0 };
     }

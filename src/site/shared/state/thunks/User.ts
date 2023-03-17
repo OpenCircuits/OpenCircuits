@@ -27,7 +27,7 @@ export function LoadUserCircuits(): ThunkResult<Promise<boolean>> {
 
             return true; // success
         } catch (e) {
-            dispatch(_LoadCircuitsFinish([], e));
+            dispatch(_LoadCircuitsFinish([], String(e)));
 
             return false; // failure
         }

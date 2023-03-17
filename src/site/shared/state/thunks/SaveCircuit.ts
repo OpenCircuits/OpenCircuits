@@ -35,7 +35,7 @@ export function SaveCircuit(data: string): ThunkResult<Promise<boolean>> {
 
             return true; // Success
         } catch (e) {
-            dispatch(_SetCircuitSavingFinish(e));
+            dispatch(_SetCircuitSavingFinish(String(e)));
 
             return false; // Failure
         }
