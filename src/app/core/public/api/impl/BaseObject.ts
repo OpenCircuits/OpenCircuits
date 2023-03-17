@@ -67,10 +67,20 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
     
     public getProp(key: string): Prop {
-        throw new Error("Unimplemented");
+        const tmp = this.circuit.getObjByID(this.objID);
+        if(!tmp)
+        {
+            throw new Error("Does not exist!");
+        }
+        return tmp.props[key];
     }
 
     public getProps(): Record<string, Prop> {
-        throw new Error("Unimplemented");
+        const tmp = this.circuit.getObjByID(this.objID);
+        if(!tmp)
+        {
+            throw new Error("Does not exist!");
+        }
+        return tmp.props;
     }
 }
