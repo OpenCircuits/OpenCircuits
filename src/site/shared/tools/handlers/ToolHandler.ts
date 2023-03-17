@@ -1,4 +1,4 @@
-import {Circuit}           from "core/public";
+import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
 import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
 
 
@@ -14,11 +14,11 @@ export interface ToolHandler {
      * i.e. If the user zooms and the ZoomHandler catches it, it will return "STOP"
      *  and then any other handlers after it will not be called for this event.
      *
-     * @param ev      The input event that just fired.
-     * @param circuit The circuit that this hander acts on.
-     * @returns       A handler response. Return PASSTHROUGH if nothing was done or you want
-     *                other handlers to potentially handle the event as well. Return STOP if
-     *                this should be the only handler to handle the event.
+     * @param ev       The input event that just fired.
+     * @param designer The circuit designer that this hander acts on.
+     * @returns        A handler response. Return PASSTHROUGH if nothing was done or you want
+     *                 other handlers to potentially handle the event as well. Return STOP if
+     *                 this should be the only handler to handle the event.
      */
-    onEvent: (ev: InputManagerEvent, circuit: Circuit) => ToolHandlerResponse;
+    onEvent: (ev: InputManagerEvent, designer: CircuitDesigner) => ToolHandlerResponse;
 }

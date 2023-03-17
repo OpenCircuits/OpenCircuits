@@ -296,7 +296,7 @@ export abstract class CircuitImpl<
     public detachCanvas(): void {
         this.view.setCanvas(undefined);
         // TODO: Figure out this event type more concretely
-        this.publish({ type: "detatchCanvas" });
+        this.publish({ type: "detachCanvas" });
     }
 
     public addRenderCallback(cb: () => void): void {

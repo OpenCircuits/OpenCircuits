@@ -16,15 +16,13 @@ export const PanTool: Tool = {
         (!ev.state.isDragging && !ev.state.isAltKeyDown)
     ),
 
-    onActivate: (ev, circuit, state) => {
-        PanTool.onEvent(ev, circuit, state); // Explicitly call drag event
-    },
+    onActivate:   () => {},
     onDeactivate: () => {},
 
-    onEvent: (ev, { camera }) => {
+    onEvent: (ev, { circuit }) => {
         if (ev.type === "mousedrag") {
             const { x: dx, y: dy } = ev.state.deltaMousePos;
-            camera.translate(V(-dx, -dy), "screen");
+            circuit.camera.translate(V(-dx, -dy), "screen");
         }
     },
 }

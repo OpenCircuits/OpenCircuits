@@ -2,7 +2,7 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const ZoomHandler: ToolHandler = {
-    onEvent: (ev, circuit) => {
+    onEvent: (ev, { circuit }) => {
         if (ev.type !== "zoom")
             return ToolHandlerResponse.PASSTHROUGH;
 

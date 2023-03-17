@@ -1,9 +1,12 @@
-import {Circuit, Component}            from "core/public";
+import {V} from "Vector";
+
+import {Component} from "core/public";
+
+import {CircuitDesigner}               from "shared/circuitdesigner/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON}             from "shared/utils/input/Constants";
 import {InputManagerEvent}             from "shared/utils/input/InputManagerEvent";
 import {SnapToConnections, SnapToGrid} from "shared/utils/SnapUtils";
-import {V}                             from "Vector";
-import {Tool, ToolState}               from "./Tool";
+import {Tool}                          from "./Tool";
 
 
 export class TranslateTool implements Tool {
@@ -11,11 +14,9 @@ export class TranslateTool implements Tool {
 
     public constructor() {
         this.components = [];
-
     }
 
-    public shouldActivate(ev: InputManagerEvent, circuit: Circuit, { curPressedObjID }: ToolState): boolean {
-        const curPressedObj = (curPressedObjID ? circuit.getObj(curPressedObjID) : undefined);
+    public shouldActivate(ev: InputManagerEvent, { curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user is pressing down on a component
         return (
             ev.type === "mousedrag"
@@ -27,9 +28,7 @@ export class TranslateTool implements Tool {
         return (ev.type === "mouseup" && ev.button === LEFT_MOUSE_BUTTON);
     }
 
-    public onActivate(ev: InputManagerEvent, circuit: Circuit, { curPressedObjID }: ToolState): void {
-        const curPressedObj = (curPressedObjID ? circuit.getObj(curPressedObjID) : undefined);
-
+    public onActivate(ev: InputManagerEvent, { circuit, curPressedObj }: CircuitDesigner): void {
         // If the pressed component is part of the selected objects,
         //  then translate all of the selected objects
         //  otherwise, just translate the pressed object
@@ -40,16 +39,13 @@ export class TranslateTool implements Tool {
         circuit.beginTransaction();
 
         // TODO: shift components
-
-        // Explicitly start the drag
-        this.onEvent(ev, circuit);
     }
 
-    public onDeactivate(ev: InputManagerEvent, circuit: Circuit): void {
+    public onDeactivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputManagerEvent, circuit: Circuit): void {
+    public onEvent(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
         // Using mousemove instead of mousedrag here because when a button besides
         //  mouse left is released, mousedrag events are no longer created, only mousemove.
         //  So instead mousemove is used and whether or not left mouse is still pressed is
