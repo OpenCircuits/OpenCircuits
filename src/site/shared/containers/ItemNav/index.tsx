@@ -143,7 +143,6 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
 
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
-        console.log("here", shortcut_flag)
         if(shortcut_flag){
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
             const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
