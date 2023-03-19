@@ -90,7 +90,6 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
-    let shortcut_flag:boolean = false;
 
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
     //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
@@ -113,7 +112,6 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 onStart && onStart();
                 shortcut_flag = true
                 ev.stopPropagation();
-                shortcut_flag = true;
             }
         }
 
@@ -143,6 +141,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
 
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
+        // If keyboard shorcut used to bring up component then allow to drop until "Esc" pressed
         if(shortcut_flag){
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
             const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
