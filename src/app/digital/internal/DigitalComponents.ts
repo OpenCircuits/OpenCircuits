@@ -132,6 +132,7 @@ const DigitalGateComponentInfo = (kind: string) =>
     );
 
 const ANDGateInfo  = DigitalGateComponentInfo("ANDGate");
+const BUFGateInfo  = DigitalGateComponentInfo("BUFGate");
 const NANDGateInfo = DigitalGateComponentInfo("NANDGate");
 const ORGateInfo   = DigitalGateComponentInfo("ORGate");
 const NORGateInfo  = DigitalGateComponentInfo("NORGate");
@@ -312,7 +313,7 @@ export function CreateDigitalComponentInfoProvider(): ObjInfoProvider {
         // Outputs
         LEDInfo, BCDDisplayInfo, ASCIIDisplayInfo, SegmentDisplayInfo, OscilloscopeInfo,
         // Gates
-        ANDGateInfo, NANDGateInfo, ORGateInfo, NORGateInfo, XORGateInfo, XNORGateInfo,
+        ANDGateInfo, BUFGateInfo, NANDGateInfo, ORGateInfo, NORGateInfo, XORGateInfo, XNORGateInfo,
         // Flip Flops
         DFlipFlopInfo, TFlipFlopInfo, SRFlipFlopInfo, JKFlipFlopInfo,
         // Latches
