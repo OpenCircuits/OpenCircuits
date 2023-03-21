@@ -64,18 +64,32 @@ export const KeyboardShortcutsPopup = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <Shortcut os={os} label="Undo"          keys={["Z"]}          mod />
-                    <Shortcut os={os} label="Redo"          keys={["Shift", "Z"]} mod />
-                    <Shortcut os={os} label="Cut"           keys={["X"]}          mod />
-                    <Shortcut os={os} label="Copy"          keys={["C"]}          mod />
-                    <Shortcut os={os} label="Paste"         keys={["V"]}          mod />
-                    <Shortcut os={os} label="Select All"    keys={["A"]}          mod />
-                    <Shortcut os={os} label="Deselect All"  keys={["Esc"]}            />
-                    <Shortcut os={os} label="Delete"        keys={["Backspace"]}      />
-                    <Shortcut os={os} label="Snip"          keys={["X"]}              />
-                    <Shortcut os={os} label="Snapping"      keys={["Shift"]} pre="Hold " />
-                    <Shortcut os={os} label="Duplicate"     keys={["D"]}          mod />
-                    <Shortcut os={os} label="Fit to Screen" keys={["F"]}              />
+                    <Shortcut os={os} label="Undo"            keys={["Z"]}          mod />
+                    <Shortcut os={os} label="Redo"            keys={["Shift", "Z"]} mod />
+                    <Shortcut os={os} label="Cut"             keys={["X"]}          mod />
+                    <Shortcut os={os} label="Copy"            keys={["C"]}          mod />
+                    <Shortcut os={os} label="Paste"           keys={["V"]}          mod />
+                    <Shortcut os={os} label="Select All"      keys={["A"]}          mod />
+                    <Shortcut os={os} label="Deselect All"    keys={["Esc"]}            />
+                    <Shortcut os={os} label="Delete"          keys={["Backspace"]}      />
+                    <Shortcut os={os} label="Snip"            keys={["X"]}              />
+                    <Shortcut os={os} label="Snapping"        keys={["Shift"]} pre="Hold " />
+                    <Shortcut os={os} label="Duplicate"       keys={["D"]}          mod />
+                    <Shortcut os={os} label="Fit to Screen"   keys={["F"]}              />
+                    <Shortcut os={os} label="Button"          keys={["B"]}              />
+                    <Shortcut os={os} label="Switch"          keys={["S"]}              />
+                    <Shortcut os={os} label="Constant Low"    keys={["L"]}              />
+                    <Shortcut os={os} label="Constant High"   keys={["H"]}              />
+                    <Shortcut os={os} label="Constant Number" keys={["N"]}              />
+                    <Shortcut os={os} label="Clock"           keys={["C"]}              />
+                    <Shortcut os={os} label="Buffer"          keys={["1"]}              />
+                    <Shortcut os={os} label="NOT"             keys={["2"]}              />
+                    <Shortcut os={os} label="AND"             keys={["3"]}              />
+                    <Shortcut os={os} label="NAND"            keys={["4"]}              />
+                    <Shortcut os={os} label="OR"              keys={["5"]}              />
+                    <Shortcut os={os} label="NOR"             keys={["6"]}              />
+                    <Shortcut os={os} label="XOR"             keys={["7"]}              />
+                    <Shortcut os={os} label="XNOR"            keys={["8"]}              />
                 </tbody>
             </table>
         </Popup>
