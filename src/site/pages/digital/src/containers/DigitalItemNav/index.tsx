@@ -187,6 +187,7 @@ export const DigitalItemNav = ({ info }: Props) => {
             additionalPreview={additionalPreview}
             getImgSrc={getImgSrc}
             onStart={onSmartPlaceOff}
+            shortcuts = {[]}
             onFinish={onSmartPlaceOff}
             onDelete={onDelete} />
     );
