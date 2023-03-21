@@ -178,7 +178,7 @@ export const DigitalItemNav = ({ info }: Props) => {
         return true;
     }, [designer, history]);
 
-    //eadijfseioejiofjes
+    // Append regular ItemNav items with ICs
     return (
         <ItemNav
             info={info}
