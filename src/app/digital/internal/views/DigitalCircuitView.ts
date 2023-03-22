@@ -5,6 +5,7 @@ import {CircuitView}          from "core/internal/view/CircuitView";
 import {Obj}                  from "core/schema/Obj";
 import {DigitalSim}           from "../sim/DigitalSim";
 import {ANDGateAssembler}     from "./components/ANDGateAssembler";
+import {ORGateAssembler}     from "./components/ORGateAssembler";
 import {LEDAssembler}         from "./components/LEDAssembler";
 import {SwitchAssembler}      from "./components/SwitchAssembler";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
@@ -24,6 +25,7 @@ export class DigitalCircuitView extends CircuitView {
         if (!this.assemblers) {
             this.assemblers = {
                 "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
+                "ORGate": new ORGateAssembler(this.circuit, this, this.selections, this.sim),
                 "LED":     new LEDAssembler(this.circuit, this, this.selections, this.sim),
                 "Switch":  new SwitchAssembler(this.circuit, this, this.selections, this.sim),
 
