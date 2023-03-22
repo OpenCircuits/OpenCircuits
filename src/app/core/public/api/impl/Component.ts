@@ -70,4 +70,35 @@ export abstract class ComponentImpl<
     public firstAvailable(group: string): PortT | undefined {
         throw new Error("Unimplemented!");
     }
+
+    public setNumPorts(group: string, amt: number): boolean {
+        const curConfig = {} as Record<string, number>;
+        this.internal.getPortsForComponent(this.id)
+            .map((ids) => [...ids]
+                .map((id) => this.circuit.getPort(id)!))
+            .unwrap()
+            .forEach(({ group }) =>
+                curConfig[group] = (curConfig[group] ?? 0) + 1);
+
+        // Already at that amount of ports, so do nothing
+        if (curConfig[group] === amt)
+            return true;
+
+        const config = {
+            ...curConfig,
+            [group]: amt,
+        };
+        const isValid = this.internal.getComponentInfo(this.kind).checkPortConfig(config);
+        if (!isValid.ok)
+            return false;
+
+        this.circuit.beginTransaction();
+        const result = this.internal.setPortConfig(this.id, config);
+        if (!result.ok) {
+            this.circuit.cancelTransaction();
+            return false;
+        }
+        this.circuit.commitTransaction();
+        return true;
+    }
 }
