@@ -7,7 +7,7 @@ import {CircuitInternal}      from "core/internal";
 import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {CircuitView}          from "core/internal/view/CircuitView";
 import {PortAssembler}        from "core/internal/view/PortAssembler";
-import {Line}                 from "core/internal/view/rendering/prims/Line";
+import {QuadCurve}                 from "core/internal/view/rendering/prims/QuadCurve";
 import {SVGPrim}              from "core/internal/view/rendering/prims/SVG";
 import {Style}                from "core/internal/view/rendering/Style";
 import {Schema}               from "core/schema";
@@ -34,12 +34,12 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
             "inputs":  (index, total) => {
                 const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                return { origin: V(-0.35, spacing*((total-1)/2 - index)), dir: V(-1.3, 0) };
+                return { origin: V(-0.425, spacing*((total-1)/2 - index)), dir: V(-1.3, 0) };
             },
         });
     }
 
-    private assembleLine(gate: Schema.Component) {
+    private assembleQuadCurve(gate: Schema.Component) {
         const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
 
         const { inputPortGroups } = this.circuit.getObjectInfo("ORGate") as DigitalComponentInfo;
@@ -49,24 +49,39 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
             .map((id) => this.circuit.getPortByID(id).unwrap())
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
 
-        const dy = (numInputs-1)/2*(0.5 - defaultBorderWidth/2);
-        const y1 = -dy - defaultBorderWidth/2;
-        const y2 =  dy + defaultBorderWidth/2;
+        let quadCurves = [];
 
-        const x = -(this.size.x - defaultBorderWidth)/2 + 0.35;
+        const amt = 2 * Math.floor(numInputs / 4) + 1;
+        const [lNumMod, sMod] = (amt === 1) ? ([0.014, 0]) : ([0, 0.012]);
+        for (let i = 0; i < amt; i++) {
+            const d = (i - Math.floor(amt / 2)) * this.size.y;
+            const h = defaultBorderWidth;
+            const l1 = -this.size.y / 2 + lNumMod;
+            const l2 = +this.size.y / 2 - lNumMod;
 
-        const transform = this.view.componentTransforms.get(gate.id)!;
+            const s = this.size.x / 2 - h + sMod;
+            const l = this.size.x / 5 - h;
 
-        const selected = this.selections.has(gate.id);
+            const p1 = V(-s, l1 + d);
+            const p2 = V(-s, l2 + d);
+            const c = V(-l, d);
 
-        return new Line(
-            transform.toWorldSpace(V(x, y1)),
-            transform.toWorldSpace(V(x, y2)),
-            new Style(undefined,
-                (selected ? selectedBorderColor : defaultBorderColor),
-                defaultBorderWidth,
-            ),
-        );
+            const transform = this.view.componentTransforms.get(gate.id)!;
+
+            const selected = this.selections.has(gate.id);
+
+            quadCurves.push(new QuadCurve(
+                transform.toWorldSpace(p1),
+                transform.toWorldSpace(p2),
+                transform.toWorldSpace(c),
+                new Style(undefined,
+                    (selected ? selectedBorderColor : defaultBorderColor),
+                    defaultBorderWidth,
+                ),
+            ));
+        }
+
+        return quadCurves;
     }
 
     private assembleImage(gate: Schema.Component) {
@@ -96,17 +111,23 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
 
         const [prevLine, prevImg] = (this.view.componentPrims.get(gate.id) ?? []);
 
-        const line = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleLine(gate) : prevLine);
+        let image = [];
+        const line = this.assembleQuadCurve(gate);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
+
+        line.map((q) => image.push(q));
+        image.push(img);
 
         // Update styles only if only selections changed
         if (selectionChanged) {
             const selected = this.selections.has(gate.id);
 
-            line.updateStyle(this.options.lineStyle(selected));
-            img.updateStyle(new Style((selected ? this.options.selectedFillColor : undefined)));
+            for (let i = 0; i < image.length; i++) {
+                image[i].updateStyle(this.options.lineStyle(selected));
+                img.updateStyle(new Style((selected ? this.options.selectedFillColor : undefined)));
+            }
         }
 
-        this.view.componentPrims.set(gate.id, [line, img]);
+        this.view.componentPrims.set(gate.id, image);
     }
 }
