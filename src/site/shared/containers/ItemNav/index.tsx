@@ -31,7 +31,6 @@ import {DragDropHandlers} from "shared/components/DragDroppable/DragDropHandlers
 import {Draggable}        from "shared/components/DragDroppable/Draggable";
 
 import styles from "./index.scss";
-import { boolean } from "yargs";
 
 
 export type ItemNavItem = {
@@ -61,7 +60,7 @@ type Props<D> = {
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-let shortcut_flag:boolean = false
+// let shortcut_flag:boolean = false
 
 export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts,  onDelete,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
@@ -90,6 +89,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
+    const [shorcutFlag, setShortcutFlag] = useState(false);
 
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
     //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
@@ -102,15 +102,16 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // Loops through the shorcuts 2d array in AnalogItemNav to see if any shortcuts
     useDocEvent("keydown", (ev) => {
         // Loop through each of the input shortcuts
-        for (var short of shortcuts){
-            if (ev.key === short[0]){
+        for (const short of shortcuts) {
+            if (ev.key === short[0]) {
                 const id = short[1];
                 const section = config.sections.find((s) => (s.items.find((i) => i.id === id)));
                 dispatch(SetCurItem(id));
                 setNumClicks(id.toLowerCase() === curItemID ? numClicks+1 : 1);
                 setCurItemImg(`/${config.imgRoot}/${section?.id}/${id.toLowerCase().concat(".svg")}`)
                 onStart && onStart();
-                shortcut_flag = true
+                // shortcut_flag = true
+                setShortcutFlag(true);
                 ev.stopPropagation();
             }
         }
@@ -142,7 +143,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         // If keyboard shorcut used to bring up component then allow to drop until "Esc" pressed
-        if (shortcut_flag) {
+        if(shorcutFlag){
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
             const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
             dispatch(SetCurItem(curItemID));
@@ -197,7 +198,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
         reset(true);
-        shortcut_flag = false
+        // shortcut_flag = false
+        setShortcutFlag(false);
     });
 
     // Also cancel on Right Click
