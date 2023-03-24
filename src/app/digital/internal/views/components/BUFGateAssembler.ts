@@ -34,11 +34,6 @@ export class BUFGateAssembler extends Assembler<Schema.Component> {
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
             "inputs": () => ({ origin: V(-0.5, 0), dir: V(-1, 0) }),
-            /*
-            "inputs":  (index, total) => {
-                const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                return { origin: V(-0.5, spacing*((total-1)/2 - index)), dir: V(-1, 0) };
-            },*/
         });
     }
 
