@@ -98,7 +98,7 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
         // Update styles only if only selections changed
         if (selectionChanged) {
             bg.updateStyle(this.assembleBackgroundStyle(sw));
-            img.updateStyle(new Style(this.assembleImageTint(sw)));
+            img.updateStyle({ fill: this.assembleImageTint(sw) });
         }
 
         this.view.componentPrims.set(sw.id, [bg, img]);

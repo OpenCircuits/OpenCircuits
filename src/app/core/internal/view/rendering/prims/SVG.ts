@@ -40,6 +40,6 @@ export class SVGPrim implements Prim {
         ctx.restore();
     }
     public updateStyle(style: Style): void {
-        this.tint = (style.fillColor ? parseColor(style.fillColor as string) : undefined);
+        this.tint = (style.fill ? parseColor(style.fill as string) : undefined);
     }
 }

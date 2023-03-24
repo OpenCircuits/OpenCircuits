@@ -48,7 +48,7 @@ export class DefaultRenderOptions implements RenderOptions {
     public showGrid = true;
 
     public gridSize = 1;
-    public gridStyle = new Style(undefined, "#999999", 0.02);
+    public gridStyle = { stroke: { color: "#999999", size: 0.02 } };
 
     public defaultFillColor =  "#ffffff";
     public selectedFillColor = "#1cff3e";
@@ -86,39 +86,47 @@ export class DefaultRenderOptions implements RenderOptions {
     }
 
     public lineStyle(selected: boolean) {
-        return new Style(
-            undefined,
-            (selected ? this.selectedBorderColor : this.defaultBorderColor),
-            this.defaultBorderWidth,
-        );
+        return {
+            stroke: {
+                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
+                size:  this.defaultBorderWidth,
+            },
+        };
     }
     public curveStyle(selected: boolean) {
-        return new Style(
-            undefined,
-            (selected ? this.selectedBorderColor : this.defaultBorderColor),
-            this.curveBorderWidth,
-        );
+        return {
+            stroke: {
+                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
+                size:  this.curveBorderWidth,
+            },
+        };
     }
     public fillStyle(selected: boolean): Style {
-        return new Style(
-            (selected ? this.selectedFillColor : this.defaultFillColor),
-            (selected ? this.selectedBorderColor : this.defaultBorderColor),
-            this.defaultBorderWidth,
-        );
+        return {
+            fill:   (selected ? this.selectedFillColor : this.defaultFillColor),
+            stroke: {
+                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
+                size:  this.defaultBorderWidth,
+            },
+        };
     }
 
     public portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style } {
         return {
-            lineStyle: new Style(
-                undefined,
-                ((parentSelected && !selected) ? this.selectedBorderColor : this.defaultBorderColor),
-                this.portLineWidth,
-            ),
-            circleStyle: new Style(
-                ((parentSelected || selected) ? this.selectedFillColor : this.defaultFillColor),
-                ((parentSelected || selected) ? this.selectedBorderColor : this.defaultBorderColor),
-                this.portBorderWidth,
-            ),
+            lineStyle: {
+                stroke: {
+                    color: ((parentSelected && !selected) ? this.selectedBorderColor : this.defaultBorderColor),
+                    size:  this.portLineWidth,
+                },
+            },
+            circleStyle: {
+                fill:   ((parentSelected || selected) ? this.selectedFillColor : this.defaultFillColor),
+                stroke: {
+                    color: ((parentSelected || selected) ? this.selectedBorderColor : this.defaultBorderColor),
+                    size:  this.portBorderWidth,
+
+                },
+            },
         };
     }
     public wireStyle(selected: boolean, color: string): Style {
@@ -132,10 +140,11 @@ export class DefaultRenderOptions implements RenderOptions {
 
         // @TODO move to function for getting color based on being selection/on/off
          // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
-        return new Style(
-            undefined,
-            (selected ? selectedColor : color),
-            this.wireThickness
-        );
+        return {
+            stroke: {
+                color: (selected ? selectedColor : color),
+                size:  this.wireThickness,
+            },
+        };
     }
 }
