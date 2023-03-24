@@ -12,8 +12,7 @@ describe("DeleteObjects", () => {
 
         const c = circuit.placeComponentAt(V(0, 0), "ANDGate");
 
-        let cArray: Component[] = [c];
-        circuit.deleteObjs(cArray);
+        circuit.deleteObjs([c]);
         expect(c.exists()).toEqual(false);
     });
     test("Multiple Deletions", () => {
@@ -24,8 +23,7 @@ describe("DeleteObjects", () => {
         const s2 = circuit.placeComponentAt(V(-5, -5), "Switch");
         const l1 = circuit.placeComponentAt(V(5,   0), "LED");
 
-        let cArray: Component[] = [c1, s1, s2, l1];
-        circuit.deleteObjs(cArray);
+        circuit.deleteObjs([c1, s1, s2, l1]);
         expect(c1.exists()).toEqual(false);
         expect(s1.exists()).toEqual(false);
         expect(s2.exists()).toEqual(false);
