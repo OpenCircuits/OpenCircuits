@@ -41,7 +41,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
     }
 
     private assembleLine(gate: Schema.Component) {
-        const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
+        const { defaultBorderWidth } = this.options;
 
         const { inputPortGroups } = this.circuit.getObjectInfo("ANDGate") as DigitalComponentInfo;
 
@@ -63,10 +63,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
         return new Line(
             transform.toWorldSpace(V(x, y1)),
             transform.toWorldSpace(V(x, y2)),
-            new Style(undefined,
-                (selected ? selectedBorderColor : defaultBorderColor),
-                defaultBorderWidth,
-            ),
+            this.options.lineStyle(selected),
         );
     }
 
@@ -105,7 +102,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
             const selected = this.selections.has(gate.id);
 
             line.updateStyle(this.options.lineStyle(selected));
-            img.updateStyle(new Style((selected ? this.options.selectedFillColor : undefined)));
+            img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
         }
 
         this.view.componentPrims.set(gate.id, [line, img]);

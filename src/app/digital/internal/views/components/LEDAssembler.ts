@@ -62,7 +62,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
         );
         gradient.addColorStop(0.4152, `rgba(${col.r}, ${col.g}, ${col.b}, ${this.options.ledLightIntensity})`);
         gradient.addColorStop(1, `rgba(${col.r}, ${col.g}, ${col.b}, 0)`);
-        return new Style(gradient);
+        return { fill: gradient };
     }
 
     private assembleLight(led: Schema.Component) {
@@ -104,7 +104,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
 
         // Update light only if color changed
         if (colorChanged)
-            img.updateStyle(new Style(this.getColor(led)));
+            img.updateStyle({ fill: this.getColor(led) });
 
         // Just set the img if the light isn't on
         if (!isOn) {
