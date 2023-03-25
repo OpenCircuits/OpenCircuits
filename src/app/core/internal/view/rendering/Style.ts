@@ -1,20 +1,10 @@
-export class Style {
-    public readonly fillColor?: string | CanvasGradient;
-    public readonly strokeColor?: string;
+export interface StrokeStyle {
+    color: string;
+    size: number;
+    lineCap?: "butt" | "round" | "square";
+}
 
-    public readonly strokeSize?: number;
-
-    public constructor(fillColor?: string | CanvasGradient, strokeColor?: string, strokeSize?: number) {
-        this.fillColor = fillColor;
-        this.strokeColor = strokeColor;
-        this.strokeSize = strokeSize;
-    }
-
-    public fill(): boolean {
-        return (this.fillColor !== undefined);
-    }
-
-    public stroke(): boolean {
-        return (this.strokeColor !== undefined && this.strokeSize !== undefined && this.strokeSize > 0);
-    }
+export interface Style {
+    stroke?: StrokeStyle;
+    fill?: string | CanvasGradient;
 }

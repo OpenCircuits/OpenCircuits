@@ -99,12 +99,12 @@ export class RenderHelper {
     public setStyle(style: Style, alpha = 1) {
         this.ctx.globalAlpha = alpha;
 
-        if (style.fillColor)
-            this.ctx.fillStyle = style.fillColor as string;
-        if (style.strokeColor)
-            this.ctx.strokeStyle = style.strokeColor;
-        if (style.strokeSize)
-            this.ctx.lineWidth = style.strokeSize;
+        if (style.fill !== undefined)
+            this.ctx.fillStyle = style.fill;
+        if (style.stroke !== undefined) {
+            this.ctx.strokeStyle = style.stroke.color;
+            this.ctx.lineWidth = style.stroke.size;
+        }
     }
 
     public save(): void {
