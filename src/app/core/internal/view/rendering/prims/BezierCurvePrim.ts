@@ -4,9 +4,20 @@ import {Style}         from "../Style";
 import {BaseShapePrim} from "./BaseShapePrim";
 
 
+/**
+ * A representation of a Bezier Curve shape.
+ *
+ * See the @BezierCurve class for more details about this shape.
+ */
 export class BezierCurvePrim extends BaseShapePrim {
     protected curve: BezierCurve;
 
+    /**
+     * Constructor for a bezier curve primitive.
+     *
+     * @param curve The bezier curve to represent.
+     * @param style The draw-style for the curve.
+     */
     public constructor(curve: BezierCurve, style: Style) {
         super(style);
 

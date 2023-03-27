@@ -7,9 +7,8 @@ import {CircuitInternal}      from "core/internal";
 import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {CircuitView}          from "core/internal/view/CircuitView";
 import {PortAssembler}        from "core/internal/view/PortAssembler";
-import {Line}                 from "core/internal/view/rendering/prims/Line";
-import {SVGPrim}              from "core/internal/view/rendering/prims/SVG";
-import {Style}                from "core/internal/view/rendering/Style";
+import {LinePrim}             from "core/internal/view/rendering/prims/LinePrim";
+import {SVGPrim}              from "core/internal/view/rendering/prims/SVGPrim";
 import {Schema}               from "core/schema";
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
@@ -60,7 +59,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         const selected = this.selections.has(gate.id);
 
-        return new Line(
+        return new LinePrim(
             transform.toWorldSpace(V(x, y1)),
             transform.toWorldSpace(V(x, y2)),
             this.options.lineStyle(selected),

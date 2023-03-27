@@ -10,12 +10,26 @@ import {Prim}  from "../../Prim";
 import {Style} from "../Style";
 
 
+/**
+ * A representation of a SVG shape.
+ *
+ * Note: currently the contents of the SVG are ignored for hit-testings and culling.
+ *  Instead, it is treated as a rectangle around the bounds of the SVG.
+ */
 export class SVGPrim implements Prim {
     protected svg: SVGDrawing;
     protected size: Vector;
     protected transform: Transform;
     protected tint?: Color;
 
+    /**
+     * Constructor for a SVG primitive.
+     *
+     * @param svg       The SVG drawing to draw.
+     * @param size      The size of the SVG, also dictates the bounds of the hit-testing for this SVG.
+     * @param transform The transform for this SVG, note that the size of the transform is ignored.
+     * @param tint      An optional tinting color to apply over the SVG.
+     */
     public constructor(svg: SVGDrawing, size: Vector, transform: Transform, tint?: string) {
         this.svg = svg;
         this.size = size;
