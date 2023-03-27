@@ -87,6 +87,8 @@ export abstract class CircuitView {
                 const obj = circuit.getObjByID(id).unwrap();
                 this.getAssemblerFor(obj.kind).assemble(obj, ev);
             });
+
+            this.scheduler.requestRender();
         });
     }
 

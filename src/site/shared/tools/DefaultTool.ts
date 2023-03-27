@@ -26,7 +26,7 @@ export class DefaultTool {
         // Loop through each handler and see if we should trigger any of them
         for (const handler of this.handlers) {
             // If handler triggered a stop, don't loop through any others
-            if (handler.onEvent(ev, designer) === ToolHandlerResponse.STOP)
+            if (handler.onEvent(ev, designer) === ToolHandlerResponse.HALT)
                 return;
         }
     }
