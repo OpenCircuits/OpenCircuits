@@ -1,7 +1,7 @@
+import {GUID}                                             from "core/schema/GUID";
+import {Observable}                                       from "core/utils/Observable";
 import {AddErrE}                                          from "core/utils/MultiError";
 import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "core/utils/Result";
-
-import {GUID} from "core/schema/GUID";
 
 import {Schema} from "../../schema";
 
@@ -20,7 +20,7 @@ import {CheckPortList, ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from
 // EXCEPTION POLICY:
 //  ERRORS: thrown during unexpected, exceptional, irrecoverable scenarios
 //  OTHERWISE: The "Result" and "Option" types are used to communicate success/failure.
-export class CircuitInternal {
+export class CircuitInternal extends Observable {
     protected readonly objInfo: ObjInfoProvider;
 
     private readonly log: CircuitLog;
@@ -28,6 +28,9 @@ export class CircuitInternal {
 
     private transaction: boolean;
     private transactionOps: CircuitOp[];
+
+    // Camera schema
+    protected camera: Schema.Camera;
 
     // Object storage (up-in-the-air)
     protected objStorage: Map<GUID, Schema.Obj>;
@@ -82,6 +85,7 @@ export class CircuitInternal {
                 .andThen(([_, info]) => info.checkPortConnectivity(map)
                     .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`)));
         };
+
         switch (op.kind) {
             case "PlaceComponentOp": {
                 if (op.inverted) {
@@ -162,6 +166,8 @@ export class CircuitInternal {
 
     // TODO: load with some initial state
     public constructor(objInfo: ObjInfoProvider, log: CircuitLog) {
+        super();
+
         this.objInfo = objInfo;
 
         this.log = log;
@@ -169,6 +175,12 @@ export class CircuitInternal {
 
         this.transaction = false;
         this.transactionOps = [];
+
+        this.camera = {
+            x:    0,
+            y:    0,
+            zoom: 0.02,
+        };
 
         this.objStorage = new Map();
 
@@ -274,10 +286,13 @@ export class CircuitInternal {
 
         // read-your-writes
         return this.applyOp(op)
-            .uponErr(this.cancelTransaction)
+            .uponErr(() => this.cancelTransaction())
             .uponOk(() => {
                 // Push only after successful op
                 this.transactionOps.push(op);
+
+                // TODO: Publish actual event details
+                this.publish({});
             });
     }
 
@@ -389,6 +404,14 @@ export class CircuitInternal {
             });
     }
 
+    public setCameraProps(props: Partial<Schema.Camera>) {
+        this.camera.x = (props.x ?? this.camera.x);
+        this.camera.y = (props.y ?? this.camera.y);
+        this.camera.zoom = (props.zoom ?? this.camera.zoom);
+
+        this.publish({});
+    }
+
     //
     // Getters below.  Returned objects should not be modified directly.
     //
@@ -436,8 +459,36 @@ export class CircuitInternal {
     public getObjs(): IterableIterator<GUID> {
         return this.objStorage.keys();
     }
-    public getComps(): ReadonlyArray<Readonly<Schema.Component>> {
-        return [...this.objStorage.values()].filter((obj) => obj.baseKind === "Component") as Schema.Component[];
+    public getComponents(): IterableIterator<GUID> {
+        return this.componentPortsMap.keys();
+    }
+    public getWires(): GUID[] {
+        return [...this.getObjs()].filter((id) => this.hasWire(id));
+    }
+
+    public getCamera(): Readonly<Schema.Camera> {
+        return this.camera;
+    }
+
+    public getPortsByGroup(parentID: GUID): Result<Readonly<Record<string, GUID[]>>> {
+        return this.getPortsForComponent(parentID)
+            .map((portIDs) =>
+                [...portIDs].reduce<Record<string, GUID[]>>((record, portID) => {
+                    const port = this.getPortByID(portID).unwrap();
+                    // return (port.group === group);÷
+                    return {
+                        ...record,
+                        [port.group]: [
+                            ...(record[port.group] ?? []),
+                            port.id,
+                        ],
+                    };
+                }, {}));
+    }
+
+    public getPortsForGroup(parentID: GUID, group: string): Result<ReadonlySet<GUID>> {
+        return this.getPortsByGroup(parentID)
+            .map((record) => new Set(record[group]));
     }
 
     public getPortsForComponent(id: GUID): Result<ReadonlySet<GUID>> {

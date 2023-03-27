@@ -10,6 +10,8 @@ import {V, Vector} from "./Vector";
  * 2 control points, and the bounding
  * box for the curve.
  *
+ * Note that bezier curves are immutable.
+ *
  * Link to an interactive cubic bezier curve with formulas:
  * https://www.desmos.com/calculator/rptlhv5rx8.
  */
@@ -18,32 +20,29 @@ export class BezierCurve {
     /**
      * The x, y coordinates of the start point.
      */
-    private p1: Vector;
+    public readonly p1: Vector;
 
     /**
      * The x, y coordinates of the end point.
      */
-    private p2: Vector;
+    public readonly p2: Vector;
 
     /**
      * The x, y coordinates of the first control point.
      */
-    private c1: Vector;
+    public readonly c1: Vector;
 
     /**
      * The x, y coordinates of the second control point.
      */
-    private c2: Vector;
+    public readonly c2: Vector;
 
     /**
      * The Bounding Box that encases the entire curve.
+     * Note this will be undefined until `.bounds` is called at which
+     *  point the box will be computed and won't be re-computed again.
      */
-    private boundingBox: Rect;
-
-    /**
-     * Whether the curve's data has been updated.
-     */
-    private dirty: boolean;
+    private boundingBox?: Rect;
 
     /**
      * Initializes bezier curve with the given start point, end point, and intermediate points.
@@ -60,9 +59,6 @@ export class BezierCurve {
         this.p2 = p2;
         this.c1 = c1;
         this.c2 = c2;
-
-        this.dirty = true;
-        this.boundingBox = new Rect(V(0), V(0));
     }
 
     /**
@@ -84,15 +80,7 @@ export class BezierCurve {
         return Clamp((-b + mod*Math.sqrt(d)) / (2*a), 0, 1);
     }
 
-    /**
-     * Calculates the position and size of the bounding box,
-     * based on p1, p2, c1, and c2.
-     */
-    private updateBoundingBox(): void {
-        if (!this.dirty)
-            return;
-        this.dirty = false;
-
+    private calcBoundingBox(): Rect {
         const end1 = this.getPos(0);
         const end2 = this.getPos(1);
 
@@ -110,83 +98,18 @@ export class BezierCurve {
         const maxX = Math.max(this.getX(t3), this.getX(t4), end1.x, end2.x);
         const minX = Math.min(this.getX(t3), this.getX(t4), end1.x, end2.x);
 
-        this.boundingBox = Rect.FromPoints(V(minX, minY), V(maxX, maxY));
+        return Rect.FromPoints(V(minX, minY), V(maxX, maxY));
     }
 
     /**
-     * Changes start point (P1), for Bezier curve.
+     * Bounding box accessor updates the bounding box and returns it.
      *
-     * @param v The x, y coordinates to set the point to.
+     * @returns A Transform that contains the bounding box of the curve.
      */
-    public setP1(v: Vector): void {
-        this.dirty = true;
-        this.p1 = v;
-    }
-
-    /**
-     * Changes end point (P2) for Bezier curve.
-     *
-     * @param v The x, y coordinates to set the point to.
-     */
-    public setP2(v: Vector): void {
-        this.dirty = true;
-        this.p2 = v;
-    }
-
-    /**
-     * Changes first control point (C1) for Bezier curve.
-     *
-     * @param v The x, y coordinates to set the point to.
-     */
-    public setC1(v: Vector): void {
-        this.dirty = true;
-        this.c1 = v;
-    }
-
-    /**
-     * Changes second control point (C2) for Bezier curve.
-     *
-     * @param v The x, y coordinates to set the point to.
-     */
-    public setC2(v: Vector): void {
-        this.dirty = true;
-        this.c2 = v;
-    }
-
-    /**
-     * Returns start point of curve (p1).
-     *
-     * @returns The x, y coordinates of the start point.
-     */
-    public getP1(): Vector {
-        return this.p1;
-    }
-
-    /**
-     * Returns end point of curve (p2).
-     *
-     * @returns The x, y coordinates of the end point.
-     */
-    public getP2(): Vector {
-        return this.p2;
-    }
-
-    /**
-     * Returns first control point (C1) for Bezier curve.
-     *
-     * @returns The x, y coordinates of the first control point.
-     */
-    public getC1(): Vector {
-        return this.c1;
-    }
-
-    /**
-     * Returns second control point (C2) for Bezier curve.
-     *
-     * @returns The x, y coordinates of the second control point.
-     */
-    public getC2(): Vector {
-        return this.c2;
+    public get bounds(): Rect {
+        if (!this.boundingBox) // Calculate when requested
+            this.boundingBox = this.calcBoundingBox();
+        return this.boundingBox;
     }
 
     /**
@@ -285,15 +208,5 @@ export class BezierCurve {
      */
     public get2ndDerivative(t: number): Vector {
         return V(this.getDDX(t), this.getDDY(t));
-    }
-
-    /**
-     * Bounding box accessor updates the bounding box and returns it.
-     *
-     * @returns A Transform that contains the bounding box of the curve.
-     */
-    public getBoundingBox(): Rect {
-        this.updateBoundingBox();
-        return this.boundingBox;
     }
 }

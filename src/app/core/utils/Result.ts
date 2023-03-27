@@ -182,7 +182,9 @@ export function WrapResOr<T, E>(t: T | undefined, e: E): Result<T, E> {
     return t === undefined ? Err(e) : Ok(t);
 }
 export function WrapResOrE<T>(t: T | undefined, e: string): Result<T, MultiError> {
-    return WrapResOr(t, new MultiError([new Error(e)]));
+    // We need to be careful to only every construct a new JS-`Error` when there an actual
+    //  error. It is a very expensive operation as it captures a stack trace on construction.
+    return t === undefined ? Err(new MultiError([new Error(e)])) : Ok(t);
 }
 
 const OK_VOID = Ok<void, unknown>(undefined);

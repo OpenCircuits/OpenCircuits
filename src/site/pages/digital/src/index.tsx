@@ -1,13 +1,12 @@
-import {CreateCircuit}                from "digital/public";
-import React                          from "react";
-import ReactDOM                       from "react-dom";
-import ReactGA                        from "react-ga";
-import {Provider}                     from "react-redux";
-import {applyMiddleware, createStore} from "redux";
-import thunk, {ThunkMiddleware}       from "redux-thunk";
+import {CreateCircuit, DigitalCircuit}             from "digital/public";
+import React, {useEffect, useLayoutEffect, useRef} from "react";
+import ReactDOM                                    from "react-dom";
+import ReactGA                                     from "react-ga";
+import {Provider}                                  from "react-redux";
+import {applyMiddleware, createStore}              from "redux";
+import thunk, {ThunkMiddleware}                    from "redux-thunk";
 
 import {GetCookie}     from "shared/utils/Cookies";
-import {Images}        from "shared/utils/Images";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {storeCircuit} from "shared/utils/hooks/useCircuit";
@@ -23,16 +22,72 @@ import {AppState, AppStore} from "./state";
 import {AllActions}         from "./state/actions";
 import {reducers}           from "./state/reducers";
 
-import ImageFiles from "./data/images.json";
+import ImageFiles         from "./data/images.json";
+import {useWindowSize}    from "shared/utils/hooks/useWindowSize";
+import {useDeltaMousePos} from "shared/utils/hooks/useMousePos";
+import {useKey}           from "shared/utils/hooks/useKey";
+import {V}                from "Vector";
+import {useDocEvent}      from "shared/utils/hooks/useDocEvent";
 
+
+const usePanTool = (circuit: DigitalCircuit) => {
+    const { dx, dy, isMouseDown } = useDeltaMousePos();
+    const altKey = useKey("Alt");
+
+    useEffect(() => {
+        if (!altKey || !isMouseDown)
+            return;
+        circuit.camera.translate(V(-dx, -dy, "screen"));
+    }, [circuit, dx, dy, isMouseDown, altKey]);
+}
+
+const useZoomTool = (circuit: DigitalCircuit) => {
+    useDocEvent("wheel", (ev) => {
+        const dy = ev.deltaY;
+        const pos = V(ev.pageX, ev.pageY);
+
+        let zoomFactor = 0.95;
+        if (dy >= 0)
+            zoomFactor = 1 / zoomFactor;
+
+        circuit.camera.zoomTo(zoomFactor, pos);
+    }, [circuit]);
+}
+
+const MainCircuit = ({ circuit }: { circuit: DigitalCircuit }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { w, h } = useWindowSize();
+
+    usePanTool(circuit);
+    useZoomTool(circuit);
+
+    useLayoutEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas)
+            return;
+        (window as any).Circuit = circuit;
+        return circuit.attachCanvas(canvas);
+    }, [canvasRef]);
+
+    useLayoutEffect(() => circuit.resize(w, h), [w, h]);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            width={w}
+            height={h} />
+    );
+}
 
 async function Init(): Promise<void> {
     const startPercent = 30;
     let store: AppStore;
 
+    const circuit = CreateCircuit();
+
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {
-            await Images.Load(ImageFiles.images, onProgress);
+            await circuit.loadImages(ImageFiles.images, onProgress);
         }],
 
         [85, "Initializing redux", async () => {
@@ -97,41 +152,24 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            // Setup circuit and get the CircuitInfo and helpers
-            // const [info, helpers] = Setup(
-            //     store,
-            //     new DefaultTool(
-            //         SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-            //         DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-            //         PressableHandler, SelectionHandler, SelectPathHandler,
-            //         RedoHandler, UndoHandler, CleanUpHandler, CopyHandler,
-            //         PasteHandler((data) => DigitalPaste(data, info, undefined)),
-            //         SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-            //     ),
-            //     PanTool, RotateTool,
-            //     TranslateTool, WiringTool,
-            //     SelectionBoxTool, SplitWireTool
-            // );
-
+            // TODO[model_refactor](leon)
             // info.history.addCallback(() => {
             //     store.dispatch(SetCircuitSaved(false));
             // });
-            const circuit = CreateCircuit();
 
             storeCircuit("main", circuit);
 
-            if (process.env.NODE_ENV === "development") {
-                // Load dev state
-                const files = await DevListFiles();
-                // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-            }
+            // TODO[model_refactor](leon)
+            // if (process.env.NODE_ENV === "development") {
+            //     // Load dev state
+            //     const files = await DevListFiles();
+            //     // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
+            //     //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            // }
 
             ReactDOM.render(
                 <React.StrictMode>
-                    <Provider store={store}>
-                        <App />
-                    </Provider>
+                    <MainCircuit circuit={circuit} />
                 </React.StrictMode>,
                 document.getElementById("root")
             );

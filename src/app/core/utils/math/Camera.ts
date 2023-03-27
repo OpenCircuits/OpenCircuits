@@ -198,7 +198,7 @@ export class Camera {
      */
     public getMatrix(): Matrix2x3 {
         this.updateMatrix();
-        return this.mat.copy();
+        return this.mat;
     }
     /**
      * Returns a copy of the inverse of the matrix and updates the matrix.
@@ -207,7 +207,7 @@ export class Camera {
      */
     public getInverseMatrix(): Matrix2x3 {
         this.updateMatrix();
-        return this.inv.copy();
+        return this.inv;
     }
     /**
      * Returns the current screen position with formula using the vector v and getCenter.

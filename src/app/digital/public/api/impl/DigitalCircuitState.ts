@@ -1,4 +1,5 @@
 import {CircuitState} from "core/public/api/impl/CircuitState";
+import {DigitalSim} from "digital/internal/sim/DigitalSim";
 
 import {DigitalCircuit}   from "../DigitalCircuit";
 import {DigitalComponent} from "../DigitalComponent";
@@ -11,4 +12,6 @@ export type DigitalCircuitState = CircuitState<
     DigitalWire,
     DigitalPort,
     DigitalCircuit
->;
+> & {
+    sim: DigitalSim;
+};
