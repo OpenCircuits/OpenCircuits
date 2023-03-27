@@ -1,6 +1,6 @@
 import {AddErrE} from "core/utils/MultiError";
 
-import {Schema}       from "core/schema";
+import {Schema} from "core/schema";
 
 import {Component} from "../Component";
 import {Port}      from "../Port";

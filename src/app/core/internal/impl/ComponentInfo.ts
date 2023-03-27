@@ -3,7 +3,7 @@ import {Result} from "core/utils/Result";
 import {Schema} from "core/schema";
 
 
-export type PortConfig = Record<string, number>
+export type PortConfig = Record<string, number>;
 
 export interface ObjInfo {
     readonly baseKind: Schema.Obj["baseKind"];

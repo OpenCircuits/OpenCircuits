@@ -40,6 +40,7 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
         // Setup input manager to attach to the Circuit's canvas
         if (circuit.canvas)
             this.inputManager.setupOn(circuit.canvas);
+
         circuit.subscribe((ev) => {
             if (ev.type === "attachCanvas")
                 this.inputManager.setupOn(ev.canvas);
