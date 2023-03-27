@@ -7,10 +7,17 @@ import {BaseShapePrim} from "./BaseShapePrim";
 /**
  * A representation of a Line shape.
  */
-export class Line extends BaseShapePrim {
+export class LinePrim extends BaseShapePrim {
     protected readonly p1: Vector;
     protected readonly p2: Vector;
 
+    /**
+     * Cosntructor for a line primitive.
+     *
+     * @param p1    The first point of the line.
+     * @param p2    The second point of the line.
+     * @param style The draw-style for the line.
+     */
     public constructor(p1: Vector, p2: Vector, style: Style) {
         super(style);
 

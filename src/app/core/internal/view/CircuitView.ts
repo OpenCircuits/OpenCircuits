@@ -63,7 +63,7 @@ export abstract class CircuitView {
         this.scheduler.subscribe(() => this.render());
 
         this.circuit.subscribe((ev) => {
-            // TODO: use event
+            // TODO[model_refactor](leon) - use events
 
             // update components first
             for (const compID of circuit.getComponents()) {
@@ -132,7 +132,7 @@ export abstract class CircuitView {
             RenderGrid(this);
 
         // Render wires
-        // TODO render by depth
+        // TODO[model_refactor](leon) - render by depth
         this.wirePrims.forEach((prims) => {
             prims.forEach((prim) => {
                 // if (!prim.cull(this.circuit.getCamera()))
@@ -142,7 +142,7 @@ export abstract class CircuitView {
         });
 
         // Render components
-        // TODO render by depth
+        // TODO[model_refactor](leon) - render by depth
         this.componentPrims.forEach((prims, compID) => {
             // Draw ports first
             this.portPrims.get(compID)?.forEach((prim) => {

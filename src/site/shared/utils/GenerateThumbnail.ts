@@ -4,6 +4,7 @@ import {DEFAULT_THUMBNAIL_SIZE,
         THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";
 
 
+// TODO[model_refactor](leon) - revisit this
 export const GenerateThumbnail = (() => {
     const canvas = document.createElement("canvas");
     // const camera = new Camera(DEFAULT_THUMBNAIL_SIZE, DEFAULT_THUMBNAIL_SIZE);

@@ -19,13 +19,13 @@ export class DigitalWireAssembler extends WireAssembler {
         this.sim = sim;
     }
 
-    protected getColorForWire(wire: Wire): string {
+    protected getColorForWire(wire: Wire): string | undefined {
         const signal = this.sim.getSignal(wire.p1);
         if (signal === Signal.On)
             return this.options.defaultOnColor;
         if (signal === Signal.Metastable)
             return this.options.defaultMetastableColor;
-        return (wire.props.color ?? "#ffffff");
+        return wire.props.color;
     }
 
     protected override assembleCurveStyle(wire: Wire): Style {
