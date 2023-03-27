@@ -33,8 +33,8 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.onImg  = view.options.getImage("switchDown.svg")!;
-        this.offImg = view.options.getImage("switchUp.svg")!;
+        this.onImg  = view.options.getImage("switchDown.svg");
+        this.offImg = view.options.getImage("switchUp.svg");
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.62, 0), dir: V(1, 0) }),

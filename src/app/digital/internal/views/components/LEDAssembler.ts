@@ -30,7 +30,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("led.svg")!;
+        this.img = view.options.getImage("led.svg");
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "inputs": () => ({ origin: V(0, -0.5), target: V(0, -2) }),

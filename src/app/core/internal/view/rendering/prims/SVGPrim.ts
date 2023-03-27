@@ -54,6 +54,8 @@ export class SVGPrim implements Prim {
         ctx.restore();
     }
     public updateStyle(style: Style): void {
-        this.tint = (style.fill ? parseColor(style.fill as string) : undefined);
+        if (typeof style.fill !== "string")
+            throw new Error("Cannot have an SVG with a Gradient tint!");
+        this.tint = (style.fill ? parseColor(style.fill) : undefined);
     }
 }

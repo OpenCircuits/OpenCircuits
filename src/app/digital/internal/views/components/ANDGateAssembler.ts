@@ -28,7 +28,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("and.svg")!;
+        this.img = view.options.getImage("and.svg");
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
