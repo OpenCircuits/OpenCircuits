@@ -55,21 +55,6 @@ export class RenderHelper {
 
     public draw(prim: Prim): void {
         prim.render(this.ctx);
-        // this.save();
-        // this.setStyle(style, alpha);
-
-        // // Begin path and draw the shape
-        // this.ctx.beginPath();
-        // shape.draw(this.ctx);
-
-        // // Only fill or stroke if we have to
-        // if (style.fill())
-        //     this.ctx.fill();
-        // if (style.stroke())
-        //     this.ctx.stroke();
-
-        // this.ctx.closePath();
-        // this.restore();
     }
 
     public createRadialGradient(pos1: Vector, r1: number, pos2: Vector, r2: number): CanvasGradient {

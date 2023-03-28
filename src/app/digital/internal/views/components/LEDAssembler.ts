@@ -9,13 +9,12 @@ import {CircuitInternal}   from "core/internal";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitView}       from "core/internal/view/CircuitView";
 import {PortAssembler}     from "core/internal/view/PortAssembler";
-import {SVGPrim}           from "core/internal/view/rendering/prims/SVG";
-import {Style}             from "core/internal/view/rendering/Style";
+import {SVGPrim}           from "core/internal/view/rendering/prims/SVGPrim";
 import {Assembler}         from "core/internal/view/Assembler";
+import {CirclePrim}        from "core/internal/view/rendering/prims/CirclePrim";
 
 import {DigitalSim} from "digital/internal/sim/DigitalSim";
 import {Signal}     from "digital/internal/sim/Signal";
-import {Circle}     from "core/internal/view/rendering/prims/Circle";
 
 
 export class LEDAssembler extends Assembler<Schema.Component> {
@@ -31,7 +30,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("led.svg")!;
+        this.img = view.options.getImage("led.svg");
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "inputs": () => ({ origin: V(0, -0.5), target: V(0, -2) }),
@@ -66,7 +65,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
     }
 
     private assembleLight(led: Schema.Component) {
-        return new Circle(
+        return new CirclePrim(
             V(led.props.x ?? 0, led.props.y ?? 0),
             this.options.ledLightRadius,
             this.assembleLightStyle(led),

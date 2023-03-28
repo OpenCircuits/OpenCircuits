@@ -24,15 +24,29 @@ export class DigitalCircuitView extends CircuitView {
         // Create assemblers on first call since some assemblers load images and so we need to defer it
         if (!this.assemblers) {
             this.assemblers = {
+                // Base types
+                "DigitalWire": new DigitalWireAssembler(this.circuit, this, this.selections, this.sim),
+
+                // Inputs
+                "Switch": new SwitchAssembler(this.circuit, this, this.selections, this.sim),
+
+                // Outputs
+                "LED": new LEDAssembler(this.circuit, this, this.selections, this.sim),
+
+                // Gates
                 "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
                 "XORGate": new XORGateAssembler(this.circuit, this, this.selections, this.sim),
-                "LED":     new LEDAssembler(this.circuit, this, this.selections, this.sim),
-                "Switch":  new SwitchAssembler(this.circuit, this, this.selections, this.sim),
+                
+                // FlipFlops
 
-                "DigitalWire": new DigitalWireAssembler(this.circuit, this, this.selections, this.sim),
+                // Latches
+
+                // Other
             };
         }
 
+        // TODO[model_refactor](leon) - Consider going back to templating `kind`, but as a post-effort once the view
+        //                               is all set-in-stone.
         if (!(kind in this.assemblers))
             throw new Error(`Failed to get assembler for kind ${kind}! Unmapped!`);
         return this.assemblers[kind];

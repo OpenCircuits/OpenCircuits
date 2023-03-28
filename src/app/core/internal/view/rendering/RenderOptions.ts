@@ -26,12 +26,21 @@ export interface RenderOptions {
     ledLightIntensity: number;
 
     wireThickness: number;
+    defaultWireColor: string;
 
     defaultOnColor: string;
     defaultMetastableColor: string;
 
     addImage(key: string, img: SVGDrawing): void;
-    getImage(key: string): SVGDrawing | undefined;
+
+    /**
+     * Retrives the SVG with the given key.
+     * Note this will throw an error if the image is not found.
+     *
+     * @param key The key of the SVG.
+     * @throws If the image is not found.
+     */
+    getImage(key: string): SVGDrawing;
 
     // fillColor(selected: boolean): string;
     // borderColor(selected: boolean): string;
@@ -41,7 +50,7 @@ export interface RenderOptions {
     fillStyle(selected: boolean): Style;
 
     portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style };
-    wireStyle(selected: boolean, color: string): Style;
+    wireStyle(selected: boolean, color?: string): Style;
 }
 
 export class DefaultRenderOptions implements RenderOptions {
@@ -68,6 +77,7 @@ export class DefaultRenderOptions implements RenderOptions {
     public ledLightIntensity = 0.75;
 
     public wireThickness = 0.14;
+    public defaultWireColor = "#ffffff";
 
     public defaultOnColor = "#3cacf2";
     public defaultMetastableColor = "#cc5e5e";
@@ -81,7 +91,11 @@ export class DefaultRenderOptions implements RenderOptions {
     public addImage(key: string, img: SVGDrawing): void {
         this.images[key] = img;
     }
-    public getImage(key: string): SVGDrawing | undefined {
+    public getImage(key: string): SVGDrawing {
+        if (!(key in this.images)) {
+            throw new Error(`Failed to find image with key ${key}!` +
+                            `Loaded images: ${Object.keys(this.images).join(",")}`);
+        }
         return this.images[key];
     }
 
@@ -129,7 +143,7 @@ export class DefaultRenderOptions implements RenderOptions {
             },
         };
     }
-    public wireStyle(selected: boolean, color: string): Style {
+    public wireStyle(selected: boolean, color = this.defaultWireColor): Style {
         // Changes color of wires: when wire is selected it changes to the color
         //  selected blended with constant color SELECTED_FILL_COLOR
         const selectedColor = ColorToHex(blend(
