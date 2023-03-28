@@ -12,12 +12,14 @@ import {storeDesigner} from "shared/utils/hooks/useDesigner";
 
 import {CreateDesigner} from "shared/circuitdesigner";
 
-import {DefaultTool}      from "shared/tools/DefaultTool";
-import {PanTool}          from "shared/tools/PanTool";
-import {TranslateTool}    from "shared/tools/TranslateTool";
-import {WiringTool}       from "shared/tools/WiringTool";
-import {ZoomHandler}      from "shared/tools/handlers/ZoomHandler";
-import {SelectionHandler} from "shared/tools/handlers/SelectionHandler";
+import {DefaultTool}              from "shared/tools/DefaultTool";
+import {PanTool}                  from "shared/tools/PanTool";
+import {TranslateTool}            from "shared/tools/TranslateTool";
+import {SelectionBoxTool}         from "shared/tools/SelectionBoxTool";
+import {WiringTool}               from "shared/tools/WiringTool";
+import {ZoomHandler}              from "shared/tools/handlers/ZoomHandler";
+import {SelectionHandler}         from "shared/tools/handlers/SelectionHandler";
+import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
 
 import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
@@ -67,8 +69,8 @@ async function Init(): Promise<void> {
         CreateCircuit(),
         {
             defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
-            tools:       [PanTool, new TranslateTool(), new WiringTool()],
-            renderers:   [new DigitalWiringToolRenderer()],
+            tools:       [PanTool, new TranslateTool(), new WiringTool(), new SelectionBoxTool()],
+            renderers:   [new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
         },
     );
 

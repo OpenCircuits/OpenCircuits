@@ -53,6 +53,13 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
         throw new Error("Unimplemented");
     }
 
+    public select(): void {
+        this.isSelected = true;
+    }
+    public deselect(): void {
+        this.isSelected = false;
+    }
+
     public exists(): boolean {
         return !!this.internal.getObjByID(this.objID);
     }
