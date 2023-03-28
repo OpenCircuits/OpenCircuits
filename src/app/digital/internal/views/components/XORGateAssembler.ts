@@ -7,9 +7,10 @@ import {CircuitInternal}      from "core/internal";
 import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {CircuitView}          from "core/internal/view/CircuitView";
 import {PortAssembler}        from "core/internal/view/PortAssembler";
-import {Line}                 from "core/internal/view/rendering/prims/Line";
-import {SVGPrim}              from "core/internal/view/rendering/prims/SVG";
-import {Style}                from "core/internal/view/rendering/Style";
+import {LinePrim}                 from "core/internal/view/rendering/prims/LinePrim";
+import {QuadCurvePrim}        from "core/internal/view/rendering/prims/QuadCurvePrim";
+import {SVGPrim}              from "core/internal/view/rendering/prims/SVGPrim";
+import {Style, StrokeStyle}   from "core/internal/view/rendering/Style";
 import {Schema}               from "core/schema";
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
@@ -40,10 +41,54 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         });
     }
 
+    private assembleQuadCurve(gate: Schema.Component, dx: number) {
+        const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
+
+        const { inputPortGroups } = this.circuit.getObjectInfo("XORGate") as DigitalComponentInfo;
+
+         // Get current number of inputs
+         const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
+            .map((id) => this.circuit.getPortByID(id).unwrap())
+            .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
+
+        const amt = 2 * Math.floor(numInputs / 4) + 1;
+        
+        // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
+        const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.014, 0]) : ([0, 0.012]);
+
+        for (let i = 0; i < amt; i++) {
+            const d = (i - Math.floor(amt / 2)) * this.size.y;
+            const h = defaultBorderWidth;
+            const l1 = -this.size.y / 2 + lNumMod;
+            const l2 = +this.size.y / 2 - lNumMod;
+
+            const s = this.size.x / 2 - h + sMod;
+            const l = this.size.x / 5 - h;
+
+            const p1 = V(-s + dx, l1 + d);
+            const p2 = V(-s + dx, l2 + d);
+            const c = V(-l + dx, d);
+            if (amt === 1 && dx !== 0) {
+                return new QuadCurvePrim(p1, p2, c, style);
+            }
+            else if (amt !== 1 || dx !== 0) {
+                renderer.save();
+                renderer.setPathStyle({ lineCap: "round" });
+                renderer.draw(new QuadCurve(p1, p2, c), style);
+                renderer.restore();
+            }
+        }
+
+
+        const selected = this.selections.has(gate.id);
+    
+        return new QuadCurvePrim(p1, p2, c, this.options.curveStyle(selected));
+    }
+
     private assembleLine(gate: Schema.Component) {
         const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
 
-        const { inputPortGroups } = this.circuit.getObjectInfo("ANDGate") as DigitalComponentInfo;
+        const { inputPortGroups } = this.circuit.getObjectInfo("XORGate") as DigitalComponentInfo;
 
         // Get current number of inputs
         const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
@@ -60,7 +105,9 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
 
         const selected = this.selections.has(gate.id);
 
-        return new Line(
+
+
+        return new LinePrim(
             transform.toWorldSpace(V(x, y1)),
             transform.toWorldSpace(V(x, y2)),
             new Style(undefined,
