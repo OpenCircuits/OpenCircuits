@@ -16,7 +16,7 @@ export class RenderHelper {
         // this.camera = camera;
     }
 
-    protected get ctx(): CanvasRenderingContext2D {
+    public get ctx(): CanvasRenderingContext2D {
         if (!this.context)
             throw new Error(`RenderHelper: Uninitialized context! ${this.canvas} | ${this.context}`);
         return this.context;

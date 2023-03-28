@@ -20,6 +20,8 @@ import {CircuitState}         from "./CircuitState";
 import {CreateDrawingFromSVG} from "svg2canvas";
 import {CameraImpl}           from "./Camera";
 import {Observable}           from "core/utils/Observable";
+import {RenderHelper}         from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions}        from "core/internal/view/rendering/RenderOptions";
 
 
 export abstract class CircuitImpl<
@@ -118,14 +120,35 @@ export abstract class CircuitImpl<
     }
 
     // Queries
-    public pickObjectAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
+    public pickObjAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
         const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
         const objID = this.view.findNearestObj(pos);
         if (!objID)
             return undefined;
         return this.getObj(objID);
     }
-    public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
+    public pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | undefined {
+        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
+        const objID = this.view.findNearestObj(pos, (id) => (this.circuit.hasComp(id)));
+        if (!objID)
+            return undefined;
+        return this.getComponent(objID);
+    }
+    public pickWireAt(pt: Vector, space: Vector.Spaces = "world"): WireT | undefined {
+        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
+        const objID = this.view.findNearestObj(pos, (id) => (this.circuit.hasWire(id)));
+        if (!objID)
+            return undefined;
+        return this.getWire(objID);
+    }
+    public pickPortAt(pt: Vector, space: Vector.Spaces = "world"): PortT | undefined {
+        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
+        const objID = this.view.findNearestObj(pos, (id) => (this.circuit.hasPort(id)));
+        if (!objID)
+            return undefined;
+        return this.getPort(objID);
+    }
+    public pickObjRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
 
@@ -299,7 +322,13 @@ export abstract class CircuitImpl<
         this.publish({ type: "detachCanvas" });
     }
 
-    public addRenderCallback(cb: () => void): void {
-        throw new Error("Unimplemented");
+    public forceRedraw(): void {
+        this.view.scheduler.requestRender();
+    }
+
+    public addRenderCallback(cb: (data: {
+        renderer: RenderHelper; options: RenderOptions; circuit: Circuit;
+    }) => void): void {
+        this.view.subscribe(({ renderer }) => cb({ renderer, options: this.view.options, circuit: this }));
     }
 }

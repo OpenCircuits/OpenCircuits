@@ -1,11 +1,18 @@
 import {Circuit, Obj}    from "core/public";
 import {DefaultTool}     from "shared/tools/DefaultTool";
+import {ToolRenderer}    from "shared/tools/renderers/ToolRenderer";
 import {Tool}            from "shared/tools/Tool";
 import {Cursor}          from "shared/utils/input/Cursor";
 import {InputManager}    from "shared/utils/input/InputManager";
 import {CircuitDesigner} from "../CircuitDesigner";
 import {ToolManager}     from "./ToolManager";
 
+
+export interface ToolConfig {
+    defaultTool: DefaultTool;
+    tools: Tool[];
+    renderers?: Array<ToolRenderer<Tool>>;
+}
 
 export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigner<Circ> {
     public readonly circuit: Circ;
@@ -21,10 +28,7 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
 
     public constructor(
         circuit: Circ,
-        { defaultTool, tools }: {
-            defaultTool: DefaultTool;
-            tools: Tool[];
-        },
+        { defaultTool, tools, renderers }: ToolConfig,
     ) {
         this.circuit = circuit;
 
@@ -50,6 +54,17 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
 
         // Setup tool manager
         this.inputManager.subscribe((ev) => this.toolManager.onEvent(ev, this));
+
+        // Attach tool renderers
+        if (renderers) {
+            this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
+                renderers.forEach((toolRenderer) => {
+                    const curTool = this.toolManager.curTool;
+                    if (toolRenderer.isActive(curTool))
+                        toolRenderer.render({ renderer, options, circuit, curTool, input: this.inputManager.state });
+                });
+            })
+        }
     }
 
     public get curPressedObj() {

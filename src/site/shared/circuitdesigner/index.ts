@@ -1,16 +1,10 @@
 import {Circuit} from "core/public";
 
-import {DefaultTool} from "shared/tools/DefaultTool";
-import {Tool}        from "shared/tools/Tool";
-
-import {CircuitDesignerImpl} from "./impl/CircuitDesigner";
+import {CircuitDesignerImpl, ToolConfig} from "./impl/CircuitDesigner";
 
 
 export * from "./CircuitDesigner";
 
-export function CreateDesigner<Circ extends Circuit>(circuit: Circ, toolConfig: {
-    defaultTool: DefaultTool;
-    tools: Tool[];
-}) {
+export function CreateDesigner<Circ extends Circuit>(circuit: Circ, toolConfig: ToolConfig) {
     return new CircuitDesignerImpl(circuit, toolConfig);
 }

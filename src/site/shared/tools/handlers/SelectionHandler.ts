@@ -9,7 +9,7 @@ export const SelectionHandler: ToolHandler = {
 
         const deselectAll = (!ev.state.isShiftKeyDown && circuit.selectedObjs.length > 0);
 
-        const obj = circuit.pickObjectAt(ev.state.mousePos, "screen");
+        const obj = circuit.pickObjAt(ev.state.mousePos, "screen");
         if (!obj) {
             // Clear selections if not holding shift
             if (deselectAll) {
@@ -18,6 +18,8 @@ export const SelectionHandler: ToolHandler = {
             }
             return ToolHandlerResponse.PASS;
         }
+
+        // TODO[model_refactor_api](leon) - think about how this works w/ ports and WireTool (like in master)
 
         const shouldSelect = (!ev.state.isShiftKeyDown || !obj.isSelected);
 

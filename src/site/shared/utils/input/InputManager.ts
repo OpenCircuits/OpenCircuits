@@ -74,7 +74,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     /** The canvas the user is performing inputs on. */
     private canvas?: HTMLCanvasElement;
 
-    private state: InputManagerStateImpl;
+    public state: InputManagerStateImpl;
 
     /**
      * Initializes Input with given canvas and dragTime.
