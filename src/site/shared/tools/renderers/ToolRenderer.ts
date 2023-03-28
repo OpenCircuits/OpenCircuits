@@ -7,7 +7,7 @@ import {InputManagerState} from "shared/utils/input/InputManagerState";
 import {Tool} from "../Tool";
 
 
-export interface ToolRendererProps<T extends Tool = Tool> {
+export interface ToolRendererProps<T extends Tool | undefined = Tool> {
     renderer: RenderHelper;
     options: RenderOptions;
 
@@ -17,7 +17,7 @@ export interface ToolRendererProps<T extends Tool = Tool> {
     input: InputManagerState;
 }
 
-export interface ToolRenderer<T extends Tool = Tool> {
+export interface ToolRenderer<T extends Tool | undefined = Tool> {
     isActive(curTool?: Tool): curTool is T;
 
     render(props: ToolRendererProps<T>): void;

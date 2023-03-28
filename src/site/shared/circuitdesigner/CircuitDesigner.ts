@@ -1,5 +1,6 @@
 import {Circuit, Obj} from "core/public";
 import {Cursor}       from "shared/utils/input/Cursor";
+import {Vector}       from "Vector";
 
 
 export interface CircuitDesigner<Circ extends Circuit = Circuit> {
@@ -7,4 +8,6 @@ export interface CircuitDesigner<Circ extends Circuit = Circuit> {
 
     cursor?: Cursor;
     curPressedObj?: Obj;
+
+    readonly worldMousePos: Vector;
 }

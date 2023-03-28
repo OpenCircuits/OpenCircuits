@@ -11,7 +11,7 @@ import {ToolManager}     from "./ToolManager";
 export interface ToolConfig {
     defaultTool: DefaultTool;
     tools: Tool[];
-    renderers?: Array<ToolRenderer<Tool>>;
+    renderers?: Array<ToolRenderer<Tool | undefined>>;
 }
 
 export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigner<Circ> {
@@ -60,8 +60,12 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
             this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
                 renderers.forEach((toolRenderer) => {
                     const curTool = this.toolManager.curTool;
-                    if (toolRenderer.isActive(curTool))
-                        toolRenderer.render({ renderer, options, circuit, curTool, input: this.inputManager.state });
+                    if (toolRenderer.isActive(curTool)) {
+                        toolRenderer.render({
+                            renderer, options, circuit, curTool,
+                            input: this.inputManager.state,
+                        });
+                    }
                 });
             })
         }
@@ -79,5 +83,9 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
     }
     public set cursor(cursor: Cursor | undefined) {
         this.state.cursor = cursor;
+    }
+
+    public get worldMousePos() {
+        return this.circuit.camera.toWorldPos(this.inputManager.state.mousePos);
     }
 }
