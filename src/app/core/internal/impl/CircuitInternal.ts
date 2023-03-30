@@ -26,7 +26,8 @@ export class CircuitInternal extends Observable {
     private readonly log: CircuitLog;
     private clock: number;
 
-    private transaction: boolean;
+    // Keep track of multiple "begin"/"commit" pairs and only commit when counter reaches zero.
+    private transactionCounter: number;
     private transactionOps: CircuitOp[];
 
     // Camera schema
@@ -173,7 +174,7 @@ export class CircuitInternal extends Observable {
         this.log = log;
         this.clock = log.clock;
 
-        this.transaction = false;
+        this.transactionCounter = 0;
         this.transactionOps = [];
 
         this.camera = {
@@ -195,7 +196,7 @@ export class CircuitInternal extends Observable {
                 return;
 
             // Apply remote updates mid-transaction so this state is up-to-date.
-            if (this.transaction)
+            if (this.isTransaction())
                 this.transformTransaction(evt.ops);
             else
                 this.applyOpsChecked(evt.ops);
@@ -218,27 +219,25 @@ export class CircuitInternal extends Observable {
         this.applyOpsChecked(ops);
 
         // Transform tx ops
-        const transformedTx = TransformCircuitOps(this.transactionOps, ops);
+        TransformCircuitOps(this.transactionOps, ops)
+            .uponErr(() => {
+                // Failed to transform partial transaction, so cancel it and save the error.
+                this.transactionCounter = 0;
+                this.transactionOps = [];
 
-        if (transformedTx) {
-            // Reapply tx ops
-            this.applyOpsChecked(this.transactionOps);
-        } else {
-            // Failed to transform partial transaction, so cancel it
-            this.transactionOps = [];
-            this.transaction = false;
-        }
+                // TODO[model_refactor_api](kevin): propagate this error to the client.
+                // this.transactionTransformError = e;
+            })
+            .uponOk((txOps) => {
+                // Reapply tx ops
+                this.transactionOps = txOps;
+                this.applyOpsChecked(this.transactionOps);
+            });
     }
 
-    private assertTransactionState(state: boolean): void {
-        if (this.transaction !== state)
-            throw new Error(`Unexpectedly in transaction state ${this.transaction}`);
-    }
     private endTransactionHelper(f: (txOps: CircuitOp[]) => void): void {
-        this.assertTransactionState(true);
-
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
-        this.transaction = false;
+        this.transactionCounter = 0;
         if (this.transactionOps.length > 0) {
             const txOps = this.transactionOps;
             this.transactionOps = [];
@@ -252,11 +251,17 @@ export class CircuitInternal extends Observable {
 
     // We need "read-your-writes" so functions like "setProp" can correctly get tombstones like "oldVal".
     public beginTransaction(): void {
-        this.assertTransactionState(false);
-        this.transaction = true;
+        this.transactionCounter++;
     }
     // TODO: This should return some reference representing the LogEntry
     public commitTransaction(): void {
+        if (!this.isTransaction())
+            throw new Error("Unexpected commitTransaction!");
+
+        // Early return if this isn't the last "commit"
+        if (--this.transactionCounter > 0)
+            return
+
         this.endTransactionHelper((txOps) => {
             // Sanity check: Clock should be kept updated by the event handler.
             if (this.clock !== this.log.clock)
@@ -273,7 +278,7 @@ export class CircuitInternal extends Observable {
     // Check this before working with long-running transactions.  Long-running transactions are any transaction that
     //  crosses an async/event boundary and some other task could have resumed in the mean time.
     public isTransaction(): boolean {
-        return this.transaction;
+        return this.transactionCounter > 0;
     }
 
 
@@ -282,7 +287,7 @@ export class CircuitInternal extends Observable {
     //
 
     protected addTransactionOp(op: CircuitOp): Result {
-        this.assertTransactionState(true);
+        this.beginTransaction();
 
         // read-your-writes
         return this.applyOp(op)
@@ -290,6 +295,7 @@ export class CircuitInternal extends Observable {
             .uponOk(() => {
                 // Push only after successful op
                 this.transactionOps.push(op);
+                this.commitTransaction();
 
                 // TODO: Publish actual event details
                 this.publish({});
