@@ -1,13 +1,11 @@
 import {OperatorFormat} from "./Constants/DataStructures";
 import {FORMATS}        from "./Constants/Formats";
 
-import {DigitalComponent} from "digital/models/DigitalComponent";
-import {DigitalObjectSet} from "digital/models/DigitalObjectSet";
-
 import {GenerateInputTree}        from "./GenerateInputTree";
 import {GenerateTokens}           from "./GenerateTokens";
 import {TreeToCircuit}            from "./TreeToCircuit";
 import {ValidateInputOutputTypes} from "./Utils";
+import {DigitalCircuit}           from "digital/public";
 
 
 /**
@@ -28,10 +26,10 @@ import {ValidateInputOutputTypes} from "./Utils";
  * @throws If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
  * @throws If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
  */
-export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
+export function ExpressionToCircuit(inputs: Map<string, string>,
                                     expression: string,
-                                    output: DigitalComponent,
-                                    ops: OperatorFormat = FORMATS[0]): DigitalObjectSet {
+                                    output: string,
+                                    ops: OperatorFormat = FORMATS[0]): DigitalCircuit {
 
     ValidateInputOutputTypes(inputs, output);
 
@@ -39,7 +37,5 @@ export function ExpressionToCircuit(inputs: Map<string, DigitalComponent>,
 
     const connectedTree = GenerateInputTree(tokenList, ops.ops);
 
-    const fullCircuit = TreeToCircuit(connectedTree, inputs, output);
-
-    return DigitalObjectSet.From(fullCircuit);
+    return TreeToCircuit(connectedTree, inputs, output);
 }

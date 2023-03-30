@@ -1,17 +1,8 @@
-// import {Create} from "serialeazy";
+import {InputTree} from "./Constants/DataStructures";
 
-import {InputTree, InputTreeBinOpType, InputTreeOpType} from "./Constants/DataStructures";
-
-// import {IOObject} from "core/models";
-
-// import {LazyConnect} from "digital/utils/ComponentUtils";
-
-// import {DigitalComponent} from "digital/models";
-
-// import {Gate} from "digital/models/ioobjects/gates/Gate";
 import {CreateCircuit, DigitalCircuit} from "digital/public";
-import {V} from "Vector";
-// import {DigitalCircuitImpl} from "digital/public/api/impl/DigitalCircuit";
+import {V}                             from "Vector";
+import {Component}                     from "core/public";
 
 
 /**
@@ -47,39 +38,48 @@ export const NegatedTypeToGate = {
  * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
  * @see TreeToCircuit
  */
-// function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: DigitalCircuit):
-//     DigitalCircuit {
-//     if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
-//         if (!inputs.has(node.ident))
-//             throw new Error("Input Not Found: \"" + node.ident + "\"");
-//         const index = circuit.indexOf(inputs.get(node.ident)!);
-//         circuit.splice(index, 1);
-//         circuit.push(inputs.get(node.ident)!);
-//         return circuit;
-//     }
+function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circuit: DigitalCircuit):
+    Component {
+    if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
+        const input = inputs.get(node.ident);
+        if (!input)
+            throw new Error("Input Not Found: \"" + node.ident + "\"");
+        return input;
+    }
 
-//     const ret = circuit;
-//     const newGate = ((node.kind === "binop" && node.isNot)
-//                                  ? NegatedTypeToGate[node.type]
-//                                  : TypeToGate[node.type]);
-//     circuit.placeComponentAt(V(0, 0), newGate)
-//     if (node.kind === "unop") {
-//         const prevNode = treeToCircuitCore(node.child, inputs, ret).at(-1) as DigitalComponent;
-//         const wire = LazyConnect(prevNode, newGate);
-//         ret.push(wire);
-//     } else if (node.kind === "binop") {
-//         newGate.setInputPortCount(node.children.length);
-//         node.children.forEach((child) => {
-//             if (!child)
-//                 throw new Error("treeToCircuitCore failed: child was undefined");
-//             const prevNode = treeToCircuitCore(child, inputs, ret).at(-1) as DigitalComponent;
-//             const wire = LazyConnect(prevNode, newGate);
-//             ret.push(wire);
-//         });
-//     }
-//     ret.push(newGate);
-//     return ret;
-// }
+    const ret = circuit;
+    const newGate = ((node.kind === "binop" && node.isNot)
+                                 ? NegatedTypeToGate[node.type]
+                                 : TypeToGate[node.type]);
+    const newComp = circuit.placeComponentAt(V(0, 0), newGate);
+    const newNode = newComp.firstAvailable("input");
+    if (!newNode)
+        throw new Error(`Port not found on newly created ${newComp.kind}`);
+    if (node.kind === "unop") {
+        const prevComp = treeToCircuitCore(node.child, inputs, ret);
+        const prevNode = prevComp.firstAvailable("output");
+        if (!prevNode)
+            throw new Error(`Port not found on returned ${prevComp.kind}`);
+        const wire = circuit.connectWire(prevNode, newNode);
+        if (!wire)
+            throw new Error(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
+    } else if (node.kind === "binop") {
+        newComp.setNumPorts("input", node.children.length);
+        node.children.forEach((child) => {
+            if (!child)
+                throw new Error("treeToCircuitCore failed: child was undefined");
+            const prevComp = treeToCircuitCore(child, inputs, ret);
+            const prevNode = prevComp.firstAvailable("output");
+            if (!prevNode)
+                throw new Error(`Port not found on returned ${prevComp.kind}`);
+            const wire = circuit.connectWire(prevNode, newNode);
+            if (!wire)
+                throw new Error(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
+        });
+    }
+
+    return newComp;
+}
 
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
@@ -90,16 +90,32 @@ export const NegatedTypeToGate = {
  * @returns      The components and wires converted from the tree.
  * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
  */
-export function TreeToCircuit(tree: InputTree | undefined, inputs: Map<string, string>,){
-                            //   output: string): IOObject[] {
-    if (!tree)
-        return [];
-
+export function TreeToCircuit(tree: InputTree | undefined, inputs: ReadonlyMap<string, string>,
+                              output: string): DigitalCircuit {
     const circuit = CreateCircuit();
-    const c = circuit.placeComponentAt(V(0, 0), "Multiplexer");
+    if (!tree)
+        return circuit;
 
-    // ret = treeToCircuitCore(tree, inputs, ret);
-    // const wire = LazyConnect(ret.at(-1) as DigitalComponent, output);
-    // ret.push(wire, output);
-    // return ret;
+    const outputComp = circuit.placeComponentAt(V(0, 0), output);
+    const outputNode = outputComp.firstAvailable("output");
+    if (!outputNode)
+        throw new Error(`Port not found on output ${outputComp.kind}`);
+
+    const inputMap = new Map<string, Component>();
+    inputs.forEach((input, type) => {
+        const c = circuit.placeComponentAt(V(0, 0), type);
+        inputMap.set(input, c);
+    });
+
+    const finalComp = treeToCircuitCore(tree, inputMap, circuit);
+
+    const finalNode = finalComp.firstAvailable("output");
+    if (!finalNode)
+        throw new Error(`Port not found on output ${finalComp.kind}`);
+
+    const wire = circuit.connectWire(finalNode, outputNode);
+    if (!wire)
+        throw new Error(`Connection between ${finalComp.kind} and ${outputComp.kind} failed`);
+
+    return circuit;
 }

@@ -12,6 +12,6 @@
             "shared/*":       ["../../shared/*"],
         }
     },
-    "include": ["../../shared/utils/types"],
+    // TODO[model_refactor_api](Leon) - Add back "src" to include
     "files": ["./src/index.tsx"],
 }
