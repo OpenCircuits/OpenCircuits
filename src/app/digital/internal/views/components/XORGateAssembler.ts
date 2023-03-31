@@ -7,7 +7,7 @@ import {CircuitInternal}      from "core/internal";
 import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {CircuitView}          from "core/internal/view/CircuitView";
 import {PortAssembler}        from "core/internal/view/PortAssembler";
-import {LinePrim}                 from "core/internal/view/rendering/prims/LinePrim";
+import {LinePrim}             from "core/internal/view/rendering/prims/LinePrim";
 import {QuadCurvePrim}        from "core/internal/view/rendering/prims/QuadCurvePrim";
 import {SVGPrim}              from "core/internal/view/rendering/prims/SVGPrim";
 import {Style, StrokeStyle}   from "core/internal/view/rendering/Style";
@@ -42,7 +42,7 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
     }
 
     private assembleQuadCurve(gate: Schema.Component, dx: number) {
-        const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
+        const { defaultBorderWidth, selectedBorderColor, defaultBorderColor, fillStyle } = this.options;
 
         const { inputPortGroups } = this.circuit.getObjectInfo("XORGate") as DigitalComponentInfo;
 
@@ -56,65 +56,44 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
         const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.014, 0]) : ([0, 0.012]);
 
+        let quadCurves = [];
+        
+        const h = defaultBorderWidth;
+        const l1 = -this.size.y / 2 + lNumMod;
+        const l2 = +this.size.y / 2 - lNumMod;
+
+        const s = this.size.x / 2 - h + sMod;
+        const l = this.size.x / 5 - h;
+        
+        const transform = this.view.componentTransforms.get(gate.id)!;
+        const selected = this.selections.has(gate.id);
+        
         for (let i = 0; i < amt; i++) {
             const d = (i - Math.floor(amt / 2)) * this.size.y;
-            const h = defaultBorderWidth;
-            const l1 = -this.size.y / 2 + lNumMod;
-            const l2 = +this.size.y / 2 - lNumMod;
-
-            const s = this.size.x / 2 - h + sMod;
-            const l = this.size.x / 5 - h;
-
             const p1 = V(-s + dx, l1 + d);
             const p2 = V(-s + dx, l2 + d);
             const c = V(-l + dx, d);
+
             if (amt === 1 && dx !== 0) {
-                return new QuadCurvePrim(p1, p2, c, style);
+                quadCurves.push( new QuadCurvePrim(
+                    transform.toWorldSpace(p1),
+                    transform.toWorldSpace(p2), 
+                    transform.toWorldSpace(c), 
+                    this.options.curveStyle(selected)));
             }
             else if (amt !== 1 || dx !== 0) {
-                renderer.save();
-                renderer.setPathStyle({ lineCap: "round" });
-                renderer.draw(new QuadCurve(p1, p2, c), style);
-                renderer.restore();
+                let style = this.options.curveStyle(selected);
+                if (style.stroke) {
+                    style.stroke.lineCap = "round";
+                }
+                quadCurves.push( new QuadCurvePrim(
+                    transform.toWorldSpace(p1),
+                    transform.toWorldSpace(p2), 
+                    transform.toWorldSpace(c), 
+                    style))
             }
         }
-
-
-        const selected = this.selections.has(gate.id);
-    
-        return new QuadCurvePrim(p1, p2, c, this.options.curveStyle(selected));
-    }
-
-    private assembleLine(gate: Schema.Component) {
-        const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
-
-        const { inputPortGroups } = this.circuit.getObjectInfo("XORGate") as DigitalComponentInfo;
-
-        // Get current number of inputs
-        const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
-            .map((id) => this.circuit.getPortByID(id).unwrap())
-            .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
-
-        const dy = (numInputs-1)/2*(0.5 - defaultBorderWidth/2);
-        const y1 = -dy - defaultBorderWidth/2;
-        const y2 =  dy + defaultBorderWidth/2;
-
-        const x = -(this.size.x - defaultBorderWidth)/2;
-
-        const transform = this.view.componentTransforms.get(gate.id)!;
-
-        const selected = this.selections.has(gate.id);
-
-
-
-        return new LinePrim(
-            transform.toWorldSpace(V(x, y1)),
-            transform.toWorldSpace(V(x, y2)),
-            new Style(undefined,
-                (selected ? selectedBorderColor : defaultBorderColor),
-                defaultBorderWidth,
-            ),
-        );
+        return quadCurves;
     }
 
     private assembleImage(gate: Schema.Component) {
