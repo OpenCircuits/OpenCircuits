@@ -26,12 +26,21 @@ export interface RenderOptions {
     ledLightIntensity: number;
 
     wireThickness: number;
+    defaultWireColor: string;
 
     defaultOnColor: string;
     defaultMetastableColor: string;
 
     addImage(key: string, img: SVGDrawing): void;
-    getImage(key: string): SVGDrawing | undefined;
+
+    /**
+     * Retrives the SVG with the given key.
+     * Note this will throw an error if the image is not found.
+     *
+     * @param key The key of the SVG.
+     * @throws If the image is not found.
+     */
+    getImage(key: string): SVGDrawing;
 
     // fillColor(selected: boolean): string;
     // borderColor(selected: boolean): string;
@@ -41,14 +50,14 @@ export interface RenderOptions {
     fillStyle(selected: boolean): Style;
 
     portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style };
-    wireStyle(selected: boolean, color: string): Style;
+    wireStyle(selected: boolean, color?: string): Style;
 }
 
 export class DefaultRenderOptions implements RenderOptions {
     public showGrid = true;
 
     public gridSize = 1;
-    public gridStyle = new Style(undefined, "#999999", 0.02);
+    public gridStyle = { stroke: { color: "#999999", size: 0.02 } };
 
     public defaultFillColor =  "#ffffff";
     public selectedFillColor = "#1cff3e";
@@ -68,6 +77,7 @@ export class DefaultRenderOptions implements RenderOptions {
     public ledLightIntensity = 0.75;
 
     public wireThickness = 0.14;
+    public defaultWireColor = "#ffffff";
 
     public defaultOnColor = "#3cacf2";
     public defaultMetastableColor = "#cc5e5e";
@@ -81,47 +91,59 @@ export class DefaultRenderOptions implements RenderOptions {
     public addImage(key: string, img: SVGDrawing): void {
         this.images[key] = img;
     }
-    public getImage(key: string): SVGDrawing | undefined {
+    public getImage(key: string): SVGDrawing {
+        if (!(key in this.images)) {
+            throw new Error(`Failed to find image with key ${key}!` +
+                            `Loaded images: ${Object.keys(this.images).join(",")}`);
+        }
         return this.images[key];
     }
 
     public lineStyle(selected: boolean) {
-        return new Style(
-            undefined,
-            (selected ? this.selectedBorderColor : this.defaultBorderColor),
-            this.defaultBorderWidth,
-        );
+        return {
+            stroke: {
+                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
+                size:  this.defaultBorderWidth,
+            },
+        };
     }
     public curveStyle(selected: boolean) {
-        return new Style(
-            undefined,
-            (selected ? this.selectedBorderColor : this.defaultBorderColor),
-            this.curveBorderWidth,
-        );
+        return {
+            stroke: {
+                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
+                size:  this.curveBorderWidth,
+            },
+        };
     }
     public fillStyle(selected: boolean): Style {
-        return new Style(
-            (selected ? this.selectedFillColor : this.defaultFillColor),
-            (selected ? this.selectedBorderColor : this.defaultBorderColor),
-            this.defaultBorderWidth,
-        );
+        return {
+            fill:   (selected ? this.selectedFillColor : this.defaultFillColor),
+            stroke: {
+                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
+                size:  this.defaultBorderWidth,
+            },
+        };
     }
 
     public portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style } {
         return {
-            lineStyle: new Style(
-                undefined,
-                ((parentSelected && !selected) ? this.selectedBorderColor : this.defaultBorderColor),
-                this.portLineWidth,
-            ),
-            circleStyle: new Style(
-                ((parentSelected || selected) ? this.selectedFillColor : this.defaultFillColor),
-                ((parentSelected || selected) ? this.selectedBorderColor : this.defaultBorderColor),
-                this.portBorderWidth,
-            ),
+            lineStyle: {
+                stroke: {
+                    color: ((parentSelected && !selected) ? this.selectedBorderColor : this.defaultBorderColor),
+                    size:  this.portLineWidth,
+                },
+            },
+            circleStyle: {
+                fill:   ((parentSelected || selected) ? this.selectedFillColor : this.defaultFillColor),
+                stroke: {
+                    color: ((parentSelected || selected) ? this.selectedBorderColor : this.defaultBorderColor),
+                    size:  this.portBorderWidth,
+
+                },
+            },
         };
     }
-    public wireStyle(selected: boolean, color: string): Style {
+    public wireStyle(selected: boolean, color = this.defaultWireColor): Style {
         // Changes color of wires: when wire is selected it changes to the color
         //  selected blended with constant color SELECTED_FILL_COLOR
         const selectedColor = ColorToHex(blend(
@@ -132,10 +154,11 @@ export class DefaultRenderOptions implements RenderOptions {
 
         // @TODO move to function for getting color based on being selection/on/off
          // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
-        return new Style(
-            undefined,
-            (selected ? selectedColor : color),
-            this.wireThickness
-        );
+        return {
+            stroke: {
+                color: (selected ? selectedColor : color),
+                size:  this.wireThickness,
+            },
+        };
     }
 }

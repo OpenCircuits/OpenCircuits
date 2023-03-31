@@ -9,13 +9,12 @@ import {CircuitInternal}   from "core/internal";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitView}       from "core/internal/view/CircuitView";
 import {PortAssembler}     from "core/internal/view/PortAssembler";
-import {SVGPrim}           from "core/internal/view/rendering/prims/SVG";
-import {Style}             from "core/internal/view/rendering/Style";
+import {SVGPrim}           from "core/internal/view/rendering/prims/SVGPrim";
 import {Assembler}         from "core/internal/view/Assembler";
 
-import {Signal}     from "digital/internal/sim/Signal";
-import {DigitalSim} from "digital/internal/sim/DigitalSim";
-import {Rectangle}  from "core/internal/view/rendering/prims/Rectangle";
+import {Signal}        from "digital/internal/sim/Signal";
+import {DigitalSim}    from "digital/internal/sim/DigitalSim";
+import {RectanglePrim} from "core/internal/view/rendering/prims/RectanglePrim";
 
 
 export class SwitchAssembler extends Assembler<Schema.Component> {
@@ -34,8 +33,8 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.onImg  = view.options.getImage("switchDown.svg")!;
-        this.offImg = view.options.getImage("switchUp.svg")!;
+        this.onImg  = view.options.getImage("switchDown.svg");
+        this.offImg = view.options.getImage("switchUp.svg");
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.62, 0), dir: V(1, 0) }),
@@ -52,7 +51,7 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
     }
 
     private assembleBackground(sw: Schema.Component) {
-        return new Rectangle(
+        return new RectanglePrim(
             this.view.componentTransforms.get(sw.id)!,
             this.assembleBackgroundStyle(sw),
         );
@@ -98,7 +97,7 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
         // Update styles only if only selections changed
         if (selectionChanged) {
             bg.updateStyle(this.assembleBackgroundStyle(sw));
-            img.updateStyle(new Style(this.assembleImageTint(sw)));
+            img.updateStyle({ fill: this.assembleImageTint(sw) });
         }
 
         this.view.componentPrims.set(sw.id, [bg, img]);

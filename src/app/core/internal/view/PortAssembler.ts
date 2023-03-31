@@ -6,8 +6,8 @@ import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";
 import {CircuitView}       from "./CircuitView";
-import {Circle}            from "./rendering/prims/Circle";
-import {Line}              from "./rendering/prims/Line";
+import {CirclePrim}        from "./rendering/prims/CirclePrim";
+import {LinePrim}          from "./rendering/prims/LinePrim";
 import {Assembler}         from "./Assembler";
 import {Style}             from "./rendering/Style";
 
@@ -96,8 +96,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
             const parentSelected = this.selections.has(parent.id);
 
-            const { selectedBorderColor, defaultBorderColor, selectedFillColor,
-                    defaultFillColor, portLineWidth, portBorderWidth, defaultPortRadius } = this.options;
+            const { defaultPortRadius } = this.options;
 
             // Re-assemble all prims
             const prims = [...ports].flatMap((portID) => {
@@ -105,16 +104,11 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 const selected = this.selections.has(portID);
 
                 // Assemble the port-line and port-circle
-                const line = new Line(origin, target, new Style(undefined,
-                    ((parentSelected && !selected) ? selectedBorderColor : defaultBorderColor),
-                    portLineWidth,
-                ));
-                const circle = new Circle(target, defaultPortRadius, new Style(
-                    ((parentSelected || selected) ? selectedFillColor   : defaultFillColor),
-                    ((parentSelected || selected) ? selectedBorderColor : defaultBorderColor),
-                    portBorderWidth,
-                ));
-                return [line, circle];
+                const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
+                return [
+                    new LinePrim(origin, target, lineStyle),
+                    new CirclePrim(target, defaultPortRadius, circleStyle),
+                ];
             });
 
             this.view.portPrims.set(parent.id, prims);

@@ -25,12 +25,12 @@ export abstract class BaseShapePrim implements Prim {
 
     public render(ctx: CanvasRenderingContext2D): void {
         // Set style
-        if (this.style.fillColor !== undefined)
-            ctx.fillStyle = this.style.fillColor;
-        if (this.style.strokeColor !== undefined)
-            ctx.strokeStyle = this.style.strokeColor;
-        if (this.style.strokeSize !== undefined)
-            ctx.lineWidth = this.style.strokeSize;
+        if (this.style.fill !== undefined)
+            ctx.fillStyle = this.style.fill;
+        if (this.style.stroke !== undefined) {
+            ctx.strokeStyle = this.style.stroke.color;
+            ctx.lineWidth = this.style.stroke.size;
+        }
 
         ctx.save();
 
@@ -40,9 +40,9 @@ export abstract class BaseShapePrim implements Prim {
 
         this.renderShape(ctx);
 
-        if (this.style.fill())
+        if (this.style.fill)
             ctx.fill();
-        if (this.style.stroke())
+        if (this.style.stroke && this.style.stroke.size > 0)
             ctx.stroke();
 
         ctx.closePath();

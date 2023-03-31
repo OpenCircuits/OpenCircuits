@@ -7,9 +7,16 @@ import {BaseShapePrim} from "./BaseShapePrim";
 /**
  * A representation of a Rectangle shape.
  */
-export class Rectangle extends BaseShapePrim {
+export class RectanglePrim extends BaseShapePrim {
+    // TODO[model_refactor](leon) - need to move away from Transforms representing rectangles and having sizes
     protected transform: Transform;
 
+    /**
+     * Constructor for a rectangle primitive.
+     *
+     * @param transform The transform that represents the rectangle.
+     * @param style     The draw-style for the rectangle.
+     */
     public constructor(transform: Transform, style: Style) {
         super(style);
 
@@ -22,7 +29,7 @@ export class Rectangle extends BaseShapePrim {
         ctx.transform(a,b,c,d,e,f);
     }
 
-    public override renderShape(ctx: CanvasRenderingContext2D): void {
+    protected override renderShape(ctx: CanvasRenderingContext2D): void {
         const size = this.transform.getSize();
         ctx.rect(-size.x/2, -size.y/2, size.x, size.y);
     }

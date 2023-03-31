@@ -207,28 +207,14 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            // Setup circuit and get the CircuitInfo and helpers
-            // const [info, helpers] = Setup(
-            //     store,
-            //     new DefaultTool(
-            //         SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-            //         DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-            //         PressableHandler, SelectionHandler, SelectPathHandler,
-            //         RedoHandler, UndoHandler, CleanUpHandler, CopyHandler,
-            //         PasteHandler((data) => DigitalPaste(data, info, undefined)),
-            //         SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-            //     ),
-            //     PanTool, RotateTool,
-            //     TranslateTool, WiringTool,
-            //     SelectionBoxTool, SplitWireTool
-            // );
-
+            // TODO[model_refactor](leon)
             // info.history.addCallback(() => {
             //     store.dispatch(SetCircuitSaved(false));
             // });
 
             storeCircuit("main", circuit);
 
+            // TODO[model_refactor](leon)
             // if (process.env.NODE_ENV === "development") {
             //     // Load dev state
             //     const files = await DevListFiles();
@@ -240,9 +226,6 @@ async function Init(): Promise<void> {
             root.render(
                 <React.StrictMode>
                     <MainCircuit circuit={circuit} />
-                    {/* <Provider store={store}>
-                        <App />
-                    </Provider> */}
                 </React.StrictMode>
             );
         }],
