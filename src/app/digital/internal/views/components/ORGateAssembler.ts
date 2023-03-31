@@ -7,7 +7,7 @@ import {CircuitInternal}      from "core/internal";
 import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {CircuitView}          from "core/internal/view/CircuitView";
 import {PortAssembler}        from "core/internal/view/PortAssembler";
-import {QuadCurve}                 from "core/internal/view/rendering/prims/QuadCurve";
+import {QuadCurve}            from "core/internal/view/rendering/prims/QuadCurve";
 import {SVGPrim}              from "core/internal/view/rendering/prims/SVG";
 import {Style}                from "core/internal/view/rendering/Style";
 import {Schema}               from "core/schema";
@@ -34,7 +34,8 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
             "inputs":  (index, total) => {
                 const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                return { origin: V(-0.425, spacing*((total-1)/2 - index)), dir: V(-1.3, 0) };
+                return { origin: V(-0.43, spacing*((total-1)/2 - index)), dir: V(-1.3, 0),stroke: {color: "black", size: 1, lineCap: "round"}
+            };
             },
         });
     }
@@ -74,12 +75,11 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
                 transform.toWorldSpace(p1),
                 transform.toWorldSpace(p2),
                 transform.toWorldSpace(c),
-                new Style(undefined,
-                    (selected ? selectedBorderColor : defaultBorderColor),
-                    defaultBorderWidth,
-                ),
+                // this.options.lineStyle(selected),
+                {stroke: {color: "black", size: 1, lineCap: "round"}}
             ));
         }
+        // { fill: (selected ? this.options.selectedFillColor : undefined) }
 
         return quadCurves;
     }
@@ -124,7 +124,7 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
 
             for (let i = 0; i < image.length; i++) {
                 image[i].updateStyle(this.options.lineStyle(selected));
-                img.updateStyle(new Style((selected ? this.options.selectedFillColor : undefined)));
+                img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
             }
         }
 
