@@ -38,7 +38,7 @@ export class ToolManager {
         if (newTool !== undefined) {
             this.curTool = newTool;
             newTool.onActivate(ev, designer);
-            newTool.onEvent(ev, designer);
+            newTool.onEvent(ev, designer); // TODO[.](leon) - see if this is okay
 
             designer.circuit.forceRedraw();
 

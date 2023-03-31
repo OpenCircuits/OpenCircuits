@@ -9,4 +9,8 @@ import {DigitalCircuitState} from "./DigitalCircuitState";
 
 export class DigitalWireImpl extends WireImpl<
     DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
-> implements DigitalWire {}
+> implements DigitalWire {
+    public override get nodeKind() {
+        return "DigitalNode";
+    }
+}

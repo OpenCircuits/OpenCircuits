@@ -42,7 +42,6 @@ export class SelectionsManager extends Observable<SelectionEvent> {
     }
 
     public clear(): void {
-        // TODO(callac5): See above for reference
-        throw new Error("Unimplemented");
+        this.deselect(...this.get());
     }
 }

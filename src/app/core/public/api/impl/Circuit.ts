@@ -246,8 +246,11 @@ export abstract class CircuitImpl<
         throw new Error("Unimplemented");
     }
     public clearSelections(): void {
-        // TODO(callac5)
-        throw new Error("Unimplemented");
+        this.beginTransaction();
+        this.selections.clear();
+        this.commitTransaction();
+        // // TODO(callac5)
+        // throw new Error("Unimplemented");
     }
 
     public createIC(objs: Array<ComponentT | WireT | PortT>): Circuit | undefined {

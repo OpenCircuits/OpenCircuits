@@ -67,6 +67,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
         this.circuit.subscribe((ev) => {
             // TODO[model_refactor](leon) - use events
+            // TODO[.](leon) - handle deletion
 
             // update components first
             for (const compID of circuit.getComponents()) {

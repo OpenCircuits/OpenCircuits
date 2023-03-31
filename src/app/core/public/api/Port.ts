@@ -29,5 +29,5 @@ export interface Port extends BaseObject {
     readonly connectedPorts: Port[]; // TODO: think of a better name for this ?
 
     getLegalWires(): Port.LegalWiresQuery;
-    connectTo(other: Port): void;
+    connectTo(other: Port | Component): Wire | undefined;
 }
