@@ -89,8 +89,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
-    const [shortcutFlag, setShortcutFlag] = useState(false);
-    const [shortItem, setShortItem] = useState("");
+    let [shortcutFlag, setShortcutFlag] = useState(false);
+    let [shortItem, setShortItem] = useState("");
 
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
     //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
@@ -117,12 +117,15 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 onStart && onStart();
                 // shortcut_flag = true
                 ev.stopPropagation();
+                console.log(shortcutFlag)
                 setShortcutFlag(true);
-                setShortItem(id)
-                console.log('init',shortcutFlag)
+                shortcutFlag = true;
+                setShortItem(id);
+                let shortItem = id;
+                console.log('init',shortcutFlag, shortItem)
             }
         }
-    })
+    }),
     useDocEvent("mouseup",    () => setCurPressedObj(undefined));
     useDocEvent("mouseleave", () => setCurPressedObj(undefined));
     function handleItemNavDrag() { // Issue #478
