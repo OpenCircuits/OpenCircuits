@@ -72,8 +72,13 @@ async function Init(): Promise<void> {
         CreateCircuit(),
         {
             defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
-            tools:       [PanTool, new TranslateTool(), new RotateTool(), new WiringTool(), new SelectionBoxTool(), new SplitWireTool()],
-            renderers:   [new DigitalWiringToolRenderer(), SelectionBoxToolRenderer, RotateToolRenderer],
+            tools:       [
+                PanTool,
+                new RotateTool(), new TranslateTool(),
+                new WiringTool(), new SplitWireTool(),
+                new SelectionBoxTool(),
+            ],
+            renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
         },
     );
 

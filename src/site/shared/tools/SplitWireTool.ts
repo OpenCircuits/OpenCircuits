@@ -23,16 +23,16 @@ export class SplitWireTool extends TranslateTool {
 
         const wire = curPressedObj! as Wire;
 
-        // circuit.beginTransaction();
+        circuit.beginTransaction();
 
         circuit.clearSelections();
         const { node } = wire.split();
         node.select();
 
-        // circuit.commitTransaction();
-
         designer.curPressedObj = node;
 
         super.onActivate(ev, designer);
+
+        circuit.commitTransaction();
     }
 }

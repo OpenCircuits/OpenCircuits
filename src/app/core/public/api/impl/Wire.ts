@@ -42,19 +42,19 @@ export abstract class WireImpl<
         const shape = this.circuit.view?.wireCurves.get(this.id);
         const pos = (shape?.getPos(0.5) ?? V(0, 0));
 
+        this.circuit.beginTransaction();
+
         const node = this.circuit.placeComponentAt(pos, this.nodeKind) as ComponentT;
 
         // Need to get these properties before deleting this wire
         const { p1, p2 } = this;
 
-        this.circuit.beginTransaction();
-
         this.internal.deleteWire(this.id).unwrap();
-
-        this.circuit.commitTransaction();
 
         const wire1 = p1.connectTo(node) as WireT;
         const wire2 = p2.connectTo(node) as WireT;
+
+        this.circuit.commitTransaction();
 
         return { node, wire1, wire2 };
     }

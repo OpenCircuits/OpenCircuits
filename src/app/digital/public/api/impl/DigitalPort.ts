@@ -43,7 +43,6 @@ export class DigitalPortImpl extends PortImpl<
             return this.circuit.connectWire(this, other);
 
         const port = (this.isInputPort ? other.firstOutput : other.firstAvailableInput);
-        console.log(this, other, port);
         return this.circuit.connectWire(this, port);
     }
 
