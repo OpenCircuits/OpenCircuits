@@ -1,7 +1,7 @@
+import {GUID}                                             from "core/schema/GUID";
+import {Observable}                                       from "core/utils/Observable";
 import {AddErrE}                                          from "core/utils/MultiError";
 import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "core/utils/Result";
-
-import {GUID} from "core/schema/GUID";
 
 import {Schema} from "../../schema";
 
@@ -20,14 +20,18 @@ import {CheckPortList, ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from
 // EXCEPTION POLICY:
 //  ERRORS: thrown during unexpected, exceptional, irrecoverable scenarios
 //  OTHERWISE: The "Result" and "Option" types are used to communicate success/failure.
-export class CircuitInternal {
+export class CircuitInternal extends Observable {
     protected readonly objInfo: ObjInfoProvider;
 
     private readonly log: CircuitLog;
     private clock: number;
 
-    private transaction: boolean;
+    // Keep track of multiple "begin"/"commit" pairs and only commit when counter reaches zero.
+    private transactionCounter: number;
     private transactionOps: CircuitOp[];
+
+    // Camera schema
+    protected camera: Schema.Camera;
 
     // Object storage (up-in-the-air)
     protected objStorage: Map<GUID, Schema.Obj>;
@@ -82,6 +86,7 @@ export class CircuitInternal {
                 .andThen(([_, info]) => info.checkPortConnectivity(map)
                     .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`)));
         };
+
         switch (op.kind) {
             case "PlaceComponentOp": {
                 if (op.inverted) {
@@ -162,13 +167,21 @@ export class CircuitInternal {
 
     // TODO: load with some initial state
     public constructor(objInfo: ObjInfoProvider, log: CircuitLog) {
+        super();
+
         this.objInfo = objInfo;
 
         this.log = log;
         this.clock = log.clock;
 
-        this.transaction = false;
+        this.transactionCounter = 0;
         this.transactionOps = [];
+
+        this.camera = {
+            x:    0,
+            y:    0,
+            zoom: 0.02,
+        };
 
         this.objStorage = new Map();
 
@@ -183,7 +196,7 @@ export class CircuitInternal {
                 return;
 
             // Apply remote updates mid-transaction so this state is up-to-date.
-            if (this.transaction)
+            if (this.isTransaction())
                 this.transformTransaction(evt.ops);
             else
                 this.applyOpsChecked(evt.ops);
@@ -206,27 +219,25 @@ export class CircuitInternal {
         this.applyOpsChecked(ops);
 
         // Transform tx ops
-        const transformedTx = TransformCircuitOps(this.transactionOps, ops);
+        TransformCircuitOps(this.transactionOps, ops)
+            .uponErr(() => {
+                // Failed to transform partial transaction, so cancel it and save the error.
+                this.transactionCounter = 0;
+                this.transactionOps = [];
 
-        if (transformedTx) {
-            // Reapply tx ops
-            this.applyOpsChecked(this.transactionOps);
-        } else {
-            // Failed to transform partial transaction, so cancel it
-            this.transactionOps = [];
-            this.transaction = false;
-        }
+                // TODO[model_refactor_api](kevin): propagate this error to the client.
+                // this.transactionTransformError = e;
+            })
+            .uponOk((txOps) => {
+                // Reapply tx ops
+                this.transactionOps = txOps;
+                this.applyOpsChecked(this.transactionOps);
+            });
     }
 
-    private assertTransactionState(state: boolean): void {
-        if (this.transaction !== state)
-            throw new Error(`Unexpectedly in transaction state ${this.transaction}`);
-    }
     private endTransactionHelper(f: (txOps: CircuitOp[]) => void): void {
-        this.assertTransactionState(true);
-
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
-        this.transaction = false;
+        this.transactionCounter = 0;
         if (this.transactionOps.length > 0) {
             const txOps = this.transactionOps;
             this.transactionOps = [];
@@ -240,11 +251,17 @@ export class CircuitInternal {
 
     // We need "read-your-writes" so functions like "setProp" can correctly get tombstones like "oldVal".
     public beginTransaction(): void {
-        this.assertTransactionState(false);
-        this.transaction = true;
+        this.transactionCounter++;
     }
     // TODO: This should return some reference representing the LogEntry
     public commitTransaction(): void {
+        if (!this.isTransaction())
+            throw new Error("Unexpected commitTransaction!");
+
+        // Early return if this isn't the last "commit"
+        if (--this.transactionCounter > 0)
+            return
+
         this.endTransactionHelper((txOps) => {
             // Sanity check: Clock should be kept updated by the event handler.
             if (this.clock !== this.log.clock)
@@ -261,7 +278,7 @@ export class CircuitInternal {
     // Check this before working with long-running transactions.  Long-running transactions are any transaction that
     //  crosses an async/event boundary and some other task could have resumed in the mean time.
     public isTransaction(): boolean {
-        return this.transaction;
+        return this.transactionCounter > 0;
     }
 
 
@@ -270,14 +287,18 @@ export class CircuitInternal {
     //
 
     protected addTransactionOp(op: CircuitOp): Result {
-        this.assertTransactionState(true);
+        this.beginTransaction();
 
         // read-your-writes
         return this.applyOp(op)
-            .uponErr(this.cancelTransaction)
+            .uponErr(() => this.cancelTransaction())
             .uponOk(() => {
                 // Push only after successful op
                 this.transactionOps.push(op);
+                this.commitTransaction();
+
+                // TODO: Publish actual event details
+                this.publish({});
             });
     }
 
@@ -389,6 +410,14 @@ export class CircuitInternal {
             });
     }
 
+    public setCameraProps(props: Partial<Schema.Camera>) {
+        this.camera.x = (props.x ?? this.camera.x);
+        this.camera.y = (props.y ?? this.camera.y);
+        this.camera.zoom = (props.zoom ?? this.camera.zoom);
+
+        this.publish({});
+    }
+
     //
     // Getters below.  Returned objects should not be modified directly.
     //
@@ -435,6 +464,37 @@ export class CircuitInternal {
     }
     public getObjs(): IterableIterator<GUID> {
         return this.objStorage.keys();
+    }
+    public getComponents(): IterableIterator<GUID> {
+        return this.componentPortsMap.keys();
+    }
+    public getWires(): GUID[] {
+        return [...this.getObjs()].filter((id) => this.hasWire(id));
+    }
+
+    public getCamera(): Readonly<Schema.Camera> {
+        return this.camera;
+    }
+
+    public getPortsByGroup(parentID: GUID): Result<Readonly<Record<string, GUID[]>>> {
+        return this.getPortsForComponent(parentID)
+            .map((portIDs) =>
+                [...portIDs].reduce<Record<string, GUID[]>>((record, portID) => {
+                    const port = this.getPortByID(portID).unwrap();
+                    // return (port.group === group);÷
+                    return {
+                        ...record,
+                        [port.group]: [
+                            ...(record[port.group] ?? []),
+                            port.id,
+                        ],
+                    };
+                }, {}));
+    }
+
+    public getPortsForGroup(parentID: GUID, group: string): Result<ReadonlySet<GUID>> {
+        return this.getPortsByGroup(parentID)
+            .map((record) => new Set(record[group]));
     }
 
     public getPortsForComponent(id: GUID): Result<ReadonlySet<GUID>> {

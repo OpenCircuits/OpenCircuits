@@ -1,4 +1,4 @@
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
@@ -16,7 +16,9 @@ import {Obj}       from "../Obj";
 import {Port}      from "../Port";
 import {Wire}      from "../Wire";
 
-import {CircuitState} from "./CircuitState";
+import {CircuitState}         from "./CircuitState";
+import {CreateDrawingFromSVG} from "svg2canvas";
+import {CameraImpl}           from "./Camera";
 
 
 export abstract class CircuitImpl<
@@ -25,17 +27,21 @@ export abstract class CircuitImpl<
     PortT extends Port = Port,
 > implements Circuit, CircuitState<ComponentT, WireT, PortT> {
     public circuit: CircuitInternal;
-    public view?: CircuitView;
+    public view: CircuitView;
 
     public selections: SelectionsManager;
 
     public isLocked: boolean;
 
-    public constructor(provider: ObjInfoProvider) {
-        this.circuit = new CircuitInternal(provider, new CircuitLog());
-        this.view = undefined;
+    public constructor(
+        circuit: CircuitInternal,
+        view: CircuitView,
+        selections: SelectionsManager
+    ) {
+        this.circuit = circuit
+        this.view = view;
 
-        this.selections = new SelectionsManager();
+        this.selections = selections;
 
         this.isLocked = false;
     }
@@ -105,7 +111,7 @@ export abstract class CircuitImpl<
     }
 
     public get camera(): Camera {
-        throw new Error("Method not implemented.");
+        return new CameraImpl(this);
     }
 
     // Queries
@@ -115,7 +121,7 @@ export abstract class CircuitImpl<
     public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
-    
+
     public selectedObjs(): Obj[] {
         return this.selections.get()
                .map((id) => this.getObj(id))
@@ -164,7 +170,7 @@ export abstract class CircuitImpl<
                               .filter((comp) => (comp !== undefined)) as Component[];
 
         // Case: no components are selected
-        if (allComponents.length === 0) 
+        if (allComponents.length === 0)
             return V(0,0)
 
         // Case: One or more components are selected
@@ -217,6 +223,31 @@ export abstract class CircuitImpl<
         throw new Error("Method not implemented.");
     }
 
+    public async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
+        let numLoaded = 0;
+        await Promise.all(
+            imgSrcs.map(async (src) => {
+                const svg = await fetch(`img/items/${src}`);
+                if (!svg.ok) // Make sure fetch worked
+                    throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
+
+                const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
+                if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
+                    throw new Error(`Failed to parse XML for img/items/${src}` +
+                                    `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
+                }
+
+                const drawing = CreateDrawingFromSVG(svgXML, {});
+                if (!drawing)
+                    throw new Error(`Failed to create drawing for svg: img/items/${src}`);
+                this.view.addImage(src, drawing);
+
+                // Update progress on successful load
+                onProgress((++numLoaded) / imgSrcs.length);
+            })
+        );
+    }
+
     public undo(): boolean {
         throw new Error("Unimplemented");
     }
@@ -237,6 +268,17 @@ export abstract class CircuitImpl<
     }
     public deserialize(data: string): void {
         throw new Error("Method not implemented.");
+    }
+
+    public resize(w: number, h: number): void {
+        this.view.resize(w, h);
+    }
+    public attachCanvas(canvas: HTMLCanvasElement): () => void {
+        this.view.setCanvas(canvas);
+        return () => this.detachCanvas();
+    }
+    public detachCanvas(): void {
+        this.view.setCanvas(undefined);
     }
 
     public addRenderCallback(cb: () => void): void {
