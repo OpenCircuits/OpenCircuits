@@ -15,13 +15,15 @@ import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
 import {Assembler}            from "core/internal/view/Assembler";
 
+
 export class ORGateAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1.2, 1);
     public readonly img: SVGDrawing;
 
     protected readonly sim: DigitalSim;
 
-    protected portAssembler: PortAssembler;
+    protected portAssemblerV1: PortAssembler;
+    protected portAssemblerV2: PortAssembler;
 
     public constructor(circuit: CircuitInternal, view: CircuitView, selections: SelectionsManager, sim: DigitalSim) {
         super(circuit, view, selections);
@@ -30,25 +32,42 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
 
         this.img = view.options.getImage("or.svg")!;
 
-        this.portAssembler = new PortAssembler(circuit, view, selections, {
+        this.portAssemblerV1 = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
             "inputs":  (index, total) => {
                 const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                return { origin: V(-0.43, spacing*((total-1)/2 - index)), dir: V(-1.3, 0),stroke: {color: "black", size: 1, lineCap: "round"}
+                return { origin: V(-0.43, spacing*((total-1)/2 - index)), dir: V(-1.3, 0), stroke: {color: "black", size: 1, lineCap: "round"}
+            };
+            },
+        });
+
+        this.portAssemblerV2 = new PortAssembler(circuit, view, selections, {
+            "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
+            "inputs":  (index, total) => {
+                const spacing = 0.5 - this.options.defaultBorderWidth/2;
+                return { origin: V(-0.40, spacing*((total-1)/2 - index)), dir: V(-1.3, 0), stroke: {color: "black", size: 1, lineCap: "round"}
             };
             },
         });
     }
 
-    private assembleQuadCurve(gate: Schema.Component) {
-        const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
-
+    private getNumInputs(gate: Schema.Component) {
         const { inputPortGroups } = this.circuit.getObjectInfo("ORGate") as DigitalComponentInfo;
 
         // Get current number of inputs
         const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
             .map((id) => this.circuit.getPortByID(id).unwrap())
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
+        
+        return numInputs
+    }
+
+    private assembleQuadCurve(gate: Schema.Component) {
+        const { defaultBorderWidth, selectedBorderColor, defaultBorderColor } = this.options;
+        const transform = this.view.componentTransforms.get(gate.id)!;
+        const selected = this.selections.has(gate.id);
+
+        const numInputs = this.getNumInputs(gate);
 
         let quadCurves = [];
 
@@ -63,24 +82,28 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
             const s = this.size.x / 2 - h + sMod;
             const l = this.size.x / 5 - h;
 
-            const p1 = V(-s, l1 + d);
-            const p2 = V(-s, l2 + d);
+            let p1 = V(-s, l1 + d);
+            let p2 = V(-s, l2 + d);
+    
             const c = V(-l, d);
 
-            const transform = this.view.componentTransforms.get(gate.id)!;
-
-            const selected = this.selections.has(gate.id);
-
-            quadCurves.push(new QuadCurve(
-                transform.toWorldSpace(p1),
-                transform.toWorldSpace(p2),
-                transform.toWorldSpace(c),
-                // this.options.lineStyle(selected),
-                {stroke: {color: "black", size: 1, lineCap: "round"}}
-            ));
+            if (numInputs <= 3) {
+                quadCurves.push(new QuadCurve(
+                    transform.toWorldSpace(p1),
+                    transform.toWorldSpace(p2),
+                    transform.toWorldSpace(c),
+                    {stroke: {color: "black", size: 0.02, lineCap: "round"}}
+                ));
+            } else {
+                quadCurves.push(new QuadCurve(
+                    transform.toWorldSpace(p1),
+                    transform.toWorldSpace(p2),
+                    transform.toWorldSpace(c),
+                    {stroke: {color: "black", size: 0.05, lineCap: "round"}}
+                ));
+            }
+            
         }
-        // { fill: (selected ? this.options.selectedFillColor : undefined) }
-
         return quadCurves;
     }
 
@@ -107,7 +130,11 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
             ));
         }
 
-        this.portAssembler.assemble(gate, ev);
+        const numInputs = this.getNumInputs(gate);
+        if (numInputs % 2 === 0)
+            this.portAssemblerV1.assemble(gate, ev);
+        else
+            this.portAssemblerV2.assemble(gate, ev);
 
         const [prevLine, prevImg] = (this.view.componentPrims.get(gate.id) ?? []);
 
@@ -117,16 +144,6 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
 
         line.map((q) => image.push(q));
         image.push(img);
-
-        // Update styles only if only selections changed
-        if (selectionChanged) {
-            const selected = this.selections.has(gate.id);
-
-            for (let i = 0; i < image.length; i++) {
-                image[i].updateStyle(this.options.lineStyle(selected));
-                img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
-            }
-        }
 
         this.view.componentPrims.set(gate.id, image);
     }

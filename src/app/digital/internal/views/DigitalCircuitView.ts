@@ -25,7 +25,7 @@ export class DigitalCircuitView extends CircuitView {
         if (!this.assemblers) {
             this.assemblers = {
                 "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
-                "ORGate": new ORGateAssembler(this.circuit, this, this.selections, this.sim),
+                "ORGate":  new ORGateAssembler(this.circuit, this, this.selections, this.sim),
                 "LED":     new LEDAssembler(this.circuit, this, this.selections, this.sim),
                 "Switch":  new SwitchAssembler(this.circuit, this, this.selections, this.sim),
 

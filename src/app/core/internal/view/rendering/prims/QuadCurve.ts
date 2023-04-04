@@ -33,9 +33,7 @@ export class QuadCurve extends BaseShapePrim {
      * @param ctx Provides the 2D rendering context for the drawing surface of an element.
      */
     protected override renderShape(ctx: CanvasRenderingContext2D): void {
-        const p1 = this.p1;
-        const p2 = this.p2;
-        const c  = this.c;
+        const { p1, p2, c } = this;
 
         ctx.moveTo(p1.x, p1.y);
         ctx.quadraticCurveTo(c.x, c.y, p2.x, p2.y);
