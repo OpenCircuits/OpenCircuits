@@ -38,7 +38,7 @@ export class CircuitInternal {
     protected portWireMap: Map<GUID, Set<GUID>>; // Ports to their wires
 
     // Circuit Metadata
-    protected CircuitMetadata: Schema.CircuitMetadata;
+    protected circuitMetadata: Schema.CircuitMetadata;
 
     // Placed here for proximity to member declarations
     private applyOp(op: CircuitOp): Result {
@@ -154,7 +154,7 @@ export class CircuitInternal {
                 throw new Error("TODO: impossible block");
         }
     }
-    
+
     private getPortPortMapChecked(id: GUID): Set<GUID> {
         const p = this.portPortMap.get(id);
         if (!p)
@@ -162,11 +162,10 @@ export class CircuitInternal {
         return p;
     }
 
-
     // TODO: load with some initial state
     public constructor(objInfo: ObjInfoProvider, log: CircuitLog) {
         this.objInfo = objInfo;
-        
+
         this.log = log;
         this.clock = log.clock;
 
@@ -179,7 +178,7 @@ export class CircuitInternal {
         this.portPortMap = new Map();
         this.portWireMap = new Map();
 
-        this.CircuitMetadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0"}
+        this.circuitMetadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0" };
 
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
@@ -395,7 +394,7 @@ export class CircuitInternal {
     }
 
     public setCircuitMetadata(newMetadata: Schema.CircuitMetadata) {
-        this.CircuitMetadata = newMetadata;
+        this.circuitMetadata = newMetadata;
     }
 
     //
@@ -460,6 +459,6 @@ export class CircuitInternal {
     }
 
     public getCircuitMetadata(): Readonly<Schema.CircuitMetadata> {
-      return this.CircuitMetadata;
+        return this.circuitMetadata;
     }
 }
