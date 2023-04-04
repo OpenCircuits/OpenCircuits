@@ -8,7 +8,7 @@ import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {CircuitView}          from "core/internal/view/CircuitView";
 import {PortAssembler}        from "core/internal/view/PortAssembler";
 import {QuadCurve}            from "core/internal/view/rendering/prims/QuadCurve";
-import {SVGPrim}              from "core/internal/view/rendering/prims/SVG";
+import {SVGPrim}              from "core/internal/view/rendering/prims/SVGPrim";
 import {Style}                from "core/internal/view/rendering/Style";
 import {Schema}               from "core/schema";
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";

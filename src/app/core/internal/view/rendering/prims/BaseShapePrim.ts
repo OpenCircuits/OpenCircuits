@@ -30,6 +30,8 @@ export abstract class BaseShapePrim implements Prim {
         if (this.style.stroke !== undefined) {
             ctx.strokeStyle = this.style.stroke.color;
             ctx.lineWidth = this.style.stroke.size;
+            if (this.style.stroke.lineCap)
+                ctx.lineCap = this.style.stroke.lineCap;
         }
 
         ctx.save();
