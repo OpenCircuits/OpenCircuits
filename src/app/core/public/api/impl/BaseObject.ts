@@ -65,21 +65,11 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
         this.circuit.commitTransaction();
     }
     
-    public getProp(key: string): Prop {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if(!tmp)
-        {
-            throw new Error("Does not exist!");
-        }
-        return tmp.props[key];
+    public getProp(key: string): Prop | undefined {
+        return this.internal.getObjByID(this.objID).unwrap().props[key];
     }
 
     public getProps(): Record<string, Prop> {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if(!tmp)
-        {
-            throw new Error("Does not exist!");
-        }
-        return tmp.props;
+        return this.internal.getObjByID(this.objID).unwrap().props;
     }
 }
