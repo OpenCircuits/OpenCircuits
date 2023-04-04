@@ -30,9 +30,17 @@ export class DigitalCircuitView extends CircuitView {
                 "Switch":  new SwitchAssembler(this.circuit, this, this.selections, this.sim),
 
                 "DigitalWire": new DigitalWireAssembler(this.circuit, this, this.selections, this.sim),
+
+                // FlipFlops
+
+                // Latches
+
+                // Other
             };
         }
 
+        // TODO[model_refactor](leon) - Consider going back to templating `kind`, but as a post-effort once the view
+        //                               is all set-in-stone.
         if (!(kind in this.assemblers))
             throw new Error(`Failed to get assembler for kind ${kind}! Unmapped!`);
         return this.assemblers[kind];

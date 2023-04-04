@@ -68,7 +68,7 @@ export abstract class ComponentImpl<
     }
 
     public setNumPorts(group: string, amt: number): boolean {
-        // TODO(leon) revisit this and decide on a functionality
+        // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = {} as Record<string, number>;
         this.internal.getPortsForComponent(this.id)
             .map((ids) => [...ids]

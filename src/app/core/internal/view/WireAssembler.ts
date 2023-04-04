@@ -10,7 +10,7 @@ export class WireAssembler extends Assembler<Schema.Wire> {
     protected assembleCurveStyle(wire: Schema.Wire) {
         return this.options.wireStyle(
             this.selections.has(wire.id),
-            (wire.props.color ?? "#ffffff"),
+            wire.props.color,
         );
     }
 

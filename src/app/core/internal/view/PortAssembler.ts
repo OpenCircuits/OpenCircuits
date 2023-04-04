@@ -6,8 +6,8 @@ import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";
 import {CircuitView}       from "./CircuitView";
-import {Circle}            from "./rendering/prims/Circle";
-import {Line}              from "./rendering/prims/Line";
+import {CirclePrim}        from "./rendering/prims/CirclePrim";
+import {LinePrim}          from "./rendering/prims/LinePrim";
 import {Assembler}         from "./Assembler";
 import {Style}             from "./rendering/Style";
 
@@ -106,8 +106,8 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 // Assemble the port-line and port-circle
                 const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
                 return [
-                    new Line(origin, target, lineStyle),
-                    new Circle(target, defaultPortRadius, circleStyle),
+                    new LinePrim(origin, target, lineStyle),
+                    new CirclePrim(target, defaultPortRadius, circleStyle),
                 ];
             });
 
