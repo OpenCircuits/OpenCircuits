@@ -1,4 +1,5 @@
 import {useCallback} from "react";
+
 import {GetIDFor}    from "serialeazy";
 
 import {Component} from "core/models";
@@ -8,7 +9,6 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {ItemNav} from "shared/containers/ItemNav";
 
 import itemNavConfig from "site/analog/data/itemNavConfig.json";
-import { Resistor } from "analog/models/eeobjects";
 
 
 type Props = {
@@ -32,12 +32,12 @@ export const AnalogItemNav = ({ info }: Props) => {
         <ItemNav
             info={info}
             config={itemNavConfig}
-            getImgSrc={getImgSrc} 
-            shortcuts = {[["r", "Resistor"],
-                        ['c', "Capacitor"],	                        
-                        ['g', "Ground"],                     
+            getImgSrc={getImgSrc}
+            shortcuts={[["r", "Resistor"],
+                        ["c", "Capacitor"],
+                        ["g", "Ground"],
                         ["l", "Inductor"],
                         ["v", "VoltageSource"],
-                        ["i", "CurrentSource"]]}/>
+                        ["i", "CurrentSource"]] }/>
     );
 }

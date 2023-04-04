@@ -186,8 +186,7 @@ export const DigitalItemNav = ({ info }: Props) => {
             additionalData={smartPlace}
             additionalPreview={additionalPreview}
             getImgSrc={getImgSrc}
-            onStart={onSmartPlaceOff}
-            shortcuts = {[["b", "Button"],
+            shortcuts={[["b", "Button"],
                         ["s", "Switch"],
                         ["l", "ConstantLow"],
                         ["h", "ConstantHigh"],
@@ -201,6 +200,7 @@ export const DigitalItemNav = ({ info }: Props) => {
                         ["6", "NORGate"],
                         ["7", "XORGate"],
                         ["8", "XNORGate"]]}
+            onStart={onSmartPlaceOff}
             onFinish={onSmartPlaceOff}
             onDelete={onDelete} />
     );
