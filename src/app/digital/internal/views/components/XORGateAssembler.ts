@@ -41,7 +41,7 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         });
     }
 
-    private assembleQuadCurve(gate: Schema.Component, dx: number) {
+    private assembleQuadCurve(gate: Schema.Component, dx: number) : QuadCurvePrim[] {
         const { defaultBorderWidth, selectedBorderColor, defaultBorderColor, fillStyle } = this.options;
 
         const { inputPortGroups } = this.circuit.getObjectInfo("XORGate") as DigitalComponentInfo;
@@ -52,22 +52,22 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
 
         const amt = 2 * Math.floor(numInputs / 4) + 1;
-        
+
         // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
         const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.014, 0]) : ([0, 0.012]);
 
         let quadCurves = [];
-        
+
         const h = defaultBorderWidth;
         const l1 = -this.size.y / 2 + lNumMod;
         const l2 = +this.size.y / 2 - lNumMod;
 
         const s = this.size.x / 2 - h + sMod;
         const l = this.size.x / 5 - h;
-        
+
         const transform = this.view.componentTransforms.get(gate.id)!;
         const selected = this.selections.has(gate.id);
-        
+
         for (let i = 0; i < amt; i++) {
             const d = (i - Math.floor(amt / 2)) * this.size.y;
             const p1 = V(-s + dx, l1 + d);
@@ -123,17 +123,27 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
 
         const [prevLine, prevImg] = (this.view.componentPrims.get(gate.id) ?? []);
 
-        const line = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleLine(gate) : prevLine);
+        const quadCurvesFront = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleQuadCurve(gate, 0) : []);
+        const quadCurvesBack = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleQuadCurve(gate, -0.24) : []);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
 
+        
         // Update styles only if only selections changed
         if (selectionChanged) {
             const selected = this.selections.has(gate.id);
 
-            line.updateStyle(this.options.lineStyle(selected));
-            img.updateStyle(new Style((selected ? this.options.selectedFillColor : undefined)));
+            for (let i = 0; i < quadCurvesFront.length; i++) {
+                quadCurvesFront[i].updateStyle(this.options.lineStyle(selected));
+                quadCurvesBack[i].updateStyle(this.options.lineStyle(selected));
+            }
+            img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
         }
+        
+        let image = [];
+        quadCurvesFront.map((qc) => image.push(qc));
+        quadCurvesBack.map((qc) => image.push(qc));
+        image.push(img);
 
-        this.view.componentPrims.set(gate.id, [line, img]);
+        this.view.componentPrims.set(gate.id, image);
     }
 }
