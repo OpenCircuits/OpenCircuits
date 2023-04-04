@@ -89,8 +89,9 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
-    let [shortcutFlag, setShortcutFlag] = useState(false);
-    let [shortItem, setShortItem] = useState("");
+    const [shortcutFlag, setShortcutFlag] = useState(false);
+    
+    const [shortItem, setShortItem] = useState("");
 
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
     //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
@@ -105,10 +106,6 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         // Loop through each of the input shortcuts
         for (const short of shortcuts) {
             if (ev.key === short[0]) {
-                if (shortcutFlag && short[1] === curItemID){
-                    setShortcutFlag(false);
-                    reset(true)
-                }
                 const id = short[1];
                 const section = config.sections.find((s) => (s.items.find((i) => i.id === id)));
                 dispatch(SetCurItem(id));
@@ -117,12 +114,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 onStart && onStart();
                 // shortcut_flag = true
                 ev.stopPropagation();
-                console.log(shortcutFlag)
                 setShortcutFlag(true);
-                shortcutFlag = true;
                 setShortItem(id);
-                let shortItem = id;
-                console.log('init',shortcutFlag, shortItem)
             }
         }
     }),
@@ -146,13 +139,11 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         setNumClicks(1);
         setCurItemImg("");
         onFinish?.(cancelled);
-        console.log('reset', shortcutFlag)
     }, [setNumClicks, setCurItemImg, onFinish, dispatch]);
 
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         // If keyboard shortcut used to bring up component then allow to drop until "Esc" pressed
-        console.log(shortcutFlag, curItemID, shortItem)
         if(shortcutFlag && curItemID === shortItem){
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
             const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
@@ -172,7 +163,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         // Otherwise drop all and reset
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks, reset]);
+    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks, reset, shortcutFlag, shortItem]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
         if (!touch)
@@ -210,7 +201,6 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         reset(true);
         // shortcut_flag = false
         setShortcutFlag(false);
-        console.log('esc ',shortcutFlag)
     });
 
     // Also cancel on Right Click

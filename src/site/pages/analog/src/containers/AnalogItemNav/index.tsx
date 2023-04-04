@@ -8,7 +8,6 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 import {ItemNav} from "shared/containers/ItemNav";
 
 import itemNavConfig from "site/analog/data/itemNavConfig.json";
-import { Resistor } from "analog/models/eeobjects";
 
 
 type Props = {
