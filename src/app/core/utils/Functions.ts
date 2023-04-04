@@ -6,7 +6,7 @@
  *
  * @param obj  The object/record to map to a different object/record.
  * @param func The mapping function.
- * @returns      A new object with same keys and different values.
+ * @returns    A new object with same keys and different values.
  */
 export function MapObj<Ks extends string|number, V1s, V2s>(
     obj: Record<Ks, V1s>,
@@ -20,4 +20,17 @@ export function MapObj<Ks extends string|number, V1s, V2s>(
     ) as Record<Ks, V2s>;
 }
 
-// export function 
+/**
+ * Utility function that takes a set of entries [Key, Val] and makes a Record from them, but concatenating
+ *  same keys to a single array entry.
+ *
+ * @param entries The list of entries.
+ * @returns       A record from the keys to all the associated values.
+ */
+export function FromConcatenatedEntries<K extends string, V>(entries: Array<[K, V]>): Record<K, V[]> {
+    return entries.reduce((prev, [key, val]) => ({
+        ...prev,
+        [key]: [...(prev[key] ?? []), val],
+    }), {} as Record<K, V[]>);
+}
+

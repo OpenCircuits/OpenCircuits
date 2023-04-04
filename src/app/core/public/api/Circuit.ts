@@ -65,6 +65,8 @@ export interface Circuit {
     createIC(objs: Obj[]): Circuit | undefined;
     getICs(): Circuit[];
 
+    loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void>;
+
     undo(): boolean;
     redo(): boolean;
 
@@ -74,6 +76,10 @@ export interface Circuit {
 
     serialize(): string;
     deserialize(data: string): void;
+
+    resize(w: number, h: number): void;
+    attachCanvas(canvas: HTMLCanvasElement): () => void;
+    detachCanvas(): void;
 
     addRenderCallback(cb: () => void): void;
 

@@ -32,7 +32,7 @@ type Props = {
 export const Dropdown = ({ open, btnInfo, onClick, onClose, children }: Props) => {
     // Check for clicking outside of the menu as to call onClose
     useEffect(() => {
-        function onWindowClick(ev: MouseEvent) {
+        function onWindowClick(ev: MouseEvent | TouchEvent) {
             if (!open || onClose === undefined)
                 return;
 
@@ -42,7 +42,7 @@ export const Dropdown = ({ open, btnInfo, onClick, onClose, children }: Props) =
         }
 
         // listener for mobile and desktop (see Issue #597)
-        const events = ["click", "touchend"];
+        const events = ["click", "touchend"] as const;
 
         // Add listener on start
         events.forEach((e) => window.addEventListener(e, onWindowClick));

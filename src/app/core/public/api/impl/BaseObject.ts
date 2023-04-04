@@ -8,28 +8,25 @@ import {BaseObject} from "../BaseObject";
 import {CircuitState} from "./CircuitState";
 
 
-export abstract class BaseObjectImpl implements BaseObject {
-    protected state: CircuitState;
+export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> implements BaseObject {
+    protected circuit: State;
     protected objID: GUID;
 
-    public constructor(state: CircuitState, objID: GUID) {
-        this.state = state;
+    public constructor(circuit: State, objID: GUID) {
+        this.circuit = circuit;
         this.objID = objID;
     }
 
-    protected get circuit(): CircuitInternal {
-        return this.state.circuit;
+    protected get internal(): CircuitInternal {
+        return this.circuit.circuit;
     }
     
     protected get selections(): SelectionsManager {
-        return this.state.selections;
+        return this.circuit.selections;
     }
 
     public get kind(): string {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if (!tmp)
-            throw new Error(`Object does not exist!`);
-        return tmp.kind;
+        return this.internal.getObjByID(this.id).unwrap().kind;
     }
 
     public get id(): string {
@@ -41,14 +38,14 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
 
     public set isSelected(val: boolean) {
-        if (val) 
+        if (val)
             this.selections.select(this.objID);
-        else 
+        else
             this.selections.deselect(this.objID);
     }
 
     public get isSelected(): boolean {
-        return this.selections.isSelected(this.objID);
+        return this.selections.has(this.objID);
     }
 
     public set zIndex(val: number) {
@@ -59,28 +56,20 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
 
     public exists(): boolean {
-        return !!this.circuit.getObjByID(this.objID);
+        return !!this.internal.getObjByID(this.objID);
     }
 
     public setProp(key: string, val: Prop): void {
-        this.circuit.setPropFor(this.objID, key, val);
+        this.circuit.beginTransaction();
+        this.internal.setPropFor(this.objID, key, val);
+        this.circuit.commitTransaction();
     }
     
-    public getProp(key: string): Prop {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if(!tmp)
-        {
-            throw new Error("Does not exist!");
-        }
-        return tmp.props[key];
+    public getProp(key: string): Prop | undefined {
+        return this.internal.getObjByID(this.objID).unwrap().props[key];
     }
 
     public getProps(): Record<string, Prop> {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if(!tmp)
-        {
-            throw new Error("Does not exist!");
-        }
-        return tmp.props;
+        return this.internal.getObjByID(this.objID).unwrap().props;
     }
 }
