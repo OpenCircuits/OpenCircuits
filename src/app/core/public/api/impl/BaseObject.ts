@@ -26,10 +26,10 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
 
     public get kind(): string {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if (!tmp)
-            throw new Error(`Object does not exist!`);
-        return tmp.kind;
+        const obj = this.circuit.getObjByID(this.objID);
+        if (!obj)
+            throw new Error("Object does not exist!");
+        return obj.kind;
     }
 
     public get id(): string {
@@ -67,20 +67,16 @@ export abstract class BaseObjectImpl implements BaseObject {
     }
     
     public getProp(key: string): Prop {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if(!tmp)
-        {
+        const obj = this.circuit.getObjByID(this.objID);
+        if(!obj)
             throw new Error("Does not exist!");
-        }
-        return tmp.props[key];
+        return obj.props[key];
     }
 
     public getProps(): Record<string, Prop> {
-        const tmp = this.circuit.getObjByID(this.objID);
-        if(!tmp)
-        {
+        const obj = this.circuit.getObjByID(this.objID);
+        if(!obj)
             throw new Error("Does not exist!");
-        }
-        return tmp.props;
+        return obj.props;
     }
 }
