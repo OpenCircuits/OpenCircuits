@@ -1,4 +1,4 @@
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
@@ -7,41 +7,48 @@ import {CircuitLog}        from "core/internal/impl/CircuitLog";
 import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
 import {DebugOptions}      from "core/internal/impl/DebugOptions";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {CircuitView}       from "core/internal/view/CircuitView";
 
-import {Camera}        from "../Camera";
-import {Circuit}       from "../Circuit";
-import {Component}     from "../Component";
-import {ComponentInfo} from "../ComponentInfo";
-import {Obj}           from "../Obj";
-import {Port}          from "../Port";
-import {Wire}          from "../Wire";
+import {Camera}    from "../Camera";
+import {Circuit}   from "../Circuit";
+import {Component} from "../Component";
+import {Obj}       from "../Obj";
+import {Port}      from "../Port";
+import {Wire}      from "../Wire";
 
-import {CircuitState}  from "./CircuitState";
-import {ComponentImpl} from "./Component";
-import {PortImpl}      from "./Port";
-import {WireImpl}      from "./Wire";
+import {CircuitState}         from "./CircuitState";
+import {CreateDrawingFromSVG} from "svg2canvas";
+import {CameraImpl}           from "./Camera";
 
 
-export abstract class CircuitImpl implements Circuit {
-    protected readonly state: CircuitState;
+export abstract class CircuitImpl<
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
+    public circuit: CircuitInternal;
+    public view: CircuitView;
 
-    public constructor(provider: ObjInfoProvider) {
-        this.state = {
-            circuit: new CircuitInternal(provider, new CircuitLog()),
-            view:    undefined,
+    public selections: SelectionsManager;
 
-            selections: new SelectionsManager(),
+    public isLocked: boolean;
 
-            isLocked: false,
-        };
+    public constructor(
+        circuit: CircuitInternal,
+        view: CircuitView,
+        selections: SelectionsManager
+    ) {
+        this.circuit = circuit
+        this.view = view;
+
+        this.selections = selections;
+
+        this.isLocked = false;
     }
 
-    private get circuit(): CircuitInternal {
-        return this.state.circuit;
-    }
-    private get selections(): SelectionsManager {
-        return this.state.selections;
-    }
+    public abstract constructComponent(id: string): ComponentT;
+    public abstract constructWire(id: string): WireT;
+    public abstract constructPort(id: string): PortT;
 
     // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)
     // All queries within a transaction are coherent.
@@ -104,39 +111,39 @@ export abstract class CircuitImpl implements Circuit {
     }
 
     public get camera(): Camera {
-        throw new Error("Method not implemented.");
+        return new CameraImpl(this);
     }
 
     // Queries
-    public pickObjectAt(pt: Vector): Obj | undefined {
+    public pickObjectAt(pt: Vector): ComponentT | WireT | PortT | undefined {
         throw new Error("Unimplemented");
     }
-    public pickObjectRange(bounds: Rect): Obj[] {
+    public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
-    
+
     public selectedObjs(): Obj[] {
         return this.selections.get()
                .map((id) => this.getObj(id))
                .filter((obj) => (obj !== undefined)) as Obj[];
     }
 
-    public getComponent(id: string): Component | undefined {
+    public getComponent(id: string): ComponentT | undefined {
         if (!this.circuit.getCompByID(id))
             return undefined;
-        return new ComponentImpl(this.state, id);
+        return this.constructComponent(id);
     }
-    public getWire(id: string): Wire | undefined {
+    public getWire(id: string): WireT | undefined {
         if (!this.circuit.getWireByID(id))
             return undefined;
-        return new WireImpl(this.state, id);
+        return this.constructWire(id);
     }
-    public getPort(id: string): Port | undefined {
+    public getPort(id: string): PortT | undefined {
         if (!this.circuit.getPortByID(id))
             return undefined;
-        return new PortImpl(this.state, id);
+        return this.constructPort(id);
     }
-    public getObj(id: string): Obj | undefined {
+    public getObj(id: string): ComponentT | WireT | PortT | undefined {
         if (this.circuit.hasComp(id))
             return this.getComponent(id);
         if (this.circuit.hasWire(id))
@@ -149,7 +156,7 @@ export abstract class CircuitImpl implements Circuit {
         return [...this.circuit.getObjs()]
             .map((id) => this.getObj(id)!);
     }
-    public getComponentInfo(kind: string): ComponentInfo | undefined {
+    public getComponentInfo(kind: string): ComponentT["info"] | undefined {
         throw new Error("Method not implemented.");
     }
 
@@ -163,7 +170,7 @@ export abstract class CircuitImpl implements Circuit {
                               .filter((comp) => (comp !== undefined)) as Component[];
 
         // Case: no components are selected
-        if (allComponents.length === 0) 
+        if (allComponents.length === 0)
             return V(0,0)
 
         // Case: One or more components are selected
@@ -176,24 +183,24 @@ export abstract class CircuitImpl implements Circuit {
     }
 
     // Object manipulation
-    public placeComponentAt(pt: Vector, kind: string): Component {
+    public placeComponentAt(pt: Vector, kind: string): ComponentT {
         const info = this.circuit.getComponentInfo(kind);
 
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();
 
-        // Place raw component
-        const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y });
+        // Place raw component (TODO: unwrap...)
+        const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
 
         // Set its config to place ports
-        this.circuit.setPortConfig(id, info.defaultPortConfig);
+        this.circuit.setPortConfig(id, info.defaultPortConfig).unwrap();
 
         this.circuit.commitTransaction();
 
-        return new ComponentImpl(this.state, id);
+        return this.constructComponent(id);
     }
     // Wire connection can fail if i.e. p1 is reference-equal to p2
-    public abstract connectWire(p1: Port, p2: Port): Wire | undefined;
+    public abstract connectWire(p1: PortT, p2: PortT): WireT | undefined;
 
     /** Will delete all components and wires
      * contained within the Obj[] array
@@ -217,16 +224,42 @@ export abstract class CircuitImpl implements Circuit {
         }
         this.circuit.commitTransaction();
     }
+    
     public clearSelections(): void {
         // TODO(callac5)
         throw new Error("Unimplemented");
     }
 
-    public createIC(objs: Obj[]): Circuit | undefined {
+    public createIC(objs: Array<ComponentT | WireT | PortT>): Circuit | undefined {
         throw new Error("Unimplemented");
     }
     public getICs(): Circuit[] {
         throw new Error("Method not implemented.");
+    }
+
+    public async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
+        let numLoaded = 0;
+        await Promise.all(
+            imgSrcs.map(async (src) => {
+                const svg = await fetch(`img/items/${src}`);
+                if (!svg.ok) // Make sure fetch worked
+                    throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
+
+                const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
+                if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
+                    throw new Error(`Failed to parse XML for img/items/${src}` +
+                                    `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
+                }
+
+                const drawing = CreateDrawingFromSVG(svgXML, {});
+                if (!drawing)
+                    throw new Error(`Failed to create drawing for svg: img/items/${src}`);
+                this.view.addImage(src, drawing);
+
+                // Update progress on successful load
+                onProgress((++numLoaded) / imgSrcs.length);
+            })
+        );
     }
 
     public undo(): boolean {
@@ -249,6 +282,17 @@ export abstract class CircuitImpl implements Circuit {
     }
     public deserialize(data: string): void {
         throw new Error("Method not implemented.");
+    }
+
+    public resize(w: number, h: number): void {
+        this.view.resize(w, h);
+    }
+    public attachCanvas(canvas: HTMLCanvasElement): () => void {
+        this.view.setCanvas(canvas);
+        return () => this.detachCanvas();
+    }
+    public detachCanvas(): void {
+        this.view.setCanvas(undefined);
     }
 
     public addRenderCallback(cb: () => void): void {

@@ -18,6 +18,7 @@ export class ComponentInfoImpl implements ComponentInfo {
         if (!info)
             throw new Error(`Failed to find component info for ${kind}!`);
         this.info = info;
+        this.state = state;
         this.kind = kind;
         this.portGroups = info.portGroups;
         this.defaultPortConfig = info.defaultPortConfig;

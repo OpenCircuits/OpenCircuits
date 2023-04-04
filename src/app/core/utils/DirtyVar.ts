@@ -2,7 +2,7 @@
 
 export class DirtyVar<T> {
     private isDirty: boolean;
-    private variable: T;
+    private variable?: T;
 
     private readonly update: () => T;
 
@@ -30,6 +30,6 @@ export class DirtyVar<T> {
             this.isDirty = false;
             this.variable = this.update();
         }
-        return this.variable;
+        return this.variable!;
     }
 }
