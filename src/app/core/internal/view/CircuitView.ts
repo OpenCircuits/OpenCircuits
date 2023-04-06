@@ -6,17 +6,20 @@ import {BezierCurve} from "math/BezierCurve";
 import {Matrix2x3}   from "math/Matrix";
 import {Transform}   from "math/Transform";
 
-import {GUID}                                from "..";
-import {CircuitInternal}                     from "../impl/CircuitInternal";
-import {SelectionsManager}                   from "../impl/SelectionsManager";
-import {Assembler}                           from "./Assembler";
-import {Prims}                               from "./Prim";
+import {Observable} from "core/utils/Observable";
+
+import {GUID}              from "..";
+import {CircuitInternal}   from "../impl/CircuitInternal";
+import {SelectionsManager} from "../impl/SelectionsManager";
+
+import {Assembler} from "./Assembler";
+import {Prims}     from "./Prim";
+import {PortPos}   from "./PortAssembler";
+
 import {RenderGrid}                          from "./rendering/renderers/GridRenderer";
 import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
-import {PortPos}                             from "./PortAssembler";
-import {Observable}                          from "core/utils/Observable";
 
 
 export abstract class CircuitView extends Observable<{ renderer: RenderHelper }> {
@@ -33,9 +36,9 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     public componentTransforms: Map<GUID, Transform>;
     public componentPrims: Map<GUID, Prims>;
 
-    public localPortPositions: Map<GUID, PortPos>;
-    public portPositions: Map<GUID, PortPos>;
-    public portPrims: Map<GUID, Prims>;
+    public localPortPositions: Map<GUID, PortPos>; // Key'd by port ID
+    public portPositions: Map<GUID, PortPos>; // Key'd by port ID
+    public portPrims: Map<GUID, Prims>; // Key'd by component parent
 
     public wireCurves: Map<GUID, BezierCurve>;
     public wirePrims: Map<GUID, Prims>;
@@ -66,8 +69,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         this.scheduler.subscribe(() => this.render());
 
         this.circuit.subscribe((ev) => {
-            // TODO[model_refactor](leon) - use events
-            // TODO[.](leon) - handle deletion
+            // TODO[model_refactor_api](leon) - use events
 
             // update components first
             for (const compID of circuit.getComponents()) {
@@ -75,10 +77,33 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
                 this.getAssemblerFor(comp.kind).assemble(comp, ev);
             }
 
+            // temporary hack to handle deleting components (and ports)
+            for (const compID of this.componentPrims.keys()) {
+                if (!circuit.hasComp(compID)) {
+                    this.componentPrims.delete(compID);
+                    this.componentTransforms.delete(compID);
+                    this.portPrims.delete(compID);
+                }
+            }
+            for (const portID of this.portPositions.keys()) {
+                if (!circuit.hasPort(portID)) {
+                    this.portPositions.delete(portID);
+                    this.localPortPositions.delete(portID);
+                }
+            }
+
             // then update wires
             for (const wireID of circuit.getWires()) {
                 const wire = circuit.getWireByID(wireID).unwrap();
                 this.getAssemblerFor(wire.kind).assemble(wire, ev);
+            }
+
+            // temporary hack to handle deleting wires
+            for (const wireID of this.wirePrims.keys()) {
+                if (!circuit.hasWire(wireID)) {
+                    this.wireCurves.delete(wireID);
+                    this.wirePrims.delete(wireID);
+                }
             }
 
             this.cameraMat = this.calcCameraMat();
