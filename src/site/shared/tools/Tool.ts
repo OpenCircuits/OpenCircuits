@@ -1,22 +1,22 @@
 import {Circuit}           from "core/public";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 
 export interface Tool {
     // Conditional method to see if the current state should transition to this tool
-    shouldActivate(event: InputManagerEvent, circuit: Circuit): boolean;
+    shouldActivate(event: InputAdapterEvent, circuit: Circuit): boolean;
 
     // Conditional method to see if the current state should transition out of this tool
-    shouldDeactivate(event: InputManagerEvent, circuit: Circuit): boolean;
+    shouldDeactivate(event: InputAdapterEvent, circuit: Circuit): boolean;
 
 
     // Method called when this tool is initially activated
-    onActivate(event: InputManagerEvent, circuit: Circuit): void;
+    onActivate(event: InputAdapterEvent, circuit: Circuit): void;
 
     // Method called when this tool is deactivated
-    onDeactivate(event: InputManagerEvent, circuit: Circuit): void;
+    onDeactivate(event: InputAdapterEvent, circuit: Circuit): void;
 
 
     // Method called when this tool is currently active and an event occurs
-    onEvent(event: InputManagerEvent, circuit: Circuit): void;
+    onEvent(event: InputAdapterEvent, circuit: Circuit): void;
 }

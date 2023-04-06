@@ -281,13 +281,13 @@ export abstract class CircuitImpl<
     }
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
         this.view.setCanvas(canvas);
-        // TODO: Figure out this event type more concretely
+        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
         this.publish({ type: "attachCanvas", canvas });
         return () => this.detachCanvas();
     }
     public detachCanvas(): void {
         this.view.setCanvas(undefined);
-        // TODO: Figure out this event type more concretely
+        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
         this.publish({ type: "detatchCanvas" });
     }
 

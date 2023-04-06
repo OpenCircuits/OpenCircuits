@@ -2,7 +2,13 @@ import {Vector} from "Vector";
 import {Key}    from "./Key";
 
 
-export interface InputManagerState {
+/**
+ * This interface represents the current state of user-input-related data.
+ *
+ * This includes direct user-input-state, i.e. which mouse buttons and keys are currently being pressed, along with
+ *  persistent user-input data like the previous mouse position and when they began pressing.
+ */
+export interface UserInputState {
     /** A vector representing the position the mouse was when the mousebutton first became pressed. */
     readonly mouseDownPos: Vector;
     /** A vector representing the previous position of the mouse. */

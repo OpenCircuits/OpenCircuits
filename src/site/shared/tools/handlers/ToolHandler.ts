@@ -1,9 +1,11 @@
 import {Circuit}           from "core/public";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 
 export enum ToolHandlerResponse {
+    /** This response represents that the handler is okay with following handlers to execute in this event cycle. */
     PASSTHROUGH = 0,
+    /** This response represents that the handler does not want any other handlers to execute in this event cycle. */
     STOP = 1,
 }
 
@@ -20,5 +22,5 @@ export interface ToolHandler {
      *                other handlers to potentially handle the event as well. Return STOP if
      *                this should be the only handler to handle the event.
      */
-    onEvent: (ev: InputManagerEvent, circuit: Circuit) => ToolHandlerResponse;
+    onEvent: (ev: InputAdapterEvent, circuit: Circuit) => ToolHandlerResponse;
 }

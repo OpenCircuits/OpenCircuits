@@ -1,10 +1,10 @@
 import {useEffect} from "react";
 
-import {InputManager, InputManagerEvent, InputManagerEventType} from "shared/utils/input/InputManager";
+import {InputAdapter, InputManagerEvent, InputManagerEventType} from "shared/utils/input/InputAdapter";
 
 
 export const useEvent = <T extends InputManagerEventType>(type: T, f: (ev: InputManagerEvent & {type: T}) => void,
-                                              input?: InputManager, deps?: React.DependencyList) => {
+                                              input?: InputAdapter, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
             return;

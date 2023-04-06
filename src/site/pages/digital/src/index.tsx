@@ -25,8 +25,8 @@ import {reducers} from "./state/reducers";
 import ImageFiles          from "./data/images.json";
 import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 import {Circuit}           from "core/public";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
-import {InputManager}      from "shared/utils/input/InputManager";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
+import {InputAdapter}      from "shared/utils/input/InputAdapter";
 import {configureStore}    from "@reduxjs/toolkit";
 
 
@@ -47,30 +47,30 @@ interface ToolConfig {
 //     }), [circuit, type, f, ...(deps ?? [])]);
 // }
 
-const useInputEvents = (circuit: Circuit, handler: (ev: InputManagerEvent) => void) => {
-    const inputManager = useMemo(() => new InputManager(), []);
+const useInputEvents = (circuit: Circuit, handler: (ev: InputAdapterEvent) => void) => {
+    const inputAdapter = useMemo(() => new InputAdapter(), []);
 
     useEffect(() => {
         if (circuit.canvas) {
-            inputManager.tearDown();
-            inputManager.setupOn(circuit.canvas);
+            inputAdapter.tearDown();
+            inputAdapter.setupOn(circuit.canvas);
         }
 
         return circuit.subscribe((ev) => {
             if (ev.type === "attachCanvas")
-                inputManager.setupOn(ev.canvas);
+                inputAdapter.setupOn(ev.canvas);
             if (ev.type === "detachCanvas")
-                inputManager.tearDown();
+                inputAdapter.tearDown();
         });
-    }, [circuit, inputManager]);
+    }, [circuit, inputAdapter]);
 
-    useEffect(() => inputManager.subscribe((ev) => handler(ev)), [inputManager, handler]);
+    useEffect(() => inputAdapter.subscribe((ev) => handler(ev)), [inputAdapter, handler]);
 }
 
 const useTools = (circuit: DigitalCircuit, { defaultTool, tools }: ToolConfig) => {
     const [curTool, setCurTool] = useState(undefined as Tool | undefined);
 
-    const handler = useCallback((ev: InputManagerEvent) => {
+    const handler = useCallback((ev: InputAdapterEvent) => {
         // Call the current tool's (or default tool's) onEvent method
         if (curTool) {
             curTool.onEvent(ev, circuit);
