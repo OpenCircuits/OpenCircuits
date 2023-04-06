@@ -1,10 +1,12 @@
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 
 export enum ToolHandlerResponse {
+    /** This response represents that the handler is okay with following handlers to execute in this event cycle. */
     PASS = 0,
     HALT = 1,
+    /** This response represents that the handler does not want any other handlers to execute in this event cycle. */
 }
 
 export interface ToolHandler {
@@ -20,5 +22,5 @@ export interface ToolHandler {
      *                 other handlers to potentially handle the event as well. Return HALT if
      *                 this should be the only handler to handle the event.
      */
-    onEvent: (ev: InputManagerEvent, designer: CircuitDesigner) => ToolHandlerResponse;
+    onEvent: (ev: InputAdapterEvent, designer: CircuitDesigner) => ToolHandlerResponse;
 }

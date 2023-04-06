@@ -2,7 +2,7 @@ import {Circuit, Obj}    from "core/public";
 import {DefaultTool}     from "shared/tools/DefaultTool";
 import {Tool}            from "shared/tools/Tool";
 import {Cursor}          from "shared/utils/input/Cursor";
-import {InputManager}    from "shared/utils/input/InputManager";
+import {InputAdapter}    from "shared/utils/input/InputAdapter";
 import {CircuitDesigner} from "../CircuitDesigner";
 import {ToolManager}     from "./ToolManager";
 
@@ -10,7 +10,7 @@ import {ToolManager}     from "./ToolManager";
 export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigner<Circ> {
     public readonly circuit: Circ;
 
-    public inputManager: InputManager;
+    public inputAdapter: InputAdapter;
 
     private readonly toolManager: ToolManager;
 
@@ -28,7 +28,7 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
     ) {
         this.circuit = circuit;
 
-        this.inputManager = new InputManager();
+        this.inputAdapter = new InputAdapter();
 
         this.toolManager = new ToolManager(defaultTool, tools);
 
@@ -39,17 +39,17 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
 
         // Setup input manager to attach to the Circuit's canvas
         if (circuit.canvas)
-            this.inputManager.setupOn(circuit.canvas);
+            this.inputAdapter.setupOn(circuit.canvas);
 
         circuit.subscribe((ev) => {
             if (ev.type === "attachCanvas")
-                this.inputManager.setupOn(ev.canvas);
+                this.inputAdapter.setupOn(ev.canvas);
             if (ev.type === "detachCanvas")
-                this.inputManager.tearDown();
+                this.inputAdapter.tearDown();
         });
 
         // Setup tool manager
-        this.inputManager.subscribe((ev) => this.toolManager.onEvent(ev, this));
+        this.inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
     }
 
     public get curPressedObj() {

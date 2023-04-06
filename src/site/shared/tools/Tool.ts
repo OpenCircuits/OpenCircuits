@@ -1,23 +1,22 @@
-import {GUID}              from "core/public";
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 
 export interface Tool {
     // Conditional method to see if the current state should transition to this tool
-    shouldActivate(ev: InputManagerEvent, designer: CircuitDesigner): boolean;
+    shouldActivate(ev: InputAdapterEvent, designer: CircuitDesigner): boolean;
 
     // Conditional method to see if the current state should transition out of this tool
-    shouldDeactivate(ev: InputManagerEvent, designer: CircuitDesigner): boolean;
+    shouldDeactivate(ev: InputAdapterEvent, designer: CircuitDesigner): boolean;
 
 
     // Method called when this tool is initially activated
-    onActivate(ev: InputManagerEvent, designer: CircuitDesigner): void;
+    onActivate(ev: InputAdapterEvent, designer: CircuitDesigner): void;
 
     // Method called when this tool is deactivated
-    onDeactivate(ev: InputManagerEvent, designer: CircuitDesigner): void;
+    onDeactivate(ev: InputAdapterEvent, designer: CircuitDesigner): void;
 
 
     // Method called when this tool is currently active and an event occurs
-    onEvent(ev: InputManagerEvent, designer: CircuitDesigner): void;
+    onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void;
 }

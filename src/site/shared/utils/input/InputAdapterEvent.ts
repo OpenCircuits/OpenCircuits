@@ -1,11 +1,11 @@
-import {Vector}            from "Vector";
-import {InputManagerState} from "./InputManagerState";
+import {Vector}         from "Vector";
+import {UserInputState} from "./UserInputState";
 
 import {Key} from "./Key";
 
 
 export interface BaseInputEvent {
-    state: InputManagerState;
+    state: UserInputState;
 }
 export interface MouseInputEvent extends BaseInputEvent {
     type: "click" | "dblclick" | "mousedown" | "mousedrag" | "mouseup";
@@ -28,6 +28,6 @@ export interface OtherInputEvent extends BaseInputEvent {
     type: "mouseenter" | "mousemove" | "mouseleave" | "contextmenu" | "unknown";
 }
 
-export type InputManagerEvent =
+export type InputAdapterEvent =
     MouseInputEvent | KeyboardInputEvent | ZoomInputEvent | CopyPasteInputEvent | OtherInputEvent;
-export type InputManagerEventType = InputManagerEvent["type"];
+export type InputAdapterEventType = InputAdapterEvent["type"];

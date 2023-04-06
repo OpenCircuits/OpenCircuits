@@ -1,5 +1,5 @@
 import {CircuitDesigner}                  from "shared/circuitdesigner/CircuitDesigner";
-import {InputManagerEvent}                from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent}                from "shared/utils/input/InputAdapterEvent";
 import {ToolHandler, ToolHandlerResponse} from "./handlers/ToolHandler";
 
 
@@ -10,8 +10,12 @@ export class DefaultTool {
         this.handlers = handlers;
     }
 
+    public onActivate(ev: InputAdapterEvent, designer: CircuitDesigner): void {
+        this.onEvent(ev, designer);
+    }
+
     // Method called when this tool is currently active and an event occurs
-    public onEvent(ev: InputManagerEvent, designer: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void {
         // // Don't do anything when circuit is locked
         // if (circuit.locked)
         //     return;
