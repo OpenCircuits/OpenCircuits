@@ -368,8 +368,14 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                                         dragDir={(side === "left") ? "horizontal" : "vertical"}
                                         data={[item.id, Math.max(numClicks,1), additionalData]}
                                         onClick={(ev) => {
+                                            reset(true)
                                             dispatch(SetCurItem(item.id));
-                                            setNumClicks(item.id === curItemID ? numClicks+1 : 1);
+                                            if (shortcutFlag) {
+                                                setNumClicks(1);
+                                            }else{
+                                                setNumClicks(item.id === curItemID ? numClicks+1 : 1);
+                                            }
+                                            setShortcutFlag(false);
                                             setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                             onStart && onStart();
 
