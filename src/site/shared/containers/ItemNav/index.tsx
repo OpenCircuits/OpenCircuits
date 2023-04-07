@@ -372,7 +372,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                                             dispatch(SetCurItem(item.id));
                                             if (shortcutFlag) {
                                                 setNumClicks(1);
-                                            }else{
+                                            } else {
                                                 setNumClicks(item.id === curItemID ? numClicks+1 : 1);
                                             }
                                             setShortcutFlag(false);
