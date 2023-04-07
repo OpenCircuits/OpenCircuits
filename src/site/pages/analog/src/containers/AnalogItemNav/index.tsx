@@ -1,5 +1,4 @@
 import {useCallback} from "react";
-
 import {GetIDFor}    from "serialeazy";
 
 import {Component} from "core/models";
@@ -38,6 +37,6 @@ export const AnalogItemNav = ({ info }: Props) => {
                         ["g", "Ground"],
                         ["l", "Inductor"],
                         ["v", "VoltageSource"],
-                        ["i", "CurrentSource"]] }/>
+                        ["i", "CurrentSource"]]}/>
     );
 }
