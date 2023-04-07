@@ -115,7 +115,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 const section = config.sections.find((s) => (s.items.find((i) => i.id === id)));
                 dispatch(SetCurItem(id));
                 setNumClicks(id.toLowerCase() === curItemID ? numClicks+1 : 1);
-                setCurItemImg(`/${config.imgRoot}/${section?.id}/${id.toLowerCase().concat(".svg")}`)
+                setCurItemImg(`/${config.imgRoot}/${section?.id}/${[...id.toLowerCase(),...".svg"].join("")}`)
                 onStart && onStart();
                 ev.stopPropagation();
                 setShortcutFlag(true);
@@ -148,12 +148,12 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         // If keyboard shortcut used to bring up component then allow to drop until "Esc" pressed
-        if(shortcutFlag && curItemID === shortItem){
+        if (shortcutFlag && curItemID === shortItem){
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
             const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
             dispatch(SetCurItem(curItemID));
             setNumClicks(1);
-            setCurItemImg(`/${config.imgRoot}/${section?.id}/${curItemID.toLowerCase().concat(".svg")}`)
+            setCurItemImg(`/${config.imgRoot}/${section?.id}/${[...curItemID.toLowerCase(),...".svg"].join("")}`)
             onStart && onStart();
             return;
         }
