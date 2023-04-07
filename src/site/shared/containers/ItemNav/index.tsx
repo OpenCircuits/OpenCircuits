@@ -371,8 +371,8 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                                         dragDir={(side === "left") ? "horizontal" : "vertical"}
                                         data={[item.id, Math.max(numClicks,1), additionalData]}
                                         onClick={(ev) => {
-                                            reset(true)
                                             dispatch(SetCurItem(item.id));
+                                            // Force exit shotcut state when using ItemNav panel
                                             if (shortcutFlag) {
                                                 setNumClicks(1);
                                             } else {
