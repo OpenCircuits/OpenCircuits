@@ -106,19 +106,20 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         // Loop through each of the input shortcuts
         for (const short of shortcuts) {
             if (ev.key === short[0]) {
+                if (curItemID === short[1] && shortcutFlag) {
+                    reset(true);
+                    setShortcutFlag(false);
+                    break;
+                }
                 const id = short[1];
                 const section = config.sections.find((s) => (s.items.find((i) => i.id === id)));
                 dispatch(SetCurItem(id));
                 setNumClicks(id.toLowerCase() === curItemID ? numClicks+1 : 1);
                 setCurItemImg(`/${config.imgRoot}/${section?.id}/${id.toLowerCase().concat(".svg")}`)
                 onStart && onStart();
-                // shortcut_flag = true
                 ev.stopPropagation();
-                console.log(shortcutFlag)
                 setShortcutFlag(true);
                 setShortItem(id);
-                let shortItem = id;
-                console.log('init',shortcutFlag, shortItem)
             }
         }
     }, [shortcutFlag, shortItem, curItemID]);
@@ -147,7 +148,6 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
         // If keyboard shortcut used to bring up component then allow to drop until "Esc" pressed
-        console.log(shortcutFlag, curItemID, shortItem)
         if(shortcutFlag && curItemID === shortItem){
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
             const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
@@ -203,7 +203,6 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     // Cancel placing when pressing escape
     useWindowKeyDownEvent("Escape", () => {
         reset(true);
-        // shortcut_flag = false
         setShortcutFlag(false);
     });
 
