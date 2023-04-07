@@ -106,6 +106,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         // Loop through each of the input shortcuts
         for (const short of shortcuts) {
             if (ev.key === short[0]) {
+                // Detect second keypress to exit shortcut
                 if (curItemID === short[1] && shortcutFlag) {
                     reset(true);
                     setShortcutFlag(false);
@@ -118,6 +119,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
                 setCurItemImg(`/${config.imgRoot}/${section?.id}/${[...id.toLowerCase(),...".svg"].join("")}`)
                 onStart && onStart();
                 ev.stopPropagation();
+                // Update shortcut paramters to verify later
                 setShortcutFlag(true);
                 setShortItem(id);
             }
