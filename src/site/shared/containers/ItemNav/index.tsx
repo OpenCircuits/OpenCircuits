@@ -90,7 +90,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
     const [curItemImg, setCurItemImg] = useState("");
 
     const [shortcutFlag, setShortcutFlag] = useState(false);
-    
+
     const [shortItem, setShortItem] = useState("");
 
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that

@@ -37,6 +37,6 @@ export const AnalogItemNav = ({ info }: Props) => {
                         ["g", "Ground"],
                         ["l", "Inductor"],
                         ["v", "VoltageSource"],
-                        ["i", "CurrentSource"]]}/>
+                        ["i", "CurrentSource"]] }/>
     );
 }
