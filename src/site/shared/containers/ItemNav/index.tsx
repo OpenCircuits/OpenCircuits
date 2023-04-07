@@ -203,7 +203,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts
         );
     }, [info.camera, isOpen, side]);
 
-    // Cancel placing when pressing escape
+    // Cancel placing when pressing escape and reset shortcut state flag
     useWindowKeyDownEvent("Escape", () => {
         reset(true);
         setShortcutFlag(false);
