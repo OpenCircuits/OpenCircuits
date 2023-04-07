@@ -18,7 +18,7 @@ import {Assembler}            from "core/internal/view/Assembler";
 
 
 export class XORGateAssembler extends Assembler<Schema.Component> {
-    public readonly size = V(1, 1);
+    public readonly size = V(1.2, 1);
     public readonly img: SVGDrawing;
 
     protected readonly sim: DigitalSim;
@@ -33,10 +33,10 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         this.img = view.options.getImage("or.svg")!;
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
-            "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
+            "outputs": () => ({ origin: V(0.47, 0), dir: V(1.25, 0) }),
             "inputs":  (index, total) => {
                 const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                return { origin: V(-0.5, spacing*((total-1)/2 - index)), dir: V(-1, 0) };
+                return { origin: V(-0.35, spacing*((total-1)/2 - index)), dir: V(-1.25, 0) };
             },
         });
     }
@@ -74,24 +74,16 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
             const p2 = V(-s + dx, l2 + d);
             const c = V(-l + dx, d);
 
-            if (amt === 1 && dx !== 0) {
-                quadCurves.push( new QuadCurvePrim(
-                    transform.toWorldSpace(p1),
-                    transform.toWorldSpace(p2), 
-                    transform.toWorldSpace(c), 
-                    this.options.curveStyle(selected)));
-            }
-            else if (amt !== 1 || dx !== 0) {
-                let style = this.options.curveStyle(selected);
-                if (style.stroke) {
-                    style.stroke.lineCap = "round";
-                }
-                quadCurves.push( new QuadCurvePrim(
-                    transform.toWorldSpace(p1),
-                    transform.toWorldSpace(p2), 
-                    transform.toWorldSpace(c), 
-                    style))
-            }
+            //   let style = this.options.curveStyle(selected);
+            //   if (style.stroke) {
+            //     style.stroke.lineCap = "round";
+            //   }
+          
+            quadCurves.push( new QuadCurvePrim(
+                transform.toWorldSpace(p1),
+                transform.toWorldSpace(p2), 
+                transform.toWorldSpace(c), 
+                {stroke: {color: "black", size: 0.05, lineCap: "round"}}));
         }
         return quadCurves;
     }
@@ -123,27 +115,23 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
 
         const [prevLine, prevImg] = (this.view.componentPrims.get(gate.id) ?? []);
 
-        const quadCurvesFront = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleQuadCurve(gate, 0) : []);
-        const quadCurvesBack = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleQuadCurve(gate, -0.24) : []);
+        const quadCurvesFront = this.assembleQuadCurve(gate, 0);
+        const quadCurvesBack = this.assembleQuadCurve(gate, -0.24);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
 
         
-        // Update styles only if only selections changed
-        if (selectionChanged) {
-            const selected = this.selections.has(gate.id);
+        // // Update styles only if only selections changed
+        // if (selectionChanged) {
+        //     const selected = this.selections.has(gate.id);
 
-            for (let i = 0; i < quadCurvesFront.length; i++) {
-                quadCurvesFront[i].updateStyle(this.options.lineStyle(selected));
-                quadCurvesBack[i].updateStyle(this.options.lineStyle(selected));
-            }
-            img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
-        }
+        //     for (let i = 0; i < quadCurvesFront.length; i++) {
+        //         quadCurvesFront[i].updateStyle(this.options.curveStyle(selected));
+        //         quadCurvesBack[i].updateStyle(this.options.curveStyle(selected));
+        //     }
+        //     img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
+        // }
         
-        let image = [];
-        quadCurvesFront.map((qc) => image.push(qc));
-        quadCurvesBack.map((qc) => image.push(qc));
-        image.push(img);
-
+        let image = [...quadCurvesFront, ...quadCurvesBack, img];
         this.view.componentPrims.set(gate.id, image);
     }
 }
