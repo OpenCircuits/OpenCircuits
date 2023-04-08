@@ -41,7 +41,7 @@ export const ContextMenu = ({ circuit }: Props) => {
     //     if (!input)
     //         return;
 
-    //     const listener = (ev: InputManagerEvent) => {
+    //     const listener = (ev: InputAdapterEvent) => {
     //         if (ev.type === "contextmenu")
     //             dispatch(OpenContextMenu());
     //         else if (ev.type === "mousedown")

@@ -1,6 +1,6 @@
 import {DefaultTool}       from "shared/tools/DefaultTool";
 import {Tool}              from "shared/tools/Tool";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 import {CircuitDesigner}   from "../CircuitDesigner";
 
 
@@ -15,7 +15,7 @@ export class ToolManager {
         this.tools = tools;
     }
 
-    public onEvent(ev: InputManagerEvent, designer: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void {
         // Call the current tool's (or default tool's) onEvent method
         if (this.curTool) {
             this.curTool.onEvent(ev, designer);

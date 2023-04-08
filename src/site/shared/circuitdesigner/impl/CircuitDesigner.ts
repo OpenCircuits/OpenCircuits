@@ -37,17 +37,6 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
             cursor:        undefined,
         };
 
-        // Setup input manager to attach to the Circuit's canvas
-        if (circuit.canvas)
-            this.inputAdapter.setupOn(circuit.canvas);
-
-        circuit.subscribe((ev) => {
-            if (ev.type === "attachCanvas")
-                this.inputAdapter.setupOn(ev.canvas);
-            if (ev.type === "detachCanvas")
-                this.inputAdapter.tearDown();
-        });
-
         // Setup tool manager
         this.inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
     }
@@ -64,5 +53,15 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
     }
     public set cursor(cursor: Cursor | undefined) {
         this.state.cursor = cursor;
+    }
+
+    public attachCanvas(canvas: HTMLCanvasElement): () => void {
+        this.inputAdapter.setupOn(canvas);
+        this.circuit.attachCanvas(canvas);
+        return () => this.detachCanvas();
+    }
+    public detachCanvas(): void {
+        this.inputAdapter.tearDown();
+        this.circuit.detachCanvas();
     }
 }
