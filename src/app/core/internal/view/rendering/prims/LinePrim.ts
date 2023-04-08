@@ -26,7 +26,7 @@ export class LinePrim extends BaseShapePrim {
     }
 
     public override hitTest(pt: Vector): boolean {
-        // TODO: Maybe allow lines to be hit ?
+        // TODO[.](*): Maybe allow lines to be hit ?
         return false;
     }
 
