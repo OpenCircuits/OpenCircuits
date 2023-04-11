@@ -46,8 +46,11 @@ describe("DeleteObjects", () => {
         expect(s2.exists()).toEqual(false);
         expect(g.exists()).toEqual(false);
         expect(l.exists()).toEqual(false);
-        //expect(w1?.exists()).toEqual(false);
+        expect(w1?.exists()).toEqual(false);
+        expect(w2?.exists()).toEqual(false);
+        expect(w3?.exists()).toEqual(false);
         //TODO test for wires existing
         //TODO ensure deletion working properly for full circuit
+        //none of my test cases are working properly right now unfortunately
     });
 });

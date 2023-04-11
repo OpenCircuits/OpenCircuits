@@ -211,11 +211,9 @@ export abstract class CircuitImpl<
     */
     public deleteObjs(objs: Obj[]): void {
         this.circuit.beginTransaction();
-        for(const obj of objs) 
-        {
+        for(const obj of objs) {
             if(obj.baseKind == "Port") { continue; }
-            if(obj.baseKind == "Component") 
-            {
+            if(obj.baseKind == "Component") {
                 this.circuit.setPortConfig(obj.id, {});
                 this.circuit.deleteComponent(obj.id);
                 continue;
