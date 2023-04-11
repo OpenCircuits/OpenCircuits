@@ -18,7 +18,7 @@ import {Assembler}            from "core/internal/view/Assembler";
 
 
 export class XORGateAssembler extends Assembler<Schema.Component> {
-    public readonly size = V(1, 1);
+    public readonly size = V(1.2, 1);
     public readonly img: SVGDrawing;
 
     protected readonly sim: DigitalSim;
@@ -33,10 +33,18 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         this.img = view.options.getImage("or.svg")!;
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
-            "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
+            "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0)}),
             "inputs":  (index, total) => {
-                const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                return { origin: V(-0.5, spacing*((total-1)/2 - index)), dir: V(-1, 0) };
+                if (total % 2 == 0) {
+                    const spacing = 0.52 - this.options.defaultBorderWidth/2;
+                    return { origin: V(-0.43, spacing*((total-1)/2 - index)), dir: V(-1.3, 0) };
+                } else {
+                    const spacing = 0.50 - this.options.defaultBorderWidth/2;
+                    if ((total == 7 && index == 0) || (total == 7 && index == 6)) {
+                        return { origin: V(-0.53, spacing*((total-1)/2 - index)), dir: V(-1.41, 0) };
+                    }
+                    return { origin: V(-0.40, spacing*((total-1)/2 - index)), dir: V(-1.6, 0) };
+                }
             },
         });
     }
@@ -73,24 +81,23 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
             const p1 = V(-s + dx, l1 + d);
             const p2 = V(-s + dx, l2 + d);
             const c = V(-l + dx, d);
-
+            
+            let qc = new QuadCurvePrim(
+                transform.toWorldSpace(p1),
+                transform.toWorldSpace(p2), 
+                transform.toWorldSpace(c), 
+                this.options.curveStyle(selected));
+            
             if (amt === 1 && dx !== 0) {
-                quadCurves.push( new QuadCurvePrim(
-                    transform.toWorldSpace(p1),
-                    transform.toWorldSpace(p2), 
-                    transform.toWorldSpace(c), 
-                    this.options.curveStyle(selected)));
+                quadCurves.push(qc);
             }
             else if (amt !== 1 || dx !== 0) {
                 let style = this.options.curveStyle(selected);
                 if (style.stroke) {
                     style.stroke.lineCap = "round";
                 }
-                quadCurves.push( new QuadCurvePrim(
-                    transform.toWorldSpace(p1),
-                    transform.toWorldSpace(p2), 
-                    transform.toWorldSpace(c), 
-                    style))
+                qc.updateStyle(style);
+                quadCurves.push(qc)
             }
         }
         return quadCurves;
@@ -109,7 +116,7 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
 
         if (!transformChanged && !selectionChanged && !portAmtChanged)
             return;
-
+        
         if (transformChanged) {
             // Update transform
             this.view.componentTransforms.set(gate.id, new Transform(
@@ -132,18 +139,17 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         if (selectionChanged) {
             const selected = this.selections.has(gate.id);
 
+            // TODO: update each quadCurve style, at the moment this.options.curveStyle(selected)
+            //       does not hold any info about linecap settings (i.e round, square )
+            //       the commented code will overwrite any previously set linecap
             for (let i = 0; i < quadCurvesFront.length; i++) {
-                quadCurvesFront[i].updateStyle(this.options.lineStyle(selected));
-                quadCurvesBack[i].updateStyle(this.options.lineStyle(selected));
+                // quadCurvesFront[i].updateStyle(this.options.curveStyle(selected));
+                // quadCurvesBack[i].updateStyle(this.options.curveStyle(selected));
             }
             img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
         }
         
-        let image = [];
-        quadCurvesFront.map((qc) => image.push(qc));
-        quadCurvesBack.map((qc) => image.push(qc));
-        image.push(img);
-
+        let image = [...quadCurvesFront, ...quadCurvesBack, img];
         this.view.componentPrims.set(gate.id, image);
     }
 }
