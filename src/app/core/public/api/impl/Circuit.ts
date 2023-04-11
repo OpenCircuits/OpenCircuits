@@ -202,12 +202,15 @@ export abstract class CircuitImpl<
     // Wire connection can fail if i.e. p1 is reference-equal to p2
     public abstract connectWire(p1: PortT, p2: PortT): WireT | undefined;
 
-    /** Will delete all components and wires
-     * contained within the Obj[] array
-     * Ignores ports as deleting ports is a no-op
+    /** 
+     * Will delete all components and wires contained within the Obj[] array
+     * Will also disconnect any wires from components that are being deleted.
      * 
-     * @param Obj[] should only contain 
-     * wires, components, and maybe ports
+     * Will not delete ports directly, 
+     * however ports that are a part of
+     * a component in objs will be deleted
+     * 
+     * @param Obj[] should only contain wires, components, and maybe ports
     */
     public deleteObjs(objs: Obj[]): void {
         this.circuit.beginTransaction();
