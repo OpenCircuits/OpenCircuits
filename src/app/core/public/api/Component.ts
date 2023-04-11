@@ -16,5 +16,6 @@ export interface Component extends BaseObject {
 
     readonly ports: Record<string, Port[]>;
 
+    setNumPorts(group: string, amt: number): boolean;
     firstAvailable(group: string): Port | undefined;
 }

@@ -16,7 +16,7 @@ export class DigitalComponentInfoImpl extends ComponentInfoImpl implements Digit
         if (!(info instanceof DigitalComponentInfoInternal))
             throw new Error(`Received non-digital component info for ${kind}!`);
 
-        this.inputPortGroups  = this.portGroups.filter((g) => (info.portGroupInfo[g] ===  "input"));
-        this.outputPortGroups = this.portGroups.filter((g) => (info.portGroupInfo[g] === "output"));
+        this.inputPortGroups  = info.inputPortGroups;
+        this.outputPortGroups = info.outputPortGroups;
     }
 }
