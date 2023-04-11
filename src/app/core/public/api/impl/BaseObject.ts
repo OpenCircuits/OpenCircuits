@@ -66,6 +66,6 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
         return this.internal.getObjByID(this.objID).unwrap().props[key];
     }
     public getProps(): Record<string, Prop> {
-        throw new Error("Unimplemented");
+        return this.internal.getObjByID(this.objID).unwrap().props;
     }
 }
