@@ -37,7 +37,7 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
             "inputs":  (index, total) => {
                 if (total % 2 == 0) {
                     const spacing = 0.52 - this.options.defaultBorderWidth/2;
-                    return { origin: V(-0.43, spacing*((total-1)/2 - index)), dir: V(-1.3, 0) };
+                    return { origin: V(-0.43, spacing*((total-1)/2 - index)), dir: V(-1.6, 0) };
                 } else {
                     const spacing = 0.50 - this.options.defaultBorderWidth/2;
                     if ((total == 7 && index == 0) || (total == 7 && index == 6)) {
