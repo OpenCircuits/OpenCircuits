@@ -19,13 +19,14 @@ import {Wire}      from "../Wire";
 import {CircuitState}         from "./CircuitState";
 import {CreateDrawingFromSVG} from "svg2canvas";
 import {CameraImpl}           from "./Camera";
+import {Observable}           from "core/utils/Observable";
 
 
 export abstract class CircuitImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
-> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
+> extends Observable<any> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
     public circuit: CircuitInternal;
     public view: CircuitView;
 
@@ -38,6 +39,8 @@ export abstract class CircuitImpl<
         view: CircuitView,
         selections: SelectionsManager
     ) {
+        super();
+
         this.circuit = circuit
         this.view = view;
 
@@ -273,19 +276,22 @@ export abstract class CircuitImpl<
     public resize(w: number, h: number): void {
         this.view.resize(w, h);
     }
+    public get canvas() {
+        return this.view.getCanvas();
+    }
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
         this.view.setCanvas(canvas);
+        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
+        this.publish({ type: "attachCanvas", canvas });
         return () => this.detachCanvas();
     }
     public detachCanvas(): void {
         this.view.setCanvas(undefined);
+        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
+        this.publish({ type: "detatchCanvas" });
     }
 
     public addRenderCallback(cb: () => void): void {
         throw new Error("Unimplemented");
-    }
-
-    public subscribe(cb: (ev: any) => void): () => void {
-        throw new Error("Method not implemented.");
     }
 }

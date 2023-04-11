@@ -10,67 +10,71 @@ import {CalculateMidpoint} from "math/MathUtils";
 
 import {Observable} from "core/utils/Observable";
 
-import {Key} from "./Key";
+import {Key}               from "./Key";
+import {InputAdapterEvent} from "./InputAdapterEvent";
+import {UserInputState}    from "./UserInputState";
 
 
-export type MouseInputEvent = {
-    type: "click" | "dblclick" | "mousedown" | "mousedrag" | "mouseup";
-    button: number;
-}
-export type KeyboardInputEvent = {
-    type: "keydown" | "keyup";
-    key: Key;
-}
-export type ZoomInputEvent = {
-    type: "zoom";
-    factor: number;
-    pos: Vector;
-}
-export type CopyPasteInputEvent = {
-    type: "paste" | "copy" | "cut";
-    ev: ClipboardEvent;
-}
-export type OtherInputEvent = {
-    type: "mouseenter" | "mousemove" | "mouseleave" | "contextmenu" | "unknown";
-}
+export class UserInputStateImpl implements UserInputState {
+    public mouseDownPos: Vector;
+    public prevMousePos: Vector;
+    public mousePos: Vector;
 
-export type InputManagerEvent =
-    MouseInputEvent | KeyboardInputEvent | ZoomInputEvent | CopyPasteInputEvent | OtherInputEvent;
-export type InputManagerEventType = InputManagerEvent["type"];
+    public isMouseDown: boolean;
+    public mouseDownButton: number;
 
+    public isDragging: boolean;
+    public startTapTime: number;
+
+    public touchCount: number;
+
+    public keysDown: Set<Key>;
+
+    public constructor() {
+        this.mouseDownPos = V();
+        this.prevMousePos = V();
+        this.mousePos = V();
+
+        this.isMouseDown = false;
+        this.mouseDownButton = 0;
+
+        this.isDragging = false;
+        this.startTapTime = 0;
+
+        this.touchCount = 0;
+
+        this.keysDown = new Set();
+    }
+
+    public get deltaMousePos() {
+        return this.mousePos.sub(this.prevMousePos);
+    }
+
+    public get isShiftKeyDown() {
+        return this.keysDown.has("Shift")
+    }
+    public get isEscKeyDown() {
+        return this.keysDown.has("Escape")
+    }
+    public get isModifierKeyDown() {
+        return (this.keysDown.has("Control") || this.keysDown.has("Meta"));
+    }
+    public get isAltKeyDown() {
+        return this.keysDown.has("Alt")
+    }
+}
 
 /**
  * Class to handle user input, and trigger appropriate event listeners.
  */
-export class InputManager extends Observable<InputManagerEvent> {
+export class InputAdapter extends Observable<InputAdapterEvent> {
     /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
     private readonly dragTime: number;
 
     /** The canvas the user is performing inputs on. */
     private canvas?: HTMLCanvasElement;
 
-    /** A vector representing the previous position of the mouse. */
-    private prevMousePos: Vector;
-    /** A vector representing the current position of the mouse. */
-    private mousePos: Vector;
-
-    /** True if a mousebutton is held down, false otherwise. */
-    private mouseDown: boolean;
-    /** A vector representing the position the mouse was when the mousebutton first became pressed. */
-    private mouseDownPos: Vector;
-    /** Represents the mousebutton being pressed (left, middle, right, etc.). */
-    private mouseDownButton: number;
-
-    /** True if the mouse is being dragged, false otherwise. (a "drag" being distinct from a "click"). */
-    private isDragging: boolean;
-    /** Represents the time at which the mouse button became held down. */
-    private startTapTime: number;
-
-    /** Represents the number of touches currently active (i.e. fingers on a touchpad or mobile device). */
-    private touchCount: number;
-
-    /** Map with keycodes as keys and booleans representing whether that key is held as values. */
-    private keysDown: Map<Key, boolean>;
+    private state: UserInputStateImpl;
 
     /**
      * Initializes Input with given canvas and dragTime.
@@ -80,20 +84,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     public constructor(dragTime: number = DRAG_TIME) {
         super();
         this.dragTime = dragTime;
-
-        this.prevMousePos = V();
-        this.mousePos = V();
-
-        this.mouseDown = false;
-        this.mouseDownPos = V();
-        this.mouseDownButton = 0;
-
-        this.isDragging = false;
-        this.startTapTime = 0;
-
-        this.touchCount = 0;
-
-        this.keysDown = new Map();
+        this.state = new UserInputStateImpl();
     }
 
     /**
@@ -114,15 +105,19 @@ export class InputManager extends Observable<InputManagerEvent> {
         const tearDownTouchEvents    = this.hookupTouchEvents(canvas);
         const tearDownHammer         = this.setupHammer(canvas);
 
-        return () => {
+        this.tearDown = () => {
             tearDownHammer();
             tearDownTouchEvents();
             tearDownMouseEvents();
             tearDownKeyboardEvents();
 
             this.canvas = undefined;
-        }
+        };
+
+        return this.tearDown;
     }
+
+    public tearDown: () => void = () => {};
 
     /**
      * Checks if newKey is a prevented combination of keys.
@@ -147,7 +142,7 @@ export class InputManager extends Observable<InputManagerEvent> {
         return PREVENTED_COMBINATIONS.some((combination) => (
             combination.flat().includes(newKey) &&
             combination.every((keys) => (
-                keys.some((key) => this.isKeyDown(key))
+                keys.some((key) => this.state.keysDown.has(key))
             ))
         ));
     }
@@ -162,34 +157,44 @@ export class InputManager extends Observable<InputManagerEvent> {
         if (!this.canvas)
             throw new Error("Input: Attempted to hookup keyboard events before a canvas was set!");
 
-        const onKeyDown = (e: KeyboardEvent) => {
-            // Check for "Alt" to fix issue #943
-            if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) {
-                this.onKeyDown(e.key as Key);
+        const parseKey = (key: string): Key => {
+            // Assume it's alphanumeric if it's a single-character keycode
+            //  and make it lowercase for consistency
+            if (key.length === 1)
+                return key.toLowerCase() as Key;
+            return key as Key; // Otherwise just leave it alone and explicitly cast
+        }
 
-                if (this.isPreventedCombination(e.key as Key))
+        const onKeyDown = (e: KeyboardEvent) => {
+            const key = parseKey(e.key);
+            // Check for "Alt" to fix issue #943
+            if (key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) {
+                // Only lowercase version since that's the only type allowed as defined
+                //  in Key.ts and pressing Shift will make it uppercase.
+                this.onKeyDown(key);
+
+                if (this.isPreventedCombination(key))
                     e.preventDefault();
             }
         }
         const onKeyUp = (e: KeyboardEvent) => {
+            const key = parseKey(e.key);
+
             // Check for "Alt" to fix issue #943
-            if (e.key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(e.key as Key);
+            if (key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
+                this.onKeyUp(key);
 
             // Check for Meta key and release all other keys on up
             //  See https://stackoverflow.com/q/27380018/5911675
-            if (e.key === "Meta") {
-                [...this.keysDown.entries()]
-                    .filter(([_,down]) => down)
-                    .map(([k]) => k)
-                    .forEach((k) => this.onKeyUp(k));
-            }
+            if (key === "Meta")
+                this.state.keysDown.forEach((key) => this.onKeyUp(key));
+
         }
         const onBlur = () => this.onBlur();
 
-        const onPaste = (ev: ClipboardEvent) => this.publish({ type: "paste", ev });
-        const onCopy  = (ev: ClipboardEvent) => this.publish({ type: "copy",  ev });
-        const onCut   = (ev: ClipboardEvent) => this.publish({ type: "cut",   ev });
+        const onPaste = (ev: ClipboardEvent) => this.publish({ state: this.state, type: "paste", ev });
+        const onCopy  = (ev: ClipboardEvent) => this.publish({ state: this.state, type: "copy",  ev });
+        const onCut   = (ev: ClipboardEvent) => this.publish({ state: this.state, type: "cut",   ev });
 
 
         window.addEventListener("keydown", onKeyDown, false);
@@ -234,7 +239,7 @@ export class InputManager extends Observable<InputManagerEvent> {
 
         const onContextMenu = (e: MouseEvent) => {
             e.preventDefault();
-            this.publish({ type: "contextmenu" });
+            this.publish({ state: this.state, type: "contextmenu" });
         }
 
         // Mouse events
@@ -307,9 +312,10 @@ export class InputManager extends Observable<InputManagerEvent> {
         const pinch = new Hammer.Pinch();
         const onPinch = (e: HammerInput) => {
             this.publish({
+                state:  this.state,
                 type:   "zoom",
                 factor: lastScale/e.scale,
-                pos:    this.mousePos,
+                pos:    this.state.mousePos,
             });
             lastScale = e.scale;
         }
@@ -357,108 +363,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      *  Keeps listeners and outer-controlled state.
      */
     public reset(): void {
-        this.prevMousePos = V();
-        this.mousePos = V();
-
-        this.mouseDown = false;
-        this.mouseDownPos = V();
-        this.mouseDownButton = 0;
-
-        this.isDragging = false;
-        this.startTapTime = 0;
-
-        this.touchCount = 0;
-
-        this.keysDown = new Map();
-    }
-
-    /**
-     * Checks if the mouse is pressed down.
-     *
-     * @returns True if the mouse is down, false otherwise.
-     */
-    public isMouseDown(): boolean {
-        return this.mouseDown;
-    }
-    /**
-     * Checks if the given key is held down.
-     *
-     * @param key Represents the key being checked.
-     * @returns   True if key is down, false otherwise.
-     */
-    public isKeyDown(key: Key): boolean {
-        return (this.keysDown.has(key.toLowerCase() as Key) &&
-                this.keysDown.get(key.toLowerCase() as Key) === true);
-    }
-
-    /**
-     * Checks if the shift key is held down.
-     *
-     * @returns True if the shift key is down, false otherwise.
-     */
-    public isShiftKeyDown(): boolean {
-        return this.isKeyDown("Shift");
-    }
-
-
-    /**
-     * Checks if the option key is held down.
-     *
-     * @returns True if the option key is down, false otherwise.
-     */
-    public isEscKeyDown(): boolean {
-        return this.isKeyDown("Escape");
-    }
-
-    /**
-     * Checks if the modifier key is held down.
-     *
-     * @returns True if the modifier key (control, command, or meta) is down, false otherwise.
-     */
-     public isModifierKeyDown(): boolean {
-        return (this.isKeyDown("Control") || this.isKeyDown("Meta"));
-    }
-    /**
-     * Checks if the option key is held down.
-     *
-     * @returns True if the option key is down, false otherwise.
-     */
-    public isAltKeyDown(): boolean {
-        return this.isKeyDown("Alt");
-    }
-
-    /**
-     * Gets the position of the cursor of the mouse.
-     *
-     * @returns Current position of the mouse.
-     */
-    public getMousePos(): Vector {
-        return V(this.mousePos);
-    }
-    /**
-     * Gets the position where the mouse was pressed down.
-     *
-     * @returns Current position of the mouse down.
-     */
-    public getMouseDownPos(): Vector {
-        return V(this.mouseDownPos);
-    }
-    /**
-     * Gets the difference between the current and previous mouse position.
-     *
-     * @returns Difference between current and previous mouse position.
-     */
-    public getDeltaMousePos(): Vector {
-        return this.mousePos.sub(this.prevMousePos);
-    }
-
-    /**
-     * Gets the number of times the mouse has been pressed.
-     *
-     * @returns The touchCount.
-     */
-    public getTouchCount(): number {
-        return this.touchCount;
+        this.state = new UserInputStateImpl();
     }
 
     /**
@@ -467,10 +372,9 @@ export class InputManager extends Observable<InputManagerEvent> {
      * @param key Represents the key being pressed.
      */
     protected onKeyDown(key: Key): void {
-        this.keysDown.set(key.toLowerCase() as Key, true); // Lower case so that letters are the same despite SHIFT
+        this.state.keysDown.add(key);
 
-        // call each listener
-        this.publish({ type: "keydown", key });
+        this.publish({ state: this.state, type: "keydown", key });
     }
     /**
      * Sets the given key as up, and calls each Listener on Event "keyup", key.
@@ -478,10 +382,10 @@ export class InputManager extends Observable<InputManagerEvent> {
      * @param key Represents the key being released.
      */
     protected onKeyUp(key: Key): void {
-        this.keysDown.set(key.toLowerCase() as Key, false); // Lower case so that letters are the same despite SHIFT
+        this.state.keysDown.delete(key);
 
         // call each listener
-        this.publish({ type: "keyup", key });
+        this.publish({ state: this.state, type: "keyup", key });
     }
 
     /**
@@ -492,13 +396,13 @@ export class InputManager extends Observable<InputManagerEvent> {
      */
     protected onClick(_: Vector, button: number = LEFT_MOUSE_BUTTON): void {
         // Don't call onclick if was dragging
-        if (this.isDragging) {
-            this.isDragging = false;
+        if (this.state.isDragging) {
+            this.state.isDragging = false;
             return;
         }
 
         // call each listener
-        this.publish({ type: "click", button });
+        this.publish({ state: this.state, type: "click", button });
     }
     /**
      * Calls each Listener on Event "dbclick", button.
@@ -508,7 +412,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     protected onDoubleClick(button: number): void {
 
         // call each listener
-        this.publish({ type: "dblclick", button });
+        this.publish({ state: this.state, type: "dblclick", button });
     }
 
     /**
@@ -524,9 +428,10 @@ export class InputManager extends Observable<InputManagerEvent> {
             zoomFactor = 1 / zoomFactor;
 
         this.publish({
+            state:  this.state,
             type:   "zoom",
             factor: zoomFactor,
-            pos:    this.mousePos,
+            pos:    this.state.mousePos,
         });
     }
 
@@ -544,21 +449,21 @@ export class InputManager extends Observable<InputManagerEvent> {
 
         const rect = this.canvas.getBoundingClientRect();
 
-        this.touchCount++;
+        this.state.touchCount++;
 
         // reset dragging and set mouse stuff
-        this.isDragging = false;
-        this.startTapTime = Date.now();
-        this.mouseDown = true;
-        this.mouseDownPos = pos.sub(rect.left, rect.top)
+        this.state.isDragging = false;
+        this.state.startTapTime = Date.now();
+        this.state.isMouseDown = true;
+        this.state.mouseDownPos = pos.sub(rect.left, rect.top)
                                // Scale in case the real canvas size is different then the pixel size
                                // (i.e. image exporter)
                                .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
 
-        this.mousePos = V(this.mouseDownPos);
-        this.mouseDownButton = button;
+        this.state.mousePos = V(this.state.mouseDownPos);
+        this.state.mouseDownButton = button;
 
-        this.publish({ type: "mousedown", button });
+        this.publish({ state: this.state, type: "mousedown", button });
     }
     /**
      * Triggered on mouse movement, calculates new mouse position,
@@ -575,22 +480,23 @@ export class InputManager extends Observable<InputManagerEvent> {
         const rect = this.canvas.getBoundingClientRect();
 
         // get raw and relative mouse positions
-        this.prevMousePos = V(this.mousePos);
-        this.mousePos = pos.sub(rect.left, rect.top)
+        this.state.prevMousePos = V(this.state.mousePos);
+        this.state.mousePos = pos.sub(rect.left, rect.top)
                            // Scale in case the real canvas size is different then the pixel size (i.e. image exporter)
                            .scale(V(this.canvas.width / rect.width, this.canvas.height / rect.height));
 
         // determine if mouse is dragging
-        this.isDragging = (this.mouseDown &&
-                           Date.now() - this.startTapTime > this.dragTime);
+        this.state.isDragging = (this.state.isMouseDown &&
+                           Date.now() - this.state.startTapTime > this.dragTime);
 
-        if (this.isDragging) {
+        if (this.state.isDragging) {
             this.publish({
+                state:  this.state,
                 type:   "mousedrag",
-                button: this.mouseDownButton,
+                button: this.state.mouseDownButton,
             });
         }
-        this.publish({ type: "mousemove" });
+        this.publish({ state: this.state, type: "mousemove" });
     }
     /**
      * Calls each Listener on Event "mouseup", button
@@ -599,35 +505,36 @@ export class InputManager extends Observable<InputManagerEvent> {
      * @param button Represents the mouse button being released (0 by default).
      */
     protected onMouseUp(button = 0): void {
-        this.touchCount = Math.max(0, this.touchCount - 1); // Should never have -1 touches
-        this.mouseDown = false;
-        this.mouseDownButton = -1;
+        this.state.touchCount = Math.max(0, this.state.touchCount - 1); // Should never have -1 touches
+        this.state.isMouseDown = false;
+        this.state.mouseDownButton = -1;
 
-        this.publish({ type: "mouseup", button });
+        this.publish({ state: this.state, type: "mouseup", button });
     }
 
     /**
      * Calls each Listener on Event "mouseenter".
      */
     protected onMouseEnter(): void {
-        this.publish({ type: "mouseenter" });
+        this.publish({ state: this.state, type: "mouseenter" });
     }
     /**
      * Calls each Listener on Event "mouseleave".
      * Also calls on Event "mouseup", [current mouse button down].
      */
     protected onMouseLeave(): void {
-        this.touchCount = 0;
-        this.mouseDown = false;
+        this.state.touchCount = 0;
+        this.state.isMouseDown = false;
 
-        this.publish({ type: "mouseleave" });
+        this.publish({ state: this.state, type: "mouseleave" });
 
         // call mouse up as well so that
         //  up events get called when the
         //  mouse leaves
         this.publish({
+            state:  this.state,
             type:   "mouseup",
-            button: this.mouseDownButton,
+            button: this.state.mouseDownButton,
         });
     }
 
@@ -659,7 +566,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      * Releases each key that is down.
      */
     protected onBlur(): void {
-        this.keysDown.forEach((down, key) => {
+        this.state.keysDown.forEach((down, key) => {
             if (down)
                 this.onKeyUp(key);
         });
