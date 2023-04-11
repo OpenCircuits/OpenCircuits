@@ -12,7 +12,7 @@ const { storeDesigner, useDesigner, useMainDesigner } = (() => {
         useMainDesigner: () => {
             const designer = storedDesigners.get("main");
             if (!designer)
-                throw new Error("useMainCircuit: Failed to find a circuit labeled as 'main'!");
+                throw new Error("useMainDesigner: Failed to find a circuit designer labeled as 'main'!");
             return designer;
         },
     };

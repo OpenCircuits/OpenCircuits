@@ -61,7 +61,7 @@ export class TranslateTool implements Tool {
                 if (snapToGrid)
                     pos = SnapToGrid(pos);
                 if (snapToConnections)
-                    pos = SnapToConnections(pos, c);
+                    pos = SnapToConnections(pos, c.allPorts);
                 // Very specifically Translate as we go
                 //  as to correctly apply `SnapToConnections`
                 c.pos = pos;

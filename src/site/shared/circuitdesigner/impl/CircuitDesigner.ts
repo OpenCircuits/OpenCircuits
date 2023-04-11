@@ -7,8 +7,8 @@ import {CircuitDesigner} from "../CircuitDesigner";
 import {ToolManager}     from "./ToolManager";
 
 
-export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigner<Circ> {
-    public readonly circuit: Circ;
+export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDesigner<CircuitT> {
+    public readonly circuit: CircuitT;
 
     public inputAdapter: InputAdapter;
 
@@ -20,7 +20,7 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
     }
 
     public constructor(
-        circuit: Circ,
+        circuit: CircuitT,
         { defaultTool, tools }: {
             defaultTool: DefaultTool;
             tools: Tool[];

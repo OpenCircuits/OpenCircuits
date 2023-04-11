@@ -132,10 +132,6 @@ export abstract class CircuitImpl<
                .filter((obj) => (obj !== undefined)) as Obj[];
     }
 
-    public hasObj(obj: Obj): boolean {
-        return this.selections.has(obj.id);
-    }
-
     public getComponent(id: string): ComponentT | undefined {
         if (!this.circuit.getCompByID(id))
             return undefined;
