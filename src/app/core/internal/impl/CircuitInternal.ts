@@ -10,7 +10,7 @@ import {CircuitOp, InvertCircuitOp, TransformCircuitOps} from "./CircuitOps";
 import {PortConfig}                                      from "./ComponentInfo";
 import {Observable}                                      from "core/utils/Observable";
 import {CircuitDocument, ReadonlyCircuitDocument}        from "./CircuitDocument";
-import {FastCircuitDiff, FastCircuitDiffBuilder}         from "./CircuitDiff";
+import {FastCircuitDiff, FastCircuitDiffBuilder}         from "./FastCircuitDiff";
 
 
 // CircuitInternal is a low-level session for editing a circuit.  It encapsulates the CircuitDocument and the CircuitLog
