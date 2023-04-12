@@ -29,19 +29,20 @@ import {FastCircuitDiff, FastCircuitDiffBuilder}         from "./CircuitDiff";
 //  OTHERWISE: The "Result" and "Option" types are used to communicate success/failure.
 export class CircuitInternal extends Observable<FastCircuitDiff> {
     private readonly mutableDoc: CircuitDocument;
-    public readonly doc: ReadonlyCircuitDocument;
+    public get doc(): ReadonlyCircuitDocument {
+        return this.mutableDoc;
+    }
     public readonly log: CircuitLog;
     private clock: number;
 
     private transaction: boolean;
     private transactionOps: CircuitOp[];
 
-    private readonly diffBuilder: FastCircuitDiffBuilder;
+    private diffBuilder: FastCircuitDiffBuilder;
 
     public constructor(log: CircuitLog, doc: CircuitDocument) {
-        super()
+        super();
         this.mutableDoc = doc;
-        this.doc = doc;
 
         this.log = log;
         this.clock = log.clock;
@@ -64,10 +65,16 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
                 this.applyOpsChecked(evt.ops);
 
             // Emit event on remote updates
-            this.publish(this.diffBuilder.build());
+            this.publishDiffEvent();
         })
     }
 
+
+    private publishDiffEvent() {
+        const diff = this.diffBuilder.build();
+        this.diffBuilder = new FastCircuitDiffBuilder();
+        this.publish(diff);
+    }
 
     private applyOp(op: CircuitOp): Result {
         return this.mutableDoc.applyOp(op)
@@ -168,7 +175,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
                 this.transactionOps.push(op);
 
                 // Emit event per-transaction-op
-                this.publish(this.diffBuilder.build());
+                this.publishDiffEvent();
             });
     }
 
@@ -241,7 +248,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
             .andThen((newPorts) => this.doc.getPortsForComponent(id)
                 .andThen((oldPortIDs) => {
                     const oldPorts = [...oldPortIDs].map((portID) => this.doc.getPortByID(portID).unwrap());
-                    const removedPorts = oldPorts.filter((port: Schema.Port) => port.index >= portConfig[port.group]);
+                    const removedPorts = oldPorts.filter((port: Schema.Port) => (port.index >= portConfig[port.group]));
 
                     // Deleted wires are all wires attached to ports with indices
                     // at least as high as the new config's "count" for respective groups.

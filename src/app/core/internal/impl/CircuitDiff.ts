@@ -5,6 +5,9 @@ import {assertNever} from "../utils/TypeEnforcement";
 
 import {CircuitOp} from "./CircuitOps";
 
+// eslint-disable-next-line import/no-restricted-paths
+import {} from "core/utils/Map"
+
 
 // FastCircuitDiff is a simple, coarse description of how a circuit changed, primarily for invalidating objects computed
 // from circuit objects, namely the view.  This avoids the potentially complex logic of CircuitDiff for high-throughput
@@ -25,37 +28,33 @@ export interface FastCircuitDiff {
 
 export class FastCircuitDiffBuilder {
     // Components
-    private addedComponents: Set<GUID>;
-    private removedComponents: Set<GUID>;
-    private portsChanged: Set<GUID>;
+    private readonly addedComponents: Set<GUID>;
+    private readonly removedComponents: Set<GUID>;
+    private readonly portsChanged: Set<GUID>;
 
     // Wires
-    private addedWires: Set<GUID>;
-    private removedWires: Set<GUID>;
+    private readonly addedWires: Set<GUID>;
+    private readonly removedWires: Set<GUID>;
 
     // All objects that may have a prop changed
-    private propsChanged: Map<GUID, Set<string>>;
+    private readonly propsChanged: Map<GUID, Set<string>>;
 
     private getOrCreatePropSet(id: GUID): Set<string> {
-        let s = this.propsChanged.get(id);
-        if (!s) {
-            s = new Set();
-            this.propsChanged.set(id, s);
-        }
-        return s;
+        return this.propsChanged.getOrInsert(id, () => new Set());
     }
 
     public constructor() {
-        this.addedComponents = new Set();
+        this.addedComponents   = new Set();
         this.removedComponents = new Set();
-        this.portsChanged = new Set();
-        this.addedWires = new Set();
-        this.removedWires = new Set();
-        this.propsChanged = new Map();
+        this.portsChanged      = new Set();
+        this.addedWires        = new Set();
+        this.removedWires      = new Set();
+        this.propsChanged      = new Map();
     }
 
+    // Discard this after calling
     public build(): FastCircuitDiff {
-        const o = {
+        return {
             addedComponents:   this.addedComponents,
             removedComponents: this.removedComponents,
             portsChanged:      this.portsChanged,
@@ -63,13 +62,6 @@ export class FastCircuitDiffBuilder {
             removedWires:      this.removedWires,
             propsChanged:      this.propsChanged,
         };
-        this.addedComponents = new Set();
-        this.removedComponents = new Set();
-        this.portsChanged = new Set();
-        this.addedWires = new Set();
-        this.removedWires = new Set();
-        this.propsChanged = new Map();
-        return o;
     }
 
     public applyOp(op: CircuitOp) {
@@ -121,14 +113,12 @@ export class FastCircuitDiffBuilder {
 
     public applyDiff(diff: FastCircuitDiff) {
         const merge = <T>(from: ReadonlySet<T>, into: Set<T>) => from.forEach((v) => into.add(v));
-        merge(diff.addedComponents, this.addedComponents);
+        merge(diff.addedComponents,   this.addedComponents);
         merge(diff.removedComponents, this.removedComponents);
-        merge(diff.portsChanged, this.portsChanged);
-        merge(diff.addedWires, this.addedWires);
-        merge(diff.removedWires, this.removedWires);
-        diff.propsChanged.forEach((v, k) => {
-            merge(v, this.getOrCreatePropSet(k));
-        })
+        merge(diff.portsChanged,      this.portsChanged);
+        merge(diff.addedWires,        this.addedWires);
+        merge(diff.removedWires,      this.removedWires);
+        diff.propsChanged.forEach((v, k) => merge(v, this.getOrCreatePropSet(k)));
     }
 }
 
@@ -138,8 +128,8 @@ export interface ComponentPortDiff {
     removed: Map<GUID, Schema.Port>;
 }
 
-export type PropsDiff = Map<string, { oldVal?: Schema.Prop, newVal?: Schema.Prop }>;
-type PropDiff = [string, {oldVal?: Schema.Prop, newVal?: Schema.Prop}];
+type PropDiff = {oldVal?: Schema.Prop, newVal?: Schema.Prop};
+export type PropsDiff = Map<string, PropDiff>;
 
 // CircuitDiff accumulates the net difference from a known-legal sequence of CircuitOps.  This is useful when a minimal
 // complete diff is desirable, such as when displaying in a History view.  For example, a sequence of CircuitOps like
@@ -169,27 +159,27 @@ export interface CircuitDiff {
 
 export class CircuitDiffBuilder {
     // Graph changes
-    private addedComponents: Map<GUID, Schema.Component>;
-    private removedComponents: Map<GUID, Schema.Component>;
+    private readonly addedComponents: Map<GUID, Schema.Component>;
+    private readonly removedComponents: Map<GUID, Schema.Component>;
 
-    private addedWires: Map<GUID, Schema.Wire>;
-    private removedWires: Map<GUID, Schema.Wire>;
+    private readonly addedWires: Map<GUID, Schema.Wire>;
+    private readonly removedWires: Map<GUID, Schema.Wire>;
 
     // Port changes
-    private portDiff: Map<GUID, ComponentPortDiff>;
+    private readonly portDiff: Map<GUID, ComponentPortDiff>;
 
     // Property changes
-    private changedComponents: Map<GUID, { oldKind?: string, newKind?: string }>;
-    private propsDiff: Map<GUID, PropsDiff>;
+    private readonly changedComponents: Map<GUID, { oldKind?: string, newKind?: string }>;
+    private readonly propsDiff: Map<GUID, PropsDiff>;
 
     public constructor() {
-        this.addedComponents = new Map();
+        this.addedComponents   = new Map();
         this.removedComponents = new Map();
-        this.addedWires = new Map();
-        this.removedWires = new Map();
-        this.portDiff = new Map();
+        this.addedWires        = new Map();
+        this.removedWires      = new Map();
+        this.portDiff          = new Map();
         this.changedComponents = new Map();
-        this.propsDiff = new Map();
+        this.propsDiff         = new Map();
     }
 
     // Iterate all portions of the diff to remove any net-0 changes
@@ -228,7 +218,7 @@ export class CircuitDiffBuilder {
                 this.propsDiff.delete(id);
         });
 
-        const o = {
+        return {
             addedComponents:   this.addedComponents,
             removedComponents: this.removedComponents,
             addedWires:        this.addedWires,
@@ -237,14 +227,7 @@ export class CircuitDiffBuilder {
             changedComponents: this.changedComponents,
             propsDiff:         this.propsDiff,
         };
-        this.addedComponents = new Map();
-        this.removedComponents = new Map();
-        this.addedWires = new Map();
-        this.removedWires = new Map();
-        this.portDiff = new Map();
-        this.changedComponents = new Map();
-        this.propsDiff = new Map();
-        return o;
+        // TODO: re-add "reset" behavior
     }
 
     private addComponent(c: Schema.Component) {
@@ -254,11 +237,7 @@ export class CircuitDiffBuilder {
         // Keep the newest "add"
         this.addedComponents.set(c.id, { ...c, props: {} });
 
-        const props: PropDiff[] = [];
-        for (const key in c.props) {
-            props.push([ key, { newVal: c.props[key] } ]);
-        }
-        this.updateProps(c.id, props.values());
+        this.updatePropsForAdd(c.id, c.props);
         this.changeComponentKind(c.id, undefined, c.kind);
     }
 
@@ -273,47 +252,27 @@ export class CircuitDiffBuilder {
         // Ports are handled separately because they are a separate op
         // this.portDiff.delete(c.id);
 
-        // If a component is deleted, all of its props are removed.
-        const props: PropDiff[] = [];
-        for (const key in c.props) {
-            props.push([ key, { oldVal: c.props[key] } ]);
-        }
-        this.updateProps(c.id, props.values());
+        this.updatePropsForRemove(c.id, c.props);
         this.changeComponentKind(c.id, c.kind, undefined);
     }
 
     private updatePorts(
         id: GUID,
-        addedPorts?: IterableIterator<Schema.Port>,
-        removedPorts?: IterableIterator<Schema.Port>
+        addedPorts?: Schema.Port[],
+        removedPorts?: Schema.Port[]
     ) {
-        let currDiff = this.portDiff.get(id);
-        if (!currDiff) {
-            currDiff = { added: new Map(), removed: new Map() };
-            this.portDiff.set(id, currDiff);
-        }
+        const currDiff = this.portDiff.getOrInsert(id, () => ({ added: new Map(), removed: new Map() }));
 
-        if (removedPorts) {
-            for (const p of removedPorts) {
-                currDiff.removed.delete(p.id);
-            }
-        }
-        if (addedPorts) {
-            for (const p of addedPorts) {
-                currDiff.added.set(id, p);
-            }
-        }
+        if (removedPorts)
+            removedPorts.forEach((p) => currDiff.removed.delete(p.id));
+        if (addedPorts)
+            addedPorts.forEach((p) => currDiff.added.set(id, p));
     }
 
     // Parallels logic of "addComponent"
     private addWire(w: Schema.Wire) {
         this.addedWires.set(w.id, w);
-
-        const props: PropDiff[] = [];
-        for (const key in w.props) {
-            props.push([ key, { newVal: w.props[key] } ]);
-        }
-        this.updateProps(w.id, props.values());
+        this.updatePropsForAdd(w.id, w.props);
     }
 
     // Parallels logic of "removeComponent"
@@ -325,42 +284,36 @@ export class CircuitDiffBuilder {
         if (!this.removedWires.has(w.id))
             this.removedWires.set(w.id, w);
 
-        // If a component is deleted, remove all of the "diff" data
-        const props: PropDiff[] = [];
-        for (const key in w.props) {
-            props.push([ key, { oldVal: w.props[key] } ]);
-        }
-        this.updateProps(w.id, props.values());
+        this.updatePropsForRemove(w.id, w.props);
     }
 
     private changeComponentKind(id: GUID, oldKind?: string, newKind?: string) {
-        let currDiff = this.changedComponents.get(id);
-        if (!currDiff) {
-            currDiff = { oldKind, newKind };
-            this.changedComponents.set(id, currDiff);
-        } else {
-            // Only copy the "newKind" so the oldest "oldKind" is kept.
-            currDiff.newKind = newKind;
-        }
+        // Only copy the "newKind" so the oldest "oldKind" is kept.
+        this.changedComponents.upsert(id, (_, d) => ({ newKind, ...d }), () => ({ newKind, oldKind }));
     }
 
-    private updateProps(id: GUID, propUpdates: IterableIterator<PropDiff>) {
-        let props = this.propsDiff.get(id);
-        if (!props) {
-            props = new Map();
-            this.propsDiff.set(id, props);
-        }
+    private updatePropsForAdd(id: GUID, props: Record<string, Schema.Prop>) {
+        // If an object is added, all of its props are added.
+        const propDiff = new Map();
+        for (const key in props)
+            propDiff.set(key, { newVal: props[key] });
+        this.updateProps(id, propDiff);
+    }
 
-        for (const [key, { oldVal, newVal }] of propUpdates) {
-            let propDiff = props.get(key);
-            if (!propDiff) {
-                propDiff = { oldVal, newVal };
-                props.set(key, propDiff);
-            } else {
-                // Only copy the "newVal" so the oldest "oldVal" is kept.
-                propDiff.newVal = newVal;
-            }
-        }
+    private updatePropsForRemove(id: GUID, props: Record<string, Schema.Prop>) {
+        // If an object is deleted, all of its props are removed.
+        const propDiffs = new Map();
+        for (const key in props)
+            propDiffs.set(key, { oldVal: props[key] });
+        this.updateProps(id, propDiffs);
+    }
+
+    private updateProps(id: GUID, propUpdates: PropsDiff) {
+        const props = this.propsDiff.getOrInsert(id, () => new Map());
+        propUpdates.forEach(({ oldVal, newVal }, key) => {
+            // Only save the "newVal" so the oldest "oldVal" is kept.
+            props.upsert(key, (_, d) => ({ newVal, ...d }), () => ({ oldVal, newVal }));
+        });
     }
 
     // Appends an op to the diff.  Assumes "op" has already passed validation, either by being accepted by the remote
@@ -377,10 +330,10 @@ export class CircuitDiffBuilder {
             }
             case "SetComponentPortsOp": {
                 if (op.inverted) {
-                    this.updatePorts(op.component, op.removedPorts.values(), op.addedPorts.values());
+                    this.updatePorts(op.component, op.removedPorts, op.addedPorts);
                     op.deadWires.forEach((w) => this.addWire(w));
                 } else {
-                    this.updatePorts(op.component, op.addedPorts.values(), op.removedPorts.values());
+                    this.updatePorts(op.component, op.addedPorts, op.removedPorts);
                     op.deadWires.forEach((w) => this.removeWire(w));
                 }
                 break;
@@ -393,8 +346,8 @@ export class CircuitDiffBuilder {
                 throw new Error("Unimplemented");
             }
             case "SetPropertyOp": {
-                const d: PropDiff = [op.key, op];
-                this.updateProps(op.id, [d].values());
+                const d: PropDiff = op;
+                this.updateProps(op.id, new Map([[op.key, d]]));
                 break;
             }
             default:

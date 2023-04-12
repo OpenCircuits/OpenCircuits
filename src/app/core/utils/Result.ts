@@ -186,6 +186,7 @@ export function WrapResOr<T, E>(t: T | undefined, e: E): Result<T, E> {
     return t === undefined ? Err(e) : Ok(t);
 }
 export function WrapResOrE<T>(t: T | undefined, e: string): Result<T, MultiError> {
+    // Inlined from WrapResOr to avoid constructing Error objects when taking the Ok path.
     return t === undefined ? Err(new MultiError([new Error(e)])) : Ok(t);
 }
 
