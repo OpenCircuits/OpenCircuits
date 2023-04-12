@@ -5,7 +5,6 @@ import {assertNever} from "../utils/TypeEnforcement";
 
 import {CircuitOp} from "./CircuitOps";
 
-// eslint-disable-next-line import/no-restricted-paths
 import {} from "core/utils/Map"
 
 

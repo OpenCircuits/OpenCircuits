@@ -78,10 +78,7 @@ export function TransformCircuitOp(targetOp: CircuitOp, withOp: CircuitOp): Resu
     return Ok(targetOp);
 }
 
-export function TransformCircuitOps(
-    targetOps: readonly CircuitOp[],
-    withOps: readonly CircuitOp[]
-): Result<readonly CircuitOp[]> {
+export function TransformCircuitOps(targetOps: CircuitOp[], withOps: readonly CircuitOp[]): Result<CircuitOp[]> {
     if (withOps.length === 0)
         return Ok(targetOps);
     return ResultUtil.mapIter(targetOps.values(), (op) =>

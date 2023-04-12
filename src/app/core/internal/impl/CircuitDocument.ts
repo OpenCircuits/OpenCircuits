@@ -286,6 +286,27 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
         return this.objStorage.keys();
     }
 
+    public getPortsByGroup(componentID: GUID): Result<Readonly<Record<string, GUID[]>>> {
+        return this.getPortsForComponent(componentID)
+            .map((portIDs) =>
+                [...portIDs].reduce<Record<string, GUID[]>>((record, portID) => {
+                    const port = this.getPortByID(portID).unwrap();
+                    // return (port.group === group);÷
+                    return {
+                        ...record,
+                        [port.group]: [
+                            ...(record[port.group] ?? []),
+                            port.id,
+                        ],
+                    };
+                }, {}));
+    }
+
+    public getPortsForGroup(componentID: GUID, group: string): Result<ReadonlySet<GUID>> {
+        return this.getPortsByGroup(componentID)
+            .map((record) => new Set(record[group]));
+    }
+
     public getPortsForComponent(id: GUID): Result<ReadonlySet<GUID>> {
         return WrapResOrE(this.componentPortsMap.get(id),
             `CircuitInternal: Attempted to get ports for component ${id}, but failed to find an entry!`);
