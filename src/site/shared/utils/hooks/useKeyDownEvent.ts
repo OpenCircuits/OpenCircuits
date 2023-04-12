@@ -1,15 +1,16 @@
 import {useEffect} from "react";
 
-import {InputManager, InputManagerEvent} from "shared/utils/input/InputManager";
-import {Key}                             from "shared/utils/input/Key";
+import {InputAdapter}      from "shared/utils/input/InputAdapter";
+import {Key}               from "shared/utils/input/Key";
+import {InputAdapterEvent} from "../input/InputAdapterEvent";
 
 
-export const useKeyDownEvent = (input: InputManager, key: Key, f: () => void, deps?: React.DependencyList) => {
+export const useKeyDownEvent = (input: InputAdapter, key: Key, f: () => void, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
             return;
 
-        const LookForKey = (ev: InputManagerEvent) => {
+        const LookForKey = (ev: InputAdapterEvent) => {
             if (ev.type === "keydown" && ev.key === key)
                 f();
         }
@@ -32,4 +33,3 @@ export const useWindowKeyDownEvent = (key: Key, f: () => void, deps?: React.Depe
         return () => window.removeEventListener("keydown", LookForKey);
     }, [key, ...(deps ?? [])]);
 }
-

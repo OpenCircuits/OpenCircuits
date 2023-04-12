@@ -43,7 +43,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
             this.selections.deselect(this.objID);
     }
     public get isSelected(): boolean {
-        return this.selections.isSelected(this.objID);
+        return this.selections.has(this.objID);
     }
 
     public set zIndex(val: number) {
@@ -58,10 +58,12 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public setProp(key: string, val: Prop): void {
-        throw new Error("Unimplemented");
+        this.circuit.beginTransaction();
+        this.internal.setPropFor(this.objID, key, val);
+        this.circuit.commitTransaction();
     }
-    public getProp(key: string): Prop {
-        throw new Error("Unimplemented");
+    public getProp(key: string): Prop | undefined {
+        return this.internal.getObjByID(this.objID).unwrap().props[key];
     }
     public getProps(): Record<string, Prop> {
         throw new Error("Unimplemented");

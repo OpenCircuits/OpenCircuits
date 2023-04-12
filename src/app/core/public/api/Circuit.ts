@@ -48,11 +48,11 @@ export interface Circuit {
     /**
      * Returns the average of the positions of the components selected
      * as a Vector object.
-     * 
-     * @param space defines the coordinate-space which can be 
-     *        either "screen space" or "world space."
-     * @returns A Vector object where x and y are the averages 
-     *          of the positions of the selected components.
+     *
+     * @param space Defines the coordinate-space which can be
+     *              either "screen space" or "world space.".
+     * @returns     A Vector object where x and y are the averages
+     *              of the positions of the selected components.
      */
     selectionsMidpoint(space: Vector.Spaces): Vector;
 
@@ -65,6 +65,8 @@ export interface Circuit {
     createIC(objs: Obj[]): Circuit | undefined;
     getICs(): Circuit[];
 
+    loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void>;
+
     undo(): boolean;
     redo(): boolean;
 
@@ -74,6 +76,11 @@ export interface Circuit {
 
     serialize(): string;
     deserialize(data: string): void;
+
+    resize(w: number, h: number): void;
+    readonly canvas?: HTMLCanvasElement;
+    attachCanvas(canvas: HTMLCanvasElement): () => void;
+    detachCanvas(): void;
 
     addRenderCallback(cb: () => void): void;
 

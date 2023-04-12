@@ -16,27 +16,36 @@ import {Obj}       from "../Obj";
 import {Port}      from "../Port";
 import {Wire}      from "../Wire";
 
-import {CircuitState}    from "./CircuitState";
-import {CircuitDocument} from "core/internal/impl/CircuitDocument";
+import {CircuitState}         from "./CircuitState";
+import {CircuitDocument}      from "core/internal/impl/CircuitDocument";
+import {CreateDrawingFromSVG} from "svg2canvas";
+import {CameraImpl}           from "./Camera";
+import {Observable}           from "core/utils/Observable";
 
 
 export abstract class CircuitImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
-> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
+> extends Observable<any> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
     public circuit: CircuitInternal;
-    public view?: CircuitView;
+    public view: CircuitView;
 
     public selections: SelectionsManager;
 
     public isLocked: boolean;
 
-    public constructor(provider: ObjInfoProvider) {
-        this.circuit = new CircuitInternal(new CircuitLog(), new CircuitDocument(provider));
-        this.view = undefined;
+    public constructor(
+        provider: ObjInfoProvider,
+        view: CircuitView,
+        selections: SelectionsManager
+    ) {
+        super();
 
-        this.selections = new SelectionsManager();
+        this.circuit = new CircuitInternal(new CircuitLog(), new CircuitDocument(provider));
+        this.view = view;
+
+        this.selections = selections;
 
         this.isLocked = false;
     }
@@ -106,7 +115,7 @@ export abstract class CircuitImpl<
     }
 
     public get camera(): Camera {
-        throw new Error("Method not implemented.");
+        return new CameraImpl(this);
     }
 
     // Queries
@@ -218,6 +227,31 @@ export abstract class CircuitImpl<
         throw new Error("Method not implemented.");
     }
 
+    public async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
+        let numLoaded = 0;
+        await Promise.all(
+            imgSrcs.map(async (src) => {
+                const svg = await fetch(`img/items/${src}`);
+                if (!svg.ok) // Make sure fetch worked
+                    throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
+
+                const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
+                if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
+                    throw new Error(`Failed to parse XML for img/items/${src}` +
+                                    `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
+                }
+
+                const drawing = CreateDrawingFromSVG(svgXML, {});
+                if (!drawing)
+                    throw new Error(`Failed to create drawing for svg: img/items/${src}`);
+                this.view.addImage(src, drawing);
+
+                // Update progress on successful load
+                onProgress((++numLoaded) / imgSrcs.length);
+            })
+        );
+    }
+
     public undo(): boolean {
         throw new Error("Unimplemented");
     }
@@ -240,11 +274,25 @@ export abstract class CircuitImpl<
         throw new Error("Method not implemented.");
     }
 
-    public addRenderCallback(cb: () => void): void {
-        throw new Error("Unimplemented");
+    public resize(w: number, h: number): void {
+        this.view.resize(w, h);
+    }
+    public get canvas() {
+        return this.view.getCanvas();
+    }
+    public attachCanvas(canvas: HTMLCanvasElement): () => void {
+        this.view.setCanvas(canvas);
+        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
+        this.publish({ type: "attachCanvas", canvas });
+        return () => this.detachCanvas();
+    }
+    public detachCanvas(): void {
+        this.view.setCanvas(undefined);
+        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
+        this.publish({ type: "detatchCanvas" });
     }
 
-    public subscribe(cb: (ev: any) => void): () => void {
-        throw new Error("Method not implemented.");
+    public addRenderCallback(cb: () => void): void {
+        throw new Error("Unimplemented");
     }
 }

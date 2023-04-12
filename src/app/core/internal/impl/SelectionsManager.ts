@@ -33,7 +33,7 @@ export class SelectionsManager extends Observable<SelectionEvent> {
         this.publish({ type: "deselect", selections });
     }
 
-    public isSelected(id: GUID): boolean {
+    public has(id: GUID): boolean {
         return this.selections.has(id);
     }
 

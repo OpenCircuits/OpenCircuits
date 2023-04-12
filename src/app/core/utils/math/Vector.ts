@@ -239,6 +239,22 @@ export namespace Vector {
     export function Clamp(x: Vector, lo: Vector, hi: Vector): Vector {
         return Vector.Min(Vector.Max(x, lo), hi);
     }
+
+    export function Ceil(vec: Vector): Vector {
+        return new VectorImpl(
+            Math.ceil(vec.x),
+            Math.ceil(vec.y),
+            vec.space,
+        );
+    }
+
+    export function Floor(vec: Vector): Vector {
+        return new VectorImpl(
+            Math.floor(vec.x),
+            Math.floor(vec.y),
+            vec.space,
+        );
+    }
 }
 
 class VectorImpl implements Vector {

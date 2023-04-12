@@ -1,14 +1,13 @@
 import {AddErrE}            from "core/utils/MultiError";
 import {Result, ResultUtil} from "core/utils/Result";
 
-import {GUID} from "core/schema/GUID";
-
-import {Schema} from "../../schema";
+import {Observable} from "core/utils/Observable";
+import {Schema}     from "core/schema";
+import {GUID}       from "core/schema/GUID";
 
 import {CircuitLog, LogEntry}                            from "./CircuitLog";
 import {CircuitOp, InvertCircuitOp, TransformCircuitOps} from "./CircuitOps";
 import {PortConfig}                                      from "./ComponentInfo";
-import {Observable}                                      from "core/utils/Observable";
 import {CircuitDocument, ReadonlyCircuitDocument}        from "./CircuitDocument";
 import {FastCircuitDiff, FastCircuitDiffBuilder}         from "./FastCircuitDiff";
 
@@ -35,10 +34,14 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
     public readonly log: CircuitLog;
     private clock: number;
 
-    private transaction: boolean;
+    // Keep track of multiple "begin"/"commit" pairs and only commit when counter reaches zero.
+    private transactionCounter: number;
     private transactionOps: CircuitOp[];
 
     private diffBuilder: FastCircuitDiffBuilder;
+
+    // Camera schema
+    protected camera: Schema.Camera;
 
     public constructor(log: CircuitLog, doc: CircuitDocument) {
         super();
@@ -47,10 +50,16 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
         this.log = log;
         this.clock = log.clock;
 
-        this.transaction = false;
+        this.transactionCounter = 0;
         this.transactionOps = [];
 
         this.diffBuilder = new FastCircuitDiffBuilder();
+
+        this.camera = {
+            x:    0,
+            y:    0,
+            zoom: 0.02,
+        };
 
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
@@ -59,7 +68,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
                 return;
 
             // Apply remote updates mid-transaction so this state is up-to-date.
-            if (this.transaction)
+            if (this.isTransaction())
                 this.transformTransaction(evt.ops);
             else
                 this.applyOpsChecked(evt.ops);
@@ -97,28 +106,25 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
         this.applyOpsChecked(ops);
 
         // Transform tx ops
-        const transformedTx = TransformCircuitOps(this.transactionOps, ops);
+        TransformCircuitOps(this.transactionOps, ops)
+            .uponErr(() => {
+                // Failed to transform partial transaction, so cancel it and save the error.
+                this.transactionCounter = 0;
+                this.transactionOps = [];
 
-        if (transformedTx) {
-            // Reapply tx ops
-            this.applyOpsChecked(this.transactionOps);
-        } else {
-            // Failed to transform partial transaction, so cancel it
-            this.transactionOps = [];
-            this.transaction = false;
-        }
-    }
-
-    private assertTransactionState(state: boolean): void {
-        if (this.transaction !== state)
-            throw new Error(`Unexpectedly in transaction state ${this.transaction}`);
+                // TODO[model_refactor_api](kevin): propagate this error to the client.
+                // this.transactionTransformError = e;
+            })
+            .uponOk((txOps) => {
+                // Reapply tx ops
+                this.transactionOps = txOps;
+                this.applyOpsChecked(this.transactionOps);
+            });
     }
 
     private endTransactionHelper<T>(f: (txOps: CircuitOp[]) => T): T | undefined {
-        this.assertTransactionState(true);
-
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
-        this.transaction = false;
+        this.transactionCounter = 0;
         if (this.transactionOps.length > 0) {
             const txOps = this.transactionOps;
             this.transactionOps = [];
@@ -132,12 +138,18 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
 
     // We need "read-your-writes" so functions like "setProp" can correctly get tombstones like "oldVal".
     public beginTransaction(): void {
-        this.assertTransactionState(false);
-        this.transaction = true;
+        this.transactionCounter++;
     }
 
     // "clientData" is arbitrary data the client can store in the Log for higher-level semantics than CircuitOps.
     public commitTransaction(clientData = ""): LogEntry | undefined {
+        if (!this.isTransaction())
+            throw new Error("Unexpected commitTransaction!");
+
+        // Early return if this isn't the last "commit"
+        if (--this.transactionCounter > 0)
+            return
+
         return this.endTransactionHelper((txOps) => {
             // Sanity check: Clock should be kept updated by the event handler.
             if (this.clock !== this.log.clock)
@@ -156,7 +168,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
     // Check this before working with long-running transactions.  Long-running transactions are any transaction that
     //  crosses an async/event boundary and some other task could have resumed in the mean time.
     public isTransaction(): boolean {
-        return this.transaction;
+        return this.transactionCounter > 0;
     }
 
 
@@ -165,7 +177,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
     //
 
     protected addTransactionOp(op: CircuitOp): Result {
-        this.assertTransactionState(true);
+        this.beginTransaction();
 
         // read-your-writes
         return this.applyOp(op)
@@ -173,6 +185,8 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
             .uponOk(() => {
                 // Push only after successful op
                 this.transactionOps.push(op);
+
+                this.commitTransaction();
 
                 // Emit event per-transaction-op
                 this.publishDiffEvent();
@@ -271,5 +285,22 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
                         deadWires,
                     });
                 }));
+    }
+
+    //
+    // Revisit where this should go
+    //
+
+    public getCamera(): Readonly<Schema.Camera> {
+        return this.camera;
+    }
+
+    public setCameraProps(props: Partial<Schema.Camera>) {
+        this.camera.x = (props.x ?? this.camera.x);
+        this.camera.y = (props.y ?? this.camera.y);
+        this.camera.zoom = (props.zoom ?? this.camera.zoom);
+
+        // TODO[model_refactor_api](idk) The camera changing is a very different kind of event than the others here.
+        this.publish((new FastCircuitDiffBuilder()).build());
     }
 }
