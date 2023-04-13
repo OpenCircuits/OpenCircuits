@@ -24,13 +24,19 @@ export class DigitalCircuitView extends CircuitView {
         // Create assemblers on first call since some assemblers load images and so we need to defer it
         if (!this.assemblers) {
             this.assemblers = {
-                "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
-                "ORGate":  new ORGateAssembler(this.circuit, this, this.selections, this.sim),
-                "LED":     new LEDAssembler(this.circuit, this, this.selections, this.sim),
-                "Switch":  new SwitchAssembler(this.circuit, this, this.selections, this.sim),
-
+                // Base types
                 "DigitalWire": new DigitalWireAssembler(this.circuit, this, this.selections, this.sim),
 
+                // Inputs
+                "Switch": new SwitchAssembler(this.circuit, this, this.selections, this.sim),
+
+                // Outputs
+                "LED": new LEDAssembler(this.circuit, this, this.selections, this.sim),
+
+                // Gates
+                "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
+                "ORGate":  new ORGateAssembler(this.circuit, this, this.selections, this.sim),
+                
                 // FlipFlops
 
                 // Latches
