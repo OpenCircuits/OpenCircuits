@@ -42,7 +42,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
     }
 
     private isOn(led: Schema.Component) {
-        const [inputPort] = this.circuit.getPortsForComponent(led.id).unwrap();
+        const [inputPort] = this.circuit.doc.getPortsForComponent(led.id).unwrap();
         return Signal.isOn(this.sim.getSignal(inputPort));
     }
 

@@ -42,11 +42,11 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
     private assembleLine(gate: Schema.Component) {
         const { defaultBorderWidth } = this.options;
 
-        const { inputPortGroups } = this.circuit.getObjectInfo("ANDGate") as DigitalComponentInfo;
+        const { inputPortGroups } = this.circuit.doc.getObjectInfo("ANDGate") as DigitalComponentInfo;
 
         // Get current number of inputs
-        const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
-            .map((id) => this.circuit.getPortByID(id).unwrap())
+        const numInputs = [...this.circuit.doc.getPortsForComponent(gate.id).unwrap()]
+            .map((id) => this.circuit.doc.getPortByID(id).unwrap())
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
 
         const dy = (numInputs-1)/2*(0.5 - defaultBorderWidth/2);

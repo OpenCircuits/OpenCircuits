@@ -3,8 +3,6 @@ import {V, Vector} from "Vector";
 import {Rect} from "math/Rect";
 
 import {CircuitInternal}   from "core/internal/impl/CircuitInternal";
-import {CircuitLog}        from "core/internal/impl/CircuitLog";
-import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
 import {DebugOptions}      from "core/internal/impl/DebugOptions";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitView}       from "core/internal/view/CircuitView";
@@ -17,7 +15,6 @@ import {Port}      from "../Port";
 import {Wire}      from "../Wire";
 
 import {CircuitState}         from "./CircuitState";
-import {CircuitDocument}      from "core/internal/impl/CircuitDocument";
 import {CreateDrawingFromSVG} from "svg2canvas";
 import {CameraImpl}           from "./Camera";
 import {Observable}           from "core/utils/Observable";
@@ -36,13 +33,13 @@ export abstract class CircuitImpl<
     public isLocked: boolean;
 
     public constructor(
-        provider: ObjInfoProvider,
+        circuit: CircuitInternal,
         view: CircuitView,
         selections: SelectionsManager
     ) {
         super();
 
-        this.circuit = new CircuitInternal(new CircuitLog(), new CircuitDocument(provider));
+        this.circuit = circuit;
         this.view = view;
 
         this.selections = selections;

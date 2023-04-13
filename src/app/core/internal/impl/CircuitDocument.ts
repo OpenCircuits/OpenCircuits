@@ -20,13 +20,18 @@ export interface ReadonlyCircuitDocument {
     hasWire(id: GUID): boolean;
     hasPort(id: GUID): boolean;
 
+    getObjs(): IterableIterator<GUID>;
+    getComponents(): IterableIterator<GUID>;
+    getWires(): IterableIterator<GUID>;
+
     getObjByID(id: GUID): Result<Readonly<Schema.Obj>>;
     getCompByID(id: GUID): Result<Readonly<Schema.Component>>;
     getWireByID(id: GUID): Result<Readonly<Schema.Wire>>;
     getPortByID(id: GUID): Result<Readonly<Schema.Port>>;
-    getObjs(): IterableIterator<GUID>;
 
     // Graph connectivity
+    getPortsByGroup(componentID: GUID): Result<Readonly<Record<string, GUID[]>>>;
+    getPortsForGroup(componentID: GUID, group: string): Result<ReadonlySet<GUID>>;
     getPortsForComponent(id: GUID): Result<ReadonlySet<GUID>>;
     getPortsForWire(id: GUID): Result<Readonly<[GUID, GUID]>>;
     getWiresForPort(id: GUID): Result<ReadonlySet<GUID>>;
@@ -43,6 +48,7 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
 
     // Object storage
     private readonly objStorage: Map<GUID, Schema.Obj>;
+    private readonly wireSet: Set<GUID>;
 
     // Graph connectivity
     private readonly componentPortsMap: Map<GUID, Set<GUID>>; // Components to ports
@@ -54,6 +60,7 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
         this.objInfo = objInfo;
 
         this.objStorage = new Map();
+        this.wireSet = new Set();
 
         this.componentPortsMap = new Map();
         this.portPortMap = new Map();
@@ -68,6 +75,7 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
 
     private deleteWire(w: Schema.Wire) {
         this.objStorage.delete(w.id);
+        this.wireSet.delete(w.id);
 
         this.portPortMap.get(w.p1)!.delete(w.p2);
         this.portPortMap.get(w.p2)!.delete(w.p1);
@@ -78,6 +86,7 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
 
     private addWire(w: Schema.Wire) {
         this.objStorage.set(w.id, w);
+        this.wireSet.add(w.id);
 
         this.portPortMap.get(w.p1)!.add(w.p2);
         this.portPortMap.get(w.p2)!.add(w.p1);
@@ -202,7 +211,7 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
         return this.getPortByID(op.w.p1)
             .andThen((p1) => this.getPortByID(op.w.p2)
                 .andThen((p2) => this.checkWireConnectivity(p1, p2).and(this.checkWireConnectivity(p2, p1)))
-                .map((_) => op.inverted ? this.deleteWire(op.w) : this.addWire(op.w)));
+                .map((_) => (op.inverted ? this.deleteWire(op.w) : this.addWire(op.w))));
     }
 
     public setProperty(op: SetPropertyOp): Result {
@@ -262,6 +271,17 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
         return this.hasType(id, "Port");
     }
 
+    public getObjs(): IterableIterator<GUID> {
+        return this.objStorage.keys();
+    }
+    public getComponents(): IterableIterator<GUID> {
+        return this.componentPortsMap.keys();
+    }
+    public getWires(): IterableIterator<GUID> {
+        return this.wireSet.values();
+    }
+
+
     private getBaseKindByID<O extends Schema.Obj>(id: GUID, kind: O["baseKind"]): Result<O> {
         return this.getObjByID(id)
             .andThen((obj): Result<O> => {
@@ -281,9 +301,6 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
     }
     public getPortByID(id: GUID): Result<Readonly<Schema.Port>> {
         return this.getBaseKindByID<Schema.Port>(id, "Port");
-    }
-    public getObjs(): IterableIterator<GUID> {
-        return this.objStorage.keys();
     }
 
     public getPortsByGroup(componentID: GUID): Result<Readonly<Record<string, GUID[]>>> {

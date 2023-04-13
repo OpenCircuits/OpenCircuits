@@ -70,7 +70,7 @@ export abstract class ComponentImpl<
     public setNumPorts(group: string, amt: number): boolean {
         // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = {} as Record<string, number>;
-        this.internal.getPortsForComponent(this.id)
+        this.internal.doc.getPortsForComponent(this.id)
             .map((ids) => [...ids]
                 .map((id) => this.circuit.getPort(id)!))
             .unwrap()
@@ -85,7 +85,7 @@ export abstract class ComponentImpl<
             ...curConfig,
             [group]: amt,
         };
-        const isValid = this.internal.getComponentInfo(this.kind).checkPortConfig(config);
+        const isValid = this.internal.doc.getComponentInfo(this.kind).checkPortConfig(config);
         if (!isValid.ok)
             return false;
 
