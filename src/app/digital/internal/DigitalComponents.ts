@@ -285,9 +285,9 @@ class DigitalComponentInfoProvider implements ObjInfoProvider {
     private readonly ports: Map<string, ObjInfo>;
 
     public constructor(components: DigitalComponentInfo[]) {
-        this.components = new Map<string, ComponentInfo>(components.map((info) => [info.kind, info]));
-        this.wires = new Map<string, ObjInfo>([["DigitalWire", WireInfo]]);
-        this.ports = new Map<string, ObjInfo>([["DigitalPort", PortInfo]]);
+        this.components = new Map(components.map((info) => [info.kind, info]));
+        this.wires = new Map([["DigitalWire", WireInfo]]);
+        this.ports = new Map([["DigitalPort", PortInfo]]);
     }
 
     public getComponent(kind: string): ComponentInfo | undefined {
