@@ -1,18 +1,18 @@
-import {Component} from "core/public";
+import {Port}      from "core/public";
 import {V, Vector} from "Vector";
 
 
 const WIRE_SNAP_THRESHOLD = 0.2;
 
 /**
- * Utility used for calculating positions of ports and wires when a component
- * gets moved.
+ * Utility to adjust a given position for a component to be axis-aligned with the given set of ports
+ *  when within a certain snap threshold to them.
  *
- * @param oPos The origin position to snap.
- * @param comp The component to consider snapping the connections for.
- * @returns    The snapped position for `obj`.
+ * @param pos   The position to snap to the given ports.
+ * @param ports The ports to consider snapping to.
+ * @returns     The snapped position.
  */
-export function SnapToConnections(oPos: Vector, comp: Component): Vector {
+export function SnapToConnections(pos: Vector, ports: Port[]): Vector {
     // if x-c is less than the wire snap threshold,
     // DoSnap is set to c, if greater it's set to x
     const DoSnap = (x: Vector, c: Vector) => V(
@@ -21,13 +21,13 @@ export function SnapToConnections(oPos: Vector, comp: Component): Vector {
     );
 
     // Snaps the wires to the ports they're connected to.
-    let v = V(oPos);
-    for (const port of comp.allPorts) {
-        const pos = port.targetPos.sub(oPos);
+    let v = V(pos);
+    for (const port of ports) {
+        const p = port.targetPos.sub(pos);
 
         // Calculate new position (v).
         for (const port2 of port.connectedPorts)
-            v = DoSnap(v.add(pos), port2.targetPos).sub(pos);
+            v = DoSnap(v.add(p), port2.targetPos).sub(p);
     }
     return v;
 }
