@@ -2,13 +2,13 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const ZoomHandler: ToolHandler = {
-    onEvent: (ev, circuit) => {
+    onEvent: (ev, { circuit }) => {
         if (ev.type !== "zoom")
-            return ToolHandlerResponse.PASSTHROUGH;
+            return ToolHandlerResponse.PASS;
 
         circuit.camera.zoomTo(ev.factor, ev.pos);
 
         // This should be the only handler to handle the zoom event
-        return ToolHandlerResponse.STOP;
+        return ToolHandlerResponse.HALT;
     },
 }

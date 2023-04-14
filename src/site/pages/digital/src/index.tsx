@@ -1,17 +1,22 @@
-import {CreateCircuit, DigitalCircuit}                                             from "digital/public";
-import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
-import {createRoot}                                                                from "react-dom/client";
-import ReactGA                                                                     from "react-ga";
+import React, {useLayoutEffect, useRef} from "react";
+import {createRoot}                     from "react-dom/client";
+import ReactGA                          from "react-ga";
+import {configureStore}                 from "@reduxjs/toolkit";
+
+import {CreateCircuit} from "digital/public";
 
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
-import {storeCircuit} from "shared/utils/hooks/useCircuit";
+import {storeDesigner} from "shared/utils/hooks/useDesigner";
 
-import {Tool}        from "shared/tools/Tool";
-import {DefaultTool} from "shared/tools/DefaultTool";
-import {PanTool}     from "shared/tools/PanTool";
-import {ZoomHandler} from "shared/tools/handlers/ZoomHandler";
+import {CreateDesigner} from "shared/circuitdesigner";
+
+import {DefaultTool}      from "shared/tools/DefaultTool";
+import {PanTool}          from "shared/tools/PanTool";
+import {TranslateTool}    from "shared/tools/TranslateTool";
+import {ZoomHandler}      from "shared/tools/handlers/ZoomHandler";
+import {SelectionHandler} from "shared/tools/handlers/SelectionHandler";
 
 import {DevListFiles} from "shared/api/Dev";
 
@@ -22,109 +27,25 @@ import {Login} from "shared/state/thunks/User";
 import {AppStore} from "./state";
 import {reducers} from "./state/reducers";
 
-import ImageFiles          from "./data/images.json";
-import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
-import {Circuit}           from "core/public";
-import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
-import {InputAdapter}      from "shared/utils/input/InputAdapter";
-import {configureStore}    from "@reduxjs/toolkit";
+import ImageFiles      from "./data/images.json";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+
+import {DigitalCircuitDesigner} from "./utils/DigitalCircuitDesigner";
 
 
-interface ToolConfig {
-    defaultTool: DefaultTool;
-    tools: Tool[];
-}
-
-// const useCircuitEvent = <T extends string>(
-//     type: T,
-//     f: (ev: any & { type: T }) => void,
-//     circuit: Circuit,
-//     deps?: React.DependencyList,
-// ) => {
-//     useEffect(() => circuit.subscribe((ev) => {
-//         if (ev.type === type)
-//             f(ev);
-//     }), [circuit, type, f, ...(deps ?? [])]);
-// }
-
-const useInputEvents = (circuit: Circuit, handler: (ev: InputAdapterEvent) => void) => {
-    const inputAdapter = useMemo(() => new InputAdapter(), []);
-
-    useEffect(() => {
-        if (circuit.canvas) {
-            inputAdapter.tearDown();
-            inputAdapter.setupOn(circuit.canvas);
-        }
-
-        return circuit.subscribe((ev) => {
-            if (ev.type === "attachCanvas")
-                inputAdapter.setupOn(ev.canvas);
-            if (ev.type === "detachCanvas")
-                inputAdapter.tearDown();
-        });
-    }, [circuit, inputAdapter]);
-
-    useEffect(() => inputAdapter.subscribe((ev) => handler(ev)), [inputAdapter, handler]);
-}
-
-const useTools = (circuit: DigitalCircuit, { defaultTool, tools }: ToolConfig) => {
-    const [curTool, setCurTool] = useState(undefined as Tool | undefined);
-
-    const handler = useCallback((ev: InputAdapterEvent) => {
-        // Call the current tool's (or default tool's) onEvent method
-        if (curTool) {
-            curTool.onEvent(ev, circuit);
-            // Check if we should deactivate the current tool
-            if (curTool.shouldDeactivate(ev, circuit)) {
-                // Deactivate the tool
-                curTool.onDeactivate(ev, circuit);
-                setCurTool(undefined);
-                defaultTool.onActivate(ev, circuit);
-                return;
-            }
-            return;
-        }
-
-        // Check if some other tool should be activated
-        const newTool = tools.find((t) => t.shouldActivate(ev, circuit));
-        if (newTool !== undefined) {
-            setCurTool(newTool);
-            newTool.onActivate(ev, circuit);
-            return;
-        }
-
-        // Specifically do defaultTool's `onEvent` last
-        //  which means that Tool activations will take priority
-        //  over the default behavior for things like Handlers
-        //  Fixes #624
-        defaultTool.onEvent(ev, circuit);
-    }, [circuit, defaultTool, tools, curTool]);
-
-    useInputEvents(circuit, handler);
-}
-
-const MainCircuit = ({ circuit }: { circuit: DigitalCircuit }) => {
+const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { w, h } = useWindowSize();
-
-    const toolConfig = useMemo<ToolConfig>(() => ({
-        defaultTool: new DefaultTool(
-            ZoomHandler,
-        ),
-        tools: [PanTool],
-    }), []);
-
-    useTools(circuit, toolConfig);
 
     useLayoutEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas)
             return;
-        (window as unknown as { Circuit: Circuit }).Circuit = circuit;
-        return circuit.attachCanvas(canvas);
-    }, [circuit, canvasRef]);
+        (window as any).Circuit = designer.circuit;
+        return designer.attachCanvas(canvas);
+    }, [designer, canvasRef]);
 
-    useLayoutEffect(() => circuit.resize(w, h), [circuit, w, h]);
+    useLayoutEffect(() => designer.circuit.resize(w, h), [designer, w, h]);
 
     return (
         <canvas
@@ -138,11 +59,17 @@ async function Init(): Promise<void> {
     const startPercent = 30;
     let store: AppStore;
 
-    const circuit = CreateCircuit();
+    const designer = CreateDesigner(
+        CreateCircuit(),
+        {
+            defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
+            tools:       [PanTool, new TranslateTool()],
+        }
+    );
 
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {
-            await circuit.loadImages(ImageFiles.images, onProgress);
+            await designer.circuit.loadImages(ImageFiles.images, onProgress);
         }],
 
         [85, "Initializing redux", async () => {
@@ -212,7 +139,7 @@ async function Init(): Promise<void> {
             //     store.dispatch(SetCircuitSaved(false));
             // });
 
-            storeCircuit("main", circuit);
+            storeDesigner("main", designer);
 
             // TODO[model_refactor](leon)
             // if (process.env.NODE_ENV === "development") {
@@ -225,7 +152,7 @@ async function Init(): Promise<void> {
             const root = createRoot(document.getElementById("root")!);
             root.render(
                 <React.StrictMode>
-                    <MainCircuit circuit={circuit} />
+                    <MainCircuit designer={designer} />
                 </React.StrictMode>
             );
         }],

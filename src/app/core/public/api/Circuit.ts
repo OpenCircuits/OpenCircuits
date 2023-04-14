@@ -34,9 +34,9 @@ export interface Circuit {
     readonly camera: Camera;
 
     // Queries
-    pickObjectAt(pt: Vector): Obj | undefined;
+    pickObjectAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
     pickObjectRange(bounds: Rect): Obj[];
-    selectedObjs(): Obj[];
+    readonly selectedObjs: Obj[];
 
     getComponent(id: GUID): Component | undefined;
     getWire(id: GUID): Wire | undefined;

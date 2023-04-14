@@ -8,6 +8,7 @@ import {Wire}      from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
+import {Vector}         from "Vector";
 
 
 export class PortImpl<
@@ -32,6 +33,24 @@ export class PortImpl<
     }
     public get index(): number {
         return this.getObj().index;
+    }
+
+    public get originPos(): Vector {
+        // TODO[model_refactor_api]: This probably needs to be calculated explicitly here ?
+        return this.circuit.view!.portPositions.get(this.id)!.origin;
+    }
+    public get targetPos(): Vector {
+        // TODO[model_refactor_api]: This probably needs to be calculated explicitly here ?
+        return this.circuit.view!.portPositions.get(this.id)!.target;
+    }
+
+    public get connections(): WireT[] {
+        return [...this.internal.doc.getWiresForPort(this.id).unwrap()]
+            .map((id) => this.circuit.constructWire(id));
+    }
+
+    public get connectedPorts(): PortT[] {
+        return this.connections.map((w) => ((w.p1.id === this.id) ? w.p2 : w.p1) as PortT);
     }
 
     public canConnectTo(other: PortT): boolean {

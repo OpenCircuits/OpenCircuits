@@ -17,14 +17,13 @@ import {Wire}      from "../Wire";
 import {CircuitState}         from "./CircuitState";
 import {CreateDrawingFromSVG} from "svg2canvas";
 import {CameraImpl}           from "./Camera";
-import {Observable}           from "core/utils/Observable";
 
 
 export abstract class CircuitImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
-> extends Observable<any> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
+> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
     public circuit: CircuitInternal;
     public view: CircuitView;
 
@@ -37,8 +36,6 @@ export abstract class CircuitImpl<
         view: CircuitView,
         selections: SelectionsManager
     ) {
-        super();
-
         this.circuit = circuit;
         this.view = view;
 
@@ -116,14 +113,15 @@ export abstract class CircuitImpl<
     }
 
     // Queries
-    public pickObjectAt(pt: Vector): ComponentT | WireT | PortT | undefined {
-        throw new Error("Unimplemented");
+    public pickObjectAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
+        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
+        return this.view.findNearestObj(pos).map((id) => this.getObj(id)).asUnion();
     }
     public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
 
-    public selectedObjs(): Obj[] {
+    public get selectedObjs(): Obj[] {
         return this.selections.get()
                .map((id) => this.getObj(id))
                .filter((obj) => (obj !== undefined)) as Obj[];
@@ -162,10 +160,6 @@ export abstract class CircuitImpl<
     }
 
     public selectionsMidpoint(space: Vector.Spaces): Vector {
-        // TODO(renr)
-        //  For now, ignore the `space`, and ignore any non-Component
-        //   objects that are selected
-        //  From these components, average their positions
         const allComponents = this.selections.get()
                               .map((id) => this.getComponent(id))
                               .filter((comp) => (comp !== undefined)) as Component[];
@@ -279,17 +273,17 @@ export abstract class CircuitImpl<
     }
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
         this.view.setCanvas(canvas);
-        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
-        this.publish({ type: "attachCanvas", canvas });
         return () => this.detachCanvas();
     }
     public detachCanvas(): void {
         this.view.setCanvas(undefined);
-        // TODO[model_refactor_api_tools2](leon): Figure out this event type more concretely
-        this.publish({ type: "detatchCanvas" });
     }
 
     public addRenderCallback(cb: () => void): void {
         throw new Error("Unimplemented");
+    }
+
+    public subscribe(cb: (ev: any) => void): () => void {
+        throw new Error("Method not implemented.");
     }
 }

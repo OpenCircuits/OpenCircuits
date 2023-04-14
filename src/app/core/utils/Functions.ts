@@ -1,4 +1,3 @@
-
 /**
  * Utility function that works identically to Array.map, but applies for Objects (Records).
  *
@@ -33,4 +32,3 @@ export function FromConcatenatedEntries<K extends string, V>(entries: Array<[K, 
         [key]: [...(prev[key] ?? []), val],
     }), {} as Record<K, V[]>);
 }
-

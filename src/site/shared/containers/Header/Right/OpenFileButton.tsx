@@ -5,7 +5,7 @@ import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 import {useAPIMethods} from "shared/utils/ApiMethods";
 import {LoadFile}      from "shared/utils/Importer";
 
-import {useMainCircuit}    from "shared/utils/hooks/useCircuit";
+import {useMainCircuit}    from "shared/utils/hooks/useDesigner";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {InputField} from "shared/components/InputField";

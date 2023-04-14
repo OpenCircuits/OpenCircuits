@@ -1,4 +1,4 @@
-import {Circuit}                          from "core/public";
+import {CircuitDesigner}                  from "shared/circuitdesigner/CircuitDesigner";
 import {InputAdapterEvent}                from "shared/utils/input/InputAdapterEvent";
 import {ToolHandler, ToolHandlerResponse} from "./handlers/ToolHandler";
 
@@ -10,30 +10,27 @@ export class DefaultTool {
         this.handlers = handlers;
     }
 
-    public onActivate(ev: InputAdapterEvent, circuit: Circuit): void {
-        this.onEvent(ev, circuit);
+    public onActivate(ev: InputAdapterEvent, designer: CircuitDesigner): void {
+        this.onEvent(ev, designer);
     }
 
     // Method called when this tool is currently active and an event occurs
-    public onEvent(ev: InputAdapterEvent, circuit: Circuit): void {
+    public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void {
         // // Don't do anything when circuit is locked
         // if (circuit.locked)
         //     return;
 
-        // if (ev.type === "mousedown") {
-        //     // Find object if we pressed on one
-        //     info.curPressedObjID = viewManager.findNearestObj(
-        //         worldMousePos,
-        //         ((o) => (o.baseKind !== "Port"))
-        //     )?.id;
-        // }
-        // if (ev.type === "mouseup")
-        //     info.curPressedObjID = undefined;
+        if (ev.type === "mousedown") {
+            // Find object if we pressed on one
+            designer.curPressedObj = designer.circuit.pickObjectAt(ev.state.mousePos, "screen");
+        } else if (ev.type === "mouseup") {
+            designer.curPressedObj = undefined;
+        }
 
         // Loop through each handler and see if we should trigger any of them
         for (const handler of this.handlers) {
             // If handler triggered a stop, don't loop through any others
-            if (handler.onEvent(ev, circuit) === ToolHandlerResponse.STOP)
+            if (handler.onEvent(ev, designer) === ToolHandlerResponse.HALT)
                 return;
         }
     }

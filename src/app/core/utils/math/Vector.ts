@@ -10,13 +10,6 @@
  */
 export interface Vector {
     /**
-     * The Vector "space" that represents the coordinate-space for this vector.
-     * By default it is set to "world" space, but can also be set as "screen" space.
-     * The interpretation of these spaces is entirely up to the user.
-     */
-    readonly space: Vector.Spaces;
-
-    /**
      * The x-component of this Vector in the given space.
      */
     readonly x: number;
@@ -244,7 +237,6 @@ export namespace Vector {
         return new VectorImpl(
             Math.ceil(vec.x),
             Math.ceil(vec.y),
-            vec.space,
         );
     }
 
@@ -252,18 +244,15 @@ export namespace Vector {
         return new VectorImpl(
             Math.floor(vec.x),
             Math.floor(vec.y),
-            vec.space,
         );
     }
 }
 
 class VectorImpl implements Vector {
-    public readonly space: Vector.Spaces;
     public readonly x: number;
     public readonly y: number;
 
-    public constructor(x: number, y: number, space: Vector.Spaces = "world") {
-        this.space = space;
+    public constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
@@ -273,8 +262,8 @@ class VectorImpl implements Vector {
     public add(other: Vector): Vector;
     public add(x: Vector | number, y?: number): Vector {
         if (typeof x === "number")
-            return new VectorImpl(this.x + x, this.y + (y ?? x), this.space);
-        return new VectorImpl(this.x + x.x, this.y + x.y, this.space);
+            return new VectorImpl(this.x + x, this.y + (y ?? x));
+        return new VectorImpl(this.x + x.x, this.y + x.y);
     }
 
     public sub(amt: number): Vector;
@@ -282,25 +271,25 @@ class VectorImpl implements Vector {
     public sub(other: Vector): Vector;
     public sub(x: Vector | number, y?: number): Vector {
         if (typeof x === "number")
-            return new VectorImpl(this.x - x, this.y - (y ?? x), this.space);
-        return new VectorImpl(this.x - x.x, this.y - x.y, this.space);
+            return new VectorImpl(this.x - x, this.y - (y ?? x));
+        return new VectorImpl(this.x - x.x, this.y - x.y);
     }
 
     public scale(amt: number): Vector;
     public scale(other: Vector): Vector;
     public scale(a: Vector | number): Vector {
         if (typeof a === "number")
-            return new VectorImpl(this.x * a, this.y  * a, this.space);
-        return new VectorImpl(this.x * a.x, this.y * a.y, this.space);
+            return new VectorImpl(this.x * a, this.y  * a);
+        return new VectorImpl(this.x * a.x, this.y * a.y);
     }
 
     public abs(): Vector {
-        return new VectorImpl(Math.abs(this.x), Math.abs(this.y), this.space);
+        return new VectorImpl(Math.abs(this.x), Math.abs(this.y));
     }
     public normalize(): Vector {
         const len = this.len();
         if (len === 0)
-            return new VectorImpl(0, 0, this.space);
+            return new VectorImpl(0, 0);
         return this.scale(1 / len);
     }
     public len(): number {
@@ -323,7 +312,6 @@ class VectorImpl implements Vector {
         return new VectorImpl(
             ((this.x - o.x) * cos - (this.y - o.y) * sin) + o.x,
             ((this.x - o.x) * sin + (this.y - o.y) * cos) + o.y,
-            this.space
         );
     }
     public withRotation(a: number, o = new VectorImpl(0, 0)): Vector {
@@ -333,36 +321,33 @@ class VectorImpl implements Vector {
         return v.scale(this.dot(v) / v.len2());
     }
     public negativeReciprocal(): Vector {
-        return new VectorImpl(this.y, -this.x, this.space);
+        return new VectorImpl(this.y, -this.x);
     }
 
     public toString(): string {
-        return `${this.space}(${Math.round(this.x)}, ${Math.round(this.y)})`;
+        return `(${Math.round(this.x)}, ${Math.round(this.y)})`;
     }
 }
 
 export function V(): Vector;
-export function V(space: Vector.Spaces): Vector;
 export function V(v: Vector): Vector;
 export function V(x: number): Vector;
-export function V(x: number, space: Vector.Spaces): Vector;
 export function V(x: number, y: number): Vector;
-export function V(x: number, y: number, space?: Vector.Spaces): Vector;
-export function V(a?: Vector.Spaces | Vector | number, b?: Vector.Spaces | number, c?: Vector.Spaces): Vector {
+export function V(a?: Vector.Spaces | Vector | number, b?: number): Vector {
     if (a === undefined)
         return new VectorImpl(0, 0);
 
     if (typeof a === "number") {
         if (typeof b === "number")
-            return new VectorImpl(a, b, c);
-        return new VectorImpl(a, a, b);
+            return new VectorImpl(a, b);
+        return new VectorImpl(a, a);
     }
     if (typeof a === "object") {
-        return new VectorImpl(a.x, a.y, a.space);
+        return new VectorImpl(a.x, a.y);
     }
     if (typeof a === "string") {
-        return new VectorImpl(0, 0, a);
+        return new VectorImpl(0, 0);
     }
 
-    throw new Error(`V: Incorrect parameters! ${a}, ${b}, ${c}`);
+    throw new Error(`V: Incorrect parameters! ${a}, ${b}`);
 }

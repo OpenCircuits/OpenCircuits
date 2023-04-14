@@ -4,7 +4,7 @@ import {Tool}                from "./Tool";
 
 
 export const PanTool: Tool = {
-    shouldActivate: (ev, _) => (
+    shouldActivate: (ev) => (
         // Activate if the user just pressed the "option key"
         //  or if the user began dragging with either 2 fingers
         //                           or the middle mouse button
@@ -12,19 +12,17 @@ export const PanTool: Tool = {
         (ev.type === "mousedrag" && (ev.button === MIDDLE_MOUSE_BUTTON ||
                                     ev.state.touchCount === 2))
     ),
-    shouldDeactivate: (ev, _) => (
+    shouldDeactivate: (ev) => (
         (!ev.state.isDragging && !ev.state.isAltKeyDown)
     ),
 
-    onActivate: (ev, circuit) => {
-        PanTool.onEvent(ev, circuit); // Explicitly call drag event
-    },
+    onActivate:   () => {},
     onDeactivate: () => {},
 
-    onEvent: (ev, { camera }) => {
+    onEvent: (ev, { circuit }) => {
         if (ev.type === "mousedrag") {
             const { x: dx, y: dy } = ev.state.deltaMousePos;
-            camera.translate(V(-dx, -dy, "screen"));
+            circuit.camera.translate(V(-dx, -dy), "screen");
         }
     },
 }
