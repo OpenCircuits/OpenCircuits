@@ -66,14 +66,14 @@ export abstract class CircuitView {
             // TODO[model_refactor](leon) - use events
 
             // update components first
-            for (const compID of circuit.getComponents()) {
-                const comp = circuit.getCompByID(compID).unwrap();
+            for (const compID of circuit.doc.getComponents()) {
+                const comp = circuit.doc.getCompByID(compID).unwrap();
                 this.getAssemblerFor(comp.kind).assemble(comp, ev);
             }
 
             // then update wires
-            for (const wireID of circuit.getWires()) {
-                const wire = circuit.getWireByID(wireID).unwrap();
+            for (const wireID of circuit.doc.getWires()) {
+                const wire = circuit.doc.getWireByID(wireID).unwrap();
                 this.getAssemblerFor(wire.kind).assemble(wire, ev);
             }
 
@@ -84,7 +84,7 @@ export abstract class CircuitView {
 
         this.selections.subscribe((ev) => {
             ev.selections.forEach((id) => {
-                const obj = circuit.getObjByID(id).unwrap();
+                const obj = circuit.doc.getObjByID(id).unwrap();
                 this.getAssemblerFor(obj.kind).assemble(obj, ev);
             });
         });

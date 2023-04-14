@@ -19,7 +19,7 @@ export class PortImpl<
     public readonly baseKind = "Port";
 
     protected getObj(): Schema.Port {
-        return this.internal.getPortByID(this.id)
+        return this.internal.doc.getPortByID(this.id)
             .mapErr(AddErrE(`API Port: Attempted to get port with ID ${this.id} could not find it!`))
             .unwrap();
     }

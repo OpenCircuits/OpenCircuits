@@ -42,7 +42,7 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
     }
 
     private isOn(sw: Schema.Component) {
-        const [outputPort] = this.circuit.getPortsForComponent(sw.id).unwrap();
+        const [outputPort] = this.circuit.doc.getPortsForComponent(sw.id).unwrap();
         return Signal.isOn(this.sim.getSignal(outputPort));
     }
 
