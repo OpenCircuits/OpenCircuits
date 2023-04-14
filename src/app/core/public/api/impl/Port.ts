@@ -45,7 +45,7 @@ export class PortImpl<
     }
 
     public get connections(): WireT[] {
-        return [...this.internal.getWiresForPort(this.id).unwrap()]
+        return [...this.internal.doc.getWiresForPort(this.id).unwrap()]
             .map((id) => this.circuit.constructWire(id));
     }
 
