@@ -72,19 +72,19 @@ export class PortAssembler extends Assembler<Schema.Component> {
             return;
 
         if (portAmtChanged) {
-            const ports = this.circuit.getPortsByGroup(parent.id).unwrap();
+            const ports = this.circuit.doc.getPortsByGroup(parent.id).unwrap();
 
             // Re-calculate local port positions
             Object.entries(ports).forEach(([group, portIDs]) => {
                 portIDs.forEach((portID) => {
-                    const port = this.circuit.getPortByID(portID).unwrap();
+                    const port = this.circuit.doc.getPortByID(portID).unwrap();
                     this.view.localPortPositions.set(portID, this.calcPos(group, port.index, portIDs.length));
                 })
             });
         }
 
         if (transformChanged || portAmtChanged) {
-            const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
+            const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
 
             // Transform all local port positions to new parent transform
             ports.forEach((portID) =>
@@ -92,7 +92,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
         }
 
         if (transformChanged || portAmtChanged || selectionChanged) {
-            const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
+            const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
 
             const parentSelected = this.selections.has(parent.id);
 

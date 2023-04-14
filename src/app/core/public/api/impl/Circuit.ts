@@ -3,8 +3,6 @@ import {V, Vector} from "Vector";
 import {Rect} from "math/Rect";
 
 import {CircuitInternal}   from "core/internal/impl/CircuitInternal";
-import {CircuitLog}        from "core/internal/impl/CircuitLog";
-import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
 import {DebugOptions}      from "core/internal/impl/DebugOptions";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitView}       from "core/internal/view/CircuitView";
@@ -38,7 +36,7 @@ export abstract class CircuitImpl<
         view: CircuitView,
         selections: SelectionsManager
     ) {
-        this.circuit = circuit
+        this.circuit = circuit;
         this.view = view;
 
         this.selections = selections;
@@ -133,31 +131,31 @@ export abstract class CircuitImpl<
     }
 
     public getComponent(id: string): ComponentT | undefined {
-        if (!this.circuit.getCompByID(id))
+        if (!this.circuit.doc.getCompByID(id))
             return undefined;
         return this.constructComponent(id);
     }
     public getWire(id: string): WireT | undefined {
-        if (!this.circuit.getWireByID(id))
+        if (!this.circuit.doc.getWireByID(id))
             return undefined;
         return this.constructWire(id);
     }
     public getPort(id: string): PortT | undefined {
-        if (!this.circuit.getPortByID(id))
+        if (!this.circuit.doc.getPortByID(id))
             return undefined;
         return this.constructPort(id);
     }
     public getObj(id: string): ComponentT | WireT | PortT | undefined {
-        if (this.circuit.hasComp(id))
+        if (this.circuit.doc.hasComp(id))
             return this.getComponent(id);
-        if (this.circuit.hasWire(id))
+        if (this.circuit.doc.hasWire(id))
             return this.getWire(id);
-        if (this.circuit.hasPort(id))
+        if (this.circuit.doc.hasPort(id))
             return this.getPort(id);
         return undefined;
     }
     public getObjs(): Obj[] {
-        return [...this.circuit.getObjs()]
+        return [...this.circuit.doc.getObjs()]
             .map((id) => this.getObj(id)!);
     }
     public getComponentInfo(kind: string): ComponentT["info"] | undefined {
@@ -188,7 +186,7 @@ export abstract class CircuitImpl<
 
     // Object manipulation
     public placeComponentAt(pt: Vector, kind: string): ComponentT {
-        const info = this.circuit.getComponentInfo(kind);
+        const info = this.circuit.doc.getComponentInfo(kind);
 
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();
