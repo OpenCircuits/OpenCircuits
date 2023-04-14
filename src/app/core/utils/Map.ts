@@ -10,7 +10,6 @@ declare global {
 
 
 // See https://github.com/tc39/proposal-upsert
-// Adapted from https://github.com/zloirock/core-js/blob/0f121211809a214b6def16bbac51b9d05fb42bad/packages/core-js/internals/map-upsert.js
 Map.prototype.emplace = function<K, V>(key: K, op: {
     insert?: (key: K, map: Map<K, V>) => V;
     update?: (existing: V, key: K, map: Map<K, V>) => V;

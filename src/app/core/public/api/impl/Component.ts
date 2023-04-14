@@ -62,8 +62,8 @@ export abstract class ComponentImpl<
     public get ports(): Record<string, PortT[]> {
         return FromConcatenatedEntries(
             [...this.internal.doc.getPortsForComponent(this.id).unwrap()]
-            .map((id) => this.circuit.constructPort(id))
-            .map((p) => [p.group, p])
+                .map((id) => this.circuit.constructPort(id))
+                .map((p) => [p.group, p])
         );
     }
 

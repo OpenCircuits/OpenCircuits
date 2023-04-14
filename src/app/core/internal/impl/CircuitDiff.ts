@@ -167,7 +167,7 @@ export class CircuitDiffBuilder {
         // Only copy the "newKind" so the oldest "oldKind" is kept.
         this.diff.changedComponents.emplace(id, {
             insert: ()  => ({ newKind, oldKind }),
-            update: (d) => ({ newKind, ...d }),
+            update: (d) => ({ ...d, newKind }),
         });
     }
 
@@ -193,7 +193,7 @@ export class CircuitDiffBuilder {
             // Only save the "newVal" so the oldest "oldVal" is kept.
             props.emplace(key, {
                 insert: ()  => ({ oldVal, newVal }),
-                update: (d) => ({ newVal, ...d }),
+                update: (d) => ({ ...d, newVal }),
             });
         });
     }
@@ -203,7 +203,10 @@ export class CircuitDiffBuilder {
     public applyOp(op: CircuitOp): void {
         switch (op.kind) {
             case "PlaceComponentOp": {
-                op.inverted ? this.removeComponent(op.c) : this.addComponent(op.c);
+                if (op.inverted)
+                    this.removeComponent(op.c);
+                else
+                    this.addComponent(op.c);
                 break;
             }
             case "ReplaceComponentOp": {
@@ -221,15 +224,17 @@ export class CircuitDiffBuilder {
                 break;
             }
             case "ConnectWireOp": {
-                op.inverted ? this.removeWire(op.w) : this.addWire(op.w);
+                if (op.inverted)
+                    this.removeWire(op.w);
+                else
+                    this.addWire(op.w);
                 break;
             }
             case "SplitWireOp": {
                 throw new Error("Unimplemented");
             }
             case "SetPropertyOp": {
-                const d: PropDiff = op;
-                this.updateProps(op.id, new Map([[op.key, d]]));
+                this.updateProps(op.id, new Map([[op.key, op]]));
                 break;
             }
             default:
