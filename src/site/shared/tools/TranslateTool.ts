@@ -38,7 +38,7 @@ export class TranslateTool implements Tool {
 
         circuit.beginTransaction();
 
-        // TODO: shift components
+        // TODO[model_refactor_api](leon): shift components
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {

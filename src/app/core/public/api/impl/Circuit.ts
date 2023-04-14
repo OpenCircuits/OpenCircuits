@@ -115,10 +115,7 @@ export abstract class CircuitImpl<
     // Queries
     public pickObjectAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
         const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        const objID = this.view.findNearestObj(pos);
-        if (!objID)
-            return undefined;
-        return this.getObj(objID);
+        return this.view.findNearestObj(pos).map((id) => this.getObj(id)).asUnion();
     }
     public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
@@ -163,10 +160,6 @@ export abstract class CircuitImpl<
     }
 
     public selectionsMidpoint(space: Vector.Spaces): Vector {
-        // TODO(renr)
-        //  For now, ignore the `space`, and ignore any non-Component
-        //   objects that are selected
-        //  From these components, average their positions
         const allComponents = this.selections.get()
                               .map((id) => this.getComponent(id))
                               .filter((comp) => (comp !== undefined)) as Component[];

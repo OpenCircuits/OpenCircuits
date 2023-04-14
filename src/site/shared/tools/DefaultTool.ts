@@ -23,9 +23,9 @@ export class DefaultTool {
         if (ev.type === "mousedown") {
             // Find object if we pressed on one
             designer.curPressedObj = designer.circuit.pickObjectAt(ev.state.mousePos, "screen");
-        }
-        if (ev.type === "mouseup")
+        } else if (ev.type === "mouseup") {
             designer.curPressedObj = undefined;
+        }
 
         // Loop through each handler and see if we should trigger any of them
         for (const handler of this.handlers) {

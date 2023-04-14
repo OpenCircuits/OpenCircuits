@@ -6,16 +6,18 @@ import {BezierCurve} from "math/BezierCurve";
 import {Matrix2x3}   from "math/Matrix";
 import {Transform}   from "math/Transform";
 
+import {None,Option,Some} from "core/utils/Result";
+
 import {GUID}                                from "..";
 import {CircuitInternal}                     from "../impl/CircuitInternal";
 import {SelectionsManager}                   from "../impl/SelectionsManager";
-import {Assembler}                           from "./Assembler";
 import {Prims}                               from "./Prim";
+import {PortPos}                             from "./PortAssembler";
+import {Assembler}                           from "./Assembler";
 import {RenderGrid}                          from "./rendering/renderers/GridRenderer";
 import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
-import {PortPos}                             from "./PortAssembler";
 
 
 export abstract class CircuitView {
@@ -105,17 +107,17 @@ export abstract class CircuitView {
         return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
     }
 
-    public findNearestObj(pos: Vector): GUID | undefined {
+    public findNearestObj(pos: Vector): Option<GUID> {
         for (const [id, prims] of this.componentPrims) {
             if (prims.some((prim) => prim.hitTest(pos)))
-                return id;
-            // TODO: hit test the component's ports as well
+                return Some(id);
+            // TODO[model_refactor_api](leon): hit test the component's ports as well
         }
         for (const [id, prims] of this.wirePrims) {
             if (prims.some((prim) => prim.hitTest(pos)))
-                return id;
+                return Some(id);
         }
-        return undefined;
+        return None();
     }
 
     protected abstract getAssemblerFor(kind: string): Assembler;
