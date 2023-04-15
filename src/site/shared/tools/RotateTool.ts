@@ -3,7 +3,7 @@ import {V, Vector} from "Vector";
 import {Circuit, Component} from "core/public";
 
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 import {Tool} from "./Tool";
 
@@ -40,7 +40,7 @@ export class RotateTool implements Tool {
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
     }
 
-    public shouldActivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): boolean {
+    public shouldActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): boolean {
         // Activate if the user pressed their mouse or finger
         //  down over the "rotation circle" which appears if
         //  there are ONLY Components being selected
@@ -52,11 +52,11 @@ export class RotateTool implements Tool {
             this.isOnCircle(ev.state.mousePos, circuit)
         );
     }
-    public shouldDeactivate(ev: InputManagerEvent): boolean {
+    public shouldDeactivate(ev: InputAdapterEvent): boolean {
         return (ev.type === "mouseup");
     }
 
-    public onActivate(ev: InputManagerEvent, { circuit, worldMousePos }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit, worldMousePos }: CircuitDesigner): void {
         this.components = circuit.selectedObjs as Component[];
 
         // Get initial angles
@@ -69,11 +69,11 @@ export class RotateTool implements Tool {
         circuit.beginTransaction();
     }
 
-    public onDeactivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputManagerEvent, { circuit, worldMousePos }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { circuit, worldMousePos }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             // Get whether z is presesed for independent rotation
             const isIndependent = ev.state.keysDown.has("z");

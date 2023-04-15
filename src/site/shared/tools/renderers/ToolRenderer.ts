@@ -2,7 +2,7 @@ import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 import {Circuit}       from "core/public";
 
-import {InputManagerState} from "shared/utils/input/InputManagerState";
+import {UserInputState} from "shared/utils/input/UserInputState";
 
 import {Tool} from "../Tool";
 
@@ -14,7 +14,7 @@ export interface ToolRendererProps<T extends Tool | undefined = Tool> {
     circuit: Circuit;
 
     curTool: T;
-    input: InputManagerState;
+    input: UserInputState;
 }
 
 export interface ToolRenderer<T extends Tool | undefined = Tool> {
