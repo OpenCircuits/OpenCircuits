@@ -22,7 +22,7 @@ export abstract class ComponentImpl<
     public readonly baseKind = "Component";
 
     protected getObj(): Schema.Component {
-        return this.internal.getCompByID(this.id)
+        return this.internal.doc.getCompByID(this.id)
             .mapErr(AddErrE(`API Component: Attempted to get component with ID ${this.id} could not find it!`))
             .unwrap();
     }
@@ -63,14 +63,14 @@ export abstract class ComponentImpl<
         return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
     }
     public get allPorts(): PortT[] {
-        return [...this.internal.getPortsForComponent(this.id).unwrap()]
+        return [...this.internal.doc.getPortsForComponent(this.id).unwrap()]
             .map((id) => this.circuit.constructPort(id));
     }
 
     public setNumPorts(group: string, amt: number): boolean {
         // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = {} as Record<string, number>;
-        this.internal.getPortsForComponent(this.id)
+        this.internal.doc.getPortsForComponent(this.id)
             .map((ids) => [...ids]
                 .map((id) => this.circuit.getPort(id)!))
             .unwrap()
@@ -85,7 +85,7 @@ export abstract class ComponentImpl<
             ...curConfig,
             [group]: amt,
         };
-        const isValid = this.internal.getComponentInfo(this.kind).checkPortConfig(config);
+        const isValid = this.internal.doc.getComponentInfo(this.kind).checkPortConfig(config);
         if (!isValid.ok)
             return false;
 

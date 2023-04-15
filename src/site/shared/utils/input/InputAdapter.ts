@@ -11,11 +11,11 @@ import {CalculateMidpoint} from "math/MathUtils";
 import {Observable} from "core/utils/Observable";
 
 import {Key}               from "./Key";
-import {InputManagerEvent} from "./InputManagerEvent";
-import {InputManagerState} from "./InputManagerState";
+import {InputAdapterEvent} from "./InputAdapterEvent";
+import {UserInputState}    from "./UserInputState";
 
 
-export class InputManagerStateImpl implements InputManagerState {
+export class UserInputStateImpl implements UserInputState {
     public mouseDownPos: Vector;
     public prevMousePos: Vector;
     public mousePos: Vector;
@@ -67,14 +67,14 @@ export class InputManagerStateImpl implements InputManagerState {
 /**
  * Class to handle user input, and trigger appropriate event listeners.
  */
-export class InputManager extends Observable<InputManagerEvent> {
+export class InputAdapter extends Observable<InputAdapterEvent> {
     /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
     private readonly dragTime: number;
 
     /** The canvas the user is performing inputs on. */
     private canvas?: HTMLCanvasElement;
 
-    public state: InputManagerStateImpl;
+    public state: UserInputStateImpl;
 
     /**
      * Initializes Input with given canvas and dragTime.
@@ -84,7 +84,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     public constructor(dragTime: number = DRAG_TIME) {
         super();
         this.dragTime = dragTime;
-        this.state = new InputManagerStateImpl();
+        this.state = new UserInputStateImpl();
     }
 
     /**
@@ -363,7 +363,7 @@ export class InputManager extends Observable<InputManagerEvent> {
      *  Keeps listeners and outer-controlled state.
      */
     public reset(): void {
-        this.state = new InputManagerStateImpl();
+        this.state = new UserInputStateImpl();
     }
 
     /**

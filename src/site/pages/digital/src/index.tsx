@@ -36,7 +36,6 @@ import {reducers} from "./state/reducers";
 
 import ImageFiles      from "./data/images.json";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
-import {Circuit}       from "core/public";
 
 import {DigitalCircuitDesigner} from "./utils/DigitalCircuitDesigner";
 
@@ -49,8 +48,8 @@ const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {
         const canvas = canvasRef.current;
         if (!canvas)
             return;
-        (window as unknown as { Circuit: Circuit }).Circuit = designer.circuit;
-        return designer.circuit.attachCanvas(canvas);
+        (window as any).Circuit = designer.circuit;
+        return designer.attachCanvas(canvas);
     }, [designer, canvasRef]);
 
     useLayoutEffect(() => designer.circuit.resize(w, h), [designer, w, h]);

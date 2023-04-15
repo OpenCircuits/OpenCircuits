@@ -4,7 +4,7 @@ import {Component} from "core/public";
 
 import {CircuitDesigner}               from "shared/circuitdesigner/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON}             from "shared/utils/input/Constants";
-import {InputManagerEvent}             from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent}             from "shared/utils/input/InputAdapterEvent";
 import {SnapToConnections, SnapToGrid} from "shared/utils/SnapUtils";
 import {Tool}                          from "./Tool";
 
@@ -16,7 +16,7 @@ export class TranslateTool implements Tool {
         this.components = [];
     }
 
-    public shouldActivate(ev: InputManagerEvent, { curPressedObj }: CircuitDesigner): boolean {
+    public shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user is pressing down on a component
         return (
             ev.type === "mousedrag"
@@ -24,11 +24,11 @@ export class TranslateTool implements Tool {
                 && curPressedObj?.baseKind === "Component"
         );
     }
-    public shouldDeactivate(ev: InputManagerEvent): boolean {
+    public shouldDeactivate(ev: InputAdapterEvent): boolean {
         return (ev.type === "mouseup" && ev.button === LEFT_MOUSE_BUTTON);
     }
 
-    public onActivate(ev: InputManagerEvent, { circuit, curPressedObj }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit, curPressedObj }: CircuitDesigner): void {
         // If the pressed component is part of the selected objects,
         //  then translate all of the selected objects
         //  otherwise, just translate the pressed object
@@ -38,14 +38,14 @@ export class TranslateTool implements Tool {
 
         circuit.beginTransaction();
 
-        // TODO: shift components
+        // TODO[model_refactor_api](leon): shift components
     }
 
-    public onDeactivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         // Using mousemove instead of mousedrag here because when a button besides
         //  mouse left is released, mousedrag events are no longer created, only mousemove.
         //  So instead mousemove is used and whether or not left mouse is still pressed is
@@ -61,7 +61,7 @@ export class TranslateTool implements Tool {
                 if (snapToGrid)
                     pos = SnapToGrid(pos);
                 if (snapToConnections)
-                    pos = SnapToConnections(pos, c);
+                    pos = SnapToConnections(pos, c.allPorts);
                 // Very specifically Translate as we go
                 //  as to correctly apply `SnapToConnections`
                 c.pos = pos;

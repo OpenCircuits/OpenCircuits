@@ -25,7 +25,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public get kind(): string {
-        return this.internal.getObjByID(this.id).unwrap().kind;
+        return this.internal.doc.getObjByID(this.id).unwrap().kind;
     }
 
     public get id(): string {
@@ -61,7 +61,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public exists(): boolean {
-        return !!this.internal.getObjByID(this.objID);
+        return !!this.internal.doc.getObjByID(this.objID);
     }
 
     public setProp(key: string, val: Prop): void {
@@ -70,7 +70,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
         this.circuit.commitTransaction();
     }
     public getProp(key: string): Prop | undefined {
-        return this.internal.getObjByID(this.objID).unwrap().props[key];
+        return this.internal.doc.getObjByID(this.objID).unwrap().props[key];
     }
     public getProps(): Record<string, Prop> {
         throw new Error("Unimplemented");

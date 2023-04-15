@@ -6,17 +6,19 @@ import {BezierCurve} from "math/BezierCurve";
 import {Matrix2x3}   from "math/Matrix";
 import {Transform}   from "math/Transform";
 
+import {None,Option,Some} from "core/utils/Result";
+import {Observable}       from "core/utils/Observable";
+
 import {GUID}                                from "..";
 import {CircuitInternal}                     from "../impl/CircuitInternal";
 import {SelectionsManager}                   from "../impl/SelectionsManager";
-import {Assembler}                           from "./Assembler";
 import {Prims}                               from "./Prim";
+import {PortPos}                             from "./PortAssembler";
+import {Assembler}                           from "./Assembler";
 import {RenderGrid}                          from "./rendering/renderers/GridRenderer";
 import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
-import {PortPos}                             from "./PortAssembler";
-import {Observable}                          from "core/utils/Observable";
 
 
 export abstract class CircuitView extends Observable<{ renderer: RenderHelper }> {
@@ -69,14 +71,14 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
             // TODO[model_refactor](leon) - use events
 
             // update components first
-            for (const compID of circuit.getComponents()) {
-                const comp = circuit.getCompByID(compID).unwrap();
+            for (const compID of circuit.doc.getComponents()) {
+                const comp = circuit.doc.getCompByID(compID).unwrap();
                 this.getAssemblerFor(comp.kind).assemble(comp, ev);
             }
 
             // then update wires
-            for (const wireID of circuit.getWires()) {
-                const wire = circuit.getWireByID(wireID).unwrap();
+            for (const wireID of circuit.doc.getWires()) {
+                const wire = circuit.doc.getWireByID(wireID).unwrap();
                 this.getAssemblerFor(wire.kind).assemble(wire, ev);
             }
 
@@ -87,7 +89,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
         this.selections.subscribe((ev) => {
             ev.selections.forEach((id) => {
-                const obj = circuit.getObjByID(id).unwrap();
+                const obj = circuit.doc.getObjByID(id).unwrap();
                 this.getAssemblerFor(obj.kind).assemble(obj, ev);
             });
 
@@ -108,21 +110,21 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
     }
 
-    public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): GUID | undefined {
+    public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): Option<GUID> {
         for (const [id, prims] of this.componentPrims) {
             if (!filter(id)) // Skip things not in the filter
                 continue;
             if (prims.some((prim) => prim.hitTest(pos)))
-                return id;
-            // TODO[model_refactor_api_tools2](leon): hit test the component's ports as well
+                return Some(id);
+            // TODO[model_refactor_api](leon): hit test the component's ports as well
         }
         for (const [id, prims] of this.wirePrims) {
             if (!filter(id)) // Skip things not in the filter
                 continue;
             if (prims.some((prim) => prim.hitTest(pos)))
-                return id;
+                return Some(id);
         }
-        return undefined;
+        return None();
     }
 
     protected abstract getAssemblerFor(kind: string): Assembler;

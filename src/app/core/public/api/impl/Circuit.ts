@@ -3,8 +3,6 @@ import {V, Vector} from "Vector";
 import {Rect} from "math/Rect";
 
 import {CircuitInternal}   from "core/internal/impl/CircuitInternal";
-import {CircuitLog}        from "core/internal/impl/CircuitLog";
-import {ObjInfoProvider}   from "core/internal/impl/ComponentInfo";
 import {DebugOptions}      from "core/internal/impl/DebugOptions";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitView}       from "core/internal/view/CircuitView";
@@ -19,7 +17,6 @@ import {Wire}      from "../Wire";
 import {CircuitState}         from "./CircuitState";
 import {CreateDrawingFromSVG} from "svg2canvas";
 import {CameraImpl}           from "./Camera";
-import {Observable}           from "core/utils/Observable";
 import {RenderHelper}         from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions}        from "core/internal/view/rendering/RenderOptions";
 
@@ -28,7 +25,7 @@ export abstract class CircuitImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
-> extends Observable<any> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
+> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
     public circuit: CircuitInternal;
     public view: CircuitView;
 
@@ -41,9 +38,7 @@ export abstract class CircuitImpl<
         view: CircuitView,
         selections: SelectionsManager
     ) {
-        super();
-
-        this.circuit = circuit
+        this.circuit = circuit;
         this.view = view;
 
         this.selections = selections;
@@ -122,31 +117,22 @@ export abstract class CircuitImpl<
     // Queries
     public pickObjAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
         const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        const objID = this.view.findNearestObj(pos);
-        if (!objID)
-            return undefined;
-        return this.getObj(objID);
+        return this.view.findNearestObj(pos).map((id) => this.getObj(id)).asUnion();
     }
     public pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | undefined {
         const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        const objID = this.view.findNearestObj(pos, (id) => (this.circuit.hasComp(id)));
-        if (!objID)
-            return undefined;
-        return this.getComponent(objID);
+        return this.view.findNearestObj(pos, (id) => this.circuit.doc.hasComp(id))
+            .map((id) => this.getComponent(id)).asUnion();
     }
     public pickWireAt(pt: Vector, space: Vector.Spaces = "world"): WireT | undefined {
         const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        const objID = this.view.findNearestObj(pos, (id) => (this.circuit.hasWire(id)));
-        if (!objID)
-            return undefined;
-        return this.getWire(objID);
+        return this.view.findNearestObj(pos, (id) => this.circuit.doc.hasWire(id))
+            .map((id) => this.getWire(id)).asUnion();
     }
     public pickPortAt(pt: Vector, space: Vector.Spaces = "world"): PortT | undefined {
         const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        const objID = this.view.findNearestObj(pos, (id) => (this.circuit.hasPort(id)));
-        if (!objID)
-            return undefined;
-        return this.getPort(objID);
+        return this.view.findNearestObj(pos, (id) => this.circuit.doc.hasPort(id))
+            .map((id) => this.getPort(id)).asUnion();
     }
     public pickObjRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
@@ -158,36 +144,32 @@ export abstract class CircuitImpl<
                .filter((obj) => (obj !== undefined)) as Obj[];
     }
 
-    public hasObj(obj: Obj): boolean {
-        return this.selections.has(obj.id);
-    }
-
     public getComponent(id: string): ComponentT | undefined {
-        if (!this.circuit.getCompByID(id))
+        if (!this.circuit.doc.getCompByID(id))
             return undefined;
         return this.constructComponent(id);
     }
     public getWire(id: string): WireT | undefined {
-        if (!this.circuit.getWireByID(id))
+        if (!this.circuit.doc.getWireByID(id))
             return undefined;
         return this.constructWire(id);
     }
     public getPort(id: string): PortT | undefined {
-        if (!this.circuit.getPortByID(id))
+        if (!this.circuit.doc.getPortByID(id))
             return undefined;
         return this.constructPort(id);
     }
     public getObj(id: string): ComponentT | WireT | PortT | undefined {
-        if (this.circuit.hasComp(id))
+        if (this.circuit.doc.hasComp(id))
             return this.getComponent(id);
-        if (this.circuit.hasWire(id))
+        if (this.circuit.doc.hasWire(id))
             return this.getWire(id);
-        if (this.circuit.hasPort(id))
+        if (this.circuit.doc.hasPort(id))
             return this.getPort(id);
         return undefined;
     }
     public getObjs(): Obj[] {
-        return [...this.circuit.getObjs()]
+        return [...this.circuit.doc.getObjs()]
             .map((id) => this.getObj(id)!);
     }
     public getComponentInfo(kind: string): ComponentT["info"] | undefined {
@@ -195,10 +177,6 @@ export abstract class CircuitImpl<
     }
 
     public selectionsMidpoint(space: Vector.Spaces): Vector {
-        // TODO(renr)
-        //  For now, ignore the `space`, and ignore any non-Component
-        //   objects that are selected
-        //  From these components, average their positions
         const allComponents = this.selections.get()
                               .map((id) => this.getComponent(id))
                               .filter((comp) => (comp !== undefined)) as Component[];
@@ -218,7 +196,7 @@ export abstract class CircuitImpl<
 
     // Object manipulation
     public placeComponentAt(pt: Vector, kind: string): ComponentT {
-        const info = this.circuit.getComponentInfo(kind);
+        const info = this.circuit.doc.getComponentInfo(kind);
 
         // TODO: Deal with `pt` being in screen space
         this.circuit.beginTransaction();
@@ -312,14 +290,10 @@ export abstract class CircuitImpl<
     }
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
         this.view.setCanvas(canvas);
-        // TODO: Figure out this event type more concretely
-        this.publish({ type: "attachCanvas", canvas });
         return () => this.detachCanvas();
     }
     public detachCanvas(): void {
         this.view.setCanvas(undefined);
-        // TODO: Figure out this event type more concretely
-        this.publish({ type: "detachCanvas" });
     }
 
     public forceRedraw(): void {
@@ -330,5 +304,9 @@ export abstract class CircuitImpl<
         renderer: RenderHelper; options: RenderOptions; circuit: Circuit;
     }) => void): void {
         this.view.subscribe(({ renderer }) => cb({ renderer, options: this.view.options, circuit: this }));
+    }
+
+    public subscribe(cb: (ev: any) => void): () => void {
+        throw new Error("Method not implemented.");
     }
 }

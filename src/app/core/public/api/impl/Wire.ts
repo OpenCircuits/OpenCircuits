@@ -19,7 +19,7 @@ export class WireImpl<
     public readonly baseKind = "Wire";
 
     protected getObj(): Schema.Wire {
-        return this.internal.getWireByID(this.id)
+        return this.internal.doc.getWireByID(this.id)
             .mapErr(AddErrE(`API Wire: Attempted to get wire with ID ${this.id} could not find it!`))
             .unwrap();
     }

@@ -3,7 +3,7 @@ import {DefaultTool}     from "shared/tools/DefaultTool";
 import {ToolRenderer}    from "shared/tools/renderers/ToolRenderer";
 import {Tool}            from "shared/tools/Tool";
 import {Cursor}          from "shared/utils/input/Cursor";
-import {InputManager}    from "shared/utils/input/InputManager";
+import {InputAdapter}    from "shared/utils/input/InputAdapter";
 import {CircuitDesigner} from "../CircuitDesigner";
 import {ToolManager}     from "./ToolManager";
 
@@ -14,10 +14,10 @@ export interface ToolConfig {
     renderers?: Array<ToolRenderer<Tool | undefined>>;
 }
 
-export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigner<Circ> {
-    public readonly circuit: Circ;
+export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDesigner<CircuitT> {
+    public readonly circuit: CircuitT;
 
-    public inputManager: InputManager;
+    public inputAdapter: InputAdapter;
 
     private readonly toolManager: ToolManager;
 
@@ -27,12 +27,12 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
     }
 
     public constructor(
-        circuit: Circ,
+        circuit: CircuitT,
         { defaultTool, tools, renderers }: ToolConfig,
     ) {
         this.circuit = circuit;
 
-        this.inputManager = new InputManager();
+        this.inputAdapter = new InputAdapter();
 
         this.toolManager = new ToolManager(defaultTool, tools);
 
@@ -41,33 +41,18 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
             cursor:        undefined,
         };
 
-        // Setup input manager to attach to the Circuit's canvas
-        if (circuit.canvas)
-            this.inputManager.setupOn(circuit.canvas);
-
-        circuit.subscribe((ev) => {
-            if (ev.type === "attachCanvas")
-                this.inputManager.setupOn(ev.canvas);
-            if (ev.type === "detachCanvas")
-                this.inputManager.tearDown();
-        });
-
         // Setup tool manager
-        this.inputManager.subscribe((ev) => this.toolManager.onEvent(ev, this));
+        this.inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
 
         // Attach tool renderers
         if (renderers) {
             this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
                 renderers.forEach((toolRenderer) => {
                     const curTool = this.toolManager.curTool;
-                    if (toolRenderer.isActive(curTool)) {
-                        toolRenderer.render({
-                            renderer, options, circuit, curTool,
-                            input: this.inputManager.state,
-                        });
-                    }
+                    if (toolRenderer.isActive(curTool))
+                        toolRenderer.render({ renderer, options, circuit, curTool, input: this.inputAdapter.state });
                 });
-            })
+            });
         }
     }
 
@@ -86,6 +71,16 @@ export class CircuitDesignerImpl<Circ extends Circuit> implements CircuitDesigne
     }
 
     public get worldMousePos() {
-        return this.circuit.camera.toWorldPos(this.inputManager.state.mousePos);
+        return this.circuit.camera.toWorldPos(this.inputAdapter.state.mousePos);
+    }
+
+    public attachCanvas(canvas: HTMLCanvasElement): () => void {
+        this.inputAdapter.setupOn(canvas);
+        this.circuit.attachCanvas(canvas);
+        return () => this.detachCanvas();
+    }
+    public detachCanvas(): void {
+        this.inputAdapter.tearDown();
+        this.circuit.detachCanvas();
     }
 }
