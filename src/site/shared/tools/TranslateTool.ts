@@ -51,10 +51,10 @@ export class TranslateTool implements Tool {
         //  So instead mousemove is used and whether or not left mouse is still pressed is
         //  handled within the activation and deactivation of this tool.
         if (ev.type === "mousemove") {
-            const snapToGrid = ev.state.isShiftKeyDown;
-            const snapToConnections = !ev.state.isShiftKeyDown;
+            const snapToGrid = ev.input.isShiftKeyDown;
+            const snapToConnections = !ev.input.isShiftKeyDown;
 
-            const dPos = ev.state.deltaMousePos.scale(V(circuit.camera.zoom, -circuit.camera.zoom));
+            const dPos = ev.input.deltaMousePos.scale(V(circuit.camera.zoom, -circuit.camera.zoom));
 
             this.components.forEach((c) => {
                 let pos = V(c.x, c.y).add(dPos);

@@ -46,23 +46,23 @@ export class RotateTool implements Tool {
         //  there are ONLY Components being selected
         return (
             ev.type === "mousedown" &&
-            ev.state.touchCount === 1 &&
+            ev.input.touchCount === 1 &&
             circuit.selectedObjs.length > 0 &&
             circuit.selectedObjs.every((obj) => (obj.baseKind === "Component")) &&
-            this.isOnCircle(ev.state.mousePos, circuit)
+            this.isOnCircle(ev.input.mousePos, circuit)
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
         return (ev.type === "mouseup");
     }
 
-    public onActivate(ev: InputAdapterEvent, { circuit, worldMousePos }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         this.components = circuit.selectedObjs as Component[];
 
         // Get initial angles
         this.curAngles = this.components.map((c) => c.angle);
         this.curAroundAngle = 0;
-        this.startAngle = worldMousePos.sub(circuit.selectionsMidpoint("world")).angle();
+        this.startAngle = ev.input.worldMousePos.sub(circuit.selectionsMidpoint("world")).angle();
         this.prevAngle = this.startAngle;
 
         // Start the transaction
@@ -73,20 +73,20 @@ export class RotateTool implements Tool {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputAdapterEvent, { circuit, worldMousePos }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             // Get whether z is presesed for independent rotation
-            const isIndependent = ev.state.keysDown.has("z");
+            const isIndependent = ev.input.keysDown.has("z");
 
             const midpoint = circuit.selectionsMidpoint("world");
 
-            const dAngle = worldMousePos.sub(midpoint).angle() - this.prevAngle;
+            const dAngle = ev.input.worldMousePos.sub(midpoint).angle() - this.prevAngle;
 
             // Calculate new and snapped angles
             const newAngles = this.curAngles.map((a) => (a + dAngle));
             const snappedAngles = newAngles
                 .map((a) => (
-                    ev.state.isShiftKeyDown
+                    ev.input.isShiftKeyDown
                     ? (Math.floor(a/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT)
                     : a
                 ));
@@ -98,7 +98,7 @@ export class RotateTool implements Tool {
                 : this.curAroundAngle + dAngle
             );
             const snappedAroundAngle = (
-                ev.state.isShiftKeyDown
+                ev.input.isShiftKeyDown
                 ? Math.floor(newAroundAngle/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT
                 : newAroundAngle
             );

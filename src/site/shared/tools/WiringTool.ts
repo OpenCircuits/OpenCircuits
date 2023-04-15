@@ -18,7 +18,7 @@ export const WIRING_PORT_SELECT_RADIUS = 0.34;
 export class WiringTool implements Tool {
     protected curPort: Port | undefined;
 
-    /** Field to help differentiate between this tool when activated with a click vs drag */
+    /** Field to help differentiate between this tool when activated with a click vs drag. */
     protected stateType: "clicked" | "dragged" | undefined;
 
     /**
@@ -68,10 +68,10 @@ export class WiringTool implements Tool {
         // Activate if the user drags or clicks on a port
         return (
             (
-                (ev.type === "mousedown" && ev.button === LEFT_MOUSE_BUTTON && ev.state.touchCount === 1) ||
+                (ev.type === "mousedown" && ev.button === LEFT_MOUSE_BUTTON && ev.input.touchCount === 1) ||
                 (ev.type === "click")
             )
-            && (this.findPort(ev.state.mousePos, circuit) !== undefined)
+            && (this.findPort(ev.input.mousePos, circuit) !== undefined)
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
@@ -85,13 +85,13 @@ export class WiringTool implements Tool {
     }
 
     public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        this.curPort = this.findPort(ev.state.mousePos, circuit);
+        this.curPort = this.findPort(ev.input.mousePos, circuit);
 
         this.stateType = (ev.type === "click" ? "clicked" : "dragged");
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        const port2 = this.findPort(ev.state.mousePos, circuit, this.curPort);
+        const port2 = this.findPort(ev.input.mousePos, circuit, this.curPort);
         if (port2) // Connect the ports if we found a second port
             this.curPort!.connectTo(port2);
 

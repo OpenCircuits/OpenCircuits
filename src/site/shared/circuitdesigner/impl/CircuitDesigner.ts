@@ -17,9 +17,8 @@ export interface ToolConfig {
 export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDesigner<CircuitT> {
     public readonly circuit: CircuitT;
 
-    public inputAdapter: InputAdapter;
-
     private readonly toolManager: ToolManager;
+    private readonly toolConfig: ToolConfig;
 
     private readonly state: {
         curPressedObj?: Obj;
@@ -28,32 +27,17 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
 
     public constructor(
         circuit: CircuitT,
-        { defaultTool, tools, renderers }: ToolConfig,
+        config: ToolConfig,
     ) {
         this.circuit = circuit;
 
-        this.inputAdapter = new InputAdapter();
-
-        this.toolManager = new ToolManager(defaultTool, tools);
+        this.toolManager = new ToolManager(config.defaultTool, config.tools);
+        this.toolConfig = config;
 
         this.state = {
             curPressedObj: undefined,
             cursor:        undefined,
         };
-
-        // Setup tool manager
-        this.inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
-
-        // Attach tool renderers
-        if (renderers) {
-            this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
-                renderers.forEach((toolRenderer) => {
-                    const curTool = this.toolManager.curTool;
-                    if (toolRenderer.isActive(curTool))
-                        toolRenderer.render({ renderer, options, circuit, curTool, input: this.inputAdapter.state });
-                });
-            });
-        }
     }
 
     public get curPressedObj() {
@@ -70,17 +54,29 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
         this.state.cursor = cursor;
     }
 
-    public get worldMousePos() {
-        return this.circuit.camera.toWorldPos(this.inputAdapter.state.mousePos);
-    }
-
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
-        this.inputAdapter.setupOn(canvas);
+        // Setup input adapter
+        const inputAdapter = new InputAdapter(canvas, this.circuit.camera);
+
+        // Setup tool manager
+        inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
+
+        // Attach tool renderers
+        const { renderers } = this.toolConfig;
+        if (renderers) {
+            this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
+                renderers.forEach((toolRenderer) => {
+                    const curTool = this.toolManager.curTool;
+                    if (toolRenderer.isActive(curTool))
+                        toolRenderer.render({ renderer, options, circuit, curTool, input: inputAdapter.state });
+                });
+            });
+        }
+
         this.circuit.attachCanvas(canvas);
-        return () => this.detachCanvas();
-    }
-    public detachCanvas(): void {
-        this.inputAdapter.tearDown();
-        this.circuit.detachCanvas();
+        return () => {
+            inputAdapter.cleanup();
+            this.circuit.detachCanvas();
+        }
     }
 }

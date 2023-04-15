@@ -5,7 +5,7 @@ import {Key} from "./Key";
 
 
 export interface BaseInputEvent {
-    state: UserInputState;
+    input: UserInputState;
 }
 export interface MouseInputEvent extends BaseInputEvent {
     type: "click" | "dblclick" | "mousedown" | "mousedrag" | "mouseup";

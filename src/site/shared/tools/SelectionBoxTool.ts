@@ -19,7 +19,7 @@ export class SelectionBoxTool implements Tool {
         // Activate if the user began dragging on empty canvas
         return (
             ev.type === "mousedrag" &&
-            ev.state.touchCount === 1 &&
+            ev.input.touchCount === 1 &&
             curPressedObj === undefined
         );
     }
@@ -29,8 +29,8 @@ export class SelectionBoxTool implements Tool {
 
     public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         this.rect = Rect.FromPoints(
-            circuit.camera.toWorldPos(ev.state.mouseDownPos),
-            circuit.camera.toWorldPos(ev.state.mousePos),
+            circuit.camera.toWorldPos(ev.input.mouseDownPos),
+            circuit.camera.toWorldPos(ev.input.mousePos),
         );
     }
 
@@ -38,7 +38,7 @@ export class SelectionBoxTool implements Tool {
         // Find all objects within the selection box
         const objs = circuit.pickObjRange(this.rect);
 
-        const deselectAll = (!ev.state.isShiftKeyDown && circuit.selectedObjs.length > 0);
+        const deselectAll = (!ev.input.isShiftKeyDown && circuit.selectedObjs.length > 0);
 
         // If nothing was clicked, check if we should deselect and exit
         if (objs.length === 0) {
@@ -69,8 +69,8 @@ export class SelectionBoxTool implements Tool {
     public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             this.rect = Rect.FromPoints(
-                circuit.camera.toWorldPos(ev.state.mouseDownPos),
-                circuit.camera.toWorldPos(ev.state.mousePos),
+                circuit.camera.toWorldPos(ev.input.mouseDownPos),
+                circuit.camera.toWorldPos(ev.input.mousePos),
             );
 
             circuit.forceRedraw();
