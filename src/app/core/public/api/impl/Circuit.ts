@@ -19,6 +19,8 @@ import {CreateDrawingFromSVG} from "svg2canvas";
 import {CameraImpl}           from "./Camera";
 import {RenderHelper}         from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions}        from "core/internal/view/rendering/RenderOptions";
+import {Selections}           from "../Selections";
+import {SelectionsImpl}       from "./Selections";
 
 
 export abstract class CircuitImpl<
@@ -29,19 +31,19 @@ export abstract class CircuitImpl<
     public circuit: CircuitInternal;
     public view: CircuitView;
 
-    public selections: SelectionsManager;
+    public selectionsManager: SelectionsManager;
 
     public isLocked: boolean;
 
     public constructor(
         circuit: CircuitInternal,
         view: CircuitView,
-        selections: SelectionsManager
+        selectionsManager: SelectionsManager
     ) {
         this.circuit = circuit;
         this.view = view;
 
-        this.selections = selections;
+        this.selectionsManager = selectionsManager;
 
         this.isLocked = false;
     }
@@ -139,10 +141,8 @@ export abstract class CircuitImpl<
         throw new Error("Unimplemented");
     }
 
-    public get selectedObjs(): Obj[] {
-        return this.selections.get()
-               .map((id) => this.getObj(id))
-               .filter((obj) => (obj !== undefined)) as Obj[];
+    public get selections(): Selections {
+        return new SelectionsImpl(this);
     }
 
     public getComponent(id: string): ComponentT | undefined {
@@ -178,9 +178,9 @@ export abstract class CircuitImpl<
     }
 
     public selectionsMidpoint(space: Vector.Spaces): Vector {
-        const allComponents = this.selections.get()
-                              .map((id) => this.getComponent(id))
-                              .filter((comp) => (comp !== undefined)) as Component[];
+        const allComponents = this.selectionsManager.get()
+            .map((id) => this.getComponent(id))
+            .filter((comp) => (comp !== undefined)) as Component[];
 
         // Case: no components are selected
         if (allComponents.length === 0)

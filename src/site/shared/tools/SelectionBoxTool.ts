@@ -38,7 +38,7 @@ export class SelectionBoxTool implements Tool {
         // Find all objects within the selection box
         const objs = circuit.pickObjRange(this.rect);
 
-        const deselectAll = (!ev.input.isShiftKeyDown && circuit.selectedObjs.length > 0);
+        const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
         // If nothing was clicked, check if we should deselect and exit
         if (objs.length === 0) {

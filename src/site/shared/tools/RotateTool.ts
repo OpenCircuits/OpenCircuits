@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {Circuit, Component} from "core/public";
+import {Circuit, Component, isObjComponent} from "core/public";
 
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
 import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
@@ -47,8 +47,8 @@ export class RotateTool implements Tool {
         return (
             ev.type === "mousedown" &&
             ev.input.touchCount === 1 &&
-            circuit.selectedObjs.length > 0 &&
-            circuit.selectedObjs.every((obj) => (obj.baseKind === "Component")) &&
+            circuit.selections.isEmpty &&
+            circuit.selections.every(isObjComponent) &&
             this.isOnCircle(ev.input.mousePos, circuit)
         );
     }
@@ -57,7 +57,7 @@ export class RotateTool implements Tool {
     }
 
     public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        this.components = circuit.selectedObjs as Component[];
+        this.components = circuit.selections.components;
 
         // Get initial angles
         this.curAngles = this.components.map((c) => c.angle);

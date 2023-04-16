@@ -7,7 +7,7 @@ export const SelectionHandler: ToolHandler = {
         if (!(ev.type === "click" && ev.button === LEFT_MOUSE_BUTTON))
             return ToolHandlerResponse.PASS;
 
-        const deselectAll = (!ev.input.isShiftKeyDown && circuit.selectedObjs.length > 0);
+        const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
         const obj = circuit.pickObjAt(ev.input.mousePos, "screen");
         if (!obj) {

@@ -33,7 +33,7 @@ export class TranslateTool implements Tool {
         //  then translate all of the selected objects
         //  otherwise, just translate the pressed object
         this.components = (!curPressedObj || curPressedObj.isSelected)
-            ? (circuit.selectedObjs.filter((o) => (o.baseKind === "Component"))) as Component[]
+            ? circuit.selections.components
             : [curPressedObj as Component];
 
         circuit.beginTransaction();

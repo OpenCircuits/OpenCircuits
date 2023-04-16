@@ -20,8 +20,8 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     protected get internal(): CircuitInternal {
         return this.circuit.circuit;
     }
-    protected get selections(): SelectionsManager {
-        return this.circuit.selections;
+    protected get selectionsManager(): SelectionsManager {
+        return this.circuit.selectionsManager;
     }
 
     public get kind(): string {
@@ -38,12 +38,12 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
 
     public set isSelected(val: boolean) {
         if (val)
-            this.selections.select(this.objID);
+            this.selectionsManager.select(this.objID);
         else
-            this.selections.deselect(this.objID);
+            this.selectionsManager.deselect(this.objID);
     }
     public get isSelected(): boolean {
-        return this.selections.has(this.objID);
+        return this.selectionsManager.has(this.objID);
     }
 
     public set zIndex(val: number) {
