@@ -9,5 +9,4 @@ export interface CircuitDesigner<CircuitT extends Circuit = Circuit> {
     curPressedObj?: Obj;
 
     attachCanvas(canvas: HTMLCanvasElement): () => void;
-    detachCanvas(): void;
 }

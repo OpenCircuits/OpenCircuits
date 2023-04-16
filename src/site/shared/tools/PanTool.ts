@@ -10,10 +10,10 @@ export const PanTool: Tool = {
         //                           or the middle mouse button
         (ev.type === "keydown" && (ev.key === "Alt")) ||
         (ev.type === "mousedrag" && (ev.button === MIDDLE_MOUSE_BUTTON ||
-                                    ev.state.touchCount === 2))
+                                    ev.input.touchCount === 2))
     ),
     shouldDeactivate: (ev) => (
-        (!ev.state.isDragging && !ev.state.isAltKeyDown)
+        (!ev.input.isDragging && !ev.input.isAltKeyDown)
     ),
 
     onActivate:   () => {},
@@ -21,7 +21,7 @@ export const PanTool: Tool = {
 
     onEvent: (ev, { circuit }) => {
         if (ev.type === "mousedrag") {
-            const { x: dx, y: dy } = ev.state.deltaMousePos;
+            const { x: dx, y: dy } = ev.input.deltaMousePos;
             circuit.camera.translate(V(-dx, -dy), "screen");
         }
     },

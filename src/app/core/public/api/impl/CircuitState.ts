@@ -21,7 +21,7 @@ export type CircuitState<
     //  even when there isn't a canvas/images loaded.
     view?: CircuitView;
 
-    selections: SelectionsManager;
+    selectionsManager: SelectionsManager;
 
     isLocked: boolean;
 
