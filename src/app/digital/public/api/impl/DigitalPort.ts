@@ -1,7 +1,7 @@
-import {GUID}       from "core/internal";
-import {Port, Wire} from "core/public";
-import {PortImpl}   from "core/public/api/impl/Port";
-import {Signal}     from "digital/public/utils/Signal";
+import {GUID}     from "core/internal";
+import {Port}     from "core/public";
+import {PortImpl} from "core/public/api/impl/Port";
+import {Signal}   from "digital/public/utils/Signal";
 
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort}      from "../DigitalPort";
@@ -27,12 +27,8 @@ export class DigitalPortImpl extends PortImpl<
         return this.circuit.sim.getSignal(this.id);
     }
 
-    public override connectTo(other: DigitalComponent | DigitalPort): DigitalWire | undefined {
-        if (other.baseKind === "Port")
-            return this.circuit.connectWire(this, other);
-
-        const port = (this.isInputPort ? other.firstOutput : other.firstAvailableInput);
-        return this.circuit.connectWire(this, port);
+    public override connectTo(other: DigitalPort): DigitalWire | undefined {
+        return this.circuit.connectWire(this, other);
     }
 
     public override getLegalWires(): Port.LegalWiresQuery {

@@ -63,5 +63,5 @@ export abstract class PortImpl<
 
     public abstract getLegalWires(): Port.LegalWiresQuery;
 
-    public abstract connectTo(other: PortT | ComponentT): Wire | undefined;
+    public abstract connectTo(other: PortT): Wire | undefined;
 }

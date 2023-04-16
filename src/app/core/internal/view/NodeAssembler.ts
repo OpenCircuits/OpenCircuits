@@ -33,7 +33,7 @@ export class NodeAssembler extends Assembler<Schema.Component> {
             ));
 
             // Update "port" positions
-            const ports = this.circuit.getPortsByGroup(node.id).unwrap();
+            const ports = this.circuit.doc.getPortsByGroup(node.id).unwrap();
             if (Object.entries(ports).length > 0) { // Need to make sure the ports are set
                 // TODO[.](leon): transform the direction so that the angle of the node changes `dir`
                 this.view.portPositions.set(ports["inputs"][0],  { origin: pos, target: pos, dir: V(-1, 0) });

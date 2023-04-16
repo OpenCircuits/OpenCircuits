@@ -30,6 +30,10 @@ export class SelectionsImpl implements Selections {
             .map((id) => this.state.constructComponent(id));
     }
 
+    public clear(): void {
+        this.state.selectionsManager.clear();
+    }
+
     public every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean {
         return this.selections
             .map((id) => this.state.getObj(id)!)

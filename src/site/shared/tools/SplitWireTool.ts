@@ -2,23 +2,23 @@ import {Wire} from "core/public";
 
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON} from "shared/utils/input/Constants";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 import {TranslateTool} from "./TranslateTool";
 
 
 export class SplitWireTool extends TranslateTool {
-    public override shouldActivate(ev: InputManagerEvent, { curPressedObj }: CircuitDesigner): boolean {
+    public override shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user is pressing down on a wire
         return (
             ev.type === "mousedrag" &&
             ev.button === LEFT_MOUSE_BUTTON &&
-            ev.state.touchCount === 1 &&
+            ev.input.touchCount === 1 &&
             curPressedObj?.baseKind === "Wire"
         );
     }
 
-    public override onActivate(ev: InputManagerEvent, designer: CircuitDesigner): void {
+    public override onActivate(ev: InputAdapterEvent, designer: CircuitDesigner): void {
         const { circuit, curPressedObj } = designer;
 
         const wire = curPressedObj! as Wire;

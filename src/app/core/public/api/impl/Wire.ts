@@ -25,7 +25,12 @@ export abstract class WireImpl<
             .unwrap();
     }
 
+    // TODO[model_refactor_api](leon) - Potentially make a `WireInfo` object and move this there
     protected abstract get nodeKind(): string;
+
+    // This method is necessary since how the nodes are configured is project-dependent, so wiring them
+    //  needs to be handled on a per-project-basis.
+    protected abstract connectNode(p1: PortT, p2: PortT, node: ComponentT): { wire1: WireT, wire2: WireT };
 
     public get p1(): PortT {
         return this.circuit.constructPort(this.getObj().p1);
@@ -51,8 +56,7 @@ export abstract class WireImpl<
 
         this.internal.deleteWire(this.id).unwrap();
 
-        const wire1 = p1.connectTo(node) as WireT;
-        const wire2 = p2.connectTo(node) as WireT;
+        const { wire1, wire2 } = this.connectNode(p1, p2, node);
 
         this.circuit.commitTransaction();
 
