@@ -12,4 +12,6 @@ export interface Selections {
     clear(): void;
 
     every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean;
+
+    duplicate(): Obj[];
 }

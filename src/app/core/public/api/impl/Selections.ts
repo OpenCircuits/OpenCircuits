@@ -42,4 +42,10 @@ export class SelectionsImpl implements Selections {
             .map((id) => this.state.getObj(id)!)
             .every(condition);
     }
+
+    public duplicate(): Obj[] {
+        if (this.isEmpty)
+            return [];
+        throw new Error("Unimplemented!");
+    }
 }

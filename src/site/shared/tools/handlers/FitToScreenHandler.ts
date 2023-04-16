@@ -11,9 +11,11 @@ export const FitToScreenHandler: ToolHandler = {
 
         circuit.camera.zoomToFit(
             // Fit selections if there are any, otherwise fit entire circuit
-            circuit.selections.isEmpty
+            (circuit.selections.isEmpty
                 ? circuit.getObjs()
-                : circuit.selections.all);
+                : circuit.selections.all),
+            FIT_PADDING_RATIO
+        );
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;

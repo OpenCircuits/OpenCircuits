@@ -74,7 +74,7 @@ export class CameraImpl implements Camera {
         return this.state.view!.toWorldPos(screenPos);
     }
 
-    public zoomToFit(objs: Obj[]): void {
+    public zoomToFit(objs: Obj[], padRatio = 1): void {
         throw new Error("Unimplemented!");
     }
 }

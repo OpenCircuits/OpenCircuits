@@ -18,5 +18,5 @@ export interface Camera {
 
     toWorldPos(screenPos: Vector): Vector;
 
-    zoomToFit(objs: Obj[]): void;
+    zoomToFit(objs: Obj[], padRatio?: number): void;
 }
