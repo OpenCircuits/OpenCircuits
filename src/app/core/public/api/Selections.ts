@@ -8,5 +8,7 @@ export interface Selections {
 
     readonly components: Component[];
 
+    clear(): void;
+
     every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean;
 }

@@ -31,5 +31,5 @@ export interface Port extends BaseObject {
     // TODO[model_refactor_api]: connectedComponents?
 
     getLegalWires(): Port.LegalWiresQuery;
-    connectTo(other: Port): void;
+    connectTo(other: Port): Wire | undefined;
 }

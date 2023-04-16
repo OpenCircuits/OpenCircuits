@@ -231,6 +231,13 @@ const Label = new DigitalComponentInfo("Label", {
     "bgColor":   "string",
 }, {}, [{}]);
 
+const NodeInfo = new DigitalComponentInfo(
+    "DigitalNode",
+    {},
+    { "inputs": "input", "outputs": "output" },
+    [{ "inputs": 1, "outputs": 1 }]
+);
+
 
 // Wires
 class DigitalWireInfo implements ObjInfo {
@@ -286,6 +293,7 @@ class DigitalComponentInfoProvider implements ObjInfoProvider {
 
     public constructor(components: DigitalComponentInfo[]) {
         this.components = new Map(components.map((info) => [info.kind, info]));
+        this.components.set("DigitalNode", NodeInfo);
         this.wires = new Map([["DigitalWire", WireInfo]]);
         this.ports = new Map([["DigitalPort", PortInfo]]);
     }

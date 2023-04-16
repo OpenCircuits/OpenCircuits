@@ -27,6 +27,10 @@ export class DigitalPortImpl extends PortImpl<
         return this.circuit.sim.getSignal(this.id);
     }
 
+    public override connectTo(other: DigitalPort): DigitalWire | undefined {
+        return this.circuit.connectWire(this, other);
+    }
+
     public override getLegalWires(): Port.LegalWiresQuery {
         return {
             isEmpty: !this.isAvailable(),

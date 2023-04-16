@@ -18,6 +18,7 @@ import {TranslateTool}            from "shared/tools/TranslateTool";
 import {SelectionBoxTool}         from "shared/tools/SelectionBoxTool";
 import {RotateTool}               from "shared/tools/RotateTool";
 import {WiringTool}               from "shared/tools/WiringTool";
+import {SplitWireTool}            from "shared/tools/SplitWireTool";
 import {ZoomHandler}              from "shared/tools/handlers/ZoomHandler";
 import {SelectionHandler}         from "shared/tools/handlers/SelectionHandler";
 import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
@@ -70,8 +71,13 @@ async function Init(): Promise<void> {
         CreateCircuit(),
         {
             defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
-            tools:       [PanTool, new TranslateTool(), new RotateTool(), new WiringTool(), new SelectionBoxTool()],
-            renderers:   [new DigitalWiringToolRenderer(), SelectionBoxToolRenderer, RotateToolRenderer],
+            tools:       [
+                PanTool,
+                new RotateTool(), new TranslateTool(),
+                new WiringTool(), new SplitWireTool(),
+                new SelectionBoxTool(),
+            ],
+            renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
         },
     );
 

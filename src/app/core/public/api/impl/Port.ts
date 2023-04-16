@@ -63,7 +63,5 @@ export abstract class PortImpl<
 
     public abstract getLegalWires(): Port.LegalWiresQuery;
 
-    public connectTo(other: PortT): Wire | undefined {
-        return this.circuit.connectWire(this, other);
-    }
+    public abstract connectTo(other: PortT): Wire | undefined;
 }
