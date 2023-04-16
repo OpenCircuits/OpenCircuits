@@ -11,11 +11,12 @@ import {CalculateMidpoint} from "math/MathUtils";
 import {Observable} from "core/utils/Observable";
 
 import {Key}               from "./Key";
-import {InputManagerEvent} from "./InputManagerEvent";
-import {InputManagerState} from "./InputManagerState";
+import {InputAdapterEvent} from "./InputAdapterEvent";
+import {UserInputState}    from "./UserInputState";
+import {Camera}            from "core/public/api/Camera";
 
 
-export class InputManagerStateImpl implements InputManagerState {
+export class UserInputStateImpl implements UserInputState {
     public mouseDownPos: Vector;
     public prevMousePos: Vector;
     public mousePos: Vector;
@@ -30,7 +31,11 @@ export class InputManagerStateImpl implements InputManagerState {
 
     public keysDown: Set<Key>;
 
-    public constructor() {
+    private readonly camera: Camera;
+
+    public constructor(camera: Camera) {
+        this.camera = camera;
+
         this.mouseDownPos = V();
         this.prevMousePos = V();
         this.mousePos = V();
@@ -44,6 +49,10 @@ export class InputManagerStateImpl implements InputManagerState {
         this.touchCount = 0;
 
         this.keysDown = new Set();
+    }
+
+    public get worldMousePos() {
+        return this.camera.toWorldPos(this.mousePos);
     }
 
     public get deltaMousePos() {
@@ -67,57 +76,43 @@ export class InputManagerStateImpl implements InputManagerState {
 /**
  * Class to handle user input, and trigger appropriate event listeners.
  */
-export class InputManager extends Observable<InputManagerEvent> {
+export class InputAdapter extends Observable<InputAdapterEvent> {
     /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
     private readonly dragTime: number;
 
     /** The canvas the user is performing inputs on. */
-    private canvas?: HTMLCanvasElement;
+    private readonly canvas: HTMLCanvasElement;
 
-    public state: InputManagerStateImpl;
+    public state: UserInputStateImpl;
+
+    public readonly cleanup: () => void;
 
     /**
      * Initializes Input with given canvas and dragTime.
      *
+     * @param canvas   The canvas to adapt the inputs of.
+     * @param camera   The camera for the circuit (used to provide world-space input utilities).
      * @param dragTime The minimum length of time a mousedown must last to be considered a drag rather than a click.
      */
-    public constructor(dragTime: number = DRAG_TIME) {
+    public constructor(canvas: HTMLCanvasElement, camera: Camera, dragTime: number = DRAG_TIME) {
         super();
         this.dragTime = dragTime;
-        this.state = new InputManagerStateImpl();
-    }
-
-    /**
-     * Set ups event listeners on the given canvas and returns a tear down callback.
-     *
-     * @param canvas The canvas to setup on.
-     * @returns      A callback that tears down the setup event listeners.
-     * @throws If the canvas was already setup and not torn down.
-     */
-    public setupOn(canvas: HTMLCanvasElement): () => void {
-        if (this.canvas)
-            throw new Error("Attempted to setup Input when previously setup! This is undefined behaviour!");
-
         this.canvas = canvas;
+        this.state = new UserInputStateImpl(camera);
 
+        // Setup adapters
         const tearDownKeyboardEvents = this.hookupKeyboardEvents();
         const tearDownMouseEvents    = this.hookupMouseEvents(canvas);
         const tearDownTouchEvents    = this.hookupTouchEvents(canvas);
         const tearDownHammer         = this.setupHammer(canvas);
 
-        this.tearDown = () => {
+        this.cleanup = () => {
             tearDownHammer();
             tearDownTouchEvents();
             tearDownMouseEvents();
             tearDownKeyboardEvents();
-
-            this.canvas = undefined;
         };
-
-        return this.tearDown;
     }
-
-    public tearDown: () => void = () => {};
 
     /**
      * Checks if newKey is a prevented combination of keys.
@@ -192,9 +187,9 @@ export class InputManager extends Observable<InputManagerEvent> {
         }
         const onBlur = () => this.onBlur();
 
-        const onPaste = (ev: ClipboardEvent) => this.publish({ state: this.state, type: "paste", ev });
-        const onCopy  = (ev: ClipboardEvent) => this.publish({ state: this.state, type: "copy",  ev });
-        const onCut   = (ev: ClipboardEvent) => this.publish({ state: this.state, type: "cut",   ev });
+        const onPaste = (ev: ClipboardEvent) => this.publish({ input: this.state, type: "paste", ev });
+        const onCopy  = (ev: ClipboardEvent) => this.publish({ input: this.state, type: "copy",  ev });
+        const onCut   = (ev: ClipboardEvent) => this.publish({ input: this.state, type: "cut",   ev });
 
 
         window.addEventListener("keydown", onKeyDown, false);
@@ -239,7 +234,7 @@ export class InputManager extends Observable<InputManagerEvent> {
 
         const onContextMenu = (e: MouseEvent) => {
             e.preventDefault();
-            this.publish({ state: this.state, type: "contextmenu" });
+            this.publish({ input: this.state, type: "contextmenu" });
         }
 
         // Mouse events
@@ -312,7 +307,7 @@ export class InputManager extends Observable<InputManagerEvent> {
         const pinch = new Hammer.Pinch();
         const onPinch = (e: HammerInput) => {
             this.publish({
-                state:  this.state,
+                input:  this.state,
                 type:   "zoom",
                 factor: lastScale/e.scale,
                 pos:    this.state.mousePos,
@@ -359,14 +354,6 @@ export class InputManager extends Observable<InputManagerEvent> {
     }
 
     /**
-     * Resets internal state of the Input.
-     *  Keeps listeners and outer-controlled state.
-     */
-    public reset(): void {
-        this.state = new InputManagerStateImpl();
-    }
-
-    /**
      * Sets the given key as down, and calls each Listener on Event "keydown", key.
      *
      * @param key Represents the key being pressed.
@@ -374,7 +361,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     protected onKeyDown(key: Key): void {
         this.state.keysDown.add(key);
 
-        this.publish({ state: this.state, type: "keydown", key });
+        this.publish({ input: this.state, type: "keydown", key });
     }
     /**
      * Sets the given key as up, and calls each Listener on Event "keyup", key.
@@ -385,7 +372,7 @@ export class InputManager extends Observable<InputManagerEvent> {
         this.state.keysDown.delete(key);
 
         // call each listener
-        this.publish({ state: this.state, type: "keyup", key });
+        this.publish({ input: this.state, type: "keyup", key });
     }
 
     /**
@@ -402,7 +389,7 @@ export class InputManager extends Observable<InputManagerEvent> {
         }
 
         // call each listener
-        this.publish({ state: this.state, type: "click", button });
+        this.publish({ input: this.state, type: "click", button });
     }
     /**
      * Calls each Listener on Event "dbclick", button.
@@ -412,7 +399,7 @@ export class InputManager extends Observable<InputManagerEvent> {
     protected onDoubleClick(button: number): void {
 
         // call each listener
-        this.publish({ state: this.state, type: "dblclick", button });
+        this.publish({ input: this.state, type: "dblclick", button });
     }
 
     /**
@@ -428,7 +415,7 @@ export class InputManager extends Observable<InputManagerEvent> {
             zoomFactor = 1 / zoomFactor;
 
         this.publish({
-            state:  this.state,
+            input:  this.state,
             type:   "zoom",
             factor: zoomFactor,
             pos:    this.state.mousePos,
@@ -463,7 +450,7 @@ export class InputManager extends Observable<InputManagerEvent> {
         this.state.mousePos = V(this.state.mouseDownPos);
         this.state.mouseDownButton = button;
 
-        this.publish({ state: this.state, type: "mousedown", button });
+        this.publish({ input: this.state, type: "mousedown", button });
     }
     /**
      * Triggered on mouse movement, calculates new mouse position,
@@ -491,12 +478,12 @@ export class InputManager extends Observable<InputManagerEvent> {
 
         if (this.state.isDragging) {
             this.publish({
-                state:  this.state,
+                input:  this.state,
                 type:   "mousedrag",
                 button: this.state.mouseDownButton,
             });
         }
-        this.publish({ state: this.state, type: "mousemove" });
+        this.publish({ input: this.state, type: "mousemove" });
     }
     /**
      * Calls each Listener on Event "mouseup", button
@@ -509,14 +496,14 @@ export class InputManager extends Observable<InputManagerEvent> {
         this.state.isMouseDown = false;
         this.state.mouseDownButton = -1;
 
-        this.publish({ state: this.state, type: "mouseup", button });
+        this.publish({ input: this.state, type: "mouseup", button });
     }
 
     /**
      * Calls each Listener on Event "mouseenter".
      */
     protected onMouseEnter(): void {
-        this.publish({ state: this.state, type: "mouseenter" });
+        this.publish({ input: this.state, type: "mouseenter" });
     }
     /**
      * Calls each Listener on Event "mouseleave".
@@ -526,13 +513,13 @@ export class InputManager extends Observable<InputManagerEvent> {
         this.state.touchCount = 0;
         this.state.isMouseDown = false;
 
-        this.publish({ state: this.state, type: "mouseleave" });
+        this.publish({ input: this.state, type: "mouseleave" });
 
         // call mouse up as well so that
         //  up events get called when the
         //  mouse leaves
         this.publish({
-            state:  this.state,
+            input:  this.state,
             type:   "mouseup",
             button: this.state.mouseDownButton,
         });

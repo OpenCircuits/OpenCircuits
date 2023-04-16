@@ -3,7 +3,8 @@ import {CircleSectorPrim} from "core/internal/view/rendering/prims/CircleSectorP
 
 import {ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_THICKNESS, RotateTool} from "../RotateTool";
 
-import {ToolRenderer} from "./ToolRenderer";
+import {ToolRenderer}   from "./ToolRenderer";
+import {isObjComponent} from "core/public";
 
 
 export const RotateToolRenderer: ToolRenderer<RotateTool | undefined> = {
@@ -22,14 +23,12 @@ export const RotateToolRenderer: ToolRenderer<RotateTool | undefined> = {
             }));
         }
 
-        const selections = circuit.selectedObjs;
+        const selections = circuit.selections;
 
         // If we are in the default tool, draw the rotation circle outline if we have only components selected
         if (!curTool) {
-            if (selections.length > 0 &&
-                selections.every((o) => (o.baseKind === "Component"))) {
+            if (selections.isEmpty && selections.every((isObjComponent)))
                 drawOutline();
-            }
             return;
         }
 

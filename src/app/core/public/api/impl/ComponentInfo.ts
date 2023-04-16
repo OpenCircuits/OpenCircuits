@@ -14,7 +14,7 @@ export class ComponentInfoImpl implements ComponentInfo {
     protected state: CircuitState;
 
     public constructor(state: CircuitState, kind: string) {
-        const info = state.circuit.getComponentInfo(kind);
+        const info = state.circuit.doc.getComponentInfo(kind);
         if (!info)
             throw new Error(`Failed to find component info for ${kind}!`);
         this.info = info;

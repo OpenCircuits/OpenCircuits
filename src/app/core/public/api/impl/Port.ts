@@ -21,7 +21,7 @@ export abstract class PortImpl<
     public readonly baseKind = "Port";
 
     protected getObj(): Schema.Port {
-        return this.internal.getPortByID(this.id)
+        return this.internal.doc.getPortByID(this.id)
             .mapErr(AddErrE(`API Port: Attempted to get port with ID ${this.id} could not find it!`))
             .unwrap();
     }
@@ -37,11 +37,11 @@ export abstract class PortImpl<
     }
 
     public get originPos(): Vector {
-        // TODO: This probably needs to be calculated explicitly here ?
+        // TODO[model_refactor_api]: This probably needs to be calculated explicitly here ?
         return this.circuit.view!.portPositions.get(this.id)!.origin;
     }
     public get targetPos(): Vector {
-        // TODO: This probably needs to be calculated explicitly here ?
+        // TODO[model_refactor_api]: This probably needs to be calculated explicitly here ?
         return this.circuit.view!.portPositions.get(this.id)!.target;
     }
     public get dir(): Vector {
@@ -49,7 +49,7 @@ export abstract class PortImpl<
     }
 
     public get connections(): WireT[] {
-        return [...this.internal.getWiresForPort(this.id).unwrap()]
+        return [...this.internal.doc.getWiresForPort(this.id).unwrap()]
             .map((id) => this.circuit.constructWire(id));
     }
 

@@ -3,7 +3,7 @@ import {V} from "Vector";
 import {Rect} from "math/Rect";
 
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
-import {InputManagerEvent} from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 import {Tool} from "./Tool";
 
@@ -15,30 +15,30 @@ export class SelectionBoxTool implements Tool {
         this.rect = new Rect(V(), V());
     }
 
-    public shouldActivate(ev: InputManagerEvent, { curPressedObj }: CircuitDesigner): boolean {
+    public shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user began dragging on empty canvas
         return (
             ev.type === "mousedrag" &&
-            ev.state.touchCount === 1 &&
+            ev.input.touchCount === 1 &&
             curPressedObj === undefined
         );
     }
-    public shouldDeactivate(ev: InputManagerEvent): boolean {
+    public shouldDeactivate(ev: InputAdapterEvent): boolean {
         return (ev.type === "mouseup");
     }
 
-    public onActivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         this.rect = Rect.FromPoints(
-            circuit.camera.toWorldPos(ev.state.mouseDownPos),
-            circuit.camera.toWorldPos(ev.state.mousePos),
+            circuit.camera.toWorldPos(ev.input.mouseDownPos),
+            circuit.camera.toWorldPos(ev.input.mousePos),
         );
     }
 
-    public onDeactivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         // Find all objects within the selection box
         const objs = circuit.pickObjRange(this.rect);
 
-        const deselectAll = (!ev.state.isShiftKeyDown && circuit.selectedObjs.length > 0);
+        const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
         // If nothing was clicked, check if we should deselect and exit
         if (objs.length === 0) {
@@ -66,11 +66,11 @@ export class SelectionBoxTool implements Tool {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             this.rect = Rect.FromPoints(
-                circuit.camera.toWorldPos(ev.state.mouseDownPos),
-                circuit.camera.toWorldPos(ev.state.mousePos),
+                circuit.camera.toWorldPos(ev.input.mouseDownPos),
+                circuit.camera.toWorldPos(ev.input.mousePos),
             );
 
             circuit.forceRedraw();

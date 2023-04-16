@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+import {Vector} from "Vector";
 
-import {Vector}     from "Vector";
 import {BaseObject} from "./BaseObject";
 import {Component}  from "./Component";
 import {Wire}       from "./Wire";
@@ -26,7 +26,9 @@ export interface Port extends BaseObject {
     readonly dir: Vector;
 
     readonly connections: Wire[];
-    readonly connectedPorts: Port[]; // TODO: think of a better name for this ?
+    // TODO[model_refactor_api]: What about nodes? Should this be endpoint non-node components?
+    readonly connectedPorts: Port[];
+    // TODO[model_refactor_api]: connectedComponents?
 
     getLegalWires(): Port.LegalWiresQuery;
     connectTo(other: Port | Component): Wire | undefined;

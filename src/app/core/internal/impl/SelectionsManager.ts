@@ -41,6 +41,10 @@ export class SelectionsManager extends Observable<SelectionEvent> {
         return [...this.selections];
     }
 
+    public length(): number {
+        return this.selections.size;
+    }
+
     public clear(): void {
         this.deselect(...this.get());
     }

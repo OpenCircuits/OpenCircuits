@@ -20,12 +20,12 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     protected get internal(): CircuitInternal {
         return this.circuit.circuit;
     }
-    protected get selections(): SelectionsManager {
-        return this.circuit.selections;
+    protected get selectionsManager(): SelectionsManager {
+        return this.circuit.selectionsManager;
     }
 
     public get kind(): string {
-        return this.internal.getObjByID(this.id).unwrap().kind;
+        return this.internal.doc.getObjByID(this.id).unwrap().kind;
     }
 
     public get id(): string {
@@ -38,12 +38,12 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
 
     public set isSelected(val: boolean) {
         if (val)
-            this.selections.select(this.objID);
+            this.selectionsManager.select(this.objID);
         else
-            this.selections.deselect(this.objID);
+            this.selectionsManager.deselect(this.objID);
     }
     public get isSelected(): boolean {
-        return this.selections.has(this.objID);
+        return this.selectionsManager.has(this.objID);
     }
 
     public set zIndex(val: number) {
@@ -61,7 +61,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
     }
 
     public exists(): boolean {
-        return !!this.internal.getObjByID(this.objID);
+        return !!this.internal.doc.getObjByID(this.objID);
     }
 
     public setProp(key: string, val: Prop): void {
@@ -70,7 +70,7 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
         this.circuit.commitTransaction();
     }
     public getProp(key: string): Prop | undefined {
-        return this.internal.getObjByID(this.objID).unwrap().props[key];
+        return this.internal.doc.getObjByID(this.objID).unwrap().props[key];
     }
     public getProps(): Record<string, Prop> {
         throw new Error("Unimplemented");

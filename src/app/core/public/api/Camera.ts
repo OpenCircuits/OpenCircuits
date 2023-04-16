@@ -14,5 +14,5 @@ export interface Camera {
     translate(dPos: Vector, space?: Vector.Spaces): void;
     zoomTo(zoom: number, pos: Vector): void;
 
-    toWorldPos(pos: Vector): Vector;
+    toWorldPos(screenPos: Vector): Vector;
 }

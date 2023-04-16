@@ -2,8 +2,12 @@ import {Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
+import {GUID} from "core/schema/GUID";
+
 import {DebugOptions} from "core/internal/impl/DebugOptions";
-import {GUID}         from "core/schema/GUID";
+
+import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
 import {Camera}        from "./Camera";
 import {Component}     from "./Component";
@@ -11,8 +15,7 @@ import {ComponentInfo} from "./ComponentInfo";
 import {Obj}           from "./Obj";
 import {Port}          from "./Port";
 import {Wire}          from "./Wire";
-import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
+import {Selections}    from "./Selections";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
@@ -41,7 +44,7 @@ export interface Circuit {
     pickWireAt(pt: Vector, space?: Vector.Spaces): Wire | undefined;
     pickPortAt(pt: Vector, space?: Vector.Spaces): Port | undefined;
     pickObjRange(bounds: Rect): Obj[];
-    readonly selectedObjs: Obj[];
+    readonly selections: Selections;
 
     getComponent(id: GUID): Component | undefined;
     getWire(id: GUID): Wire | undefined;
