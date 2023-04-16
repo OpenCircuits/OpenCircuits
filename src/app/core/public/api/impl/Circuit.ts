@@ -115,23 +115,24 @@ export abstract class CircuitImpl<
     }
 
     // Queries
+    private pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
+        const pos = ((space === "world" ? pt : this.view.toWorldPos(pt)));
+        return this.view.findNearestObj(pos, filter);
+    }
     public pickObjAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
-        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        return this.view.findNearestObj(pos).map((id) => this.getObj(id)).asUnion();
+        return this.pickObjAtHelper(pt, space)
+            .map((id) => this.getObj(id)).asUnion();
     }
     public pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | undefined {
-        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        return this.view.findNearestObj(pos, (id) => this.circuit.doc.hasComp(id))
+        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasComp(id))
             .map((id) => this.getComponent(id)).asUnion();
     }
     public pickWireAt(pt: Vector, space: Vector.Spaces = "world"): WireT | undefined {
-        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        return this.view.findNearestObj(pos, (id) => this.circuit.doc.hasWire(id))
+        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasWire(id))
             .map((id) => this.getWire(id)).asUnion();
     }
     public pickPortAt(pt: Vector, space: Vector.Spaces = "world"): PortT | undefined {
-        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        return this.view.findNearestObj(pos, (id) => this.circuit.doc.hasPort(id))
+        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasPort(id))
             .map((id) => this.getPort(id)).asUnion();
     }
     public pickObjRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
