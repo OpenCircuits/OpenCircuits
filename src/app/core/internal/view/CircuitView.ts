@@ -7,6 +7,7 @@ import {Matrix2x3}   from "math/Matrix";
 import {Transform}   from "math/Transform";
 
 import {None,Option,Some} from "core/utils/Result";
+import {Observable}       from "core/utils/Observable";
 
 import {GUID}                                from "..";
 import {CircuitInternal}                     from "../impl/CircuitInternal";
@@ -20,7 +21,7 @@ import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
 
 
-export abstract class CircuitView {
+export abstract class CircuitView extends Observable<{ renderer: RenderHelper }> {
     public readonly circuit: CircuitInternal;
     public readonly selections: SelectionsManager;
 
@@ -42,6 +43,8 @@ export abstract class CircuitView {
     public wirePrims: Map<GUID, Prims>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
+        super();
+
         this.circuit = circuit;
         this.selections = selections;
 
@@ -107,13 +110,17 @@ export abstract class CircuitView {
         return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
     }
 
-    public findNearestObj(pos: Vector): Option<GUID> {
+    public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): Option<GUID> {
         for (const [id, prims] of this.componentPrims) {
+            if (!filter(id)) // Skip things not in the filter
+                continue;
             if (prims.some((prim) => prim.hitTest(pos)))
                 return Some(id);
             // TODO[model_refactor_api](leon): hit test the component's ports as well
         }
         for (const [id, prims] of this.wirePrims) {
+            if (!filter(id)) // Skip things not in the filter
+                continue;
             if (prims.some((prim) => prim.hitTest(pos)))
                 return Some(id);
         }
@@ -162,11 +169,12 @@ export abstract class CircuitView {
                 this.renderer.draw(prim);
             });
         });
-        this.renderer.restore();
 
         // Debug rendering
 
         // Callback for post-rendering
+        this.publish({ renderer: this.renderer });
+        this.renderer.restore();
     }
 
     public getContextUtils() {

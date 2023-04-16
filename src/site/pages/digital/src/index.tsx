@@ -15,8 +15,11 @@ import {CreateDesigner} from "shared/circuitdesigner";
 import {DefaultTool}      from "shared/tools/DefaultTool";
 import {PanTool}          from "shared/tools/PanTool";
 import {TranslateTool}    from "shared/tools/TranslateTool";
+import {WiringTool}       from "shared/tools/WiringTool";
 import {ZoomHandler}      from "shared/tools/handlers/ZoomHandler";
 import {SelectionHandler} from "shared/tools/handlers/SelectionHandler";
+
+import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
 import {DevListFiles} from "shared/api/Dev";
 
@@ -63,8 +66,9 @@ async function Init(): Promise<void> {
         CreateCircuit(),
         {
             defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
-            tools:       [PanTool, new TranslateTool()],
-        }
+            tools:       [PanTool, new TranslateTool(), new WiringTool()],
+            renderers:   [new DigitalWiringToolRenderer()],
+        },
     );
 
     await LoadingScreen("loading-screen", startPercent, [

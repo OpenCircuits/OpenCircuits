@@ -25,6 +25,9 @@ export class ToolManager {
                 this.curTool.onDeactivate(ev, designer);
                 this.curTool = undefined;
                 this.defaultTool.onEvent(ev, designer);
+
+                designer.circuit.forceRedraw();
+
                 return;
             }
             return;
@@ -36,6 +39,9 @@ export class ToolManager {
             this.curTool = newTool;
             newTool.onActivate(ev, designer);
             newTool.onEvent(ev, designer);
+
+            designer.circuit.forceRedraw();
+
             return;
         }
 

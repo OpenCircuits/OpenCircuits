@@ -1,3 +1,5 @@
+import {Vector} from "Vector";
+
 import {AddErrE} from "core/utils/MultiError";
 
 import {Schema} from "core/schema";
@@ -8,10 +10,9 @@ import {Wire}      from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
-import {Vector}         from "Vector";
 
 
-export class PortImpl<
+export abstract class PortImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
@@ -43,6 +44,9 @@ export class PortImpl<
         // TODO[model_refactor_api]: This probably needs to be calculated explicitly here ?
         return this.circuit.view!.portPositions.get(this.id)!.target;
     }
+    public get dir(): Vector {
+        return this.targetPos.sub(this.originPos).normalize();
+    }
 
     public get connections(): WireT[] {
         return [...this.internal.doc.getWiresForPort(this.id).unwrap()]
@@ -56,6 +60,8 @@ export class PortImpl<
     public canConnectTo(other: PortT): boolean {
         throw new Error("Unimplemented");
     }
+
+    public abstract getLegalWires(): Port.LegalWiresQuery;
 
     public connectTo(other: PortT): Wire | undefined {
         return this.circuit.connectWire(this, other);

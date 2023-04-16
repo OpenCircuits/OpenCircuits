@@ -74,7 +74,7 @@ export class InputAdapter extends Observable<InputAdapterEvent> {
     /** The canvas the user is performing inputs on. */
     private canvas?: HTMLCanvasElement;
 
-    private state: UserInputStateImpl;
+    public state: UserInputStateImpl;
 
     /**
      * Initializes Input with given canvas and dragTime.

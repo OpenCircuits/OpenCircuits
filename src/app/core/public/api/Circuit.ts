@@ -11,6 +11,8 @@ import {ComponentInfo} from "./ComponentInfo";
 import {Obj}           from "./Obj";
 import {Port}          from "./Port";
 import {Wire}          from "./Wire";
+import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
@@ -34,8 +36,11 @@ export interface Circuit {
     readonly camera: Camera;
 
     // Queries
-    pickObjectAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
-    pickObjectRange(bounds: Rect): Obj[];
+    pickObjAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
+    pickComponentAt(pt: Vector, space?: Vector.Spaces): Component | undefined;
+    pickWireAt(pt: Vector, space?: Vector.Spaces): Wire | undefined;
+    pickPortAt(pt: Vector, space?: Vector.Spaces): Port | undefined;
+    pickObjRange(bounds: Rect): Obj[];
     readonly selectedObjs: Obj[];
 
     getComponent(id: GUID): Component | undefined;
@@ -82,7 +87,10 @@ export interface Circuit {
     attachCanvas(canvas: HTMLCanvasElement): () => void;
     detachCanvas(): void;
 
-    addRenderCallback(cb: () => void): void;
+    forceRedraw(): void;
+
+    // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
+    addRenderCallback(cb: (data: { renderer: RenderHelper, options: RenderOptions, circuit: Circuit }) => void): void;
 
     subscribe(cb: (ev: any) => void): () => void;
 }

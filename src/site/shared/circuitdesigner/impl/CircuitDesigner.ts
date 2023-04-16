@@ -1,11 +1,18 @@
 import {Circuit, Obj}    from "core/public";
 import {DefaultTool}     from "shared/tools/DefaultTool";
+import {ToolRenderer}    from "shared/tools/renderers/ToolRenderer";
 import {Tool}            from "shared/tools/Tool";
 import {Cursor}          from "shared/utils/input/Cursor";
 import {InputAdapter}    from "shared/utils/input/InputAdapter";
 import {CircuitDesigner} from "../CircuitDesigner";
 import {ToolManager}     from "./ToolManager";
 
+
+export interface ToolConfig {
+    defaultTool: DefaultTool;
+    tools: Tool[];
+    renderers?: Array<ToolRenderer<Tool>>;
+}
 
 export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDesigner<CircuitT> {
     public readonly circuit: CircuitT;
@@ -21,10 +28,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
 
     public constructor(
         circuit: CircuitT,
-        { defaultTool, tools }: {
-            defaultTool: DefaultTool;
-            tools: Tool[];
-        },
+        { defaultTool, tools, renderers }: ToolConfig,
     ) {
         this.circuit = circuit;
 
@@ -39,6 +43,17 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
 
         // Setup tool manager
         this.inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
+
+        // Attach tool renderers
+        if (renderers) {
+            this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
+                renderers.forEach((toolRenderer) => {
+                    const curTool = this.toolManager.curTool;
+                    if (toolRenderer.isActive(curTool))
+                        toolRenderer.render({ renderer, options, circuit, curTool, input: this.inputAdapter.state });
+                });
+            });
+        }
     }
 
     public get curPressedObj() {

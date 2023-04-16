@@ -17,6 +17,8 @@ import {Wire}      from "../Wire";
 import {CircuitState}         from "./CircuitState";
 import {CreateDrawingFromSVG} from "svg2canvas";
 import {CameraImpl}           from "./Camera";
+import {RenderHelper}         from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions}        from "core/internal/view/rendering/RenderOptions";
 
 
 export abstract class CircuitImpl<
@@ -113,11 +115,27 @@ export abstract class CircuitImpl<
     }
 
     // Queries
-    public pickObjectAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
-        const pos = ((space === "world") ? pt : this.view.toWorldPos(pt));
-        return this.view.findNearestObj(pos).map((id) => this.getObj(id)).asUnion();
+    private pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
+        const pos = ((space === "world" ? pt : this.view.toWorldPos(pt)));
+        return this.view.findNearestObj(pos, filter);
     }
-    public pickObjectRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
+    public pickObjAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
+        return this.pickObjAtHelper(pt, space)
+            .map((id) => this.getObj(id)).asUnion();
+    }
+    public pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | undefined {
+        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasComp(id))
+            .map((id) => this.getComponent(id)).asUnion();
+    }
+    public pickWireAt(pt: Vector, space: Vector.Spaces = "world"): WireT | undefined {
+        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasWire(id))
+            .map((id) => this.getWire(id)).asUnion();
+    }
+    public pickPortAt(pt: Vector, space: Vector.Spaces = "world"): PortT | undefined {
+        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasPort(id))
+            .map((id) => this.getPort(id)).asUnion();
+    }
+    public pickObjRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
     }
 
@@ -279,8 +297,14 @@ export abstract class CircuitImpl<
         this.view.setCanvas(undefined);
     }
 
-    public addRenderCallback(cb: () => void): void {
-        throw new Error("Unimplemented");
+    public forceRedraw(): void {
+        this.view.scheduler.requestRender();
+    }
+
+    public addRenderCallback(cb: (data: {
+        renderer: RenderHelper; options: RenderOptions; circuit: Circuit;
+    }) => void): void {
+        this.view.subscribe(({ renderer }) => cb({ renderer, options: this.view.options, circuit: this }));
     }
 
     public subscribe(cb: (ev: any) => void): () => void {
