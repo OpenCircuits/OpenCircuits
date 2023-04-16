@@ -1,5 +1,3 @@
-
-
 export abstract class Observable<Event = unknown> {
     protected blocked: boolean;
     protected callbacks: Set<(data: Event) => void>;
@@ -16,6 +14,10 @@ export abstract class Observable<Event = unknown> {
 
         // Shallow copy in case the callbacks try to sub/unsub while iterating
         [...this.callbacks].forEach((c) => c(data));
+    }
+
+    protected unsubscribeAll() {
+        this.callbacks.clear();
     }
 
     public setBlocked(blocked: boolean): void {

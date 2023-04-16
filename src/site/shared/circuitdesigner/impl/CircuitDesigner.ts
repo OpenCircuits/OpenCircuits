@@ -55,6 +55,8 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
+        const { renderers } = this.toolConfig;
+
         // Setup input adapter
         const inputAdapter = new InputAdapter(canvas, this.circuit.camera);
 
@@ -62,9 +64,9 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
         inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
 
         // Attach tool renderers
-        const { renderers } = this.toolConfig;
+        let renderCleanup = () => {};
         if (renderers) {
-            this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
+            renderCleanup = this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
                 renderers.forEach((toolRenderer) => {
                     const curTool = this.toolManager.curTool;
                     if (toolRenderer.isActive(curTool))
@@ -75,8 +77,9 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
 
         this.circuit.attachCanvas(canvas);
         return () => {
-            inputAdapter.cleanup();
             this.circuit.detachCanvas();
+            renderCleanup();
+            inputAdapter.cleanup();
         }
     }
 }

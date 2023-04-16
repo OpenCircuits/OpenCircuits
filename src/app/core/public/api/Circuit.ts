@@ -16,6 +16,7 @@ import {Obj}           from "./Obj";
 import {Port}          from "./Port";
 import {Wire}          from "./Wire";
 import {Selections}    from "./Selections";
+import {CleanupFunc}   from "core/utils/types";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
@@ -87,13 +88,17 @@ export interface Circuit {
 
     resize(w: number, h: number): void;
     readonly canvas?: HTMLCanvasElement;
-    attachCanvas(canvas: HTMLCanvasElement): () => void;
+    attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
     detachCanvas(): void;
 
     forceRedraw(): void;
 
     // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
-    addRenderCallback(cb: (data: { renderer: RenderHelper, options: RenderOptions, circuit: Circuit }) => void): void;
+    addRenderCallback(cb: (data: {
+        renderer: RenderHelper;
+        options: RenderOptions;
+        circuit: Circuit;
+    }) => void): CleanupFunc;
 
-    subscribe(cb: (ev: any) => void): () => void;
+    subscribe(cb: (ev: any) => void): CleanupFunc;
 }

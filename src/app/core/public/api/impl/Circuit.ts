@@ -21,6 +21,7 @@ import {RenderHelper}         from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions}        from "core/internal/view/rendering/RenderOptions";
 import {Selections}           from "../Selections";
 import {SelectionsImpl}       from "./Selections";
+import {CleanupFunc}          from "core/utils/types";
 
 
 export abstract class CircuitImpl<
@@ -288,7 +289,7 @@ export abstract class CircuitImpl<
     public get canvas() {
         return this.view.getCanvas();
     }
-    public attachCanvas(canvas: HTMLCanvasElement): () => void {
+    public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
         this.view.setCanvas(canvas);
         return () => this.detachCanvas();
     }
@@ -302,11 +303,11 @@ export abstract class CircuitImpl<
 
     public addRenderCallback(cb: (data: {
         renderer: RenderHelper; options: RenderOptions; circuit: Circuit;
-    }) => void): void {
-        this.view.subscribe(({ renderer }) => cb({ renderer, options: this.view.options, circuit: this }));
+    }) => void): CleanupFunc {
+        return this.view.subscribe(({ renderer }) => cb({ renderer, options: this.view.options, circuit: this }));
     }
 
-    public subscribe(cb: (ev: any) => void): () => void {
+    public subscribe(cb: (ev: any) => void): CleanupFunc {
         throw new Error("Method not implemented.");
     }
 }

@@ -111,6 +111,8 @@ export class InputAdapter extends Observable<InputAdapterEvent> {
             tearDownTouchEvents();
             tearDownMouseEvents();
             tearDownKeyboardEvents();
+
+            this.unsubscribeAll();
         };
     }
 
