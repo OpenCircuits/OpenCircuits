@@ -12,19 +12,25 @@ import {storeDesigner} from "shared/utils/hooks/useDesigner";
 
 import {CreateDesigner} from "shared/circuitdesigner";
 
-import {DefaultTool}              from "shared/tools/DefaultTool";
-import {PanTool}                  from "shared/tools/PanTool";
-import {TranslateTool}            from "shared/tools/TranslateTool";
-import {SelectionBoxTool}         from "shared/tools/SelectionBoxTool";
-import {RotateTool}               from "shared/tools/RotateTool";
-import {WiringTool}               from "shared/tools/WiringTool";
-import {SplitWireTool}            from "shared/tools/SplitWireTool";
-import {ZoomHandler}              from "shared/tools/handlers/ZoomHandler";
-import {SelectionHandler}         from "shared/tools/handlers/SelectionHandler";
-import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
-import {RotateToolRenderer}       from "shared/tools/renderers/RotateToolRenderer";
+import {DefaultTool} from "shared/tools/DefaultTool";
+import {PanTool}     from "shared/tools/PanTool";
 
-import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
+
+// import {TranslateTool}            from "shared/tools/TranslateTool";
+// import {SelectionBoxTool}         from "shared/tools/SelectionBoxTool";
+import {RotateTool} from "shared/tools/RotateTool";
+
+
+// import {WiringTool}               from "shared/tools/WiringTool";
+// import {SplitWireTool}            from "shared/tools/SplitWireTool";
+import {ZoomHandler}      from "shared/tools/handlers/ZoomHandler";
+import {SelectionHandler} from "shared/tools/handlers/SelectionHandler";
+
+
+// import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
+import {RotateToolRenderer} from "shared/tools/renderers/RotateToolRenderer";
+
+// import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
 import {DevListFiles} from "shared/api/Dev";
 
@@ -72,12 +78,12 @@ async function Init(): Promise<void> {
         {
             defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
             tools:       [
-                PanTool,
-                new RotateTool(), new TranslateTool(),
-                new WiringTool(), new SplitWireTool(),
-                new SelectionBoxTool(),
+                new PanTool(),
+                new RotateTool(), // new TranslateTool(),
+                // new WiringTool(), new SplitWireTool(),
+                // new SelectionBoxTool(),
             ],
-            renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
+            renderers: [RotateToolRenderer], // , new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
         },
     );
 

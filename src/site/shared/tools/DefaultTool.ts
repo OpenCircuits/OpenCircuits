@@ -10,10 +10,6 @@ export class DefaultTool {
         this.handlers = handlers;
     }
 
-    public onActivate(ev: InputAdapterEvent, designer: CircuitDesigner): void {
-        this.onEvent(ev, designer);
-    }
-
     // Method called when this tool is currently active and an event occurs
     public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void {
         // // Don't do anything when circuit is locked

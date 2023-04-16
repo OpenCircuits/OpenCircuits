@@ -1,22 +1,21 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
 import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 
+export namespace Tool {
+    export enum State {
+        Inactive,
+        Active,
+        Pending,
+    }
+}
+
 export interface Tool {
-    // Conditional method to see if the current state should transition to this tool
-    shouldActivate(ev: InputAdapterEvent, designer: CircuitDesigner): boolean;
+    readonly kind: string;
 
-    // Conditional method to see if the current state should transition out of this tool
-    shouldDeactivate(ev: InputAdapterEvent, designer: CircuitDesigner): boolean;
+    state: Tool.State;
 
-
-    // Method called when this tool is initially activated
-    onActivate(ev: InputAdapterEvent, designer: CircuitDesigner): void;
-
-    // Method called when this tool is deactivated
-    onDeactivate(ev: InputAdapterEvent, designer: CircuitDesigner): void;
-
-
-    // Method called when this tool is currently active and an event occurs
-    onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void;
+    // This method is only called when the tool is active or when the default tool is active
+    onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): Tool.State;
 }

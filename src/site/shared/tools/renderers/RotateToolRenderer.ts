@@ -5,12 +5,19 @@ import {ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_THICKNESS, RotateTool} from "../
 
 import {ToolRenderer}   from "./ToolRenderer";
 import {isObjComponent} from "core/public";
+import {Tool}           from "../Tool";
 
 
-export const RotateToolRenderer: ToolRenderer<RotateTool | undefined> = {
-    isActive: (curTool): curTool is RotateTool | undefined => (!curTool || curTool instanceof RotateTool),
+export const RotateToolRenderer: ToolRenderer<RotateTool> = {
+    // isActive: (curTool): curTool is RotateTool | undefined => (!curTool || curTool instanceof RotateTool),
+
+    toolKind: "RotateTool",
 
     render: ({ circuit, renderer, curTool }) => {
+        // Draw nothing when inactive
+        if (curTool.state === Tool.State.Inactive)
+            return;
+
         const pos = circuit.selectionsMidpoint("world");
 
         const drawOutline = () => {
@@ -25,8 +32,8 @@ export const RotateToolRenderer: ToolRenderer<RotateTool | undefined> = {
 
         const selections = circuit.selections;
 
-        // If we are in the default tool, draw the rotation circle outline if we have only components selected
-        if (!curTool) {
+        // If we are pending, draw the rotation circle outline if we have only components selected
+        if (curTool.state === Tool.State.Pending) {
             if (selections.isEmpty && selections.every((isObjComponent)))
                 drawOutline();
             return;

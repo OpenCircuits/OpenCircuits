@@ -18,7 +18,8 @@ export interface ToolRendererArgs<T extends Tool | undefined = Tool> {
 }
 
 export interface ToolRenderer<T extends Tool | undefined = Tool> {
-    isActive(curTool?: Tool): curTool is T;
+    // isActive(curTool?: Tool): curTool is T;
+    readonly toolKind: string;
 
     render(props: ToolRendererArgs<T>): void;
 }

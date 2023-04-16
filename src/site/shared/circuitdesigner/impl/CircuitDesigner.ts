@@ -66,12 +66,12 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
         // Attach tool renderers
         let renderCleanup = () => {};
         if (renderers) {
-            renderCleanup = this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
-                renderers.forEach((toolRenderer) => {
-                    const curTool = this.toolManager.curTool;
-                    if (toolRenderer.isActive(curTool))
-                        toolRenderer.render({ renderer, options, circuit, curTool, input: inputAdapter.state });
-                });
+            renderCleanup = this.circuit.addRenderCallback((renderArgs) => {
+                renderers.forEach((toolRenderer) => toolRenderer.render({
+                    curTool: this.toolManager.getTool(toolRenderer.toolKind),
+                    input:   inputAdapter.state,
+                    ...renderArgs,
+                }));
             });
         }
 
