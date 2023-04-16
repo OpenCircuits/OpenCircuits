@@ -52,6 +52,7 @@ export interface Circuit {
     getPort(id: GUID): Port | undefined;
     getObj(id: GUID): Obj | undefined;
     getObjs(): Obj[];
+    getComponents(): Component[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     /**
