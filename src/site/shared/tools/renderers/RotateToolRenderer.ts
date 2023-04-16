@@ -7,9 +7,7 @@ import {ToolRenderer}   from "./ToolRenderer";
 import {isObjComponent} from "core/public";
 
 
-export const RotateToolRenderer: ToolRenderer<RotateTool | undefined> = {
-    isActive: (curTool): curTool is RotateTool | undefined => (!curTool || curTool instanceof RotateTool),
-
+export const RotateToolRenderer: ToolRenderer = {
     render: ({ circuit, renderer, curTool }) => {
         const pos = circuit.selectionsMidpoint("world");
 
@@ -31,6 +29,10 @@ export const RotateToolRenderer: ToolRenderer<RotateTool | undefined> = {
                 drawOutline();
             return;
         }
+
+        // If a non-rotate-tool active, then do nothing
+        if (!(curTool instanceof RotateTool))
+            return;
 
         // Otherwise rotate tool is active so draw the rotation circle and outline
         drawOutline();

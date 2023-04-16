@@ -1,27 +1,24 @@
 import {BezierCurve} from "math/BezierCurve";
 
-import {Tool}       from "../Tool";
 import {WiringTool} from "../WiringTool";
 
 import {ToolRenderer, ToolRendererArgs} from "./ToolRenderer";
+import {RenderOptions}                  from "core/internal/view/rendering/RenderOptions";
 
 
 /**
  * WiringToolRenderer is a class since Wire colors need to be specified
  *  as they change per-project.
  */
-export class WiringToolRenderer implements ToolRenderer<WiringTool> {
-
-    public isActive(curTool?: Tool): curTool is WiringTool {
-        return (curTool instanceof WiringTool);
-    }
-
-    protected getColor({ options }: ToolRendererArgs<WiringTool>): string | undefined {
+export class WiringToolRenderer implements ToolRenderer {
+    protected getColor(options: RenderOptions, _: WiringTool): string | undefined {
         return options.defaultWireColor;
     }
 
-    public render(props: ToolRendererArgs<WiringTool>) {
-        const { renderer, options, circuit, curTool, input } = props;
+    public render({ renderer, options, circuit, curTool, input }: ToolRendererArgs) {
+        // If a non-selection-box-tool active, then do nothing
+        if (!(curTool instanceof WiringTool))
+            return;
 
         const port = curTool.getCurPort();
         if (!port)
@@ -32,7 +29,7 @@ export class WiringToolRenderer implements ToolRenderer<WiringTool> {
 
         renderer.save();
 
-        renderer.setStyle(options.wireStyle(false, this.getColor(props)));
+        renderer.setStyle(options.wireStyle(false, this.getColor(options, curTool)));
 
         renderer.beginPath();
         renderer.moveTo(curve.p1)

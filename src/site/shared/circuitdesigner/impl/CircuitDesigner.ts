@@ -11,7 +11,7 @@ import {ToolManager}     from "./ToolManager";
 export interface ToolConfig {
     defaultTool: DefaultTool;
     tools: Tool[];
-    renderers?: Array<ToolRenderer<Tool | undefined>>;
+    renderers?: ToolRenderer[];
 }
 
 export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDesigner<CircuitT> {
@@ -55,7 +55,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
-        const { renderers } = this.toolConfig;
+        const renderers = (this.toolConfig.renderers ?? []);
 
         // Setup input adapter
         const inputAdapter = new InputAdapter(canvas, this.circuit.camera);
@@ -64,16 +64,12 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
         inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
 
         // Attach tool renderers
-        let renderCleanup = () => {};
-        if (renderers) {
-            renderCleanup = this.circuit.addRenderCallback(({ renderer, options, circuit }) => {
-                renderers.forEach((toolRenderer) => {
-                    const curTool = this.toolManager.curTool;
-                    if (toolRenderer.isActive(curTool))
-                        toolRenderer.render({ renderer, options, circuit, curTool, input: inputAdapter.state });
-                });
-            });
-        }
+        const renderCleanup = this.circuit.addRenderCallback((renderArgs) =>
+            renderers.forEach((toolRenderer) => toolRenderer.render({
+                curTool: this.toolManager.curTool,
+                input:   inputAdapter.state,
+                ...renderArgs,
+             })));
 
         this.circuit.attachCanvas(canvas);
         return () => {
