@@ -3,7 +3,7 @@ import {BezierCurve} from "math/BezierCurve";
 import {Tool}       from "../Tool";
 import {WiringTool} from "../WiringTool";
 
-import {ToolRenderer, ToolRendererProps} from "./ToolRenderer";
+import {ToolRenderer, ToolRendererArgs} from "./ToolRenderer";
 
 
 /**
@@ -16,11 +16,11 @@ export class WiringToolRenderer implements ToolRenderer<WiringTool> {
         return (curTool instanceof WiringTool);
     }
 
-    protected getColor({ options }: ToolRendererProps<WiringTool>): string | undefined {
+    protected getColor({ options }: ToolRendererArgs<WiringTool>): string | undefined {
         return options.defaultWireColor;
     }
 
-    public render(props: ToolRendererProps<WiringTool>) {
+    public render(props: ToolRendererArgs<WiringTool>) {
         const { renderer, options, circuit, curTool, input } = props;
 
         const port = curTool.getCurPort();

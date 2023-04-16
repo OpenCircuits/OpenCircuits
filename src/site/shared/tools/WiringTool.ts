@@ -8,7 +8,7 @@ import {Circuit, Port} from "core/public";
 
 import {CircuitDesigner}                       from "shared/circuitdesigner/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "shared/utils/input/Constants";
-import {InputManagerEvent}                     from "shared/utils/input/InputManagerEvent";
+import {InputAdapterEvent}                     from "shared/utils/input/InputAdapterEvent";
 import {Tool}                                  from "./Tool";
 
 
@@ -64,7 +64,7 @@ export class WiringTool implements Tool {
             .reduce(MinDist).port;
     }
 
-    public shouldActivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): boolean {
+    public shouldActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): boolean {
         // Activate if the user drags or clicks on a port
         return (
             (
@@ -74,7 +74,7 @@ export class WiringTool implements Tool {
             && (this.findPort(ev.state.mousePos, circuit) !== undefined)
         );
     }
-    public shouldDeactivate(ev: InputManagerEvent): boolean {
+    public shouldDeactivate(ev: InputAdapterEvent): boolean {
         return (
             (this.stateType === "clicked" && ev.type === "click") ||
             (this.stateType === "dragged" && ev.type === "mouseup") ||
@@ -84,13 +84,13 @@ export class WiringTool implements Tool {
         );
     }
 
-    public onActivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         this.curPort = this.findPort(ev.state.mousePos, circuit);
 
         this.stateType = (ev.type === "click" ? "clicked" : "dragged");
     }
 
-    public onDeactivate(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         const port2 = this.findPort(ev.state.mousePos, circuit, this.curPort);
         if (port2) // Connect the ports if we found a second port
             this.curPort!.connectTo(port2);
@@ -98,7 +98,7 @@ export class WiringTool implements Tool {
         this.curPort = undefined;
     }
 
-    public onEvent(ev: InputManagerEvent, { circuit }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         if (ev.type === "mousemove")
             circuit.forceRedraw();
     }
