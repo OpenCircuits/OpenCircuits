@@ -3,6 +3,10 @@ import {InputTree} from "./Constants/DataStructures";
 import {CreateCircuit, DigitalCircuit} from "digital/public";
 import {V}                             from "Vector";
 import {Component}                     from "core/public";
+import {Err, Ok, Result}                        from "core/utils/Result";
+import {ErrE} from "core/utils/Result";
+import {MultiError} from "core/utils/MultiError";
+import {isError} from "shared/utils/Errors";
 
 
 /**
@@ -39,12 +43,12 @@ export const NegatedTypeToGate = {
  * @see TreeToCircuit
  */
 function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circuit: DigitalCircuit):
-    Component {
-    if (node.kind === "leaf") { // Rearranges array so thge relevant input is at the end
+    Result<Component> {
+    if (node.kind === "leaf") {
         const input = inputs.get(node.ident);
         if (!input)
-            throw new Error("Input Not Found: \"" + node.ident + "\"");
-        return input;
+            return ErrE("Input Not Found: \"" + node.ident + "\"");
+        return Ok(input);
     }
 
     const ret = circuit;
@@ -54,31 +58,34 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
     const newComp = circuit.placeComponentAt(V(0, 0), newGate);
     const newNode = newComp.firstAvailable("input");
     if (!newNode)
-        throw new Error(`Port not found on newly created ${newComp.kind}`);
+        return ErrE(`Port not found on newly created ${newComp.kind}`);
     if (node.kind === "unop") {
-        const prevComp = treeToCircuitCore(node.child, inputs, ret);
-        const prevNode = prevComp.firstAvailable("output");
-        if (!prevNode)
-            throw new Error(`Port not found on returned ${prevComp.kind}`);
-        const wire = circuit.connectWire(prevNode, newNode);
-        if (!wire)
-            throw new Error(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
+        return treeToCircuitCore(node.child, inputs, ret)
+            .andThen((prevComp) => {
+                const prevNode = prevComp.firstAvailable("output");
+                if (!prevNode)
+                    return ErrE(`Port not found on returned ${prevComp.kind}`);
+                const wire = circuit.connectWire(prevNode, newNode);
+                if (!wire)
+                    return ErrE(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
+                return Ok(newComp);
+            });
     } else if (node.kind === "binop") {
         newComp.setNumPorts("input", node.children.length);
         node.children.forEach((child) => {
             if (!child)
-                throw new Error("treeToCircuitCore failed: child was undefined");
+                return ErrE("treeToCircuitCore failed: child was undefined");
             const prevComp = treeToCircuitCore(child, inputs, ret);
             const prevNode = prevComp.firstAvailable("output");
             if (!prevNode)
-                throw new Error(`Port not found on returned ${prevComp.kind}`);
+                return ErrE(`Port not found on returned ${prevComp.kind}`);
             const wire = circuit.connectWire(prevNode, newNode);
             if (!wire)
-                throw new Error(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
+                return ErrE(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
         });
     }
 
-    return newComp;
+    return Ok(newComp);
 }
 
 /**
