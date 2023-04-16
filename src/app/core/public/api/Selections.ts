@@ -6,6 +6,7 @@ export interface Selections {
     readonly length: number;
     readonly isEmpty: boolean;
 
+    readonly all: Obj[];
     readonly components: Component[];
 
     clear(): void;

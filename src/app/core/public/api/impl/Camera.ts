@@ -4,6 +4,7 @@ import {Rect}      from "math/Rect";
 
 import {Camera}       from "../Camera";
 import {CircuitState} from "./CircuitState";
+import {Obj}          from "../Obj";
 
 
 export class CameraImpl implements Camera {
@@ -71,5 +72,9 @@ export class CameraImpl implements Camera {
 
     public toWorldPos(screenPos: Vector): Vector {
         return this.state.view!.toWorldPos(screenPos);
+    }
+
+    public zoomToFit(objs: Obj[]): void {
+        throw new Error("Unimplemented!");
     }
 }

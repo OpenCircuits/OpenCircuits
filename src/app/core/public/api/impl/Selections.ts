@@ -25,6 +25,9 @@ export class SelectionsImpl implements Selections {
         return (this.length > 0);
     }
 
+    public get all(): Obj[] {
+        return this.selections.map((id) => this.state.getObj(id)!);
+    }
     public get components(): Component[] {
         return this.selections.filter((id) => (this.doc.hasComp(id)))
             .map((id) => this.state.constructComponent(id));
