@@ -19,4 +19,6 @@ export interface Component extends BaseObject {
 
     setNumPorts(group: string, amt: number): boolean;
     firstAvailable(group: string): Port | undefined;
+
+    delete(): void;
 }

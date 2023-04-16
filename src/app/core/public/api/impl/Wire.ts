@@ -62,4 +62,8 @@ export abstract class WireImpl<
 
         return { node, wire1, wire2 };
     }
+
+    public delete(): void {
+        this.circuit.deleteObjs([this]);
+    }
 }

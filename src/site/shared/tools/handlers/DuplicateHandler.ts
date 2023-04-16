@@ -4,7 +4,7 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 export const DuplicateHandler: ToolHandler = {
     onEvent: (ev, { circuit }) => {
-        // Activate when releasing CTRL/CMD + D
+        // Activate when pressing CTRL/CMD + D
         if (!(ev.type === "keydown" && ev.key === "d" && ev.input.isModifierKeyDown))
             return ToolHandlerResponse.PASS;
 

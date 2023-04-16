@@ -1,6 +1,7 @@
 import {Component}    from "../Component";
 import {Obj}          from "../Obj";
 import {Selections}   from "../Selections";
+import {Wire}         from "../Wire";
 import {CircuitState} from "./CircuitState";
 
 
@@ -31,6 +32,10 @@ export class SelectionsImpl implements Selections {
     public get components(): Component[] {
         return this.selections.filter((id) => (this.doc.hasComp(id)))
             .map((id) => this.state.constructComponent(id));
+    }
+    public get wires(): Wire[] {
+        return this.selections.filter((id) => (this.doc.hasWire(id)))
+            .map((id) => this.state.constructWire(id));
     }
 
     public clear(): void {

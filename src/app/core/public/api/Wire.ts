@@ -10,4 +10,6 @@ export interface Wire extends BaseObject {
     readonly p2: Port;
 
     split(): { node: Component, wire1: Wire, wire2: Wire };
+
+    delete(): void;
 }

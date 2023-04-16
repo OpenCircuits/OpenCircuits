@@ -102,4 +102,8 @@ export abstract class ComponentImpl<
     public firstAvailable(group: string): PortT | undefined {
         throw new Error("Unimplemented!");
     }
+
+    public delete(): void {
+        this.circuit.deleteObjs([this]);
+    }
 }

@@ -1,5 +1,6 @@
 import {Component} from "./Component";
 import {Obj}       from "./Obj";
+import {Wire}      from "./Wire";
 
 
 export interface Selections {
@@ -8,6 +9,7 @@ export interface Selections {
 
     readonly all: Obj[];
     readonly components: Component[];
+    readonly wires: Wire[];
 
     clear(): void;
 
