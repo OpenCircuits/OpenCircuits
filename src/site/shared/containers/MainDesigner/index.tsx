@@ -4,7 +4,7 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V, Vector} from "Vector";
 
-import {useMainCircuit}    from "shared/utils/hooks/useCircuit";
+import {useMainCircuit}    from "shared/utils/hooks/useDesigner";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 

@@ -8,7 +8,7 @@ import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
 
-import {useMainCircuit} from "shared/utils/hooks/useCircuit";
+import {useMainCircuit} from "shared/utils/hooks/useDesigner";
 
 import {useAPIMethods} from "shared/utils/ApiMethods";
 

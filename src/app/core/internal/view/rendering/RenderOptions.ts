@@ -40,7 +40,9 @@ export interface RenderOptions {
      * @param key The key of the SVG.
      * @throws If the image is not found.
      */
-    getImage(key: string): SVGDrawing;
+    getImage(key: string): SVGDrawing; // TODO[model_refactor_api](leon) - figure out a system to allow SVGDrawings
+                                       //                                  to exist and work w/o the image loading
+                                       //                                  so that views can exist w/o images/canvas
 
     // fillColor(selected: boolean): string;
     // borderColor(selected: boolean): string;

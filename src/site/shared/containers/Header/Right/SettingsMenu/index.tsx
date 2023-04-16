@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 
-import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
+import {useMainCircuit}                       from "shared/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {ToggleDebugCullboxes, ToggleDebugNoFill,

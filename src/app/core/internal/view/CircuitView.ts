@@ -6,19 +6,24 @@ import {BezierCurve} from "math/BezierCurve";
 import {Matrix2x3}   from "math/Matrix";
 import {Transform}   from "math/Transform";
 
-import {GUID}                                from "..";
-import {CircuitInternal}                     from "../impl/CircuitInternal";
-import {SelectionsManager}                   from "../impl/SelectionsManager";
-import {Assembler}                           from "./Assembler";
-import {Prims}                               from "./Prim";
+import {None,Option,Some} from "core/utils/Result";
+import {Observable}       from "core/utils/Observable";
+
+import {GUID}              from "..";
+import {CircuitInternal}   from "../impl/CircuitInternal";
+import {SelectionsManager} from "../impl/SelectionsManager";
+
+import {Assembler} from "./Assembler";
+import {Prims}     from "./Prim";
+import {PortPos}   from "./PortAssembler";
+
 import {RenderGrid}                          from "./rendering/renderers/GridRenderer";
 import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
-import {PortPos}                             from "./PortAssembler";
 
 
-export abstract class CircuitView {
+export abstract class CircuitView extends Observable<{ renderer: RenderHelper }> {
     public readonly circuit: CircuitInternal;
     public readonly selections: SelectionsManager;
 
@@ -32,14 +37,16 @@ export abstract class CircuitView {
     public componentTransforms: Map<GUID, Transform>;
     public componentPrims: Map<GUID, Prims>;
 
-    public localPortPositions: Map<GUID, PortPos>;
-    public portPositions: Map<GUID, PortPos>;
-    public portPrims: Map<GUID, Prims>;
+    public localPortPositions: Map<GUID, PortPos>; // Key'd by port ID
+    public portPositions: Map<GUID, PortPos>; // Key'd by port ID
+    public portPrims: Map<GUID, Prims>; // Key'd by component parent
 
     public wireCurves: Map<GUID, BezierCurve>;
     public wirePrims: Map<GUID, Prims>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
+        super();
+
         this.circuit = circuit;
         this.selections = selections;
 
@@ -63,18 +70,41 @@ export abstract class CircuitView {
         this.scheduler.subscribe(() => this.render());
 
         this.circuit.subscribe((ev) => {
-            // TODO[model_refactor](leon) - use events
+            // TODO[model_refactor_api](leon) - use events
 
             // update components first
-            for (const compID of circuit.getComponents()) {
-                const comp = circuit.getCompByID(compID).unwrap();
+            for (const compID of circuit.doc.getComponents()) {
+                const comp = circuit.doc.getCompByID(compID).unwrap();
                 this.getAssemblerFor(comp.kind).assemble(comp, ev);
             }
 
+            // temporary hack to handle deleting components (and ports)
+            for (const compID of this.componentPrims.keys()) {
+                if (!circuit.doc.hasComp(compID)) {
+                    this.componentPrims.delete(compID);
+                    this.componentTransforms.delete(compID);
+                    this.portPrims.delete(compID);
+                }
+            }
+            for (const portID of this.portPositions.keys()) {
+                if (!circuit.doc.hasPort(portID)) {
+                    this.portPositions.delete(portID);
+                    this.localPortPositions.delete(portID);
+                }
+            }
+
             // then update wires
-            for (const wireID of circuit.getWires()) {
-                const wire = circuit.getWireByID(wireID).unwrap();
+            for (const wireID of circuit.doc.getWires()) {
+                const wire = circuit.doc.getWireByID(wireID).unwrap();
                 this.getAssemblerFor(wire.kind).assemble(wire, ev);
+            }
+
+            // temporary hack to handle deleting wires
+            for (const wireID of this.wirePrims.keys()) {
+                if (!circuit.doc.hasWire(wireID)) {
+                    this.wireCurves.delete(wireID);
+                    this.wirePrims.delete(wireID);
+                }
             }
 
             this.cameraMat = this.calcCameraMat();
@@ -84,9 +114,11 @@ export abstract class CircuitView {
 
         this.selections.subscribe((ev) => {
             ev.selections.forEach((id) => {
-                const obj = circuit.getObjByID(id).unwrap();
+                const obj = circuit.doc.getObjByID(id).unwrap();
                 this.getAssemblerFor(obj.kind).assemble(obj, ev);
             });
+
+            this.scheduler.requestRender();
         });
     }
 
@@ -101,6 +133,23 @@ export abstract class CircuitView {
     }
     public toScreenPos(pos: Vector): Vector {
         return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
+    }
+
+    public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): Option<GUID> {
+        for (const [id, prims] of this.componentPrims) {
+            if (!filter(id)) // Skip things not in the filter
+                continue;
+            if (prims.some((prim) => prim.hitTest(pos)))
+                return Some(id);
+            // TODO[model_refactor_api](leon): hit test the component's ports as well
+        }
+        for (const [id, prims] of this.wirePrims) {
+            if (!filter(id)) // Skip things not in the filter
+                continue;
+            if (prims.some((prim) => prim.hitTest(pos)))
+                return Some(id);
+        }
+        return None();
     }
 
     protected abstract getAssemblerFor(kind: string): Assembler;
@@ -145,11 +194,12 @@ export abstract class CircuitView {
                 this.renderer.draw(prim);
             });
         });
-        this.renderer.restore();
 
         // Debug rendering
 
         // Callback for post-rendering
+        this.publish({ renderer: this.renderer });
+        this.renderer.restore();
     }
 
     public getContextUtils() {
@@ -170,5 +220,9 @@ export abstract class CircuitView {
 
     public setCanvas(canvas?: HTMLCanvasElement) {
         this.renderer.setCanvas(canvas);
+    }
+
+    public getCanvas(): HTMLCanvasElement | undefined {
+        return this.renderer.canvas;
     }
 }

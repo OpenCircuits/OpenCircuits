@@ -40,6 +40,7 @@ interface RInterface<T, E> {
     uponErr(f: (e: E) => unknown): Result<T, E>;
     uponOk(f: (t: T) => unknown): Result<T, E>;
     match(f: (t: T) => unknown, g: (e: E) => unknown): Result<T, E>;
+    asUnion(): T | E;
 }
 
 // Rust-like implementation of "Result" type.  Use equivalent rust names.
@@ -144,6 +145,9 @@ class ResultBase<T, E> implements RInterface<T, E> {
             g(this.r.error);
         return this.asResult();
     }
+    public asUnion(): T | E {
+        return this.r.ok ? this.r.value : this.r.error;
+    }
 }
 
 class ResultOk<T, E> extends ResultBase<T, E> {
@@ -244,6 +248,7 @@ interface OInterface<T> {
     uponNone(f: () => unknown): Option<T>;
     uponSome(f: (t: T) => unknown): Option<T>;
     match(f: (t: T) => unknown, g: () => unknown): Option<T>;
+    asUnion(): T | undefined;
 }
 
 // Rust-like implementation of "Option" type.  Use equivalent rust names.
@@ -346,6 +351,9 @@ class OptionBase<T> {
         else
             g();
         return this.asOption();
+    }
+    public asUnion(): T | undefined {
+        return this.r.some ? this.r.value : undefined;
     }
 }
 
