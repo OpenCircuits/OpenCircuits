@@ -14,6 +14,8 @@ export interface Component extends BaseObject {
     pos: Vector;
     angle: number;
 
+    isNode: boolean;
+
     readonly ports: Record<string, Port[]>;
     readonly allPorts: Port[];
 

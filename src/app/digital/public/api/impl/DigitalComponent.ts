@@ -19,6 +19,10 @@ export class DigitalComponentImpl extends ComponentImpl<
         return new DigitalComponentInfoImpl(this.circuit, this.kind);
     }
 
+    public override get isNode(): boolean {
+        return (this.kind === "DigitalNode");
+    }
+
     public get firstAvailableInput(): DigitalPort {
         // Find first available input port TODO[.](leon) - maybe think this through better
         return this.allPorts.find((port) => (port.isInputPort && port.connections.length === 0))!;

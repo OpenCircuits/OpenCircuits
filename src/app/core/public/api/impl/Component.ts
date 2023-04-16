@@ -59,6 +59,8 @@ export abstract class ComponentImpl<
         return (this.getObj().props.angle ?? 0);
     }
 
+    public abstract get isNode(): boolean;
+
     public get ports(): Record<string, PortT[]> {
         return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
     }

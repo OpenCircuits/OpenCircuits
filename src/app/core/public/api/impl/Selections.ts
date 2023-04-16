@@ -42,6 +42,11 @@ export class SelectionsImpl implements Selections {
         this.state.selectionsManager.clear();
     }
 
+    public forEach(f: (obj: Obj, i: number, arr: Obj[]) => void): void {
+        return this.selections
+            .map((id) => this.state.getObj(id)!)
+            .forEach(f);
+    }
     public every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean {
         return this.selections
             .map((id) => this.state.getObj(id)!)

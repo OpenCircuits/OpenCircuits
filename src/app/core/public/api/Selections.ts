@@ -13,6 +13,7 @@ export interface Selections {
 
     clear(): void;
 
+    forEach(f: (obj: Obj, i: number, arr: Obj[]) => void): void;
     every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean;
 
     duplicate(): Obj[];
