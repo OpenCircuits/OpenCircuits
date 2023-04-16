@@ -4,18 +4,17 @@ import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 
 export namespace Tool {
-    export enum State {
-        Inactive,
-        Active,
-        Pending,
-    }
+    export type BaseState = "Inactive" | "Active";
 }
 
-export interface Tool {
+// eslint-disable-next-line @typescript-eslint/ban-types
+type DefaultState = Tool.BaseState | (string & {});
+
+export interface Tool<S extends DefaultState = DefaultState> {
     readonly kind: string;
 
-    state: Tool.State;
+    state: S;
 
     // This method is only called when the tool is active or when the default tool is active
-    onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): Tool.State;
+    onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void;
 }

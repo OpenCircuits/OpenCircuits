@@ -17,10 +17,41 @@ const ROTATION_CIRCLE_THRESHOLD = ROTATION_CIRCLE_THICKNESS + 0.06;
 const ROTATION_CIRCLE_R1 = (ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD) ** 2;
 const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) ** 2;
 
-export class RotateTool implements Tool {
+
+// interface RotateToolState {
+//     state: Tool.State;
+
+//     components: Component[];
+
+//     curAngles: number[];
+//     curAroundAngle: number;
+//     startAngle: number;
+//     prevAngle: number;
+// }
+
+// function RotateTool2<S extends { rotateTool: RotateToolState }>(
+//     curState: S,
+//     ev: InputAdapterEvent,
+//     designer: CircuitDesigner
+// ) {
+//     switch (curState.rotateTool.state) {
+//         case Tool.State.Inactive:
+
+//     }
+
+//     return {
+//         ...curState,
+//         rotateTool: {
+//             ...curState.rotateTool,
+//         },
+//     };
+// }
+
+
+export class RotateTool implements Tool<Tool.BaseState | "Pending"> {
     public readonly kind = "RotateTool";
 
-    public state: Tool.State = Tool.State.Inactive;
+    public state: Tool.BaseState | "Pending" = "Inactive";
 
     private components: Component[];
 
@@ -54,22 +85,24 @@ export class RotateTool implements Tool {
         this.prevAngle = this.startAngle;
     }
 
-    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): Tool.State {
+    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         const { selections } = circuit;
         const { worldMousePos, isShiftKeyDown, keysDown, touchCount } = ev.input;
 
         switch (this.state) {
-            case Tool.State.Inactive:
+            case "Inactive":
                 // Enter a pending state when ONLY components are being selected
                 if (!selections.isEmpty && selections.every(isObjComponent))
-                    return Tool.State.Pending;
+                    this.state = "Pending";
 
-                return Tool.State.Inactive;
+                break;
 
-            case Tool.State.Pending:
+            case "Pending":
                 // Go back to inactive if things are deselected or we select a non-component
-                if (selections.isEmpty || !selections.every(isObjComponent))
-                    return Tool.State.Inactive;
+                if (selections.isEmpty || !selections.every(isObjComponent)) {
+                    this.state = "Inactive";
+                    break;
+                }
 
                 // Activate if the user pressed down on the "rotation circle"
                 if (ev.type === "mousedown" && touchCount === 1 && this.isOnCircle(worldMousePos, circuit)) {
@@ -78,18 +111,20 @@ export class RotateTool implements Tool {
                     // Start the transaction
                     circuit.beginTransaction();
 
-                    return Tool.State.Active;
+                    this.state = "Active";
                 }
 
-                return Tool.State.Pending;
+                break;
 
-            case Tool.State.Active:
+            case "Active":
                 // Deactivate when the mouse is released
                 if (ev.type === "mouseup") {
                     // Commit the transaction on deactivation
                     circuit.commitTransaction();
 
-                    return Tool.State.Inactive;
+                    this.state = "Inactive";
+
+                    break;
                 }
 
                 if (ev.type === "mousedrag") {
@@ -137,7 +172,7 @@ export class RotateTool implements Tool {
                     circuit.forceRedraw();
                 }
 
-                return Tool.State.Active;
+                break;
         }
     }
 

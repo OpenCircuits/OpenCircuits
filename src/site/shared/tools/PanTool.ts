@@ -8,38 +8,39 @@ import {V}                   from "Vector";
 import {MIDDLE_MOUSE_BUTTON} from "shared/utils/input/Constants";
 
 
-export class PanTool implements Tool {
+export class PanTool implements Tool<Tool.BaseState> {
     public readonly kind = "PanTool";
 
-    public state: Tool.State = Tool.State.Inactive;
+    public state: Tool.BaseState = "Inactive";
 
-    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner<Circuit>): Tool.State {
+    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner<Circuit>): void {
         const { isDragging, isAltKeyDown, touchCount, deltaMousePos } = ev.input;
 
         switch (this.state) {
-            case Tool.State.Inactive:
-            case Tool.State.Pending:
+            case "Inactive":
                 // Activate if the user pressed the "option key"
                 if (ev.type === "keydown" && (ev.key === "Alt"))
-                    return Tool.State.Active;
+                    this.state = "Active";
 
                 // Activate if the user is dragging w/ middle mouse or two fingers
                 if (ev.type === "mousedrag" && (ev.button === MIDDLE_MOUSE_BUTTON || touchCount === 2))
-                    return Tool.State.Active;
+                    this.state = "Active";
 
-                return Tool.State.Inactive;
+                break;
 
-            case Tool.State.Active:
+            case "Active":
                 // Check if we should deactivate
-                if (!isDragging && !isAltKeyDown)
-                    return Tool.State.Inactive;
+                if (!isDragging && !isAltKeyDown) {
+                    this.state = "Inactive";
+                    break;
+                }
 
                 if (ev.type === "mousedrag") {
                     const { x: dx, y: dy } = deltaMousePos;
                     circuit.camera.translate(V(-dx, -dy), "screen");
                 }
 
-                return Tool.State.Active;
+                break;
         }
     }
 }

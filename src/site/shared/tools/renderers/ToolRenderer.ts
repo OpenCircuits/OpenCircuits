@@ -7,7 +7,7 @@ import {UserInputState} from "shared/utils/input/UserInputState";
 import {Tool} from "../Tool";
 
 
-export interface ToolRendererArgs<T extends Tool | undefined = Tool> {
+export interface ToolRendererArgs<T extends Tool = Tool> {
     renderer: RenderHelper;
     options: RenderOptions;
 
@@ -17,7 +17,7 @@ export interface ToolRendererArgs<T extends Tool | undefined = Tool> {
     input: UserInputState;
 }
 
-export interface ToolRenderer<T extends Tool | undefined = Tool> {
+export interface ToolRenderer<T extends Tool = Tool> {
     // isActive(curTool?: Tool): curTool is T;
     readonly toolKind: string;
 
