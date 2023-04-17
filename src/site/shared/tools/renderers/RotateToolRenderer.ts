@@ -25,7 +25,7 @@ export const RotateToolRenderer: ToolRenderer = {
 
         // If we are in the default tool, draw the rotation circle outline if we have only components selected
         if (!curTool) {
-            if (selections.isEmpty && selections.every((isObjComponent)))
+            if (!selections.isEmpty && selections.every((isObjComponent)))
                 drawOutline();
             return;
         }

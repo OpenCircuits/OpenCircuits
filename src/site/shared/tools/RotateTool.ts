@@ -47,7 +47,7 @@ export class RotateTool implements Tool {
         return (
             ev.type === "mousedown" &&
             ev.input.touchCount === 1 &&
-            circuit.selections.isEmpty &&
+            !circuit.selections.isEmpty &&
             circuit.selections.every(isObjComponent) &&
             this.isOnCircle(ev.input.mousePos, circuit)
         );
