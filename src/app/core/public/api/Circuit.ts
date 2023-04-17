@@ -84,7 +84,7 @@ export interface Circuit {
 
     reset(): void;
 
-    serialize(): string;
+    serialize(objs?: Obj[]): string;
     deserialize(data: string): void;
 
     resize(w: number, h: number): void;

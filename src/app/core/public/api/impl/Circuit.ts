@@ -280,7 +280,7 @@ export abstract class CircuitImpl<
         throw new Error("Method not implemented.");
     }
 
-    public serialize(): string {
+    public serialize(objs?: Obj[]): string {
         throw new Error("Method not implemented.");
     }
     public deserialize(data: string): void {
