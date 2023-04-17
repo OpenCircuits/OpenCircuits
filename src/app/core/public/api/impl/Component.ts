@@ -17,6 +17,7 @@ export abstract class ComponentImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
+    NodeT extends Node = Node,
     State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
 > extends BaseObjectImpl<State> implements Component, Node {
     public readonly baseKind = "Component";
@@ -59,11 +60,15 @@ export abstract class ComponentImpl<
         return (this.getObj().props.angle ?? 0);
     }
 
-    public abstract isNode(): this is Node;
+    public abstract isNode(): this is NodeT;
 
     public snip(): Wire {
         if (!this.isNode())
             throw new Error("Can't snip a non-Node component!");
+        throw new Error("Unimplemented!");
+    }
+
+    public get path(): Array<NodeT | WireT> {
         throw new Error("Unimplemented!");
     }
 

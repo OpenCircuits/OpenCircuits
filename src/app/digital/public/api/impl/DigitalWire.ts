@@ -1,14 +1,14 @@
 import {WireImpl} from "core/public/api/impl/Wire";
 
-import {DigitalComponent} from "../DigitalComponent";
-import {DigitalPort}      from "../DigitalPort";
-import {DigitalWire}      from "../DigitalWire";
+import {DigitalComponent, DigitalNode} from "../DigitalComponent";
+import {DigitalPort}                   from "../DigitalPort";
+import {DigitalWire}                   from "../DigitalWire";
 
 import {DigitalCircuitState} from "./DigitalCircuitState";
 
 
 export class DigitalWireImpl extends WireImpl<
-    DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
+    DigitalComponent, DigitalWire, DigitalPort, DigitalNode, DigitalCircuitState
 > implements DigitalWire {
     protected override get nodeKind() {
         return "DigitalNode";

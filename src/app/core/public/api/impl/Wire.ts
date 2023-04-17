@@ -2,9 +2,9 @@ import {AddErrE} from "core/utils/MultiError";
 
 import {Schema} from "core/schema";
 
-import {Component} from "../Component";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
+import {Component, Node} from "../Component";
+import {Port}            from "../Port";
+import {Wire}            from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
@@ -15,6 +15,7 @@ export abstract class WireImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
+    NodeT extends Node = Node,
     State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
 > extends BaseObjectImpl<State> implements Wire {
     public readonly baseKind = "Wire";
@@ -39,7 +40,7 @@ export abstract class WireImpl<
         return this.circuit.constructPort(this.getObj().p2);
     }
 
-    public get path(): Array<ComponentT | WireT> {
+    public get path(): Array<NodeT | WireT> {
         throw new Error("Unimplemented!");
     }
 

@@ -23,7 +23,7 @@ export class SelectionsImpl implements Selections {
         return this.state.selectionsManager.length();
     }
     public get isEmpty(): boolean {
-        return (this.length > 0);
+        return (this.length === 0);
     }
 
     public get all(): Obj[] {

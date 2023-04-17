@@ -12,7 +12,7 @@ import {DigitalPortImpl}          from "./DigitalPort";
 
 
 export class DigitalComponentImpl extends ComponentImpl<
-    DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
+    DigitalComponent, DigitalWire, DigitalPort, DigitalNode, DigitalCircuitState
 > implements DigitalComponent {
 
     public override get info(): DigitalComponentInfo {

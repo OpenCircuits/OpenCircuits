@@ -30,4 +30,6 @@ export interface Component extends BaseObject {
 
 export interface Node extends Component {
     snip(): Wire;
+
+    readonly path: Array<Node | Wire>;
 }
