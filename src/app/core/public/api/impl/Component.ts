@@ -5,9 +5,9 @@ import {FromConcatenatedEntries} from "core/utils/Functions";
 
 import {Schema} from "core/schema";
 
-import {Component} from "../Component";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
+import {Component, Node} from "../Component";
+import {Port}            from "../Port";
+import {Wire}            from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
@@ -18,7 +18,7 @@ export abstract class ComponentImpl<
     WireT extends Wire = Wire,
     PortT extends Port = Port,
     State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
-> extends BaseObjectImpl<State> implements Component {
+> extends BaseObjectImpl<State> implements Component, Node {
     public readonly baseKind = "Component";
 
     protected getObj(): Schema.Component {
@@ -59,7 +59,13 @@ export abstract class ComponentImpl<
         return (this.getObj().props.angle ?? 0);
     }
 
-    public abstract get isNode(): boolean;
+    public abstract isNode(): this is Node;
+
+    public snip(): Wire {
+        if (!this.isNode())
+            throw new Error("Can't snip a non-Node component!");
+        throw new Error("Unimplemented!");
+    }
 
     public get ports(): Record<string, PortT[]> {
         return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));

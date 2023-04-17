@@ -3,6 +3,7 @@ import {Vector} from "Vector";
 import {BaseObject}    from "./BaseObject";
 import {ComponentInfo} from "./ComponentInfo";
 import {Port}          from "./Port";
+import {Wire}          from "./Wire";
 
 
 export interface Component extends BaseObject {
@@ -14,7 +15,7 @@ export interface Component extends BaseObject {
     pos: Vector;
     angle: number;
 
-    isNode: boolean;
+    isNode(): this is Node;
 
     readonly ports: Record<string, Port[]>;
     readonly allPorts: Port[];
@@ -25,4 +26,8 @@ export interface Component extends BaseObject {
     firstAvailable(group: string): Port | undefined;
 
     delete(): void;
+}
+
+export interface Node extends Component {
+    snip(): Wire;
 }

@@ -1,10 +1,10 @@
 import {Port}          from "core/public";
 import {ComponentImpl} from "core/public/api/impl/Component";
 
-import {DigitalComponent}     from "../DigitalComponent";
-import {DigitalComponentInfo} from "../DigitalComponentInfo";
-import {DigitalPort}          from "../DigitalPort";
-import {DigitalWire}          from "../DigitalWire";
+import {DigitalComponent, DigitalNode} from "../DigitalComponent";
+import {DigitalComponentInfo}          from "../DigitalComponentInfo";
+import {DigitalPort}                   from "../DigitalPort";
+import {DigitalWire}                   from "../DigitalWire";
 
 import {DigitalCircuitState}      from "./DigitalCircuitState";
 import {DigitalComponentInfoImpl} from "./DigitalComponentInfo";
@@ -19,7 +19,7 @@ export class DigitalComponentImpl extends ComponentImpl<
         return new DigitalComponentInfoImpl(this.circuit, this.kind);
     }
 
-    public override get isNode(): boolean {
+    public override isNode(): this is DigitalNode {
         return (this.kind === "DigitalNode");
     }
 
