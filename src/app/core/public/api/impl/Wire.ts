@@ -39,6 +39,10 @@ export abstract class WireImpl<
         return this.circuit.constructPort(this.getObj().p2);
     }
 
+    public get path(): Array<ComponentT | WireT> {
+        throw new Error("Unimplemented!");
+    }
+
     public split(): { node: ComponentT, wire1: WireT, wire2: WireT } {
         // TODO[model_refactor_api](kevin)
         //  Need to make an explicit CircuitInternal operation for splitting wires

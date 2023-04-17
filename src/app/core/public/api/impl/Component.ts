@@ -69,6 +69,10 @@ export abstract class ComponentImpl<
             .map((id) => this.circuit.constructPort(id));
     }
 
+    public get connectedComponents(): ComponentT[] {
+        throw new Error("Unimplemented!");
+    }
+
     public setNumPorts(group: string, amt: number): boolean {
         // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = {} as Record<string, number>;

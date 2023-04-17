@@ -30,6 +30,9 @@ export interface Port extends BaseObject {
     readonly connectedPorts: Port[];
     // TODO[model_refactor_api]: connectedComponents?
 
+    // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
+    readonly path: Array<Component | Wire>;
+
     getLegalWires(): Port.LegalWiresQuery;
     connectTo(other: Port): Wire | undefined;
 }

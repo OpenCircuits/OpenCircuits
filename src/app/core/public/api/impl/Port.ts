@@ -61,6 +61,10 @@ export abstract class PortImpl<
         throw new Error("Unimplemented");
     }
 
+    public get path(): Array<ComponentT | WireT> {
+        throw new Error("Unimplemented!");
+    }
+
     public abstract getLegalWires(): Port.LegalWiresQuery;
 
     public abstract connectTo(other: PortT): Wire | undefined;
