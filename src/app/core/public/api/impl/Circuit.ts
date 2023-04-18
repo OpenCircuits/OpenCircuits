@@ -199,8 +199,6 @@ export abstract class CircuitImpl<
 
         return this.constructComponent(id);
     }
-    // Wire connection can fail if i.e. p1 is reference-equal to p2
-    public abstract connectWire(p1: PortT, p2: PortT): WireT | undefined;
 
     public deleteObjs(objs: Array<ComponentT | WireT | PortT>): void {
         // TODO(friedj)

@@ -48,24 +48,6 @@ export class DigitalCircuitImpl extends CircuitImpl<
         return new DigitalPortImpl(this, id);
     }
 
-    public connectWire(p1: DigitalPort, p2: DigitalPort): DigitalWire | undefined {
-        // TODO(chuh4)
-        //  Connect the ports using a "DigitalWire"
-        //  See `placeComponentAt` for a similar method
-        //  Note: `circuit.connectWire` CAN throw an exception, i.e.
-        //         if you try to connect a port to itself or something
-        //         and we should handle this HERE and return undefined
-        //         in that case
-
-        this.circuit.beginTransaction();
-
-        const id = this.circuit.connectWire("DigitalWire", p1.id, p2.id, {}).unwrap();
-
-        this.circuit.commitTransaction();
-
-        return new DigitalWireImpl(this, id);
-    }
-
     public set propagationTime(val: number) {
         throw new Error("Unimplemented");
     }

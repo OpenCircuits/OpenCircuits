@@ -28,7 +28,21 @@ export class DigitalPortImpl extends PortImpl<
     }
 
     public override connectTo(other: DigitalPort): DigitalWire | undefined {
-        return this.circuit.connectWire(this, other);
+        // TODO(chuh4)
+        //  Connect the ports using a "DigitalWire"
+        //  See `placeComponentAt` for a similar method
+        //  Note: `port.connectWire` CAN throw an exception, i.e.
+        //         if you try to connect a port to itself or something
+        //         and we should handle this HERE and return undefined
+        //         in that case
+
+        this.circuit.beginTransaction();
+
+        const id = this.internal.connectWire("DigitalWire", this.id, other.id, {}).unwrap();
+
+        this.circuit.commitTransaction();
+
+        return this.circuit.constructWire(id);
     }
 
     public override getLegalWires(): Port.LegalWiresQuery {

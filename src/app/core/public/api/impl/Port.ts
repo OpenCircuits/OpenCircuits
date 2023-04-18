@@ -68,5 +68,6 @@ export abstract class PortImpl<
 
     public abstract getLegalWires(): Port.LegalWiresQuery;
 
+    // Wire connection can fail if i.e. this is reference-equal to other
     public abstract connectTo(other: PortT): Wire | undefined;
 }
