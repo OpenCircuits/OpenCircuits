@@ -118,6 +118,10 @@ export abstract class CircuitImpl<
         return new CameraImpl(this);
     }
 
+    public get selections(): Selections {
+        return new SelectionsImpl(this);
+    }
+
     // Queries
     private pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
         const pos = ((space === "world" ? pt : this.view.toWorldPos(pt)));
@@ -141,10 +145,6 @@ export abstract class CircuitImpl<
     }
     public pickObjRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
         throw new Error("Unimplemented");
-    }
-
-    public get selections(): Selections {
-        return new SelectionsImpl(this);
     }
 
     public getComponent(id: string): ComponentT | undefined {
@@ -266,9 +266,6 @@ export abstract class CircuitImpl<
 
     public resize(w: number, h: number): void {
         this.view.resize(w, h);
-    }
-    public get canvas() {
-        return this.view.getCanvas();
     }
     public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
         this.view.setCanvas(canvas);

@@ -38,6 +38,7 @@ export interface Circuit {
     debugOptions: DebugOptions;
 
     readonly camera: Camera;
+    readonly selections: Selections;
 
     // Queries
     pickObjAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
@@ -45,7 +46,6 @@ export interface Circuit {
     pickWireAt(pt: Vector, space?: Vector.Spaces): Wire | undefined;
     pickPortAt(pt: Vector, space?: Vector.Spaces): Port | undefined;
     pickObjRange(bounds: Rect): Obj[];
-    readonly selections: Selections;
 
     getComponent(id: GUID): Component | undefined;
     getWire(id: GUID): Wire | undefined;
@@ -75,7 +75,6 @@ export interface Circuit {
     deserialize(data: string): void;
 
     resize(w: number, h: number): void;
-    readonly canvas?: HTMLCanvasElement;
     attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
     detachCanvas(): void;
 
