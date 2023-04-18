@@ -1,3 +1,4 @@
+import {V, Vector}    from "Vector";
 import {Component}    from "../Component";
 import {Obj}          from "../Obj";
 import {Selections}   from "../Selections";
@@ -36,6 +37,20 @@ export class SelectionsImpl implements Selections {
     public get wires(): Wire[] {
         return this.selections.filter((id) => (this.doc.hasWire(id)))
             .map((id) => this.state.constructWire(id));
+    }
+
+    public midpoint(space: Vector.Spaces): Vector {
+        // Case: no components are selected
+        if (this.components.length === 0)
+            return V(0, 0);
+
+        // Case: One or more components are selected, calculate average
+        const avgWorldPos = this.components
+            .map((c) => c.pos)
+            .reduce((sum, v) => sum.add(v))
+            .scale(1 / this.components.length);
+
+        return (space === "screen" ? this.state.view!.toScreenPos(avgWorldPos) : avgWorldPos);
     }
 
     public clear(): void {

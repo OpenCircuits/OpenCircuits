@@ -55,17 +55,6 @@ export interface Circuit {
     getComponents(): Component[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
-    /**
-     * Returns the average of the positions of the components selected
-     * as a Vector object.
-     *
-     * @param space Defines the coordinate-space which can be
-     *              either "screen space" or "world space.".
-     * @returns     A Vector object where x and y are the averages
-     *              of the positions of the selected components.
-     */
-    selectionsMidpoint(space: Vector.Spaces): Vector;
-
     // Object manipulation
     placeComponentAt(pt: Vector, kind: string): Component;
     connectWire(p1: Port, p2: Port): Wire | undefined;

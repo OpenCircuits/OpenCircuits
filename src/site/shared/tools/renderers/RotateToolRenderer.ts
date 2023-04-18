@@ -9,7 +9,7 @@ import {isObjComponent} from "core/public";
 
 export const RotateToolRenderer: ToolRenderer = {
     render: ({ circuit, renderer, curTool }) => {
-        const pos = circuit.selectionsMidpoint("world");
+        const pos = circuit.selections.midpoint("world");
 
         const drawOutline = () => {
             renderer.draw(new CirclePrim(pos, ROTATION_CIRCLE_RADIUS, {

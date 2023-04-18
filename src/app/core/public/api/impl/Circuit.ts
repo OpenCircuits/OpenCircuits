@@ -182,24 +182,6 @@ export abstract class CircuitImpl<
         throw new Error("Method not implemented.");
     }
 
-    public selectionsMidpoint(space: Vector.Spaces): Vector {
-        const allComponents = this.selectionsManager.get()
-            .map((id) => this.getComponent(id))
-            .filter((comp) => (comp !== undefined)) as Component[];
-
-        // Case: no components are selected
-        if (allComponents.length === 0)
-            return V(0,0)
-
-        // Case: One or more components are selected
-        const sumPosition = allComponents
-                            .map((c) => c.pos)
-                            .reduce((sum, v) => sum.add(v));
-
-        // Calculate average position
-        return sumPosition.scale(1 / allComponents.length);
-    }
-
     // Object manipulation
     public placeComponentAt(pt: Vector, kind: string): ComponentT {
         const info = this.circuit.doc.getComponentInfo(kind);
