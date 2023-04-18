@@ -31,5 +31,5 @@ Circuit 4: RLC(Resistor-Inductor-Capacitor) Example Circuit (Series)
     * This can include modeling specific real-world components if the data reflects that components (expected) behaviors.
 7. Component Information Does Not Work
     * Currently, clicking on the "learn about this component" button does nothing for all of the components. Can fix this by linking a wikipedia page to the button.
-   <img width="149" alt="image" src="https://user-images.githubusercontent.com/62410569/222838727-b0379451-c131-4c4e-ba7e-cc0a6652cf8e.png">
+<img width="149" alt="image" src="https://user-images.githubusercontent.com/62410569/222838727-b0379451-c131-4c4e-ba7e-cc0a6652cf8e.png">
 
