@@ -59,7 +59,6 @@ export interface Circuit {
     placeComponentAt(pt: Vector, kind: string): Component;
     connectWire(p1: Port, p2: Port): Wire | undefined;
     deleteObjs(objs: Obj[]): void;
-    clearSelections(): void;
 
     createIC(objs: Obj[]): Circuit | undefined;
     getICs(): Circuit[];

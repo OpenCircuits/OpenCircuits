@@ -211,9 +211,6 @@ export abstract class CircuitImpl<
         //  And also note that deleting Ports is a no-op, just ignore that case
         throw new Error("Unimplemented");
     }
-    public clearSelections(): void {
-        this.selections.clear();
-    }
 
     public createIC(objs: Array<ComponentT | WireT | PortT>): Circuit | undefined {
         throw new Error("Unimplemented");

@@ -44,7 +44,7 @@ export class SelectionBoxTool implements Tool {
         if (objs.length === 0) {
             // Clear selections if not holding shift
             if (deselectAll)
-                circuit.clearSelections();
+                circuit.selections.clear();
             return;
         }
 
@@ -60,7 +60,7 @@ export class SelectionBoxTool implements Tool {
         circuit.beginTransaction();
 
         if (deselectAll)
-            circuit.clearSelections();
+            circuit.selections.clear();
         objsToSelect.forEach((o) => o.select());
 
         circuit.commitTransaction();

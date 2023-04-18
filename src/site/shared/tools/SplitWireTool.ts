@@ -25,7 +25,7 @@ export class SplitWireTool extends TranslateTool {
 
         circuit.beginTransaction();
 
-        circuit.clearSelections();
+        circuit.selections.clear();
         const { node } = wire.split();
         node.select();
 
