@@ -14,5 +14,5 @@
     },
     // TODO[model_refactor_api](Leon) - Add back "src" to include
     "include": ["src/utils/ExpressionParser", "../../shared/utils/types"],
-    "files": ["./src/index.tsx"],
+    "files": ["./src/index.tsx", "tests/utils/ExpressionParser.test.ts"],
 }

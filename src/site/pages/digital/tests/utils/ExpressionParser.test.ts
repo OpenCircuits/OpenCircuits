@@ -1,13 +1,17 @@
 import {InputToken, InputTreeBinOpNode, InputTreeIdent,
         InputTreeUnOpNode, OperatorFormat,
-        Token} from "site/digital/utils/ExpressionParser/Constants/DataStructures";
+        Token} from "src/utils/ExpressionParser/Constants/DataStructures";
+
+
 // import {FORMATS} from "site/digital/utils/ExpressionParser/Constants/Formats";
 
 // import {AddGroup} from "core/actions/compositions/AddGroup";
 
 // import {ExpressionToCircuit} from "site/digital/utils/ExpressionParser";
 
-import {GenerateInputTree} from "site/digital/utils/ExpressionParser/GenerateInputTree";
+import {GenerateInputTree} from "src/utils/ExpressionParser/GenerateInputTree";
+
+
 // import {GenerateTokens}    from "site/digital/utils/ExpressionParser/GenerateTokens";
 
 // import {DigitalCircuitDesigner} from "digital/models/DigitalCircuitDesigner";
@@ -743,7 +747,10 @@ describe("Expression Parser", () => {
             const notToken: Token = { type: "!" };
             const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
             const tree = GenerateInputTree(tokenList);
-            const treeNand = tree as InputTreeBinOpNode;
+            test ("Returned OK", () => {
+                expect(tree.ok).toBeTruthy();
+            });
+            const treeNand = tree.unwrap() as InputTreeBinOpNode;
             test("!", () => {
                 expect(treeNand.kind).toBe("binop");
                 expect(treeNand.isNot).toBeTruthy();
@@ -765,7 +772,10 @@ describe("Expression Parser", () => {
             const notToken: Token = { type: "!" };
             const tokenList = [notToken, tokenA];
             const tree = GenerateInputTree(tokenList);
-            const treeNot = tree as InputTreeUnOpNode;
+            test ("Returned OK", () => {
+                expect(tree.ok).toBeTruthy();
+            });
+            const treeNot = tree.unwrap() as InputTreeUnOpNode;
             test("!", () => {
                 expect(treeNot.kind).toBe("unop");
                 expect(treeNot.type).toBe("!");
