@@ -1,3 +1,4 @@
+import {ErrE, Ok, Result} from "core/utils/Result";
 import {BinOpChildren, InputToken, InputTree, InputTreeBinOpNode, InputTreeBinOpType,
         Token, TokenType} from "./Constants/DataStructures";
 import {FORMATS} from "./Constants/Formats";
@@ -67,6 +68,69 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
     return errorMessage;
 }
 
+function handleUnary(tokens: readonly Token[], ops: Record<TokenType, string>,
+        currentOpNum: number, index: number): Result<NewTreeRetValue> {
+    const rightToken = tokens[index];
+    let rightRet: Result<NewTreeRetValue>;
+    if (rightToken.type === "!") { // This case applies when there are two !'s in a row
+        rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
+    }
+    else if (rightToken.type === "input") { // This case would apply when an input follows a "!"
+        rightRet = Ok({ index: index+1, tree: { kind: "leaf", ident: rightToken.name } });
+    }
+    else {
+        return ErrE(`Invalid token "${ops[rightToken.type]}" following "${ops["!"]}"`);
+    }
+    return rightRet.andThen((rightRetVal) => {
+        let tree: InputTree;
+        const rTree = rightRetVal.tree;
+        if (rTree.kind === "binop" && !rTree.isNot) {
+            tree = rTree;
+            tree.isNot = true;
+        }
+        else {
+            tree = { kind: "unop", type: "!", child: rightRetVal.tree };
+        }
+        return Ok({ index: rightRetVal.index, tree: tree });
+    });
+}
+
+function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: readonly Token[],
+        ops: Record<TokenType, string>, currentOpNum: number, index: number): Result<NewTreeRetValue> {
+    // This section gets the part of the tree from the left side of the operator.
+    //  "!" and "(" only have operands on their right side, so this section is skipped for them
+    return generateInputTreeCore(tokens, ops, nextOpNum, index).andThen((leftRet): Result<NewTreeRetValue> => {
+        index = leftRet.index;
+        // If this isn't the right operation to apply, return
+        if (index >= tokens.length || tokens[index].type !== currentOp)
+            return Ok(leftRet);
+
+        index += 1;
+        return generateInputTreeCore(tokens, ops, currentOpNum, index)
+                .andThen((rightRet): Result<NewTreeRetValue> => {
+            index = rightRet.index;
+            const lTree = leftRet!.tree, rTree = rightRet.tree;
+            let childrenArray = isTreeExtendable(lTree, currentOp, leftRet!.final)
+                                ? lTree.children as InputTree[]
+                                : [lTree];
+            if (isTreeExtendable(rTree, currentOp, rightRet.final))
+                childrenArray = [...childrenArray, ...rTree.children as InputTree[]];
+            else
+                childrenArray.push(rTree);
+
+            childrenArray = generateNestedTrees(childrenArray, currentOp);
+
+            const tree: InputTree = {
+                kind:     "binop",
+                type:     currentOp,
+                isNot:    false,
+                children: childrenArray as BinOpChildren,
+            };
+            return Ok({ index: index, tree: tree });
+        });
+    });
+}
+
 /**
  * The core of the function to generate the input tree. Various errors are returned for invalid inputs.
  *  It is recommended to not call this function directly and instead call GenerateInputTree.
@@ -77,26 +141,27 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
  * @param currentOpNum The index of the current operation to evaluate.
  * @param index        The index of the parsing process in the tokens Array.
  * @returns            The current input tree and the current parsing index.
- * @throws Parenthesis do not include anything (such as "()").
- * @throws An opening parenthesis is missing a corresponding closing parenthesis (such as "(a").
- * @throws A closing parenthesis is missing a corresponding opening parenthesis (such as ")a").
- * @throws `|`, `&`, or `^` are missing an operand on their left (such as "a|").
- * @throws `|`, `&`, `^`, or `!` are missing an operand on their right (such as "!a").
+ *                     In the case of error, then an error will be returned indicating one of the following:
+ *                     - Parenthesis do not include anything (such as "()").
+ *                     - An opening parenthesis is missing a corresponding closing parenthesis (such as "(a").
+ *                     - A closing parenthesis is missing a corresponding opening parenthesis (such as ")a").
+ *                     - `|`, `&`, or `^` are missing an operand on their left (such as "a|").
+ *                     - `|`, `&`, `^`, or `!` are missing an operand on their right (such as "!a").
  * @see GenerateInputTree
  */
-function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
-                               currentOpNum = 0, index = 0): NewTreeRetValue {
+function generateInputTreeCore(tokens: readonly Token[], ops: Record<TokenType, string>,
+                               currentOpNum = 0, index = 0): Result<NewTreeRetValue> {
     const nextOpNum = (currentOpNum+1) % DefaultPrecedences.length;
     const currentOp = DefaultPrecedences[currentOpNum];
     if (tokens[index].type === ")") {
         if (index > 0) {
             const prevTokenType = tokens[index-1].type;
             if (prevTokenType === "(")
-                throw new Error("Empty Parenthesis");
+                return ErrE("Empty Parenthesis");
             if (prevTokenType !== ")" && prevTokenType !== "input")
-                throw new Error(`Missing Right Operand: "${ops[prevTokenType]}"`);
+                return ErrE(`Missing Right Operand: "${ops[prevTokenType]}"`);
         }
-        throw new Error(`Encountered Unmatched "${ops[")"]}"`);
+        return ErrE(`Encountered Unmatched "${ops[")"]}"`);
     }
 
     // When this function has recursed through to "!" and the token still isn't that, then
@@ -106,79 +171,37 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
         if (token.type === "(")
             return generateInputTreeCore(tokens, ops, nextOpNum, index);
         if (token.type === "input")
-            return { index: index+1, tree: { kind: "leaf", ident: token.name } };
-        throw new Error(`Missing Left Operand: "${ops[token.type]}"`);
-    }
-
-    // This section gets the part of the tree from the left side of the operator.
-    //  "!" and "(" only have operands on their right side, so this section is skipped for them
-    let leftRet: NewTreeRetValue;
-    if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
-        leftRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
-        index = leftRet.index;
-        // If this isn't the right operation to apply, return
-        if (index >= tokens.length || tokens[index].type !== currentOp)
-            return leftRet;
+            return Ok({ index: index+1, tree: { kind: "leaf", ident: token.name } });
+        return ErrE(`Missing Left Operand: "${ops[token.type]}"`);
     }
 
     // This section gets the part of the tree from the right side of the operand. index is incremented by 1
     //  so it now points to the token on the right side of the operator.
-    index += 1;
-    if (index >= tokens.length && currentOp !== "(") {
-        throw new Error(`Missing Right Operand: "${ops[currentOp]}"`);
+    if ((index + 1) >= tokens.length && currentOp !== "(") {
+        return ErrE(`Missing Right Operand: "${ops[currentOp]}"`);
     }
-    let rightRet: NewTreeRetValue;
-    const rightToken = tokens[index];
-    if (currentOp === "!" && rightToken.type === "!") { // This case applies when there are two !'s in a row
-        rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
-    } else if (currentOp === "!" && rightToken.type === "input") { // This case would apply when an input follows a "!"
-        rightRet = { index: index+1, tree: { kind: "leaf", ident: rightToken.name } };
-    } else if (currentOp === "(") {
+    else if (currentOp === "!") {
+        index += 1;
+        return handleUnary(tokens, ops, currentOpNum, index);
+    }
+    else if (currentOp === "(") {
+        index += 1;
         if (index >= tokens.length)
-            throw new Error(`Encountered Unmatched "${ops["("]}"`);
-        rightRet = generateInputTreeCore(tokens, ops, nextOpNum, index);
-    } else {
-        rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
-    }
-    index = rightRet.index;
-    if (currentOp === "(") {
-        if (index >= tokens.length)
-            throw new Error(`Encountered Unmatched "${ops["("]}"`);
-        if (tokens[index].type !== ")")
-            throw new Error(`Encountered Unmatched "${ops["("]}"`);
-        rightRet.index += 1; // Incremented to skip the ")"
-        rightRet.final = true; // used to not combine gates in (a|b)|(c|d) for example
-        return rightRet;
-    }
-
-    // The tree tree is created with the new node as the root and returned
-    let tree: InputTree;
-    if (currentOp === "!") {
-        const rTree = rightRet.tree;
-        if (rTree.kind === "binop" && !rTree.isNot) {
-            tree = rTree;
-            tree.isNot = true;
-        }
-        else {
-            tree = { kind: "unop", type: "!", child: rightRet.tree };
-        }
+            return ErrE(`Encountered Unmatched "${ops["("]}"`);
+        return generateInputTreeCore(tokens, ops, nextOpNum, index).andThen((rightRet): Result<NewTreeRetValue> => {
+            if (index >= tokens.length)
+                return ErrE(`Encountered Unmatched "${ops["("]}"`);
+            if (tokens[rightRet.index].type !== ")")
+                return ErrE(`Encountered Unmatched "${ops["("]}"`);
+            rightRet.index += 1; // Incremented to skip the ")"
+            rightRet.final = true; // used to not combine gates in (a|b)|(c|d) for example
+            return Ok(rightRet);
+        });
     }
     else if (currentOp === "|" || currentOp === "^" || currentOp === "&") {
-        const lTree = leftRet!.tree, rTree = rightRet.tree;
-        let childrenArray = isTreeExtendable(lTree, currentOp, leftRet!.final)
-                            ? lTree.children as InputTree[]
-                            : [lTree];
-        if (isTreeExtendable(rTree, currentOp, rightRet.final))
-            childrenArray = [...childrenArray, ...rTree.children as InputTree[]];
-        else
-            childrenArray.push(rTree);
-
-        childrenArray = generateNestedTrees(childrenArray, currentOp);
-
-        tree = { kind: "binop", type: currentOp, isNot: false, children: childrenArray as BinOpChildren };
+        return handleBinary(currentOp, nextOpNum, tokens, ops, currentOpNum, index);
     }
-    return { index: index, tree: tree! };
-
+    return ErrE(`Unknown current operand ${currentOp}`);
 }
 
 /**
@@ -187,35 +210,38 @@ function generateInputTreeCore(tokens: Token[], ops: Record<TokenType, string>,
  * @param tokens The array of tokens representing the expression to parse.
  * @param ops    The representation format for the operations used in this expression (only used for error messages).
  * @returns      `undefined` if tokens.length is 0, the relevant input tree otherwise.
- * @throws Parenthesis do not include anything (such as "()").
- * @throws An opening parenthesis is missing a corresponding closing parenthesis (such as "(").
- * @throws A closing parenthesis is missing a corresponding opening parenthesis (such as ")").
- * @throws `|`, `&`, or `^` are missing an operand on their left (such as "a|").
- * @throws `|`, `&`, `^`, or `!` are missing an operand on their right (such as "!a").
- * @throws There is no operator between two inputs (such as "a b").
- * @throws `generateInputTreeCore` returns back up to this function before the end of tokens is reached
- *                  for any other reason.
+ *               In the case of error, then an error will be returned indicating one of the following:
+ *               - Parenthesis do not include anything (such as "()").
+ *               - An opening parenthesis is missing a corresponding closing parenthesis (such as "(").
+ *               - A closing parenthesis is missing a corresponding opening parenthesis (such as ")").
+ *               - `|`, `&`, or `^` are missing an operand on their left (such as "a|").
+ *               - `|`, `&`, `^`, or `!` are missing an operand on their right (such as "!a").
+ *               - There is no operator between two inputs (such as "a b").
+ *               - `generateInputTreeCore` returns back up to this function before the end of tokens is reached
+ *               for any other reason.
  */
-export function GenerateInputTree(tokens: Token[], ops = FORMATS[0].ops): InputTree | undefined {
+export function GenerateInputTree(tokens: readonly Token[], ops = FORMATS[0].ops): Result<InputTree> {
     if (tokens.length === 0)
-        return;
+        return ErrE("Input string was empty");
     const ret = generateInputTreeCore(tokens, ops);
 
-    const index = ret.index;
-    if (index < tokens.length) {
-        if (tokens[index].type === ")")
-            throw new Error(`Encountered Unmatched "${ops[")"]}"`);
+    return ret.andThen((retVal): Result<InputTree> => {
+        const index = retVal.index;
+        if (index < tokens.length) {
+            if (tokens[index].type === ")")
+                return ErrE(`Encountered Unmatched "${ops[")"]}"`);
 
-        const prev = tokens.slice(0, index) // Decrementing through the array starting at right before the returned index
-                           .reverse()
-                           .find((token) => token.type === "input") as InputToken;
-        const next = tokens.slice(index)
-                           .find((token) => token.type === "input") as InputToken;
-        if (prev && prev.name && next && next.name)
-            throw new Error(generateErrorMessage(prev.name, next.name, ops));
+            const prev = tokens.slice(0, index) // Decrementing through the array starting at right before the returned index
+                            .reverse()
+                            .find((token) => token.type === "input") as InputToken;
+            const next = tokens.slice(index)
+                            .find((token) => token.type === "input") as InputToken;
+            if (prev && prev.name && next && next.name)
+                return ErrE(generateErrorMessage(prev.name, next.name, ops));
 
-        throw new Error("Parsing ended prematurely");
-    }
+            return ErrE("Parsing ended prematurely");
+        }
 
-    return ret.tree;
+        return Ok(retVal.tree);
+    });
 }

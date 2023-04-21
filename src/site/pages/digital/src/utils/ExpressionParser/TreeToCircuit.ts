@@ -1,12 +1,9 @@
 import {InputTree} from "./Constants/DataStructures";
 
-import {CreateCircuit, DigitalCircuit} from "digital/public";
-import {V}                             from "Vector";
-import {Component, Port}                     from "core/public";
-import {Err, Ok, Result, ResultUtil}                        from "core/utils/Result";
-import {ErrE} from "core/utils/Result";
-import {MultiError} from "core/utils/MultiError";
-import {isError} from "shared/utils/Errors";
+import {CreateCircuit, DigitalCircuit}    from "digital/public";
+import {V}                                from "Vector";
+import {Component, Port}                  from "core/public";
+import {Err, ErrE, Ok, Result,ResultUtil} from "core/utils/Result";
 
 
 /**
@@ -28,11 +25,11 @@ export const NegatedTypeToGate = {
     "^": "XNORGate",
 } as const;
 
-function connect(prevComp: Component, newNode: Port, newComp: Component, circuit: DigitalCircuit): Result<Component> {
+function connect(prevComp: Component, newNode: Port, newComp: Component): Result<Component> {
     const prevNode = prevComp.firstAvailable("output");
     if (!prevNode)
         return ErrE(`Port not found on returned ${prevComp.kind}`);
-    const wire = circuit.connectWire(prevNode, newNode);
+    const wire = prevNode.connectTo(newNode);
     if (!wire)
         return ErrE(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
     return Ok(newComp);
@@ -49,7 +46,8 @@ function connect(prevComp: Component, newNode: Port, newComp: Component, circuit
  *                DigitalComponents found in inputs.
  * @returns       The current part of the tree that has been converted to a circuit, the most recently used component
  *                should always be last in the array.
- * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
+ *                In the case of error, then an error will be returned indicating one of the following:
+ *                - When one of the leaf nodes of the InputTree references an input that is not inputs.
  * @see TreeToCircuit
  */
 function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circuit: DigitalCircuit):
@@ -71,14 +69,14 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
         return ErrE(`Port not found on newly created ${newComp.kind}`);
     if (node.kind === "unop") {
         return treeToCircuitCore(node.child, inputs, ret)
-            .andThen((prevComp) => connect(prevComp, newNode, newComp, circuit));
+            .andThen((prevComp) => connect(prevComp, newNode, newComp));
     } else if (node.kind === "binop") {
         newComp.setNumPorts("input", node.children.length);
         const outer = ResultUtil.mapIter(node.children.values(), (child): Result<Component> => {
             if (!child)
                 return ErrE("treeToCircuitCore failed: child was undefined");
             return treeToCircuitCore(child, inputs, ret)
-                .andThen((prevComp) => connect(prevComp, newNode, newComp, circuit));
+                .andThen((prevComp) => connect(prevComp, newNode, newComp));
         });
         return outer.ok ? Ok(newComp) : Err(outer.errToOption().unwrap());
     }
@@ -93,7 +91,8 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
  * @param inputs The input components used by this expression.
  * @param output The component that the circuit outputs to.
  * @returns      The components and wires converted from the tree.
- * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
+ *               In the case of error, then an error will be returned indicating one of the following:
+ *               - When one of the leaf nodes of the InputTree references an input that is not inputs.
  */
 export function TreeToCircuit(tree: InputTree | undefined, inputs: ReadonlyMap<string, string>,
                               output: string): Result<DigitalCircuit> {
@@ -112,15 +111,8 @@ export function TreeToCircuit(tree: InputTree | undefined, inputs: ReadonlyMap<s
         inputMap.set(input, c);
     });
 
-    const finalComp = treeToCircuitCore(tree, inputMap, circuit);
+   treeToCircuitCore(tree, inputMap, circuit)
+        .andThen((prevComp) => connect(prevComp, outputNode, outputComp));
 
-    const finalNode = finalComp.firstAvailable("output");
-    if (!finalNode)
-        return ErrE(`Port not found on output ${finalComp.kind}`);
-
-    const wire = circuit.connectWire(finalNode, outputNode);
-    if (!wire)
-        return ErrE(`Connection between ${finalComp.kind} and ${outputComp.kind} failed`);
-
-    return circuit;
+    return Ok(circuit);
 }

@@ -1,3 +1,4 @@
+import {ErrE, Ok, Result}                             from "core/utils/Result";
 import {InputToken, OperatorFormat, Token, TokenType} from "./Constants/DataStructures";
 
 import {SubStrEquals} from "core/utils/StringUtils";
@@ -52,16 +53,17 @@ function getToken(expression: string, index: number, ops: OperatorFormat): Token
  * @param expression The expression to convert.
  * @param ops        The representation format for the operations used in this expression.
  * @returns          A list of tokens that represent the given expression.
- * @throws If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
- * @throws If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
+ *                   In the case of error, then an error will be returned indicating one of the following:
+ *                   - If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
+ *                   - If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
  */
-export function GenerateTokens(expression: string, ops: OperatorFormat): Token[] {
+export function GenerateTokens(expression: string, ops: OperatorFormat): Result<readonly Token[]> {
     for (const tokenType of TokenTypesArray) {
         if (ops.ops[tokenType] === "")
-            throw new Error("Length zero " + tokenType + " in supplied operation symbols");
+            ErrE("Length zero " + tokenType + " in supplied operation symbols");
     }
     if (ops.separator === "")
-        throw new Error("Length zero separator in supplied operation symbols");
+        ErrE("Length zero separator in supplied operation symbols");
 
     const tokenList = new Array<Token>();
     let token: Token | undefined;
@@ -80,5 +82,5 @@ export function GenerateTokens(expression: string, ops: OperatorFormat): Token[]
         }
     }
 
-    return tokenList;
+    return Ok(tokenList);
 }

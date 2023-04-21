@@ -14,7 +14,7 @@ const programming1: Readonly<OperatorFormat> = {
         "(": "(",
         ")": ")",
     },
-}
+};
 const programming2: Readonly<OperatorFormat> = {
     label:     "Programming 2 (&&, ||, ^, !)",
     separator: " ",
@@ -28,7 +28,7 @@ const programming2: Readonly<OperatorFormat> = {
         "(": "(",
         ")": ")",
     },
-}
+};
 const algebraic1: Readonly<OperatorFormat> = {
     label:     "Algebraic 1 (*, +, ^, !)",
     separator: " ",
@@ -42,7 +42,7 @@ const algebraic1: Readonly<OperatorFormat> = {
         "(": "(",
         ")": ")",
     },
-}
+};
 const algebraic2: Readonly<OperatorFormat> = {
     label:     "Algebraic 2 (*, +, ^, _)",
     separator: " ",
@@ -56,7 +56,7 @@ const algebraic2: Readonly<OperatorFormat> = {
         "(": "(",
         ")": ")",
     },
-}
+};
 const literal1: Readonly<OperatorFormat> = {
     label:     "Literal 1 (AND, OR, XOR, NOT)",
     separator: " ",
@@ -70,7 +70,7 @@ const literal1: Readonly<OperatorFormat> = {
         "(": "(",
         ")": ")",
     },
-}
+};
 const literal2: Readonly<OperatorFormat> = {
     label:     "Literal 2 (and, or, xor, not)",
     separator: " ",
@@ -84,7 +84,7 @@ const literal2: Readonly<OperatorFormat> = {
         "(": "(",
         ")": ")",
     },
-}
+};
 
 /**
  * Stores the different types of preset formats.
