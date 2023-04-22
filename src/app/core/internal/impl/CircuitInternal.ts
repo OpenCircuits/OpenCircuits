@@ -282,8 +282,6 @@ export class CircuitInternal extends Observable {
     }
 
 
-          this.objStorage.set(op.c.id, op.c);
-
     protected addTransactionOp(op: CircuitOp): Result {
         this.beginTransaction();
 
