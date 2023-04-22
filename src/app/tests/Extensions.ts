@@ -1,4 +1,5 @@
-import crypto from "node:crypto";
+import {Result} from "core/utils/Result";
+import crypto   from "node:crypto";
 
 
 // Define crypto for Jest for uuid generation
@@ -11,6 +12,7 @@ declare global {
         interface Matchers<R> {
             toApproximatelyEqual(expected: unknown, epsilon?: number): CustomMatcherResult;
             toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
+            toBeOk(): CustomMatcherResult;
             // toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
     }
@@ -79,6 +81,61 @@ expect.extend({
             message: () => `expected ${received} and ${otherAngle} to be numbers (angles)`,
             pass:    false,
         };
+    },
+
+    toBeOk(received: unknown) {
+        console.error("HERE" + received);
+        if (typeof received !== "object" || !received) {
+            return {
+                message: () => "supplied value is not an object",
+                pass:    false,
+            }
+        }
+        if (!("ok" in received)) {
+            return {
+                message: () => "supplied value is not a Result, no ok property found",
+                pass:    false,
+            }
+        }
+        const ok = received.ok;
+        if (typeof ok !== "boolean") {
+            return {
+                message: () => "supplied value is not a Result, no ok boolean property found",
+                pass:    false,
+            }
+        }
+        if (ok) {
+            return {
+                message: () => "expected Result to be Ok",
+                pass:    true,
+            }
+        }
+        if (!("error" in received)) {
+            return {
+                message: () => "supplied value is not a Result, no error property found",
+                pass:    false,
+            }
+        }
+        const error = received.error;
+        if (typeof error !== "object" || !error || !("errors" in error)) {
+            return {
+                message: () => "supplied value is not a Result, error property is not valid",
+                pass:    false,
+            }
+        }
+        const errors = error.errors;
+        if (typeof errors !== "object" || !errors || !Array.isArray(errors)) {
+            return {
+                message: () => "supplied value is not a Result, errors property is not an Array",
+                pass:    false,
+            }
+        }
+        return {
+            message: () => `expected Result to not have errors:\n - ${errors
+                .map((err) => err.message)
+                .join("\n - ")}`,
+            pass: false,
+        }
     },
 
     // toBeConnectedTo(source: unknown, target: DigitalComponent, options = { depth: Infinity }) {

@@ -1,6 +1,6 @@
 import {InputToken, InputTreeBinOpNode, InputTreeIdent,
         InputTreeUnOpNode, OperatorFormat,
-        Token} from "src/utils/ExpressionParser/Constants/DataStructures";
+        Token} from "site/digital/utils/ExpressionParser/Constants/DataStructures";
 
 
 // import {FORMATS} from "site/digital/utils/ExpressionParser/Constants/Formats";
@@ -9,7 +9,9 @@ import {InputToken, InputTreeBinOpNode, InputTreeIdent,
 
 // import {ExpressionToCircuit} from "site/digital/utils/ExpressionParser";
 
-import {GenerateInputTree} from "src/utils/ExpressionParser/GenerateInputTree";
+import {GenerateInputTree} from "site/digital/utils/ExpressionParser/GenerateInputTree";
+
+import "./../../../../../app/tests/Extensions";
 
 
 // import {GenerateTokens}    from "site/digital/utils/ExpressionParser/GenerateTokens";
@@ -748,21 +750,15 @@ describe("Expression Parser", () => {
             const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
             const tree = GenerateInputTree(tokenList);
             test ("Returned OK", () => {
-                expect(tree.ok).toBeTruthy();
-            });
-            const treeNand = tree.unwrap() as InputTreeBinOpNode;
-            test("!", () => {
+                expect(tree).toBeOk();
+                const treeNand = tree.unwrap() as InputTreeBinOpNode;
                 expect(treeNand.kind).toBe("binop");
                 expect(treeNand.isNot).toBeTruthy();
                 expect(treeNand.children[0].kind).toBe("leaf");
                 expect(treeNand.children[1].kind).toBe("leaf");
-            });
-            const treeLeft = treeNand.children[0] as InputTreeIdent;
-            test("a", () => {
+                const treeLeft = treeNand.children[0] as InputTreeIdent;
                 expect(treeLeft.ident).toBe("a");
-            });
-            const treeRight = treeNand.children[1] as InputTreeIdent;
-            test("b", () => {
+                const treeRight = treeNand.children[1] as InputTreeIdent;
                 expect(treeRight.ident).toBe("b");
             });
         });
@@ -773,16 +769,12 @@ describe("Expression Parser", () => {
             const tokenList = [notToken, tokenA];
             const tree = GenerateInputTree(tokenList);
             test ("Returned OK", () => {
-                expect(tree.ok).toBeTruthy();
-            });
-            const treeNot = tree.unwrap() as InputTreeUnOpNode;
-            test("!", () => {
+                expect(tree).toBeOk();
+                const treeNot = tree.unwrap() as InputTreeUnOpNode;
                 expect(treeNot.kind).toBe("unop");
                 expect(treeNot.type).toBe("!");
                 expect(treeNot.child.kind).toBe("leaf");
-            });
-            const treeLeft = treeNot.child as InputTreeIdent;
-            test("a", () => {
+                const treeLeft = treeNot.child as InputTreeIdent;
                 expect(treeLeft.ident).toBe("a");
             });
         });
