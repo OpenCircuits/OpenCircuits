@@ -1,16 +1,30 @@
-import {CreateCircuit}                from "digital/public";
-import React                          from "react";
-import ReactDOM                       from "react-dom";
-import ReactGA                        from "react-ga";
-import {Provider}                     from "react-redux";
-import {applyMiddleware, createStore} from "redux";
-import thunk, {ThunkMiddleware}       from "redux-thunk";
+import React, {useLayoutEffect, useRef} from "react";
+import {createRoot}                     from "react-dom/client";
+import ReactGA                          from "react-ga";
+import {configureStore}                 from "@reduxjs/toolkit";
+
+import {CreateCircuit} from "digital/public";
 
 import {GetCookie}     from "shared/utils/Cookies";
-import {Images}        from "shared/utils/Images";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
-import {storeCircuit} from "shared/utils/hooks/useCircuit";
+import {storeDesigner} from "shared/utils/hooks/useDesigner";
+
+import {CreateDesigner} from "shared/circuitdesigner";
+
+import {DefaultTool}              from "shared/tools/DefaultTool";
+import {PanTool}                  from "shared/tools/PanTool";
+import {TranslateTool}            from "shared/tools/TranslateTool";
+import {SelectionBoxTool}         from "shared/tools/SelectionBoxTool";
+import {RotateTool}               from "shared/tools/RotateTool";
+import {WiringTool}               from "shared/tools/WiringTool";
+import {SplitWireTool}            from "shared/tools/SplitWireTool";
+import {ZoomHandler}              from "shared/tools/handlers/ZoomHandler";
+import {SelectionHandler}         from "shared/tools/handlers/SelectionHandler";
+import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
+import {RotateToolRenderer}       from "shared/tools/renderers/RotateToolRenderer";
+
+import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
 import {DevListFiles} from "shared/api/Dev";
 
@@ -18,25 +32,62 @@ import {NoAuthState} from "shared/api/auth/NoAuthState";
 
 import {Login} from "shared/state/thunks/User";
 
-import {App}                from "./containers/App";
-import {AppState, AppStore} from "./state";
-import {AllActions}         from "./state/actions";
-import {reducers}           from "./state/reducers";
+import {AppStore} from "./state";
+import {reducers} from "./state/reducers";
 
-import ImageFiles from "./data/images.json";
+import ImageFiles      from "./data/images.json";
+import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
+import {DigitalCircuitDesigner} from "./utils/DigitalCircuitDesigner";
+
+
+const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { w, h } = useWindowSize();
+
+    useLayoutEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas)
+            return;
+        (window as any).Circuit = designer.circuit;
+        return designer.attachCanvas(canvas);
+    }, [designer, canvasRef]);
+
+    useLayoutEffect(() => designer.circuit.resize(w, h), [designer, w, h]);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            width={w}
+            height={h} />
+    );
+}
 
 async function Init(): Promise<void> {
     const startPercent = 30;
     let store: AppStore;
 
+    const designer = CreateDesigner(
+        CreateCircuit(),
+        {
+            defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
+            tools:       [
+                PanTool,
+                new RotateTool(), new TranslateTool(),
+                new WiringTool(), new SplitWireTool(),
+                new SelectionBoxTool(),
+            ],
+            renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
+        },
+    );
+
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {
-            await Images.Load(ImageFiles.images, onProgress);
+            await designer.circuit.loadImages(ImageFiles.images, onProgress);
         }],
 
         [85, "Initializing redux", async () => {
-            store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+            store = configureStore({ reducer: reducers });
         }],
 
         [95, "Initializing Authentication", async () => {
@@ -97,43 +148,26 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            // Setup circuit and get the CircuitInfo and helpers
-            // const [info, helpers] = Setup(
-            //     store,
-            //     new DefaultTool(
-            //         SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-            //         DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-            //         PressableHandler, SelectionHandler, SelectPathHandler,
-            //         RedoHandler, UndoHandler, CleanUpHandler, CopyHandler,
-            //         PasteHandler((data) => DigitalPaste(data, info, undefined)),
-            //         SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-            //     ),
-            //     PanTool, RotateTool,
-            //     TranslateTool, WiringTool,
-            //     SelectionBoxTool, SplitWireTool
-            // );
-
+            // TODO[model_refactor](leon)
             // info.history.addCallback(() => {
             //     store.dispatch(SetCircuitSaved(false));
             // });
-            const circuit = CreateCircuit();
 
-            storeCircuit("main", circuit);
+            storeDesigner("main", designer);
 
-            if (process.env.NODE_ENV === "development") {
-                // Load dev state
-                const files = await DevListFiles();
-                // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-            }
+            // TODO[model_refactor](leon)
+            // if (process.env.NODE_ENV === "development") {
+            //     // Load dev state
+            //     const files = await DevListFiles();
+            //     // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
+            //     //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            // }
 
-            ReactDOM.render(
+            const root = createRoot(document.getElementById("root")!);
+            root.render(
                 <React.StrictMode>
-                    <Provider store={store}>
-                        <App />
-                    </Provider>
-                </React.StrictMode>,
-                document.getElementById("root")
+                    <MainCircuit designer={designer} />
+                </React.StrictMode>
             );
         }],
     ]);

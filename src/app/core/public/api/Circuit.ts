@@ -2,8 +2,12 @@ import {Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
+import {GUID} from "core/schema/GUID";
+
 import {DebugOptions} from "core/internal/impl/DebugOptions";
-import {GUID}         from "core/schema/GUID";
+
+import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
 import {Camera}        from "./Camera";
 import {Component}     from "./Component";
@@ -11,6 +15,8 @@ import {ComponentInfo} from "./ComponentInfo";
 import {Obj}           from "./Obj";
 import {Port}          from "./Port";
 import {Wire}          from "./Wire";
+import {Selections}    from "./Selections";
+import {CleanupFunc}   from "core/utils/types";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
@@ -34,9 +40,12 @@ export interface Circuit {
     readonly camera: Camera;
 
     // Queries
-    pickObjectAt(pt: Vector): Obj | undefined;
-    pickObjectRange(bounds: Rect): Obj[];
-    selectedObjs(): Obj[];
+    pickObjAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
+    pickComponentAt(pt: Vector, space?: Vector.Spaces): Component | undefined;
+    pickWireAt(pt: Vector, space?: Vector.Spaces): Wire | undefined;
+    pickPortAt(pt: Vector, space?: Vector.Spaces): Port | undefined;
+    pickObjRange(bounds: Rect): Obj[];
+    readonly selections: Selections;
 
     getComponent(id: GUID): Component | undefined;
     getWire(id: GUID): Wire | undefined;
@@ -48,11 +57,11 @@ export interface Circuit {
     /**
      * Returns the average of the positions of the components selected
      * as a Vector object.
-     * 
-     * @param space defines the coordinate-space which can be 
-     *        either "screen space" or "world space."
-     * @returns A Vector object where x and y are the averages 
-     *          of the positions of the selected components.
+     *
+     * @param space Defines the coordinate-space which can be
+     *              either "screen space" or "world space.".
+     * @returns     A Vector object where x and y are the averages
+     *              of the positions of the selected components.
      */
     selectionsMidpoint(space: Vector.Spaces): Vector;
 
@@ -65,6 +74,8 @@ export interface Circuit {
     createIC(objs: Obj[]): Circuit | undefined;
     getICs(): Circuit[];
 
+    loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void>;
+
     undo(): boolean;
     redo(): boolean;
 
@@ -75,7 +86,19 @@ export interface Circuit {
     serialize(): string;
     deserialize(data: string): void;
 
-    addRenderCallback(cb: () => void): void;
+    resize(w: number, h: number): void;
+    readonly canvas?: HTMLCanvasElement;
+    attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
+    detachCanvas(): void;
 
-    subscribe(cb: (ev: any) => void): () => void;
+    forceRedraw(): void;
+
+    // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
+    addRenderCallback(cb: (data: {
+        renderer: RenderHelper;
+        options: RenderOptions;
+        circuit: Circuit;
+    }) => void): CleanupFunc;
+
+    subscribe(cb: (ev: any) => void): CleanupFunc;
 }

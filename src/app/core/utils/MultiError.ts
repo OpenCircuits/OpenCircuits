@@ -1,4 +1,3 @@
-
 // Encapsulates an error with multiple levels of semantic information
 export class MultiError {
     private readonly errs: Error[]

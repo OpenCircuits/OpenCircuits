@@ -11,9 +11,12 @@ export interface BaseObject {
     isSelected: boolean;
     zIndex: number;
 
+    select(): void;
+    deselect(): void;
+
     exists(): boolean;
 
     setProp(key: string, val: Prop): void;
-    getProp(key: string): Prop;
+    getProp(key: string): Prop | undefined;
     getProps(): Record<string, Prop>;
 }

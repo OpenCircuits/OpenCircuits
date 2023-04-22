@@ -18,6 +18,9 @@ export class DigitalComponentInfo implements ComponentInfo {
     public readonly portGroups: string[];
 
     public readonly portGroupInfo: DigitalPortGroupInfo;
+    public readonly inputPortGroups: readonly string[];
+    public readonly outputPortGroups: readonly string[];
+
     private readonly validPortConfigs: PortConfig[];
     private readonly props: TypeMap;
 
@@ -36,6 +39,9 @@ export class DigitalComponentInfo implements ComponentInfo {
 
         this.portGroupInfo = portGroupInfo;
         this.validPortConfigs = portConfigs;
+
+        this.inputPortGroups  = this.portGroups.filter((g) => (this.portGroupInfo[g] ===  "input"));
+        this.outputPortGroups = this.portGroups.filter((g) => (this.portGroupInfo[g] === "output"));
     }
 
     public checkPropValue(key: string, value?: Prop): Result {
@@ -93,8 +99,8 @@ export class DigitalComponentInfo implements ComponentInfo {
 const DigitalOutputComponentInfo = (kind: string, outputs: number[], props: TypeMap = {}) =>
     new DigitalComponentInfo(kind, props, { "outputs": "output" }, outputs.map((amt) => ({ "outputs": amt })));
 
-const SwitchInfo = DigitalOutputComponentInfo("Switch", [1]);
-const ButtonInfo = DigitalOutputComponentInfo("Button", [1]);
+const SwitchInfo = DigitalOutputComponentInfo("Switch", [1], { "isOn": "boolean" });
+const ButtonInfo = DigitalOutputComponentInfo("Button", [1], { "isOn": "boolean" });
 const ConstantLowInfo    = DigitalOutputComponentInfo("ConstantLow",    [1]);
 const ConstantHighInfo   = DigitalOutputComponentInfo("ConstantHigh",   [1]);
 const ConstantNumberInfo = DigitalOutputComponentInfo("ConstantNumber", [4], { "inputNum": "number" });
@@ -225,6 +231,13 @@ const Label = new DigitalComponentInfo("Label", {
     "bgColor":   "string",
 }, {}, [{}]);
 
+const NodeInfo = new DigitalComponentInfo(
+    "DigitalNode",
+    {},
+    { "inputs": "input", "outputs": "output" },
+    [{ "inputs": 1, "outputs": 1 }]
+);
+
 
 // Wires
 class DigitalWireInfo implements ObjInfo {
@@ -280,6 +293,7 @@ class DigitalComponentInfoProvider implements ObjInfoProvider {
 
     public constructor(components: DigitalComponentInfo[]) {
         this.components = new Map(components.map((info) => [info.kind, info]));
+        this.components.set("DigitalNode", NodeInfo);
         this.wires = new Map([["DigitalWire", WireInfo]]);
         this.ports = new Map([["DigitalPort", PortInfo]]);
     }

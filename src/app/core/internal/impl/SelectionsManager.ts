@@ -33,7 +33,7 @@ export class SelectionsManager extends Observable<SelectionEvent> {
         this.publish({ type: "deselect", selections });
     }
 
-    public isSelected(id: GUID): boolean {
+    public has(id: GUID): boolean {
         return this.selections.has(id);
     }
 
@@ -41,8 +41,11 @@ export class SelectionsManager extends Observable<SelectionEvent> {
         return [...this.selections];
     }
 
+    public length(): number {
+        return this.selections.size;
+    }
+
     public clear(): void {
-        // TODO(callac5): See above for reference
-        throw new Error("Unimplemented");
+        this.deselect(...this.get());
     }
 }

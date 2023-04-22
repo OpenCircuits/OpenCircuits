@@ -41,7 +41,7 @@ export const ContextMenu = ({ circuit }: Props) => {
     //     if (!input)
     //         return;
 
-    //     const listener = (ev: InputManagerEvent) => {
+    //     const listener = (ev: InputAdapterEvent) => {
     //         if (ev.type === "contextmenu")
     //             dispatch(OpenContextMenu());
     //         else if (ev.type === "mousedown")
@@ -203,7 +203,7 @@ export const ContextMenu = ({ circuit }: Props) => {
                     onClick={() => doFunc(onCleanUp)}>Clean Up</button>
             <button type="button"
                     title="Duplicate"
-                    disabled={circuit.selectedObjs().length === 0}
+                    disabled={circuit.selectedObjs.length === 0}
                     onClick={() => doFunc(onDuplicate)}>Duplicate</button>
             <hr />
             <button type="button"
