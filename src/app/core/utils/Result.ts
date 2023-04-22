@@ -4,15 +4,9 @@ import {MultiError} from "./MultiError";
 // Result
 //
 
-export type Result<T = void, E = MultiError> = ResultVariants<T, E> & RInterface<T, E>;
-
-type ResultRepOk<T> = { ok: true, value: T };
-type ResultRepErr<E> = { ok: false, error: E };
-type ResultRep<T, E> = ResultRepOk<T> | ResultRepErr<E>;
-
-type ResultVariants<T, E> =
-    | (ResultRepOk<T> & { cast<F>(): Result<T, F>})
-    | (ResultRepErr<E> & { cast<U>(): Result<U, E>});
+// Rust-like implementation of "Result" type.  Use equivalent rust names.
+// https://doc.rust-lang.org/std/result/
+export type Result<T = void, E = MultiError> = (ResultOk<T> | ResultErr<E>) & RInterface<T, E>;
 
 interface RInterface<T, E> {
     // Extracting values
@@ -43,142 +37,176 @@ interface RInterface<T, E> {
     asUnion(): T | E;
 }
 
-// Rust-like implementation of "Result" type.  Use equivalent rust names.
-// https://doc.rust-lang.org/std/result/
-class ResultBase<T, E> implements RInterface<T, E> {
-    private readonly r: ResultRep<T, E>;
-    protected constructor(r: ResultRep<T, E>) {
-        this.r = r;
+class ResultOk<T> {
+    public constructor(t: T) {
+        this.value = t;
     }
-
-    // Use for zero-copy cast when we know which variant we are
-    // Cast "Err" values to different "Ok" types
-    protected unsafeCastErr<U>(): Result<U, E> {
-        return this as unknown as Result<U, E>;
-    }
-    // Cast "Ok" values to different "Err" types
-    protected unsafeCastOk<F>(): Result<T, F> {
-        return this as unknown as Result<T, F>;
-    }
-
-    protected asResult(): Result<T, E> {
-        return this as unknown as Result<T, E>;
-    }
+    public readonly ok = true as const;
+    public readonly value: T;
 
     // Queries
     public isOk(): boolean {
-        return this.r.ok;
+        return this.ok;
     }
     public isErr(): boolean {
-        return !this.r.ok;
+        return !this.ok;
     }
 
     // Extracting values
-    public expect(errMsg: string): T {
-        if (!this.r.ok)
-            throw new Error(errMsg);
-        return this.r.value;
+    public expect(_errMsg: string): T {
+        return this.value;
     }
     public unwrap(): T {
-        if (!this.r.ok)
-            throw this.r.error;
-        return this.r.value;
+        return this.value;
     }
-    public unwrapOr(d: T): T {
-        if (!this.r.ok)
-            return d;
-        return this.r.value;
+    public unwrapOr(_d: T): T {
+        return this.value;
     }
-    public unwrapOrElse(f: (e: E) => T): T {
-        if (!this.r.ok)
-            return f(this.r.error);
-        return this.r.value;
+    public unwrapOrElse(_f: (e: never) => T): T {
+        return this.value;
     }
 
 
     // Transformations (omisssions: "transpose")
-    public errToOption(): Option<E> {
-        return this.r.ok ? None() : Some(this.r.error);
+    public errToOption(): OptionNone {
+        return None;
     }
-    public okToOption(): Option<T> {
-        return this.r.ok ? Some(this.r.value) : None();
+    public okToOption(): OptionSome<T> {
+        return Some(this.value);
     }
-    public map<U>(f: (t: T) => U): Result<U, E> {
-        return this.r.ok ? Ok(f(this.r.value)) : this.unsafeCastErr();
+    public map<U>(f: (t: T) => U): ResultOk<U> {
+        return Ok(f(this.value));
     }
-    public mapErr<F>(f: (e: E) => F): Result<T, F> {
-        return this.r.ok ? this.unsafeCastOk() : Err(f(this.r.error));
+    public mapErr(_f: (e: never) => never): ResultOk<T> {
+        return this;
     }
-    public mapOr<U>(f: (t: T) => U, u: U): U {
-        return this.r.ok ? f(this.r.value) : u;
+    public mapOr<U>(f: (t: T) => U, _u: U): U {
+        return f(this.value);
     }
-    public mapOrElse<U>(f: (t: T) => U, g: (e: E) => U): U {
-        return this.r.ok ? f(this.r.value) : g(this.r.error);
+    public mapOrElse<U>(f: (t: T) => U, _g: (e: never) => U): U {
+        return f(this.value);
     }
 
     // Boolean operators
-    public and<U>(o: Result<U, E>): Result<U, E> {
-        return this.r.ok ? o : this.unsafeCastErr();
+    public and<U, E>(o: Result<U, E>): Result<U, E> {
+        return o;
     }
-    public andThen<U>(f: (t: T) => Result<U, E>): Result<U, E> {
-        return this.r.ok ? f(this.r.value) : this.unsafeCastErr();
+    public andThen<U, E>(f: (t: T) => Result<U, E>): Result<U, E> {
+        return f(this.value);
     }
 
-    public or<F>(o: Result<T, F>): Result<T, F> {
-        return this.r.ok ? this.unsafeCastOk() : o;
+    public or(_o: Result<T, never>): ResultOk<T> {
+        return this;
     }
-    public orElse<F>(f: (e: E) => Result<T, F>): Result<T, F> {
-        return this.r.ok ? this.unsafeCastOk() : f(this.r.error);
+    public orElse(_f: (e: never) => Result<T, never>): ResultOk<T> {
+        return this;
     }
 
     // Extensions
-    public uponErr(f: (e: E) => unknown): Result<T, E> {
-        return this.match(() => {}, f);
+    public uponErr(_f: (e: never) => unknown): ResultOk<T> {
+        return this;
     }
-    public uponOk(f: (t: T) => unknown): Result<T, E> {
-        return this.match(f, () => {});
+    public uponOk(f: (t: T) => unknown): ResultOk<T> {
+        f(this.value);
+        return this;
     }
-    public match(f: (t: T) => unknown, g: (e: E) => unknown): Result<T, E> {
-        if (this.r.ok)
-            f(this.r.value);
-        else
-            g(this.r.error);
-        return this.asResult();
+    public match(f: (t: T) => unknown, _g: (e: never) => unknown): ResultOk<T> {
+        return this.uponOk(f);
     }
-    public asUnion(): T | E {
-        return this.r.ok ? this.r.value : this.r.error;
+    public asUnion(): T {
+        return this.value;
     }
 }
 
-class ResultOk<T, E> extends ResultBase<T, E> {
-    public constructor(t: T) {
-        super({ ok: true, value: t });
-        this.value = t;
-    }
-    public readonly ok = true;
-    public readonly value: T;
-
-    public cast<F>(): Result<T, F> {
-        return this.unsafeCastOk();
-    }
-}
-class ResultErr<T, E> extends ResultBase<T, E> {
+class ResultErr<E> {
     public constructor(e: E) {
-        super({ ok: false, error: e });
         this.error = e;
     }
-    public readonly ok = false;
+    public readonly ok = false as const;
     public readonly error: E;
 
-    public cast<U>(): Result<U, E> {
-        return this.unsafeCastErr();
+    // Queries
+    public isOk(): boolean {
+        return this.ok;
+    }
+    public isErr(): boolean {
+        return !this.ok;
+    }
+
+    // Extracting values
+    public expect(errMsg: string): never {
+        throw new Error(errMsg);
+    }
+    public unwrap(): never {
+        throw this.error;
+    }
+    public unwrapOr<T>(d: T): T {
+        return d;
+    }
+    public unwrapOrElse<T>(f: (e: E) => T): T {
+        return f(this.error);
+    }
+
+
+    // Transformations (omisssions: "transpose")
+    public errToOption(): OptionSome<E> {
+        return Some(this.error);
+    }
+    public okToOption(): OptionNone {
+        return None;
+    }
+    public map(_f: (t: never) => never): ResultErr<E> {
+        return this;
+    }
+    public mapErr<F>(f: (e: E) => F): ResultErr<F> {
+        return Err(f(this.error));
+    }
+    public mapOr<U>(_f: (t: never) => U, u: U): U {
+        return u;
+    }
+    public mapOrElse<U>(_f: (t: never) => U, g: (e: E) => U): U {
+        return g(this.error);
+    }
+
+    // Boolean operators
+    public and(_o: Result<never, E>): ResultErr<E> {
+        return this;
+    }
+    public andThen(_f: (t: never) => Result<never, E>): ResultErr<E> {
+        return this;
+    }
+
+    public or<T, F>(o: Result<T, F>): Result<T, F> {
+        return o;
+    }
+    public orElse<T, F>(f: (e: E) => Result<T, F>): Result<T, F> {
+        return f(this.error);
+    }
+
+    // Extensions
+    public uponErr(f: (e: E) => unknown): ResultErr<E> {
+        f(this.error);
+        return this;
+    }
+    public uponOk(_f: (t: never) => unknown): ResultErr<E> {
+        return this;
+    }
+    public match(_f: (t: never) => unknown, g: (e: E) => unknown): ResultErr<E> {
+        return this.uponErr(g);
+    }
+    public asUnion(): E {
+        return this.error;
     }
 }
 
-export function Ok<T, E>(t: T): ResultOk<T, E> {
+export function Test<T, E>(t: T): Result<T, E> {
+    return Ok(t);
+}
+
+export function Ok<T>(t: T): ResultOk<T> {
     return new ResultOk(t);
 }
-export function Err<T, E>(e: E): ResultErr<T, E> {
+export function Err<E>(e: E): ResultErr<E> {
     return new ResultErr(e);
 }
 
@@ -191,11 +219,8 @@ export function WrapResOrE<T>(t: T | undefined, e: string): Result<T, MultiError
     return t === undefined ? Err(new MultiError([new Error(e)])) : Ok(t);
 }
 
-const OK_VOID = Ok<void, unknown>(undefined);
-export function OkVoid<E>(): ResultOk<void, E> {
-    return OK_VOID as ResultOk<void, E>;
-}
-export function ErrE<T>(e: string): ResultErr<T, MultiError> {
+export const OkVoid = Ok<void>(undefined);
+export function ErrE(e: string): ResultErr<MultiError> {
     return Err(new MultiError([new Error(e)]));
 }
 
@@ -203,16 +228,9 @@ export function ErrE<T>(e: string): ResultErr<T, MultiError> {
 // Option
 //
 
-export type Option<T> = OptionVariants<T> & OInterface<T>;
-
-type OptionRepSome<T> = { some: true, value: T };
-type OptionRepNone = { some: false };
-type OptionRep<T> = OptionRepSome<T> | OptionRepNone;
-
-// See ResultVariants def for using "any" here.
-type OptionVariants<T> =
-    | OptionRepSome<T>
-    | (OptionRepNone & { cast<U>(): Option<U> });
+// Rust-like implementation of "Option" type.  Use equivalent rust names.
+// https://doc.rust-lang.org/std/option/
+export type Option<T> = (OptionSome<T> | OptionNone) & OInterface<T>;
 
 interface OInterface<T> {
     // Queries
@@ -251,156 +269,201 @@ interface OInterface<T> {
     asUnion(): T | undefined;
 }
 
-// Rust-like implementation of "Option" type.  Use equivalent rust names.
-// https://doc.rust-lang.org/std/option/
-class OptionBase<T> {
-    private readonly r: OptionRep<T>;
-    protected constructor(r: OptionRep<T>) {
-        this.r = r;
+class OptionSome<T> {
+    public constructor(t: T) {
+        this.value = t;
     }
-
-    protected asOption(): Option<T> {
-        return this as unknown as Option<T>;
-    }
+    public readonly some = true as const;
+    public readonly value: T;
 
     // Queries
     public isSome(): boolean {
-        return this.r.some;
+        return true;
     }
     public isNone(): boolean {
-        return !this.r.some;
+        return false;
     }
 
     // Extracting values
-    public expect(errMsg: string): T {
-        if (!this.r.some)
-            throw new Error(errMsg);
-        return this.r.value;
+    public expect(_errMsg: string): T {
+        return this.value;
     }
     public unwrap(): T {
-        if (!this.r.some)
-            throw new Error("Attempted to unwrap \"None\" Option");
-        return this.r.value;
+        return this.value;
     }
-    public unwrapOr(d: T): T {
-        if (!this.r.some)
-            return d;
-        return this.r.value;
+    public unwrapOr(_d: T): T {
+        return this.value;
     }
-    public unwrapOrElse(f: () => T): T {
-        if (!this.r.some)
-            return f();
-        return this.r.value;
+    public unwrapOrElse(_f: () => T): T {
+        return this.value;
     }
 
     // Transformations (omissions: transpose, flatten)
-    public okOr<E>(err: E): Result<T, E> {
-        return this.r.some ? Ok(this.r.value) : Err(err);
+    public okOr(_err: never): ResultOk<T> {
+        return Ok(this.value);
     }
-    public okOrElse<E>(f: () => E): Result<T, E> {
-        return this.r.some ? Ok(this.r.value) : Err(f());
+    public okOrElse(_f: () => never): ResultOk<T> {
+        return Ok(this.value);
     }
     public filter(f: (t: T) => boolean): Option<T> {
-        return this.r.some && f(this.r.value) ? this.asOption() : None();
+        return f(this.value) ? this : None;
     }
-    public map<U>(f: (t: T) => U): Option<U> {
-        return this.r.some ? Some(f(this.r.value)) : None();
+    public map<U>(f: (t: T) => U): OptionSome<U> {
+        return Some(f(this.value));
     }
-    public mapOr<U>(f: (t: T) => U, u: U): U {
-        return this.r.some ? f(this.r.value) : u;
+    public mapOr<U>(f: (t: T) => U, _u: U): U {
+        return f(this.value);
     }
-    public mapOrElse<U>(f: (t: T) => U, g: () => U): U {
-        return this.r.some ? f(this.r.value) : g();
+    public mapOrElse<U>(f: (t: T) => U, _g: () => U): U {
+        return f(this.value);
     }
     public zip<U>(o: Option<U>): Option<[T,U]> {
-        return this.r.some && o.some ? Some([this.r.value, o.value]) : None();
+        return o.some ? Some([this.value, o.value]) : None;
     }
     public zipWith<U, R>(o: Option<U>, f: (t: T, u: U) => R): Option<R> {
-        return this.r.some && o.some ? Some(f(this.r.value, o.value)) : None();
+        return o.some ? Some(f(this.value, o.value)) : None;
     }
 
     // Boolean operators
     public and<U>(o: Option<U>): Option<U> {
-        return this.r.some ? o : None();
+        return o;
     }
     public andThen<U>(f: (t: T) => Option<U>): Option<U> {
-        return this.r.some ? f(this.r.value) : None();
+        return f(this.value);
     }
 
-    public or(o: Option<T>): Option<T> {
-        return this.r.some ? this.asOption() : o;
+    public or(_o: Option<T>): OptionSome<T> {
+        return this;
     }
-    public orElse(f: () => Option<T>): Option<T> {
-        return this.r.some ? this.asOption() : f();
+    public orElse(_f: () => Option<T>): OptionSome<T> {
+        return this;
     }
 
     public xor(o: Option<T>): Option<T> {
-        return this.r.some ? (o.some ? None() : this.asOption()) : (o.some ? o : None());
+        return o.some ? None : this;
     }
 
     // Extensions
-    public uponNone(f: () => unknown): Option<T> {
-        return this.match(() => {}, f);
+    public uponNone(_f: () => unknown): OptionSome<T> {
+        return this;
     }
-    public uponSome(f: (t: T) => unknown): Option<T> {
-        return this.match(f, () => {});
+    public uponSome(f: (t: T) => unknown): OptionSome<T> {
+        f(this.value);
+        return this;
     }
-    public match(f: (t: T) => unknown, g: () => unknown): Option<T> {
-        if (this.r.some)
-            f(this.r.value);
-        else
-            g();
-        return this.asOption();
+    public match(f: (t: T) => unknown, _g: () => unknown): OptionSome<T> {
+        return this.uponSome(f);
     }
-    public asUnion(): T | undefined {
-        return this.r.some ? this.r.value : undefined;
+    public asUnion(): T {
+        return this.value;
     }
 }
 
-class OptionSome<T> extends OptionBase<T> {
-    public constructor(t: T) {
-        super({ some: true, value: t });
-        this.value = t;
-    }
-    public readonly some = true;
-    public readonly value: T;
-}
-class OptionNone<T> extends OptionBase<T> {
-    public constructor() {
-        super({ some: false });
-    }
-    public readonly some = false;
+class OptionNone {
+    public constructor() {}
+    public readonly some = false as const;
 
-    public cast<U>(): Option<U> {
-        return None();
+    // Queries
+    public isSome(): boolean {
+        return false;
+    }
+    public isNone(): boolean {
+        return true;
+    }
+
+    // Extracting values
+    public expect(errMsg: string): never {
+        throw new Error(errMsg);
+    }
+    public unwrap(): never {
+        throw new Error("Attempted to unwrap \"None\" Option");
+    }
+    public unwrapOr(d: T): T {
+        return d;
+    }
+    public unwrapOrElse(f: () => T): T {
+        return f();
+    }
+
+    // Transformations (omissions: transpose, flatten)
+    public okOr<E>(err: E): ResultErr<E> {
+        return Err(err);
+    }
+    public okOrElse<E>(f: () => E): ResultErr<E> {
+        return Err(f());
+    }
+    public filter(_f: (t: never) => boolean): OptionNone {
+        return this;
+    }
+    public map(_f: (t: never) => never): OptionNone {
+        return this;
+    }
+    public mapOr<U>(_f: (t: never) => U, u: U): U {
+        return u
+    }
+    public mapOrElse<U>(_f: (t: never) => U, g: () => U): U {
+        return g();
+    }
+    public zip(_o: Option<never>): OptionNone {
+        return this;
+    }
+    public zipWith(_o: Option<never>, _f: (t: never, u: never) => never): OptionNone {
+        return this;
+    }
+
+    // Boolean operators
+    public and(_o: Option<never>): OptionNone {
+        return this;
+    }
+    public andThen(_f: (t: never) => Option<never>): OptionNone {
+        return this;
+    }
+
+    public or<T>(o: Option<T>): Option<T> {
+        return o;
+    }
+    public orElse<T>(f: () => Option<T>): Option<T> {
+        return f();
+    }
+
+    public xor<T>(o: Option<T>): Option<T> {
+        return o;
+    }
+
+    // Extensions
+    public uponNone(f: () => unknown): OptionNone {
+        f();
+        return this;
+    }
+    public uponSome(_f: (t: never) => unknown): OptionNone {
+        return this;
+    }
+    public match(_f: (t: never) => unknown, g: () => unknown): Option<T> {
+        return this.uponNone(g);
+    }
+    public asUnion(): undefined {
+        return undefined;
     }
 }
 
 export function Some<T>(t: T): OptionSome<T> {
     return new OptionSome(t);
 }
-const NONE = new OptionNone();
-export function None<T>(): OptionNone<T> {
-    return NONE as OptionNone<T>;
-}
+export const None = new OptionNone();
 
 export function WrapOpt<T>(t: T | undefined): Option<T> {
-    return t === undefined ? None() : Some(t);
+    return t === undefined ? None : Some(t);
 }
 
 // Helper functions that don't work with Result as the receiver
 export const ResultUtil = {
     // Like map, but stops after the first item returns an Err.
-    mapIter: <T, U, E>(it: IterableIterator<T>, f: (t: T) => Result<U, E>): Result<U[], E> => {
-        const res: U[] = [];
-        for (const v of it) {
-            const a = f(v);
-            if (!a.ok)
-                return a.cast();
-            res.push(a.value);
-        }
-        return Ok(res);
-    },
+    mapIter: <T, U, E>(it: IterableIterator<T>, f: (t: T) => Result<U, E>): Result<U[], E> =>
+        ResultUtil.reduceIter([], it, (res: U[], t: T) =>
+            f(t).map((a) => {
+                    res.push(a);
+                    return res;
+                })),
 
     // Like reduce, but stops after the first step returns an Err.
     reduceIter: <T, U, E>(u: U, it: IterableIterator<T>, f: (u: U, t: T) => Result<U, E>): Result<U, E> => {

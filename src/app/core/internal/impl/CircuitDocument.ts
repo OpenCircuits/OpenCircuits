@@ -146,7 +146,7 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
         switch (op.kind) {
             case "PlaceComponentOp":
                 this.placeComponent(op);
-                return OkVoid();
+                return OkVoid;
             case "ReplaceComponentOp":
                 throw new Error("Unimplemented");
             case "SetComponentPortsOp":
@@ -284,7 +284,7 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
 
     private getBaseKindByID<O extends Schema.Obj>(id: GUID, kind: O["baseKind"]): Result<O> {
         return this.getObjByID(id)
-            .andThen((obj): Result<O> => {
+            .andThen((obj) => {
                 if (obj.baseKind !== kind)
                     return ErrE(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${obj.baseKind}!`);
                 return Ok(obj as O);

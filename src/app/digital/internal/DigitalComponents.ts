@@ -49,7 +49,7 @@ export class DigitalComponentInfo implements ComponentInfo {
             return ErrE(`DigitalComponentInfo: ${key} not a valid prop`);
         if (value && (this.props[key] !== typeof value))
             return ErrE(`DigitalComponentInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
-        return OkVoid();
+        return OkVoid;
     }
 
     public makePortsForConfig(componentID: string, p: PortConfig): Result<Port[]> {
@@ -80,7 +80,7 @@ export class DigitalComponentInfo implements ComponentInfo {
             //  if the counts all match
             this.portGroups.every((group) => (counts[group] === p[group])));
 
-        return hasValidConfig ? OkVoid() : ErrE(`DigitalComponentInfo: Failed to find matching config for ${p}`);
+        return hasValidConfig ? OkVoid : ErrE(`DigitalComponentInfo: Failed to find matching config for ${p}`);
     }
 
     public checkPortConnectivity(wires: Map<Port, Port[]>): Result {
@@ -89,7 +89,7 @@ export class DigitalComponentInfo implements ComponentInfo {
             if (this.portGroupInfo[myPort.group] === "input" && connectedPorts.length > 1)
                 return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${myPort.id}`);
             // TODO: prevent "inputs" from being connected to other "IN" ports and similar.
-            return OkVoid();
+            return OkVoid;
         });
     }
 }
@@ -257,7 +257,7 @@ class DigitalWireInfo implements ObjInfo {
             return ErrE(`DigitalWireInfo: ${key} not a valid prop`);
         if (value && (this.props[key] !== typeof value))
             return ErrE(`DigitalWireInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
-        return OkVoid();
+        return OkVoid;
     }
 }
 const WireInfo = new DigitalWireInfo("DigitalWire", { "color": "string" });
@@ -280,7 +280,7 @@ class DigitalPortInfo implements ObjInfo {
             return ErrE(`DigitalPortInfo: ${key} not a valid prop`);
         if (value && (this.props[key] !== typeof value))
             return ErrE(`DigitalPortInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
-        return OkVoid();
+        return OkVoid;
     }
 }
 const PortInfo = new DigitalPortInfo("DigitalPort", {});
