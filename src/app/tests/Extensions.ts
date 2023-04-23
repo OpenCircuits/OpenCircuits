@@ -1,5 +1,4 @@
-import {Result} from "core/utils/Result";
-import crypto   from "node:crypto";
+import crypto from "node:crypto";
 
 
 // Define crypto for Jest for uuid generation
@@ -84,7 +83,6 @@ expect.extend({
     },
 
     toBeOk(received: unknown) {
-        console.error("HERE" + received);
         if (typeof received !== "object" || !received) {
             return {
                 message: () => "supplied value is not an object",

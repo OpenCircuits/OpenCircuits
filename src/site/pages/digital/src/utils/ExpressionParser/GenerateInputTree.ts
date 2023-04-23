@@ -72,7 +72,7 @@ function handleUnary(tokens: readonly Token[], ops: Record<TokenType, string>,
         currentOpNum: number, index: number): Result<NewTreeRetValue> {
     const rightToken = tokens[index];
     let rightRet: Result<NewTreeRetValue>;
-    if (rightToken.type === "!") { // This case applies when there are two !'s in a row
+    if (rightToken.type === "!" || rightToken.type === "(") { // This case applies when the next token is "!" or "("
         rightRet = generateInputTreeCore(tokens, ops, currentOpNum, index);
     }
     else if (rightToken.type === "input") { // This case would apply when an input follows a "!"
