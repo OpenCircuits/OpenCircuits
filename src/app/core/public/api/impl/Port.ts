@@ -38,11 +38,11 @@ export abstract class PortImpl<
 
     public get originPos(): Vector {
         // TODO[model_refactor_api]: This probably needs to be calculated explicitly here ?
-        return this.circuit.view!.portPositions.get(this.id)!.origin;
+        return this.circuit.view.getPortPos(this.id).unwrap().origin;
     }
     public get targetPos(): Vector {
         // TODO[model_refactor_api]: This probably needs to be calculated explicitly here ?
-        return this.circuit.view!.portPositions.get(this.id)!.target;
+        return this.circuit.view.getPortPos(this.id).unwrap().target;
     }
     public get dir(): Vector {
         return this.targetPos.sub(this.originPos).normalize();

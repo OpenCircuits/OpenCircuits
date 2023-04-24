@@ -33,12 +33,20 @@ export class RenderScheduler extends Observable {
      * Request a render frame and add to the queue.
      */
     public requestRender(): void {
+        // Do nothing when blocked
+        if (this.blocked)
+            return;
+
         if (this.queued === 0)
             this.lastFrameId = requestAnimationFrame(() => this.actualRender());
         this.queued++;
     }
 
     public cancel(): void {
+        // Do nothing when blocked
+        if (this.blocked)
+            return;
+
         cancelAnimationFrame(this.lastFrameId);
     }
 
