@@ -27,7 +27,7 @@ import {DigitalCircuit}    from "digital/public";
  *                   - If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
  *                   - If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
  */
-export function ExpressionToCircuit(inputs: Map<string, string>,
+export function ExpressionToCircuit(inputs: ReadonlyMap<string, string>,
                                     expression: string,
                                     output: string,
                                     ops: OperatorFormat = FORMATS[0]): Result<DigitalCircuit> {

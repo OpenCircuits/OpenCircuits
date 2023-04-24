@@ -106,6 +106,8 @@ function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: rea
             return Ok(leftRet);
 
         index += 1;
+        if (index >= tokens.length)
+            return ErrE(`Missing Right Operand: "${ops[currentOp]}"`);
         return generateInputTreeCore(tokens, ops, currentOpNum, index)
                 .andThen((rightRet): Result<NewTreeRetValue> => {
             index = rightRet.index;
@@ -191,7 +193,7 @@ function generateInputTreeCore(tokens: readonly Token[], ops: Record<TokenType, 
         return generateInputTreeCore(tokens, ops, nextOpNum, index).andThen((rightRet): Result<NewTreeRetValue> => {
             if (index >= tokens.length)
                 return ErrE(`Encountered Unmatched "${ops["("]}"`);
-            if (tokens[rightRet.index].type !== ")")
+            if (rightRet.index >= tokens.length || tokens[rightRet.index].type !== ")")
                 return ErrE(`Encountered Unmatched "${ops["("]}"`);
             rightRet.index += 1; // Incremented to skip the ")"
             rightRet.final = true; // used to not combine gates in (a|b)|(c|d) for example

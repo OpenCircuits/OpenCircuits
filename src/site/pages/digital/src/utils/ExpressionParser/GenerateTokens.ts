@@ -60,10 +60,10 @@ function getToken(expression: string, index: number, ops: OperatorFormat): Token
 export function GenerateTokens(expression: string, ops: OperatorFormat): Result<readonly Token[]> {
     for (const tokenType of TokenTypesArray) {
         if (ops.ops[tokenType] === "")
-            ErrE("Length zero " + tokenType + " in supplied operation symbols");
+            return ErrE("Length zero " + tokenType + " in supplied operation symbols");
     }
     if (ops.separator === "")
-        ErrE("Length zero separator in supplied operation symbols");
+        return ErrE("Length zero separator in supplied operation symbols");
 
     const tokenList = new Array<Token>();
     let token: Token | undefined;

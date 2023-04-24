@@ -11,7 +11,10 @@ import {InputToken, InputTreeBinOpNode, InputTreeIdent,
 
 import {GenerateInputTree} from "site/digital/utils/ExpressionParser/GenerateInputTree";
 
-import "./../../../../../app/tests/Extensions";
+import "../../../../../app/tests/Extensions";
+import {ExpressionToCircuit} from "site/digital/utils/ExpressionParser";
+import {DigitalCircuit}      from "digital/public";
+import {GenerateTokens}      from "site/digital/utils/ExpressionParser/GenerateTokens";
 
 
 // import {GenerateTokens}    from "site/digital/utils/ExpressionParser/GenerateTokens";
@@ -93,18 +96,18 @@ import "./../../../../../app/tests/Extensions";
 //     }
 // }
 
-// /**
-//  * This function is similar to testInputs but only generates one test case rather than one for every state.
-//  *
-//  * @param inputs   An array of the names of the switches along with their corresponding Switch,
-//  *                 those same Switch objects must be present in circuit.
-//  * @param circuit  The components and wires that make up the circuit being tested.
-//  * @param output   The component whose state will be evaluated in the test, must be present in circuit.
-//  * @param expected The expected states of the output LED for all the different switch combinations.
-//  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
-//  * @see testInputs
-//  */
-// function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalObjectSet, output: LED,
+/**
+ * This function is similar to testInputs but only generates one test case rather than one for every state.
+ *
+ * @param inputs   An array of the names of the switches along with their corresponding Switch,
+ *                 those same Switch objects must be present in circuit.
+ * @param circuit  The components and wires that make up the circuit being tested.
+ * @param output   The component whose state will be evaluated in the test, must be present in circuit.
+ * @param expected The expected states of the output LED for all the different switch combinations.
+ * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
+ * @see testInputs
+ */
+// function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalCircuit, output: LED,
 //                           expected: boolean[]) {
 //     if (2 ** inputs.length !== expected.length)
 //         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
@@ -125,392 +128,271 @@ import "./../../../../../app/tests/Extensions";
 //     });
 // }
 
-// /**
-//  * This is a function that autogenerates and tests all states of a circuit represented by a given expression.
-//  * The names of these switches are procedurally generated from "a" through "z". Note that the expression should
-//  * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
-//  * as input names.
-//  *
-//  * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the
-//  * entire expression.
-//  * This behavior can be overwritten with the verbose argument.
-//  *
-//  * @param numInputs  The number of switches that are used by this expression/test.
-//  * @param expression The logical boolean expression to test.
-//  * @param expected   The expected states of the output LED for all the different switch combinations
-//  *                   (see testInputs for order).
-//  * @param ops        The strings used to represent the different operators.
-//  * @param verbose    True to force creating a new test for every state, false to force creating one single test
-//  *                   encompassing all states.
-//  * @throws If numInputs > 8.
-//  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
-//  * @see testInputs
-//  * @see ExpressionToCircuit
-//  */
-// function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat, verbose?: boolean) {
-//     describe("Parse: '" + expression + "'", () => {
-//         if (numInputs > 8)
-//             throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
+/**
+ * This is a function that autogenerates and tests all states of a circuit represented by a given expression.
+ * The names of these switches are procedurally generated from "a" through "z". Note that the expression should
+ * only use input names available to it. For example, an expression with numInputs=3 should only use a, b, and c
+ * as input names.
+ *
+ * By default, with numInputs<=3 then a test is created for each state, otherwise one test is created for the
+ * entire expression.
+ * This behavior can be overwritten with the verbose argument.
+ *
+ * @param numInputs  The number of switches that are used by this expression/test.
+ * @param expression The logical boolean expression to test.
+ * @param expected   The expected states of the output LED for all the different switch combinations
+ *                   (see testInputs for order).
+ * @param ops        The strings used to represent the different operators.
+ * @param verbose    True to force creating a new test for every state, false to force creating one single test
+ *                   encompassing all states.
+ * @throws If numInputs > 8.
+ * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
+ * @see testInputs
+ * @see ExpressionToCircuit
+ */
+function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat, verbose?: boolean) {
+    describe("Parse: '" + expression + "'", () => {
+        if (numInputs > 8)
+            throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
-//         const o = new LED();
-//         const inputs: Array<[string, Switch]> = [];
-//         const charCodeStart = "a".codePointAt(0)!;
-//         for (let i = 0; i < numInputs; i++)
-//             inputs.push([String.fromCodePoint(charCodeStart+i), new Switch()]);
+        const o = "LED";
+        const inputs: Array<[string, string]> = [];
+        const charCodeStart = "a".codePointAt(0)!;
+        for (let i = 0; i < numInputs; i++)
+            inputs.push([String.fromCodePoint(charCodeStart+i), "Switch"]);
 
-//         const objectSet = ExpressionToCircuit(new Map(inputs), expression, o, ops);
+        const result = ExpressionToCircuit(new Map(inputs), expression, o, ops);
+        test("Expression To Circuit Generation didn't error", () => {
+            expect(result).toBeOk();
+        });
+        result.unwrap();
 
-//         if (verbose === false || (verbose === undefined && numInputs > 3))
-//             testInputsSimple(inputs, objectSet, o, expected);
-//         else
-//             testInputs(inputs, objectSet, o, expected);
-//     });
-// }
+        // if (verbose === false || (verbose === undefined && numInputs > 3))
+        //     testInputsSimple(inputs, objectSet, o, expected);
+        // else
+        //     testInputs(inputs, objectSet, o, expected);
+    });
+}
 
 describe("Expression Parser", () => {
-    // describe("Invalid Inputs", () => {
+    describe("Invalid Inputs", () => {
+        // test("Input Not Found", () => {
+        //     const a = "Switch", o = "LED";
+        //     const inputMap = new Map([
+        //         ["a", a],
+        //     ]);
 
-    //     test("Not An Input", () => {
-    //         const a = new LED(), b = new ORGate(), o1 = new LED(), o2 = new LED();
-    //         const inputMap1 = new Map([
-    //             ["a", a],
-    //         ]);
-    //         const inputMap2 = new Map([
-    //             ["b", b],
-    //         ]);
+        //     expect(ExpressionToCircuit(inputMap,"b",o)).not.toBeOk();
+        //     expect(ExpressionToCircuit(inputMap,"a|b",o)).not.toBeOk();
+        //     expect(ExpressionToCircuit(inputMap,"!b",o)).not.toBeOk();
+        // });
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap1,"a",o1);
-    //         }).toThrow("Not An Input: \"a\"");
+        test("Unmatched '(' and ')'", () => {
+            const a = "Switch", b = "Switch", o = "LED";
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b],
+            ]);
+            const inputMap2 = new Map();
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap2,"b",o2);
-    //         }).toThrow("Not An Input: \"b\"");
-    //     });
+            expect(ExpressionToCircuit(inputMap,"(",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"!(",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(a|b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"((a|b)",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,")",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a|b)",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(a|b))",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,")a|b(",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,")(",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap2,"(",o)).not.toBeOk();
+        });
 
-    //     test("Not An Output", () => {
-    //         const a = new Switch(), b = new Switch(), o1 = new ANDGate(), o2 = new Switch();
-    //         const inputMap = new Map([
-    //             ["a", a],
-    //             ["b", b],
-    //         ]);
+        test("Missing Operands", () => {
+            const a = "Switch", b = "Switch", o = "LED";
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b],
+            ]);
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a|b",o1);
-    //         }).toThrow("Supplied Output Is Not An Output");
+            expect(ExpressionToCircuit(inputMap,"!",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"!!",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(!)",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(!)a",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"&a",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a&",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(&a)",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(a&)",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"^a",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a^",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"|a",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a|",o)).not.toBeOk();
+        });
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a|b",o2);
-    //         }).toThrow("Supplied Output Is Not An Output");
-    //     });
+        test("No Operator", () => {
+            const a = "Switch", b = "Switch", o = "LED";
+            const inputMap = new Map([
+                ["a", a],
+                ["b", b],
+            ]);
 
-    //     test("Input Not Found", () => {
-    //         const a = new Switch(), o = new LED();
-    //         const inputMap = new Map([
-    //             ["a", a],
-    //         ]);
+            expect(ExpressionToCircuit(inputMap,"a b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a (b)",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(a) b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a !b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a()b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(a)(b)",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(a|b)a",o)).not.toBeOk();
+        });
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"b",o);
-    //         }).toThrow("Input Not Found: \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a|b",o);
-    //         }).toThrow("Input Not Found: \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"!b",o);
-    //         }).toThrow("Input Not Found: \"b\"");
-    //     });
+        test("Empty Parenthesis", () => {
+            const o = "LED";
+            const inputMap = new Map();
 
-    //     test("Unmatched '(' and ')'", () => {
-    //         const a = new Switch(), b = new Switch(), o = new LED();
-    //         const inputMap = new Map([
-    //             ["a", a],
-    //             ["b", b],
-    //         ]);
-    //         const inputMap2 = new Map();
+            expect(ExpressionToCircuit(inputMap,"()",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"( )",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"(())",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"()a|b",o)).not.toBeOk();
+        });
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(",o);
-    //         }).toThrow("Encountered Unmatched \"(\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"!(",o);
-    //         }).toThrow("Encountered Unmatched \"(\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(a|b",o);
-    //         }).toThrow("Encountered Unmatched \"(\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"((a|b)",o);
-    //         }).toThrow("Encountered Unmatched \"(\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,")",o);
-    //         }).toThrow("Encountered Unmatched \")\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a|b)",o);
-    //         }).toThrow("Encountered Unmatched \")\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(a|b))",o);
-    //         }).toThrow("Encountered Unmatched \")\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,")a|b(",o);
-    //         }).toThrow("Encountered Unmatched \")\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,")(",o);
-    //         }).toThrow("Encountered Unmatched \")\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap2,"(",o);
-    //         }).toThrow("Encountered Unmatched \"(\"");
-    //     });
+        describe("Invalid ops", () => {
+            const expression = "a | b ^ c & d | !(e & f)";
 
-    //     test("Missing Operands", () => {
-    //         const a = new Switch(), b = new Switch(), o = new LED();
-    //         const inputMap = new Map([
-    //             ["a", a],
-    //             ["b", b],
-    //         ]);
+            test("Invalid |", () => {
+                const testOps: OperatorFormat = {
+                    label:     "Programming 1 (&, |, ^, !)",
+                    separator: " ",
+                    icon:      "|",
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"!",o);
-    //         }).toThrow("Missing Right Operand: \"!\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"!!",o);
-    //         }).toThrow("Missing Right Operand: \"!\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(!)",o);
-    //         }).toThrow("Missing Right Operand: \"!\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(!)a",o);
-    //         }).toThrow("Missing Right Operand: \"!\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"&a",o);
-    //         }).toThrow("Missing Left Operand: \"&\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a&",o);
-    //         }).toThrow("Missing Right Operand: \"&\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(&a)",o);
-    //         }).toThrow("Missing Left Operand: \"&\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(a&)",o);
-    //         }).toThrow("Missing Right Operand: \"&\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"^a",o);
-    //         }).toThrow("Missing Left Operand: \"^\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a^",o);
-    //         }).toThrow("Missing Right Operand: \"^\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"|a",o);
-    //         }).toThrow("Missing Left Operand: \"|\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a|",o);
-    //         }).toThrow("Missing Right Operand: \"|\"");
-    //     });
+                    ops: {
+                        "|": "",
+                        "^": "^",
+                        "&": "&",
+                        "!": "!",
+                        "(": "(",
+                        ")": ")",
+                    },
+                }
+                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+            });
+            test("Invalid ^", () => {
+                const testOps: OperatorFormat = {
+                    label:     "Programming 1 (&, |, ^, !)",
+                    separator: " ",
+                    icon:      "|",
 
-    //     test("No Operator", () => {
-    //         const a = new Switch(), b = new Switch(), o = new LED();
-    //         const inputMap = new Map([
-    //             ["a", a],
-    //             ["b", b],
-    //         ]);
+                    ops: {
+                        "|": "|",
+                        "^": "",
+                        "&": "&",
+                        "!": "!",
+                        "(": "(",
+                        ")": ")",
+                    },
+                }
+                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+            });
+            test("Invalid &", () => {
+                const testOps: OperatorFormat = {
+                    label:     "Programming 1 (&, |, ^, !)",
+                    separator: " ",
+                    icon:      "|",
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a b",o);
-    //         }).toThrow("No valid operator between \"a\" and \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a (b)",o);
-    //         }).toThrow("No valid operator between \"a\" and \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(a) b",o);
-    //         }).toThrow("No valid operator between \"a\" and \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a !b",o);
-    //         }).toThrow("No valid operator between \"a\" and \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"a()b",o);
-    //         }).toThrow("No valid operator between \"a\" and \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(a)(b)",o);
-    //         }).toThrow("No valid operator between \"a\" and \"b\"");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(a|b)a",o);
-    //         }).toThrow("No valid operator between \"b\" and \"a\"");
-    //     });
+                    ops: {
+                        "|": "|",
+                        "^": "^",
+                        "&": "",
+                        "!": "!",
+                        "(": "(",
+                        ")": ")",
+                    },
+                }
+                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+            });
+            test("Invalid !", () => {
+                const testOps: OperatorFormat = {
+                    label:     "Programming 1 (&, |, ^, !)",
+                    separator: " ",
+                    icon:      "|",
 
-    //     test("Empty Parenthesis", () => {
-    //         const o = new LED();
-    //         const inputMap = new Map();
+                    ops: {
+                        "|": "|",
+                        "^": "^",
+                        "&": "&",
+                        "!": "",
+                        "(": "(",
+                        ")": ")",
+                    },
+                }
+                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+            });
+            test("Invalid (", () => {
+                const testOps: OperatorFormat = {
+                    label:     "Programming 1 (&, |, ^, !)",
+                    separator: " ",
+                    icon:      "|",
 
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"()",o);
-    //         }).toThrow("Empty Parenthesis");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"( )",o);
-    //         }).toThrow("Empty Parenthesis");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"(())",o);
-    //         }).toThrow("Empty Parenthesis");
-    //         expect(() => {
-    //             ExpressionToCircuit(inputMap,"()a|b",o);
-    //         }).toThrow("Empty Parenthesis");
-    //     });
+                    ops: {
+                        "|": "|",
+                        "^": "^",
+                        "&": "&",
+                        "!": "!",
+                        "(": "",
+                        ")": ")",
+                    },
+                }
+                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+            });
+            test("Invalid )", () => {
+                const testOps: OperatorFormat = {
+                    label:     "Programming 1 (&, |, ^, !)",
+                    separator: " ",
+                    icon:      "|",
 
-    //     describe("Invalid ops", () => {
-    //         const expression = "a | b ^ c & d | !(e & f)";
+                    ops: {
+                        "|": "|",
+                        "^": "^",
+                        "&": "&",
+                        "!": "!",
+                        "(": "(",
+                        ")": "",
+                    },
+                }
+                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+            });
+            test("Invalid separator", () => {
+                const testOps: OperatorFormat = {
+                    label:     "Programming 1 (&, |, ^, !)",
+                    separator: "",
+                    icon:      "|",
 
-    //         test("Invalid |", () => {
-    //             const testOps: OperatorFormat = {
-    //                 label:     "Programming 1 (&, |, ^, !)",
-    //                 separator: " ",
-    //                 icon:      "|",
+                    ops: {
+                        "|": "|",
+                        "^": "^",
+                        "&": "&",
+                        "!": "!",
+                        "(": "(",
+                        ")": ")",
+                    },
+                }
+                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+            });
+        });
 
-    //                 ops: {
-    //                     "|": "",
-    //                     "^": "^",
-    //                     "&": "&",
-    //                     "!": "!",
-    //                     "(": "(",
-    //                     ")": ")",
-    //                 },
-    //             }
-    //             expect(() => {
-    //                 GenerateTokens(expression, testOps);
-    //             }).toThrow("Length zero | in supplied operation symbols");
-    //         });
-    //         test("Invalid ^", () => {
-    //             const testOps: OperatorFormat = {
-    //                 label:     "Programming 1 (&, |, ^, !)",
-    //                 separator: " ",
-    //                 icon:      "|",
+        test("Parse: ''", () => {
+            const o = "LED";
+            const inputMap = new Map<string, string>();
 
-    //                 ops: {
-    //                     "|": "|",
-    //                     "^": "",
-    //                     "&": "&",
-    //                     "!": "!",
-    //                     "(": "(",
-    //                     ")": ")",
-    //                 },
-    //             }
-    //             expect(() => {
-    //                 GenerateTokens(expression, testOps);
-    //             }).toThrow("Length zero ^ in supplied operation symbols");
-    //         });
-    //         test("Invalid &", () => {
-    //             const testOps: OperatorFormat = {
-    //                 label:     "Programming 1 (&, |, ^, !)",
-    //                 separator: " ",
-    //                 icon:      "|",
+            const result = ExpressionToCircuit(inputMap, "", o);
+            expect(result).not.toBeOk();
+        });
+        test("Parse: ' '", () => {
+            const o = "LED";
+            const inputMap = new Map<string, string>();
 
-    //                 ops: {
-    //                     "|": "|",
-    //                     "^": "^",
-    //                     "&": "",
-    //                     "!": "!",
-    //                     "(": "(",
-    //                     ")": ")",
-    //                 },
-    //             }
-    //             expect(() => {
-    //                 GenerateTokens(expression, testOps);
-    //             }).toThrow("Length zero & in supplied operation symbols");
-    //         });
-    //         test("Invalid !", () => {
-    //             const testOps: OperatorFormat = {
-    //                 label:     "Programming 1 (&, |, ^, !)",
-    //                 separator: " ",
-    //                 icon:      "|",
-
-    //                 ops: {
-    //                     "|": "|",
-    //                     "^": "^",
-    //                     "&": "&",
-    //                     "!": "",
-    //                     "(": "(",
-    //                     ")": ")",
-    //                 },
-    //             }
-    //             expect(() => {
-    //                 GenerateTokens(expression, testOps);
-    //             }).toThrow("Length zero ! in supplied operation symbols");
-    //         });
-    //         test("Invalid (", () => {
-    //             const testOps: OperatorFormat = {
-    //                 label:     "Programming 1 (&, |, ^, !)",
-    //                 separator: " ",
-    //                 icon:      "|",
-
-    //                 ops: {
-    //                     "|": "|",
-    //                     "^": "^",
-    //                     "&": "&",
-    //                     "!": "!",
-    //                     "(": "",
-    //                     ")": ")",
-    //                 },
-    //             }
-    //             expect(() => {
-    //                 GenerateTokens(expression, testOps);
-    //             }).toThrow("Length zero ( in supplied operation symbols");
-    //         });
-    //         test("Invalid )", () => {
-    //             const testOps: OperatorFormat = {
-    //                 label:     "Programming 1 (&, |, ^, !)",
-    //                 separator: " ",
-    //                 icon:      "|",
-
-    //                 ops: {
-    //                     "|": "|",
-    //                     "^": "^",
-    //                     "&": "&",
-    //                     "!": "!",
-    //                     "(": "(",
-    //                     ")": "",
-    //                 },
-    //             }
-    //             expect(() => {
-    //                 GenerateTokens(expression, testOps);
-    //             }).toThrow("Length zero ) in supplied operation symbols");
-    //         });
-    //         test("Invalid separator", () => {
-    //             const testOps: OperatorFormat = {
-    //                 label:     "Programming 1 (&, |, ^, !)",
-    //                 separator: "",
-    //                 icon:      "|",
-
-    //                 ops: {
-    //                     "|": "|",
-    //                     "^": "^",
-    //                     "&": "&",
-    //                     "!": "!",
-    //                     "(": "(",
-    //                     ")": ")",
-    //                 },
-    //             }
-    //             expect(() => {
-    //                 GenerateTokens(expression, testOps);
-    //             }).toThrow("Length zero separator in supplied operation symbols");
-    //         });
-    //     });
-    // });
-
-    // describe("0 Inputs", () => {
-    //     test("Parse: ''", () => {
-    //         const o = new LED();
-    //         const inputMap = new Map<string, DigitalComponent>();
-
-    //         const objectSet = ExpressionToCircuit(inputMap, "", o);
-
-    //         expect(objectSet.toList()).toHaveLength(0);
-    //     });
-    //     test("Parse: ' '", () => {
-    //         const o = new LED();
-    //         const inputMap = new Map<string, DigitalComponent>();
-
-    //         const objectSet = ExpressionToCircuit(inputMap, " ", o);
-
-    //         expect(objectSet.toList()).toHaveLength(0);
-    //     });
-    // });
+            const result = ExpressionToCircuit(inputMap, " ", o);
+            expect(result).not.toBeOk();
+        });
+    });
 
     // describe("1 Input", () => {
     //     runTests(1, "a", [false, true]);
@@ -523,7 +405,7 @@ describe("Expression Parser", () => {
 
     //     describe("Parse: 'a' (ConstantHigh)", () => {
     //         const designer = new DigitalCircuitDesigner(0);
-    //         const a = new ConstantHigh(), o = new LED();
+    //         const a = new ConstantHigh(), o = "LED";
     //         const inputMap = new Map([
     //             ["a", a],
     //         ]);
@@ -538,7 +420,7 @@ describe("Expression Parser", () => {
 
     //     describe("Parse: 'a' (ConstantLow)", () => {
     //         const designer = new DigitalCircuitDesigner(0);
-    //         const a = new ConstantLow(), o = new LED();
+    //         const a = new ConstantLow(), o = "LED";
     //         const inputMap = new Map([
     //             ["a", a],
     //         ]);
@@ -566,7 +448,7 @@ describe("Expression Parser", () => {
     //     runTests(1, "a^!a", [true, true]);
 
     //     describe("Parse: 'longName'", () => {
-    //         const a = new Switch(), o = new LED();
+    //         const a = "Switch", o = "LED";
     //         const inputs: Array<[string, Switch]> = [["longName", a]];
     //         const objectSet = ExpressionToCircuit(new Map(inputs), "longName", o);
 
@@ -634,11 +516,11 @@ describe("Expression Parser", () => {
 
     // describe("Binary gate variants", () => {
     //     describe("7 variable OR", () => {
-    //         const o = new LED();
+    //         const o = "LED";
     //         const inputs: Array<[string, Switch]> = [];
     //         const charCodeStart = "a".codePointAt(0)!;
     //         for (let i = 0; i < 7; i++)
-    //             inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
+    //             inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
     //         const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
 
@@ -654,11 +536,11 @@ describe("Expression Parser", () => {
     //     });
 
     //     describe("8 variable OR", () => {
-    //         const o = new LED();
+    //         const o = "LED";
     //         const inputs: Array<[string, Switch]> = [];
     //         const charCodeStart = "a".codePointAt(0)!;
     //         for (let i = 0; i < 8; i++)
-    //             inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
+    //             inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
     //         const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
 
@@ -674,11 +556,11 @@ describe("Expression Parser", () => {
     //     });
 
     //     describe("9 variable OR", () => {
-    //         const o = new LED();
+    //         const o = "LED";
     //         const inputs: Array<[string, Switch]> = [];
     //         const charCodeStart = "a".codePointAt(0)!;
     //         for (let i = 0; i < 9; i++)
-    //             inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
+    //             inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
     //         const objectSet = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
 
@@ -696,11 +578,11 @@ describe("Expression Parser", () => {
     //     });
 
     //     describe("(a|b)|(c|d)", () => {
-    //         const o = new LED();
+    //         const o = "LED";
     //         const inputs: Array<[string, Switch]> = [];
     //         const charCodeStart = "a".codePointAt(0)!;
     //         for (let i = 0; i < 4; i++)
-    //             inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
+    //             inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
     //         const objectSet = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
 
@@ -719,11 +601,11 @@ describe("Expression Parser", () => {
     //     });
 
     //     describe("!(a|b|c)", () => {
-    //         const o = new LED();
+    //         const o = "LED";
     //         const inputs: Array<[string, Switch]> = [];
     //         const charCodeStart = "a".codePointAt(0)!;
     //         for (let i = 0; i < 3; i++)
-    //             inputs.push([String.fromCodePoint(charCodeStart + i), new Switch()]);
+    //             inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
     //         const objectSet = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
 
@@ -740,7 +622,7 @@ describe("Expression Parser", () => {
     // });
 
     describe("Generate Input Tree", () => {
-        describe("!(a&b)", () => {
+        test("!(a&b)", () => {
             const tokenA: InputToken = { type: "input", name: "a" };
             const tokenB: InputToken = { type: "input", name: "b" };
             const parenOpen: Token = { type: "(" };
@@ -749,34 +631,29 @@ describe("Expression Parser", () => {
             const notToken: Token = { type: "!" };
             const tokenList = [notToken, parenOpen, tokenA, andToken, tokenB, parenClose];
             const tree = GenerateInputTree(tokenList);
-            test ("Returned OK", () => {
-                expect(tree).toBeOk();
-                const treeNand = tree.unwrap() as InputTreeBinOpNode;
-                expect(treeNand.kind).toBe("binop");
-                expect(treeNand.isNot).toBeTruthy();
-                expect(treeNand.children[0].kind).toBe("leaf");
-                expect(treeNand.children[1].kind).toBe("leaf");
-                const treeLeft = treeNand.children[0] as InputTreeIdent;
-                expect(treeLeft.ident).toBe("a");
-                const treeRight = treeNand.children[1] as InputTreeIdent;
-                expect(treeRight.ident).toBe("b");
-            });
+            expect(tree).toBeOk();
+            const treeNand = tree.unwrap() as InputTreeBinOpNode;
+            expect(treeNand.kind).toBe("binop");
+            expect(treeNand.isNot).toBeTruthy();
+            expect(treeNand.children[0].kind).toBe("leaf");
+            expect(treeNand.children[1].kind).toBe("leaf");
+            const treeLeft = treeNand.children[0] as InputTreeIdent;
+            expect(treeLeft.ident).toBe("a");
+            const treeRight = treeNand.children[1] as InputTreeIdent;
+            expect(treeRight.ident).toBe("b");
         });
 
-        describe("!a", () => {
+        test("!a", () => {
             const tokenA: InputToken = { type: "input", name: "a" };
             const notToken: Token = { type: "!" };
             const tokenList = [notToken, tokenA];
             const tree = GenerateInputTree(tokenList);
-            test ("Returned OK", () => {
-                expect(tree).toBeOk();
-                const treeNot = tree.unwrap() as InputTreeUnOpNode;
-                expect(treeNot.kind).toBe("unop");
-                expect(treeNot.type).toBe("!");
-                expect(treeNot.child.kind).toBe("leaf");
-                const treeLeft = treeNot.child as InputTreeIdent;
-                expect(treeLeft.ident).toBe("a");
-            });
+            const treeNot = tree.unwrap() as InputTreeUnOpNode;
+            expect(treeNot.kind).toBe("unop");
+            expect(treeNot.type).toBe("!");
+            expect(treeNot.child.kind).toBe("leaf");
+            const treeLeft = treeNot.child as InputTreeIdent;
+            expect(treeLeft.ident).toBe("a");
         });
     });
 });
