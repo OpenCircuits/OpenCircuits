@@ -23,6 +23,13 @@ import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
 
 
+/**
+ * Utility class to manage assets for the circuit view.
+ *
+ * Specifically used over a Map so that it can be observed so that when an
+ * asset is updated (i.e. set for the first time), dependencies of that
+ * assets can be notified and update accordingly.
+ */
 export class CircuitViewAssetManager<T> extends Observable<{ key: string, val: T }> {
     private readonly assets: Map<string, T>;
 
@@ -32,6 +39,9 @@ export class CircuitViewAssetManager<T> extends Observable<{ key: string, val: T
         this.assets = new Map();
     }
 
+    public has(key: string): boolean {
+        return this.assets.has(key);
+    }
     public get(key: string): T | undefined {
         return this.assets.get(key);
     }
@@ -101,7 +111,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         this.scheduler.setBlocked(true);
 
         this.circuit.subscribe((ev) => {
-            // TODO[model_refactor_api](leon) - use events better, i.e. how to we collect the diffs until the next
+            // TODO[model_refactor_api](leon) - use events better, i.e. how do we collect the diffs until the next
             //                                  render cycle or query for the dirty object(s)?
 
             // Mark all added/removed component dirty
@@ -213,6 +223,8 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
     }
 
+    // TODO[model_refactor_api](leon): Think of a better way to allow access to Prim data and have it auto-update
+    //                                 if it is currently dirty
     public getPortPos(portID: GUID): Option<PortPos> {
         if (!this.circuit.doc.hasPort(portID))
             return None();
@@ -247,7 +259,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
     protected render(): void {
         if (!this.renderer.canvas)
-            throw new Error("CircuitView: Attempeted Circuit render before a canvas was set!");
+            throw new Error("CircuitView: Attempted Circuit render before a canvas was set!");
 
         this.updateDirtyObjs();
 
@@ -311,7 +323,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     }
 
     public setCanvas(canvas?: HTMLCanvasElement) {
-        // Unlock scheduler once a canvas is set
+        // Unblock scheduler once a canvas is set
         this.scheduler.setBlocked(false);
 
         this.renderer.setCanvas(canvas);
