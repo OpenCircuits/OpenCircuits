@@ -253,7 +253,7 @@ export abstract class CircuitImpl<
                 const drawing = CreateDrawingFromSVG(svgXML, {});
                 if (!drawing)
                     throw new Error(`Failed to create drawing for svg: img/items/${src}`);
-                this.view.addImage(src, drawing);
+                this.view.images.set(src, drawing);
 
                 // Update progress on successful load
                 onProgress((++numLoaded) / imgSrcs.length);

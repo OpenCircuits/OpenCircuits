@@ -23,6 +23,24 @@ import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
 
 
+export class CircuitViewAssetManager<T> extends Observable<{ key: string, val: T }> {
+    private readonly assets: Map<string, T>;
+
+    public constructor() {
+        super();
+
+        this.assets = new Map();
+    }
+
+    public get(key: string): T | undefined {
+        return this.assets.get(key);
+    }
+    public set(key: string, val: T) {
+        this.assets.set(key, val);
+        this.publish({ key, val });
+    }
+}
+
 export abstract class CircuitView extends Observable<{ renderer: RenderHelper }> {
     public readonly circuit: CircuitInternal;
     public readonly selections: SelectionsManager;
@@ -43,6 +61,8 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
     public wireCurves: Map<GUID, BezierCurve>;
     public wirePrims: Map<GUID, Prims>;
+
+    public images: CircuitViewAssetManager<SVGDrawing>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
         super();
@@ -66,6 +86,8 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
         this.wireCurves = new Map();
         this.wirePrims = new Map();
+
+        this.images = new CircuitViewAssetManager();
 
         this.scheduler.subscribe(() => this.render());
 
@@ -212,10 +234,6 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     public resize(w: number, h: number) {
         // Request a render on resize
         this.scheduler.requestRender();
-    }
-
-    public addImage(imgSrc: string, img: SVGDrawing) {
-        this.options.addImage(imgSrc, img);
     }
 
     public setCanvas(canvas?: HTMLCanvasElement) {
