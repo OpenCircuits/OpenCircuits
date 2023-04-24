@@ -23,6 +23,34 @@ import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
 
 
+/**
+ * Utility class to manage assets for the circuit view.
+ *
+ * Specifically used over a Map so that it can be observed so that when an
+ * asset is updated (i.e. set for the first time), dependencies of that
+ * assets can be notified and update accordingly.
+ */
+export class CircuitViewAssetManager<T> extends Observable<{ key: string, val: T }> {
+    private readonly assets: Map<string, T>;
+
+    public constructor() {
+        super();
+
+        this.assets = new Map();
+    }
+
+    public has(key: string): boolean {
+        return this.assets.has(key);
+    }
+    public get(key: string): T | undefined {
+        return this.assets.get(key);
+    }
+    public set(key: string, val: T) {
+        this.assets.set(key, val);
+        this.publish({ key, val });
+    }
+}
+
 export abstract class CircuitView extends Observable<{ renderer: RenderHelper }> {
     public readonly circuit: CircuitInternal;
     public readonly selections: SelectionsManager;
@@ -43,6 +71,12 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
     public wireCurves: Map<GUID, BezierCurve>;
     public wirePrims: Map<GUID, Prims>;
+
+    public images: CircuitViewAssetManager<SVGDrawing>;
+
+    private readonly dirtyComponents: Set<GUID>;
+    private readonly dirtyWires: Set<GUID>;
+    private readonly dirtyPorts: Set<GUID>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
         super();
@@ -67,44 +101,52 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         this.wireCurves = new Map();
         this.wirePrims = new Map();
 
+        this.images = new CircuitViewAssetManager();
+
+        this.dirtyComponents = new Set();
+        this.dirtyWires = new Set();
+        this.dirtyPorts = new Set();
+
         this.scheduler.subscribe(() => this.render());
+        this.scheduler.setBlocked(true);
 
         this.circuit.subscribe((ev) => {
-            // TODO[model_refactor_api](leon) - use events
+            // TODO[model_refactor_api](leon) - use events better, i.e. how do we collect the diffs until the next
+            //                                  render cycle or query for the dirty object(s)?
 
-            // update components first
-            for (const compID of circuit.doc.getComponents()) {
-                const comp = circuit.doc.getCompByID(compID).unwrap();
-                this.getAssemblerFor(comp.kind).assemble(comp, ev);
-            }
+            // Mark all added/removed component dirty
+            for (const compID of ev.addedComponents)
+                this.dirtyComponents.add(compID);
+            for (const compID of ev.removedComponents)
+                this.dirtyComponents.add(compID);
 
-            // temporary hack to handle deleting components (and ports)
-            for (const compID of this.componentPrims.keys()) {
-                if (!circuit.doc.hasComp(compID)) {
-                    this.componentPrims.delete(compID);
-                    this.componentTransforms.delete(compID);
-                    this.portPrims.delete(compID);
-                }
-            }
-            for (const portID of this.portPositions.keys()) {
-                if (!circuit.doc.hasPort(portID)) {
-                    this.portPositions.delete(portID);
-                    this.localPortPositions.delete(portID);
-                }
-            }
+            // Mark all components w/ changed ports dirty
+            for (const compID of ev.portsChanged)
+                this.dirtyComponents.add(compID);
 
-            // then update wires
-            for (const wireID of circuit.doc.getWires()) {
-                const wire = circuit.doc.getWireByID(wireID).unwrap();
-                this.getAssemblerFor(wire.kind).assemble(wire, ev);
-            }
+            // Mark all added/removed wires dirty
+            for (const wireID of ev.addedWires)
+                this.dirtyWires.add(wireID);
+            for (const wireID of ev.removedWires)
+                this.dirtyWires.add(wireID);
 
-            // temporary hack to handle deleting wires
-            for (const wireID of this.wirePrims.keys()) {
-                if (!circuit.doc.hasWire(wireID)) {
-                    this.wireCurves.delete(wireID);
-                    this.wirePrims.delete(wireID);
-                }
+            // Mark all changed obj props dirty
+            for (const [id, props] of ev.propsChanged) {
+                if (circuit.doc.hasComp(id)) {
+                    this.dirtyComponents.add(id);
+
+                    // Component transform changed, update connected wires
+                    if (props.has("x") || props.has("y") || props.has("angle")) {
+                        const ports = this.circuit.doc.getPortsForComponent(id);
+                        ports.map((ports) => ports.forEach((portID) => {
+                            this.circuit.doc.getWiresForPort(portID)
+                                .map((wires) => wires.forEach((wireID) => this.dirtyWires.add(wireID)))
+                        }))
+                    }
+                } else if (circuit.doc.hasWire(id))
+                    this.dirtyWires.add(id);
+                else if (circuit.doc.hasPort(id))
+                    this.dirtyPorts.add(id);
             }
 
             this.cameraMat = this.calcCameraMat();
@@ -114,12 +156,58 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
         this.selections.subscribe((ev) => {
             ev.selections.forEach((id) => {
-                const obj = circuit.doc.getObjByID(id).unwrap();
-                this.getAssemblerFor(obj.kind).assemble(obj, ev);
+                if (circuit.doc.hasComp(id))
+                    this.dirtyComponents.add(id);
+                else if (circuit.doc.hasWire(id))
+                    this.dirtyWires.add(id);
+                else if (circuit.doc.hasPort(id))
+                    this.dirtyPorts.add(id);
             });
 
             this.scheduler.requestRender();
         });
+    }
+
+    private updateDirtyObjs() {
+        // Update components first
+        for (const compID of this.dirtyComponents) {
+            // If component still exists, update it
+            if (this.circuit.doc.hasComp(compID)) {
+                const comp = this.circuit.doc.getCompByID(compID).unwrap();
+                // TODO[model_refactor_api](leon) - figure out `ev` param
+                this.getAssemblerFor(comp.kind).assemble(comp, {});
+                continue;
+            }
+            // Otherwise, component was deleted so remove it and any associated ports
+            this.componentPrims.delete(compID);
+            this.componentTransforms.delete(compID);
+            this.portPrims.delete(compID);
+        }
+        this.dirtyComponents.clear();
+
+        // Remove any ports that were deleted
+        for (const portID of this.dirtyPorts) {
+            if (!this.circuit.doc.hasPort(portID)) {
+                this.portPositions.delete(portID);
+                this.localPortPositions.delete(portID);
+            }
+        }
+        this.dirtyPorts.clear();
+
+        // Then update wires
+        for (const wireID of this.dirtyWires) {
+            // If wire still exists, update it
+            if (this.circuit.doc.hasWire(wireID)) {
+                const wire = this.circuit.doc.getWireByID(wireID).unwrap();
+                // TODO[model_refactor_api](leon) - figure out `ev` param
+                this.getAssemblerFor(wire.kind).assemble(wire, {});
+                continue;
+            }
+            // Otherwise, wire was deleted so remove it
+            this.wireCurves.delete(wireID);
+            this.wirePrims.delete(wireID);
+        }
+        this.dirtyWires.clear();
     }
 
     protected calcCameraMat() {
@@ -133,6 +221,21 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     }
     public toScreenPos(pos: Vector): Vector {
         return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
+    }
+
+    // TODO[model_refactor_api](leon): Think of a better way to allow access to Prim data and have it auto-update
+    //                                 if it is currently dirty
+    public getPortPos(portID: GUID): Option<PortPos> {
+        if (!this.circuit.doc.hasPort(portID))
+            return None();
+        const port = this.circuit.doc.getPortByID(portID).unwrap();
+        // TODO[model_refactor_api](leon): This is terrible
+        if (this.dirtyComponents.has(port.parent)) {
+            const comp = this.circuit.doc.getCompByID(port.parent).unwrap();
+            this.getAssemblerFor(comp.kind).assemble(comp, {});
+            this.dirtyComponents.delete(port.parent);
+        }
+        return Some(this.portPositions.get(portID)!);
     }
 
     public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): Option<GUID> {
@@ -155,6 +258,11 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     protected abstract getAssemblerFor(kind: string): Assembler;
 
     protected render(): void {
+        if (!this.renderer.canvas)
+            throw new Error("CircuitView: Attempted Circuit render before a canvas was set!");
+
+        this.updateDirtyObjs();
+
         // Clear canvas
         this.renderer.clear();
 
@@ -214,11 +322,10 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         this.scheduler.requestRender();
     }
 
-    public addImage(imgSrc: string, img: SVGDrawing) {
-        this.options.addImage(imgSrc, img);
-    }
-
     public setCanvas(canvas?: HTMLCanvasElement) {
+        // Unblock scheduler once a canvas is set
+        this.scheduler.setBlocked(false);
+
         this.renderer.setCanvas(canvas);
     }
 

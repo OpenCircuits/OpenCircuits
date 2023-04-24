@@ -17,9 +17,7 @@ export type CircuitState<
 > = CircuitT & {
     circuit: CircuitInternal;
 
-    // TODO[model_refactor_api](leon): Get towards the point where this can always exist
-    //  even when there isn't a canvas/images loaded.
-    view?: CircuitView;
+    view: CircuitView;
 
     selectionsManager: SelectionsManager;
 

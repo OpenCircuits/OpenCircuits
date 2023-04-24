@@ -62,7 +62,7 @@ export class CameraImpl implements Camera {
     }
 
     public zoomTo(zoom: number, pos: Vector): void {
-        const view = this.state.view!;
+        const view = this.state.view;
 
         const pos0 = view.toWorldPos(pos);
         this.zoom = Clamp(this.zoom * zoom, 1e-6, 200);
@@ -70,6 +70,6 @@ export class CameraImpl implements Camera {
     }
 
     public toWorldPos(screenPos: Vector): Vector {
-        return this.state.view!.toWorldPos(screenPos);
+        return this.state.view.toWorldPos(screenPos);
     }
 }

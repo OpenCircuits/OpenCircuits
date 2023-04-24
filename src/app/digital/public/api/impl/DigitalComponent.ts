@@ -33,24 +33,28 @@ export class DigitalComponentImpl extends ComponentImpl<
         if (!this.info.portGroups.includes(portGroup))
             return undefined; // Invalid port group for the component
 
-        const ports = this.internal.doc.getPortsForComponent(this.id).unwrap();
+        const ports = [...this.internal.doc.getPortsForComponent(this.id).unwrap()]
+            .map((id) => this.internal.doc.getPortByID(id).unwrap())
+            .filter((port) => (port.group === portGroup));
 
         // Find out if the portGroup is of type input or output
-        const isInputType = this.info.inputPortGroups.includes(portGroup);
-        const isOutputType = this.info.outputPortGroups.includes(portGroup);
+        const isInputGroup = this.info.inputPortGroups.includes(portGroup);
+        const isOutputGroup = this.info.outputPortGroups.includes(portGroup);
 
-        const firstAvailableHelper = (id: string) => {
-            const portObject = this.internal.doc.getPortByID(id).unwrap();
-            const portWire = this.internal.doc.getWiresForPort(id).unwrap(); // no wires = available
+        if (!isInputGroup && !isOutputGroup)
+            throw new Error(`Found port group ${portGroup} for ${this.kind} that is neither input nor output!`);
 
-            if (isInputType && portObject.group === portGroup)
+        const port = ports.find((port) => {
+            // Output ports are always available
+            if (isOutputGroup)
                 return true;
-            return (isOutputType && portObject.group === portGroup && portWire.size === 0);
-        }
+            // Input ports are available if they have no connections
+            const connections = this.internal.doc.getWiresForPort(port.id).unwrap();
+            return (isInputGroup && connections.size === 0);
+        });
 
-        const match = [...ports].find(firstAvailableHelper)!;
-        if (!match)
+        if (!port)
             return undefined;
-        return new DigitalPortImpl(this.circuit, match);
+        return new DigitalPortImpl(this.circuit, port.id);
     }
 }
