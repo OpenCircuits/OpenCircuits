@@ -27,14 +27,17 @@ export class SelectionsImpl implements Selections {
     }
 
     public get all(): Obj[] {
-        return this.selections.map((id) => this.state.getObj(id)!);
+        return this.selections
+            .map((id) => this.state.getObj(id)!);
     }
     public get components(): Component[] {
-        return this.selections.filter((id) => (this.doc.hasComp(id)))
+        return this.selections
+            .filter((id) => this.doc.hasComp(id))
             .map((id) => this.state.constructComponent(id));
     }
     public get wires(): Wire[] {
-        return this.selections.filter((id) => (this.doc.hasWire(id)))
+        return this.selections
+            .filter((id) => this.doc.hasWire(id))
             .map((id) => this.state.constructWire(id));
     }
 
