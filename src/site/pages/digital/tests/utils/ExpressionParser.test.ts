@@ -176,16 +176,16 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
-        // test("Input Not Found", () => {
-        //     const a = "Switch", o = "LED";
-        //     const inputMap = new Map([
-        //         ["a", a],
-        //     ]);
+        test("Input Not Found", () => {
+            const a = "Switch", o = "LED";
+            const inputMap = new Map([
+                ["a", a],
+            ]);
 
-        //     expect(ExpressionToCircuit(inputMap,"b",o)).not.toBeOk();
-        //     expect(ExpressionToCircuit(inputMap,"a|b",o)).not.toBeOk();
-        //     expect(ExpressionToCircuit(inputMap,"!b",o)).not.toBeOk();
-        // });
+            expect(ExpressionToCircuit(inputMap,"b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a|b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"!b",o)).not.toBeOk();
+        });
 
         test("Unmatched '(' and ')'", () => {
             const a = "Switch", b = "Switch", o = "LED";

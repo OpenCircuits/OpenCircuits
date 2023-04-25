@@ -94,11 +94,9 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
  *               In the case of error, then an error will be returned indicating one of the following:
  *               - When one of the leaf nodes of the InputTree references an input that is not inputs.
  */
-export function TreeToCircuit(tree: InputTree | undefined, inputs: ReadonlyMap<string, string>,
+export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
                               output: string): Result<DigitalCircuit> {
     const circuit = CreateCircuit();
-    if (!tree)
-        return Ok(circuit);
 
     const outputComp = circuit.placeComponentAt(V(0, 0), output);
     const outputNode = outputComp.firstAvailable("output");
