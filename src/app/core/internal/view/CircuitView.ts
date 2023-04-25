@@ -143,10 +143,11 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
                                 .map((wires) => wires.forEach((wireID) => this.dirtyWires.add(wireID)))
                         }))
                     }
-                } else if (circuit.doc.hasWire(id))
+                } else if (circuit.doc.hasWire(id)) {
                     this.dirtyWires.add(id);
-                else if (circuit.doc.hasPort(id))
+                } else if (circuit.doc.hasPort(id)) {
                     this.dirtyPorts.add(id);
+                }
             }
 
             this.cameraMat = this.calcCameraMat();
