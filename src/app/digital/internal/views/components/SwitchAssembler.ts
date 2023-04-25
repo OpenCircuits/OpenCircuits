@@ -21,10 +21,10 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1.24, 1.54);
     public readonly pressableSize = V(0.96, 1.2);
 
-    public readonly onImg: SVGDrawing;
-    public readonly offImg: SVGDrawing;
-
     protected readonly sim: DigitalSim;
+
+    public onImg?: SVGDrawing;
+    public offImg?: SVGDrawing;
 
     protected portAssembler: PortAssembler;
 
@@ -33,8 +33,15 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.onImg  = view.options.getImage("switchDown.svg");
-        this.offImg = view.options.getImage("switchUp.svg");
+        view.images.subscribe(({ key, val }) => {
+            if (key === "switchDown.svg") {
+                this.onImg = val;
+                // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
+            } else if (key === "switchUp.svg") {
+                this.offImg = val;
+                // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
+            }
+        });
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.62, 0), dir: V(1, 0) }),

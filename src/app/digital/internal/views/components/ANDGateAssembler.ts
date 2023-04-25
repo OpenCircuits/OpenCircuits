@@ -17,9 +17,10 @@ import {Assembler}            from "core/internal/view/Assembler";
 
 export class ANDGateAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1, 1);
-    public readonly img: SVGDrawing;
 
     protected readonly sim: DigitalSim;
+
+    public img?: SVGDrawing;
 
     protected portAssembler: PortAssembler;
 
@@ -28,7 +29,12 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("and.svg");
+        view.images.subscribe(({ key, val }) => {
+            if (key === "and.svg") {
+                this.img = val;
+                // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
+            }
+        });
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
