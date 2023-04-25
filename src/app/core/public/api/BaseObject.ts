@@ -8,6 +8,8 @@ export interface BaseObject {
     readonly id: string;
     readonly bounds: Rect;
 
+    name: string | undefined;
+
     isSelected: boolean;
     zIndex: number;
 
