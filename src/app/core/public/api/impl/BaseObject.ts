@@ -36,6 +36,13 @@ export abstract class BaseObjectImpl<State extends CircuitState = CircuitState> 
         throw new Error("Unimplemented");
     }
 
+    public set name(name: string | undefined) {
+        this.internal.setPropFor(this.objID, "name", name);
+    }
+    public get name(): string | undefined {
+        return this.internal.doc.getObjByID(this.objID).unwrap().props["name"];
+    }
+
     public set isSelected(val: boolean) {
         if (val)
             this.selectionsManager.select(this.objID);
