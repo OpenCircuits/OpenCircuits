@@ -107,26 +107,23 @@ import {GenerateTokens}      from "site/digital/utils/ExpressionParser/GenerateT
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  */
-// function testInputsSimple(inputs: Array<[string, Switch]>, circuit: DigitalCircuit, output: LED,
-//                           expected: boolean[]) {
-//     if (2 ** inputs.length !== expected.length)
-//         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
-//                         2 ** inputs.length + ")");
+function testInputsSimple(inputs: Array<[string, Component]>, circuit: DigitalCircuit, output: string,
+                          expected: boolean[]) {
+    if (2 ** inputs.length !== expected.length)
+        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
+                        2 ** inputs.length + ")");
 
-//     const designer = new DigitalCircuitDesigner(0);
-//     AddGroup(designer, circuit);
-
-//     // Decrements because there can be weird propagation issues when trying to read initial state
-//     // For more, see issues #468 and #613
-//     // TODO: Make this increment rather than decrement if/when #468 and #613 are fixed
-//     test("Test all states", () => {
-//         for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
-//             for (let index = 0; index < inputs.length; index++)
-//                 inputs[index][1].activate(!!(num & (2 ** index)));
-//             expect(output.isOn()).toBe(expected[num]);
-//         }
-//     });
-// }
+    // Decrements because there can be weird propagation issues when trying to read initial state
+    // For more, see issues #468 and #613
+    // TODO: Make this increment rather than decrement if/when #468 and #613 are fixed
+    test("Test all states", () => {
+        for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
+            for (let index = 0; index < inputs.length; index++)
+                inputs[index][1].activate(!!(num & (2 ** index)));
+            expect(output.isOn()).toBe(expected[num]);
+        }
+    });
+}
 
 /**
  * This is a function that autogenerates and tests all states of a circuit represented by a given expression.
@@ -162,13 +159,20 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
             inputs.push([String.fromCodePoint(charCodeStart+i), "Switch"]);
 
         const result = ExpressionToCircuit(new Map(inputs), expression, o, ops);
+        // If I understand Jest correctly, this test will run after the non-test-blocked code after it,
+        // including the unwrap. So this may not actually be useful?
         test("Expression To Circuit Generation didn't error", () => {
             expect(result).toBeOk();
         });
-        result.unwrap();
+        const circuit = result.unwrap();
+        for (let i = 0; i < numInputs; i++) {
+            const code = String.fromCodePoint(charCodeStart+i);
+            // TODO[.](trevor) Improve this when API is improved
+            const comp = circuit.getObjs().find((o) => (o.name === code));
+        }
 
         // if (verbose === false || (verbose === undefined && numInputs > 3))
-        //     testInputsSimple(inputs, objectSet, o, expected);
+        //     testInputsSimple(inputs, circuit, o, expected);
         // else
         //     testInputs(inputs, objectSet, o, expected);
     });
@@ -394,67 +398,67 @@ describe("Expression Parser", () => {
         });
     });
 
-    // describe("1 Input", () => {
-    //     runTests(1, "a", [false, true]);
+    describe("1 Input", () => {
+        runTests(1, "a", [false, true]);
 
-    //     runTests(1, " a ", [false, true]);
+        runTests(1, " a ", [false, true]);
 
-    //     runTests(1, "(a)", [false, true]);
+        runTests(1, "(a)", [false, true]);
 
-    //     runTests(1, " (  a ) ", [false, true]);
+        runTests(1, " (  a ) ", [false, true]);
 
-    //     describe("Parse: 'a' (ConstantHigh)", () => {
-    //         const designer = new DigitalCircuitDesigner(0);
-    //         const a = new ConstantHigh(), o = "LED";
-    //         const inputMap = new Map([
-    //             ["a", a],
-    //         ]);
+        // describe("Parse: 'a' (ConstantHigh)", () => {
+        //     const a = "ConstantHigh", o = "LED";
+        //     const inputMap = new Map([
+        //         ["a", a],
+        //     ]);
 
-    //         const objectSet = ExpressionToCircuit(inputMap, "a", o);
-    //         AddGroup(designer, objectSet);
+        //     const result = ExpressionToCircuit(inputMap, "a", o);
 
-    //         test("Initial State", () => {
-    //             expect(o.isOn()).toBe(true);
-    //         });
-    //     });
+        //     test("Initial State", () => {
+        //         expect(result).toBeOk();
+        //         const circuit = result.unwrap();
+        //         expect(o.isOn()).toBe(true);
+        //     });
+        // });
 
-    //     describe("Parse: 'a' (ConstantLow)", () => {
-    //         const designer = new DigitalCircuitDesigner(0);
-    //         const a = new ConstantLow(), o = "LED";
-    //         const inputMap = new Map([
-    //             ["a", a],
-    //         ]);
+        // describe("Parse: 'a' (ConstantLow)", () => {
+        //     const a = "ConstantLow", o = "LED";
+        //     const inputMap = new Map([
+        //         ["a", a],
+        //     ]);
 
-    //         const objectSet = ExpressionToCircuit(inputMap, "a", o);
-    //         AddGroup(designer, objectSet);
+        //     const result = ExpressionToCircuit(inputMap, "a", o);
 
-    //         test("Initial State", () => {
-    //             expect(o.isOn()).toBe(false);
-    //         });
-    //     });
+        //     test("Initial State", () => {
+        //         expect(result).toBeOk();
+        //         const circuit = result.unwrap();
+        //         expect(o.isOn()).toBe(false);
+        //     });
+        // });
 
-    //     runTests(1, "!a", [true, false]);
+        runTests(1, "!a", [true, false]);
 
-    //     runTests(1, "!!a", [false, true]);
+        runTests(1, "!!a", [false, true]);
 
-    //     runTests(1, "!(!a)", [false, true]);
+        runTests(1, "!(!a)", [false, true]);
 
-    //     runTests(1, "a&a", [false, true]);
+        runTests(1, "a&a", [false, true]);
 
-    //     runTests(1, "a|a", [false, true]);
+        runTests(1, "a|a", [false, true]);
 
-    //     runTests(1, "a^a", [false, false]);
+        runTests(1, "a^a", [false, false]);
 
-    //     runTests(1, "a^!a", [true, true]);
+        runTests(1, "a^!a", [true, true]);
 
-    //     describe("Parse: 'longName'", () => {
-    //         const a = "Switch", o = "LED";
-    //         const inputs: Array<[string, Switch]> = [["longName", a]];
-    //         const objectSet = ExpressionToCircuit(new Map(inputs), "longName", o);
+        // describe("Parse: 'longName'", () => {
+        //     const a = "Switch", o = "LED";
+        //     const inputs: ReadonlyArray<[string, string]> = [["longName", a]];
+        //     const objectSet = ExpressionToCircuit(new Map(inputs), "longName", o);
 
-    //         testInputs(inputs, objectSet, o, [false, true]);
-    //     });
-    // });
+        //     testInputs(inputs, objectSet, o, [false, true]);
+        // });
+    });
 
     // // 0, a, b, (a, b)
     // describe("2 Inputs", () => {
