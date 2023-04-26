@@ -187,11 +187,11 @@ export class Graph<V, E> {
 export function CreateGraph(circuit: Circuit): Graph<Component, Wire> {
     const graph = new Graph<Component, Wire>();
 
-    const objs = circuit.getComponents();
+    const objs = circuit.getObjs().filter((obj) => (obj.baseKind === "Component")) as readonly Component[];
     for (const obj of objs) {
         graph.createNode(obj);
     }
-    const wires = circuit.getWires();
+    const wires = circuit.getObjs().filter((obj) => (obj.baseKind === "Wire")) as readonly Wire[];
     for (const wire of wires) {
         graph.createEdge(wire.p1.parent, wire.p2.parent, wire);
     }

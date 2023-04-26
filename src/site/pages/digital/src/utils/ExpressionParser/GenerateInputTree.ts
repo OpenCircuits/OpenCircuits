@@ -68,6 +68,18 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
     return errorMessage;
 }
 
+/**
+ * Handles parsing a unary operation.
+ *
+ * @param currentOp    The current unary operation.
+ * @param tokens       The array of tokens representing the expression to parse.
+ * @param ops          The represenation of the operands in the original expression,
+ *                     only used for error text formatting.
+ * @param currentOpNum The index of the current operation to evaluate.
+ * @param index        The index of the parsing process in the tokens Array.
+ * @returns            The current input tree and the current parsing index.
+ * @see generateInputTreeCore
+ */
 function handleUnary(currentOp: "!", tokens: readonly Token[], ops: Record<TokenType, string>,
         currentOpNum: number, index: number): Result<NewTreeRetValue> {
     if (index >= tokens.length) {
@@ -98,6 +110,19 @@ function handleUnary(currentOp: "!", tokens: readonly Token[], ops: Record<Token
     });
 }
 
+/**
+ * Handles parsing a binary operation.
+ *
+ * @param currentOp    The current binary operation.
+ * @param nextOpNum    Index of the next operation.
+ * @param tokens       The array of tokens representing the expression to parse.
+ * @param ops          The represenation of the operands in the original expression,
+ *                     only used for error text formatting.
+ * @param currentOpNum The index of the current operation to evaluate.
+ * @param index        The index of the parsing process in the tokens Array.
+ * @returns            The current input tree and the current parsing index.
+ * @see generateInputTreeCore
+ */
 function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: readonly Token[],
         ops: Record<TokenType, string>, currentOpNum: number, index: number): Result<NewTreeRetValue> {
     // This section gets the part of the tree from the left side of the operator.
@@ -147,11 +172,11 @@ function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: rea
  * @param index        The index of the parsing process in the tokens Array.
  * @returns            The current input tree and the current parsing index.
  *                     In the case of error, then an error will be returned indicating one of the following:
- *                     - Parenthesis do not include anything (such as "()").
- *                     - An opening parenthesis is missing a corresponding closing parenthesis (such as "(a").
- *                     - A closing parenthesis is missing a corresponding opening parenthesis (such as ")a").
- *                     - `|`, `&`, or `^` are missing an operand on their left (such as "a|").
- *                     - `|`, `&`, `^`, or `!` are missing an operand on their right (such as "!a").
+ *                     - Parenthesis do not include anything (such as `()`).
+ *                     - An opening parenthesis is missing a corresponding closing parenthesis (such as `(a`).
+ *                     - A closing parenthesis is missing a corresponding opening parenthesis (such as "a)").
+ *                     - `|`, `&`, or `^` are missing an operand on their left (such as `|a`).
+ *                     - `|`, `&`, `^`, or `!` are missing an operand on their right (such as `!` or `a&`).
  * @see GenerateInputTree
  */
 function generateInputTreeCore(tokens: readonly Token[], ops: Record<TokenType, string>,
@@ -211,12 +236,12 @@ function generateInputTreeCore(tokens: readonly Token[], ops: Record<TokenType, 
  * @param ops    The representation format for the operations used in this expression (only used for error messages).
  * @returns      `undefined` if tokens.length is 0, the relevant input tree otherwise.
  *               In the case of error, then an error will be returned indicating one of the following:
- *               - Parenthesis do not include anything (such as "()").
- *               - An opening parenthesis is missing a corresponding closing parenthesis (such as "(").
- *               - A closing parenthesis is missing a corresponding opening parenthesis (such as ")").
- *               - `|`, `&`, or `^` are missing an operand on their left (such as "a|").
- *               - `|`, `&`, `^`, or `!` are missing an operand on their right (such as "!a").
- *               - There is no operator between two inputs (such as "a b").
+ *               - Parenthesis do not include anything (such as `()`).
+ *               - An opening parenthesis is missing a corresponding closing parenthesis (such as `(a`).
+ *               - A closing parenthesis is missing a corresponding opening parenthesis (such as "a)").
+ *               - `|`, `&`, or `^` are missing an operand on their left (such as `|a`).
+ *               - `|`, `&`, `^`, or `!` are missing an operand on their right (such as `!` or `a&`).
+ *               - There is no operator between two inputs (such as `a b`).
  *               - `generateInputTreeCore` returns back up to this function before the end of tokens is reached
  *               for any other reason.
  */

@@ -25,6 +25,16 @@ export const NegatedTypeToGate = {
     "^": "XNORGate",
 } as const;
 
+/**
+ * Connects the first available output port on `prevComp` to the `newNode` on `newComp`.
+ *
+ * @param prevComp The component to connect the output of.
+ * @param newNode  First available `inputs` port on `newComp`.
+ * @param newComp  The component to connect the input of, only used for error message and return value.
+ * @returns        In the case of success, a `Result` wrapping `newComp`. An error in the following cases:
+ *                 - No output port found on `prevComp`.
+ *                 - Wire failed to create connecting `prevComp` to `newNode`.
+ */
 function connect(prevComp: Component, newNode: Port, newComp: Component): Result<Component> {
     const prevNode = prevComp.firstAvailable("outputs");
     if (!prevNode)
@@ -48,6 +58,7 @@ function connect(prevComp: Component, newNode: Port, newComp: Component): Result
  *                should always be last in the array.
  *                In the case of error, then an error will be returned indicating one of the following:
  *                - When one of the leaf nodes of the InputTree references an input that is not inputs.
+ *                - Any connections fail.
  * @see TreeToCircuit
  */
 function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circuit: DigitalCircuit):
@@ -93,6 +104,7 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
  * @returns      The components and wires converted from the tree.
  *               In the case of error, then an error will be returned indicating one of the following:
  *               - When one of the leaf nodes of the InputTree references an input that is not inputs.
+ *               - Any connections fail.
  */
 export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
                               output: string): Result<DigitalCircuit> {
@@ -111,7 +123,7 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
         inputMap.set(input, c);
     });
 
-   treeToCircuitCore(tree, inputMap, circuit)
+    treeToCircuitCore(tree, inputMap, circuit)
         .andThen((prevComp) => connect(prevComp, outputNode, outputComp));
 
     return Ok(circuit);
