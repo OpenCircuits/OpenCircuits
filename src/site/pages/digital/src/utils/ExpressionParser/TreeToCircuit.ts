@@ -26,7 +26,7 @@ export const NegatedTypeToGate = {
 } as const;
 
 function connect(prevComp: Component, newNode: Port, newComp: Component): Result<Component> {
-    const prevNode = prevComp.firstAvailable("output");
+    const prevNode = prevComp.firstAvailable("outputs");
     if (!prevNode)
         return ErrE(`Port not found on returned ${prevComp.kind}`);
     const wire = prevNode.connectTo(newNode);
@@ -64,7 +64,7 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
                                  ? NegatedTypeToGate[node.type]
                                  : TypeToGate[node.type]);
     const newComp = circuit.placeComponentAt(V(0, 0), newGate);
-    const newNode = newComp.firstAvailable("input");
+    const newNode = newComp.firstAvailable("outputs");
     if (!newNode)
         return ErrE(`Port not found on newly created ${newComp.kind}`);
     if (node.kind === "unop") {
@@ -99,13 +99,15 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
     const circuit = CreateCircuit();
 
     const outputComp = circuit.placeComponentAt(V(0, 0), output);
-    const outputNode = outputComp.firstAvailable("output");
+    outputComp.name = "Output";
+    const outputNode = outputComp.firstAvailable("inputs");
     if (!outputNode)
         return ErrE(`Port not found on output ${outputComp.kind}`);
 
     const inputMap = new Map<string, Component>();
-    inputs.forEach((input, type) => {
+    inputs.forEach((type, input) => {
         const c = circuit.placeComponentAt(V(0, 0), type);
+        c.name = input;
         inputMap.set(input, c);
     });
 

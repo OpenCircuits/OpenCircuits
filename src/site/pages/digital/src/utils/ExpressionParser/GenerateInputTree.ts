@@ -68,8 +68,11 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
     return errorMessage;
 }
 
-function handleUnary(tokens: readonly Token[], ops: Record<TokenType, string>,
+function handleUnary(currentOp: "!", tokens: readonly Token[], ops: Record<TokenType, string>,
         currentOpNum: number, index: number): Result<NewTreeRetValue> {
+    if (index >= tokens.length) {
+        return ErrE(`Missing Right Operand on Unary Operation: "${ops[currentOp]}"`);
+    }
     const rightToken = tokens[index];
     let rightRet: Result<NewTreeRetValue>;
     if (rightToken.type === "!" || rightToken.type === "(") { // This case applies when the next token is "!" or "("
@@ -107,7 +110,7 @@ function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: rea
 
         index += 1;
         if (index >= tokens.length)
-            return ErrE(`Missing Right Operand: "${ops[currentOp]}"`);
+            return ErrE(`Missing Right Operand on Binary Operation: "${ops[currentOp]}"`);
         return generateInputTreeCore(tokens, ops, currentOpNum, index)
                 .andThen((rightRet): Result<NewTreeRetValue> => {
             index = rightRet.index;
@@ -177,14 +180,9 @@ function generateInputTreeCore(tokens: readonly Token[], ops: Record<TokenType, 
         return ErrE(`Missing Left Operand: "${ops[token.type]}"`);
     }
 
-    // This section gets the part of the tree from the right side of the operand. index is incremented by 1
-    //  so it now points to the token on the right side of the operator.
-    if ((index + 1) >= tokens.length && currentOp !== "(") {
-        return ErrE(`Missing Right Operand: "${ops[currentOp]}"`);
-    }
     else if (currentOp === "!") {
         index += 1;
-        return handleUnary(tokens, ops, currentOpNum, index);
+        return handleUnary(currentOp, tokens, ops, currentOpNum, index);
     }
     else if (currentOp === "(") {
         index += 1;

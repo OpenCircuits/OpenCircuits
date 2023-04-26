@@ -11,7 +11,7 @@ import {DigitalCircuit}    from "digital/public";
 /**
  * Main driver function for parsing an expression into a circuit.
  *
- * @param inputs     A map correlating input name to the DigitalComponent it represents.
+ * @param inputs     A map correlating input name to the type of component it will represent.
  * @param expression The expression to be parsed.
  * @param output     The DigitalComponent to use as an output, port 0 will be used.
  * @param ops        The strings used to represent the different operators.
