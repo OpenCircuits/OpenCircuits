@@ -89,10 +89,9 @@ export class Renderer {
         this.context.textAlign = textAlign;
         this.context.textBaseline = textBaseline;
 
+        this.translate(pos);
         // Flip y-axis scale
         this.context.scale(1, -1);
-
-        this.translate(pos);
         if (angle !== 0)
             this.rotate(angle);
         this.context.fillText(txt, 0, 0);
@@ -137,7 +136,7 @@ export class Renderer {
         if (baseline === "middle")
             this.pathLine(pos.sub(0, len/2), pos.add(0, len/2));
         else
-            this.pathLine(pos, pos.sub(0, len));
+            this.pathLine(pos, pos.add(0, len));
     }
     public vLines(xs: number[], y0: number, len: number, baseline: "bottom"|"middle") {
         xs.forEach((x) => this.vLine(V(x, y0), len, baseline));

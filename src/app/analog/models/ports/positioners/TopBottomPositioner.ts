@@ -27,11 +27,11 @@ export class TopBottomPositioner extends Positioner<AnalogPort> {
     public override updatePortPositions([p1, p2]: AnalogPort[]): void {
         const height = p1.getParent().getSize().y;
 
-        p1.setOriginPos(V(0, -height/2));
-        p1.setTargetPos(V(0, -(height/2+IO_PORT_LENGTH)));
+        p1.setOriginPos(V(0,  height/2));
+        p1.setTargetPos(V(0,  (height/2+IO_PORT_LENGTH)));
 
-        p2.setOriginPos(V(0, height/2));
-        p2.setTargetPos(V(0,  height/2+IO_PORT_LENGTH));
+        p2.setOriginPos(V(0, -height/2));
+        p2.setTargetPos(V(0, -(height/2+IO_PORT_LENGTH)));
     }
 
 }
