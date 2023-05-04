@@ -32,3 +32,19 @@ export function FromConcatenatedEntries<K extends string, V>(entries: Array<[K, 
         [key]: [...(prev[key] ?? []), val],
     }), {} as Record<K, V[]>);
 }
+
+
+export function extend<
+    O extends Record<string | number | symbol, unknown>,
+    E extends Record<string | number | symbol, unknown>
+>(obj: O, ext: E): O & E {
+    for (const prop in ext) {
+        if (Object.getOwnPropertyDescriptor && Object.defineProperty) {
+            const propertyDescriptor = Object.getOwnPropertyDescriptor(ext, prop)!;
+            Object.defineProperty(obj, prop, propertyDescriptor);
+        } else {
+            (obj[prop] as unknown) = ext[prop];
+        }
+    }
+    return obj as O & E;
+}

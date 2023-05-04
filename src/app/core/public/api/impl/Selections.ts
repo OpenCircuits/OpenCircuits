@@ -1,76 +1,68 @@
-import {V, Vector}    from "Vector";
-import {Component}    from "../Component";
-import {Obj}          from "../Obj";
-import {Selections}   from "../Selections";
-import {Wire}         from "../Wire";
-import {CircuitState} from "./CircuitState";
+import {V, Vector} from "Vector";
+
+import {Selections} from "../Selections";
+import {Circuit}    from "../Circuit";
+
+import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export class SelectionsImpl implements Selections {
-    protected state: CircuitState;
-
-    public constructor(state: CircuitState) {
-        this.state = state;
+export function SelectionsImpl<T extends CircuitTypes>(
+    circuit: Circuit,
+    { internal, selectionsManager, view, constructComponent, constructWire }: CircuitState<T>
+) {
+    function selections() {
+        return selectionsManager.get();
     }
 
-    private get selections() {
-        return this.state.selectionsManager.get();
-    }
-    private get doc() {
-        return this.state.circuit.doc;
-    }
+    return {
+        get length(): number {
+            return selections().length;
+        },
+        get isEmpty(): boolean {
+            return (this.length === 0);
+        },
 
-    public get length(): number {
-        return this.state.selectionsManager.length();
-    }
-    public get isEmpty(): boolean {
-        return (this.length === 0);
-    }
+        get all(): T["Obj[]"] {
+            return selections().map((id) => circuit.getObj(id)!);
+        },
+        get components(): T["Component[]"] {
+            return selections().filter((id) => (internal.doc.hasComp(id)))
+                .map((id) => constructComponent(id));
+        },
+        get wires(): T["Wire[]"] {
+            return selections().filter((id) => (internal.doc.hasComp(id)))
+                .map((id) => constructWire(id));
+        },
 
-    public get all(): Obj[] {
-        return this.selections.map((id) => this.state.getObj(id)!);
-    }
-    public get components(): Component[] {
-        return this.selections.filter((id) => (this.doc.hasComp(id)))
-            .map((id) => this.state.constructComponent(id));
-    }
-    public get wires(): Wire[] {
-        return this.selections.filter((id) => (this.doc.hasWire(id)))
-            .map((id) => this.state.constructWire(id));
-    }
+        midpoint(space: Vector.Spaces = "world"): Vector {
+            // Case: no components are selected
+            if (this.components.length === 0)
+                return V(0, 0);
 
-    public midpoint(space: Vector.Spaces): Vector {
-        // Case: no components are selected
-        if (this.components.length === 0)
-            return V(0, 0);
+            // Case: One or more components are selected, calculate average
+            const avgWorldPos = this.components
+                .map((c) => c.pos)
+                .reduce((sum, v) => sum.add(v))
+                .scale(1 / this.components.length);
 
-        // Case: One or more components are selected, calculate average
-        const avgWorldPos = this.components
-            .map((c) => c.pos)
-            .reduce((sum, v) => sum.add(v))
-            .scale(1 / this.components.length);
+            return (space === "screen" ? view.toScreenPos(avgWorldPos) : avgWorldPos);
+        },
 
-        return (space === "screen" ? this.state.view!.toScreenPos(avgWorldPos) : avgWorldPos);
-    }
+        clear(): void {
+            selectionsManager.clear();
+        },
 
-    public clear(): void {
-        this.state.selectionsManager.clear();
-    }
+        forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {
+            return this.all.forEach(f);
+        },
+        every(condition: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): boolean {
+            return this.all.every(condition);
+        },
 
-    public forEach(f: (obj: Obj, i: number, arr: Obj[]) => void): void {
-        return this.selections
-            .map((id) => this.state.getObj(id)!)
-            .forEach(f);
-    }
-    public every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean {
-        return this.selections
-            .map((id) => this.state.getObj(id)!)
-            .every(condition);
-    }
-
-    public duplicate(): Obj[] {
-        if (this.isEmpty)
-            return [];
-        throw new Error("Unimplemented!");
-    }
+        duplicate(): T["Obj[]"] {
+            if (this.isEmpty)
+                return [];
+            throw new Error("Unimplemented!");
+        },
+    } satisfies Selections;
 }

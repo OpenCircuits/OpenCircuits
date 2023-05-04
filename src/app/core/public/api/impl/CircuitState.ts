@@ -2,30 +2,42 @@ import {CircuitInternal}   from "core/internal";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitView}       from "core/internal/view/CircuitView";
 
-import {Circuit}   from "../Circuit";
-import {Component} from "../Component";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
+import {Component, Node} from "../Component";
+import {Port}            from "../Port";
+import {Wire}            from "../Wire";
 
 
-// Utility object to pass around the Circuit API state to the API Component/Port/etc
-export type CircuitState<
+// Utility interface to hold utility types for the templated Circuit API.
+export type CircuitTypes<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
-    CircuitT extends Circuit = Circuit,
-> = CircuitT & {
-    circuit: CircuitInternal;
+    NodeT extends Node = Node,
+> = {
+    "Component": ComponentT;
+    "Wire": WireT;
+    "Port": PortT;
+    "Obj": ComponentT | WireT | PortT;
 
-    // TODO[model_refactor_api](leon): Get towards the point where this can always exist
-    //  even when there isn't a canvas/images loaded.
-    view?: CircuitView;
+    "ComponentInfo": ComponentT["info"];
 
+    "Node": NodeT;
+    "Path": Array<NodeT | WireT>;
+
+    "Component[]": ComponentT[];
+    "Wire[]": WireT[];
+    "Port[]": PortT[];
+    "Obj[]": Array<ComponentT | WireT | PortT>;
+}
+
+export interface CircuitState<T extends CircuitTypes> {
+    internal: CircuitInternal;
+    view: CircuitView;
     selectionsManager: SelectionsManager;
 
     isLocked: boolean;
 
-    constructComponent(id: string): ComponentT;
-    constructWire(id: string): WireT;
-    constructPort(id: string): PortT;
+    constructComponent(id: string): T["Component"];
+    constructWire(id: string): T["Wire"];
+    constructPort(id: string): T["Port"];
 }

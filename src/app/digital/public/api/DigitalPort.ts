@@ -1,12 +1,11 @@
-import {Port}   from "core/public";
+import type {Port} from "core/public";
+
+import type {APIToDigital} from "./DigitalCircuit";
+
 import {Signal} from "../utils/Signal";
 
-import {DigitalComponent} from "./DigitalComponent";
 
-
-export interface DigitalPort extends Port {
-    readonly parent: DigitalComponent;
-
+export interface DigitalPort extends APIToDigital<Port> {
     readonly isInputPort: boolean;
     readonly isOutputPort: boolean;
 

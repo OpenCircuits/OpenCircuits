@@ -22,7 +22,7 @@ export interface Selections {
      * @returns     A Vector object where x and y are the averages
      *              of the positions of the selected components.
      */
-    midpoint(space: Vector.Spaces): Vector;
+    midpoint(space?: Vector.Spaces): Vector;
 
     clear(): void;
 

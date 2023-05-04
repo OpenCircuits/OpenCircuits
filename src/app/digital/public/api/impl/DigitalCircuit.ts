@@ -1,61 +1,20 @@
-import {CircuitInternal}                    from "core/internal";
-import {CircuitDocument}                    from "core/internal/impl/CircuitDocument";
-import {CircuitLog}                         from "core/internal/impl/CircuitLog";
-import {SelectionsManager}                  from "core/internal/impl/SelectionsManager";
-import {CircuitImpl}                        from "core/public/api/impl/Circuit";
-import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
-import {DigitalSim}                         from "digital/internal/sim/DigitalSim";
-import {DigitalCircuitView}                 from "digital/internal/views/DigitalCircuitView";
+import {CircuitImpl} from "core/public/api/impl/Circuit";
 
-import {DigitalCircuit}       from "../DigitalCircuit";
-import {DigitalComponent}     from "../DigitalComponent";
-import {DigitalComponentInfo} from "../DigitalComponentInfo";
-import {DigitalPort}          from "../DigitalPort";
-import {DigitalWire}          from "../DigitalWire";
-import {DigitalCircuitState}  from "./DigitalCircuitState";
+import {extend} from "core/utils/Functions";
 
-import {DigitalComponentImpl} from "./DigitalComponent";
-import {DigitalPortImpl}      from "./DigitalPort";
-import {DigitalWireImpl}      from "./DigitalWire";
+import {DigitalCircuit}                    from "../DigitalCircuit";
+import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
 
-export class DigitalCircuitImpl extends CircuitImpl<
-    DigitalComponent, DigitalWire, DigitalPort
-> implements DigitalCircuit, DigitalCircuitState {
-    public sim: DigitalSim;
+export function DigitalCircuitImpl(state: DigitalCircuitState) {
+    const base = CircuitImpl<DigitalCircuit, DigitalTypes>(state);
 
-    public constructor() {
-        const circuit = new CircuitInternal(
-            new CircuitLog(),
-            new CircuitDocument(CreateDigitalComponentInfoProvider())
-        );
-        const selections = new SelectionsManager();
-        const sim = new DigitalSim(circuit);
-        const view = new DigitalCircuitView(circuit, selections, sim);
-
-        super(circuit, view, selections);
-
-        this.sim = sim;
-    }
-
-    public constructComponent(id: string): DigitalComponent {
-        return new DigitalComponentImpl(this, id);
-    }
-    public constructWire(id: string): DigitalWire {
-        return new DigitalWireImpl(this, id);
-    }
-    public constructPort(id: string): DigitalPort {
-        return new DigitalPortImpl(this, id);
-    }
-
-    public set propagationTime(val: number) {
-        throw new Error("Unimplemented");
-    }
-    public get propagationTime(): number {
-        throw new Error("Unimplemented");
-    }
-
-    public override getComponentInfo(kind: string): DigitalComponentInfo | undefined {
-        throw new Error("Unimplmeneted");
-    }
+    return extend(base, {
+        set propagationTime(val: number) {
+            throw new Error("Unimplemented!");
+        },
+        get propagationTime(): number {
+            throw new Error("Unimplemented!");
+        },
+    } as const) satisfies DigitalCircuit;
 }

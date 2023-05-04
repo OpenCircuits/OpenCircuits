@@ -1,291 +1,257 @@
-import {V, Vector} from "Vector";
-
-import {Rect} from "math/Rect";
-
-import {CircuitInternal}   from "core/internal/impl/CircuitInternal";
-import {DebugOptions}      from "core/internal/impl/DebugOptions";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
-import {CircuitView}       from "core/internal/view/CircuitView";
-
-import {Camera}    from "../Camera";
-import {Circuit}   from "../Circuit";
-import {Component} from "../Component";
-import {Obj}       from "../Obj";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
-
-import {CircuitState}         from "./CircuitState";
 import {CreateDrawingFromSVG} from "svg2canvas";
-import {CameraImpl}           from "./Camera";
-import {RenderHelper}         from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions}        from "core/internal/view/rendering/RenderOptions";
-import {Selections}           from "../Selections";
-import {SelectionsImpl}       from "./Selections";
-import {CleanupFunc}          from "core/utils/types";
-import {isObjComponent}       from "../Utilities";
+
+import {Vector} from "Vector";
+import {Rect}   from "math/Rect";
+
+import {CleanupFunc} from "core/utils/types";
+
+import {DebugOptions, GUID} from "core/internal";
+import {RenderHelper}       from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions}      from "core/internal/view/rendering/RenderOptions";
+
+import {Camera}         from "../Camera";
+import {Circuit}        from "../Circuit";
+import {Selections}     from "../Selections";
+import {isObjComponent} from "../Utilities";
+
+import {CameraImpl}                 from "./Camera";
+import {CircuitState, CircuitTypes} from "./CircuitState";
+import {SelectionsImpl}             from "./Selections";
 
 
-export abstract class CircuitImpl<
-    ComponentT extends Component = Component,
-    WireT extends Wire = Wire,
-    PortT extends Port = Port,
-> implements Circuit, CircuitState<ComponentT, WireT, PortT> {
-    public circuit: CircuitInternal;
-    public view: CircuitView;
-
-    public selectionsManager: SelectionsManager;
-
-    public isLocked: boolean;
-
-    public constructor(
-        circuit: CircuitInternal,
-        view: CircuitView,
-        selectionsManager: SelectionsManager
-    ) {
-        this.circuit = circuit;
-        this.view = view;
-
-        this.selectionsManager = selectionsManager;
-
-        this.isLocked = false;
+export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
+    function pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
+        const pos = ((space === "world" ? pt : state.view.toWorldPos(pt)));
+        return state.view.findNearestObj(pos, filter);
     }
 
-    public abstract constructComponent(id: string): ComponentT;
-    public abstract constructWire(id: string): WireT;
-    public abstract constructPort(id: string): PortT;
+    return {
+        beginTransaction(): void {
+            state.internal.beginTransaction();
+        },
+        commitTransaction(): void {
+            state.internal.commitTransaction();
+        },
+        cancelTransaction(): void {
+            state.internal.cancelTransaction();
+        },
 
-    // Transactions.  All ops between a begin/commit pair are applied atomically (For collaborative editing, undo/redo)
-    // All queries within a transaction are coherent.
-    // All ops outside begin/commit are applied individually
-    public beginTransaction(): void {
-        this.circuit.beginTransaction();
-    }
-    public commitTransaction(): void {
-        this.circuit.commitTransaction();
-    }
-    public cancelTransaction(): void {
-        this.circuit.cancelTransaction();
-    }
+        // Metadata
+        get id(): GUID {
+            throw new Error("Unimplemented!");
+        },
+        set name(val: string) {
+            throw new Error("Unimplemented!");
+        },
+        get name(): string {
+            throw new Error("Unimplemented!");
+        },
+        set desc(val: string) {
+            throw new Error("Unimplemented!");
+        },
+        get desc(): string {
+            throw new Error("Unimplemented!");
+        },
+        set thumbnail(val: string) {
+            throw new Error("Unimplemented!");
+        },
+        get thumbnail(): string {
+            throw new Error("Unimplemented!");
+        },
 
-    public get id(): string {
-        throw new Error("Method not implemented.");
-    }
+        // Other data
+        set locked(val: boolean) {
+            throw new Error("Unimplemented!");
+        },
+        get locked(): boolean {
+             // TODO: Decide which level to enforce this at.  Is it serialized?
+            throw new Error("Unimplemented!");
+        },
+        set simEnabled(val: boolean) {
+            throw new Error("Unimplemented!");
+        },
+        get simEnabled(): boolean {
+            throw new Error("Unimplemented!");
+        },
+        set debugOptions(val: DebugOptions) {
+            throw new Error("Unimplemented!");
+        },
+        get debugOptions(): DebugOptions {
+            throw new Error("Unimplemented!");
+        },
 
-    public set name(val: string) {
-        throw new Error("Method not implemented.");
-    }
-    public get name(): string {
-        throw new Error("Method not implemented.");
-    }
+        get camera(): Camera {
+            return CameraImpl(state);
+        },
+        get selections(): Selections {
+            return SelectionsImpl(this, state);
+        },
 
-    public set desc(val: string) {
-        throw new Error("Method not implemented.");
-    }
-    public get desc(): string {
-        throw new Error("Method not implemented.");
-    }
+        // Queries
+        pickObjAt(pt: Vector, space: Vector.Spaces = "world"): T["Obj"] | undefined {
+            return pickObjAtHelper(pt, space)
+                .map((id) => this.getObj(id)).asUnion();
+        },
+        pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): T["Component"] | undefined {
+            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasComp(id))
+                .map((id) => this.getComponent(id)).asUnion();
+        },
+        pickWireAt(pt: Vector, space: Vector.Spaces = "world"): T["Wire"] | undefined {
+            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasWire(id))
+                .map((id) => this.getWire(id)).asUnion();
+        },
+        pickPortAt(pt: Vector, space: Vector.Spaces = "world"): T["Port"] | undefined {
+            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasPort(id))
+                .map((id) => this.getPort(id)).asUnion();
+        },
+        pickObjRange(bounds: Rect): T["Obj[]"] {
+            throw new Error("Unimplemented!");
+        },
 
-    public set thumbnail(val: string) {
-        throw new Error("Method not implemented.");
-    }
-    public get thumbnail(): string {
-        throw new Error("Method not implemented.");
-    }
-
-    public set locked(val: boolean) {
-        throw new Error("Unimplemented");
-    }
-    public get locked(): boolean {
-        // TODO: Decide which level to enforce this at.  Is it serialized?
-        throw new Error("Unimplemented");
-    }
-
-    public set simEnabled(val: boolean) {
-        throw new Error("Unimplemented");
-    }
-    public get simEnabled(): boolean {
-        throw new Error("Unimplemented");
-    }
-
-    public set debugOptions(options: Partial<DebugOptions>) {
-        throw new Error("Unimplemented");
-    }
-    public get debugOptions(): DebugOptions {
-        throw new Error("Unimplemented");
-    }
-
-    public get camera(): Camera {
-        return new CameraImpl(this);
-    }
-
-    public get selections(): Selections {
-        return new SelectionsImpl(this);
-    }
-
-    // Queries
-    private pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
-        const pos = ((space === "world" ? pt : this.view.toWorldPos(pt)));
-        return this.view.findNearestObj(pos, filter);
-    }
-    public pickObjAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | WireT | PortT | undefined {
-        return this.pickObjAtHelper(pt, space)
-            .map((id) => this.getObj(id)).asUnion();
-    }
-    public pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): ComponentT | undefined {
-        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasComp(id))
-            .map((id) => this.getComponent(id)).asUnion();
-    }
-    public pickWireAt(pt: Vector, space: Vector.Spaces = "world"): WireT | undefined {
-        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasWire(id))
-            .map((id) => this.getWire(id)).asUnion();
-    }
-    public pickPortAt(pt: Vector, space: Vector.Spaces = "world"): PortT | undefined {
-        return this.pickObjAtHelper(pt, space, (id) => this.circuit.doc.hasPort(id))
-            .map((id) => this.getPort(id)).asUnion();
-    }
-    public pickObjRange(bounds: Rect): Array<ComponentT | WireT | PortT> {
-        throw new Error("Unimplemented");
-    }
-
-    public getComponent(id: string): ComponentT | undefined {
-        if (!this.circuit.doc.getCompByID(id))
+        getComponent(id: GUID): T["Component"] | undefined {
+            if (!state.internal.doc.getCompByID(id))
+                return undefined;
+            return state.constructComponent(id);
+        },
+        getWire(id: GUID): T["Wire"] | undefined {
+            if (!state.internal.doc.getWireByID(id))
+                return undefined;
+            return state.constructWire(id);
+        },
+        getPort(id: GUID): T["Port"] | undefined {
+            if (!state.internal.doc.getPortByID(id))
+                return undefined;
+            return state.constructPort(id);
+        },
+        getObj(id: GUID): T["Obj"] | undefined {
+            if (state.internal.doc.hasComp(id))
+                return this.getComponent(id);
+            if (state.internal.doc.hasWire(id))
+                return this.getWire(id);
+            if (state.internal.doc.hasPort(id))
+                return this.getPort(id);
             return undefined;
-        return this.constructComponent(id);
-    }
-    public getWire(id: string): WireT | undefined {
-        if (!this.circuit.doc.getWireByID(id))
-            return undefined;
-        return this.constructWire(id);
-    }
-    public getPort(id: string): PortT | undefined {
-        if (!this.circuit.doc.getPortByID(id))
-            return undefined;
-        return this.constructPort(id);
-    }
-    public getObj(id: string): ComponentT | WireT | PortT | undefined {
-        if (this.circuit.doc.hasComp(id))
-            return this.getComponent(id);
-        if (this.circuit.doc.hasWire(id))
-            return this.getWire(id);
-        if (this.circuit.doc.hasPort(id))
-            return this.getPort(id);
-        return undefined;
-    }
-    public getObjs(): Obj[] {
-        return [...this.circuit.doc.getObjs()]
-            .map((id) => this.getObj(id)!);
-    }
-    public getComponents(): Component[] {
-        return this.getObjs().filter(isObjComponent);
-    }
-    public getComponentInfo(kind: string): ComponentT["info"] | undefined {
-        throw new Error("Method not implemented.");
-    }
+        },
+        getObjs(): T["Obj[]"] {
+            return [...state.internal.doc.getObjs()]
+                .map((id) => this.getObj(id)!);
+        },
+        getComponents(): T["Component[]"] {
+            return this.getObjs().filter(isObjComponent);
+        },
+        getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
+            // TODO[.](kevin) - getComponentInfo should probably return a Result right?
+            //                  Or should we add a method to check if a component exists?
+            return state.internal.doc.getComponentInfo(kind);
+        },
 
-    // Object manipulation
-    public placeComponentAt(pt: Vector, kind: string): ComponentT {
-        const info = this.circuit.doc.getComponentInfo(kind);
+        // Object manipulation
+        placeComponentAt(pt: Vector, kind: string): T["Component"] {
+            const info = this.getComponentInfo(kind);
 
-        // TODO: Deal with `pt` being in screen space
-        this.circuit.beginTransaction();
+            // TODO: Deal with `pt` being in screen space
+            this.beginTransaction();
 
-        // Place raw component (TODO: unwrap...)
-        const id = this.circuit.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
+            // Place raw component (TODO: unwrap...)
+            const id = state.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
 
-        // Set its config to place ports
-        this.circuit.setPortConfig(id, info.defaultPortConfig).unwrap();
+            // Set its config to place ports
+            state.internal.setPortConfig(id, info!.defaultPortConfig).unwrap();
 
-        this.circuit.commitTransaction();
+            this.commitTransaction();
 
-        return this.constructComponent(id);
-    }
+            return state.constructComponent(id);
+        },
+        deleteObjs(objs: T["Obj[]"]): void {
+            throw new Error("Unimplemented!");
+        },
 
-    public deleteObjs(objs: Array<ComponentT | WireT | PortT>): void {
-        // TODO(friedj)
-        //  See `placeComponentAt` for some general guidance
-        //  Note that to delete a Component, you have to set its "Port Config" to `{}` first
-        //   which will remove all of its ports
-        //  Then it's safe to delete the Component directly
-        //  And also note that deleting Ports is a no-op, just ignore that case
-        throw new Error("Unimplemented");
-    }
+        createIC(objs: T["Obj[]"]): CircuitT | undefined {
+            throw new Error("Unimplemented!");
+        },
+        getICs(): CircuitT[] {
+            throw new Error("Unimplemented!");
+        },
 
-    public createIC(objs: Array<ComponentT | WireT | PortT>): Circuit | undefined {
-        throw new Error("Unimplemented");
-    }
-    public getICs(): Circuit[] {
-        throw new Error("Method not implemented.");
-    }
+        async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
+            // TODO[model_refactor_api](leon) - Move this somewhere else
+            let numLoaded = 0;
+            await Promise.all(
+                imgSrcs.map(async (src) => {
+                    const svg = await fetch(`img/items/${src}`);
+                    if (!svg.ok) // Make sure fetch worked
+                        throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
 
-    public async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
-        let numLoaded = 0;
-        await Promise.all(
-            imgSrcs.map(async (src) => {
-                const svg = await fetch(`img/items/${src}`);
-                if (!svg.ok) // Make sure fetch worked
-                    throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
+                    const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
+                    if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
+                        throw new Error(`Failed to parse XML for img/items/${src}` +
+                                        `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
+                    }
 
-                const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
-                if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
-                    throw new Error(`Failed to parse XML for img/items/${src}` +
-                                    `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
-                }
+                    const drawing = CreateDrawingFromSVG(svgXML, {});
+                    if (!drawing)
+                        throw new Error(`Failed to create drawing for svg: img/items/${src}`);
+                    state.view.addImage(src, drawing);
 
-                const drawing = CreateDrawingFromSVG(svgXML, {});
-                if (!drawing)
-                    throw new Error(`Failed to create drawing for svg: img/items/${src}`);
-                this.view.addImage(src, drawing);
+                    // Update progress on successful load
+                    onProgress((++numLoaded) / imgSrcs.length);
+                })
+            );
+        },
 
-                // Update progress on successful load
-                onProgress((++numLoaded) / imgSrcs.length);
-            })
-        );
-    }
+        undo(): boolean {
+            throw new Error("Unimplemented!");
+        },
+        redo(): boolean {
+            throw new Error("Unimplemented!");
+        },
 
-    public undo(): boolean {
-        throw new Error("Unimplemented");
-    }
-    public redo(): boolean {
-        throw new Error("Unimplemented");
-    }
+        copy(): CircuitT {
+            throw new Error("Unimplemented!");
+        },
 
-    public copy(): Circuit {
-        throw new Error("Method not implemented.");
-    }
+        reset(): void {
+            throw new Error("Unimplemented!");
+        },
 
-    public reset(): void {
-        throw new Error("Method not implemented.");
-    }
+        serialize(objs?: T["Obj[]"]): string {
+            throw new Error("Unimplemented!");
+        },
+        deserialize(data: string): void {
+            throw new Error("Unimplemented!");
+        },
 
-    public serialize(objs?: Obj[]): string {
-        throw new Error("Method not implemented.");
-    }
-    public deserialize(data: string): void {
-        throw new Error("Method not implemented.");
-    }
+        resize(w: number, h: number): void {
+            state.view.resize(w, h);
+        },
+        attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
+            state.view.setCanvas(canvas);
+            return () => this.detachCanvas();
+        },
+        detachCanvas(): void {
+            state.view.setCanvas(undefined);
+        },
 
-    public resize(w: number, h: number): void {
-        this.view.resize(w, h);
-    }
-    public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
-        this.view.setCanvas(canvas);
-        return () => this.detachCanvas();
-    }
-    public detachCanvas(): void {
-        this.view.setCanvas(undefined);
-    }
+        forceRedraw(): void {
+            state.view.scheduler.requestRender();
+        },
 
-    public forceRedraw(): void {
-        this.view.scheduler.requestRender();
-    }
+        // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
+        addRenderCallback(cb: (data: {
+            renderer: RenderHelper;
+            options: RenderOptions;
+            circuit: CircuitT;
+        }) => void): CleanupFunc {
+            return state.view.subscribe(({ renderer }) => cb({
+                renderer,
+                options: state.view.options,
+                // TODO[model_refactor_api)[leon] - figure out if we can get around this cast?
+                circuit: this as CircuitT,
+            }));
+        },
 
-    public addRenderCallback(cb: (data: {
-        renderer: RenderHelper; options: RenderOptions; circuit: Circuit;
-    }) => void): CleanupFunc {
-        return this.view.subscribe(({ renderer }) => cb({ renderer, options: this.view.options, circuit: this }));
-    }
-
-    public subscribe(cb: (ev: any) => void): CleanupFunc {
-        throw new Error("Method not implemented.");
-    }
+        subscribe(cb: (ev: any) => void): CleanupFunc {
+            throw new Error("Unimplemented!");
+        },
+    } satisfies Circuit;
 }
