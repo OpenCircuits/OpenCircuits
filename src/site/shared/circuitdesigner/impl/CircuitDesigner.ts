@@ -69,7 +69,8 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
                 curTool: this.toolManager.curTool,
                 input:   inputAdapter.state,
                 ...renderArgs,
-             })));
+             }))
+        );
 
         this.circuit.attachCanvas(canvas);
         return () => {
