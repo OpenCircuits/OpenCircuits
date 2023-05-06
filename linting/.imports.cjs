@@ -163,7 +163,10 @@ module.exports = {
                     },
                     {
                         "target": "./src/app/core/public/**",
-                        "from": ["./src/app/!(core)/**", "./src/app/core/!(internal|public)/**"],
+                        "from": [
+                            "./src/app/!(core)/**",
+                            "./src/app/core/!(internal|public|utils)/**",
+                        ],
                     },
                     {
                         "target": "./src/app/digital/public/**",

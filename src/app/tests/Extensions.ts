@@ -1,4 +1,5 @@
-import crypto from "node:crypto";
+import {Result} from "core/utils/Result";
+import crypto   from "node:crypto";
 
 
 // Define crypto for Jest for uuid generation
@@ -83,59 +84,28 @@ expect.extend({
     },
 
     toBeOk(received: unknown) {
-        if (typeof received !== "object" || !received) {
+        if (!received || typeof received !== "object" || !("ok" in received)) {
             return {
-                message: () => "supplied value is not an object",
+                message: () => "supplied value is not a Result",
                 pass:    false,
             }
         }
-        if (!("ok" in received)) {
-            return {
-                message: () => "supplied value is not a Result, no ok property found",
-                pass:    false,
-            }
-        }
-        const ok = received.ok;
-        if (typeof ok !== "boolean") {
-            return {
-                message: () => "supplied value is not a Result, no ok boolean property found",
-                pass:    false,
-            }
-        }
-        if (ok) {
+        const result = received as Result;
+        if (result.ok) {
             return {
                 message: () => "expected Result to be Ok",
                 pass:    true,
             }
         }
-        if (!("error" in received)) {
-            return {
-                message: () => "supplied value is not a Result, no error property found",
-                pass:    false,
-            }
-        }
-        const error = received.error;
-        if (typeof error !== "object" || !error || !("errors" in error)) {
-            return {
-                message: () => "supplied value is not a Result, error property is not valid",
-                pass:    false,
-            }
-        }
-        const errors = error.errors;
-        if (typeof errors !== "object" || !errors || !Array.isArray(errors)) {
-            return {
-                message: () => "supplied value is not a Result, errors property is not an Array",
-                pass:    false,
-            }
-        }
         return {
-            message: () => `expected Result to not have errors:\n - ${errors
+            message: () => `expected Result to not have errors:\n - ${result.error.errors
                 .map((err) => err.message)
                 .join("\n - ")}`,
             pass: false,
         }
     },
 
+    // TODO[model_refactor_api_expr_to_circ](trevor): Check if this is/was needed for expression to circuit
     // toBeConnectedTo(source: unknown, target: DigitalComponent, options = { depth: Infinity }) {
     //     if (!(source instanceof DigitalComponent))
     //         throw new Error("toBeConnectedTo can only be used with DigitalComponents!");

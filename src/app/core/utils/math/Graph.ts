@@ -1,6 +1,3 @@
-import {Circuit, Component, Wire} from "core/public";
-
-
 /**
  * @param V The type for the vertices of the edge.
  * @param E The type for weight of the edge.
@@ -55,15 +52,15 @@ export class Graph<V, E> {
     }
 
     public createEdge(source: V, target: V, weight: E): void {
-        const src = this.list.get(source);
-        const trgt = this.reverseList.get(target);
-        if (!src)
+        const sourceNode = this.list.get(source);
+        const targetNode = this.reverseList.get(target);
+        if (!sourceNode)
             throw new Error("Graph doesn't have node of value: " + source);
-        if (!trgt)
+        if (!targetNode)
             throw new Error("Graph doesn't have node of value: " + target);
 
-        src.push(new Edge<V, E>(target, weight));
-        trgt.push(new Edge<V, E>(source, weight));
+        sourceNode.push(new Edge<V, E>(target, weight));
+        targetNode.push(new Edge<V, E>(source, weight));
     }
 
     public isConnected(): boolean {
@@ -182,19 +179,4 @@ export class Graph<V, E> {
         return this.getNodeDepths(false);
     }
 
-}
-
-export function CreateGraph(circuit: Circuit): Graph<Component, Wire> {
-    const graph = new Graph<Component, Wire>();
-
-    const objs = circuit.getObjs().filter((obj) => (obj.baseKind === "Component")) as readonly Component[];
-    for (const obj of objs) {
-        graph.createNode(obj);
-    }
-    const wires = circuit.getObjs().filter((obj) => (obj.baseKind === "Wire")) as readonly Wire[];
-    for (const wire of wires) {
-        graph.createEdge(wire.p1.parent, wire.p2.parent, wire);
-    }
-
-    return graph;
 }
