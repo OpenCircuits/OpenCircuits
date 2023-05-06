@@ -13,6 +13,7 @@ declare global {
             toApproximatelyEqual(expected: unknown, epsilon?: number): CustomMatcherResult;
             toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
             toBeOk(): CustomMatcherResult;
+            toIncludeError(message: string): CustomMatcherResult;
             // toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
     }
@@ -98,10 +99,37 @@ expect.extend({
             }
         }
         return {
-            message: () => `expected Result to not have errors:\n - ${result.error.errors
+            message: () => `expected Result to not have errors:\n - ${
+                result.error.errors
                 .map((err) => err.message)
-                .join("\n - ")}`,
+                .join("\n - ")
+            }`,
             pass: false,
+        }
+    },
+
+    toIncludeError(received: unknown, message: string) {
+        if (!received || typeof received !== "object" || !("ok" in received)) {
+            return {
+                message: () => "supplied value is not a Result",
+                pass:    false,
+            }
+        }
+        const result = received as Result;
+        if (result.ok) {
+            return {
+                message: () => "expected Result to be not be Ok",
+                pass:    false,
+            }
+        }
+        return {
+            message: () => `expected Result to contain an error including the text "${message}", ` +
+                `instead includes:\n - ${
+                    result.error.errors
+                    .map((err) => err.message)
+                    .join("\n - ")
+                }`,
+            pass: result.error.errors.some((error) => error.message.includes(message)),
         }
     },
 

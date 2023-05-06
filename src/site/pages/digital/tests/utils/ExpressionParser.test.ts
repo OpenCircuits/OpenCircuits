@@ -152,16 +152,16 @@ describe("Expression Parser", () => {
             ]);
             const inputMap2 = new Map();
 
-            expect(ExpressionToCircuit(inputMap,"(",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"!(",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(a|b",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"((a|b)",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,")",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"a|b)",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(a|b))",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,")a|b(",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,")(",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap2,"(",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap, "(", o)).toIncludeError("Encountered Unmatched \"(\"");
+            expect(ExpressionToCircuit(inputMap,"!(",o)).toIncludeError("Encountered Unmatched \"(\"");
+            expect(ExpressionToCircuit(inputMap,"(a|b",o)).toIncludeError("Encountered Unmatched \"(\"");
+            expect(ExpressionToCircuit(inputMap,"((a|b)",o)).toIncludeError("Encountered Unmatched \"(\"");
+            expect(ExpressionToCircuit(inputMap,")",o)).toIncludeError("Encountered Unmatched \")\"");
+            expect(ExpressionToCircuit(inputMap,"a|b)",o)).toIncludeError("Encountered Unmatched \")\"");
+            expect(ExpressionToCircuit(inputMap,"(a|b))",o)).toIncludeError("Encountered Unmatched \")\"");
+            expect(ExpressionToCircuit(inputMap,")a|b(",o)).toIncludeError("Encountered Unmatched \")\"");
+            expect(ExpressionToCircuit(inputMap,")(",o)).toIncludeError("Encountered Unmatched \")\"");
+            expect(ExpressionToCircuit(inputMap2,"(",o)).toIncludeError("Encountered Unmatched \"(\"");
         });
 
         test("Missing Operands", () => {
@@ -171,18 +171,30 @@ describe("Expression Parser", () => {
                 ["b", b],
             ]);
 
-            expect(ExpressionToCircuit(inputMap,"!",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"!!",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(!)",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(!)a",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"&a",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"a&",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(&a)",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(a&)",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"^a",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"a^",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"|a",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"a|",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap, "!", o))
+                .toIncludeError("Missing Right Operand: \"!\"");
+            expect(ExpressionToCircuit(inputMap,"!!",o))
+                .toIncludeError("Missing Right Operand: \"!\"");
+            expect(ExpressionToCircuit(inputMap,"(!)",o))
+                .toIncludeError("Invalid token \")\" following \"!\"");
+            expect(ExpressionToCircuit(inputMap,"(!)a",o))
+                .toIncludeError("Invalid token \")\" following \"!\"");
+            expect(ExpressionToCircuit(inputMap,"&a",o))
+                .toIncludeError("Missing Left Operand: \"&\"");
+            expect(ExpressionToCircuit(inputMap,"a&",o))
+                .toIncludeError("Missing Right Operand: \"&\"");
+            expect(ExpressionToCircuit(inputMap,"(&a)",o))
+                .toIncludeError("Missing Left Operand: \"&\"");
+            expect(ExpressionToCircuit(inputMap,"(a&)",o))
+                .toIncludeError("Missing Right Operand: \"&\"");
+            expect(ExpressionToCircuit(inputMap,"^a",o))
+                .toIncludeError("Missing Left Operand: \"^\"");
+            expect(ExpressionToCircuit(inputMap,"a^",o))
+                .toIncludeError("Missing Right Operand: \"^\"");
+            expect(ExpressionToCircuit(inputMap,"|a",o))
+                .toIncludeError("Missing Left Operand: \"|\"");
+            expect(ExpressionToCircuit(inputMap,"a|",o))
+                .toIncludeError("Missing Right Operand: \"|\"");
         });
 
         test("No Operator", () => {
@@ -192,23 +204,30 @@ describe("Expression Parser", () => {
                 ["b", b],
             ]);
 
-            expect(ExpressionToCircuit(inputMap,"a b",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"a (b)",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(a) b",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"a !b",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"a()b",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(a)(b)",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(a|b)a",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"a b",o))
+                .toIncludeError("No valid operator between \"a\" and \"b\"");
+            expect(ExpressionToCircuit(inputMap,"a (b)",o))
+                .toIncludeError("No valid operator between \"a\" and \"b\"");
+            expect(ExpressionToCircuit(inputMap,"(a) b",o))
+                .toIncludeError("No valid operator between \"a\" and \"b\"");
+            expect(ExpressionToCircuit(inputMap,"a !b",o))
+                .toIncludeError("No valid operator between \"a\" and \"b\"");
+            expect(ExpressionToCircuit(inputMap,"a()b",o))
+                .toIncludeError("No valid operator between \"a\" and \"b\"");
+            expect(ExpressionToCircuit(inputMap,"(a)(b)",o))
+                .toIncludeError("No valid operator between \"a\" and \"b\"");
+            expect(ExpressionToCircuit(inputMap,"(a|b)a",o))
+                .toIncludeError("No valid operator between \"b\" and \"a\"");
         });
 
         test("Empty Parenthesis", () => {
             const o = "LED";
             const inputMap = new Map();
 
-            expect(ExpressionToCircuit(inputMap,"()",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"( )",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"(())",o)).not.toBeOk();
-            expect(ExpressionToCircuit(inputMap,"()a|b",o)).not.toBeOk();
+            expect(ExpressionToCircuit(inputMap,"()",o)).toIncludeError("Empty Parenthesis");
+            expect(ExpressionToCircuit(inputMap,"( )",o)).toIncludeError("Empty Parenthesis");
+            expect(ExpressionToCircuit(inputMap,"(())",o)).toIncludeError("Empty Parenthesis");
+            expect(ExpressionToCircuit(inputMap,"()a|b",o)).toIncludeError("Empty Parenthesis");
         });
 
         describe("Invalid ops", () => {
@@ -229,7 +248,8 @@ describe("Expression Parser", () => {
                         ")": ")",
                     },
                 }
-                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+                expect(GenerateTokens(expression, testOps))
+                    .toIncludeError("Length zero | in supplied operation symbols");
             });
             test("Invalid ^", () => {
                 const testOps: OperatorFormat = {
@@ -246,7 +266,8 @@ describe("Expression Parser", () => {
                         ")": ")",
                     },
                 }
-                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+                expect(GenerateTokens(expression, testOps))
+                    .toIncludeError("Length zero ^ in supplied operation symbols");
             });
             test("Invalid &", () => {
                 const testOps: OperatorFormat = {
@@ -263,7 +284,8 @@ describe("Expression Parser", () => {
                         ")": ")",
                     },
                 }
-                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+                expect(GenerateTokens(expression, testOps))
+                    .toIncludeError("Length zero & in supplied operation symbols");
             });
             test("Invalid !", () => {
                 const testOps: OperatorFormat = {
@@ -280,7 +302,8 @@ describe("Expression Parser", () => {
                         ")": ")",
                     },
                 }
-                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+                expect(GenerateTokens(expression, testOps))
+                    .toIncludeError("Length zero ! in supplied operation symbols");
             });
             test("Invalid (", () => {
                 const testOps: OperatorFormat = {
@@ -297,7 +320,8 @@ describe("Expression Parser", () => {
                         ")": ")",
                     },
                 }
-                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+                expect(GenerateTokens(expression, testOps))
+                    .toIncludeError("Length zero ( in supplied operation symbols");
             });
             test("Invalid )", () => {
                 const testOps: OperatorFormat = {
@@ -314,7 +338,8 @@ describe("Expression Parser", () => {
                         ")": "",
                     },
                 }
-                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+                expect(GenerateTokens(expression, testOps))
+                    .toIncludeError("Length zero ) in supplied operation symbols");
             });
             test("Invalid separator", () => {
                 const testOps: OperatorFormat = {
@@ -331,7 +356,8 @@ describe("Expression Parser", () => {
                         ")": ")",
                     },
                 }
-                expect(GenerateTokens(expression, testOps)).not.toBeOk();
+                expect(GenerateTokens(expression, testOps))
+                    .toIncludeError("Length zero separator in supplied operation symbols");
             });
         });
 
@@ -340,14 +366,14 @@ describe("Expression Parser", () => {
             const inputMap = new Map<string, string>();
 
             const result = ExpressionToCircuit(inputMap, "", o);
-            expect(result).not.toBeOk();
+            expect(result).toIncludeError("Empty Input");
         });
         test("Parse: ' '", () => {
             const o = "LED";
             const inputMap = new Map<string, string>();
 
             const result = ExpressionToCircuit(inputMap, " ", o);
-            expect(result).not.toBeOk();
+            expect(result).toIncludeError("Empty Input");
         });
     });
 

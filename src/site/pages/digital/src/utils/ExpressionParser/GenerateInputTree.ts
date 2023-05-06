@@ -83,7 +83,7 @@ function generateErrorMessage(prev: string, next: string, ops: Record<TokenType,
 function handleUnary(currentOp: "!", tokens: readonly Token[], ops: Record<TokenType, string>,
         currentOpNum: number, index: number): Result<NewTreeRetValue> {
     if (index >= tokens.length) {
-        return ErrE(`Missing Right Operand on Unary Operation: "${ops[currentOp]}"`);
+        return ErrE(`Missing Right Operand: "${ops[currentOp]}"`);
     }
     const rightToken = tokens[index];
     let rightRet: Result<NewTreeRetValue>;
@@ -135,7 +135,7 @@ function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: rea
 
         index += 1;
         if (index >= tokens.length)
-            return ErrE(`Missing Right Operand on Binary Operation: "${ops[currentOp]}"`);
+            return ErrE(`Missing Right Operand: "${ops[currentOp]}"`);
         return generateInputTreeCore(tokens, ops, currentOpNum, index)
                 .andThen((rightRet): Result<NewTreeRetValue> => {
             index = rightRet.index;
@@ -247,7 +247,7 @@ function generateInputTreeCore(tokens: readonly Token[], ops: Record<TokenType, 
  */
 export function GenerateInputTree(tokens: readonly Token[], ops = FORMATS[0].ops): Result<InputTree> {
     if (tokens.length === 0)
-        return ErrE("Input string was empty");
+        return ErrE("Empty Input");
     const ret = generateInputTreeCore(tokens, ops);
 
     return ret.andThen((retVal): Result<InputTree> => {
