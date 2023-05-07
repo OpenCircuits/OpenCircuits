@@ -1,7 +1,8 @@
 import {Vector} from "Vector";
 
-import {Style}         from "../Style";
-import {BaseShapePrim} from "./BaseShapePrim";
+import {Style}          from "../Style";
+import {BaseShapePrim}  from "./BaseShapePrim";
+import {CircleContains} from "math/MathUtils";
 
 
 /**
@@ -23,6 +24,10 @@ export class CirclePrim extends BaseShapePrim {
 
         this.pos = pos;
         this.radius = radius;
+    }
+
+    public override hitTest(pt: Vector): boolean {
+        return CircleContains(this.pos, this.radius, pt);
     }
 
     protected override renderShape(ctx: CanvasRenderingContext2D): void {

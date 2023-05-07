@@ -1,13 +1,11 @@
 import {V, Vector} from "Vector";
 
 import {Selections} from "../Selections";
-import {Circuit}    from "../Circuit";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
 export function SelectionsImpl<T extends CircuitTypes>(
-    circuit: Circuit,
     { internal, selectionsManager, view, constructComponent, constructWire, constructObj }: CircuitState<T>
 ) {
     function selections() {

@@ -105,10 +105,14 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
                 // Assemble the port-line and port-circle
                 const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
-                return [
+                const prims = [
                     new LinePrim(origin, target, lineStyle),
                     new CirclePrim(target, defaultPortRadius, circleStyle),
                 ];
+
+                this.view.iPortPrims.set(portID, prims);
+
+                return prims;
             });
 
             this.view.portPrims.set(parent.id, prims);

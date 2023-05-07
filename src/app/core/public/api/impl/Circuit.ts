@@ -9,15 +9,80 @@ import {DebugOptions, GUID} from "core/internal";
 import {RenderHelper}       from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions}      from "core/internal/view/rendering/RenderOptions";
 
-import {Camera}         from "../Camera";
-import {Circuit}        from "../Circuit";
-import {Selections}     from "../Selections";
-import {isObjComponent} from "../Utilities";
+import {Camera}     from "../Camera";
+import {Circuit}    from "../Circuit";
+import {Selections} from "../Selections";
 
 import {CameraImpl}                 from "./Camera";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
 
+
+export function ObjQueryFiltersImpl<
+    T extends CircuitTypes,
+    K extends keyof Circuit.ObjQueryTypes
+>(state: CircuitState<T>, possibleObjs: Array<Circuit.ObjQueryTypes[K]>) {
+    return {
+        with(props: { id: GUID }) {
+            return possibleObjs.filter((obj) => (obj.id === props.id));
+        },
+        at(pt: Vector, space: Vector.Spaces = "world") {
+            const pos = ((space === "world" ? pt : state.view.toWorldPos(pt)));
+            return possibleObjs.filter((obj) => {
+                if (obj.baseKind === "Component")
+                    return state.view.componentContains(obj.id, pos);
+                if (obj.baseKind === "Wire")
+                    return state.view.wireContains(obj.id, pos);
+                if (obj.baseKind === "Port")
+                    return state.view.portContains(obj.id, pos);
+                return false;
+            });
+        },
+        within(bounds: Rect, space: Vector.Spaces = "world") {
+            throw new Error("Unimplemented!");
+        },
+    };
+}
+
+export function MultiObjQueryImpl<
+    T extends CircuitTypes,
+    K extends keyof Circuit.ObjQueryTypes
+>(state: CircuitState<T>, possibleObjs: Array<Circuit.ObjQueryTypes[K]>): Circuit.MultiObjQuery<K> {
+    return {
+        get result(): Array<Circuit.ObjQueryTypes[K]> {
+            return possibleObjs;
+        },
+        with(props) {
+            return MultiObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).with(props));
+        },
+        at(pt, space) {
+            return MultiObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).at(pt, space));
+        },
+        within(bounds, space) {
+            return MultiObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).within(bounds, space));
+        },
+    }
+}
+
+export function ObjQueryImpl<
+    T extends CircuitTypes,
+    K extends keyof Circuit.ObjQueryTypes
+>(state: CircuitState<T>, possibleObjs: Array<Circuit.ObjQueryTypes[K]>): Circuit.ObjQuery<K> {
+    return {
+        get result(): Circuit.ObjQueryTypes[K] | undefined {
+            return possibleObjs[0];
+        },
+        with(props) {
+            return ObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).with(props));
+        },
+        at(pt, space) {
+            return ObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).at(pt, space));
+        },
+        within(bounds, space) {
+            return ObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).within(bounds, space));
+        },
+    }
+}
 
 export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
     function pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
@@ -84,16 +149,10 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             return CameraImpl(state);
         },
         get selections(): Selections {
-            return SelectionsImpl(this, state);
+            return SelectionsImpl(state);
         },
 
         // Queries
-        find(kind) {
-            throw new Error("Unimplemented!");
-        },
-        findAll(kind) {
-            throw new Error("Unimplemented!");
-        },
         // pickObjAt(pt: Vector, space: Vector.Spaces = "world"): T["Obj"] | undefined {
         //     return pickObjAtHelper(pt, space)
         //         .map((id) => this.getObj(id)).asUnion();
@@ -259,5 +318,5 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         subscribe(cb: (ev: any) => void): CleanupFunc {
             throw new Error("Unimplemented!");
         },
-    } satisfies Circuit;
+    } satisfies Omit<Circuit, "find" | "findAll">;
 }

@@ -67,6 +67,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
     public localPortPositions: Map<GUID, PortPos>; // Key'd by port ID
     public portPositions: Map<GUID, PortPos>; // Key'd by port ID
+    public iPortPrims: Map<GUID, Prims>; // Individual port prims, key'd by port ID
     public portPrims: Map<GUID, Prims>; // Key'd by component parent
 
     public wireCurves: Map<GUID, BezierCurve>;
@@ -96,6 +97,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
 
         this.localPortPositions = new Map();
         this.portPositions = new Map();
+        this.iPortPrims = new Map();
         this.portPrims = new Map();
 
         this.wireCurves = new Map();
@@ -237,6 +239,21 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
             this.dirtyComponents.delete(port.parent);
         }
         return Some(this.portPositions.get(portID)!);
+    }
+
+    private objContains(prims: Prims | undefined, pos: Vector): boolean {
+        if (!prims)
+            return false;
+        return prims.some((prim) => prim.hitTest(pos));
+    }
+    public componentContains(id: GUID, pos: Vector): boolean {
+        return this.objContains(this.componentPrims.get(id), pos);
+    }
+    public wireContains(id: GUID, pos: Vector): boolean {
+        return this.objContains(this.wirePrims.get(id), pos);
+    }
+    public portContains(id: GUID, pos: Vector): boolean {
+        return this.objContains(this.iPortPrims.get(id), pos);
     }
 
     public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): Option<GUID> {
