@@ -29,6 +29,13 @@ export function BaseObjectImpl<T extends CircuitTypes>(
             throw new Error("Unimplemented!");
         },
 
+        set name(name: string | undefined) {
+            state.internal.setPropFor(objID, "name", name);
+        },
+        get name(): string | undefined {
+            return state.internal.doc.getObjByID(objID).unwrap().props["name"];
+        },
+
         set isSelected(val: boolean) {
             if (val)
                 state.selectionsManager.select(objID);
@@ -57,10 +64,12 @@ export function BaseObjectImpl<T extends CircuitTypes>(
         },
 
         setProp(key: string, val: Prop): void {
+            state.internal.beginTransaction();
             state.internal.setPropFor(objID, key, val);
+            state.internal.commitTransaction();
         },
         getProp(key: string): Prop | undefined {
-            return getObj().props[key];
+            return state.internal.doc.getObjByID(objID).unwrap().props[key];
         },
         getProps(): Readonly<Record<string, Prop>> {
             return getObj().props;

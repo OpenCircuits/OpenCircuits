@@ -40,25 +40,29 @@ export function DigitalComponentImpl(circuit: DigitalCircuit, state: DigitalCirc
             if (!this.info.portGroups.includes(portGroup))
                 return undefined; // Invalid port group for the component
 
-            const ports = internal.doc.getPortsForComponent(base.id).unwrap();
+            const ports = [...internal.doc.getPortsForComponent(id).unwrap()]
+                .map((id) => internal.doc.getPortByID(id).unwrap())
+                .filter((port) => (port.group === portGroup));
 
             // Find out if the portGroup is of type input or output
-            const isInputType = this.info.inputPortGroups.includes(portGroup);
-            const isOutputType = this.info.outputPortGroups.includes(portGroup);
+            const isInputGroup = this.info.inputPortGroups.includes(portGroup);
+            const isOutputGroup = this.info.outputPortGroups.includes(portGroup);
 
-            const firstAvailableHelper = (id: string) => {
-                const portObject = internal.doc.getPortByID(id).unwrap();
-                const portWire = internal.doc.getWiresForPort(id).unwrap(); // no wires = available
+            if (!isInputGroup && !isOutputGroup)
+                throw new Error(`Found port group ${portGroup} for ${base.kind} that is neither input nor output!`);
 
-                if (isInputType && portObject.group === portGroup)
+            const port = ports.find((port) => {
+                // Output ports are always available
+                if (isOutputGroup)
                     return true;
-                return (isOutputType && portObject.group === portGroup && portWire.size === 0);
-            }
+                // Input ports are available if they have no connections
+                const connections = internal.doc.getWiresForPort(port.id).unwrap();
+                return (isInputGroup && connections.size === 0);
+            });
 
-            const match = [...ports].find(firstAvailableHelper)!;
-            if (!match)
+            if (!port)
                 return undefined;
-            return DigitalPortImpl(circuit, state, match);
+            return DigitalPortImpl(circuit, state, port.id);
         },
     } as const) satisfies DigitalComponent;
 }

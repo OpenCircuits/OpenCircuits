@@ -40,10 +40,10 @@ export function PortImpl<T extends CircuitTypes>(
         },
 
         get originPos(): Vector {
-            return view.portPositions.get(base.id)!.origin;
+            return view.getPortPos(id).unwrap().origin;
         },
         get targetPos(): Vector {
-            return view.portPositions.get(base.id)!.target;
+            return view.getPortPos(id).unwrap().target;
         },
         get dir(): Vector {
             return this.targetPos.sub(this.originPos).normalize();

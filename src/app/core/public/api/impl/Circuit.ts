@@ -191,7 +191,7 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
                     const drawing = CreateDrawingFromSVG(svgXML, {});
                     if (!drawing)
                         throw new Error(`Failed to create drawing for svg: img/items/${src}`);
-                    state.view.addImage(src, drawing);
+                    state.view.images.set(src, drawing);
 
                     // Update progress on successful load
                     onProgress((++numLoaded) / imgSrcs.length);
