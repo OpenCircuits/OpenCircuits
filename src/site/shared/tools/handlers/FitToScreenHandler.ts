@@ -12,7 +12,7 @@ export const FitToScreenHandler: ToolHandler = {
         circuit.camera.zoomToFit(
             // Fit selections if there are any, otherwise fit entire circuit
             (circuit.selections.isEmpty
-                ? circuit.getObjs()
+                ? circuit.findAll("Obj").result
                 : circuit.selections.all),
             FIT_PADDING_RATIO
         );

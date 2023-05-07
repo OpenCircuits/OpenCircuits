@@ -9,7 +9,7 @@ export const SelectPathHandler: ToolHandler = {
             return ToolHandlerResponse.PASS;
 
         // Make sure we double clicked on something
-        const obj = circuit.pickObjAt(ev.input.worldMousePos);
+        const { result: obj } = circuit.find("Obj").at(ev.input.worldMousePos);
         if (!obj)
             return ToolHandlerResponse.PASS;
 

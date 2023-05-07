@@ -38,14 +38,13 @@ export class WiringTool implements Tool {
         const worldPos = circuit.camera.toWorldPos(pos);
 
         // First see if there is a port that we are directly within the bounds of
-        const p1 = circuit.pickPortAt(worldPos);
+        const { result: p1 } = circuit.find("Port").at(worldPos);
         if (p1)
             return p1;
 
         // Otherwise, gather all ports that are within the wireable
         //  bounds (and can be wired), and find the closest one
-        const allPorts = circuit.getObjs()
-            .filter((obj) => (obj.baseKind === "Port")) as Port[];
+        const { result: allPorts } = circuit.findAll("Port");
         const validPorts = allPorts
             // Make sure port is wireable
             .filter((port) => !port.getLegalWires().isEmpty)

@@ -36,7 +36,7 @@ export class SelectionBoxTool implements Tool {
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         // Find all objects within the selection box
-        const objs = circuit.pickObjRange(this.rect);
+        const { result: objs } = circuit.findAll("Obj").within(this.rect);
 
         const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 

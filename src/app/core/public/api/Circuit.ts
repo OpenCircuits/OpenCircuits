@@ -34,6 +34,7 @@ export namespace Circuit {
     export interface BaseObjQuery {
         with(props: { id: GUID }): this;
         at(pt: Vector, space?: Vector.Spaces): this;
+        within(bounds: Rect, space?: Vector.Spaces): this;
     }
     export interface ObjQuery<K extends keyof ObjQueryTypes> extends BaseObjQuery {
         readonly result: ObjQueryTypes[K] | undefined;

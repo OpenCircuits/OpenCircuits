@@ -22,7 +22,7 @@ export class DefaultTool {
 
         if (ev.type === "mousedown") {
             // Find object if we pressed on one
-            designer.curPressedObj = designer.circuit.pickObjAt(ev.input.mousePos, "screen");
+            designer.curPressedObj = designer.circuit.find("Obj").at(ev.input.mousePos, "screen").result;
         } else if (ev.type === "mouseup") {
             designer.curPressedObj = undefined;
         }

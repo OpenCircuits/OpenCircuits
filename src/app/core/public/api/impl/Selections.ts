@@ -8,7 +8,7 @@ import {CircuitState, CircuitTypes} from "./CircuitState";
 
 export function SelectionsImpl<T extends CircuitTypes>(
     circuit: Circuit,
-    { internal, selectionsManager, view, constructComponent, constructWire }: CircuitState<T>
+    { internal, selectionsManager, view, constructComponent, constructWire, constructObj }: CircuitState<T>
 ) {
     function selections() {
         return selectionsManager.get();
@@ -23,7 +23,7 @@ export function SelectionsImpl<T extends CircuitTypes>(
         },
 
         get all(): T["Obj[]"] {
-            return selections().map((id) => circuit.getObj(id)!);
+            return selections().map((id) => constructObj(id));
         },
         get components(): T["Component[]"] {
             return selections().filter((id) => (internal.doc.hasComp(id)))
