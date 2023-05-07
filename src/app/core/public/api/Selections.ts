@@ -18,7 +18,7 @@ export interface Selections {
      * as a Vector object.
      *
      * @param space Defines the coordinate-space which can be
-     *              either "screen space" or "world space.".
+     *              either "screen space" or "world space".
      * @returns     A Vector object where x and y are the averages
      *              of the positions of the selected components.
      */
