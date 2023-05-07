@@ -1,24 +1,20 @@
 import {WireImpl} from "core/public/api/impl/Wire";
 
-import {DigitalComponent} from "../DigitalComponent";
-import {DigitalPort}      from "../DigitalPort";
-import {DigitalWire}      from "../DigitalWire";
+import {GUID} from "core/internal";
 
-import {DigitalCircuitState} from "./DigitalCircuitState";
+import {extend} from "core/utils/Functions";
+
+import {DigitalCircuit} from "../DigitalCircuit";
+import {DigitalNode}    from "../DigitalComponent";
+import {DigitalWire}    from "../DigitalWire";
+
+import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
 
-export class DigitalWireImpl extends WireImpl<
-    DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
-> implements DigitalWire {
-    protected override get nodeKind() {
-        return "DigitalNode";
-    }
+export function DigitalWireImpl(circuit: DigitalCircuit, state: DigitalCircuitState, id: GUID) {
+    const base = WireImpl<DigitalTypes>(circuit, state, id, (p1, p2, pos) => {
+        const node = circuit.placeComponentAt(pos, "DigitalNode") as DigitalNode;
 
-    protected override connectNode(
-        p1: DigitalPort,
-        p2: DigitalPort,
-        node: DigitalComponent
-    ): { wire1: DigitalWire, wire2: DigitalWire } {
         const nodeIn = node.ports["inputs"][0], nodeOut = node.ports["outputs"][0];
 
         const wire1 = (p1.isOutputPort ? p1.connectTo(nodeIn) : p1.connectTo(nodeOut));
@@ -29,6 +25,8 @@ export class DigitalWireImpl extends WireImpl<
         if (!wire2)
             throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
 
-        return { wire1, wire2 };
-    }
+        return { node, wire1, wire2 };
+    });
+
+    return extend(base, {} as const) satisfies DigitalWire;
 }

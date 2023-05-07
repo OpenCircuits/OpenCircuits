@@ -23,7 +23,7 @@ describe("FirstAvailable", () => {
         const s1 = circuit.placeComponentAt(V(-5,  5), "Switch");
         const c1 = circuit.placeComponentAt(V(0,   0), "ANDGate");
 
-        circuit.connectWire(s1.ports["outputs"][0], c1.ports["inputs"][0]);
+        s1.ports["outputs"][0].connectTo(c1.ports["inputs"][0]);
 
         // Switch should still have an available output port
         expect(s1.firstAvailable("outputs")?.id).toEqual(s1.ports["outputs"][0].id);

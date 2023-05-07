@@ -1,75 +1,67 @@
 import {V, Vector} from "Vector";
 import {Clamp}     from "math/MathUtils";
-import {Rect}      from "math/Rect";
+import {Margin}    from "math/Rect";
 
-import {Camera}       from "../Camera";
-import {CircuitState} from "./CircuitState";
+import {Camera}                     from "../Camera";
+import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export class CameraImpl implements Camera {
-    protected state: CircuitState;
-
-    public constructor(state: CircuitState) {
-        this.state = state;
+export function CameraImpl<T extends CircuitTypes>({ internal, view }: CircuitState<T>) {
+    function camera() {
+        return internal.getCamera();
     }
 
-    protected get circuit() {
-        return this.state.circuit;
-    }
-    protected get camera() {
-        return this.circuit.getCamera();
-    }
+    return {
+        set cx(x: number) {
+            internal.setCameraProps({ x });
+        },
+        get cx(): number {
+            return camera().x;
+        },
+        set cy(y: number) {
+            internal.setCameraProps({ y });
+        },
+        get cy(): number {
+            return camera().y;
+        },
+        set pos({ x, y }: Vector) {
+            internal.setCameraProps({ x, y });
+        },
+        get pos(): Vector {
+            return V(this.cx, this.cy);
+        },
 
-    public set cx(x: number) {
-        this.circuit.setCameraProps({ x });
-    }
-    public get cx(): number {
-        return this.camera.x;
-    }
+        set zoom(zoom: number) {
+            internal.setCameraProps({ zoom });
+        },
+        get zoom(): number {
+            return camera().zoom;
+        },
 
-    public set cy(y: number) {
-        this.circuit.setCameraProps({ y });
-    }
-    public get cy(): number {
-        return this.camera.y;
-    }
+        set margin(val: Margin) {
+            throw new Error("Unimplemented!");
+        },
+        get margin(): Margin {
+            throw new Error("Unimplemented!");
+        },
 
-    public set pos({ x, y }: Vector) {
-        this.circuit.setCameraProps({ x, y });
-    }
-    public get pos(): Vector {
-        return V(this.cx, this.cy);
-    }
+        translate(delta: Vector, space: Vector.Spaces = "world"): void {
+            if (space === "screen")
+                return this.translate(V(delta.x * this.zoom, -delta.y * this.zoom));
+            this.pos = this.pos.add(delta);
+        },
+        zoomTo(zoom: number, pos: Vector): void {
+            const pos0 = view.toWorldPos(pos);
+            this.zoom = Clamp(this.zoom * zoom, 1e-6, 200);
+            this.translate(view.toScreenPos(pos0).sub(pos), "screen");
+        },
 
-    public set zoom(zoom: number) {
-        this.circuit.setCameraProps({ zoom });
-    }
-    public get zoom(): number {
-        return this.camera.zoom;
-    }
+        toWorldPos(screenPos: Vector): Vector {
+            return view.toWorldPos(screenPos);
+        },
 
-    public set margin(m: Rect) {
-        throw new Error("Method not implemented.");
-    }
-    public get margin(): Rect {
-        throw new Error("Method not implemented.");
-    }
-
-    public translate(delta: Vector, space: Vector.Spaces = "world"): void {
-        if (space === "screen")
-            return this.translate(V(delta.x * this.zoom, -delta.y * this.zoom));
-        this.pos = this.pos.add(delta);
-    }
-
-    public zoomTo(zoom: number, pos: Vector): void {
-        const view = this.state.view;
-
-        const pos0 = view.toWorldPos(pos);
-        this.zoom = Clamp(this.zoom * zoom, 1e-6, 200);
-        this.translate(view.toScreenPos(pos0).sub(pos), "screen");
-    }
-
-    public toWorldPos(screenPos: Vector): Vector {
-        return this.state.view.toWorldPos(screenPos);
-    }
+        zoomToFit(objs: T["Obj[]"], padRatio?: number): void {
+            throw new Error("Unimplemented!");
+        },
+    } satisfies Camera;
 }

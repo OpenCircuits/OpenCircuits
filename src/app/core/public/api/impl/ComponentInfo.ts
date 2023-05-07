@@ -1,26 +1,19 @@
-import {ComponentInfo as ComponentInfoInternal, PortConfig} from "core/internal/impl/ComponentInfo";
-
 import {ComponentInfo} from "../ComponentInfo";
 
-import {CircuitState} from "./CircuitState";
+import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export class ComponentInfoImpl implements ComponentInfo {
-    public readonly kind: string;
-    public readonly portGroups: readonly string[];
-    public readonly defaultPortConfig: Readonly<PortConfig>;
+export function ComponentInfoImpl<T extends CircuitTypes>(
+    state: CircuitState<T>,
+    kind: string,
+) {
+    const info = state.internal.doc.getComponentInfo(kind);
+    if (!info)
+        throw new Error(`Failed to find component info for ${kind}!`);
 
-    protected readonly info: ComponentInfoInternal;
-    protected state: CircuitState;
-
-    public constructor(state: CircuitState, kind: string) {
-        const info = state.circuit.doc.getComponentInfo(kind);
-        if (!info)
-            throw new Error(`Failed to find component info for ${kind}!`);
-        this.info = info;
-        this.state = state;
-        this.kind = kind;
-        this.portGroups = info.portGroups;
-        this.defaultPortConfig = info.defaultPortConfig;
-    }
+    return {
+        kind,
+        portGroups:        info.portGroups,
+        defaultPortConfig: info.defaultPortConfig,
+    } satisfies ComponentInfo;
 }

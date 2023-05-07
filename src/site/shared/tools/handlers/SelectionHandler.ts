@@ -13,7 +13,7 @@ export const SelectionHandler: ToolHandler = {
         if (!obj) {
             // Clear selections if not holding shift
             if (deselectAll) {
-                circuit.clearSelections();
+                circuit.selections.clear();
                 return ToolHandlerResponse.HALT;
             }
             return ToolHandlerResponse.PASS;
@@ -26,7 +26,7 @@ export const SelectionHandler: ToolHandler = {
         circuit.beginTransaction();
 
         if (deselectAll)
-            circuit.clearSelections();
+            circuit.selections.clear();
         obj.isSelected = shouldSelect;
 
         circuit.commitTransaction();
