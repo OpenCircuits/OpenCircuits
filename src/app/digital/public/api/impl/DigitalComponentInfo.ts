@@ -1,22 +1,27 @@
-import {CircuitState}                                         from "core/public/api/impl/CircuitState";
-import {ComponentInfoImpl}                                    from "core/public/api/impl/ComponentInfo";
+import {ComponentInfoImpl} from "core/public/api/impl/ComponentInfo";
+
+import {extend} from "core/utils/Functions";
+
 import {DigitalComponentInfo as DigitalComponentInfoInternal} from "digital/internal/DigitalComponents";
 
 import {DigitalComponentInfo} from "../DigitalComponentInfo";
 
+import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
-export class DigitalComponentInfoImpl extends ComponentInfoImpl implements DigitalComponentInfo {
-    public readonly inputPortGroups: readonly string[];
-    public readonly outputPortGroups: readonly string[];
 
-    public constructor(state: CircuitState, kind: string) {
-        super(state, kind);
+export function DigitalComponentInfoImpl(state: DigitalCircuitState, kind: string) {
+    const info = state.internal.doc.getComponentInfo(kind);
+    if (!(info instanceof DigitalComponentInfoInternal))
+        throw new Error(`Received non-digital component info for ${kind}!`);
 
-        const info = this.info;
-        if (!(info instanceof DigitalComponentInfoInternal))
-            throw new Error(`Received non-digital component info for ${kind}!`);
+    const base = ComponentInfoImpl<DigitalTypes>(state, kind);
 
-        this.inputPortGroups  = info.inputPortGroups;
-        this.outputPortGroups = info.outputPortGroups;
-    }
+    return extend(base, {
+        get inputPortGroups(): readonly string[] {
+            return info.inputPortGroups;
+        },
+        get outputPortGroups(): readonly string[] {
+            return info.outputPortGroups;
+        },
+    } as const) satisfies DigitalComponentInfo;
 }

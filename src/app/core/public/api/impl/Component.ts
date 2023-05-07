@@ -1,126 +1,115 @@
 import {V, Vector} from "Vector";
 
-import {AddErrE}                 from "core/utils/MultiError";
-import {FromConcatenatedEntries} from "core/utils/Functions";
+import {AddErrE}                         from "core/utils/MultiError";
+import {FromConcatenatedEntries, extend} from "core/utils/Functions";
+import {GUID}                            from "core/internal";
 
 import {Schema} from "core/schema";
 
-import {Component, Node} from "../Component";
-import {Port}            from "../Port";
-import {Wire}            from "../Wire";
+import {Circuit}   from "../Circuit";
+import {Component} from "../Component";
+import {Port}      from "../Port";
 
-import {BaseObjectImpl} from "./BaseObject";
-import {CircuitState}   from "./CircuitState";
+import {BaseObjectImpl}             from "./BaseObject";
+import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export abstract class ComponentImpl<
-    ComponentT extends Component = Component,
-    WireT extends Wire = Wire,
-    PortT extends Port = Port,
-    NodeT extends Node = Node,
-    State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
-> extends BaseObjectImpl<State> implements Component, Node {
-    public readonly baseKind = "Component";
+export function ComponentImpl<T extends CircuitTypes>(
+    circuit: Circuit,
+    state: CircuitState<T>,
+    id: GUID,
+) {
+    const { internal, constructPort } = state;
 
-    protected getObj(): Schema.Component {
-        return this.internal.doc.getCompByID(this.id)
-            .mapErr(AddErrE(`API Component: Attempted to get component with ID ${this.id} could not find it!`))
+    function getComponent() {
+        return internal.doc.getCompByID(id)
+            .mapErr(AddErrE(`API Component: Attempted to get component with ID ${id} that doesn't exist!`))
             .unwrap();
     }
 
-    public abstract get info(): ComponentT["info"];
+    const base = BaseObjectImpl(state, id);
 
-    public set x(val: number) {
-        this.internal.setPropFor(this.id, "x", val);
-    }
-    public get x(): number {
-        return (this.getObj().props.x ?? 0);
-    }
-    public set y(val: number) {
-        this.internal.setPropFor(this.id, "y", val);
-    }
-    public get y(): number {
-        return (this.getObj().props.y ?? 0);
-    }
+    return extend(base, {
+        baseKind: "Component",
 
-    public set pos(val: Vector) {
-        this.internal.setPropFor<Schema.Component, "x">(this.id, "x", val.x).unwrap();
-        this.internal.setPropFor<Schema.Component, "y">(this.id, "y", val.y).unwrap();
-    }
-    public get pos(): Vector {
-        const obj = this.getObj();
+        set x(val: number) {
+            internal.setPropFor<Schema.Component, "x">(id, "x", val);
+        },
+        get x(): number {
+            return (getComponent().props.x ?? 0);
+        },
+        set y(val: number) {
+            internal.setPropFor(id, "y", val);
+        },
+        get y(): number {
+            return (getComponent().props.y ?? 0);
+        },
+        set pos(val: Vector) {
+            internal.beginTransaction();
+            internal.setPropFor<Schema.Component, "x">(id, "x", val.x).unwrap();
+            internal.setPropFor<Schema.Component, "y">(id, "y", val.y).unwrap();
+            internal.commitTransaction();
+        },
+        get pos(): Vector {
+            const obj = getComponent();
+            return V((obj.props.x ?? 0), (obj.props.y ?? 0));
+        },
+        set angle(val: number) {
+            internal.setPropFor<Schema.Component, "angle">(id, "angle", val);
+        },
+        get angle(): number {
+            return (getComponent().props.angle ?? 0);
+        },
 
-        return V((obj.props.x ?? 0), (obj.props.y ?? 0));
-    }
+        get ports(): Record<string, T["Port[]"]> {
+            return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
+        },
+        get allPorts(): T["Port[]"] {
+            return [...internal.doc.getPortsForComponent(id).unwrap()]
+                .map((id) => constructPort(id));
+        },
 
-    public set angle(val: number) {
-        this.internal.setPropFor<Schema.Component, "angle">(this.id, "angle", val).unwrap();
-    }
-    public get angle(): number {
-        return (this.getObj().props.angle ?? 0);
-    }
+        get connectedComponents(): T["Component[]"] {
+            throw new Error("Unimplemented!");
+        },
 
-    public abstract isNode(): this is NodeT;
+        setNumPorts(group: string, amt: number): boolean {
+            // TODO[model_refactor](leon) revisit this and decide on a functionality
+            const curConfig = {} as Record<string, number>;
+            internal.doc.getPortsForComponent(base.id)
+                .map((ids) => [...ids]
+                    .map((id) => circuit.getPort(id)!))
+                .unwrap()
+                .forEach(({ group }) =>
+                    curConfig[group] = (curConfig[group] ?? 0) + 1);
 
-    public snip(): Wire {
-        if (!this.isNode())
-            throw new Error("Can't snip a non-Node component!");
-        throw new Error("Unimplemented!");
-    }
+            // Already at that amount of ports, so do nothing
+            if (curConfig[group] === amt)
+                return true;
 
-    public get path(): Array<NodeT | WireT> {
-        throw new Error("Unimplemented!");
-    }
+            const config = {
+                ...curConfig,
+                [group]: amt,
+            };
+            const isValid = internal.doc.getComponentInfo(base.kind).checkPortConfig(config);
+            if (!isValid.ok)
+                return false;
 
-    public get ports(): Record<string, PortT[]> {
-        return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
-    }
-    public get allPorts(): PortT[] {
-        return [...this.internal.doc.getPortsForComponent(this.id).unwrap()]
-            .map((id) => this.circuit.constructPort(id));
-    }
-
-    public get connectedComponents(): ComponentT[] {
-        throw new Error("Unimplemented!");
-    }
-
-    public setNumPorts(group: string, amt: number): boolean {
-        // TODO[model_refactor](leon) revisit this and decide on a functionality
-        const curConfig = {} as Record<string, number>;
-        this.internal.doc.getPortsForComponent(this.id)
-            .map((ids) => [...ids]
-                .map((id) => this.circuit.getPort(id)!))
-            .unwrap()
-            .forEach(({ group }) =>
-                curConfig[group] = (curConfig[group] ?? 0) + 1);
-
-        // Already at that amount of ports, so do nothing
-        if (curConfig[group] === amt)
+            internal.beginTransaction();
+            const result = internal.setPortConfig(base.id, config);
+            if (!result.ok) {
+                internal.cancelTransaction();
+                return false;
+            }
+            internal.commitTransaction();
             return true;
+        },
+        firstAvailable(group: string): T["Port"] | undefined {
+            throw new Error("Unimplemented!");
+        },
 
-        const config = {
-            ...curConfig,
-            [group]: amt,
-        };
-        const isValid = this.internal.doc.getComponentInfo(this.kind).checkPortConfig(config);
-        if (!isValid.ok)
-            return false;
-
-        this.circuit.beginTransaction();
-        const result = this.internal.setPortConfig(this.id, config);
-        if (!result.ok) {
-            this.circuit.cancelTransaction();
-            return false;
-        }
-        this.circuit.commitTransaction();
-        return true;
-    }
-
-    public firstAvailable(group: string): PortT | undefined {
-        throw new Error("Unimplemented!");
-    }
-
-    public delete(): void {
-        this.circuit.deleteObjs([this]);
-    }
+        delete(): void {
+            throw new Error("Unimplemented!");
+        },
+    } as const) satisfies Omit<Component, "isNode" | "info">;
 }

@@ -38,6 +38,7 @@ export interface Circuit {
     debugOptions: DebugOptions;
 
     readonly camera: Camera;
+    readonly selections: Selections;
 
     // Queries
     pickObjAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
@@ -45,7 +46,6 @@ export interface Circuit {
     pickWireAt(pt: Vector, space?: Vector.Spaces): Wire | undefined;
     pickPortAt(pt: Vector, space?: Vector.Spaces): Port | undefined;
     pickObjRange(bounds: Rect): Obj[];
-    readonly selections: Selections;
 
     getComponent(id: GUID): Component | undefined;
     getWire(id: GUID): Wire | undefined;
@@ -55,22 +55,9 @@ export interface Circuit {
     getComponents(): Component[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
-    /**
-     * Returns the average of the positions of the components selected
-     * as a Vector object.
-     *
-     * @param space Defines the coordinate-space which can be
-     *              either "screen space" or "world space.".
-     * @returns     A Vector object where x and y are the averages
-     *              of the positions of the selected components.
-     */
-    selectionsMidpoint(space: Vector.Spaces): Vector;
-
     // Object manipulation
     placeComponentAt(pt: Vector, kind: string): Component;
-    connectWire(p1: Port, p2: Port): Wire | undefined;
     deleteObjs(objs: Obj[]): void;
-    clearSelections(): void;
 
     createIC(objs: Obj[]): Circuit | undefined;
     getICs(): Circuit[];
@@ -88,7 +75,6 @@ export interface Circuit {
     deserialize(data: string): void;
 
     resize(w: number, h: number): void;
-    readonly canvas?: HTMLCanvasElement;
     attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
     detachCanvas(): void;
 

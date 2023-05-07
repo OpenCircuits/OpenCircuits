@@ -1,6 +1,6 @@
-import {BaseObject}      from "./BaseObject";
-import {Component, Node} from "./Component";
-import {Port}            from "./Port";
+import {BaseObject} from "./BaseObject";
+import {Node}       from "./Component";
+import {Port}       from "./Port";
 
 
 export interface Wire extends BaseObject {
@@ -12,7 +12,7 @@ export interface Wire extends BaseObject {
     // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
     readonly path: Array<Node | Wire>;
 
-    split(): { node: Component, wire1: Wire, wire2: Wire };
+    split(): { node: Node, wire1: Wire, wire2: Wire };
 
     delete(): void;
 }
