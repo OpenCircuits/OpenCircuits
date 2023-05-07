@@ -152,58 +152,6 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             return SelectionsImpl(state);
         },
 
-        // Queries
-        // pickObjAt(pt: Vector, space: Vector.Spaces = "world"): T["Obj"] | undefined {
-        //     return pickObjAtHelper(pt, space)
-        //         .map((id) => this.getObj(id)).asUnion();
-        // },
-        // pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): T["Component"] | undefined {
-        //     return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasComp(id))
-        //         .map((id) => this.getComponent(id)).asUnion();
-        // },
-        // pickWireAt(pt: Vector, space: Vector.Spaces = "world"): T["Wire"] | undefined {
-        //     return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasWire(id))
-        //         .map((id) => this.getWire(id)).asUnion();
-        // },
-        // pickPortAt(pt: Vector, space: Vector.Spaces = "world"): T["Port"] | undefined {
-        //     return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasPort(id))
-        //         .map((id) => this.getPort(id)).asUnion();
-        // },
-        // pickObjRange(bounds: Rect): T["Obj[]"] {
-        //     throw new Error("Unimplemented!");
-        // },
-
-        // getComponent(id: GUID): T["Component"] | undefined {
-        //     if (!state.internal.doc.getCompByID(id))
-        //         return undefined;
-        //     return state.constructComponent(id);
-        // },
-        // getWire(id: GUID): T["Wire"] | undefined {
-        //     if (!state.internal.doc.getWireByID(id))
-        //         return undefined;
-        //     return state.constructWire(id);
-        // },
-        // getPort(id: GUID): T["Port"] | undefined {
-        //     if (!state.internal.doc.getPortByID(id))
-        //         return undefined;
-        //     return state.constructPort(id);
-        // },
-        // getObj(id: GUID): T["Obj"] | undefined {
-        //     if (state.internal.doc.hasComp(id))
-        //         return this.getComponent(id);
-        //     if (state.internal.doc.hasWire(id))
-        //         return this.getWire(id);
-        //     if (state.internal.doc.hasPort(id))
-        //         return this.getPort(id);
-        //     return undefined;
-        // },
-        // getObjs(): T["Obj[]"] {
-        //     return [...state.internal.doc.getObjs()]
-        //         .map((id) => this.getObj(id)!);
-        // },
-        // getComponents(): T["Component[]"] {
-        //     return this.getObjs().filter(isObjComponent);
-        // },
         getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
             // TODO[.](kevin) - getComponentInfo should probably return a Result right?
             //                  Or should we add a method to check if a component exists?

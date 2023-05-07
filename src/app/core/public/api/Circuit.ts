@@ -68,18 +68,6 @@ export interface Circuit {
     // Queries
     find<K extends keyof Circuit.ObjQueryTypes>(kind: K): Circuit.ObjQuery<K>;
     findAll<K extends keyof Circuit.ObjQueryTypes>(kind: K): Circuit.MultiObjQuery<K>;
-    // pickObjAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
-    // pickComponentAt(pt: Vector, space?: Vector.Spaces): Component | undefined;
-    // pickWireAt(pt: Vector, space?: Vector.Spaces): Wire | undefined;
-    // pickPortAt(pt: Vector, space?: Vector.Spaces): Port | undefined;
-    // pickObjRange(bounds: Rect): Obj[];
-
-    // getComponent(id: GUID): Component | undefined;
-    // getWire(id: GUID): Wire | undefined;
-    // getPort(id: GUID): Port | undefined;
-    // getObj(id: GUID): Obj | undefined;
-    // getObjs(): Obj[];
-    // getComponents(): Component[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     // Object manipulation
