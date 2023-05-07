@@ -3,15 +3,15 @@ import {Port}     from "core/public";
 import {PortImpl} from "core/public/api/impl/Port";
 import {Signal}   from "digital/public/utils/Signal";
 
-import {DigitalComponent} from "../DigitalComponent";
-import {DigitalPort}      from "../DigitalPort";
-import {DigitalWire}      from "../DigitalWire";
+import {DigitalComponent, DigitalNode} from "../DigitalComponent";
+import {DigitalPort}                   from "../DigitalPort";
+import {DigitalWire}                   from "../DigitalWire";
 
 import {DigitalCircuitState} from "./DigitalCircuitState";
 
 
 export class DigitalPortImpl extends PortImpl<
-    DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
+    DigitalComponent, DigitalWire, DigitalPort, DigitalNode, DigitalCircuitState
 > implements DigitalPort {
     public readonly isInputPort: boolean;
     public readonly isOutputPort: boolean;

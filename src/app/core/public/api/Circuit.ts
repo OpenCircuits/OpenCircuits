@@ -52,6 +52,7 @@ export interface Circuit {
     getPort(id: GUID): Port | undefined;
     getObj(id: GUID): Obj | undefined;
     getObjs(): Obj[];
+    getComponents(): Component[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     /**
@@ -83,7 +84,7 @@ export interface Circuit {
 
     reset(): void;
 
-    serialize(): string;
+    serialize(objs?: Obj[]): string;
     deserialize(data: string): void;
 
     resize(w: number, h: number): void;

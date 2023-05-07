@@ -22,6 +22,7 @@ import {RenderOptions}        from "core/internal/view/rendering/RenderOptions";
 import {Selections}           from "../Selections";
 import {SelectionsImpl}       from "./Selections";
 import {CleanupFunc}          from "core/utils/types";
+import {isObjComponent}       from "../Utilities";
 
 
 export abstract class CircuitImpl<
@@ -174,6 +175,9 @@ export abstract class CircuitImpl<
         return [...this.circuit.doc.getObjs()]
             .map((id) => this.getObj(id)!);
     }
+    public getComponents(): Component[] {
+        return this.getObjs().filter(isObjComponent);
+    }
     public getComponentInfo(kind: string): ComponentT["info"] | undefined {
         throw new Error("Method not implemented.");
     }
@@ -276,7 +280,7 @@ export abstract class CircuitImpl<
         throw new Error("Method not implemented.");
     }
 
-    public serialize(): string {
+    public serialize(objs?: Obj[]): string {
         throw new Error("Method not implemented.");
     }
     public deserialize(data: string): void {

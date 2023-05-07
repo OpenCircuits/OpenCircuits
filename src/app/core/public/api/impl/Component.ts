@@ -5,9 +5,9 @@ import {FromConcatenatedEntries} from "core/utils/Functions";
 
 import {Schema} from "core/schema";
 
-import {Component} from "../Component";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
+import {Component, Node} from "../Component";
+import {Port}            from "../Port";
+import {Wire}            from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
@@ -17,8 +17,9 @@ export abstract class ComponentImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
+    NodeT extends Node = Node,
     State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
-> extends BaseObjectImpl<State> implements Component {
+> extends BaseObjectImpl<State> implements Component, Node {
     public readonly baseKind = "Component";
 
     protected getObj(): Schema.Component {
@@ -59,12 +60,28 @@ export abstract class ComponentImpl<
         return (this.getObj().props.angle ?? 0);
     }
 
+    public abstract isNode(): this is NodeT;
+
+    public snip(): Wire {
+        if (!this.isNode())
+            throw new Error("Can't snip a non-Node component!");
+        throw new Error("Unimplemented!");
+    }
+
+    public get path(): Array<NodeT | WireT> {
+        throw new Error("Unimplemented!");
+    }
+
     public get ports(): Record<string, PortT[]> {
         return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
     }
     public get allPorts(): PortT[] {
         return [...this.internal.doc.getPortsForComponent(this.id).unwrap()]
             .map((id) => this.circuit.constructPort(id));
+    }
+
+    public get connectedComponents(): ComponentT[] {
+        throw new Error("Unimplemented!");
     }
 
     public setNumPorts(group: string, amt: number): boolean {
@@ -101,5 +118,9 @@ export abstract class ComponentImpl<
 
     public firstAvailable(group: string): PortT | undefined {
         throw new Error("Unimplemented!");
+    }
+
+    public delete(): void {
+        this.circuit.deleteObjs([this]);
     }
 }

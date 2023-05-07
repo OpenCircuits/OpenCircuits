@@ -4,9 +4,9 @@ import {AddErrE} from "core/utils/MultiError";
 
 import {Schema} from "core/schema";
 
-import {Component} from "../Component";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
+import {Component, Node} from "../Component";
+import {Port}            from "../Port";
+import {Wire}            from "../Wire";
 
 import {BaseObjectImpl} from "./BaseObject";
 import {CircuitState}   from "./CircuitState";
@@ -16,6 +16,7 @@ export abstract class PortImpl<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
+    NodeT extends Node = Node,
     State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
 > extends BaseObjectImpl<State> implements Port {
     public readonly baseKind = "Port";
@@ -57,6 +58,10 @@ export abstract class PortImpl<
 
     public canConnectTo(other: PortT): boolean {
         throw new Error("Unimplemented");
+    }
+
+    public get path(): Array<NodeT | WireT> {
+        throw new Error("Unimplemented!");
     }
 
     public abstract getLegalWires(): Port.LegalWiresQuery;
