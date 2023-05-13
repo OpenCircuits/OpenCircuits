@@ -84,3 +84,19 @@ Convenientally, eslint supports automatically fixing some issues. To do this, ru
 ```bash
 yarn lint:fix
 ```
+
+### Docker
+
+To run OpenCircuits in docker, you need to build docker image from repository by running
+```bash
+docker build --rm -t opencircuits .
+```
+
+After image created, you simply start container by running
+```bash
+docker run -p 8080:8080 opencircuits
+```
+
+You can change `8080:8080` to expose different port from container.
+
+For example, to expose port 8081 from container, use `8081:8080`
