@@ -24,9 +24,6 @@ export const isObjPort = <
     WireT extends Wire = Wire,
     PortT extends Port = Port,
 >(obj: ComponentT | WireT | PortT): obj is PortT => (obj.baseKind === "Port");
-export const isObjComponent = (obj: Obj): obj is Component => (obj.baseKind === "Component");
-export const isObjWire      = (obj: Obj): obj is Wire      => (obj.baseKind === "Wire");
-export const isObjPort = (obj: Obj): obj is Port => (obj.baseKind === "Port");
 
 // TODO[model_refactor_api_expr_to_circ](trevor) Is this the right place? Check for circular dependencies.
 /**
