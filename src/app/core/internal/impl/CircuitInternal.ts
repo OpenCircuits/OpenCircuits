@@ -290,7 +290,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
                 }));
     }
 
-    public setCircuitMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {
+    public setMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {
         this.metadata = { ...this.metadata, ...newMetadata } as Schema.CircuitMetadata;
     }
 
@@ -311,7 +311,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
         this.publish((new FastCircuitDiffBuilder()).build());
     }
 
-    public getCircuitMetadata(): Readonly<Schema.CircuitMetadata> {
+    public getMetadata(): Readonly<Schema.CircuitMetadata> {
         return this.metadata;
     }
 }
