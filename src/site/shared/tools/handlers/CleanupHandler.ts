@@ -11,7 +11,7 @@ export const CleanupHandler: ToolHandler = {
 
         // Get selected components if we have selections, or get all components to cleanup
         const comps = (circuit.selections.isEmpty
-            ? circuit.getComponents()
+            ? circuit.findAll("Component").result
             : circuit.selections.components);
 
         if (comps.length === 0)

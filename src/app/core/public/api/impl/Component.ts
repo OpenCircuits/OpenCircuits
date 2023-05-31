@@ -8,7 +8,6 @@ import {Schema} from "core/schema";
 
 import {Circuit}   from "../Circuit";
 import {Component} from "../Component";
-import {Port}      from "../Port";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
@@ -78,7 +77,7 @@ export function ComponentImpl<T extends CircuitTypes>(
             const curConfig = {} as Record<string, number>;
             internal.doc.getPortsForComponent(base.id)
                 .map((ids) => [...ids]
-                    .map((id) => circuit.getPort(id)!))
+                    .map((id) => internal.doc.getPortByID(id).unwrap()))
                 .unwrap()
                 .forEach(({ group }) =>
                     curConfig[group] = (curConfig[group] ?? 0) + 1);

@@ -7,7 +7,7 @@ export const SelectAllHandler: ToolHandler = {
         if (!(ev.type === "keydown" && ev.key === "a" && ev.input.isModifierKeyDown))
             return ToolHandlerResponse.PASS;
 
-        const comps = circuit.getComponents();
+        const { result: comps } = circuit.findAll("Component");
         // Don't select all if nothing to select or everything is already selected
         // TODO[.](kevin) - is this necessary anymore? it was here to prevent unnecessary entries in the
         //                  action history, but will this be automatically detected now?

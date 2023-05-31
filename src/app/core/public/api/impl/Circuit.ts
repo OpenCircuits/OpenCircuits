@@ -9,15 +9,80 @@ import {DebugOptions, GUID} from "core/internal";
 import {RenderHelper}       from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions}      from "core/internal/view/rendering/RenderOptions";
 
-import {Camera}         from "../Camera";
-import {Circuit}        from "../Circuit";
-import {Selections}     from "../Selections";
-import {isObjComponent} from "../Utilities";
+import {Camera}     from "../Camera";
+import {Circuit}    from "../Circuit";
+import {Selections} from "../Selections";
 
 import {CameraImpl}                 from "./Camera";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
 
+
+export function ObjQueryFiltersImpl<
+    T extends CircuitTypes,
+    K extends keyof Circuit.ObjQueryTypes
+>(state: CircuitState<T>, possibleObjs: Array<Circuit.ObjQueryTypes[K]>) {
+    return {
+        with(props: { id: GUID }) {
+            return possibleObjs.filter((obj) => (obj.id === props.id));
+        },
+        at(pt: Vector, space: Vector.Spaces = "world") {
+            const pos = ((space === "world" ? pt : state.view.toWorldPos(pt)));
+            return possibleObjs.filter((obj) => {
+                if (obj.baseKind === "Component")
+                    return state.view.componentContains(obj.id, pos);
+                if (obj.baseKind === "Wire")
+                    return state.view.wireContains(obj.id, pos);
+                if (obj.baseKind === "Port")
+                    return state.view.portContains(obj.id, pos);
+                return false;
+            });
+        },
+        within(bounds: Rect, space: Vector.Spaces = "world") {
+            throw new Error("Unimplemented!");
+        },
+    };
+}
+
+export function MultiObjQueryImpl<
+    T extends CircuitTypes,
+    K extends keyof Circuit.ObjQueryTypes
+>(state: CircuitState<T>, possibleObjs: Array<Circuit.ObjQueryTypes[K]>): Circuit.MultiObjQuery<K> {
+    return {
+        get result(): Array<Circuit.ObjQueryTypes[K]> {
+            return possibleObjs;
+        },
+        with(props) {
+            return MultiObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).with(props));
+        },
+        at(pt, space) {
+            return MultiObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).at(pt, space));
+        },
+        within(bounds, space) {
+            return MultiObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).within(bounds, space));
+        },
+    }
+}
+
+export function ObjQueryImpl<
+    T extends CircuitTypes,
+    K extends keyof Circuit.ObjQueryTypes
+>(state: CircuitState<T>, possibleObjs: Array<Circuit.ObjQueryTypes[K]>): Circuit.ObjQuery<K> {
+    return {
+        get result(): Circuit.ObjQueryTypes[K] | undefined {
+            return possibleObjs[0];
+        },
+        with(props) {
+            return ObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).with(props));
+        },
+        at(pt, space) {
+            return ObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).at(pt, space));
+        },
+        within(bounds, space) {
+            return ObjQueryImpl(state, ObjQueryFiltersImpl(state, possibleObjs).within(bounds, space));
+        },
+    }
+}
 
 export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
     function pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
@@ -84,61 +149,9 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             return CameraImpl(state);
         },
         get selections(): Selections {
-            return SelectionsImpl(this, state);
+            return SelectionsImpl(state);
         },
 
-        // Queries
-        pickObjAt(pt: Vector, space: Vector.Spaces = "world"): T["Obj"] | undefined {
-            return pickObjAtHelper(pt, space)
-                .map((id) => this.getObj(id)).asUnion();
-        },
-        pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): T["Component"] | undefined {
-            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasComp(id))
-                .map((id) => this.getComponent(id)).asUnion();
-        },
-        pickWireAt(pt: Vector, space: Vector.Spaces = "world"): T["Wire"] | undefined {
-            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasWire(id))
-                .map((id) => this.getWire(id)).asUnion();
-        },
-        pickPortAt(pt: Vector, space: Vector.Spaces = "world"): T["Port"] | undefined {
-            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasPort(id))
-                .map((id) => this.getPort(id)).asUnion();
-        },
-        pickObjRange(bounds: Rect): T["Obj[]"] {
-            throw new Error("Unimplemented!");
-        },
-
-        getComponent(id: GUID): T["Component"] | undefined {
-            if (!state.internal.doc.getCompByID(id))
-                return undefined;
-            return state.constructComponent(id);
-        },
-        getWire(id: GUID): T["Wire"] | undefined {
-            if (!state.internal.doc.getWireByID(id))
-                return undefined;
-            return state.constructWire(id);
-        },
-        getPort(id: GUID): T["Port"] | undefined {
-            if (!state.internal.doc.getPortByID(id))
-                return undefined;
-            return state.constructPort(id);
-        },
-        getObj(id: GUID): T["Obj"] | undefined {
-            if (state.internal.doc.hasComp(id))
-                return this.getComponent(id);
-            if (state.internal.doc.hasWire(id))
-                return this.getWire(id);
-            if (state.internal.doc.hasPort(id))
-                return this.getPort(id);
-            return undefined;
-        },
-        getObjs(): T["Obj[]"] {
-            return [...state.internal.doc.getObjs()]
-                .map((id) => this.getObj(id)!);
-        },
-        getComponents(): T["Component[]"] {
-            return this.getObjs().filter(isObjComponent);
-        },
         getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
             // TODO[.](kevin) - getComponentInfo should probably return a Result right?
             //                  Or should we add a method to check if a component exists?
@@ -253,5 +266,5 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         subscribe(cb: (ev: any) => void): CleanupFunc {
             throw new Error("Unimplemented!");
         },
-    } satisfies Circuit;
+    } satisfies Omit<Circuit, "find" | "findAll">;
 }

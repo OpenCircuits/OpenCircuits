@@ -9,6 +9,13 @@ import type {DigitalWire}                   from "./DigitalWire";
 import type {DigitalPort}                   from "./DigitalPort";
 
 
+export interface DigitalObjQuery<K extends keyof Circuit.ObjQueryTypes> extends Circuit.BaseObjQuery {
+    readonly result: ToDigital<Circuit.ObjQueryTypes>[K] | undefined;
+}
+export interface DigitalMultiObjQuery<K extends keyof Circuit.ObjQueryTypes> extends Circuit.BaseObjQuery {
+    readonly result: Array<ToDigital<Circuit.ObjQueryTypes>[K]>;
+}
+
 export type ToDigital<T> = (
     // Core types to keep the same and return early on (and prevent infinite recursion)
     T extends Vector ? Vector :
@@ -36,5 +43,8 @@ export type APIToDigital<T> = {
 
 
 export interface DigitalCircuit extends APIToDigital<Circuit> {
+    find<K extends keyof Circuit.ObjQueryTypes>(type: K): DigitalObjQuery<K>;
+    findAll<K extends keyof Circuit.ObjQueryTypes>(type: K): DigitalMultiObjQuery<K>;
+
     propagationTime: number;
 }

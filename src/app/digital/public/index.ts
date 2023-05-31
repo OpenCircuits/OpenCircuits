@@ -40,6 +40,15 @@ export function CreateCircuit(): DigitalCircuit {
         constructPort(id) {
             return DigitalPortImpl(circuit, state, id);
         },
+        constructObj(id) {
+            if (internal.doc.hasComp(id))
+                return DigitalComponentImpl(circuit, state, id);
+            else if (internal.doc.hasWire(id))
+                return DigitalWireImpl(circuit, state, id);
+            else if (internal.doc.hasPort(id))
+                return DigitalPortImpl(circuit, state, id);
+            throw new Error(`Cannot construct object with id ${id}!`);
+        },
     }
     const circuit = DigitalCircuitImpl(state);
 
