@@ -132,42 +132,4 @@ expect.extend({
             pass: result.error.errors.some((error) => error.message.includes(message)),
         }
     },
-
-    // TODO[model_refactor_api_expr_to_circ](trevor): Check if this is/was needed for expression to circuit
-    // toBeConnectedTo(source: unknown, target: DigitalComponent, options = { depth: Infinity }) {
-    //     if (!(source instanceof DigitalComponent))
-    //         throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
-
-    //     const { depth } = options;
-
-    //     const visited = new Set<DigitalComponent>();
-    //     function bfs(layer: DigitalComponent[], depth: number): boolean {
-    //         if (depth === 0 || layer.length === 0)
-    //             return false;
-
-    //         const queue = [] as DigitalComponent[];
-    //         for (const cur of layer) {
-    //             visited.add(cur);
-
-    //             const connections = [
-    //                 ...cur.getOutputs().map((w) => w.getOutputComponent()),
-    //                 ...cur.getInputs().map((w) => w.getInputComponent()),
-    //             ].filter((c) => !visited.has(c));
-
-    //             if (connections.includes(target))
-    //                 return true;
-
-    //             queue.push(...connections);
-    //         }
-    //         return bfs(queue, depth-1);
-    //     }
-
-    //     const pass = bfs([source], depth);
-
-    //     return {
-    //         message: () => `expected ${source.getName()} to ${pass ? "" : "not "}be connected to ${target.getName()}` +
-    //                        ` within ${options.depth} connections`,
-    //         pass,
-    //     };
-    // },
 });

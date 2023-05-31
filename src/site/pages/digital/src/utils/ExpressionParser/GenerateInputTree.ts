@@ -125,8 +125,6 @@ function handleUnary(currentOp: "!", tokens: readonly Token[], ops: Record<Token
  */
 function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: readonly Token[],
         ops: Record<TokenType, string>, currentOpNum: number, index: number): Result<NewTreeRetValue> {
-    // This section gets the part of the tree from the left side of the operator.
-    //  "!" and "(" only have operands on their right side, so this section is skipped for them
     return generateInputTreeCore(tokens, ops, nextOpNum, index).andThen((leftRet): Result<NewTreeRetValue> => {
         index = leftRet.index;
         // If this isn't the right operation to apply, return

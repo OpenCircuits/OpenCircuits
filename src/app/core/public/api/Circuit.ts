@@ -53,6 +53,7 @@ export interface Circuit {
     getObj(id: GUID): Obj | undefined;
     getObjs(): Obj[];
     getComponents(): Component[];
+    getWires(): Wire[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     // Object manipulation
