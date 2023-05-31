@@ -1,9 +1,24 @@
 import {Component} from "./Component";
-import {Obj}       from "./Obj";
 import {Port}      from "./Port";
 import {Wire}      from "./Wire";
 
 
-export const isObjComponent = (obj: Obj): obj is Component => (obj.baseKind === "Component");
-export const isObjWire      = (obj: Obj): obj is Wire      => (obj.baseKind === "Wire");
-export const isObjPort      = (obj: Obj): obj is Port      => (obj.baseKind === "Port");
+export const isObjComponent = <
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+>(obj: ComponentT | WireT | PortT): obj is ComponentT => (obj.baseKind === "Component");
+
+
+export const isObjWire = <
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+>(obj: ComponentT | WireT | PortT): obj is WireT => (obj.baseKind === "Wire");
+
+
+export const isObjPort = <
+    ComponentT extends Component = Component,
+    WireT extends Wire = Wire,
+    PortT extends Port = Port,
+>(obj: ComponentT | WireT | PortT): obj is PortT => (obj.baseKind === "Port");

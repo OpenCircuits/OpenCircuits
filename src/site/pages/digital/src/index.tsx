@@ -12,15 +12,29 @@ import {storeDesigner} from "shared/utils/hooks/useDesigner";
 
 import {CreateDesigner} from "shared/circuitdesigner";
 
-import {DefaultTool}              from "shared/tools/DefaultTool";
-import {PanTool}                  from "shared/tools/PanTool";
-import {TranslateTool}            from "shared/tools/TranslateTool";
-import {SelectionBoxTool}         from "shared/tools/SelectionBoxTool";
-import {RotateTool}               from "shared/tools/RotateTool";
-import {WiringTool}               from "shared/tools/WiringTool";
-import {SplitWireTool}            from "shared/tools/SplitWireTool";
-import {ZoomHandler}              from "shared/tools/handlers/ZoomHandler";
-import {SelectionHandler}         from "shared/tools/handlers/SelectionHandler";
+import {DefaultTool}      from "shared/tools/DefaultTool";
+import {PanTool}          from "shared/tools/PanTool";
+import {TranslateTool}    from "shared/tools/TranslateTool";
+import {SelectionBoxTool} from "shared/tools/SelectionBoxTool";
+import {RotateTool}       from "shared/tools/RotateTool";
+import {WiringTool}       from "shared/tools/WiringTool";
+import {SplitWireTool}    from "shared/tools/SplitWireTool";
+
+import {CleanupHandler}     from "shared/tools/handlers/CleanUpHandler";
+import {CopyHandler}        from "shared/tools/handlers/CopyHandler";
+import {DeleteHandler}      from "shared/tools/handlers/DeleteHandler";
+import {DeselectAllHandler} from "shared/tools/handlers/DeselectAllHandler";
+import {DuplicateHandler}   from "shared/tools/handlers/DuplicateHandler";
+import {FitToScreenHandler} from "shared/tools/handlers/FitToScreenHandler";
+import {PasteHandler}       from "shared/tools/handlers/PasteHandler";
+import {RedoHandler}        from "shared/tools/handlers/RedoHandler";
+import {SaveHandler}        from "shared/tools/handlers/SaveHandler";
+import {SelectAllHandler}   from "shared/tools/handlers/SelectAllHandler";
+import {SelectionHandler}   from "shared/tools/handlers/SelectionHandler";
+import {SelectPathHandler}  from "shared/tools/handlers/SelectPathHandler";
+import {SnipNodesHandler}   from "shared/tools/handlers/SnipNodesHandler";
+import {UndoHandler}        from "shared/tools/handlers/UndoHandler";
+
 import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
 import {RotateToolRenderer}       from "shared/tools/renderers/RotateToolRenderer";
 
@@ -70,8 +84,14 @@ async function Init(): Promise<void> {
     const designer = CreateDesigner(
         CreateCircuit(),
         {
-            defaultTool: new DefaultTool(ZoomHandler, SelectionHandler),
-            tools:       [
+            defaultTool: new DefaultTool(
+                SelectAllHandler, FitToScreenHandler, DuplicateHandler,
+                DeleteHandler, SnipNodesHandler, DeselectAllHandler,
+                SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+                CleanupHandler, CopyHandler, PasteHandler,
+                SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
+            ),
+            tools: [
                 PanTool,
                 new RotateTool(), new TranslateTool(),
                 new WiringTool(), new SplitWireTool(),

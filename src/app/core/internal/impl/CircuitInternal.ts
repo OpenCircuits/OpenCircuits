@@ -40,8 +40,9 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
 
     private diffBuilder: FastCircuitDiffBuilder;
 
-    // Camera schema
+    // Schemas
     protected camera: Schema.Camera;
+    protected metadata: Schema.CircuitMetadata;
 
     public constructor(log: CircuitLog, doc: CircuitDocument) {
         super();
@@ -61,7 +62,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
             zoom: 0.02,
         };
 
-        this.circuitMetadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0" };
+        this.metadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0" };
 
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
@@ -289,8 +290,8 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
                 }));
     }
 
-    public setCircuitMetadata(newMetadata: Schema.CircuitMetadata) {
-        this.circuitMetadata = newMetadata;
+    public setCircuitMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {
+        this.metadata = { ...this.metadata, ...newMetadata } as Schema.CircuitMetadata;
     }
 
     //
@@ -311,6 +312,6 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
     }
 
     public getCircuitMetadata(): Readonly<Schema.CircuitMetadata> {
-        return this.circuitMetadata;
+        return this.metadata;
     }
 }

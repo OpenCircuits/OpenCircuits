@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import {Vector} from "Vector";
 
-import {BaseObject} from "./BaseObject";
-import {Component}  from "./Component";
-import {Wire}       from "./Wire";
+import {BaseObject}      from "./BaseObject";
+import {Component, Node} from "./Component";
+import {Wire}            from "./Wire";
 
 
 export namespace Port {
@@ -29,6 +29,9 @@ export interface Port extends BaseObject {
     // TODO[model_refactor_api]: What about nodes? Should this be endpoint non-node components?
     readonly connectedPorts: Port[];
     // TODO[model_refactor_api]: connectedComponents?
+
+    // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
+    readonly path: Array<Node | Wire>;
 
     getLegalWires(): Port.LegalWiresQuery;
     connectTo(other: Port): Wire | undefined;

@@ -8,6 +8,8 @@ export interface BaseObject {
     readonly id: string;
     readonly bounds: Rect;
 
+    name: string | undefined;
+
     isSelected: boolean;
     zIndex: number;
 
@@ -18,5 +20,5 @@ export interface BaseObject {
 
     setProp(key: string, val: Prop): void;
     getProp(key: string): Prop | undefined;
-    getProps(): Record<string, Prop>;
+    getProps(): Readonly<Record<string, Prop>>;
 }

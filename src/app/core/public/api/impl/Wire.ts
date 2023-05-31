@@ -1,65 +1,76 @@
+import {V, Vector} from "Vector";
+
 import {AddErrE} from "core/utils/MultiError";
+import {extend}  from "core/utils/Functions";
 
-import {Schema} from "core/schema";
+import {GUID} from "core/internal";
 
-import {Component} from "../Component";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
+import {Node}    from "../Component";
+import {Circuit} from "../Circuit";
+import {Wire}    from "../Wire";
 
-import {BaseObjectImpl} from "./BaseObject";
-import {CircuitState}   from "./CircuitState";
-import {V}              from "Vector";
+import {BaseObjectImpl}             from "./BaseObject";
+import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export abstract class WireImpl<
-    ComponentT extends Component = Component,
-    WireT extends Wire = Wire,
-    PortT extends Port = Port,
-    State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
-> extends BaseObjectImpl<State> implements Wire {
-    public readonly baseKind = "Wire";
+export function WireImpl<T extends CircuitTypes>(
+    circuit: Circuit,
+    state: CircuitState<T>,
+    id: GUID,
+    // This method is necessary since how the nodes are configured is project-dependent, so wiring them
+    //  needs to be handled on a per-project-basis
+    connectNode: (p1: T["Port"], p2: T["Port"], pos: Vector) =>
+        { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] },
+) {
+    const { internal, view, constructPort } = state;
 
-    protected getObj(): Schema.Wire {
-        return this.internal.doc.getWireByID(this.id)
-            .mapErr(AddErrE(`API Wire: Attempted to get wire with ID ${this.id} could not find it!`))
+    function getWire() {
+        return internal.doc.getWireByID(id)
+            .mapErr(AddErrE(`API Wire: Attempted to get wire with ID ${id} that doesn't exist!`))
             .unwrap();
     }
 
-    // TODO[model_refactor_api](leon) - Potentially make a `WireInfo` object and move this there
-    protected abstract get nodeKind(): string;
+    const base = BaseObjectImpl(state, id);
 
-    // This method is necessary since how the nodes are configured is project-dependent, so wiring them
-    //  needs to be handled on a per-project-basis.
-    protected abstract connectNode(p1: PortT, p2: PortT, node: ComponentT): { wire1: WireT, wire2: WireT };
+    return extend(base, {
+        baseKind: "Wire",
 
-    public get p1(): PortT {
-        return this.circuit.constructPort(this.getObj().p1);
-    }
-    public get p2(): PortT {
-        return this.circuit.constructPort(this.getObj().p2);
-    }
+        get p1(): T["Port"] {
+            return constructPort(getWire().p1);
+        },
+        get p2(): T["Port"] {
+            return constructPort(getWire().p1);
+        },
 
-    public split(): { node: ComponentT, wire1: WireT, wire2: WireT } {
-        // TODO[model_refactor_api](kevin)
-        //  Need to make an explicit CircuitInternal operation for splitting wires
+        // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
+        get path(): T["Path"] {
+            throw new Error("Unimplemented!");
+        },
 
-        // Default to making the node in the middle of the wire
-        const shape = this.circuit.view?.wireCurves.get(this.id);
-        const pos = (shape?.getPos(0.5) ?? V(0, 0));
+        split(): { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] } {
+            // TODO[model_refactor_api](kevin)
+            //  Need to make an explicit CircuitInternal operation for splitting wires
 
-        this.circuit.beginTransaction();
+            // Default to making the node in the middle of the wire
+            const shape = view.wireCurves.get(base.id);
+            const pos = (shape?.getPos(0.5) ?? V(0, 0));
 
-        const node = this.circuit.placeComponentAt(pos, this.nodeKind) as ComponentT;
+            internal.beginTransaction();
 
-        // Need to get these properties before deleting this wire
-        const { p1, p2 } = this;
+            // Need to get these properties before deleting this wire
+            const { p1, p2 } = this;
 
-        this.internal.deleteWire(this.id).unwrap();
+            internal.deleteWire(base.id).unwrap();
 
-        const { wire1, wire2 } = this.connectNode(p1, p2, node);
+            const nodeAndWires = connectNode(p1, p2, pos);
 
-        this.circuit.commitTransaction();
+            internal.commitTransaction();
 
-        return { node, wire1, wire2 };
-    }
+            return nodeAndWires;
+        },
+
+        delete(): void {
+            throw new Error("Unimplemented!");
+        },
+    } as const) satisfies Wire;
 }

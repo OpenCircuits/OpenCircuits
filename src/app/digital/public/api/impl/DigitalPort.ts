@@ -1,57 +1,67 @@
-import {GUID}     from "core/internal";
+import {GUID} from "core/internal";
+
 import {Port}     from "core/public";
 import {PortImpl} from "core/public/api/impl/Port";
-import {Signal}   from "digital/public/utils/Signal";
 
-import {DigitalComponent} from "../DigitalComponent";
-import {DigitalPort}      from "../DigitalPort";
-import {DigitalWire}      from "../DigitalWire";
+import {extend} from "core/utils/Functions";
 
-import {DigitalCircuitState} from "./DigitalCircuitState";
+import {Signal} from "digital/public/utils/Signal";
+
+import {DigitalCircuit} from "../DigitalCircuit";
+import {DigitalPort}    from "../DigitalPort";
+import {DigitalWire}    from "../DigitalWire";
+
+import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
 
-export class DigitalPortImpl extends PortImpl<
-    DigitalComponent, DigitalWire, DigitalPort, DigitalCircuitState
-> implements DigitalPort {
-    public readonly isInputPort: boolean;
-    public readonly isOutputPort: boolean;
+export function DigitalPortImpl(circuit: DigitalCircuit, state: DigitalCircuitState, id: GUID) {
+    const { internal, constructWire } = state;
 
-    public constructor(circuit: DigitalCircuitState, objID: GUID) {
-        super(circuit, objID);
+    const base = PortImpl<DigitalTypes>(circuit, state, id);
 
-        this.isInputPort  = this.parent.info.inputPortGroups.includes(this.group);
-        this.isOutputPort = this.parent.info.outputPortGroups.includes(this.group);
-    }
+    return extend(base, {
+        get isInputPort(): boolean {
+            return base.parent.info.inputPortGroups.includes(base.group);
+        },
+        get isOutputPort(): boolean {
+            return base.parent.info.outputPortGroups.includes(base.group);
+        },
 
-    public get signal(): Signal {
-        return this.circuit.sim.getSignal(this.id);
-    }
+        get signal(): Signal {
+            return state.sim.getSignal(base.id);
+        },
 
-    public override connectTo(other: DigitalPort): DigitalWire | undefined {
-        return this.circuit.connectWire(this, other);
-    }
+        connectTo(other: DigitalPort): DigitalWire | undefined {
+            internal.beginTransaction();
 
-    public override getLegalWires(): Port.LegalWiresQuery {
-        return {
-            isEmpty: !this.isAvailable(),
+            const id = internal.connectWire("DigitalWire", base.id, other.id, {}).unwrap();
 
-            contains: (port: DigitalPort) => (
-                this.isAvailable() &&
-                // Legal connections are only input -> output or output -> input ports
-                ((this.isInputPort && port.isOutputPort) ||
-                 (this.isOutputPort && port.isInputPort))
-            ),
-        }
-    }
+            internal.commitTransaction();
 
-    // returns true if a port is available, false otherwise
-    public isAvailable(): boolean {
-        // Output ports are always available for more connections
-        if (this.isOutputPort)
-            return true;
+            return constructWire(id);
+        },
 
-        // Input ports are only available if there isn't a connection already
-        const wires = this.internal.doc.getWiresForPort(this.id).unwrap();
-        return (wires.size === 0);
-    }
+        getLegalWires(): Port.LegalWiresQuery {
+            return {
+                isEmpty: !this.isAvailable(),
+
+                contains: (port: DigitalPort) => (
+                    this.isAvailable() &&
+                    // Legal connections are only input -> output or output -> input ports
+                    ((this.isInputPort && port.isOutputPort) ||
+                     (this.isOutputPort && port.isInputPort))
+                ),
+            }
+        },
+
+        isAvailable(): boolean {
+            // Output ports are always available for more connections
+            if (this.isOutputPort)
+                return true;
+
+            // Input ports are only available if there isn't a connection already
+            const wires = internal.doc.getWiresForPort(base.id).unwrap();
+            return (wires.size === 0);
+        },
+    } as const) satisfies DigitalPort;
 }
