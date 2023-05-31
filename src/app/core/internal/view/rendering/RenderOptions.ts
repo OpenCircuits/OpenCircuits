@@ -31,17 +31,6 @@ export interface RenderOptions {
     defaultOnColor: string;
     defaultMetastableColor: string;
 
-    addImage(key: string, img: SVGDrawing): void;
-
-    /**
-     * Retrives the SVG with the given key.
-     * Note this will throw an error if the image is not found.
-     *
-     * @param key The key of the SVG.
-     * @throws If the image is not found.
-     */
-    getImage(key: string): SVGDrawing;
-
     // fillColor(selected: boolean): string;
     // borderColor(selected: boolean): string;
 

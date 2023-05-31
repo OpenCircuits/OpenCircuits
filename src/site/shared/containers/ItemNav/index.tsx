@@ -26,7 +26,6 @@ import {Draggable}        from "shared/components/DragDroppable/Draggable";
 import styles from "./index.scss";
 
 
-
 export type ItemNavItem = {
     kind: string;
     label: string;
@@ -91,7 +90,7 @@ export const ItemNav = <D,>({ circuit, config, additionalData, onDelete, getImgS
             return;
         // If pressed object is part of selections, do a default deselect and delete of all selections
         if (curPressedObj.isSelected) {
-            circuit.deleteObjs(circuit.selectedObjs());
+            circuit.deleteObjs(circuit.selectedObjs);
             return;
         }
         // Else just delete
@@ -374,5 +373,3 @@ export const ItemNav = <D,>({ circuit, config, additionalData, onDelete, getImgS
         </nav>
     </>);
 }
-
-

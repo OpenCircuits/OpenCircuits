@@ -1,33 +1,76 @@
+import {V, Vector} from "Vector";
+
 import {AddErrE} from "core/utils/MultiError";
+import {extend}  from "core/utils/Functions";
 
-import {Schema}       from "core/schema";
+import {GUID} from "core/internal";
 
-import {Component} from "../Component";
-import {Port}      from "../Port";
-import {Wire}      from "../Wire";
+import {Node}    from "../Component";
+import {Circuit} from "../Circuit";
+import {Wire}    from "../Wire";
 
-import {BaseObjectImpl} from "./BaseObject";
-import {CircuitState}   from "./CircuitState";
+import {BaseObjectImpl}             from "./BaseObject";
+import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export class WireImpl<
-    ComponentT extends Component = Component,
-    WireT extends Wire = Wire,
-    PortT extends Port = Port,
-    State extends CircuitState<ComponentT, WireT, PortT> = CircuitState<ComponentT, WireT, PortT>
-> extends BaseObjectImpl<State> implements Wire {
-    public readonly baseKind = "Wire";
+export function WireImpl<T extends CircuitTypes>(
+    circuit: Circuit,
+    state: CircuitState<T>,
+    id: GUID,
+    // This method is necessary since how the nodes are configured is project-dependent, so wiring them
+    //  needs to be handled on a per-project-basis
+    connectNode: (p1: T["Port"], p2: T["Port"], pos: Vector) =>
+        { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] },
+) {
+    const { internal, view, constructPort } = state;
 
-    protected getObj(): Schema.Wire {
-        return this.internal.getWireByID(this.id)
-            .mapErr(AddErrE(`API Wire: Attempted to get wire with ID ${this.id} could not find it!`))
+    function getWire() {
+        return internal.doc.getWireByID(id)
+            .mapErr(AddErrE(`API Wire: Attempted to get wire with ID ${id} that doesn't exist!`))
             .unwrap();
     }
 
-    public get p1(): PortT {
-        return this.circuit.constructPort(this.getObj().p1);
-    }
-    public get p2(): PortT {
-        return this.circuit.constructPort(this.getObj().p2);
-    }
+    const base = BaseObjectImpl(state, id);
+
+    return extend(base, {
+        baseKind: "Wire",
+
+        get p1(): T["Port"] {
+            return constructPort(getWire().p1);
+        },
+        get p2(): T["Port"] {
+            return constructPort(getWire().p1);
+        },
+
+        // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
+        get path(): T["Path"] {
+            throw new Error("Unimplemented!");
+        },
+
+        split(): { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] } {
+            // TODO[model_refactor_api](kevin)
+            //  Need to make an explicit CircuitInternal operation for splitting wires
+
+            // Default to making the node in the middle of the wire
+            const shape = view.wireCurves.get(base.id);
+            const pos = (shape?.getPos(0.5) ?? V(0, 0));
+
+            internal.beginTransaction();
+
+            // Need to get these properties before deleting this wire
+            const { p1, p2 } = this;
+
+            internal.deleteWire(base.id).unwrap();
+
+            const nodeAndWires = connectNode(p1, p2, pos);
+
+            internal.commitTransaction();
+
+            return nodeAndWires;
+        },
+
+        delete(): void {
+            throw new Error("Unimplemented!");
+        },
+    } as const) satisfies Wire;
 }

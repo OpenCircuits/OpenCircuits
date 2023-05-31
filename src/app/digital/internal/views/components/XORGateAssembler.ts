@@ -10,7 +10,7 @@ import {PortAssembler}        from "core/internal/view/PortAssembler";
 import {LinePrim}             from "core/internal/view/rendering/prims/LinePrim";
 import {QuadCurvePrim}        from "core/internal/view/rendering/prims/QuadCurvePrim";
 import {SVGPrim}              from "core/internal/view/rendering/prims/SVGPrim";
-import {Style, StrokeStyle}   from "core/internal/view/rendering/Style";
+import {StrokeStyle, Style}   from "core/internal/view/rendering/Style";
 import {Schema}               from "core/schema";
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
@@ -19,7 +19,8 @@ import {Assembler}            from "core/internal/view/Assembler";
 
 export class XORGateAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1.2, 1);
-    public readonly img: SVGDrawing;
+
+    public img?: SVGDrawing;
 
     protected readonly sim: DigitalSim;
 
@@ -30,33 +31,38 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("or.svg")!;
+        view.images.subscribe(({ key, val }) => {
+            if (key === "or.svg") {
+                this.img = val;
+                // TODO[model_refactor_api](leon) - Invalidate all XOR gates to re-assemble with new image
+            }
+        });
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
-            "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0)}),
+            "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
             "inputs":  (index, total) => {
                 if (total % 2 == 0) {
                     const spacing = 0.52 - this.options.defaultBorderWidth/2;
                     return { origin: V(-0.43, spacing*((total-1)/2 - index)), dir: V(-1.6, 0) };
-                } else {
-                    const spacing = 0.50 - this.options.defaultBorderWidth/2;
+                }
+                    const spacing = 0.5 - this.options.defaultBorderWidth/2;
                     if ((total == 7 && index == 0) || (total == 7 && index == 6)) {
                         return { origin: V(-0.53, spacing*((total-1)/2 - index)), dir: V(-1.41, 0) };
                     }
-                    return { origin: V(-0.40, spacing*((total-1)/2 - index)), dir: V(-1.6, 0) };
-                }
+                    return { origin: V(-0.4, spacing*((total-1)/2 - index)), dir: V(-1.6, 0) };
+
             },
         });
     }
 
-    private assembleQuadCurve(gate: Schema.Component, dx: number) : QuadCurvePrim[] {
+    private assembleQuadCurve(gate: Schema.Component, dx: number): QuadCurvePrim[] {
         const { defaultBorderWidth, selectedBorderColor, defaultBorderColor, fillStyle } = this.options;
 
-        const { inputPortGroups } = this.circuit.getObjectInfo("XORGate") as DigitalComponentInfo;
+        const { inputPortGroups } = this.circuit.doc.getObjectInfo("XORGate") as DigitalComponentInfo;
 
          // Get current number of inputs
-         const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
-            .map((id) => this.circuit.getPortByID(id).unwrap())
+         const numInputs = [...this.circuit.doc.getPortsForComponent(gate.id).unwrap()]
+            .map((id) => this.circuit.doc.getPortByID(id).unwrap())
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
 
         const amt = 2 * Math.floor(numInputs / 4) + 1;
@@ -64,7 +70,7 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
         const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.014, 0]) : ([0, 0.012]);
 
-        let quadCurves = [];
+        const quadCurves: QuadCurvePrim[] = [];
 
         const h = defaultBorderWidth;
         const l1 = -this.size.y / 2 + lNumMod;
@@ -81,18 +87,18 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
             const p1 = V(-s + dx, l1 + d);
             const p2 = V(-s + dx, l2 + d);
             const c = V(-l + dx, d);
-            
-            let qc = new QuadCurvePrim(
+
+            const qc = new QuadCurvePrim(
                 transform.toWorldSpace(p1),
-                transform.toWorldSpace(p2), 
-                transform.toWorldSpace(c), 
+                transform.toWorldSpace(p2),
+                transform.toWorldSpace(c),
                 this.options.curveStyle(selected));
-            
+
             if (amt === 1 && dx !== 0) {
                 quadCurves.push(qc);
             }
             else if (amt !== 1 || dx !== 0) {
-                let style = this.options.curveStyle(selected);
+                const style = this.options.curveStyle(selected);
                 if (style.stroke) {
                     style.stroke.lineCap = "round";
                 }
@@ -116,7 +122,7 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
 
         if (!transformChanged && !selectionChanged && !portAmtChanged)
             return;
-        
+
         if (transformChanged) {
             // Update transform
             this.view.componentTransforms.set(gate.id, new Transform(
@@ -134,7 +140,7 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
         const quadCurvesBack = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleQuadCurve(gate, -0.24) : []);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
 
-        
+
         // Update styles only if only selections changed
         if (selectionChanged) {
             const selected = this.selections.has(gate.id);
@@ -148,8 +154,8 @@ export class XORGateAssembler extends Assembler<Schema.Component> {
             }
             img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
         }
-        
-        let image = [...quadCurvesFront, ...quadCurvesBack, img];
+
+        const image = [...quadCurvesFront, ...quadCurvesBack, img];
         this.view.componentPrims.set(gate.id, image);
     }
 }

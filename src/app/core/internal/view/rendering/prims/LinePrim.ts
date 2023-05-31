@@ -25,6 +25,11 @@ export class LinePrim extends BaseShapePrim {
         this.p2 = p2;
     }
 
+    public override hitTest(pt: Vector): boolean {
+        // TODO[.](*): Maybe allow lines to be hit ?
+        return false;
+    }
+
     protected override renderShape(ctx: CanvasRenderingContext2D): void {
         ctx.moveTo(this.p1.x, this.p1.y);
         ctx.lineTo(this.p2.x, this.p2.y);

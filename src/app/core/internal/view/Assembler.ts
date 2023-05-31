@@ -9,7 +9,7 @@ export abstract class Assembler<Obj extends Schema.Obj = Schema.Obj> {
     protected readonly view: CircuitView;
     protected readonly selections: SelectionsManager;
 
-    protected constructor(circuit: CircuitInternal, view: CircuitView, selections: SelectionsManager) {
+    public constructor(circuit: CircuitInternal, view: CircuitView, selections: SelectionsManager) {
         this.circuit = circuit;
         this.view = view;
         this.selections = selections;

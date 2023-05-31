@@ -7,4 +7,5 @@ export interface StrokeStyle {
 export interface Style {
     stroke?: StrokeStyle;
     fill?: string | CanvasGradient;
+    alpha?: number;
 }

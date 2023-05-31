@@ -10,36 +10,52 @@ export interface LogEvent {
     clock: number;
 
     // Old proposed entries.  These entries may not have been accepted.
-    oldProposed: LogEntry[];
+    oldProposed: ReadonlyArray<Readonly<LogEntry>>;
 
     // Accepted entries.  These entries may be local/remote.
-    accepted: LogEntry[];
+    accepted: ReadonlyArray<Readonly<LogEntry>>;
 
     // Proposed local entries.  These entries are not accepted yet.
-    proposed: LogEntry[];
+    proposed: ReadonlyArray<Readonly<LogEntry>>;
 
     // List of ops to apply this event.
-    ops: CircuitOp[];
+    ops: ReadonlyArray<Readonly<CircuitOp>>;
 
     // Remote accepted entries.
-    remote: LogEntry[];
+    remote: ReadonlyArray<Readonly<LogEntry>>;
 
     // Local accepted + proposed entries.
-    local: LogEntry[];
+    local: ReadonlyArray<Readonly<LogEntry>>;
 }
 
 // LogEntry's are IMMUTABLE. It's OK to hold onto LogEntry references, but their contents may not be up-to-date.
-//  "id" identifies a log entry across mutations.  Update LogEntry references on LogEvents.
+// Update LogEntry references on LogEvents.
 export interface LogEntry {
+    // Identifies a log entry across mutations.
     id: GUID;
-    ops: CircuitOp[];
-    // TODO: semantic info used by the client, i.e. in the history box.
-    // clientData: unknown;
 
     // Log metadata.
     // user: string;
     // time: undefined;
     clock: number;
+
+    ops: ReadonlyArray<Readonly<CircuitOp>>;
+
+    // semantic info used by the client, i.e. in the history box.
+    clientData: string;
+}
+
+interface ProposedLogEntry {
+    id: GUID;
+
+    // Log metadata.
+    // user: string;
+    // time: undefined;
+    clock: number;
+
+    // Elements are mutable since transformations may be required.
+    ops: readonly CircuitOp[];
+    clientData: string;
 }
 
 // CircuitLog is a one-way history of a circuit.  Each LogEntry represents a sequence of primitive changes,
@@ -55,7 +71,7 @@ export interface LogEntry {
 export class CircuitLog extends Observable<LogEvent> {
     private readonly log: LogEntry[];
 
-    private proposedEntries: LogEntry[];
+    private proposedEntries: ProposedLogEntry[];
 
 
     public constructor() {
@@ -70,9 +86,9 @@ export class CircuitLog extends Observable<LogEvent> {
     }
 
     // NOTE: call-sites of propose should expect possible re-entrant calls.
-    public propose(ops: CircuitOp[]): void {
+    public propose(ops: CircuitOp[], clientData: string): LogEntry {
         // Propose "entry" with an invalid clock.  The server will provide a clock.
-        const entry: LogEntry = { id: uuid(), ops, clock: -1 };
+        const entry: ProposedLogEntry = { id: uuid(), clock: -1, ops, clientData };
         this.proposedEntries.push(entry);
 
         const evt: LogEvent = {
@@ -88,6 +104,8 @@ export class CircuitLog extends Observable<LogEvent> {
 
         // simulated "accept" logic.  Normally triggered by "acceptRemote"
         this.acceptLocal(entry);
+
+        return entry;
     }
 
     private acceptLocal(entry: LogEntry): void {

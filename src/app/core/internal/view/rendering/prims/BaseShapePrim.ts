@@ -33,6 +33,8 @@ export abstract class BaseShapePrim implements Prim {
             if (this.style.stroke.lineCap !== undefined)
                 ctx.lineCap = this.style.stroke.lineCap;
         }
+        if (this.style.alpha !== undefined)
+            ctx.globalAlpha = this.style.alpha;
 
         ctx.save();
 
@@ -50,6 +52,10 @@ export abstract class BaseShapePrim implements Prim {
         ctx.closePath();
 
         ctx.restore();
+
+        // Reset alpha if we set it
+        if (this.style.alpha !== undefined)
+            ctx.globalAlpha = 1;
     }
 
     public updateStyle(style: Style): void {

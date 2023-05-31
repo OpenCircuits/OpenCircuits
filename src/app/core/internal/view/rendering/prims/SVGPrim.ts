@@ -6,8 +6,9 @@ import {Transform} from "math/Transform";
 
 import {Camera} from "core/schema/Camera";
 
-import {Prim}  from "../../Prim";
-import {Style} from "../Style";
+import {Prim}         from "../../Prim";
+import {Style}        from "../Style";
+import {RectContains} from "math/MathUtils";
 
 
 /**
@@ -17,7 +18,7 @@ import {Style} from "../Style";
  *  Instead, it is treated as a rectangle around the bounds of the SVG.
  */
 export class SVGPrim implements Prim {
-    protected svg: SVGDrawing;
+    protected svg?: SVGDrawing;
     protected size: Vector;
     protected transform: Transform;
     protected tint?: Color;
@@ -30,7 +31,7 @@ export class SVGPrim implements Prim {
      * @param transform The transform for this SVG, note that the size of the transform is ignored.
      * @param tint      An optional tinting color to apply over the SVG.
      */
-    public constructor(svg: SVGDrawing, size: Vector, transform: Transform, tint?: string) {
+    public constructor(svg: SVGDrawing | undefined, size: Vector, transform: Transform, tint?: string) {
         this.svg = svg;
         this.size = size;
         this.transform = transform;
@@ -41,9 +42,12 @@ export class SVGPrim implements Prim {
         throw new Error("Method not implemented.");
     }
     public hitTest(pt: Vector): boolean {
-        throw new Error("Method not implemented.");
+        return RectContains(this.transform, pt);
     }
     public render(ctx: CanvasRenderingContext2D): void {
+        if (!this.svg) // Don't draw if the image isn't loaded
+            return;
+
         ctx.save();
 
         const [a,b,c,d,e,f] = this.transform.getMatrix().mat;
