@@ -1,9 +1,9 @@
 import {InputTree} from "./Constants/DataStructures";
 
-import {CreateCircuit, DigitalCircuit}    from "digital/public";
-import {V}                                from "Vector";
-import {Component, Port}                  from "core/public";
-import {Err, ErrE, Ok, Result,ResultUtil} from "core/utils/Result";
+import {CreateCircuit, DigitalCircuit} from "digital/public";
+import {V}                             from "Vector";
+import {DigitalComponent}              from "digital/public/api/DigitalComponent";
+import {DigitalPort}                   from "digital/public/api/DigitalPort";
 
 
 /**
@@ -31,18 +31,16 @@ export const NegatedTypeToGate = {
  * @param prevComp The component to connect the output of.
  * @param newNode  First available `inputs` port on `newComp`.
  * @param newComp  The component to connect the input of, only used for error message and return value.
- * @returns        In the case of success, a `Result` wrapping `newComp`. An error in the following cases:
- *                 - No output port found on `prevComp`.
- *                 - Wire failed to create connecting `prevComp` to `newNode`.
+ * @throws If no output port found on `prevComp`.
+ * @throws If wire failed to create connecting `prevComp` to `newNode`.
  */
-function connect(prevComp: Component, newNode: Port, newComp: Component): Result<Component> {
+function connect(prevComp: DigitalComponent, newNode: DigitalPort, newComp: DigitalComponent) {
     const prevNode = prevComp.firstAvailable("outputs");
     if (!prevNode)
-        return ErrE(`Port not found on returned ${prevComp.kind}`);
+        throw new Error(`Port not found on returned ${prevComp.kind}`);
     const wire = prevNode.connectTo(newNode);
     if (!wire)
-        return ErrE(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
-    return Ok(newComp);
+        throw new Error(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
 }
 
 /**
@@ -56,18 +54,17 @@ function connect(prevComp: Component, newNode: Port, newComp: Component): Result
  *                DigitalComponents found in inputs.
  * @returns       The current part of the tree that has been converted to a circuit, the most recently used component
  *                should always be last in the array.
- *                In the case of error, then an error will be returned indicating one of the following:
- *                - When one of the leaf nodes of the InputTree references an input that is not inputs.
- *                - Any connections fail.
+ * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
+ * @throws If any connections fail.
  * @see TreeToCircuit
  */
-function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circuit: DigitalCircuit):
-    Result<Component> {
+function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent>, circuit: DigitalCircuit):
+    DigitalComponent {
     if (node.kind === "leaf") {
         const input = inputs.get(node.ident);
         if (!input)
-            return ErrE("Input Not Found: \"" + node.ident + "\"");
-        return Ok(input);
+            throw new Error("Input Not Found: \"" + node.ident + "\"");
+        return input;
     }
 
     const ret = circuit;
@@ -77,22 +74,21 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
     const newComp = circuit.placeComponentAt(V(0, 0), newGate);
     const newNode = newComp.firstAvailable("outputs");
     if (!newNode)
-        return ErrE(`Port not found on newly created ${newComp.kind}`);
+        throw new Error(`Port not found on newly created ${newComp.kind}`);
     if (node.kind === "unop") {
-        return treeToCircuitCore(node.child, inputs, ret)
-            .andThen((prevComp) => connect(prevComp, newNode, newComp));
+        const prevComp = treeToCircuitCore(node.child, inputs, ret);
+        connect(prevComp, newNode, newComp);
     } else if (node.kind === "binop") {
         newComp.setNumPorts("input", node.children.length);
-        const outer = ResultUtil.mapIter(node.children.values(), (child): Result<Component> => {
+        node.children.forEach((child) => {
             if (!child)
-                return ErrE("treeToCircuitCore failed: child was undefined");
-            return treeToCircuitCore(child, inputs, ret)
-                .andThen((prevComp) => connect(prevComp, newNode, newComp));
+                throw new Error("treeToCircuitCore failed: child was undefined");
+            const prevComp = treeToCircuitCore(child, inputs, ret);
+            connect(prevComp, newNode, newComp);
         });
-        return outer.ok ? Ok(newComp) : Err(outer.errToOption().unwrap());
     }
 
-    return Ok(newComp);
+    return newComp;
 }
 
 /**
@@ -102,29 +98,29 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, Component>, circ
  * @param inputs The input components used by this expression.
  * @param output The component that the circuit outputs to.
  * @returns      The components and wires converted from the tree.
- *               In the case of error, then an error will be returned indicating one of the following:
- *               - When one of the leaf nodes of the InputTree references an input that is not inputs.
- *               - Any connections fail.
+ * @throws If `output` indicates a component without an input port.
+ * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
+ * @throws If any connections fail.
  */
 export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
-                              output: string): Result<DigitalCircuit> {
+                              output: string): DigitalCircuit {
     const circuit = CreateCircuit();
 
     const outputComp = circuit.placeComponentAt(V(0, 0), output);
     outputComp.name = "Output";
     const outputNode = outputComp.firstAvailable("inputs");
     if (!outputNode)
-        return ErrE(`Port not found on output ${outputComp.kind}`);
+        throw new Error(`Input port not found on output ${outputComp.kind}`);
 
-    const inputMap = new Map<string, Component>();
+    const inputMap = new Map<string, DigitalComponent>();
     inputs.forEach((type, input) => {
         const c = circuit.placeComponentAt(V(0, 0), type);
         c.name = input;
         inputMap.set(input, c);
     });
 
-    treeToCircuitCore(tree, inputMap, circuit)
-        .andThen((prevComp) => connect(prevComp, outputNode, outputComp));
+    const prevComp = treeToCircuitCore(tree, inputMap, circuit);
+    connect(prevComp, outputNode, outputComp);
 
-    return Ok(circuit);
+    return circuit;
 }

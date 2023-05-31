@@ -32,7 +32,7 @@ export function ExpressionToCircuit(inputs: ReadonlyMap<string, string>,
                                     output: string,
                                     ops: OperatorFormat = FORMATS[0]): Result<DigitalCircuit> {
     return GenerateTokens(expression, ops).andThen((tokenList) =>
-        GenerateInputTree(tokenList, ops.ops).andThen((connectedTree) =>
+        GenerateInputTree(tokenList, ops.ops).map((connectedTree) =>
             TreeToCircuit(connectedTree, inputs, output)
         )
     );

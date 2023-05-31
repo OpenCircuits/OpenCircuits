@@ -96,7 +96,7 @@ function handleUnary(currentOp: "!", tokens: readonly Token[], ops: Record<Token
     else {
         return ErrE(`Invalid token "${ops[rightToken.type]}" following "${ops["!"]}"`);
     }
-    return rightRet.andThen((rightRetVal) => {
+    return rightRet.map((rightRetVal) => {
         let tree: InputTree;
         const rTree = rightRetVal.tree;
         if (rTree.kind === "binop" && !rTree.isNot) {
@@ -106,7 +106,7 @@ function handleUnary(currentOp: "!", tokens: readonly Token[], ops: Record<Token
         else {
             tree = { kind: "unop", type: "!", child: rightRetVal.tree };
         }
-        return Ok({ index: rightRetVal.index, tree: tree });
+        return { index: rightRetVal.index, tree: tree };
     });
 }
 
@@ -137,7 +137,7 @@ function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: rea
         if (index >= tokens.length)
             return ErrE(`Missing Right Operand: "${ops[currentOp]}"`);
         return generateInputTreeCore(tokens, ops, currentOpNum, index)
-                .andThen((rightRet): Result<NewTreeRetValue> => {
+                .map((rightRet) => {
             index = rightRet.index;
             const lTree = leftRet!.tree, rTree = rightRet.tree;
             let childrenArray = isTreeExtendable(lTree, currentOp, leftRet!.final)
@@ -156,7 +156,7 @@ function handleBinary(currentOp: "|" | "^" | "&", nextOpNum: number, tokens: rea
                 isNot:    false,
                 children: childrenArray as BinOpChildren,
             };
-            return Ok({ index: index, tree: tree });
+            return { index: index, tree: tree };
         });
     });
 }
