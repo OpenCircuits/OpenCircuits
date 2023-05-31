@@ -107,7 +107,6 @@ export function ComponentImpl<T extends CircuitTypes>(
         firstAvailable(group: string): T["Port"] | undefined {
             throw new Error("Unimplemented!");
         },
-
         delete(): void {
             throw new Error("Unimplemented!");
         },
