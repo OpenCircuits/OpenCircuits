@@ -1,4 +1,6 @@
-import {BezierCurve} from "math/BezierCurve";
+import {BezierCurve}    from "math/BezierCurve";
+import {BezierContains} from "math/MathUtils";
+import {Vector}         from "Vector";
 
 import {Style}         from "../Style";
 import {BaseShapePrim} from "./BaseShapePrim";
@@ -22,6 +24,10 @@ export class BezierCurvePrim extends BaseShapePrim {
         super(style);
 
         this.curve = curve;
+    }
+
+    public override hitTest(pt: Vector): boolean {
+        return BezierContains(this.curve, pt);
     }
 
     protected renderShape(ctx: CanvasRenderingContext2D): void {

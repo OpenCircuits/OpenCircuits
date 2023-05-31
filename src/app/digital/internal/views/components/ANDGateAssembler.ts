@@ -17,9 +17,10 @@ import {Assembler}            from "core/internal/view/Assembler";
 
 export class ANDGateAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1, 1);
-    public readonly img: SVGDrawing;
 
     protected readonly sim: DigitalSim;
+
+    public img?: SVGDrawing;
 
     protected portAssembler: PortAssembler;
 
@@ -28,7 +29,12 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("and.svg");
+        view.images.subscribe(({ key, val }) => {
+            if (key === "and.svg") {
+                this.img = val;
+                // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
+            }
+        });
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
@@ -42,11 +48,11 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
     private assembleLine(gate: Schema.Component) {
         const { defaultBorderWidth } = this.options;
 
-        const { inputPortGroups } = this.circuit.getObjectInfo("ANDGate") as DigitalComponentInfo;
+        const { inputPortGroups } = this.circuit.doc.getObjectInfo("ANDGate") as DigitalComponentInfo;
 
         // Get current number of inputs
-        const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
-            .map((id) => this.circuit.getPortByID(id).unwrap())
+        const numInputs = [...this.circuit.doc.getPortsForComponent(gate.id).unwrap()]
+            .map((id) => this.circuit.doc.getPortByID(id).unwrap())
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
 
         const dy = (numInputs-1)/2*(0.5 - defaultBorderWidth/2);

@@ -18,7 +18,8 @@ import {Assembler}            from "core/internal/view/Assembler";
 
 export class ORGateAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1.2, 1);
-    public readonly img: SVGDrawing;
+
+    public img?: SVGDrawing;
 
     protected readonly sim: DigitalSim;
 
@@ -29,29 +30,34 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("or.svg")!;
+        view.images.subscribe(({ key, val }) => {
+            if (key === "or.svg") {
+                this.img = val;
+                // TODO[model_refactor_api](leon) - Invalidate all OR gates to re-assemble with new image
+            }
+        });
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
             "inputs":  (index, total) => {
-                if (total % 2 == 0) {
+                if (total % 2 === 0) {
                     const spacing = 0.52 - this.options.defaultBorderWidth/2;
-                    return { 
+                    return {
                         origin: V(-0.43, spacing*((total-1)/2 - index)),
-                        dir: V(-1.3, 0), 
-                    };
-                } else {
-                    const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                    if ((total == 7 && index == 0) || (total == 7 && index == 6)) {
-                        return { 
-                            origin: V(-0.53, spacing*((total-1)/2 - index)), 
-                            dir: V(-1.1, 0) };
-                    }
-                    return { 
-                        origin: V(-0.40,spacing*((total-1)/2 - index)),
-                        dir: V(-1.3, 0), 
+                        dir:    V(-1.3, 0),
                     };
                 }
+                    const spacing = 0.5 - this.options.defaultBorderWidth/2;
+                    if ((total === 7 && index === 0) || (total === 7 && index === 6)) {
+                        return {
+                            origin: V(-0.53, spacing*((total-1)/2 - index)),
+                            dir:    V(-1.1, 0) };
+                    }
+                    return {
+                        origin: V(-0.4,spacing*((total-1)/2 - index)),
+                        dir:    V(-1.3, 0),
+                    };
+
             },
         });
     }
@@ -59,14 +65,14 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
     private assembleQuadCurve(gate: Schema.Component) {
         const { defaultBorderWidth, selectedBorderColor, defaultBorderColor, fillStyle } = this.options;
 
-        const { inputPortGroups } = this.circuit.getObjectInfo("XORGate") as DigitalComponentInfo;
+        const { inputPortGroups } = this.circuit.doc.getObjectInfo("XORGate") as DigitalComponentInfo;
 
         // Get current number of inputs
-        const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
-            .map((id) => this.circuit.getPortByID(id).unwrap())
+        const numInputs = [...this.circuit.doc.getPortsForComponent(gate.id).unwrap()]
+            .map((id) => this.circuit.doc.getPortByID(id).unwrap())
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
 
-        let quadCurves = [];
+        const quadCurves: QuadCurve[] = [];
 
         const transform = this.view.componentTransforms.get(gate.id)!;
         const selected = this.selections.has(gate.id);
@@ -81,17 +87,17 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
             const s = this.size.x / 2 - h + sMod;
             const l = this.size.x / 5 - h;
 
-            let p1 = V(-s, l1 + d);
-            let p2 = V(-s, l2 + d);
-    
+            const p1 = V(-s, l1 + d);
+            const p2 = V(-s, l2 + d);
+
             const c = V(-l, d);
 
-            if (amt != 1 ) {
+            if (amt != 1) {
                 quadCurves.push(new QuadCurve(
                     transform.toWorldSpace(p1),
                     transform.toWorldSpace(p2),
                     transform.toWorldSpace(c),
-                    {stroke: {color: "black", size: 0.05, lineCap: "round"}}
+                    { stroke: { color: "black", size: 0.05, lineCap: "round" } }
                 ));
             }
         }
@@ -122,14 +128,14 @@ export class ORGateAssembler extends Assembler<Schema.Component> {
         }
 
         this.portAssembler.assemble(gate, ev);
-       
+
         const [prevLine, prevImg] = (this.view.componentPrims.get(gate.id) ?? []);
 
-        let image = [];
+        const image = [];
         const line = this.assembleQuadCurve(gate);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
 
-        line.map((q) => image.push(q));
+        line.forEach((q) => image.push(q));
         image.push(img);
 
         this.view.componentPrims.set(gate.id, image);

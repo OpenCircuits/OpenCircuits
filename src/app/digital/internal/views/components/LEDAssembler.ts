@@ -19,9 +19,10 @@ import {Signal}     from "digital/internal/sim/Signal";
 
 export class LEDAssembler extends Assembler<Schema.Component> {
     public readonly size = V(1, 1);
-    public readonly img: SVGDrawing;
 
     protected readonly sim: DigitalSim;
+
+    public img?: SVGDrawing;
 
     protected portAssembler: PortAssembler;
 
@@ -30,7 +31,12 @@ export class LEDAssembler extends Assembler<Schema.Component> {
 
         this.sim = sim;
 
-        this.img = view.options.getImage("led.svg");
+        view.images.subscribe(({ key, val }) => {
+            if (key === "led.svg") {
+                this.img = val;
+                // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
+            }
+        });
 
         this.portAssembler = new PortAssembler(circuit, view, selections, {
             "inputs": () => ({ origin: V(0, -0.5), target: V(0, -2) }),
@@ -42,7 +48,7 @@ export class LEDAssembler extends Assembler<Schema.Component> {
     }
 
     private isOn(led: Schema.Component) {
-        const [inputPort] = this.circuit.getPortsForComponent(led.id).unwrap();
+        const [inputPort] = this.circuit.doc.getPortsForComponent(led.id).unwrap();
         return Signal.isOn(this.sim.getSignal(inputPort));
     }
 

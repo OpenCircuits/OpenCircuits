@@ -6,7 +6,8 @@ import {Style}                  from "./Style";
 
 
 export class RenderHelper {
-    protected canvas?: HTMLCanvasElement;
+    public canvas?: HTMLCanvasElement;
+
     protected context?: CanvasRenderingContext2D;
 
     // protected camera: CameraView;
@@ -15,7 +16,7 @@ export class RenderHelper {
         // this.camera = camera;
     }
 
-    protected get ctx(): CanvasRenderingContext2D {
+    public get ctx(): CanvasRenderingContext2D {
         if (!this.context)
             throw new Error(`RenderHelper: Uninitialized context! ${this.canvas} | ${this.context}`);
         return this.context;

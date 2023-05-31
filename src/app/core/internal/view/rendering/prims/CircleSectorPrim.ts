@@ -41,7 +41,6 @@ export class CircleSectorPrim extends BaseShapePrim {
         let da = (a1 - a0) % (2*Math.PI);
         if (da < 0)
             da += 2*Math.PI;
-        // Flip angles since y-axis is flipped
-        ctx.arc(x, y, radius, 2*Math.PI - a0, 2*Math.PI - a1, da <= Math.PI);
+        ctx.arc(x, y, radius, a0, a1, da > Math.PI);
     }
 }

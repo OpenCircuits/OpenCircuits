@@ -4,7 +4,7 @@ import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/C
 
 import {useAPIMethods} from "shared/utils/ApiMethods";
 
-import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
+import {useMainCircuit}                       from "shared/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {DevCreateFile, DevGetFile, DevListFiles} from "shared/api/Dev";

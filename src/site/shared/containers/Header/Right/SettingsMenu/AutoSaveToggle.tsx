@@ -4,7 +4,7 @@ import {SAVE_TIME} from "shared/utils/Constants";
 
 import {useAPIMethods} from "shared/utils/ApiMethods";
 
-import {useMainCircuit}                       from "shared/utils/hooks/useCircuit";
+import {useMainCircuit}                       from "shared/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {SetAutoSave} from "shared/state/UserInfo";

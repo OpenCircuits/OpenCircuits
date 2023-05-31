@@ -8,12 +8,17 @@ export interface BaseObject {
     readonly id: string;
     readonly bounds: Rect;
 
+    name: string | undefined;
+
     isSelected: boolean;
     zIndex: number;
+
+    select(): void;
+    deselect(): void;
 
     exists(): boolean;
 
     setProp(key: string, val: Prop): void;
     getProp(key: string): Prop | undefined;
-    getProps(): Record<string, Prop>;
+    getProps(): Readonly<Record<string, Prop>>;
 }
