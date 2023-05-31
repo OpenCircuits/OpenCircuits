@@ -38,25 +38,34 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
 
         // Metadata
         get id(): GUID {
-            throw new Error("Unimplemented!");
+            return state.internal.getCircuitMetadata().id;
         },
         set name(val: string) {
-            throw new Error("Unimplemented!");
+            state.internal.setCircuitMetadata({
+                ...state.internal.getCircuitMetadata(),
+                name: val,
+            });
         },
         get name(): string {
-            throw new Error("Unimplemented!");
+            return state.internal.getCircuitMetadata().name;
         },
         set desc(val: string) {
-            throw new Error("Unimplemented!");
+            state.internal.setCircuitMetadata({
+                ...state.internal.getCircuitMetadata(),
+                desc: val,
+            });
         },
         get desc(): string {
-            throw new Error("Unimplemented!");
+            return state.internal.getCircuitMetadata().desc;
         },
         set thumbnail(val: string) {
-            throw new Error("Unimplemented!");
+            state.internal.setCircuitMetadata({
+                ...state.internal.getCircuitMetadata(),
+                thumb: val,
+            });
         },
         get thumbnail(): string {
-            throw new Error("Unimplemented!");
+            return state.internal.getCircuitMetadata().thumb;
         },
 
         // Other data

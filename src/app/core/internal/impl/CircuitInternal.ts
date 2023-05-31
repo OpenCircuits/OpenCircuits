@@ -40,8 +40,9 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
 
     private diffBuilder: FastCircuitDiffBuilder;
 
-    // Camera schema
+    // Schemas
     protected camera: Schema.Camera;
+    protected metadata: Schema.CircuitMetadata;
 
     public constructor(log: CircuitLog, doc: CircuitDocument) {
         super();
@@ -60,6 +61,8 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
             y:    0,
             zoom: 0.02,
         };
+
+        this.metadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0" };
 
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
@@ -287,6 +290,10 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
                 }));
     }
 
+    public setCircuitMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {
+        this.metadata = { ...this.metadata, ...newMetadata } as Schema.CircuitMetadata;
+    }
+
     //
     // Revisit where this should go
     //
@@ -302,5 +309,9 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
 
         // TODO[model_refactor_api](idk) The camera changing is a very different kind of event than the others here.
         this.publish((new FastCircuitDiffBuilder()).build());
+    }
+
+    public getCircuitMetadata(): Readonly<Schema.CircuitMetadata> {
+        return this.metadata;
     }
 }
