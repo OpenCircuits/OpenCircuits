@@ -1,6 +1,7 @@
 import React, {useLayoutEffect, useRef} from "react";
 import {createRoot}                     from "react-dom/client";
 import ReactGA                          from "react-ga";
+import {Provider}                       from "react-redux";
 import {configureStore}                 from "@reduxjs/toolkit";
 
 import {CreateCircuit} from "digital/public";
@@ -52,30 +53,9 @@ import {reducers} from "./state/reducers";
 import ImageFiles      from "./data/images.json";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
+import {App} from "./containers/App";
 import {DigitalCircuitDesigner} from "./utils/DigitalCircuitDesigner";
 
-
-const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { w, h } = useWindowSize();
-
-    useLayoutEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas)
-            return;
-        (window as any).Circuit = designer.circuit;
-        return designer.attachCanvas(canvas);
-    }, [designer, canvasRef]);
-
-    useLayoutEffect(() => designer.circuit.resize(w, h), [designer, w, h]);
-
-    return (
-        <canvas
-            ref={canvasRef}
-            width={w}
-            height={h} />
-    );
-}
 
 async function Init(): Promise<void> {
     const startPercent = 30;
@@ -186,7 +166,9 @@ async function Init(): Promise<void> {
             const root = createRoot(document.getElementById("root")!);
             root.render(
                 <React.StrictMode>
-                    <MainCircuit designer={designer} />
+                    <Provider store={store}>
+                        <App />
+                    </Provider>
                 </React.StrictMode>
             );
         }],
