@@ -4,7 +4,7 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 const FIT_PADDING_RATIO = 1.2;
 
 export const FitToScreenHandler: ToolHandler = {
-    onEvent: (ev, { circuit }) => {
+    onEvent: (ev, { circuit, margin }) => {
         // Activate when releasing F key
         if (!(ev.type === "keyup" && ev.key === "f"))
             return ToolHandlerResponse.PASS;
@@ -14,6 +14,7 @@ export const FitToScreenHandler: ToolHandler = {
             (circuit.selections.isEmpty
                 ? circuit.getObjs()
                 : circuit.selections.all),
+            margin,
             FIT_PADDING_RATIO
         );
 

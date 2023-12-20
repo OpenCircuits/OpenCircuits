@@ -4,6 +4,8 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V, Vector} from "Vector";
 
+import {Circuit} from "core/public";
+
 import {useMainDesigner}    from "shared/utils/hooks/useDesigner";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
@@ -11,6 +13,19 @@ import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 import {Droppable} from "shared/components/DragDroppable/Droppable";
 
 import "./index.scss";
+
+
+function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPos: Vector, space: Vector.Spaces = "world") {
+    circuit.beginTransaction();
+    let pos = startPos;
+    for (let i = 0; i < N; i++) {
+        const comp = circuit.placeComponentAt(itemKind, pos, space);
+
+        // Calculate bounds of the placed component to offset the position for the next one
+        pos = pos.sub(0, comp.bounds.height);
+    }
+    circuit.commitTransaction();
+}
 
 
 type Props = {
@@ -37,16 +52,23 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     return (
         <Droppable
             ref={canvas}
-            onDrop={(pos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {
+            onDrop={(screenPos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {  
+                if (!itemKind)
+                    return;
+
                 if (!canvas.current)
                     throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
-                pos = pos.sub(V(0, canvas.current.getBoundingClientRect().top));
+                if (typeof itemKind !== "string")
+                    throw new Error(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);
+
+                const amt = (typeof num === "number" ? num : 1);
+                const pos = screenPos.sub(V(0, canvas.current.getBoundingClientRect().top));
 
                 // TODO[model_refactor](leon)
-                // // If other place options are specified then do those
-                // //  otherwise default to CreateNComponents
-                // if (!otherPlace?.(pos, itemKind, num ?? 1, otherData))
-                //     circuit.placeN(itemKind, num ?? 1, pos, "screen");
+                // If other place options are specified then do those
+                //  otherwise default to CreateNComponents
+                if (!otherPlace?.(pos, itemKind, amt, otherData))
+                    PlaceNComponents(designer.circuit, itemKind, amt, pos, "screen");
             }}>
             <canvas
                 className="main__canvas"

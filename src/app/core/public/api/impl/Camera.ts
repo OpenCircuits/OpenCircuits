@@ -38,13 +38,6 @@ export function CameraImpl<T extends CircuitTypes>({ internal, view }: CircuitSt
             return camera().zoom;
         },
 
-        set margin(val: Margin) {
-            throw new Error("Unimplemented!");
-        },
-        get margin(): Margin {
-            throw new Error("Unimplemented!");
-        },
-
         translate(delta: Vector, space: Vector.Spaces = "world"): void {
             if (space === "screen")
                 return this.translate(V(delta.x * this.zoom, -delta.y * this.zoom));
@@ -60,7 +53,7 @@ export function CameraImpl<T extends CircuitTypes>({ internal, view }: CircuitSt
             return view.toWorldPos(screenPos);
         },
 
-        zoomToFit(objs: T["Obj[]"], padRatio?: number): void {
+        zoomToFit(objs: T["Obj[]"], margin?: Margin, padRatio?: number): void {
             throw new Error("Unimplemented!");
         },
     } satisfies Camera;

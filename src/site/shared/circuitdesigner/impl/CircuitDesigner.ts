@@ -6,6 +6,7 @@ import {Cursor}          from "shared/utils/input/Cursor";
 import {InputAdapter}    from "shared/utils/input/InputAdapter";
 import {CircuitDesigner} from "../CircuitDesigner";
 import {ToolManager}     from "./ToolManager";
+import { Margin } from "math/Rect";
 
 
 export interface ToolConfig {
@@ -23,6 +24,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
     private readonly state: {
         curPressedObj?: Obj;
         cursor?: Cursor;
+        margin: Margin;
     }
 
     public constructor(
@@ -37,6 +39,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
         this.state = {
             curPressedObj: undefined,
             cursor:        undefined,
+            margin:        { left: 0, right: 0, top: 0, bottom: 0 },
         };
     }
 
@@ -52,6 +55,13 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
     }
     public set cursor(cursor: Cursor | undefined) {
         this.state.cursor = cursor;
+    }
+
+    public get margin() {
+        return this.state.margin;
+    }
+    public set margin(m: Margin) {
+        this.state.margin = { ...this.state.margin, ...m };
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): () => void {
