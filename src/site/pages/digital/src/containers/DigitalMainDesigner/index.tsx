@@ -4,31 +4,33 @@ import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
 
 import {MainDesigner} from "shared/containers/MainDesigner";
 
-import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
+// import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
+import {useMainDigitalDesigner} from "site/digital/utils/hooks/useDigitalDesigner";
 
 import "./index.scss";
 
-import {useMainCircuit} from "shared/utils/hooks/useCircuit";
+// import {useMainCircuit} from "shared/utils/hooks/useCircuit";
 
 
 export const DigitalMainDesigner = () => {
+    const designer = useMainDigitalDesigner();
     const isPageVisible = usePageVisibility();
-    const circuit = useMainCircuit();
 
     useLayoutEffect(() => {
+        // TODO
         // if (isPageVisible)
         //     info.designer.resume();
         // else
         //     info.designer.pause();
-    }, [circuit, isPageVisible]);
+    }, [designer, isPageVisible]);
 
     return (
         <MainDesigner
             otherPlace={(pos, itemKind, num, smartPlaceOptions) => {
-                if (smartPlaceOptions !== SmartPlaceOptions.Off) {
-                    // circuit.smartPlace(itemKind, smartPlaceOptions, num, pos);
-                    return true;
-                }
+                // if (smartPlaceOptions !== SmartPlaceOptions.Off) {
+                //     // circuit.smartPlace(itemKind, smartPlaceOptions, num, pos);
+                //     return true;
+                // }
                 return false;
             }} />
     );

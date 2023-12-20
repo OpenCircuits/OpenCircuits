@@ -4,7 +4,7 @@ import {HEADER_HEIGHT} from "shared/utils/Constants";
 
 import {V, Vector} from "Vector";
 
-import {useMainCircuit}    from "shared/utils/hooks/useDesigner";
+import {useMainDesigner}    from "shared/utils/hooks/useDesigner";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 import {useWindowSize}     from "shared/utils/hooks/useWindowSize";
 
@@ -17,24 +17,22 @@ type Props = {
     otherPlace?: (pos: Vector, itemKind: string, num: number, ...otherData: unknown[]) => boolean;
 }
 export const MainDesigner = ({ otherPlace }: Props) => {
-    const circuit = useMainCircuit();
-    const { isLocked } = useSharedSelector(
-        (state) => ({ isLocked: state.circuit.isLocked })
-    );
+    const designer = useMainDesigner();
     const { w, h } = useWindowSize();
     const canvas = useRef<HTMLCanvasElement>(null);
 
-    // TODO[model_refactor](leon)
-    // // On resize (useLayoutEffect happens sychronously so
-    // //  there's no pause/glitch when resizing the screen)
-    // useLayoutEffect(() => circuit.camera.resize(w, h-HEADER_HEIGHT), [circuit, w, h]);
+    useLayoutEffect(() => {
+        if (!canvas.current)
+            return;
+        // TODO[model_refactor](leon) - Make a global declaration for this so we can set it w/o gross cast
+        (window as unknown as Record<string, unknown>).Circuit = designer.circuit;
+        return designer.attachCanvas(canvas.current);
+    }, [designer, canvas]);
 
-    // TODO[model_refactor](leon)
-    // Initial function called after the canvas first shows up
-    // useLayoutEffect(() => circuit.setupCanvas(canvas), [circuit, canvas]);
-
-    // Lock/unlock circuit
-    useLayoutEffect(() => { circuit.locked = isLocked; }, [circuit, isLocked]);
+    // On resize (useLayoutEffect happens sychronously so
+    //  there's no pause/glitch when resizing the screen)
+    // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
+    useLayoutEffect(() => designer.circuit.resize(w, h), [designer, w, h]);
 
     return (
         <Droppable
@@ -53,7 +51,8 @@ export const MainDesigner = ({ otherPlace }: Props) => {
             <canvas
                 className="main__canvas"
                 width={w}
-                height={h-HEADER_HEIGHT} />
+                // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
+                height={h} />
         </Droppable>
     );
 }
