@@ -11,7 +11,7 @@ import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 // import {useDigitalCircuit} from "site/digital/utils/hooks/useDigitalCircuit";
 
-// import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
+import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
 import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
 import {DigitalMainDesigner}    from "site/digital/containers/DigitalMainDesigner";
 // import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
@@ -50,7 +50,7 @@ export const App = () => {
             {/* <SideNav circuit={circuit} exampleCircuits={exampleCircuits} /> */}
 
             <div className="App__container" style={{ height: h+"px" }}>
-                {/* <DigitalHeader /> */}
+                <DigitalHeader />
 
                 <main>
                     <DigitalMainDesigner />

@@ -1,12 +1,16 @@
-import {Circuit, Obj}    from "core/public";
-import {DefaultTool}     from "shared/tools/DefaultTool";
-import {ToolRenderer}    from "shared/tools/renderers/ToolRenderer";
-import {Tool}            from "shared/tools/Tool";
-import {Cursor}          from "shared/utils/input/Cursor";
-import {InputAdapter}    from "shared/utils/input/InputAdapter";
+import {Margin} from "math/Rect";
+
+import {Circuit, Obj} from "core/public";
+
+import {DebugOptions} from "shared/circuitdesigner/impl/DebugOptions";
+import {DefaultTool}  from "shared/tools/DefaultTool";
+import {ToolRenderer} from "shared/tools/renderers/ToolRenderer";
+import {Tool}         from "shared/tools/Tool";
+import {Cursor}       from "shared/utils/input/Cursor";
+import {InputAdapter} from "shared/utils/input/InputAdapter";
+
 import {CircuitDesigner} from "../CircuitDesigner";
 import {ToolManager}     from "./ToolManager";
-import { Margin } from "math/Rect";
 
 
 export interface ToolConfig {
@@ -25,6 +29,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
         curPressedObj?: Obj;
         cursor?: Cursor;
         margin: Margin;
+        debugOptions: DebugOptions;
     }
 
     public constructor(
@@ -40,28 +45,41 @@ export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDes
             curPressedObj: undefined,
             cursor:        undefined,
             margin:        { left: 0, right: 0, top: 0, bottom: 0 },
+            debugOptions:  {
+                debugCullboxes:       false,
+                debugNoFill:          false,
+                debugPressableBounds: false,
+                debugSelectionBounds: false,
+            },
         };
     }
 
-    public get curPressedObj() {
-        return this.state.curPressedObj;
-    }
     public set curPressedObj(obj: Obj | undefined) {
         this.state.curPressedObj = obj;
     }
-
-    public get cursor() {
-        return this.state.cursor;
+    public get curPressedObj() {
+        return this.state.curPressedObj;
     }
+
     public set cursor(cursor: Cursor | undefined) {
         this.state.cursor = cursor;
     }
+    public get cursor() {
+        return this.state.cursor;
+    }
 
+    public set margin(m: Margin) {
+        this.state.margin = { ...this.state.margin, ...m };
+    }
     public get margin() {
         return this.state.margin;
     }
-    public set margin(m: Margin) {
-        this.state.margin = { ...this.state.margin, ...m };
+
+    public set debugOptions(val: DebugOptions) {
+        this.state.debugOptions = { ...this.state.debugOptions, ...val };
+    }
+    public get debugOptions(): DebugOptions {
+        return this.state.debugOptions;
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): () => void {

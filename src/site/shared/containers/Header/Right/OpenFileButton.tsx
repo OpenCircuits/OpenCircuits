@@ -5,16 +5,16 @@ import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 import {useAPIMethods} from "shared/utils/ApiMethods";
 import {LoadFile}      from "shared/utils/Importer";
 
-import {useMainCircuit}    from "shared/utils/hooks/useDesigner";
+import {useMainDesigner}   from "shared/utils/hooks/useDesigner";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {InputField} from "shared/components/InputField";
 
 
 export const OpenFileButton = () => {
-    const circuit = useMainCircuit();
+    const designer = useMainDesigner();
     const isSaved = useSharedSelector((state) => state.circuit.isSaved);
-    const { LoadCircuit } = useAPIMethods(circuit);
+    const { LoadCircuit } = useAPIMethods(designer.circuit);
 
     const fileInput = React.useRef<HTMLInputElement>(null);
 

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import {SaveFile} from "shared/utils/Exporter";
 
-import {useMainCircuit}                       from "shared/utils/hooks/useDesigner";
+import {useMainDesigner}                      from "shared/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/state/Header";
@@ -10,14 +10,14 @@ import {Dropdown} from "./Dropdown";
 
 
 export const DownloadMenuDropdown = () => {
-    const circuit = useMainCircuit();
+    const designer = useMainDesigner();
     const { curMenu, circuitName } = useSharedSelector(
         (state) => ({ curMenu: state.header.curMenu, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 
     const onDownloadClick = () => {
-        const data = circuit.serialize();
+        const data = designer.circuit.serialize();
 
         // Convert to URL data
         const file = new Blob([data], { type: "text/json" });
