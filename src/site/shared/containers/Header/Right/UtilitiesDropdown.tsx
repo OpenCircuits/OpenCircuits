@@ -4,7 +4,7 @@ import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/C
 
 import {useAPIMethods} from "shared/utils/ApiMethods";
 
-import {useMainCircuit}                       from "shared/utils/hooks/useDesigner";
+import {useMainDesigner}                      from "shared/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {DevCreateFile, DevGetFile, DevListFiles} from "shared/api/Dev";
@@ -24,7 +24,7 @@ type Props = {
     extraUtilities: Utility[];
 }
 export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
-    const circuit = useMainCircuit();
+    const designer = useMainDesigner();
     const { curMenu, isLocked, isSaved } = useSharedSelector(
         (state) => ({
             curMenu:  state.header.curMenu,
@@ -32,7 +32,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
             isSaved:  state.circuit.isSaved,
         })
     );
-    const { LoadCircuit } = useAPIMethods(circuit);
+    const { LoadCircuit } = useAPIMethods(designer.circuit);
     const dispatch = useSharedDispatch();
 
     const [enableReload, setEnableReload] = useState(false);
@@ -74,7 +74,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
                 <div role="button" tabIndex={0}
                      onClick={async () => {
                         dispatch(CloseHeaderMenus());
-                        await DevCreateFile(circuit.serialize(), DEV_CACHED_CIRCUIT_FILE);
+                        await DevCreateFile(designer.circuit.serialize(), DEV_CACHED_CIRCUIT_FILE);
                         setEnableReload(true);
                      }}>
                     <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />

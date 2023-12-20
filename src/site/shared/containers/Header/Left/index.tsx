@@ -8,13 +8,13 @@ import {InputField} from "shared/components/InputField";
 
 import "./index.scss";
 
-import {useMainCircuit} from "shared/utils/hooks/useDesigner";
+import {useMainDesigner} from "shared/utils/hooks/useDesigner";
 
 import {useAPIMethods} from "shared/utils/ApiMethods";
 
 
 export const HeaderLeft = () => {
-    const circuit = useMainCircuit();
+    const designer = useMainDesigner();
     const { id, name, isSaved, isLocked, isLoggedIn, isHistoryBoxOpen, saving, error } = useSharedSelector(
         (state) => ({
             ...state.circuit,
@@ -23,7 +23,7 @@ export const HeaderLeft = () => {
         })
     );
     const dispatch = useSharedDispatch();
-    const { SaveCircuitRemote, DuplicateCircuitRemote } = useAPIMethods(circuit);
+    const { SaveCircuitRemote, DuplicateCircuitRemote } = useAPIMethods(designer.circuit);
 
     return (
         <div className="header__left">

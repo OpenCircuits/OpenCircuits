@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 
-import {useMainCircuit}                       from "shared/utils/hooks/useDesigner";
+import {useMainDesigner}                      from "shared/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {ToggleDebugCullboxes, ToggleDebugNoFill,
@@ -15,7 +15,7 @@ import {AutoSaveToggle} from "./AutoSaveToggle";
 
 
 export const SettingsMenu = () => {
-    const circuit = useMainCircuit();
+    const designer = useMainDesigner();
     const { curMenu, debugInfo } = useSharedSelector(
         (state) => ({ curMenu: state.header.curMenu, debugInfo: state.debugInfo })
     );
@@ -23,9 +23,12 @@ export const SettingsMenu = () => {
 
     // We need this to connect the Redux state to the CircuitInfo state
     // (keeps CircuitInfo in sync with the Redux state)
+    // TODO[model_refactor](leon) - figure out a better system for this
+    //  maybe even put all the react-redux stuff into the CircuitDesigner
+    //  especially the gross 'useAPIMethods' thing
     useEffect(() => {
-        circuit.debugOptions = debugInfo;
-    }, [circuit, debugInfo, debugInfo.debugCullboxes, debugInfo.debugPressableBounds,
+        designer.debugOptions = debugInfo;
+    }, [designer, debugInfo, debugInfo.debugCullboxes, debugInfo.debugPressableBounds,
         debugInfo.debugSelectionBounds, debugInfo.debugNoFill]); // Updates when any of the debugInfo values change
 
     return (

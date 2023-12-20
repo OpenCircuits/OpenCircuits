@@ -5,9 +5,9 @@ import {Rect}   from "math/Rect";
 
 import {CleanupFunc} from "core/utils/types";
 
-import {DebugOptions, GUID} from "core/internal";
-import {RenderHelper}       from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions}      from "core/internal/view/rendering/RenderOptions";
+import {GUID}          from "core/internal";
+import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
 import {Camera}         from "../Camera";
 import {Circuit}        from "../Circuit";
@@ -71,12 +71,6 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             throw new Error("Unimplemented!");
         },
         get simEnabled(): boolean {
-            throw new Error("Unimplemented!");
-        },
-        set debugOptions(val: DebugOptions) {
-            throw new Error("Unimplemented!");
-        },
-        get debugOptions(): DebugOptions {
             throw new Error("Unimplemented!");
         },
 
