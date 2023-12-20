@@ -56,7 +56,7 @@ export interface Circuit {
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     // Object manipulation
-    placeComponentAt(pt: Vector, kind: string): Component;
+    placeComponentAt(kind: string, pt: Vector, space?: Vector.Spaces): Component;
     deleteObjs(objs: Obj[]): void;
 
     createIC(objs: Obj[]): Circuit | undefined;

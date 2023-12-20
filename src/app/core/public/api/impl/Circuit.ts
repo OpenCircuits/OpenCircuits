@@ -146,14 +146,14 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         },
 
         // Object manipulation
-        placeComponentAt(pt: Vector, kind: string): T["Component"] {
+        placeComponentAt(kind: string, pt: Vector, space: Vector.Spaces = "world"): T["Component"] {
             const info = this.getComponentInfo(kind);
+            const pos = ((space === "world" ? pt : state.view.toWorldPos(pt)));
 
-            // TODO: Deal with `pt` being in screen space
             this.beginTransaction();
 
-            // Place raw component (TODO: unwrap...)
-            const id = state.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
+            // Place raw component (TODO[master](leon) - don't use unwrap...)
+            const id = state.internal.placeComponent(kind, { x: pos.x, y: pos.y }).unwrap();
 
             // Set its config to place ports
             state.internal.setPortConfig(id, info!.defaultPortConfig).unwrap();

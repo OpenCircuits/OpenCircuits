@@ -12,7 +12,7 @@ import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 // import {useDigitalCircuit} from "site/digital/utils/hooks/useDigitalCircuit";
 
 // import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
-// import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
+import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
 import {DigitalMainDesigner}    from "site/digital/containers/DigitalMainDesigner";
 // import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 // import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
@@ -55,7 +55,7 @@ export const App = () => {
                 <main>
                     <DigitalMainDesigner />
 
-                    {/* <DigitalItemNav /> */}
+                    <DigitalItemNav />
                     {/* <HistoryBox circuit={circuit} /> */}
 
                     {/* <SelectionPopup circuit={circuit} docsUrlConfig={docsConfig}>

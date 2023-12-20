@@ -11,12 +11,10 @@ export interface Camera {
 
     zoom: number;
 
-    margin: Margin;
-
     translate(delta: Vector, space?: Vector.Spaces): void;
     zoomTo(zoom: number, pos: Vector): void;
 
     toWorldPos(screenPos: Vector): Vector;
 
-    zoomToFit(objs: Obj[], padRatio?: number): void;
+    zoomToFit(objs: Obj[], margin?: Margin, padRatio?: number): void;
 }
