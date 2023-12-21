@@ -111,27 +111,33 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         this.scheduler.setBlocked(true);
 
         this.circuit.subscribe((ev) => {
+            if (ev.type === "CameraOp") {
+                this.cameraMat = this.calcCameraMat();
+                this.scheduler.requestRender();
+                return;
+            }
             // TODO[model_refactor_api](leon) - use events better, i.e. how do we collect the diffs until the next
             //                                  render cycle or query for the dirty object(s)?
+            const diff = ev.diff;
 
             // Mark all added/removed component dirty
-            for (const compID of ev.addedComponents)
+            for (const compID of diff.addedComponents)
                 this.dirtyComponents.add(compID);
-            for (const compID of ev.removedComponents)
+            for (const compID of diff.removedComponents)
                 this.dirtyComponents.add(compID);
 
             // Mark all components w/ changed ports dirty
-            for (const compID of ev.portsChanged)
+            for (const compID of diff.portsChanged)
                 this.dirtyComponents.add(compID);
 
             // Mark all added/removed wires dirty
-            for (const wireID of ev.addedWires)
+            for (const wireID of diff.addedWires)
                 this.dirtyWires.add(wireID);
-            for (const wireID of ev.removedWires)
+            for (const wireID of diff.removedWires)
                 this.dirtyWires.add(wireID);
 
             // Mark all changed obj props dirty
-            for (const [id, props] of ev.propsChanged) {
+            for (const [id, props] of diff.propsChanged) {
                 if (circuit.doc.hasComp(id)) {
                     this.dirtyComponents.add(id);
 
@@ -149,8 +155,6 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
                     this.dirtyPorts.add(id);
                 }
             }
-
-            this.cameraMat = this.calcCameraMat();
 
             this.scheduler.requestRender();
         });

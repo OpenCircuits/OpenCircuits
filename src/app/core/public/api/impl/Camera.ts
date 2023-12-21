@@ -2,8 +2,11 @@ import {V, Vector} from "Vector";
 import {Clamp}     from "math/MathUtils";
 import {Margin}    from "math/Rect";
 
-import {Camera}                     from "../Camera";
+import {extend} from "core/utils/Functions";
+
+import {Camera, CameraEvent}        from "../Camera";
 import {CircuitState, CircuitTypes} from "./CircuitState";
+import {ObservableImpl}             from "./Observable";
 
 
 export function CameraImpl<T extends CircuitTypes>({ internal, view }: CircuitState<T>) {
@@ -11,7 +14,15 @@ export function CameraImpl<T extends CircuitTypes>({ internal, view }: CircuitSt
         return internal.getCamera();
     }
 
-    return {
+    const observable = ObservableImpl<CameraEvent>();
+
+    internal.subscribe((ev) => {
+        if (ev.type !== "CameraOp")
+            return;
+        observable.emit({ type: "change", ...ev.diff });
+    });
+
+    return extend(observable, {
         set cx(x: number) {
             internal.setCameraProps({ x });
         },
@@ -56,5 +67,5 @@ export function CameraImpl<T extends CircuitTypes>({ internal, view }: CircuitSt
         zoomToFit(objs: T["Obj[]"], margin?: Margin, padRatio?: number): void {
             throw new Error("Unimplemented!");
         },
-    } satisfies Camera;
+    }) satisfies Camera;
 }

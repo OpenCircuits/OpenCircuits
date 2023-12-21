@@ -25,6 +25,9 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         return state.view.findNearestObj(pos, filter);
     }
 
+    const camera = CameraImpl(state);
+    let selections: Selections;
+
     return {
         beginTransaction(): void {
             state.internal.beginTransaction();
@@ -75,10 +78,12 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         },
 
         get camera(): Camera {
-            return CameraImpl(state);
+            return camera;
         },
         get selections(): Selections {
-            return SelectionsImpl(this, state);
+            if (!selections)
+                selections = SelectionsImpl(this, state);
+            return selections;
         },
 
         // Queries

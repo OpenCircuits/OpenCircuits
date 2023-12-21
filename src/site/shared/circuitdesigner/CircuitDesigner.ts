@@ -16,7 +16,7 @@ export interface CircuitDesigner<CircuitT extends Circuit = Circuit> {
     curPressedObj?: Obj;
 
     // A margin relative to the current viewport (Camera) used
-    // for calculating the current "usable" viewport specifically 
+    // for calculating the current "usable" viewport specifically
     // for fitting the camera. I.e. when the ItemNav is open, this margin
     // cuts off part of the canvas that is actually usable. (Issue #656)
     // TODO[master](leon) - See if maybe we can replace this with tracking if the ItemNav is open

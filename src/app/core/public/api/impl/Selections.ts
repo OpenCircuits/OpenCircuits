@@ -1,9 +1,12 @@
 import {V, Vector} from "Vector";
 
-import {Selections} from "../Selections";
-import {Circuit}    from "../Circuit";
+import {extend} from "core/utils/Functions";
+
+import {Selections, SelectionsEvent} from "../Selections";
+import {Circuit}                     from "../Circuit";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
+import {ObservableImpl}             from "./Observable";
 
 
 export function SelectionsImpl<T extends CircuitTypes>(
@@ -14,7 +17,16 @@ export function SelectionsImpl<T extends CircuitTypes>(
         return selectionsManager.get();
     }
 
-    return {
+    const observable = ObservableImpl<SelectionsEvent>();
+
+    selectionsManager.subscribe((_) => {
+        observable.emit({
+            type:   "numSelectionsChanged",
+            newAmt: selectionsManager.length(),
+        });
+    });
+
+    return extend(observable, {
         get length(): number {
             return selections().length;
         },
@@ -64,5 +76,5 @@ export function SelectionsImpl<T extends CircuitTypes>(
                 return [];
             throw new Error("Unimplemented!");
         },
-    } satisfies Selections;
+    }) satisfies Selections;
 }
