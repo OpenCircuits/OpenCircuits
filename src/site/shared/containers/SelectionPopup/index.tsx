@@ -2,17 +2,20 @@ import React, {useEffect, useRef, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
+import {V}     from "Vector";
 import {Clamp} from "math/MathUtils";
+
+import {Obj} from "core/public";
 
 import {useDocEvent}       from "shared/utils/hooks/useDocEvent";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
 
-// import {TitleModule} from "./modules/TitleModule";
+import {TitleModule}       from "./modules/TitleModule";
+import {useSelectionProps} from "./modules/useSelectionProps";
 
 import "./index.scss";
-import {V} from "Vector";
 
 
 type Props = {
@@ -91,7 +94,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
                 pointerEvents: (clickThrough || !!itemNavCurItem ? "none" : "auto"),
              }}>
             <InfoDisplay designer={designer} docsUrlConfig={docsUrlConfig} />
-            {/* <TitleModule designer={designer}  /> */}
+            <TitleModule designer={designer}  />
             <hr />
             {children}
         </div>
@@ -106,29 +109,29 @@ type InfoDisplayProps = {
 const InfoDisplay = ({ designer, docsUrlConfig }: InfoDisplayProps) => {
     const circuit = designer.circuit;
 
-    // const [id, setID] = useState("");
-    // useEffect(() => circuit.subscribe((ev) => {
-    //     if (ev.type !== "selected")
-    //         return;
-    //     const objs = circuit.selections.all;
+    const [props] = useSelectionProps(
+        circuit,
+        (o): o is Obj => true,
+        (o) => ({ kind: o.kind }),
+    );
 
-    //     // Make sure all components have same kind
-    //     const kinds = objs.map((o) => o.kind);
-    //     setID((kinds.length > 0 && kinds.every((kind) => kind === kinds[0])) ? kinds[0]! : "");
-    // }), [circuit]);
+    if (!props)
+        return null;
 
-    const objs = circuit.selections.all;
+    // Make sure all components have same kind, otherwise don't display
+    const allSame = props.kind.every((kind) => (kind === props.kind[0]));
+    if (!allSame)
+        return null;
 
-    // Make sure all components have same kind
-    const kinds = objs.map((o) => o.kind);
-    const kind = ((kinds.length > 0 && kinds.every((kind) => kind === kinds[0])) ? kinds[0]! : "");
-
-    const infoLink = (kind in docsUrlConfig ? docsUrlConfig[kind as keyof typeof docsUrlConfig] : undefined);
+    const kind = props.kind[0];
 
     return (
         <div className="info-button">
             <div>{kind}</div>
-            <a href={infoLink} target="_blank" rel="noopener noreferrer" title="Click for component information">
+            <a href={docsUrlConfig[kind]}
+               target="_blank"
+               rel="noopener noreferrer"
+               title="Click for component information">
                 ?
             </a>
         </div>

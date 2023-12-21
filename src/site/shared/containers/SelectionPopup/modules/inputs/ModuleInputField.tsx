@@ -1,8 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 
-import {Action} from "core/actions/Action";
-
-import {Prop} from "core/models/PropInfo";
+import {Circuit, Prop} from "core/public";
 
 
 const usePrevious = (value: any, initialValue: any) => {
@@ -37,17 +35,13 @@ const useEffectDebugger = (effectHook: any, dependencies: any, dependencyNames: 
     useEffect(effectHook, dependencies);
 };
 
-export type ModuleSubmitInfo = {
-    isFinal: boolean;
-    action: Action;
-}
-
 export type SharedModuleInputFieldProps<V extends Prop> = {
+    circuit: Circuit;
+
     props: V[];
 
-    getAction: (newVals: V[]) => Action;
-    onSubmit: (info: ModuleSubmitInfo) => void;
-    getModifierAction?: (newMod: V) => Action;
+    doChange: (newVals: V[]) => void;
+    onSubmit?: () => void;
     getCustomDisplayVal?: (val: V) => V;
 
     placeholder?: string;
@@ -55,13 +49,15 @@ export type SharedModuleInputFieldProps<V extends Prop> = {
 }
 
 export const DefaultConfig = <V extends Primitive>({
-    props, getAction, onSubmit, getCustomDisplayVal,
+    circuit, props, doChange, onSubmit, getCustomDisplayVal,
 }: Omit<SharedModuleInputFieldProps<V>, "alt" | "placeholder">): Omit<Props<[V]>, "parseVal"> => ({
+    circuit,
+
     props: props.map((v) => [v]),
 
     isValid: (_) => true,
 
-    getAction: (newVals) => getAction(newVals.map(([v]) => v)),
+    doChange: (newVals) => doChange(newVals.map(([v]) => v)),
 
     onSubmit,
     getCustomDisplayVal: (getCustomDisplayVal
@@ -72,6 +68,8 @@ export const DefaultConfig = <V extends Primitive>({
 
 type Primitive = string | number | boolean;
 type Props<V extends Primitive[]> = {
+    circuit: Circuit;
+
     // `props` represents ALL the selected element's properties
     //  a single `prop` can contain multiple `val`s which represent
     //  x/y in a Vector or elements in an array
@@ -84,15 +82,14 @@ type Props<V extends Primitive[]> = {
     applyModifier?:   (val: V[number], mod: V[number] | undefined, i: number) => V[number];
     reverseModifier?: (val: V[number], mod: V[number] | undefined, i: number) => V[number];
 
-    getAction: (newVals: V[]) => Action;
-
-    onSubmit: (info: ModuleSubmitInfo) => void;
+    doChange: (newVals: V[]) => void;
+    onSubmit?: () => void;
 
     getCustomDisplayVal?: (val: V, i: number) => V[number];
 }
 export const useBaseModule = <V extends Primitive[]>({
-    props, parseVal, isValid, fixVal, applyModifier, reverseModifier,
-    getAction, onSubmit, getCustomDisplayVal,
+    circuit, props, parseVal, isValid, fixVal, applyModifier, reverseModifier,
+    doChange, onSubmit, getCustomDisplayVal,
 }: Props<V>) => {
     const len = props.reduce((max, vals) => Math.max(max, vals.length), 0);
     const indices = new Array(len).fill(0).map((_, i) => i);
@@ -122,8 +119,7 @@ export const useBaseModule = <V extends Primitive[]>({
                 : ""))
     ) as Array<string | V[number]>;
 
-    // Use effect necessary since `onSubmit` is a callback that can call other states
-    //  also because we can't have unnecessary
+    // Handles actually performing the changes given the current `submission` object.
     // This is all necessary because onChange/onModify/onFocus/onBlur use the functional form of
     //  setState since they have the ability to be called synchronously (i.e. in a Button Module)
     //  and React.StrictMode calls these functions twice to help debug side-effects.
@@ -134,17 +130,20 @@ export const useBaseModule = <V extends Primitive[]>({
             return;
         const { isFinal, newProps } = state.submission;
 
-        const action = getAction(newProps);
-        onSubmit({ isFinal, action });
+        circuit.beginTransaction();
+        doChange(newProps);
+        if (isFinal) // Commit the transaction when finalized
+            circuit.commitTransaction();
+        onSubmit?.();
 
         if (isFinal) // Reset submission if final
             setState((prevState) => ({ ...prevState, submission: undefined }));
 
         return () => {
             if (!isFinal) // Only undo on change if NOT the final submission
-                action.undo();
+                circuit.cancelTransaction();
         }
-    }, [state.submission, getAction, onSubmit]);
+    }, [circuit, state.submission, doChange, onSubmit]);
 
     // onModify gets called when a "modification" is made to the current value of the properties
     //  i.e. arrow-buttons to step a value

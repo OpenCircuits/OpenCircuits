@@ -33,6 +33,7 @@ export interface Selections extends Observable<SelectionsEvent> {
     clear(): void;
 
     forEach(f: (obj: Obj, i: number, arr: Obj[]) => void): void;
+    filter(f: (obj: Obj, i: number, arr: Obj[]) => boolean): Obj[];
     every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean;
 
     duplicate(): Obj[];

@@ -4,19 +4,21 @@ import {Vector} from "Vector";
 import {Rect}   from "math/Rect";
 
 import {CleanupFunc} from "core/utils/types";
+import {extend}      from "core/utils/Functions";
 
 import {GUID}          from "core/internal";
 import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
-import {Camera}         from "../Camera";
-import {Circuit}        from "../Circuit";
-import {Selections}     from "../Selections";
-import {isObjComponent} from "../Utilities";
+import {Camera}                from "../Camera";
+import {Circuit, CircuitEvent} from "../Circuit";
+import {Selections}            from "../Selections";
+import {isObjComponent}        from "../Utilities";
 
 import {CameraImpl}                 from "./Camera";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
+import {ObservableImpl}             from "./Observable";
 
 
 export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
@@ -28,7 +30,15 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
     const camera = CameraImpl(state);
     let selections: Selections;
 
-    return {
+    const observable = ObservableImpl<CircuitEvent>();
+
+    state.internal.subscribe((ev) => {
+        if (ev.type !== "CircuitOp")
+            return;
+        observable.emit({ type: "change", diff: ev.diff });
+    });
+
+    const circuit = extend(observable, {
         beginTransaction(): void {
             state.internal.beginTransaction();
         },
@@ -82,7 +92,7 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         },
         get selections(): Selections {
             if (!selections)
-                selections = SelectionsImpl(this, state);
+                selections = SelectionsImpl(circuit, state);
             return selections;
         },
 
@@ -239,18 +249,13 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         addRenderCallback(cb: (data: {
             renderer: RenderHelper;
             options: RenderOptions;
-            circuit: CircuitT;
         }) => void): CleanupFunc {
             return state.view.subscribe(({ renderer }) => cb({
                 renderer,
                 options: state.view.options,
-                // TODO[model_refactor_api)[leon] - figure out if we can get around this cast?
-                circuit: this as CircuitT,
             }));
         },
+    }) satisfies Circuit;
 
-        subscribe(cb: (ev: any) => void): CleanupFunc {
-            throw new Error("Unimplemented!");
-        },
-    } satisfies Circuit;
+    return circuit;
 }
