@@ -35,7 +35,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
             state.internal.setPropFor(objID, "name", name);
         },
         get name(): string | undefined {
-            return state.internal.doc.getObjByID(objID).unwrap().props["name"];
+            return getObj().props["name"];
         },
 
         set isSelected(val: boolean) {
@@ -71,7 +71,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
             state.internal.commitTransaction();
         },
         getProp(key: string): Prop | undefined {
-            return state.internal.doc.getObjByID(objID).unwrap().props[key];
+            return getObj().props[key];
         },
         getProps(): Readonly<Record<string, Prop>> {
             return getObj().props;
