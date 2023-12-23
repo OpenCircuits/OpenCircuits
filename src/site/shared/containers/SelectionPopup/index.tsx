@@ -1,13 +1,12 @@
+import {Obj}                                from "core/public";
 import React, {useEffect, useRef, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/utils/Constants";
 
-import {V}     from "Vector";
+import {V} from "Vector";
+
 import {Clamp} from "math/MathUtils";
 
-import {Obj} from "core/public";
-
-import {useDocEvent}       from "shared/utils/hooks/useDocEvent";
 import {useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
@@ -30,11 +29,24 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     const [numSelections, setNumSelections] = useState(0);
     const [pos, setPos] = useState(circuit.selections.midpoint("screen"));
     const [isDragging, setIsDragging] = useState(false);
+    const [clickThrough, setClickThrough] = useState(false);
 
     useEffect(() => circuit.selections.observe((ev) => {
         setNumSelections(ev.newAmt);
         setPos(circuit.selections.midpoint("screen"));
-    }), [circuit, setNumSelections]);
+
+        // When the selection changes, reset the clickThrough state and
+        // let user click through box so it doesn't block a double click
+        setClickThrough((prevState) => {
+            if (prevState) // If already have a timeout then just ignore
+                return prevState;
+            setTimeout(() =>
+                setClickThrough(false),
+                DOUBLE_CLICK_DURATION
+            );
+            return true;
+        });
+    }), [circuit, setNumSelections, setClickThrough]);
 
     useEffect(() => circuit.camera.observe(() =>
         setPos(circuit.selections.midpoint("screen"))
@@ -46,20 +58,6 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
         if (ev.type === "dragEnd")
             setIsDragging(false); // Show when stopped dragging
     }), [circuit, setIsDragging]);
-
-    const [clickThrough, setClickThrough] = useState(false);
-    useDocEvent("click", (_) => {
-        // Let user click through box so it doesn't block a double click
-        setClickThrough((prevState) => {
-            if (prevState) // If already have a timeout then just ignore
-                return prevState;
-            setTimeout(() =>
-                setClickThrough(false),
-                DOUBLE_CLICK_DURATION
-            );
-            return true;
-        });
-    }, [setClickThrough]);
 
     const popup = useRef<HTMLDivElement>(null);
 

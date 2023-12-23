@@ -2,8 +2,8 @@ import {Vector} from "Vector";
 
 import {Component}  from "./Component";
 import {Obj}        from "./Obj";
-import {Wire}       from "./Wire";
 import {Observable} from "./Observable";
+import {Wire}       from "./Wire";
 
 
 export type SelectionsEvent = {
@@ -34,6 +34,7 @@ export interface Selections extends Observable<SelectionsEvent> {
 
     forEach(f: (obj: Obj, i: number, arr: Obj[]) => void): void;
     filter(f: (obj: Obj, i: number, arr: Obj[]) => boolean): Obj[];
+    filter<O extends Obj>(f: (obj: Obj, i: number, arr: Obj[]) => obj is O): O[];
     every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean;
 
     duplicate(): Obj[];

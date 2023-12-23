@@ -46,9 +46,13 @@ export type GroupPropInfo = BasePropInfo & {
     info: PropInfo;
 }
 
-export type PropInfoEntry =
-    | NumberPropInfo | StringSelectPropInfo | ColorPropInfo
-    | StringPropInfo | GroupPropInfo;
+export type PropInfoEntryField =
+    | NumberPropInfo
+    | StringSelectPropInfo
+    | ColorPropInfo
+    | StringPropInfo
+
+export type PropInfoEntry = PropInfoEntryField | GroupPropInfo;
 
 export type PropInfo = PropInfoEntry[];
 
