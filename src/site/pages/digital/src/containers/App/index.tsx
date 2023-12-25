@@ -1,3 +1,5 @@
+import {CircuitMetadata} from "core/public";
+
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 // import {ContextMenu} from "shared/containers/ContextMenu";
@@ -5,15 +7,16 @@ import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 // import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
 // import {LoginPopup} from "shared/containers/LoginPopup";
 import {SelectionPopup} from "shared/containers/SelectionPopup";
-// import {SideNav} from "shared/containers/SideNav";
+import {SideNav}        from "shared/containers/SideNav";
 
 import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {useMainDigitalDesigner} from "site/digital/utils/hooks/useDigitalDesigner";
 
-import {DigitalHeader}          from "site/digital/containers/DigitalHeader";
-import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
-import {DigitalMainDesigner}    from "site/digital/containers/DigitalMainDesigner";
+import {DigitalHeader}       from "site/digital/containers/DigitalHeader";
+import {DigitalItemNav}      from "site/digital/containers/DigitalItemNav";
+import {DigitalMainDesigner} from "site/digital/containers/DigitalMainDesigner";
+
 // import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 // import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
 import {DigitalPropInfo} from "site/digital/containers/SelectionPopup/propinfo";
@@ -26,21 +29,20 @@ import {DigitalPropInfo} from "site/digital/containers/SelectionPopup/propinfo";
 // import {ReplaceComponentDropdownModule} from "site/digital/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
 // import {ViewICButtonModule}             from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
 
-import docsConfig from "site/digital/data/docsUrlConfig.json";
-// import exampleConfig from "site/digital/data/examples.json";
+import docsConfig    from "site/digital/data/docsUrlConfig.json";
+import exampleConfig from "site/digital/data/examples.json";
 
 import "./index.scss";
 
-// import {CircuitMetadata} from "core/public";
 
 
-// const exampleCircuits = exampleConfig.examples.map((example) => ({
-//     id:      example.file,
-//     name:    example.name,
-//     desc:    "Example Circuit",
-//     thumb:   example.thumbnail,
-//     version: "/",
-// } as CircuitMetadata));
+const exampleCircuits = exampleConfig.examples.map((example) => ({
+    id:      example.file,
+    name:    example.name,
+    desc:    "Example Circuit",
+    thumb:   example.thumbnail,
+    version: "/",
+} as CircuitMetadata));
 
 export const App = () => {
     const designer = useMainDigitalDesigner();
@@ -48,7 +50,7 @@ export const App = () => {
 
     return (
         <div className="App">
-            {/* <SideNav circuit={circuit} exampleCircuits={exampleCircuits} /> */}
+            <SideNav exampleCircuits={exampleCircuits} />
 
             <div className="App__container" style={{ height: h+"px" }}>
                 <DigitalHeader />

@@ -1,8 +1,11 @@
+import {CircuitMetadata} from "core/public";
+
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/utils/Constants";
 
 import {useAPIMethods} from "shared/utils/ApiMethods";
 import {Request}       from "shared/utils/Request";
 
+import {useMainDesigner}                      from "shared/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
 
 import {ToggleSideNav} from "shared/state/SideNav";
@@ -14,8 +17,6 @@ import {SignInOutButtons} from "shared/containers/Header/Right/SignInOutButtons"
 
 import "./index.scss";
 
-import {Circuit, CircuitMetadata} from "core/public";
-
 
 function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
     return Request({
@@ -26,10 +27,11 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
 }
 
 type Props = {
-    circuit: Circuit;
     exampleCircuits: CircuitMetadata[];
 }
-export const SideNav = ({ circuit, exampleCircuits }: Props) => {
+export const SideNav = ({ exampleCircuits }: Props) => {
+    const designer = useMainDesigner();
+
     const { auth, circuits, isOpen, loading, isSaved, loadingCircuits } = useSharedSelector(
         (state) => ({
             ...state.user,
@@ -40,13 +42,13 @@ export const SideNav = ({ circuit, exampleCircuits }: Props) => {
         })
     );
     const dispatch = useSharedDispatch();
-    const { LoadCircuit, LoadCircuitRemote, DeleteCircuitRemote } = useAPIMethods(circuit);
+    const { LoadCircuit, LoadCircuitRemote, DeleteCircuitRemote } = useAPIMethods(designer.circuit);
 
     const onReset = () => {
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
             return;
-        circuit.reset();
+        designer.circuit.reset();
         dispatch(ToggleSideNav());
     }
 
