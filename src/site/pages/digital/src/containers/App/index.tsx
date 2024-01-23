@@ -2,7 +2,7 @@ import {CircuitMetadata} from "core/public";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-// import {ContextMenu} from "shared/containers/ContextMenu";
+import {ContextMenu} from "shared/containers/ContextMenu";
 // import {HistoryBox}  from "shared/containers/HistoryBox";
 // import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
 // import {LoginPopup} from "shared/containers/LoginPopup";
@@ -72,7 +72,7 @@ export const App = () => {
                         <ViewICButtonModule circuit={circuit} /> */}
                     </SelectionPopup>
 
-                    {/* <ContextMenu circuit={circuit} /> */}
+                    <ContextMenu designer={designer} />
                 </main>
             </div>
 

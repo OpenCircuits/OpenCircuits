@@ -15,6 +15,7 @@ export const PasteHandler: ToolHandler = {
         if (data.length === 0) // Nothing in clipboard
             return ToolHandlerResponse.PASS;
 
+        // TODO[model_refactor](leon) - figure out pasting API
         circuit.deserialize(data);
 
         // This should be the only handler to execute

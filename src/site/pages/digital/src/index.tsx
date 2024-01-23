@@ -21,7 +21,7 @@ import {RotateTool}       from "shared/tools/RotateTool";
 import {WiringTool}       from "shared/tools/WiringTool";
 import {SplitWireTool}    from "shared/tools/SplitWireTool";
 
-import {CleanupHandler}     from "shared/tools/handlers/CleanUpHandler";
+import {CleanupHandler}     from "shared/tools/handlers/CleanupHandler";
 import {CopyHandler}        from "shared/tools/handlers/CopyHandler";
 import {DeleteHandler}      from "shared/tools/handlers/DeleteHandler";
 import {DeselectAllHandler} from "shared/tools/handlers/DeselectAllHandler";
