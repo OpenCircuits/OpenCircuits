@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/utils/Constants";
 
@@ -10,6 +10,12 @@ import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared
 
 import {CloseHeaderPopups} from "shared/state/Header";
 
+import {CircuitDesigner, CreateDesigner} from "shared/circuitdesigner";
+
+import {DefaultTool}                     from "shared/tools/DefaultTool";
+import {PanTool}                         from "shared/tools/PanTool";
+import {FitToScreen, FitToScreenHandler} from "shared/tools/handlers/FitToScreenHandler";
+
 import {ButtonToggle} from "shared/components/ButtonToggle";
 import {InputField}   from "shared/components/InputField";
 import {Popup}        from "shared/components/Popup";
@@ -17,25 +23,14 @@ import {SwitchToggle} from "shared/components/SwitchToggle";
 
 import "./index.scss";
 
-import {Circuit} from "core/public";
-
 
 const MIN_IMG_SIZE = 50;
 const MAX_IMG_SIZE = 10_000;
 
-export type ImageExporterPreviewProps = {
-    canvas: React.RefObject<HTMLCanvasElement>;
-    isActive: boolean;
-    width: number;
-    height: number;
-    useGrid: boolean;
-    style: React.CSSProperties;
-}
-
 type Props = {
-    circuit: Circuit;
+    designer: CircuitDesigner;
 }
-export const ImageExporterPopup = ({ circuit }: Props) => {
+export const ImageExporterPopup = ({ designer }: Props) => {
     const { curPopup, circuitName } = useSharedSelector(
         (state) => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
     );
@@ -89,17 +84,17 @@ export const ImageExporterPopup = ({ circuit }: Props) => {
             <div className="imageexporter__popup">
                 <div ref={wrapper}
                      className={`imageexporter__popup__canvas-wrapper ${state.useBg ? "" : "checkered"}`}>
-                    {preview({
-                        canvas,
-                        isActive,
-                        width:   Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE),
-                        height:  Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE),
-                        useGrid: state.useGrid,
-                        style:   {
-                            border:          "1px solid black",
-                            backgroundColor: state.useBg ? state.bgColor : "transparent",
-                        },
-                    })}
+                    {isActive && (
+                        <ImageExporterPreview
+                            designer={designer}
+                            canvas={canvas}
+                            width={Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE)}
+                            height={Clamp(state.height, MIN_IMG_SIZE, MAX_IMG_SIZE)}
+                            useGrid={state.useGrid}
+                            style={{
+                                border:          "1px solid black",
+                                backgroundColor: state.useBg ? state.bgColor : "transparent",
+                            }} />)}
                 </div>
                 <div className="imageexporter__popup__options">
                     <h2>Options</h2>
@@ -183,4 +178,51 @@ export const ImageExporterPopup = ({ circuit }: Props) => {
             </div>
         </Popup>
     );
+}
+
+
+export type ImageExporterPreviewProps = {
+    designer: CircuitDesigner;
+    canvas: React.RefObject<HTMLCanvasElement>;
+    width: number;
+    height: number;
+    useGrid: boolean;
+    style: React.CSSProperties;
+}
+export const ImageExporterPreview = ({ designer: mainDesigner, canvas, width, height,
+                                       style, ...renderingOptions }: ImageExporterPreviewProps) => {
+    const { useGrid } = renderingOptions;
+
+    // Happens on-opening since this component should be used conditionally when active
+    const designer: CircuitDesigner = useMemo(() => CreateDesigner(
+        mainDesigner.circuit.copy(),
+        {
+            defaultTool: new DefaultTool(FitToScreenHandler),
+            tools:       [PanTool],
+        }
+    ), [mainDesigner]);
+
+    useLayoutEffect(() => {
+        if (!canvas.current)
+            return;
+        return designer.attachCanvas(canvas.current);
+    }, [designer, canvas]);
+
+    // On resize (useLayoutEffect happens sychronously so
+    //  there's no pause/glitch when resizing the screen)
+    useLayoutEffect(() => designer.circuit.resize(width, height), [designer, width, height]);
+
+    // Keep render options in sync
+    useLayoutEffect(() => designer.circuit.setRenderOptions({ useGrid }), [designer, useGrid]);
+
+    return (<>
+        <img src="img/icons/fitscreen.svg"
+             className="image-exporter-preview__button"
+             alt="Fit to screen"
+             onClick={() => FitToScreen(designer.circuit, designer.margin)} />
+        <canvas ref={canvas}
+                width={`${width}px`}
+                height={`${height}px`}
+                style={style} />
+    </>);
 }

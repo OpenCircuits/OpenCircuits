@@ -6,13 +6,14 @@ import {Rect}   from "math/Rect";
 import {CleanupFunc} from "core/utils/types";
 import {extend}      from "core/utils/Functions";
 
-import {GUID}          from "core/internal";
-import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
+import {GUID}                            from "core/internal";
+import {RenderHelper}                    from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions as RenderOptionsI} from "core/internal/view/rendering/RenderOptions";
 
 import {Camera}                from "../Camera";
 import {Circuit, CircuitEvent} from "../Circuit";
 import {Selections}            from "../Selections";
+import {RenderOptions}         from "../RenderOptions";
 import {isObjComponent}        from "../Utilities";
 
 import {CameraImpl}                 from "./Camera";
@@ -245,10 +246,20 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             state.view.scheduler.requestRender();
         },
 
+        setRenderOptions(options: Partial<RenderOptions>): void {
+            state.view.options.showGrid = options.useGrid ?? state.view.options.showGrid;
+            state.view.scheduler.requestRender();
+        },
+        get renderOptions(): RenderOptions {
+            return {
+                useGrid: state.view.options.showGrid,
+            };
+        },
+
         // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
         addRenderCallback(cb: (data: {
             renderer: RenderHelper;
-            options: RenderOptions;
+            options: RenderOptionsI;
         }) => void): CleanupFunc {
             return state.view.subscribe(({ renderer }) => cb({
                 renderer,

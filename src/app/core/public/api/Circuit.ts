@@ -7,8 +7,8 @@ import {CleanupFunc} from "core/utils/types";
 
 import {FastCircuitDiff} from "core/internal/impl/FastCircuitDiff";
 
-import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
+import {RenderHelper}                    from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions as RenderOptionsI} from "core/internal/view/rendering/RenderOptions";
 
 import {Camera}        from "./Camera";
 import {Component}     from "./Component";
@@ -18,6 +18,7 @@ import {Port}          from "./Port";
 import {Wire}          from "./Wire";
 import {Selections}    from "./Selections";
 import {Observable}    from "./Observable";
+import {RenderOptions} from "./RenderOptions";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
@@ -86,9 +87,12 @@ export interface Circuit extends Observable<CircuitEvent> {
 
     forceRedraw(): void;
 
+    setRenderOptions(options: Partial<RenderOptions>): void;
+    readonly renderOptions: RenderOptions;
+
     // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
     addRenderCallback(cb: (data: {
         renderer: RenderHelper;
-        options: RenderOptions;
+        options: RenderOptionsI;
     }) => void): CleanupFunc;
 }

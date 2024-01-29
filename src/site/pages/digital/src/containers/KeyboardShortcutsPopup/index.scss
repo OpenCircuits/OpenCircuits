@@ -46,19 +46,6 @@
             white-space: nowrap;
 
             & > tr {
-                & > td:nth-child(2) {
-                    & > #key {
-                        margin-right: 3px;
-                        padding: 3px 5px;
-
-                        white-space: nowrap;
-
-                        color: black;
-                        border: 1px solid #bbb;
-                        border-radius: 3px;
-                    }
-                }
-
                 &:hover {
                     background-color: #f5f5f5;
                 }

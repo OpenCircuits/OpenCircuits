@@ -2,12 +2,12 @@ import {CircuitMetadata} from "core/public";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {ContextMenu} from "shared/containers/ContextMenu";
+import {ContextMenu}        from "shared/containers/ContextMenu";
 // import {HistoryBox}  from "shared/containers/HistoryBox";
-// import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
-// import {LoginPopup} from "shared/containers/LoginPopup";
-import {SelectionPopup} from "shared/containers/SelectionPopup";
-import {SideNav}        from "shared/containers/SideNav";
+import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
+import {LoginPopup}         from "shared/containers/LoginPopup";
+import {SelectionPopup}     from "shared/containers/SelectionPopup";
+import {SideNav}            from "shared/containers/SideNav";
 
 import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
@@ -17,8 +17,9 @@ import {DigitalHeader}       from "site/digital/containers/DigitalHeader";
 import {DigitalItemNav}      from "site/digital/containers/DigitalItemNav";
 import {DigitalMainDesigner} from "site/digital/containers/DigitalMainDesigner";
 
-// import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
-// import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
+import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+
 import {DigitalPropInfo} from "site/digital/containers/SelectionPopup/propinfo";
 
 // import {BusButtonModule}                from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
@@ -33,7 +34,6 @@ import docsConfig    from "site/digital/data/docsUrlConfig.json";
 import exampleConfig from "site/digital/data/examples.json";
 
 import "./index.scss";
-
 
 
 const exampleCircuits = exampleConfig.examples.map((example) => ({
@@ -79,13 +79,13 @@ export const App = () => {
             {/* <ICDesigner />
             <ICViewer /> */}
 
-            {/* <QuickStartPopup />
-            <KeyboardShortcutsPopup /> */}
-            {/* <ImageExporterPopup circuit={circuit} /> */}
+            <QuickStartPopup />
+            <KeyboardShortcutsPopup />
+            <ImageExporterPopup designer={designer} />
 
             {/* <ExprToCircuitPopup /> */}
 
-            {/* <LoginPopup /> */}
+            <LoginPopup />
         </div>
     );
 };
