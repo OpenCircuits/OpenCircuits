@@ -2,7 +2,8 @@ import baseConfig, {DevProjects, DevWebServers, ProdProjects, ProdWebServers} fr
 
 import type {PlaywrightTestConfig} from "@playwright/test";
 
-let overrides: PlaywrightTestConfig = {
+
+const overrides: PlaywrightTestConfig = {
     testDir: ".././",
 
     webServer: [DevWebServers.landing, ProdWebServers.digital],
