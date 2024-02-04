@@ -66,25 +66,3 @@ Currently only digital has a "prod" version, so landing still uses the dev versi
 :::
 
 ---
-
-## Creating/Updating Snapshots
-
-Due to our usage of canvas, the best way to test is by comparing screenshots of the site at certain states. The difficulty with this is different operating systems have different rendering quirks, primarly with text. As a result, Playwright supports saving separate images for different operating systems.
-
-Sometimes the intended snapshot should be updated, or a new test adds a new snapshot. This can be tricky as then the snapshots need to be updated on Windows, Linux, and Mac. It is not realistic to expect contributors to have access to all three operating systems, so instead we can delegate this work to a GitHub action. The GitHub action is launched by leaving a comment on a pull request of the following format:
-```
-/update-snapshots {OSes} {Tests}
-```
-`{OSes}` is a comma separated list of operating systems (windows-latest, ubuntu-latest, and macos-latest) to generate the snapshots on.
-`{Tests}` is a space separated list of tests to run.
-
-For example,
-```
-/update-snapshots windows-latest,ubuntu-latest digital/desktop/shared/basicCircuit digital/mobile/shared/basicCircuit
-```
-will generate the Windows and Linux snapshots for the tests `./playwright/digital/desktop/shared/basicCircuit.spec.ts` and
-`./playwright/digital/mobile/shared/basicCircuit.spec.ts`.
-
-After that example action executes, you will see the commits `[CI] Update Snapshots windows-latest` and `[CI] Update Snapshots ubuntu-latest` added to your pull request (assuming there were snapshots to create/update).
-
-When the action itself is executed, it uses the version found on the master branch. That means if you make changes to `playwrightSnapshots.yml`, you will have to test/debug it on a fork. This is only needed if you are modifying `playwrightSnapshots.yml`, which should not need to be done very often if at all.
