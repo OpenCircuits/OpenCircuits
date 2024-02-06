@@ -5,6 +5,8 @@ import {Rect} from "math/Rect";
 import {GUID}        from "core/schema/GUID";
 import {CleanupFunc} from "core/utils/types";
 
+import {FastCircuitDiff} from "core/internal/impl/FastCircuitDiff";
+
 import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
@@ -15,16 +17,18 @@ import {Obj}           from "./Obj";
 import {Port}          from "./Port";
 import {Wire}          from "./Wire";
 import {Selections}    from "./Selections";
-import {Observable} from "./Observable";
+import {Observable}    from "./Observable";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
 
-// export type CircuitEvent = {
-//     type: "any";
-// }
+// TODO[model_refactor](leon) - make this more user friendly
+export type CircuitEvent = {
+    type: "change";
+    diff: FastCircuitDiff;
+}
 
-export interface Circuit {// extends Observable<CircuitEvent> {
+export interface Circuit extends Observable<CircuitEvent> {
     beginTransaction(): void;
     commitTransaction(): void;
     cancelTransaction(): void;
@@ -87,8 +91,5 @@ export interface Circuit {// extends Observable<CircuitEvent> {
     addRenderCallback(cb: (data: {
         renderer: RenderHelper;
         options: RenderOptions;
-        circuit: Circuit;
     }) => void): CleanupFunc;
-
-    subscribe(cb: (ev: any) => void): CleanupFunc;
 }

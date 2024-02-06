@@ -1,5 +1,6 @@
-import {Circuit, Obj, Prop}                      from "core/public";
 import React, {useCallback, useEffect, useState} from "react";
+
+import {Circuit, Obj, Prop} from "core/public";
 
 
 // type ToArray<T> = T extends T ? T[] : never;
@@ -54,7 +55,7 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     //  or their properties change
     const updateState = useCallback(() => {
         // Get selections with ignored types filtered out
-        const selections = circuit.selectedObjs().filter((s) => !ignore(s));
+        const selections = circuit.selections.filter((s) => !ignore(s));
         const filteredSelections = selections.filter(validTypes);
 
         // Ensure we only have the acceptable types selected
@@ -89,14 +90,14 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     }, deps);
 
     useEffect(() => {
-        info.history.addCallback(updateState);
-        info.selections.subscribe(updateState);
+        const f1 = circuit.selections.observe(updateState);
+        const f2 = circuit.observe(updateState);
 
         return () => {
-            info.history.removeCallback(updateState);
-            info.selections.unsubscribe(updateState);
+            f2();
+            f1();
         }
     }, [updateState]);
 
-    return [props, circuit.selectedObjs().filter(validTypes), updateState] as const;
+    return [props, circuit.selections.filter(validTypes), updateState] as const;
 }

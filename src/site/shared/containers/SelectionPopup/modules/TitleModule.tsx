@@ -1,39 +1,37 @@
-import {Circuit} from "core/public";
+import {Obj} from "core/public";
+
+import {CircuitDesigner} from "shared/circuitdesigner";
 
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
 import {useSelectionProps}    from "./useSelectionProps";
 
 
 type Props = {
-    circuit: Circuit;
+    designer: CircuitDesigner;
 }
-export const TitleModule = ({ circuit }: Props) => {
+export const TitleModule = ({ designer }: Props) => {
+    const circuit = designer.circuit;
+
     const [props] = useSelectionProps(
         circuit,
-        (o): o is AnyObj => true,
+        (o): o is Obj => true,
         (o) => ({ name: (o.name ?? o.kind) })
     );
 
     if (!props)
         return null;
 
-    const s = circuit.selectedObjs();
+    const s = circuit.selections;
 
     return (<div>
         <label>
             <TextModuleInputField
+                circuit={circuit}
                 props={props.name}
                 placeholder="<Multiple>"
                 alt="Name of object(s)"
-                getAction={(newNames) => new GroupAction(
-                    s.map((id, i) => SetProperty(circuit, id, "name", newNames[i])),
-                    "Title Module"
-                )}
-                onSubmit={({ isFinal, action }) => {å
-                    renderer.render();
-                    if (isFinal)
-                        history.add(action);
-                }} />
+                doChange={(newNames) =>
+                    s.forEach((o, i) => (o.name = newNames[i]))} />
         </label>
     </div>)
 }
