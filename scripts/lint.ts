@@ -17,7 +17,7 @@ import yargs       from "yargs";
         extensions:              [".ts", ".tsx"],
     });
 
-    const files = (() => {
+    const files = await (async () => {
         if (all)
             return ["scripts/", "src/"];
         const git = simpleGit();
@@ -28,7 +28,7 @@ import yargs       from "yargs";
         return [
             ...new Set([
                 ...diff.split("\n"),
-                ...status.files
+                ...status.files.map(f => f.path),
             ].filter((file) => (file.endsWith(".ts") || file.endsWith(".tsx")))
         )];
     })();
