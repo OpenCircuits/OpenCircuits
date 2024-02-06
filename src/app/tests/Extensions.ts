@@ -1,4 +1,5 @@
-import crypto from "node:crypto";
+import {Result} from "core/utils/Result";
+import crypto   from "node:crypto";
 
 
 // Define crypto for Jest for uuid generation
@@ -11,6 +12,8 @@ declare global {
         interface Matchers<R> {
             toApproximatelyEqual(expected: unknown, epsilon?: number): CustomMatcherResult;
             toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
+            toBeOk(): CustomMatcherResult;
+            toIncludeError(message: string): CustomMatcherResult;
             // toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
     }
@@ -81,40 +84,40 @@ expect.extend({
         };
     },
 
-    // toBeConnectedTo(source: unknown, target: DigitalComponent, options = { depth: Infinity }) {
-    //     if (!(source instanceof DigitalComponent))
-    //         throw new Error("toBeConnectedTo can only be used with DigitalComponents!");
+    toBeOk(received: Result) {
+        const result = received as Result;
+        if (result.ok) {
+            return {
+                message: () => "expected Result to be Ok",
+                pass:    true,
+            }
+        }
+        return {
+            message: () => `expected Result to not have errors:\n - ${
+                result.error.errors
+                .map((err) => err.message)
+                .join("\n - ")
+            }`,
+            pass: false,
+        }
+    },
 
-    //     const { depth } = options;
-
-    //     const visited = new Set<DigitalComponent>();
-    //     function bfs(layer: DigitalComponent[], depth: number): boolean {
-    //         if (depth === 0 || layer.length === 0)
-    //             return false;
-
-    //         const queue = [] as DigitalComponent[];
-    //         for (const cur of layer) {
-    //             visited.add(cur);
-
-    //             const connections = [
-    //                 ...cur.getOutputs().map((w) => w.getOutputComponent()),
-    //                 ...cur.getInputs().map((w) => w.getInputComponent()),
-    //             ].filter((c) => !visited.has(c));
-
-    //             if (connections.includes(target))
-    //                 return true;
-
-    //             queue.push(...connections);
-    //         }
-    //         return bfs(queue, depth-1);
-    //     }
-
-    //     const pass = bfs([source], depth);
-
-    //     return {
-    //         message: () => `expected ${source.getName()} to ${pass ? "" : "not "}be connected to ${target.getName()}` +
-    //                        ` within ${options.depth} connections`,
-    //         pass,
-    //     };
-    // },
+    toIncludeError(received: Result, message: string) {
+        const result = received as Result;
+        if (result.ok) {
+            return {
+                message: () => "expected Result to be not be Ok",
+                pass:    false,
+            }
+        }
+        return {
+            message: () => `expected Result to contain an error including the text "${message}", ` +
+                `instead includes:\n - ${
+                    result.error.errors
+                    .map((err) => err.message)
+                    .join("\n - ")
+                }`,
+            pass: result.error.errors.some((error) => error.message.includes(message)),
+        }
+    },
 });
