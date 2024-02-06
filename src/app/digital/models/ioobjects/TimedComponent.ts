@@ -89,9 +89,7 @@ export abstract class TimedComponent extends DigitalComponent {
     }
 
     public override getPropInfo(key: string) {
-        if (!(key in Info))
-            return super.getPropInfo(key);
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     // Restart ticking

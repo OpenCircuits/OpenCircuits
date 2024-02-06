@@ -24,7 +24,7 @@ export class Inductor extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(2),
-            V(40, 240*40/104), new TopBottomPositioner(),
+            V(0.8, 240*0.8/104), new TopBottomPositioner(),
             InitialProps,
         );
     }
@@ -38,7 +38,7 @@ export class Inductor extends AnalogComponent {
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     /**

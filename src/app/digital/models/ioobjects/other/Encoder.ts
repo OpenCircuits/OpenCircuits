@@ -1,7 +1,5 @@
 import {serializable} from "serialeazy";
 
-import {DEFAULT_SIZE} from "core/utils/Constants";
-
 import {V} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
@@ -20,9 +18,9 @@ export class Encoder extends DigitalComponent {
     public constructor() {
         super(new ClampedValue(4,2,Math.pow(2,8)),
               new ClampedValue(2,1,8),
-              V(DEFAULT_SIZE, DEFAULT_SIZE*2),
-              new ConstantSpacePositioner<InputPort>("left", DEFAULT_SIZE),
-              new ConstantSpacePositioner<OutputPort>("right", DEFAULT_SIZE));
+              V(1, 2),
+              new ConstantSpacePositioner<InputPort>("left", 1),
+              new ConstantSpacePositioner<OutputPort>("right", 1));
         this.updatePortNames();
     }
 
@@ -39,7 +37,7 @@ export class Encoder extends DigitalComponent {
 
     public override setOutputPortCount(val: number): void {
         // Update size
-        const newSize = V((1 + (val - 1)/20), Math.pow(2, val)/2).scale(DEFAULT_SIZE);
+        const newSize = V((1 + (val - 1)/20), Math.pow(2, val)/2);
         this.setSize(newSize);
 
         super.setOutputPortCount(val);

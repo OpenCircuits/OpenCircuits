@@ -24,7 +24,7 @@ export class Capacitor extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(2),
-            V(20, 60), new LeftRightPositioner(),
+            V(0.4, 0.6), new LeftRightPositioner(),
             InitialProps,
         );
     }
@@ -38,7 +38,7 @@ export class Capacitor extends AnalogComponent {
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     /**

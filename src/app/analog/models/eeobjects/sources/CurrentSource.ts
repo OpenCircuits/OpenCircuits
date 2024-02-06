@@ -24,7 +24,7 @@ export class CurrentSource extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(2),
-            V(50, 50), new TopBottomPositioner(),
+            V(1, 1), new TopBottomPositioner(),
             InitialProps,
         );
     }
@@ -38,7 +38,7 @@ export class CurrentSource extends AnalogComponent {
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     /**

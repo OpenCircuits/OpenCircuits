@@ -38,8 +38,8 @@ export class SidePositioner extends Positioner<AnalogPort> {
             : this.side === "right"
             ? V(1, 0)
             : this.side === "top"
-            ? V(0, -1)
-            : V(0, 1)
+            ? V(0, 1)
+            : V(0, -1)
         );
 
         p1.setOriginPos(dir.scale(size/2));

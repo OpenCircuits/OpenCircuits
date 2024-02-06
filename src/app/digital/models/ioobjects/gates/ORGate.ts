@@ -1,7 +1,5 @@
 import {serializable} from "serialeazy";
 
-import {GATE_OR_CULLBOX_OFFSET} from "core/utils/Constants";
-
 import {V, Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
@@ -10,6 +8,8 @@ import {QuadraticCurvePositioner} from "digital/models/ports/positioners/Quadrat
 
 import {Gate} from "./Gate";
 
+
+ const GATE_OR_CULLBOX_OFFSET = 50;
 
 export function GetQuadraticOffset(numInputs: number): number {
     // The wire extensions stay the same for inputs 4-6 so the offset is constant
@@ -34,7 +34,7 @@ export class ORGate extends Gate {
      * @param not Negates this gate.
      */
     public constructor(not = false) {
-        super(not, new ClampedValue(2,2,8), V(60, 50), new QuadraticCurvePositioner());
+        super(not, new ClampedValue(2,2,8), V(1.2, 1), new QuadraticCurvePositioner());
     }
 
     /**
@@ -59,7 +59,7 @@ export class ORGate extends Gate {
      * @returns The string "NOR Gate" or "OR Gate".
      */
     public getDisplayName(): string {
-        return this.not ? "NOR Gate" : "OR Gate";
+        return this.getProp("not") ? "NOR Gate" : "OR Gate";
     }
 
     /**

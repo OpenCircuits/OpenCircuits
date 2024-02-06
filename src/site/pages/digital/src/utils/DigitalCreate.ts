@@ -68,7 +68,7 @@ export function DigitalCreateN(pos: Vector, itemId: string, designer: DigitalCir
         comps.push(comp);
 
         // Place the components vertically
-        pos = pos.add(0, comp.getCullBox().getSize().y);
+        pos = pos.add(0, -comp.getCullBox().getSize().y);
     }
 
     return comps;
@@ -119,7 +119,7 @@ export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuit
 
         inputs.forEach((s, i) => {
             s.setPos(V(-comp.getCullBox().getSize().x/2 - AUTO_PLACE_SWITCH_SPACE,
-                       (i - (inputs.length-1)/2)*s.getCullBox().getSize().y).add(comp.getPos()));
+                       ((inputs.length-1)/2 - i)*s.getCullBox().getSize().y).add(comp.getPos()));
         });
         outputs.forEach((l, i) => {
             l.setPos(V(comp.getCullBox().getSize().x/2 + AUTO_PLACE_LED_SPACE*(i+1),
@@ -141,7 +141,7 @@ export function SmartPlace(pos: Vector, itemId: string, designer: DigitalCircuit
         ], "Smart Place"));
 
         const totalCullBox = CircuitBoundingBox([comp, ...inputs, ...outputs]);
-        pos = pos.add(V(0, totalCullBox.getHeight()));
+        pos = pos.add(V(0, -totalCullBox.getHeight()));
     }
 
     return action;

@@ -19,7 +19,7 @@ export class BUFGate extends Gate {
      * @param not Determines whether the gate is a Buffer gate or a Not gate.
      */
     public constructor(not = false) {
-        super(not, new ClampedValue(1,1,1), V(50, 50));
+        super(not, new ClampedValue(1,1,1), V(1, 1));
     }
     /**
      * Activate function, passes the input port state to
@@ -35,7 +35,7 @@ export class BUFGate extends Gate {
      * @returns The display name ("NOT Gate" or "Buffer Gate").
      */
     public getDisplayName(): string {
-        return this.not ? "NOT Gate" : "Buffer Gate";
+        return this.getProp("not") ? "NOT Gate" : "Buffer Gate";
     }
 
     /**

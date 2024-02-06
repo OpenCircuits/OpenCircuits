@@ -1,4 +1,4 @@
-import {serializable, serialize} from "serialeazy";
+import {serializable} from "serialeazy";
 
 import {V, Vector} from "Vector";
 
@@ -13,11 +13,6 @@ import {TimedComponent} from "../TimedComponent";
  */
 @serializable("Clock")
 export class Clock extends TimedComponent {
-    /**
-     * This is a private boolean properties inside clock class, which determines whether the clock is on or off.
-     */
-    @serialize
-    private isOn: boolean;
 
     /**
      * Constructs a clock object intialed with 1000ms frequency, input of 1 and 2D display of size 60*42.
@@ -25,7 +20,11 @@ export class Clock extends TimedComponent {
      * Moreover, the constructor will call reset() function once.
      */
     public constructor() {
-        super(1000, new ClampedValue(0), new ClampedValue(1), V(60, 42));
+        super(
+            1000, new ClampedValue(0), new ClampedValue(1),
+            V(1.2, 0.84), undefined, undefined,
+            { "isOn": false }
+        );
         this.reset();
     }
 
@@ -34,8 +33,8 @@ export class Clock extends TimedComponent {
      * and create inputs changing to 1 or 0 constanly.
      */
     protected onTick(): void {
-        this.isOn = !this.isOn;
-        super.activate(this.isOn);
+        this.setProp("isOn", !(this.props["isOn"]));
+        super.activate(this.getProp("isOn") as boolean);
     }
 
     /**
@@ -44,7 +43,7 @@ export class Clock extends TimedComponent {
      */
     // Reset to off and start ticking
     public override reset(): void {
-        this.isOn = false;
+        this.setProp("isOn", false);
         super.reset();
     }
 
@@ -72,6 +71,6 @@ export class Clock extends TimedComponent {
      * @returns The name of the clock image file.
      */
     public override getImageName(): string {
-        return (this.isOn ? "clockOn.svg" : "clock.svg");
+        return (this.getProp("isOn") ? "clockOn.svg" : "clock.svg");
     }
 }

@@ -112,24 +112,18 @@ export class Transform {
     }
 
     /**
-     * Rotates this transform 'a' radians about the axis 'c'.
+     * Calculates the new position and angle
+     *  after transforming this by 'a' radians about the axis 'c'.
      *
      * @param a The angle to rotate.
      * @param c The axis to rotate about.
+     * @returns   The new position and angle to set to perform this rotation.
      */
-    public rotateAbout(a: number, c: Vector): void {
-        this.setAngle(this.getAngle() + a);
-        this.setPos(this.pos.sub(c));
-        const cos = Math.cos(a), sin = Math.sin(a);
-        const xx = this.pos.x * cos - this.pos.y * sin;
-        const yy = this.pos.y * cos + this.pos.x * sin;
-        this.setPos(V(xx, yy).add(c));
-        this.dirty = true;
-        this.dirtyCorners = true;
-    }
-    public setRotationAbout(a: number, c: Vector): void {
-        this.rotateAbout(-this.getAngle(), c);
-        this.rotateAbout(a, c);
+    public calcRotationAbout(a: number, c: Vector) {
+        return [
+            this.pos.sub(c).rotate(a).add(c), // new position
+            this.getAngle() + a,              // new rotation
+        ] as const;
     }
 
     public setParent(t: Transform): void {

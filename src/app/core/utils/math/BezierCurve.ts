@@ -1,4 +1,4 @@
-import {serializable} from "serialeazy";
+import {serializable, serialize} from "serialeazy";
 
 import {Clamp}     from "./MathUtils";
 import {Transform} from "./Transform";
@@ -21,21 +21,25 @@ export class BezierCurve {
     /**
      * The x, y coordinates of the start point.
      */
+    @serialize
     private p1: Vector;
 
     /**
      * The x, y coordinates of the end point.
      */
+    @serialize
     private p2: Vector;
 
     /**
      * The x, y coordinates of the first control point.
      */
+    @serialize
     private c1: Vector;
 
     /**
      * The x, y coordinates of the second control point.
      */
+    @serialize
     private c2: Vector;
 
     /**

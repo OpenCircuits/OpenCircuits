@@ -1,6 +1,4 @@
-import {ARROW_TRANSLATE_DISTANCE_NORMAL,
-        ARROW_TRANSLATE_DISTANCE_SMALL,
-        LEFT_MOUSE_BUTTON} from "core/utils/Constants";
+import {LEFT_MOUSE_BUTTON} from "core/utils/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -20,6 +18,8 @@ import {Tool} from "core/tools/Tool";
 import {Component} from "core/models";
 
 
+const ARROW_TRANSLATE_DISTANCE_NORMAL = 50;
+const ARROW_TRANSLATE_DISTANCE_SMALL = 11;
 
 export const TranslateTool: Tool = (() => {
     let initalPositions = [] as Vector[];

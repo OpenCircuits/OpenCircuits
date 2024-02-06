@@ -30,13 +30,13 @@ export class Label extends DigitalComponent {
         super(
             new ClampedValue(0),
             new ClampedValue(0),
-            V(60, 30), undefined, undefined,
+            V(1.2, 0.6), undefined, undefined,
             InitialProps,
         );
     }
 
     public override getPropInfo(key: string) {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public override getDisplayName(): string {

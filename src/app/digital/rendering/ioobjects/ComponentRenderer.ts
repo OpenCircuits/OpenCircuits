@@ -14,13 +14,11 @@ import {Renderer} from "core/rendering/Renderer";
 import {Style}    from "core/rendering/Style";
 
 import {IOLabelRenderer} from "core/rendering/renderers/IOLabelRenderer";
+import {IOPortRenderer}  from "core/rendering/renderers/IOPortRenderer";
 
 import {Rectangle} from "core/rendering/shapes/Rectangle";
 
 import {Component} from "core/models/Component";
-
-
-
 
 import {PressableComponent} from "digital/models/ioobjects/PressableComponent";
 
@@ -44,10 +42,8 @@ import {LED}            from "digital/models/ioobjects/outputs/LED";
 import {Oscilloscope}   from "digital/models/ioobjects/outputs/Oscilloscope";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
-
 import {GateRenderer}           from "./gates/GateRenderer";
 import {ConstantNumberRenderer} from "./inputs/ConstantNumberRenderer";
-import {IOPortRenderer}         from "./IOPortRenderer";
 import {ICRenderer}             from "./other/ICRenderer";
 import {MultiplexerRenderer}    from "./other/MultiplexerRenderer";
 import {LEDRenderer}            from "./outputs/LEDRenderer";
@@ -116,7 +112,7 @@ export const ComponentRenderer = (() => {
             //  TODO: figure out how to get around this
             if (object instanceof Label) {
                 // Calculate size
-                const width = renderer.getTextWidth(object.getName()) + 20;
+                const width = renderer.getTextWidth(object.getName()) + 0.4;
                 object.setSize(V(width, size.y));
 
                 drawBox(renderer, object.getTransform(), selected, object.getProp("color") as string);

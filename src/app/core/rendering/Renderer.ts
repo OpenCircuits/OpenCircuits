@@ -10,7 +10,6 @@ import {Style} from "./Style";
 import {FONT}  from "./Styles";
 
 
-
 export class Renderer {
     private readonly canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
@@ -35,17 +34,16 @@ export class Renderer {
         this.context.restore();
     }
     public transform(camera: Camera, transform: Transform): void {
-        const m = transform.getMatrix().copy();
-        m.setTranslation(camera.getScreenPos(m.getTranslation()));
-        m.scale(1/camera.getZoom());
-        this.context.setTransform(m.get(0), m.get(1), m.get(2),
-                                  m.get(3), m.get(4), m.get(5));
+        const m = camera.getInverseMatrix().mult(transform.getMatrix());
+        this.context.setTransform(
+            m.get(0), m.get(1),
+            m.get(2), m.get(3),
+            // Shift over to the center
+            m.get(4) + camera.getCenter().x, m.get(5) + camera.getCenter().y
+        );
     }
     public translate(v: Vector): void {
         this.context.translate(v.x, v.y);
-    }
-    public scale(s: Vector): void {
-        this.context.scale(s.x, s.y);
     }
     public rotate(a: number): void {
         this.context.rotate(a);
@@ -79,7 +77,8 @@ export class Renderer {
     public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
         const col = (tint ? parseColor(tint) : undefined);
 
-        img.draw(this.context, pos.x, pos.y, size.x, size.y, col);
+        // Flip y-axis scale
+        img.draw(this.context, pos.x, pos.y, size.x, -size.y, col);
     }
 
     public text(txt: string, pos: Vector, textAlign: CanvasTextAlign,
@@ -91,6 +90,8 @@ export class Renderer {
         this.context.textBaseline = textBaseline;
 
         this.translate(pos);
+        // Flip y-axis scale
+        this.context.scale(1, -1);
         if (angle !== 0)
             this.rotate(angle);
         this.context.fillText(txt, 0, 0);
@@ -135,7 +136,7 @@ export class Renderer {
         if (baseline === "middle")
             this.pathLine(pos.sub(0, len/2), pos.add(0, len/2));
         else
-            this.pathLine(pos, pos.sub(0, len));
+            this.pathLine(pos, pos.add(0, len));
     }
     public vLines(xs: number[], y0: number, len: number, baseline: "bottom"|"middle") {
         xs.forEach((x) => this.vLine(V(x, y0), len, baseline));

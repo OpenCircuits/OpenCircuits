@@ -1,5 +1,6 @@
 import {V} from "Vector";
 
+import "test/helpers/Extensions";
 import {GetHelpers} from "test/helpers/Helpers";
 import {Setup}      from "test/helpers/Setup";
 
@@ -31,7 +32,7 @@ describe("FitToScreenHandler", () => {
             .releaseKey("f");
 
         expect(selections.amount()).toBe(1);
-        expect(camera.getPos()).toEqual(V(21.5, 0));
+        expect(camera.getPos()).toApproximatelyEqual(V(0.43, 0));
 
     });
 
@@ -66,7 +67,6 @@ describe("FitToScreenHandler", () => {
             .releaseKey("f");
 
         expect(selections.amount()).toBe(1);
-        expect(camera.getPos()).toEqual(V(0, 40.5));
-
+        expect(camera.getPos()).toApproximatelyEqual(V(0, -0.81));
     });
 });

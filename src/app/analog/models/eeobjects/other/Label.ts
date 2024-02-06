@@ -31,13 +31,13 @@ export class Label extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(0),
-            V(60, 30), undefined,
+            V(1.2, 0.6), undefined,
             InitialProps,
         );
     }
 
     public override getPropInfo(key: string): PropInfo {
-        return Info[key];
+        return Info[key] ?? super.getPropInfo(key);
     }
 
     public override getDisplayName(): string {

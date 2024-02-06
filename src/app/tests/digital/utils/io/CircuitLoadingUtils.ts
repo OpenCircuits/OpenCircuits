@@ -6,14 +6,20 @@ import "test/helpers/Extensions";
 import {Component} from "core/models";
 
 import {Circuit, ContentsData} from "core/models/Circuit";
-import {CircuitDesigner}       from "core/models/CircuitDesigner";
+import {CircuitMetadataDef}    from "core/models/CircuitMetadata";
 
 import "digital/models/ioobjects";
 
 
-export function LoadCircuit(circuit: Circuit): CircuitDesigner {
-    const data = Deserialize<ContentsData>(circuit.contents);
-    return data.designer;
+type LoadedCircuit = {
+    metadata: CircuitMetadataDef;
+    contents: ContentsData;
+}
+export function LoadCircuit(circuit: Circuit): LoadedCircuit {
+    return {
+        metadata: circuit.metadata,
+        contents: Deserialize<ContentsData>(circuit.contents),
+    };
 }
 
 declare global {
@@ -21,16 +27,22 @@ declare global {
     namespace jest {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         interface Matchers<R> {
-            toMatchCircuit(expected: CircuitDesigner): CustomMatcherResult;
+            toMatchCircuit(expected: LoadedCircuit): CustomMatcherResult;
         }
     }
 }
 
+function isLoadedCircuit(c: unknown): c is LoadedCircuit {
+    if (!c || typeof c !== "object")
+        return false;
+    return ("metadata" in c) && ("contents" in c);
+}
+
 expect.extend({
-    toMatchCircuit(received: unknown, expected: CircuitDesigner) {
-        if (!(received instanceof CircuitDesigner)) {
+    toMatchCircuit(received: unknown, expected: LoadedCircuit) {
+        if (!isLoadedCircuit(received)) {
             return {
-                message: () => "expected type of CircuitDesigner",
+                message: () => "expected type of LoadedCircuit",
                 pass:    false,
             };
         }
@@ -38,21 +50,48 @@ expect.extend({
         function expectSameComponent(c1: Component, c2: Component): void {
             expect(c1.getName()).toEqual(c2.getName());
             expect(c1.getPos()).toApproximatelyEqual(c2.getPos());
+            // TODO: enable this
+            // expect(c1.getSize()).toApproximatelyEqual(c2.getSize());
             expect(c1.getAngle()).toApproximatelyEqual(c2.getAngle());
             expect(c1.getConnections()).toHaveLength(c2.getConnections().length);
+
+            // Expect all props to be the same
+            Object.entries(c1.getProps()).forEach(([key, prop]) => {
+                if (key === "size") // TODO: enable this
+                    return;
+
+                expect(c2.hasProp(key)).toBeTruthy();
+                if (typeof prop === "string" || typeof prop === "boolean")
+                    expect(c2.getProp(key)).toEqual(prop);
+                else
+                    expect(c2.getProp(key)).toApproximatelyEqual(prop);
+            });
         }
 
+        // Make sure metadata is the same
+        expect(received.metadata.name).toEqual(expected.metadata.name);
+        expect(received.metadata.desc).toEqual(expected.metadata.desc);
+
+        // Make sure camera is the same
+        const cam1 = received.contents.camera;
+        const cam2 = expected.contents.camera;
+        expect(cam1.getPos()).toApproximatelyEqual(cam2.getPos());
+        expect(cam1.getZoom()).toApproximatelyEqual(cam2.getZoom());
+
+        const circuit1 = received.contents.designer;
+        const circuit2 = expected.contents.designer;
+
         // Expect same objects
-        expect(received.getObjects()).toHaveLength(expected.getObjects().length);
-        received.getObjects().forEach((o1, i) => {
-            const o2 = expected.getObjects()[i];
+        expect(circuit1.getObjects()).toHaveLength(circuit2.getObjects().length);
+        circuit1.getObjects().forEach((o1, i) => {
+            const o2 = circuit2.getObjects()[i];
             expectSameComponent(o1, o2);
         });
 
         // Expect same wires
-        expect(received.getWires()).toHaveLength(expected.getWires().length);
-        received.getWires().forEach((w1, i) => {
-            const w2 = expected.getWires()[i];
+        expect(circuit1.getWires()).toHaveLength(circuit2.getWires().length);
+        circuit1.getWires().forEach((w1, i) => {
+            const w2 = circuit2.getWires()[i];
 
             expect(w1.getName()).toEqual(w2.getName());
             expect(w1.isStraight()).toEqual(w2.isStraight());
