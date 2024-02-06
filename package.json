@@ -15,8 +15,10 @@
     "build:jsdocs": "node ./build/scripts/docs/index.js",
     "test": "node ./build/scripts/test.js",
     "coverage": "node ./build/scripts/test.js --coverage",
-    "lint": "eslint . --cache",
-    "lint:fix": "eslint . --fix --cache",
+    "lint": "node ./build/scripts/lint.js --cache",
+    "lint:all": "node ./build/scripts/lint.js --cache --all",
+    "lint:fix": "node ./build/scripts/lint.js --cache --fix",
+    "lint:fix:all": "node ./build/scripts/lint.js --cache --fix --all",
     "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build"
   },
   "devDependencies": {
@@ -77,6 +79,7 @@
     "react-refresh-typescript": "^2.0.7",
     "sass": "^1.53.0",
     "sass-loader": "^13.0.2",
+    "simple-git": "^3.14.1",
     "ts-jest": "^28.0.5",
     "ts-loader": "^9.3.1",
     "ts-morph": "^15.1.0",
