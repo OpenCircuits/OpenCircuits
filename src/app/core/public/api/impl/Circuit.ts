@@ -10,10 +10,10 @@ import {GUID}          from "core/internal";
 import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
-import {Camera}                from "../Camera";
-import {Circuit, CircuitEvent} from "../Circuit";
-import {Selections}            from "../Selections";
-import {isObjComponent}        from "../Utilities";
+import {Camera}                    from "../Camera";
+import {Circuit, CircuitEvent}     from "../Circuit";
+import {Selections}                from "../Selections";
+import {isObjComponent, isObjWire} from "../Utilities";
 
 import {CameraImpl}                 from "./Camera";
 import {CircuitState, CircuitTypes} from "./CircuitState";
@@ -147,6 +147,9 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         },
         getComponents(): T["Component[]"] {
             return this.getObjs().filter(isObjComponent);
+        },
+        getWires(): T["Wire[]"] {
+            return this.getObjs().filter(isObjWire);
         },
         getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
             // TODO[.](kevin) - getComponentInfo should probably return a Result right?

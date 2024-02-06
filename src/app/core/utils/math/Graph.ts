@@ -1,4 +1,3 @@
-
 /**
  * @param V The type for the vertices of the edge.
  * @param E The type for weight of the edge.
@@ -53,13 +52,15 @@ export class Graph<V, E> {
     }
 
     public createEdge(source: V, target: V, weight: E): void {
-        if (!this.list.has(source))
+        const sourceNode = this.list.get(source);
+        const targetNode = this.reverseList.get(target);
+        if (!sourceNode)
             throw new Error("Graph doesn't have node of value: " + source);
-        if (!this.list.has(target))
+        if (!targetNode)
             throw new Error("Graph doesn't have node of value: " + target);
 
-        this.list.get(source)!.push(new Edge<V, E>(target, weight));
-        this.reverseList.get(target)!.push(new Edge<V, E>(source, weight));
+        sourceNode.push(new Edge<V, E>(target, weight));
+        targetNode.push(new Edge<V, E>(source, weight));
     }
 
     public isConnected(): boolean {

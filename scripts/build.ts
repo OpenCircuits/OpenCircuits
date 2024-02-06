@@ -83,7 +83,7 @@ async function BuildDir(dir: string, project: string) {
 
     // If manual production build, copy secrets
     if (prod && !ci && existsSync("src/secrets"))
-    CopyDir("src/secrets", "build");
+        CopyDir("src/secrets", "build");
 
     // Launch build in each directory
     for (const dir of dirs) {

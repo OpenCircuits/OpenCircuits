@@ -7,7 +7,7 @@
 //     return [component, ...ports] as [DigitalComponent, ...DigitalPort[]];
 // }
 
-export enum SmartPlaceOptions {
+export const enum SmartPlaceOptions {
     Off     = 0,
     Inputs  = 1 << 0,
     Outputs = 1 << 1,

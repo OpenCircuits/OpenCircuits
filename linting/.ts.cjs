@@ -8,7 +8,7 @@ module.exports = {
     ],
     "overrides": [
         {
-            "files": ["**.test.ts?(x)"],
+            "files": ["**.{test,spec}.ts?(x)"],
             "rules": {
                 "@typescript-eslint/unbound-method": "off", // Jest has its own version
             }

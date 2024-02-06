@@ -59,6 +59,7 @@ export interface Circuit extends Observable<CircuitEvent> {
     getObj(id: GUID): Obj | undefined;
     getObjs(): Obj[];
     getComponents(): Component[];
+    getWires(): Wire[];
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     // Object manipulation

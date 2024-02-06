@@ -8,7 +8,7 @@ describe("SelectionsMidpoint", () => {
     test("Single Selection", () => {
         // Create and place new component
         const circuit = CreateCircuit();
-        const s1 = circuit.placeComponentAt(V(0, 0), "ANDGate");
+        const s1 = circuit.placeComponentAt("ANDGate", V(0, 0));
 
         // Select created component
         s1.isSelected = true;
@@ -25,10 +25,10 @@ describe("SelectionsMidpoint", () => {
     test("Multiple Selections", () => {
         // Create and place new components
         const circuit = CreateCircuit();
-        const s1 = circuit.placeComponentAt(V(-5,  5), "Switch");
-        const s2 = circuit.placeComponentAt(V(-5, -5), "Switch");
-        const c1 = circuit.placeComponentAt(V(0,   0), "ANDGate");
-        const l1 = circuit.placeComponentAt(V(6,   0), "LED");
+        const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
+        const s2 = circuit.placeComponentAt("Switch", V(-5, -5));
+        const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));
+        const l1 = circuit.placeComponentAt("LED", V(6, 0));
 
         // Select created components
         s1.isSelected = true;
