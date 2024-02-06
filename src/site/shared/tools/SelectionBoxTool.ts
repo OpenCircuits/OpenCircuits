@@ -20,7 +20,8 @@ export class SelectionBoxTool implements Tool {
         return (
             ev.type === "mousedrag" &&
             ev.input.touchCount === 1 &&
-            curPressedObj === undefined
+            curPressedObj === undefined &&
+            ev.button === 0
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {

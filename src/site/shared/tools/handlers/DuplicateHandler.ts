@@ -1,6 +1,22 @@
 import {V}                                from "Vector";
+import {Circuit}                          from "core/public";
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
+
+export function DuplicateSelections(circuit: Circuit): void {
+    circuit.beginTransaction();
+
+    const duplicates = circuit.selections.duplicate();
+    circuit.selections.clear();
+    duplicates.forEach((obj) => obj.select());
+    duplicates.forEach((obj) => {
+        // Offset the duplicates slightly
+        if (obj.baseKind === "Component")
+            obj.pos = obj.pos.add(V(0.5, 0.5));
+    });
+
+    circuit.commitTransaction();
+}
 
 export const DuplicateHandler: ToolHandler = {
     onEvent: (ev, { circuit }) => {
@@ -12,18 +28,7 @@ export const DuplicateHandler: ToolHandler = {
         if (circuit.selections.isEmpty)
             return ToolHandlerResponse.PASS;
 
-        circuit.beginTransaction();
-
-        const duplicates = circuit.selections.duplicate();
-        circuit.selections.clear();
-        duplicates.forEach((obj) => obj.select());
-        duplicates.forEach((obj) => {
-            // Offset the duplicates slightly
-            if (obj.baseKind === "Component")
-                obj.pos = obj.pos.add(V(0.5, 0.5));
-        });
-
-        circuit.commitTransaction();
+        DuplicateSelections(circuit);
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;
