@@ -5,9 +5,9 @@ import {Rect}   from "math/Rect";
 
 import {CleanupFunc} from "core/utils/types";
 
-import {DebugOptions, GUID} from "core/internal";
-import {RenderHelper}       from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions}      from "core/internal/view/rendering/RenderOptions";
+import {GUID}          from "core/internal";
+import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
+import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
 
 import {Camera}                    from "../Camera";
 import {Circuit}                   from "../Circuit";
@@ -38,25 +38,25 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
 
         // Metadata
         get id(): GUID {
-            throw new Error("Unimplemented!");
+            return state.internal.getMetadata().id;
         },
         set name(val: string) {
-            throw new Error("Unimplemented!");
+            state.internal.setMetadata({ name: val });
         },
         get name(): string {
-            throw new Error("Unimplemented!");
+            return state.internal.getMetadata().name;
         },
         set desc(val: string) {
-            throw new Error("Unimplemented!");
+            state.internal.setMetadata({ desc: val });
         },
         get desc(): string {
-            throw new Error("Unimplemented!");
+            return state.internal.getMetadata().desc;
         },
         set thumbnail(val: string) {
-            throw new Error("Unimplemented!");
+            state.internal.setMetadata({ thumb: val });
         },
         get thumbnail(): string {
-            throw new Error("Unimplemented!");
+            return state.internal.getMetadata().thumb;
         },
 
         // Other data
@@ -71,12 +71,6 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             throw new Error("Unimplemented!");
         },
         get simEnabled(): boolean {
-            throw new Error("Unimplemented!");
-        },
-        set debugOptions(val: DebugOptions) {
-            throw new Error("Unimplemented!");
-        },
-        get debugOptions(): DebugOptions {
             throw new Error("Unimplemented!");
         },
 
@@ -149,14 +143,14 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         },
 
         // Object manipulation
-        placeComponentAt(pt: Vector, kind: string): T["Component"] {
+        placeComponentAt(kind: string, pt: Vector, space: Vector.Spaces = "world"): T["Component"] {
             const info = this.getComponentInfo(kind);
+            const pos = ((space === "world" ? pt : state.view.toWorldPos(pt)));
 
-            // TODO: Deal with `pt` being in screen space
             this.beginTransaction();
 
-            // Place raw component (TODO: unwrap...)
-            const id = state.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
+            // Place raw component (TODO[master](leon) - don't use unwrap...)
+            const id = state.internal.placeComponent(kind, { x: pos.x, y: pos.y }).unwrap();
 
             // Set its config to place ports
             state.internal.setPortConfig(id, info!.defaultPortConfig).unwrap();

@@ -6,6 +6,8 @@ import {NodeAssembler}        from "core/internal/view/NodeAssembler";
 import {Obj}                  from "core/schema/Obj";
 import {DigitalSim}           from "../sim/DigitalSim";
 import {ANDGateAssembler}     from "./components/ANDGateAssembler";
+import {XORGateAssembler}     from "./components/XORGateAssembler";
+import {ORGateAssembler}      from "./components/ORGateAssembler";
 import {LEDAssembler}         from "./components/LEDAssembler";
 import {SwitchAssembler}      from "./components/SwitchAssembler";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
@@ -32,6 +34,8 @@ export class DigitalCircuitView extends CircuitView {
 
             // Gates
             "ANDGate": new ANDGateAssembler(this.circuit, this, this.selections, this.sim),
+            "ORGate":  new ORGateAssembler(this.circuit, this, this.selections, this.sim),
+            "XORGate": new XORGateAssembler(this.circuit, this, this.selections, this.sim),
 
             // FlipFlops
 

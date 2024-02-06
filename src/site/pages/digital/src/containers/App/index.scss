@@ -16,9 +16,11 @@
             position: absolute;
 
             left: 0;
-            top: $header-height;
+            // TODO[model_refactor](leon) - reconsider if this is necessary
+            // top: $header-height;
             width: 100%;
-            height: calc(100vh - #{$header-height});
+            // height: calc(100vh - #{$header-height});
+            height: 100%;
         }
     }
 }

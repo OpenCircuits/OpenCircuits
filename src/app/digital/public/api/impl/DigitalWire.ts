@@ -13,7 +13,7 @@ import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
 export function DigitalWireImpl(circuit: DigitalCircuit, state: DigitalCircuitState, id: GUID) {
     const base = WireImpl<DigitalTypes>(circuit, state, id, (p1, p2, pos) => {
-        const node = circuit.placeComponentAt(pos, "DigitalNode") as DigitalNode;
+        const node = circuit.placeComponentAt("DigitalNode", pos) as DigitalNode;
 
         const nodeIn = node.ports["inputs"][0], nodeOut = node.ports["outputs"][0];
 

@@ -1,4 +1,3 @@
-
 export interface DebugOptions {
     debugCullboxes: boolean;
     debugPressableBounds: boolean;

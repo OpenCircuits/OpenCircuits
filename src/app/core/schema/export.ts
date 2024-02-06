@@ -1,4 +1,3 @@
-
 export * from "./GUID";
 export * from "./Prop";
 export * from "./Camera";
@@ -7,3 +6,4 @@ export * from "./Wire";
 export * from "./Port";
 export * from "./Obj";
 export * from "./Circuit";
+export * from "./CircuitMetadata";

@@ -2,9 +2,8 @@ import {Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {GUID} from "core/schema/GUID";
-
-import {DebugOptions} from "core/internal/impl/DebugOptions";
+import {GUID}        from "core/schema/GUID";
+import {CleanupFunc} from "core/utils/types";
 
 import {RenderHelper}  from "core/internal/view/rendering/RenderHelper";
 import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
@@ -16,7 +15,6 @@ import {Obj}           from "./Obj";
 import {Port}          from "./Port";
 import {Wire}          from "./Wire";
 import {Selections}    from "./Selections";
-import {CleanupFunc}   from "core/utils/types";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
@@ -35,7 +33,6 @@ export interface Circuit {
     // Other data
     locked: boolean;
     simEnabled: boolean;
-    debugOptions: DebugOptions;
 
     readonly camera: Camera;
     readonly selections: Selections;
@@ -57,7 +54,7 @@ export interface Circuit {
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     // Object manipulation
-    placeComponentAt(pt: Vector, kind: string): Component;
+    placeComponentAt(kind: string, pt: Vector, space?: Vector.Spaces): Component;
     deleteObjs(objs: Obj[]): void;
 
     createIC(objs: Obj[]): Circuit | undefined;

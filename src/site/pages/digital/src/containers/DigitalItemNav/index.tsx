@@ -7,7 +7,7 @@ import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
 
 import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
 
-import {useMainDigitalCircuit} from "site/digital/utils/hooks/useDigitalCircuit";
+import {useMainDigitalDesigner} from "site/digital/utils/hooks/useDigitalDesigner";
 
 import itemNavConfig from "site/digital/data/itemNavConfig.json";
 
@@ -25,7 +25,8 @@ const SmartPlaceOrder = [
 // type ICID = `ic/${number}`;
 
 export const DigitalItemNav = () => {
-    const circuit = useMainDigitalCircuit();
+    const designer = useMainDigitalDesigner();
+    const circuit = designer.circuit;
     const [{ ics }, setState] = useState({ ics: [] as ItemNavItem[] });
 
     // State for if we should 'Smart Place' (issue #689)
@@ -39,22 +40,22 @@ export const DigitalItemNav = () => {
         );
     });
 
-    // Subscribe to CircuitDesigner
-    //  and update the ItemNav w/
-    //  ICs whenever they're added/removed
-    useEffect(() => circuit.subscribe((ev) => {
-        if (ev.type !== "ic")
-            return;
-        // TODO:
-        // setState({
-        //     ics: circuit.getICData().map((d, i) => ({
-        //         id:        `ic/${i}` as ICID,
-        //         label:     d.getName(),
-        //         icon:      "multiplexer.svg",
-        //         removable: true,
-        //     })),
-        // });
-    }));
+    // // Subscribe to CircuitDesigner
+    // //  and update the ItemNav w/
+    // //  ICs whenever they're added/removed
+    // useEffect(() => designer.subscribe((ev) => {
+    //     if (ev.type !== "ic")
+    //         return;
+    //     // TODO:
+    //     // setState({
+    //     //     ics: circuit.getICData().map((d, i) => ({
+    //     //         id:        `ic/${i}` as ICID,
+    //     //         label:     d.getName(),
+    //     //         icon:      "multiplexer.svg",
+    //     //         removable: true,
+    //     //     })),
+    //     // });
+    // }));
 
     // Generate ItemNavConfig with ICs included
     const config = useMemo(() => ({
@@ -145,7 +146,7 @@ export const DigitalItemNav = () => {
     // Append regular ItemNav items with ICs
     return (
         <ItemNav
-            circuit={circuit}
+            designer={designer}
             config={config}
             additionalData={smartPlace}
             additionalPreview={additionalPreview}
