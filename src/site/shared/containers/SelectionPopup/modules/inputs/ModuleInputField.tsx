@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import {Circuit, Prop} from "core/public";
 
@@ -57,13 +57,16 @@ export const DefaultConfig = <V extends Primitive>({
 
     isValid: (_) => true,
 
-    doChange: (newVals) => doChange(newVals.map(([v]) => v)),
+    // useCallback necessary since we use doChange in a useEffect and need it to be steady
+    doChange: useCallback(
+        (newVals: Array<[V]>) => doChange(newVals.map(([v]) => v)),
+        [doChange]),
 
     onSubmit,
     getCustomDisplayVal: (getCustomDisplayVal
         ? (([v]) => getCustomDisplayVal!(v))
         : undefined),
-})
+});
 
 
 type Primitive = string | number | boolean;

@@ -1,6 +1,5 @@
+import {Circuit, Obj, Prop}                      from "core/public";
 import React, {useCallback, useEffect, useState} from "react";
-
-import {Circuit, Obj, Prop} from "core/public";
 
 
 // type ToArray<T> = T extends T ? T[] : never;
@@ -18,16 +17,6 @@ export type RecordOfArrays<Props extends Record<string, Prop>> = {
                 : never)
         >>;
 }
-
-// type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
-
-// // expands object types recursively
-// type ExpandRecursively<T> = T extends object
-//   ? T extends infer O ? { [K in keyof O]: ExpandRecursively<O[K]> } : never
-//   : T;
-// type Test = ExpandRecursively<RecordOfArrays<AnyObj, AnyObj>>;
-
-// type Test2 = Expand<keyof Test>;
 
 const propsEquals = (oldProps: Record<string, Prop[]> | undefined, newProps: Record<string, Prop[]>): boolean => {
     if (!oldProps)
@@ -50,21 +39,21 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     ignore: (s: Obj) => boolean = () => false,
 ) => {
     const [props, setProps] = useState(undefined as RecordOfArrays<Props> | undefined);
+    const [objs, setObjs] = useState([] as O[]);
 
     // This function is theoretically called anytime the Selections
     //  or their properties change
     const updateState = useCallback(() => {
         // Get selections with ignored types filtered out
         const selections = circuit.selections.filter((s) => !ignore(s));
-        const filteredSelections = selections.filter(validTypes);
 
         // Ensure we only have the acceptable types selected
-        if (filteredSelections.length !== selections.length) {
+        if (objs.length !== selections.length) {
             setProps(undefined);
             return;
         }
 
-        const allProps = filteredSelections.map((s) => getProps(s));
+        const allProps = objs.map((s) => getProps(s));
         if (allProps.length === 0) {
             setProps(undefined);
             return;
@@ -87,17 +76,23 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
         //  so we don't cause unnecessary updates and potential flickers
         //  from a `forceUpdate`
         setProps((oldProps) => (propsEquals(oldProps, newProps) ? oldProps : newProps));
-    }, deps);
+    }, [objs, ...deps]);
 
+    // When number of selections change, update the list of objects
+    useEffect(() =>
+        circuit.selections.observe(() =>
+            setObjs(circuit.selections
+                    .filter((s) => !ignore(s))
+                    .filter(validTypes))),
+        [setObjs]);
+
+    // When the list of objects changes, update the props
+    //  and then listen for any circuit changes
+    //  TODO[model_refactor](leon) - Maybe somehow just listen to changes to objs
     useEffect(() => {
-        const f1 = circuit.selections.observe(updateState);
-        const f2 = circuit.observe(updateState);
-
-        return () => {
-            f2();
-            f1();
-        }
+        updateState();
+        return circuit.observe(() => updateState())
     }, [updateState]);
 
-    return [props, circuit.selections.filter(validTypes), updateState] as const;
+    return [props, objs, updateState] as const;
 }

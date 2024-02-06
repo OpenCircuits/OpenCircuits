@@ -67,7 +67,7 @@ export function SelectionsImpl<T extends CircuitTypes>(
         forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {
             return this.all.forEach(f);
         },
-        filter(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): T["Obj[]"] {
+        filter(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): T["Obj[]"] {
             return this.all.filter(f);
         },
         every(condition: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): boolean {

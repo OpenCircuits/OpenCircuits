@@ -7,7 +7,7 @@ import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 import {SelectionPopup} from "shared/containers/SelectionPopup";
 // import {SideNav} from "shared/containers/SideNav";
 
-// import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
+import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {useMainDigitalDesigner} from "site/digital/utils/hooks/useDigitalDesigner";
 
@@ -16,6 +16,7 @@ import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
 import {DigitalMainDesigner}    from "site/digital/containers/DigitalMainDesigner";
 // import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 // import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+import {DigitalPropInfo} from "site/digital/containers/SelectionPopup/propinfo";
 
 // import {BusButtonModule}                from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
 // import {ClockSyncButtonModule}          from "site/digital/containers/SelectionPopup/modules/ClockSyncButtonModule";
@@ -59,9 +60,8 @@ export const App = () => {
                     {/* <HistoryBox circuit={circuit} /> */}
 
                     <SelectionPopup designer={designer} docsUrlConfig={docsConfig}>
-                        {null}
-                        {/* <PropertyModule circuit={circuit} />
-                        <PortCountModule circuit={circuit} />
+                        <PropertyModule designer={designer} propInfo={DigitalPropInfo} />
+                        {/* <PortCountModule circuit={circuit} />
                         <OscilloscopeModule circuit={circuit} />
                         <ClockSyncButtonModule circuit={circuit} />
                         <BusButtonModule circuit={circuit} />

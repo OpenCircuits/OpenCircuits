@@ -2,7 +2,7 @@ import {Clamp} from "math/MathUtils";
 
 import {NumberInputField} from "shared/components/InputField";
 
-import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
+import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
 type Props = SharedModuleInputFieldProps<number> & {
@@ -12,13 +12,14 @@ type Props = SharedModuleInputFieldProps<number> & {
     max?: number;
 }
 export const NumberModuleInputField = ({
-    kind, step, min, max, placeholder, alt, props, getAction, onSubmit, getCustomDisplayVal,
+    kind, step, min, max, placeholder, alt,
+    getCustomDisplayVal, ...props
 }: Props) => {
     const Min = min ?? -Infinity;
     const Max = max ?? +Infinity;
 
     const [state, setState] = useBaseModule<[number]>({
-        props: props.map((v) => [v]),
+        ...DefaultConfig({ ...props, getCustomDisplayVal }),
 
         isValid:  (val) => (!isNaN(val) && (Min <= val && val <= Max)),
         parseVal: (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),
@@ -27,9 +28,6 @@ export const NumberModuleInputField = ({
         applyModifier:   (val, step) => (val + (step ?? 0)),
         reverseModifier: (val, step) => (val - (step ?? 0)),
 
-        getAction: (newVals) => getAction(newVals.map(([v]) => v)),
-
-        onSubmit,
         getCustomDisplayVal: (([v]) =>
             // Default to rounding to two digits
             (getCustomDisplayVal ?? ((v) => parseFloat(v.toFixed(2))))(v)

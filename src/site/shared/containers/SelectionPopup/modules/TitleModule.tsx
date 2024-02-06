@@ -1,3 +1,5 @@
+import {useCallback} from "react";
+
 import {Obj} from "core/public";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
@@ -18,10 +20,13 @@ export const TitleModule = ({ designer }: Props) => {
         (o) => ({ name: (o.name ?? o.kind) })
     );
 
+    const s = circuit.selections;
+    const doChange = useCallback((newNames: string[]) =>
+        s.forEach((o, i) => (o.name = newNames[i]))
+    , [s]);
+
     if (!props)
         return null;
-
-    const s = circuit.selections;
 
     return (<div>
         <label>
@@ -30,8 +35,7 @@ export const TitleModule = ({ designer }: Props) => {
                 props={props.name}
                 placeholder="<Multiple>"
                 alt="Name of object(s)"
-                doChange={(newNames) =>
-                    s.forEach((o, i) => (o.name = newNames[i]))} />
+                doChange={doChange} />
         </label>
     </div>)
 }
