@@ -12,6 +12,19 @@ import {CircuitDocument, ReadonlyCircuitDocument}        from "./CircuitDocument
 import {FastCircuitDiff, FastCircuitDiffBuilder}         from "./FastCircuitDiff";
 
 
+export type InternalEvent = {
+    type: "CircuitOp";
+    diff: FastCircuitDiff;
+} | {
+    type: "CameraOp";
+    diff: {
+        dx: number;
+        dy: number;
+        dz: number;
+    };
+}
+
+
 // CircuitInternal is a low-level session for editing a circuit.  It encapsulates the CircuitDocument and the CircuitLog
 // to provide a transaction mechanism for building LogEntries.  It also provides a higher-level interface for producing
 // legal CircuitOps based on the desired change and the CircuitDocument state.
@@ -26,7 +39,7 @@ import {FastCircuitDiff, FastCircuitDiffBuilder}         from "./FastCircuitDiff
 // EXCEPTION POLICY:
 //  ERRORS: thrown during unexpected, exceptional, irrecoverable scenarios
 //  OTHERWISE: The "Result" and "Option" types are used to communicate success/failure.
-export class CircuitInternal extends Observable<FastCircuitDiff> {
+export class CircuitInternal extends Observable<InternalEvent> {
     private readonly mutableDoc: CircuitDocument;
     public get doc(): ReadonlyCircuitDocument {
         return this.mutableDoc;
@@ -85,7 +98,7 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
     private publishDiffEvent() {
         const diff = this.diffBuilder.build();
         this.diffBuilder = new FastCircuitDiffBuilder();
-        this.publish(diff);
+        this.publish({ type: "CircuitOp", diff });
     }
 
     private applyOp(op: CircuitOp): Result {
@@ -303,12 +316,22 @@ export class CircuitInternal extends Observable<FastCircuitDiff> {
     }
 
     public setCameraProps(props: Partial<Schema.Camera>) {
+        const dx = (props.x ?? this.camera.x) - this.camera.x;
+        const dy = (props.y ?? this.camera.y) - this.camera.y;
+        const dz = (props.zoom ?? this.camera.zoom) - this.camera.zoom;
+
+        // No change, no need to emit event
+        if (dx === 0 && dy === 0 && dz === 0)
+            return;
+
         this.camera.x = (props.x ?? this.camera.x);
         this.camera.y = (props.y ?? this.camera.y);
         this.camera.zoom = (props.zoom ?? this.camera.zoom);
 
-        // TODO[model_refactor_api](idk) The camera changing is a very different kind of event than the others here.
-        this.publish((new FastCircuitDiffBuilder()).build());
+        this.publish({
+            type: "CameraOp",
+            diff: { dx, dy, dz },
+        });
     }
 
     public getMetadata(): Readonly<Schema.CircuitMetadata> {

@@ -15,11 +15,16 @@ import {Obj}           from "./Obj";
 import {Port}          from "./Port";
 import {Wire}          from "./Wire";
 import {Selections}    from "./Selections";
+import {Observable} from "./Observable";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
 
-export interface Circuit {
+// export type CircuitEvent = {
+//     type: "any";
+// }
+
+export interface Circuit {// extends Observable<CircuitEvent> {
     beginTransaction(): void;
     commitTransaction(): void;
     cancelTransaction(): void;

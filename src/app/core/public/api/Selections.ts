@@ -1,11 +1,17 @@
 import {Vector} from "Vector";
 
-import {Component} from "./Component";
-import {Obj}       from "./Obj";
-import {Wire}      from "./Wire";
+import {Component}  from "./Component";
+import {Obj}        from "./Obj";
+import {Wire}       from "./Wire";
+import {Observable} from "./Observable";
 
 
-export interface Selections {
+export type SelectionsEvent = {
+    type: "numSelectionsChanged";
+    newAmt: number;
+}
+
+export interface Selections extends Observable<SelectionsEvent> {
     readonly length: number;
     readonly isEmpty: boolean;
 
