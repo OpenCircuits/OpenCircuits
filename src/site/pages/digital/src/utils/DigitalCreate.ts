@@ -75,7 +75,7 @@ export function DigitalCreateN(pos: Vector, itemId: string, designer: DigitalCir
 }
 
 
-export enum SmartPlaceOptions {
+export const enum SmartPlaceOptions {
     Off     = 0,
     Inputs  = 1 << 0,
     Outputs = 1 << 1,
