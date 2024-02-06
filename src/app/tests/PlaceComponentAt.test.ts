@@ -9,7 +9,7 @@ describe("PlaceComponentAt", () => {
     test("Basic Placement", () => {
         const circuit = CreateCircuit();
 
-        const c = circuit.placeComponentAt(V(0, 0), "ANDGate");
+        const c = circuit.placeComponentAt("ANDGate", V(0, 0));
 
         expect(circuit.getObjs()).toHaveLength(4); // 2 inputs, 1 output, 1 component
         expect(c.pos).toEqual(V(0, 0));
@@ -17,10 +17,10 @@ describe("PlaceComponentAt", () => {
     test("Multiple Placements", () => {
         const circuit = CreateCircuit();
 
-        const s1 = circuit.placeComponentAt(V(-5,  5), "Switch");
-        const s2 = circuit.placeComponentAt(V(-5, -5), "Switch");
-        const c1 = circuit.placeComponentAt(V(0,   0), "ANDGate");
-        const l1 = circuit.placeComponentAt(V(5,   0), "LED");
+        const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
+        const s2 = circuit.placeComponentAt("Switch", V(-5, -5));
+        const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));
+        const l1 = circuit.placeComponentAt("LED", V(5, 0));
 
         expect(circuit.getObjs()).toHaveLength(2 + 2 + 4 + 2);
         expect(s1.pos).toEqual(V(-5,  5));

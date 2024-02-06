@@ -84,13 +84,7 @@ expect.extend({
         };
     },
 
-    toBeOk(received: unknown) {
-        if (!received || typeof received !== "object" || !("ok" in received)) {
-            return {
-                message: () => "supplied value is not a Result",
-                pass:    false,
-            }
-        }
+    toBeOk(received: Result) {
         const result = received as Result;
         if (result.ok) {
             return {
@@ -108,13 +102,7 @@ expect.extend({
         }
     },
 
-    toIncludeError(received: unknown, message: string) {
-        if (!received || typeof received !== "object" || !("ok" in received)) {
-            return {
-                message: () => "supplied value is not a Result",
-                pass:    false,
-            }
-        }
+    toIncludeError(received: Result, message: string) {
         const result = received as Result;
         if (result.ok) {
             return {

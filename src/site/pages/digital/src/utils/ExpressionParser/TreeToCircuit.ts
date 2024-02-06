@@ -71,7 +71,7 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
     const newGate = ((node.kind === "binop" && node.isNot)
                                  ? NegatedTypeToGate[node.type]
                                  : TypeToGate[node.type]);
-    const newComp = circuit.placeComponentAt(V(0, 0), newGate);
+    const newComp = circuit.placeComponentAt(newGate, V(0, 0));
     const newNode = newComp.firstAvailable("outputs");
     if (!newNode)
         throw new Error(`Port not found on newly created ${newComp.kind}`);
@@ -106,7 +106,7 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
                               output: string): DigitalCircuit {
     const circuit = CreateCircuit();
 
-    const outputComp = circuit.placeComponentAt(V(0, 0), output);
+    const outputComp = circuit.placeComponentAt(output, V(0, 0));
     outputComp.name = "Output";
     const outputNode = outputComp.firstAvailable("inputs");
     if (!outputNode)
@@ -114,7 +114,7 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
 
     const inputMap = new Map<string, DigitalComponent>();
     inputs.forEach((type, input) => {
-        const c = circuit.placeComponentAt(V(0, 0), type);
+        const c = circuit.placeComponentAt(type, V(0, 0));
         c.name = input;
         inputMap.set(input, c);
     });

@@ -9,7 +9,7 @@ describe("FirstAvailable", () => {
     test("All ports available", () => {
         const circuit = CreateCircuit();
 
-        const c = circuit.placeComponentAt(V(0, 0), "Multiplexer");
+        const c = circuit.placeComponentAt("Multiplexer", V(0, 0));
 
         // Case: 'output' port group
         expect(c.firstAvailable("outputs")?.id).toEqual(c.ports["outputs"][0].id);
@@ -20,8 +20,8 @@ describe("FirstAvailable", () => {
     test("Only some/no ports are available", () => {
         const circuit = CreateCircuit();
 
-        const s1 = circuit.placeComponentAt(V(-5,  5), "Switch");
-        const c1 = circuit.placeComponentAt(V(0,   0), "ANDGate");
+        const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
+        const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));
 
         s1.ports["outputs"][0].connectTo(c1.ports["inputs"][0]);
 
