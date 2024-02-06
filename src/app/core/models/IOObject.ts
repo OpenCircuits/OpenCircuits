@@ -1,59 +1,42 @@
-import {serialize} from "serialeazy";
-
 import {Vector} from "Vector";
 
-import {Name}       from "core/utils/Name";
 import {Selectable} from "core/utils/Selectable";
 
-import {Prop, PropInfo} from "core/models/PropInfo";
+import {BaseObject} from "core/models/BaseObject";
+import {Prop}       from "core/models/PropInfo";
 
 
-export abstract class IOObject implements Selectable {
-    @serialize
-    protected name: Name;
-
-    @serialize
-    protected props: Record<string, Prop>;
-
+export abstract class IOObject extends BaseObject implements Selectable {
     protected constructor(initialProps: Record<string, Prop> = {}) {
-        this.name = new Name(this.getDisplayName());
-        this.props = { ...initialProps };
+        super({
+            name: false, // Initially is "false" for "not set"
+            ...initialProps,
+        });
+    }
+
+    public setName(name: string): void {
+        this.setProp("name", name);
     }
 
     public abstract isWithinSelectBounds(v: Vector): boolean;
 
-    public hasProp(key: string): boolean {
-        return (key in this.props);
-    }
-
-    public setName(name: string): void {
-        this.name.setName(name);
-    }
-
-    public setProp(key: string, val: Prop) {
-        const prop = this.props[key];
-        if (prop === undefined)
-            throw new Error(`Can't find property: ${key} in ${this.getName()}!` +
-                            `My props: ${Object.entries(this.props).join(",")}`);
-
-        this.props[key] = val;
+    public isNameSet(): boolean {
+        return (this.getProp("name") !== false);
     }
 
     public abstract getDisplayName(): string;
 
     public getName(): string {
-        return this.name.getName();
+        if (!this.isNameSet())
+            return this.getDisplayName();
+        return this.getProp("name") as string;
     }
 
-    public getProp(key: string): Prop {
-        return this.props[key];
-    }
-
-    public getPropInfo(_key: string): PropInfo | undefined {
-        return undefined;
-    }
-
-    public getProps() {
-        return this.props;
+    public override toString(): string {
+        return (
+            this.isNameSet()
+            ? `${this.getName()} (${this.getDisplayName()})`
+            : this.getDisplayName()
+        );
     }
 }

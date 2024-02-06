@@ -41,12 +41,12 @@ describe("SelectionHandler", () => {
     });
     test("Select Two Objects", () => {
         const [lo, hi] = Place(new ConstantLow(), new ConstantHigh());
-        hi.setPos(V(100, 0));
+        hi.setPos(V(2, 0));
 
         expect(selections.amount()).toBe(0);
         input.click(V(0, 0))
             .pressKey("Shift")
-            .click(V(100, 0))
+            .click(V(2, 0))
             .releaseKey("Shift");
         expect(selections.amount()).toBe(2);
 

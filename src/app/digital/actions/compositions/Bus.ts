@@ -10,8 +10,7 @@ import {Connect} from "core/actions/units/Connect";
 
 import {Component, Port} from "core/models";
 
-import {InputPort}  from "digital/models/ports/InputPort";
-import {OutputPort} from "digital/models/ports/OutputPort";
+import {InputPort, OutputPort} from "digital/models";
 
 
 /**

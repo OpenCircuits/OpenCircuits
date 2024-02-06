@@ -11,15 +11,15 @@ describe("Pan Tool", () => {
     afterEach(() => reset());
 
     test("Drag without alt key", () => {
-        input.drag(V(0, 0), V(-20, 0));
+        input.drag(V(0, 0), V(-1, 0));
         expect(camera.getPos()).toEqual(V(0, 0));
     });
 
     test("Drag with alt key", () => {
         input.pressKey("Alt")
-                .drag(V(0, 0), V(20, 0))
+                .drag(V(0, 0), V(1, 0))
                 .releaseKey("Alt");
-        expect(camera.getPos()).toEqual(V(-20, 0));
+        expect(camera.getPos()).toEqual(V(-1, 0));
     });
 
     test("No drag with alt key", () => {
@@ -33,23 +33,23 @@ describe("Pan Tool", () => {
     test("Drag with alt key left mouse, release alt key", () => {
         input.pressKey("Alt")
             .press(V(0,0))
-            .moveTo(V(20, 0))
+            .move(V(2, 0))
             .releaseKey("Alt")
-            .moveTo(V(40, 0))
+            .move(V(4, 0))
             .release()
-        expect(camera.getPos()).toEqual(V(-40, 0));
+        expect(camera.getPos()).toEqual(V(-6, 0));
     });
 
     test("Drag with alt key left mouse, release left mouse", () => {
         input.pressKey("Alt")
             .press(V(0, 0))
-            .moveTo(V(20, 0))
+            .move(V(2, 0))
             .release()
-            .moveTo(V(20, 20))
+            .move(V(0, 2))
             .press()
-            .moveTo(V(40, 20))
+            .move(V(4, 0))
             .releaseKey("Alt")
-        expect(camera.getPos()).toEqual(V(-40, 0));
+        expect(camera.getPos()).toEqual(V(-6, 0));
     });
 
     test("Drag with middle mouse", () => {
@@ -58,12 +58,12 @@ describe("Pan Tool", () => {
     });
 
     test("Drag with two fingers", () => {
-        input.touch(V(-20, 0))
-                .touch(V(20, 0))
-                .moveTouches(V(20, 0))
+        input.touch(V(-1, 0))
+                .touch(V(1, 0))
+                .moveTouches(V(1, 0))
                 .releaseTouch()
                 .releaseTouch();
-        expect(camera.getPos()).toEqual(V(-20, 0));
+        expect(camera.getPos()).toEqual(V(-1, 0));
     });
 
     test("Pan with arrow keys no shift", () => {
@@ -73,14 +73,14 @@ describe("Pan Tool", () => {
                 .releaseKey("ArrowUp")
                 .pressKey("ArrowRight")
                 .releaseKey("ArrowRight");
-        expect(camera.getPos()).toEqual(V(75, -75));
+        expect(camera.getPos()).toEqual(V(1.5, 1.5));
         camera.setPos(V(0, 0));
 
         input.pressKey("ArrowDown")
                 .releaseKey("ArrowDown")
                 .pressKey("ArrowLeft")
                 .releaseKey("ArrowLeft");
-        expect(camera.getPos()).toEqual(V(-75, 75));
+        expect(camera.getPos()).toEqual(V(-1.5, -1.5));
         camera.setPos(V(0, 0));
     });
 
@@ -94,7 +94,7 @@ describe("Pan Tool", () => {
                 .pressKey("ArrowRight")
                 .releaseKey("ArrowRight")
                 .releaseKey("Shift");
-        expect(camera.getPos()).toEqual(V(5, -5));
+        expect(camera.getPos()).toEqual(V(0.1, 0.1));
         camera.setPos(V(0, 0));
 
         input.pressKey("Shift")
@@ -103,7 +103,7 @@ describe("Pan Tool", () => {
                 .pressKey("ArrowLeft")
                 .releaseKey("ArrowLeft")
                 .releaseKey("Shift");
-        expect(camera.getPos()).toEqual(V(-5, 5));
+        expect(camera.getPos()).toEqual(V(-0.1, -0.1));
         camera.setPos(V(0, 0));
     });
 

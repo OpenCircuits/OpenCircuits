@@ -48,10 +48,21 @@ export const FrequencyInfo = (key: string, label: string, initial = 0, initialU:
     initial, initialU,
 );
 
-export const AngleInfo = (key: string, label: string, initial = 0) => ({
+export const AngleInfo = (key: string, label: string, initial = 0,
+                          initialU: "rad" | "deg" = "deg", step = 1): Record<string, PropInfoWithInitial> => ({
     [key]: {
         type: "float" as const,
-        label, initial,
-        min: 0, max: 360, step: 1,
+        label, initial, step,
+        unit: {
+            "rad": { name: "Radians", display: "rad", val: 1 },
+            "deg": { name: "Degrees", display: "deg", val: Math.PI/180 },
+        },
+    },
+    [`${key}_U`]: {
+        type: "string[]" as const,
+        isActive: () => false, // This is a "hidden" property
+        label: "",
+        initial: initialU,
+        options: [["rads", "rads"], ["degs", "degs"]],
     },
 });

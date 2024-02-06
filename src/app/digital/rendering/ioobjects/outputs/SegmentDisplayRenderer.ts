@@ -21,6 +21,8 @@ import {Rectangle} from "core/rendering/shapes/Rectangle";
 import {SegmentDisplay} from "digital/models/ioobjects/outputs/SegmentDisplay";
 
 
+const SEGMENT_SCALE = 0.002;
+
 /**
  * Renders SegmentDisplay using the following steps:
  * - Color and style border and fill as per selection status,
@@ -53,7 +55,7 @@ export const SegmentDisplayRenderer = ({
             const col = (on ? DEFAULT_ON_COLOR : (selected ? SELECTED_FILL_COLOR : DEFAULT_FILL_COLOR));
 
             const img = Images.GetImage(`segment_${type}.svg`)!;
-            const size = V(img.width, img.height).scale(0.1);
+            const size = V(img.width, img.height).scale(SEGMENT_SCALE);
             renderer.image(img, pos, size, col);
         }
     },

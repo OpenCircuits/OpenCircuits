@@ -63,38 +63,38 @@ describe("Transform", () => {
         test("Rotate About", () => {
             {
                 const t = new Transform(V(0,0), V(0,0), 0);
-                t.rotateAbout(Math.PI/2, V(0,0));
-                expect(t.getAngle()).toBeCloseTo(Math.PI/2, 1e-3);
-                expect(t.getPos().x).toBeCloseTo(0, 1e-3);
-                expect(t.getPos().y).toBeCloseTo(0, 1e-3);
+                const [pos, angle] = t.calcRotationAbout(Math.PI/2, V(0,0));
+                expect(angle).toBeCloseTo(Math.PI/2, 1e-3);
+                expect(pos.x).toBeCloseTo(0, 1e-3);
+                expect(pos.y).toBeCloseTo(0, 1e-3);
             }
             {
                 const t = new Transform(V(5,0), V(0,0), 0);
-                t.rotateAbout(Math.PI/2, V(0,0));
-                expect(t.getAngle()).toBeCloseTo(Math.PI/2, 1e-3);
-                expect(t.getPos().x).toBeCloseTo(0, 1e-3);
-                expect(t.getPos().y).toBeCloseTo(5, 1e-3);
+                const [pos, angle] = t.calcRotationAbout(Math.PI/2, V(0,0));
+                expect(angle).toBeCloseTo(Math.PI/2, 1e-3);
+                expect(pos.x).toBeCloseTo(0, 1e-3);
+                expect(pos.y).toBeCloseTo(5, 1e-3);
             }
             {
                 const t = new Transform(V(5,0), V(0,0), 0);
-                t.rotateAbout(3*Math.PI/4, V(0,0));
-                expect(t.getAngle()).toBeCloseTo(3*Math.PI/4, 1e-3);
-                expect(t.getPos().x).toBeCloseTo(-5*Math.sqrt(2)/2, 1e-3);
-                expect(t.getPos().y).toBeCloseTo(5*Math.sqrt(2)/2, 1e-3);
+                const [pos, angle] = t.calcRotationAbout(3*Math.PI/4, V(0,0));
+                expect(angle).toBeCloseTo(3*Math.PI/4, 1e-3);
+                expect(pos.x).toBeCloseTo(-5*Math.sqrt(2)/2, 1e-3);
+                expect(pos.y).toBeCloseTo(5*Math.sqrt(2)/2, 1e-3);
             }
             {
                 const t = new Transform(V(0,5), V(0,0), 0);
-                t.rotateAbout(3*Math.PI/4, V(-5,0));
-                expect(t.getAngle()).toBeCloseTo(3*Math.PI/4, 1e-3);
-                expect(t.getPos().x).toBeCloseTo(-5 - Math.sqrt(5*5 + 5*5), 1e-3);
-                expect(t.getPos().y).toBeCloseTo(0, 1e-3);
+                const [pos, angle] = t.calcRotationAbout(3*Math.PI/4, V(-5,0));
+                expect(angle).toBeCloseTo(3*Math.PI/4, 1e-3);
+                expect(pos.x).toBeCloseTo(-5 - Math.sqrt(5*5 + 5*5), 1e-3);
+                expect(pos.y).toBeCloseTo(0, 1e-3);
             }
             {
                 const t = new Transform(V(0,5), V(0,0), Math.PI/4);
-                t.rotateAbout(3*Math.PI/4, V(-5,0));
-                expect(t.getAngle()).toBeCloseTo(Math.PI, 1e-3);
-                expect(t.getPos().x).toBeCloseTo(-5 - Math.sqrt(5*5 + 5*5), 1e-3);
-                expect(t.getPos().y).toBeCloseTo(0, 1e-3);
+                const [pos, angle] = t.calcRotationAbout(3*Math.PI/4, V(-5,0));
+                expect(angle).toBeCloseTo(Math.PI, 1e-3);
+                expect(pos.x).toBeCloseTo(-5 - Math.sqrt(5*5 + 5*5), 1e-3);
+                expect(pos.y).toBeCloseTo(0, 1e-3);
             }
         });
         test("Set Parent", () => {

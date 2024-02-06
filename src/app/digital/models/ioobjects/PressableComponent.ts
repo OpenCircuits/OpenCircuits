@@ -1,5 +1,3 @@
-import {serialize} from "serialeazy";
-
 import {V, Vector} from "Vector";
 
 import {ClampedValue} from "math/ClampedValue";
@@ -8,29 +6,17 @@ import {Transform}    from "math/Transform";
 
 import {Pressable} from "core/utils/Pressable";
 
-import {DigitalComponent} from "../DigitalComponent";
+import {DigitalComponent} from "../index";
 
 
 export abstract class PressableComponent extends DigitalComponent implements Pressable {
-    @serialize
-    protected pressableBox: Transform;
-
-    @serialize
-    protected on: boolean;
+    protected pressTransform: Transform;
 
     protected constructor(inputPortCount: ClampedValue, outputPortCount: ClampedValue, size: Vector, pSize: Vector) {
-        super(inputPortCount, outputPortCount, size);
+        super(inputPortCount, outputPortCount, size, undefined, undefined, { pSize });
 
-        this.pressableBox = new Transform(V(), pSize);
-        this.pressableBox.setParent(this.transform);
-
-        this.on = false;
-    }
-
-    public override activate(signal: boolean, i = 0): void {
-        this.on = signal;
-
-        super.activate(signal, i);
+        this.pressTransform = new Transform(V(), pSize);
+        this.pressTransform.setParent(this.transform);
     }
 
     public press(): void {}
@@ -48,7 +34,7 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
      *    false otherwise.
      */
     public isWithinPressBounds(v: Vector): boolean {
-        return RectContains(this.pressableBox, v);
+        return RectContains(this.getPressableBox(), v);
     }
 
     public override isWithinSelectBounds(v: Vector): boolean {
@@ -58,17 +44,15 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
     }
 
     public getPressableBox(): Transform {
-        return this.pressableBox;
-    }
-
-    public isOn(): boolean {
-        return this.on;
+        if (this.dirtyTransform) // Update transform
+            super.getTransform();
+        return this.pressTransform;
     }
 
     public override getMinPos(): Vector {
         const min = super.getMinPos();
         // Find minimum pos from corners of selection box
-        const corners = this.pressableBox.getCorners().map((v) =>
+        const corners = this.getPressableBox().getCorners().map((v) =>
             v.sub(this.getOffset())
         );
         return Vector.Min(min, ...corners);
@@ -77,17 +61,9 @@ export abstract class PressableComponent extends DigitalComponent implements Pre
     public override getMaxPos(): Vector {
         const max = super.getMaxPos();
         // Find maximum pos from corners of selection box
-        const corners = this.pressableBox.getCorners().map((v) =>
+        const corners = this.getPressableBox().getCorners().map((v) =>
             v.add(this.getOffset())
         );
         return Vector.Max(max, ...corners);
     }
-
-    public override getImageName(): string {
-        return (this.isOn() ? this.getOnImageName() : this.getOffImageName());
-    }
-
-    public abstract getOffImageName(): string;
-    public abstract getOnImageName(): string;
-
 }

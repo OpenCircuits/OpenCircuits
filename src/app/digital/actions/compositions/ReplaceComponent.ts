@@ -43,7 +43,7 @@ export function ReplaceComponent(designer: DigitalCircuitDesigner,
     );
 
     // Change name of replacement component to be the replaced one if set
-    if (comp["name"].isSet())
+    if (comp.isNameSet())
         replacementComponent.setName(comp.getName());
 
     // Move replacement to the replaced position

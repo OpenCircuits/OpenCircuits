@@ -13,8 +13,8 @@ import {Port, Wire} from "core/models";
 
 export const WiringTool = (() => {
     const enum StateType {
-        CLICKED,
-        DRAGGED,
+        Clicked,
+        Dragged,
     }
 
     let port: Port;
@@ -84,8 +84,8 @@ export const WiringTool = (() => {
             //  2) if the port was initial dragged on,
             //      then letting go of the mouse will deactivate this
             //  3) the user cancels using Escape, Backspace or RMB
-            return (stateType === StateType.CLICKED && event.type === "click")  ||
-                   (stateType === StateType.DRAGGED && event.type === "mouseup") ||
+            return (stateType === StateType.Clicked && event.type === "click")  ||
+                   (stateType === StateType.Dragged && event.type === "mouseup") ||
                    (event.type === "keydown" && event.key === "Escape") ||
                    (event.type === "keydown" && event.key === "Backspace") ||
                    (event.type === "mousedown" && event.button === RIGHT_MOUSE_BUTTON);
@@ -100,7 +100,7 @@ export const WiringTool = (() => {
             wire = info.designer.createWire(port, undefined);
             setWirePoint(port.getWorldTargetPos());
 
-            stateType = (event.type === "click" ? StateType.CLICKED : StateType.DRAGGED);
+            stateType = (event.type === "click" ? StateType.Clicked : StateType.Dragged);
         },
         onDeactivate({}: Event, info: CircuitInfo): void {
             const { history, designer } = info;

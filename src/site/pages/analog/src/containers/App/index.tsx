@@ -16,8 +16,6 @@ import {LoginPopup}     from "shared/containers/LoginPopup";
 import {SelectionPopup} from "shared/containers/SelectionPopup";
 import {SideNav}        from "shared/containers/SideNav";
 
-
-import {PositionModule} from "shared/containers/SelectionPopup/modules/PositionModule";
 import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
 
 import {AnalogPaste} from "site/analog/utils/AnalogPaste";
@@ -83,7 +81,6 @@ export const App = ({ info, helpers, canvas }: Props) => {
 
                     <SelectionPopup info={info}
                                     docsUrlConfig={docsConfig}>
-                        <PositionModule info={info} />
                         <PropertyModule info={info} />
                         <OscilloscopePlotsModule info={info} />
                     </SelectionPopup>

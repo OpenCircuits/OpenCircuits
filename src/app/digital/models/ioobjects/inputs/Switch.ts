@@ -16,24 +16,23 @@ export class Switch extends PressableComponent {
     public constructor() {
         super(new ClampedValue(0),
               new ClampedValue(1),
-              V(62, 77),
-              V(48, 60));
+              V(1.24, 1.54), V(0.96, 1.2));
     }
 
     /**
      * Toggles Switch.
      */
     public override click(): void {
-        this.activate(!this.on);
+        this.activate(!this.isOn());
     }
 
     /**
-     * Activates or deactivates Switch output.
+     * Utility function to check if this Switch is on or not.
      *
-     * @param signal Boolean representing on or off.
+     * @returns True if the Switch is toggled, false otherwise.
      */
-    public override activate(signal: boolean): void {
-        super.activate(signal, 0);
+    public isOn(): boolean {
+        return this.outputs.first.getIsOn();
     }
 
     /**
@@ -45,21 +44,7 @@ export class Switch extends PressableComponent {
         return "Switch";
     }
 
-    /**
-     * Returns name of image file with on state Switch.
-     *
-     * @returns The string "switchUp.svg".
-     */
-    public getOffImageName(): string {
-        return "switchUp.svg";
-    }
-
-    /**
-     * Returns name of image file with off state Switch.
-     *
-     * @returns The string "switchDown.svg".
-     */
-    public getOnImageName(): string {
-        return "switchDown.svg";
+    public override getImageName(): string | undefined {
+        return this.isOn() ? "switchDown.svg" : "switchUp.svg";
     }
 }

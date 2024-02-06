@@ -18,7 +18,7 @@ export class Ground extends AnalogComponent {
     public constructor() {
         super(
             new ClampedValue(1),
-            V(60, 30), new SidePositioner("top")
+            V(1.2, 0.6), new SidePositioner("top")
         );
     }
 
