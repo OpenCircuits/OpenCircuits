@@ -15,8 +15,8 @@
     "build:jsdocs": "node ./build/scripts/docs/index.js",
     "test": "node ./build/scripts/test.js",
     "coverage": "node ./build/scripts/test.js --coverage",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --fix --cache",
     "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build"
   },
   "devDependencies": {
