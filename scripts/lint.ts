@@ -17,23 +17,21 @@ import yargs       from "yargs";
         extensions:              [".ts", ".tsx"],
     });
 
-    const files: string[] = [];
-    if (!all) {
+    const files = (() => {
+        if (all)
+            return ["scripts/", "src/"];
         const git = simpleGit();
+        // Get diff for all files that are staged (or something)
         const diff = await git.diff(["--name-only", "origin/master...", "--"]);
-        diff.split("\n").filter((file) => (file.endsWith(".ts") || file.endsWith(".tsx"))).forEach((file) => {
-            if (file.endsWith(".ts") || file.endsWith(".tsx"))
-                files.push(file);
-        });
+        // Get status for all unstaged files (or something)
         const status = await git.status(["--short"]);
-        status.files.forEach((summary) => {
-            const file = summary.path;
-            if (file.endsWith(".ts") || file.endsWith(".tsx"))
-                files.push(file);
-        });
-    } else {
-        files.push("scripts/", "src/");
-    }
+        return [
+            ...new Set([
+                ...diff.split("\n"),
+                ...status.files
+            ].filter((file) => (file.endsWith(".ts") || file.endsWith(".tsx")))
+        )];
+    })();
 
     const results = await eslint.lintFiles(files);
     if (fix)
