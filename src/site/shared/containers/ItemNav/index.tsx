@@ -53,13 +53,16 @@ type Props<D> = {
     info: CircuitInfo;
     config: ItemNavConfig;
     additionalData?: D;
+    shortcuts: string[][];
     getImgSrc: (c: Component) => string;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
+// let shortcut_flag:boolean = false
+
+export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, shortcuts,  onDelete,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
     const { isOpen, isEnabled, isHistoryBoxOpen, curItemID } = useSharedSelector(
         (state) => ({ ...state.itemNav })
@@ -86,6 +89,10 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
     // State to keep track of drag'n'drop preview current image
     const [curItemImg, setCurItemImg] = useState("");
 
+    const [shortcutFlag, setShortcutFlag] = useState(false);
+
+    const [shortItem, setShortItem] = useState("");
+
     // Keep track of a separate 'currentlyPressedObj' in tandem with `info.currentlyPressedObj` so that
     //  we can use it to potentially delete the object if its dragged over to the ItemNav (issue #478)
     const [currentlyPressedObj, setCurPressedObj] = useState(undefined as (Selectable | undefined));
@@ -94,6 +101,30 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         if (info.currentlyPressedObject)
             setCurPressedObj(info.currentlyPressedObject);
     });
+    // Loops through the shorcuts 2d array in AnalogItemNav to see if any shortcuts
+    useDocEvent("keydown", (ev) => {
+        // Loop through each of the input shortcuts
+        for (const short of shortcuts) {
+            if (ev.key === short[0]) {
+                // Detect second keypress to exit shortcut
+                if (curItemID === short[1] && shortcutFlag) {
+                    reset(true);
+                    setShortcutFlag(false);
+                    break;
+                }
+                const id = short[1];
+                const section = config.sections.find((s) => (s.items.find((i) => i.id === id)));
+                dispatch(SetCurItem(id));
+                setNumClicks(id.toLowerCase() === curItemID ? numClicks+1 : 1);
+                setCurItemImg(`/${config.imgRoot}/${section?.id}/${[...id.toLowerCase(),...".svg"].join("")}`)
+                onStart && onStart();
+                ev.stopPropagation();
+                // Update shortcut paramters to verify later
+                setShortcutFlag(true);
+                setShortItem(id);
+            }
+        }
+    }, [shortcutFlag, shortItem, curItemID]);
     useDocEvent("mouseup",    () => setCurPressedObj(undefined));
     useDocEvent("mouseleave", () => setCurPressedObj(undefined));
     function handleItemNavDrag() { // Issue #478
@@ -108,7 +139,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         info.history.add(DeleteGroup(info.designer, [currentlyPressedObj]));
     }
 
-    // Resets the curItemID and numClicks
+    // Resets the curItemID, numClicks, and shortcutFlag
     const reset = useCallback((cancelled = false) => {
         dispatch(SetCurItem(""));
         setNumClicks(1);
@@ -118,6 +149,18 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
 
     // Drop the current item on click (or on touch end)
     useDocEvent("click", (ev) => {
+        // If keyboard shortcut used to bring up component then allow to drop until "Esc" pressed
+        // Check to make sure shortcut is valid by checking flag and item ID
+        if (shortcutFlag && curItemID === shortItem){
+            DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
+            const section = config.sections.find((s) => (s.items.find((i) => i.id === curItemID)));
+            dispatch(SetCurItem(curItemID));
+            setNumClicks(1);
+            setCurItemImg(`/${config.imgRoot}/${section?.id}/${[...curItemID.toLowerCase(),...".svg"].join("")}`)
+            onStart && onStart();
+            return;
+        }
+
         // If holding shift then drop only a single item (issue #1043)
         if (isShiftDown && numClicks > 1) {
             DragDropHandlers.drop(V(ev.x, ev.y), curItemID, 1, additionalData);
@@ -127,7 +170,7 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         // Otherwise drop all and reset
         DragDropHandlers.drop(V(ev.x, ev.y), curItemID, numClicks, additionalData);
         reset();
-    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks, reset]);
+    }, [curItemID, numClicks, isShiftDown, additionalData, setNumClicks, reset, shortcutFlag, shortItem]);
     useDocEvent("touchend", (ev) => {
         const touch = ev.changedTouches.item(0);
         if (!touch)
@@ -160,9 +203,10 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
         );
     }, [info.camera, isOpen, side]);
 
-    // Cancel placing when pressing escape
+    // Cancel placing when pressing escape and reset shortcut state flag
     useWindowKeyDownEvent("Escape", () => {
         reset(true);
+        setShortcutFlag(false);
     });
 
     // Also cancel on Right Click
@@ -328,7 +372,13 @@ export const ItemNav = <D,>({ info, config, additionalData, getImgSrc, onDelete,
                                         data={[item.id, Math.max(numClicks,1), additionalData]}
                                         onClick={(ev) => {
                                             dispatch(SetCurItem(item.id));
-                                            setNumClicks(item.id === curItemID ? numClicks+1 : 1);
+                                            // Force exit shotcut state when using ItemNav panel
+                                            if (shortcutFlag) {
+                                                setNumClicks(1);
+                                            } else {
+                                                setNumClicks(item.id === curItemID ? numClicks+1 : 1);
+                                            }
+                                            setShortcutFlag(false);
                                             setCurItemImg(`/${config.imgRoot}/${section.id}/${item.icon}`);
                                             onStart && onStart();
 

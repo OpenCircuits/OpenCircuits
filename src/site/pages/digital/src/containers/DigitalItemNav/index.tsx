@@ -186,6 +186,20 @@ export const DigitalItemNav = ({ info }: Props) => {
             additionalData={smartPlace}
             additionalPreview={additionalPreview}
             getImgSrc={getImgSrc}
+            shortcuts={[["b", "Button"],
+                        ["s", "Switch"],
+                        ["l", "ConstantLow"],
+                        ["h", "ConstantHigh"],
+                        ["n", "ConstantNumber"],
+                        ["c", "Clock"],
+                        ["1", "BUFGate"],
+                        ["2", "NOTGate"],
+                        ["3", "ANDGate"],
+                        ["4", "NANDGate"],
+                        ["5", "ORGate"],
+                        ["6", "NORGate"],
+                        ["7", "XORGate"],
+                        ["8", "XNORGate"]]}
             onStart={onSmartPlaceOff}
             onFinish={onSmartPlaceOff}
             onDelete={onDelete} />

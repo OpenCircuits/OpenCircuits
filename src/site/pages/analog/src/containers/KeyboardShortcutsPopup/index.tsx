@@ -65,7 +65,7 @@ export const KeyboardShortcutsPopup = () => {
                 </thead>
                 <tbody>
                     <Shortcut os={os} label="Undo"          keys={["Z"]}          mod />
-                    <Shortcut os={os} label="Redo"          keys={["Shift", "Z"]} mod />
+                    <Shortcut os={os} label="Redo"          keys={["Y"]} mod />
                     <Shortcut os={os} label="Cut"           keys={["X"]}          mod />
                     <Shortcut os={os} label="Copy"          keys={["C"]}          mod />
                     <Shortcut os={os} label="Paste"         keys={["V"]}          mod />
@@ -76,6 +76,12 @@ export const KeyboardShortcutsPopup = () => {
                     <Shortcut os={os} label="Snapping"      keys={["Shift"]} pre="Hold " />
                     <Shortcut os={os} label="Duplicate"     keys={["D"]}          mod />
                     <Shortcut os={os} label="Fit to Screen" keys={["F"]}              />
+                    <Shortcut os={os} label="Voltage Source" keys={["V"]}              />
+                    <Shortcut os={os} label="Current Source" keys={["I"]}              />
+                    <Shortcut os={os} label="Resistor" keys={["R"]}              />
+                    <Shortcut os={os} label="Capacitor" keys={["C"]}              />
+                    <Shortcut os={os} label="Inductor" keys={["L"]}              />
+                    <Shortcut os={os} label="Ground" keys={["G"]}              />
                 </tbody>
             </table>
         </Popup>
