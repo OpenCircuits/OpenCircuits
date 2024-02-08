@@ -16,7 +16,7 @@ import {DigitalCircuitDesigner} from "digital/models";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 
-import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/api/Circuits";
+import {DeleteUserCircuit, LoadUserCircuit, UpdateUserCircuit} from "shared/api/Circuits";
 
 import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
 
@@ -177,14 +177,14 @@ export function GetDigitalCircuitInfoHelpers(store: AppStore, canvas: RefObject<
             );
 
             // Create circuit copy
-            const circuitCopyMetadata = await CreateUserCircuit(user.auth, circuitCopy);
+            const newId = await UpdateUserCircuit(user.auth, circuitCopy, "0");
 
-            if (!circuitCopyMetadata)
+            if (!newId)
                 throw new Error("GetDigitalCircuitInfoHelpers.DuplicateCircuitRemote failed: " +
                                 "circuitCopyMetadata is undefined");
 
             // Load circuit copy onto canvas
-            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, circuitCopyMetadata.getId()));
+            await helpers.LoadCircuit(() => LoadUserCircuit(user.auth!, newId));
 
             await store.dispatch(LoadUserCircuits());
         },

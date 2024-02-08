@@ -8,7 +8,7 @@ import (
 	"log"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/gin-gonic/gin"
+	"github.com/OpenCircuits/OpenCircuits/site/go/model"
 	"google.golang.org/api/oauth2/v2"
 	"google.golang.org/api/option"
 )
@@ -25,9 +25,6 @@ type oauth2Config struct {
 }
 type oauth2ConfigWrapper struct {
 	Web oauth2Config `json:"web"`
-}
-
-func (g authenticationMethod) RegisterHandlers(engine *gin.Engine) {
 }
 
 // New Creates a new instance of the google authentication method with the provided config path
@@ -57,7 +54,7 @@ func New(configPath string) auth.AuthenticationMethod {
 	}
 }
 
-func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
+func (g authenticationMethod) ExtractIdentity(token string) (model.UserID, error) {
 	// This is poorly documented, so the code for verifying a token is credit to
 	// https://stackoverflow.com/a/36717411/2972004
 	// NOTE: This should be replaced with manual JWT verification. This endpoint
@@ -67,9 +64,9 @@ func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
 		return "", err
 	}
 	if tokenInfo.IssuedTo != g.config.Web.ClientID {
-		return "", errors.New("invalid audience")
+		return model.UserID(""), errors.New("invalid audience")
 	}
-	return "google_" + tokenInfo.UserId, nil
+	return model.UserID("google_" + tokenInfo.UserId), nil
 }
 
 func (g authenticationMethod) AuthHeaderPrefix() string {
