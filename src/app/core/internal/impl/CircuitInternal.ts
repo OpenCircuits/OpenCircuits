@@ -15,15 +15,7 @@ import {FastCircuitDiff, FastCircuitDiffBuilder}         from "./FastCircuitDiff
 export type InternalEvent = {
     type: "CircuitOp";
     diff: FastCircuitDiff;
-} | {
-    type: "CameraOp";
-    diff: {
-        dx: number;
-        dy: number;
-        dz: number;
-    };
 }
-
 
 // CircuitInternal is a low-level session for editing a circuit.  It encapsulates the CircuitDocument and the CircuitLog
 // to provide a transaction mechanism for building LogEntries.  It also provides a higher-level interface for producing
@@ -54,7 +46,6 @@ export class CircuitInternal extends Observable<InternalEvent> {
     private diffBuilder: FastCircuitDiffBuilder;
 
     // Schemas
-    protected camera: Schema.Camera;
     protected metadata: Schema.CircuitMetadata;
 
     public constructor(log: CircuitLog, doc: CircuitDocument) {
@@ -68,12 +59,6 @@ export class CircuitInternal extends Observable<InternalEvent> {
         this.transactionOps = [];
 
         this.diffBuilder = new FastCircuitDiffBuilder();
-
-        this.camera = {
-            x:    0,
-            y:    0,
-            zoom: 0.02,
-        };
 
         this.metadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0" };
 
@@ -305,33 +290,6 @@ export class CircuitInternal extends Observable<InternalEvent> {
 
     public setMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {
         this.metadata = { ...this.metadata, ...newMetadata } as Schema.CircuitMetadata;
-    }
-
-    //
-    // Revisit where this should go
-    //
-
-    public getCamera(): Readonly<Schema.Camera> {
-        return this.camera;
-    }
-
-    public setCameraProps(props: Partial<Schema.Camera>) {
-        const dx = (props.x ?? this.camera.x) - this.camera.x;
-        const dy = (props.y ?? this.camera.y) - this.camera.y;
-        const dz = (props.zoom ?? this.camera.zoom) - this.camera.zoom;
-
-        // No change, no need to emit event
-        if (dx === 0 && dy === 0 && dz === 0)
-            return;
-
-        this.camera.x = (props.x ?? this.camera.x);
-        this.camera.y = (props.y ?? this.camera.y);
-        this.camera.zoom = (props.zoom ?? this.camera.zoom);
-
-        this.publish({
-            type: "CameraOp",
-            diff: { dx, dy, dz },
-        });
     }
 
     public getMetadata(): Readonly<Schema.CircuitMetadata> {

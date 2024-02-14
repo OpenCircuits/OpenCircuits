@@ -9,41 +9,39 @@ import {CircuitState, CircuitTypes} from "./CircuitState";
 import {ObservableImpl}             from "./Observable";
 
 
-export function CameraImpl<T extends CircuitTypes>({ internal, view }: CircuitState<T>) {
+export function CameraImpl<T extends CircuitTypes>({ view }: CircuitState<T>) {
     function camera() {
-        return internal.getCamera();
+        return view.getCamera();
     }
 
     const observable = ObservableImpl<CameraEvent>();
 
-    internal.subscribe((ev) => {
-        if (ev.type !== "CameraOp")
-            return;
-        observable.emit({ type: "change", ...ev.diff });
+    view.subscribe("oncamerachange", (ev) => {
+        observable.emit({ type: "change", ...ev });
     });
 
     return extend(observable, {
         set cx(x: number) {
-            internal.setCameraProps({ x });
+            view.setCameraProps({ x });
         },
         get cx(): number {
             return camera().x;
         },
         set cy(y: number) {
-            internal.setCameraProps({ y });
+            view.setCameraProps({ y });
         },
         get cy(): number {
             return camera().y;
         },
         set pos({ x, y }: Vector) {
-            internal.setCameraProps({ x, y });
+            view.setCameraProps({ x, y });
         },
         get pos(): Vector {
             return V(this.cx, this.cy);
         },
 
         set zoom(zoom: number) {
-            internal.setCameraProps({ zoom });
+            view.setCameraProps({ zoom });
         },
         get zoom(): number {
             return camera().zoom;

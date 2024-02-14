@@ -7,7 +7,9 @@ import {Matrix2x3}   from "math/Matrix";
 import {Transform}   from "math/Transform";
 
 import {None,Option,Some} from "core/utils/Result";
-import {Observable}       from "core/utils/Observable";
+import {Observable, MultiObservable} from "core/utils/Observable";
+
+import {Schema} from "core/schema";
 
 import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
@@ -22,6 +24,17 @@ import {RenderHelper}                        from "./rendering/RenderHelper";
 import {DefaultRenderOptions, RenderOptions} from "./rendering/RenderOptions";
 import {RenderScheduler}                     from "./rendering/RenderScheduler";
 
+
+export type CircuitViewEvents = {
+    "onrender": {
+        renderer: RenderHelper;
+    };
+    "oncamerachange": {
+        dx: number;
+        dy: number;
+        dz: number;
+    };
+}
 
 /**
  * Utility class to manage assets for the circuit view.
@@ -51,7 +64,7 @@ export class CircuitViewAssetManager<T> extends Observable<{ key: string, val: T
     }
 }
 
-export abstract class CircuitView extends Observable<{ renderer: RenderHelper }> {
+export abstract class CircuitView extends MultiObservable<CircuitViewEvents> {
     public readonly circuit: CircuitInternal;
     public readonly selections: SelectionsManager;
 
@@ -60,6 +73,8 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     public readonly scheduler: RenderScheduler;
     public readonly renderer: RenderHelper;
 
+    // SoT for the camera, since it's tied to the view
+    public camera: Schema.Camera;
     public cameraMat: Matrix2x3;
 
     public componentTransforms: Map<GUID, Transform>;
@@ -89,6 +104,11 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         this.scheduler = new RenderScheduler();
         this.renderer = new RenderHelper();
 
+        this.camera = {
+            x:    0,
+            y:    0,
+            zoom: 0.02,
+        };
         this.cameraMat = this.calcCameraMat();
 
         this.componentTransforms = new Map();
@@ -111,11 +131,6 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         this.scheduler.setBlocked(true);
 
         this.circuit.subscribe((ev) => {
-            if (ev.type === "CameraOp") {
-                this.cameraMat = this.calcCameraMat();
-                this.scheduler.requestRender();
-                return;
-            }
             // TODO[model_refactor_api](leon) - use events better, i.e. how do we collect the diffs until the next
             //                                  render cycle or query for the dirty object(s)?
             const diff = ev.diff;
@@ -216,9 +231,9 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     }
 
     protected calcCameraMat() {
-        const camera = this.circuit.getCamera();
+        const { x, y, zoom } = this.camera;
 
-        return new Matrix2x3(V(camera.x, camera.y), 0, V(camera.zoom, -camera.zoom));
+        return new Matrix2x3(V(x, y), 0, V(zoom, -zoom));
     }
 
     public toWorldPos(pos: Vector): Vector {
@@ -311,7 +326,7 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
         // Debug rendering
 
         // Callback for post-rendering
-        this.publish({ renderer: this.renderer });
+        this.publish("onrender", { renderer: this.renderer });
         this.renderer.restore();
     }
 
@@ -325,6 +340,30 @@ export abstract class CircuitView extends Observable<{ renderer: RenderHelper }>
     public resize(w: number, h: number) {
         // Request a render on resize
         this.scheduler.requestRender();
+    }
+
+    public setCameraProps(props: Partial<Schema.Camera>) {
+        const dx = (props.x ?? this.camera.x) - this.camera.x;
+        const dy = (props.y ?? this.camera.y) - this.camera.y;
+        const dz = (props.zoom ?? this.camera.zoom) - this.camera.zoom;
+
+        // No change, no need to emit event
+        if (dx === 0 && dy === 0 && dz === 0)
+            return;
+
+        this.camera.x = (props.x ?? this.camera.x);
+        this.camera.y = (props.y ?? this.camera.y);
+        this.camera.zoom = (props.zoom ?? this.camera.zoom);
+
+        // Update camera matrix and request re-render
+        this.cameraMat = this.calcCameraMat();
+        this.scheduler.requestRender();
+
+        this.publish("oncamerachange", { dx, dy, dz });
+    }
+
+    public getCamera(): Readonly<Schema.Camera> {
+        return this.camera;
     }
 
     public setCanvas(canvas?: HTMLCanvasElement) {

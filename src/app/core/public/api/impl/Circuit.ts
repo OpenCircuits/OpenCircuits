@@ -264,7 +264,7 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             renderer: RenderHelper;
             options: RenderOptionsI;
         }) => void): CleanupFunc {
-            return state.view.subscribe(({ renderer }) => cb({
+            return state.view.subscribe("onrender", ({ renderer }) => cb({
                 renderer,
                 options: state.view.options,
             }));
