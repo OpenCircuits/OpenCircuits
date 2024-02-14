@@ -137,4 +137,3 @@ export function Generate(info: DigitalCircuitInfo, expression: string,
     // info.history.add(action);
     // info.renderer.render();
 }
-

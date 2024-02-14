@@ -114,8 +114,8 @@ module.exports = {
                         "from": [
                             "./src/site/pages/!(analog)/**",
                             "./src/app/!(analog|core)/**",
-                            "./src/app/analog/!(public)/**",
-                            "./src/app/core/!(public)/**",
+                            "./src/app/analog/!(public|utils)/**",
+                            "./src/app/core/!(public|utils)/**",
                         ],
                     },
                     {
@@ -123,8 +123,8 @@ module.exports = {
                         "from": [
                             "./src/site/pages/!(digital)/**",
                             "./src/app/!(digital|core)/**",
-                            "./src/app/digital/!(public)/**",
-                            "./src/app/core/!(public)/**",
+                            "./src/app/digital/!(public|utils)/**",
+                            "./src/app/core/!(public|utils)/**",
                         ],
                     },
                     {
@@ -163,7 +163,10 @@ module.exports = {
                     },
                     {
                         "target": "./src/app/core/public/**",
-                        "from": ["./src/app/!(core)/**", "./src/app/core/!(internal|public)/**"],
+                        "from": [
+                            "./src/app/!(core)/**",
+                            "./src/app/core/!(internal|public|utils)/**",
+                        ],
                     },
                     {
                         "target": "./src/app/digital/public/**",
