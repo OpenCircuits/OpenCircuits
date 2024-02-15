@@ -23,8 +23,15 @@ tests/index.js
 app.yaml
 yarn-error.log
 
+.eslintcache
+
 # IntelliJ
 .idea/
 
 # Secrets (to prevent devs from pushing api keys to the repo)
 src/secrets/
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
