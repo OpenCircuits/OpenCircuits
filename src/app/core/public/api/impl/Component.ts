@@ -44,6 +44,12 @@ export function ComponentImpl<T extends CircuitTypes>(
         get y(): number {
             return (getComponent().props.y ?? 0);
         },
+        set size(val: Vector) {
+            throw new Error("Unimplemented!");
+        },
+        get size(): Vector {
+            throw new Error("Unimplemented!");
+        },
         set pos(val: Vector) {
             internal.beginTransaction();
             internal.setPropFor<Schema.Component, "x">(id, "x", val.x).unwrap();

@@ -16,6 +16,7 @@ import {useMainDigitalDesigner} from "site/digital/utils/hooks/useDigitalDesigne
 import {DigitalHeader}       from "site/digital/containers/DigitalHeader";
 import {DigitalItemNav}      from "site/digital/containers/DigitalItemNav";
 import {DigitalMainDesigner} from "site/digital/containers/DigitalMainDesigner";
+import {ExprToCircuitPopup}  from "site/digital/containers/ExprToCircuitPopup";
 
 import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
 import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
@@ -83,7 +84,7 @@ export const App = () => {
             <KeyboardShortcutsPopup />
             <ImageExporterPopup designer={designer} />
 
-            {/* <ExprToCircuitPopup /> */}
+            <ExprToCircuitPopup circuit={designer.circuit} />
 
             <LoginPopup />
         </div>
