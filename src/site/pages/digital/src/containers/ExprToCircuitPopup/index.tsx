@@ -1,9 +1,9 @@
 import {useState} from "react";
 
+import {DigitalCircuit} from "digital/public";
+
 import {OperatorFormat, OperatorFormatLabel} from "site/digital/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS}                             from "site/digital/utils/ExpressionParser/Constants/Formats";
-
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 
 import {useSharedDispatch,
         useSharedSelector} from "shared/utils/hooks/useShared";
@@ -25,9 +25,9 @@ import "./index.scss";
 
 
 type Props = {
-    mainInfo: DigitalCircuitInfo;
+    circuit: DigitalCircuit;
 }
-export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
+export const ExprToCircuitPopup = (({ circuit }: Props) => {
     const { curPopup } = useSharedSelector(
         (state) => ({ curPopup: state.header.curPopup })
     );
@@ -111,17 +111,15 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                         className="exprtocircuit__popup__generate"
                         disabled={expression===""}
                         onClick={() => {
-                            try {
-                                Generate(mainInfo, expression, {
-                                    input, output, isIC,
-                                    connectClocksToOscope: clocksToOscope,
-                                    label, format,
-                                    ops:                   customOps,
-                                });
-                                reset();
-                            } catch (e) {
-                                setErrorMessage(e.message);
-                                console.error(e);
+                            const result = Generate(circuit, expression, {
+                                input, output, isIC,
+                                connectClocksToOscope: clocksToOscope,
+                                label, format,
+                                ops:                   customOps,
+                            });
+                            if (!result.ok) {
+                                setErrorMessage(result.error.errors.map((err) => err.message).join("\n"));
+                                console.error(result.error);
                             }
                         }}>
                     Generate

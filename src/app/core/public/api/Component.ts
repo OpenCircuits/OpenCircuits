@@ -12,6 +12,7 @@ export interface Component extends BaseObject {
 
     x: number;
     y: number;
+    size: Vector;
     pos: Vector;
     angle: number;
 
