@@ -10,6 +10,7 @@ import {CircuitDesigner}                       from "shared/circuitdesigner/Circ
 import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "shared/utils/input/Constants";
 import {InputAdapterEvent}                     from "shared/utils/input/InputAdapterEvent";
 import {Tool}                                  from "./Tool";
+import {Viewport} from "shared/circuitdesigner/Viewport";
 
 
 // The distance away from the port in selection for wiring.
@@ -26,16 +27,17 @@ export class WiringTool implements Tool {
      *
      * @param pos       The position to look for ports around.
      * @param circuit   The circuit that contains the ports to look at.
+     * @param viewport  The circuit's viewport.
      * @param otherPort An optional "other port" that means we should look for a port that can connect with this one.
      * @returns         The found port, otherwise undefined if none were found.
      */
-    protected findPort(pos: Vector, circuit: Circuit, otherPort?: Port): Port | undefined {
+    protected findPort(pos: Vector, circuit: Circuit, viewport: Viewport, otherPort?: Port): Port | undefined {
         // This is not as straightforward at just picking the port that's over the cursor, because:
         // 1. If there are multiple ports close together, if one is "above" the other, it would get iterated
         //     first but the cursor might be closer to the "lower" one and the user most likely wants the closest one.
         // 2. If the closest port already has a connection and can't be wired,
         //     we probably want to find the next closest.
-        const worldPos = circuit.camera.toWorldPos(pos);
+        const worldPos = viewport.curCamera.toWorldPos(pos);
 
         // First see if there is a port that we are directly within the bounds of
         const p1 = circuit.pickPortAt(worldPos);
@@ -64,14 +66,14 @@ export class WiringTool implements Tool {
             .reduce(MinDist).port;
     }
 
-    public shouldActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): boolean {
+    public shouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): boolean {
         // Activate if the user drags or clicks on a port
         return (
             (
                 (ev.type === "mousedown" && ev.button === LEFT_MOUSE_BUTTON && ev.input.touchCount === 1) ||
                 (ev.type === "click")
             )
-            && (this.findPort(ev.input.mousePos, circuit) !== undefined)
+            && (this.findPort(ev.input.mousePos, circuit, viewport) !== undefined)
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
@@ -84,14 +86,14 @@ export class WiringTool implements Tool {
         );
     }
 
-    public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        this.curPort = this.findPort(ev.input.mousePos, circuit);
+    public onActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
+        this.curPort = this.findPort(ev.input.mousePos, circuit, viewport);
 
         this.stateType = (ev.type === "click" ? "clicked" : "dragged");
     }
 
-    public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        const port2 = this.findPort(ev.input.mousePos, circuit, this.curPort);
+    public onDeactivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
+        const port2 = this.findPort(ev.input.mousePos, circuit, viewport, this.curPort);
         if (port2) // Connect the ports if we found a second port
             this.curPort!.connectTo(port2);
 
@@ -99,8 +101,8 @@ export class WiringTool implements Tool {
     }
 
     public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        if (ev.type === "mousemove")
-            circuit.forceRedraw();
+        // if (ev.type === "mousemove")
+        //     circuit.forceRedraw();
     }
 
     public getCurPort(): Port | undefined {

@@ -4,7 +4,7 @@ import {CircuitDocument}   from "core/internal/impl/CircuitDocument";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 
 import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
-import {DigitalCircuitView}                 from "digital/internal/views/DigitalCircuitView";
+import {DigitalCircuitAssembler}            from "digital/internal/assembly/DigitalCircuitAssembler";
 import {DigitalSim}                         from "digital/internal/sim/DigitalSim";
 
 import {DigitalCircuit} from "./api/DigitalCircuit";
@@ -18,17 +18,17 @@ import {DigitalCircuitState}  from "./api/impl/DigitalCircuitState";
 
 export * from "./api/DigitalCircuit";
 
-export function CreateCircuit(): DigitalCircuit {
+export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     const internal = new CircuitInternal(
         new CircuitLog(),
         new CircuitDocument(CreateDigitalComponentInfoProvider())
     );
     const selectionsManager = new SelectionsManager();
     const sim = new DigitalSim(internal);
-    const view = new DigitalCircuitView(internal, selectionsManager, sim);
+    const assembler = new DigitalCircuitAssembler(internal, selectionsManager, sim);
 
     const state: DigitalCircuitState = {
-        internal, view, selectionsManager, sim,
+        internal, assembler, selectionsManager, sim,
         isLocked: false,
 
         constructComponent(id) {
@@ -43,7 +43,7 @@ export function CreateCircuit(): DigitalCircuit {
     }
     const circuit = DigitalCircuitImpl(state);
 
-    return circuit;
+    return [circuit, state];
 }
 
 export function ParseCircuit(rawContents: string): DigitalCircuit {

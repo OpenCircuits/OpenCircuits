@@ -1,16 +1,18 @@
 import {Margin} from "math/Rect";
 
-import {Circuit, Obj} from "core/public";
+import {Circuit} from "core/public";
 
 import {DebugOptions} from "shared/circuitdesigner/impl/DebugOptions";
 import {DefaultTool}  from "shared/tools/DefaultTool";
 import {ToolRenderer} from "shared/tools/renderers/ToolRenderer";
 import {Tool}         from "shared/tools/Tool";
 import {Cursor}       from "shared/utils/input/Cursor";
-import {InputAdapter} from "shared/utils/input/InputAdapter";
 
 import {CircuitDesigner} from "../CircuitDesigner";
-import {ToolManager}     from "./ToolManager";
+import {CircuitTypes} from "core/public/api/impl/CircuitState";
+import {CircuitDesignerState} from "./CircuitDesignerState";
+import {Viewport} from "../Viewport";
+import {ViewportImpl} from "./Viewport";
 
 
 export interface ToolConfig {
@@ -19,93 +21,60 @@ export interface ToolConfig {
     renderers?: ToolRenderer[];
 }
 
-export class CircuitDesignerImpl<CircuitT extends Circuit> implements CircuitDesigner<CircuitT> {
-    public readonly circuit: CircuitT;
+export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes>(
+    circuit: CircuitT,
+    state: CircuitDesignerState<T>
+) {
+    const viewport = ViewportImpl(state);
 
-    private readonly toolManager: ToolManager;
-    private readonly toolConfig: ToolConfig;
+    return {
+        get circuit(): CircuitT {
+            return circuit;
+        },
 
-    private readonly state: {
-        curPressedObj?: Obj;
-        cursor?: Cursor;
-        margin: Margin;
-        debugOptions: DebugOptions;
-    }
+        get viewport(): Viewport {
+            return viewport;
+        },
 
-    public constructor(
-        circuit: CircuitT,
-        config: ToolConfig,
-    ) {
-        this.circuit = circuit;
+        set curPressedObj(obj: T["Obj"] | undefined) {
+            state.curPressedObj = obj;
+        },
+        get curPressedObj(): T["Obj"] | undefined {
+            return state.curPressedObj;
+        },
 
-        this.toolManager = new ToolManager(config.defaultTool, config.tools);
-        this.toolConfig = config;
+        set cursor(cursor: Cursor | undefined) {
+            state.cursor = cursor;
+        },
+        get cursor(): Cursor | undefined {
+            return state.cursor;
+        },
 
-        this.state = {
-            curPressedObj: undefined,
-            cursor:        undefined,
-            margin:        { left: 0, right: 0, top: 0, bottom: 0 },
-            debugOptions:  {
-                debugCullboxes:       false,
-                debugNoFill:          false,
-                debugPressableBounds: false,
-                debugSelectionBounds: false,
-            },
-        };
-    }
+        set margin(m: Margin) {
+            state.margin = { ...state.margin, ...m };
+        },
+        get margin(): Margin {
+            return state.margin;
+        },
 
-    public set curPressedObj(obj: Obj | undefined) {
-        this.state.curPressedObj = obj;
-    }
-    public get curPressedObj() {
-        return this.state.curPressedObj;
-    }
-
-    public set cursor(cursor: Cursor | undefined) {
-        this.state.cursor = cursor;
-    }
-    public get cursor() {
-        return this.state.cursor;
-    }
-
-    public set margin(m: Margin) {
-        this.state.margin = { ...this.state.margin, ...m };
-    }
-    public get margin() {
-        return this.state.margin;
-    }
-
-    public set debugOptions(val: DebugOptions) {
-        this.state.debugOptions = { ...this.state.debugOptions, ...val };
-    }
-    public get debugOptions(): DebugOptions {
-        return this.state.debugOptions;
-    }
-
-    public attachCanvas(canvas: HTMLCanvasElement): () => void {
-        const renderers = (this.toolConfig.renderers ?? []);
-
-        // Setup input adapter
-        const inputAdapter = new InputAdapter(canvas, this.circuit.camera);
-
-        // Setup tool manager
-        inputAdapter.subscribe((ev) => this.toolManager.onEvent(ev, this));
-
-        // Attach tool renderers
-        const renderCleanup = this.circuit.addRenderCallback((renderArgs) =>
-            renderers.forEach((toolRenderer) => toolRenderer.render({
-                circuit: this.circuit,
-                curTool: this.toolManager.curTool,
-                input:   inputAdapter.state,
-                ...renderArgs,
-             }))
-        );
-
-        this.circuit.attachCanvas(canvas);
-        return () => {
-            this.circuit.detachCanvas();
-            renderCleanup();
-            inputAdapter.cleanup();
-        }
-    }
+        set debugOptions(val: DebugOptions) {
+            state.debugOptions = { ...state.debugOptions, ...val };
+        },
+        get debugOptions(): DebugOptions {
+            return state.debugOptions;
+        },
+    } satisfies CircuitDesigner;
 }
+
+//         this.state = {
+//             curPressedObj: undefined,
+//             cursor:        undefined,
+//             margin:        { left: 0, right: 0, top: 0, bottom: 0 },
+//             debugOptions:  {
+//                 debugCullboxes:       false,
+//                 debugNoFill:          false,
+//                 debugPressableBounds: false,
+//                 debugSelectionBounds: false,
+//             },
+//         };
+//     }

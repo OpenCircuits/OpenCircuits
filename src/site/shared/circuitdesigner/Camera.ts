@@ -1,8 +1,7 @@
 import {Vector} from "Vector";
+import {Obj} from "core/public";
+import {Observable} from "core/public/api/Observable";
 import {Margin} from "math/Rect";
-
-import {Obj}        from "./Obj";
-import {Observable} from "./Observable";
 
 
 export type CameraEvent = {

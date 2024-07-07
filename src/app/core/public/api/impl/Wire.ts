@@ -1,11 +1,10 @@
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
 
 import {AddErrE} from "core/utils/MultiError";
 import {extend}  from "core/utils/Functions";
 
 import {GUID} from "core/internal";
 
-import {Node}    from "../Component";
 import {Circuit} from "../Circuit";
 import {Wire}    from "../Wire";
 
@@ -22,7 +21,7 @@ export function WireImpl<T extends CircuitTypes>(
     connectNode: (p1: T["Port"], p2: T["Port"], pos: Vector) =>
         { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] },
 ) {
-    const { internal, view, constructPort } = state;
+    const { internal, assembler, constructPort } = state;
 
     function getWire() {
         return internal.doc.getWireByID(id)
@@ -52,8 +51,8 @@ export function WireImpl<T extends CircuitTypes>(
             //  Need to make an explicit CircuitInternal operation for splitting wires
 
             // Default to making the node in the middle of the wire
-            const shape = view.wireCurves.get(base.id);
-            const pos = (shape?.getPos(0.5) ?? V(0, 0));
+            const shape = assembler.getWireShape(base.id);
+            const pos = shape.unwrap().getPos(0.5);
 
             internal.beginTransaction();
 

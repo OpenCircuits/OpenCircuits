@@ -16,12 +16,12 @@ export class WireAssembler extends Assembler<Schema.Wire> {
 
     protected assembleCurve(wire: Schema.Wire) {
         return new BezierCurvePrim(
-            this.view.wireCurves.get(wire.id)!,
+            this.cache.wireCurves.get(wire.id)!,
             this.assembleCurveStyle(wire),
         );
     }
 
-    public assemble(wire: Schema.Wire, ev: unknown): void {
+    public assemble(wire: Schema.Wire, _: unknown): void {
         const portPositionsChanged = /* use ev to see if either port position changed */ true;
         const selectionChanged     = /* use ev to see if parent wwas de/selected */ true;
 
@@ -29,15 +29,15 @@ export class WireAssembler extends Assembler<Schema.Wire> {
             return;
 
         if (portPositionsChanged) {
-            const p1Pos = this.view.portPositions.get(wire.p1)!, p2Pos = this.view.portPositions.get(wire.p2)!;
+            const p1Pos = this.cache.portPositions.get(wire.p1)!, p2Pos = this.cache.portPositions.get(wire.p2)!;
 
             // Calc bezier curve points
             const p1 = p1Pos.target, c1 = p1.add(p1Pos.dir.scale(1));
             const p2 = p2Pos.target, c2 = p2.add(p2Pos.dir.scale(1));
-            this.view.wireCurves.set(wire.id, new BezierCurve(p1, p2, c1, c2));
+            this.cache.wireCurves.set(wire.id, new BezierCurve(p1, p2, c1, c2));
         }
 
-        const [prevCurve] = (this.view.wirePrims.get(wire.id) ?? []);
+        const [prevCurve] = (this.cache.wirePrims.get(wire.id) ?? []);
 
         const curve = ((!prevCurve || portPositionsChanged) ? this.assembleCurve(wire) : prevCurve);
 
@@ -45,6 +45,6 @@ export class WireAssembler extends Assembler<Schema.Wire> {
         if (selectionChanged)
             curve.updateStyle(this.assembleCurveStyle(wire));
 
-        this.view.wirePrims.set(wire.id, [curve]);
+        this.cache.wirePrims.set(wire.id, [curve]);
     }
 }

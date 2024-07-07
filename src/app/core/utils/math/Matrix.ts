@@ -33,6 +33,8 @@ export class Matrix2x3 {
      */
     public constructor(mat: number[]);
 
+    // TODO[master](leon) - maybe make factory methods to do this logic w/ constructor only taking in raw elements
+    //                      for efficiency reasons
     public constructor(other?: number[] | Vector, angle?: number, scale?: Vector) {
         this.mat = [1,0,0,1,0,0];
 

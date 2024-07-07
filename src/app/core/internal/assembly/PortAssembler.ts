@@ -3,20 +3,12 @@ import {Vector} from "Vector";
 import {Schema} from "core/schema";
 
 import {GUID}              from "..";
-import {CircuitInternal}   from "../impl/CircuitInternal";
-import {SelectionsManager} from "../impl/SelectionsManager";
-import {CircuitView}       from "./CircuitView";
 import {CirclePrim}        from "./rendering/prims/CirclePrim";
 import {LinePrim}          from "./rendering/prims/LinePrim";
-import {Assembler}         from "./Assembler";
-import {Style}             from "./rendering/Style";
+import {Assembler, AssemblerParams} from "./Assembler";
+import {PortPos} from "./AssemblyCache";
 
 
-export interface PortPos {
-    origin: Vector;
-    target: Vector;
-    dir: Vector;
-}
 export type PartialPortPos = {
     origin: Vector;
     target: Vector;
@@ -36,9 +28,8 @@ export type PortFactory = Record<
 export class PortAssembler extends Assembler<Schema.Component> {
     private readonly factory: PortFactory;
 
-    public constructor(circuit: CircuitInternal, view: CircuitView,
-                       selections: SelectionsManager, factory: PortFactory) {
-        super(circuit, view, selections);
+    public constructor(params: AssemblerParams, factory: PortFactory) {
+        super(params);
 
         this.factory = factory;
     }
@@ -54,8 +45,8 @@ export class PortAssembler extends Assembler<Schema.Component> {
     }
 
     protected calcWorldPos(parentID: GUID, portID: GUID) {
-        const { origin, target, dir } = this.view.localPortPositions.get(portID)!;
-        const transform = this.view.componentTransforms.get(parentID)!;
+        const { origin, target, dir } = this.cache.localPortPositions.get(portID)!;
+        const transform = this.cache.componentTransforms.get(parentID)!;
         return {
             origin: transform.toWorldSpace(origin),
             target: transform.toWorldSpace(target),
@@ -63,7 +54,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
         };
     }
 
-    public assemble(parent: Schema.Component, ev: unknown) {
+    public assemble(parent: Schema.Component, _: unknown) {
         const transformChanged = /* use ev to see if parent transform changed */ true;
         const selectionChanged = /* use ev to see if parent wwas de/selected */ true;
         const portAmtChanged   = /* use ev to see if the number of ports changed */ true;
@@ -78,7 +69,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
             Object.entries(ports).forEach(([group, portIDs]) => {
                 portIDs.forEach((portID) => {
                     const port = this.circuit.doc.getPortByID(portID).unwrap();
-                    this.view.localPortPositions.set(portID, this.calcPos(group, port.index, portIDs.length));
+                    this.cache.localPortPositions.set(portID, this.calcPos(group, port.index, portIDs.length));
                 })
             });
         }
@@ -88,7 +79,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
             // Transform all local port positions to new parent transform
             ports.forEach((portID) =>
-                this.view.portPositions.set(portID, this.calcWorldPos(parent.id, portID)));
+                this.cache.portPositions.set(portID, this.calcWorldPos(parent.id, portID)));
         }
 
         if (transformChanged || portAmtChanged || selectionChanged) {
@@ -100,7 +91,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
             // Re-assemble all prims
             const prims = [...ports].flatMap((portID) => {
-                const { origin, target } = this.view.portPositions.get(portID)!;
+                const { origin, target } = this.cache.portPositions.get(portID)!;
                 const selected = this.selections.has(portID);
 
                 // Assemble the port-line and port-circle
@@ -111,7 +102,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 ];
             });
 
-            this.view.portPrims.set(parent.id, prims);
+            this.cache.portPrims.set(parent.id, prims);
         }
     }
 }

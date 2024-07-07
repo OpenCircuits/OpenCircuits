@@ -15,6 +15,7 @@ import {Assembler}         from "core/internal/view/Assembler";
 import {Signal}        from "digital/internal/sim/Signal";
 import {DigitalSim}    from "digital/internal/sim/DigitalSim";
 import {RectanglePrim} from "core/internal/view/rendering/prims/RectanglePrim";
+import {AssemblerParams} from "core/internal/assembly/Assembler";
 
 
 export class SwitchAssembler extends Assembler<Schema.Component> {
@@ -28,8 +29,8 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
 
     protected portAssembler: PortAssembler;
 
-    public constructor(circuit: CircuitInternal, view: CircuitView, selections: SelectionsManager, sim: DigitalSim) {
-        super(circuit, view, selections);
+    public constructor(params: AssemblerParams, sim: DigitalSim) {
+        super(params);
 
         this.sim = sim;
 
@@ -43,7 +44,7 @@ export class SwitchAssembler extends Assembler<Schema.Component> {
             }
         });
 
-        this.portAssembler = new PortAssembler(circuit, view, selections, {
+        this.portAssembler = new PortAssembler(params, {
             "outputs": () => ({ origin: V(0.62, 0), dir: V(1, 0) }),
         });
     }

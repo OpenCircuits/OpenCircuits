@@ -1,20 +1,18 @@
 import {Wire} from "core/schema/Wire";
 
-import {CircuitInternal}   from "core/internal";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
-import {CircuitView}       from "core/internal/view/CircuitView";
-import {Style}             from "core/internal/view/rendering/Style";
-import {WireAssembler}     from "core/internal/view/WireAssembler";
+import {Style}         from "core/internal/assembly/rendering/Style";
+import {WireAssembler} from "core/internal/assembly/WireAssembler";
 
 import {DigitalSim} from "../sim/DigitalSim";
 import {Signal}     from "../sim/Signal";
+import {AssemblerParams} from "core/internal/assembly/Assembler";
 
 
 export class DigitalWireAssembler extends WireAssembler {
     protected sim: DigitalSim;
 
-    public constructor(circuit: CircuitInternal, view: CircuitView, selections: SelectionsManager, sim: DigitalSim) {
-        super(circuit, view, selections);
+    public constructor(params: AssemblerParams, sim: DigitalSim) {
+        super(params);
 
         this.sim = sim;
     }

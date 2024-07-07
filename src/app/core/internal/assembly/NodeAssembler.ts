@@ -11,11 +11,11 @@ import {Assembler}  from "./Assembler";
 export class NodeAssembler extends Assembler<Schema.Component> {
     private assembleCircle(node: Schema.Component) {
         const { circleStyle } = this.options.portStyle(this.selections.has(node.id), false);
-        const pos = this.view.componentTransforms.get(node.id)!.getPos();
+        const pos = this.cache.componentTransforms.get(node.id)!.getPos();
         return new CirclePrim(pos, this.options.defaultPortRadius, circleStyle);
     }
 
-    public assemble(node: Schema.Component, ev: unknown) {
+    public assemble(node: Schema.Component, _: unknown) {
         const transformChanged = /* use ev to see if parent transform changed */ true;
         const selectionChanged = /* use ev to see if parent wwas de/selected */ true;
 
@@ -26,7 +26,7 @@ export class NodeAssembler extends Assembler<Schema.Component> {
             const pos = V(node.props.x ?? 0, node.props.y ?? 0);
 
             // Update transform
-            this.view.componentTransforms.set(node.id, new Transform(
+            this.cache.componentTransforms.set(node.id, new Transform(
                 pos,
                 V(2*this.options.defaultPortRadius),
                 (node.props.angle ?? 0),
@@ -36,12 +36,12 @@ export class NodeAssembler extends Assembler<Schema.Component> {
             const ports = this.circuit.doc.getPortsByGroup(node.id).unwrap();
             if (Object.entries(ports).length > 0) { // Need to make sure the ports are set
                 // TODO[.](leon): transform the direction so that the angle of the node changes `dir`
-                this.view.portPositions.set(ports["inputs"][0],  { origin: pos, target: pos, dir: V(-1, 0) });
-                this.view.portPositions.set(ports["outputs"][0], { origin: pos, target: pos, dir: V(+1, 0) });
+                this.cache.portPositions.set(ports["inputs"][0],  { origin: pos, target: pos, dir: V(-1, 0) });
+                this.cache.portPositions.set(ports["outputs"][0], { origin: pos, target: pos, dir: V(+1, 0) });
             }
         }
 
-        const [prev] = (this.view.componentPrims.get(node.id) ?? []);
+        const [prev] = (this.cache.componentPrims.get(node.id) ?? []);
 
         const circle = ((!prev || transformChanged) ? this.assembleCircle(node) : prev);
 
@@ -49,6 +49,6 @@ export class NodeAssembler extends Assembler<Schema.Component> {
         if (selectionChanged)
             circle.updateStyle(this.options.portStyle(this.selections.has(node.id), false).circleStyle);
 
-        this.view.componentPrims.set(node.id, [circle]);
+        this.cache.componentPrims.set(node.id, [circle]);
     }
 }

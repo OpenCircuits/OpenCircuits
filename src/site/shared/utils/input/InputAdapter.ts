@@ -13,7 +13,7 @@ import {Observable} from "core/utils/Observable";
 import {Key}               from "./Key";
 import {InputAdapterEvent} from "./InputAdapterEvent";
 import {UserInputState}    from "./UserInputState";
-import {Camera}            from "core/public/api/Camera";
+import {Camera}            from "shared/circuitdesigner/Camera";
 
 
 export class UserInputStateImpl implements UserInputState {

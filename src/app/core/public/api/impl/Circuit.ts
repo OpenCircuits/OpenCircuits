@@ -1,34 +1,25 @@
-import {CreateDrawingFromSVG} from "svg2canvas";
+import {V, Vector} from "Vector";
+import {Rect}      from "math/Rect";
 
-import {Vector} from "Vector";
-import {Rect}   from "math/Rect";
+import {extend} from "core/utils/Functions";
 
-import {CleanupFunc} from "core/utils/types";
-import {extend}      from "core/utils/Functions";
+import {GUID} from "core/internal";
 
-import {GUID}                            from "core/internal";
-import {RenderHelper}                    from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions as RenderOptionsI} from "core/internal/view/rendering/RenderOptions";
-
-import {Camera}                from "../Camera";
-import {Circuit, CircuitEvent} from "../Circuit";
-import {Selections}            from "../Selections";
-import {RenderOptions}         from "../RenderOptions";
+import {Circuit, CircuitEvent, IntegratedCircuit,
+        IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
+import {Selections}                from "../Selections";
 import {isObjComponent, isObjWire} from "../Utilities";
 
-import {CameraImpl}                 from "./Camera";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl}             from "./Observable";
 
 
 export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
-    function pickObjAtHelper(pt: Vector, space: Vector.Spaces = "world", filter?: (id: string) => boolean) {
-        const pos = ((space === "world" ? pt : state.view.toWorldPos(pt)));
-        return state.view.findNearestObj(pos, filter);
+    function pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
+        return state.assembler.findNearestObj(pt, filter);
     }
 
-    const camera = CameraImpl(state);
     let selections: Selections;
 
     const observable = ObservableImpl<CircuitEvent>();
@@ -88,9 +79,6 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             throw new Error("Unimplemented!");
         },
 
-        get camera(): Camera {
-            return camera;
-        },
         get selections(): Selections {
             if (!selections)
                 selections = SelectionsImpl(circuit, state);
@@ -98,20 +86,20 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         },
 
         // Queries
-        pickObjAt(pt: Vector, space: Vector.Spaces = "world"): T["Obj"] | undefined {
-            return pickObjAtHelper(pt, space)
+        pickObjAt(pt: Vector): T["Obj"] | undefined {
+            return pickObjAtHelper(pt)
                 .map((id) => this.getObj(id)).asUnion();
         },
-        pickComponentAt(pt: Vector, space: Vector.Spaces = "world"): T["Component"] | undefined {
-            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasComp(id))
+        pickComponentAt(pt: Vector): T["Component"] | undefined {
+            return pickObjAtHelper(pt, (id) => state.internal.doc.hasComp(id))
                 .map((id) => this.getComponent(id)).asUnion();
         },
-        pickWireAt(pt: Vector, space: Vector.Spaces = "world"): T["Wire"] | undefined {
-            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasWire(id))
+        pickWireAt(pt: Vector): T["Wire"] | undefined {
+            return pickObjAtHelper(pt, (id) => state.internal.doc.hasWire(id))
                 .map((id) => this.getWire(id)).asUnion();
         },
-        pickPortAt(pt: Vector, space: Vector.Spaces = "world"): T["Port"] | undefined {
-            return pickObjAtHelper(pt, space, (id) => state.internal.doc.hasPort(id))
+        pickPortAt(pt: Vector): T["Port"] | undefined {
+            return pickObjAtHelper(pt, (id) => state.internal.doc.hasPort(id))
                 .map((id) => this.getPort(id)).asUnion();
         },
         pickObjRange(bounds: Rect): T["Obj[]"] {
@@ -159,14 +147,13 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         },
 
         // Object manipulation
-        placeComponentAt(kind: string, pt: Vector, space: Vector.Spaces = "world"): T["Component"] {
+        placeComponentAt(kind: string, pt: Vector): T["Component"] {
             const info = this.getComponentInfo(kind);
-            const pos = ((space === "world" ? pt : state.view.toWorldPos(pt)));
 
             this.beginTransaction();
 
             // Place raw component (TODO[master](leon) - don't use unwrap...)
-            const id = state.internal.placeComponent(kind, { x: pos.x, y: pos.y }).unwrap();
+            const id = state.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
 
             // Set its config to place ports
             state.internal.setPortConfig(id, info!.defaultPortConfig).unwrap();
@@ -179,38 +166,31 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             throw new Error("Unimplemented!");
         },
 
-        createIC(objs: T["Obj[]"]): CircuitT | undefined {
-            throw new Error("Unimplemented!");
-        },
-        getICs(): CircuitT[] {
-            throw new Error("Unimplemented!");
-        },
+        // async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
+        //     // TODO[model_refactor_api](leon) - Move this somewhere else
+        //     let numLoaded = 0;
+        //     await Promise.all(
+        //         imgSrcs.map(async (src) => {
+        //             const svg = await fetch(`img/items/${src}`);
+        //             if (!svg.ok) // Make sure fetch worked
+        //                 throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
 
-        async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
-            // TODO[model_refactor_api](leon) - Move this somewhere else
-            let numLoaded = 0;
-            await Promise.all(
-                imgSrcs.map(async (src) => {
-                    const svg = await fetch(`img/items/${src}`);
-                    if (!svg.ok) // Make sure fetch worked
-                        throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
+        //             const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
+        //             if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
+        //                 throw new Error(`Failed to parse XML for img/items/${src}` +
+        //                                 `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
+        //             }
 
-                    const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
-                    if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
-                        throw new Error(`Failed to parse XML for img/items/${src}` +
-                                        `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
-                    }
+        //             const drawing = CreateDrawingFromSVG(svgXML, {});
+        //             if (!drawing)
+        //                 throw new Error(`Failed to create drawing for svg: img/items/${src}`);
+        //             state.view.images.set(src, drawing);
 
-                    const drawing = CreateDrawingFromSVG(svgXML, {});
-                    if (!drawing)
-                        throw new Error(`Failed to create drawing for svg: img/items/${src}`);
-                    state.view.images.set(src, drawing);
-
-                    // Update progress on successful load
-                    onProgress((++numLoaded) / imgSrcs.length);
-                })
-            );
-        },
+        //             // Update progress on successful load
+        //             onProgress((++numLoaded) / imgSrcs.length);
+        //         })
+        //     );
+        // },
 
         undo(): boolean {
             throw new Error("Unimplemented!");
@@ -233,43 +213,50 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
         deserialize(data: string): void {
             throw new Error("Unimplemented!");
         },
-
-        resize(w: number, h: number): void {
-            state.view.resize(w, h);
-        },
-        attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
-            state.view.setCanvas(canvas);
-            return () => this.detachCanvas();
-        },
-        detachCanvas(): void {
-            state.view.setCanvas(undefined);
-        },
-
-        forceRedraw(): void {
-            state.view.scheduler.requestRender();
-        },
-
-        setRenderOptions(options: Partial<RenderOptions>): void {
-            state.view.options.showGrid = options.useGrid ?? state.view.options.showGrid;
-            state.view.scheduler.requestRender();
-        },
-        get renderOptions(): RenderOptions {
-            return {
-                useGrid: state.view.options.showGrid,
-            };
-        },
-
-        // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
-        addRenderCallback(cb: (data: {
-            renderer: RenderHelper;
-            options: RenderOptionsI;
-        }) => void): CleanupFunc {
-            return state.view.subscribe("onrender", ({ renderer }) => cb({
-                renderer,
-                options: state.view.options,
-            }));
-        },
     }) satisfies Circuit;
 
     return circuit;
+}
+
+
+export function RootCircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
+    const circuit = CircuitImpl(state);
+
+    return extend(circuit, {
+        createIC(objs: T["Obj[]"]): CircuitT | undefined {
+            throw new Error("Unimplemented!");
+        },
+        getICs(): CircuitT[] {
+            throw new Error("Unimplemented!");
+        },
+    }) satisfies RootCircuit;
+}
+
+
+export function IntegratedCircuitImpl<T extends CircuitTypes>(state: CircuitState<T>) {
+    const circuit = CircuitImpl(state);
+
+    const display = {
+        set size(s: Vector) {
+            state.internal.setICMetadata(circuit.id, { displayWidth: s.x, displayHeight: s.y });
+        },
+        get size(): Vector {
+            const size = state.internal.getICMetadata(circuit.id);
+            return V(size.displayWidth, size.displayHeight);
+        },
+
+        setPinPos(pin: GUID, pos: Vector): void {
+            circuit.beginTransaction();
+            const p = circuit.getComponent(pin);
+            p?.setProp("pinPosX", pos.x);
+            p?.setProp("pinPosY", pos.x);
+            circuit.commitTransaction();
+        },
+    } satisfies IntegratedCircuitDisplay;
+
+    return extend(circuit, {
+        get display(): IntegratedCircuitDisplay {
+            return display;
+        },
+    }) satisfies IntegratedCircuit;
 }

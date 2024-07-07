@@ -45,7 +45,7 @@ export class TranslateTool implements Tool {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         // Using mousemove instead of mousedrag here because when a button besides
         //  mouse left is released, mousedrag events are no longer created, only mousemove.
         //  So instead mousemove is used and whether or not left mouse is still pressed is
@@ -54,7 +54,7 @@ export class TranslateTool implements Tool {
             const snapToGrid = ev.input.isShiftKeyDown;
             const snapToConnections = !ev.input.isShiftKeyDown;
 
-            const dPos = ev.input.deltaMousePos.scale(V(circuit.camera.zoom, -circuit.camera.zoom));
+            const dPos = ev.input.deltaMousePos.scale(V(viewport.curCamera.zoom, -viewport.curCamera.zoom));
 
             this.components.forEach((c) => {
                 let pos = V(c.x, c.y).add(dPos);

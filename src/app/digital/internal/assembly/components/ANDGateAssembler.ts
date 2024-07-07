@@ -3,16 +3,14 @@ import {SVGDrawing} from "svg2canvas";
 import {V}         from "Vector";
 import {Transform} from "math/Transform";
 
-import {CircuitInternal}      from "core/internal";
-import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
-import {CircuitView}          from "core/internal/view/CircuitView";
-import {PortAssembler}        from "core/internal/view/PortAssembler";
-import {LinePrim}             from "core/internal/view/rendering/prims/LinePrim";
-import {SVGPrim}              from "core/internal/view/rendering/prims/SVGPrim";
+import {Assembler}            from "core/internal/assembly/Assembler";
+import {PortAssembler}        from "core/internal/assembly/PortAssembler";
+import {LinePrim}             from "core/internal/assembly/rendering/prims/LinePrim";
+import {SVGPrim}              from "core/internal/assembly/rendering/prims/SVGPrim";
 import {Schema}               from "core/schema";
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
-import {Assembler}            from "core/internal/view/Assembler";
+import {AssemblerParams} from "core/internal/assembly/Assembler";
 
 
 export class ANDGateAssembler extends Assembler<Schema.Component> {
@@ -24,19 +22,19 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
     protected portAssembler: PortAssembler;
 
-    public constructor(circuit: CircuitInternal, view: CircuitView, selections: SelectionsManager, sim: DigitalSim) {
-        super(circuit, view, selections);
+    public constructor(params: AssemblerParams, sim: DigitalSim) {
+        super(params);
 
         this.sim = sim;
 
-        view.images.subscribe(({ key, val }) => {
-            if (key === "and.svg") {
-                this.img = val;
-                // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
-            }
-        });
+        // view.images.subscribe(({ key, val }) => {
+        //     if (key === "and.svg") {
+        //         this.img = val;
+        //         // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
+        //     }
+        // });
 
-        this.portAssembler = new PortAssembler(circuit, view, selections, {
+        this.portAssembler = new PortAssembler(params, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
             "inputs":  (index, total) => {
                 const spacing = 0.5 - this.options.defaultBorderWidth/2;
@@ -61,7 +59,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         const x = -(this.size.x - defaultBorderWidth)/2;
 
-        const transform = this.view.componentTransforms.get(gate.id)!;
+        const transform = this.cache.componentTransforms.get(gate.id)!;
 
         const selected = this.selections.has(gate.id);
 
@@ -75,7 +73,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
     private assembleImage(gate: Schema.Component) {
         const selected = this.selections.has(gate.id);
         const tint = (selected ? this.options.selectedFillColor : undefined);
-        return new SVGPrim(this.img, this.size, this.view.componentTransforms.get(gate.id)!, tint);
+        return new SVGPrim(this.img, this.size, this.cache.componentTransforms.get(gate.id)!, tint);
     }
 
     public assemble(gate: Schema.Component, ev: unknown) {
@@ -88,7 +86,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         if (transformChanged) {
             // Update transform
-            this.view.componentTransforms.set(gate.id, new Transform(
+            this.cache.componentTransforms.set(gate.id, new Transform(
                 V(gate.props.x ?? 0, gate.props.y ?? 0),
                 this.size,
                 (gate.props.angle ?? 0),
@@ -97,7 +95,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         this.portAssembler.assemble(gate, ev);
 
-        const [prevLine, prevImg] = (this.view.componentPrims.get(gate.id) ?? []);
+        const [prevLine, prevImg] = (this.cache.componentPrims.get(gate.id) ?? []);
 
         const line = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleLine(gate) : prevLine);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
@@ -110,6 +108,6 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
             img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
         }
 
-        this.view.componentPrims.set(gate.id, [line, img]);
+        this.cache.componentPrims.set(gate.id, [line, img]);
     }
 }
