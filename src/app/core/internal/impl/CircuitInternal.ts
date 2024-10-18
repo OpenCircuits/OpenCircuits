@@ -48,6 +48,9 @@ export class CircuitInternal extends Observable<InternalEvent> {
     // Schemas
     protected metadata: Schema.CircuitMetadata;
 
+    // TODO[model_refactor](leon) - this is probably a hack, we most likely need to make this a transaction somehow
+    protected icMetadata: Record<GUID, Schema.IntegratedCircuit["metadata"]>;
+
     public constructor(log: CircuitLog, doc: CircuitDocument) {
         super();
         this.mutableDoc = doc;
@@ -61,6 +64,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
         this.diffBuilder = new FastCircuitDiffBuilder();
 
         this.metadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0" };
+        this.icMetadata = {};
 
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
@@ -76,7 +80,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
 
             // Emit event on remote updates
             this.publishDiffEvent();
-        })
+        });
     }
 
 
@@ -294,5 +298,16 @@ export class CircuitInternal extends Observable<InternalEvent> {
 
     public getMetadata(): Readonly<Schema.CircuitMetadata> {
         return this.metadata;
+    }
+
+    public setICMetadata(ic: GUID, newMetadata: Partial<Schema.IntegratedCircuit["metadata"]>) {
+        this.icMetadata[ic] = {
+            ...this.icMetadata[ic],
+            ...newMetadata,
+        };
+    }
+
+    public getICMetadata(ic: GUID): Readonly<Schema.IntegratedCircuit["metadata"]> {
+        return this.icMetadata[ic];
     }
 }

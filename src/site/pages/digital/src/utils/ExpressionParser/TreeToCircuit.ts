@@ -104,7 +104,7 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
  */
 export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
                               output: string): DigitalCircuit {
-    const circuit = CreateCircuit();
+    const [circuit, _] = CreateCircuit();
 
     const outputComp = circuit.placeComponentAt(output, V(0, 0));
     outputComp.name = "Output";

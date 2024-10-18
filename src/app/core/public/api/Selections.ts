@@ -23,12 +23,10 @@ export interface Selections extends Observable<SelectionsEvent> {
      * Returns the average of the positions of the components selected
      * as a Vector object.
      *
-     * @param space Defines the coordinate-space which can be
-     *              either "screen space" or "world space".
-     * @returns     A Vector object where x and y are the averages
-     *              of the positions of the selected components.
+     * @returns A Vector object where x and y are the averages
+     *          of the positions of the selected components.
      */
-    midpoint(space?: Vector.Spaces): Vector;
+    midpoint(): Vector;
 
     clear(): void;
 

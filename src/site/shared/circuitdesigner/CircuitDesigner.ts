@@ -4,6 +4,7 @@ import {Circuit, Obj} from "core/public";
 
 import {Cursor}       from "shared/utils/input/Cursor";
 import {DebugOptions} from "shared/circuitdesigner/impl/DebugOptions";
+import {Viewport}     from "./Viewport";
 
 
 // All state variables within the CircuitDesigner will/should NOT be serialized
@@ -24,5 +25,5 @@ export interface CircuitDesigner<CircuitT extends Circuit = Circuit> {
 
     debugOptions: DebugOptions;
 
-    attachCanvas(canvas: HTMLCanvasElement): () => void;
+    viewport: Viewport;
 }

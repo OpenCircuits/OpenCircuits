@@ -1,6 +1,7 @@
 import {CircuitInternal}   from "core/internal";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
-import {CircuitView}       from "core/internal/view/CircuitView";
+import {CircuitAssembler}  from "core/internal/assembly/CircuitAssembler";
+import {RenderOptions}     from "core/internal/assembly/rendering/RenderOptions";
 
 import {Component, Node} from "../Component";
 import {Port}            from "../Port";
@@ -32,8 +33,9 @@ export type CircuitTypes<
 
 export interface CircuitState<T extends CircuitTypes> {
     internal: CircuitInternal;
-    view: CircuitView;
+    assembler: CircuitAssembler;
     selectionsManager: SelectionsManager;
+    renderOptions: RenderOptions;
 
     isLocked: boolean;
 

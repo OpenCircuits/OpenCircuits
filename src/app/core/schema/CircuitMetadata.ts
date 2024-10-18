@@ -2,7 +2,7 @@ import {GUID} from "./GUID";
 import {Prop} from "./Prop";
 
 
-export interface CircuitMetadata extends Record<string, Prop> {
+export interface CircuitMetadata {
     id: GUID;
     name: string;
     desc: string;

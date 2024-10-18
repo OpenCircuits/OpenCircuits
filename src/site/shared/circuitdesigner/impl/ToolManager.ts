@@ -26,7 +26,8 @@ export class ToolManager {
                 this.curTool = undefined;
                 this.defaultTool.onEvent(ev, designer);
 
-                designer.circuit.forceRedraw();
+                // TODO[.](leon) - I know this had a reason but I should document it
+                // designer.circuit.forceRedraw();
 
                 return;
             }
@@ -40,7 +41,7 @@ export class ToolManager {
             newTool.onActivate(ev, designer);
             newTool.onEvent(ev, designer); // TODO[.](leon) - see if this is okay
 
-            designer.circuit.forceRedraw();
+            // designer.circuit.forceRedraw();
 
             return;
         }

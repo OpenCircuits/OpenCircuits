@@ -2,15 +2,10 @@ import {Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {GUID}        from "core/schema/GUID";
-import {CleanupFunc} from "core/utils/types";
+import {GUID} from "core/schema/GUID";
 
 import {FastCircuitDiff} from "core/internal/impl/FastCircuitDiff";
 
-import {RenderHelper}                    from "core/internal/view/rendering/RenderHelper";
-import {RenderOptions as RenderOptionsI} from "core/internal/view/rendering/RenderOptions";
-
-import {Camera}        from "./Camera";
 import {Component}     from "./Component";
 import {ComponentInfo} from "./ComponentInfo";
 import {Obj}           from "./Obj";
@@ -18,7 +13,6 @@ import {Port}          from "./Port";
 import {Wire}          from "./Wire";
 import {Selections}    from "./Selections";
 import {Observable}    from "./Observable";
-import {RenderOptions} from "./RenderOptions";
 
 
 export type {CircuitMetadata} from "core/schema/CircuitMetadata";
@@ -44,33 +38,29 @@ export interface Circuit extends Observable<CircuitEvent> {
     locked: boolean;
     simEnabled: boolean;
 
-    readonly camera: Camera;
     readonly selections: Selections;
 
     // Queries
-    pickObjAt(pt: Vector, space?: Vector.Spaces): Obj | undefined;
-    pickComponentAt(pt: Vector, space?: Vector.Spaces): Component | undefined;
-    pickWireAt(pt: Vector, space?: Vector.Spaces): Wire | undefined;
-    pickPortAt(pt: Vector, space?: Vector.Spaces): Port | undefined;
+    pickObjAt(pt: Vector): Obj | undefined;
+    pickComponentAt(pt: Vector): Component | undefined;
+    pickWireAt(pt: Vector): Wire | undefined;
+    pickPortAt(pt: Vector): Port | undefined;
     pickObjRange(bounds: Rect): Obj[];
 
+    getObj(id: GUID): Obj | undefined;
     getComponent(id: GUID): Component | undefined;
     getWire(id: GUID): Wire | undefined;
     getPort(id: GUID): Port | undefined;
-    getObj(id: GUID): Obj | undefined;
+
     getObjs(): Obj[];
     getComponents(): Component[];
     getWires(): Wire[];
+
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
     // Object manipulation
-    placeComponentAt(kind: string, pt: Vector, space?: Vector.Spaces): Component;
+    placeComponentAt(kind: string, pt: Vector): Component;
     deleteObjs(objs: Obj[]): void;
-
-    createIC(objs: Obj[]): Circuit | undefined;
-    getICs(): Circuit[];
-
-    loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void>;
 
     undo(): boolean;
     redo(): boolean;
@@ -82,18 +72,27 @@ export interface Circuit extends Observable<CircuitEvent> {
     serialize(objs?: Obj[]): string;
     deserialize(data: string): void;
 
-    resize(w: number, h: number): void;
-    attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
-    detachCanvas(): void;
+    // forceRedraw(): void;
 
-    forceRedraw(): void;
+    // setRenderOptions(options: Partial<RenderOptions>): void;
+    // readonly renderOptions: RenderOptions;
 
-    setRenderOptions(options: Partial<RenderOptions>): void;
-    readonly renderOptions: RenderOptions;
+    // // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
+    // addRenderCallback(cb: (data: {
+    //     renderer: RenderHelper;
+    //     options: RenderOptionsI;
+    // }) => void): CleanupFunc;
+}
 
-    // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
-    addRenderCallback(cb: (data: {
-        renderer: RenderHelper;
-        options: RenderOptionsI;
-    }) => void): CleanupFunc;
+export interface RootCircuit extends Circuit {
+    createIC(objs: Obj[]): Circuit | undefined;
+    getICs(): Circuit[];
+}
+
+export interface IntegratedCircuitDisplay {
+    size: Vector;
+    setPinPos(pin: GUID, pos: Vector): void;
+}
+export interface IntegratedCircuit extends Circuit {
+    readonly display: IntegratedCircuitDisplay;
 }

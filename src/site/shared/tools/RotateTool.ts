@@ -6,6 +6,7 @@ import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
 import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
 
 import {Tool} from "./Tool";
+import {Viewport} from "shared/circuitdesigner/Viewport";
 
 
 export const ROTATION_CIRCLE_RADIUS = 1.5;
@@ -33,14 +34,14 @@ export class RotateTool implements Tool {
         this.prevAngle = 0;
     }
 
-    private isOnCircle(pos: Vector, circuit: Circuit): boolean {
-        const worldPos = circuit.camera.toWorldPos(pos);
-        const d = worldPos.sub(circuit.selections.midpoint("world")).len2();
+    private isOnCircle(pos: Vector, circuit: Circuit, viewport: Viewport): boolean {
+        const worldPos = viewport.camera.toWorldPos(pos);
+        const d = worldPos.sub(circuit.selections.midpoint()).len2();
 
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
     }
 
-    public shouldActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): boolean {
+    public shouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): boolean {
         // Activate if the user pressed their mouse or finger
         //  down over the "rotation circle" which appears if
         //  there are ONLY Components being selected
@@ -49,20 +50,20 @@ export class RotateTool implements Tool {
             ev.input.touchCount === 1 &&
             !circuit.selections.isEmpty &&
             circuit.selections.every(isObjComponent) &&
-            this.isOnCircle(ev.input.mousePos, circuit)
+            this.isOnCircle(ev.input.mousePos, circuit, viewport)
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
         return (ev.type === "mouseup");
     }
 
-    public onActivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {
         this.components = circuit.selections.components;
 
         // Get initial angles
         this.curAngles = this.components.map((c) => c.angle);
         this.curAroundAngle = 0;
-        this.startAngle = ev.input.worldMousePos.sub(circuit.selections.midpoint("world")).angle();
+        this.startAngle = camera.toWorldPos(ev.input.mousePos).sub(circuit.selections.midpoint()).angle();
         this.prevAngle = this.startAngle;
 
         // Start the transaction
@@ -73,14 +74,14 @@ export class RotateTool implements Tool {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             // Get whether z is presesed for independent rotation
             const isIndependent = ev.input.keysDown.has("z");
 
-            const midpoint = circuit.selections.midpoint("world");
+            const midpoint = circuit.selections.midpoint();
 
-            const dAngle = ev.input.worldMousePos.sub(midpoint).angle() - this.prevAngle;
+            const dAngle = camera.toWorldPos(ev.input.mousePos).sub(midpoint).angle() - this.prevAngle;
 
             // Calculate new and snapped angles
             const newAngles = this.curAngles.map((a) => (a + dAngle));
@@ -118,7 +119,7 @@ export class RotateTool implements Tool {
 
             this.prevAngle += dAngle;
 
-            circuit.forceRedraw();
+            // circuit.forceRedraw();
         }
     }
 

@@ -4,14 +4,10 @@ import ReactGA                          from "react-ga";
 import {Provider}                       from "react-redux";
 import {configureStore}                 from "@reduxjs/toolkit";
 
-import {CreateCircuit} from "digital/public";
-
 import {GetCookie}     from "shared/utils/Cookies";
 import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {storeDesigner} from "shared/utils/hooks/useDesigner";
-
-import {CreateDesigner} from "shared/circuitdesigner";
 
 import {DefaultTool}      from "shared/tools/DefaultTool";
 import {PanTool}          from "shared/tools/PanTool";
@@ -35,11 +31,12 @@ import {SelectionHandler}   from "shared/tools/handlers/SelectionHandler";
 import {SelectPathHandler}  from "shared/tools/handlers/SelectPathHandler";
 import {SnipNodesHandler}   from "shared/tools/handlers/SnipNodesHandler";
 import {UndoHandler}        from "shared/tools/handlers/UndoHandler";
+import {ZoomHandler}        from "shared/tools/handlers/ZoomHandler";
 
-import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
-import {RotateToolRenderer}       from "shared/tools/renderers/RotateToolRenderer";
+// import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
+// import {RotateToolRenderer}       from "shared/tools/renderers/RotateToolRenderer";
 
-import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
+// import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
 import {DevListFiles} from "shared/api/Dev";
 
@@ -53,8 +50,31 @@ import {reducers} from "./state/reducers";
 import ImageFiles      from "./data/images.json";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
-import {App} from "./containers/App";
-import {DigitalCircuitDesigner} from "./utils/DigitalCircuitDesigner";
+// import {App} from "./containers/App";
+import {CreateDesigner, DigitalCircuitDesigner} from "./utils/DigitalCircuitDesigner";
+
+
+const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { w, h } = useWindowSize();
+
+    useLayoutEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas)
+            return;
+        (window as any).Circuit = designer.circuit;
+        return designer.viewport.attachCanvas(canvas);
+    }, [designer, canvasRef]);
+
+    useLayoutEffect(() => designer.viewport.resize(w, h), [designer, w, h]);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            width={w}
+            height={h} />
+    );
+}
 
 
 async function Init(): Promise<void> {
@@ -62,13 +82,12 @@ async function Init(): Promise<void> {
     let store: AppStore;
 
     const designer = CreateDesigner(
-        CreateCircuit(),
         {
             defaultTool: new DefaultTool(
                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                 DeleteHandler, SnipNodesHandler, DeselectAllHandler,
                 SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                CleanupHandler, CopyHandler, PasteHandler,
+                CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
                 SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
             ),
             tools: [
@@ -77,13 +96,20 @@ async function Init(): Promise<void> {
                 new WiringTool(), new SplitWireTool(),
                 new SelectionBoxTool(),
             ],
-            renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
+            // renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
         },
     );
 
+    // const renderers = [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer]
+    designer.viewport.observe("onrender", (ev) => {
+        // renderers.forEach((toolRenderer) => toolRenderer.render(
+        //     ...
+        // ));
+    })
+
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {
-            await designer.circuit.loadImages(ImageFiles.images, onProgress);
+            // await designer.circuit.loadImages(ImageFiles.images, onProgress);
         }],
 
         [85, "Initializing redux", async () => {
@@ -167,7 +193,8 @@ async function Init(): Promise<void> {
             root.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        <App />
+                        <MainCircuit designer={designer} />
+                        {/* <App /> */}
                     </Provider>
                 </React.StrictMode>
             );

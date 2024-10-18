@@ -18,8 +18,6 @@ export interface UserInputState {
     /** A vector representing the change in mouse position. */
     readonly deltaMousePos: Vector;
 
-    readonly worldMousePos: Vector;
-
     /** True if a mousebutton is held down, false otherwise. */
     readonly isMouseDown: boolean;
     /** Represents the mousebutton being pressed (left, middle, right, etc.). */

@@ -1,5 +1,5 @@
-import {CirclePrim}       from "core/internal/view/rendering/prims/CirclePrim";
-import {CircleSectorPrim} from "core/internal/view/rendering/prims/CircleSectorPrim";
+import {CirclePrim}       from "core/internal/assembly/rendering/prims/CirclePrim";
+import {CircleSectorPrim} from "core/internal/assembly/rendering/prims/CircleSectorPrim";
 
 import {ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_THICKNESS, RotateTool} from "../RotateTool";
 
@@ -9,7 +9,7 @@ import {isObjComponent} from "core/public";
 
 export const RotateToolRenderer: ToolRenderer = {
     render: ({ circuit, renderer, curTool }) => {
-        const pos = circuit.selections.midpoint("world");
+        const pos = circuit.selections.midpoint();
 
         const drawOutline = () => {
             renderer.draw(new CirclePrim(pos, ROTATION_CIRCLE_RADIUS, {
