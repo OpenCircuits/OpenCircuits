@@ -3,6 +3,7 @@ import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {Assembler, AssemblerParams} from "core/internal/assembly/Assembler";
 import {CircuitAssembler}     from "core/internal/assembly/CircuitAssembler";
 import {NodeAssembler}        from "core/internal/assembly/NodeAssembler";
+import {RenderOptions}        from "core/internal/assembly/rendering/RenderOptions";
 import {Obj}                  from "core/schema/Obj";
 import {DigitalSim}           from "../sim/DigitalSim";
 import {ANDGateAssembler}     from "./components/ANDGateAssembler";
@@ -11,19 +12,19 @@ import {ANDGateAssembler}     from "./components/ANDGateAssembler";
 // import {LEDAssembler}         from "./components/LEDAssembler";
 // import {SwitchAssembler}      from "./components/SwitchAssembler";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
-import {DefaultRenderOptions} from "core/internal/assembly/rendering/RenderOptions";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
     protected sim: DigitalSim;
     protected assemblers: Record<string, Assembler>;
 
-    public constructor(circuit: CircuitInternal, selections: SelectionsManager, sim: DigitalSim) {
+    public constructor(circuit: CircuitInternal, selections: SelectionsManager,
+                       sim: DigitalSim, options: RenderOptions) {
         super(circuit, selections);
 
         this.sim = sim;
 
-        const params: AssemblerParams = { circuit, cache: this.cache, selections, options: new DefaultRenderOptions() };
+        const params: AssemblerParams = { circuit, cache: this.cache, selections, options };
         this.assemblers = {
             // Base types
             "DigitalWire": new DigitalWireAssembler(params, sim),

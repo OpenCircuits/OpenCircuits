@@ -13,7 +13,6 @@ import {Observable} from "core/utils/Observable";
 import {Key}               from "./Key";
 import {InputAdapterEvent} from "./InputAdapterEvent";
 import {UserInputState}    from "./UserInputState";
-import {Camera}            from "shared/circuitdesigner/Camera";
 
 
 export class UserInputStateImpl implements UserInputState {
@@ -31,11 +30,7 @@ export class UserInputStateImpl implements UserInputState {
 
     public keysDown: Set<Key>;
 
-    private readonly camera: Camera;
-
-    public constructor(camera: Camera) {
-        this.camera = camera;
-
+    public constructor() {
         this.mouseDownPos = V();
         this.prevMousePos = V();
         this.mousePos = V();
@@ -49,10 +44,6 @@ export class UserInputStateImpl implements UserInputState {
         this.touchCount = 0;
 
         this.keysDown = new Set();
-    }
-
-    public get worldMousePos() {
-        return this.camera.toWorldPos(this.mousePos);
     }
 
     public get deltaMousePos() {
@@ -94,11 +85,11 @@ export class InputAdapter extends Observable<InputAdapterEvent> {
      * @param camera   The camera for the circuit (used to provide world-space input utilities).
      * @param dragTime The minimum length of time a mousedown must last to be considered a drag rather than a click.
      */
-    public constructor(canvas: HTMLCanvasElement, camera: Camera, dragTime: number = DRAG_TIME) {
+    public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {
         super();
         this.dragTime = dragTime;
         this.canvas = canvas;
-        this.state = new UserInputStateImpl(camera);
+        this.state = new UserInputStateImpl();
 
         // Setup adapters
         const tearDownKeyboardEvents = this.hookupKeyboardEvents();

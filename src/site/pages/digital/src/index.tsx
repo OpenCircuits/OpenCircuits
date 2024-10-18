@@ -31,6 +31,7 @@ import {SelectionHandler}   from "shared/tools/handlers/SelectionHandler";
 import {SelectPathHandler}  from "shared/tools/handlers/SelectPathHandler";
 import {SnipNodesHandler}   from "shared/tools/handlers/SnipNodesHandler";
 import {UndoHandler}        from "shared/tools/handlers/UndoHandler";
+import {ZoomHandler}        from "shared/tools/handlers/ZoomHandler";
 
 // import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
 // import {RotateToolRenderer}       from "shared/tools/renderers/RotateToolRenderer";
@@ -86,7 +87,7 @@ async function Init(): Promise<void> {
                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                 DeleteHandler, SnipNodesHandler, DeselectAllHandler,
                 SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                CleanupHandler, CopyHandler, PasteHandler,
+                CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
                 SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
             ),
             tools: [
@@ -98,6 +99,13 @@ async function Init(): Promise<void> {
             // renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
         },
     );
+
+    // const renderers = [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer]
+    designer.viewport.observe("onrender", (ev) => {
+        // renderers.forEach((toolRenderer) => toolRenderer.render(
+        //     ...
+        // ));
+    })
 
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {

@@ -37,7 +37,7 @@ export class WiringTool implements Tool {
         //     first but the cursor might be closer to the "lower" one and the user most likely wants the closest one.
         // 2. If the closest port already has a connection and can't be wired,
         //     we probably want to find the next closest.
-        const worldPos = viewport.curCamera.toWorldPos(pos);
+        const worldPos = viewport.camera.toWorldPos(pos);
 
         // First see if there is a port that we are directly within the bounds of
         const p1 = circuit.pickPortAt(worldPos);

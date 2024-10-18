@@ -11,6 +11,7 @@ import {Schema}               from "core/schema";
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
 import {AssemblerParams} from "core/internal/assembly/Assembler";
+import {SVGs} from "../svgs";
 
 
 export class ANDGateAssembler extends Assembler<Schema.Component> {
@@ -18,7 +19,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
     protected readonly sim: DigitalSim;
 
-    public img?: SVGDrawing;
+    public img: SVGDrawing;
 
     protected portAssembler: PortAssembler;
 
@@ -26,13 +27,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
         super(params);
 
         this.sim = sim;
-
-        // view.images.subscribe(({ key, val }) => {
-        //     if (key === "and.svg") {
-        //         this.img = val;
-        //         // TODO[model_refactor_api](leon) - Invalidate all AND gates to re-assemble with new image
-        //     }
-        // });
+        this.img = SVGs["and"];
 
         this.portAssembler = new PortAssembler(params, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),

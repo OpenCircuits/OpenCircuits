@@ -1,6 +1,7 @@
 import {Vector} from "Vector";
 import {Obj} from "core/public";
 import {Observable} from "core/public/api/Observable";
+import {Matrix2x3} from "math/Matrix";
 import {Margin} from "math/Rect";
 
 
@@ -16,6 +17,8 @@ export type CameraEvent = {
 }
 
 export interface Camera extends Observable<CameraEvent> {
+    readonly matrix: Matrix2x3;
+
     cx: number;
     cy: number;
     pos: Vector;

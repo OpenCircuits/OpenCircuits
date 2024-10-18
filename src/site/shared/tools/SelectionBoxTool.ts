@@ -30,8 +30,8 @@ export class SelectionBoxTool implements Tool {
 
     public onActivate(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         this.rect = Rect.FromPoints(
-            viewport.curCamera.toWorldPos(ev.input.mouseDownPos),
-            viewport.curCamera.toWorldPos(ev.input.mousePos),
+            viewport.camera.toWorldPos(ev.input.mouseDownPos),
+            viewport.camera.toWorldPos(ev.input.mousePos),
         );
     }
 
@@ -70,8 +70,8 @@ export class SelectionBoxTool implements Tool {
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             this.rect = Rect.FromPoints(
-                viewport.curCamera.toWorldPos(ev.input.mouseDownPos),
-                viewport.curCamera.toWorldPos(ev.input.mousePos),
+                viewport.camera.toWorldPos(ev.input.mouseDownPos),
+                viewport.camera.toWorldPos(ev.input.mousePos),
             );
 
             // circuit.forceRedraw();

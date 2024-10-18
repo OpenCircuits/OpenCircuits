@@ -3,13 +3,13 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const SelectPathHandler: ToolHandler = {
-    onEvent: (ev, { circuit }) => {
+    onEvent: (ev, { circuit, viewport: { camera } }) => {
         // Activate on double LMB click
         if (!(ev.type === "dblclick" && ev.button === LEFT_MOUSE_BUTTON))
             return ToolHandlerResponse.PASS;
 
         // Make sure we double clicked on something
-        const obj = circuit.pickObjAt(ev.input.worldMousePos);
+        const obj = circuit.pickObjAt(camera.toWorldPos(ev.input.mousePos));
         if (!obj)
             return ToolHandlerResponse.PASS;
 

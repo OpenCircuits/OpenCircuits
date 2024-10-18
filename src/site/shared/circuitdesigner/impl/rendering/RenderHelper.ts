@@ -11,25 +11,18 @@ export interface Renderer {
 
 
 export class RenderHelper {
-    public canvas?: HTMLCanvasElement;
+    public canvas: HTMLCanvasElement;
+    protected context: CanvasRenderingContext2D;
 
-    protected context?: CanvasRenderingContext2D;
-
-    // protected camera: CameraView;
-
-    public constructor() {
-        // this.camera = camera;
+    public constructor(canvas: HTMLCanvasElement) {
+        this.canvas = canvas;
+        this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
     }
 
     public get ctx(): CanvasRenderingContext2D {
         if (!this.context)
             throw new Error(`RenderHelper: Uninitialized context! ${this.canvas} | ${this.context}`);
         return this.context;
-    }
-
-    public setCanvas(canvas?: HTMLCanvasElement) {
-        this.canvas = canvas;
-        this.context = canvas?.getContext("2d") as CanvasRenderingContext2D | undefined;
     }
 
     public clear(): void {
@@ -44,10 +37,10 @@ export class RenderHelper {
         );
     }
 
-    public toWorldSpace(mat: Matrix2x3): void {
-        const inv = mat.inverse();
-        this.transform(inv.withTranslation(inv.pos.add(this.size.scale(0.5))));
-    }
+    // public toWorldSpace(mat: Matrix2x3): void {
+    //     const inv = mat.inverse();
+    //     this.transform(inv.withTranslation(inv.pos.add(this.size.scale(0.5))));
+    // }
     // public toScreenSpace(): void {
     //     this.transform(this.camera.matrix);
     // }
@@ -106,6 +99,6 @@ export class RenderHelper {
     }
 
     public get size(): Vector {
-        return V(this.canvas?.width ?? 0, this.canvas?.height ?? 0);
+        return V(this.canvas.width, this.canvas.height);
     }
 }

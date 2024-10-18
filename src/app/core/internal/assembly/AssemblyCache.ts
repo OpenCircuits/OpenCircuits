@@ -24,3 +24,9 @@ export interface AssemblyCache {
     wireCurves: Map<GUID, BezierCurve>;
     wirePrims: Map<GUID, Prims>;
 }
+
+export type ReadonlyAssemblyCache = {
+    [T in keyof AssemblyCache]: AssemblyCache[T] extends Map<infer K, infer V>
+        ? ReadonlyMap<K, Readonly<V>>
+        : Readonly<AssemblyCache[T]>;
+}

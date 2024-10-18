@@ -54,7 +54,7 @@ export class TranslateTool implements Tool {
             const snapToGrid = ev.input.isShiftKeyDown;
             const snapToConnections = !ev.input.isShiftKeyDown;
 
-            const dPos = ev.input.deltaMousePos.scale(V(viewport.curCamera.zoom, -viewport.curCamera.zoom));
+            const dPos = ev.input.deltaMousePos.scale(V(viewport.camera.zoom, -viewport.camera.zoom));
 
             this.components.forEach((c) => {
                 let pos = V(c.x, c.y).add(dPos);

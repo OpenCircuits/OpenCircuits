@@ -3,21 +3,28 @@ import {CleanupFunc} from "core/utils/types";
 
 import {MultiObservable} from "core/public/api/Observable";
 import {Camera} from "./Camera";
+import {Vector} from "Vector";
 
 
 export type ViewportEvents = {
     "onrender": {
         renderer: unknown; // TODO
     };
-    "oncamerachange": {
-        dx: number;
-        dy: number;
-        dz: number;
+    "onresize": {
+        w: number;
+        h: number;
     };
+    // I dont know why this was here
+    // "oncamerachange": {
+    //     dx: number;
+    //     dy: number;
+    //     dz: number;
+    // };
 }
 
 export interface Viewport extends MultiObservable<ViewportEvents> {
-    readonly curCamera: Camera;
+    readonly camera: Camera;
+    readonly screenSize: Vector;
 
     resize(w: number, h: number): void;
 

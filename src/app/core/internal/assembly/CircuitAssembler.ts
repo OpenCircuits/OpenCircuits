@@ -8,7 +8,7 @@ import {CircuitInternal}   from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";
 
 import {Assembler}              from "./Assembler";
-import {AssemblyCache, PortPos} from "./AssemblyCache";
+import {AssemblyCache, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
 import {BezierCurve} from "math/BezierCurve";
 
 
@@ -212,6 +212,10 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
                 return Some(id);
         }
         return None();
+    }
+
+    public getCache(): ReadonlyAssemblyCache {
+        return this.cache;
     }
 
     protected abstract getAssemblerFor(kind: string): Assembler;

@@ -12,10 +12,6 @@ export abstract class CircuitView {
 
     private cleanupFunc: (() => void) | undefined;
 
-    // SoT for the camera, since it's tied to the view
-    public camera: Schema.Camera;
-    public cameraMat: Matrix2x3;
-
     public constructor(designer: CircuitDesigner, toolManager: ToolManager, toolConfig: ToolConfig) {
         this.designer = designer;
         this.toolManager = toolManager;
@@ -36,18 +32,6 @@ export abstract class CircuitView {
         this.scheduler.setBlocked(true);
     }
 
-    protected calcCameraMat() {
-        const { x, y, zoom } = this.camera;
-
-        return new Matrix2x3(V(x, y), 0, V(zoom, -zoom));
-    }
-
-    public toWorldPos(pos: Vector): Vector {
-        return this.cameraMat.mul(pos.sub(this.renderer.size.scale(0.5)));
-    }
-    public toScreenPos(pos: Vector): Vector {
-        return this.cameraMat.inverse().mul(pos).add(this.renderer.size.scale(0.5));
-    }
     public resize(w: number, h: number) {
         // Request a render on resize
         this.scheduler.requestRender();

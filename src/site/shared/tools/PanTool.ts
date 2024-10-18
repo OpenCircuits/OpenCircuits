@@ -17,15 +17,15 @@ export const PanTool: Tool = {
     ),
 
     onActivate: (_, { viewport }) => {
-        viewport.curCamera.emit({ type: "dragStart" });
+        viewport.camera.emit({ type: "dragStart" });
     },
     onDeactivate: (_, { viewport }) => {
-        viewport.curCamera.emit({ type: "dragEnd" });
+        viewport.camera.emit({ type: "dragEnd" });
     },
     onEvent: (ev, { viewport }) => {
         if (ev.type === "mousedrag") {
             const { x: dx, y: dy } = ev.input.deltaMousePos;
-            viewport.curCamera.translate(V(-dx, -dy), "screen");
+            viewport.camera.translate(V(-dx, -dy), "screen");
         }
     },
 }

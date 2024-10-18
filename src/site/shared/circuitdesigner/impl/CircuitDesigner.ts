@@ -4,7 +4,6 @@ import {Circuit} from "core/public";
 
 import {DebugOptions} from "shared/circuitdesigner/impl/DebugOptions";
 import {DefaultTool}  from "shared/tools/DefaultTool";
-import {ToolRenderer} from "shared/tools/renderers/ToolRenderer";
 import {Tool}         from "shared/tools/Tool";
 import {Cursor}       from "shared/utils/input/Cursor";
 
@@ -18,16 +17,13 @@ import {ViewportImpl} from "./Viewport";
 export interface ToolConfig {
     defaultTool: DefaultTool;
     tools: Tool[];
-    renderers?: ToolRenderer[];
 }
 
 export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes>(
     circuit: CircuitT,
     state: CircuitDesignerState<T>
 ) {
-    const viewport = ViewportImpl(state);
-
-    return {
+    const designer = {
         get circuit(): CircuitT {
             return circuit;
         },
@@ -64,6 +60,10 @@ export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitT
             return state.debugOptions;
         },
     } satisfies CircuitDesigner;
+
+    const viewport = ViewportImpl(state, designer);
+
+    return designer;
 }
 
 //         this.state = {
