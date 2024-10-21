@@ -71,17 +71,6 @@ export interface Circuit extends Observable<CircuitEvent> {
 
     serialize(objs?: Obj[]): string;
     deserialize(data: string): void;
-
-    // forceRedraw(): void;
-
-    // setRenderOptions(options: Partial<RenderOptions>): void;
-    // readonly renderOptions: RenderOptions;
-
-    // // TODO[](leon) - Need to make a public-facing RenderHelper/RenderOptions
-    // addRenderCallback(cb: (data: {
-    //     renderer: RenderHelper;
-    //     options: RenderOptionsI;
-    // }) => void): CleanupFunc;
 }
 
 export interface RootCircuit extends Circuit {

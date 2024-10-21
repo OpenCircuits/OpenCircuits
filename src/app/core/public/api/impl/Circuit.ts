@@ -166,32 +166,6 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
             throw new Error("Unimplemented!");
         },
 
-        // async loadImages(imgSrcs: string[], onProgress: (pctDone: number) => void): Promise<void> {
-        //     // TODO[model_refactor_api](leon) - Move this somewhere else
-        //     let numLoaded = 0;
-        //     await Promise.all(
-        //         imgSrcs.map(async (src) => {
-        //             const svg = await fetch(`img/items/${src}`);
-        //             if (!svg.ok) // Make sure fetch worked
-        //                 throw new Error(`Failed to fetch img/items/${src}: ${svg.statusText}`);
-
-        //             const svgXML = new DOMParser().parseFromString(await svg.text(), "text/xml");
-        //             if (svgXML.querySelector("parsererror")) { // Make sure there's no XML parsing error
-        //                 throw new Error(`Failed to parse XML for img/items/${src}` +
-        //                                 `: ${svgXML.querySelector("parsererror")?.innerHTML}`);
-        //             }
-
-        //             const drawing = CreateDrawingFromSVG(svgXML, {});
-        //             if (!drawing)
-        //                 throw new Error(`Failed to create drawing for svg: img/items/${src}`);
-        //             state.view.images.set(src, drawing);
-
-        //             // Update progress on successful load
-        //             onProgress((++numLoaded) / imgSrcs.length);
-        //         })
-        //     );
-        // },
-
         undo(): boolean {
             throw new Error("Unimplemented!");
         },
