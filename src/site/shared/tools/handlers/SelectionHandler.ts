@@ -3,13 +3,13 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const SelectionHandler: ToolHandler = {
-    onEvent: (ev, { circuit }) => {
+    onEvent: (ev, { circuit, viewport }) => {
         if (!(ev.type === "click" && ev.button === LEFT_MOUSE_BUTTON))
             return ToolHandlerResponse.PASS;
 
         const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
-        const obj = circuit.pickObjAt(ev.input.mousePos, "screen");
+        const obj = circuit.pickObjAt(viewport.camera.toWorldPos(ev.input.mousePos));
         if (!obj) {
             // Clear selections if not holding shift
             if (deselectAll) {

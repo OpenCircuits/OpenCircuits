@@ -1,0 +1,36 @@
+import {GUID}        from "core/public";
+import {CleanupFunc} from "core/utils/types";
+
+import {MultiObservable} from "core/public/api/Observable";
+import {Camera} from "./Camera";
+import {Vector} from "Vector";
+
+
+export type ViewportEvents = {
+    "onrender": {
+        renderer: unknown; // TODO
+    };
+    "onresize": {
+        w: number;
+        h: number;
+    };
+    // I dont know why this was here
+    // "oncamerachange": {
+    //     dx: number;
+    //     dy: number;
+    //     dz: number;
+    // };
+}
+
+export interface Viewport extends MultiObservable<ViewportEvents> {
+    readonly camera: Camera;
+    readonly screenSize: Vector;
+
+    resize(w: number, h: number): void;
+
+    attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
+    detachCanvas(): void;
+
+    setView(kind: "main"): void;
+    setView(kind: "ic", id: GUID, type: "internal" | "display"): void;
+}

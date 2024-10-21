@@ -1,6 +1,6 @@
 import {Camera}          from "./Camera";
 import {CircuitMetadata} from "./CircuitMetadata";
-import {uuid}            from "./GUID";
+import {GUID, uuid}      from "./GUID";
 import {Obj}             from "./Obj";
 
 
@@ -10,11 +10,20 @@ export interface Circuit {
     camera: Camera;
 
     objects: Obj[];
-
-    ics: Circuit[]; // ignored except on root circuits
 }
 
-export const DefaultCircuit = (): Circuit => ({
+export interface IntegratedCircuit extends Circuit {
+    metadata: CircuitMetadata & {
+        displayWidth: number;
+        displayHeight: number;
+    };
+}
+
+export interface RootCircuit extends Circuit {
+    ics: IntegratedCircuit[];
+}
+
+export const DefaultCircuit = (): RootCircuit => ({
     metadata: {
         id:      uuid(),
         name:    "",

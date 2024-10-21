@@ -7,6 +7,5 @@ export * from "./api/Wire";
 export * from "./api/Port";
 export * from "./api/Obj";
 export * from "./api/Circuit";
-export * from "./api/Camera";
 export * from "./api/Selections";
 export * from "./api/Utilities";

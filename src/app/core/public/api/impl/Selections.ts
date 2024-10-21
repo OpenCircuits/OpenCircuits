@@ -11,7 +11,7 @@ import {ObservableImpl}             from "./Observable";
 
 export function SelectionsImpl<T extends CircuitTypes>(
     circuit: Circuit,
-    { internal, selectionsManager, view, constructComponent, constructWire }: CircuitState<T>
+    { internal, selectionsManager, constructComponent, constructWire }: CircuitState<T>
 ) {
     function selections() {
         return selectionsManager.get();
@@ -46,18 +46,16 @@ export function SelectionsImpl<T extends CircuitTypes>(
                 .map((id) => constructWire(id));
         },
 
-        midpoint(space: Vector.Spaces = "world"): Vector {
+        midpoint(): Vector {
             // Case: no components are selected
             if (this.components.length === 0)
                 return V(0, 0);
 
             // Case: One or more components are selected, calculate average
-            const avgWorldPos = this.components
+            return this.components
                 .map((c) => c.pos)
                 .reduce((sum, v) => sum.add(v))
                 .scale(1 / this.components.length);
-
-            return (space === "screen" ? view.toScreenPos(avgWorldPos) : avgWorldPos);
         },
 
         clear(): void {

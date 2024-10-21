@@ -1,4 +1,4 @@
-import {CircuitDesigner} from "shared/circuitdesigner";
+import {CircuitDesigner} from "shared/circuitdesigner/CircuitDesigner";
 
 
 const { storeDesigner, useDesigner, useMainDesigner } = (() => {

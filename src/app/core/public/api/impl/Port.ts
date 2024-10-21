@@ -16,7 +16,7 @@ export function PortImpl<T extends CircuitTypes>(
     state: CircuitState<T>,
     id: GUID,
 ) {
-    const { internal, view, constructComponent, constructWire } = state;
+    const { internal, assembler, constructComponent, constructWire } = state;
 
     function getPort() {
         return internal.doc.getPortByID(id)
@@ -40,10 +40,10 @@ export function PortImpl<T extends CircuitTypes>(
         },
 
         get originPos(): Vector {
-            return view.getPortPos(id).unwrap().origin;
+            return assembler.getPortPos(id).unwrap().origin;
         },
         get targetPos(): Vector {
-            return view.getPortPos(id).unwrap().target;
+            return assembler.getPortPos(id).unwrap().target;
         },
         get dir(): Vector {
             return this.targetPos.sub(this.originPos).normalize();

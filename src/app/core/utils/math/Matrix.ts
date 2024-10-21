@@ -33,6 +33,10 @@ export class Matrix2x3 {
      */
     public constructor(mat: number[]);
 
+    // TODO[master](leon) - maybe make factory methods to do this logic w/ constructor only taking in raw elements
+    //                      for efficiency reasons
+    // TODO(leon) - consider making this not support arbitrary elements, and limit it to non-shear transformation
+    //              which I think makes the determinant easier to calculate
     public constructor(other?: number[] | Vector, angle?: number, scale?: Vector) {
         this.mat = [1,0,0,1,0,0];
 
