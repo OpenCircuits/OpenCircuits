@@ -3,8 +3,8 @@ import {Vector} from "Vector";
 import {Schema} from "core/schema";
 
 import {GUID}              from "..";
-import {CirclePrim}        from "./rendering/prims/CirclePrim";
-import {LinePrim}          from "./rendering/prims/LinePrim";
+import {CirclePrim}        from "./prims/CirclePrim";
+import {LinePrim}          from "./prims/LinePrim";
 import {Assembler, AssemblerParams} from "./Assembler";
 import {PortPos} from "./AssemblyCache";
 
@@ -23,7 +23,6 @@ export type PortFactory = Record<
     string,
     (index: number, total: number) => PartialPortPos
 >;
-
 
 export class PortAssembler extends Assembler<Schema.Component> {
     private readonly factory: PortFactory;
@@ -56,10 +55,9 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
     public assemble(parent: Schema.Component, _: unknown) {
         const transformChanged = /* use ev to see if parent transform changed */ true;
-        const selectionChanged = /* use ev to see if parent wwas de/selected */ true;
         const portAmtChanged   = /* use ev to see if the number of ports changed */ true;
 
-        if (!transformChanged && !selectionChanged && !portAmtChanged)
+        if (!transformChanged && !portAmtChanged)
             return;
 
         if (portAmtChanged) {
@@ -82,23 +80,19 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 this.cache.portPositions.set(portID, this.calcWorldPos(parent.id, portID)));
         }
 
-        if (transformChanged || portAmtChanged || selectionChanged) {
+        if (transformChanged || portAmtChanged) {
             const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
-
-            const parentSelected = this.selections.has(parent.id);
 
             const { defaultPortRadius } = this.options;
 
             // Re-assemble all prims
             const prims = [...ports].flatMap((portID) => {
                 const { origin, target } = this.cache.portPositions.get(portID)!;
-                const selected = this.selections.has(portID);
 
                 // Assemble the port-line and port-circle
-                const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
                 return [
-                    new LinePrim(origin, target, lineStyle),
-                    new CirclePrim(target, defaultPortRadius, circleStyle),
+                    new LinePrim(origin, target),
+                    new CirclePrim(target, defaultPortRadius),
                 ];
             });
 

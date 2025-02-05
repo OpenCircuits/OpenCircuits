@@ -6,7 +6,7 @@ import {UserInputState} from "shared/utils/input/UserInputState";
 
 import {Tool} from "../Tool";
 import {RenderHelper} from "shared/circuitdesigner/impl/rendering/RenderHelper";
-import {RenderOptions} from "core/internal/assembly/rendering/RenderOptions";
+import {RenderOptions} from "shared/circuitdesigner/impl/rendering/RenderOptions";
 
 
 export interface ToolRendererArgs {

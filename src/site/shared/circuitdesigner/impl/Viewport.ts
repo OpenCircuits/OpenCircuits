@@ -37,6 +37,43 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
 
     const cameras: Map<CameraRecordKey, Camera> = new Map();
 
+    const dirtyComponents: Set<GUID> = new Set();
+    const dirtyWires: Set<GUID> = new Set();
+
+    function getRendererFor(kind: string) {
+        return {
+            
+        }
+    }
+
+    const reassemble = () => {
+        state.circuitState.assembler.reassemble();
+
+        const circuit = state.circuitState.internal;
+
+        // Update components first
+        for (const compID of dirtyComponents) {
+            if (!circuit.doc.hasComp(compID))
+                continue;
+            // Otherwise, update it
+            const comp = circuit.doc.getCompByID(compID).unwrap();
+            // TODO[model_refactor_api](leon) - figure out `ev` param
+            getRendererFor(comp.kind).assemble(comp, {});
+        }
+        dirtyComponents.clear();
+
+        // Then update wires
+        for (const wireID of dirtyWires) {
+            if (!circuit.doc.hasWire(wireID))
+                continue;
+            // Otherwise, update it
+            const wire = circuit.doc.getWireByID(wireID).unwrap();
+            // TODO[model_refactor_api](leon) - figure out `ev` param
+            getRendererFor(wire.kind).assemble(wire, {});
+        }
+        dirtyWires.clear();
+    }
+
     const render = () => {
         if (!curState)
             throw new Error("Viewport: Attempted Circuit render before a canvas was set!");
@@ -51,7 +88,7 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
         };
 
         // Reassemble and get the cache
-        state.circuitState.assembler.reassemble();
+        reassemble();
         const assembly = state.circuitState.assembler.getCache();
 
         renderer.clear();
@@ -103,6 +140,19 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
     const scheduler = new RenderScheduler();
     scheduler.subscribe(render);
     scheduler.block();
+
+    state.circuitState.selectionsManager.subscribe((ev) => {
+        ev.selections.forEach((id) => {
+            if (state.circuitState.internal.doc.hasComp(id))
+                dirtyComponents.add(id);
+            else if (state.circuitState.internal.doc.hasWire(id))
+                dirtyWires.add(id);
+            else if (state.circuitState.internal.doc.hasPort(id))
+                dirtyPorts.add(id);
+        });
+
+        scheduler.requestRender();
+    });
 
     const view = extend(observable, {
         get camera(): Camera {

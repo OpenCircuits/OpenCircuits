@@ -120,34 +120,34 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
             this.publish({ type: "onchange" });
         });
 
-        this.selections.subscribe((ev) => {
-            ev.selections.forEach((id) => {
-                if (circuit.doc.hasComp(id))
-                    this.dirtyComponents.add(id);
-                else if (circuit.doc.hasWire(id))
-                    this.dirtyWires.add(id);
-                else if (circuit.doc.hasPort(id))
-                    this.dirtyPorts.add(id);
-            });
+        // this.selections.subscribe((ev) => {
+        //     ev.selections.forEach((id) => {
+        //         if (circuit.doc.hasComp(id))
+        //             this.dirtyComponents.add(id);
+        //         else if (circuit.doc.hasWire(id))
+        //             this.dirtyWires.add(id);
+        //         else if (circuit.doc.hasPort(id))
+        //             this.dirtyPorts.add(id);
+        //     });
 
-            this.publish({ type: "onchange" });
-        });
+        //     this.publish({ type: "onchange" });
+        // });
     }
 
     public reassemble() {
         // Update components first
         for (const compID of this.dirtyComponents) {
-            // If component still exists, update it
-            if (this.circuit.doc.hasComp(compID)) {
-                const comp = this.circuit.doc.getCompByID(compID).unwrap();
-                // TODO[model_refactor_api](leon) - figure out `ev` param
-                this.getAssemblerFor(comp.kind).assemble(comp, {});
+            // If component doesn't exist, remove it and any associated ports
+            if (!this.circuit.doc.hasComp(compID)) {
+                this.cache.componentPrims.delete(compID);
+                this.cache.componentTransforms.delete(compID);
+                this.cache.portPrims.delete(compID);
                 continue;
             }
-            // Otherwise, component was deleted so remove it and any associated ports
-            this.cache.componentPrims.delete(compID);
-            this.cache.componentTransforms.delete(compID);
-            this.cache.portPrims.delete(compID);
+            // Otherwise, update it
+            const comp = this.circuit.doc.getCompByID(compID).unwrap();
+            // TODO[model_refactor_api](leon) - figure out `ev` param
+            this.getAssemblerFor(comp.kind).assemble(comp, {});
         }
         this.dirtyComponents.clear();
 
@@ -162,16 +162,16 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
 
         // Then update wires
         for (const wireID of this.dirtyWires) {
-            // If wire still exists, update it
-            if (this.circuit.doc.hasWire(wireID)) {
-                const wire = this.circuit.doc.getWireByID(wireID).unwrap();
-                // TODO[model_refactor_api](leon) - figure out `ev` param
-                this.getAssemblerFor(wire.kind).assemble(wire, {});
+            // If wire doesn't exist, remove it
+            if (!this.circuit.doc.hasWire(wireID)) {
+                this.cache.wireCurves.delete(wireID);
+                this.cache.wirePrims.delete(wireID);
                 continue;
             }
-            // Otherwise, wire was deleted so remove it
-            this.cache.wireCurves.delete(wireID);
-            this.cache.wirePrims.delete(wireID);
+            // Otherwise, update it
+            const wire = this.circuit.doc.getWireByID(wireID).unwrap();
+            // TODO[model_refactor_api](leon) - figure out `ev` param
+            this.getAssemblerFor(wire.kind).assemble(wire, {});
         }
         this.dirtyWires.clear();
     }

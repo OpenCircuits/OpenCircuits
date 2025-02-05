@@ -4,22 +4,20 @@ import {Transform} from "math/Transform";
 
 import {Schema} from "core/schema";
 
-import {CirclePrim} from "./rendering/prims/CirclePrim";
+import {CirclePrim} from "./prims/CirclePrim";
 import {Assembler}  from "./Assembler";
 
 
 export class NodeAssembler extends Assembler<Schema.Component> {
     private assembleCircle(node: Schema.Component) {
-        const { circleStyle } = this.options.portStyle(this.selections.has(node.id), false);
         const pos = this.cache.componentTransforms.get(node.id)!.getPos();
-        return new CirclePrim(pos, this.options.defaultPortRadius, circleStyle);
+        return new CirclePrim(pos, this.options.defaultPortRadius);
     }
 
     public assemble(node: Schema.Component, _: unknown) {
         const transformChanged = /* use ev to see if parent transform changed */ true;
-        const selectionChanged = /* use ev to see if parent wwas de/selected */ true;
 
-        if (!transformChanged && !selectionChanged)
+        if (!transformChanged)
             return;
 
         if (transformChanged) {
@@ -44,10 +42,6 @@ export class NodeAssembler extends Assembler<Schema.Component> {
         const [prev] = (this.cache.componentPrims.get(node.id) ?? []);
 
         const circle = ((!prev || transformChanged) ? this.assembleCircle(node) : prev);
-
-        // Update styles only if selections changed
-        if (selectionChanged)
-            circle.updateStyle(this.options.portStyle(this.selections.has(node.id), false).circleStyle);
 
         this.cache.componentPrims.set(node.id, [circle]);
     }

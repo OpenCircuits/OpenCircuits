@@ -7,7 +7,7 @@ import "./Extensions";
 describe("SelectionsMidpoint", () => {
     test("Single Selection", () => {
         // Create and place new component
-        const circuit = CreateCircuit();
+        const [circuit, _] = CreateCircuit();
         const s1 = circuit.placeComponentAt("ANDGate", V(0, 0));
 
         // Select created component
@@ -17,14 +17,14 @@ describe("SelectionsMidpoint", () => {
         expect(s1.isSelected).toBe(true);
 
         // Calculate midpoint position using method
-        const sm1 = circuit.selections.midpoint("screen");
+        const sm1 = circuit.selections.midpoint();
 
         // Check that method is returning correct midpoint position
         expect(sm1).toEqual(V(0,0));
     });
     test("Multiple Selections", () => {
         // Create and place new components
-        const circuit = CreateCircuit();
+        const [circuit, _] = CreateCircuit();
         const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
         const s2 = circuit.placeComponentAt("Switch", V(-5, -5));
         const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));
@@ -43,7 +43,7 @@ describe("SelectionsMidpoint", () => {
         expect(l1.isSelected).toBe(true);
 
         // Calculate midpoint position using method
-        const methodMidpoint = circuit.selections.midpoint("screen");
+        const methodMidpoint = circuit.selections.midpoint();
 
         // Check that method is returning correct midpoint position
         expect(methodMidpoint).toEqual(V(-1, 0));

@@ -127,7 +127,6 @@ export class DefaultRenderOptions implements RenderOptions {
                 stroke: {
                     color: ((parentSelected || selected) ? this.selectedBorderColor : this.defaultBorderColor),
                     size:  this.portBorderWidth,
-
                 },
             },
         };
@@ -142,7 +141,7 @@ export class DefaultRenderOptions implements RenderOptions {
         ));
 
         // @TODO move to function for getting color based on being selection/on/off
-         // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
+        // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
         return {
             stroke: {
                 color: (selected ? selectedColor : color),

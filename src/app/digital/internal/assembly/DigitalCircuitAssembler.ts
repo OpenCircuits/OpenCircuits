@@ -3,7 +3,8 @@ import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
 import {Assembler, AssemblerParams} from "core/internal/assembly/Assembler";
 import {CircuitAssembler}     from "core/internal/assembly/CircuitAssembler";
 import {NodeAssembler}        from "core/internal/assembly/NodeAssembler";
-import {RenderOptions}        from "core/internal/assembly/rendering/RenderOptions";
+import {WireAssembler}        from "core/internal/assembly/WireAssembler";
+import {AssemblyOptions}      from "core/internal/assembly/AssemblyOptions";
 import {Obj}                  from "core/schema/Obj";
 import {DigitalSim}           from "../sim/DigitalSim";
 import {ANDGateAssembler}     from "./components/ANDGateAssembler";
@@ -11,7 +12,6 @@ import {ANDGateAssembler}     from "./components/ANDGateAssembler";
 // import {ORGateAssembler}      from "./components/ORGateAssembler";
 // import {LEDAssembler}         from "./components/LEDAssembler";
 // import {SwitchAssembler}      from "./components/SwitchAssembler";
-import {DigitalWireAssembler} from "./DigitalWireAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -19,7 +19,7 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
     protected assemblers: Record<string, Assembler>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager,
-                       sim: DigitalSim, options: RenderOptions) {
+                       sim: DigitalSim, options: AssemblyOptions) {
         super(circuit, selections);
 
         this.sim = sim;
@@ -27,7 +27,7 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
         const params: AssemblerParams = { circuit, cache: this.cache, selections, options };
         this.assemblers = {
             // Base types
-            "DigitalWire": new DigitalWireAssembler(params, sim),
+            "DigitalWire": new WireAssembler(params),
             "DigitalNode": new NodeAssembler(params),
             // // Inputs
             // "Switch": new SwitchAssembler(params, sim),

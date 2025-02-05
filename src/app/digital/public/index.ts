@@ -3,7 +3,7 @@ import {CircuitLog}        from "core/internal/impl/CircuitLog";
 import {CircuitDocument}   from "core/internal/impl/CircuitDocument";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 
-import {DefaultRenderOptions} from "core/internal/assembly/rendering/RenderOptions";
+import {DefaultAssemblyOptions} from "core/internal/assembly/AssemblyOptions";
 
 import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
 import {DigitalCircuitAssembler}            from "digital/internal/assembly/DigitalCircuitAssembler";
@@ -25,13 +25,13 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
         new CircuitLog(),
         new CircuitDocument(CreateDigitalComponentInfoProvider())
     );
-    const renderOptions = new DefaultRenderOptions();
+    const assemblyOptions = new DefaultAssemblyOptions();
     const selectionsManager = new SelectionsManager();
     const sim = new DigitalSim(internal);
-    const assembler = new DigitalCircuitAssembler(internal, selectionsManager, sim, renderOptions);
+    const assembler = new DigitalCircuitAssembler(internal, selectionsManager, sim, assemblyOptions);
 
     const state: DigitalCircuitState = {
-        internal, assembler, selectionsManager, sim, renderOptions,
+        internal, assembler, selectionsManager, sim, assemblyOptions,
         isLocked: false,
 
         constructComponent(id) {

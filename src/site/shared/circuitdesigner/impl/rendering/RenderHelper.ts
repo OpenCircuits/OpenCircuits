@@ -2,7 +2,7 @@ import {Matrix2x3}              from "math/Matrix";
 import {SVGDrawing, parseColor} from "svg2canvas";
 import {V, Vector}              from "Vector";
 import {Prim}                   from "core/internal/assembly/Prim";
-import {Style}                  from "core/internal/assembly/rendering/Style";
+import {Style}                  from "shared/circuitdesigner/impl/rendering/Style";
 
 
 export interface Renderer {

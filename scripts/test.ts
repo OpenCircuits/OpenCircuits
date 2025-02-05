@@ -26,6 +26,7 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
     return await jest.runCLI({
         ...args,
         ...flags,
+        silent: false,
         config: JSON.stringify({
             "preset":           "ts-jest",
             "testEnvironment":  "jsdom",

@@ -1,5 +1,13 @@
-
-
 export interface AssemblyOptions {
-    // TODO maybe just have this have non-style attributes like port length and such
+    defaultBorderWidth: number;
+
+    defaultPortLength: number;
+    defaultPortRadius: number;
+}
+
+export class DefaultAssemblyOptions implements AssemblyOptions {
+    public defaultBorderWidth = 0.04;
+
+    public defaultPortLength = 0.7;
+    public defaultPortRadius = 0.14;
 }

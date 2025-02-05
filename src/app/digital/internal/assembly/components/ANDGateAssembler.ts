@@ -1,17 +1,15 @@
-import {SVGDrawing} from "svg2canvas";
-
 import {V}         from "Vector";
 import {Transform} from "math/Transform";
 
-import {Assembler}            from "core/internal/assembly/Assembler";
-import {PortAssembler}        from "core/internal/assembly/PortAssembler";
-import {LinePrim}             from "core/internal/assembly/rendering/prims/LinePrim";
-import {SVGPrim}              from "core/internal/assembly/rendering/prims/SVGPrim";
-import {Schema}               from "core/schema";
+import {Assembler, AssemblerParams} from "core/internal/assembly/Assembler";
+import {PortAssembler}              from "core/internal/assembly/PortAssembler";
+import {LinePrim}                   from "core/internal/assembly/prims/LinePrim";
+import {SVGPrim}                    from "core/internal/assembly/prims/SVGPrim";
+
+import {Schema} from "core/schema";
+
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
-import {AssemblerParams} from "core/internal/assembly/Assembler";
-import {SVGs} from "../svgs";
 
 
 export class ANDGateAssembler extends Assembler<Schema.Component> {
@@ -19,15 +17,15 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
     protected readonly sim: DigitalSim;
 
-    public img: SVGDrawing;
-
     protected portAssembler: PortAssembler;
+
+    protected info: DigitalComponentInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params);
 
         this.sim = sim;
-        this.img = SVGs["and"];
+        this.info = this.circuit.doc.getObjectInfo("ANDGate") as DigitalComponentInfo;
 
         this.portAssembler = new PortAssembler(params, {
             "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
@@ -41,7 +39,7 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
     private assembleLine(gate: Schema.Component) {
         const { defaultBorderWidth } = this.options;
 
-        const { inputPortGroups } = this.circuit.doc.getObjectInfo("ANDGate") as DigitalComponentInfo;
+        const inputPortGroups = this.info.inputPortGroups;
 
         // Get current number of inputs
         const numInputs = [...this.circuit.doc.getPortsForComponent(gate.id).unwrap()]
@@ -56,27 +54,21 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         const transform = this.cache.componentTransforms.get(gate.id)!;
 
-        const selected = this.selections.has(gate.id);
-
         return new LinePrim(
             transform.toWorldSpace(V(x, y1)),
             transform.toWorldSpace(V(x, y2)),
-            this.options.lineStyle(selected),
         );
     }
 
     private assembleImage(gate: Schema.Component) {
-        const selected = this.selections.has(gate.id);
-        const tint = (selected ? this.options.selectedFillColor : undefined);
-        return new SVGPrim(this.img, this.size, this.cache.componentTransforms.get(gate.id)!, tint);
+        return new SVGPrim(this.size, this.cache.componentTransforms.get(gate.id)!);
     }
 
     public assemble(gate: Schema.Component, ev: unknown) {
         const transformChanged = /* use ev to see if our transform changed */ true;
-        const selectionChanged = /* use ev to see if we were de/selected */ true;
         const portAmtChanged   = /* use ev to see if the number of ports changed */ true;
 
-        if (!transformChanged && !selectionChanged && !portAmtChanged)
+        if (!transformChanged && !portAmtChanged)
             return;
 
         if (transformChanged) {
@@ -94,14 +86,6 @@ export class ANDGateAssembler extends Assembler<Schema.Component> {
 
         const line = ((!prevLine || transformChanged || portAmtChanged) ? this.assembleLine(gate) : prevLine);
         const img  = ((!prevImg || transformChanged) ? this.assembleImage(gate) : prevImg);
-
-        // Update styles only if only selections changed
-        if (selectionChanged) {
-            const selected = this.selections.has(gate.id);
-
-            line.updateStyle(this.options.lineStyle(selected));
-            img.updateStyle({ fill: (selected ? this.options.selectedFillColor : undefined) });
-        }
 
         this.cache.componentPrims.set(gate.id, [line, img]);
     }

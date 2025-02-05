@@ -3,27 +3,19 @@ import {BezierCurve} from "math/BezierCurve";
 import {Schema} from "core/schema";
 
 import {Assembler}       from "./Assembler";
-import {BezierCurvePrim} from "./rendering/prims/BezierCurvePrim";
+import {BezierCurvePrim} from "./prims/BezierCurvePrim";
 
 
 export class WireAssembler extends Assembler<Schema.Wire> {
-    protected assembleCurveStyle(wire: Schema.Wire) {
-        return this.options.wireStyle(
-            this.selections.has(wire.id),
-            wire.props.color,
-        );
-    }
-
     protected assembleCurve(wire: Schema.Wire) {
         return new BezierCurvePrim(
-            this.cache.wireCurves.get(wire.id)!,
-            this.assembleCurveStyle(wire),
+            this.cache.wireCurves.get(wire.id)!
         );
     }
 
     public assemble(wire: Schema.Wire, _: unknown): void {
         const portPositionsChanged = /* use ev to see if either port position changed */ true;
-        const selectionChanged     = /* use ev to see if parent wwas de/selected */ true;
+        const selectionChanged     = /* use ev to see if parent was de/selected */ true;
 
         if (!portPositionsChanged && !selectionChanged)
             return;
@@ -40,10 +32,6 @@ export class WireAssembler extends Assembler<Schema.Wire> {
         const [prevCurve] = (this.cache.wirePrims.get(wire.id) ?? []);
 
         const curve = ((!prevCurve || portPositionsChanged) ? this.assembleCurve(wire) : prevCurve);
-
-        // Update styles only if only selections changed
-        if (selectionChanged)
-            curve.updateStyle(this.assembleCurveStyle(wire));
 
         this.cache.wirePrims.set(wire.id, [curve]);
     }
