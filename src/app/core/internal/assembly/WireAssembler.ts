@@ -16,12 +16,14 @@ export class WireAssembler extends Assembler<Schema.Wire> {
         return new BezierCurve(p1, p2, c1, c2);
     }
 
+    protected getWireStyle(wire: Schema.Wire) {
+        return this.options.wireStyle(this.selections.has(wire.id), wire.props.color);
+    }
+
     public override assemble(wire: Schema.Wire, reasons: Set<AssemblyReason>) {
         const added                = reasons.has(AssemblyReason.Added);
         const portPositionsChanged = reasons.has(AssemblyReason.TransformChanged);
         const selectionChanged     = reasons.has(AssemblyReason.SelectionChanged);
-
-        const isSelected = this.selections.has(wire.id);
 
         if (added || portPositionsChanged) {
             const curve = this.calcWireCurve(wire);
@@ -30,7 +32,7 @@ export class WireAssembler extends Assembler<Schema.Wire> {
             this.cache.wirePrims.set(wire.id, [{
                 kind:  "BezierCurve",
                 curve: this.calcWireCurve(wire),
-                style: this.options.wireStyle(isSelected, wire.props.color),
+                style: this.getWireStyle(wire),
             }]);
         } else if (selectionChanged) {
             const [prim] = this.cache.wirePrims.get(wire.id)!;
@@ -39,7 +41,7 @@ export class WireAssembler extends Assembler<Schema.Wire> {
                 console.error(`Invalid prim type in WireAssembler! ${prim.kind}`);
                 return;
             }
-            prim.style = this.options.wireStyle(isSelected, wire.props.color);
+            prim.style = this.getWireStyle(wire);
         }
     }
 }

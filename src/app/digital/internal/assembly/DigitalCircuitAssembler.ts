@@ -7,10 +7,10 @@ import {Assembler,
         AssemblerParams}  from "core/internal/assembly/Assembler";
 import {CircuitAssembler} from "core/internal/assembly/CircuitAssembler";
 import {NodeAssembler}    from "core/internal/assembly/NodeAssembler";
-import {WireAssembler}    from "core/internal/assembly/WireAssembler";
 import {RenderOptions}    from "core/internal/assembly/RenderOptions";
 
 import {DigitalSim}           from "../sim/DigitalSim";
+import {DigitalWireAssembler} from "./DigitalWireAssembler";
 import {ANDGateAssembler}     from "./components/ANDGateAssembler";
 // import {XORGateAssembler}     from "./components/XORGateAssembler";
 // import {ORGateAssembler}      from "./components/ORGateAssembler";
@@ -31,7 +31,7 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
         const params: AssemblerParams = { circuit, cache: this.cache, selections, options };
         this.assemblers = {
             // Base types
-            "DigitalWire": new WireAssembler(params),
+            "DigitalWire": new DigitalWireAssembler(params, sim),
             "DigitalNode": new NodeAssembler(params),
             // // Inputs
             // "Switch": new SwitchAssembler(params, sim),
