@@ -1,3 +1,5 @@
+import {SVGDrawing} from "svg2canvas";
+
 import {Margin} from "math/Rect";
 
 import {Circuit} from "core/public";
@@ -21,7 +23,8 @@ export interface ToolConfig {
 
 export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes>(
     circuit: CircuitT,
-    state: CircuitDesignerState<T>
+    state: CircuitDesignerState<T>,
+    svgMap: Map<string, SVGDrawing>,
 ) {
     const designer = {
         get circuit(): CircuitT {
@@ -61,7 +64,7 @@ export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitT
         },
     } satisfies CircuitDesigner;
 
-    const viewport = ViewportImpl(state, designer);
+    const viewport = ViewportImpl(state, designer, svgMap);
 
     return designer;
 }

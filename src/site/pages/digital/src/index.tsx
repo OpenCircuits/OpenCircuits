@@ -51,7 +51,7 @@ import ImageFiles      from "./data/images.json";
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 
 // import {App} from "./containers/App";
-import {CreateDesigner, DigitalCircuitDesigner} from "./utils/DigitalCircuitDesigner";
+import {CreateDesigner, DigitalCircuitDesigner} from "./internal/DigitalCircuitDesigner";
 
 
 const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {

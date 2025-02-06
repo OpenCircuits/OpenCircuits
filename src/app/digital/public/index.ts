@@ -3,7 +3,7 @@ import {CircuitLog}        from "core/internal/impl/CircuitLog";
 import {CircuitDocument}   from "core/internal/impl/CircuitDocument";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 
-import {DefaultRenderOptions} from "core/internal/assembly/rendering/RenderOptions";
+import {DefaultRenderOptions} from "core/internal/assembly/RenderOptions";
 
 import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
 import {DigitalCircuitAssembler}            from "digital/internal/assembly/DigitalCircuitAssembler";

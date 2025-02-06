@@ -6,6 +6,7 @@ import {CircuitDesignerImpl, ToolConfig} from "shared/circuitdesigner/impl/Circu
 import {CircuitDesignerState} from "shared/circuitdesigner/impl/CircuitDesignerState";
 import {ToolManager} from "shared/circuitdesigner/impl/ToolManager";
 
+import {SVGs} from "./rendering/svgs";
 
 export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalCircuit> {}
 
@@ -39,5 +40,5 @@ export function CreateDesigner(toolConfig: ToolConfig) {
         },
     };
 
-    return CircuitDesignerImpl(circuit, designerState);
+    return CircuitDesignerImpl(circuit, designerState, SVGs);
 }

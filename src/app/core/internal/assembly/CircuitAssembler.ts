@@ -1,15 +1,16 @@
 import {Vector} from "Vector";
 
-import {None,Option,Some} from "core/utils/Result";
+import {None, Option, Some} from "core/utils/Result";
 import {Observable}       from "core/utils/Observable";
 
 import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";
 
-import {Assembler}              from "./Assembler";
+import {Assembler, AssemblyReason}              from "./Assembler";
 import {AssemblyCache, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
 import {BezierCurve} from "math/BezierCurve";
+import {HitTest} from "./PrimHitTests";
 
 
 export type CircuitAssemblerEvent = {
@@ -44,15 +45,60 @@ export type CircuitAssemblerEvent = {
 //     }
 // }
 
+
+class DirtyMap<K> {
+    private readonly map: Map<K, Set<AssemblyReason>>;
+
+    public constructor() {
+        this.map = new Map();
+    }
+
+    public add(id: K, reason: AssemblyReason): void {
+        this.map.getOrInsert(id, () => new Set())
+            .add(reason);
+    }
+
+    public has(id: K): boolean {
+        return this.map.has(id);
+    }
+
+    public get(id: K): Set<AssemblyReason> | undefined {
+        return this.map.get(id);
+    }
+
+    public delete(id: K): boolean {
+        return this.map.delete(id);
+    }
+
+    public clear(): void {
+        this.map.clear();
+    }
+
+    public isEmpty(): boolean {
+        return this.map.size === 0;
+    }
+
+    public get length(): number {
+        return this.map.size;
+    }
+
+
+    public *[Symbol.iterator]() {
+        for (const item of this.map) {
+            yield item;
+        }
+    }
+}
+
 export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     private readonly circuit: CircuitInternal;
     private readonly selections: SelectionsManager;
 
     protected cache: AssemblyCache;
 
-    private readonly dirtyComponents: Set<GUID>;
-    private readonly dirtyWires: Set<GUID>;
-    private readonly dirtyPorts: Set<GUID>;
+    private readonly dirtyComponents: DirtyMap<GUID>;
+    private readonly dirtyWires: DirtyMap<GUID>;
+    private readonly dirtyPorts: DirtyMap<GUID>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
         super();
@@ -72,9 +118,9 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
             wirePrims:  new Map(),
         };
 
-        this.dirtyComponents = new Set();
-        this.dirtyWires = new Set();
-        this.dirtyPorts = new Set();
+        this.dirtyComponents = new DirtyMap();
+        this.dirtyWires = new DirtyMap();
+        this.dirtyPorts = new DirtyMap();
 
         this.circuit.subscribe((ev) => {
             // TODO[model_refactor_api](leon) - use events better, i.e. how do we collect the diffs until the next
@@ -83,37 +129,40 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
 
             // Mark all added/removed component dirty
             for (const compID of diff.addedComponents)
-                this.dirtyComponents.add(compID);
+                this.dirtyComponents.add(compID, AssemblyReason.Added);
             for (const compID of diff.removedComponents)
-                this.dirtyComponents.add(compID);
+                this.dirtyComponents.add(compID, AssemblyReason.Removed);
 
             // Mark all components w/ changed ports dirty
             for (const compID of diff.portsChanged)
-                this.dirtyComponents.add(compID);
+                this.dirtyComponents.add(compID, AssemblyReason.PortsChanged);
 
             // Mark all added/removed wires dirty
             for (const wireID of diff.addedWires)
-                this.dirtyWires.add(wireID);
+                this.dirtyWires.add(wireID, AssemblyReason.Added);
             for (const wireID of diff.removedWires)
-                this.dirtyWires.add(wireID);
+                this.dirtyWires.add(wireID, AssemblyReason.Removed);
 
             // Mark all changed obj props dirty
             for (const [id, props] of diff.propsChanged) {
                 if (circuit.doc.hasComp(id)) {
-                    this.dirtyComponents.add(id);
-
                     // Component transform changed, update connected wires
                     if (props.has("x") || props.has("y") || props.has("angle")) {
+                        this.dirtyComponents.add(id, AssemblyReason.TransformChanged);
+
                         const ports = this.circuit.doc.getPortsForComponent(id);
                         ports.map((ports) => ports.forEach((portID) => {
                             this.circuit.doc.getWiresForPort(portID)
-                                .map((wires) => wires.forEach((wireID) => this.dirtyWires.add(wireID)))
+                                .map((wires) => wires.forEach((wireID) =>
+                                    this.dirtyWires.add(wireID, AssemblyReason.TransformChanged)))
                         }))
+                    } else {
+                        this.dirtyComponents.add(id, AssemblyReason.PropChanged);
                     }
                 } else if (circuit.doc.hasWire(id)) {
-                    this.dirtyWires.add(id);
+                    this.dirtyWires.add(id, AssemblyReason.PropChanged);
                 } else if (circuit.doc.hasPort(id)) {
-                    this.dirtyPorts.add(id);
+                    this.dirtyPorts.add(id, AssemblyReason.PropChanged);
                 }
             }
 
@@ -123,11 +172,11 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
         this.selections.subscribe((ev) => {
             ev.selections.forEach((id) => {
                 if (circuit.doc.hasComp(id))
-                    this.dirtyComponents.add(id);
+                    this.dirtyComponents.add(id, AssemblyReason.SelectionChanged);
                 else if (circuit.doc.hasWire(id))
-                    this.dirtyWires.add(id);
+                    this.dirtyWires.add(id, AssemblyReason.SelectionChanged);
                 else if (circuit.doc.hasPort(id))
-                    this.dirtyPorts.add(id);
+                    this.dirtyPorts.add(id, AssemblyReason.SelectionChanged);
             });
 
             this.publish({ type: "onchange" });
@@ -136,23 +185,24 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
 
     public reassemble() {
         // Update components first
-        for (const compID of this.dirtyComponents) {
-            // If component still exists, update it
-            if (this.circuit.doc.hasComp(compID)) {
-                const comp = this.circuit.doc.getCompByID(compID).unwrap();
-                // TODO[model_refactor_api](leon) - figure out `ev` param
-                this.getAssemblerFor(comp.kind).assemble(comp, {});
+        for (const [compID, reasons] of this.dirtyComponents) {
+            // If component doesn't exist, remove it and any associated ports
+            if (!this.circuit.doc.hasComp(compID)) {
+                this.cache.componentPrims.delete(compID);
+                this.cache.componentTransforms.delete(compID);
+                this.cache.portPrims.delete(compID);
                 continue;
             }
-            // Otherwise, component was deleted so remove it and any associated ports
-            this.cache.componentPrims.delete(compID);
-            this.cache.componentTransforms.delete(compID);
-            this.cache.portPrims.delete(compID);
+            // Otherwise, update it
+            const comp = this.circuit.doc.getCompByID(compID).unwrap();
+            this.getAssemblerFor(comp.kind).assemble(comp, reasons);
         }
         this.dirtyComponents.clear();
 
+        // TODO(leon) - does this work? I don't think it does
+        //   i.e. I don't think dirtyPorts gets set properly when portAmt changes?
         // Remove any ports that were deleted
-        for (const portID of this.dirtyPorts) {
+        for (const [portID, _reasons] of this.dirtyPorts) {
             if (!this.circuit.doc.hasPort(portID)) {
                 this.cache.portPositions.delete(portID);
                 this.cache.localPortPositions.delete(portID);
@@ -161,17 +211,16 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
         this.dirtyPorts.clear();
 
         // Then update wires
-        for (const wireID of this.dirtyWires) {
-            // If wire still exists, update it
-            if (this.circuit.doc.hasWire(wireID)) {
-                const wire = this.circuit.doc.getWireByID(wireID).unwrap();
-                // TODO[model_refactor_api](leon) - figure out `ev` param
-                this.getAssemblerFor(wire.kind).assemble(wire, {});
+        for (const [wireID, reasons] of this.dirtyWires) {
+            // If wire doesn't exist, remove it
+            if (!this.circuit.doc.hasWire(wireID)) {
+                this.cache.wireCurves.delete(wireID);
+                this.cache.wirePrims.delete(wireID);
                 continue;
             }
-            // Otherwise, wire was deleted so remove it
-            this.cache.wireCurves.delete(wireID);
-            this.cache.wirePrims.delete(wireID);
+            // Otherwise, update it
+            const wire = this.circuit.doc.getWireByID(wireID).unwrap();
+            this.getAssemblerFor(wire.kind).assemble(wire, reasons);
         }
         this.dirtyWires.clear();
     }
@@ -185,7 +234,8 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
         // TODO[model_refactor_api](leon): This is terrible
         if (this.dirtyComponents.has(port.parent)) {
             const comp = this.circuit.doc.getCompByID(port.parent).unwrap();
-            this.getAssemblerFor(comp.kind).assemble(comp, {});
+            this.getAssemblerFor(comp.kind)
+                .assemble(comp, this.dirtyComponents.get(port.parent)!);
             this.dirtyComponents.delete(port.parent);
         }
         return Some(this.cache.portPositions.get(portID)!);
@@ -201,14 +251,14 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
         for (const [id, prims] of this.cache.componentPrims) {
             if (!filter(id)) // Skip things not in the filter
                 continue;
-            if (prims.some((prim) => prim.hitTest(pos)))
+            if (prims.some((prim) => HitTest(prim, pos)))
                 return Some(id);
             // TODO[model_refactor_api](leon): hit test the component's ports as well
         }
         for (const [id, prims] of this.cache.wirePrims) {
             if (!filter(id)) // Skip things not in the filter
                 continue;
-            if (prims.some((prim) => prim.hitTest(pos)))
+            if (prims.some((prim) => HitTest(prim, pos)))
                 return Some(id);
         }
         return None();

@@ -1,17 +1,21 @@
-import {CircuitInternal}      from "core/internal";
-import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
-import {Assembler, AssemblerParams} from "core/internal/assembly/Assembler";
-import {CircuitAssembler}     from "core/internal/assembly/CircuitAssembler";
-import {NodeAssembler}        from "core/internal/assembly/NodeAssembler";
-import {RenderOptions}        from "core/internal/assembly/rendering/RenderOptions";
-import {Obj}                  from "core/schema/Obj";
+import {Obj} from "core/schema/Obj";
+
+import {CircuitInternal}   from "core/internal";
+import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+
+import {Assembler,
+        AssemblerParams}  from "core/internal/assembly/Assembler";
+import {CircuitAssembler} from "core/internal/assembly/CircuitAssembler";
+import {NodeAssembler}    from "core/internal/assembly/NodeAssembler";
+import {RenderOptions}    from "core/internal/assembly/RenderOptions";
+
 import {DigitalSim}           from "../sim/DigitalSim";
+import {DigitalWireAssembler} from "./DigitalWireAssembler";
 import {ANDGateAssembler}     from "./components/ANDGateAssembler";
 // import {XORGateAssembler}     from "./components/XORGateAssembler";
 // import {ORGateAssembler}      from "./components/ORGateAssembler";
 // import {LEDAssembler}         from "./components/LEDAssembler";
 // import {SwitchAssembler}      from "./components/SwitchAssembler";
-import {DigitalWireAssembler} from "./DigitalWireAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
