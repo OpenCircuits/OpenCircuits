@@ -72,7 +72,6 @@ export type SVGPrim = {
     tint?: Color;
 }
 
-
 export type Prim =
     | BezierCurvePrim
     | CirclePrim

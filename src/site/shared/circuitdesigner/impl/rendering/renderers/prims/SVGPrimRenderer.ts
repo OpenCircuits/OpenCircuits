@@ -9,8 +9,7 @@ export class SVGPrimRenderer extends PrimRenderer<SVGPrim> {
     protected readonly svgMap: Map<string, SVGDrawing>;
 
     public constructor(svgMap: Map<string, SVGDrawing>) {
-        super({});
-
+        super();
         this.svgMap = svgMap;
     }
 

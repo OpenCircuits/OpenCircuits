@@ -36,16 +36,8 @@ describe("CircuitAssembler", () => {
         expect(assembler["dirtyWires"]).toHaveLength(0);
         expect(assembler["dirtyPorts"]).toHaveLength(0);
 
-        // // Select created component
-        // s1.isSelected = true;
+        assembler.reassemble();
 
-        // // Check component has been selected
-        // expect(s1.isSelected).toBe(true);
-
-        // // Calculate midpoint position using method
-        // const sm1 = circuit.selections.midpoint();
-
-        // // Check that method is returning correct midpoint position
-        // expect(sm1).toEqual(V(0,0));
+        expectNoDirty(assembler);
     });
 });

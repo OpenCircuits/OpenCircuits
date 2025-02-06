@@ -63,13 +63,13 @@ export function ViewportImpl<T extends CircuitTypes>(
     const renderOptions = new DefaultRenderOptions();
 
     const primRenderers = {
-        "BezierCurve":  new BezierCurvePrimRenderer({}),
-        "Circle":       new CirclePrimRenderer({}),
-        "CircleSector": new CircleSectorPrimRenderer({}),
-        "Line":         new LinePrimRenderer({}),
-        "Polygon":      new PolygonPrimRenderer({}),
-        "QuadCurve":    new QuadCurvePrimRenderer({}),
-        "Rectangle":    new RectanglePrimRenderer({}),
+        "BezierCurve":  new BezierCurvePrimRenderer(),
+        "Circle":       new CirclePrimRenderer(),
+        "CircleSector": new CircleSectorPrimRenderer(),
+        "Line":         new LinePrimRenderer(),
+        "Polygon":      new PolygonPrimRenderer(),
+        "QuadCurve":    new QuadCurvePrimRenderer(),
+        "Rectangle":    new RectanglePrimRenderer(),
         "SVG":          new SVGPrimRenderer(svgMap),
     } as const;
     function getRendererFor(kind: string): PrimRenderer {
@@ -111,7 +111,6 @@ export function ViewportImpl<T extends CircuitTypes>(
                 prims.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    // renderer.draw(prim);
                     getRendererFor(prim.kind)
                         .render(renderer.ctx, prim);
                 });
@@ -124,7 +123,6 @@ export function ViewportImpl<T extends CircuitTypes>(
                 assembly.portPrims.get(compId)?.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    // renderer.draw(prim);
                     getRendererFor(prim.kind)
                         .render(renderer.ctx, prim);
                 });
@@ -133,7 +131,6 @@ export function ViewportImpl<T extends CircuitTypes>(
                 prims.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    // renderer.draw(prim);
                     getRendererFor(prim.kind)
                         .render(renderer.ctx, prim);
                 });
