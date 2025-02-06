@@ -16,6 +16,6 @@ function ToSVGDrawing(name: string, svgStr: string): SVGDrawing {
     }
 }
 
-export const SVGs: Record<string, SVGDrawing> = {
-    "and": ToSVGDrawing("and", andSVG),
-};
+export const SVGs: Map<string, SVGDrawing> = new Map([
+    ["and.svg", ToSVGDrawing("and", andSVG)],
+]);

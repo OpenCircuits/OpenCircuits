@@ -11,5 +11,5 @@
           "shared/*":  ["./*"],
       }
   },
-  "include": ["."],
+  "include": [".", "../../app/core/internal/assembly/RenderOptions.ts"],
 }

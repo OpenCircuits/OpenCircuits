@@ -1,48 +1,47 @@
 import {V} from "Vector";
 
-import {Transform} from "math/Transform";
-
 import {Schema} from "core/schema";
 
-import {CirclePrim} from "./prims/CirclePrim";
-import {Assembler}  from "./Assembler";
+import {AssemblerParams, AssemblyReason}  from "./Assembler";
+import {ComponentAssembler} from "./ComponentAssembler";
 
 
-export class NodeAssembler extends Assembler<Schema.Component> {
-    private assembleCircle(node: Schema.Component) {
-        const pos = this.cache.componentTransforms.get(node.id)!.getPos();
-        return new CirclePrim(pos, this.options.defaultPortRadius);
+export class NodeAssembler extends ComponentAssembler {
+
+    public constructor(params: AssemblerParams) {
+        super(params, V(2*params.options.defaultPortRadius), {
+            // TODO[.](leon): transform the direction so that the angle of the node changes `dir`
+            "outputs": () => ({ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }),
+            "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
+        });
     }
 
-    public assemble(node: Schema.Component, _: unknown) {
-        const transformChanged = /* use ev to see if parent transform changed */ true;
+    public override assemble(node: Schema.Component, reasons: Set<AssemblyReason>) {
+        super.assemble(node, reasons);
 
-        if (!transformChanged)
-            return;
+        const added            = reasons.has(AssemblyReason.Added);
+        const transformChanged = reasons.has(AssemblyReason.TransformChanged);
+        const selectionChanged = reasons.has(AssemblyReason.SelectionChanged);
 
-        if (transformChanged) {
-            const pos = V(node.props.x ?? 0, node.props.y ?? 0);
+        const isSelected = this.selections.has(node.id);
 
-            // Update transform
-            this.cache.componentTransforms.set(node.id, new Transform(
-                pos,
-                V(2*this.options.defaultPortRadius),
-                (node.props.angle ?? 0),
-            ));
+        if (added || transformChanged) {
+            this.cache.componentPrims.set(node.id, [{
+                kind: "Circle",
 
-            // Update "port" positions
-            const ports = this.circuit.doc.getPortsByGroup(node.id).unwrap();
-            if (Object.entries(ports).length > 0) { // Need to make sure the ports are set
-                // TODO[.](leon): transform the direction so that the angle of the node changes `dir`
-                this.cache.portPositions.set(ports["inputs"][0],  { origin: pos, target: pos, dir: V(-1, 0) });
-                this.cache.portPositions.set(ports["outputs"][0], { origin: pos, target: pos, dir: V(+1, 0) });
+                pos:    this.cache.componentTransforms.get(node.id)!.getPos(),
+                radius: this.options.defaultPortRadius,
+
+                style: this.options.portStyle(isSelected, false).circleStyle,
+            }]);
+        } else if (selectionChanged) {
+            const [prim] = this.cache.componentPrims.get(node.id)!;
+
+            if (prim.kind !== "Circle") {
+                console.error(`Invalid prim type in NodeAssembler! ${prim.kind}`);
+                return;
             }
+            prim.style = this.options.portStyle(isSelected, false).circleStyle;
         }
-
-        const [prev] = (this.cache.componentPrims.get(node.id) ?? []);
-
-        const circle = ((!prev || transformChanged) ? this.assembleCircle(node) : prev);
-
-        this.cache.componentPrims.set(node.id, [circle]);
     }
 }

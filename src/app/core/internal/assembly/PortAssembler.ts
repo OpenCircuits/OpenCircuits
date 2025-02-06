@@ -3,9 +3,7 @@ import {Vector} from "Vector";
 import {Schema} from "core/schema";
 
 import {GUID}              from "..";
-import {CirclePrim}        from "./prims/CirclePrim";
-import {LinePrim}          from "./prims/LinePrim";
-import {Assembler, AssemblerParams} from "./Assembler";
+import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";
 import {PortPos} from "./AssemblyCache";
 
 
@@ -53,50 +51,75 @@ export class PortAssembler extends Assembler<Schema.Component> {
         };
     }
 
-    public assemble(parent: Schema.Component, _: unknown) {
-        const transformChanged = /* use ev to see if parent transform changed */ true;
-        const portAmtChanged   = /* use ev to see if the number of ports changed */ true;
+    public override assemble(parent: Schema.Component, reasons: Set<AssemblyReason>) {
+        const added            = reasons.has(AssemblyReason.Added);
+        const transformChanged = reasons.has(AssemblyReason.TransformChanged);
+        const portAmtChanged   = reasons.has(AssemblyReason.PortsChanged);
+        const selectionChanged = reasons.has(AssemblyReason.SelectionChanged);
 
-        if (!transformChanged && !portAmtChanged)
-            return;
+        const parentSelected = this.selections.has(parent.id);
 
-        if (portAmtChanged) {
+        if (added || portAmtChanged) {
             const ports = this.circuit.doc.getPortsByGroup(parent.id).unwrap();
 
             // Re-calculate local port positions
             Object.entries(ports).forEach(([group, portIDs]) => {
                 portIDs.forEach((portID) => {
                     const port = this.circuit.doc.getPortByID(portID).unwrap();
+
                     this.cache.localPortPositions.set(portID, this.calcPos(group, port.index, portIDs.length));
-                })
+                });
             });
         }
 
-        if (transformChanged || portAmtChanged) {
+        if (added || transformChanged || portAmtChanged) {
             const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
-
-            // Transform all local port positions to new parent transform
-            ports.forEach((portID) =>
-                this.cache.portPositions.set(portID, this.calcWorldPos(parent.id, portID)));
-        }
-
-        if (transformChanged || portAmtChanged) {
-            const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
-
-            const { defaultPortRadius } = this.options;
 
             // Re-assemble all prims
             const prims = [...ports].flatMap((portID) => {
-                const { origin, target } = this.cache.portPositions.get(portID)!;
+                // Transform all local port positions to new parent transform
+                const pos = this.calcWorldPos(parent.id, portID);
+                this.cache.portPositions.set(portID, pos);
 
                 // Assemble the port-line and port-circle
+                const selected = this.selections.has(portID);
+                const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
                 return [
-                    new LinePrim(origin, target),
-                    new CirclePrim(target, defaultPortRadius),
-                ];
+                    {
+                        kind:  "Line",
+                        p1:    pos.origin,
+                        p2:    pos.target,
+                        style: lineStyle,
+                    },
+                    {
+                        kind:   "Circle",
+                        pos:    pos.target,
+                        radius: this.options.defaultPortRadius,
+                        style:  circleStyle,
+                    },
+                ] as const;
             });
 
             this.cache.portPrims.set(parent.id, prims);
+        } else if (selectionChanged) {
+            const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
+            const prims = this.cache.portPrims.get(parent.id)!;
+
+            [...ports].forEach((portID, i) => {
+                const line   = prims[2*i];
+                const circle = prims[2*i + 1];
+
+                if (line.kind !== "Line" || circle.kind !== "Circle") {
+                    console.error(`Invalid prim type in PortAssembler! ${line.kind}, ${circle.kind}`);
+                    return;
+                }
+
+                const selected = this.selections.has(portID);
+                const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
+
+                line.style = lineStyle;
+                circle.style = circleStyle;
+            });
         }
     }
 }

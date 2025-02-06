@@ -1,24 +1,43 @@
+import {SVGDrawing} from "svg2canvas";
+
+import {V, Vector} from "Vector";
+
 import {GUID} from "core/public";
+
+import {CleanupFunc} from "core/utils/types";
+import {extend}      from "core/utils/Functions";
+
+import {DefaultRenderOptions} from "core/internal/assembly/RenderOptions";
+
+import {CircuitTypes}        from "core/public/api/impl/CircuitState";
+import {MultiObservableImpl} from "core/public/api/impl/Observable";
 
 import {DefaultTool}  from "shared/tools/DefaultTool";
 import {ToolRenderer} from "shared/tools/renderers/ToolRenderer";
 import {Tool}         from "shared/tools/Tool";
 
-import {Viewport, ViewportEvents} from "../Viewport";
-import {CleanupFunc} from "core/utils/types";
-import {CircuitTypes} from "core/public/api/impl/CircuitState";
-import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
-import {Camera} from "../Camera";
-import {extend} from "core/utils/Functions";
-import {MultiObservableImpl} from "core/public/api/impl/Observable";
-import {CameraImpl} from "./Camera";
-import {V, Vector} from "Vector";
 import {InputAdapter} from "shared/utils/input/InputAdapter";
-import {CircuitDesigner} from "../CircuitDesigner";
-import {RenderHelper} from "./rendering/RenderHelper";
-import {RenderGrid} from "./rendering/renderers/GridRenderer";
-import {RenderState} from "./rendering/RenderState";
-import {RenderScheduler} from "./rendering/RenderScheduler";
+
+import {RenderHelper}             from "./rendering/RenderHelper";
+import {RenderState}              from "./rendering/RenderState";
+import {RenderScheduler}          from "./rendering/RenderScheduler";
+import {PrimRenderer}             from "./rendering/renderers/PrimRenderer";
+import {RenderGrid}               from "./rendering/renderers/GridRenderer";
+import {BezierCurvePrimRenderer}  from "./rendering/renderers/prims/BezierCurvePrimRenderer";
+import {CirclePrimRenderer}       from "./rendering/renderers/prims/CirclePrimRenderer";
+import {CircleSectorPrimRenderer} from "./rendering/renderers/prims/CircleSectorPrimRenderer";
+import {LinePrimRenderer}         from "./rendering/renderers/prims/LinePrimRenderer";
+import {PolygonPrimRenderer}      from "./rendering/renderers/prims/PolygonPrimRenderer";
+import {QuadCurvePrimRenderer}    from "./rendering/renderers/prims/QuadCurvePrimRenderer";
+import {RectanglePrimRenderer}    from "./rendering/renderers/prims/RectanglePrimRenderer";
+import {SVGPrimRenderer}          from "./rendering/renderers/prims/SVGPrimRenderer";
+
+import {Camera}                   from "../Camera";
+import {CircuitDesigner}          from "../CircuitDesigner";
+import {Viewport, ViewportEvents} from "../Viewport";
+
+import {CameraImpl}                            from "./Camera";
+import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
 
 
 export interface ToolConfig {
@@ -27,7 +46,11 @@ export interface ToolConfig {
     renderers?: ToolRenderer[];
 }
 
-export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState<T>, designer: CircuitDesigner) {
+export function ViewportImpl<T extends CircuitTypes>(
+    state: CircuitDesignerState<T>,
+    designer: CircuitDesigner,
+    svgMap: Map<string, SVGDrawing>,
+) {
     const observable = MultiObservableImpl<ViewportEvents>();
 
     let curState: {
@@ -37,41 +60,22 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
 
     const cameras: Map<CameraRecordKey, Camera> = new Map();
 
-    const dirtyComponents: Set<GUID> = new Set();
-    const dirtyWires: Set<GUID> = new Set();
+    const renderOptions = new DefaultRenderOptions();
 
-    function getRendererFor(kind: string) {
-        return {
-            
-        }
-    }
-
-    const reassemble = () => {
-        state.circuitState.assembler.reassemble();
-
-        const circuit = state.circuitState.internal;
-
-        // Update components first
-        for (const compID of dirtyComponents) {
-            if (!circuit.doc.hasComp(compID))
-                continue;
-            // Otherwise, update it
-            const comp = circuit.doc.getCompByID(compID).unwrap();
-            // TODO[model_refactor_api](leon) - figure out `ev` param
-            getRendererFor(comp.kind).assemble(comp, {});
-        }
-        dirtyComponents.clear();
-
-        // Then update wires
-        for (const wireID of dirtyWires) {
-            if (!circuit.doc.hasWire(wireID))
-                continue;
-            // Otherwise, update it
-            const wire = circuit.doc.getWireByID(wireID).unwrap();
-            // TODO[model_refactor_api](leon) - figure out `ev` param
-            getRendererFor(wire.kind).assemble(wire, {});
-        }
-        dirtyWires.clear();
+    const primRenderers = {
+        "BezierCurve":  new BezierCurvePrimRenderer({}),
+        "Circle":       new CirclePrimRenderer({}),
+        "CircleSector": new CircleSectorPrimRenderer({}),
+        "Line":         new LinePrimRenderer({}),
+        "Polygon":      new PolygonPrimRenderer({}),
+        "QuadCurve":    new QuadCurvePrimRenderer({}),
+        "Rectangle":    new RectanglePrimRenderer({}),
+        "SVG":          new SVGPrimRenderer(svgMap),
+    } as const;
+    function getRendererFor(kind: string): PrimRenderer {
+        if (!(kind in primRenderers))
+            throw new Error(`Unknown prim renderer for kind: ${kind}`);
+        return primRenderers[kind as keyof typeof primRenderers];
     }
 
     const render = () => {
@@ -81,14 +85,14 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
         const { renderer } = curState;
         const renderState: RenderState = {
             camera:     state.cameras[state.curCamera],
-            options:    state.circuitState.renderOptions,
+            options:    renderOptions,
             circuit:    state.circuitState.internal,
             selections: state.circuitState.selectionsManager,
             renderer,
         };
 
         // Reassemble and get the cache
-        reassemble();
+        state.circuitState.assembler.reassemble();
         const assembly = state.circuitState.assembler.getCache();
 
         renderer.clear();
@@ -107,7 +111,9 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
                 prims.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    renderer.draw(prim);
+                    // renderer.draw(prim);
+                    getRendererFor(prim.kind)
+                        .render(renderer.ctx, prim);
                 });
             });
 
@@ -118,14 +124,18 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
                 assembly.portPrims.get(compId)?.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    renderer.draw(prim);
+                    // renderer.draw(prim);
+                    getRendererFor(prim.kind)
+                        .render(renderer.ctx, prim);
                 });
 
                 // Draw prims for component
                 prims.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    renderer.draw(prim);
+                    // renderer.draw(prim);
+                    getRendererFor(prim.kind)
+                        .render(renderer.ctx, prim);
                 });
             });
 
@@ -140,19 +150,6 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
     const scheduler = new RenderScheduler();
     scheduler.subscribe(render);
     scheduler.block();
-
-    state.circuitState.selectionsManager.subscribe((ev) => {
-        ev.selections.forEach((id) => {
-            if (state.circuitState.internal.doc.hasComp(id))
-                dirtyComponents.add(id);
-            else if (state.circuitState.internal.doc.hasWire(id))
-                dirtyWires.add(id);
-            else if (state.circuitState.internal.doc.hasPort(id))
-                dirtyPorts.add(id);
-        });
-
-        scheduler.requestRender();
-    });
 
     const view = extend(observable, {
         get camera(): Camera {
@@ -188,9 +185,8 @@ export function ViewportImpl<T extends CircuitTypes>(state: CircuitDesignerState
             };
 
             const u1 = state.circuitState.assembler.subscribe((data) => {
-                if (data.type === "onchange") {
-                    render();
-                }
+                if (data.type === "onchange")
+                    scheduler.requestRender();
             });
 
             // Setup inputs and forward them to the tool manager

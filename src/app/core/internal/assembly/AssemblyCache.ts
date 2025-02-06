@@ -4,7 +4,7 @@ import {BezierCurve} from "math/BezierCurve";
 import {Transform}   from "math/Transform";
 
 import {GUID}  from "..";
-import {Prims} from "./Prim";
+import {Prim} from "./Prim";
 
 
 export interface PortPos {
@@ -15,14 +15,14 @@ export interface PortPos {
 
 export interface AssemblyCache {
     componentTransforms: Map<GUID, Transform>;
-    componentPrims: Map<GUID, Prims>;
+    componentPrims: Map<GUID, Prim[]>;
 
     localPortPositions: Map<GUID, PortPos>; // Key'd by port ID
     portPositions: Map<GUID, PortPos>; // Key'd by port ID
-    portPrims: Map<GUID, Prims>; // Key'd by component parent
+    portPrims: Map<GUID, Prim[]>; // Key'd by component parent
 
     wireCurves: Map<GUID, BezierCurve>;
-    wirePrims: Map<GUID, Prims>;
+    wirePrims: Map<GUID, Prim[]>;
 }
 
 export type ReadonlyAssemblyCache = {

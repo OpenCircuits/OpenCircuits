@@ -1,8 +1,10 @@
-import {Matrix2x3}              from "math/Matrix";
 import {SVGDrawing, parseColor} from "svg2canvas";
-import {V, Vector}              from "Vector";
-import {Prim}                   from "core/internal/assembly/Prim";
-import {Style}                  from "shared/circuitdesigner/impl/rendering/Style";
+
+import {V, Vector} from "Vector";
+
+import {Matrix2x3} from "math/Matrix";
+
+import {Style} from "core/internal/assembly/Style";
 
 
 export interface Renderer {
@@ -52,9 +54,9 @@ export class RenderHelper {
         img.draw(this.ctx, pos.x, pos.y, size.x, -size.y, col);
     }
 
-    public draw(prim: Prim): void {
-        prim.render(this.ctx);
-    }
+    // public draw(prim: Prim): void {
+    //     prim.render(this.ctx);
+    // }
 
     public createRadialGradient(pos1: Vector, r1: number, pos2: Vector, r2: number): CanvasGradient {
         return this.ctx.createRadialGradient(pos1.x, pos1.y, r1, pos2.x, pos2.y, r2);

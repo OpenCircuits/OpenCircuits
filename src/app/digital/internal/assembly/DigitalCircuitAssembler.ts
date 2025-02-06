@@ -1,11 +1,15 @@
-import {CircuitInternal}      from "core/internal";
-import {SelectionsManager}    from "core/internal/impl/SelectionsManager";
-import {Assembler, AssemblerParams} from "core/internal/assembly/Assembler";
-import {CircuitAssembler}     from "core/internal/assembly/CircuitAssembler";
-import {NodeAssembler}        from "core/internal/assembly/NodeAssembler";
-import {WireAssembler}        from "core/internal/assembly/WireAssembler";
-import {AssemblyOptions}      from "core/internal/assembly/AssemblyOptions";
-import {Obj}                  from "core/schema/Obj";
+import {Obj} from "core/schema/Obj";
+
+import {CircuitInternal}   from "core/internal";
+import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+
+import {Assembler,
+        AssemblerParams}  from "core/internal/assembly/Assembler";
+import {CircuitAssembler} from "core/internal/assembly/CircuitAssembler";
+import {NodeAssembler}    from "core/internal/assembly/NodeAssembler";
+import {WireAssembler}    from "core/internal/assembly/WireAssembler";
+import {RenderOptions}    from "core/internal/assembly/RenderOptions";
+
 import {DigitalSim}           from "../sim/DigitalSim";
 import {ANDGateAssembler}     from "./components/ANDGateAssembler";
 // import {XORGateAssembler}     from "./components/XORGateAssembler";
@@ -19,7 +23,7 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
     protected assemblers: Record<string, Assembler>;
 
     public constructor(circuit: CircuitInternal, selections: SelectionsManager,
-                       sim: DigitalSim, options: AssemblyOptions) {
+                       sim: DigitalSim, options: RenderOptions) {
         super(circuit, selections);
 
         this.sim = sim;

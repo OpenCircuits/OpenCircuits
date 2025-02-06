@@ -10,5 +10,5 @@
             "test/helpers/*": ["./tests/helpers/*"],
         },
     },
-    "include": [".", "./core/utils/types", "./core/utils/math", "../site/shared/circuitdesigner/RenderOptions.ts", "../site/shared/circuitdesigner/impl/rendering/RenderScheduler.ts", "../site/shared/circuitdesigner/impl/rendering/RenderHelper.ts", "../site/shared/circuitdesigner/impl/rendering/renderers", "../site/shared/circuitdesigner/impl/rendering/RenderState.ts", "../site/shared/circuitdesigner/impl/rendering/Style.ts", "../site/shared/circuitdesigner/impl/rendering/RenderOptions.ts"]
+    "include": [".", "./core/utils/types", "./core/utils/math", "../site/shared/circuitdesigner/RenderOptions.ts", "../site/shared/circuitdesigner/impl/rendering/RenderScheduler.ts", "../site/shared/circuitdesigner/impl/rendering/RenderHelper.ts", "../site/shared/circuitdesigner/impl/rendering/renderers", "../site/shared/circuitdesigner/impl/rendering/RenderState.ts", "../site/shared/circuitdesigner/impl/rendering/Style.ts", "core/internal/assembly/RenderOptions.ts"]
 }
