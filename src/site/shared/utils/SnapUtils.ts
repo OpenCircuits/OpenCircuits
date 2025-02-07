@@ -13,11 +13,11 @@ const WIRE_SNAP_THRESHOLD = 0.2;
  * @returns     The snapped position.
  */
 export function SnapToConnections(pos: Vector, ports: Port[]): Vector {
-    // if x-c is less than the wire snap threshold,
-    // DoSnap is set to c, if greater it's set to x
-    const DoSnap = (x: Vector, c: Vector) => V(
-        (Math.abs(x.x - c.x) <= WIRE_SNAP_THRESHOLD) ? c.x : x.x,
-        (Math.abs(x.y - c.y) <= WIRE_SNAP_THRESHOLD) ? c.y : x.y,
+    // if p-c is less than the wire snap threshold,
+    // DoSnap is set to c, if greater it's set to p
+    const DoSnap = (p: Vector, c: Vector) => V(
+        (Math.abs(p.x - c.x) <= WIRE_SNAP_THRESHOLD) ? c.x : p.x,
+        (Math.abs(p.y - c.y) <= WIRE_SNAP_THRESHOLD) ? c.y : p.y,
     );
 
     // Snaps the wires to the ports they're connected to.
@@ -26,8 +26,10 @@ export function SnapToConnections(pos: Vector, ports: Port[]): Vector {
         const p = port.targetPos.sub(pos);
 
         // Calculate new position (v).
-        for (const port2 of port.connectedPorts)
-            v = DoSnap(v.add(p), port2.targetPos).sub(p);
+        for (const port2 of port.connectedPorts) {
+            const snap = DoSnap(v.add(p), port2.targetPos)
+            v = snap.sub(p);
+        }
     }
     return v;
 }

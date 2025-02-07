@@ -38,7 +38,7 @@ export function WireImpl<T extends CircuitTypes>(
             return constructPort(getWire().p1);
         },
         get p2(): T["Port"] {
-            return constructPort(getWire().p1);
+            return constructPort(getWire().p2);
         },
 
         // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'

@@ -1,4 +1,4 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Component} from "core/public";
 
@@ -11,9 +11,11 @@ import {Tool}                          from "./Tool";
 
 export class TranslateTool implements Tool {
     private components: Component[];
+    private initialPositions: Vector[];
 
     public constructor() {
         this.components = [];
+        this.initialPositions = [];
     }
 
     public shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
@@ -36,6 +38,8 @@ export class TranslateTool implements Tool {
             ? circuit.selections.components
             : [curPressedObj as Component];
 
+        this.initialPositions = this.components.map((c) => V(c.x, c.y));
+
         circuit.beginTransaction();
 
         // TODO[model_refactor_api](leon): shift components
@@ -54,17 +58,19 @@ export class TranslateTool implements Tool {
             const snapToGrid = ev.input.isShiftKeyDown;
             const snapToConnections = !ev.input.isShiftKeyDown;
 
-            const dPos = ev.input.deltaMousePos.scale(V(viewport.camera.zoom, -viewport.camera.zoom));
+            const dPos = viewport.camera.toWorldPos(ev.input.mousePos)
+                .sub(viewport.camera.toWorldPos(ev.input.mouseDownPos));
 
+            // Translate all selected components
+            this.components.forEach((c, i) =>
+                c.pos = this.initialPositions[i].add(dPos));
+
+            // Apply snapping AFTER to avoid issue #417.
             this.components.forEach((c) => {
-                let pos = V(c.x, c.y).add(dPos);
                 if (snapToGrid)
-                    pos = SnapToGrid(pos);
+                    c.pos = SnapToGrid(c.pos);
                 if (snapToConnections)
-                    pos = SnapToConnections(pos, c.allPorts);
-                // Very specifically Translate as we go
-                //  as to correctly apply `SnapToConnections`
-                c.pos = pos;
+                    c.pos = SnapToConnections(c.pos, c.allPorts);
             });
         }
     }

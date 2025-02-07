@@ -153,7 +153,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
 
         // Early return if this isn't the last "commit"
         if (--this.transactionCounter > 0)
-            return
+            return;
 
         return this.endTransactionHelper((txOps) => {
             // Sanity check: Clock should be kept updated by the event handler.

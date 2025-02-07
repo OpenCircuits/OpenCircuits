@@ -230,7 +230,9 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
     public getPortPos(portID: GUID): Option<PortPos> {
         if (!this.circuit.doc.hasPort(portID))
             return None();
+
         const port = this.circuit.doc.getPortByID(portID).unwrap();
+
         // TODO[model_refactor_api](leon): This is terrible
         if (this.dirtyComponents.has(port.parent)) {
             const comp = this.circuit.doc.getCompByID(port.parent).unwrap();
@@ -238,6 +240,7 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
                 .assemble(comp, this.dirtyComponents.get(port.parent)!);
             this.dirtyComponents.delete(port.parent);
         }
+
         return Some(this.cache.portPositions.get(portID)!);
     }
 
