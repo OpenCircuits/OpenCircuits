@@ -8,14 +8,14 @@ import {Transform} from "math/Transform";
 import {Style} from "./Style";
 
 
-export type BezierCurvePrim = {
+export interface BezierCurvePrim {
     kind: "BezierCurve";
 
     curve: BezierCurve;
 
     style: Style;
 }
-export type CirclePrim = {
+export interface CirclePrim {
     kind: "Circle";
 
     pos: Vector;
@@ -23,7 +23,7 @@ export type CirclePrim = {
 
     style: Style;
 }
-export type CircleSectorPrim = {
+export interface CircleSectorPrim {
     kind: "CircleSector";
 
     pos: Vector;
@@ -32,7 +32,7 @@ export type CircleSectorPrim = {
 
     style: Style;
 }
-export type LinePrim = {
+export interface LinePrim {
     kind: "Line";
 
     p1: Vector;
@@ -40,14 +40,14 @@ export type LinePrim = {
 
     style: Style;
 }
-export type PolygonPrim = {
+export interface PolygonPrim {
     kind: "Polygon";
 
     points: Vector[];
 
     style: Style;
 }
-export type QuadCurvePrim = {
+export interface QuadCurvePrim {
     kind: "QuadCurve";
 
     p1: Vector;
@@ -56,14 +56,34 @@ export type QuadCurvePrim = {
 
     style: Style;
 }
-export type RectanglePrim = {
+export interface RectanglePrim {
     kind: "Rectangle";
 
     transform: Transform;
 
     style: Style;
 }
-export type SVGPrim = {
+export type BaseShapePrim =
+    | BezierCurvePrim
+    | CirclePrim
+    | CircleSectorPrim
+    | LinePrim
+    | PolygonPrim
+    | QuadCurvePrim
+    | RectanglePrim;
+
+// Represents a group of basic prims (non-SVG) that share a style.
+type MakeBasePrimWithoutStyle<T> = T extends { style: Style } ? Omit<T, "style"> : T;
+export type BaseShapePrimWithoutStyle = MakeBasePrimWithoutStyle<BaseShapePrim>;
+export interface GroupPrim {
+    kind: "Group";
+
+    prims: BaseShapePrimWithoutStyle[];
+
+    style: Style;
+}
+
+export interface SVGPrim {
     kind: "SVG";
 
     svg: string; // opaque handle for the SVG
@@ -73,11 +93,6 @@ export type SVGPrim = {
 }
 
 export type Prim =
-    | BezierCurvePrim
-    | CirclePrim
-    | CircleSectorPrim
-    | LinePrim
-    | PolygonPrim
-    | QuadCurvePrim
-    | RectanglePrim
-    | SVGPrim;
+    | BaseShapePrim
+    | SVGPrim
+    | GroupPrim;

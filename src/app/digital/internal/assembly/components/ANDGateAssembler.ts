@@ -1,15 +1,11 @@
-import {parseColor} from "svg2canvas";
-
 import {V} from "Vector";
-
-import {Schema} from "core/schema";
 
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";
 
 import {AssemblerParams, AssemblyReason} from "core/internal/assembly/Assembler";
 import {ComponentAssembler} from "core/internal/assembly/ComponentAssembler";
-import {Prim} from "core/internal/assembly/Prim";
+import {Schema} from "core/schema";
 
 
 export class ANDGateAssembler extends ComponentAssembler {
@@ -24,13 +20,38 @@ export class ANDGateAssembler extends ComponentAssembler {
                 const spacing = 0.5 - this.options.defaultBorderWidth/2;
                 return { origin: V(-0.5, spacing*((total-1)/2 - index)), dir: V(-1, 0) };
             },
-        });
+        }, [
+            { // Line
+                kind: "BaseShape",
+
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
+                assemble: (gate) => this.assembleLine(gate),
+
+                styleChangesWhenSelected: true,
+                getStyle: (comp) => this.options.lineStyle(this.selections.has(comp.id)),
+            },
+            { // SVG
+                kind: "SVG",
+
+                dependencies: new Set([AssemblyReason.TransformChanged]),
+                assemble:     (gate) => ({
+                    kind: "SVG",
+
+                    svg:       "and.svg",
+                    transform: this.getTransform(gate),
+                }),
+
+                tintChangesWhenSelected: true,
+                getTint: (gate) =>
+                    (this.selections.has(gate.id) ? this.options.selectedFillColor : undefined),
+            },
+        ]);
 
         this.sim = sim;
         this.info = this.circuit.doc.getObjectInfo("ANDGate") as DigitalComponentInfo;
     }
 
-    private assembleLine(gate: Schema.Component): Prim {
+    private assembleLine(gate: Schema.Component) {
         const { defaultBorderWidth } = this.options;
 
         const inputPortGroups = this.info.inputPortGroups;
@@ -46,65 +67,12 @@ export class ANDGateAssembler extends ComponentAssembler {
 
         const x = -(this.size.x - defaultBorderWidth)/2;
 
-        const transform = this.cache.componentTransforms.get(gate.id)!;
-        const selected = this.selections.has(gate.id);
-
+        const transform = this.getTransform(gate);
         return {
             kind: "Line",
 
             p1: transform.toWorldSpace(V(x, y1)),
             p2: transform.toWorldSpace(V(x, y2)),
-
-            style: this.options.lineStyle(selected),
-        }
-    }
-
-    private assembleImage(gate: Schema.Component): Prim {
-        const selected = this.selections.has(gate.id);
-
-        const tint = (selected ? parseColor(this.options.selectedFillColor) : undefined);
-
-        return {
-            kind: "SVG",
-
-            svg:       "and.svg",
-            transform: this.cache.componentTransforms.get(gate.id)!,
-
-            tint,
-        };
-    }
-
-    public override assemble(gate: Schema.Component, ev: Set<AssemblyReason>) {
-        super.assemble(gate, ev);
-
-        const added            = ev.has(AssemblyReason.Added);
-        const transformChanged = ev.has(AssemblyReason.TransformChanged);
-        const portAmtChanged   = ev.has(AssemblyReason.PortsChanged);
-        const selectionChanged = ev.has(AssemblyReason.SelectionChanged);
-
-        if (added || transformChanged) {
-            this.cache.componentPrims.set(gate.id, [
-                this.assembleLine(gate),
-                this.assembleImage(gate),
-            ]);
-        } else if (portAmtChanged) {
-            const [_, img] = this.cache.componentPrims.get(gate.id)!;
-            this.cache.componentPrims.set(gate.id, [
-                this.assembleLine(gate),
-                img,
-            ]);
-        } else if (selectionChanged) {
-            const [line, img] = this.cache.componentPrims.get(gate.id)!;
-
-            if (line.kind !== "Line" || img.kind !== "SVG") {
-                console.error(`Invalid prim type in ANDGateAssembler! ${line.kind}, ${img.kind}`);
-                return;
-            }
-
-            const selected = this.selections.has(gate.id);
-
-            line.style = this.options.lineStyle(selected);
-            img.tint = (selected ? parseColor(this.options.selectedFillColor) : undefined);
-        }
+        } as const;
     }
 }
