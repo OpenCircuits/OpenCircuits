@@ -23,6 +23,8 @@ export interface RenderOptions {
     portLineWidth: number;
     portBorderWidth: number;
 
+    notPortCircleRadius: number;
+
     ledLightRadius: number;
     ledLightIntensity: number;
 
@@ -63,6 +65,8 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public portLineWidth = 0.04;
     public portBorderWidth = 0.02;
+
+    public notPortCircleRadius = 0.1;
 
     public ledLightRadius = 1.5;
     public ledLightIntensity = 0.75;
