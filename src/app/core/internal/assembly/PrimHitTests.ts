@@ -16,10 +16,12 @@ export function HitTest(prim: Prim, pt: Vector): boolean {
     case "Polygon":
         throw new Error("Method not implemented.");
     case "QuadCurve":
-        throw new Error("Method not implemented.");
+        return false; // Maybe allow quad curves to be hit?
     case "Rectangle":
         return RectContains(prim.transform, pt);
     case "SVG":
         return RectContains(prim.transform, pt);
+    case "Group":
+        return prim.prims.some((p) => HitTest(p as Prim, pt));
     }
 }

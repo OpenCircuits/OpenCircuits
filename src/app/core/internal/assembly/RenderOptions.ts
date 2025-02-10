@@ -84,10 +84,11 @@ export class DefaultRenderOptions implements RenderOptions {
     public curveStyle(selected: boolean) {
         return {
             stroke: {
-                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
-                size:  this.curveBorderWidth,
+                color:   (selected ? this.selectedBorderColor : this.defaultBorderColor),
+                size:    this.curveBorderWidth,
+                lineCap: "round",
             },
-        };
+        } as const;
     }
     public fillStyle(selected: boolean): Style {
         return {

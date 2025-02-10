@@ -23,14 +23,6 @@ import {RenderState}              from "./rendering/RenderState";
 import {RenderScheduler}          from "./rendering/RenderScheduler";
 import {PrimRenderer}             from "./rendering/renderers/PrimRenderer";
 import {RenderGrid}               from "./rendering/renderers/GridRenderer";
-import {BezierCurvePrimRenderer}  from "./rendering/renderers/prims/BezierCurvePrimRenderer";
-import {CirclePrimRenderer}       from "./rendering/renderers/prims/CirclePrimRenderer";
-import {CircleSectorPrimRenderer} from "./rendering/renderers/prims/CircleSectorPrimRenderer";
-import {LinePrimRenderer}         from "./rendering/renderers/prims/LinePrimRenderer";
-import {PolygonPrimRenderer}      from "./rendering/renderers/prims/PolygonPrimRenderer";
-import {QuadCurvePrimRenderer}    from "./rendering/renderers/prims/QuadCurvePrimRenderer";
-import {RectanglePrimRenderer}    from "./rendering/renderers/prims/RectanglePrimRenderer";
-import {SVGPrimRenderer}          from "./rendering/renderers/prims/SVGPrimRenderer";
 
 import {Camera}                   from "../Camera";
 import {CircuitDesigner}          from "../CircuitDesigner";
@@ -62,22 +54,7 @@ export function ViewportImpl<T extends CircuitTypes>(
 
     const renderOptions = new DefaultRenderOptions();
 
-    const primRenderers = {
-        "BezierCurve":  new BezierCurvePrimRenderer(),
-        "Circle":       new CirclePrimRenderer(),
-        "CircleSector": new CircleSectorPrimRenderer(),
-        "Line":         new LinePrimRenderer(),
-        "Polygon":      new PolygonPrimRenderer(),
-        "QuadCurve":    new QuadCurvePrimRenderer(),
-        "Rectangle":    new RectanglePrimRenderer(),
-        "SVG":          new SVGPrimRenderer(svgMap),
-    } as const;
-    function getRendererFor(kind: string): PrimRenderer {
-        if (!(kind in primRenderers))
-            throw new Error(`Unknown prim renderer for kind: ${kind}`);
-        return primRenderers[kind as keyof typeof primRenderers];
-    }
-
+    const primRenderer = new PrimRenderer(svgMap);
     const render = () => {
         if (!curState)
             throw new Error("Viewport: Attempted Circuit render before a canvas was set!");
@@ -111,8 +88,7 @@ export function ViewportImpl<T extends CircuitTypes>(
                 prims.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    getRendererFor(prim.kind)
-                        .render(renderer.ctx, prim);
+                    primRenderer.render(renderer.ctx, prim);
                 });
             });
 
@@ -123,16 +99,14 @@ export function ViewportImpl<T extends CircuitTypes>(
                 assembly.portPrims.get(compId)?.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    getRendererFor(prim.kind)
-                        .render(renderer.ctx, prim);
+                    primRenderer.render(renderer.ctx, prim);
                 });
 
                 // Draw prims for component
                 prims.forEach((prim) => {
                     // if (!prim.cull(renderState.camera))
                     //     return;
-                    getRendererFor(prim.kind)
-                        .render(renderer.ctx, prim);
+                    primRenderer.render(renderer.ctx, prim);
                 });
             });
 
