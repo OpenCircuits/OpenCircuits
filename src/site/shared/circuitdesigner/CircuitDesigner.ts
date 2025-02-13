@@ -2,7 +2,7 @@ import {Margin} from "math/Rect";
 
 import {Circuit, Obj} from "core/public";
 
-import {Cursor}       from "shared/utils/input/Cursor";
+import {Cursor}       from "shared/src/utils/input/Cursor";
 import {DebugOptions} from "shared/circuitdesigner/impl/DebugOptions";
 import {Viewport}     from "./Viewport";
 
