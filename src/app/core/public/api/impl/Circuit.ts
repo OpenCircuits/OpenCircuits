@@ -15,7 +15,7 @@ import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl}             from "./Observable";
 
 
-export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
+function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
     function pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
         return state.assembler.findNearestObj(pt, filter);
     }
@@ -193,22 +193,26 @@ export function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(st
 }
 
 
-export function RootCircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
-    const circuit = CircuitImpl(state);
+export function RootCircuitImpl<
+    ICircuitT extends IntegratedCircuit,
+    CircuitT extends Circuit,
+    T extends CircuitTypes
+>(state: CircuitState<T>) {
+    const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
-        createIC(objs: T["Obj[]"]): CircuitT | undefined {
+        createIC(): ICircuitT {
             throw new Error("Unimplemented!");
         },
-        getICs(): CircuitT[] {
+        getICs(): ICircuitT[] {
             throw new Error("Unimplemented!");
         },
     }) satisfies RootCircuit;
 }
 
 
-export function IntegratedCircuitImpl<T extends CircuitTypes>(state: CircuitState<T>) {
-    const circuit = CircuitImpl(state);
+export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
+    const circuit = CircuitImpl<CircuitT, T>(state);
 
     const display = {
         set size(s: Vector) {

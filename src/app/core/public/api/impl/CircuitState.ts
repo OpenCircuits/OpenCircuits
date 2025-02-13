@@ -1,4 +1,6 @@
 import {CircuitInternal}   from "core/internal";
+import {CircuitLog}        from "core/internal/impl/CircuitLog";
+import {CircuitDocument}   from "core/internal/impl/CircuitDocument";
 import {SelectionsManager} from "core/internal/impl/SelectionsManager";
 import {CircuitAssembler}  from "core/internal/assembly/CircuitAssembler";
 import {RenderOptions}     from "core/internal/assembly/RenderOptions";
@@ -32,6 +34,8 @@ export type CircuitTypes<
 }
 
 export interface CircuitState<T extends CircuitTypes> {
+    log: CircuitLog;
+    doc: CircuitDocument;
     internal: CircuitInternal;
     assembler: CircuitAssembler;
     selectionsManager: SelectionsManager;

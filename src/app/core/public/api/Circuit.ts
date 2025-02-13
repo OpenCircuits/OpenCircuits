@@ -74,8 +74,8 @@ export interface Circuit extends Observable<CircuitEvent> {
 }
 
 export interface RootCircuit extends Circuit {
-    createIC(objs: Obj[]): Circuit | undefined;
-    getICs(): Circuit[];
+    createIC(): IntegratedCircuit;
+    getICs(): IntegratedCircuit[];
 }
 
 export interface IntegratedCircuitDisplay {

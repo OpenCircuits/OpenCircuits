@@ -1,14 +1,13 @@
-import {CircuitImpl} from "core/public/api/impl/Circuit";
+import {IntegratedCircuitImpl, RootCircuitImpl} from "core/public/api/impl/Circuit";
 
 import {extend} from "core/utils/Functions";
 
-import {DigitalCircuit}                    from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
+import {Circuit} from "core/public";
 
 
-export function DigitalCircuitImpl(state: DigitalCircuitState) {
-    const base = CircuitImpl<DigitalCircuit, DigitalTypes>(state);
-
+function DigitalCircuitImpl<T extends (APIToDigital<Circuit> & Record<string | number | symbol, unknown>)>(base: T) {
     return extend(base, {
         set propagationTime(val: number) {
             throw new Error("Unimplemented!");
@@ -17,4 +16,12 @@ export function DigitalCircuitImpl(state: DigitalCircuitState) {
             throw new Error("Unimplemented!");
         },
     } as const) satisfies DigitalCircuit;
+}
+
+export function DigitalRootCircuitImpl(state: DigitalCircuitState) {
+    return DigitalCircuitImpl(RootCircuitImpl<DigitalIntegratedCircuit, DigitalCircuit, DigitalTypes>(state));
+}
+
+export function DigitalIntegratedCircuitImpl(state: DigitalCircuitState) {
+    return DigitalCircuitImpl(IntegratedCircuitImpl<DigitalCircuit, DigitalTypes>(state));
 }

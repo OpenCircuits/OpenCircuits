@@ -1,7 +1,7 @@
 import type {Vector} from "Vector";
 import type {Rect}   from "math/Rect";
 
-import type {Circuit, Component, ComponentInfo, Node, Port, Wire} from "core/public";
+import type {Circuit, Component, ComponentInfo, IntegratedCircuit, Node, Port, RootCircuit, Wire} from "core/public";
 
 import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
 import type {DigitalComponent, DigitalNode} from "./DigitalComponent";
@@ -14,12 +14,13 @@ export type ToDigital<T> = (
     T extends Vector ? Vector :
     T extends Rect   ? Rect   :
     // Base-type replacements
-    T extends Circuit       ? DigitalCircuit :
-    T extends Node          ? DigitalNode :
-    T extends Component     ? DigitalComponent :
-    T extends Wire          ? DigitalWire :
-    T extends Port          ? DigitalPort :
-    T extends ComponentInfo ? DigitalComponentInfo :
+    T extends IntegratedCircuit ? DigitalIntegratedCircuit :
+    T extends Circuit           ? DigitalCircuit :
+    T extends Node              ? DigitalNode :
+    T extends Component         ? DigitalComponent :
+    T extends Wire              ? DigitalWire :
+    T extends Port              ? DigitalPort :
+    T extends ComponentInfo     ? DigitalComponentInfo :
     // Replace all method args/return types
     T extends (...a: infer Args) => infer R ? (...a: ToDigital<Args>) => ToDigital<R> :
     // Recursively replace records
@@ -38,3 +39,6 @@ export type APIToDigital<T> = {
 export interface DigitalCircuit extends APIToDigital<Circuit> {
     propagationTime: number;
 }
+
+export type DigitalRootCircuit = APIToDigital<RootCircuit> & DigitalCircuit;
+export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & DigitalCircuit;

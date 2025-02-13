@@ -9,9 +9,9 @@ import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalCompon
 import {DigitalCircuitAssembler}            from "digital/internal/assembly/DigitalCircuitAssembler";
 import {DigitalSim}                         from "digital/internal/sim/DigitalSim";
 
-import {DigitalCircuit} from "./api/DigitalCircuit";
+import {DigitalCircuit, DigitalRootCircuit} from "./api/DigitalCircuit";
 
-import {DigitalCircuitImpl}   from "./api/impl/DigitalCircuit";
+import {DigitalRootCircuitImpl}   from "./api/impl/DigitalCircuit";
 import {DigitalComponentImpl} from "./api/impl/DigitalComponent";
 import {DigitalWireImpl}      from "./api/impl/DigitalWire";
 import {DigitalPortImpl}      from "./api/impl/DigitalPort";
@@ -20,18 +20,18 @@ import {DigitalCircuitState}  from "./api/impl/DigitalCircuitState";
 
 export * from "./api/DigitalCircuit";
 
-export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
-    const internal = new CircuitInternal(
-        new CircuitLog(),
-        new CircuitDocument(CreateDigitalComponentInfoProvider())
-    );
+export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
+    const log = new CircuitLog();
+    const doc = new CircuitDocument(CreateDigitalComponentInfoProvider());
+    const internal = new CircuitInternal(log, doc);
+
     const renderOptions = new DefaultRenderOptions();
     const selectionsManager = new SelectionsManager();
     const sim = new DigitalSim(internal);
     const assembler = new DigitalCircuitAssembler(internal, selectionsManager, sim, renderOptions);
 
     const state: DigitalCircuitState = {
-        internal, assembler, selectionsManager, sim, renderOptions,
+        log, doc, internal, assembler, selectionsManager, sim, renderOptions,
         isLocked: false,
 
         constructComponent(id) {
@@ -44,7 +44,7 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
             return DigitalPortImpl(circuit, state, id);
         },
     }
-    const circuit = DigitalCircuitImpl(state);
+    const circuit = DigitalRootCircuitImpl(state);
 
     return [circuit, state];
 }
