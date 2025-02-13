@@ -11,9 +11,8 @@ import {RenderOptions}    from "core/internal/assembly/RenderOptions";
 
 import {DigitalSim}           from "../sim/DigitalSim";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
-import {ANDGateAssembler}     from "./components/ANDGateAssembler";
-import {XORGateAssembler}     from "./components/XORGateAssembler";
-import {ORGateAssembler}      from "./components/ORGateAssembler";
+import {ANDGateAssembler}     from "./components/gates/ANDGateAssembler";
+import {ORGateAssembler}      from "./components/gates/ORGateAssembler";
 // import {LEDAssembler}         from "./components/LEDAssembler";
 // import {SwitchAssembler}      from "./components/SwitchAssembler";
 
@@ -40,9 +39,12 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
             // "LED": new LEDAssembler(params),
 
             // Gates
-            "ANDGate": new ANDGateAssembler(params, sim),
-            "ORGate":  new ORGateAssembler(params, sim),
-            "XORGate": new XORGateAssembler(params, sim),
+            "ANDGate":  new ANDGateAssembler(params, sim, false),
+            "NANDGate": new ANDGateAssembler(params, sim, true),
+            "ORGate":   new ORGateAssembler(params, sim, { xor: false, not: false }),
+            "NORGate":  new ORGateAssembler(params, sim, { xor: false, not: true  }),
+            "XORGate":  new ORGateAssembler(params, sim, { xor: true,  not: false }),
+            "XNORGate": new ORGateAssembler(params, sim, { xor: true,  not: true  }),
 
             // FlipFlops
 
