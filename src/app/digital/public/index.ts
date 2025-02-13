@@ -32,7 +32,6 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
 
     const state: DigitalCircuitState = {
         log, doc, internal, assembler, selectionsManager, sim, renderOptions,
-        isLocked: false,
 
         constructComponent(id) {
             return DigitalComponentImpl(circuit, state, id);
