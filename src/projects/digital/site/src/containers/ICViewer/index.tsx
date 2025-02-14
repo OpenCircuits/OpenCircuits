@@ -1,7 +1,7 @@
 import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
 import {PanTool}     from "shared/api/circuit/tools/PanTool";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
 import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
 

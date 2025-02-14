@@ -6,8 +6,8 @@ import {DirtyVar}  from "shared/api/circuit/utils/DirtyVar";
 import {extend} from "shared/api/circuit/utils/Functions";
 
 import {Camera, CameraEvent}        from "../Camera";
-import {CircuitTypes} from "shared/api/circuit/impl/CircuitState";
-import {ObservableImpl}             from "shared/api/circuit/impl/Observable";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {ObservableImpl}             from "shared/api/circuit/public/impl/Observable";
 import {Viewport} from "../Viewport";
 import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
 import {Matrix2x3} from "math/Matrix";

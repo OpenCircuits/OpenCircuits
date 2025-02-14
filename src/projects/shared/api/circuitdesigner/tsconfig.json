@@ -7,7 +7,6 @@
             "math/*":                       ["../circuit/src/utils/math/*"],
             "shared/api/circuit/*":         ["../circuit/src/*"],
             "shared/api/circuitdesigner/*": ["./src/*"],
-            "test/helpers/*":               ["../circuit/tests/helpers/*"],
         },
     },
     "include": [".", "./src/types"],

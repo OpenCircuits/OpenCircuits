@@ -13,8 +13,8 @@ import {SVGPrim}           from "shared/api/circuit/internal/view/rendering/prim
 import {Assembler}         from "shared/api/circuit/internal/view/Assembler";
 import {CirclePrim}        from "shared/api/circuit/internal/view/rendering/prims/CirclePrim";
 
-import {DigitalSim} from "digital/internal/sim/DigitalSim";
-import {Signal}     from "digital/internal/sim/Signal";
+import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
+import {Signal}     from "digital/api/circuit/internal/sim/Signal";
 
 
 export class LEDAssembler extends Assembler<Schema.Component> {

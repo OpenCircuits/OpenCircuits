@@ -1,4 +1,4 @@
-import {IntegratedCircuitImpl, RootCircuitImpl} from "shared/api/circuit/impl/Circuit";
+import {IntegratedCircuitImpl, RootCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 

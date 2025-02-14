@@ -1,4 +1,4 @@
-import {CircuitDesigner}                  from "shared/circuitdesigner/CircuitDesigner";
+import {CircuitDesigner}                  from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent}                from "shared/src/utils/input/InputAdapterEvent";
 import {ToolHandler, ToolHandlerResponse} from "./handlers/ToolHandler";
 

@@ -1,5 +1,5 @@
-import {DigitalCircuitDesignerController} from "digital/controllers/DigitalCircuitDesignerController";
-import {DigitalCircuit}                   from "digital/schema/DigitalCircuit";
+import {DigitalCircuitDesignerController} from "digital/api/circuit/controllers/DigitalCircuitDesignerController";
+import {DigitalCircuit}                   from "digital/api/circuit/schema/DigitalCircuit";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 

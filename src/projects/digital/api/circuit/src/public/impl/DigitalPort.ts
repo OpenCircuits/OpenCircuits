@@ -1,11 +1,11 @@
 import {GUID} from "shared/api/circuit/internal";
 
 import {Port}     from "shared/api/circuit/public";
-import {PortImpl} from "shared/api/circuit/impl/Port";
+import {PortImpl} from "shared/api/circuit/public/impl/Port";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
-import {Signal} from "digital/public/utils/Signal";
+import {Signal} from "digital/api/circuit/utils/Signal";
 
 import {DigitalCircuit} from "../DigitalCircuit";
 import {DigitalPort}    from "../DigitalPort";

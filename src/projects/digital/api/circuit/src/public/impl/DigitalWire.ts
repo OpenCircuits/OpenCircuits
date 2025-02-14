@@ -1,4 +1,4 @@
-import {WireImpl} from "shared/api/circuit/impl/Wire";
+import {WireImpl} from "shared/api/circuit/public/impl/Wire";
 
 import {GUID} from "shared/api/circuit/internal";
 

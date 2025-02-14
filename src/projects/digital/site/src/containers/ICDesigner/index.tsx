@@ -5,7 +5,7 @@ import {FitToScreenHandler} from "shared/api/circuit/tools/handlers/FitToScreenH
 import {RedoHandler}        from "shared/api/circuit/tools/handlers/RedoHandler";
 import {UndoHandler}        from "shared/api/circuit/tools/handlers/UndoHandler";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
 import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
 

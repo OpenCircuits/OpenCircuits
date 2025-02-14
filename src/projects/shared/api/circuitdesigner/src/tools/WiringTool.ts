@@ -6,11 +6,11 @@ import {MinDist} from "shared/api/circuit/utils/Reducers";
 
 import {Circuit, Port} from "shared/api/circuit/public";
 
-import {CircuitDesigner}                       from "shared/circuitdesigner/CircuitDesigner";
+import {CircuitDesigner}                       from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "shared/src/utils/input/Constants";
 import {InputAdapterEvent}                     from "shared/src/utils/input/InputAdapterEvent";
 import {Tool}                                  from "./Tool";
-import {Viewport} from "shared/circuitdesigner/Viewport";
+import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
 
 
 // The distance away from the port in selection for wiring.

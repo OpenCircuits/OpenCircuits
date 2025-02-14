@@ -1,5 +1,5 @@
 import {GUID} from "shared/api/circuit/schema/GUID";
-import {Signal} from "../public/utils/Signal";
+import {Signal} from "../utils/Signal";
 
 
 export interface DigitalSimState {

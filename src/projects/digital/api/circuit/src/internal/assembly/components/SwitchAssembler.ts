@@ -12,8 +12,8 @@ import {PortAssembler}     from "shared/api/circuit/internal/view/PortAssembler"
 import {SVGPrim}           from "shared/api/circuit/internal/view/rendering/prims/SVGPrim";
 import {Assembler}         from "shared/api/circuit/internal/view/Assembler";
 
-import {Signal}        from "digital/internal/sim/Signal";
-import {DigitalSim}    from "digital/internal/sim/DigitalSim";
+import {Signal}        from "digital/api/circuit/internal/sim/Signal";
+import {DigitalSim}    from "digital/api/circuit/internal/sim/DigitalSim";
 import {RectanglePrim} from "shared/api/circuit/internal/view/rendering/prims/RectanglePrim";
 import {AssemblerParams} from "shared/api/circuit/internal/assembly/Assembler";
 

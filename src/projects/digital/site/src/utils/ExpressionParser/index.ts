@@ -5,7 +5,7 @@ import {FORMATS}        from "./Constants/Formats";
 import {GenerateInputTree} from "./GenerateInputTree";
 import {GenerateTokens}    from "./GenerateTokens";
 import {TreeToCircuit}     from "./TreeToCircuit";
-import {DigitalCircuit}    from "digital/public";
+import {DigitalCircuit}    from "digital/api/circuit/public";
 
 
 /**

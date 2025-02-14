@@ -5,20 +5,20 @@ import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsMana
 
 import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
-import {DigitalCircuitAssembler}            from "digital/internal/assembly/DigitalCircuitAssembler";
-import {DigitalSim}                         from "digital/internal/sim/DigitalSim";
+import {CreateDigitalComponentInfoProvider} from "digital/api/circuit/internal/DigitalComponents";
+import {DigitalCircuitAssembler}            from "digital/api/circuit/internal/assembly/DigitalCircuitAssembler";
+import {DigitalSim}                         from "digital/api/circuit/internal/sim/DigitalSim";
 
-import {DigitalCircuit, DigitalRootCircuit} from "./api/DigitalCircuit";
+import {DigitalCircuit, DigitalRootCircuit} from "./DigitalCircuit";
 
-import {DigitalRootCircuitImpl}   from "./api/impl/DigitalCircuit";
-import {DigitalComponentImpl} from "./api/impl/DigitalComponent";
-import {DigitalWireImpl}      from "./api/impl/DigitalWire";
-import {DigitalPortImpl}      from "./api/impl/DigitalPort";
-import {DigitalCircuitState}  from "./api/impl/DigitalCircuitState";
+import {DigitalRootCircuitImpl}   from "./impl/DigitalCircuit";
+import {DigitalComponentImpl} from "./impl/DigitalComponent";
+import {DigitalWireImpl}      from "./impl/DigitalWire";
+import {DigitalPortImpl}      from "./impl/DigitalPort";
+import {DigitalCircuitState}  from "./impl/DigitalCircuitState";
 
 
-export * from "./api/DigitalCircuit";
+export * from "./DigitalCircuit";
 
 export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
     const log = new CircuitLog();

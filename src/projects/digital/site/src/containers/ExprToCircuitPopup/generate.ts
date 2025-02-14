@@ -1,8 +1,8 @@
 import {OperatorFormat,
-        OperatorFormatLabel} from "digital/utils/ExpressionParser/Constants/DataStructures";
-import {FORMATS} from "digital/utils/ExpressionParser/Constants/Formats";
+        OperatorFormatLabel} from "digital/api/circuit/utils/ExpressionParser/Constants/DataStructures";
+import {FORMATS} from "digital/api/circuit/utils/ExpressionParser/Constants/Formats";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
 
 export type ExprToCirGeneratorOptions = {

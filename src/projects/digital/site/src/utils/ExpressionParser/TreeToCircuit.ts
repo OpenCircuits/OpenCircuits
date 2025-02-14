@@ -1,9 +1,9 @@
 import {InputTree} from "./Constants/DataStructures";
 
-import {CreateCircuit, DigitalCircuit} from "digital/public";
+import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
 import {V}                             from "Vector";
-import {DigitalComponent}              from "digital/public/api/DigitalComponent";
-import {DigitalPort}                   from "digital/public/api/DigitalPort";
+import {DigitalComponent}              from "digital/api/circuit/public/api/DigitalComponent";
+import {DigitalPort}                   from "digital/api/circuit/public/api/DigitalPort";
 
 
 /**

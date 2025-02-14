@@ -9,8 +9,8 @@ import {extend}      from "shared/api/circuit/utils/Functions";
 
 import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {CircuitTypes}        from "shared/api/circuit/impl/CircuitState";
-import {MultiObservableImpl} from "shared/api/circuit/impl/Observable";
+import {CircuitTypes}        from "shared/api/circuit/public/impl/CircuitState";
+import {MultiObservableImpl} from "shared/api/circuit/public/impl/Observable";
 
 import {DefaultTool}  from "shared/api/circuitdesigner/tools/DefaultTool";
 import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";

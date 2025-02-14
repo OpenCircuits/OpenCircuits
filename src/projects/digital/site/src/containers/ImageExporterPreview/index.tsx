@@ -5,9 +5,9 @@ import {PanTool}     from "shared/api/circuit/tools/PanTool";
 
 // import {FitToScreenHandler} from "shared/api/circuit/tools/handlers/FitToScreenHandler";
 
-import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
+import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
-// import {DigitalCircuitDesigner} from "digital/models";
+// import {DigitalCircuitDesigner} from "digital/api/circuit/models";
 
 import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
 

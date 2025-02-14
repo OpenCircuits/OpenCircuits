@@ -1,8 +1,8 @@
-import {ComponentInfoImpl} from "shared/api/circuit/impl/ComponentInfo";
+import {ComponentInfoImpl} from "shared/api/circuit/public/impl/ComponentInfo";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
-import {DigitalComponentInfo as DigitalComponentInfoInternal} from "digital/internal/DigitalComponents";
+import {DigitalComponentInfo as DigitalComponentInfoInternal} from "digital/api/circuit/internal/DigitalComponents";
 
 import {DigitalComponentInfo} from "../DigitalComponentInfo";
 

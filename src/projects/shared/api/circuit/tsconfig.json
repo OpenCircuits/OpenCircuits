@@ -9,5 +9,5 @@
             "test/helpers/*":       ["./tests/helpers/*"],
         },
     },
-    "include": [".", "./src/utils/types"],
+    "include": ["."],
 }

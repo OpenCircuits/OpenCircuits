@@ -1,4 +1,4 @@
-import {CircuitState, CircuitTypes} from "shared/api/circuit/impl/CircuitState";
+import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 import {Margin} from "math/Rect";
 import {Cursor} from "shared/api/circuitdesigner/input/Cursor";
 import {DebugOptions} from "./DebugOptions";

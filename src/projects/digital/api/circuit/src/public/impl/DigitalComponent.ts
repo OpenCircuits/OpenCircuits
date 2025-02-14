@@ -1,5 +1,5 @@
 import {GUID}          from "shared/api/circuit/public";
-import {ComponentImpl} from "shared/api/circuit/impl/Component";
+import {ComponentImpl} from "shared/api/circuit/public/impl/Component";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 

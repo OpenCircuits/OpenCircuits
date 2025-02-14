@@ -4,13 +4,13 @@ import {Margin} from "math/Rect";
 
 import {Circuit} from "shared/api/circuit/public";
 
-import {DebugOptions} from "shared/api/circuitdesigner/impl/DebugOptions";
+import {DebugOptions} from "shared/api/circuitdesigner/public/impl/DebugOptions";
 import {DefaultTool}  from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}         from "shared/api/circuitdesigner/tools/Tool";
 import {Cursor}       from "shared/api/circuitdesigner/input/Cursor";
 
 import {CircuitDesigner} from "../CircuitDesigner";
-import {CircuitTypes} from "shared/api/circuit/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 import {CircuitDesignerState} from "./CircuitDesignerState";
 import {Viewport} from "../Viewport";
 import {ViewportImpl} from "./Viewport";

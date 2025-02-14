@@ -1,4 +1,4 @@
-import {CreateCircuit} from "digital/public";
+import {CreateCircuit} from "digital/api/circuit/public";
 
 import "./Extensions";
 import {V} from "Vector";

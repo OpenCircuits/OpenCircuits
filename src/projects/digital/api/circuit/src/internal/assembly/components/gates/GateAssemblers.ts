@@ -4,8 +4,8 @@ import {ComponentAssembler, ComponentBaseShapePrimAssembly} from "shared/api/cir
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
 
-import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
-import {DigitalSim}           from "digital/internal/sim/DigitalSim";
+import {DigitalComponentInfo} from "digital/api/circuit/internal/DigitalComponents";
+import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
 
 
 export type SimplifiedAssembly = {

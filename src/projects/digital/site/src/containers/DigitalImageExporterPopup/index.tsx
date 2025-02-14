@@ -1,6 +1,6 @@
 import {useEffect, useLayoutEffect} from "react";
 
-import {DigitalCircuitDesignerController} from "digital/controllers/DigitalCircuitDesignerController";
+import {DigitalCircuitDesignerController} from "digital/api/circuit/controllers/DigitalCircuitDesignerController";
 
 import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
 import {PanTool}     from "shared/api/circuit/tools/PanTool";

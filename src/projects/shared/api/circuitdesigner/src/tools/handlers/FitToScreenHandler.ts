@@ -3,7 +3,7 @@ import {Margin} from "math/Rect";
 import {Circuit} from "shared/api/circuit/public";
 
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
-import {Camera} from "shared/circuitdesigner/Camera";
+import {Camera} from "shared/api/circuitdesigner/public/Camera";
 
 
 const FIT_PADDING_RATIO = 1.2;

@@ -1,10 +1,10 @@
-import {CircuitState, CircuitTypes} from "shared/api/circuit/impl/CircuitState";
+import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 import {DigitalComponent, DigitalNode} from "../DigitalComponent";
 import {DigitalPort}                   from "../DigitalPort";
 import {DigitalWire}                   from "../DigitalWire";
 
-import {DigitalSim} from "digital/internal/sim/DigitalSim";
+import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 
 export type DigitalTypes = CircuitTypes<

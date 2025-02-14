@@ -1,4 +1,4 @@
-// import {ICData} from "digital/models/ioobjects";
+// import {ICData} from "digital/api/circuit/models/ioobjects";
 
 import {CreateState} from "shared/utils/CreateState";
 

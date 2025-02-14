@@ -1,6 +1,6 @@
 import {RenderOptions} from "shared/api/circuit/internal/view/rendering/RenderOptions";
-import {DigitalPort}   from "digital/public/api/DigitalPort";
-import {Signal}        from "digital/public/utils/Signal";
+import {DigitalPort}   from "digital/api/circuit/public/api/DigitalPort";
+import {Signal}        from "digital/api/circuit/utils/Signal";
 
 import {WiringToolRenderer} from "shared/api/circuitdesigner/tools/renderers/WiringToolRenderer"
 
