@@ -4,7 +4,7 @@ import {V, Vector} from "Vector";
 
 import {Matrix2x3} from "math/Matrix";
 
-import {Style} from "core/internal/assembly/Style";
+import {Style} from "shared/api/circuit/internal/assembly/Style";
 
 
 export class RenderHelper {

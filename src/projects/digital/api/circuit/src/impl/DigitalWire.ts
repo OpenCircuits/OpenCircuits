@@ -1,8 +1,8 @@
-import {WireImpl} from "core/public/api/impl/Wire";
+import {WireImpl} from "shared/api/circuit/impl/Wire";
 
-import {GUID} from "core/internal";
+import {GUID} from "shared/api/circuit/internal";
 
-import {extend} from "core/utils/Functions";
+import {extend} from "shared/api/circuit/utils/Functions";
 
 import {DigitalCircuit} from "../DigitalCircuit";
 import {DigitalNode}    from "../DigitalComponent";

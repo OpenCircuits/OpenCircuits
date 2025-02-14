@@ -1,9 +1,9 @@
-import {CircuitInternal}   from "core/internal";
-import {CircuitLog}        from "core/internal/impl/CircuitLog";
-import {CircuitDocument}   from "core/internal/impl/CircuitDocument";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
-import {CircuitAssembler}  from "core/internal/assembly/CircuitAssembler";
-import {RenderOptions}     from "core/internal/assembly/RenderOptions";
+import {CircuitInternal}   from "shared/api/circuit/internal";
+import {CircuitLog}        from "shared/api/circuit/internal/impl/CircuitLog";
+import {CircuitDocument}   from "shared/api/circuit/internal/impl/CircuitDocument";
+import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsManager";
+import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
 
 import {Component, Node} from "../Component";
 import {Port}            from "../Port";

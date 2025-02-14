@@ -2,7 +2,7 @@ import {V, Vector} from "Vector";
 
 import {Transform} from "math/Transform";
 
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
 import {Assembler, AssemblerParams,
         AssemblyReason} from "./Assembler";

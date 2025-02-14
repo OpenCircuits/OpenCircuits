@@ -1,9 +1,9 @@
 import {V, Vector} from "Vector";
 import {Rect}      from "math/Rect";
 
-import {extend} from "core/utils/Functions";
+import {extend} from "shared/api/circuit/utils/Functions";
 
-import {GUID} from "core/internal";
+import {GUID} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, IntegratedCircuit,
         IntegratedCircuitDisplay, RootCircuit} from "../Circuit";

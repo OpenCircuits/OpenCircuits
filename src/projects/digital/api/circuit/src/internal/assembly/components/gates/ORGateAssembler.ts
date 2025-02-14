@@ -1,8 +1,8 @@
 import {V} from "Vector";
 
-import {Schema} from "core/schema";
-import {AssemblerParams} from "core/internal/assembly/Assembler";
-import {QuadCurvePrim} from "core/internal/assembly/Prim";
+import {Schema} from "shared/api/circuit/schema";
+import {AssemblerParams} from "shared/api/circuit/internal/assembly/Assembler";
+import {QuadCurvePrim} from "shared/api/circuit/internal/assembly/Prim";
 
 import {DigitalSim} from "digital/internal/sim/DigitalSim";
 

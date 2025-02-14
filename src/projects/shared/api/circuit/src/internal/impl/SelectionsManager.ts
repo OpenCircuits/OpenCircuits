@@ -1,4 +1,4 @@
-import {Observable} from "core/utils/Observable";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 import {GUID} from "..";
 

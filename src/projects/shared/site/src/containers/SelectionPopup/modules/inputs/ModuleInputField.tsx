@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 
-import {Circuit, Prop} from "core/public";
+import {Circuit, Prop} from "shared/api/circuit/public";
 
 
 const usePrevious = (value: any, initialValue: any) => {

@@ -1,6 +1,6 @@
 import {Rect} from "math/Rect";
 
-import {Prop} from "../../schema/Prop";
+import {Prop} from "../schema/Prop";
 
 
 export interface BaseObject {

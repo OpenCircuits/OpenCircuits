@@ -1,6 +1,6 @@
 import {V}             from "Vector";
 import {CreateCircuit} from "digital/public";
-import {CircuitAssembler} from "core/internal/assembly/CircuitAssembler";
+import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 
 import "./Extensions";
 

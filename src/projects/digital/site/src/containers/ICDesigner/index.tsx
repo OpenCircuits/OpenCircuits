@@ -1,9 +1,9 @@
-import {DefaultTool} from "core/tools/DefaultTool";
-import {PanTool}     from "core/tools/PanTool";
+import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
+import {PanTool}     from "shared/api/circuit/tools/PanTool";
 
-import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
-import {RedoHandler}        from "core/tools/handlers/RedoHandler";
-import {UndoHandler}        from "core/tools/handlers/UndoHandler";
+import {FitToScreenHandler} from "shared/api/circuit/tools/handlers/FitToScreenHandler";
+import {RedoHandler}        from "shared/api/circuit/tools/handlers/RedoHandler";
+import {UndoHandler}        from "shared/api/circuit/tools/handlers/UndoHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 

@@ -1,4 +1,4 @@
-import {Component, Node} from "core/public";
+import {Component, Node} from "shared/api/circuit/public";
 
 import {DigitalPort}  from "./DigitalPort";
 import {APIToDigital} from "./DigitalCircuit";

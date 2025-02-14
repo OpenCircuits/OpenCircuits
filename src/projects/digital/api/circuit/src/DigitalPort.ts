@@ -1,4 +1,4 @@
-import type {Port} from "core/public";
+import type {Port} from "shared/api/circuit/public";
 
 import type {APIToDigital} from "./DigitalCircuit";
 

@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {Component} from "core/public";
+import {Component} from "shared/api/circuit/public";
 
 import {CircuitDesigner}               from "shared/circuitdesigner/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON}             from "shared/src/utils/input/Constants";

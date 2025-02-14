@@ -1,8 +1,8 @@
-import {Wire} from "core/schema/Wire";
+import {Wire} from "shared/api/circuit/schema/Wire";
 
-import {AssemblerParams} from "core/internal/assembly/Assembler";
-import {Style}           from "core/internal/assembly/Style";
-import {WireAssembler}   from "core/internal/assembly/WireAssembler";
+import {AssemblerParams} from "shared/api/circuit/internal/assembly/Assembler";
+import {Style}           from "shared/api/circuit/internal/assembly/Style";
+import {WireAssembler}   from "shared/api/circuit/internal/assembly/WireAssembler";
 
 import {DigitalSim} from "../sim/DigitalSim";
 import {Signal}     from "../sim/Signal";

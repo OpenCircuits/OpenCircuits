@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "core/public";
+import {CircuitMetadata} from "shared/api/circuit/public";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/src/utils/Constants";
 

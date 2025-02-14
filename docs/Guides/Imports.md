@@ -75,28 +75,28 @@ When importing code from other files make sure the imports maintain the followin
 # EXAMPLE #
     import {createRef} from "react";
 
-    import {InteractionTool}    from "core/tools/InteractionTool";
-    import {PanTool}            from "core/tools/PanTool";
-    import {RotateTool}         from "core/tools/RotateTool";
-    import {TranslateTool}      from "core/tools/TranslateTool";
-    import {WiringTool}         from "core/tools/WiringTool";
-    import {SplitWireTool}      from "core/tools/SplitWireTool";
-    import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
+    import {InteractionTool}    from "shared/api/circuit/tools/InteractionTool";
+    import {PanTool}            from "shared/api/circuit/tools/PanTool";
+    import {RotateTool}         from "shared/api/circuit/tools/RotateTool";
+    import {TranslateTool}      from "shared/api/circuit/tools/TranslateTool";
+    import {WiringTool}         from "shared/api/circuit/tools/WiringTool";
+    import {SplitWireTool}      from "shared/api/circuit/tools/SplitWireTool";
+    import {SelectionBoxTool}   from "shared/api/circuit/tools/SelectionBoxTool";
 
-    import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
-    import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
-    import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
-    import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
-    import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
-    import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
-    import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
-    import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
-    import {UndoHandler}          from "core/tools/handlers/UndoHandler";
-    import {RedoHandler}          from "core/tools/handlers/RedoHandler";
-    import {CopyHandler}          from "core/tools/handlers/CopyHandler";
-    import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+    import {SelectAllHandler}     from "shared/api/circuit/tools/handlers/SelectAllHandler";
+    import {FitToScreenHandler}   from "shared/api/circuit/tools/handlers/FitToScreenHandler";
+    import {DuplicateHandler}     from "shared/api/circuit/tools/handlers/DuplicateHandler";
+    import {DeleteHandler}        from "shared/api/circuit/tools/handlers/DeleteHandler";
+    import {SnipWirePortsHandler} from "shared/api/circuit/tools/handlers/SnipWirePortsHandler";
+    import {DeselectAllHandler}   from "shared/api/circuit/tools/handlers/DeselectAllHandler";
+    import {SelectionHandler}     from "shared/api/circuit/tools/handlers/SelectionHandler";
+    import {SelectPathHandler}    from "shared/api/circuit/tools/handlers/SelectPathHandler";
+    import {UndoHandler}          from "shared/api/circuit/tools/handlers/UndoHandler";
+    import {RedoHandler}          from "shared/api/circuit/tools/handlers/RedoHandler";
+    import {CopyHandler}          from "shared/api/circuit/tools/handlers/CopyHandler";
+    import {PasteHandler}         from "shared/api/circuit/tools/handlers/PasteHandler";
 
-    import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+    import {CircuitMetadataBuilder} from "shared/api/circuit/models/CircuitMetadata";
 
     import {SetCircuitSaved} from "shared/state/CircuitInfo";
 

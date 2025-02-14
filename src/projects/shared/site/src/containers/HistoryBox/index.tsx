@@ -11,7 +11,7 @@ import {AdjustableElement} from "shared/src/components/AdjustableElement";
 
 import "./index.scss";
 
-import {Circuit} from "core/public";
+import {Circuit} from "shared/api/circuit/public";
 
 
 type HistoryEntryProps = {

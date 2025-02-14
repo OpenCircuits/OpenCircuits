@@ -1,7 +1,7 @@
-import {CircuitDesignerController}         from "core/controllers/CircuitDesignerController";
+import {CircuitDesignerController}         from "shared/api/circuit/controllers/CircuitDesignerController";
 import React, {useLayoutEffect, useRef, useState} from "react";
 
-import {Cursor} from "core/utils/Cursor";
+import {Cursor} from "shared/api/circuit/utils/Cursor";
 
 import {useSharedSelector} from "shared/src/utils/hooks/useShared";
 

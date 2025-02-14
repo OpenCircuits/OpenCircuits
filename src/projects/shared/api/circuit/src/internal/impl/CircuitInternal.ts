@@ -1,9 +1,9 @@
-import {AddErrE}            from "core/utils/MultiError";
-import {Result, ResultUtil} from "core/utils/Result";
+import {AddErrE}            from "shared/api/circuit/utils/MultiError";
+import {Result, ResultUtil} from "shared/api/circuit/utils/Result";
 
-import {Observable} from "core/utils/Observable";
-import {Schema}     from "core/schema";
-import {GUID}       from "core/schema/GUID";
+import {Observable} from "shared/api/circuit/utils/Observable";
+import {Schema}     from "shared/api/circuit/schema";
+import {GUID}       from "shared/api/circuit/schema/GUID";
 
 import {CircuitLog, LogEntry}                            from "./CircuitLog";
 import {CircuitOp, InvertCircuitOp, TransformCircuitOps} from "./CircuitOps";

@@ -1,4 +1,4 @@
-import {Result}         from "core/utils/Result";
+import {Result}         from "shared/api/circuit/utils/Result";
 import {OperatorFormat} from "./Constants/DataStructures";
 import {FORMATS}        from "./Constants/Formats";
 

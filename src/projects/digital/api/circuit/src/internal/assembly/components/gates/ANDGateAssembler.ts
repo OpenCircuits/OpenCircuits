@@ -1,8 +1,8 @@
-import {AssemblerParams} from "core/internal/assembly/Assembler";
+import {AssemblerParams} from "shared/api/circuit/internal/assembly/Assembler";
 import {GateAssembler} from "./GateAssemblers";
 import {DigitalSim} from "digital/internal/sim/DigitalSim";
 import {V} from "Vector";
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
 
 export class ANDGateAssembler extends GateAssembler {

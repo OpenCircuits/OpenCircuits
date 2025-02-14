@@ -1,7 +1,7 @@
 import {Vector} from "Vector";
 
-import {None, Option, Some} from "core/utils/Result";
-import {Observable}       from "core/utils/Observable";
+import {None, Option, Some} from "shared/api/circuit/utils/Result";
+import {Observable}       from "shared/api/circuit/utils/Observable";
 
 import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";

@@ -1,4 +1,4 @@
-import {GUID}                                      from "core/public";
+import {GUID}                                      from "shared/api/circuit/public";
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {useWindowKeyDownEvent} from "shared/utils/hooks/useKeyDownEvent";

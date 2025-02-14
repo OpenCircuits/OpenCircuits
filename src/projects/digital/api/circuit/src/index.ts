@@ -1,9 +1,9 @@
-import {CircuitInternal}   from "core/internal";
-import {CircuitLog}        from "core/internal/impl/CircuitLog";
-import {CircuitDocument}   from "core/internal/impl/CircuitDocument";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {CircuitInternal}   from "shared/api/circuit/internal";
+import {CircuitLog}        from "shared/api/circuit/internal/impl/CircuitLog";
+import {CircuitDocument}   from "shared/api/circuit/internal/impl/CircuitDocument";
+import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsManager";
 
-import {DefaultRenderOptions} from "core/internal/assembly/RenderOptions";
+import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 
 import {CreateDigitalComponentInfoProvider} from "digital/internal/DigitalComponents";
 import {DigitalCircuitAssembler}            from "digital/internal/assembly/DigitalCircuitAssembler";

@@ -1,7 +1,7 @@
 import type {Vector} from "Vector";
 import type {Rect}   from "math/Rect";
 
-import type {Circuit, Component, ComponentInfo, IntegratedCircuit, Node, Port, RootCircuit, Wire} from "core/public";
+import type {Circuit, Component, ComponentInfo, IntegratedCircuit, Node, Port, RootCircuit, Wire} from "shared/api/circuit/public";
 
 import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
 import type {DigitalComponent, DigitalNode} from "./DigitalComponent";

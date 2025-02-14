@@ -1,7 +1,7 @@
-import {ErrE, Ok, Result}                             from "core/utils/Result";
+import {ErrE, Ok, Result}                             from "shared/api/circuit/utils/Result";
 import {InputToken, OperatorFormat, Token, TokenType} from "./Constants/DataStructures";
 
-import {SubStrEquals} from "core/utils/StringUtils";
+import {SubStrEquals} from "shared/api/circuit/utils/StringUtils";
 
 
 const TokenTypesArray: TokenType[] = ["(", ")", "&", "^", "|", "!"];

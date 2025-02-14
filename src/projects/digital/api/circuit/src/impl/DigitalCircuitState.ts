@@ -1,4 +1,4 @@
-import {CircuitState, CircuitTypes} from "core/public/api/impl/CircuitState";
+import {CircuitState, CircuitTypes} from "shared/api/circuit/impl/CircuitState";
 
 import {DigitalComponent, DigitalNode} from "../DigitalComponent";
 import {DigitalPort}                   from "../DigitalPort";

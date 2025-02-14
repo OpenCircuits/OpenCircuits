@@ -1,4 +1,4 @@
-import {Port}      from "core/public";
+import {Port}      from "shared/api/circuit/public";
 import {V, Vector} from "Vector";
 
 

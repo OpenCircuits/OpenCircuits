@@ -1,14 +1,13 @@
 {
-    "extends": "../../tsconfig.base.json",
+    "extends": "../../../../../tsconfig.base.json",
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "Vector":         ["./core/utils/math/Vector"],
-            "math/*":         ["./core/utils/math/*"],
-            "core/*":         ["./core/*"],
-            "digital/*":      ["./digital/*"],
-            "test/helpers/*": ["./tests/helpers/*"],
+            "Vector":               ["./src/utils/math/Vector"],
+            "math/*":               ["./src/utils/math/*"],
+            "shared/api/circuit/*": ["./src/*"],
+            "test/helpers/*":       ["./tests/helpers/*"],
         },
     },
-    "include": [".", "./core/utils/types"],
+    "include": [".", "./src/utils/types"],
 }

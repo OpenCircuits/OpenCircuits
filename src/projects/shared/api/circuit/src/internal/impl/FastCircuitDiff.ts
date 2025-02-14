@@ -1,4 +1,4 @@
-import {GUID} from "core/schema/GUID";
+import {GUID} from "shared/api/circuit/schema/GUID";
 
 import {Schema}      from "../../schema";
 import {assertNever} from "../utils/TypeEnforcement";

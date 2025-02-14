@@ -1,4 +1,4 @@
-import {RectanglePrim} from "core/internal/view/rendering/prims/RectanglePrim";
+import {RectanglePrim} from "shared/api/circuit/internal/view/rendering/prims/RectanglePrim";
 import {Transform}     from "math/Transform";
 
 import {SelectionBoxTool} from "../SelectionBoxTool";

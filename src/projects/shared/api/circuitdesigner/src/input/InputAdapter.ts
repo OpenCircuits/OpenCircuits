@@ -8,7 +8,7 @@ import {V, Vector} from "Vector";
 
 import {CalculateMidpoint} from "math/MathUtils";
 
-import {Observable} from "core/utils/Observable";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 import {Key}               from "./Key";
 import {InputAdapterEvent} from "./InputAdapterEvent";

@@ -1,10 +1,10 @@
-import {RenderOptions} from "core/internal/view/rendering/RenderOptions";
+import {RenderOptions} from "shared/api/circuit/internal/view/rendering/RenderOptions";
 import {DigitalPort}   from "digital/public/api/DigitalPort";
 import {Signal}        from "digital/public/utils/Signal";
 
-import {WiringToolRenderer} from "shared/tools/renderers/WiringToolRenderer"
+import {WiringToolRenderer} from "shared/api/circuitdesigner/tools/renderers/WiringToolRenderer"
 
-import {WiringTool} from "shared/tools/WiringTool";
+import {WiringTool} from "shared/api/circuitdesigner/tools/WiringTool";
 
 
 export class DigitalWiringToolRenderer extends WiringToolRenderer {

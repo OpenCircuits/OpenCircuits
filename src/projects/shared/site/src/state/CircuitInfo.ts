@@ -1,4 +1,4 @@
-import {GUID} from "core/public";
+import {GUID} from "shared/api/circuit/public";
 
 import {CreateState} from "shared/src/utils/CreateState";
 

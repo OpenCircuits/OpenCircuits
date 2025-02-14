@@ -1,6 +1,6 @@
 import {Margin} from "math/Rect";
 
-import {Circuit} from "core/public";
+import {Circuit} from "shared/api/circuit/public";
 
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 import {Camera} from "shared/circuitdesigner/Camera";

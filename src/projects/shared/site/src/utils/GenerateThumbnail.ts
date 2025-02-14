@@ -1,4 +1,4 @@
-import {Circuit} from "core/public";
+import {Circuit} from "shared/api/circuit/public";
 
 import {DEFAULT_THUMBNAIL_SIZE,
         THUMBNAIL_ZOOM_PADDING_RATIO} from "./Constants";

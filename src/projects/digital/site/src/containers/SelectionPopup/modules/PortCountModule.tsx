@@ -1,11 +1,11 @@
-import {SetPortConfig}    from "core/actions/compositions/SetPortConfig";
-import {Circuit}          from "core/public";
-import {AllPortInfo}      from "core/views/portinfo";
-import {CalcPortConfigID} from "core/views/portinfo/utils";
+import {SetPortConfig}    from "shared/api/circuit/actions/compositions/SetPortConfig";
+import {Circuit}          from "shared/api/circuit/public";
+import {AllPortInfo}      from "shared/api/circuit/views/portinfo";
+import {CalcPortConfigID} from "shared/api/circuit/views/portinfo/utils";
 
-import {GroupAction} from "core/actions/GroupAction";
+import {GroupAction} from "shared/api/circuit/actions/GroupAction";
 
-import {AnyComponent} from "core/models/types";
+import {AnyComponent} from "shared/api/circuit/models/types";
 
 import {useSelectionProps} from "shared/containers/SelectionPopup/modules/useSelectionProps";
 

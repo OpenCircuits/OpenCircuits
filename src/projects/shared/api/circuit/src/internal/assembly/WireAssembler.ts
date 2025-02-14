@@ -1,6 +1,6 @@
 import {BezierCurve} from "math/BezierCurve";
 
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
 import {Assembler, AssemblyReason} from "./Assembler";
 

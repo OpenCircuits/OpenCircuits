@@ -1,8 +1,8 @@
-import {ErrE, Ok, OkVoid, Result, ResultUtil} from "core/utils/Result";
+import {ErrE, Ok, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result";
 
-import {Prop, uuid}                                          from "core/internal";
-import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from "core/internal/impl/ComponentInfo";
-import {Port}                                                from "core/schema/Port";
+import {Prop, uuid}                                          from "shared/api/circuit/internal";
+import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ComponentInfo";
+import {Port}                                                from "shared/api/circuit/schema/Port";
 
 
 type DigitalPortConfig = Record<string, number>

@@ -1,4 +1,4 @@
-import {GUID}                                                       from "core/public";
+import {GUID}                                                       from "shared/api/circuit/public";
 import {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react";
 
 import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH} from "shared/src/utils/Constants";

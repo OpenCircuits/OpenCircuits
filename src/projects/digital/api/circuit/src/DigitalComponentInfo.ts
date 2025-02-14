@@ -1,4 +1,4 @@
-import type {ComponentInfo} from "core/public";
+import type {ComponentInfo} from "shared/api/circuit/public";
 import type {APIToDigital}  from "./DigitalCircuit";
 
 

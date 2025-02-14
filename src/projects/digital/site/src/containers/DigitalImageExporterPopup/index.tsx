@@ -2,8 +2,8 @@ import {useEffect, useLayoutEffect} from "react";
 
 import {DigitalCircuitDesignerController} from "digital/controllers/DigitalCircuitDesignerController";
 
-import {DefaultTool} from "core/tools/DefaultTool";
-import {PanTool}     from "core/tools/PanTool";
+import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
+import {PanTool}     from "shared/api/circuit/tools/PanTool";
 
 import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
 

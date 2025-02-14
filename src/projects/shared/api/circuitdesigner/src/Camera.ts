@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
-import {Obj} from "core/public";
-import {Observable} from "core/public/api/Observable";
+import {Obj} from "shared/api/circuit/public";
+import {Observable} from "shared/api/circuit/public/Observable";
 import {Matrix2x3} from "math/Matrix";
 import {Margin} from "math/Rect";
 

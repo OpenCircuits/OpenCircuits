@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
 import {GUID}              from "..";
 import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";

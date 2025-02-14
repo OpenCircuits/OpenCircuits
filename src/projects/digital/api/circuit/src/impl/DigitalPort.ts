@@ -1,9 +1,9 @@
-import {GUID} from "core/internal";
+import {GUID} from "shared/api/circuit/internal";
 
-import {Port}     from "core/public";
-import {PortImpl} from "core/public/api/impl/Port";
+import {Port}     from "shared/api/circuit/public";
+import {PortImpl} from "shared/api/circuit/impl/Port";
 
-import {extend} from "core/utils/Functions";
+import {extend} from "shared/api/circuit/utils/Functions";
 
 import {Signal} from "digital/public/utils/Signal";
 

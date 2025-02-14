@@ -1,4 +1,4 @@
-import {Wire} from "core/public";
+import {Wire} from "shared/api/circuit/public";
 
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON} from "shared/src/utils/input/Constants";

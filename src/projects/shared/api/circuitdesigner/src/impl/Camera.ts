@@ -1,13 +1,13 @@
 import {V, Vector} from "Vector";
 import {Clamp}     from "math/MathUtils";
 import {Margin}    from "math/Rect";
-import {DirtyVar}  from "core/utils/DirtyVar";
+import {DirtyVar}  from "shared/api/circuit/utils/DirtyVar";
 
-import {extend} from "core/utils/Functions";
+import {extend} from "shared/api/circuit/utils/Functions";
 
 import {Camera, CameraEvent}        from "../Camera";
-import {CircuitTypes} from "core/public/api/impl/CircuitState";
-import {ObservableImpl}             from "core/public/api/impl/Observable";
+import {CircuitTypes} from "shared/api/circuit/impl/CircuitState";
+import {ObservableImpl}             from "shared/api/circuit/impl/Observable";
 import {Viewport} from "../Viewport";
 import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
 import {Matrix2x3} from "math/Matrix";

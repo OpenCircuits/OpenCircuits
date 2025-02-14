@@ -1,6 +1,6 @@
 import {SVGDrawing} from "svg2canvas";
 
-import {BaseShapePrimWithoutStyle, Prim} from "core/internal/assembly/Prim";
+import {BaseShapePrimWithoutStyle, Prim} from "shared/api/circuit/internal/assembly/Prim";
 
 
 function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWithoutStyle): void {

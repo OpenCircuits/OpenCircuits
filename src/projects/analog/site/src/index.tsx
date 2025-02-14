@@ -7,30 +7,30 @@ import thunk, {ThunkMiddleware}       from "redux-thunk";
 
 import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
 
-import {Images} from "core/utils/Images";
+import {Images} from "shared/api/circuit/utils/Images";
 
-import {DefaultTool}      from "core/tools/DefaultTool";
-import {PanTool}          from "core/tools/PanTool";
-import {RotateTool}       from "core/tools/RotateTool";
-import {SelectionBoxTool} from "core/tools/SelectionBoxTool";
-import {SplitWireTool}    from "core/tools/SplitWireTool";
-import {TranslateTool}    from "core/tools/TranslateTool";
-import {WiringTool}       from "core/tools/WiringTool";
+import {DefaultTool}      from "shared/api/circuit/tools/DefaultTool";
+import {PanTool}          from "shared/api/circuit/tools/PanTool";
+import {RotateTool}       from "shared/api/circuit/tools/RotateTool";
+import {SelectionBoxTool} from "shared/api/circuit/tools/SelectionBoxTool";
+import {SplitWireTool}    from "shared/api/circuit/tools/SplitWireTool";
+import {TranslateTool}    from "shared/api/circuit/tools/TranslateTool";
+import {WiringTool}       from "shared/api/circuit/tools/WiringTool";
 
-import {CleanUpHandler}       from "core/tools/handlers/CleanUpHandler";
-import {CopyHandler}          from "core/tools/handlers/CopyHandler";
-import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
-import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
-import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
-import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
-import {PasteHandler}         from "core/tools/handlers/PasteHandler";
-import {RedoHandler}          from "core/tools/handlers/RedoHandler";
-import {SaveHandler}          from "core/tools/handlers/SaveHandler";
-import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
-import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
-import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
-import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
-import {UndoHandler}          from "core/tools/handlers/UndoHandler";
+import {CleanUpHandler}       from "shared/api/circuit/tools/handlers/CleanUpHandler";
+import {CopyHandler}          from "shared/api/circuit/tools/handlers/CopyHandler";
+import {DeleteHandler}        from "shared/api/circuit/tools/handlers/DeleteHandler";
+import {DeselectAllHandler}   from "shared/api/circuit/tools/handlers/DeselectAllHandler";
+import {DuplicateHandler}     from "shared/api/circuit/tools/handlers/DuplicateHandler";
+import {FitToScreenHandler}   from "shared/api/circuit/tools/handlers/FitToScreenHandler";
+import {PasteHandler}         from "shared/api/circuit/tools/handlers/PasteHandler";
+import {RedoHandler}          from "shared/api/circuit/tools/handlers/RedoHandler";
+import {SaveHandler}          from "shared/api/circuit/tools/handlers/SaveHandler";
+import {SelectAllHandler}     from "shared/api/circuit/tools/handlers/SelectAllHandler";
+import {SelectionHandler}     from "shared/api/circuit/tools/handlers/SelectionHandler";
+import {SelectPathHandler}    from "shared/api/circuit/tools/handlers/SelectPathHandler";
+import {SnipWirePortsHandler} from "shared/api/circuit/tools/handlers/SnipWirePortsHandler";
+import {UndoHandler}          from "shared/api/circuit/tools/handlers/UndoHandler";
 
 import {ResizeTool} from "analog/tools/ResizeTool";
 

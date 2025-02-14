@@ -1,13 +1,13 @@
-import {Obj} from "core/schema/Obj";
+import {Obj} from "shared/api/circuit/schema/Obj";
 
-import {CircuitInternal}   from "core/internal";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {CircuitInternal}   from "shared/api/circuit/internal";
+import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsManager";
 
 import {Assembler,
-        AssemblerParams}  from "core/internal/assembly/Assembler";
-import {CircuitAssembler} from "core/internal/assembly/CircuitAssembler";
-import {NodeAssembler}    from "core/internal/assembly/NodeAssembler";
-import {RenderOptions}    from "core/internal/assembly/RenderOptions";
+        AssemblerParams}  from "shared/api/circuit/internal/assembly/Assembler";
+import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
+import {RenderOptions}    from "shared/api/circuit/internal/assembly/RenderOptions";
 
 import {DigitalSim}           from "../sim/DigitalSim";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";

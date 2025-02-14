@@ -1,10 +1,10 @@
-import {IntegratedCircuitImpl, RootCircuitImpl} from "core/public/api/impl/Circuit";
+import {IntegratedCircuitImpl, RootCircuitImpl} from "shared/api/circuit/impl/Circuit";
 
-import {extend} from "core/utils/Functions";
+import {extend} from "shared/api/circuit/utils/Functions";
 
 import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
-import {Circuit} from "core/public";
+import {Circuit} from "shared/api/circuit/public";
 
 
 function DigitalCircuitImpl<T extends (APIToDigital<Circuit> & Record<string | number | symbol, unknown>)>(base: T) {

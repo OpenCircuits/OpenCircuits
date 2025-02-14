@@ -1,6 +1,6 @@
-import {DefaultTool}       from "shared/tools/DefaultTool";
-import {Tool}              from "shared/tools/Tool";
-import {InputAdapterEvent} from "shared/utils/input/InputAdapterEvent";
+import {DefaultTool}       from "shared/api/circuitdesigner/tools/DefaultTool";
+import {Tool}              from "shared/api/circuitdesigner/tools/Tool";
+import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {CircuitDesigner}   from "../CircuitDesigner";
 
 

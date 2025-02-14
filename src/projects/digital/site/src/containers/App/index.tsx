@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "core/public";
+import {CircuitMetadata} from "shared/api/circuit/public";
 
 import {useWindowSize} from "shared/utils/hooks/useWindowSize";
 

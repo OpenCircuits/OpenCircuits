@@ -1,7 +1,7 @@
-import {AddErrE}                              from "core/utils/MultiError";
-import {ErrE, Ok, OkVoid, Result, WrapResOrE} from "core/utils/Result";
+import {AddErrE}                              from "shared/api/circuit/utils/MultiError";
+import {ErrE, Ok, OkVoid, Result, WrapResOrE} from "shared/api/circuit/utils/Result";
 
-import {GUID} from "core/schema/GUID";
+import {GUID} from "shared/api/circuit/schema/GUID";
 
 import {Schema} from "../../schema";
 

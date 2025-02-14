@@ -1,5 +1,5 @@
-import {DefaultTool} from "core/tools/DefaultTool";
-import {PanTool}     from "core/tools/PanTool";
+import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
+import {PanTool}     from "shared/api/circuit/tools/PanTool";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 

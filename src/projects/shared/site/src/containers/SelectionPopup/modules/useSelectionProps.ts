@@ -1,4 +1,4 @@
-import {Circuit, Obj, Prop}                      from "core/public";
+import {Circuit, Obj, Prop}                      from "shared/api/circuit/public";
 import React, {useCallback, useEffect, useState} from "react";
 
 

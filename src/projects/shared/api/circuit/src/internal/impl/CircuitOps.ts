@@ -1,6 +1,6 @@
-import {Ok, Result, ResultUtil} from "core/utils/Result";
+import {Ok, Result, ResultUtil} from "shared/api/circuit/utils/Result";
 
-import {Schema} from "core/schema"
+import {Schema} from "shared/api/circuit/schema"
 
 
 export interface PlaceComponentOp {

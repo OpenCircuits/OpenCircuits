@@ -2,9 +2,9 @@ import {Vector} from "Vector";
 
 import {Rect} from "math/Rect";
 
-import {GUID} from "core/schema/GUID";
+import {GUID} from "shared/api/circuit/schema/GUID";
 
-import {FastCircuitDiff} from "core/internal/impl/FastCircuitDiff";
+import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff";
 
 import {Component}     from "./Component";
 import {ComponentInfo} from "./ComponentInfo";
@@ -15,7 +15,7 @@ import {Selections}    from "./Selections";
 import {Observable}    from "./Observable";
 
 
-export type {CircuitMetadata} from "core/schema/CircuitMetadata";
+export type {CircuitMetadata} from "shared/api/circuit/schema/CircuitMetadata";
 
 // TODO[model_refactor](leon) - make this more user friendly
 export type CircuitEvent = {

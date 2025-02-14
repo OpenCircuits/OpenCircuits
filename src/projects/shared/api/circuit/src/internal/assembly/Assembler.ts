@@ -1,4 +1,4 @@
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
 import {CircuitInternal}   from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";

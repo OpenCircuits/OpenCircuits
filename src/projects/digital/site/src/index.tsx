@@ -9,32 +9,32 @@ import {LoadingScreen} from "shared/utils/LoadingScreen";
 
 import {storeDesigner} from "shared/utils/hooks/useDesigner";
 
-import {DefaultTool}      from "shared/tools/DefaultTool";
-import {PanTool}          from "shared/tools/PanTool";
-import {TranslateTool}    from "shared/tools/TranslateTool";
-import {SelectionBoxTool} from "shared/tools/SelectionBoxTool";
-import {RotateTool}       from "shared/tools/RotateTool";
-import {WiringTool}       from "shared/tools/WiringTool";
-import {SplitWireTool}    from "shared/tools/SplitWireTool";
+import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
+import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
+import {TranslateTool}    from "shared/api/circuitdesigner/tools/TranslateTool";
+import {SelectionBoxTool} from "shared/api/circuitdesigner/tools/SelectionBoxTool";
+import {RotateTool}       from "shared/api/circuitdesigner/tools/RotateTool";
+import {WiringTool}       from "shared/api/circuitdesigner/tools/WiringTool";
+import {SplitWireTool}    from "shared/api/circuitdesigner/tools/SplitWireTool";
 
-import {CleanupHandler}     from "shared/tools/handlers/CleanupHandler";
-import {CopyHandler}        from "shared/tools/handlers/CopyHandler";
-import {DeleteHandler}      from "shared/tools/handlers/DeleteHandler";
-import {DeselectAllHandler} from "shared/tools/handlers/DeselectAllHandler";
-import {DuplicateHandler}   from "shared/tools/handlers/DuplicateHandler";
-import {FitToScreenHandler} from "shared/tools/handlers/FitToScreenHandler";
-import {PasteHandler}       from "shared/tools/handlers/PasteHandler";
-import {RedoHandler}        from "shared/tools/handlers/RedoHandler";
-import {SaveHandler}        from "shared/tools/handlers/SaveHandler";
-import {SelectAllHandler}   from "shared/tools/handlers/SelectAllHandler";
-import {SelectionHandler}   from "shared/tools/handlers/SelectionHandler";
-import {SelectPathHandler}  from "shared/tools/handlers/SelectPathHandler";
-import {SnipNodesHandler}   from "shared/tools/handlers/SnipNodesHandler";
-import {UndoHandler}        from "shared/tools/handlers/UndoHandler";
-import {ZoomHandler}        from "shared/tools/handlers/ZoomHandler";
+import {CleanupHandler}     from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
+import {CopyHandler}        from "shared/api/circuitdesigner/tools/handlers/CopyHandler";
+import {DeleteHandler}      from "shared/api/circuitdesigner/tools/handlers/DeleteHandler";
+import {DeselectAllHandler} from "shared/api/circuitdesigner/tools/handlers/DeselectAllHandler";
+import {DuplicateHandler}   from "shared/api/circuitdesigner/tools/handlers/DuplicateHandler";
+import {FitToScreenHandler} from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
+import {PasteHandler}       from "shared/api/circuitdesigner/tools/handlers/PasteHandler";
+import {RedoHandler}        from "shared/api/circuitdesigner/tools/handlers/RedoHandler";
+import {SaveHandler}        from "shared/api/circuitdesigner/tools/handlers/SaveHandler";
+import {SelectAllHandler}   from "shared/api/circuitdesigner/tools/handlers/SelectAllHandler";
+import {SelectionHandler}   from "shared/api/circuitdesigner/tools/handlers/SelectionHandler";
+import {SelectPathHandler}  from "shared/api/circuitdesigner/tools/handlers/SelectPathHandler";
+import {SnipNodesHandler}   from "shared/api/circuitdesigner/tools/handlers/SnipNodesHandler";
+import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
+import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
-// import {SelectionBoxToolRenderer} from "shared/tools/renderers/SelectionBoxToolRenderer";
-// import {RotateToolRenderer}       from "shared/tools/renderers/RotateToolRenderer";
+// import {SelectionBoxToolRenderer} from "shared/api/circuitdesigner/tools/renderers/SelectionBoxToolRenderer";
+// import {RotateToolRenderer}       from "shared/api/circuitdesigner/tools/renderers/RotateToolRenderer";
 
 // import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 

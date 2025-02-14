@@ -1,5 +1,5 @@
-import {CircuitInternal, GUID} from "core/internal";
-import {Observable}            from "core/utils/Observable";
+import {CircuitInternal, GUID} from "shared/api/circuit/internal";
+import {Observable}            from "shared/api/circuit/utils/Observable";
 import {Signal}                from "./Signal";
 
 

@@ -1,8 +1,8 @@
 import {Vector}         from "Vector";
 
-import {ComponentAssembler, ComponentBaseShapePrimAssembly} from "core/internal/assembly/ComponentAssembler";
-import {AssemblerParams, AssemblyReason} from "core/internal/assembly/Assembler";
-import {PortFactory} from "core/internal/assembly/PortAssembler";
+import {ComponentAssembler, ComponentBaseShapePrimAssembly} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 import {DigitalComponentInfo} from "digital/internal/DigitalComponents";
 import {DigitalSim}           from "digital/internal/sim/DigitalSim";

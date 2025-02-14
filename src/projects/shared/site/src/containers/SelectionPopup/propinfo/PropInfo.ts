@@ -1,4 +1,4 @@
-import {Prop} from "core/public";
+import {Prop} from "shared/api/circuit/public";
 
 
 export type Props = Record<string, Prop>;

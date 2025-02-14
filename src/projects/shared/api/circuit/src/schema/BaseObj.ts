@@ -1,5 +1,5 @@
-import {GUID} from "core/schema/GUID";
-import {Prop} from "core/schema/Prop";
+import {GUID} from "shared/api/circuit/schema/GUID";
+import {Prop} from "shared/api/circuit/schema/Prop";
 
 
 export interface BaseObj {

@@ -1,9 +1,9 @@
 import {AnalogPropInfo} from "analog/views/info";
 import {useCallback}    from "react";
 
-import {SAVE_VERSION} from "core/utils/Constants";
+import {SAVE_VERSION} from "shared/api/circuit/utils/Constants";
 
-import {CircuitMetadata} from "core/models/Circuit";
+import {CircuitMetadata} from "shared/api/circuit/models/Circuit";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 

@@ -1,10 +1,10 @@
 import {V, Vector} from "Vector";
 
-import {AddErrE}                         from "core/utils/MultiError";
-import {FromConcatenatedEntries, extend} from "core/utils/Functions";
-import {GUID}                            from "core/internal";
+import {AddErrE}                         from "shared/api/circuit/utils/MultiError";
+import {FromConcatenatedEntries, extend} from "shared/api/circuit/utils/Functions";
+import {GUID}                            from "shared/api/circuit/internal";
 
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
 import {Circuit}   from "../Circuit";
 import {Component} from "../Component";

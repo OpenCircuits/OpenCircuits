@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {extend} from "core/utils/Functions";
+import {extend} from "shared/api/circuit/utils/Functions";
 
 import {Selections, SelectionsEvent} from "../Selections";
 import {Circuit}                     from "../Circuit";

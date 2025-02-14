@@ -1,7 +1,7 @@
-import {GUID}          from "core/public";
-import {ComponentImpl} from "core/public/api/impl/Component";
+import {GUID}          from "shared/api/circuit/public";
+import {ComponentImpl} from "shared/api/circuit/impl/Component";
 
-import {extend} from "core/utils/Functions";
+import {extend} from "shared/api/circuit/utils/Functions";
 
 import {DigitalCircuit}       from "../DigitalCircuit";
 import {DigitalComponent}     from "../DigitalComponent";

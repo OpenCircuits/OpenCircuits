@@ -1,4 +1,4 @@
-import {CircuitInfo} from "core/utils/CircuitInfo";
+import {CircuitInfo} from "shared/api/circuit/utils/CircuitInfo";
 
 import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
 

@@ -1,7 +1,7 @@
-import {Schema}            from "core/schema";
-import {RenderOptions}     from "core/internal/assembly/RenderOptions";
-import {CircuitInternal}   from "core/internal/impl/CircuitInternal";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
+import {Schema}            from "shared/api/circuit/schema";
+import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
+import {CircuitInternal}   from "shared/api/circuit/internal/impl/CircuitInternal";
+import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsManager";
 import {RenderHelper}      from "./RenderHelper";
 
 

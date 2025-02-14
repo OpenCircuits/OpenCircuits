@@ -2,9 +2,9 @@ import {CreateCircuit, DigitalCircuit} from "digital/public";
 import {DigitalTypes} from "digital/public/api/impl/DigitalCircuitState";
 
 import {CircuitDesigner} from "shared/circuitdesigner/CircuitDesigner";
-import {CircuitDesignerImpl, ToolConfig} from "shared/circuitdesigner/impl/CircuitDesigner";
-import {CircuitDesignerState} from "shared/circuitdesigner/impl/CircuitDesignerState";
-import {ToolManager} from "shared/circuitdesigner/impl/ToolManager";
+import {CircuitDesignerImpl, ToolConfig} from "shared/api/circuitdesigner/impl/CircuitDesigner";
+import {CircuitDesignerState} from "shared/api/circuitdesigner/impl/CircuitDesignerState";
+import {ToolManager} from "shared/api/circuitdesigner/impl/ToolManager";
 
 import {SVGs} from "./rendering/svgs";
 

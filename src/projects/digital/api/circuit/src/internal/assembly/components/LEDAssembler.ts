@@ -3,15 +3,15 @@ import {SVGDrawing, blend, parseColor} from "svg2canvas";
 import {V}         from "Vector";
 import {Transform} from "math/Transform";
 
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
-import {CircuitInternal}   from "core/internal";
-import {SelectionsManager} from "core/internal/impl/SelectionsManager";
-import {CircuitView}       from "core/internal/view/CircuitView";
-import {PortAssembler}     from "core/internal/view/PortAssembler";
-import {SVGPrim}           from "core/internal/view/rendering/prims/SVGPrim";
-import {Assembler}         from "core/internal/view/Assembler";
-import {CirclePrim}        from "core/internal/view/rendering/prims/CirclePrim";
+import {CircuitInternal}   from "shared/api/circuit/internal";
+import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsManager";
+import {CircuitView}       from "shared/api/circuit/internal/view/CircuitView";
+import {PortAssembler}     from "shared/api/circuit/internal/view/PortAssembler";
+import {SVGPrim}           from "shared/api/circuit/internal/view/rendering/prims/SVGPrim";
+import {Assembler}         from "shared/api/circuit/internal/view/Assembler";
+import {CirclePrim}        from "shared/api/circuit/internal/view/rendering/prims/CirclePrim";
 
 import {DigitalSim} from "digital/internal/sim/DigitalSim";
 import {Signal}     from "digital/internal/sim/Signal";

@@ -7,7 +7,7 @@ import {GenerateInputTree} from "site/digital/utils/ExpressionParser/GenerateInp
 import "../../../../../app/tests/Extensions";
 import {ExpressionToCircuit} from "site/digital/utils/ExpressionParser";
 import {GenerateTokens}      from "site/digital/utils/ExpressionParser/GenerateTokens";
-import {Component}           from "core/public";
+import {Component}           from "shared/api/circuit/public";
 import {FORMATS}             from "site/digital/utils/ExpressionParser/Constants/Formats";
 
 

@@ -1,4 +1,4 @@
-import {Obj}                                from "core/public";
+import {Obj}                                from "shared/api/circuit/public";
 import React, {useEffect, useRef, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/src/utils/Constants";

@@ -1,7 +1,7 @@
-import {GUID}        from "core/public";
-import {CleanupFunc} from "core/utils/types";
+import {GUID}        from "shared/api/circuit/public";
+import {CleanupFunc} from "shared/api/circuit/utils/types";
 
-import {MultiObservable} from "core/public/api/Observable";
+import {MultiObservable} from "shared/api/circuit/public/Observable";
 import {Camera} from "./Camera";
 import {Vector} from "Vector";
 

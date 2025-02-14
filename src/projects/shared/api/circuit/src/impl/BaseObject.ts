@@ -1,8 +1,8 @@
 import {V} from "Vector";
 import {Rect} from "math/Rect";
 
-import {AddErrE}    from "core/utils/MultiError";
-import {GUID, Prop} from "core/internal";
+import {AddErrE}    from "shared/api/circuit/utils/MultiError";
+import {GUID, Prop} from "shared/api/circuit/internal";
 
 import {BaseObject} from "../BaseObject";
 

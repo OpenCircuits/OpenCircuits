@@ -2,9 +2,9 @@ import {Vector} from "Vector";
 
 import {CircleContains} from "math/MathUtils";
 
-import {MinDist} from "core/utils/Reducers";
+import {MinDist} from "shared/api/circuit/utils/Reducers";
 
-import {Circuit, Port} from "core/public";
+import {Circuit, Port} from "shared/api/circuit/public";
 
 import {CircuitDesigner}                       from "shared/circuitdesigner/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "shared/src/utils/input/Constants";

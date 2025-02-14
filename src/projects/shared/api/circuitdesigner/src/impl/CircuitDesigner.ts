@@ -2,15 +2,15 @@ import {SVGDrawing} from "svg2canvas";
 
 import {Margin} from "math/Rect";
 
-import {Circuit} from "core/public";
+import {Circuit} from "shared/api/circuit/public";
 
-import {DebugOptions} from "shared/circuitdesigner/impl/DebugOptions";
-import {DefaultTool}  from "shared/tools/DefaultTool";
-import {Tool}         from "shared/tools/Tool";
-import {Cursor}       from "shared/utils/input/Cursor";
+import {DebugOptions} from "shared/api/circuitdesigner/impl/DebugOptions";
+import {DefaultTool}  from "shared/api/circuitdesigner/tools/DefaultTool";
+import {Tool}         from "shared/api/circuitdesigner/tools/Tool";
+import {Cursor}       from "shared/api/circuitdesigner/input/Cursor";
 
 import {CircuitDesigner} from "../CircuitDesigner";
-import {CircuitTypes} from "core/public/api/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/impl/CircuitState";
 import {CircuitDesignerState} from "./CircuitDesignerState";
 import {Viewport} from "../Viewport";
 import {ViewportImpl} from "./Viewport";

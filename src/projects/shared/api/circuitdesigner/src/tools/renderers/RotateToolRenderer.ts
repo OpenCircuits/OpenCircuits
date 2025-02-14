@@ -1,10 +1,10 @@
-import {CirclePrim}       from "core/internal/assembly/rendering/prims/CirclePrim";
-import {CircleSectorPrim} from "core/internal/assembly/rendering/prims/CircleSectorPrim";
+import {CirclePrim}       from "shared/api/circuit/internal/assembly/rendering/prims/CirclePrim";
+import {CircleSectorPrim} from "shared/api/circuit/internal/assembly/rendering/prims/CircleSectorPrim";
 
 import {ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_THICKNESS, RotateTool} from "../RotateTool";
 
 import {ToolRenderer}   from "./ToolRenderer";
-import {isObjComponent} from "core/public";
+import {isObjComponent} from "shared/api/circuit/public";
 
 
 export const RotateToolRenderer: ToolRenderer = {

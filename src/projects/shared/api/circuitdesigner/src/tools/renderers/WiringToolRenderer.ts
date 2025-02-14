@@ -3,7 +3,7 @@ import {BezierCurve} from "math/BezierCurve";
 import {WiringTool} from "../WiringTool";
 
 import {ToolRenderer, ToolRendererArgs} from "./ToolRenderer";
-import {RenderOptions}                  from "core/internal/view/rendering/RenderOptions";
+import {RenderOptions}                  from "shared/api/circuit/internal/view/rendering/RenderOptions";
 
 
 /**

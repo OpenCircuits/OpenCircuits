@@ -1,4 +1,4 @@
-import {Circuit} from "core/schema/Circuit";
+import {Circuit} from "shared/api/circuit/schema/Circuit";
 import {DigitalSimState} from "./DigitalSimState";
 
 

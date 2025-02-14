@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 
-import {Obj} from "core/public";
+import {Obj} from "shared/api/circuit/public";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
 

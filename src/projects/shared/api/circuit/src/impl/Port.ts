@@ -1,8 +1,8 @@
 import {Vector} from "Vector";
 
-import {AddErrE} from "core/utils/MultiError";
-import {extend}  from "core/utils/Functions";
-import {GUID}    from "core/internal";
+import {AddErrE} from "shared/api/circuit/utils/MultiError";
+import {extend}  from "shared/api/circuit/utils/Functions";
+import {GUID}    from "shared/api/circuit/internal";
 
 import {Port}    from "../Port";
 import {Circuit} from "../Circuit";

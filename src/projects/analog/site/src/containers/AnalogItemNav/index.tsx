@@ -1,6 +1,6 @@
 import {useCallback} from "react";
 
-import {GUID} from "core/utils/GUID";
+import {GUID} from "shared/api/circuit/utils/GUID";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 

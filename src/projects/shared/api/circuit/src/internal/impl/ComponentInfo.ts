@@ -1,6 +1,6 @@
-import {Result} from "core/utils/Result";
+import {Result} from "shared/api/circuit/utils/Result";
 
-import {Schema} from "core/schema";
+import {Schema} from "shared/api/circuit/schema";
 
 
 export type PortConfig = Record<string, number>;

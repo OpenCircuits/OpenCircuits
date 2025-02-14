@@ -1,6 +1,6 @@
-import {Circuit} from "core/models/Circuit";
+import {Circuit} from "shared/api/circuit/models/Circuit";
 
-import {AnalogObj} from "core/models/types/analog";
+import {AnalogObj} from "shared/api/circuit/models/types/analog";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 

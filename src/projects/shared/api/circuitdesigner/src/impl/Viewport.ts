@@ -2,21 +2,21 @@ import {SVGDrawing} from "svg2canvas";
 
 import {V, Vector} from "Vector";
 
-import {GUID} from "core/public";
+import {GUID} from "shared/api/circuit/public";
 
-import {CleanupFunc} from "core/utils/types";
-import {extend}      from "core/utils/Functions";
+import {CleanupFunc} from "shared/api/circuit/utils/types";
+import {extend}      from "shared/api/circuit/utils/Functions";
 
-import {DefaultRenderOptions} from "core/internal/assembly/RenderOptions";
+import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {CircuitTypes}        from "core/public/api/impl/CircuitState";
-import {MultiObservableImpl} from "core/public/api/impl/Observable";
+import {CircuitTypes}        from "shared/api/circuit/impl/CircuitState";
+import {MultiObservableImpl} from "shared/api/circuit/impl/Observable";
 
-import {DefaultTool}  from "shared/tools/DefaultTool";
-import {ToolRenderer} from "shared/tools/renderers/ToolRenderer";
-import {Tool}         from "shared/tools/Tool";
+import {DefaultTool}  from "shared/api/circuitdesigner/tools/DefaultTool";
+import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
+import {Tool}         from "shared/api/circuitdesigner/tools/Tool";
 
-import {InputAdapter} from "shared/utils/input/InputAdapter";
+import {InputAdapter} from "shared/api/circuitdesigner/input/InputAdapter";
 
 import {RenderHelper}             from "./rendering/RenderHelper";
 import {RenderState}              from "./rendering/RenderState";

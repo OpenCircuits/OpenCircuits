@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "core/public";
+import {CircuitMetadata} from "shared/api/circuit/public";
 
 import {AUTO_SAVE_COOKIE_KEY} from "shared/src/utils/Constants";
 

@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {Circuit, Component, isObjComponent} from "core/public";
+import {Circuit, Component, isObjComponent} from "shared/api/circuit/public";
 
 import {CircuitDesigner}   from "shared/circuitdesigner/CircuitDesigner";
 import {InputAdapterEvent} from "shared/src/utils/input/InputAdapterEvent";

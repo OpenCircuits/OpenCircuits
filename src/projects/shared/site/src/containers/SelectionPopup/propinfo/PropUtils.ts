@@ -1,4 +1,4 @@
-import {Obj, Prop} from "core/public";
+import {Obj, Prop} from "shared/api/circuit/public";
 
 import {PropInfo, PropInfoEntryField, PropInfoRecord} from "./PropInfo";
 

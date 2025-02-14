@@ -1,25 +1,25 @@
 import {CreateView}        from "analog/views";
 import {AnalogViewInfo}    from "analog/views/AnalogViewInfo";
-import {CircuitController} from "core/controllers/CircuitController";
-import {ViewManager}       from "core/views/ViewManager";
+import {CircuitController} from "shared/api/circuit/controllers/CircuitController";
+import {ViewManager}       from "shared/api/circuit/views/ViewManager";
 
 import {V} from "Vector";
 
 import {Camera} from "math/Camera";
 
-import {InputManager}      from "core/utils/InputManager";
-import {RenderQueue}       from "core/utils/RenderQueue";
-import {SelectionsWrapper} from "core/utils/SelectionsWrapper";
+import {InputManager}      from "shared/api/circuit/utils/InputManager";
+import {RenderQueue}       from "shared/api/circuit/utils/RenderQueue";
+import {SelectionsWrapper} from "shared/api/circuit/utils/SelectionsWrapper";
 
-import {HistoryManager} from "core/actions/HistoryManager";
+import {HistoryManager} from "shared/api/circuit/actions/HistoryManager";
 
-import {DefaultTool} from "core/tools/DefaultTool";
-import {Tool}        from "core/tools/Tool";
-import {ToolManager} from "core/tools/ToolManager";
+import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
+import {Tool}        from "shared/api/circuit/tools/Tool";
+import {ToolManager} from "shared/api/circuit/tools/ToolManager";
 
-import {Circuit, DefaultCircuit} from "core/models/Circuit";
+import {Circuit, DefaultCircuit} from "shared/api/circuit/models/Circuit";
 
-import {AnalogObj} from "core/models/types/analog";
+import {AnalogObj} from "shared/api/circuit/models/types/analog";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 

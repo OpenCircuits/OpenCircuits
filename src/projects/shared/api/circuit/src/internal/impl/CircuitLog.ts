@@ -1,6 +1,6 @@
-import {Observable} from "core/utils/Observable";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
-import {GUID, uuid} from "core/schema/GUID";
+import {GUID, uuid} from "shared/api/circuit/schema/GUID";
 
 import {CircuitOp} from "./CircuitOps";
 

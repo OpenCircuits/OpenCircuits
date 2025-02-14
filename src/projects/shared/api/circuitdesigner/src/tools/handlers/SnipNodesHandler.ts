@@ -1,4 +1,4 @@
-import {Node} from "core/public";
+import {Node} from "shared/api/circuit/public";
 
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 

@@ -1,9 +1,9 @@
 import {useEffect, useLayoutEffect} from "react";
 
-import {DefaultTool} from "core/tools/DefaultTool";
-import {PanTool}     from "core/tools/PanTool";
+import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
+import {PanTool}     from "shared/api/circuit/tools/PanTool";
 
-// import {FitToScreenHandler} from "core/tools/handlers/FitToScreenHandler";
+// import {FitToScreenHandler} from "shared/api/circuit/tools/handlers/FitToScreenHandler";
 
 import {DigitalCircuitInfo} from "digital/utils/DigitalCircuitInfo";
 

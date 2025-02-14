@@ -1,4 +1,4 @@
-import {Result} from "core/utils/Result";
+import {Result} from "shared/api/circuit/utils/Result";
 import crypto   from "node:crypto";
 
 

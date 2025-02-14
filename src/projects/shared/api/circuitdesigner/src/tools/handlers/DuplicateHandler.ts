@@ -1,5 +1,5 @@
 import {V}                                from "Vector";
-import {Circuit}                          from "core/public";
+import {Circuit}                          from "shared/api/circuit/public";
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 

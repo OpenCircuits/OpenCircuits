@@ -1,7 +1,7 @@
 import {RefObject} from "react";
 
-import {DefaultTool} from "core/tools/DefaultTool";
-import {Tool}        from "core/tools/Tool";
+import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
+import {Tool}        from "shared/api/circuit/tools/Tool";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 

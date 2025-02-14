@@ -1,4 +1,4 @@
-import {GUID} from "core/schema/GUID";
+import {GUID} from "shared/api/circuit/schema/GUID";
 import {Signal} from "../public/utils/Signal";
 
 

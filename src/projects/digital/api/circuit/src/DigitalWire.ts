@@ -1,4 +1,4 @@
-import type {Wire} from "core/public";
+import type {Wire} from "shared/api/circuit/public";
 
 import type {APIToDigital} from "./DigitalCircuit";
 

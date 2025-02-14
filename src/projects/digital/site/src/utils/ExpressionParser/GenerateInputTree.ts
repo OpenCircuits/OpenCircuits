@@ -1,4 +1,4 @@
-import {ErrE, Ok, Result} from "core/utils/Result";
+import {ErrE, Ok, Result} from "shared/api/circuit/utils/Result";
 import {BinOpChildren, InputToken, InputTree, InputTreeBinOpNode, InputTreeBinOpType,
         Token, TokenType} from "./Constants/DataStructures";
 import {FORMATS} from "./Constants/Formats";
