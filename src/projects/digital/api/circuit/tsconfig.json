@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "Vector":         ["./core/utils/math/Vector"],
+            "math/*":         ["./core/utils/math/*"],
+            "core/*":         ["./core/*"],
+            "digital/*":      ["./digital/*"],
+            "test/helpers/*": ["./tests/helpers/*"],
+        },
+    },
+    "include": [".", "./core/utils/types"],
+}
