@@ -1,6 +1,6 @@
-import {ActionCreatorType} from "shared/utils/CreateState";
+import {ActionCreatorType} from "shared/site/utils/CreateState";
 
-import {AllSharedActions} from "shared/state/actions";
+import {AllSharedActions} from "shared/site/state/actions";
 
 
 type ActionCreators =

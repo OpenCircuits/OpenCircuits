@@ -7,9 +7,9 @@ import {CircuitMetadata} from "shared/api/circuit/models/Circuit";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {CircuitInfoHelpers} from "shared/site/utils/CircuitInfoHelpers";
 
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 import {ContextMenu}               from "shared/containers/ContextMenu";
 import {HistoryBox}                from "shared/containers/HistoryBox";

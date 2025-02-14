@@ -4,10 +4,10 @@ import {AnalogObj} from "shared/api/circuit/models/types/analog";
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
-import {GenerateThumbnail}  from "shared/utils/GenerateThumbnail";
+import {CircuitInfoHelpers} from "shared/site/utils/CircuitInfoHelpers";
+import {GenerateThumbnail}  from "shared/site/utils/GenerateThumbnail";
 
-import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
+import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/site/state/CircuitInfo";
 
 import {AppStore} from "../../state";
 

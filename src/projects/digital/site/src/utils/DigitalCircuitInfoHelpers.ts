@@ -1,9 +1,9 @@
 import {DigitalCircuitDesignerController} from "digital/api/circuit/controllers/DigitalCircuitDesignerController";
 import {DigitalCircuit}                   from "digital/api/circuit/schema/DigitalCircuit";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {CircuitInfoHelpers} from "shared/site/utils/CircuitInfoHelpers";
 
-import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/state/CircuitInfo";
+import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/site/state/CircuitInfo";
 
 import {AppStore} from "../state";
 

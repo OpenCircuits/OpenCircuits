@@ -1,6 +1,6 @@
 import {DigitalCircuitDesigner} from "site/digital/utils/DigitalCircuitDesigner";
 
-import {useDesigner, useMainDesigner} from "shared/utils/hooks/useDesigner"
+import {useDesigner, useMainDesigner} from "shared/site/utils/hooks/useDesigner"
 
 
 export const useDigitalDesigner = (key: string) =>

@@ -1,6 +1,6 @@
 import {useLayoutEffect} from "react";
 
-import {usePageVisibility} from "shared/utils/hooks/usePageVisibility";
+import {usePageVisibility} from "shared/site/utils/hooks/usePageVisibility";
 
 import {MainDesigner} from "shared/containers/MainDesigner";
 
@@ -9,7 +9,7 @@ import {useMainDigitalDesigner} from "site/digital/utils/hooks/useDigitalDesigne
 
 import "./index.scss";
 
-// import {useMainCircuit} from "shared/utils/hooks/useCircuit";
+// import {useMainCircuit} from "shared/site/utils/hooks/useCircuit";
 
 
 export const DigitalMainDesigner = () => {

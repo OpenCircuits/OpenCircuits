@@ -98,7 +98,7 @@ When importing code from other files make sure the imports maintain the followin
 
     import {CircuitMetadataBuilder} from "shared/api/circuit/models/CircuitMetadata";
 
-    import {SetCircuitSaved} from "shared/state/CircuitInfo";
+    import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 
     import {ContextMenu}     from "shared/containers/ContextMenu";
     import {Header}          from "shared/containers/Header";

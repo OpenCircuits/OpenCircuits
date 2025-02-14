@@ -1,6 +1,6 @@
 import {SimDataMappings} from "analog/models/sim/NetlistGenerator";
 
-import {CreateState} from "shared/utils/CreateState";
+import {CreateState} from "shared/site/utils/CreateState";
 
 
 const [initialState, actions, reducer] = CreateState()(

@@ -4,10 +4,10 @@ import ReactGA                          from "react-ga";
 import {Provider}                       from "react-redux";
 import {configureStore}                 from "@reduxjs/toolkit";
 
-import {GetCookie}     from "shared/utils/Cookies";
-import {LoadingScreen} from "shared/utils/LoadingScreen";
+import {GetCookie}     from "shared/site/utils/Cookies";
+import {LoadingScreen} from "shared/site/utils/LoadingScreen";
 
-import {storeDesigner} from "shared/utils/hooks/useDesigner";
+import {storeDesigner} from "shared/site/utils/hooks/useDesigner";
 
 import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
@@ -38,20 +38,20 @@ import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/Zoom
 
 // import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
-import {DevListFiles} from "shared/api/Dev";
+import {DevListFiles} from "shared/site/api/Dev";
 
-import {NoAuthState} from "shared/api/auth/NoAuthState";
+import {NoAuthState} from "shared/site/api/auth/NoAuthState";
 
-import {Login} from "shared/state/thunks/User";
+import {Login} from "shared/site/state/thunks/User";
 
 import {AppStore} from "./state";
 import {reducers} from "./state/reducers";
 
 import ImageFiles      from "./data/images.json";
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 // import {App} from "./containers/App";
-import {CreateDesigner, DigitalCircuitDesigner} from "./internal/DigitalCircuitDesigner";
+import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 
 
 const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {

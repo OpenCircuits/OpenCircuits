@@ -1,6 +1,6 @@
 // import {ICData} from "digital/api/circuit/models/ioobjects";
 
-import {CreateState} from "shared/utils/CreateState";
+import {CreateState} from "shared/site/utils/CreateState";
 
 
 // @TODO

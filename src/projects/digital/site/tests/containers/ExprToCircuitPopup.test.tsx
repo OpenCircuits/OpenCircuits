@@ -9,7 +9,7 @@
 
 // import {Setup} from "test/helpers/Setup";
 
-// import {OpenHeaderPopup} from "shared/state/Header";
+// import {OpenHeaderPopup} from "shared/site/state/Header";
 
 // import "shared/tests/helpers/Extensions";
 // import {PressToggle} from "shared/tests/helpers/PressToggle";

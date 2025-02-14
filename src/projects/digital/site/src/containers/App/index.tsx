@@ -1,6 +1,6 @@
 import {CircuitMetadata} from "shared/api/circuit/public";
 
-import {useWindowSize} from "shared/utils/hooks/useWindowSize";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 import {ContextMenu}        from "shared/containers/ContextMenu";
 // import {HistoryBox}  from "shared/containers/HistoryBox";

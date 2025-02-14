@@ -7,7 +7,7 @@ import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
 import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {CircuitInfoHelpers} from "shared/site/utils/CircuitInfoHelpers";
 
 import {AppStore} from "site/analog/state";
 

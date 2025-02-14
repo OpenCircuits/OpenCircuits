@@ -9,7 +9,7 @@ import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
 // import {DigitalCircuitDesigner} from "digital/api/circuit/models";
 
-import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
+import {GetRenderFunc} from "shared/site/utils/GetRenderingFunc";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 

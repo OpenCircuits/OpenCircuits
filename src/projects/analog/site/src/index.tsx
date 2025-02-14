@@ -5,7 +5,7 @@ import {Provider}                     from "react-redux";
 import {applyMiddleware, createStore} from "redux";
 import thunk, {ThunkMiddleware}       from "redux-thunk";
 
-import {DEV_CACHED_CIRCUIT_FILE} from "shared/utils/Constants";
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
 
 import {Images} from "shared/api/circuit/utils/Images";
 
@@ -38,16 +38,16 @@ import {CursorHandler} from "analog/tools/handlers/CursorHandler";
 
 import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
 
-import {GetCookie}     from "shared/utils/Cookies";
-import {LoadingScreen} from "shared/utils/LoadingScreen";
+import {GetCookie}     from "shared/site/utils/Cookies";
+import {LoadingScreen} from "shared/site/utils/LoadingScreen";
 
 import {DevGetFile, DevListFiles} from "shared/api/Dev";
 
 import {NoAuthState} from "shared/api/auth/NoAuthState";
 
-import {SetCircuitSaved} from "shared/state/CircuitInfo";
+import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 
-import {Login} from "shared/state/thunks/User";
+import {Login} from "shared/site/state/thunks/User";
 
 import {App}                from "./containers/App";
 import NGSpice              from "./lib/ngspice.wasm";

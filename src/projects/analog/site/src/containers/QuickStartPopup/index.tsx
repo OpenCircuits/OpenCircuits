@@ -1,6 +1,6 @@
-import {useSharedDispatch, useSharedSelector} from "shared/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CloseHeaderPopups} from "shared/state/Header";
+import {CloseHeaderPopups} from "shared/site/state/Header";
 
 import {Popup} from "shared/components/Popup";
 

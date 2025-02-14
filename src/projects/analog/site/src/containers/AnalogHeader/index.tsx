@@ -1,6 +1,6 @@
 import {CircuitInfo} from "shared/api/circuit/utils/CircuitInfo";
 
-import {CircuitInfoHelpers} from "shared/utils/CircuitInfoHelpers";
+import {CircuitInfoHelpers} from "shared/site/utils/CircuitInfoHelpers";
 
 import {Header} from "shared/containers/Header";
 

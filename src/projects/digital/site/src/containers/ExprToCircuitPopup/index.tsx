@@ -6,9 +6,9 @@ import {FORMATS}                             from "site/digital/utils/Expression
 import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
 import {useSharedDispatch,
-        useSharedSelector} from "shared/utils/hooks/useShared";
+        useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CloseHeaderPopups} from "shared/state/Header";
+import {CloseHeaderPopups} from "shared/site/state/Header";
 
 import {ButtonToggle} from "shared/components/ButtonToggle";
 import {InputField}   from "shared/components/InputField";

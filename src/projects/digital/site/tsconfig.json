@@ -3,16 +3,17 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "Vector":         ["../../../app/core/utils/math/Vector"],
-            "math/*":         ["../../../app/core/utils/math/*"],
-            "core/*":         ["../../../app/core/*"],
-            "site/digital/*": ["./src/*"],
-            "digital/*":      ["../../../app/digital/*"],
-            "test/helpers/*": ["../../../app/tests/helpers/*"],
-            "shared/*":       ["../../shared/*"],
+            "Vector":                        ["../../shared/api/circuit/src/utils/math/Vector"],
+            "math/*":                        ["../../shared/api/circuit/src/utils/math/*"],
+            "shared/api/circuit/*":          ["../../shared/api/circuit/src/*"],
+            "shared/api/circuitdesigner/*":  ["../../shared/api/circuitdesigner/src/*"],
+            "shared/site/*":                 ["../../shared/site/src/*"],
+            "digital/api/circuit/*":         ["../api/circuit/src/*"],
+            "digital/api/circuitdesigner/*": ["../api/circuitdesigner/src/*"],
+            "digital/site/*":                ["./src/*"],
         }
     },
     // TODO[model_refactor_api](Leon) - Add back "src" to include
-    "include": ["src/utils/ExpressionParser", "../../shared/utils/types", "../../../app/core/utils/types", "tests/utils/ExpressionParser.test.ts"],
+    "include": [""],
     "files": ["./src/index.tsx"],
 }

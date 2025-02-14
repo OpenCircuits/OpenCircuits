@@ -1,12 +1,12 @@
 import {combineReducers} from "redux";
 
-import {circuitInfoReducer} from "shared/state/CircuitInfo";
-import {contextMenuReducer} from "shared/state/ContextMenu";
-import {debugInfoReducer}   from "shared/state/DebugInfo";
-import {headerReducer}      from "shared/state/Header";
-import {itemNavReducer}     from "shared/state/ItemNav";
-import {sideNavReducer}     from "shared/state/SideNav";
-import {userInfoReducer}    from "shared/state/UserInfo";
+import {circuitInfoReducer} from "shared/site/state/CircuitInfo";
+import {contextMenuReducer} from "shared/site/state/ContextMenu";
+import {debugInfoReducer}   from "shared/site/state/DebugInfo";
+import {headerReducer}      from "shared/site/state/Header";
+import {itemNavReducer}     from "shared/site/state/ItemNav";
+import {sideNavReducer}     from "shared/site/state/SideNav";
+import {userInfoReducer}    from "shared/site/state/UserInfo";
 
 import {icDesignerReducer} from "./ICDesigner";
 import {icViewerReducer}   from "./ICViewer";

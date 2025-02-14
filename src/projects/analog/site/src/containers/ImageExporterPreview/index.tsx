@@ -7,7 +7,7 @@ import {FitToScreenHandler} from "shared/api/circuit/tools/handlers/FitToScreenH
 
 import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
 
-import {GetRenderFunc} from "shared/utils/GetRenderingFunc";
+import {GetRenderFunc} from "shared/site/utils/GetRenderingFunc";
 
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 

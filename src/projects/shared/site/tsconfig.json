@@ -3,12 +3,11 @@
   "compilerOptions": {
       "baseUrl": ".",
       "paths": {
-          "Vector":    ["../../app/core/utils/math/Vector"],
-          "math/*":    ["../../app/core/utils/math/*"],
-          "core/*":    ["../../app/core/*"],
-          "digital/*": ["../../app/digital/*"],
-          "test/helpers/*": ["../../app/tests/helpers/*"],
-          "shared/*":  ["./*"],
+          "Vector":                        ["../../../shared/api/circuit/src/utils/math/Vector"],
+          "math/*":                        ["../../../shared/api/circuit/src/utils/math/*"],
+          "shared/api/circuit/*":          ["../../../shared/api/circuit/src/*"],
+          "shared/api/circuitdesigner/*":  ["../../../shared/api/circuitdesigner/src/*"],
+          "shared/site/*":                 ["./src/*"],
       }
   },
   "include": ["."],
