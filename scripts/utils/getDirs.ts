@@ -1,46 +1,54 @@
 import {existsSync, readFileSync, readdirSync} from "node:fs";
 import path                                    from "node:path";
 
-import type {Choice} from "prompts";
 
+export interface DirInfo {
+    name: string;
+    title: string;
+    description: string;
+    path: string;
+}
 
-/**
- * Get Directories to run scripts in.
- *
- * @param includeServer Whether or not to include the `server` folder.
- * @param includeApp    Whether or not to include the `app` folder.
- * @param includeShared Whether or not to include the `site/shared` folder.
- * @returns             The directories of the format for presentation using `prompts`.
- */
-export default function getDirs(includeServer: boolean, includeApp: boolean, includeShared: boolean): Choice[] {
-    const pagesDir = "src/site/pages";
-    const dirs = readdirSync(pagesDir, { withFileTypes: true });
-
-    // Get all directories in `src/site/pages`
-    const pageDirs = dirs
-        // Filter out directories
-        .filter((dir) => dir.isDirectory())
-        // Get package.json paths
-        .map((dir) => [dir, path.resolve(pagesDir, dir.name, "package.json")] as const)
+function getDirs(root: string, subpath: string, titleAppend = ""): DirInfo[] {
+    // Get all directories in directories
+    return readdirSync(root, { withFileTypes: true })
+        .filter((dir) => (dir.isDirectory()))
+        .map((dir) => dir.name)
+        // Get full paths
+        .map((projectName) => [
+            projectName,
+            path.join(root, projectName, subpath),
+        ] as const)
         // Filter out non-package.json-containing directories
-        .filter(([_, packagePath]) => existsSync(packagePath))
+        .filter(([_, dir]) => existsSync(path.join(dir, "package.json")))
         // Map to prompt formats
-        .map(([dir, packagePath]) => ({
-            title:       (dir.name[0].toUpperCase() + dir.name.slice(1).toLowerCase()),
-            description: JSON.parse(readFileSync(packagePath, "utf8")).description,
-            value:       dir.name,
+        .map(([projectName, dir]) => ({
+            name:        projectName,
+            title:       (projectName[0].toUpperCase() + projectName.slice(1).toLowerCase()) + titleAppend,
+            description: JSON.parse(readFileSync(path.join(dir, "package.json"), "utf8")).description,
+            path:        dir,
         }));
+}
 
-    return [
-        ...(includeServer ? [{ // Add in server directory
-            title: "Server", description: "The backend server for OpenCircuits", value: "server",
-        }] : []),
-        ...(includeApp ? [{ // Add in app directory
-            title: "App", description: "The application logic for OpenCircuits", value: "app",
-        }] : []),
-        ...(includeShared ? [{ // Add in the site/shared directory
-            title: "Shared", description: "The shared site code for OpenCircuits", value: "site/shared",
-        }] : []),
-        ...pageDirs,
-    ];
+export function getProjectSiteDirs(): DirInfo[] {
+    return getDirs("src/projects", "site", " (Site)");
+}
+export function getProjectCircuitDirs(): DirInfo[] {
+    return getDirs("src/projects", "api/circuit", " (API: Circuit)");
+}
+export function getProjectCircuitDesignerDirs(): DirInfo[] {
+    return getDirs("src/projects", "api/circuitdesigner", " (API: CircuitDesigner)");
+}
+
+export function getServerDir(): DirInfo {
+    return {
+        name:        "server",
+        title:       "Server",
+        description: "The backend server for OpenCircuits",
+        path:        "src/server",
+    };
+}
+
+export function getOtherPageDirs(): DirInfo[] {
+    return getDirs("src/other/pages", "", " (Site)");
 }

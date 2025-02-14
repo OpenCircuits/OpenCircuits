@@ -1,25 +1,25 @@
 import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 
-import {HEADER_HEIGHT} from "shared/src/utils/Constants";
+import {HEADER_HEIGHT} from "shared/site/utils/Constants";
 
 import {Clamp} from "math/MathUtils";
 
-import {ImageExportOptions, SaveImage} from "shared/src/utils/ImageExporter";
+import {ImageExportOptions, SaveImage} from "shared/site/utils/ImageExporter";
 
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CloseHeaderPopups} from "shared/src/state/Header";
+import {CloseHeaderPopups} from "shared/site/state/Header";
 
 import {CircuitDesigner, CreateDesigner} from "shared/circuitdesigner";
 
-import {DefaultTool}                     from "shared/src/tools/DefaultTool";
-import {PanTool}                         from "shared/src/tools/PanTool";
-import {FitToScreen, FitToScreenHandler} from "shared/src/tools/handlers/FitToScreenHandler";
+import {DefaultTool}                     from "shared/api/circuitdesigner/DefaultTool";
+import {PanTool}                         from "shared/api/circuitdesigner/PanTool";
+import {FitToScreen, FitToScreenHandler} from "shared/api/circuitdesigner/handlers/FitToScreenHandler";
 
-import {ButtonToggle} from "shared/src/components/ButtonToggle";
-import {InputField}   from "shared/src/components/InputField";
-import {Popup}        from "shared/src/components/Popup";
-import {SwitchToggle} from "shared/src/components/SwitchToggle";
+import {ButtonToggle} from "shared/site/components/ButtonToggle";
+import {InputField}   from "shared/site/components/InputField";
+import {Popup}        from "shared/site/components/Popup";
+import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 import "./index.scss";
 

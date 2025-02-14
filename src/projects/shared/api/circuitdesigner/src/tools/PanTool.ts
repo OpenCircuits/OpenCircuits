@@ -1,4 +1,4 @@
-import {MIDDLE_MOUSE_BUTTON} from "shared/src/utils/input/Constants";
+import {MIDDLE_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
 import {V}                   from "Vector";
 import {Tool}                from "./Tool";
 

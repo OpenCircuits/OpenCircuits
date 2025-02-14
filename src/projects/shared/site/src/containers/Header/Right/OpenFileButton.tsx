@@ -1,14 +1,14 @@
 import React from "react";
 
-import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/src/utils/Constants";
+import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-import {useAPIMethods} from "shared/src/utils/ApiMethods";
-import {LoadFile}      from "shared/src/utils/Importer";
+import {useAPIMethods} from "shared/site/utils/ApiMethods";
+import {LoadFile}      from "shared/site/utils/Importer";
 
-import {useMainDesigner}   from "shared/src/utils/hooks/useDesigner";
-import {useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useMainDesigner}   from "shared/site/utils/hooks/useDesigner";
+import {useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {InputField} from "shared/src/components/InputField";
+import {InputField} from "shared/site/components/InputField";
 
 
 export const OpenFileButton = () => {

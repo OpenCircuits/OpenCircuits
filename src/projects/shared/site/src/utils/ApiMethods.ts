@@ -1,13 +1,13 @@
 import {Circuit} from "shared/api/circuit/public";
 
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/src/api/Circuits";
+import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/site/api/Circuits";
 
-import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/src/state/CircuitInfo";
+import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/site/state/CircuitInfo";
 
-import {SaveCircuit}      from "shared/src/state/thunks/SaveCircuit";
-import {LoadUserCircuits} from "shared/src/state/thunks/User";
+import {SaveCircuit}      from "shared/site/state/thunks/SaveCircuit";
+import {LoadUserCircuits} from "shared/site/state/thunks/User";
 
 import {GenerateThumbnail} from "./GenerateThumbnail";
 

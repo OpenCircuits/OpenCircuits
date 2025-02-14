@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import {Matcher, render, screen} from "@testing-library/react";
 import userEvent                 from "@testing-library/user-event";
 
-import {ButtonToggle} from "shared/src/components/ButtonToggle";
+import {ButtonToggle} from "shared/site/components/ButtonToggle";
 
 
 /**

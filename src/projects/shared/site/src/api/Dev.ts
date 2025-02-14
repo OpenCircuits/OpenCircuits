@@ -1,4 +1,4 @@
-import {Request} from "shared/src/utils/Request";
+import {Request} from "shared/site/utils/Request";
 
 
 export async function DevCreateFile(data: string, fileId: string): Promise<void> {

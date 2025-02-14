@@ -11,7 +11,7 @@ import {BaseShapePrimWithoutStyle, GroupPrim, Prim, SVGPrim} from "./Prim";
 import {Style} from "./Style";
 import {parseColor} from "svg2canvas";
 
-import "core/utils/Array";
+import "shared/api/circuit/utils/Array";
 
 
 export interface ComponentBaseShapePrimAssembly {

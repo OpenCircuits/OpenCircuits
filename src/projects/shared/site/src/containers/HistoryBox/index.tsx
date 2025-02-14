@@ -1,13 +1,13 @@
 import {useState} from "react";
 
-import {useDocEvent}                          from "shared/src/utils/hooks/useDocEvent";
-import {useEvent}                             from "shared/src/utils/hooks/useEvent";
-import {useHistory}                           from "shared/src/utils/hooks/useHistory";
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useDocEvent}                          from "shared/site/utils/hooks/useDocEvent";
+import {useEvent}                             from "shared/site/utils/hooks/useEvent";
+import {useHistory}                           from "shared/site/utils/hooks/useHistory";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CloseHistoryBox} from "shared/src/state/ItemNav";
+import {CloseHistoryBox} from "shared/site/state/ItemNav";
 
-import {AdjustableElement} from "shared/src/components/AdjustableElement";
+import {AdjustableElement} from "shared/site/components/AdjustableElement";
 
 import "./index.scss";
 

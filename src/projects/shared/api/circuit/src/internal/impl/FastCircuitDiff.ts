@@ -5,7 +5,7 @@ import {assertNever} from "../utils/TypeEnforcement";
 
 import {CircuitOp} from "./CircuitOps";
 
-import "core/utils/Map";
+import "shared/api/circuit/utils/Map";
 
 
 // FastCircuitDiff is a simple, coarse description of how a circuit changed, primarily for invalidating objects computed

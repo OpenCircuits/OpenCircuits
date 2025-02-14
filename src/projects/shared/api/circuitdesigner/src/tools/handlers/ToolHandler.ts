@@ -1,5 +1,5 @@
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {InputAdapterEvent} from "shared/src/utils/input/InputAdapterEvent";
+import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
 
 export enum ToolHandlerResponse {

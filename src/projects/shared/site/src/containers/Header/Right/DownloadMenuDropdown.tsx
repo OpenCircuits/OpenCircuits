@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
-import {SaveFile} from "shared/src/utils/Exporter";
+import {SaveFile} from "shared/site/utils/Exporter";
 
-import {useMainDesigner}                      from "shared/src/utils/hooks/useDesigner";
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/src/state/Header";
+import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
 
 import {Dropdown} from "./Dropdown";
 

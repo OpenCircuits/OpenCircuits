@@ -2,14 +2,14 @@
 
 import {ThunkAction} from "redux-thunk";
 
-import {CreateUserCircuit, UpdateUserCircuit} from "shared/src/api/Circuits";
+import {CreateUserCircuit, UpdateUserCircuit} from "shared/site/api/Circuits";
 
-import {SharedAppState} from "shared/src/state";
+import {SharedAppState} from "shared/site/state";
 
-import {AllSharedActions}       from "shared/src/state/actions";
+import {AllSharedActions}       from "shared/site/state/actions";
 import {SetCircuitId,
         _SetCircuitSavingFinish,
-        _SetCircuitSavingStart} from "shared/src/state/CircuitInfo";
+        _SetCircuitSavingStart} from "shared/site/state/CircuitInfo";
 
 
 type ThunkResult<R> = ThunkAction<R, SharedAppState, undefined, AllSharedActions>;

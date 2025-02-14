@@ -1,4 +1,4 @@
-import {Utility} from "shared/src/containers/Header/Right/UtilitiesDropdown";
+import {Utility} from "shared/site/containers/Header/Right/UtilitiesDropdown";
 
 import {HeaderLeft}  from "./Left";
 import {HeaderRight} from "./Right";

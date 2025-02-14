@@ -1,19 +1,19 @@
 import {CircuitMetadata} from "shared/api/circuit/public";
 
-import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/src/utils/Constants";
+import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-import {useAPIMethods} from "shared/src/utils/ApiMethods";
-import {Request}       from "shared/src/utils/Request";
+import {useAPIMethods} from "shared/site/utils/ApiMethods";
+import {Request}       from "shared/site/utils/Request";
 
-import {useMainDesigner}                      from "shared/src/utils/hooks/useDesigner";
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {ToggleSideNav} from "shared/src/state/SideNav";
+import {ToggleSideNav} from "shared/site/state/SideNav";
 
-import {CircuitPreview} from "shared/src/components/CircuitPreview";
-import {Overlay}        from "shared/src/components/Overlay";
+import {CircuitPreview} from "shared/site/components/CircuitPreview";
+import {Overlay}        from "shared/site/components/Overlay";
 
-import {SignInOutButtons} from "shared/src/containers/Header/Right/SignInOutButtons";
+import {SignInOutButtons} from "shared/site/containers/Header/Right/SignInOutButtons";
 
 import "./index.scss";
 

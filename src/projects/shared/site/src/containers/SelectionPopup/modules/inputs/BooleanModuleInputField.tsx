@@ -1,5 +1,5 @@
-import {ButtonToggle} from "shared/src/components/ButtonToggle";
-import {SwitchToggle} from "shared/src/components/SwitchToggle";
+import {ButtonToggle} from "shared/site/components/ButtonToggle";
+import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 

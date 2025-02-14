@@ -4,9 +4,9 @@ import {V, Vector} from "Vector";
 
 import {Rect, RectProps} from "math/Rect";
 
-import {useDocEvent}   from "shared/src/utils/hooks/useDocEvent";
-import {useMousePos}   from "shared/src/utils/hooks/useMousePos";
-import {useWindowSize} from "shared/src/utils/hooks/useWindowSize";
+import {useDocEvent}   from "shared/site/utils/hooks/useDocEvent";
+import {useMousePos}   from "shared/site/utils/hooks/useMousePos";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 
 const RESIZE_AREAS = ["center", "nw", "w", "sw", "n", "s", "ne", "e", "se"] as const;

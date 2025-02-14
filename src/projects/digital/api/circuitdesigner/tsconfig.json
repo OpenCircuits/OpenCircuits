@@ -11,5 +11,5 @@
             "digital/api/circuitdesigner/*": ["./src/*"],
         },
     },
-    "include": ["."],
+    "include": [".", "../../../shared/api/circuitdesigner/src/types"],
 }

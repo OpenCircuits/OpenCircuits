@@ -1,6 +1,6 @@
 import {Clamp} from "math/MathUtils";
 
-import {NumberInputField} from "shared/src/components/InputField";
+import {NumberInputField} from "shared/site/components/InputField";
 
 import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 

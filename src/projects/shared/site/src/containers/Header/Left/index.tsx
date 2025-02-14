@@ -1,16 +1,16 @@
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {SetCircuitName, ToggleCircuitLocked} from "shared/src/state/CircuitInfo";
-import {CloseHistoryBox, OpenHistoryBox}     from "shared/src/state/ItemNav";
-import {ToggleSideNav}                       from "shared/src/state/SideNav";
+import {SetCircuitName, ToggleCircuitLocked} from "shared/site/state/CircuitInfo";
+import {CloseHistoryBox, OpenHistoryBox}     from "shared/site/state/ItemNav";
+import {ToggleSideNav}                       from "shared/site/state/SideNav";
 
-import {InputField} from "shared/src/components/InputField";
+import {InputField} from "shared/site/components/InputField";
 
 import "./index.scss";
 
-import {useMainDesigner} from "shared/src/utils/hooks/useDesigner";
+import {useMainDesigner} from "shared/site/utils/hooks/useDesigner";
 
-import {useAPIMethods} from "shared/src/utils/ApiMethods";
+import {useAPIMethods} from "shared/site/utils/ApiMethods";
 
 
 export const HeaderLeft = () => {

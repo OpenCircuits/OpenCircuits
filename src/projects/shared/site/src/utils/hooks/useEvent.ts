@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 
-import {InputAdapter, InputAdapterEvent, InputAdapterEventType} from "shared/src/utils/input/InputAdapter";
+import {InputAdapter, InputAdapterEvent, InputAdapterEventType} from "shared/api/circuitdesigner/input/InputAdapter";
 
 
 export const useEvent = <T extends InputAdapterEventType>(type: T, f: (ev: InputAdapterEvent & {type: T}) => void,

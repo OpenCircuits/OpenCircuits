@@ -1,15 +1,15 @@
 import {useEffect, useState} from "react";
 
-import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/src/utils/Constants";
+import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-import {useAPIMethods} from "shared/src/utils/ApiMethods";
+import {useAPIMethods} from "shared/site/utils/ApiMethods";
 
-import {useMainDesigner}                      from "shared/src/utils/hooks/useDesigner";
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {DevCreateFile, DevGetFile, DevListFiles} from "shared/src/api/Dev";
+import {DevCreateFile, DevGetFile, DevListFiles} from "shared/site/api/Dev";
 
-import {CloseHeaderMenus, HeaderPopups, OpenHeaderMenu, OpenHeaderPopup} from "shared/src/state/Header";
+import {CloseHeaderMenus, HeaderPopups, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
 
 import {Dropdown} from "./Dropdown";
 

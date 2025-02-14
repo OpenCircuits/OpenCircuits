@@ -1,4 +1,4 @@
-import {SetCookie} from "shared/src/utils/Cookies";
+import {SetCookie} from "shared/site/utils/Cookies";
 
 import {AuthState} from "./AuthState";
 import {AuthType}  from "./AuthTypes";

@@ -1,9 +1,8 @@
 {
   "private": true,
   "workspaces": [
-    "src/app",
-    "src/site/shared",
-    "src/site/pages/*"
+    "src/projects/*",
+    "src/other/pages/*"
   ],
   "type": "module",
   "scripts": {

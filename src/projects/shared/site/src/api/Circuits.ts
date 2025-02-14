@@ -1,6 +1,6 @@
 import {CircuitMetadata} from "shared/api/circuit/public";
 
-import {Request} from "shared/src/utils/Request";
+import {Request} from "shared/site/utils/Request";
 
 import {AuthState} from "./auth/AuthState";
 

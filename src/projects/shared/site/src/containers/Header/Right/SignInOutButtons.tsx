@@ -1,7 +1,7 @@
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {OpenHeaderPopup} from "shared/src/state/Header";
-import {Logout}          from "shared/src/state/UserInfo";
+import {OpenHeaderPopup} from "shared/site/state/Header";
+import {Logout}          from "shared/site/state/UserInfo";
 
 import "./index.scss";
 

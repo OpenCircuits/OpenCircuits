@@ -1,8 +1,8 @@
 import {GUID}                                                       from "shared/api/circuit/public";
 import {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react";
 
-import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH} from "shared/src/utils/Constants";
-import {RIGHT_MOUSE_BUTTON}            from "shared/src/utils/input/Constants";
+import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH} from "shared/site/utils/Constants";
+import {RIGHT_MOUSE_BUTTON}            from "shared/api/circuitdesigner/input/Constants";
 
 import {V, Vector} from "Vector";
 
@@ -10,20 +10,20 @@ import {Clamp} from "math/MathUtils";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
 
-import {useDocEvent}           from "shared/src/utils/hooks/useDocEvent";
-import {useHistory}            from "shared/src/utils/hooks/useHistory";
-import {useKey}                from "shared/src/utils/hooks/useKey";
-import {useWindowKeyDownEvent} from "shared/src/utils/hooks/useKeyDownEvent";
-import {useMousePos}           from "shared/src/utils/hooks/useMousePos";
+import {useDocEvent}           from "shared/site/utils/hooks/useDocEvent";
+import {useHistory}            from "shared/site/utils/hooks/useHistory";
+import {useKey}                from "shared/site/utils/hooks/useKey";
+import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
+import {useMousePos}           from "shared/site/utils/hooks/useMousePos";
 import {useSharedDispatch,
-        useSharedSelector}     from "shared/src/utils/hooks/useShared";
-import {useWindowSize} from "shared/src/utils/hooks/useWindowSize";
+        useSharedSelector}     from "shared/site/utils/hooks/useShared";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
-import {SetCurPressedObjID}                                                     from "shared/src/state/CircuitInfo";
-import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} from "shared/src/state/ItemNav";
+import {SetCurPressedObjID}                                                     from "shared/site/state/CircuitInfo";
+import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} from "shared/site/state/ItemNav";
 
-import {DragDropHandlers} from "shared/src/components/DragDroppable/DragDropHandlers";
-import {Draggable}        from "shared/src/components/DragDroppable/Draggable";
+import {DragDropHandlers} from "shared/site/components/DragDroppable/DragDropHandlers";
+import {Draggable}        from "shared/site/components/DragDroppable/Draggable";
 
 import styles from "./index.scss";
 

@@ -1,6 +1,6 @@
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/src/state/Header";
+import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
 
 import {Dropdown} from "./Dropdown";
 

@@ -1,6 +1,6 @@
 import {GUID} from "shared/api/circuit/public";
 
-import {CreateState} from "shared/src/utils/CreateState";
+import {CreateState} from "shared/site/utils/CreateState";
 
 
 const [initialState, actions, reducer] = CreateState()(

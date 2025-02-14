@@ -1,4 +1,4 @@
-import {useWindowSize} from "shared/src/utils/hooks/useWindowSize";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 import "./index.scss";
 

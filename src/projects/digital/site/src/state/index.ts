@@ -1,7 +1,7 @@
 import {Store}         from "redux";
 import {ThunkDispatch} from "redux-thunk";
 
-import {SharedAppState} from "shared/state";
+import {SharedAppState} from "shared/site/state";
 
 import {AllActions}      from "./actions";
 import {ICDesignerState} from "./ICDesigner";

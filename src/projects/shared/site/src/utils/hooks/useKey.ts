@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {Key} from "shared/src/utils/input/Key";
+import {Key} from "shared/api/circuitdesigner/input/Key";
 
 import {useDocEvent} from "./useDocEvent";
 

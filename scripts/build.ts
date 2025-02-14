@@ -8,7 +8,7 @@ import prompts from "prompts";
 import yargs   from "yargs/yargs";
 
 import CopyDir      from "./utils/copyDir.js";
-import getDirs      from "./utils/getDirs.js";
+// import getDirs      from "./utils/getDirs.js";
 import startWebpack from "./webpack/index.js";
 
 
@@ -17,7 +17,7 @@ process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
 
 
-const DIRS = getDirs(true, false, false);
+const DIRS = []; //getDirs(true, false, false);
 const DIR_MAP = Object.fromEntries(DIRS.map((d) => [d.value, d]));
 
 

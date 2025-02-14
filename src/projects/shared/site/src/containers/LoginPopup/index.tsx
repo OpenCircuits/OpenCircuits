@@ -1,15 +1,15 @@
 import {Fragment, useState} from "react";
 
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {NoAuthState} from "shared/src/api/auth/NoAuthState";
+import {NoAuthState} from "shared/site/api/auth/NoAuthState";
 
-import {CloseHeaderPopups} from "shared/src/state/Header";
+import {CloseHeaderPopups} from "shared/site/state/Header";
 
-import {Login} from "shared/src/state/thunks/User";
+import {Login} from "shared/site/state/thunks/User";
 
-import {InputField} from "shared/src/components/InputField";
-import {Popup}      from "shared/src/components/Popup";
+import {InputField} from "shared/site/components/InputField";
+import {Popup}      from "shared/site/components/Popup";
 
 import {GoogleAuthButton} from "./GoogleSignInButton";
 

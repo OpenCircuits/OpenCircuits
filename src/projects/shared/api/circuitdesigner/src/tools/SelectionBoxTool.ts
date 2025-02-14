@@ -3,7 +3,7 @@ import {V} from "Vector";
 import {Rect} from "math/Rect";
 
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {InputAdapterEvent} from "shared/src/utils/input/InputAdapterEvent";
+import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
 import {Tool} from "./Tool";
 

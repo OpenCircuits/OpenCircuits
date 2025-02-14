@@ -3,7 +3,7 @@ import React, {useLayoutEffect, useRef, useState} from "react";
 
 import {Cursor} from "shared/api/circuit/utils/Cursor";
 
-import {useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import "./index.scss";
 

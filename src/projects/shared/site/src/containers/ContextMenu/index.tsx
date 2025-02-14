@@ -2,17 +2,17 @@ import {useRef, useState} from "react";
 
 import {V} from "Vector";
 
-import {useDocEvent}                          from "shared/src/utils/hooks/useDocEvent";
-import {useHistory}                           from "shared/src/utils/hooks/useHistory";
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useDocEvent}                          from "shared/site/utils/hooks/useDocEvent";
+import {useHistory}                           from "shared/site/utils/hooks/useHistory";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CleanUp}             from "shared/src/tools/handlers/CleanupHandler";
-import {DuplicateSelections} from "shared/src/tools/handlers/DuplicateHandler";
-import {FitToScreen}         from "shared/src/tools/handlers/FitToScreenHandler";
+import {CleanUp}             from "shared/api/circuitdesigner/handlers/CleanupHandler";
+import {DuplicateSelections} from "shared/api/circuitdesigner/handlers/DuplicateHandler";
+import {FitToScreen}         from "shared/api/circuitdesigner/handlers/FitToScreenHandler";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
 
-import {CloseContextMenu, OpenContextMenu} from "shared/src/state/ContextMenu";
+import {CloseContextMenu, OpenContextMenu} from "shared/site/state/ContextMenu";
 
 import "./index.scss";
 

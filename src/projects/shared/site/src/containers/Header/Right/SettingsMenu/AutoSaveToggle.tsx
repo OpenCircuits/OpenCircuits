@@ -1,15 +1,15 @@
 import {useEffect} from "react";
 
-import {SAVE_TIME} from "shared/src/utils/Constants";
+import {SAVE_TIME} from "shared/site/utils/Constants";
 
-import {useAPIMethods} from "shared/src/utils/ApiMethods";
+import {useAPIMethods} from "shared/site/utils/ApiMethods";
 
-import {useMainDesigner}                      from "shared/src/utils/hooks/useDesigner";
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {SetAutoSave} from "shared/src/state/UserInfo";
+import {SetAutoSave} from "shared/site/state/UserInfo";
 
-import {SwitchToggle} from "shared/src/components/SwitchToggle";
+import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 
 export const AutoSaveToggle = () => {

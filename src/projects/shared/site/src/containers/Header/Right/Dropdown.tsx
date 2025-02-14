@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 
-import {useWindowSize} from "shared/src/utils/hooks/useWindowSize";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 
 const DOCUMENT_NODE_TYPE = 9;

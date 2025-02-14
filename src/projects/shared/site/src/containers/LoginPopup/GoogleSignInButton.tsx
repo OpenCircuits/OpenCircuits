@@ -1,12 +1,12 @@
 import {useEffect} from "react";
 
-import {useSharedDispatch} from "shared/src/utils/hooks/useShared";
+import {useSharedDispatch} from "shared/site/utils/hooks/useShared";
 
-import {GoogleAuthState} from "shared/src/api/auth/GoogleAuthState";
+import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
 
-import {CloseHeaderPopups} from "shared/src/state/Header";
+import {CloseHeaderPopups} from "shared/site/state/Header";
 
-import {Login} from "shared/src/state/thunks/User";
+import {Login} from "shared/site/state/thunks/User";
 
 
 export const GoogleAuthButton = () => {

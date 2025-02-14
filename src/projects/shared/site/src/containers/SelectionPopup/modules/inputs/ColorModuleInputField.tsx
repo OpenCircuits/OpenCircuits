@@ -1,6 +1,6 @@
 import {useRef} from "react";
 
-import {InputField} from "shared/src/components/InputField";
+import {InputField} from "shared/site/components/InputField";
 
 import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 

@@ -1,9 +1,9 @@
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {ThunkDispatch}                          from "redux-thunk";
 
-import {SharedAppState} from "shared/src/state";
+import {SharedAppState} from "shared/site/state";
 
-import {AllSharedActions} from "shared/src/state/actions";
+import {AllSharedActions} from "shared/site/state/actions";
 
 
 export const useSharedDispatch = () => useDispatch<ThunkDispatch<SharedAppState, undefined, AllSharedActions>>();

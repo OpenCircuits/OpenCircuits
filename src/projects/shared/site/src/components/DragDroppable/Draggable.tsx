@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react"
 
-import {DRAG_TIME, RIGHT_MOUSE_BUTTON} from "shared/src/utils/input/Constants";
+import {DRAG_TIME, RIGHT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
 
 import {V, Vector} from "Vector";
 
-import {useDocEvent}           from "shared/src/utils/hooks/useDocEvent";
-import {useWindowKeyDownEvent} from "shared/src/utils/hooks/useKeyDownEvent";
+import {useDocEvent}           from "shared/site/utils/hooks/useDocEvent";
+import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 
 import {DragDropHandlers} from "./DragDropHandlers";
 

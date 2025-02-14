@@ -3,9 +3,9 @@ import {V, Vector} from "Vector";
 import {Component} from "shared/api/circuit/public";
 
 import {CircuitDesigner}               from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {LEFT_MOUSE_BUTTON}             from "shared/src/utils/input/Constants";
-import {InputAdapterEvent}             from "shared/src/utils/input/InputAdapterEvent";
-import {SnapToConnections, SnapToGrid} from "shared/src/utils/SnapUtils";
+import {LEFT_MOUSE_BUTTON}             from "shared/api/circuitdesigner/input/Constants";
+import {InputAdapterEvent}             from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import {SnapToConnections, SnapToGrid} from "shared/api/circuitdesigner/utils/SnapUtils";
 import {Tool}                          from "./Tool";
 
 

@@ -1,8 +1,8 @@
 import {Wire} from "shared/api/circuit/public";
 
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {LEFT_MOUSE_BUTTON} from "shared/src/utils/input/Constants";
-import {InputAdapterEvent} from "shared/src/utils/input/InputAdapterEvent";
+import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
+import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
 import {TranslateTool} from "./TranslateTool";
 

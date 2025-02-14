@@ -1,13 +1,13 @@
 import {useEffect} from "react";
 
-import {useMainDesigner}                      from "shared/src/utils/hooks/useDesigner";
-import {useSharedDispatch, useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {ToggleDebugCullboxes, ToggleDebugNoFill,
-        ToggleDebugPressableBounds, ToggleDebugSelectionBounds} from "shared/src/state/DebugInfo";
-import {CloseHeaderMenus, OpenHeaderMenu} from "shared/src/state/Header";
+        ToggleDebugPressableBounds, ToggleDebugSelectionBounds} from "shared/site/state/DebugInfo";
+import {CloseHeaderMenus, OpenHeaderMenu} from "shared/site/state/Header";
 
-import {SwitchToggle} from "shared/src/components/SwitchToggle";
+import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 import {Dropdown} from "../Dropdown";
 

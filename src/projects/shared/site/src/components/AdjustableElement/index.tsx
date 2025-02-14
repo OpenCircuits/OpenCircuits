@@ -1,11 +1,11 @@
 import {HEADER_HEIGHT,
         ITEMNAV_HEIGHT,
-        ITEMNAV_WIDTH} from "shared/src/utils/Constants";
+        ITEMNAV_WIDTH} from "shared/site/utils/Constants";
 
 import {Rect} from "math/Rect";
 
-import {useSharedSelector} from "shared/src/utils/hooks/useShared";
-import {useWindowSize}     from "shared/src/utils/hooks/useWindowSize";
+import {useSharedSelector} from "shared/site/utils/hooks/useShared";
+import {useWindowSize}     from "shared/site/utils/hooks/useWindowSize";
 
 import {useAdjustableElement} from "./useAdjustableElement";
 

@@ -1,4 +1,4 @@
-import {SnapToGrid} from "shared/src/utils/SnapUtils";
+import {SnapToGrid} from "shared/api/circuitdesigner/utils/SnapUtils";
 
 import {Circuit} from "shared/api/circuit/public";
 

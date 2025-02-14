@@ -1,13 +1,13 @@
 import {Obj}                                from "shared/api/circuit/public";
 import React, {useEffect, useRef, useState} from "react";
 
-import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/src/utils/Constants";
+import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/site/utils/Constants";
 
 import {V} from "Vector";
 
 import {Clamp} from "math/MathUtils";
 
-import {useSharedSelector} from "shared/src/utils/hooks/useShared";
+import {useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
 

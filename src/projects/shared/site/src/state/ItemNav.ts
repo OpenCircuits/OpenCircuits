@@ -1,4 +1,4 @@
-import {CreateState} from "shared/src/utils/CreateState";
+import {CreateState} from "shared/site/utils/CreateState";
 
 import {ToggleCircuitLocked} from "./CircuitInfo";
 

@@ -1,16 +1,16 @@
 import {useLayoutEffect, useRef} from "react";
 
-import {HEADER_HEIGHT} from "shared/src/utils/Constants";
+import {HEADER_HEIGHT} from "shared/site/utils/Constants";
 
 import {V, Vector} from "Vector";
 
 import {Circuit} from "shared/api/circuit/public";
 
-import {useMainDesigner}    from "shared/src/utils/hooks/useDesigner";
-import {useSharedSelector} from "shared/src/utils/hooks/useShared";
-import {useWindowSize}     from "shared/src/utils/hooks/useWindowSize";
+import {useMainDesigner}    from "shared/site/utils/hooks/useDesigner";
+import {useSharedSelector} from "shared/site/utils/hooks/useShared";
+import {useWindowSize}     from "shared/site/utils/hooks/useWindowSize";
 
-import {Droppable} from "shared/src/components/DragDroppable/Droppable";
+import {Droppable} from "shared/site/components/DragDroppable/Droppable";
 
 import "./index.scss";
 

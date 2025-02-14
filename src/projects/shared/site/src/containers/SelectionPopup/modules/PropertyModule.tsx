@@ -1,11 +1,11 @@
 import {Circuit, Obj, Prop} from "shared/api/circuit/public";
 import {useCallback}        from "react";
 
-import {useSelectionProps} from "shared/src/containers/SelectionPopup/modules/useSelectionProps";
+import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
-import {ColorModuleInputField}  from "shared/src/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
-import {NumberModuleInputField} from "shared/src/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
-import {SelectModuleInputField} from "shared/src/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
+import {ColorModuleInputField}  from "shared/site/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
+import {NumberModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
+import {SelectModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 
 import {CircuitDesigner} from "shared/circuitdesigner";
 

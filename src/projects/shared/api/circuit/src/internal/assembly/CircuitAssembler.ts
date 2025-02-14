@@ -12,6 +12,8 @@ import {AssemblyCache, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
 import {BezierCurve} from "math/BezierCurve";
 import {HitTest} from "./PrimHitTests";
 
+import "shared/api/circuit/utils/Map";
+
 
 export type CircuitAssemblerEvent = {
     type: "onchange";

@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 
-import {InputAdapter}      from "shared/src/utils/input/InputAdapter";
-import {Key}               from "shared/src/utils/input/Key";
+import {InputAdapter}      from "shared/api/circuitdesigner/input/InputAdapter";
+import {Key}               from "shared/api/circuitdesigner/input/Key";
 import {InputAdapterEvent} from "../input/InputAdapterEvent";
 
 
