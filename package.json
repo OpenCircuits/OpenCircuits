@@ -1,7 +1,12 @@
 {
   "private": true,
   "workspaces": [
-    "src/projects/*",
+    "src/projects/shared/api/*",
+    "src/projects/shared/site",
+    "src/projects/analog/api/*",
+    "src/projects/analog/site",
+    "src/projects/digital/api/*",
+    "src/projects/digital/site",
     "src/other/pages/*"
   ],
   "type": "module",
