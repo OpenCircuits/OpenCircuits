@@ -51,7 +51,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
     // TODO[model_refactor](leon) - this is probably a hack, we most likely need to make this a transaction somehow
     protected icMetadata: Record<GUID, Schema.IntegratedCircuit["metadata"]>;
 
-    public constructor(log: CircuitLog, doc: CircuitDocument) {
+    public constructor(id: GUID, log: CircuitLog, doc: CircuitDocument) {
         super();
         this.mutableDoc = doc;
 
@@ -63,7 +63,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
 
         this.diffBuilder = new FastCircuitDiffBuilder();
 
-        this.metadata = { id: "", name: "", desc: "", thumb: "", version: "type/v0" };
+        this.metadata = { id, name: "", desc: "", thumb: "", version: "type/v0" };
         this.icMetadata = {};
 
         this.log.subscribe((evt) => {
@@ -265,8 +265,8 @@ export class CircuitInternal extends Observable<InternalEvent> {
         return this.doc.getComponentAndInfoByID(id)
             .andThen(([_, info]) => info.makePortsForConfig(id, portConfig))
             .andThen((newPorts) => this.doc.getPortsForComponent(id)
-                .andThen((oldPortIDs) => {
-                    const oldPorts = [...oldPortIDs].map((portID) => this.doc.getPortByID(portID).unwrap());
+                .andThen((oldPortIds) => {
+                    const oldPorts = [...oldPortIds].map((portId) => this.doc.getPortByID(portId).unwrap());
                     const removedPorts = oldPorts.filter((port: Schema.Port) => (port.index >= portConfig[port.group]));
 
                     // Deleted wires are all wires attached to ports with indices
@@ -290,6 +290,28 @@ export class CircuitInternal extends Observable<InternalEvent> {
                         deadWires,
                     });
                 }));
+    }
+
+    public removePortsFor(compId: GUID): Result {
+        return this.doc.getPortsForComponent(compId)
+            .andThen((oldPortIds) => {
+                const oldPorts = [...oldPortIds].map((portID) => this.doc.getPortByID(portID).unwrap());
+
+                // Deleted wires are all wires attached to ports with indices
+                // at least as high as the new config's "count" for respective groups.
+                const deadWires = oldPorts
+                    .flatMap((removedPort) => [...this.doc.getWiresForPort(removedPort.id).unwrap()])
+                    .map((removedWire) => this.doc.getWireByID(removedWire).unwrap());
+
+                return this.addTransactionOp({
+                    kind:         "SetComponentPortsOp",
+                    inverted:     false,
+                    component:    compId,
+                    addedPorts:   [],
+                    removedPorts: oldPorts,
+                    deadWires,
+                });
+            });
     }
 
     public setMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {

@@ -10,10 +10,10 @@ import {Circuit} from "shared/api/circuit/public";
 function DigitalCircuitImpl<T extends (APIToDigital<Circuit> & Record<string | number | symbol, unknown>)>(base: T) {
     return extend(base, {
         set propagationTime(val: number) {
-            throw new Error("Unimplemented!");
+            throw new Error("DigitalCircuitImpl.set propagationTime: Unimplemented!");
         },
         get propagationTime(): number {
-            throw new Error("Unimplemented!");
+            throw new Error("DigitalCircuitImpl.get propagationTime: Unimplemented!");
         },
     } as const) satisfies DigitalCircuit;
 }

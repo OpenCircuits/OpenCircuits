@@ -7,9 +7,10 @@ export function ComponentInfoImpl<T extends CircuitTypes>(
     state: CircuitState<T>,
     kind: string,
 ) {
-    const info = state.internal.doc.getComponentInfo(kind);
-    if (!info)
+    const result = state.internal.doc.getComponentInfo(kind);
+    if (!result.ok)
         throw new Error(`Failed to find component info for ${kind}!`);
+    const info = result.unwrap();
 
     return {
         kind,

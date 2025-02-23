@@ -34,10 +34,6 @@ export interface Circuit extends Observable<CircuitEvent> {
     desc: string;
     thumbnail: string;
 
-    // Other data
-    locked: boolean;
-    simEnabled: boolean;
-
     readonly selections: Selections;
 
     // Queries
@@ -60,7 +56,9 @@ export interface Circuit extends Observable<CircuitEvent> {
 
     // Object manipulation
     placeComponentAt(kind: string, pt: Vector): Component;
-    deleteObjs(objs: Obj[]): void;
+
+    // Cannot delete ports
+    deleteObjs(objs: Array<Wire | Component>): void;
 
     undo(): boolean;
     redo(): boolean;

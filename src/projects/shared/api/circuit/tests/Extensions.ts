@@ -1,5 +1,6 @@
 import {Result} from "shared/api/circuit/utils/Result";
 import crypto   from "node:crypto";
+import {Obj} from "../src/public";
 
 
 // Define crypto for Jest for uuid generation
@@ -14,9 +15,28 @@ declare global {
             toBeCloseToAngle(otherAngle: number, epsilon?: number): CustomMatcherResult;
             toBeOk(): CustomMatcherResult;
             toIncludeError(message: string): CustomMatcherResult;
+            toBeObj(obj: Obj): CustomMatcherResult;
+            toContainObjs(objs: Obj[]): CustomMatcherResult;
+            toContainObjsExact(objs: Obj[]): CustomMatcherResult;
             // toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
     }
+}
+
+function FormatObj(obj: Obj | undefined): string {
+    return `${obj?.baseKind}[${obj?.kind}](id=${obj?.id})`;
+}
+function FormatObjs(objs: Obj[]): string {
+    return `[${objs.map(FormatObj).join(", ")}]`;
+}
+function SetDifference<T>(s1: Set<T>, s2: Set<T>): Set<T> {
+    const differenceSet = new Set<T>();
+    for (const elem of s1) {
+        if (!s2.has(elem)) {
+            differenceSet.add(elem);
+        }
+    }
+    return differenceSet;
 }
 
 expect.extend({
@@ -118,6 +138,47 @@ expect.extend({
                     .join("\n - ")
                 }`,
             pass: result.error.errors.some((error) => error.message.includes(message)),
+        }
+    },
+
+    toBeObj(received: Obj | undefined, obj: Obj) {
+        return {
+            message: () => `expected ${FormatObj(received)} to equal ${FormatObj(obj)}`,
+            pass:    (received?.id === obj.id),
+        }
+    },
+
+    toContainObjs(received: Obj[], objs: Obj[]) {
+        const receivedIds = new Set(received.map((o) => o.id));
+        const objs2 = objs.filter((o) => !receivedIds.has(o.id));
+        return {
+            message: () => `missing ${FormatObjs(objs2)} from ${FormatObjs(received)}`,
+            pass:    objs2.length === 0,
+        }
+    },
+
+    toContainObjsExact(received: Obj[], objs: Obj[]) {
+        const receivedIds = new Set(received.map((o) => o.id));
+        const objsIds = new Set(objs.map((o) => o.id));
+        const receivedDiff = SetDifference(receivedIds, objsIds);
+        if (receivedDiff.size > 0) {
+            const receivedDiffsObjs = received.filter((o) => receivedDiff.has(o.id));
+            return {
+                message: () => `expected ${FormatObjs(receivedDiffsObjs)} to not be in ${FormatObjs(objs)}`,
+                pass:    false,
+            }
+        }
+        const objsDiff = SetDifference(objsIds, receivedIds);
+        if (objsDiff.size > 0) {
+            const objsDiffsObjs = objs.filter((o) => objsDiff.has(o.id));
+            return {
+                message: () => `expected ${FormatObjs(received)} to have ${FormatObjs(objsDiffsObjs)}`,
+                pass:    false,
+            }
+        }
+        return {
+            message: () => "same objects",
+            pass:    true,
         }
     },
 });

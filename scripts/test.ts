@@ -89,7 +89,7 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
         ci,
         coverage,
 
-        watch: (dirs.length === 1 && !ci) && !coverage,
+        watch: (dirPaths.length === 1 && !ci) && !coverage,
 
         collectCoverageFrom: "**/*.{js,ts,tsx}",
         coverageDirectory:   undefined,

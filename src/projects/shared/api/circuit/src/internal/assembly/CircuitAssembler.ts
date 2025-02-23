@@ -7,12 +7,13 @@ import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";
 
-import {Assembler, AssemblyReason}              from "./Assembler";
+import {Assembler, AssemblerParams, AssemblyReason}              from "./Assembler";
 import {AssemblyCache, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
 import {BezierCurve} from "math/BezierCurve";
 import {HitTest} from "./PrimHitTests";
 
 import "shared/api/circuit/utils/Map";
+import {RenderOptions} from "./RenderOptions";
 
 
 export type CircuitAssemblerEvent = {
@@ -92,7 +93,7 @@ class DirtyMap<K> {
     }
 }
 
-export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
+export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     private readonly circuit: CircuitInternal;
     private readonly selections: SelectionsManager;
 
@@ -102,7 +103,14 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
     private readonly dirtyWires: DirtyMap<GUID>;
     private readonly dirtyPorts: DirtyMap<GUID>;
 
-    public constructor(circuit: CircuitInternal, selections: SelectionsManager) {
+    protected readonly assemblers: Record<string, Assembler>;
+
+    public constructor(
+        circuit: CircuitInternal,
+        selections: SelectionsManager,
+        options: RenderOptions,
+        assemblers: (params: AssemblerParams) => Record<string, Assembler>,
+    ) {
         super();
 
         this.circuit = circuit;
@@ -119,6 +127,8 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
             wireCurves: new Map(),
             wirePrims:  new Map(),
         };
+
+        this.assemblers = assemblers({ circuit, cache: this.cache, selections, options });
 
         this.dirtyComponents = new DirtyMap();
         this.dirtyWires = new DirtyMap();
@@ -249,16 +259,35 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
     public getWireShape(wireID: GUID): Option<BezierCurve> {
         if (!this.circuit.doc.hasWire(wireID))
             return None();
+
+        // Reassemble wire if it's dirty
+        if (this.dirtyWires.has(wireID)) {
+            const wire = this.circuit.doc.getWireByID(wireID).unwrap();
+            this.getAssemblerFor(wire.kind)
+                .assemble(wire, this.dirtyWires.get(wireID)!);
+            this.dirtyWires.delete(wireID);
+        }
+
         return Some(this.cache.wireCurves.get(wireID)!);
     }
 
     public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): Option<GUID> {
+        // Must reassemble to refresh prims in caches
+        this.reassemble();
+
+        // TODO[model_refactor](leon): sort by zIndex
         for (const [id, prims] of this.cache.componentPrims) {
-            if (!filter(id)) // Skip things not in the filter
-                continue;
-            if (prims.some((prim) => HitTest(prim, pos)))
+            // Skip components not in the filter
+            if (filter(id) && prims.some((prim) => HitTest(prim, pos)))
                 return Some(id);
-            // TODO[model_refactor_api](leon): hit test the component's ports as well
+
+            // Hit test component's ports
+            for (const [portId, portPrims] of this.cache.portPrims.get(id) ?? []) {
+                if (!filter(portId))
+                    continue;
+                if (portPrims.some((prim) => HitTest(prim, pos)))
+                    return Some(portId);
+            }
         }
         for (const [id, prims] of this.cache.wirePrims) {
             if (!filter(id)) // Skip things not in the filter
@@ -273,5 +302,9 @@ export abstract class CircuitAssembler extends Observable<CircuitAssemblerEvent>
         return this.cache;
     }
 
-    protected abstract getAssemblerFor(kind: string): Assembler;
+    protected getAssemblerFor(kind: string): Assembler {
+        if (!(kind in this.assemblers))
+            throw new Error(`CircuitAssembler: Failed to get assembler for kind ${kind}! Unmapped!`);
+        return this.assemblers[kind];
+    }
 }

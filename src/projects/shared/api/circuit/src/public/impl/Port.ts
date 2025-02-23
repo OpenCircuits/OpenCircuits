@@ -58,7 +58,7 @@ export function PortImpl<T extends CircuitTypes>(
         },
 
         get path(): T["Path"] {
-            throw new Error("Unimplemented!");
+            throw new Error("Port.get path: Unimplemented!");
         },
     } as const) satisfies Omit<Port, "getLegalWires" | "connectTo">;
 }

@@ -34,8 +34,6 @@ export type CircuitTypes<
 }
 
 export interface CircuitState<T extends CircuitTypes> {
-    log: CircuitLog;
-    doc: CircuitDocument;
     internal: CircuitInternal;
     assembler: CircuitAssembler;
     selectionsManager: SelectionsManager;

@@ -70,7 +70,7 @@ export function ComponentImpl<T extends CircuitTypes>(
         },
 
         get connectedComponents(): T["Component[]"] {
-            throw new Error("Unimplemented!");
+            throw new Error("Component.connectedComponents: Unimplemented!");
         },
 
         setNumPorts(group: string, amt: number): boolean {
@@ -91,7 +91,7 @@ export function ComponentImpl<T extends CircuitTypes>(
                 ...curConfig,
                 [group]: amt,
             };
-            const isValid = internal.doc.getComponentInfo(base.kind).checkPortConfig(config);
+            const isValid = internal.doc.getComponentInfo(base.kind).unwrap().checkPortConfig(config);
             if (!isValid.ok)
                 return false;
 
@@ -105,10 +105,10 @@ export function ComponentImpl<T extends CircuitTypes>(
             return true;
         },
         firstAvailable(group: string): T["Port"] | undefined {
-            throw new Error("Unimplemented!");
+            throw new Error("Component.firstAvailable: Unimplemented!");
         },
         delete(): void {
-            throw new Error("Unimplemented!");
+            throw new Error("Component.delete: Unimplemented!");
         },
     } as const) satisfies Omit<Component, "isNode" | "info">;
 }
