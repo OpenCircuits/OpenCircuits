@@ -1,5 +1,5 @@
 import {AddErrE}            from "shared/api/circuit/utils/MultiError";
-import {Result, ResultUtil} from "shared/api/circuit/utils/Result";
+import {ErrE, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result";
 
 import {Observable} from "shared/api/circuit/utils/Observable";
 import {Schema}     from "shared/api/circuit/schema";
@@ -39,6 +39,9 @@ export class CircuitInternal extends Observable<InternalEvent> {
     public readonly log: CircuitLog;
     private clock: number;
 
+    private readonly undoStack: number[]; // Index in the `log` of the entry
+    private redoStack: number[]; // Index in the `log` of the entry
+
     // Keep track of multiple "begin"/"commit" pairs and only commit when counter reaches zero.
     private transactionCounter: number;
     private transactionOps: CircuitOp[];
@@ -61,11 +64,15 @@ export class CircuitInternal extends Observable<InternalEvent> {
         this.transactionCounter = 0;
         this.transactionOps = [];
 
+        this.undoStack = [];
+        this.redoStack = [];
+
         this.diffBuilder = new FastCircuitDiffBuilder();
 
         this.metadata = { id, name: "", desc: "", thumb: "", version: "type/v0" };
         this.icMetadata = {};
 
+        // NOTE: THIS IS _COMPLETELY UNUSED_ AT THE MOMENT SINCE THERE IS NO REMOTE
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
             // Optimization: If there are no remote entries then the ops are already applied.
@@ -83,26 +90,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
         });
     }
 
-
-    private publishDiffEvent() {
-        const diff = this.diffBuilder.build();
-        this.diffBuilder = new FastCircuitDiffBuilder();
-        this.publish({ type: "CircuitOp", diff });
-    }
-
-    private applyOp(op: CircuitOp): Result {
-        return this.mutableDoc.applyOp(op)
-            .map(() => this.diffBuilder.applyOp(op));
-    }
-
-    private applyOpsChecked(ops: readonly CircuitOp[]): void {
-        // TODO: If any exceptions are thrown by applying server-provided ops, this is a BUG
-        //  and the site should force reload to get back to a consistent state.
-        ResultUtil.mapIter(ops.values(), (op) => this.applyOp(op))
-            .mapErr(AddErrE("Internal applyOp failed!  Client state is inconsistent!"))
-            .unwrap();
-    }
-
+    // NOTE THIS IS UNUSED SINCE THERE IS NO REMOTE
     private transformTransaction(ops: readonly CircuitOp[]): void {
         // Revert tx ops
         this.applyOpsChecked(this.transactionOps.map(InvertCircuitOp).reverse());
@@ -127,14 +115,24 @@ export class CircuitInternal extends Observable<InternalEvent> {
             });
     }
 
-    private endTransactionHelper<T>(f: (txOps: CircuitOp[]) => T): T | undefined {
-        // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
-        this.transactionCounter = 0;
-        if (this.transactionOps.length > 0) {
-            const txOps = this.transactionOps;
-            this.transactionOps = [];
-            return f(txOps);
-        }
+
+    private publishDiffEvent() {
+        const diff = this.diffBuilder.build();
+        this.diffBuilder = new FastCircuitDiffBuilder();
+        this.publish({ type: "CircuitOp", diff });
+    }
+
+    private applyOp(op: CircuitOp): Result {
+        return this.mutableDoc.applyOp(op)
+            .map(() => this.diffBuilder.applyOp(op));
+    }
+
+    private applyOpsChecked(ops: readonly CircuitOp[]): void {
+        // TODO: If any exceptions are thrown by applying server-provided ops, this is a BUG
+        //  and the site should force reload to get back to a consistent state.
+        ResultUtil.mapIter(ops.values(), (op) => this.applyOp(op))
+            .mapErr(AddErrE("Internal applyOp failed!  Client state is inconsistent!"))
+            .unwrap();
     }
 
     //
@@ -155,19 +153,60 @@ export class CircuitInternal extends Observable<InternalEvent> {
         if (--this.transactionCounter > 0)
             return;
 
-        return this.endTransactionHelper((txOps) => {
-            // Sanity check: Clock should be kept updated by the event handler.
-            if (this.clock !== this.log.clock)
-                throw new Error(`Unexpected clock difference (${this.clock} vs ${this.log.clock})`
-                                + ". Maybe a missed event?");
-            return this.log.propose(txOps, clientData);
-        });
+        // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
+        this.transactionCounter = 0;
+        if (this.transactionOps.length === 0)
+            return;
+
+        const txOps = this.transactionOps;
+        this.transactionOps = [];
+        // Sanity check: Clock should be kept updated by the event handler.
+        if (this.clock !== this.log.clock)
+            throw new Error(`Unexpected clock difference (${this.clock} vs ${this.log.clock})`
+                            + ". Maybe a missed event?");
+
+        // Add entry to undo stack and clear redo stack
+        this.undoStack.push(this.log.length);
+        this.redoStack = [];
+
+        return this.log.propose(txOps, clientData);
     }
 
     public cancelTransaction(): void {
-        this.endTransactionHelper((txOps) => {
-            this.applyOpsChecked(txOps.reverse().map(InvertCircuitOp));
-        });
+        // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
+        this.transactionCounter = 0;
+        if (this.transactionOps.length === 0)
+            return;
+
+        const txOps = this.transactionOps;
+        this.transactionOps = [];
+        this.applyOpsChecked(txOps.reverse().map(InvertCircuitOp));
+    }
+
+    public undo(): Result {
+        if (this.isTransaction())
+            return ErrE("Cannot undo while currently within a transaction!");
+        if (this.undoStack.length === 0)
+            return OkVoid();
+
+        const lastEntryIndex = this.undoStack.pop()!;
+        this.redoStack.push(lastEntryIndex);
+        this.applyOpsChecked(this.log.entries[lastEntryIndex].ops.map(InvertCircuitOp).reverse());
+
+        return OkVoid();
+    }
+
+    public redo(): Result {
+        if (this.isTransaction())
+            return ErrE("Cannot redo while currently within a transaction!");
+        if (this.redoStack.length === 0)
+            return OkVoid();
+
+        const lastEntryIndex = this.redoStack.pop()!;
+        this.undoStack.push(lastEntryIndex);
+        this.applyOpsChecked(this.log.entries[lastEntryIndex].ops);
+
+        return OkVoid();
     }
 
     // Check this before working with long-running transactions.  Long-running transactions are any transaction that

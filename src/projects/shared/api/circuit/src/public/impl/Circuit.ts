@@ -159,32 +159,23 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
                 .map((c) => c.id));
 
             // Delete wires first
-            for (const wireId of wireIds) {
-                const r = state.internal.deleteWire(wireId);
-                if (!r.ok)
-                    throw r.error;
-            }
+            for (const wireId of wireIds)
+                state.internal.deleteWire(wireId).unwrap();
 
             // Then remove all ports for each component, then delete them
-            for (const compId of compIds) {
-                const r = state.internal.removePortsFor(compId);
-                if (!r.ok)
-                    throw r.error;
-            }
-            for (const compId of compIds) {
-                const r = state.internal.deleteComponent(compId);
-                if (!r.ok)
-                    throw r.error;
-            }
+            for (const compId of compIds)
+                state.internal.removePortsFor(compId).unwrap();
+            for (const compId of compIds)
+                state.internal.deleteComponent(compId).unwrap();
 
             this.commitTransaction();
         },
 
-        undo(): boolean {
-            throw new Error("Circuit.undo: Unimplemented!");
+        undo(): void {
+            state.internal.undo().unwrap();
         },
-        redo(): boolean {
-            throw new Error("Circuit.redo: Unimplemented!");
+        redo(): void {
+            state.internal.redo().unwrap();
         },
 
         copy(): CircuitT {

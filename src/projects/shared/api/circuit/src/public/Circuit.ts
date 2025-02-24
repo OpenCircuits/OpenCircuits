@@ -56,12 +56,11 @@ export interface Circuit extends Observable<CircuitEvent> {
 
     // Object manipulation
     placeComponentAt(kind: string, pt: Vector): Component;
-
     // Cannot delete ports
     deleteObjs(objs: Array<Wire | Component>): void;
 
-    undo(): boolean;
-    redo(): boolean;
+    undo(): void;
+    redo(): void;
 
     copy(): Circuit;
 

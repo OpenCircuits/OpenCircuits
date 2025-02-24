@@ -317,4 +317,149 @@ describe("RootCircuit", () => {
             expect(() => w.setProp("name", "test")).toThrow();
         });
     });
+
+    describe("Undo/Redo", () => {
+        describe("Place Component", () => {
+            test("Basic 1 Component", () => {
+                const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
+
+                const [c] = PlaceAt(V(0, 0));
+
+                expect(circuit.getObjs()).toHaveLength(2);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+
+                circuit.undo();
+
+                expect(circuit.getObjs()).toHaveLength(0);
+                expect(circuit.getObj(c.id)).toBeUndefined();
+                // expect(() => c.setProp("name", "test")).toThrow();
+
+                circuit.redo();
+
+                expect(circuit.getObjs()).toHaveLength(2);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+            });
+            test("Basic 2 Components in transaction", () => {
+                const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
+
+                circuit.beginTransaction();
+                const [c, c2] = PlaceAt(V(0, 0), V(5, 0));
+                circuit.commitTransaction();
+
+                expect(circuit.getObjs()).toHaveLength(4);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+
+                circuit.undo()
+
+                expect(circuit.getObjs()).toHaveLength(0);
+                expect(circuit.getObj(c.id)).toBeUndefined();
+                expect(circuit.getObj(c2.id)).toBeUndefined();
+                // expect(() => c.setProp("name", "test")).toThrow();
+                // expect(() => c2.setProp("name", "test")).toThrow();
+
+                circuit.redo();
+
+                expect(circuit.getObjs()).toHaveLength(4);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+            });
+            test("Basic 2 Components in succession", () => {
+                const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
+
+                const [c, c2] = PlaceAt(V(0, 0), V(5, 0));
+
+                expect(circuit.getObjs()).toHaveLength(4);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+
+                circuit.undo()
+
+                expect(circuit.getObjs()).toHaveLength(2);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeUndefined();
+                // expect(() => c2.setProp("name", "test")).toThrow();
+
+                circuit.redo();
+
+                expect(circuit.getObjs()).toHaveLength(4);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+
+                circuit.undo();
+
+                expect(circuit.getObjs()).toHaveLength(2);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeUndefined();
+                // expect(() => c2.setProp("name", "test")).toThrow();
+
+                circuit.undo();
+
+                expect(circuit.getObjs()).toHaveLength(0);
+                expect(circuit.getObj(c.id)).toBeUndefined();
+                expect(circuit.getObj(c2.id)).toBeUndefined();
+                // expect(() => c.setProp("name", "test")).toThrow();
+                // expect(() => c2.setProp("name", "test")).toThrow();
+            });
+        });
+
+        describe("Connect Wire", () => {
+            test("Basic 1 Wire", () => {
+                const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+
+                const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
+                            w = Connect(c, c2);
+
+                expect(circuit.getObjs()).toHaveLength(5);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(circuit.getObj(w.id)).toBeObj(w);
+
+                circuit.undo()
+
+                expect(circuit.getObjs()).toHaveLength(4);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(circuit.getObj(w.id)).toBeUndefined();
+                // expect(() => w.setProp("name", "test")).toThrow();
+
+                circuit.redo();
+
+                expect(circuit.getObjs()).toHaveLength(5);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(circuit.getObj(w.id)).toBeObj(w);
+            });
+            test("Components and Wire creation in transaction", () => {
+                const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+
+                circuit.beginTransaction();
+                const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
+                            w = Connect(c, c2);
+                circuit.commitTransaction();
+
+                expect(circuit.getObjs()).toHaveLength(5);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(circuit.getObj(w.id)).toBeObj(w);
+
+                circuit.undo()
+
+                expect(circuit.getObjs()).toHaveLength(0);
+                expect(circuit.getObj(c.id)).toBeUndefined();
+                expect(circuit.getObj(c2.id)).toBeUndefined();
+                expect(circuit.getObj(w.id)).toBeUndefined();
+                // expect(() => c.setProp("name", "test")).toThrow();
+                // expect(() => c2.setProp("name", "test")).toThrow();
+                // expect(() => w.setProp("name", "test")).toThrow();
+
+                circuit.redo();
+
+                expect(circuit.getObjs()).toHaveLength(5);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(circuit.getObj(w.id)).toBeObj(w);
+            });
+        });
+    });
 });
