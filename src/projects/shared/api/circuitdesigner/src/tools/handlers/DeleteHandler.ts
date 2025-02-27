@@ -11,7 +11,7 @@ export const DeleteHandler: ToolHandler = {
         if (circuit.selections.isEmpty)
             return ToolHandlerResponse.PASS;
 
-        circuit.deleteObjs(circuit.selections.all);
+        circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;

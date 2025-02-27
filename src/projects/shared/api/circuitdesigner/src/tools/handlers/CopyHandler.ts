@@ -22,20 +22,21 @@ export const CopyHandler: ToolHandler = {
         if (circuit.selections.isEmpty)
             return ToolHandlerResponse.PASS;
 
-        const str = circuit.serialize(circuit.selections.all);
+        // TODO
+        // const str = circuit.serialize(circuit.selections.all);
 
-        const clipboardData = ev.ev.clipboardData;
-        if (!clipboardData)
-            throw new Error("CopyHandler failed: ev.clipboardData is null!");
+        // const clipboardData = ev.ev.clipboardData;
+        // if (!clipboardData)
+        //     throw new Error("CopyHandler failed: ev.clipboardData is null!");
 
-        // We don't copy the data from the json since it will cause
-        // some weird error, which will cause the issue #746
-        clipboardData.setData("text/plain", str);
-        ev.ev.preventDefault(); // Necessary to copy correctly
+        // // We don't copy the data from the json since it will cause
+        // // some weird error, which will cause the issue #746
+        // clipboardData.setData("text/plain", str);
+        // ev.ev.preventDefault(); // Necessary to copy correctly
 
-        // Delete selections if cutting
-        if (ev.type === "cut")
-            circuit.deleteObjs(circuit.selections.all);
+        // // Delete selections if cutting
+        // if (ev.type === "cut")
+        //     circuit.deleteObjs(circuit.selections.all);
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;
