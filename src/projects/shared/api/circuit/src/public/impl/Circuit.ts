@@ -178,20 +178,16 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
             state.internal.redo().unwrap();
         },
 
-        copy(): CircuitT {
-            throw new Error("Circuit.copy: Unimplemented!");
-        },
+        // reset(): void {
+        //     throw new Error("Circuit.reset: Unimplemented!");
+        // },
 
-        reset(): void {
-            throw new Error("Circuit.reset: Unimplemented!");
-        },
-
-        serialize(objs?: T["Obj[]"]): string {
-            throw new Error("Circuit.serialize: Unimplemented!");
-        },
-        deserialize(data: string): void {
-            throw new Error("Circuit.deserialize: Unimplemented!");
-        },
+        // serialize(objs?: T["Obj[]"]): string {
+        //     throw new Error("Circuit.serialize: Unimplemented!");
+        // },
+        // deserialize(data: string): void {
+        //     throw new Error("Circuit.deserialize: Unimplemented!");
+        // },
     }) satisfies Circuit;
 
     return circuit;

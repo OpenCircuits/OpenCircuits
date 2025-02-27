@@ -240,15 +240,16 @@ export class CircuitInternal extends Observable<InternalEvent> {
     public placeComponent(kind: string, props: Schema.Component["props"]): Result<GUID> {
         const id = Schema.uuid();
         return this.addTransactionOp({
-            kind:     "PlaceComponentOp",
-            inverted: false,
-            c:        {
-                baseKind: "Component",
-                kind:     kind,
-                id:       id,
-                props:    { ...props }, // Copy non-trivial object
-            },
-        }).map(() => id);
+                kind:     "PlaceComponentOp",
+                inverted: false,
+                c:        {
+                    baseKind: "Component",
+                    kind:     kind,
+                    id:       id,
+                    props:    { ...props }, // Copy non-trivial object
+                },
+            }).map(() => id)
+            .uponErr(() => this.cancelTransaction());
     }
 
     // public replaceComponent(id: GUID, newKind: string): void {
@@ -264,20 +265,22 @@ export class CircuitInternal extends Observable<InternalEvent> {
                     kind:     "PlaceComponentOp",
                     inverted: true,
                     c, // No copy needed
-                }));
+                }))
+            .uponErr(() => this.cancelTransaction());
     }
 
     public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"] = {}): Result<GUID> {
         const id = Schema.uuid();
         return this.addTransactionOp({
-            kind:     "ConnectWireOp",
-            inverted: false,
-            w:        {
-                baseKind: "Wire",
-                props:    { ...props }, // Copy non-trivial object
-                kind, id, p1, p2,
-            },
-        }).map(() => id);
+                kind:     "ConnectWireOp",
+                inverted: false,
+                w:        {
+                    baseKind: "Wire",
+                    props:    { ...props }, // Copy non-trivial object
+                    kind, id, p1, p2,
+                },
+            }).map(() => id)
+            .uponErr(() => this.cancelTransaction());
     }
 
     public deleteWire(id: GUID): Result {
@@ -287,7 +290,8 @@ export class CircuitInternal extends Observable<InternalEvent> {
                     kind:     "ConnectWireOp",
                     inverted: true,
                     w, // No copy needed
-                }));
+                }))
+            .uponErr(() => this.cancelTransaction());
     }
 
     public setPropFor<
@@ -297,7 +301,8 @@ export class CircuitInternal extends Observable<InternalEvent> {
         // NOTE: applyOp will check the ComponentInfo that it is the correct type
         return this.doc.getObjByID(id)
             .andThen((obj) => this.addTransactionOp(
-                { id, kind: "SetPropertyOp", key, oldVal: obj.props[key], newVal }));
+                { id, kind: "SetPropertyOp", key, oldVal: obj.props[key], newVal }))
+            .uponErr(() => this.cancelTransaction());
     }
 
     public setPortConfig(id: GUID, portConfig: PortConfig): Result {
@@ -328,7 +333,8 @@ export class CircuitInternal extends Observable<InternalEvent> {
                         removedPorts,
                         deadWires,
                     });
-                }));
+                }))
+            .uponErr(() => this.cancelTransaction());
     }
 
     public removePortsFor(compId: GUID): Result {
@@ -350,7 +356,8 @@ export class CircuitInternal extends Observable<InternalEvent> {
                     removedPorts: oldPorts,
                     deadWires,
                 });
-            });
+            })
+            .uponErr(() => this.cancelTransaction());
     }
 
     public setMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {

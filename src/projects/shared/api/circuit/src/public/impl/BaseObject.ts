@@ -67,9 +67,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
 
         setProp(key: string, val: Prop): void {
             state.internal.beginTransaction();
-            const result = state.internal.setPropFor(objID, key, val);
-            if (!result.ok)
-                throw result.error;
+            state.internal.setPropFor(objID, key, val).unwrap();
             state.internal.commitTransaction();
         },
         getProp(key: string): Prop | undefined {

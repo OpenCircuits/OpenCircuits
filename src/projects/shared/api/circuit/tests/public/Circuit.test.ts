@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import "../Extensions";
 
 import {V} from "Vector";
 
-import {Circuit} from "shared/api/circuit/public";
+import {Circuit, Obj} from "shared/api/circuit/public";
 
 import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
 
@@ -332,6 +334,7 @@ describe("RootCircuit", () => {
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();
+                // Need to make sure that any errors that are thrown cancel transactions or something!
                 // expect(() => c.setProp("name", "test")).toThrow();
 
                 circuit.redo();
@@ -378,7 +381,7 @@ describe("RootCircuit", () => {
                 expect(circuit.getObjs()).toHaveLength(2);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeUndefined();
-                // expect(() => c2.setProp("name", "test")).toThrow();
+                expect(() => c2.setProp("name", "test")).toThrow();
 
                 circuit.redo();
 
@@ -391,15 +394,15 @@ describe("RootCircuit", () => {
                 expect(circuit.getObjs()).toHaveLength(2);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeUndefined();
-                // expect(() => c2.setProp("name", "test")).toThrow();
+                expect(() => c2.setProp("name", "test")).toThrow();
 
                 circuit.undo();
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();
                 expect(circuit.getObj(c2.id)).toBeUndefined();
-                // expect(() => c.setProp("name", "test")).toThrow();
-                // expect(() => c2.setProp("name", "test")).toThrow();
+                expect(() => c.setProp("name", "test")).toThrow();
+                expect(() => c2.setProp("name", "test")).toThrow();
             });
         });
 
@@ -421,7 +424,7 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeUndefined();
-                // expect(() => w.setProp("name", "test")).toThrow();
+                expect(() => w.setProp("name", "test")).toThrow();
 
                 circuit.redo();
 
@@ -449,9 +452,9 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c.id)).toBeUndefined();
                 expect(circuit.getObj(c2.id)).toBeUndefined();
                 expect(circuit.getObj(w.id)).toBeUndefined();
-                // expect(() => c.setProp("name", "test")).toThrow();
-                // expect(() => c2.setProp("name", "test")).toThrow();
-                // expect(() => w.setProp("name", "test")).toThrow();
+                expect(() => c.setProp("name", "test")).toThrow();
+                expect(() => c2.setProp("name", "test")).toThrow();
+                expect(() => w.setProp("name", "test")).toThrow();
 
                 circuit.redo();
 
@@ -461,5 +464,55 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(w.id)).toBeObj(w);
             });
         });
+
+        // TODO: All other operations
     });
+
+    // describe("Copy", () => {
+    //     function expectObjsToBeSame(o1: Obj, o2: Obj) {
+    //         expect(o1.baseKind).toEqual(o2.baseKind);
+    //         expect(o1.kind).toEqual(o2.kind);
+    //         expect(o1.getProps()).toEqual(o2.getProps());
+    //         if (o1.baseKind === "Port" && o2.baseKind === "Port") {
+    //             expect(o1.group).toEqual(o2.group);
+    //             expect(o1.index).toEqual(o2.index);
+    //         }
+    //     }
+
+    //     test("Basic Circuit Copy", () => {
+    //         const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+
+    //         const [c1, c2, c3] = PlaceAt(V(0, -5), V(0, 5), V(5, 0));
+    //         const w1 = Connect(c1, c2),
+    //               w2 = Connect(c2, c3),
+    //               w3 = Connect(c3, c1);
+
+    //         c1.name = "Comp 1";
+    //         c2.name = "Comp 2";
+    //         c3.name = "Comp 3";
+    //         w1.name = "Wire 1";
+    //         w2.name = "Wire 2";
+    //         w3.name = "Wire 3";
+
+    //         const circuit2 = circuit.copy();
+
+    //         expect(circuit2.getObjs()).toHaveLength(circuit.getObjs().length);
+
+    //         const c1_2 = circuit2.pickComponentAt(V(0, -5))!,
+    //               c2_2 = circuit2.pickComponentAt(V(0,  5))!,
+    //               c3_2 = circuit2.pickComponentAt(V(5,  0))!;
+    //         expectObjsToBeSame(c1_2, c1);
+    //         expectObjsToBeSame(c2_2, c2);
+    //         expectObjsToBeSame(c3_2, c3);
+
+    //         const w1_2 = circuit2.pickWireAt(V(0,  0))!,
+    //               w2_2 = circuit2.pickWireAt(V(3,  2))!,
+    //               w3_2 = circuit2.pickWireAt(V(3, -2))!;
+    //         expectObjsToBeSame(w1_2, w1);
+    //         expectObjsToBeSame(w2_2, w2);
+    //         expectObjsToBeSame(w3_2, w3);
+    //     });
+    // });
+
+
 });
