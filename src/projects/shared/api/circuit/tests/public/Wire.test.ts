@@ -9,10 +9,12 @@ import {Circuit, Obj} from "shared/api/circuit/public";
 import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
 
 
-describe("Component", () => {
+describe("Wire", () => {
     describe("Bounds", () => {
         // Test ideas:
-        // Bounds for the TestComp are 1x1 I think
+        // Check bounds for test circuit and make sure they're right
+        //  > Wires you'll have to do some math but placing components horizontally and connecting them
+        //  should lead to straightforward bounds
     });
 
     describe("Name", () => {
@@ -40,37 +42,33 @@ describe("Component", () => {
 
     describe("Props", () => {
         // Test ideas:
-        // For comp should all have name/zIndex/x/y/angle
+        // For wire should all have name/zIndex/color
         // Setting an invalid prop should error
         // Getting an invalid prop should return undefined
     });
 
-    describe("Transform", () => {
-        // Test ideas:
-        // Making sure default x/y/pos/angle are 0s
-        // Setting positions => getting position
-        // Undo/redo settings positions
-    });
-
-    describe("isNode", () => {
-        // Idk
-    });
-
     describe("Ports", () => {
         // Test ideas:
-        // Maybe make a new helper to create a circuit with a specific set of port groups
-        // make sure `.ports` has the correct groups and number of ports in each group
-        // make sure allPorts has the correct number of ports
-        // in each of these you can `setNumPorts` as well maybe?
-        // Also test firstAvailable in here
+        // Make sure connected ports (p1, p2) are as expected
     });
 
-    // TODO: Do we even want this in the API?
-    // describe("Connected Components", () => {
+    // TODO: Do we even want this in the API
+    // describe("Path", () => {
+    //     ///
     // });
+
+    describe("Split", () => {
+        // Test ideas:
+        // Make sure split actually works, the wire that was "split" shouldn't exist afterwards (I think)
+        //  (.exist return false)
+        // Make sure undo/redo works
+        // Undoing should make the original wire exist again
+        // Make sure connected ports (p1, p2) are as expected throughout
+    });
 
     describe("Delete", () => {
         // Test ideas:
-        // Deleting components and undoing it
+        // Deleting wire should work and undo/redo
+        // Deletion after splitting and stuff should be tested too
     });
 });
