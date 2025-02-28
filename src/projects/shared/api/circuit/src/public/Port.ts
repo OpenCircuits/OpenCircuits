@@ -8,8 +8,10 @@ import {Wire}            from "./Wire";
 
 export namespace Port {
     export interface LegalWiresQuery {
-        readonly isEmpty: boolean;
+        // Returns true if the given port has available space for more wires
+        readonly isWireable: boolean;
 
+        // Returns true if the given port can wire to the given `port`.
         contains(port: Port): boolean;
     }
 }

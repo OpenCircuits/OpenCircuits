@@ -66,8 +66,8 @@ export function TestPortImpl(circuit: Circuit, state: CircuitState<CircuitTypes>
         },
         getLegalWires(): Port.LegalWiresQuery {
             return {
-                isEmpty:  false,
-                contains: (_: Port) => (true),
+                isWireable: true,
+                contains:   (_: Port) => (true),
             }
         },
     } as const) satisfies Port;

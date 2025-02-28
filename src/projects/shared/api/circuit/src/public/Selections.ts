@@ -24,7 +24,7 @@ export interface Selections extends Observable<SelectionsEvent> {
      * as a Vector object.
      *
      * @returns A Vector object where x and y are the averages
-     *          of the positions of the selected components.
+     *  of the positions of the selected components.
      */
     midpoint(): Vector;
 
