@@ -20,7 +20,9 @@ export const SelectPathHandler: ToolHandler = {
                     if (obj.isNode())
                         return obj.path;
                     // For other components, return all of the components that are connected
-                    return [obj, ...obj.connectedComponents];
+                    // TODO: Get connected components
+                    // return [obj, ...obj.connectedComponents];
+                    throw new Error("SelectPathHandler: Component Unimplemented!");
                 case "Wire":
                     // For wires, return the path they are apart of
                     return obj.path;

@@ -69,9 +69,9 @@ export function ComponentImpl<T extends CircuitTypes>(
                 .map((id) => constructPort(id));
         },
 
-        get connectedComponents(): T["Component[]"] {
-            throw new Error("Component.connectedComponents: Unimplemented!");
-        },
+        // get connectedComponents(): T["Component[]"] {
+        //     throw new Error("Component.connectedComponents: Unimplemented!");
+        // },
 
         setNumPorts(group: string, amt: number): boolean {
             // TODO[model_refactor](leon) revisit this and decide on a functionality
