@@ -7,7 +7,7 @@ export interface PlaceComponentOp {
     kind: "PlaceComponentOp";
     inverted: boolean;
     c: Schema.Component;
-    // Components are born without ports.  This helps reduce complexity of individual ops
+    // Components are born without ports. This helps reduce complexity of individual ops
     // and does not introduce any problematic intermediary states.
 }
 

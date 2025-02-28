@@ -43,7 +43,7 @@ export function WireImpl<T extends CircuitTypes>(
 
         // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
         get path(): T["Path"] {
-            throw new Error("Unimplemented!");
+            throw new Error("Wire.get path: Unimplemented!");
         },
 
         split(): { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] } {
@@ -69,7 +69,7 @@ export function WireImpl<T extends CircuitTypes>(
         },
 
         delete(): void {
-            throw new Error("Unimplemented!");
+            throw new Error("Wire.delete: Unimplemented!");
         },
     } as const) satisfies Wire;
 }

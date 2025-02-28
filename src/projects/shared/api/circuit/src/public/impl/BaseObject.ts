@@ -48,10 +48,10 @@ export function BaseObjectImpl<T extends CircuitTypes>(
             return state.selectionsManager.has(objID);
         },
         set zIndex(val: number) {
-            throw new Error("Unimplemented!");
+            state.internal.setPropFor(objID, "zIndex", val);
         },
         get zIndex(): number {
-            throw new Error("Unimplemented!");
+            return getObj().props["zIndex"] ?? 0;
         },
 
         select(): void {
@@ -67,7 +67,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
 
         setProp(key: string, val: Prop): void {
             state.internal.beginTransaction();
-            state.internal.setPropFor(objID, key, val);
+            state.internal.setPropFor(objID, key, val).unwrap();
             state.internal.commitTransaction();
         },
         getProp(key: string): Prop | undefined {

@@ -131,7 +131,7 @@ export function CameraImpl<T extends CircuitTypes>(
         },
 
         zoomToFit(objs: T["Obj[]"], margin?: Margin, padRatio?: number): void {
-            throw new Error("Unimplemented!");
+            throw new Error("Camera.zoomToFit: Unimplemented!");
         },
     }) satisfies Camera;
 

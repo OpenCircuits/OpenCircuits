@@ -5,6 +5,7 @@ import {Schema} from "shared/api/circuit/schema";
 import {GUID}              from "..";
 import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";
 import {PortPos} from "./AssemblyCache";
+import {Prim} from "./Prim";
 
 
 export type PartialPortPos = {
@@ -76,7 +77,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
             const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
 
             // Re-assemble all prims
-            const prims = [...ports].flatMap((portID) => {
+            const prims = [...ports].map((portID) => {
                 // Transform all local port positions to new parent transform
                 const pos = this.calcWorldPos(parent.id, portID);
                 this.cache.portPositions.set(portID, pos);
@@ -85,29 +86,31 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 const selected = this.selections.has(portID);
                 const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
                 return [
-                    {
-                        kind:  "Line",
-                        p1:    pos.origin,
-                        p2:    pos.target,
-                        style: lineStyle,
-                    },
-                    {
-                        kind:   "Circle",
-                        pos:    pos.target,
-                        radius: this.options.defaultPortRadius,
-                        style:  circleStyle,
-                    },
-                ] as const;
+                    portID,
+                    [
+                        {
+                            kind:  "Line",
+                            p1:    pos.origin,
+                            p2:    pos.target,
+                            style: lineStyle,
+                        },
+                        {
+                            kind:   "Circle",
+                            pos:    pos.target,
+                            radius: this.options.defaultPortRadius,
+                            style:  circleStyle,
+                        },
+                    ],
+                ] satisfies [GUID, Prim[]];
             });
 
-            this.cache.portPrims.set(parent.id, prims);
+            this.cache.portPrims.set(parent.id, new Map<GUID, Prim[]>(prims));
         } else if (selectionChanged) {
             const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
             const prims = this.cache.portPrims.get(parent.id)!;
 
-            [...ports].forEach((portID, i) => {
-                const line   = prims[2*i];
-                const circle = prims[2*i + 1];
+            [...ports].forEach((portID) => {
+                const [line, circle] = prims.get(portID)!;
 
                 if (line.kind !== "Line" || circle.kind !== "Circle") {
                     console.error(`Invalid prim type in PortAssembler! ${line.kind}, ${circle.kind}`);

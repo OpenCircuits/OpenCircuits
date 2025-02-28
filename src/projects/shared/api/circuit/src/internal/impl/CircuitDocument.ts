@@ -1,17 +1,16 @@
 import {AddErrE}                              from "shared/api/circuit/utils/MultiError";
 import {ErrE, Ok, OkVoid, Result, WrapResOrE} from "shared/api/circuit/utils/Result";
 
-import {GUID} from "shared/api/circuit/schema/GUID";
+import {GUID}   from "shared/api/circuit/schema/GUID";
+import {Schema} from "shared/api/circuit/schema";
 
-import {Schema} from "../../schema";
-
-import {CircuitOp, ConnectWireOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp}       from "./CircuitOps";
-import {CheckPortList, ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ComponentInfo";
+import {CircuitOp, ConnectWireOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp} from "./CircuitOps";
+import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig}          from "./ComponentInfo";
 
 
 export interface ReadonlyCircuitDocument {
-    getObjectInfo(kind: string): ObjInfo;
-    getComponentInfo(kind: string): ComponentInfo;
+    getObjectInfo(kind: string): Result<ObjInfo>;
+    getComponentInfo(kind: string): Result<ComponentInfo>;
 
     getObjectAndInfoByID(id: GUID): Result<[Readonly<Schema.Obj>, ObjInfo]>;
     getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentInfo]>;
@@ -135,7 +134,9 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
 
     private getMutObjectAndInfoByID(id: GUID): Result<[Schema.Obj, ObjInfo]> {
         return this.getMutableObjByID(id)
-            .map((obj) => [obj, this.getObjectInfo(obj.kind)]);
+            .andThen((obj) =>
+                this.getObjectInfo(obj.kind)
+                    .map((info) => [obj, info]));
     }
 
     //
@@ -182,22 +183,15 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
         }
     }
 
+    // NOTE: This operation does NOT check the given port configuration for correctness.
+    // It assumes any configuration of added/removed ports is fine.
+    // Checking it against a component's info should be done prior to calling this method.
     public setComponentPorts(op: SetComponentPortsOp): Result {
         const addedPorts = op.inverted ? op.removedPorts : op.addedPorts;
         const removedPorts = op.inverted ? op.addedPorts : op.removedPorts;
-        const removedPortIds = new Set(removedPorts.map((p) => p.id));
 
-        return this.getComponentAndInfoByID(op.component)
-            .andThen(([_, info]) => this.getPortsForComponent(op.component)
-                // Filter removed ports
-                .map((portIds) => [...portIds]
-                    .filter((p) => !removedPortIds.has(p))
-                    .map((p) => this.getPortByID(p).unwrap()))
-                // Inject added ports
-                .map((ports) => [...ports, ...addedPorts])
-                .andThen((newPorts) => CheckPortList(info, newPorts)
-                    .mapErr(AddErrE(`Invalid new port list ${newPorts} for component ${op.component}`))))
-            .uponOk(() => {
+        return this.getCompByID(op.component)
+            .map((_) => {
                 if (!op.inverted)
                     op.deadWires.forEach((w) => this.deleteWire(w));
                 removedPorts.forEach((p) => this.deletePort(p));
@@ -231,27 +225,25 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
     // Getters.  Returned objects should not be modified directly.
     //
 
-    public getObjectInfo(kind: string): ObjInfo {
-        const info = this.objInfo.get(kind);
-        if (!info)
-            throw new Error(`Unknown obj type ${kind}!`);
-        return info;
+    public getObjectInfo(kind: string): Result<ObjInfo> {
+        return WrapResOrE(this.objInfo.get(kind), `Unknown obj type ${kind}!`);
     }
-    public getComponentInfo(kind: string): ComponentInfo {
-        const info = this.objInfo.getComponent(kind);
-        if (!info)
-            throw new Error(`Unknown component type ${kind}!`);
-        return info;
+    public getComponentInfo(kind: string): Result<ComponentInfo> {
+        return WrapResOrE(this.objInfo.getComponent(kind), `Unknown component type ${kind}!`);
     }
 
     public getObjectAndInfoByID(id: GUID): Result<[Readonly<Schema.Obj>, ObjInfo]> {
         return this.getObjByID(id)
-            .map((obj) => [obj, this.getObjectInfo(obj.kind)]);
+            .andThen((obj) =>
+                this.getObjectInfo(obj.kind)
+                    .map((info) => [obj, info]));
     }
 
     public getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentInfo]> {
         return this.getCompByID(id)
-            .map((c) => [c, this.getComponentInfo(c.kind)]);
+            .andThen((comp) =>
+                this.getComponentInfo(comp.kind)
+                    .map((info) => [comp, info]));
     }
 
     private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {

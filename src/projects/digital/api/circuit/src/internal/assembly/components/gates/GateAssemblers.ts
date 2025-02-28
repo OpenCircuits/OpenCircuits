@@ -85,6 +85,6 @@ export class GateAssembler extends ComponentAssembler {
         ]);
 
         this.sim = sim;
-        this.info = this.circuit.doc.getObjectInfo(kind) as DigitalComponentInfo;
+        this.info = this.circuit.doc.getObjectInfo(kind).unwrap() as DigitalComponentInfo;
     }
 }

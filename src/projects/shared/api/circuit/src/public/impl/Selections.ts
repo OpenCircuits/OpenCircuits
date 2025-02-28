@@ -75,7 +75,7 @@ export function SelectionsImpl<T extends CircuitTypes>(
         duplicate(): T["Obj[]"] {
             if (this.isEmpty)
                 return [];
-            throw new Error("Unimplemented!");
+            throw new Error("Selections.duplicate: Unimplemented!");
         },
     }) satisfies Selections;
 }

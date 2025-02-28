@@ -64,21 +64,6 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
             return state.internal.getMetadata().thumb;
         },
 
-        // Other data
-        set locked(val: boolean) {
-            throw new Error("Unimplemented!");
-        },
-        get locked(): boolean {
-             // TODO: Decide which level to enforce this at.  Is it serialized?
-            throw new Error("Unimplemented!");
-        },
-        set simEnabled(val: boolean) {
-            throw new Error("Unimplemented!");
-        },
-        get simEnabled(): boolean {
-            throw new Error("Unimplemented!");
-        },
-
         get selections(): Selections {
             if (!selections)
                 selections = SelectionsImpl(circuit, state);
@@ -103,21 +88,21 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
                 .map((id) => this.getPort(id)).asUnion();
         },
         pickObjRange(bounds: Rect): T["Obj[]"] {
-            throw new Error("Unimplemented!");
+            throw new Error("Circuit.pickObjRange: Unimplemented!");
         },
 
         getComponent(id: GUID): T["Component"] | undefined {
-            if (!state.internal.doc.getCompByID(id))
+            if (!state.internal.doc.getCompByID(id).ok)
                 return undefined;
             return state.constructComponent(id);
         },
         getWire(id: GUID): T["Wire"] | undefined {
-            if (!state.internal.doc.getWireByID(id))
+            if (!state.internal.doc.getWireByID(id).ok)
                 return undefined;
             return state.constructWire(id);
         },
         getPort(id: GUID): T["Port"] | undefined {
-            if (!state.internal.doc.getPortByID(id))
+            if (!state.internal.doc.getPortByID(id).ok)
                 return undefined;
             return state.constructPort(id);
         },
@@ -141,9 +126,10 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
             return this.getObjs().filter(isObjWire);
         },
         getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
-            // TODO[.](kevin) - getComponentInfo should probably return a Result right?
-            //                  Or should we add a method to check if a component exists?
-            return state.internal.doc.getComponentInfo(kind);
+            const info = state.internal.doc.getComponentInfo(kind);
+            if (!info.ok)
+                return undefined;
+            return info.unwrap();
         },
 
         // Object manipulation
@@ -162,31 +148,46 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 
             return state.constructComponent(id);
         },
-        deleteObjs(objs: T["Obj[]"]): void {
-            throw new Error("Unimplemented!");
+        deleteObjs(objs: Array<T["Component"] | T["Wire"]>): void {
+            this.beginTransaction();
+
+            const wireIds = new Set(objs
+                .filter((o) => o.baseKind === "Wire")
+                .map((w) => w.id));
+            const compIds = new Set(objs
+                .filter((o) => o.baseKind === "Component")
+                .map((c) => c.id));
+
+            // Delete wires first
+            for (const wireId of wireIds)
+                state.internal.deleteWire(wireId).unwrap();
+
+            // Then remove all ports for each component, then delete them
+            for (const compId of compIds)
+                state.internal.removePortsFor(compId).unwrap();
+            for (const compId of compIds)
+                state.internal.deleteComponent(compId).unwrap();
+
+            this.commitTransaction();
         },
 
-        undo(): boolean {
-            throw new Error("Unimplemented!");
+        undo(): void {
+            state.internal.undo().unwrap();
         },
-        redo(): boolean {
-            throw new Error("Unimplemented!");
-        },
-
-        copy(): CircuitT {
-            throw new Error("Unimplemented!");
+        redo(): void {
+            state.internal.redo().unwrap();
         },
 
-        reset(): void {
-            throw new Error("Unimplemented!");
-        },
+        // reset(): void {
+        //     throw new Error("Circuit.reset: Unimplemented!");
+        // },
 
-        serialize(objs?: T["Obj[]"]): string {
-            throw new Error("Unimplemented!");
-        },
-        deserialize(data: string): void {
-            throw new Error("Unimplemented!");
-        },
+        // serialize(objs?: T["Obj[]"]): string {
+        //     throw new Error("Circuit.serialize: Unimplemented!");
+        // },
+        // deserialize(data: string): void {
+        //     throw new Error("Circuit.deserialize: Unimplemented!");
+        // },
     }) satisfies Circuit;
 
     return circuit;
@@ -202,10 +203,10 @@ export function RootCircuitImpl<
 
     return extend(circuit, {
         createIC(): ICircuitT {
-            throw new Error("Unimplemented!");
+            throw new Error("RootCircuit.createIC: Unimplemented!");
         },
         getICs(): ICircuitT[] {
-            throw new Error("Unimplemented!");
+            throw new Error("RootCircuit.getICs: Unimplemented!");
         },
     }) satisfies RootCircuit;
 }

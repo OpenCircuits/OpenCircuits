@@ -85,6 +85,14 @@ export class CircuitLog extends Observable<LogEvent> {
         return this.log.length - 1;
     }
 
+    public get entries(): ReadonlyArray<Readonly<LogEntry>> {
+        return this.log;
+    }
+
+    public get length(): number {
+        return this.log.length;
+    }
+
     // NOTE: call-sites of propose should expect possible re-entrant calls.
     public propose(ops: CircuitOp[], clientData: string): LogEntry {
         // Propose "entry" with an invalid clock.  The server will provide a clock.

@@ -21,11 +21,11 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
     }
 
     public setState(id: GUID, state: Signal[]): void {
-        throw new Error("Unimplemented");
+        throw new Error("DigitalSim.setState: Unimplemented");
     }
 
     public step(): void {
-        throw new Error("Unimplemented");
+        throw new Error("DigitalSim.step: Unimplemented");
     }
 
     public getSignal(id: GUID): Signal {
@@ -33,6 +33,6 @@ export class DigitalSim extends Observable<DigitalSimEvent> {
     }
 
     public getState(id: GUID): Signal[] {
-        throw new Error("Unimplemented");
+        throw new Error("DigitalSim.getState: Unimplemented");
     }
 }

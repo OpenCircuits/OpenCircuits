@@ -1,89 +1,44 @@
-import {ErrE, Ok, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result";
+import {ErrE, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result";
 
-import {Prop, uuid}                                          from "shared/api/circuit/internal";
-import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ComponentInfo";
-import {Port}                                                from "shared/api/circuit/schema/Port";
+import {BaseComponentInfo,
+        BaseObjInfo,
+        BaseObjInfoProvider,
+        ObjInfoProvider,
+        PortConfig,
+        PropTypeMap} from "shared/api/circuit/internal/impl/ComponentInfo";
+import {Schema} from "shared/api/circuit/schema";
 
-
-type DigitalPortConfig = Record<string, number>
 
 type DigitalPortGroupInfo = Record<string, "input" | "output">
 
-type TypeMap = Record<string, "string" | "number" | "boolean">;
-
-export class DigitalComponentInfo implements ComponentInfo {
-    public readonly baseKind: "Component";
-    public readonly kind: string;
-    public readonly defaultPortConfig: PortConfig;
-    public readonly portGroups: string[];
-
+export class DigitalComponentInfo extends BaseComponentInfo {
     public readonly portGroupInfo: DigitalPortGroupInfo;
     public readonly inputPortGroups: readonly string[];
     public readonly outputPortGroups: readonly string[];
 
-    private readonly validPortConfigs: PortConfig[];
-    private readonly props: TypeMap;
-
     public constructor(
         kind: string,
-        props: TypeMap,
+        props: PropTypeMap,
         portGroupInfo: DigitalPortGroupInfo,
-        portConfigs: DigitalPortConfig[],
+        portConfigs: PortConfig[],
         defaultConfig = 0
     ) {
-        this.baseKind = "Component";
-        this.kind = kind;
-        this.props = { ...props, "name": "string", "x": "number", "y": "number", "angle": "number" };
-        this.defaultPortConfig = portConfigs[defaultConfig];
-        this.portGroups = Object.keys(portGroupInfo);
+        super(kind, props, Object.keys(portGroupInfo), portConfigs, defaultConfig);
 
         this.portGroupInfo = portGroupInfo;
-        this.validPortConfigs = portConfigs;
 
         this.inputPortGroups  = this.portGroups.filter((g) => (this.portGroupInfo[g] ===  "input"));
         this.outputPortGroups = this.portGroups.filter((g) => (this.portGroupInfo[g] === "output"));
     }
 
-    public checkPropValue(key: string, value?: Prop): Result {
-        if (!(key in this.props))
-            return ErrE(`DigitalComponentInfo: ${key} not a valid prop`);
-        if (value && (this.props[key] !== typeof value))
-            return ErrE(`DigitalComponentInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
-        return OkVoid();
+    public override getPortInfo(_p: PortConfig, _group: string, _index: number): Pick<Schema.Port, "kind" | "props"> {
+        return {
+            kind:  "DigitalPort",
+            props: {}, // TODO: any manditory props for Digial ports
+        };
     }
 
-    public makePortsForConfig(componentID: string, p: PortConfig): Result<Port[]> {
-        return Ok(Object.entries(p)
-            .flatMap(([group, count]) =>
-                new Array(count)
-                    .fill(0)
-                    .map((_, index) => ({
-                        baseKind: "Port",
-                        kind:     "DigitalPort",
-                        id:       uuid(),
-
-                        parent: componentID,
-                        group,
-                        index,
-                        props:  {}, // TODO: any manditory props for Digial ports
-                    }))));
-    }
-
-    public checkPortConfig(p: PortConfig): Result {
-        // Doesn't have all the port groups
-        if (this.portGroups.some((group) => !(group in p)))
-            return ErrE(`DigitalComponentInfo: Port config ${p} did not contain all groups ${this.portGroups}`);
-
-        // Return is some valid config matches the given config
-        const hasValidConfig = this.validPortConfigs.some((counts) =>
-            // Check each port group in the valid config and the given config to see
-            //  if the counts all match
-            this.portGroups.every((group) => (counts[group] === p[group])));
-
-        return hasValidConfig ? OkVoid() : ErrE(`DigitalComponentInfo: Failed to find matching config for ${p}`);
-    }
-
-    public checkPortConnectivity(wires: Map<Port, Port[]>): Result {
+    public override checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result {
         return ResultUtil.reduceIterU(wires.entries(), ([myPort, connectedPorts]): Result<void> =>  {
             // Prevent multiple ports connecting to a single input port
             if (this.portGroupInfo[myPort.group] === "input" && connectedPorts.length > 1)
@@ -96,7 +51,7 @@ export class DigitalComponentInfo implements ComponentInfo {
 
 
 // Inputs
-const DigitalOutputComponentInfo = (kind: string, outputs: number[], props: TypeMap = {}) =>
+const DigitalOutputComponentInfo = (kind: string, outputs: number[], props: PropTypeMap = {}) =>
     new DigitalComponentInfo(kind, props, { "outputs": "output" }, outputs.map((amt) => ({ "outputs": amt })));
 
 const SwitchInfo = DigitalOutputComponentInfo("Switch", [1], { "isOn": "boolean" });
@@ -107,7 +62,7 @@ const ConstantNumberInfo = DigitalOutputComponentInfo("ConstantNumber", [4], { "
 const ClockInfo = DigitalOutputComponentInfo("Clock", [1], { "delay": "number", "paused": "boolean" });
 
 // Outputs
-const DigitalInputComponentInfo = (kind: string, inputs: number[], props: TypeMap = {}) =>
+const DigitalInputComponentInfo = (kind: string, inputs: number[], props: PropTypeMap = {}) =>
     new DigitalComponentInfo(kind, props, { "inputs": "input" }, inputs.map((amt) => ({ "inputs": amt })));
 
 const LEDInfo = DigitalInputComponentInfo("LED", [1], { "color": "string" });
@@ -240,81 +195,16 @@ const NodeInfo = new DigitalComponentInfo(
 
 
 // Wires
-class DigitalWireInfo implements ObjInfo {
-    public readonly baseKind: "Wire";
-    public readonly kind: string;
-
-    private readonly props: TypeMap;
-
-    public constructor(kind: string, props: TypeMap) {
-        this.baseKind = "Wire";
-        this.kind = kind;
-        this.props = { ...props, "name": "string" };
-    }
-
-    public checkPropValue(key: string, value?: Prop | undefined): Result {
-        if (!(key in this.props))
-            return ErrE(`DigitalWireInfo: ${key} not a valid prop`);
-        if (value && (this.props[key] !== typeof value))
-            return ErrE(`DigitalWireInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
-        return OkVoid();
-    }
-}
-const WireInfo = new DigitalWireInfo("DigitalWire", { "color": "string" });
+const WireInfo = new BaseObjInfo("Wire", "DigitalWire", { "color": "string" });
 
 // Ports
-class DigitalPortInfo implements ObjInfo {
-    public readonly baseKind: "Port";
-    public readonly kind: string;
+const PortInfo = new BaseObjInfo("Port", "DigitalPort", {});
 
-    private readonly props: TypeMap;
-
-    public constructor(kind: string, props: TypeMap) {
-        this.baseKind = "Port";
-        this.kind = kind;
-        this.props = { ...props, "name": "string" };
-    }
-
-    public checkPropValue(key: string, value?: Prop | undefined): Result {
-        if (!(key in this.props))
-            return ErrE(`DigitalPortInfo: ${key} not a valid prop`);
-        if (value && (this.props[key] !== typeof value))
-            return ErrE(`DigitalPortInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
-        return OkVoid();
-    }
-}
-const PortInfo = new DigitalPortInfo("DigitalPort", {});
-
-
-class DigitalComponentInfoProvider implements ObjInfoProvider {
-    private readonly components: Map<string, ComponentInfo>;
-    private readonly wires: Map<string, ObjInfo>;
-    private readonly ports: Map<string, ObjInfo>;
-
-    public constructor(components: DigitalComponentInfo[]) {
-        this.components = new Map(components.map((info) => [info.kind, info]));
-        this.components.set("DigitalNode", NodeInfo);
-        this.wires = new Map([["DigitalWire", WireInfo]]);
-        this.ports = new Map([["DigitalPort", PortInfo]]);
-    }
-
-    public getComponent(kind: string): ComponentInfo | undefined {
-        return this.components.get(kind);
-    }
-
-    public get(kind: string): ObjInfo | undefined {
-        if (this.components.has(kind))
-            return this.components.get(kind);
-        if (this.wires.has(kind))
-            return this.wires.get(kind);
-        if (this.ports.has(kind))
-            return this.ports.get(kind);
-        return undefined;
-    }
-}
 
 export function CreateDigitalComponentInfoProvider(): ObjInfoProvider {
-    return new DigitalComponentInfoProvider([
+    return new BaseObjInfoProvider([
+        // Node
+        NodeInfo,
         // Inputs
         SwitchInfo, ButtonInfo, ConstantLowInfo, ConstantHighInfo, ConstantNumberInfo, ClockInfo,
         // Outputs
@@ -327,5 +217,5 @@ export function CreateDigitalComponentInfoProvider(): ObjInfoProvider {
         DLatchInfo, SRLatchInfo,
         // Other
         MultiplexerInfo, DemultiplexerInfo, EncoderInfo, DecoderInfo, Comparator, Label,
-    ]);
+    ], [WireInfo], [PortInfo]);
 }

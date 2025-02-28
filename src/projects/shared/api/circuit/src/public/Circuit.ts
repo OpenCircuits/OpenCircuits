@@ -34,10 +34,6 @@ export interface Circuit extends Observable<CircuitEvent> {
     desc: string;
     thumbnail: string;
 
-    // Other data
-    locked: boolean;
-    simEnabled: boolean;
-
     readonly selections: Selections;
 
     // Queries
@@ -60,17 +56,20 @@ export interface Circuit extends Observable<CircuitEvent> {
 
     // Object manipulation
     placeComponentAt(kind: string, pt: Vector): Component;
-    deleteObjs(objs: Obj[]): void;
+    // Cannot delete ports
+    deleteObjs(objs: Array<Wire | Component>): void;
 
-    undo(): boolean;
-    redo(): boolean;
+    undo(): void;
+    redo(): void;
 
-    copy(): Circuit;
+    // I'm not sure if these methods makes sense to have
+    // copy(): Circuit;
+    // reset(): void;
 
-    reset(): void;
-
-    serialize(objs?: Obj[]): string;
-    deserialize(data: string): void;
+    // Figure out HOW these need to be used first before implementing
+    // It might be a motivator for some Query system and then you serialize the query
+    // serialize(objs?: Obj[]): string;
+    // deserialize(data: string): void;
 }
 
 export interface RootCircuit extends Circuit {

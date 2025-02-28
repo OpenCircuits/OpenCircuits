@@ -96,10 +96,12 @@ export function ViewportImpl<T extends CircuitTypes>(
             // TODO[model_refactor](leon) - render by depth
             assembly.componentPrims.forEach((prims, compId) => {
                 // Draw ports first
-                assembly.portPrims.get(compId)?.forEach((prim) => {
-                    // if (!prim.cull(renderState.camera))
-                    //     return;
-                    primRenderer.render(renderer.ctx, prim);
+                assembly.portPrims.get(compId)?.forEach((prims) => {
+                    prims.forEach((prim) => {
+                        // if (!prim.cull(renderState.camera))
+                        //     return;
+                        primRenderer.render(renderer.ctx, prim);
+                    });
                 });
 
                 // Draw prims for component
