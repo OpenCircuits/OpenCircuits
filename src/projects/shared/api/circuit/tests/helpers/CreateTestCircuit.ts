@@ -68,7 +68,7 @@ export function TestComponentImpl(circuit: Circuit, state: CircuitState<CircuitT
             return ComponentInfoImpl(state, base.kind);
         },
         isNode(): boolean {
-            return (false);
+            return (base.kind === "TestNode");
         },
     } as const) satisfies Component;
 }
@@ -80,7 +80,7 @@ export function TestWireImpl(circuit: Circuit, state: CircuitState<CircuitTypes>
 
         const port = node.ports[""][0];
         const wire1 = p1.connectTo(port);
-        const wire2 = p2.connectTo(port);
+        const wire2 = port.connectTo(p2);
 
         if (!wire1)
             throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
