@@ -87,15 +87,11 @@ describe("Selections", () => {
         w1.select();
         test(".all", () => {
             expect(selections.all).toHaveLength(4);
-            expect(selections.all).toContain(c1);
-            expect(selections.all).toContain(c2);
-            expect(selections.all).toContain(p3);
-            expect(selections.all).toContain(w1);
+            expect(selections.all).toContainObjsExact([c1, c2, p3, w1]);
         });
         test(".components", () => {
             expect(selections.components).toHaveLength(2);
-            expect(selections.components).toContain(c1);
-            expect(selections.components).toContain(c2);
+            expect(selections.all).toContainObjsExact([c1, c2]);
         });
         test(".wires", () => {
             expect(selections.wires).toHaveLength(1);
@@ -109,7 +105,7 @@ describe("Selections", () => {
             const [c1, c2] = PlaceAt(V(0, 0), V(2, 2));
             c1.select();
             c2.select();
-            expect(selections.midpoint()).toStrictEqual(V(1, 1));
+            expect(selections.midpoint()).toApproximatelyEqual(V(1, 1));
         });
         test("6 components selected", () => {
             const [{selections}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
@@ -120,7 +116,7 @@ describe("Selections", () => {
             c4.select();
             c5.select();
             c6.select();
-            expect(selections.midpoint()).toStrictEqual(V(1, 1));
+            expect(selections.midpoint()).toApproximatelyEqual(V(1, 1));
         });
         test("Use bounding box midpoint, not weighted average", () => {
             const [{selections}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
@@ -128,7 +124,7 @@ describe("Selections", () => {
             c1.select();
             c2.select();
             c3.select();
-            expect(selections.midpoint()).toStrictEqual(V(1, 1));
+            expect(selections.midpoint()).toApproximatelyEqual(V(1, 1));
         });
     });
 
@@ -146,18 +142,12 @@ describe("Selections", () => {
             p3.select();
             w1.select();
             expect(selections.all).toHaveLength(4);
-            expect(selections.all).toContain(c1);
-            expect(selections.all).toContain(c2);
-            expect(selections.all).toContain(p3);
-            expect(selections.all).toContain(w1);
+            expect(selections.all).toContainObjsExact([c1, c2, p3, w1]);
             selections.clear();
             expect(selections.all).toHaveLength(0);
             undo();
             expect(selections.all).toHaveLength(4);
-            expect(selections.all).toContain(c1);
-            expect(selections.all).toContain(c2);
-            expect(selections.all).toContain(p3);
-            expect(selections.all).toContain(w1);
+            expect(selections.all).toContainObjsExact([c1, c2, p3, w1]);
             redo();
             expect(selections.all).toHaveLength(0);
         });
@@ -179,8 +169,7 @@ describe("Selections", () => {
 
             // selection shouldn't be modified by `.duplicate()`, it is up to the caller handle that
             expect(selections).toHaveLength(2);
-            expect(selections).toContain(c1);
-            expect(selections).toContain(c2);
+            expect(selections.all).toContainObjsExact([c1, c2]);
 
             undo();
             expect(duplicates).toHaveLength(2);

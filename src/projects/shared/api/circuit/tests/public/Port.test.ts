@@ -263,8 +263,7 @@ describe("Port", () => {
             p1.connectTo(p2);
             p1.connectTo(p3);
             expect(p1.connectedPorts).toHaveLength(2);
-            expect(p1.connectedPorts).toContain(p2);
-            expect(p1.connectedPorts).toContain(p3);
+            expect(p1.connectedPorts).toContainObjsExact([p2, p3]);
             expect(p2.connectedPorts).toHaveLength(1);
             expect(p2.connectedPorts).toContain(p1);
             expect(p3.connectedPorts).toHaveLength(1);

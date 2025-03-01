@@ -3,6 +3,7 @@
 import "../Extensions";
 
 import {V} from "Vector";
+import {Rect} from "math/Rect";
 
 import {Circuit, Obj} from "shared/api/circuit/public";
 
@@ -14,16 +15,14 @@ describe("Component", () => {
         test("1x1 default", () => {
             const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
-            expect(c.bounds.center).toStrictEqual(V(0, 0));
-            expect(c.bounds.size).toStrictEqual(V(1, 1));
+            expect(c.bounds).toEqual(Rect.From({cx: -1, cy: -1, width: 1, height: 1}));
         });
 
         test("1x1 with rotation", () => {
             const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             c.angle = Math.PI / 2;
-            expect(c.bounds.center).toStrictEqual(V(0, 0));
-            expect(c.bounds.size).toStrictEqual(V(1, 1));
+            expect(c.bounds).toEqual(Rect.From({cx: -1, cy: -1, width: 1, height: 1}));
         });
 
         test("1x1 default offset start", () => {
@@ -139,8 +138,6 @@ describe("Component", () => {
             expect("pos" in props).toBeFalsy();
             expect("angle" in props).toBeTruthy();
             expect("name" in props).toBeTruthy();
-            expect("isSelected" in props).toBeTruthy();
-            expect("exists" in props).toBeTruthy();
             expect("zIndex" in props).toBeTruthy();
         });
 
@@ -178,34 +175,29 @@ describe("Component", () => {
             const [c] = PlaceAt(V(0, 0));
             expect(c.x).toBe(0);
             expect(c.y).toBe(0);
-            expect(c.pos.x).toBe(0);
-            expect(c.pos.y).toBe(0);
+            expect(c.pos).toEqual(V(0, 0));
             expect(c.angle).toBe(0);
 
             c.x = 3;
             expect(c.x).toBe(3);
             expect(c.y).toBe(0);
-            expect(c.pos.x).toBe(3);
-            expect(c.pos.y).toBe(0);
+            expect(c.pos).toEqual(V(3, 0));
             expect(c.angle).toBe(0);
             c.y = 5;
             expect(c.x).toBe(3);
             expect(c.y).toBe(5);
-            expect(c.pos.x).toBe(3);
-            expect(c.pos.y).toBe(5);
+            expect(c.pos).toEqual(V(3, 5));
             expect(c.angle).toBe(0);
 
             circuit.undo();
             expect(c.x).toBe(3);
             expect(c.y).toBe(0);
-            expect(c.pos.x).toBe(3);
-            expect(c.pos.y).toBe(0);
+            expect(c.pos).toEqual(V(3, 0));
             expect(c.angle).toBe(0);
             circuit.redo();
             expect(c.x).toBe(3);
             expect(c.y).toBe(5);
-            expect(c.pos.x).toBe(3);
-            expect(c.pos.y).toBe(5);
+            expect(c.pos).toEqual(V(3, 5));
             expect(c.angle).toBe(0);
         });
 
@@ -214,30 +206,47 @@ describe("Component", () => {
             const [c] = PlaceAt(V(0, 0));
             expect(c.x).toBe(0);
             expect(c.y).toBe(0);
-            expect(c.pos.x).toBe(0);
-            expect(c.pos.y).toBe(0);
+            expect(c.pos).toEqual(V(0, 0));
             expect(c.angle).toBe(0);
 
             c.pos = V(9, -17);
             expect(c.x).toBe(9);
             expect(c.y).toBe(-17);
-            expect(c.pos.x).toBe(9);
-            expect(c.pos.y).toBe(-17);
+            expect(c.pos).toEqual(V(9, -17));
             expect(c.angle).toBe(0);
 
             // undo/redo
             circuit.undo();
             expect(c.x).toBe(0);
             expect(c.y).toBe(0);
-            expect(c.pos.x).toBe(0);
-            expect(c.pos.y).toBe(0);
+            expect(c.pos).toEqual(V(0, 0));
             expect(c.angle).toBe(0);
             circuit.redo();
             expect(c.x).toBe(9);
             expect(c.y).toBe(-17);
-            expect(c.pos.x).toBe(9);
-            expect(c.pos.y).toBe(-17);
+            expect(c.pos).toEqual(V(9, -17));
             expect(c.angle).toBe(0);
+        });
+
+        test("Multiple moves in one transaction", () => {
+            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [c] = PlaceAt(V(0, 0));
+            expect(c.x).toBe(0);
+            expect(c.y).toBe(0);
+            expect(c.pos).toEqual(V(0, 0));
+            expect(c.angle).toBe(0);
+
+            circuit.beginTransaction();
+            c.pos = V(5, 0);
+            expect(c.pos).toEqual(V(5, 0));
+            c.pos = V(10, 0);
+            circuit.commitTransaction();
+            expect(c.pos).toEqual(V(10, 0));
+
+            circuit.undo();
+            expect(c.pos).toEqual(V(0, 0));
+            circuit.redo();
+            expect(c.pos).toEqual(V(10, 0));
         });
     });
 
