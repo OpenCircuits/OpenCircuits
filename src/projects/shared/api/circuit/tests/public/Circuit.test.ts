@@ -455,7 +455,7 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
 
-                circuit.undo()
+                circuit.undo();
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();

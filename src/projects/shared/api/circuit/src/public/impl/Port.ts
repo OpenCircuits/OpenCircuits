@@ -19,7 +19,7 @@ export function PortImpl<T extends CircuitTypes>(
     const { internal, assembler, constructComponent, constructWire } = state;
 
     function getPort() {
-        return internal.doc.getPortByID(id)
+        return internal.getPortByID(id)
             .mapErr(AddErrE(`API Port: Attempted to get port with ID ${id} that doesn't exist!`))
             .unwrap();
     }
@@ -50,7 +50,7 @@ export function PortImpl<T extends CircuitTypes>(
         },
 
         get connections(): T["Wire[]"] {
-            return [...internal.doc.getWiresForPort(base.id).unwrap()]
+            return [...internal.getWiresForPort(base.id).unwrap()]
                 .map((id) => constructWire(id));
         },
         get connectedPorts(): T["Port[]"] {

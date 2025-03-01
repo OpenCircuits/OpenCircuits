@@ -8,7 +8,7 @@ import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {Schema} from "shared/api/circuit/schema";
 
 import {Circuit, Component, Node, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
-import {RootCircuitImpl}                             from "shared/api/circuit/public/impl/Circuit";
+import {IntegratedCircuitImpl, RootCircuitImpl}                             from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
@@ -123,18 +123,20 @@ export function CreateTestRootCircuit(
 ): [RootCircuit, CircuitState<CircuitTypes>, TestRootCircuitHelpers] {
     const portConfigs = [{ "": 1 }, ...additionalPortConfigs];
 
-    const internal = new CircuitInternal(
-        uuid(),
-        new CircuitLog(),
-        new CircuitDocument(new BaseObjInfoProvider(
-            [
-                new TestComponentInfo("TestComp", {}, [""], portConfigs),
-                new TestComponentInfo("TestNode", {}, [""], portConfigs),
-            ],
-            [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
-            [new BaseObjInfo("Port", "TestPort", {})],
-        )),
-    );
+    const log = new CircuitLog();
+    const doc = new CircuitDocument(new BaseObjInfoProvider(
+        [
+            new TestComponentInfo("TestComp", {}, [""], portConfigs),
+            new TestComponentInfo("TestNode", {}, [""], portConfigs),
+        ],
+        [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
+        [new BaseObjInfo("Port", "TestPort", {})],
+    ), log);
+    const mainCircuitID = uuid();
+
+    doc.createCircuit(mainCircuitID);
+    const internal = new CircuitInternal(mainCircuitID, log, doc);
+
     const renderOptions = new DefaultRenderOptions();
     const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
         "TestWire": new WireAssembler(params),
@@ -154,6 +156,10 @@ export function CreateTestRootCircuit(
         constructPort(id) {
             return TestPortImpl(circuit, state, id);
         },
+
+        // constructIC(id) {
+        //     return IntegratedCircuitImpl(id, state);
+        // },
     }
     const circuit = RootCircuitImpl(state);
 
