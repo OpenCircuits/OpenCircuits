@@ -7,6 +7,7 @@ import {V} from "Vector";
 import {Circuit, Component, Obj, Wire} from "shared/api/circuit/public";
 
 import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
+import {Rect} from "math/Rect";
 
 
 // NOTE: For (most) of these, make sure the `SelectionsEvent` fires correctly
@@ -105,7 +106,7 @@ describe("Selections", () => {
             const [c1, c2] = PlaceAt(V(0, 0), V(2, 2));
             c1.select();
             c2.select();
-            expect(selections.midpoint()).toApproximatelyEqual(V(1, 1));
+            expect(selections.bounds).toEqual(Rect.From({cx: 1, cy: 1, width: 3, height: 3}));
         });
         test("6 components selected", () => {
             const [{selections}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
@@ -116,7 +117,7 @@ describe("Selections", () => {
             c4.select();
             c5.select();
             c6.select();
-            expect(selections.midpoint()).toApproximatelyEqual(V(1, 1));
+            expect(selections.bounds).toEqual(Rect.From({cx: 1, cy: 1, width: 3, height: 3}));
         });
         test("Use bounding box midpoint, not weighted average", () => {
             const [{selections}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
@@ -124,7 +125,7 @@ describe("Selections", () => {
             c1.select();
             c2.select();
             c3.select();
-            expect(selections.midpoint()).toApproximatelyEqual(V(1, 1));
+            expect(selections.bounds).toEqual(Rect.From({cx: 1, cy: 1, width: 3, height: 3}));
         });
     });
 
