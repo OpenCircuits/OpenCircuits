@@ -5,11 +5,11 @@ import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 
 import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
 
-import {SmartPlaceOptions} from "site/digital/utils/DigitalCreate";
+import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
 
-import {useMainDigitalDesigner} from "site/digital/utils/hooks/useDigitalDesigner";
+import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
-import itemNavConfig from "site/digital/data/itemNavConfig.json";
+import itemNavConfig from "digital/site/data/itemNavConfig.json";
 
 import "core/utils/Array";
 

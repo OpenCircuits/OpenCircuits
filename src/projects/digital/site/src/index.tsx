@@ -50,31 +50,8 @@ import {reducers} from "./state/reducers";
 import ImageFiles      from "./data/images.json";
 import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
-// import {App} from "./containers/App";
+import {App} from "./containers/App";
 import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-
-
-const MainCircuit = ({ designer }: { designer: DigitalCircuitDesigner }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { w, h } = useWindowSize();
-
-    useLayoutEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas)
-            return;
-        (window as any).Circuit = designer.circuit;
-        return designer.viewport.attachCanvas(canvas);
-    }, [designer, canvasRef]);
-
-    useLayoutEffect(() => designer.viewport.resize(w, h), [designer, w, h]);
-
-    return (
-        <canvas
-            ref={canvasRef}
-            width={w}
-            height={h} />
-    );
-}
 
 
 async function Init(): Promise<void> {
@@ -193,8 +170,8 @@ async function Init(): Promise<void> {
             root.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        <MainCircuit designer={designer} />
-                        {/* <App /> */}
+                        {/* <MainCircuit designer={designer} /> */}
+                        <App />
                     </Provider>
                 </React.StrictMode>
             );

@@ -3,10 +3,10 @@
   "compilerOptions": {
       "baseUrl": ".",
       "paths": {
-          "Vector":                        ["../../../shared/api/circuit/src/utils/math/Vector"],
-          "math/*":                        ["../../../shared/api/circuit/src/utils/math/*"],
-          "shared/api/circuit/*":          ["../../../shared/api/circuit/src/*"],
-          "shared/api/circuitdesigner/*":  ["../../../shared/api/circuitdesigner/src/*"],
+          "Vector":                        ["../api/circuit/src/utils/math/Vector"],
+          "math/*":                        ["../api/circuit/src/utils/math/*"],
+          "shared/api/circuit/*":          ["../api/circuit/src/*"],
+          "shared/api/circuitdesigner/*":  ["../api/circuitdesigner/src/*"],
           "shared/site/*":                 ["./src/*"],
       }
   },

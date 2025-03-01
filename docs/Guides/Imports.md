@@ -108,28 +108,28 @@ When importing code from other files make sure the imports maintain the followin
     import {SelectionPopup}       from "shared/containers/SelectionPopup";
     import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
 
-    import {DigitalPaste} from "site/digital/utils/DigitalPaste";
-    import {Setup}        from "site/digital/utils/CircuitInfo/Setup";
+    import {DigitalPaste} from "digital/site/utils/DigitalPaste";
+    import {Setup}        from "digital/site/utils/CircuitInfo/Setup";
 
-    import {AppStore} from "site/digital/state";
+    import {AppStore} from "digital/site/state";
 
-    import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
-    import {ICDesigner}             from "site/digital/containers/ICDesigner";
-    import {ICViewer}               from "site/digital/containers/ICViewer";
-    import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
-    import {MainDesigner}           from "site/digital/containers/MainDesigner";
-    import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+    import {DigitalItemNav}         from "digital/site/containers/DigitalItemNav";
+    import {ICDesigner}             from "digital/site/containers/ICDesigner";
+    import {ICViewer}               from "digital/site/containers/ICViewer";
+    import {KeyboardShortcutsPopup} from "digital/site/containers/KeyboardShortcutsPopup";
+    import {MainDesigner}           from "digital/site/containers/MainDesigner";
+    import {QuickStartPopup}        from "digital/site/containers/QuickStartPopup";
 
-    import {ViewICButtonModule}   from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
-    import {InputCountModule}     from "site/digital/containers/SelectionPopup/modules/InputCountModule";
-    import {ColorModule}          from "site/digital/containers/SelectionPopup/modules/ColorModule";
-    import {ClockFrequencyModule} from "site/digital/containers/SelectionPopup/modules/ClockFrequencyModule";
-    import {OutputCountModule}    from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
-    import {SegmentCountModule}   from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
-    import {TextColorModule}      from "site/digital/containers/SelectionPopup/modules/TextColorModule";
-    import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
-    import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+    import {ViewICButtonModule}   from "digital/site/containers/SelectionPopup/modules/ViewICButtonModule";
+    import {InputCountModule}     from "digital/site/containers/SelectionPopup/modules/InputCountModule";
+    import {ColorModule}          from "digital/site/containers/SelectionPopup/modules/ColorModule";
+    import {ClockFrequencyModule} from "digital/site/containers/SelectionPopup/modules/ClockFrequencyModule";
+    import {OutputCountModule}    from "digital/site/containers/SelectionPopup/modules/OutputCountModule";
+    import {SegmentCountModule}   from "digital/site/containers/SelectionPopup/modules/SegmentCountModule";
+    import {TextColorModule}      from "digital/site/containers/SelectionPopup/modules/TextColorModule";
+    import {BusButtonModule}      from "digital/site/containers/SelectionPopup/modules/BusButtonModule";
+    import {CreateICButtonModule} from "digital/site/containers/SelectionPopup/modules/CreateICButtonModule";
 
-    import exampleConfig from "site/digital/data/examples.json";
+    import exampleConfig from "digital/site/data/examples.json";
 
     import "./index.scss";

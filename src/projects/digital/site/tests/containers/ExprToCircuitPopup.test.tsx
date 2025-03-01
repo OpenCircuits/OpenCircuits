@@ -14,12 +14,12 @@
 // import "shared/tests/helpers/Extensions";
 // import {PressToggle} from "shared/tests/helpers/PressToggle";
 
-// import {AppState} from "site/digital/state";
+// import {AppState} from "digital/site/state";
 
-// import {AllActions} from "site/digital/state/actions";
-// import {reducers}   from "site/digital/state/reducers";
+// import {AllActions} from "digital/site/state/actions";
+// import {reducers}   from "digital/site/state/reducers";
 
-// import {ExprToCircuitPopup} from "site/digital/containers/ExprToCircuitPopup";
+// import {ExprToCircuitPopup} from "digital/site/containers/ExprToCircuitPopup";
 
 
 // // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended

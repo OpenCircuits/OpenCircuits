@@ -14,7 +14,7 @@ import {GetRenderFunc} from "shared/site/utils/GetRenderingFunc";
 import {ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
 
 
-import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
+import {CreateInfo} from "digital/site/utils/CircuitInfo/CreateInfo";
 
 import "./index.scss";
 
