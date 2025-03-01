@@ -22,7 +22,7 @@ export function ComponentImpl<T extends CircuitTypes>(
     const { internal, constructPort } = state;
 
     function getComponent() {
-        return internal.doc.getCompByID(id)
+        return internal.getCompByID(id)
             .mapErr(AddErrE(`API Component: Attempted to get component with ID ${id} that doesn't exist!`))
             .unwrap();
     }
@@ -65,7 +65,7 @@ export function ComponentImpl<T extends CircuitTypes>(
             return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
         },
         get allPorts(): T["Port[]"] {
-            return [...internal.doc.getPortsForComponent(id).unwrap()]
+            return [...internal.getPortsForComponent(id).unwrap()]
                 .map((id) => constructPort(id));
         },
 
@@ -76,7 +76,7 @@ export function ComponentImpl<T extends CircuitTypes>(
         setNumPorts(group: string, amt: number): boolean {
             // TODO[model_refactor](leon) revisit this and decide on a functionality
             const curConfig = {} as Record<string, number>;
-            internal.doc.getPortsForComponent(base.id)
+            internal.getPortsForComponent(base.id)
                 .map((ids) => [...ids]
                     .map((id) => circuit.getPort(id)!))
                 .unwrap()
@@ -91,7 +91,7 @@ export function ComponentImpl<T extends CircuitTypes>(
                 ...curConfig,
                 [group]: amt,
             };
-            const isValid = internal.doc.getComponentInfo(base.kind).unwrap().checkPortConfig(config);
+            const isValid = internal.getComponentInfo(base.kind).unwrap().checkPortConfig(config);
             if (!isValid.ok)
                 return false;
 

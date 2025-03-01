@@ -26,7 +26,7 @@ export function WireImpl<T extends CircuitTypes>(
     const { internal, assembler, constructPort } = state;
 
     function getWire() {
-        return internal.doc.getWireByID(id)
+        return internal.getWireByID(id)
             .mapErr(AddErrE(`API Wire: Attempted to get wire with ID ${id} that doesn't exist!`))
             .unwrap();
     }

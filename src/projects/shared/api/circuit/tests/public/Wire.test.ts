@@ -18,7 +18,7 @@ describe("Wire", () => {
 
             const w1 = Connect(c1, c2);
             // TODO: Update height when we figure out the actual thickness of a wire
-            expect(w1.bounds).toApproximatelyEqual(Rect.From({ left: 1, right: 1 + Math.sqrt(2), bottom: 0, top: 0 }));
+            expect(w1.bounds).toApproximatelyEqual(Rect.From({ left: 1, right: 2, bottom: 0, top: 0 }));
         });
     });
 

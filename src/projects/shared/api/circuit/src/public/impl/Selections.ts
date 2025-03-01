@@ -17,7 +17,7 @@ export function SelectionsImpl<T extends CircuitTypes>(
 
     function getSelectedObjs() {
         // TODO: Make this more efficient, cache them in SelectionsImpl?
-        return [...internal.doc.getAllObjs()]
+        return [...internal.getAllObjs()]
             .filter((o) => (o.props["isSelected"] === true));
     }
 
@@ -52,12 +52,12 @@ export function SelectionsImpl<T extends CircuitTypes>(
         },
         get components(): T["Component[]"] {
             return getSelectedObjs()
-                .filter((o) => (internal.doc.hasComp(o.id)))
+                .filter((o) => (internal.hasComp(o.id)))
                 .map((o) => constructComponent(o.id));
         },
         get wires(): T["Wire[]"] {
             return getSelectedObjs()
-                .filter((o) => (internal.doc.hasWire(o.id)))
+                .filter((o) => (internal.hasWire(o.id)))
                 .map((o) => constructWire(o.id));
         },
 

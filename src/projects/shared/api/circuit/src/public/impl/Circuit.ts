@@ -2,7 +2,9 @@ import {V, Vector} from "Vector";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
-import {GUID} from "shared/api/circuit/internal";
+import {Schema} from "shared/api/circuit/schema";
+
+import {GUID, uuid} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, IntegratedCircuit,
         IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
@@ -42,25 +44,25 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 
         // Metadata
         get id(): GUID {
-            return state.internal.getMetadata().id;
+            return state.internal.getMetadata().unwrap().id;
         },
         set name(val: string) {
-            state.internal.setMetadata({ name: val });
+            state.internal.setMetadata({ name: val }).unwrap();
         },
         get name(): string {
-            return state.internal.getMetadata().name;
+            return state.internal.getMetadata().unwrap().name;
         },
         set desc(val: string) {
-            state.internal.setMetadata({ desc: val });
+            state.internal.setMetadata({ desc: val }).unwrap();
         },
         get desc(): string {
-            return state.internal.getMetadata().desc;
+            return state.internal.getMetadata().unwrap().desc;
         },
         set thumbnail(val: string) {
-            state.internal.setMetadata({ thumb: val });
+            state.internal.setMetadata({ thumb: val }).unwrap();
         },
         get thumbnail(): string {
-            return state.internal.getMetadata().thumb;
+            return state.internal.getMetadata().unwrap().thumb;
         },
 
         get selections(): Selections {
@@ -75,44 +77,44 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
                 .map((id) => this.getObj(id)).asUnion();
         },
         pickComponentAt(pt: Vector): T["Component"] | undefined {
-            return pickObjAtHelper(pt, (id) => state.internal.doc.hasComp(id))
+            return pickObjAtHelper(pt, (id) => state.internal.hasComp(id))
                 .map((id) => this.getComponent(id)).asUnion();
         },
         pickWireAt(pt: Vector): T["Wire"] | undefined {
-            return pickObjAtHelper(pt, (id) => state.internal.doc.hasWire(id))
+            return pickObjAtHelper(pt, (id) => state.internal.hasWire(id))
                 .map((id) => this.getWire(id)).asUnion();
         },
         pickPortAt(pt: Vector): T["Port"] | undefined {
-            return pickObjAtHelper(pt, (id) => state.internal.doc.hasPort(id))
+            return pickObjAtHelper(pt, (id) => state.internal.hasPort(id))
                 .map((id) => this.getPort(id)).asUnion();
         },
 
         getComponent(id: GUID): T["Component"] | undefined {
-            if (!state.internal.doc.getCompByID(id).ok)
+            if (!state.internal.getCompByID(id).ok)
                 return undefined;
             return state.constructComponent(id);
         },
         getWire(id: GUID): T["Wire"] | undefined {
-            if (!state.internal.doc.getWireByID(id).ok)
+            if (!state.internal.getWireByID(id).ok)
                 return undefined;
             return state.constructWire(id);
         },
         getPort(id: GUID): T["Port"] | undefined {
-            if (!state.internal.doc.getPortByID(id).ok)
+            if (!state.internal.getPortByID(id).ok)
                 return undefined;
             return state.constructPort(id);
         },
         getObj(id: GUID): T["Obj"] | undefined {
-            if (state.internal.doc.hasComp(id))
+            if (state.internal.hasComp(id))
                 return this.getComponent(id);
-            if (state.internal.doc.hasWire(id))
+            if (state.internal.hasWire(id))
                 return this.getWire(id);
-            if (state.internal.doc.hasPort(id))
+            if (state.internal.hasPort(id))
                 return this.getPort(id);
             return undefined;
         },
         getObjs(): T["Obj[]"] {
-            return [...state.internal.doc.getObjs()]
+            return [...state.internal.getObjs()]
                 .map((id) => this.getObj(id)!);
         },
         getComponents(): T["Component[]"] {
@@ -122,7 +124,7 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
             return this.getObjs().filter(isObjWire);
         },
         getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
-            const info = state.internal.doc.getComponentInfo(kind);
+            const info = state.internal.getComponentInfo(kind);
             if (!info.ok)
                 return undefined;
             return info.unwrap();
@@ -191,32 +193,35 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 
 
 export function RootCircuitImpl<
-    ICircuitT extends IntegratedCircuit,
     CircuitT extends Circuit,
     T extends CircuitTypes
 >(state: CircuitState<T>) {
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
-        createIC(): ICircuitT {
+        createIC(): IntegratedCircuit {
+            // return state.constructIC(uuid());
             throw new Error("RootCircuit.createIC: Unimplemented!");
         },
-        getICs(): ICircuitT[] {
+        getICs(): IntegratedCircuit[] {
             throw new Error("RootCircuit.getICs: Unimplemented!");
         },
     }) satisfies RootCircuit;
 }
 
 
-export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
+export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(
+    id: GUID,
+    state: CircuitState<T>,
+) {
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     const display = {
         set size(s: Vector) {
-            state.internal.setICMetadata(circuit.id, { displayWidth: s.x, displayHeight: s.y });
+            state.internal.setMetadata({ displayWidth: s.x, displayHeight: s.y } as unknown as Schema.CircuitMetadata);
         },
         get size(): Vector {
-            const size = state.internal.getICMetadata(circuit.id);
+            const size = state.internal.getMetadata() as unknown as Schema.IntegratedCircuit["metadata"];
             return V(size.displayWidth, size.displayHeight);
         },
 
