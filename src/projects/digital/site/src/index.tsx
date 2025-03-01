@@ -170,7 +170,6 @@ async function Init(): Promise<void> {
             root.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        {/* <MainCircuit designer={designer} /> */}
                         <App />
                     </Provider>
                 </React.StrictMode>

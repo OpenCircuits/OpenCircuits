@@ -1,5 +1,5 @@
 @use "sass:math";
-@import "~shared/utils/theme";
+@use "theme" as *;
 
 $header-height: 62px;
 $header-border-width: 5px;

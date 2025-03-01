@@ -1,4 +1,4 @@
-@import "~shared/utils/constants";
+@use"~shared/site/utils/constants" as *;
 
 $historybox-height: 400px;
 $historybox-header-height: 30px;

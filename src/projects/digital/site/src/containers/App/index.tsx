@@ -13,7 +13,7 @@ import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 // import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
-// import {DigitalHeader}       from "digital/site/containers/DigitalHeader";
+import {DigitalHeader}       from "digital/site/containers/DigitalHeader";
 // import {DigitalItemNav}      from "digital/site/containers/DigitalItemNav";
 import {DigitalMainDesigner} from "digital/site/containers/DigitalMainDesigner";
 
@@ -53,7 +53,7 @@ export const App = () => {
             {/* <SideNav exampleCircuits={exampleCircuits} /> */}
 
             <div className="App__container" style={{ height: h+"px" }}>
-                {/* <DigitalHeader /> */}
+                <DigitalHeader />
 
                 <main>
                     <DigitalMainDesigner />
