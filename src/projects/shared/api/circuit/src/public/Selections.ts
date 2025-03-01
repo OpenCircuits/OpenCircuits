@@ -1,4 +1,4 @@
-import {Vector} from "Vector";
+import {Rect} from "math/Rect";
 
 import {Component}  from "./Component";
 import {Obj}        from "./Obj";
@@ -12,21 +12,15 @@ export type SelectionsEvent = {
 }
 
 export interface Selections extends Observable<SelectionsEvent> {
+    // Returns the bounding box of all the selections
+    readonly bounds: Rect;
+
     readonly length: number;
     readonly isEmpty: boolean;
 
     readonly all: Obj[];
     readonly components: Component[];
     readonly wires: Wire[];
-
-    /**
-     * Returns the average of the positions of the components selected
-     * as a Vector object.
-     *
-     * @returns A Vector object where x and y are the averages
-     *  of the positions of the selected components.
-     */
-    midpoint(): Vector;
 
     clear(): void;
 

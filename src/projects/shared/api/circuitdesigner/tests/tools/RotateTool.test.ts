@@ -94,7 +94,7 @@ describe("RotateTool", () => {
                        V(+4, +4)); // Select objects
             expect(circuit.selections).toHaveLength(2);
 
-            input.moveTo(circuit.selections.midpoint())
+            input.moveTo(circuit.selections.bounds.center)
                 .move(V(-ROTATION_CIRCLE_RADIUS, 0))
                 .press()
                 .move(V(0, +ROTATION_CIRCLE_RADIUS))
@@ -109,7 +109,7 @@ describe("RotateTool", () => {
             expect(circuit.selections).toHaveLength(2);
 
             const midpoint = obj1.pos.add(obj2.pos).scale(0.5);
-            expect(midpoint).toApproximatelyEqual(circuit.selections.midpoint());
+            expect(midpoint).toApproximatelyEqual(circuit.selections.bounds.center);
 
             input.moveTo(midpoint) // Move to midpoint of objects
                 .move(V(ROTATION_CIRCLE_RADIUS, 0))
@@ -128,7 +128,7 @@ describe("RotateTool", () => {
             const newMidpoint = obj1.pos.add(obj2.pos).scale(0.5);
 
             expect(newMidpoint).toApproximatelyEqual(midpoint); // Make sure midpoint stayed in the same place
-            expect(newMidpoint).toApproximatelyEqual(circuit.selections.midpoint());
+            expect(newMidpoint).toApproximatelyEqual(circuit.selections.bounds.center);
             expect(obj1.angle).toBeCloseTo(0);
             expect(obj2.angle).toBeCloseTo(0);
         });
@@ -139,7 +139,7 @@ describe("RotateTool", () => {
             expect(circuit.selections).toHaveLength(2);
 
             const initialMidpoints = circuit.selections.components.map((o) => o.pos);
-            const midpoint = circuit.selections.midpoint();
+            const midpoint = circuit.selections.bounds.center;
 
             input.pressKey("z")
                 .moveTo(midpoint)
@@ -149,7 +149,7 @@ describe("RotateTool", () => {
                 .release()
                 .releaseKey("z");
 
-            const newMidpoint = circuit.selections.midpoint();
+            const newMidpoint = circuit.selections.bounds.center;
             const finalMidpoints = circuit.selections.components.map((o) => o.pos);
 
             expect(obj1.angle).toBeCloseTo(-Math.PI/4);
@@ -163,7 +163,7 @@ describe("RotateTool", () => {
                        V(+4, +4)); // Select objects
 
             const initialMidpoints = circuit.selections.components.map((o) => o.pos);
-            const midpoint = circuit.selections.midpoint();
+            const midpoint = circuit.selections.bounds.center;
 
             input.moveTo(midpoint) // Move to midpoint of objects
                 .move(V(-ROTATION_CIRCLE_RADIUS, 0))
@@ -190,7 +190,7 @@ describe("RotateTool", () => {
                        V(+4, +4)); // Select objects
 
             const initialMidpoints = circuit.selections.components.map((o) => o.pos);
-            const midpoint = circuit.selections.midpoint();
+            const midpoint = circuit.selections.bounds.center;
 
             input.pressKey("z")
                 .moveTo(midpoint) // Move to midpoint of objects
@@ -230,7 +230,7 @@ describe("RotateTool", () => {
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects
 
-            const midpoint = circuit.selections.midpoint();
+            const midpoint = circuit.selections.bounds.center;
 
             // rotation #1
             input.pressKey("z")

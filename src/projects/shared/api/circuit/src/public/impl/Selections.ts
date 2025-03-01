@@ -1,4 +1,4 @@
-import {V, Vector} from "Vector";
+import {Rect} from "math/Rect";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
@@ -27,6 +27,10 @@ export function SelectionsImpl<T extends CircuitTypes>(
     });
 
     return extend(observable, {
+        get bounds(): Rect {
+            return Rect.Bounding(this.all.map((o) => o.bounds));
+        },
+
         get length(): number {
             return selections().length;
         },
@@ -44,18 +48,6 @@ export function SelectionsImpl<T extends CircuitTypes>(
         get wires(): T["Wire[]"] {
             return selections().filter((id) => (internal.doc.hasComp(id)))
                 .map((id) => constructWire(id));
-        },
-
-        midpoint(): Vector {
-            // Case: no components are selected
-            if (this.components.length === 0)
-                return V(0, 0);
-
-            // Case: One or more components are selected, calculate average
-            return this.components
-                .map((c) => c.pos)
-                .reduce((sum, v) => sum.add(v))
-                .scale(1 / this.components.length);
         },
 
         clear(): void {

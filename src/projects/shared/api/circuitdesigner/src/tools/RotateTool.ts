@@ -36,7 +36,7 @@ export class RotateTool implements Tool {
 
     private isOnCircle(pos: Vector, circuit: Circuit, viewport: Viewport): boolean {
         const worldPos = viewport.camera.toWorldPos(pos);
-        const d = worldPos.sub(circuit.selections.midpoint()).len2();
+        const d = worldPos.sub(circuit.selections.bounds.center).len2();
 
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
     }
@@ -63,7 +63,7 @@ export class RotateTool implements Tool {
         // Get initial angles
         this.curAngles = this.components.map((c) => c.angle);
         this.curAroundAngle = 0;
-        this.startAngle = camera.toWorldPos(ev.input.mousePos).sub(circuit.selections.midpoint()).angle();
+        this.startAngle = camera.toWorldPos(ev.input.mousePos).sub(circuit.selections.bounds.center).angle();
         this.prevAngle = this.startAngle;
 
         // Start the transaction
@@ -79,7 +79,7 @@ export class RotateTool implements Tool {
             // Get whether z is presesed for independent rotation
             const isIndependent = ev.input.keysDown.has("z");
 
-            const midpoint = circuit.selections.midpoint();
+            const midpoint = circuit.selections.bounds.center;
 
             const dAngle = camera.toWorldPos(ev.input.mousePos).sub(midpoint).angle() - this.prevAngle;
 
