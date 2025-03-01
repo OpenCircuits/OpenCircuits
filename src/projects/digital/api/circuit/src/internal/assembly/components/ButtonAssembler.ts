@@ -7,20 +7,16 @@ import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {DigitalComponentInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {Transform} from "math/Transform";
 
 
-export class SwitchAssembler extends ComponentAssembler {
-    // public readonly size = V(1.24, 1.54);
-    // public readonly pressableSize = V(0.96, 1.2);
-
+export class ButtonAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
     protected info: DigitalComponentInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
-        super(params, V(1.24, 1.54), {
-            "outputs": () => ({origin: V(0.62, 0), dir: V(1, 0)})
+        super(params, V(1, 1), {
+            "outputs": () => ({origin: V(0.5, 0), dir: V(1, 0)})
         }, [
             {
                 kind: "BaseShape",
@@ -38,16 +34,17 @@ export class SwitchAssembler extends ComponentAssembler {
 
                 // TODO: Add dependency handling for state change (may or may not be part of PropChanged)
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
-                assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "switchDown.svg" : "switchUp.svg", transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp))}),
+                assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "buttonDown.svg" : "buttonUp.svg", transform: this.getTransform(comp)}),
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.doc.getObjectInfo("Switch").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.doc.getObjectInfo("Button").unwrap() as DigitalComponentInfo;
     }
 
     private isOn(sw: Schema.Component) {
         const [outputPort] = this.circuit.doc.getPortsForComponent(sw.id).unwrap();
         return Signal.isOn(this.sim.getSignal(outputPort));
     }
+
 }

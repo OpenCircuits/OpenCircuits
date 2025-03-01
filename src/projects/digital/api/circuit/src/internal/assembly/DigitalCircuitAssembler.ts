@@ -10,8 +10,12 @@ import {DigitalSim}           from "../sim/DigitalSim";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
 import {ANDGateAssembler}     from "./components/gates/ANDGateAssembler";
 import {ORGateAssembler}      from "./components/gates/ORGateAssembler";
-// import {LEDAssembler}         from "./components/LEDAssembler";
-// import {SwitchAssembler}      from "./components/SwitchAssembler";
+import {LEDAssembler}         from "./components/LEDAssembler";
+import {SwitchAssembler}      from "./components/SwitchAssembler";
+import {ButtonAssembler}      from "./components/ButtonAssembler";
+import {ClockAssembler}       from "./components/ClockAssembler";
+import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
+import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
 
 export function MakeDigitalCircuitAssembler(
     circuit: CircuitInternal,
@@ -27,10 +31,14 @@ export function MakeDigitalCircuitAssembler(
             "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
         }),
         // // Inputs
-        // "Switch": new SwitchAssembler(params, sim),
+        "Switch": new SwitchAssembler(params, sim),
+        "Button": new ButtonAssembler(params, sim),
+        "Clock": new ClockAssembler(params, sim),
+        "ConstantHigh": new ConstantHighAssembler(params, sim),
+        "ConstantLow": new ConstantLowAssembler(params, sim),
 
         // // Outputs
-        // "LED": new LEDAssembler(params),
+        "LED": new LEDAssembler(params, sim),
 
         // Gates
         "ANDGate":  new ANDGateAssembler(params, sim, false),
