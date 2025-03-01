@@ -3,10 +3,11 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "Vector":                ["../../../shared/api/circuit/src/utils/math/Vector"],
-            "math/*":                ["../../../shared/api/circuit/src/utils/math/*"],
-            "shared/api/circuit/*":  ["../../../shared/api/circuit/src/*"],
-            "digital/api/circuit/*": ["./src/*"],
+            "Vector":                 ["../../../shared/api/circuit/src/utils/math/Vector"],
+            "math/*":                 ["../../../shared/api/circuit/src/utils/math/*"],
+            "shared/api/circuit/*":   ["../../../shared/api/circuit/src/*"],
+            "shared/tests/helpers/*": ["../../../shared/api/circuit/tests/helpers/*"],
+            "digital/api/circuit/*":  ["./src/*"],
         },
     },
     "include": ["."],

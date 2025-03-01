@@ -1,10 +1,11 @@
+import "shared/tests/helpers/Extensions";
+
 import {V}             from "Vector";
 import {CreateCircuit} from "digital/api/circuit/public";
+import {Rect} from "math/Rect";
 
-import "./Extensions";
 
-
-describe("SelectionsMidpoint", () => {
+describe("SelectionsBounds", () => {
     test("Single Selection", () => {
         // Create and place new component
         const [circuit, _] = CreateCircuit();
@@ -16,11 +17,8 @@ describe("SelectionsMidpoint", () => {
         // Check component has been selected
         expect(s1.isSelected).toBe(true);
 
-        // Calculate midpoint position using method
-        const sm1 = circuit.selections.midpoint();
-
-        // Check that method is returning correct midpoint position
-        expect(sm1).toEqual(V(0,0));
+        const bounds = circuit.selections.bounds;
+        expect(bounds).toEqual(Rect.From({cx: 0, cy: 0, width: 1, height: 1}));
     });
     test("Multiple Selections", () => {
         // Create and place new components
@@ -28,7 +26,7 @@ describe("SelectionsMidpoint", () => {
         const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
         const s2 = circuit.placeComponentAt("Switch", V(-5, -5));
         const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));
-        const l1 = circuit.placeComponentAt("LED", V(6, 0));
+        const l1 = circuit.placeComponentAt("LED", V(2.12, 0));
 
         // Select created components
         s1.isSelected = true;
@@ -42,10 +40,7 @@ describe("SelectionsMidpoint", () => {
         expect(c1.isSelected).toBe(true);
         expect(l1.isSelected).toBe(true);
 
-        // Calculate midpoint position using method
-        const methodMidpoint = circuit.selections.midpoint();
-
-        // Check that method is returning correct midpoint position
-        expect(methodMidpoint).toEqual(V(-1, 0));
+        const bounds = circuit.selections.bounds;
+        expect(bounds).toEqual(Rect.From({cx: -1, cy: 0, width: 2*4.62, height: 2*5.77}));
     });
 });

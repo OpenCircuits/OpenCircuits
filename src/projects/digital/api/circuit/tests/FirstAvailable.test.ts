@@ -1,8 +1,8 @@
+import "shared/tests/helpers/Extensions";
+
 import {V} from "Vector";
 
 import {CreateCircuit} from "digital/api/circuit/public";
-
-import "./Extensions";
 
 
 describe("FirstAvailable", () => {

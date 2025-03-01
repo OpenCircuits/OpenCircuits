@@ -270,9 +270,18 @@ describe("RootCircuit", () => {
         });
     });
 
-    // TODO
-    // describe("Place", () => {
-    // });
+    describe("Place", () => {
+        test("0, 0", () => {
+            const [circuit, _, {}] = CreateTestRootCircuit();
+            const c1 = circuit.placeComponentAt("TestComp", V(0, 0));
+            expect(c1.pos).toEqual(V(0, 0));
+        });
+        test("-5, 16", () => {
+            const [circuit, _, { }] = CreateTestRootCircuit();
+            const c1 = circuit.placeComponentAt("TestComp", V(-5, 16));
+            expect(c1.pos).toEqual(V(-5, 16));
+        });
+    });
 
     describe("Delete", () => {
         test("Basic Delete 1 Component", () => {
@@ -468,6 +477,7 @@ describe("RootCircuit", () => {
         // TODO: All other operations
     });
 
+    // TODO: Is this just redundant with select all then copy selection?
     // describe("Copy", () => {
     //     function expectObjsToBeSame(o1: Obj, o2: Obj) {
     //         expect(o1.baseKind).toEqual(o2.baseKind);
