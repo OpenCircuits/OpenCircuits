@@ -3,7 +3,6 @@ import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner
 
 const { storeDesigner, useDesigner, useMainDesigner } = (() => {
     const storedDesigners = new Map<string, CircuitDesigner>();
-
     return {
         storeDesigner: (key: string, designer: CircuitDesigner) => {
             storedDesigners.set(key, designer);

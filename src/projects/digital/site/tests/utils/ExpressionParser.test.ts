@@ -1,14 +1,14 @@
 import {InputToken, InputTreeBinOpNode, InputTreeIdent,
         InputTreeUnOpNode, OperatorFormat,
-        Token} from "site/digital/utils/ExpressionParser/Constants/DataStructures";
+        Token} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 
-import {GenerateInputTree} from "site/digital/utils/ExpressionParser/GenerateInputTree";
+import {GenerateInputTree} from "digital/site/utils/ExpressionParser/GenerateInputTree";
 
 import "../../../../../app/tests/Extensions";
-import {ExpressionToCircuit} from "site/digital/utils/ExpressionParser";
-import {GenerateTokens}      from "site/digital/utils/ExpressionParser/GenerateTokens";
+import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser";
+import {GenerateTokens}      from "digital/site/utils/ExpressionParser/GenerateTokens";
 import {Component}           from "shared/api/circuit/public";
-import {FORMATS}             from "site/digital/utils/ExpressionParser/Constants/Formats";
+import {FORMATS}             from "digital/site/utils/ExpressionParser/Constants/Formats";
 
 
 /**

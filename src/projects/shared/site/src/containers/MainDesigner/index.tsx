@@ -15,11 +15,11 @@ import {Droppable} from "shared/site/components/DragDroppable/Droppable";
 import "./index.scss";
 
 
-function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPos: Vector, space: Vector.Spaces = "world") {
+function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPos: Vector) {
     circuit.beginTransaction();
     let pos = startPos;
     for (let i = 0; i < N; i++) {
-        const comp = circuit.placeComponentAt(itemKind, pos, space);
+        const comp = circuit.placeComponentAt(itemKind, pos);
 
         // Calculate bounds of the placed component to offset the position for the next one
         pos = pos.sub(0, comp.bounds.height);
@@ -41,13 +41,13 @@ export const MainDesigner = ({ otherPlace }: Props) => {
             return;
         // TODO[model_refactor](leon) - Make a global declaration for this so we can set it w/o gross cast
         (window as unknown as Record<string, unknown>).Circuit = designer.circuit;
-        return designer.attachCanvas(canvas.current);
+        return designer.viewport.attachCanvas(canvas.current);
     }, [designer, canvas]);
 
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
-    useLayoutEffect(() => designer.circuit.resize(w, h), [designer, w, h]);
+    useLayoutEffect(() => designer.viewport.resize(w, h), [designer, w, h]);
 
     return (
         <Droppable
@@ -68,7 +68,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
                 // If other place options are specified then do those
                 //  otherwise default to CreateNComponents
                 if (!otherPlace?.(pos, itemKind, amt, otherData))
-                    PlaceNComponents(designer.circuit, itemKind, amt, pos, "screen");
+                    PlaceNComponents(designer.circuit, itemKind, amt, pos);
             }}>
             <canvas
                 className="main__canvas"

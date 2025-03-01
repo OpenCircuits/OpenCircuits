@@ -7,7 +7,7 @@ import {UndoHandler}        from "shared/api/circuit/tools/handlers/UndoHandler"
 
 import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
-import {CreateInfo} from "site/digital/utils/CircuitInfo/CreateInfo";
+import {CreateInfo} from "digital/site/utils/CircuitInfo/CreateInfo";
 
 import "./index.scss";
 

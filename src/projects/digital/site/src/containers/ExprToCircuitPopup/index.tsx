@@ -1,7 +1,7 @@
 import {useState} from "react";
 
-import {OperatorFormat, OperatorFormatLabel} from "site/digital/utils/ExpressionParser/Constants/DataStructures";
-import {FORMATS}                             from "site/digital/utils/ExpressionParser/Constants/Formats";
+import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
+import {FORMATS}                             from "digital/site/utils/ExpressionParser/Constants/Formats";
 
 import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 

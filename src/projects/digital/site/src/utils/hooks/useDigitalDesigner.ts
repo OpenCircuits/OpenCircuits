@@ -1,5 +1,4 @@
-import {DigitalCircuitDesigner} from "site/digital/utils/DigitalCircuitDesigner";
-
+import type {DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {useDesigner, useMainDesigner} from "shared/site/utils/hooks/useDesigner"
 
 
