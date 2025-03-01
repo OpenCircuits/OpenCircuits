@@ -4,11 +4,11 @@ import {Observable} from "shared/api/circuit/utils/Observable";
 import {Schema}     from "shared/api/circuit/schema";
 import {GUID}       from "shared/api/circuit/schema/GUID";
 
-import {CircuitLog}                               from "./CircuitLog";
-import {InvertCircuitOp}                          from "./CircuitOps";
-import {PortConfig}                               from "./ComponentInfo";
-import {CircuitDocument, ReadonlyCircuitDocument} from "./CircuitDocument";
-import {FastCircuitDiff}                          from "./FastCircuitDiff";
+import {CircuitLog}      from "./CircuitLog";
+import {InvertCircuitOp} from "./CircuitOps";
+import {PortConfig}      from "./ComponentInfo";
+import {CircuitDocument} from "./CircuitDocument";
+import {FastCircuitDiff} from "./FastCircuitDiff";
 
 
 export type InternalEvent = {
@@ -33,34 +33,25 @@ export type InternalEvent = {
 export class CircuitInternal extends Observable<InternalEvent> {
     private readonly id: GUID;
 
-    private readonly mutableDoc: CircuitDocument;
-    private get doc(): ReadonlyCircuitDocument {
-        return this.mutableDoc;
-    }
-    public readonly log: CircuitLog;
+    private readonly doc: CircuitDocument;
+    private readonly log: CircuitLog;
 
     private readonly undoStack: number[]; // Index in the `log` of the entry
     private redoStack: number[]; // Index in the `log` of the entry
-
-    // // Schemas
-    // protected metadata: Schema.CircuitMetadata;
-
-    // TODO[model_refactor](leon) - this is probably a hack, we most likely need to make this a transaction somehow
-    // protected icMetadata: Record<GUID, Schema.IntegratedCircuit["metadata"]>;
 
     public constructor(id: GUID, log: CircuitLog, doc: CircuitDocument) {
         super();
 
         this.id = id;
 
-        this.mutableDoc = doc;
+        this.doc = doc;
 
         this.log = log;
 
         this.undoStack = [];
         this.redoStack = [];
 
-        this.mutableDoc.subscribe(({ circuit, diff }) => {
+        this.doc.subscribe(({ circuit, diff }) => {
             if (circuit !== this.id)
                 return;
             this.publish({
@@ -72,15 +63,23 @@ export class CircuitInternal extends Observable<InternalEvent> {
         // Subscribe to log to track events that change this circuit
         // When they, track in undo stack
         this.log.subscribe((ev) => {
-            if (ev.ops.some((op) => (op.circuit === this.id))) {
+            if (ev.accepted.length === 0)
+                return;
+
+            // TODO: What if multiple entries? (only matters for multi-edit)
+            const [entry] = ev.accepted;
+            if (entry.clientData.startsWith(this.id) &&
+                (entry.clientData.endsWith("undo") || entry.clientData.endsWith("redo"))) {
+                // Don't consider undo/redo entries for the undo/redo history
+                return;
+            }
+
+            if (entry.ops.some((op) => (op.circuit === this.id))) {
                 // Add entry to undo stack and clear redo stack
-                this.undoStack.push(this.log.length);  // use ev.clock?
+                this.undoStack.push(ev.clock);
                 this.redoStack = [];
             }
         });
-
-        // this.metadata = { id, name: "", desc: "", thumb: "", version: "type/v0" };
-        // this.icMetadata = {};
     }
 
     //
@@ -137,14 +136,14 @@ export class CircuitInternal extends Observable<InternalEvent> {
     //
 
     public beginTransaction() {
-        this.mutableDoc.beginTransaction();
+        this.doc.beginTransaction();
     }
     public cancelTransaction() {
-        this.mutableDoc.cancelTransaction();
+        this.doc.cancelTransaction();
     }
     public commitTransaction() {
-        this.mutableDoc.commitTransaction();
-        // if (this.mutableDoc.commitTransaction()) {
+        this.doc.commitTransaction();
+        // if (this.doc.commitTransaction()) {
         //     // Add entry to undo stack and clear redo stack
         //     this.undoStack.push(this.log.length - 1);
         //     this.redoStack = [];
@@ -152,7 +151,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
     }
 
     public undo(): Result {
-        if (this.mutableDoc.isTransaction())
+        if (this.doc.isTransaction())
             return ErrE("Cannot undo while currently within a transaction!");
         if (this.undoStack.length === 0)
             return OkVoid();
@@ -160,23 +159,29 @@ export class CircuitInternal extends Observable<InternalEvent> {
         const lastEntryIndex = this.undoStack.pop()!;
         this.redoStack.push(lastEntryIndex);
 
-        const ops = this.log.entries[lastEntryIndex].ops
+        this.doc.beginTransaction();
+        this.log.entries[lastEntryIndex].ops
             .filter((op) => (op.circuit === this.id))
             .map(InvertCircuitOp)
-            .reverse();
-        this.mutableDoc["applyOpsChecked"](ops);
-        this.mutableDoc["publishDiffEvent"](this.id);
-            // .forEach((op) => {
-            //     // TODO: Might need to add a method that does all the ops at once
-            //     // to avoid broadcasting a diff event for EACH operation
-            //     this.mutableDoc.addTransactionOp(op);
-            // });
+            .reverse()
+            .forEach((op) => {
+                // TODO: Might need to add a method that does all the ops at once
+                // to avoid broadcasting a diff event for EACH operation
+                this.doc.addTransactionOp(op);
+            });
+        this.doc.commitTransaction(`${this.id}/undo`);
+        // const ops = this.log.entries[lastEntryIndex].ops
+        //     .filter((op) => (op.circuit === this.id))
+        //     .map(InvertCircuitOp)
+        //     .reverse();
+        // this.doc["applyOpsChecked"](ops);
+        // this.doc["publishDiffEvent"](this.id);
 
         return OkVoid();
     }
 
     public redo(): Result {
-        if (this.mutableDoc.isTransaction())
+        if (this.doc.isTransaction())
             return ErrE("Cannot redo while currently within a transaction!");
         if (this.redoStack.length === 0)
             return OkVoid();
@@ -184,22 +189,26 @@ export class CircuitInternal extends Observable<InternalEvent> {
         const lastEntryIndex = this.redoStack.pop()!;
         this.undoStack.push(lastEntryIndex);
 
-        const ops = this.log.entries[lastEntryIndex].ops
-            .filter((op) => (op.circuit === this.id));
-            // .forEach((op) => {
-            //     // TODO: Might need to add a method that does all the ops at once
-            //     // to avoid broadcasting a diff event for EACH operation
-            //     this.mutableDoc.addTransactionOp(op);
-            // });
-        this.mutableDoc["applyOpsChecked"](ops);
-        this.mutableDoc["publishDiffEvent"](this.id);
+        this.doc.beginTransaction();
+        this.log.entries[lastEntryIndex].ops
+            .filter((op) => (op.circuit === this.id))
+            .forEach((op) => {
+                // TODO: Might need to add a method that does all the ops at once
+                // to avoid broadcasting a diff event for EACH operation
+                this.doc.addTransactionOp(op);
+            });
+        this.doc.commitTransaction(`${this.id}/redo`);
+        // const ops = this.log.entries[lastEntryIndex].ops
+        //     .filter((op) => (op.circuit === this.id));
+        // this.doc["applyOpsChecked"](ops);
+        // this.doc["publishDiffEvent"](this.id);
 
         return OkVoid();
     }
 
     public placeComponent(kind: string, props: Schema.Component["props"]): Result<GUID> {
         const id = Schema.uuid();
-        return this.mutableDoc.addTransactionOp({
+        return this.doc.addTransactionOp({
                 kind:     "PlaceComponentOp",
                 circuit:  this.id,
                 inverted: false,
@@ -225,7 +234,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
             .andThen((circuit) => circuit
                 .getCompByID(id)
                 .andThen((c) =>
-                    this.mutableDoc.addTransactionOp({
+                    this.doc.addTransactionOp({
                         kind:     "PlaceComponentOp",
                         circuit:  this.id,
                         inverted: true,
@@ -236,7 +245,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
 
     public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"] = {}): Result<GUID> {
         const id = Schema.uuid();
-        return this.mutableDoc
+        return this.doc
             .addTransactionOp({
                 kind:     "ConnectWireOp",
                 circuit:  this.id,
@@ -256,7 +265,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
             .andThen((circuit) => circuit
                 .getWireByID(id)
                 .andThen((w) =>
-                    this.mutableDoc.addTransactionOp({
+                    this.doc.addTransactionOp({
                         kind:     "ConnectWireOp",
                         circuit:  this.id,
                         inverted: true,
@@ -274,7 +283,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
             .getCircuitInfo(this.id)
             .andThen((circuit) => circuit
                 .getObjByID(id)
-                .andThen((obj) => this.mutableDoc.addTransactionOp({
+                .andThen((obj) => this.doc.addTransactionOp({
                     id,
                     circuit: this.id,
                     kind:    "SetPropertyOp",
@@ -309,7 +318,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
                         const addedPortsMap = new Map(newPorts.map((p) => [s(p), p]));
                         oldPorts.forEach((oldPort) => addedPortsMap.delete(s(oldPort)));
 
-                        return this.mutableDoc.addTransactionOp({
+                        return this.doc.addTransactionOp({
                             kind:       "SetComponentPortsOp",
                             circuit:    this.id,
                             inverted:   false,
@@ -336,7 +345,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
                         .flatMap((removedPort) => [...circuit.getWiresForPort(removedPort.id).unwrap()])
                         .map((removedWire) => circuit.getWireByID(removedWire).unwrap());
 
-                    return this.mutableDoc.addTransactionOp({
+                    return this.doc.addTransactionOp({
                         kind:         "SetComponentPortsOp",
                         circuit:      this.id,
                         inverted:     false,
@@ -350,7 +359,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
     }
 
     public setMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {
-        return this.mutableDoc.setMetadataFor(this.id, newMetadata);
+        return this.doc.setMetadataFor(this.id, newMetadata);
     }
 
     public getMetadata(): Result<Readonly<Schema.CircuitMetadata>> {
