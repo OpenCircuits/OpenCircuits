@@ -82,8 +82,19 @@ export class PrimRenderer {
         case "Rectangle":
         case "Group": {
             // Set style
-            if (prim.style.fill !== undefined)
-                ctx.fillStyle = prim.style.fill;
+            if (prim.style.fill !== undefined) {
+                if (typeof prim.style.fill === "string") {
+                    ctx.fillStyle = prim.style.fill;
+                } else {
+                    // Gradient info
+                    // TODO - evaluate performance of this and if it's too much, find a way to cache the gradient
+                    const { pos1, radius1, pos2, radius2, colorStops } = prim.style.fill;
+                    const gradient = ctx.createRadialGradient(pos1.x, pos1.y, radius1, pos2.x, pos2.y, radius2);
+                    colorStops.forEach(([offset, color]) =>
+                        gradient.addColorStop(offset, color));
+                    ctx.fillStyle = gradient;
+                }
+            }
             if (prim.style.stroke !== undefined) {
                 ctx.strokeStyle = prim.style.stroke.color;
                 ctx.lineWidth = prim.style.stroke.size;

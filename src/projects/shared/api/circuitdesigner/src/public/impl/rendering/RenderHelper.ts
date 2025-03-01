@@ -68,8 +68,19 @@ export class RenderHelper {
     public setStyle(style: Style, alpha = 1) {
         this.ctx.globalAlpha = alpha;
 
-        if (style.fill !== undefined)
-            this.ctx.fillStyle = style.fill;
+        if (style.fill !== undefined) {
+            if (typeof style.fill === "string") {
+                this.ctx.fillStyle = style.fill;
+            } else {
+                // Gradient info
+                // TODO - evaluate performance of this and if it's too much, find a way to cache the gradient
+                const { pos1, radius1, pos2, radius2, colorStops } = style.fill;
+                const gradient = this.ctx.createRadialGradient(pos1.x, pos1.y, radius1, pos2.x, pos2.y, radius2);
+                colorStops.forEach(([offset, color]) =>
+                    gradient.addColorStop(offset, color));
+                this.ctx.fillStyle = gradient;
+            }
+        }
         if (style.stroke !== undefined) {
             this.ctx.strokeStyle = style.stroke.color;
             this.ctx.lineWidth = style.stroke.size;
