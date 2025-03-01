@@ -10,6 +10,7 @@ import {Wire}    from "../Wire";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
+import {BezierCurve} from "math/BezierCurve";
 
 
 export function WireImpl<T extends CircuitTypes>(
@@ -33,6 +34,10 @@ export function WireImpl<T extends CircuitTypes>(
 
     return extend(base, {
         baseKind: "Wire",
+
+        get shape(): BezierCurve {
+            return assembler.getWireShape(id).unwrap();
+        },
 
         get p1(): T["Port"] {
             return constructPort(getWire().p1);

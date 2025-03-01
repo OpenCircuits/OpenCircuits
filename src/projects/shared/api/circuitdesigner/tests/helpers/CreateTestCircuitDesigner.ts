@@ -56,7 +56,7 @@ export function GetDefaultTools() {
 }
 
 export function CreateTestCircuitDesigner(toolConfig: ToolConfig = GetDefaultTools()) {
-    const [circuit, state] = CreateTestRootCircuit();
+    const [circuit, state, helpers] = CreateTestRootCircuit();
 
     // create view and attach toolConfig.renderers as post-process rendering
 
@@ -97,5 +97,5 @@ export function CreateTestCircuitDesigner(toolConfig: ToolConfig = GetDefaultToo
 
     designer.viewport.attachCanvas(canvas);
 
-    return [designer, new MockInputFacade(designer.viewport.camera, canvas), canvas] as const;
+    return [designer, new MockInputFacade(designer.viewport.camera, canvas), canvas, helpers] as const;
 }

@@ -1,6 +1,6 @@
 import {Result} from "shared/api/circuit/utils/Result";
 import crypto   from "node:crypto";
-import {Obj} from "../../src/public";
+import {Component, Obj} from "../../src/public";
 
 
 // Define crypto for Jest for uuid generation
@@ -18,6 +18,7 @@ declare global {
             toBeObj(obj: Obj): CustomMatcherResult;
             toContainObjs(objs: Obj[]): CustomMatcherResult;
             toContainObjsExact(objs: Obj[]): CustomMatcherResult;
+            toBeConnectedTo(otherObj: Component): CustomMatcherResult;
             // toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
     }
@@ -180,5 +181,15 @@ expect.extend({
             message: () => "same objects",
             pass:    true,
         }
+    },
+
+    toBeConnectedTo(received: Component, otherObj: Component) {
+        const pass = received.allPorts.some((port) =>
+            port.connectedPorts.some((p) =>
+                (p.parent.id === otherObj.id)));
+        return {
+            message: () => `expected ${FormatObj(received)} to be connected to ${FormatObj(otherObj)}`,
+            pass,
+        };
     },
 });
