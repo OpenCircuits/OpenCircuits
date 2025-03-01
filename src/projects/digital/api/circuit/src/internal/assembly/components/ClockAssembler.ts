@@ -21,6 +21,7 @@ export class ClockAssembler extends ComponentAssembler {
             {
                 kind: "SVG",
 
+                // TODO: Add dependency handling for state change (may or may not be part of PropChanged)
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
                 assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "clockOn.svg" : "clock.svg", transform: this.getTransform(comp)}),
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)

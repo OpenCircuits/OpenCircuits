@@ -32,6 +32,7 @@ export class ButtonAssembler extends ComponentAssembler {
             {
                 kind: "SVG",
 
+                // TODO: Add dependency handling for state change (may or may not be part of PropChanged)
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
                 assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "buttonDown.svg" : "buttonUp.svg", transform: this.getTransform(comp)}),
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
@@ -43,7 +44,6 @@ export class ButtonAssembler extends ComponentAssembler {
 
     private isOn(sw: Schema.Component) {
         const [outputPort] = this.circuit.doc.getPortsForComponent(sw.id).unwrap();
-        console.log("isOn", Signal.isOn(this.sim.getSignal(outputPort)));
         return Signal.isOn(this.sim.getSignal(outputPort));
     }
 
