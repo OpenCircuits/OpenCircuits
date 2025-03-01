@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import "../Extensions";
+import "tests/helpers/Extensions";
 
 import {V} from "Vector";
 

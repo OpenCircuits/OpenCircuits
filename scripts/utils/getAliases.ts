@@ -23,18 +23,24 @@ export default function getAliases(cwd = process.cwd(), format: "webpack" | "jes
     const aliases: Record<string, string> = {};
     if (config.options.paths) {
         const paths = config.options.paths;
+        console.log(paths);
         Object.entries(paths).forEach(([n, [p]]) => {
             if (format === "webpack") {
                 const name = n.replace("/*", "");
                 const url = path.resolve(cwd, p.replace("/*", ""));
                 aliases[name] = url;
             } else {
-                const name = n.replace("/*", "/(.*)$");
-                const url = p.replace("./", "<rootDir>/").replace("/*", "/$1");
+                const name = "^" + n.replace("/*", "/(.*)$");
+                const url = p
+                    .replace(/^\.\.\//, "<rootDir>/../")
+                    .replace(/^\.\//, "<rootDir>/")
+                    .replace("/*", "/$1");
                 aliases[name] = url;
             }
         });
     }
+
+    console.log(aliases);
 
     return aliases;
 }

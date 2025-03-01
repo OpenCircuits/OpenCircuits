@@ -1,6 +1,6 @@
 import {Result} from "shared/api/circuit/utils/Result";
 import crypto   from "node:crypto";
-import {Obj} from "../src/public";
+import {Obj} from "../../src/public";
 
 
 // Define crypto for Jest for uuid generation

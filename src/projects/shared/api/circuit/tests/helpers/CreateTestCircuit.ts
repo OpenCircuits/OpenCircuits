@@ -1,4 +1,4 @@
-import "../Extensions";
+import "./Extensions";
 
 import {V, Vector} from "Vector";
 

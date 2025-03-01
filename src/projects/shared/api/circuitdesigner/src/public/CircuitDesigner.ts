@@ -7,6 +7,11 @@ import {DebugOptions} from "./impl/DebugOptions";
 import {Viewport}     from "./Viewport";
 
 
+export interface CircuitDesignerOptions {
+    dragTime?: number;
+}
+
+
 // All state variables within the CircuitDesigner will/should NOT be serialized
 // and shouldn't persist through user sessions. I.e. they will reset on page refresh
 // and represent temporary state for the user in the current session.

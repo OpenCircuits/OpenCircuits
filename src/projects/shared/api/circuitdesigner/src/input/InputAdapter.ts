@@ -82,7 +82,6 @@ export class InputAdapter extends Observable<InputAdapterEvent> {
      * Initializes Input with given canvas and dragTime.
      *
      * @param canvas   The canvas to adapt the inputs of.
-     * @param camera   The camera for the circuit (used to provide world-space input utilities).
      * @param dragTime The minimum length of time a mousedown must last to be considered a drag rather than a click.
      */
     public constructor(canvas: HTMLCanvasElement, dragTime: number = DRAG_TIME) {

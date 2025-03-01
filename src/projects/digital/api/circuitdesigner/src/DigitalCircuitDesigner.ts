@@ -40,5 +40,5 @@ export function CreateDesigner(toolConfig: ToolConfig) {
         },
     };
 
-    return CircuitDesignerImpl(circuit, designerState, SVGs);
+    return CircuitDesignerImpl(circuit, designerState, SVGs, {});
 }

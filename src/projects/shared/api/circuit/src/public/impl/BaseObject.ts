@@ -27,8 +27,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
             return objID;
         },
         get bounds(): Rect {
-            // TODO[model_refactor_api](leon) -- Actually implement this
-            return new Rect(V(0, 0), V(0, 0));
+            return state.assembler.getBoundsFor(this.id).unwrapOr(Rect.Bounding([]));
         },
 
         set name(name: string | undefined) {

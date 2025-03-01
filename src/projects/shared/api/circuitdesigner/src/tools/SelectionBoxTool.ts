@@ -36,35 +36,36 @@ export class SelectionBoxTool implements Tool {
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        // Find all objects within the selection box
-        const objs = circuit.pickObjRange(this.rect);
-
         const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
-        // If nothing was clicked, check if we should deselect and exit
-        if (objs.length === 0) {
-            // Clear selections if not holding shift
+        // Find all components that are within the selection box
+        const comps = circuit.getComponents()
+            .filter((c) => c.bounds.intersects(this.rect));
+        if (comps.length > 0) {
+            // If there are components, just select those
+            circuit.beginTransaction();
             if (deselectAll)
                 circuit.selections.clear();
+            comps.forEach((c) => c.select());
+            circuit.commitTransaction();
             return;
         }
 
-        // If the user selects a group of objects, we want to only select the components
-        //  and ignore any ports that may have also been selected. We only want to
-        //  select Ports if they user only selected ports
-        const nonPortObjs = objs.filter((o) => (o.baseKind !== "Port"));
+        // Otherwise if no components were found, find all ports that may be in-bounds and return those.
+        const ports = circuit.getObjs()
+            .filter((o) => (o.baseKind === "Port" && o.bounds.intersects(this.rect)));
+        if (ports.length > 0) {
+            circuit.beginTransaction();
+            if (deselectAll)
+                circuit.selections.clear();
+            comps.forEach((c) => c.select());
+            circuit.commitTransaction();
+            return;
+        }
 
-        // If there are no non-port objects, then `objects` has all the ports and select them.
-        // Otherwise, select just the non-port objects.
-        const objsToSelect = ((nonPortObjs.length === 0) ? objs : nonPortObjs);
-
-        circuit.beginTransaction();
-
+        // Else just deselect if not holding shift
         if (deselectAll)
             circuit.selections.clear();
-        objsToSelect.forEach((o) => o.select());
-
-        circuit.commitTransaction();
     }
 
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {

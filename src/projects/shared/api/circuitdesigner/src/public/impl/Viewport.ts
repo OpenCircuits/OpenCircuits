@@ -24,9 +24,9 @@ import {RenderScheduler}          from "./rendering/RenderScheduler";
 import {PrimRenderer}             from "./rendering/renderers/PrimRenderer";
 import {RenderGrid}               from "./rendering/renderers/GridRenderer";
 
-import {Camera}                   from "../Camera";
-import {CircuitDesigner}          from "../CircuitDesigner";
-import {Viewport, ViewportEvents} from "../Viewport";
+import {Camera}                                  from "../Camera";
+import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
+import {Viewport, ViewportEvents}                from "../Viewport";
 
 import {CameraImpl}                            from "./Camera";
 import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
@@ -42,6 +42,7 @@ export function ViewportImpl<T extends CircuitTypes>(
     state: CircuitDesignerState<T>,
     designer: CircuitDesigner,
     svgMap: Map<string, SVGDrawing>,
+    options: CircuitDesignerOptions,
 ) {
     const observable = MultiObservableImpl<ViewportEvents>();
 
@@ -163,7 +164,7 @@ export function ViewportImpl<T extends CircuitTypes>(
             });
 
             // Setup inputs and forward them to the tool manager
-            const inputAdapter = new InputAdapter(canvas);
+            const inputAdapter = new InputAdapter(canvas, options.dragTime);
             const u2 = inputAdapter.subscribe((ev) => state.toolManager.onEvent(ev, designer));
 
             // Unblock scheduler once a canvas is set

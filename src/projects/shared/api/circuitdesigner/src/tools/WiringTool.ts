@@ -50,7 +50,7 @@ export class WiringTool implements Tool {
             .filter((obj) => (obj.baseKind === "Port")) as Port[];
         const validPorts = allPorts
             // Make sure port is wireable
-            .filter((port) => !port.getLegalWires().isEmpty)
+            .filter((port) => port.getLegalWires().isWireable)
             // Find only ports that are within the selection radius
             .filter((port) => CircleContains(port.targetPos, WIRING_PORT_SELECT_RADIUS, worldPos))
             // If `otherPort` is specified, then make sure we also only look for ports that

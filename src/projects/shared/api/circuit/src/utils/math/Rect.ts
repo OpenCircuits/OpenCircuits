@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {CalculateMidpoint, Clamp} from "./MathUtils";
+import {Clamp} from "./MathUtils";
 
 
 // Turn union of keys to union of records with that key
@@ -64,14 +64,22 @@ export class Rect {
 
     public intersects(rect: Rect): boolean {
         return (
-            rect.right  >= this.left  &&
+            rect.right  >= this.left &&
             rect.left   <= this.right &&
-            rect.top    <= this.top   &&
-            rect.bottom >= this.bottom
+            rect.top    >= this.bottom &&
+            rect.bottom <= this.top
         );
     }
 
-    public contains(pt: Vector): boolean {
+    public contains(pt: Vector | Rect): boolean {
+        if (pt instanceof Rect) {
+            return (
+                pt.right  >= this.left  &&
+                pt.left   <= this.right &&
+                pt.top    <= this.top   &&
+                pt.bottom >= this.bottom
+            );
+        }
         return (
             pt.x <= this.right &&
             pt.x >= this.left  &&
@@ -136,7 +144,7 @@ export class Rect {
      * @returns    The remaining rectangles after the subtraction.
      */
     public sub(rect: Rect): Rect[] {
-        if (!this.intersects(rect))
+        if (!this.contains(rect))
             return [];
 
         return [

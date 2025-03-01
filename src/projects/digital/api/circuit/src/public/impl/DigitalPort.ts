@@ -43,7 +43,7 @@ export function DigitalPortImpl(circuit: DigitalCircuit, state: DigitalCircuitSt
 
         getLegalWires(): Port.LegalWiresQuery {
             return {
-                isEmpty: !this.isAvailable(),
+                isWireable: this.isAvailable(),
 
                 contains: (port: DigitalPort) => (
                     this.isAvailable() &&

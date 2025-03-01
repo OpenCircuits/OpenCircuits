@@ -9,7 +9,7 @@ import {DefaultTool}  from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}         from "shared/api/circuitdesigner/tools/Tool";
 import {Cursor}       from "shared/api/circuitdesigner/input/Cursor";
 
-import {CircuitDesigner} from "../CircuitDesigner";
+import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
 import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 import {CircuitDesignerState} from "./CircuitDesignerState";
 import {Viewport} from "../Viewport";
@@ -25,6 +25,7 @@ export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitT
     circuit: CircuitT,
     state: CircuitDesignerState<T>,
     svgMap: Map<string, SVGDrawing>,
+    options: CircuitDesignerOptions,
 ) {
     const designer = {
         get circuit(): CircuitT {
@@ -64,7 +65,7 @@ export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitT
         },
     } satisfies CircuitDesigner;
 
-    const viewport = ViewportImpl(state, designer, svgMap);
+    const viewport = ViewportImpl(state, designer, svgMap, options);
 
     return designer;
 }

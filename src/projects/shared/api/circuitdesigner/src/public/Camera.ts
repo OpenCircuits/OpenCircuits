@@ -29,6 +29,7 @@ export interface Camera extends Observable<CameraEvent> {
     zoomTo(zoom: number, pos: Vector): void;
 
     toWorldPos(screenPos: Vector): Vector;
+    toScreenPos(worldPos: Vector): Vector;
 
     zoomToFit(objs: Obj[], margin?: Margin, padRatio?: number): void;
 }

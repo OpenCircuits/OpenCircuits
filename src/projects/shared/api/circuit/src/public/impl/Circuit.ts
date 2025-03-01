@@ -1,5 +1,4 @@
 import {V, Vector} from "Vector";
-import {Rect}      from "math/Rect";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
@@ -86,9 +85,6 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
         pickPortAt(pt: Vector): T["Port"] | undefined {
             return pickObjAtHelper(pt, (id) => state.internal.doc.hasPort(id))
                 .map((id) => this.getPort(id)).asUnion();
-        },
-        pickObjRange(bounds: Rect): T["Obj[]"] {
-            throw new Error("Circuit.pickObjRange: Unimplemented!");
         },
 
         getComponent(id: GUID): T["Component"] | undefined {

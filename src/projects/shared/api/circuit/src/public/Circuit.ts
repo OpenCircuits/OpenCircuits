@@ -41,7 +41,6 @@ export interface Circuit extends Observable<CircuitEvent> {
     pickComponentAt(pt: Vector): Component | undefined;
     pickWireAt(pt: Vector): Wire | undefined;
     pickPortAt(pt: Vector): Port | undefined;
-    pickObjRange(bounds: Rect): Obj[];
 
     getObj(id: GUID): Obj | undefined;
     getComponent(id: GUID): Component | undefined;

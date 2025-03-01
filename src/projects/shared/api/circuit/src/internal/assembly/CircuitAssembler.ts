@@ -1,19 +1,21 @@
 import {Vector} from "Vector";
+import {BezierCurve} from "math/BezierCurve";
+import {Rect}        from "math/Rect";
 
 import {None, Option, Some} from "shared/api/circuit/utils/Result";
-import {Observable}       from "shared/api/circuit/utils/Observable";
+import {Observable}         from "shared/api/circuit/utils/Observable";
 
 import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
 import {SelectionsManager} from "../impl/SelectionsManager";
 
-import {Assembler, AssemblerParams, AssemblyReason}              from "./Assembler";
+import {Assembler, AssemblerParams, AssemblyReason}    from "./Assembler";
 import {AssemblyCache, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
-import {BezierCurve} from "math/BezierCurve";
-import {HitTest} from "./PrimHitTests";
+import {Bounds}                                        from "./PrimBounds";
+import {HitTest}                                       from "./PrimHitTests";
+import {RenderOptions}                                 from "./RenderOptions";
 
 import "shared/api/circuit/utils/Map";
-import {RenderOptions} from "./RenderOptions";
 
 
 export type CircuitAssemblerEvent = {
@@ -237,6 +239,41 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
         this.dirtyWires.clear();
     }
 
+    private reassembleComp(compID: GUID) {
+        // Reassemble component if dirty
+        if (this.dirtyComponents.has(compID)) {
+            const comp = this.circuit.doc.getCompByID(compID).unwrap();
+            this.getAssemblerFor(comp.kind)
+                .assemble(comp, this.dirtyComponents.get(compID)!);
+            this.dirtyComponents.delete(compID);
+        }
+    }
+    private reassembleWire(wireID: GUID) {
+        if (this.dirtyWires.has(wireID)) {
+            const wire = this.circuit.doc.getWireByID(wireID).unwrap();
+            this.getAssemblerFor(wire.kind)
+                .assemble(wire, this.dirtyWires.get(wireID)!);
+            this.dirtyWires.delete(wireID);
+        }
+    }
+
+    public getBoundsFor(objID: GUID): Option<Rect> {
+        if (this.circuit.doc.hasComp(objID)) {
+            this.reassembleComp(objID);
+            return Some(Rect.Bounding(this.cache.componentPrims.get(objID)?.map(Bounds) ?? []));
+        }
+        if (this.circuit.doc.hasWire(objID)) {
+            this.reassembleWire(objID);
+            return Some(Rect.Bounding(this.cache.wirePrims.get(objID)?.map(Bounds) ?? []));
+        }
+        if (this.circuit.doc.hasPort(objID)) {
+            const port = this.circuit.doc.getPortByID(objID).unwrap();
+            this.reassembleComp(port.parent);
+            return Some(Rect.Bounding(this.cache.portPrims.get(port.parent)?.get(objID)?.map(Bounds) ?? []));
+        }
+        return None();
+    }
+
     // TODO[model_refactor_api](leon): Think of a better way to allow access to Prim data and have it auto-update
     //                                 if it is currently dirty
     public getPortPos(portID: GUID): Option<PortPos> {
@@ -245,13 +282,8 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
 
         const port = this.circuit.doc.getPortByID(portID).unwrap();
 
-        // TODO[model_refactor_api](leon): This is terrible
-        if (this.dirtyComponents.has(port.parent)) {
-            const comp = this.circuit.doc.getCompByID(port.parent).unwrap();
-            this.getAssemblerFor(comp.kind)
-                .assemble(comp, this.dirtyComponents.get(port.parent)!);
-            this.dirtyComponents.delete(port.parent);
-        }
+        // Reassemble comp if it's dirty
+        this.reassembleComp(port.parent);
 
         return Some(this.cache.portPositions.get(portID)!);
     }
@@ -261,12 +293,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
             return None();
 
         // Reassemble wire if it's dirty
-        if (this.dirtyWires.has(wireID)) {
-            const wire = this.circuit.doc.getWireByID(wireID).unwrap();
-            this.getAssemblerFor(wire.kind)
-                .assemble(wire, this.dirtyWires.get(wireID)!);
-            this.dirtyWires.delete(wireID);
-        }
+        this.reassembleWire(wireID);
 
         return Some(this.cache.wireCurves.get(wireID)!);
     }

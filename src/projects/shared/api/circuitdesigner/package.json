@@ -10,6 +10,11 @@
   },
   "devDependencies": {
     "@types/hammerjs": "^2.0.39",
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "^8.3.4",
+    "jest-canvas-mock": "^2.5.2"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFiles": ["jest-canvas-mock"]
   }
 }
