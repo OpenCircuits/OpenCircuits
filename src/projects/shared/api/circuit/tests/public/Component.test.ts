@@ -15,21 +15,20 @@ describe("Component", () => {
         test("1x1 default", () => {
             const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
-            expect(c.bounds).toEqual(Rect.From({cx: -1, cy: -1, width: 1, height: 1}));
+            expect(c.bounds).toEqual(Rect.From({cx: 0, cy: 0, width: 1, height: 1}));
         });
 
         test("1x1 with rotation", () => {
             const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             c.angle = Math.PI / 2;
-            expect(c.bounds).toEqual(Rect.From({cx: -1, cy: -1, width: 1, height: 1}));
+            expect(c.bounds).toEqual(Rect.From({cx: 0, cy: 0, width: 1, height: 1}));
         });
 
         test("1x1 default offset start", () => {
             const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(-1, -1));
-            expect(c.bounds.center).toStrictEqual(V(-1, -1));
-            expect(c.bounds.size).toStrictEqual(V(1, 1));
+            expect(c.bounds).toEqual(Rect.From({cx: -1, cy: -1, width: 1, height: 1}));
         });
     });
 

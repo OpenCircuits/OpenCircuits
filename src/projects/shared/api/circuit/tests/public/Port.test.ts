@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import {Rect} from "math/Rect";
 import "../Extensions";
 
 import {V} from "Vector";
@@ -20,8 +21,7 @@ describe("Port", () => {
             const defaultPortWidth = defaultPortLength + defaultPortRadius;
             const [circuit, _, {PlaceAt, GetPort}] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
-            expect(GetPort(c).bounds.center).toStrictEqual(V(.5 * defaultPortWidth, 0));
-            expect(GetPort(c).bounds.size).toStrictEqual(V(defaultPortWidth, defaultPortHeight));
+            expect(c.bounds).toEqual(Rect.From({cx: .5 * defaultPortWidth, cy: 0, width: defaultPortWidth, height: defaultPortHeight}));
         });
         test("rotation", () => {
             // defaultPortHeight assumes that defaultPortLength measures to the center of the Port's circle
@@ -30,8 +30,7 @@ describe("Port", () => {
             const [circuit, _, {PlaceAt, GetPort}] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             c.angle = Math.PI / 2;
-            expect(GetPort(c).bounds.center).toStrictEqual(V(0, .5 * defaultPortHeight));
-            expect(GetPort(c).bounds.size).toStrictEqual(V(defaultPortWidth, defaultPortHeight));
+            expect(c.bounds).toEqual(Rect.From({cx: 0, cy: .5 * defaultPortWidth, width: defaultPortWidth, height: defaultPortHeight}));
         });
     });
 

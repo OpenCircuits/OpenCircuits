@@ -49,6 +49,7 @@ export function WireImpl<T extends CircuitTypes>(
         split(): { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] } {
             // TODO[model_refactor_api](kevin)
             //  Need to make an explicit CircuitInternal operation for splitting wires
+            // Need to guarantee that wire1 is connected to the p1 of initial wire and wire2 for p2
 
             // Default to making the node in the middle of the wire
             const shape = assembler.getWireShape(base.id);

@@ -120,7 +120,7 @@ describe("Selections", () => {
         });
         test("Use bounding box midpoint, not weighted average", () => {
             const [{selections}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2, c3,] = PlaceAt(V(0, 0), V(2, 2), V(0, 0));
+            const [c1, c2, c3] = PlaceAt(V(0, 0), V(2, 2), V(0, 0));
             c1.select();
             c2.select();
             c3.select();
