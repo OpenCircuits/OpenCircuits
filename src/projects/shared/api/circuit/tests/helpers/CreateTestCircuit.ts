@@ -7,7 +7,7 @@ import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Circuit, Component, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
+import {Circuit, Component, Node, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
 import {RootCircuitImpl}                             from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
@@ -25,6 +25,8 @@ import {CircuitDocument}                 from "shared/api/circuit/internal/impl/
 import {BaseComponentInfo, BaseObjInfo,
         BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ComponentInfo";
 import {SelectionsManager}               from "shared/api/circuit/internal/impl/SelectionsManager";
+import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 
 
 export class TestComponentInfo extends BaseComponentInfo {
@@ -36,6 +38,27 @@ export class TestComponentInfo extends BaseComponentInfo {
     }
     public override checkPortConnectivity(_wires: Map<Schema.Port, Schema.Port[]>): Result {
         return OkVoid();
+    }
+}
+
+export class TestComponentAssembler extends ComponentAssembler {
+    public constructor(params: AssemblerParams) {
+        super(params, V(1, 1),  {
+            "": () => ({ origin: V(0, 0), target: V(1, 0) }),
+        }, [
+            { // Line
+                kind: "BaseShape",
+
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
+                assemble: (comp) => ({
+                    kind:      "Rectangle",
+                    transform: this.getTransform(comp),
+                }),
+
+                styleChangesWhenSelected: true,
+                getStyle: (comp) => this.options.fillStyle(this.selections.has(comp.id)),
+            },
+        ]);
     }
 }
 
@@ -52,7 +75,21 @@ export function TestComponentImpl(circuit: Circuit, state: CircuitState<CircuitT
 }
 
 export function TestWireImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
-    return WireImpl(circuit, state, id, () => { throw new Error("TestWireImpl: Unimplemented!"); });
+    return WireImpl(circuit, state, id, (p1, p2, pos) => {
+        // Split logic
+        const node = circuit.placeComponentAt("TestNode", pos) as Node;
+
+        const port = node.ports[""][0];
+        const wire1 = p1.connectTo(port);
+        const wire2 = p2.connectTo(port);
+
+        if (!wire1)
+            throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
+        if (!wire2)
+            throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
+
+        return { node, wire1, wire2 };
+    });
 }
 
 export function TestPortImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
@@ -87,7 +124,10 @@ export function CreateTestRootCircuit(): [RootCircuit, CircuitState<CircuitTypes
         uuid(),
         new CircuitLog(),
         new CircuitDocument(new BaseObjInfoProvider(
-            [new TestComponentInfo("TestComp", {}, [""], [{ "": 1 }])],
+            [
+                new TestComponentInfo("TestComp", {}, [""],[{ "": 1 }]),
+                new TestComponentInfo("TestNode", {}, [""], [{ "": 1 }]),
+            ],
             [new BaseObjInfo("Wire", "TestWire", {})],
             [new BaseObjInfo("Port", "TestPort", {})],
         )),
@@ -96,7 +136,8 @@ export function CreateTestRootCircuit(): [RootCircuit, CircuitState<CircuitTypes
     const selectionsManager = new SelectionsManager();
     const assembler = new CircuitAssembler(internal, selectionsManager, renderOptions, (params) => ({
         "TestWire": new WireAssembler(params),
-        "TestComp": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(1, 0) }) }),
+        "TestComp": new TestComponentAssembler(params),
+        "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
     }));
 
     const state: CircuitState<CircuitTypes> = {

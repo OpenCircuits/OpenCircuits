@@ -23,7 +23,6 @@ export default function getAliases(cwd = process.cwd(), format: "webpack" | "jes
     const aliases: Record<string, string> = {};
     if (config.options.paths) {
         const paths = config.options.paths;
-        console.log(paths);
         Object.entries(paths).forEach(([n, [p]]) => {
             if (format === "webpack") {
                 const name = n.replace("/*", "");
@@ -39,8 +38,6 @@ export default function getAliases(cwd = process.cwd(), format: "webpack" | "jes
             }
         });
     }
-
-    console.log(aliases);
 
     return aliases;
 }
