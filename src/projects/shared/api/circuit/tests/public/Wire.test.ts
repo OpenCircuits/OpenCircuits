@@ -13,17 +13,18 @@ import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
 describe("Wire", () => {
     describe("Bounds", () => {
         test("Basic wire bounding box", () => {
-            const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 0));
+
             const w1 = Connect(c1, c2);
             // TODO: Update height when we figure out the actual thickness of a wire
-            expect(w1.bounds).toEqual(Rect.From({cx: 1.5, cy: 0, width: 1, height: 1}));
+            expect(w1.bounds).toApproximatelyEqual(Rect.From({ left: 1, right: 1 + Math.sqrt(2), bottom: 0, top: 0 }));
         });
     });
 
     describe("Name", () => {
-        test("set and undo/redo", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+        test("Set and undo/redo", () => {
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             const w1 = Connect(c1, c2);
 
@@ -38,8 +39,8 @@ describe("Wire", () => {
     });
 
     describe("isSelected", () => {
-        test(".isSelected", () => {
-            const [circuit, _, {PlaceAt, Connect}] = CreateTestRootCircuit();
+        test("isSelected", () => {
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             const w1 = Connect(c1, c2);
             expect(w1.isSelected).toBeFalsy();
@@ -59,8 +60,8 @@ describe("Wire", () => {
             expect(w1.isSelected).toBeFalsy();
         });
 
-        test(".select/.deselect", () => {
-            const [circuit, _, {PlaceAt, Connect}] = CreateTestRootCircuit();
+        test("Select/Deselect", () => {
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             const w1 = Connect(c1, c2);
             expect(w1.isSelected).toBeFalsy();
@@ -87,8 +88,8 @@ describe("Wire", () => {
     // });
 
     describe("Exists", () => {
-        test("add/delete and undo/redo", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+        test("Add/delete and undo/redo", () => {
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             const w1 = Connect(c1, c2);
             expect(w1.exists()).toBeTruthy();
@@ -97,8 +98,8 @@ describe("Wire", () => {
             circuit.redo();
             expect(w1.exists()).toBeTruthy();
         });
-        test("circuit.deleteObjs", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+        test("Circuit.deleteObjs", () => {
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             const w1 = Connect(c1, c2);
 
@@ -109,8 +110,8 @@ describe("Wire", () => {
             circuit.redo();
             expect(w1.exists()).toBeFalsy();
         });
-        test("deleting connected component deletes wire", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+        test("Deleting connected component deletes wire", () => {
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             const w1 = Connect(c1, c2);
 
@@ -125,10 +126,13 @@ describe("Wire", () => {
 
     describe("Props", () => {
         test("getProps", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            const w1 = Connect(c1, c2);
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
             w1.name = "Test Wire";
+            w1.zIndex = 1;
+            w1.setProp("color", "#ffffff");
+
             const props = w1.getProps();
             expect("name" in props).toBeTruthy();
             expect("color" in props).toBeTruthy();
@@ -136,47 +140,47 @@ describe("Wire", () => {
         });
 
         test("setProp", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            const w1 = Connect(c1, c2);
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
             w1.setProp("name", "Test Wire");
+
             expect(w1.name).toBe("Test Wire");
         });
 
         test("getProp", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            const w1 = Connect(c1, c2);
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
             expect(w1.getProp("name")).toBeUndefined();
             w1.name = "Test Wire";
             expect(w1.getProp("name")).toBe("Test Wire");
         });
 
         test("getProp with invalid prop", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            const w1 = Connect(c1, c2);
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
             expect(w1.getProp("fakeProp")).toBeUndefined();
         });
 
         test("Set invalid prop", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            const w1 = Connect(c1, c2);
-            expect(() => {w1.setProp("fakeProp", true)}).toThrow();
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
+            expect(() => { w1.setProp("fakeProp", true) }).toThrow();
         });
     });
 
     describe("Ports", () => {
         test("Wire is connected to ports", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            const p1 = GetPort(c1);
-            const p2 = GetPort(c2);
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), p1 = GetPort(c1), p2 = GetPort(c2);
+
             const w1 = p1.connectTo(p2)!;
             expect(w1).toBeDefined();
-            expect(w1.p1).toBe(p1);
-            expect(w1.p2).toBe(p2);
+            expect(w1.p1).toBeObj(p1);
+            expect(w1.p2).toBeObj(p2);
         });
     });
 
@@ -187,12 +191,11 @@ describe("Wire", () => {
 
     describe("Split", () => {
         test("split", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            const p1 = GetPort(c1);
-            const p2 = GetPort(c2);
-            const w1 = Connect(c1, c2);
-            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), p1 = GetPort(c1), p2 = GetPort(c2), w1 = Connect(c1, c2);
+
+            const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
+
             expect(w1.exists()).toBeFalsy();
             expect(n1.exists()).toBeTruthy();
             expect(sw1.exists()).toBeTruthy();
@@ -213,6 +216,7 @@ describe("Wire", () => {
             expect(p2.connections[0]).toBe(w1);
             expect(w1.p1).toBe(p1);
             expect(w1.p2).toBe(p2);
+
             circuit.redo();
             expect(w1.exists()).toBeFalsy();
             expect(n1.exists()).toBeTruthy();

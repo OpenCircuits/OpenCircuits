@@ -28,7 +28,7 @@ export class DigitalWireAssembler extends WireAssembler {
 
     protected override getWireStyle(wire: Wire): Style {
         return this.options.wireStyle(
-            this.selections.has(wire.id),
+            this.isSelected(wire.id),
             this.getColorForWire(wire),
         );
     }

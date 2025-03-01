@@ -62,10 +62,9 @@ export function ViewportImpl<T extends CircuitTypes>(
 
         const { renderer } = curState;
         const renderState: RenderState = {
-            camera:     state.cameras[state.curCamera],
-            options:    renderOptions,
-            circuit:    state.circuitState.internal,
-            selections: state.circuitState.selectionsManager,
+            camera:  state.cameras[state.curCamera],
+            options: renderOptions,
+            circuit: state.circuitState.internal,
             renderer,
         };
 

@@ -192,6 +192,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
         const lastEntryIndex = this.undoStack.pop()!;
         this.redoStack.push(lastEntryIndex);
         this.applyOpsChecked(this.log.entries[lastEntryIndex].ops.map(InvertCircuitOp).reverse());
+        this.publishDiffEvent();
 
         return OkVoid();
     }
@@ -205,6 +206,7 @@ export class CircuitInternal extends Observable<InternalEvent> {
         const lastEntryIndex = this.redoStack.pop()!;
         this.undoStack.push(lastEntryIndex);
         this.applyOpsChecked(this.log.entries[lastEntryIndex].ops);
+        this.publishDiffEvent();
 
         return OkVoid();
     }

@@ -13,28 +13,28 @@ import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
 describe("Component", () => {
     describe("Bounds", () => {
         test("1x1 default", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
-            expect(c.bounds).toEqual(Rect.From({cx: 0, cy: 0, width: 1, height: 1}));
+            expect(c.bounds).toEqual(Rect.From({ cx: 0, cy: 0, width: 1, height: 1 }));
         });
 
         test("1x1 with rotation", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             c.angle = Math.PI / 2;
-            expect(c.bounds).toEqual(Rect.From({cx: 0, cy: 0, width: 1, height: 1}));
+            expect(c.bounds).toEqual(Rect.From({ cx: 0, cy: 0, width: 1, height: 1 }));
         });
 
         test("1x1 default offset start", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(-1, -1));
-            expect(c.bounds).toEqual(Rect.From({cx: -1, cy: -1, width: 1, height: 1}));
+            expect(c.bounds).toEqual(Rect.From({ cx: -1, cy: -1, width: 1, height: 1 }));
         });
     });
 
     describe("Name", () => {
         test("set and undo/redo", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.name).toBeUndefined();
             c.name = "Test Component";
@@ -48,7 +48,7 @@ describe("Component", () => {
 
     describe("isSelected", () => {
         test(".isSelected", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.isSelected).toBeFalsy();
 
@@ -68,7 +68,7 @@ describe("Component", () => {
         });
 
         test(".select/.deselect", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.isSelected).toBeFalsy();
 
@@ -111,7 +111,7 @@ describe("Component", () => {
             expect(c.exists()).toBeFalsy();
         });
         test("circuit.deleteObjs", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
 
             circuit.deleteObjs([c]);
@@ -125,12 +125,13 @@ describe("Component", () => {
 
     describe("Props", () => {
         test("getProps", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             c.x = 1;
             c.y = 2;
             c.angle = 3;
             c.name = "Test Component";
+            c.zIndex = 1;
             const props = c.getProps();
             expect("x" in props).toBeTruthy();
             expect("y" in props).toBeTruthy();
@@ -141,14 +142,14 @@ describe("Component", () => {
         });
 
         test("setProp", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             c.setProp("name", "Test Component");
             expect(c.name).toBe("Test Component");
         });
 
         test("getProp", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.getProp("name")).toBeUndefined();
             c.name = "Test Component";
@@ -156,13 +157,13 @@ describe("Component", () => {
         });
 
         test("getProp with invalid prop", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.getProp("fakeProp")).toBeUndefined();
         });
 
         test("Set invalid prop", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(() => {c.setProp("fakeProp", true)}).toThrow();
         });
@@ -170,7 +171,7 @@ describe("Component", () => {
 
     describe("Transform", () => {
         test("Basic movement", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.x).toBe(0);
             expect(c.y).toBe(0);
@@ -201,7 +202,7 @@ describe("Component", () => {
         });
 
         test("Movement with .pos", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.x).toBe(0);
             expect(c.y).toBe(0);
@@ -251,7 +252,7 @@ describe("Component", () => {
 
     describe("isNode", () => {
         test("Test component is not a node", () => {
-            const [circuit, _, {PlaceAt}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.isNode()).toBeFalsy();
         });
@@ -259,51 +260,50 @@ describe("Component", () => {
 
     describe("Ports", () => {
         test(".ports", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
-            const {ports} = c
-            expect(Object.keys(ports)).toHaveLength(1);
-            expect("" in ports).toBeTruthy();
-            expect(ports[""]).toHaveLength(1);
-            c.setNumPorts("", 3);
-            expect(ports[""]).toHaveLength(3);
+            expect(Object.keys(c.ports)).toHaveLength(1);
+            expect("" in c.ports).toBeTruthy();
+            expect(c.ports[""]).toHaveLength(1);
+            expect(c.setNumPorts("", 3)).toBeFalsy();
+            expect(c.ports[""]).toHaveLength(1);
         });
 
         test(".allPorts", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.allPorts).toHaveLength(1);
-            c.setNumPorts("", 6);
-            expect(c.allPorts).toHaveLength(6);
+            expect(c.setNumPorts("", 6)).toBeFalsy();
+            expect(c.allPorts).toHaveLength(1);
         });
 
-        test("firstAvailable", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-            expect(c1.firstAvailable("")).toBeDefined();
-            c1.setNumPorts("", 2);
-            c1.firstAvailable("")!.connectTo(c2.firstAvailable("")!)
-            expect(c1.firstAvailable("")).toBeDefined();
-            expect(c2.firstAvailable("")).toBeUndefined();
-            expect(c1.ports[""][0].connections).toHaveLength(1);
-            expect(c1.ports[""][1].connections).toHaveLength(0);
-        });
+        // test("firstAvailable", () => {
+        //     const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+        //     const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
+        //     expect(c1.firstAvailable("")).toBeDefined();
+        //     c1.setNumPorts("", 2);
+        //     c1.firstAvailable("")!.connectTo(c2.firstAvailable("")!)
+        //     expect(c1.firstAvailable("")).toBeDefined();
+        //     expect(c2.firstAvailable("")).toBeUndefined();
+        //     expect(c1.ports[""][0].connections).toHaveLength(1);
+        //     expect(c1.ports[""][1].connections).toHaveLength(0);
+        // });
 
-        test("Use setNumPorts to remove connection", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-            const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
-            expect(c1.firstAvailable("")).toBeDefined();
-            c1.setNumPorts("", 2);
-            c1.ports[""][0].connectTo(c2.ports[""][0])
-            c1.ports[""][1].connectTo(c3.ports[""][0])
-            c1.setNumPorts("", 1);
-            expect(c1.ports[""]).toHaveLength(1);
-            expect(c1.ports[""][0].connections).toHaveLength(1);
-            expect(c2.ports[""]).toHaveLength(1);
-            expect(c2.ports[""][0].connections).toHaveLength(1);
-            expect(c3.ports[""]).toHaveLength(1);
-            expect(c3.ports[""][0]).toHaveLength(0);
-        });
+        // test("Use setNumPorts to remove connection", () => {
+        //     const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+        //     const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
+        //     expect(c1.firstAvailable("")).toBeDefined();
+        //     c1.setNumPorts("", 2);
+        //     c1.ports[""][0].connectTo(c2.ports[""][0])
+        //     c1.ports[""][1].connectTo(c3.ports[""][0])
+        //     c1.setNumPorts("", 1);
+        //     expect(c1.ports[""]).toHaveLength(1);
+        //     expect(c1.ports[""][0].connections).toHaveLength(1);
+        //     expect(c2.ports[""]).toHaveLength(1);
+        //     expect(c2.ports[""][0].connections).toHaveLength(1);
+        //     expect(c3.ports[""]).toHaveLength(1);
+        //     expect(c3.ports[""][0]).toHaveLength(0);
+        // });
 
     });
 

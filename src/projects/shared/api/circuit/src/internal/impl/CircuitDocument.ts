@@ -19,6 +19,7 @@ export interface ReadonlyCircuitDocument {
     hasWire(id: GUID): boolean;
     hasPort(id: GUID): boolean;
 
+    getAllObjs(): Readonly<IterableIterator<Readonly<Schema.Obj>>>;
     getObjs(): IterableIterator<GUID>;
     getComponents(): IterableIterator<GUID>;
     getWires(): IterableIterator<GUID>;
@@ -263,6 +264,9 @@ export class CircuitDocument implements ReadonlyCircuitDocument {
         return this.hasType(id, "Port");
     }
 
+    public getAllObjs(): Readonly<IterableIterator<Readonly<Schema.Obj>>> {
+        return this.objStorage.values();
+    }
     public getObjs(): IterableIterator<GUID> {
         return this.objStorage.keys();
     }

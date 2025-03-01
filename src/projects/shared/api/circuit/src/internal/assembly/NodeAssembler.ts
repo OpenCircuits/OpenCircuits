@@ -19,7 +19,7 @@ export class NodeAssembler extends ComponentAssembler {
             }),
 
             styleChangesWhenSelected: true,
-            getStyle: (node) => this.options.portStyle(this.selections.has(node.id), false).circleStyle,
+            getStyle: (node) => this.options.portStyle(this.isSelected(node.id), false).circleStyle,
         }]);
     }
 }

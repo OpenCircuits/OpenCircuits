@@ -31,7 +31,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
         },
 
         set name(name: string | undefined) {
-            state.internal.setPropFor(objID, "name", name);
+            state.internal.setPropFor(objID, "name", name).unwrap();
         },
         get name(): string | undefined {
             return getObj().props["name"];
@@ -39,25 +39,25 @@ export function BaseObjectImpl<T extends CircuitTypes>(
 
         set isSelected(val: boolean) {
             if (val)
-                state.selectionsManager.select(objID);
+                this.select();
             else
-                state.selectionsManager.deselect(objID);
+                this.deselect();
         },
         get isSelected(): boolean {
-            return state.selectionsManager.has(objID);
+            return getObj().props["isSelected"] ?? false;
         },
         set zIndex(val: number) {
-            state.internal.setPropFor(objID, "zIndex", val);
+            state.internal.setPropFor(objID, "zIndex", val).unwrap();
         },
         get zIndex(): number {
             return getObj().props["zIndex"] ?? 0;
         },
 
         select(): void {
-            this.isSelected = true;
+            state.internal.setPropFor(objID, "isSelected", true).unwrap();
         },
         deselect(): void {
-            this.isSelected = false;
+            state.internal.setPropFor(objID, "isSelected", false).unwrap();
         },
 
         exists(): boolean {
@@ -65,9 +65,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
         },
 
         setProp(key: string, val: Prop): void {
-            state.internal.beginTransaction();
             state.internal.setPropFor(objID, key, val).unwrap();
-            state.internal.commitTransaction();
         },
         getProp(key: string): Prop | undefined {
             return getObj().props[key];

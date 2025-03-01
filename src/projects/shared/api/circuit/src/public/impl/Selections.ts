@@ -11,20 +11,29 @@ import {ObservableImpl}             from "./Observable";
 
 export function SelectionsImpl<T extends CircuitTypes>(
     circuit: Circuit,
-    { internal, selectionsManager, constructComponent, constructWire }: CircuitState<T>
+    { internal, constructComponent, constructWire }: CircuitState<T>
 ) {
-    function selections() {
-        return selectionsManager.get();
-    }
-
     const observable = ObservableImpl<SelectionsEvent>();
 
-    selectionsManager.subscribe((_) => {
-        observable.emit({
-            type:   "numSelectionsChanged",
-            newAmt: selectionsManager.length(),
-        });
-    });
+    function getSelectedObjs() {
+        // TODO: Make this more efficient, cache them in SelectionsImpl?
+        return [...internal.doc.getAllObjs()]
+            .filter((o) => (o.props["isSelected"] === true));
+    }
+
+    internal.subscribe((ev) => {
+        const diff = ev.diff;
+
+        const numSelectionsChanged = [...diff.propsChanged.entries()]
+            .reduce((total, [_, props]) => total + (props.has("isSelected") ? 1 : 0), 0);
+
+        if (numSelectionsChanged > 0) {
+            observable.emit({
+                type:   "numSelectionsChanged",
+                newAmt: numSelectionsChanged,
+            });
+        }
+    })
 
     return extend(observable, {
         get bounds(): Rect {
@@ -32,26 +41,31 @@ export function SelectionsImpl<T extends CircuitTypes>(
         },
 
         get length(): number {
-            return selections().length;
+            return getSelectedObjs().length;
         },
         get isEmpty(): boolean {
             return (this.length === 0);
         },
 
         get all(): T["Obj[]"] {
-            return selections().map((id) => circuit.getObj(id)!);
+            return getSelectedObjs().map((o) => circuit.getObj(o.id)!);
         },
         get components(): T["Component[]"] {
-            return selections().filter((id) => (internal.doc.hasComp(id)))
-                .map((id) => constructComponent(id));
+            return getSelectedObjs()
+                .filter((o) => (internal.doc.hasComp(o.id)))
+                .map((o) => constructComponent(o.id));
         },
         get wires(): T["Wire[]"] {
-            return selections().filter((id) => (internal.doc.hasComp(id)))
-                .map((id) => constructWire(id));
+            return getSelectedObjs()
+                .filter((o) => (internal.doc.hasWire(o.id)))
+                .map((o) => constructWire(o.id));
         },
 
         clear(): void {
-            selectionsManager.clear();
+            internal.beginTransaction();
+            for (const obj of getSelectedObjs())
+                internal.setPropFor(obj.id, "isSelected", undefined);
+            internal.commitTransaction();
         },
 
         forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {

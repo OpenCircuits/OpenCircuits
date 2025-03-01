@@ -94,7 +94,7 @@ export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
     ) {
         this.baseKind = baseKind;
         this.kind = kind;
-        this.props = { ...props, "name": "string", "zIndex": "number" };
+        this.props = { ...props, "name": "string", "zIndex": "number", "isSelected": "boolean" };
     }
 
     public checkPropValue(key: string, value?: Schema.Prop): Result {

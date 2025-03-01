@@ -7,7 +7,7 @@ import {V} from "Vector";
 export function Bounds(prim: Prim): Rect {
     switch (prim.kind) {
     case "BezierCurve":
-        throw new Error("Method not implemented.");
+        return prim.curve.bounds;
     case "Circle":
         return new Rect(prim.pos, V(prim.radius * 2));
     case "CircleSector":

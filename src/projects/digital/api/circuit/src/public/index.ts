@@ -26,12 +26,11 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
     const internal = new CircuitInternal(uuid(), log, doc);
 
     const renderOptions = new DefaultRenderOptions();
-    const selectionsManager = new SelectionsManager();
     const sim = new DigitalSim(internal);
-    const assembler = MakeDigitalCircuitAssembler(internal, selectionsManager, sim, renderOptions);
+    const assembler = MakeDigitalCircuitAssembler(internal, sim, renderOptions);
 
     const state: DigitalCircuitState = {
-        internal, assembler, selectionsManager, sim, renderOptions,
+        internal, assembler, sim, renderOptions,
 
         constructComponent(id) {
             return DigitalComponentImpl(circuit, state, id);

@@ -55,12 +55,12 @@ export class ORGateAssembler extends GateAssembler {
             otherPrims: [
                 { // Curve 1
                     assemble: (gate) => this.assembleQuadCurve(gate, 0),
-                    getStyle: (gate) => this.options.curveStyle(this.selections.has(gate.id)),
+                    getStyle: (gate) => this.options.curveStyle(this.isSelected(gate.id)),
                 },
                 // Curve 2
                 ...(xor ? [{
                     assemble: (gate) => this.assembleQuadCurve(gate, -0.24),
-                    getStyle: (gate) => this.options.curveStyle(this.selections.has(gate.id)),
+                    getStyle: (gate) => this.options.curveStyle(this.isSelected(gate.id)),
                 } satisfies SimplifiedAssembly] : []),
             ],
         });

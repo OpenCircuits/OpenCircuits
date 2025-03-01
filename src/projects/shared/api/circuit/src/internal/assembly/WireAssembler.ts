@@ -17,7 +17,7 @@ export class WireAssembler extends Assembler<Schema.Wire> {
     }
 
     protected getWireStyle(wire: Schema.Wire) {
-        return this.options.wireStyle(this.selections.has(wire.id), wire.props.color);
+        return this.options.wireStyle(this.isSelected(wire.id), wire.props.color);
     }
 
     public override assemble(wire: Schema.Wire, reasons: Set<AssemblyReason>) {

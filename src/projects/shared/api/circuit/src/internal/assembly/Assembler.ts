@@ -1,7 +1,7 @@
 import {Schema} from "shared/api/circuit/schema";
+import {GUID}   from "shared/api/circuit/schema/GUID";
 
 import {CircuitInternal}   from "../impl/CircuitInternal";
-import {SelectionsManager} from "../impl/SelectionsManager";
 
 import {AssemblyCache} from "./AssemblyCache";
 import {RenderOptions} from "./RenderOptions";
@@ -9,7 +9,6 @@ import {RenderOptions} from "./RenderOptions";
 export interface AssemblerParams {
     circuit: CircuitInternal;
     cache: AssemblyCache;
-    selections: SelectionsManager;
     options: RenderOptions;
 }
 
@@ -25,14 +24,18 @@ export enum AssemblyReason {
 export abstract class Assembler<Obj extends Schema.Obj = Schema.Obj> {
     protected readonly circuit: CircuitInternal;
     protected readonly cache: AssemblyCache;
-    protected readonly selections: SelectionsManager;
     protected readonly options: RenderOptions;
 
-    public constructor({ circuit, cache, selections, options }: AssemblerParams) {
+    public constructor({ circuit, cache, options }: AssemblerParams) {
         this.circuit = circuit;
         this.cache = cache;
-        this.selections = selections;
         this.options = options;
+    }
+
+    protected isSelected(id: GUID): boolean {
+        return this.circuit.doc.getObjByID(id)
+            .map((o) => (o.props["isSelected"] ?? false))
+            .unwrapOr(false);
     }
 
     public abstract assemble(obj: Obj, reasons: Set<AssemblyReason>): void;

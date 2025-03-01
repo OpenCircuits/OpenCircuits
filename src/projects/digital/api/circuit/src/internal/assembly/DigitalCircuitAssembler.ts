@@ -1,7 +1,6 @@
 import {V} from "Vector";
 
-import {CircuitInternal}   from "shared/api/circuit/internal";
-import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsManager";
+import {CircuitInternal} from "shared/api/circuit/internal";
 
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
@@ -16,11 +15,10 @@ import {ORGateAssembler}      from "./components/gates/ORGateAssembler";
 
 export function MakeDigitalCircuitAssembler(
     circuit: CircuitInternal,
-    selections: SelectionsManager,
     sim: DigitalSim,
     options: RenderOptions,
 ): CircuitAssembler {
-    return new CircuitAssembler(circuit, selections, options, (params) => ({
+    return new CircuitAssembler(circuit, options, (params) => ({
         // Base types
         "DigitalWire": new DigitalWireAssembler(params, sim),
         "DigitalNode": new NodeAssembler(params, {

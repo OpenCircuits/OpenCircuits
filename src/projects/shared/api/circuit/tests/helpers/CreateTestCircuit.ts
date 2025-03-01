@@ -24,7 +24,6 @@ import {CircuitLog}                      from "shared/api/circuit/internal/impl/
 import {CircuitDocument}                 from "shared/api/circuit/internal/impl/CircuitDocument";
 import {BaseComponentInfo, BaseObjInfo,
         BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ComponentInfo";
-import {SelectionsManager}               from "shared/api/circuit/internal/impl/SelectionsManager";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 
@@ -56,7 +55,7 @@ export class TestComponentAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => this.options.fillStyle(this.selections.has(comp.id)),
+                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
         ]);
     }
@@ -119,29 +118,32 @@ export interface TestRootCircuitHelpers {
     GetPort(c: Component): Port;
 }
 
-export function CreateTestRootCircuit(): [RootCircuit, CircuitState<CircuitTypes>, TestRootCircuitHelpers] {
+export function CreateTestRootCircuit(
+    additionalPortConfigs: PortConfig[] = []
+): [RootCircuit, CircuitState<CircuitTypes>, TestRootCircuitHelpers] {
+    const portConfigs = [{ "": 1 }, ...additionalPortConfigs];
+
     const internal = new CircuitInternal(
         uuid(),
         new CircuitLog(),
         new CircuitDocument(new BaseObjInfoProvider(
             [
-                new TestComponentInfo("TestComp", {}, [""],[{ "": 1 }]),
-                new TestComponentInfo("TestNode", {}, [""], [{ "": 1 }]),
+                new TestComponentInfo("TestComp", {}, [""], portConfigs),
+                new TestComponentInfo("TestNode", {}, [""], portConfigs),
             ],
-            [new BaseObjInfo("Wire", "TestWire", {})],
+            [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
             [new BaseObjInfo("Port", "TestPort", {})],
         )),
     );
     const renderOptions = new DefaultRenderOptions();
-    const selectionsManager = new SelectionsManager();
-    const assembler = new CircuitAssembler(internal, selectionsManager, renderOptions, (params) => ({
+    const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
         "TestWire": new WireAssembler(params),
         "TestComp": new TestComponentAssembler(params),
         "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
     }));
 
     const state: CircuitState<CircuitTypes> = {
-        internal, assembler, selectionsManager, renderOptions,
+        internal, assembler, renderOptions,
 
         constructComponent(id) {
             return TestComponentImpl(circuit, state, id);

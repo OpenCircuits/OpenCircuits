@@ -8,5 +8,6 @@ export interface BaseObj {
     props: Record<string, Prop> & {
         name?: string;
         zIndex?: number;
+        isSelected?: boolean;
     };
 }

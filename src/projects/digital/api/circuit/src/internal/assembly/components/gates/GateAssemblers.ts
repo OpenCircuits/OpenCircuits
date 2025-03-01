@@ -44,11 +44,11 @@ export class GateAssembler extends ComponentAssembler {
 
                 styleChangesWhenSelected: true,
                 getStyle: (gate) => ({
-                    fill: (this.selections.has(gate.id)
+                    fill: (this.isSelected(gate.id)
                         ? this.options.selectedFillColor
                         : this.options.defaultFillColor),
                     stroke: {
-                        color: (this.selections.has(gate.id)
+                        color: (this.isSelected(gate.id)
                             ? this.options.selectedBorderColor
                             : this.options.defaultBorderColor),
                         size: this.options.defaultBorderWidth,
@@ -80,7 +80,7 @@ export class GateAssembler extends ComponentAssembler {
 
                 tintChangesWhenSelected: true,
                 getTint: (comp) =>
-                    (this.selections.has(comp.id) ? this.options.selectedFillColor : undefined),
+                    (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
 

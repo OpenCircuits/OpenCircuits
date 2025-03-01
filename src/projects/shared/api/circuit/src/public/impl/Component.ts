@@ -108,7 +108,10 @@ export function ComponentImpl<T extends CircuitTypes>(
             throw new Error("Component.firstAvailable: Unimplemented!");
         },
         delete(): void {
-            throw new Error("Component.delete: Unimplemented!");
+            internal.beginTransaction();
+            internal.removePortsFor(base.id).unwrap();
+            internal.deleteComponent(base.id).unwrap();
+            internal.commitTransaction();
         },
     } as const) satisfies Omit<Component, "isNode" | "info">;
 }

@@ -23,7 +23,7 @@ export class ANDGateAssembler extends GateAssembler {
             otherPrims: [
                 { // Line
                     assemble: (gate) => this.assembleLine(gate),
-                    getStyle: (comp) => this.options.lineStyle(this.selections.has(comp.id)),
+                    getStyle: (comp) => this.options.lineStyle(this.isSelected(comp.id)),
                 },
             ],
     });

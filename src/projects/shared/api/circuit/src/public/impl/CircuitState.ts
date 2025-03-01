@@ -1,7 +1,4 @@
 import {CircuitInternal}   from "shared/api/circuit/internal";
-import {CircuitLog}        from "shared/api/circuit/internal/impl/CircuitLog";
-import {CircuitDocument}   from "shared/api/circuit/internal/impl/CircuitDocument";
-import {SelectionsManager} from "shared/api/circuit/internal/impl/SelectionsManager";
 import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
 
@@ -36,7 +33,6 @@ export type CircuitTypes<
 export interface CircuitState<T extends CircuitTypes> {
     internal: CircuitInternal;
     assembler: CircuitAssembler;
-    selectionsManager: SelectionsManager;
     renderOptions: RenderOptions;
 
     constructComponent(id: string): T["Component"];

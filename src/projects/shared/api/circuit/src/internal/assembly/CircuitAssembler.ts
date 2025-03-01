@@ -7,7 +7,6 @@ import {Observable}         from "shared/api/circuit/utils/Observable";
 
 import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
-import {SelectionsManager} from "../impl/SelectionsManager";
 
 import {Assembler, AssemblerParams, AssemblyReason}    from "./Assembler";
 import {AssemblyCache, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
@@ -97,7 +96,6 @@ class DirtyMap<K> {
 
 export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     private readonly circuit: CircuitInternal;
-    private readonly selections: SelectionsManager;
 
     protected cache: AssemblyCache;
 
@@ -109,14 +107,12 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
 
     public constructor(
         circuit: CircuitInternal,
-        selections: SelectionsManager,
         options: RenderOptions,
         assemblers: (params: AssemblerParams) => Record<string, Assembler>,
     ) {
         super();
 
         this.circuit = circuit;
-        this.selections = selections;
 
         this.cache = {
             componentTransforms: new Map(),
@@ -130,7 +126,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
             wirePrims:  new Map(),
         };
 
-        this.assemblers = assemblers({ circuit, cache: this.cache, selections, options });
+        this.assemblers = assemblers({ circuit, cache: this.cache, options });
 
         this.dirtyComponents = new DirtyMap();
         this.dirtyWires = new DirtyMap();
@@ -160,6 +156,9 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
             // Mark all changed obj props dirty
             for (const [id, props] of diff.propsChanged) {
                 if (circuit.doc.hasComp(id)) {
+                    if (props.has("isSelected"))
+                        this.dirtyComponents.add(id, AssemblyReason.SelectionChanged);
+
                     // Component transform changed, update connected wires
                     if (props.has("x") || props.has("y") || props.has("angle")) {
                         this.dirtyComponents.add(id, AssemblyReason.TransformChanged);
@@ -174,24 +173,15 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
                         this.dirtyComponents.add(id, AssemblyReason.PropChanged);
                     }
                 } else if (circuit.doc.hasWire(id)) {
+                    if (props.has("isSelected"))
+                        this.dirtyWires.add(id, AssemblyReason.SelectionChanged);
                     this.dirtyWires.add(id, AssemblyReason.PropChanged);
                 } else if (circuit.doc.hasPort(id)) {
+                    if (props.has("isSelected"))
+                        this.dirtyPorts.add(id, AssemblyReason.SelectionChanged);
                     this.dirtyPorts.add(id, AssemblyReason.PropChanged);
                 }
             }
-
-            this.publish({ type: "onchange" });
-        });
-
-        this.selections.subscribe((ev) => {
-            ev.selections.forEach((id) => {
-                if (circuit.doc.hasComp(id))
-                    this.dirtyComponents.add(id, AssemblyReason.SelectionChanged);
-                else if (circuit.doc.hasWire(id))
-                    this.dirtyWires.add(id, AssemblyReason.SelectionChanged);
-                else if (circuit.doc.hasPort(id))
-                    this.dirtyPorts.add(id, AssemblyReason.SelectionChanged);
-            });
 
             this.publish({ type: "onchange" });
         });
@@ -250,7 +240,13 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     }
     private reassembleWire(wireID: GUID) {
         if (this.dirtyWires.has(wireID)) {
+            // Also may need to reassemble the ports, meaning we need to reassemble the parent components
             const wire = this.circuit.doc.getWireByID(wireID).unwrap();
+            const p1 = this.circuit.doc.getPortByID(wire.p1).unwrap(),
+                  p2 = this.circuit.doc.getPortByID(wire.p2).unwrap();
+            this.reassembleComp(p1.parent);
+            this.reassembleComp(p2.parent);
+
             this.getAssemblerFor(wire.kind)
                 .assemble(wire, this.dirtyWires.get(wireID)!);
             this.dirtyWires.delete(wireID);

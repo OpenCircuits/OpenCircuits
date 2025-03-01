@@ -2,7 +2,7 @@ import {Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {GUID}              from "..";
+import {GUID} from "..";
 import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";
 import {PortPos} from "./AssemblyCache";
 import {Prim} from "./Prim";
@@ -58,7 +58,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
         const portAmtChanged   = reasons.has(AssemblyReason.PortsChanged);
         const selectionChanged = reasons.has(AssemblyReason.SelectionChanged);
 
-        const parentSelected = this.selections.has(parent.id);
+        const parentSelected = this.isSelected(parent.id);
 
         if (added || portAmtChanged) {
             const ports = this.circuit.doc.getPortsByGroup(parent.id).unwrap();
@@ -83,7 +83,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 this.cache.portPositions.set(portID, pos);
 
                 // Assemble the port-line and port-circle
-                const selected = this.selections.has(portID);
+                const selected = this.isSelected(portID);
                 const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
                 return [
                     portID,
@@ -117,7 +117,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
                     return;
                 }
 
-                const selected = this.selections.has(portID);
+                const selected = this.isSelected(portID);
                 const { lineStyle, circleStyle } = this.options.portStyle(selected, parentSelected);
 
                 line.style = lineStyle;
