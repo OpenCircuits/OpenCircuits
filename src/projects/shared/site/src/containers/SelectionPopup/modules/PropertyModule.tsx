@@ -7,7 +7,7 @@ import {ColorModuleInputField}  from "shared/site/containers/SelectionPopup/modu
 import {NumberModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 import {SelectModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 
-import {CircuitDesigner} from "shared/circuitdesigner";
+import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import {PropInfoEntry, PropInfoRecord} from "../propinfo/PropInfo";
 import {GetPropsWithInfoFor}           from "../propinfo/PropUtils";
