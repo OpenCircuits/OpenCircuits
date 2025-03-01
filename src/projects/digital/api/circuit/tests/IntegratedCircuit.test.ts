@@ -1,6 +1,7 @@
+import "shared/tests/helpers/Extensions";
+
 import {CreateCircuit} from "digital/api/circuit/public";
 
-import "./Extensions";
 import {V} from "Vector";
 
 

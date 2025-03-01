@@ -16,6 +16,7 @@ declare global {
             toBeOk(): CustomMatcherResult;
             toIncludeError(message: string): CustomMatcherResult;
             toBeObj(obj: Obj): CustomMatcherResult;
+            toEqualObj(obj: Obj): CustomMatcherResult;
             toContainObjs(objs: Obj[]): CustomMatcherResult;
             toContainObjsExact(objs: Obj[]): CustomMatcherResult;
             toBeConnectedTo(otherObj: Component): CustomMatcherResult;
@@ -26,6 +27,9 @@ declare global {
 
 function FormatObj(obj: Obj | undefined): string {
     return `${obj?.baseKind}[${obj?.kind}](id=${obj?.id})`;
+}
+function FormatObjWithProps(obj: Obj | undefined): string {
+    return `${obj?.baseKind}[${obj?.kind}](props=${obj?.getProps()})`;
 }
 function FormatObjs(objs: Obj[]): string {
     return `[${objs.map(FormatObj).join(", ")}]`;
@@ -144,8 +148,21 @@ expect.extend({
 
     toBeObj(received: Obj | undefined, obj: Obj) {
         return {
-            message: () => `expected ${FormatObj(received)} to equal ${FormatObj(obj)}`,
+            message: () => `expected ${FormatObj(received)} to be ${FormatObj(obj)}`,
             pass:    (received?.id === obj.id),
+        }
+    },
+
+    // Everything (except id) is the same between two Objs
+    toEqualObj(received: Obj | undefined, obj: Obj) {
+        return {
+            message: () => `expected ${FormatObjWithProps(received)} to equal ${FormatObjWithProps(obj)}`,
+            pass:    (
+                received?.baseKind === obj.baseKind
+                && received.kind === obj.kind
+                && received.getProps() === obj.getProps()
+                && !(received.baseKind === "Port" && obj.baseKind === "Port"
+                    && obj.group !== received.group && obj.index !== received.index)),
         }
     },
 
