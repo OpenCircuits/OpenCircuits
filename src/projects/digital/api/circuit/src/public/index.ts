@@ -1,7 +1,6 @@
 import {CircuitInternal, uuid} from "shared/api/circuit/internal";
 import {CircuitLog}            from "shared/api/circuit/internal/impl/CircuitLog";
 import {CircuitDocument}       from "shared/api/circuit/internal/impl/CircuitDocument";
-import {SelectionsManager}     from "shared/api/circuit/internal/impl/SelectionsManager";
 
 import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 
