@@ -8,7 +8,7 @@ import {V, Vector} from "Vector";
 
 import {Clamp} from "math/MathUtils";
 
-import {CircuitDesigner} from "shared/circuitdesigner";
+import type {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import {useDocEvent}           from "shared/site/utils/hooks/useDocEvent";
 import {useHistory}            from "shared/site/utils/hooks/useHistory";
@@ -25,7 +25,10 @@ import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} 
 import {DragDropHandlers} from "shared/site/components/DragDroppable/DragDropHandlers";
 import {Draggable}        from "shared/site/components/DragDroppable/Draggable";
 
-import styles from "./index.scss";
+// TODO: Should be able to drive desktop width off of the value in _constants.scss but it isn't working
+// import styles from "./index.scss";
+import "./index.scss";
+const DESKTOP_WIDTH = 768;
 
 
 export type ItemNavItem = {
@@ -64,7 +67,7 @@ export const ItemNav = <D,_>({ designer, config, additionalData, onDelete, getIm
     const dispatch = useSharedDispatch();
 
     const { w, h } = useWindowSize();
-    const side = (w > Number(styles.desktopWidth) || w > h) ? "left" : "bottom";
+    const side = (w > Number(DESKTOP_WIDTH) || w > h) ? "left" : "bottom";
 
     const { undoHistory, redoHistory } = useHistory(circuit);
 
@@ -93,7 +96,7 @@ export const ItemNav = <D,_>({ designer, config, additionalData, onDelete, getIm
             return;
         // If pressed object is part of selections, do a default deselect and delete of all selections
         if (curPressedObj.isSelected) {
-            circuit.deleteObjs(circuit.selections.all);
+            circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
             return;
         }
         // Else just delete

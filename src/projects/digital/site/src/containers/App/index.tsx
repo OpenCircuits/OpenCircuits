@@ -2,23 +2,23 @@ import {CircuitMetadata} from "shared/api/circuit/public";
 
 import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
-// import {ContextMenu}        from "shared/containers/ContextMenu";
-// import {HistoryBox}  from "shared/containers/HistoryBox";
-// import {ImageExporterPopup} from "shared/containers/ImageExporterPopup";
-// import {LoginPopup}         from "shared/containers/LoginPopup";
-// import {SelectionPopup}     from "shared/containers/SelectionPopup";
-// import {SideNav}            from "shared/containers/SideNav";
+import {ContextMenu}        from "shared/site/containers/ContextMenu";
+// import {HistoryBox}  from "shared/site/containers/HistoryBox";
+import {ImageExporterPopup} from "shared/site/containers/ImageExporterPopup";
+import {LoginPopup}         from "shared/site/containers/LoginPopup";
+// import {SelectionPopup}     from "shared/site/containers/SelectionPopup";
+import {SideNav}            from "shared/site/containers/SideNav";
 
-// import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
+// import {PropertyModule} from "shared/site/containers/SelectionPopup/modules/PropertyModule";
 
-// import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
+import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
 import {DigitalHeader}       from "digital/site/containers/DigitalHeader";
-// import {DigitalItemNav}      from "digital/site/containers/DigitalItemNav";
+import {DigitalItemNav}      from "digital/site/containers/DigitalItemNav";
 import {DigitalMainDesigner} from "digital/site/containers/DigitalMainDesigner";
 
-// import {KeyboardShortcutsPopup} from "digital/site/containers/KeyboardShortcutsPopup";
-// import {QuickStartPopup}        from "digital/site/containers/QuickStartPopup";
+import {KeyboardShortcutsPopup} from "digital/site/containers/KeyboardShortcutsPopup";
+import {QuickStartPopup}        from "digital/site/containers/QuickStartPopup";
 
 // import {DigitalPropInfo} from "digital/site/containers/SelectionPopup/propinfo";
 
@@ -33,7 +33,7 @@ import {DigitalMainDesigner} from "digital/site/containers/DigitalMainDesigner";
 // import docsConfig    from "digital/site/data/docsUrlConfig.json";
 // import exampleConfig from "digital/site/data/examples.json";
 
-// import "./index.scss";
+import "./index.scss";
 
 
 // const exampleCircuits = exampleConfig.examples.map((example) => ({
@@ -45,12 +45,13 @@ import {DigitalMainDesigner} from "digital/site/containers/DigitalMainDesigner";
 // } as CircuitMetadata));
 
 export const App = () => {
-    // const designer = useMainDigitalDesigner();
+    const designer = useMainDigitalDesigner();
     const { h } = useWindowSize();
 
     return (
         <div className="App">
-            {/* <SideNav exampleCircuits={exampleCircuits} /> */}
+            {/* TODO: Use actual example circuit(s) */}
+            <SideNav exampleCircuits={[]} />
 
             <div className="App__container" style={{ height: h+"px" }}>
                 <DigitalHeader />
@@ -58,7 +59,7 @@ export const App = () => {
                 <main>
                     <DigitalMainDesigner />
 
-                    {/* <DigitalItemNav /> */}
+                    <DigitalItemNav />
                     {/* <HistoryBox circuit={circuit} /> */}
 
                     {/* <SelectionPopup designer={designer} docsUrlConfig={docsConfig}> */}
@@ -72,20 +73,20 @@ export const App = () => {
                         <ViewICButtonModule circuit={circuit} /> */}
                     {/* </SelectionPopup> */}
 
-                    {/* <ContextMenu designer={designer} /> */}
+                    <ContextMenu designer={designer} />
                 </main>
             </div>
 
             {/* <ICDesigner />
             <ICViewer /> */}
 
-            {/* <QuickStartPopup />
+            <QuickStartPopup />
             <KeyboardShortcutsPopup />
-            <ImageExporterPopup designer={designer} /> */}
+            <ImageExporterPopup designer={designer} />
 
             {/* <ExprToCircuitPopup /> */}
 
-            {/* <LoginPopup /> */}
+            <LoginPopup />
         </div>
     );
 };
