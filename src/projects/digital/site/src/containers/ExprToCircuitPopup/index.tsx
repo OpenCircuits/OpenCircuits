@@ -1,25 +1,25 @@
-import {useState} from "react";
+// import {useState} from "react";
 
-import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
-import {FORMATS}                             from "digital/site/utils/ExpressionParser/Constants/Formats";
+// import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
+// import {FORMATS}                             from "digital/site/utils/ExpressionParser/Constants/Formats";
 
-// import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
+// // import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
-import {useSharedDispatch,
-        useSharedSelector} from "shared/site/utils/hooks/useShared";
+// import {useSharedDispatch,
+//         useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CloseHeaderPopups} from "shared/site/state/Header";
+// import {CloseHeaderPopups} from "shared/site/state/Header";
 
-import {ButtonToggle} from "shared/site/components/ButtonToggle";
-import {InputField}   from "shared/site/components/InputField";
-import {Popup}        from "shared/site/components/Popup";
+// import {ButtonToggle} from "shared/site/components/ButtonToggle";
+// import {InputField}   from "shared/site/components/InputField";
+// import {Popup}        from "shared/site/components/Popup";
 
-import {BooleanOption}  from "./BooleanOption";
-import {CustomOps}      from "./CustomOps";
-import {DropdownOption} from "./DropdownOption";
-import {Generate,
-        InputTypes,
-        OutputTypes}    from "./generate";
+// import {BooleanOption}  from "./BooleanOption";
+// import {CustomOps}      from "./CustomOps";
+// import {DropdownOption} from "./DropdownOption";
+// import {Generate,
+//         InputTypes,
+//         OutputTypes}    from "./generate";
 
 import "./index.scss";
 

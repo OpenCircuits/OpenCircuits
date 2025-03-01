@@ -2,7 +2,7 @@ import React from "react";
 
 import {OperatorFormat, TokenType} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 
-import {InputField} from "shared/components/InputField";
+import {InputField} from "shared/site/components/InputField";
 
 
 type Props = {

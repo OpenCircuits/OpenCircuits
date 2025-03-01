@@ -14,5 +14,6 @@
         }
     },
     // TODO[model_refactor_api](Leon) - Add back "src" to include
-    "include": [".", "../../shared/api/circuitdesigner/src/types"],
+    "include": ["../../shared/api/circuitdesigner/src/types"],
+    "files": ["./src/index.tsx"],
 }
