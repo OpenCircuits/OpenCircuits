@@ -199,11 +199,11 @@ export function RootCircuitImpl<
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
-        createIC(): IntegratedCircuit {
+        createIC(): T["IC"] {
             // return state.constructIC(uuid());
             throw new Error("RootCircuit.createIC: Unimplemented!");
         },
-        getICs(): IntegratedCircuit[] {
+        getICs(): T["IC[]"] {
             throw new Error("RootCircuit.getICs: Unimplemented!");
         },
     }) satisfies RootCircuit;

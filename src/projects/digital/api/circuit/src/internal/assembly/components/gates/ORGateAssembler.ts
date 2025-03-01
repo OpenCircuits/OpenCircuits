@@ -72,8 +72,8 @@ export class ORGateAssembler extends GateAssembler {
         const { inputPortGroups } = this.info;
 
         // Get current number of inputs
-        const numInputs = [...this.circuit.doc.getPortsForComponent(gate.id).unwrap()]
-            .map((id) => this.circuit.doc.getPortByID(id).unwrap())
+        const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
+            .map((id) => this.circuit.getPortByID(id).unwrap())
             .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
 
         const quadCurves: Array<Omit<QuadCurvePrim, "style">> = [];
