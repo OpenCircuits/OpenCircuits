@@ -5,6 +5,7 @@ import "shared/api/circuit/tests/helpers/Extensions";
 import {V} from "Vector";
 
 import {CreateTestCircuitDesigner} from "tests/helpers/CreateTestCircuitDesigner";
+import {LineCurve} from "math/Line";
 
 
 describe("SplitWireTool", () => {
@@ -46,7 +47,7 @@ describe("SplitWireTool", () => {
 
     test("Connect Comp -> Comp then Split and Snap then Unsnap and move Down", () => {
         const [designer, input, _, { PlaceAt, GetPort }] = CreateTestCircuitDesigner();
-        const [obj1, obj2] = PlaceAt(V(-1, 0), V(4, 2));
+        const [obj1, obj2] = PlaceAt(V(0, 0), V(4, 0));
 
         // Connect Comp -> Comp
         input.drag(GetPort(obj1).targetPos,
@@ -59,17 +60,17 @@ describe("SplitWireTool", () => {
 
         const node = GetPort(obj1).connectedPorts[0].parent;
         expect(node.isNode()).toBeTruthy();
-        // expect(port.getInputs()[0].isStraight()).toBe(true);
-        // expect(port.getOutputs()[0].isStraight()).toBe(true);
+        expect(GetPort(node).connections[0].shape).toBeInstanceOf(LineCurve);
+        expect(GetPort(node).connections[1].shape).toBeInstanceOf(LineCurve);
         expect(node.pos).toApproximatelyEqual(V(2, 0));
 
         // Move down
-        input.move(V(0, 1))
-                .release();
+        input.move(V(0, -1))
+            .release();
 
-        // expect(port.getInputs()[0].isStraight()).toBe(false);
-        // expect(port.getOutputs()[0].isStraight()).toBe(false);
-        expect(node.pos).toApproximatelyEqual(V(2, 1));
+        expect(GetPort(node).connections[0].shape).not.toBeInstanceOf(LineCurve);
+        expect(GetPort(node).connections[1].shape).not.toBeInstanceOf(LineCurve);
+        expect(node.pos).toApproximatelyEqual(V(2, -1));
     });
 
     test("Connect Comp -> Comp then Split Twice into Snapped Rectangle", () => {
@@ -90,14 +91,14 @@ describe("SplitWireTool", () => {
 
         const node1 = GetPort(obj1).connectedPorts[0].parent;
         expect(node1.isNode()).toBeTruthy();
-        // expect(node1.getInputs()[0].isStraight()).toBe(true);
-        // expect(node1.getOutputs()[0].isStraight()).toBe(true);
+        expect(GetPort(node1).connections[0].shape).toBeInstanceOf(LineCurve);
+        expect(GetPort(node1).connections[1].shape).toBeInstanceOf(LineCurve);
         expect(node1.pos).toApproximatelyEqual(V(0, -2));
 
         const node2 = GetPort(obj2).connectedPorts[0].parent;
         expect(node2.isNode()).toBeTruthy();
-        // expect(node2.getInputs()[0].isStraight()).toBe(true);
-        // expect(node2.getOutputs()[0].isStraight()).toBe(true);
+        expect(GetPort(node2).connections[0].shape).toBeInstanceOf(LineCurve);
+        expect(GetPort(node2).connections[1].shape).toBeInstanceOf(LineCurve);
         expect(node2.pos).toApproximatelyEqual(V(9, -2));
     });
 });

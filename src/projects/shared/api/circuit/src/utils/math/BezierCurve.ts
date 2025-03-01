@@ -1,3 +1,4 @@
+import {Curve}     from "./Curve";
 import {Clamp}     from "./MathUtils";
 import {Rect}      from "./Rect";
 import {V, Vector} from "./Vector";
@@ -15,7 +16,7 @@ import {V, Vector} from "./Vector";
  * Link to an interactive cubic bezier curve with formulas:
  * https://www.desmos.com/calculator/rptlhv5rx8.
  */
-export class BezierCurve {
+export class BezierCurve extends Curve {
 
     /**
      * The x, y coordinates of the start point.
@@ -55,6 +56,8 @@ export class BezierCurve {
      * @param c2 Initializes second control point with given coordinates.
      */
     public constructor(p1: Vector = V(), p2: Vector = V(), c1: Vector = V(), c2: Vector = V()) {
+        super();
+
         this.p1 = p1;
         this.p2 = p2;
         this.c1 = c1;
@@ -101,112 +104,38 @@ export class BezierCurve {
         return Rect.FromPoints(V(minX, minY), V(maxX, maxY));
     }
 
-    /**
-     * Bounding box accessor updates the bounding box and returns it.
-     *
-     * @returns A Transform that contains the bounding box of the curve.
-     */
-    public get bounds(): Rect {
+    public override get bounds(): Rect {
         if (!this.boundingBox) // Calculate when requested
             this.boundingBox = this.calcBoundingBox();
         return this.boundingBox;
     }
 
-    /**
-     * Calculates x coordinate of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The x coordinate of t.
-     */
-    public getX(t: number): number {
+    public override getX(t: number): number {
         const it = 1 - t;
         return this.p1.x*it*it*it + 3*this.c1.x*t*it*it + 3*this.c2.x*t*t*it + this.p2.x*t*t*t;
     }
-
-    /**
-     * Calculates y coordinate of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The y coordinate of t.
-     */
-    public getY(t: number): number {
+    public override getY(t: number): number {
         const it = 1 - t;
         return this.p1.y*it*it*it + 3*this.c1.y*t*it*it + 3*this.c2.y*t*t*it + this.p2.y*t*t*t;
     }
 
-    /**
-     * Calculates x and y coordinates of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The x and y coordinates of t.
-     */
-    public getPos(t: number): Vector {
-        return V(this.getX(t), this.getY(t));
-    }
-
-    /**
-     * Calculates the 1st derivative of x coord of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The 1st derivative of x coord of t.
-     */
-    public getDX(t: number): number {
+    public override getDX(t: number): number {
         const it = 1 - t;
         return -3*this.p1.x*it*it + 3*this.c1.x*it*(1-3*t) + 3*this.c2.x*t*(2-3*t) + 3*this.p2.x*t*t;
     }
-
-    /**
-     * Calculates the 1st derivative of y coord of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The 1st derivative of y coord of t.
-     */
-    public getDY(t: number): number {
+    public override getDY(t: number): number {
         const it = 1 - t;
         return -3*this.p1.y*it*it + 3*this.c1.y*it*(1-3*t) + 3*this.c2.y*t*(2-3*t) + 3*this.p2.y*t*t;
     }
 
-    /**
-     * Calculates the 1st derivatives of x and y coordinates of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The 1st derivatives of x and y coordinates of t.
-     */
-    public getDerivative(t: number): Vector {
-        return V(this.getDX(t), this.getDY(t));
-    }
-
-    /**
-     * Calculates the 2nd derivative of x coordinate of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The 2nd derivative of x coordinate of t.
-     */
-    public getDDX(t: number): number {
+    public override getDDX(t: number): number {
         const m = -this.p1.x + 3*this.c1.x - 3*this.c2.x + this.p2.x;
         const b = this.p1.x - 2*this.c1.x + this.c2.x;
         return 6*(m * t + b);
     }
-
-    /**
-     * Calculates the 2nd derivative of y coordinate of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The 2nd derivative of y coordinate of t.
-     */
-    public getDDY(t: number): number {
+    public override getDDY(t: number): number {
         const m = -this.p1.y + 3*this.c1.y - 3*this.c2.y + this.p2.y;
         const b = this.p1.y - 2*this.c1.y + this.c2.y;
         return 6*(m * t + b);
-    }
-
-    /**
-     * Calculates the 2nd derivatives of x and y coordinates of t.
-     *
-     * @param t How far along the bezier curve the given point is.
-     * @returns The 2nd derivative of x and y coordinates of t.
-     */
-    public get2ndDerivative(t: number): Vector {
-        return V(this.getDDX(t), this.getDDY(t));
     }
 }

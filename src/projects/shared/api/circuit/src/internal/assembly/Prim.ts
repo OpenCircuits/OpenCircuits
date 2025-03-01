@@ -14,6 +14,7 @@ export interface BezierCurvePrim {
     curve: BezierCurve;
 
     style: Style;
+    ignoreHit?: boolean;
 }
 export interface CirclePrim {
     kind: "Circle";
@@ -22,6 +23,7 @@ export interface CirclePrim {
     radius: number;
 
     style: Style;
+    ignoreHit?: boolean;
 }
 export interface CircleSectorPrim {
     kind: "CircleSector";
@@ -31,6 +33,7 @@ export interface CircleSectorPrim {
     angles: [number, number];
 
     style: Style;
+    ignoreHit?: boolean;
 }
 export interface LinePrim {
     kind: "Line";
@@ -39,6 +42,7 @@ export interface LinePrim {
     p2: Vector;
 
     style: Style;
+    ignoreHit?: boolean;
 }
 export interface PolygonPrim {
     kind: "Polygon";
@@ -46,6 +50,7 @@ export interface PolygonPrim {
     points: Vector[];
 
     style: Style;
+    ignoreHit?: boolean;
 }
 export interface QuadCurvePrim {
     kind: "QuadCurve";
@@ -55,6 +60,7 @@ export interface QuadCurvePrim {
     c: Vector;
 
     style: Style;
+    ignoreHit?: boolean;
 }
 export interface RectanglePrim {
     kind: "Rectangle";
@@ -62,6 +68,7 @@ export interface RectanglePrim {
     transform: Transform;
 
     style: Style;
+    ignoreHit?: boolean;
 }
 export type BaseShapePrim =
     | BezierCurvePrim
@@ -81,6 +88,7 @@ export interface GroupPrim {
     prims: BaseShapePrimWithoutStyle[];
 
     style: Style;
+    ignoreHit?: boolean;
 }
 
 export interface SVGPrim {
@@ -90,6 +98,7 @@ export interface SVGPrim {
     transform: Transform;
 
     tint?: Color;
+    ignoreHit?: boolean;
 }
 
 export type Prim =

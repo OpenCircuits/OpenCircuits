@@ -1,7 +1,7 @@
-import {BezierCurve} from "./BezierCurve";
-import {Rect}        from "./Rect";
-import {Transform}   from "./Transform";
-import {V, Vector}   from "./Vector";
+import {Curve}     from "./Curve";
+import {Rect}      from "./Rect";
+import {Transform} from "./Transform";
+import {V, Vector} from "./Vector";
 
 /**
  * Clamps a number between a given min and max.
@@ -228,7 +228,7 @@ const WIRE_NEWTON_ITERATIONS = 5;
 
 /**
  * Finds if the given position is within
- *  the given bezier curve.
+ *  the given curve.
  *
  * Parametric function defined by
  * `X(t) = t(p2.x - p1.x) + p1.x` and
@@ -238,12 +238,12 @@ const WIRE_NEWTON_ITERATIONS = 5;
  * the distance function between the line and `pos`.
  * `D(t) = sqrt((X(t) - mx)^2 + (Y(t) - my)^2)`.
  *
- * @param curve The bezier curve.
+ * @param curve The curve.
  * @param pos   The position.
- * @returns     True if position is within the bezier curve,
+ * @returns     True if position is within the curve,
  *              false otherwise.
  */
-export function BezierContains(curve: BezierCurve, pos: Vector): boolean {
+export function CurveContains(curve: Curve, pos: Vector): boolean {
     let minDist = 1e20;
     let t0 = -1;
     for (let tt = 0; tt <= 1; tt += 1 / WIRE_DIST_ITERATIONS) {

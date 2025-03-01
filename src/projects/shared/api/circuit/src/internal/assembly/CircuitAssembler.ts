@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
-import {BezierCurve} from "math/BezierCurve";
-import {Rect}        from "math/Rect";
+import {Curve}  from "math/Curve";
+import {Rect}   from "math/Rect";
 
 import {None, Option, Some} from "shared/api/circuit/utils/Result";
 import {Observable}         from "shared/api/circuit/utils/Observable";
@@ -284,7 +284,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
         return Some(this.cache.portPositions.get(portID)!);
     }
 
-    public getWireShape(wireID: GUID): Option<BezierCurve> {
+    public getWireShape(wireID: GUID): Option<Curve> {
         if (!this.circuit.doc.hasWire(wireID))
             return None();
 

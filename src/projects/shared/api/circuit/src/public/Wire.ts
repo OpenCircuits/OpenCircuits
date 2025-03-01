@@ -1,4 +1,4 @@
-import {BezierCurve} from "math/BezierCurve";
+import {Curve} from "math/Curve";
 
 import {BaseObject} from "./BaseObject";
 import {Node}       from "./Component";
@@ -8,7 +8,7 @@ import {Port}       from "./Port";
 export interface Wire extends BaseObject {
     readonly baseKind: "Wire";
 
-    readonly shape: BezierCurve;
+    readonly shape: Curve;
 
     readonly p1: Port;
     readonly p2: Port;

@@ -39,6 +39,8 @@ export class LEDAssembler extends ComponentAssembler {
                     kind:   "Circle",
                     pos:    this.getPos(comp),
                     radius: this.options.ledLightRadius,
+
+                    ignoreHit: true,
                 }),
 
                 styleChangesWhenSelected: true,

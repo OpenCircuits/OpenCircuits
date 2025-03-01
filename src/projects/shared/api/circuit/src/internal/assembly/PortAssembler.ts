@@ -93,6 +93,8 @@ export class PortAssembler extends Assembler<Schema.Component> {
                             p1:    pos.origin,
                             p2:    pos.target,
                             style: lineStyle,
+
+                            ignoreHit: true,
                         },
                         {
                             kind:   "Circle",

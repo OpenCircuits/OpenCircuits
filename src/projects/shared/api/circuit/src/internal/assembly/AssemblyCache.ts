@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {BezierCurve} from "math/BezierCurve";
+import {Curve} from "math/Curve";
 import {Transform}   from "math/Transform";
 
 import {GUID}  from "..";
@@ -21,7 +21,7 @@ export interface AssemblyCache {
     portPositions: Map<GUID, PortPos>;       // Key'd by port ID
     portPrims: Map<GUID, Map<GUID, Prim[]>>; // Key'd by component parent, then by port ID
 
-    wireCurves: Map<GUID, BezierCurve>;
+    wireCurves: Map<GUID, Curve>;
     wirePrims: Map<GUID, Prim[]>;
 }
 

@@ -1,5 +1,7 @@
 import {Vector} from "Vector";
 
+import {Curve} from "math/Curve";
+
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
 import {extend}  from "shared/api/circuit/utils/Functions";
 
@@ -10,7 +12,6 @@ import {Wire}    from "../Wire";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
-import {BezierCurve} from "math/BezierCurve";
 
 
 export function WireImpl<T extends CircuitTypes>(
@@ -35,7 +36,7 @@ export function WireImpl<T extends CircuitTypes>(
     return extend(base, {
         baseKind: "Wire",
 
-        get shape(): BezierCurve {
+        get shape(): Curve {
             return assembler.getWireShape(id).unwrap();
         },
 
