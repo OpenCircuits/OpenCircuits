@@ -1,4 +1,5 @@
-@import "~shared/utils/constants", "~shared/utils/theme";
+@use "~shared/utils/constants" as *;
+@use "~shared/utils/theme" as *;
 
 .buttontoggle {
     display: flex;

@@ -1,4 +1,4 @@
-@import "~shared/utils/theme";
+@use "~shared/site/utils/theme" as *;
 
 .exprtocircuit__popup {
     padding: 0;

@@ -1,5 +1,5 @@
 @use "sass:math";
-@import "~shared/utils/theme";
+@use "~shared/site/utils/theme" as *;
 
 .popup {
     $width: 80%;
