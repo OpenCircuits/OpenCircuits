@@ -33,7 +33,7 @@ export abstract class Assembler<Obj extends Schema.Obj = Schema.Obj> {
     }
 
     protected isSelected(id: GUID): boolean {
-        return this.circuit.doc.getObjByID(id)
+        return this.circuit.getObjByID(id)
             .map((o) => (o.props["isSelected"] ?? false))
             .unwrapOr(false);
     }

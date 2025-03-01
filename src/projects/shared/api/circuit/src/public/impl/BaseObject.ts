@@ -14,7 +14,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
     objID: GUID,
 ) {
     function getObj() {
-        return state.internal.doc.getObjByID(objID)
+        return state.internal.getObjByID(objID)
             .mapErr(AddErrE(`API BaseObj: Attempted to get obj with ID ${objID} that doesn't exist!`))
             .unwrap();
     }
@@ -61,7 +61,7 @@ export function BaseObjectImpl<T extends CircuitTypes>(
         },
 
         exists(): boolean {
-            return state.internal.doc.getObjByID(objID).ok;
+            return state.internal.getObjByID(objID).ok;
         },
 
         setProp(key: string, val: Prop): void {

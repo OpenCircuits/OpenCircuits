@@ -155,7 +155,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
 
             // Mark all changed obj props dirty
             for (const [id, props] of diff.propsChanged) {
-                if (circuit.doc.hasComp(id)) {
+                if (circuit.hasComp(id)) {
                     if (props.has("isSelected"))
                         this.dirtyComponents.add(id, AssemblyReason.SelectionChanged);
 
@@ -163,20 +163,20 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
                     if (props.has("x") || props.has("y") || props.has("angle")) {
                         this.dirtyComponents.add(id, AssemblyReason.TransformChanged);
 
-                        const ports = this.circuit.doc.getPortsForComponent(id);
+                        const ports = this.circuit.getPortsForComponent(id);
                         ports.map((ports) => ports.forEach((portID) => {
-                            this.circuit.doc.getWiresForPort(portID)
+                            this.circuit.getWiresForPort(portID)
                                 .map((wires) => wires.forEach((wireID) =>
                                     this.dirtyWires.add(wireID, AssemblyReason.TransformChanged)))
                         }))
                     } else {
                         this.dirtyComponents.add(id, AssemblyReason.PropChanged);
                     }
-                } else if (circuit.doc.hasWire(id)) {
+                } else if (circuit.hasWire(id)) {
                     if (props.has("isSelected"))
                         this.dirtyWires.add(id, AssemblyReason.SelectionChanged);
                     this.dirtyWires.add(id, AssemblyReason.PropChanged);
-                } else if (circuit.doc.hasPort(id)) {
+                } else if (circuit.hasPort(id)) {
                     if (props.has("isSelected"))
                         this.dirtyPorts.add(id, AssemblyReason.SelectionChanged);
                     this.dirtyPorts.add(id, AssemblyReason.PropChanged);
@@ -191,14 +191,14 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
         // Update components first
         for (const [compID, reasons] of this.dirtyComponents) {
             // If component doesn't exist, remove it and any associated ports
-            if (!this.circuit.doc.hasComp(compID)) {
+            if (!this.circuit.hasComp(compID)) {
                 this.cache.componentPrims.delete(compID);
                 this.cache.componentTransforms.delete(compID);
                 this.cache.portPrims.delete(compID);
                 continue;
             }
             // Otherwise, update it
-            const comp = this.circuit.doc.getCompByID(compID).unwrap();
+            const comp = this.circuit.getCompByID(compID).unwrap();
             this.getAssemblerFor(comp.kind).assemble(comp, reasons);
         }
         this.dirtyComponents.clear();
@@ -207,7 +207,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
         //   i.e. I don't think dirtyPorts gets set properly when portAmt changes?
         // Remove any ports that were deleted
         for (const [portID, _reasons] of this.dirtyPorts) {
-            if (!this.circuit.doc.hasPort(portID)) {
+            if (!this.circuit.hasPort(portID)) {
                 this.cache.portPositions.delete(portID);
                 this.cache.localPortPositions.delete(portID);
             }
@@ -217,13 +217,13 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
         // Then update wires
         for (const [wireID, reasons] of this.dirtyWires) {
             // If wire doesn't exist, remove it
-            if (!this.circuit.doc.hasWire(wireID)) {
+            if (!this.circuit.hasWire(wireID)) {
                 this.cache.wireCurves.delete(wireID);
                 this.cache.wirePrims.delete(wireID);
                 continue;
             }
             // Otherwise, update it
-            const wire = this.circuit.doc.getWireByID(wireID).unwrap();
+            const wire = this.circuit.getWireByID(wireID).unwrap();
             this.getAssemblerFor(wire.kind).assemble(wire, reasons);
         }
         this.dirtyWires.clear();
@@ -232,7 +232,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     private reassembleComp(compID: GUID) {
         // Reassemble component if dirty
         if (this.dirtyComponents.has(compID)) {
-            const comp = this.circuit.doc.getCompByID(compID).unwrap();
+            const comp = this.circuit.getCompByID(compID).unwrap();
             this.getAssemblerFor(comp.kind)
                 .assemble(comp, this.dirtyComponents.get(compID)!);
             this.dirtyComponents.delete(compID);
@@ -241,9 +241,9 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     private reassembleWire(wireID: GUID) {
         if (this.dirtyWires.has(wireID)) {
             // Also may need to reassemble the ports, meaning we need to reassemble the parent components
-            const wire = this.circuit.doc.getWireByID(wireID).unwrap();
-            const p1 = this.circuit.doc.getPortByID(wire.p1).unwrap(),
-                  p2 = this.circuit.doc.getPortByID(wire.p2).unwrap();
+            const wire = this.circuit.getWireByID(wireID).unwrap();
+            const p1 = this.circuit.getPortByID(wire.p1).unwrap(),
+                  p2 = this.circuit.getPortByID(wire.p2).unwrap();
             this.reassembleComp(p1.parent);
             this.reassembleComp(p2.parent);
 
@@ -254,16 +254,16 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     }
 
     public getBoundsFor(objID: GUID): Option<Rect> {
-        if (this.circuit.doc.hasComp(objID)) {
+        if (this.circuit.hasComp(objID)) {
             this.reassembleComp(objID);
             return Some(Rect.Bounding(this.cache.componentPrims.get(objID)?.map(Bounds) ?? []));
         }
-        if (this.circuit.doc.hasWire(objID)) {
+        if (this.circuit.hasWire(objID)) {
             this.reassembleWire(objID);
             return Some(Rect.Bounding(this.cache.wirePrims.get(objID)?.map(Bounds) ?? []));
         }
-        if (this.circuit.doc.hasPort(objID)) {
-            const port = this.circuit.doc.getPortByID(objID).unwrap();
+        if (this.circuit.hasPort(objID)) {
+            const port = this.circuit.getPortByID(objID).unwrap();
             this.reassembleComp(port.parent);
             return Some(Rect.Bounding(this.cache.portPrims.get(port.parent)?.get(objID)?.map(Bounds) ?? []));
         }
@@ -273,10 +273,10 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     // TODO[model_refactor_api](leon): Think of a better way to allow access to Prim data and have it auto-update
     //                                 if it is currently dirty
     public getPortPos(portID: GUID): Option<PortPos> {
-        if (!this.circuit.doc.hasPort(portID))
+        if (!this.circuit.hasPort(portID))
             return None();
 
-        const port = this.circuit.doc.getPortByID(portID).unwrap();
+        const port = this.circuit.getPortByID(portID).unwrap();
 
         // Reassemble comp if it's dirty
         this.reassembleComp(port.parent);
@@ -285,7 +285,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     }
 
     public getWireShape(wireID: GUID): Option<Curve> {
-        if (!this.circuit.doc.hasWire(wireID))
+        if (!this.circuit.hasWire(wireID))
             return None();
 
         // Reassemble wire if it's dirty

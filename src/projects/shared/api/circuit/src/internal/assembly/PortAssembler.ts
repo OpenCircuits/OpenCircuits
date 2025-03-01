@@ -61,12 +61,12 @@ export class PortAssembler extends Assembler<Schema.Component> {
         const parentSelected = this.isSelected(parent.id);
 
         if (added || portAmtChanged) {
-            const ports = this.circuit.doc.getPortsByGroup(parent.id).unwrap();
+            const ports = this.circuit.getPortsByGroup(parent.id).unwrap();
 
             // Re-calculate local port positions
             Object.entries(ports).forEach(([group, portIDs]) => {
                 portIDs.forEach((portID) => {
-                    const port = this.circuit.doc.getPortByID(portID).unwrap();
+                    const port = this.circuit.getPortByID(portID).unwrap();
 
                     this.cache.localPortPositions.set(portID, this.calcPos(group, port.index, portIDs.length));
                 });
@@ -74,7 +74,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
         }
 
         if (added || transformChanged || portAmtChanged) {
-            const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
+            const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
 
             // Re-assemble all prims
             const prims = [...ports].map((portID) => {
@@ -108,7 +108,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
             this.cache.portPrims.set(parent.id, new Map<GUID, Prim[]>(prims));
         } else if (selectionChanged) {
-            const ports = this.circuit.doc.getPortsForComponent(parent.id).unwrap();
+            const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
             const prims = this.cache.portPrims.get(parent.id)!;
 
             [...ports].forEach((portID) => {

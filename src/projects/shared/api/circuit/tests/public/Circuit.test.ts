@@ -332,17 +332,23 @@ describe("RootCircuit", () => {
     describe("Undo/Redo", () => {
         describe("Place Component", () => {
             test("Basic 1 Component", () => {
-                const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt }] = CreateTestRootCircuit();
+                const log = internal["log"];
+
+                let logCount = 0;
+                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
 
                 const [c] = PlaceAt(V(0, 0));
 
                 expect(circuit.getObjs()).toHaveLength(2);
                 expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(logCount).toBe(1);
 
                 circuit.undo();
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();
+                expect(logCount).toBe(2);
                 // Need to make sure that any errors that are thrown cancel transactions or something!
                 // expect(() => c.setProp("name", "test")).toThrow();
 
@@ -350,23 +356,31 @@ describe("RootCircuit", () => {
 
                 expect(circuit.getObjs()).toHaveLength(2);
                 expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(logCount).toBe(3);
             });
             test("Basic 2 Components in transaction", () => {
-                const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt }] = CreateTestRootCircuit();
+                const log = internal["log"];
+
+                let logCount = 0;
+                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
 
                 circuit.beginTransaction();
                 const [c, c2] = PlaceAt(V(0, 0), V(5, 0));
+                expect(logCount).toBe(0);
                 circuit.commitTransaction();
 
                 expect(circuit.getObjs()).toHaveLength(4);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(logCount).toBe(1);
 
                 circuit.undo()
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();
                 expect(circuit.getObj(c2.id)).toBeUndefined();
+                expect(logCount).toBe(2);
                 // expect(() => c.setProp("name", "test")).toThrow();
                 // expect(() => c2.setProp("name", "test")).toThrow();
 
@@ -375,28 +389,22 @@ describe("RootCircuit", () => {
                 expect(circuit.getObjs()).toHaveLength(4);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(logCount).toBe(3);
             });
             test("Basic 2 Components in succession", () => {
-                const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt }] = CreateTestRootCircuit();
+                const log = internal["log"];
 
-                const [c, c2] = PlaceAt(V(0, 0), V(5, 0));
+                let logCount = 0;
+                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
 
-                expect(circuit.getObjs()).toHaveLength(4);
-                expect(circuit.getObj(c.id)).toBeObj(c);
-                expect(circuit.getObj(c2.id)).toBeObj(c2);
-
-                circuit.undo()
-
-                expect(circuit.getObjs()).toHaveLength(2);
-                expect(circuit.getObj(c.id)).toBeObj(c);
-                expect(circuit.getObj(c2.id)).toBeUndefined();
-                expect(() => c2.setProp("name", "test")).toThrow();
-
-                circuit.redo();
+                const [c] = PlaceAt(V(0, 0));
+                const [c2] = PlaceAt(V(5, 0));
 
                 expect(circuit.getObjs()).toHaveLength(4);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(logCount).toBe(2);
 
                 circuit.undo();
 
@@ -404,6 +412,22 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeUndefined();
                 expect(() => c2.setProp("name", "test")).toThrow();
+                expect(logCount).toBe(3);
+
+                circuit.redo();
+
+                expect(circuit.getObjs()).toHaveLength(4);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeObj(c2);
+                expect(logCount).toBe(4);
+
+                circuit.undo();
+
+                expect(circuit.getObjs()).toHaveLength(2);
+                expect(circuit.getObj(c.id)).toBeObj(c);
+                expect(circuit.getObj(c2.id)).toBeUndefined();
+                expect(() => c2.setProp("name", "test")).toThrow();
+                expect(logCount).toBe(5);
 
                 circuit.undo();
 
@@ -412,12 +436,17 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c2.id)).toBeUndefined();
                 expect(() => c.setProp("name", "test")).toThrow();
                 expect(() => c2.setProp("name", "test")).toThrow();
+                expect(logCount).toBe(6);
             });
         });
 
         describe("Connect Wire", () => {
             test("Basic 1 Wire", () => {
-                const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestRootCircuit();
+                const log = internal["log"];
+
+                let logCount = 0;
+                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
 
                 const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
                             w = Connect(c, c2);
@@ -426,6 +455,7 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
+                expect(logCount).toBe(3);
 
                 circuit.undo()
 
@@ -434,6 +464,7 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeUndefined();
                 expect(() => w.setProp("name", "test")).toThrow();
+                expect(logCount).toBe(4);
 
                 circuit.redo();
 
@@ -441,9 +472,14 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
+                expect(logCount).toBe(5);
             });
             test("Components and Wire creation in transaction", () => {
-                const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestRootCircuit();
+                const log = internal["log"];
+
+                let logCount = 0;
+                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
 
                 circuit.beginTransaction();
                 const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
@@ -454,8 +490,9 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
+                expect(logCount).toBe(1);
 
-                circuit.undo()
+                circuit.undo();
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();
@@ -464,6 +501,7 @@ describe("RootCircuit", () => {
                 expect(() => c.setProp("name", "test")).toThrow();
                 expect(() => c2.setProp("name", "test")).toThrow();
                 expect(() => w.setProp("name", "test")).toThrow();
+                expect(logCount).toBe(2);
 
                 circuit.redo();
 
@@ -471,6 +509,7 @@ describe("RootCircuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
+                expect(logCount).toBe(3);
             });
         });
 
