@@ -63,8 +63,6 @@ export const MainDesigner = ({ otherPlace }: Props) => {
 
                 const amt = (typeof num === "number" ? num : 1);
                 const pos = designer.viewport.camera.toWorldPos(screenPos.sub(V(0, canvas.current.getBoundingClientRect().top)));
-                
-                console.log("HUH", screenPos, pos, canvas.current.getBoundingClientRect().top)
 
                 // TODO[model_refactor](leon)
                 // If other place options are specified then do those

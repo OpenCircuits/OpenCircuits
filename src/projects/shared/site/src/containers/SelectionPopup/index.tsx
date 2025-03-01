@@ -32,8 +32,8 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     const [isDragging, setIsDragging] = useState(false);
     const [clickThrough, setClickThrough] = useState(false);
 
-    useEffect(() => circuit.selections.observe((ev) => {
-        setNumSelections(ev.newAmt);
+    useEffect(() => circuit.selections.observe(() => {
+        setNumSelections(circuit.selections.length);
         setPos(camera.toScreenPos(circuit.selections.bounds.center));
 
         // When the selection changes, reset the clickThrough state and
