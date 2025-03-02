@@ -7,6 +7,8 @@
             "math/*":                        ["../../shared/api/circuit/src/utils/math/*"],
             "shared/api/circuit/*":          ["../../shared/api/circuit/src/*"],
             "shared/api/circuitdesigner/*":  ["../../shared/api/circuitdesigner/src/*"],
+            "shared/tests/helpers/*":        ["../../shared/api/circuit/tests/helpers/*"],
+            "shared/site/tests/*":           ["../../shared/site/tests/*"],
             "shared/site/*":                 ["../../shared/site/src/*"],
             "digital/api/circuit/*":         ["../api/circuit/src/*"],
             "digital/api/circuitdesigner/*": ["../api/circuitdesigner/src/*"],
@@ -15,5 +17,5 @@
     },
     // TODO[model_refactor_api](Leon) - Add back "src" to include
     "include": ["../../shared/api/circuitdesigner/src/types"],
-    "files": ["./src/index.tsx"],
+    "files": ["./src/index.tsx", "./tests/utils/ExpressionParser.test.ts", "./tests/containers/ExprToCircuitPopup.test.tsx"],
 }

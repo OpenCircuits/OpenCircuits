@@ -4,7 +4,7 @@ import {InputToken, InputTreeBinOpNode, InputTreeIdent,
 
 import {GenerateInputTree} from "digital/site/utils/ExpressionParser/GenerateInputTree";
 
-import "../../../../../app/tests/Extensions";
+import "shared/tests/helpers/Extensions";
 import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser";
 import {GenerateTokens}      from "digital/site/utils/ExpressionParser/GenerateTokens";
 import {Component}           from "shared/api/circuit/public";
