@@ -1,9 +1,9 @@
-import {DefaultTool} from "shared/api/circuit/tools/DefaultTool";
-import {PanTool}     from "shared/api/circuit/tools/PanTool";
+import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
+import {PanTool}     from "shared/api/circuitdesigner/tools/PanTool";
 
-import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
+// import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
-import {CreateInfo} from "digital/site/utils/CircuitInfo/CreateInfo";
+// import {CreateInfo} from "digital/site/utils/CircuitInfo/CreateInfo";
 
 import "./index.scss";
 
@@ -28,159 +28,159 @@ const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 //     return false;
 // }
 
+export const ICViewer = () => {return null}
+// type Props = {
+//     mainInfo: DigitalCircuitInfo;
+// }
+// // @TODO
+// export const ICViewer = (() => {
+//     const info = CreateInfo(new DefaultTool(), PanTool);
 
-type Props = {
-    mainInfo: DigitalCircuitInfo;
-}
-// @TODO
-export const ICViewer = (() => {
-    const info = CreateInfo(new DefaultTool(), PanTool);
+//     // eslint-disable-next-line react/display-name, arrow-body-style
+//     return ({ mainInfo }: Props) => {
+//         // const { isActive, ic } = useDigitalSelector(
+//         //     (state) => ({ ...state.icViewer })
+//         // );
+//         // const dispatch = useDigitalDispatch();
 
-    // eslint-disable-next-line react/display-name, arrow-body-style
-    return ({ mainInfo }: Props) => {
-        // const { isActive, ic } = useDigitalSelector(
-        //     (state) => ({ ...state.icViewer })
-        // );
-        // const dispatch = useDigitalDispatch();
+//         // const { w, h } = useWindowSize();
+//         // const canvas = useRef<HTMLCanvasElement>(null);
 
-        // const { w, h } = useWindowSize();
-        // const canvas = useRef<HTMLCanvasElement>(null);
+//         // // State controller for main designer callback
+//         // const [pauseUpdates, setPauseUpdates] = useState(false);
 
-        // // State controller for main designer callback
-        // const [pauseUpdates, setPauseUpdates] = useState(false);
+//         // const updateViewer = useCallback(() => {
+//         //     if (!ic)
+//         //         return;
+//         //     // loop through all the inputs for this IC
+//         //     //  set their input value to be what the info.designer has for their input
+//         //     const viewerInputs = info.designer.getObjects().filter(
+//         //         (input) => [Switch, Button].some((type) => input instanceof type)
+//         //     );
+//         //     for (let i = 0; i < viewerInputs.length; ++i)
+//         //         viewerInputs[i].activate(ic.getInputPort(i).getIsOn());
+//         // }, [ic]);
 
-        // const updateViewer = useCallback(() => {
-        //     if (!ic)
-        //         return;
-        //     // loop through all the inputs for this IC
-        //     //  set their input value to be what the info.designer has for their input
-        //     const viewerInputs = info.designer.getObjects().filter(
-        //         (input) => [Switch, Button].some((type) => input instanceof type)
-        //     );
-        //     for (let i = 0; i < viewerInputs.length; ++i)
-        //         viewerInputs[i].activate(ic.getInputPort(i).getIsOn());
-        // }, [ic]);
-
-        // // On resize (useLayoutEffect happens sychronously so
-        // //  there's no pause/glitch when resizing the screen)
-        // useLayoutEffect(() => {
-        //     if (!isActive)
-        //         return;
-        //     info.camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-        //     info.renderer.render(); // Re-render
-        // }, [isActive, w, h]);
+//         // // On resize (useLayoutEffect happens sychronously so
+//         // //  there's no pause/glitch when resizing the screen)
+//         // useLayoutEffect(() => {
+//         //     if (!isActive)
+//         //         return;
+//         //     info.camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
+//         //     info.renderer.render(); // Re-render
+//         // }, [isActive, w, h]);
 
 
-        // // Initial function called after the canvas first shows up
-        // useEffect(() => {
-        //     if (!canvas.current)
-        //         throw new Error("ICViewer.useEffect failed: canvas.current is null");
+//         // // Initial function called after the canvas first shows up
+//         // useEffect(() => {
+//         //     if (!canvas.current)
+//         //         throw new Error("ICViewer.useEffect failed: canvas.current is null");
 
-        //     // Create input w/ canvas
-        //     info.input = new Input(canvas.current);
+//         //     // Create input w/ canvas
+//         //     info.input = new Input(canvas.current);
 
-        //     // Get render function
-        //     const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
+//         //     // Get render function
+//         //     const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
 
-        //     // Add input listener
-        //     info.input.addListener((event) => {
-        //         const change = info.toolManager.onEvent(event, info);
-        //         if (!change)
-        //             return;
+//         //     // Add input listener
+//         //     info.input.addListener((event) => {
+//         //         const change = info.toolManager.onEvent(event, info);
+//         //         if (!change)
+//         //             return;
 
-        //         info.renderer.render();
-        //         if (CheckForInteraction(event, info))
-        //             setPauseUpdates(true);
-        //     });
+//         //         info.renderer.render();
+//         //         if (CheckForInteraction(event, info))
+//         //             setPauseUpdates(true);
+//         //     });
 
-        //     // Input should be blocked initially
-        //     info.input.block();
+//         //     // Input should be blocked initially
+//         //     info.input.block();
 
-        //     // Add render callbacks and set render function
-        //     info.designer.addCallback(() => info.renderer.render());
+//         //     // Add render callbacks and set render function
+//         //     info.designer.addCallback(() => info.renderer.render());
 
-        //     info.renderer.setRenderFunction(() => renderFunc());
-        //     info.renderer.render();
-        // }, []); // Pass empty array so that this only runs once on mount
+//         //     info.renderer.setRenderFunction(() => renderFunc());
+//         //     info.renderer.render();
+//         // }, []); // Pass empty array so that this only runs once on mount
 
-        // // Synchronize the inputs in the original designer and this IC viewer
-        // //  (issue #754)
-        // useEffect(() => {
-        //     if (pauseUpdates)
-        //         return; // if paused, don't add callback
-        //     mainInfo.designer.addCallback(updateViewer);
-        //     // remove callback when done
-        //     return () => mainInfo.designer.removeCallback(updateViewer);
-        // }, [pauseUpdates, mainInfo, updateViewer]);
+//         // // Synchronize the inputs in the original designer and this IC viewer
+//         // //  (issue #754)
+//         // useEffect(() => {
+//         //     if (pauseUpdates)
+//         //         return; // if paused, don't add callback
+//         //     mainInfo.designer.addCallback(updateViewer);
+//         //     // remove callback when done
+//         //     return () => mainInfo.designer.removeCallback(updateViewer);
+//         // }, [pauseUpdates, mainInfo, updateViewer]);
 
-        // // Happens when activated
-        // useLayoutEffect(() => {
-        //     if (!isActive || !ic)
-        //         return;
+//         // // Happens when activated
+//         // useLayoutEffect(() => {
+//         //     if (!isActive || !ic)
+//         //         return;
 
-        //     const { input } = mainInfo;
+//         //     const { input } = mainInfo;
 
-        //     // Retrieve current debug info from mainInfo
-        //     info.debugOptions = mainInfo.debugOptions;
+//         //     // Retrieve current debug info from mainInfo
+//         //     info.debugOptions = mainInfo.debugOptions;
 
-        //     // Unlock input
-        //     info.input.unblock();
+//         //     // Unlock input
+//         //     info.input.unblock();
 
-        //     // Block input for main designer
-        //     input.block();
+//         //     // Block input for main designer
+//         //     input.block();
 
-        //     // Reset designer and add IC insides
-        //     info.designer.reset();
-        //     const inside = CopyGroup(ic.getCollection().toList());
-        //     AddGroup(info.designer, inside);
+//         //     // Reset designer and add IC insides
+//         //     info.designer.reset();
+//         //     const inside = CopyGroup(ic.getCollection().toList());
+//         //     AddGroup(info.designer, inside);
 
-        //     // Adjust the camera so it all fits in the viewer
-        //     const [pos, zoom] = GetCameraFit(
-        //         info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
-        //     );
-        //     SetProperty(info.camera, "pos", pos);
-        //     SetProperty(info.camera, "zoom", zoom);
+//         //     // Adjust the camera so it all fits in the viewer
+//         //     const [pos, zoom] = GetCameraFit(
+//         //         info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
+//         //     );
+//         //     SetProperty(info.camera, "pos", pos);
+//         //     SetProperty(info.camera, "zoom", zoom);
 
-        //     updateViewer();
-        //     info.renderer.render();
-        // }, [mainInfo, isActive, ic, updateViewer]);
+//         //     updateViewer();
+//         //     info.renderer.render();
+//         // }, [mainInfo, isActive, ic, updateViewer]);
 
-        // const close = () => {
-        //     // Reset in case for next time
-        //     setPauseUpdates(false);
+//         // const close = () => {
+//         //     // Reset in case for next time
+//         //     setPauseUpdates(false);
 
-        //     // Block input while closed
-        //     info.input.block();
+//         //     // Block input while closed
+//         //     info.input.block();
 
-        //     // Unblock main input
-        //     mainInfo.input.unblock();
+//         //     // Unblock main input
+//         //     mainInfo.input.unblock();
 
-        //     dispatch(CloseICViewer());
-        // }
+//         //     dispatch(CloseICViewer());
+//         // }
 
-        // const restore = () => {
-        //     setPauseUpdates(false);
-        //     updateViewer();
-        // }
+//         // const restore = () => {
+//         //     setPauseUpdates(false);
+//         //     updateViewer();
+//         // }
 
-        // useKeyDownEvent(info.input, "Escape", close);
+//         // useKeyDownEvent(info.input, "Escape", close);
 
-        // return (
-        //     <div className="icviewer" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
-        //         <canvas ref={canvas}
-        //                 width={w*IC_DESIGNER_VW}
-        //                 height={h*IC_DESIGNER_VH} />
+//         // return (
+//         //     <div className="icviewer" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
+//         //         <canvas ref={canvas}
+//         //                 width={w*IC_DESIGNER_VW}
+//         //                 height={h*IC_DESIGNER_VH} />
 
-        //         <div className="icviewer__buttons">
-        //             <button type="button" name="close" onClick={close}>
-        //                 Close
-        //             </button>
-        //             <button type="button" name="restore" disabled={!pauseUpdates} onClick={restore}>
-        //                 Restore
-        //             </button>
-        //         </div>
-        //     </div>
-        // );
-        return null;
-    }
-})();
+//         //         <div className="icviewer__buttons">
+//         //             <button type="button" name="close" onClick={close}>
+//         //                 Close
+//         //             </button>
+//         //             <button type="button" name="restore" disabled={!pauseUpdates} onClick={restore}>
+//         //                 Restore
+//         //             </button>
+//         //         </div>
+//         //     </div>
+//         // );
+//         return null;
+//     }
+// })();

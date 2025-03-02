@@ -49,7 +49,7 @@ export class LEDAssembler extends ComponentAssembler {
         ]);
 
         this.sim = sim;
-        this.info = this.circuit.doc.getObjectInfo("LED").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("LED").unwrap() as DigitalComponentInfo;
     }
 
     private assembleLightStyle(led: Schema.Component) {

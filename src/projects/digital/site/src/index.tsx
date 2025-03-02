@@ -52,6 +52,7 @@ import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 import {App} from "./containers/App";
 import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {RenderHelper} from "shared/api/circuitdesigner/public/impl/rendering/RenderHelper";
 
 
 async function Init(): Promise<void> {
@@ -170,7 +171,6 @@ async function Init(): Promise<void> {
             root.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        {/* <MainCircuit designer={designer} /> */}
                         <App />
                     </Provider>
                 </React.StrictMode>

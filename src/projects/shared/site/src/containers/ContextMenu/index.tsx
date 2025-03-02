@@ -6,11 +6,11 @@ import {useDocEvent}                          from "shared/site/utils/hooks/useD
 import {useHistory}                           from "shared/site/utils/hooks/useHistory";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CleanUp}             from "shared/api/circuitdesigner/handlers/CleanupHandler";
-import {DuplicateSelections} from "shared/api/circuitdesigner/handlers/DuplicateHandler";
-import {FitToScreen}         from "shared/api/circuitdesigner/handlers/FitToScreenHandler";
+import {CleanUp}             from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
+import {DuplicateSelections} from "shared/api/circuitdesigner/tools/handlers/DuplicateHandler";
+import {FitToScreen}         from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
 
-import {CircuitDesigner} from "shared/circuitdesigner";
+import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import {CloseContextMenu, OpenContextMenu} from "shared/site/state/ContextMenu";
 
@@ -63,10 +63,11 @@ export const ContextMenu = ({ designer }: Props) => {
             alert("Your web browser does not support right click CUT operation. Please use CTRL+X");
             return;
         }
-        await navigator.clipboard.writeText(circuit.serialize(circuit.selections.all));
+        // TODO: replace serialize
+        // await navigator.clipboard.writeText(circuit.serialize(circuit.selections.all));
 
         circuit.beginTransaction();
-        circuit.deleteObjs(circuit.selections.all);
+        circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
         circuit.commitTransaction();
     }
 
@@ -76,7 +77,8 @@ export const ContextMenu = ({ designer }: Props) => {
             alert("Your web browser does not support right click COPY operation. Please use CTRL+C");
             return;
         }
-        await navigator.clipboard.writeText(circuit.serialize(circuit.selections.all));
+        // TODO: replace serialize
+        // await navigator.clipboard.writeText(circuit.serialize(circuit.selections.all));
     }
 
     /* Context Menu "Paste" */
@@ -98,7 +100,7 @@ export const ContextMenu = ({ designer }: Props) => {
 
     /* Context Menu "Focus" */
     const onFocus = async () => {
-        FitToScreen(circuit, designer.margin);
+        FitToScreen(circuit, designer.viewport.camera, designer.margin);
     }
 
     /* Context Menu "Clean Up" */
@@ -119,8 +121,9 @@ export const ContextMenu = ({ designer }: Props) => {
     /* Helper function for buttons to call the function and render/close the popup */
     const doFunc = (func: () => void) => {
         // Don't do anything if locked
-        if (circuit.locked)
-            return;
+        // TODO: Move locked functionality to frontend only
+        // if (circuit.locked)
+        //     return;
         func();
         dispatch(CloseContextMenu());
     }

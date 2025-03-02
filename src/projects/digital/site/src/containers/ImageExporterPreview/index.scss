@@ -1,4 +1,4 @@
-@import "~shared/utils/theme";
+@use "~shared/site/utils/theme" as *;
 
 
 .image-exporter-preview__button {

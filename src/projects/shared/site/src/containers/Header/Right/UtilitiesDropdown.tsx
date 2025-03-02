@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 
 import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-import {useAPIMethods} from "shared/site/utils/ApiMethods";
+// import {useAPIMethods} from "shared/site/utils/ApiMethods";
 
 import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
@@ -32,7 +32,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
             isSaved:  state.circuit.isSaved,
         })
     );
-    const { LoadCircuit } = useAPIMethods(designer.circuit);
+    // const { LoadCircuit } = useAPIMethods(designer.circuit);
     const dispatch = useSharedDispatch();
 
     const [enableReload, setEnableReload] = useState(false);
@@ -45,8 +45,8 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
 
     const load = () => {
         dispatch(CloseHeaderMenus());
-        if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
-            LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+        // if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
+        //     LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE));
     }
 
     return (
@@ -74,7 +74,8 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
                 <div role="button" tabIndex={0}
                      onClick={async () => {
                         dispatch(CloseHeaderMenus());
-                        await DevCreateFile(designer.circuit.serialize(), DEV_CACHED_CIRCUIT_FILE);
+                         // TODO: DevCreateFile
+                        // await DevCreateFile(designer.circuit.serialize(), DEV_CACHED_CIRCUIT_FILE);
                         setEnableReload(true);
                      }}>
                     <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />

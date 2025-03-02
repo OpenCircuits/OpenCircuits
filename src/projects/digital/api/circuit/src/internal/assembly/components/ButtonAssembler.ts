@@ -39,11 +39,11 @@ export class ButtonAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.doc.getObjectInfo("Button").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("Button").unwrap() as DigitalComponentInfo;
     }
 
     private isOn(sw: Schema.Component) {
-        const [outputPort] = this.circuit.doc.getPortsForComponent(sw.id).unwrap();
+        const [outputPort] = this.circuit.getPortsForComponent(sw.id).unwrap();
         return Signal.isOn(this.sim.getSignal(outputPort));
     }
 

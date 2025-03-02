@@ -62,7 +62,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
                     throw new Error(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);
 
                 const amt = (typeof num === "number" ? num : 1);
-                const pos = screenPos.sub(V(0, canvas.current.getBoundingClientRect().top));
+                const pos = designer.viewport.camera.toWorldPos(screenPos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
                 // TODO[model_refactor](leon)
                 // If other place options are specified then do those

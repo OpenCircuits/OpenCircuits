@@ -3,7 +3,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 
-import {ItemNav, ItemNavItem} from "shared/containers/ItemNav";
+import {ItemNav, type ItemNavItem} from "shared/site/containers/ItemNav";
 
 import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
 
@@ -11,7 +11,7 @@ import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigne
 
 import itemNavConfig from "digital/site/data/itemNavConfig.json";
 
-import "core/utils/Array";
+import "shared/api/circuit/utils/Array";
 
 
 // List that represents the order of smart place options cycle

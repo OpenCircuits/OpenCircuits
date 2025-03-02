@@ -10,7 +10,7 @@ import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
 
 export function DigitalComponentInfoImpl(state: DigitalCircuitState, kind: string) {
-    const info = state.internal.doc.getComponentInfo(kind).unwrap();
+    const info = state.internal.getComponentInfo(kind).unwrap();
     if (!(info instanceof DigitalComponentInfoInternal))
         throw new Error(`Received non-digital component info for ${kind}!`);
 

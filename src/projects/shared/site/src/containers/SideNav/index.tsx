@@ -48,7 +48,8 @@ export const SideNav = ({ exampleCircuits }: Props) => {
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
             return;
-        designer.circuit.reset();
+        // TODO: reset?
+        // designer.circuit.reset();
         dispatch(ToggleSideNav());
     }
 

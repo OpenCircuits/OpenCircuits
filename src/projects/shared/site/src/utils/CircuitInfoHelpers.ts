@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "shared/api/circuit/models/Circuit";
+import {CircuitMetadata} from "shared/api/circuit/public";
 
 
 export type CircuitInfoHelpers = {

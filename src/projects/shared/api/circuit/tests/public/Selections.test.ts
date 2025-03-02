@@ -71,8 +71,8 @@ describe("Selections", () => {
             redo();
             redo();
             expect(observedCount).toBe(6);
-        })
-    })
+        });
+    });
 
     describe("Obj Queries", () => {
         const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();

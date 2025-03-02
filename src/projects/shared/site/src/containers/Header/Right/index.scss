@@ -1,4 +1,6 @@
-@import "~shared/utils/constants", "~shared/utils/theme", "../constants";
+@use "~shared/site/utils/constants" as *;
+@use "~shared/site/utils/theme" as *;
+@use "../constants" as *;
 
 
 .header__right {

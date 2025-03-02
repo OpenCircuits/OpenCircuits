@@ -1,4 +1,4 @@
-import {Header} from "shared/containers/Header";
+import {Header} from "shared/site/containers/Header";
 
 
 export const DigitalHeader = () => (

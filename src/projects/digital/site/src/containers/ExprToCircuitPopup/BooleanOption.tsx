@@ -1,6 +1,6 @@
 import React from "react";
 
-import {SwitchToggle} from "shared/components/SwitchToggle";
+import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 import "./index.scss";
 

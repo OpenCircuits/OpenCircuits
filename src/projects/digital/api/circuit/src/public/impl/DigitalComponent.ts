@@ -40,8 +40,8 @@ export function DigitalComponentImpl(circuit: DigitalCircuit, state: DigitalCirc
             if (!this.info.portGroups.includes(portGroup))
                 return undefined; // Invalid port group for the component
 
-            const ports = [...internal.doc.getPortsForComponent(id).unwrap()]
-                .map((id) => internal.doc.getPortByID(id).unwrap())
+            const ports = [...internal.getPortsForComponent(id).unwrap()]
+                .map((id) => internal.getPortByID(id).unwrap())
                 .filter((port) => (port.group === portGroup));
 
             // Find out if the portGroup is of type input or output
@@ -56,7 +56,7 @@ export function DigitalComponentImpl(circuit: DigitalCircuit, state: DigitalCirc
                 if (isOutputGroup)
                     return true;
                 // Input ports are available if they have no connections
-                const connections = internal.doc.getWiresForPort(port.id).unwrap();
+                const connections = internal.getWiresForPort(port.id).unwrap();
                 return (isInputGroup && connections.size === 0);
             });
 

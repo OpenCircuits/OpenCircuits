@@ -6,8 +6,8 @@ import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useS
 
 import {CloseHeaderPopups} from "shared/site/state/Header";
 
-import {Popup}       from "shared/components/Popup";
-import {ShortcutKey} from "shared/components/ShortcutKey";
+import {Popup}       from "shared/site/components/Popup";
+import {ShortcutKey} from "shared/site/components/ShortcutKey";
 
 import "./index.scss";
 

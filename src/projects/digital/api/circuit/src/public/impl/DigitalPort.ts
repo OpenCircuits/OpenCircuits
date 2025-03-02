@@ -60,7 +60,7 @@ export function DigitalPortImpl(circuit: DigitalCircuit, state: DigitalCircuitSt
                 return true;
 
             // Input ports are only available if there isn't a connection already
-            const wires = internal.doc.getWiresForPort(base.id).unwrap();
+            const wires = internal.getWiresForPort(base.id).unwrap();
             return (wires.size === 0);
         },
     } as const) satisfies DigitalPort;

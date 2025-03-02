@@ -21,8 +21,11 @@ export * from "./DigitalCircuit";
 
 export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
     const log = new CircuitLog();
-    const doc = new CircuitDocument(CreateDigitalComponentInfoProvider());
-    const internal = new CircuitInternal(uuid(), log, doc);
+    const doc = new CircuitDocument(CreateDigitalComponentInfoProvider(), log);
+
+    const circuitID = uuid();
+    doc.createCircuit(circuitID);
+    const internal = new CircuitInternal(circuitID, log, doc);
 
     const renderOptions = new DefaultRenderOptions();
     const sim = new DigitalSim(internal);
