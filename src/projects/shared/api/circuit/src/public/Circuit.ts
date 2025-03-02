@@ -6,13 +6,14 @@ import {GUID} from "shared/api/circuit/schema/GUID";
 
 import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff";
 
-import {Component}     from "./Component";
+import {Component, ReadonlyComponent}     from "./Component";
 import {ComponentInfo} from "./ComponentInfo";
-import {Obj}           from "./Obj";
-import {Port}          from "./Port";
-import {Wire}          from "./Wire";
+import {Obj, ReadonlyObj}           from "./Obj";
+import {Port, ReadonlyPort}          from "./Port";
+import {ReadonlyWire, Wire}          from "./Wire";
 import {Selections}    from "./Selections";
 import {Observable}    from "./Observable";
+import {Schema} from "../schema";
 
 
 export type {CircuitMetadata} from "shared/api/circuit/schema/CircuitMetadata";
@@ -23,7 +24,32 @@ export type CircuitEvent = {
     diff: FastCircuitDiff;
 }
 
-export interface Circuit extends Observable<CircuitEvent> {
+export interface ReadonlyCircuit {
+    readonly id: GUID;
+    readonly name: string;
+    readonly desc: string;
+    readonly thumbnail: string;
+
+    // Queries
+    pickObjAt(pt: Vector): ReadonlyObj | undefined;
+    pickComponentAt(pt: Vector): ReadonlyComponent | undefined;
+    pickWireAt(pt: Vector): ReadonlyWire | undefined;
+    pickPortAt(pt: Vector): ReadonlyPort | undefined;
+
+    getObj(id: GUID): ReadonlyObj | undefined;
+    getComponent(id: GUID): ReadonlyComponent | undefined;
+    getWire(id: GUID): ReadonlyWire | undefined;
+    getPort(id: GUID): ReadonlyPort | undefined;
+
+    getObjs(): ReadonlyObj[];
+    getComponents(): ReadonlyComponent[];
+    getWires(): ReadonlyWire[];
+
+    getComponentInfo(kind: string): ComponentInfo | undefined;
+}
+
+type C = ReadonlyCircuit & Observable<CircuitEvent>;
+export interface Circuit extends C {
     beginTransaction(): void;
     commitTransaction(): void;
     cancelTransaction(): void;
@@ -71,15 +97,26 @@ export interface Circuit extends Observable<CircuitEvent> {
     // deserialize(data: string): void;
 }
 
+export interface ICInfo {
+    circuit: ReadonlyCircuit;
+    display: IntegratedCircuitDisplay;
+}
 export interface RootCircuit extends Circuit {
-    createIC(): IntegratedCircuit;
+    createIC(info: ICInfo): IntegratedCircuit;
     getICs(): IntegratedCircuit[];
 }
 
 export interface IntegratedCircuitDisplay {
-    size: Vector;
-    setPinPos(pin: GUID, pos: Vector): void;
+    readonly size: Vector;
+
+    readonly pins: ReadonlyArray<{
+        id: GUID;  // ID of corresponding PORT
+        pos: Vector;
+    }>;
 }
-export interface IntegratedCircuit extends Circuit {
+export interface IntegratedCircuit extends ReadonlyCircuit {
     readonly display: IntegratedCircuitDisplay;
+
+    // addPin(kind: string, group: string, props: Record<string, Schema.Prop>, pinPortPos: Vector): Pin;
+    // getPins(): Component[];
 }

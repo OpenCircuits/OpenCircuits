@@ -45,6 +45,9 @@ export interface ObjInfoProvider {
     // TODO: Maybe use i.e. Option<ObjInfo>
     get(kind: string): ObjInfo | undefined;
     getComponent(kind: string): ComponentInfo | undefined;
+
+    addNewComponentInfo(kind: string, info: ComponentInfo): void;
+    removeComponentInfo(kind: string): void;
     // TODO: potentially:
     // getWire(kind: string): WireInfo | undefined;
     // getPort(kind: string): PortInfo | undefined;
@@ -65,6 +68,14 @@ export class BaseObjInfoProvider implements ObjInfoProvider {
         this.ports      = new Map(ports     .map((info) => [info.kind, info]));
     }
 
+    public addNewComponentInfo(kind: string, info: ComponentInfo): void {
+        this.components.set(kind, info);
+    }
+
+    public removeComponentInfo(kind: string): void {
+        this.components.delete(kind);
+    }
+
     public getComponent(kind: string): ComponentInfo | undefined {
         return this.components.get(kind);
     }
@@ -80,7 +91,7 @@ export class BaseObjInfoProvider implements ObjInfoProvider {
     }
 }
 
-export type PropTypeMap = Record<string, Schema.Prop>;
+export type PropTypeMap = Record<string, "string" | "number" | "boolean">;
 export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
     public readonly baseKind: K;
     public readonly kind: string;

@@ -7,7 +7,7 @@ import {Schema} from "shared/api/circuit/schema";
 import {GUID, uuid} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, IntegratedCircuit,
-        IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
+        IntegratedCircuitDisplay, RootCircuit, ICInfo} from "../Circuit";
 import {Selections}                from "../Selections";
 import {isObjComponent, isObjWire} from "../Utilities";
 
@@ -195,13 +195,14 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 export function RootCircuitImpl<
     CircuitT extends Circuit,
     T extends CircuitTypes
->(state: CircuitState<T>) {
+>(state: CircuitState<T>, makeIC: (info: ICInfo) => IntegratedCircuit) {
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
-        createIC(): IntegratedCircuit {
+        createIC(info: ICInfo): IntegratedCircuit {
+            return makeIC(info);
             // return state.constructIC(uuid());
-            throw new Error("RootCircuit.createIC: Unimplemented!");
+            // throw new Error("RootCircuit.createIC: Unimplemented!");
         },
         getICs(): IntegratedCircuit[] {
             throw new Error("RootCircuit.getICs: Unimplemented!");
@@ -217,20 +218,19 @@ export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends Circui
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     const display = {
-        set size(s: Vector) {
-            state.internal.setMetadata({ displayWidth: s.x, displayHeight: s.y } as unknown as Schema.CircuitMetadata);
-        },
         get size(): Vector {
-            const size = state.internal.getMetadata() as unknown as Schema.IntegratedCircuit["metadata"];
-            return V(size.displayWidth, size.displayHeight);
+            const metadata = state.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
+            return V(metadata.displayWidth, metadata.displayHeight);
         },
-
-        setPinPos(pin: GUID, pos: Vector): void {
-            circuit.beginTransaction();
-            const p = circuit.getComponent(pin);
-            p?.setProp("pinPosX", pos.x);
-            p?.setProp("pinPosY", pos.x);
-            circuit.commitTransaction();
+        get pins(): ReadonlyArray<{
+            id: GUID;  // ID of corresponding component
+            pos: Vector;
+        }> {
+            const metadata = state.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
+            return metadata.pins.map(({ id, x, y }) => ({
+                id,
+                pos: V(x, y),
+            }));
         },
     } satisfies IntegratedCircuitDisplay;
 
@@ -238,5 +238,33 @@ export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends Circui
         get display(): IntegratedCircuitDisplay {
             return display;
         },
+        // addPin(kind: string, group: string, props: Record<string, Schema.Prop>, pinPortPos: Vector): Pin {
+        //     const info = circuit.getComponentInfo(kind);
+
+        //     circuit.beginTransaction();
+
+        //     // Place raw component (TODO[master](leon) - don't use unwrap...)
+        //     const id = state.internal.placeComponent(kind, props).unwrap();
+
+        //     // Set its config to place ports
+        //     state.internal.setPortConfig(id, info!.defaultPortConfig).unwrap();
+        //     // TODO: Edit all instances of the ICs
+
+        //     // const c = state.constructComponent(id);
+        //     // if (!c.isPin()) {
+        //     //     circuit.cancelTransaction();
+        //     //     throw new Error(`${kind} is not a valid Pin type!`);
+        //     // }
+
+        //     // state.internal.addICPin(id, group, pinPortPos);
+
+        //     circuit.commitTransaction();
+
+        //     return c;
+        // },
+        // getPins(): Pin[] {
+        //     throw new Error("Unimplemented!");
+        //     // return circuit.getComponents().filter((c) => (c.isPin())) as Pin[];
+        // },
     }) satisfies IntegratedCircuit;
 }

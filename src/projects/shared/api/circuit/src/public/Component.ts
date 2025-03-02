@@ -1,12 +1,40 @@
 import {Vector} from "Vector";
 
-import {BaseObject}    from "./BaseObject";
+import {BaseObject, ReadonlyBaseObject} from "./BaseObject";
 import {ComponentInfo} from "./ComponentInfo";
-import {Port}          from "./Port";
-import {Wire}          from "./Wire";
+import {Port, ReadonlyPort} from "./Port";
+import {Wire, ReadonlyWire} from "./Wire";
+import {Schema} from "../schema";
 
 
-export interface Component extends BaseObject {
+export interface ReadonlyComponent extends ReadonlyBaseObject {
+    readonly baseKind: "Component";
+    readonly info: ComponentInfo;
+
+    readonly x: number;
+    readonly y: number;
+    readonly pos: Vector;
+    readonly angle: number;
+
+    isNode(): this is Node;
+
+    readonly ports: Record<string, ReadonlyPort[]>;
+    readonly allPorts: ReadonlyPort[];
+
+    // Do we even want this in the API?
+    // readonly connectedComponents: Component[];
+
+    firstAvailable(group: string): ReadonlyPort | undefined;
+
+    toSchema(): Schema.Component;
+}
+
+export interface ReadonlyNode extends ReadonlyComponent {
+    readonly path: Array<ReadonlyNode | ReadonlyWire>;
+}
+
+type C = ReadonlyComponent & BaseObject;
+export interface Component extends C {
     readonly baseKind: "Component";
     readonly info: ComponentInfo;
 
@@ -27,9 +55,12 @@ export interface Component extends BaseObject {
     firstAvailable(group: string): Port | undefined;
 
     delete(): void;
+
+    toSchema(): Schema.Component;
 }
 
-export interface Node extends Component {
+type N = ReadonlyNode & Component;
+export interface Node extends N {
     snip(): Wire;
 
     readonly path: Array<Node | Wire>;

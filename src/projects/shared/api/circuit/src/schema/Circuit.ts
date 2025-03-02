@@ -16,6 +16,9 @@ export interface IntegratedCircuit extends Circuit {
     metadata: CircuitMetadata & {
         displayWidth: number;
         displayHeight: number;
+
+        pins: Array<{ id: GUID, x: number, y: number }>;
+        // portInfo: Record<GUID, { group: string, index: number, x: number, y: number }>;
     };
 }
 

@@ -96,6 +96,7 @@ class DirtyMap<K> {
 
 export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
     private readonly circuit: CircuitInternal;
+    private readonly options: RenderOptions;
 
     protected cache: AssemblyCache;
 
@@ -125,6 +126,7 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
             wireCurves: new Map(),
             wirePrims:  new Map(),
         };
+        this.options = options;
 
         this.assemblers = assemblers({ circuit, cache: this.cache, options });
 
@@ -185,6 +187,13 @@ export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
 
             this.publish({ type: "onchange" });
         });
+    }
+
+    public addAssembler(kind: string, getAssembler: (params: AssemblerParams) => Assembler) {
+        this.assemblers[kind] = getAssembler({ circuit: this.circuit, cache: this.cache, options: this.options });
+    }
+    public removeAssembler(kind: string) {
+        delete this.assemblers[kind];
     }
 
     public reassemble() {

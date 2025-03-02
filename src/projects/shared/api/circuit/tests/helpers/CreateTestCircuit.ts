@@ -2,7 +2,7 @@ import "./Extensions";
 
 import {V, Vector} from "Vector";
 
-import {extend}         from "shared/api/circuit/utils/Functions";
+import {extend, MapObj}         from "shared/api/circuit/utils/Functions";
 import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
@@ -26,6 +26,8 @@ import {BaseComponentInfo, BaseObjInfo,
         BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ComponentInfo";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
+import {PartialPortPos} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 
 export class TestComponentInfo extends BaseComponentInfo {
@@ -49,12 +51,13 @@ export class TestComponentAssembler extends ComponentAssembler {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
-                assemble: (comp) => ({
+                assemble:     (comp) => ({
                     kind:      "Rectangle",
                     transform: this.getTransform(comp),
                 }),
 
                 styleChangesWhenSelected: true,
+
                 getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
         ]);
@@ -63,12 +66,52 @@ export class TestComponentAssembler extends ComponentAssembler {
 
 export function TestComponentImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
     const base = ComponentImpl(circuit, state, id);
+
+    // if (base.kind === "Pin") {
+    //     return extend(base, {
+    //         get info() {
+    //             return ComponentInfoImpl(state, base.kind);
+    //         },
+    //         isPin(): true {
+    //             return true;
+    //         },
+    //         isNode(): false {
+    //             return false;
+    //         },
+    //         set displayPos(pos: Vector) {
+    //             circuit.beginTransaction();
+
+    //             const curMetadata = state.internal.getMetadata()
+    //                 .unwrap() as unknown as Schema.IntegratedCircuit["metadata"];
+    //             state.internal.setMetadata({
+    //                 portInfo: {
+    //                     ...curMetadata.portInfo,
+    //                     [id]: { ...curMetadata.portInfo[id], x: pos.x, y: pos.y },
+    //                 },
+    //             } satisfies Partial<Schema.IntegratedCircuit["metadata"]> as unknown as Schema.CircuitMetadata);
+
+    //             circuit.commitTransaction();
+    //         },
+    //         get displayPos(): Vector {
+    //             const curMetadata = state.internal.getMetadata()
+    //                 .unwrap() as unknown as Schema.IntegratedCircuit["metadata"];
+    //             return V(
+    //                 curMetadata.portInfo[id].x,
+    //                 curMetadata.portInfo[id].y,
+    //             );
+    //         },
+    //     } as const) satisfies Pin;
+    // }
+
     return extend(base, {
         get info() {
             return ComponentInfoImpl(state, base.kind);
         },
         isNode(): boolean {
             return (base.kind === "TestNode");
+        },
+        isPin(): boolean {
+            return (base.kind === "Pin");
         },
     } as const) satisfies Component;
 }
@@ -121,6 +164,34 @@ export interface TestRootCircuitHelpers {
 export function CreateTestRootCircuit(
     additionalPortConfigs: PortConfig[] = []
 ): [RootCircuit, CircuitState<CircuitTypes>, TestRootCircuitHelpers] {
+    function MakeCircuit(circuitID: GUID): CircuitState<CircuitTypes> {
+        const internal = new CircuitInternal(circuitID, log, doc);
+        const renderOptions = new DefaultRenderOptions();
+        const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
+            "TestWire": new WireAssembler(params),
+            "TestComp": new TestComponentAssembler(params),
+            "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+
+            "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+        }));
+
+        const state: CircuitState<CircuitTypes> = {
+            internal, assembler, renderOptions,
+
+            constructComponent(id) {
+                return TestComponentImpl(circuit, state, id);
+            },
+            constructWire(id) {
+                return TestWireImpl(circuit, state, id);
+            },
+            constructPort(id) {
+                return TestPortImpl(circuit, state, id);
+            },
+        };
+
+        return state;
+    }
+
     const portConfigs = [{ "": 1 }, ...additionalPortConfigs];
 
     const log = new CircuitLog();
@@ -128,42 +199,60 @@ export function CreateTestRootCircuit(
         [
             new TestComponentInfo("TestComp", {}, [""], portConfigs),
             new TestComponentInfo("TestNode", {}, [""], portConfigs),
+
+            new TestComponentInfo("Pin", {}, [""], portConfigs),
         ],
         [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
         [new BaseObjInfo("Port", "TestPort", {})],
     ), log);
+
     const mainCircuitID = uuid();
-
     doc.createCircuit(mainCircuitID);
-    const internal = new CircuitInternal(mainCircuitID, log, doc);
+    const mainState = MakeCircuit(mainCircuitID);
 
-    const renderOptions = new DefaultRenderOptions();
-    const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
-        "TestWire": new WireAssembler(params),
-        "TestComp": new TestComponentAssembler(params),
-        "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
-    }));
+    const circuit = RootCircuitImpl(mainState, (info) => {
+        const id = uuid(), kind = id;
 
-    const state: CircuitState<CircuitTypes> = {
-        internal, assembler, renderOptions,
+        const portConfig = { "": info.display.pins.length };
+        const metadata: Schema.IntegratedCircuit["metadata"] = {
+            id:      id,  // Make a new ID
+            name:    info.circuit.name,
+            thumb:   info.circuit.thumbnail,
+            desc:    info.circuit.desc,
+            version: "v/0",
 
-        constructComponent(id) {
-            return TestComponentImpl(circuit, state, id);
-        },
-        constructWire(id) {
-            return TestWireImpl(circuit, state, id);
-        },
-        constructPort(id) {
-            return TestPortImpl(circuit, state, id);
-        },
+            displayWidth:  info.display.size.x,
+            displayHeight: info.display.size.y,
 
-        // constructIC(id) {
-        //     return IntegratedCircuitImpl(id, state);
-        // },
-    }
-    const circuit = RootCircuitImpl(state);
+            pins: info.display.pins.map(({ id, pos }) => ({ id, x: pos.x, y: pos.y })),
+        }
+        doc.createIC(
+            metadata,
+            new TestComponentInfo(kind, {}, [""], [portConfig]),
+            info.circuit.getObjs().map((o) => o.toSchema()),
+        );
 
-    return [circuit, state, {
+        const factory = MapObj(portConfig, ([_group, _total]) =>
+            (index: number, _total: number) => {
+                const pos = info.display.pins[index].pos;
+                const size = info.display.size;
+                return {
+                    origin: pos,
+
+                    dir: Math.abs(pos.x)-size.x/2 < Math.abs(pos.y)-size.y/2
+                        ? V(0, -1).scale(pos.y).normalize()
+                        : V(-1, 0).scale(pos.x).normalize(),
+                } satisfies PartialPortPos;
+            });
+
+        // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
+        mainState.assembler.addAssembler(kind, (params) =>
+            new ICComponentAssembler(params, info.display.size, factory));
+
+        return IntegratedCircuitImpl(id, MakeCircuit(id));
+    });
+
+    return [circuit, mainState, {
         PlaceAt: (...positions) => positions.map((p) => circuit.placeComponentAt("TestComp", p)),
         Connect: (c1, c2) => c1.ports[""][0].connectTo(c2.ports[""][0])!,
         GetPort: (c) => c.ports[""][0],

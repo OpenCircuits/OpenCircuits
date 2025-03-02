@@ -80,6 +80,20 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     // TODO: add helper that checks all invariants of the internal rep.
     //
 
+    public deleteComponent(c: Schema.Component) {
+        this.objStorage.delete(c.id);
+
+        // Delete port entry
+        this.componentPortsMap.delete(c.id);
+    }
+
+    public addComponent(c: Schema.Component) {
+        this.objStorage.set(c.id, c);
+
+        // Initialize blank port set
+        this.componentPortsMap.set(c.id, new Set());
+    }
+
     public deleteWire(w: Schema.Wire) {
         this.objStorage.delete(w.id);
         this.wireSet.delete(w.id);
@@ -385,6 +399,26 @@ export class CircuitDocument extends Observable<CircuitDocEvent> implements Read
         return OkVoid();
     }
 
+    public createIC(metadata: Schema.IntegratedCircuit["metadata"], info: ComponentInfo, objs: Schema.Obj[]): Result {
+        this.objInfo.addNewComponentInfo(info.kind, info);
+
+        const storage = new CircuitStorage<Schema.IntegratedCircuit["metadata"]>(this.objInfo, { ...metadata });
+        objs.filter((o) => (o.baseKind === "Component"))
+            .forEach((c) => storage.addComponent(c as Schema.Component));
+        objs.filter((o) => (o.baseKind === "Port"))
+            .forEach((p) => storage.addPort(p as Schema.Port));
+        objs.filter((o) => (o.baseKind === "Wire"))
+            .forEach((w) => storage.addWire(w as Schema.Wire));
+        this.storage.set(metadata.id, storage);
+        this.diffBuilders.set(metadata.id, new FastCircuitDiffBuilder());
+
+        return OkVoid();
+    }
+
+    // public addICPin(icID: GUID, group: string, index: number): Result {
+    //     this.objInfo.getComponent(icID).
+    // }
+
     public setMetadataFor<M extends Schema.CircuitMetadata>(circuit: GUID, newMetadata: Partial<M>) {
         return this.getMutableCircuitStorage(circuit)
             .map((c) => {
@@ -500,18 +534,12 @@ export class CircuitDocument extends Observable<CircuitDocEvent> implements Read
             if (info.componentPortsMap.get(op.c.id)!.size > 0)
                 throw new Error(`Deleted component ${op.c.id} should not have ports`);
 
-            info.objStorage.delete(op.c.id);
-
-            // Delete port entry
-            info.componentPortsMap.delete(op.c.id);
+            info.deleteComponent(op.c);
         } else {
             if (info.componentPortsMap.has(op.c.id))
                 throw new Error(`Placed component ${op.c.id} should not have any ports`);
 
-            info.objStorage.set(op.c.id, op.c);
-
-            // Initialize blank port set
-            info.componentPortsMap.set(op.c.id, new Set());
+            info.addComponent(op.c);
         }
     }
 
