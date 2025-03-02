@@ -277,6 +277,12 @@ describe("Component", () => {
             expect(c.allPorts).toHaveLength(1);
         });
 
+        test(".setNumPorts on invalid port group", () => {
+            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [c] = PlaceAt(V(0, 0));
+            expect(() => c.setNumPorts("invalidGroup", 6)).toThrow();
+        });
+
         // test("firstAvailable", () => {
         //     const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
         //     const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
