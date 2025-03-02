@@ -3,16 +3,18 @@ import {useState} from "react";
 import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS}                             from "digital/site/utils/ExpressionParser/Constants/Formats";
 
-import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
+import {DigitalCircuit} from "digital/api/circuit/public";
 
 import {useSharedDispatch,
         useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {CloseHeaderPopups} from "shared/site/state/Header";
 
-import {ButtonToggle} from "shared/components/ButtonToggle";
-import {InputField}   from "shared/components/InputField";
-import {Popup}        from "shared/components/Popup";
+import {ButtonToggle} from "shared/site/components/ButtonToggle";
+import {InputField}   from "shared/site/components/InputField";
+import {Popup}        from "shared/site/components/Popup";
+
+import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
 
 import {BooleanOption}  from "./BooleanOption";
 import {CustomOps}      from "./CustomOps";
@@ -22,12 +24,14 @@ import {Generate,
         OutputTypes}    from "./generate";
 
 import "./index.scss";
+import {Camera} from "shared/api/circuitdesigner/public/Camera";
 
 
 type Props = {
-    mainInfo: DigitalCircuitInfo;
+    circuit: DigitalCircuit;
+    viewport: {camera: Camera};
 }
-export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
+export const ExprToCircuitPopup = (({ circuit, viewport: {camera} }: Props) => {
     const { curPopup } = useSharedSelector(
         (state) => ({ curPopup: state.header.curPopup })
     );
@@ -111,23 +115,23 @@ export const ExprToCircuitPopup = (({ mainInfo }: Props) => {
                         className="exprtocircuit__popup__generate"
                         disabled={expression===""}
                         onClick={() => {
-                            try {
-                                Generate(mainInfo, expression, {
-                                    input, output, isIC,
-                                    connectClocksToOscope: clocksToOscope,
-                                    label, format,
-                                    ops:                   customOps,
-                                });
-                                reset();
-                            } catch (e) {
-                                setErrorMessage(e.message);
-                                console.error(e);
+                            const result = Generate(circuit, camera, expression, {
+                                input, output, isIC,
+                                connectClocksToOscope: clocksToOscope,
+                                label, format,
+                                ops: customOps,
+                            });
+                            if (!result.ok) {
+                                setErrorMessage(result.error.errors.map((err) => err.message).join("\n"));
+                                console.error(result.error);
+                            } else {
+                                dispatch(CloseHeaderPopups());
                             }
                         }}>
                     Generate
                 </button>
 
-                <button type="button" className="cancel" onClick={() => reset()}>Cancel</button>
+                <button type="button" className="cancel" onClick={reset}>Cancel</button>
             </div>
         </Popup>
     );

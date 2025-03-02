@@ -1,8 +1,8 @@
 import {useEffect} from "react";
 
 import {InputAdapter}      from "shared/api/circuitdesigner/input/InputAdapter";
+import type {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {Key}               from "shared/api/circuitdesigner/input/Key";
-import {InputAdapterEvent} from "../input/InputAdapterEvent";
 
 
 export const useKeyDownEvent = (input: InputAdapter, key: Key, f: () => void, deps?: React.DependencyList) => {

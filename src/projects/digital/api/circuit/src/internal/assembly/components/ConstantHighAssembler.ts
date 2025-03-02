@@ -24,6 +24,6 @@ export class ConstantHighAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.doc.getObjectInfo("ConstantHigh").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("ConstantHigh").unwrap() as DigitalComponentInfo;
     }
 }

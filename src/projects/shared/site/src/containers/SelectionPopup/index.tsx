@@ -9,7 +9,7 @@ import {Clamp} from "math/MathUtils";
 
 import {useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CircuitDesigner} from "shared/circuitdesigner";
+import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import {TitleModule}       from "./modules/TitleModule";
 import {useSelectionProps} from "./modules/useSelectionProps";
@@ -24,16 +24,17 @@ type Props = {
 }
 export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => {
     const circuit = designer.circuit;
+    const camera = designer.viewport.camera;
     const itemNavCurItem = useSharedSelector((state) => state.itemNav.curItemID);
 
     const [numSelections, setNumSelections] = useState(0);
-    const [pos, setPos] = useState(circuit.selections.midpoint("screen"));
+    const [pos, setPos] = useState(camera.toScreenPos(circuit.selections.bounds.center));
     const [isDragging, setIsDragging] = useState(false);
     const [clickThrough, setClickThrough] = useState(false);
 
-    useEffect(() => circuit.selections.observe((ev) => {
-        setNumSelections(ev.newAmt);
-        setPos(circuit.selections.midpoint("screen"));
+    useEffect(() => circuit.selections.observe(() => {
+        setNumSelections(circuit.selections.length);
+        setPos(camera.toScreenPos(circuit.selections.bounds.center));
 
         // When the selection changes, reset the clickThrough state and
         // let user click through box so it doesn't block a double click
@@ -48,11 +49,11 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
         });
     }), [circuit, setNumSelections, setClickThrough]);
 
-    useEffect(() => circuit.camera.observe(() =>
-        setPos(circuit.selections.midpoint("screen"))
+    useEffect(() => camera.observe(() =>
+        setPos(camera.toScreenPos(circuit.selections.bounds.center))
     ), [circuit, setPos]);
 
-    useEffect(() => circuit.camera.observe((ev) => {
+    useEffect(() => camera.observe((ev) => {
         if (ev.type === "dragStart")
             setIsDragging(true); // Don't show popup if dragging
         if (ev.type === "dragEnd")

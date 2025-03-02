@@ -10,11 +10,11 @@ import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useS
 
 import {CloseHeaderPopups} from "shared/site/state/Header";
 
-import {CircuitDesigner, CreateDesigner} from "shared/circuitdesigner";
+import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
-import {DefaultTool}                     from "shared/api/circuitdesigner/DefaultTool";
-import {PanTool}                         from "shared/api/circuitdesigner/PanTool";
-import {FitToScreen, FitToScreenHandler} from "shared/api/circuitdesigner/handlers/FitToScreenHandler";
+import {DefaultTool}                     from "shared/api/circuitdesigner/tools/DefaultTool";
+import {PanTool}                         from "shared/api/circuitdesigner/tools/PanTool";
+import {FitToScreen, FitToScreenHandler} from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
 
 import {ButtonToggle} from "shared/site/components/ButtonToggle";
 import {InputField}   from "shared/site/components/InputField";
@@ -193,33 +193,36 @@ export const ImageExporterPreview = ({ designer: mainDesigner, canvas, width, he
                                        style, ...renderingOptions }: ImageExporterPreviewProps) => {
     const { useGrid } = renderingOptions;
 
+    // TODO: CreateDesigner is in digital, this file here is in shared
     // Happens on-opening since this component should be used conditionally when active
-    const designer: CircuitDesigner = useMemo(() => CreateDesigner(
-        mainDesigner.circuit.copy(),
-        {
-            defaultTool: new DefaultTool(FitToScreenHandler),
-            tools:       [PanTool],
-        }
-    ), [mainDesigner]);
+    // const designer: CircuitDesigner = useMemo(() => CreateDesigner(
+    //     mainDesigner.circuit.copy(),
+    //     {
+    //         defaultTool: new DefaultTool(FitToScreenHandler),
+    //         tools:       [PanTool],
+    //     }
+    // ), [mainDesigner]);
+    const designer = mainDesigner;
 
     useLayoutEffect(() => {
         if (!canvas.current)
             return;
-        return designer.attachCanvas(canvas.current);
+        return designer.viewport.attachCanvas(canvas.current);
     }, [designer, canvas]);
 
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
-    useLayoutEffect(() => designer.circuit.resize(width, height), [designer, width, height]);
+    useLayoutEffect(() => designer.viewport.resize(width, height), [designer, width, height]);
 
     // Keep render options in sync
-    useLayoutEffect(() => designer.circuit.setRenderOptions({ useGrid }), [designer, useGrid]);
+    // TODO
+    // useLayoutEffect(() => designer.circuit.setRenderOptions({ useGrid }), [designer, useGrid]);
 
     return (<>
         <img src="img/icons/fitscreen.svg"
              className="image-exporter-preview__button"
              alt="Fit to screen"
-             onClick={() => FitToScreen(designer.circuit, designer.margin)} />
+             onClick={() => FitToScreen(designer.circuit, designer.viewport.camera, designer.margin)} />
         <canvas ref={canvas}
                 width={`${width}px`}
                 height={`${height}px`}

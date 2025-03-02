@@ -8,6 +8,7 @@
           "shared/api/circuit/*":          ["../api/circuit/src/*"],
           "shared/api/circuitdesigner/*":  ["../api/circuitdesigner/src/*"],
           "shared/site/*":                 ["./src/*"],
+          "shared/site/tests/*":           ["./tests/*"],
       }
   },
   "include": ["."],

@@ -1,7 +1,7 @@
-import {PropInfoRecord}      from "shared/containers/SelectionPopup/propinfo/PropInfo";
+import {PropInfoRecord} from "shared/site/containers/SelectionPopup/propinfo/PropInfo";
 import {DefaultComponentPropInfo,
         DefaultPortPropInfo,
-        DefaultWirePropInfo} from "shared/containers/SelectionPopup/propinfo/DefaultPropInfo";
+        DefaultWirePropInfo} from "shared/site/containers/SelectionPopup/propinfo/DefaultPropInfo";
 
 
 export const DigitalPropInfo: PropInfoRecord = {

@@ -27,6 +27,6 @@ export class ConstantLowAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.doc.getObjectInfo("ConstantLow").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("ConstantLow").unwrap() as DigitalComponentInfo;
     }
 }

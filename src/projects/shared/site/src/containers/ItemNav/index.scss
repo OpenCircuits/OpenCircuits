@@ -1,4 +1,5 @@
-@import "~shared/utils/constants";
+@use "~shared/site/utils/constants" as *;
+@use "~shared/site/utils/theme" as *;
 
 $tab-width: 18px;
 $tab-padding: 8px;

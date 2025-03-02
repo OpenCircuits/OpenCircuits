@@ -43,11 +43,11 @@ export class SwitchAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.doc.getObjectInfo("Switch").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("Switch").unwrap() as DigitalComponentInfo;
     }
 
     private isOn(sw: Schema.Component) {
-        const [outputPort] = this.circuit.doc.getPortsForComponent(sw.id).unwrap();
+        const [outputPort] = this.circuit.getPortsForComponent(sw.id).unwrap();
         return Signal.isOn(this.sim.getSignal(outputPort));
     }
 }

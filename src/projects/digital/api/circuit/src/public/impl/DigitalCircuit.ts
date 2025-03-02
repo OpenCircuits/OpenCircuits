@@ -19,9 +19,9 @@ function DigitalCircuitImpl<T extends (APIToDigital<Circuit> & Record<string | n
 }
 
 export function DigitalRootCircuitImpl(state: DigitalCircuitState) {
-    return DigitalCircuitImpl(RootCircuitImpl<DigitalIntegratedCircuit, DigitalCircuit, DigitalTypes>(state));
+    return DigitalCircuitImpl(RootCircuitImpl<DigitalCircuit, DigitalTypes>(state));
 }
 
-export function DigitalIntegratedCircuitImpl(state: DigitalCircuitState) {
-    return DigitalCircuitImpl(IntegratedCircuitImpl<DigitalCircuit, DigitalTypes>(state));
-}
+// export function DigitalIntegratedCircuitImpl(state: DigitalCircuitState) {
+//     return DigitalCircuitImpl(IntegratedCircuitImpl<DigitalCircuit, DigitalTypes>(state));
+// }

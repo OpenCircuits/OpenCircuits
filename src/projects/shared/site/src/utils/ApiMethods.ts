@@ -26,7 +26,8 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         }
 
         try {
-            mainCircuit.deserialize(data);
+            // TODO: Replacement for deserialize
+            // mainCircuit.deserialize(data);
         } catch (e) {
             console.error(e);
             dispatch(_SetCircuitLoading(false));
@@ -66,7 +67,8 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         // Save the circuit and reload the user circuits
         return (
-            await dispatch(SaveCircuit(mainCircuit.serialize())) &&
+            // TODO: Replacement for serialize
+            // await dispatch(SaveCircuit(mainCircuit.serialize())) &&
             await dispatch(LoadUserCircuits())
         );
     }
@@ -82,6 +84,8 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         const thumbnail = GenerateThumbnail(mainCircuit);
 
+        // TODO: Either implement circuit.copy() or workaround with copying selections and name
+        /**
         const circuitCopy = mainCircuit.copy();
         circuitCopy.name = circuitCopy.name + " (Copy)";
         circuitCopy.thumbnail = thumbnail;
@@ -93,6 +97,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         // Load circuit copy onto canvas
         await LoadCircuitRemote(circuitCopyMetadata.id);
+        */
 
         await dispatch(LoadUserCircuits());
     }

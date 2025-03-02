@@ -1,4 +1,4 @@
-@import "~shared/utils/theme";
+@use "~shared/site/utils/theme" as *;
 
 .circuit__preview {
     $img-width: 50px;

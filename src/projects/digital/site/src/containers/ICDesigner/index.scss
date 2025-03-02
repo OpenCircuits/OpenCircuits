@@ -1,5 +1,5 @@
 @use "sass:math";
-@import "~shared/utils/constants";
+@use "~shared/site/utils/theme" as *;
 
 .icdesigner {
     position: absolute;

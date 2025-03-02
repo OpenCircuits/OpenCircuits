@@ -2,7 +2,7 @@ import {useCallback} from "react";
 
 import {Obj} from "shared/api/circuit/public";
 
-import {CircuitDesigner} from "shared/circuitdesigner";
+import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
 import {useSelectionProps}    from "./useSelectionProps";

@@ -14,11 +14,14 @@ export type CircuitTypes<
     WireT extends Wire = Wire,
     PortT extends Port = Port,
     NodeT extends Node = Node,
+    ICT extends IntegratedCircuit = IntegratedCircuit,
 > = {
     "Component": ComponentT;
     "Wire": WireT;
     "Port": PortT;
     "Obj": ComponentT | WireT | PortT;
+
+    "IC": ICT;
 
     "ComponentInfo": ComponentT["info"];
 
@@ -29,6 +32,7 @@ export type CircuitTypes<
     "Wire[]": WireT[];
     "Port[]": PortT[];
     "Obj[]": Array<ComponentT | WireT | PortT>;
+    "IC[]": ICT[];
 }
 
 export interface CircuitState<T extends CircuitTypes> {

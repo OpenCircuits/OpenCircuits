@@ -195,16 +195,14 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 export function RootCircuitImpl<
     CircuitT extends Circuit,
     T extends CircuitTypes
->(state: CircuitState<T>, makeIC: (info: ICInfo) => IntegratedCircuit) {
+>(state: CircuitState<T>, makeIC: (info: ICInfo) => T["IC"]) {
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
-        createIC(info: ICInfo): IntegratedCircuit {
+        createIC(info: ICInfo): T["IC"] {
             return makeIC(info);
-            // return state.constructIC(uuid());
-            // throw new Error("RootCircuit.createIC: Unimplemented!");
         },
-        getICs(): IntegratedCircuit[] {
+        getICs(): T["IC[]"] {
             throw new Error("RootCircuit.getICs: Unimplemented!");
         },
     }) satisfies RootCircuit;
