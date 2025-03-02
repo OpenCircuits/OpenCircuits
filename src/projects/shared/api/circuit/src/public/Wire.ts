@@ -20,7 +20,7 @@ export interface ReadonlyWire extends ReadonlyBaseObject {
     toSchema(): Schema.Wire;
 }
 
-type W = ReadonlyWire & BaseObject;
+type W = BaseObject & ReadonlyWire;
 export interface Wire extends W {
     readonly baseKind: "Wire";
 

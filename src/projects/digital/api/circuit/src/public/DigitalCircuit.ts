@@ -1,12 +1,27 @@
 import type {Vector} from "Vector";
 import type {Rect}   from "math/Rect";
 
-import type {Circuit, Component, ComponentInfo, IntegratedCircuit, Node, Port, RootCircuit, Wire} from "shared/api/circuit/public";
+import type {
+    Circuit,
+    Component,
+    ComponentInfo,
+    ICInfo,
+    IntegratedCircuit,
+    Node,
+    Port,
+    ReadonlyCircuit,
+    ReadonlyComponent,
+    ReadonlyNode,
+    ReadonlyPort,
+    ReadonlyWire,
+    RootCircuit,
+    Wire,
+} from "shared/api/circuit/public";
 
 import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
-import type {DigitalComponent, DigitalNode} from "./DigitalComponent";
-import type {DigitalWire}                   from "./DigitalWire";
-import type {DigitalPort}                   from "./DigitalPort";
+import type {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode} from "./DigitalComponent";
+import type {DigitalWire, ReadonlyDigitalWire}                   from "./DigitalWire";
+import type {DigitalPort, ReadonlyDigitalPort}                   from "./DigitalPort";
 
 
 export type ToDigital<T> = (
@@ -21,6 +36,13 @@ export type ToDigital<T> = (
     T extends Wire              ? DigitalWire :
     T extends Port              ? DigitalPort :
     T extends ComponentInfo     ? DigitalComponentInfo :
+    T extends ICInfo            ? DigitalICInfo :
+    // Base-Readonly-type replacements
+    T extends ReadonlyCircuit   ? ReadonlyDigitalCircuit :
+    T extends ReadonlyNode      ? ReadonlyDigitalNode :
+    T extends ReadonlyComponent ? ReadonlyDigitalComponent :
+    T extends ReadonlyWire      ? ReadonlyDigitalWire :
+    T extends ReadonlyPort      ? ReadonlyDigitalPort :
     // Replace all method args/return types
     T extends (...a: infer Args) => infer R ? (...a: ToDigital<Args>) => ToDigital<R> :
     // Recursively replace records
@@ -36,9 +58,14 @@ export type APIToDigital<T> = {
 }
 
 
-export interface DigitalCircuit extends APIToDigital<Circuit> {
+export interface ReadonlyDigitalCircuit extends APIToDigital<ReadonlyCircuit> {
+    readonly propagationTime: number;
+}
+type C = APIToDigital<Circuit> & ReadonlyDigitalCircuit;
+export interface DigitalCircuit extends C {
     propagationTime: number;
 }
 
 export type DigitalRootCircuit = APIToDigital<RootCircuit> & DigitalCircuit;
-export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & DigitalCircuit;
+export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & ReadonlyDigitalCircuit;
+export type DigitalICInfo = APIToDigital<ICInfo>;

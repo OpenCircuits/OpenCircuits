@@ -33,7 +33,7 @@ export interface ReadonlyNode extends ReadonlyComponent {
     readonly path: Array<ReadonlyNode | ReadonlyWire>;
 }
 
-type C = ReadonlyComponent & BaseObject;
+type C = BaseObject & ReadonlyComponent;
 export interface Component extends C {
     readonly baseKind: "Component";
     readonly info: ComponentInfo;
@@ -59,7 +59,7 @@ export interface Component extends C {
     toSchema(): Schema.Component;
 }
 
-type N = ReadonlyNode & Component;
+type N = Component & ReadonlyNode;
 export interface Node extends N {
     snip(): Wire;
 

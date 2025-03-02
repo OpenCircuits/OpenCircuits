@@ -48,7 +48,7 @@ export interface ReadonlyCircuit {
     getComponentInfo(kind: string): ComponentInfo | undefined;
 }
 
-type C = ReadonlyCircuit & Observable<CircuitEvent>;
+type C = Observable<CircuitEvent> & ReadonlyCircuit;
 export interface Circuit extends C {
     beginTransaction(): void;
     commitTransaction(): void;

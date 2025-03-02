@@ -2,9 +2,9 @@ import {IntegratedCircuitImpl, RootCircuitImpl} from "shared/api/circuit/public/
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
-import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalRootCircuit} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
-import {Circuit} from "shared/api/circuit/public";
+import {Circuit, GUID} from "shared/api/circuit/public";
 
 
 function DigitalCircuitImpl<T extends (APIToDigital<Circuit> & Record<string | number | symbol, unknown>)>(base: T) {
@@ -18,10 +18,15 @@ function DigitalCircuitImpl<T extends (APIToDigital<Circuit> & Record<string | n
     } as const) satisfies DigitalCircuit;
 }
 
-export function DigitalRootCircuitImpl(state: DigitalCircuitState) {
-    return DigitalCircuitImpl(RootCircuitImpl<DigitalCircuit, DigitalTypes>(state));
+export function DigitalRootCircuitImpl(
+    state: DigitalCircuitState,
+    makeIC: (info: DigitalICInfo) => DigitalIntegratedCircuit,
+) {
+    return DigitalCircuitImpl(
+        RootCircuitImpl<DigitalCircuit, DigitalTypes>(state, makeIC)
+    ) satisfies DigitalRootCircuit;
 }
 
-// export function DigitalIntegratedCircuitImpl(state: DigitalCircuitState) {
-//     return DigitalCircuitImpl(IntegratedCircuitImpl<DigitalCircuit, DigitalTypes>(state));
-// }
+export function DigitalIntegratedCircuitImpl(id: GUID, state: DigitalCircuitState) {
+    return DigitalCircuitImpl(IntegratedCircuitImpl<DigitalCircuit, DigitalTypes>(id, state));
+}

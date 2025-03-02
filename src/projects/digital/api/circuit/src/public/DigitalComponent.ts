@@ -1,15 +1,24 @@
-import {Component, Node} from "shared/api/circuit/public";
+import {Component, Node, ReadonlyComponent, ReadonlyNode} from "shared/api/circuit/public";
 
 import {DigitalPort}  from "./DigitalPort";
 import {APIToDigital} from "./DigitalCircuit";
 
 
-export interface DigitalComponent extends APIToDigital<Component> {
+export interface ReadonlyDigitalComponent extends APIToDigital<ReadonlyComponent> {
+    readonly firstAvailableInput: DigitalPort;
+    readonly firstOutput: DigitalPort;
+
+    isNode(): this is DigitalNode;
+}
+type C = APIToDigital<Component> & ReadonlyDigitalComponent;
+export interface DigitalComponent extends C {
     readonly firstAvailableInput: DigitalPort;
     readonly firstOutput: DigitalPort;
 
     isNode(): this is DigitalNode;
 }
 
-type DigitalNodeBase = (DigitalComponent & APIToDigital<Node>);
+type ReadonlyDigitalNodeBase = (APIToDigital<ReadonlyNode> & ReadonlyDigitalComponent);
+export interface ReadonlyDigitalNode extends ReadonlyDigitalNodeBase {}
+type DigitalNodeBase = (APIToDigital<Node> & DigitalComponent & ReadonlyDigitalNode);
 export interface DigitalNode extends DigitalNodeBase {}

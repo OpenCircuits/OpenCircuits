@@ -4,10 +4,10 @@ import {extend} from "shared/api/circuit/utils/Functions";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {GUID, uuid} from "shared/api/circuit/internal";
+import {GUID} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, IntegratedCircuit,
-        IntegratedCircuitDisplay, RootCircuit, ICInfo} from "../Circuit";
+        IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
 import {Selections}                from "../Selections";
 import {isObjComponent, isObjWire} from "../Utilities";
 
@@ -195,11 +195,11 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 export function RootCircuitImpl<
     CircuitT extends Circuit,
     T extends CircuitTypes
->(state: CircuitState<T>, makeIC: (info: ICInfo) => T["IC"]) {
+>(state: CircuitState<T>, makeIC: (info: T["ICInfo"]) => T["IC"]) {
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
-        createIC(info: ICInfo): T["IC"] {
+        createIC(info: T["ICInfo"]): T["IC"] {
             return makeIC(info);
         },
         getICs(): T["IC[]"] {
@@ -236,33 +236,5 @@ export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends Circui
         get display(): IntegratedCircuitDisplay {
             return display;
         },
-        // addPin(kind: string, group: string, props: Record<string, Schema.Prop>, pinPortPos: Vector): Pin {
-        //     const info = circuit.getComponentInfo(kind);
-
-        //     circuit.beginTransaction();
-
-        //     // Place raw component (TODO[master](leon) - don't use unwrap...)
-        //     const id = state.internal.placeComponent(kind, props).unwrap();
-
-        //     // Set its config to place ports
-        //     state.internal.setPortConfig(id, info!.defaultPortConfig).unwrap();
-        //     // TODO: Edit all instances of the ICs
-
-        //     // const c = state.constructComponent(id);
-        //     // if (!c.isPin()) {
-        //     //     circuit.cancelTransaction();
-        //     //     throw new Error(`${kind} is not a valid Pin type!`);
-        //     // }
-
-        //     // state.internal.addICPin(id, group, pinPortPos);
-
-        //     circuit.commitTransaction();
-
-        //     return c;
-        // },
-        // getPins(): Pin[] {
-        //     throw new Error("Unimplemented!");
-        //     // return circuit.getComponents().filter((c) => (c.isPin())) as Pin[];
-        // },
     }) satisfies IntegratedCircuit;
 }

@@ -41,7 +41,7 @@ export interface ReadonlyPort extends ReadonlyBaseObject {
     toSchema(): Schema.Port;
 }
 
-type P = ReadonlyPort & BaseObject;
+type P = BaseObject & ReadonlyPort;
 export interface Port extends P {
     readonly baseKind: "Port";
 
