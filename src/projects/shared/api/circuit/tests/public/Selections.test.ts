@@ -154,6 +154,38 @@ describe("Selections", () => {
         });
     });
 
+    describe("Deleting selected objects", () => {
+        test("Deleted object also is deselected", () => {
+            const [circuit, { }, {PlaceAt, GetPort}] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
+            c1.select();
+            c2.select();
+            circuit.deleteObjs([c1]);
+            expect(circuit.selections).toHaveLength(1);
+            
+            circuit.undo();
+            expect(c1.isSelected).toBeTruthy();
+            expect(circuit.selections).toHaveLength(2);
+
+            circuit.redo();
+            expect(circuit.selections).toHaveLength(1);
+        });
+        test("Observer is triggered", () => {
+            const [circuit, { }, {PlaceAt, GetPort}] = CreateTestRootCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
+            c1.select();
+            c2.select();
+            let observedCount = 0;
+            circuit.selections.observe(() => {observedCount++});
+            circuit.deleteObjs([c1]);
+            expect(observedCount).toBe(1);
+            circuit.undo();
+            expect(observedCount).toBe(2);
+            circuit.redo();
+            expect(observedCount).toBe(3);
+        });
+    });
+
     // describe("Duplicate", () => {
     //     test("Basic component duplication", () => {
     //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
