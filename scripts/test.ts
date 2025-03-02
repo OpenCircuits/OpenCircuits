@@ -36,6 +36,8 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
                 "^.+\\.scss$": path.resolve("build/scripts/test/scssTransform.js"),
                 "^.+\\.svg$": path.resolve("build/scripts/test/svgTransform.js"),
             },
+
+            "setupFiles": ["jest-canvas-mock"]
         }),
     }, [dir]);
 }

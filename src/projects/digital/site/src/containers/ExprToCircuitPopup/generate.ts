@@ -115,7 +115,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     // const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
-    // TODO: Replace with a better (action based) way of organizing a circuit
+    // TODO: Replace with a better way of organizing a circuit
     OrganizeMinDepth(generatedCircuit, camera.pos);
 
     if (options.label)
@@ -124,9 +124,6 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     if (options.input === "Clock")
         setClocks(inputMap, options, generatedCircuit);
 
-        console.log(generatedCircuit.getWires());
-
-    // TODO[model_refactor](trevor): Actually add when there is a way to add
     if (options.isIC) {
         // TODO: Add as IC
     } else {

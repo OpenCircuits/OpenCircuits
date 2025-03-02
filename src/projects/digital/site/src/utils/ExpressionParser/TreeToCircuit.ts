@@ -79,9 +79,7 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
             throw new Error(`Port not found on newly created ${newComp.kind}`);
         connect(prevComp, newNode, newComp);
     } else if (node.kind === "binop") {
-        console.log("before", node.children.length, newComp.allPorts.length)
         newComp.setNumPorts("inputs", node.children.length);
-        console.log("numPorts", node.children.length, newComp.allPorts.length)
         node.children.forEach((child) => {
             if (!child)
                 throw new Error("treeToCircuitCore failed: child was undefined");

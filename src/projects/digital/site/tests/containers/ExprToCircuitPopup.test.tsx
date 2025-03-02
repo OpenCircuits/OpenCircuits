@@ -23,6 +23,7 @@ import {CreateCircuit} from "digital/api/circuit/public";
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
 import {V} from "Vector";
+import {configureStore} from "@reduxjs/toolkit";
 
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
@@ -35,7 +36,7 @@ describe("Main Popup", () => {
         },
     )
     const [circuit, _] = CreateCircuit();
-    const store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+    const store = configureStore({reducer: reducers});
     const user = userEvent.setup();
 
     beforeEach(() => {
