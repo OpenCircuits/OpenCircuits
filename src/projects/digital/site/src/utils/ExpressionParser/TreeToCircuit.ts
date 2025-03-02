@@ -1,9 +1,9 @@
 import {InputTree} from "./Constants/DataStructures";
 
 import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
-import {V}                             from "Vector";
-import {DigitalComponent}              from "digital/api/circuit/public/api/DigitalComponent";
-import {DigitalPort}                   from "digital/api/circuit/public/api/DigitalPort";
+import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
+import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
+import {V}                             from "Vector";;
 
 
 /**
@@ -72,18 +72,23 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
                                  ? NegatedTypeToGate[node.type]
                                  : TypeToGate[node.type]);
     const newComp = circuit.placeComponentAt(newGate, V(0, 0));
-    const newNode = newComp.firstAvailable("outputs");
-    if (!newNode)
-        throw new Error(`Port not found on newly created ${newComp.kind}`);
     if (node.kind === "unop") {
         const prevComp = treeToCircuitCore(node.child, inputs, ret);
+        const newNode = newComp.firstAvailable("inputs");
+        if (!newNode)
+            throw new Error(`Port not found on newly created ${newComp.kind}`);
         connect(prevComp, newNode, newComp);
     } else if (node.kind === "binop") {
-        newComp.setNumPorts("input", node.children.length);
+        console.log("before", node.children.length, newComp.allPorts.length)
+        newComp.setNumPorts("inputs", node.children.length);
+        console.log("numPorts", node.children.length, newComp.allPorts.length)
         node.children.forEach((child) => {
             if (!child)
                 throw new Error("treeToCircuitCore failed: child was undefined");
             const prevComp = treeToCircuitCore(child, inputs, ret);
+            const newNode = newComp.firstAvailable("inputs");
+            if (!newNode)
+                throw new Error(`Port not found on newly created ${newComp.kind}`);
             connect(prevComp, newNode, newComp);
         });
     }
