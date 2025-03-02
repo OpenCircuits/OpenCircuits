@@ -86,7 +86,7 @@ export const App = () => {
             <KeyboardShortcutsPopup />
             <ImageExporterPopup designer={designer} />
 
-            <ExprToCircuitPopup designer={designer} />
+            <ExprToCircuitPopup {...designer} />
 
             <LoginPopup />
         </div>

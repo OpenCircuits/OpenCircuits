@@ -7,7 +7,7 @@ import {OperatorFormatLabel, OperatorFormat} from "digital/site/utils/Expression
 import {FORMATS} from "digital/site/utils/ExpressionParser/Constants/Formats";
 import {Circuit} from "shared/api/circuit/public";
 import {Err, Ok, Result} from "shared/api/circuit/utils/Result";
-import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
+import {Camera} from "shared/api/circuitdesigner/public/Camera";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 
 
@@ -86,7 +86,7 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
 //     action.add(Select(info.selections, ic));
 // }
 
-export function Generate(circuit: DigitalCircuit, viewport: Viewport, expression: string,
+export function Generate(circuit: DigitalCircuit, camera: Camera, expression: string,
     userOptions: Partial<ExprToCirGeneratorOptions>): Result {
     const options = {...defaultOptions, ...userOptions};
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
@@ -116,7 +116,7 @@ export function Generate(circuit: DigitalCircuit, viewport: Viewport, expression
     //  so that the components are not literally in the uppermost leftmost corner
     // const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
     // TODO: Replace with a better (action based) way of organizing a circuit
-    OrganizeMinDepth(generatedCircuit, viewport.camera.pos);
+    OrganizeMinDepth(generatedCircuit, camera.pos);
 
     if (options.label)
         addLabels(inputMap, generatedCircuit);

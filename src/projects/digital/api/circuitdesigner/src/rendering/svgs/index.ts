@@ -22,7 +22,8 @@ function ToSVGDrawing(name: string, svgStr: string): SVGDrawing {
             throw new Error("Failed to create drawing from SVG!");
         return drawing;
     } catch (e) {
-        throw new Error(`Failed to turn svg ${name}.svg (${JSON.stringify(svgStr)}) into SVG! ${e}`);
+        const obj = typeof e === 'object' ? e : {};
+        throw new Error(`Failed to turn svg ${name}.svg (${JSON.stringify(svgStr)}) into SVG! ${e}`, {...obj});
     }
 }
 

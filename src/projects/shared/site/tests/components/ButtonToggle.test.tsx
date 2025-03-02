@@ -21,13 +21,13 @@ function GetToggles(id: Matcher): [HTMLImageElement, HTMLImageElement] {
 
 describe("Button Toggle", () => {
     test("Button on", () => {
-        render(<ButtonToggle text="test" isOn />);
+        render(<ButtonToggle isOn >test</ButtonToggle>);
         const [buttonOn, buttonOff] = GetToggles("test");
         expect(buttonOn).toBeVisible();
         expect(buttonOff).not.toBeVisible();
     });
     test("Button off", () => {
-        render(<ButtonToggle text="test" isOn={false} />);
+        render(<ButtonToggle isOn={false} >test</ButtonToggle>);
         const [buttonOn, buttonOff] = GetToggles("test");
         expect(buttonOn).not.toBeVisible();
         expect(buttonOff).toBeVisible();
@@ -35,7 +35,7 @@ describe("Button Toggle", () => {
     test("onChange", async () => {
         let testBoolean = false;
         const user = userEvent.setup();
-        render(<ButtonToggle text="test" isOn={testBoolean} onChange={() => testBoolean = !testBoolean} />);
+        render(<ButtonToggle isOn={testBoolean} onChange={() => testBoolean = !testBoolean} >test</ButtonToggle>);
         const [buttonOn, buttonOff] = GetToggles("test");
         expect(buttonOn).not.toBeVisible();
         expect(buttonOff).toBeVisible();

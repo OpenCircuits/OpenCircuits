@@ -3,7 +3,7 @@ import {useState} from "react";
 import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS}                             from "digital/site/utils/ExpressionParser/Constants/Formats";
 
-import {DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {DigitalCircuit} from "digital/api/circuit/public";
 
 import {useSharedDispatch,
         useSharedSelector} from "shared/site/utils/hooks/useShared";
@@ -14,6 +14,8 @@ import {ButtonToggle} from "shared/site/components/ButtonToggle";
 import {InputField}   from "shared/site/components/InputField";
 import {Popup}        from "shared/site/components/Popup";
 
+import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
+
 import {BooleanOption}  from "./BooleanOption";
 import {CustomOps}      from "./CustomOps";
 import {DropdownOption} from "./DropdownOption";
@@ -22,12 +24,14 @@ import {Generate,
         OutputTypes}    from "./generate";
 
 import "./index.scss";
+import {Camera} from "shared/api/circuitdesigner/public/Camera";
 
 
 type Props = {
-    designer: DigitalCircuitDesigner;
+    circuit: DigitalCircuit;
+    viewport: {camera: Camera};
 }
-export const ExprToCircuitPopup = (({ designer }: Props) => {
+export const ExprToCircuitPopup = (({ circuit, viewport: {camera} }: Props) => {
     const { curPopup } = useSharedSelector(
         (state) => ({ curPopup: state.header.curPopup })
     );
@@ -111,7 +115,7 @@ export const ExprToCircuitPopup = (({ designer }: Props) => {
                         className="exprtocircuit__popup__generate"
                         disabled={expression===""}
                         onClick={() => {
-                            const result = Generate(designer.circuit, designer.viewport, expression, {
+                            const result = Generate(circuit, camera, expression, {
                                 input, output, isIC,
                                 connectClocksToOscope: clocksToOscope,
                                 label, format,
