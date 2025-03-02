@@ -36,6 +36,14 @@ export class ConstantNumberAssembler extends ComponentAssembler {
 
                 getStyle: (comp) => this.getLineStyle(comp),
             },
+            {
+                kind: "BaseShape",
+
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged, AssemblyReason.PropChanged]),
+                assemble: (comp) => this.assembleText(comp),
+
+                getStyle: () => ({fill: this.options.defaultOnColor}),
+            },
         ]);
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("Switch").unwrap() as DigitalComponentInfo;
@@ -78,5 +86,25 @@ export class ConstantNumberAssembler extends ComponentAssembler {
             ...style,
             stroke: stroke? {...stroke, lineCap: 'square'} : undefined,
         }
+    }
+
+    private assembleText(comp: Schema.Component) {
+        // to adjust for cap-height of the Arial font (see https://stackoverflow.com/questions/61747006)
+        const FONT_CAP_OFFSET = 0.06;
+        const value = this.getOutValue(comp);
+        const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
+        return {
+            kind: "Text",
+            pos: this.getTransform(comp).getPos().sub(V(0, FONT_CAP_OFFSET)),
+            contents: text,
+            angle: this.getTransform(comp).getAngle(),
+            font: "lighter 0.8px arial",
+        } as const
+    }
+
+    // TODO: Where should this value or function live?
+    private getOutValue(comp: Schema.Component) {
+        const [...outputs] = this.circuit.getPortsForComponent(comp.id).unwrap();
+        return outputs.reduce((accumulator, portId, index) => accumulator + (Signal.isOn(this.sim.getSignal(portId)) ? 2 ** index : 0), 0);
     }
 }

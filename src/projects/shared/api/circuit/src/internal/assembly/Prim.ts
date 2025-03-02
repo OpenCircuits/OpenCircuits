@@ -70,6 +70,17 @@ export interface RectanglePrim {
     style: Style;
     ignoreHit?: boolean;
 }
+export interface TextPrim {
+    kind: "Text";
+
+    contents: string;
+    pos: Vector
+    angle: number
+    font: string;
+
+    style: Style;
+    ignoreHit?: true;
+}
 export type BaseShapePrim =
     | BezierCurvePrim
     | CirclePrim
@@ -77,7 +88,8 @@ export type BaseShapePrim =
     | LinePrim
     | PolygonPrim
     | QuadCurvePrim
-    | RectanglePrim;
+    | RectanglePrim
+    | TextPrim;
 
 // Represents a group of basic prims (non-SVG) that share a style.
 type MakeBasePrimWithoutStyle<T> = T extends { style: Style } ? Omit<T, "style"> : T;

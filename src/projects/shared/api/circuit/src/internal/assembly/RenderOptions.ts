@@ -34,6 +34,8 @@ export interface RenderOptions {
     defaultOnColor: string;
     defaultMetastableColor: string;
 
+    defaultFont: string;
+
     // fillColor(selected: boolean): string;
     // borderColor(selected: boolean): string;
 
@@ -76,6 +78,8 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public defaultOnColor = "#3cacf2";
     public defaultMetastableColor = "#cc5e5e";
+
+    public defaultFont = "lighter 0.3px arial";
 
     public lineStyle(selected: boolean) {
         return {

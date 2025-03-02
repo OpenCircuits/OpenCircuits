@@ -1,6 +1,7 @@
 import {SVGDrawing} from "svg2canvas";
 
 import {BaseShapePrimWithoutStyle, Prim} from "shared/api/circuit/internal/assembly/Prim";
+import {V} from "Vector";
 
 
 function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWithoutStyle): void {
@@ -61,6 +62,16 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
 
         return;
     }
+    case "Text": {
+        const {contents, pos, font} = prim;
+        const {x, y} = pos.scale(V(1, -1));
+        ctx.font = font;
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        // Flip y-axis
+        ctx.scale(1, -1);
+        ctx.fillText(contents, x, y);
+    }
     }
 }
 
@@ -80,7 +91,8 @@ export class PrimRenderer {
         case "Polygon":
         case "QuadCurve":
         case "Rectangle":
-        case "Group": {
+        case "Group":
+        case "Text": {
             // Set style
             if (prim.style.fill !== undefined) {
                 if (typeof prim.style.fill === "string") {
