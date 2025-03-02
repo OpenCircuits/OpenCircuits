@@ -11,9 +11,6 @@ import {Transform} from "math/Transform";
 
 
 export class SwitchAssembler extends ComponentAssembler {
-    // public readonly size = V(1.24, 1.54);
-    // public readonly pressableSize = V(0.96, 1.2);
-
     protected readonly sim: DigitalSim;
 
     protected info: DigitalComponentInfo;

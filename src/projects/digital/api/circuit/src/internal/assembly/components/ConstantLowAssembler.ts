@@ -16,7 +16,10 @@ export class ConstantLowAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, V(1, 1), {
-            "outputs": () => ({origin: V(0.5, 0), dir: V(1, 0)})
+            "outputs": () => ({
+                origin: V(this.size.x / 2 - this.options.defaultBorderWidth, 0),
+                target: V(1.2, 0),
+            })
         }, [
             {
                 kind: "SVG",
