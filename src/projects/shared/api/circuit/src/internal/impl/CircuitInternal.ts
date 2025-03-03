@@ -344,45 +344,6 @@ export class CircuitInternal extends Observable<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
-    // public addICPin(id: string, group: string, initialPos: Vector) {
-    //     // TODO: this is fucking disgusting
-    //     const curMetadata = this.getMetadata()
-    //         .unwrap() as unknown as Schema.IntegratedCircuit["metadata"];
-    //     const curPortInfo = curMetadata.portInfo ?? {};
-    //     const index = Object.values(curPortInfo)
-    //         .filter((i) => (i.group === group))
-    //         .reduce((total, _) => (total + 1), 0);
-    //     this.setMetadata({
-    //         portInfo: {
-    //             ...curPortInfo,
-    //             [id]: { group, index, x: initialPos.x, y: initialPos.y },
-    //         },
-    //     } satisfies Partial<Schema.IntegratedCircuit["metadata"]> as unknown as Schema.CircuitMetadata);
-    // }
-
-    // public getICSize(icID: GUID): Result<Vector> {
-    //     return this.doc.getCircuitInfo(icID)
-    //         .map((c) => {
-    //             if ("displayX" in c.metadata && "displayY" in c.metadata)
-    //                 return V(c.metadata.displayX as number, c.metadata.displayY as number);
-    //             return V(0, 0);
-    //         });
-    // }
-
-    // public getICPortPos(icID: GUID, group: string, index: number): Result<Vector> {
-    //     return this.doc.getCircuitInfo(icID)
-    //         .map((c) => {
-    //             if ("portInfo" in c.metadata) {
-    //                 const portInfo = c.metadata.portInfo as Schema.IntegratedCircuit["metadata"]["portInfo"];
-    //                 const info = Object.values(portInfo).find((info) => (info.group === group && info.index === index));
-    //                 if (!info)
-    //                     return ErrE(`Failed to find IC Port Pos for ${icID}, group: ${group}, index: ${index}`);
-    //                 return V(info.x, info.y);
-    //             }
-    //             return ErrE(`Failed to find IC Port Pos for ${icID}, group: ${group}, index: ${index}`);
-    //         }) as Result<Vector>;
-    // }
-
     public setMetadata<M extends Schema.CircuitMetadata>(newMetadata: Partial<M>) {
         return this.doc.setMetadataFor(this.id, newMetadata);
     }

@@ -116,7 +116,4 @@ export interface IntegratedCircuitDisplay {
 }
 export interface IntegratedCircuit extends ReadonlyCircuit {
     readonly display: IntegratedCircuitDisplay;
-
-    // addPin(kind: string, group: string, props: Record<string, Schema.Prop>, pinPortPos: Vector): Pin;
-    // getPins(): Component[];
 }

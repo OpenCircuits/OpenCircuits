@@ -18,7 +18,6 @@ export interface IntegratedCircuit extends Circuit {
         displayHeight: number;
 
         pins: Array<{ id: GUID, x: number, y: number }>;
-        // portInfo: Record<GUID, { group: string, index: number, x: number, y: number }>;
     };
 }
 

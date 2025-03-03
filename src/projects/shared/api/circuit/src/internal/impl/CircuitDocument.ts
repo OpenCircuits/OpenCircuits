@@ -415,10 +415,6 @@ export class CircuitDocument extends Observable<CircuitDocEvent> implements Read
         return OkVoid();
     }
 
-    // public addICPin(icID: GUID, group: string, index: number): Result {
-    //     this.objInfo.getComponent(icID).
-    // }
-
     public setMetadataFor<M extends Schema.CircuitMetadata>(circuit: GUID, newMetadata: Partial<M>) {
         return this.getMutableCircuitStorage(circuit)
             .map((c) => {

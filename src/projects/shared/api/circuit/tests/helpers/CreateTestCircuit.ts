@@ -67,42 +67,6 @@ export class TestComponentAssembler extends ComponentAssembler {
 export function TestComponentImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
     const base = ComponentImpl(circuit, state, id);
 
-    // if (base.kind === "Pin") {
-    //     return extend(base, {
-    //         get info() {
-    //             return ComponentInfoImpl(state, base.kind);
-    //         },
-    //         isPin(): true {
-    //             return true;
-    //         },
-    //         isNode(): false {
-    //             return false;
-    //         },
-    //         set displayPos(pos: Vector) {
-    //             circuit.beginTransaction();
-
-    //             const curMetadata = state.internal.getMetadata()
-    //                 .unwrap() as unknown as Schema.IntegratedCircuit["metadata"];
-    //             state.internal.setMetadata({
-    //                 portInfo: {
-    //                     ...curMetadata.portInfo,
-    //                     [id]: { ...curMetadata.portInfo[id], x: pos.x, y: pos.y },
-    //                 },
-    //             } satisfies Partial<Schema.IntegratedCircuit["metadata"]> as unknown as Schema.CircuitMetadata);
-
-    //             circuit.commitTransaction();
-    //         },
-    //         get displayPos(): Vector {
-    //             const curMetadata = state.internal.getMetadata()
-    //                 .unwrap() as unknown as Schema.IntegratedCircuit["metadata"];
-    //             return V(
-    //                 curMetadata.portInfo[id].x,
-    //                 curMetadata.portInfo[id].y,
-    //             );
-    //         },
-    //     } as const) satisfies Pin;
-    // }
-
     return extend(base, {
         get info() {
             return ComponentInfoImpl(state, base.kind);
