@@ -9,6 +9,7 @@ import {InvertCircuitOp} from "./CircuitOps";
 import {PortConfig}      from "./ComponentInfo";
 import {CircuitDocument} from "./CircuitDocument";
 import {FastCircuitDiff} from "./FastCircuitDiff";
+import {V, Vector} from "Vector";
 
 
 export type InternalEvent = {
@@ -143,11 +144,6 @@ export class CircuitInternal extends Observable<InternalEvent> {
     }
     public commitTransaction() {
         this.doc.commitTransaction();
-        // if (this.doc.commitTransaction()) {
-        //     // Add entry to undo stack and clear redo stack
-        //     this.undoStack.push(this.log.length - 1);
-        //     this.redoStack = [];
-        // }
     }
 
     public undo(): Result {
@@ -170,12 +166,6 @@ export class CircuitInternal extends Observable<InternalEvent> {
                 this.doc.addTransactionOp(op);
             });
         this.doc.commitTransaction(`${this.id}/undo`);
-        // const ops = this.log.entries[lastEntryIndex].ops
-        //     .filter((op) => (op.circuit === this.id))
-        //     .map(InvertCircuitOp)
-        //     .reverse();
-        // this.doc["applyOpsChecked"](ops);
-        // this.doc["publishDiffEvent"](this.id);
 
         return OkVoid();
     }
@@ -198,10 +188,6 @@ export class CircuitInternal extends Observable<InternalEvent> {
                 this.doc.addTransactionOp(op);
             });
         this.doc.commitTransaction(`${this.id}/redo`);
-        // const ops = this.log.entries[lastEntryIndex].ops
-        //     .filter((op) => (op.circuit === this.id));
-        // this.doc["applyOpsChecked"](ops);
-        // this.doc["publishDiffEvent"](this.id);
 
         return OkVoid();
     }
@@ -358,12 +344,12 @@ export class CircuitInternal extends Observable<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
-    public setMetadata(newMetadata: Partial<Schema.CircuitMetadata>) {
+    public setMetadata<M extends Schema.CircuitMetadata>(newMetadata: Partial<M>) {
         return this.doc.setMetadataFor(this.id, newMetadata);
     }
 
-    public getMetadata(): Result<Readonly<Schema.CircuitMetadata>> {
+    public getMetadata<M extends Schema.CircuitMetadata>(): Result<Readonly<M>> {
         return this.doc.getCircuitInfo(this.id)
-            .map((c) => c.metadata);
+            .map((c) => c.metadata as M);
     }
 }

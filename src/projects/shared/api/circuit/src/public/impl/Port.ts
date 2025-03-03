@@ -9,6 +9,7 @@ import {Circuit} from "../Circuit";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
+import {Schema} from "../../schema";
 
 
 export function PortImpl<T extends CircuitTypes>(
@@ -59,6 +60,10 @@ export function PortImpl<T extends CircuitTypes>(
 
         get path(): T["Path"] {
             throw new Error("Port.get path: Unimplemented!");
+        },
+
+        toSchema(): Schema.Port {
+            return ({ ...getPort() });
         },
     } as const) satisfies Omit<Port, "getLegalWires" | "connectTo">;
 }

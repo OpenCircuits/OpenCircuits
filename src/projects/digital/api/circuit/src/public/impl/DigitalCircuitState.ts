@@ -5,7 +5,7 @@ import {DigitalPort}                   from "../DigitalPort";
 import {DigitalWire}                   from "../DigitalWire";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
-import {DigitalIntegratedCircuit} from "../DigitalCircuit";
+import {DigitalICInfo, DigitalIntegratedCircuit} from "../DigitalCircuit";
 
 
 export type DigitalTypes = CircuitTypes<
@@ -13,7 +13,8 @@ export type DigitalTypes = CircuitTypes<
     DigitalWire,
     DigitalPort,
     DigitalNode,
-    DigitalIntegratedCircuit
+    DigitalIntegratedCircuit,
+    DigitalICInfo
 >;
 
 export interface DigitalCircuitState extends CircuitState<DigitalTypes> {

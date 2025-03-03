@@ -113,5 +113,9 @@ export function ComponentImpl<T extends CircuitTypes>(
             internal.deleteComponent(base.id).unwrap();
             internal.commitTransaction();
         },
-    } as const) satisfies Omit<Component, "isNode" | "info">;
+
+        toSchema(): Schema.Component {
+            return ({ ...getComponent() });
+        },
+    } as const) satisfies Omit<Component, "isNode" | "isPin" | "info">;
 }

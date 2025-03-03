@@ -4,7 +4,7 @@ import {extend} from "shared/api/circuit/utils/Functions";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {GUID, uuid} from "shared/api/circuit/internal";
+import {GUID} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, IntegratedCircuit,
         IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
@@ -195,13 +195,12 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 export function RootCircuitImpl<
     CircuitT extends Circuit,
     T extends CircuitTypes
->(state: CircuitState<T>) {
+>(state: CircuitState<T>, makeIC: (info: T["ICInfo"]) => T["IC"]) {
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
-        createIC(): T["IC"] {
-            // return state.constructIC(uuid());
-            throw new Error("RootCircuit.createIC: Unimplemented!");
+        createIC(info: T["ICInfo"]): T["IC"] {
+            return makeIC(info);
         },
         getICs(): T["IC[]"] {
             throw new Error("RootCircuit.getICs: Unimplemented!");
@@ -217,20 +216,19 @@ export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends Circui
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     const display = {
-        set size(s: Vector) {
-            state.internal.setMetadata({ displayWidth: s.x, displayHeight: s.y } as unknown as Schema.CircuitMetadata);
-        },
         get size(): Vector {
-            const size = state.internal.getMetadata() as unknown as Schema.IntegratedCircuit["metadata"];
-            return V(size.displayWidth, size.displayHeight);
+            const metadata = state.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
+            return V(metadata.displayWidth, metadata.displayHeight);
         },
-
-        setPinPos(pin: GUID, pos: Vector): void {
-            circuit.beginTransaction();
-            const p = circuit.getComponent(pin);
-            p?.setProp("pinPosX", pos.x);
-            p?.setProp("pinPosY", pos.x);
-            circuit.commitTransaction();
+        get pins(): ReadonlyArray<{
+            id: GUID;  // ID of corresponding component
+            pos: Vector;
+        }> {
+            const metadata = state.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
+            return metadata.pins.map(({ id, x, y }) => ({
+                id,
+                pos: V(x, y),
+            }));
         },
     } satisfies IntegratedCircuitDisplay;
 

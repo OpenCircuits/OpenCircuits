@@ -12,6 +12,7 @@ import {Wire}    from "../Wire";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
+import {Schema} from "../../schema";
 
 
 export function WireImpl<T extends CircuitTypes>(
@@ -77,6 +78,10 @@ export function WireImpl<T extends CircuitTypes>(
 
         delete(): void {
             throw new Error("Wire.delete: Unimplemented!");
+        },
+
+        toSchema(): Schema.Wire {
+            return ({ ...getWire() });
         },
     } as const) satisfies Wire;
 }
