@@ -1,5 +1,5 @@
 import {ColorToHex, blend, parseColor} from "svg2canvas";
-import {Style}                         from "./Style";
+import {FontStyle, Style, TextAlign, TextBaseline}                         from "./Style";
 
 
 export interface RenderOptions {
@@ -35,6 +35,9 @@ export interface RenderOptions {
     defaultMetastableColor: string;
 
     defaultFont: string;
+    defaultFontColor: string;
+    defaultTextBaseline: TextBaseline;
+    defaultTextAlign: TextAlign;
 
     // fillColor(selected: boolean): string;
     // borderColor(selected: boolean): string;
@@ -42,6 +45,8 @@ export interface RenderOptions {
     lineStyle(selected: boolean): Style;
     curveStyle(selected: boolean): Style;
     fillStyle(selected: boolean): Style;
+
+    fontStyle(): FontStyle;
 
     portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style };
     wireStyle(selected: boolean, color?: string): Style;
@@ -80,6 +85,9 @@ export class DefaultRenderOptions implements RenderOptions {
     public defaultMetastableColor = "#cc5e5e";
 
     public defaultFont = "lighter 0.3px arial";
+    public defaultFontColor = "#000000";
+    public defaultTextBaseline = "middle" as const;
+    public defaultTextAlign = "center" as const;
 
     public lineStyle(selected: boolean) {
         return {
@@ -106,6 +114,15 @@ export class DefaultRenderOptions implements RenderOptions {
                 size:  this.defaultBorderWidth,
             },
         };
+    }
+
+    public fontStyle(): FontStyle {
+        return {
+            font:         this.defaultFont,
+            textBaseline: this.defaultTextBaseline,
+            textAlign:    this.defaultTextAlign,
+            color:        this.defaultFontColor,
+        }
     }
 
     public portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style } {

@@ -60,17 +60,7 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
         const size = prim.transform.getSize();
         ctx.rect(-size.x/2, -size.y/2, size.x, size.y);
 
-        return;
-    }
-    case "Text": {
-        const {contents, pos, font} = prim;
-        const {x, y} = pos.scale(V(1, -1));
-        ctx.font = font;
-        ctx.textBaseline = "middle";
-        ctx.textAlign = "center";
-        // Flip y-axis
-        ctx.scale(1, -1);
-        ctx.fillText(contents, x, y);
+
     }
     }
 }
@@ -91,8 +81,7 @@ export class PrimRenderer {
         case "Polygon":
         case "QuadCurve":
         case "Rectangle":
-        case "Group":
-        case "Text": {
+        case "Group": {
             // Set style
             if (prim.style.fill !== undefined) {
                 if (typeof prim.style.fill === "string") {
@@ -164,6 +153,23 @@ export class PrimRenderer {
             ctx.restore();
 
             return;
+        }
+        case "Text": {
+            const { contents, pos, fontStyle } = prim;
+            const { x, y } = pos.scale(V(1, -1));
+            const { font, textBaseline, textAlign, color } = fontStyle;
+
+            ctx.save();
+            ctx.font = font;
+            ctx.textBaseline = textBaseline;
+            ctx.textAlign = textAlign;
+            ctx.fillStyle = color;
+            // Flip y-axis
+            ctx.scale(1, -1);
+            ctx.fillText(contents, x, y);
+            ctx.restore();
+
+            break;
         }
         }
     }

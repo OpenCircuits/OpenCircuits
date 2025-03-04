@@ -1,8 +1,5 @@
 import {V} from "Vector";
 
-import {Schema} from "shared/api/circuit/schema";
-
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {DigitalComponentInfo} from "../../DigitalComponents";
@@ -17,16 +14,17 @@ export class ConstantLowAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, V(1, 1), {
             "outputs": () => ({
-                origin: V(this.size.x / 2 - this.options.defaultBorderWidth, 0),
+                // Constant Low/High/Number have no border so we need to offset the output start point to match
+                origin: V(.5 - this.options.defaultBorderWidth, 0),
                 target: V(1.2, 0),
-            })
+            }),
         }, [
             {
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble: (comp) => ({kind: "SVG", svg: "constLow.svg", transform: this.getTransform(comp)}),
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
+                assemble:     (comp) => ({ kind: "SVG", svg: "constLow.svg", transform: this.getTransform(comp) }),
+                getTint:      (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;

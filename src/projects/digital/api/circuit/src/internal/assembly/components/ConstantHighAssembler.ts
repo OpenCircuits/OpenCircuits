@@ -14,16 +14,17 @@ export class ConstantHighAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, V(1, 1), {
             "outputs": () => ({
-                origin: V(this.size.x / 2 - this.options.defaultBorderWidth, 0),
+                // Constant Low/High/Number have no border so we need to offset the output start point to match
+                origin: V(.5 - this.options.defaultBorderWidth, 0),
                 target: V(1.2, 0),
-            })
+            }),
         }, [
             {
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble: (comp) => ({kind: "SVG", svg: "constHigh.svg", transform: this.getTransform(comp)}),
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
+                assemble:     (comp) => ({ kind: "SVG", svg: "constHigh.svg", transform: this.getTransform(comp) }),
+                getTint:      (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;

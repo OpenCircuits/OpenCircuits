@@ -5,7 +5,7 @@ import {Vector} from "Vector";
 import {BezierCurve} from "math/BezierCurve";
 import {Transform} from "math/Transform";
 
-import {Style} from "./Style";
+import {FontStyle, Style} from "./Style";
 
 
 export interface BezierCurvePrim {
@@ -70,17 +70,6 @@ export interface RectanglePrim {
     style: Style;
     ignoreHit?: boolean;
 }
-export interface TextPrim {
-    kind: "Text";
-
-    contents: string;
-    pos: Vector
-    angle: number
-    font: string;
-
-    style: Style;
-    ignoreHit?: true;
-}
 export type BaseShapePrim =
     | BezierCurvePrim
     | CirclePrim
@@ -88,8 +77,7 @@ export type BaseShapePrim =
     | LinePrim
     | PolygonPrim
     | QuadCurvePrim
-    | RectanglePrim
-    | TextPrim;
+    | RectanglePrim;
 
 // Represents a group of basic prims (non-SVG) that share a style.
 type MakeBasePrimWithoutStyle<T> = T extends { style: Style } ? Omit<T, "style"> : T;
@@ -113,7 +101,18 @@ export interface SVGPrim {
     ignoreHit?: boolean;
 }
 
+export interface TextPrim {
+    kind: "Text";
+
+    contents: string;
+    pos: Vector;
+    angle: number;
+    fontStyle: FontStyle;
+    ignoreHit?: true;
+}
+
 export type Prim =
     | BaseShapePrim
     | SVGPrim
-    | GroupPrim;
+    | GroupPrim
+    | TextPrim;

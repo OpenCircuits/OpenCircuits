@@ -22,3 +22,14 @@ export interface Style {
     fill?: string | RadialGradientInfo;
     alpha?: number;
 }
+
+// type based on CanvasTextBaseline
+export type TextBaseline = "top" | "hanging" | "middle" | "alphabetic" | "ideographic" | "bottom";
+// type based on CanvasTextAlign
+export type TextAlign = "left" | "right" | "center" | "start" | "end";
+export interface FontStyle {
+    textBaseline: TextBaseline;
+    textAlign: TextAlign;
+    font: string;
+    color: string;
+}

@@ -7,8 +7,7 @@ import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {DigitalComponentInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {Transform} from "math/Transform";
-import {StrokeStyle, Style} from "shared/api/circuit/internal/assembly/Style";
+import {FontStyle, Style} from "shared/api/circuit/internal/assembly/Style";
 
 
 export class ConstantNumberAssembler extends ComponentAssembler {
@@ -24,7 +23,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
-                assemble: (comp) => this.assembleRectangle(comp),
+                assemble:     (comp) => this.assembleRectangle(comp),
 
                 getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
@@ -32,17 +31,17 @@ export class ConstantNumberAssembler extends ComponentAssembler {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
-                assemble: (comp) => this.assembleLine(comp),
+                assemble:     (comp) => this.assembleLine(comp),
 
                 getStyle: (comp) => this.getLineStyle(comp),
             },
             {
-                kind: "BaseShape",
+                kind: "Text",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged, AssemblyReason.PropChanged]),
-                assemble: (comp) => this.assembleText(comp),
+                assemble:     (comp) => this.assembleText(comp),
 
-                getStyle: () => ({fill: this.options.defaultOnColor}),
+                getFontStyle: () => this.getFontStyle(),
             },
         ]);
         this.sim = sim;
@@ -51,7 +50,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
 
     private getOutputLocations(index: number) {
         const targetY = .75 - (index * 1.5 / 3);
-        return {origin: V((this.size.x - this.options.defaultBorderWidth) / 2, targetY), target: V(1.2, targetY)} as const
+        return { origin: V((this.size.x - this.options.defaultBorderWidth) / 2, targetY), target: V(1.2, targetY) } as const
     }
 
     private assembleRectangle(comp: Schema.Component) {
@@ -81,10 +80,10 @@ export class ConstantNumberAssembler extends ComponentAssembler {
 
     private getLineStyle(comp: Schema.Component): Style {
         const style = this.options.lineStyle(this.isSelected(comp.id));
-        const {stroke} = style
+        const { stroke } = style
         return {
             ...style,
-            stroke: stroke? {...stroke, lineCap: 'square'} : undefined,
+            stroke: stroke? { ...stroke, lineCap: "square" } : undefined,
         }
     }
 
@@ -94,12 +93,21 @@ export class ConstantNumberAssembler extends ComponentAssembler {
         const value = this.getOutValue(comp);
         const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
         return {
-            kind: "Text",
-            pos: this.getTransform(comp).getPos().sub(V(0, FONT_CAP_OFFSET)),
+            kind:     "Text",
+            pos:      this.getTransform(comp).getPos().sub(V(0, FONT_CAP_OFFSET)),
             contents: text,
-            angle: this.getTransform(comp).getAngle(),
-            font: "lighter 0.8px arial",
+            angle:    this.getTransform(comp).getAngle(),
+            font:     "lighter 0.8px arial",
         } as const
+    }
+
+    private getFontStyle(): FontStyle {
+        const fontStyle = this.options.fontStyle();
+        return {
+            ...fontStyle,
+            font:  "lighter 0.8px arial",
+            color: this.options.defaultOnColor,
+        }
     }
 
     // TODO: Where should this value or function live?
