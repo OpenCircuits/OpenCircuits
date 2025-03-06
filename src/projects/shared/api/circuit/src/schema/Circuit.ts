@@ -17,7 +17,7 @@ export interface IntegratedCircuit extends Circuit {
         displayWidth: number;
         displayHeight: number;
 
-        pins: Array<{ id: GUID, x: number, y: number }>;
+        pins: Array<{ id: GUID, group: string, x: number, y: number }>;
     };
 }
 

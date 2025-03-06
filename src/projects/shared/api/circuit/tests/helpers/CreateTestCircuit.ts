@@ -174,44 +174,18 @@ export function CreateTestRootCircuit(
     doc.createCircuit(mainCircuitID);
     const mainState = MakeCircuit(mainCircuitID);
 
-    const circuit = RootCircuitImpl(mainState, (info) => {
-        const id = uuid(), kind = id;
+    const circuit = RootCircuitImpl(mainState, (id, objs, metadata, portConfig, portFactory) => {
+        const kind = id;
 
-        const portConfig = { "": info.display.pins.length };
-        const metadata: Schema.IntegratedCircuit["metadata"] = {
-            id:      id,  // Make a new ID
-            name:    info.circuit.name,
-            thumb:   info.circuit.thumbnail,
-            desc:    info.circuit.desc,
-            version: "v/0",
-
-            displayWidth:  info.display.size.x,
-            displayHeight: info.display.size.y,
-
-            pins: info.display.pins.map(({ id, pos }) => ({ id, x: pos.x, y: pos.y })),
-        }
         doc.createIC(
             metadata,
             new TestComponentInfo(kind, {}, [""], [portConfig]),
-            info.circuit.getObjs().map((o) => o.toSchema()),
+            objs,
         );
-
-        const factory = MapObj(portConfig, ([_group, _total]) =>
-            (index: number, _total: number) => {
-                const pos = info.display.pins[index].pos;
-                const size = info.display.size;
-                return {
-                    origin: pos,
-
-                    dir: Math.abs(pos.x)-size.x/2 < Math.abs(pos.y)-size.y/2
-                        ? V(0, -1).scale(pos.y).normalize()
-                        : V(-1, 0).scale(pos.x).normalize(),
-                } satisfies PartialPortPos;
-            });
 
         // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
         mainState.assembler.addAssembler(kind, (params) =>
-            new ICComponentAssembler(params, info.display.size, factory));
+            new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
 
         return IntegratedCircuitImpl(id, MakeCircuit(id));
     });

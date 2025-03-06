@@ -1,12 +1,12 @@
 import {V, Vector} from "Vector";
 
-import {extend} from "shared/api/circuit/utils/Functions";
+import {extend, MapObj} from "shared/api/circuit/utils/Functions";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {GUID} from "shared/api/circuit/internal";
+import {GUID, uuid} from "shared/api/circuit/internal";
 
-import {Circuit, CircuitEvent, IntegratedCircuit,
+import {Circuit, CircuitEvent, ICInfo, ICPin, IntegratedCircuit,
         IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
 import {Selections}                from "../Selections";
 import {isObjComponent, isObjWire} from "../Utilities";
@@ -14,6 +14,9 @@ import {isObjComponent, isObjWire} from "../Utilities";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl}             from "./Observable";
+import {ComponentInfo} from "../ComponentInfo";
+import {PortConfig} from "../../internal/impl/ComponentInfo";
+import {PortFactory} from "../../internal/assembly/PortAssembler";
 
 
 function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: CircuitState<T>) {
@@ -195,12 +198,68 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 export function RootCircuitImpl<
     CircuitT extends Circuit,
     T extends CircuitTypes
->(state: CircuitState<T>, makeIC: (info: T["ICInfo"]) => T["IC"]) {
+>(
+    state: CircuitState<T>,
+    makeIC: (
+        id: GUID,
+        objs: Schema.Obj[],
+        metadata: Schema.IntegratedCircuit["metadata"],
+        portConfig: PortConfig,
+        portFactory: PortFactory,
+    ) => T["IC"],
+) {
     const circuit = CircuitImpl<CircuitT, T>(state);
 
     return extend(circuit, {
         createIC(info: T["ICInfo"]): T["IC"] {
-            return makeIC(info);
+            const id = uuid();
+
+            const ports = info.display.pins.reduce((prev, pin) => ({
+                ...prev,
+                [pin.group]: [...(prev[pin.group] ?? []), pin],
+            }), {} as Record<string, ICPin[]>);
+
+            const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
+
+            const metadata: Schema.IntegratedCircuit["metadata"] = {
+                id:      id,  // Make a new ID
+                name:    info.circuit.name,
+                thumb:   info.circuit.thumbnail,
+                desc:    info.circuit.desc,
+                version: "v/0",
+
+                displayWidth:  info.display.size.x,
+                displayHeight: info.display.size.y,
+
+                pins: info.display.pins.map(({ id, group, pos }) => ({ id, group, x: pos.x, y: pos.y })),
+            };
+
+            const portFactory = MapObj(ports, ([_, ids]) =>
+                (index: number, _total: number) => {
+                    const pos = ids[index].pos;
+                    const size = info.display.size;
+                    return {
+                        origin: V(pos.x, pos.y),
+
+                        dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
+                            ? V(1, 0).scale(Math.sign(pos.x))
+                            : V(0, 1).scale(Math.sign(pos.y)),
+                    };
+                });
+
+            return makeIC(id, info.circuit.getObjs().map((o) => o.toSchema()), metadata, portConfig, portFactory);
+            // state.internal.createIC(
+            //     metadata,
+            //     getComponentICInfo(info),
+            //     // new DigitalComponentInfo(kind, {}, { "inputs": "input", "outputs": "output" }, [portConfig]),
+            //     info.circuit.getObjs().map((o) => o.toSchema()),
+            // );
+    
+            // // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
+            // mainState.assembler.addAssembler(kind, (params) =>
+            //     new ICComponentAssembler(params, info.display.size, factory));
+    
+            // return makeIC(id);
         },
         getICs(): T["IC[]"] {
             throw new Error("RootCircuit.getICs: Unimplemented!");
@@ -220,14 +279,12 @@ export function IntegratedCircuitImpl<CircuitT extends Circuit, T extends Circui
             const metadata = state.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
             return V(metadata.displayWidth, metadata.displayHeight);
         },
-        get pins(): ReadonlyArray<{
-            id: GUID;  // ID of corresponding component
-            pos: Vector;
-        }> {
+        get pins(): readonly ICPin[] {
             const metadata = state.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
-            return metadata.pins.map(({ id, x, y }) => ({
+            return metadata.pins.map(({ id, group, x, y }) => ({
                 id,
                 pos: V(x, y),
+                group,
             }));
         },
     } satisfies IntegratedCircuitDisplay;

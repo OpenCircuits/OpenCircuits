@@ -106,13 +106,14 @@ export interface RootCircuit extends Circuit {
     getICs(): IntegratedCircuit[];
 }
 
+export interface ICPin {
+    id: GUID;  // ID of corresponding PORT
+    group: string;
+    pos: Vector;
+}
 export interface IntegratedCircuitDisplay {
     readonly size: Vector;
-
-    readonly pins: ReadonlyArray<{
-        id: GUID;  // ID of corresponding PORT
-        pos: Vector;
-    }>;
+    readonly pins: readonly ICPin[];
 }
 export interface IntegratedCircuit extends ReadonlyCircuit {
     readonly display: IntegratedCircuitDisplay;

@@ -31,9 +31,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: GetPort(pin1).id, pos: V(-2, -0.5) },
-                    { id: GetPort(pin2).id, pos: V(-2, +0.5) },
-                    { id: GetPort(pin3).id, pos: V(+2, 0) },
+                    { id: GetPort(pin1).id, group: "", pos: V(-2, -0.5) },
+                    { id: GetPort(pin2).id, group: "", pos: V(-2, +0.5) },
+                    { id: GetPort(pin3).id, group: "", pos: V(+2, 0) },
                 ],
             },
         });
@@ -46,5 +46,13 @@ describe("IntegratedCircuit", () => {
 
         expect(icInstance.ports[""]).toHaveLength(3);
         expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
+
+        expect(icInstance.ports[""][0].originPos).toApproximatelyEqual(V(-2, -0.5).add(1, 1));
+        expect(icInstance.ports[""][1].originPos).toApproximatelyEqual(V(-2, +0.5).add(1, 1));
+        expect(icInstance.ports[""][2].originPos).toApproximatelyEqual(V(+2, 0).add(1, 1));
+
+        expect(icInstance.ports[""][0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(1, 1));
+        expect(icInstance.ports[""][1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(1, 1));
+        expect(icInstance.ports[""][2].targetPos).toApproximatelyEqual(V(+2.7, 0).add(1, 1));
     });
 });

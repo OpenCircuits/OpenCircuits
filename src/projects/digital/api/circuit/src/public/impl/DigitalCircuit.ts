@@ -2,7 +2,7 @@ import {IntegratedCircuitImpl, RootCircuitImpl} from "shared/api/circuit/public/
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
-import {APIToDigital, DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalRootCircuit} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalRootCircuit} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {Circuit, GUID} from "shared/api/circuit/public";
 
@@ -20,7 +20,7 @@ function DigitalCircuitImpl<T extends (APIToDigital<Circuit> & Record<string | n
 
 export function DigitalRootCircuitImpl(
     state: DigitalCircuitState,
-    makeIC: (info: DigitalICInfo) => DigitalIntegratedCircuit,
+    makeIC: Parameters<typeof RootCircuitImpl<DigitalCircuit, DigitalTypes>>[1],
 ) {
     return DigitalCircuitImpl(
         RootCircuitImpl<DigitalCircuit, DigitalTypes>(state, makeIC)
