@@ -133,14 +133,22 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public checkWireConnectivity(p1: Schema.Port, p2: Schema.Port) {
-        const map = new Map([[p1, [p2]]]);
-        this.componentPortsMap.get(p1.parent)!.forEach((id) => {
-            const to = this.getPortPortMapChecked(id);
-            map.set(p1, [...to].map((id) => this.getPortByID(id).unwrap()));
-        });
+        // This is a bit over-complicated at the moment since it globally checks the whole wiring configuration
+        // When I think for now it's fine to have it be port -> port independent.
+        // const map = new Map([[p1, [p2]]]);
+        // this.componentPortsMap.get(p1.parent)!.forEach((id) => {
+        //     const p = this.getPortByID(id).unwrap();
+        //     const to = this.getPortPortMapChecked(id);
+        //     map.set(p, [...(map.get(p) ?? []), ...([...to].map((id) => this.getPortByID(id).unwrap()))]);
+        // });
+        // return this.getComponentAndInfoByID(p1.parent)
+        //     .andThen(([_, info]) => info.checkPortConnectivity(map)
+        //         .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`)));
+
+        const curPorts = [...this.getPortPortMapChecked(p1.id)].map((id) => this.getPortByID(id).unwrap());
         return this.getComponentAndInfoByID(p1.parent)
-            .andThen(([_, info]) => info.checkPortConnectivity(map)
-                .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`)));
+            .andThen(([_, info]) => info.checkPortConnectivity(p1, p2, curPorts))
+                .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`));
     }
 
     public getPortPortMapChecked(id: GUID): Set<GUID> {

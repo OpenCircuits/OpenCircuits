@@ -1,4 +1,4 @@
-import {ErrE, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result";
+import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {BaseComponentInfo,
         BaseObjInfo,
@@ -31,6 +31,13 @@ export class DigitalComponentInfo extends BaseComponentInfo {
         this.outputPortGroups = this.portGroups.filter((g) => (this.portGroupInfo[g] === "output"));
     }
 
+    private isInputPort(port: Schema.Port): boolean {
+        return this.inputPortGroups.includes(port.group);
+    }
+    private isOutputPort(port: Schema.Port): boolean {
+        return this.outputPortGroups.includes(port.group);
+    }
+
     public override getPortInfo(_p: PortConfig, _group: string, _index: number): Pick<Schema.Port, "kind" | "props"> {
         return {
             kind:  "DigitalPort",
@@ -38,15 +45,32 @@ export class DigitalComponentInfo extends BaseComponentInfo {
         };
     }
 
-    public override checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result {
-        return ResultUtil.reduceIterU(wires.entries(), ([myPort, connectedPorts]): Result<void> =>  {
-            // Prevent multiple ports connecting to a single input port
-            if (this.portGroupInfo[myPort.group] === "input" && connectedPorts.length > 1)
-                return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${myPort.id}`);
-            // TODO: prevent "inputs" from being connected to other "IN" ports and similar.
-            return OkVoid();
-        });
+    public override checkPortConnectivity(port: Schema.Port, newPort: Schema.Port, curPorts: Schema.Port[]): Result {
+        // Prevent multiple ports connecting to a single input port
+        if (this.isInputPort(port) && curPorts.length > 0)
+            return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${port.id}`);
+        // Prevent input->input port connections
+        if (this.isInputPort(port) && this.isInputPort(newPort))
+            return ErrE(`DigitalComponentInfo: Illegal input-to-input connection on port ${port.id}`);
+        // Prevent output->output port connections
+        if (this.isOutputPort(port) && this.isOutputPort(newPort))
+            return ErrE(`DigitalComponentInfo: Illegal output-to-output connection on port ${port.id}`);
+        return OkVoid();
     }
+    // public override checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result {
+    //     return ResultUtil.reduceIterU(wires.entries(), ([myPort, connectedPorts]): Result<void> =>  {
+    //         // Prevent multiple ports connecting to a single input port
+    //         if (this.isInputPort(myPort) && connectedPorts.length > 1)
+    //             return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${myPort.id}`);
+    //         // Prevent input->input port connections
+    //         if (this.isInputPort(myPort) && connectedPorts.some((port) => this.isInputPort(port)))
+    //             return ErrE(`DigitalComponentInfo: Illegal input-to-input connection on port ${myPort.id}`);
+    //         // Prevent output->output port connections
+    //         if (this.isOutputPort(myPort) && connectedPorts.some((port) => this.isOutputPort(port)))
+    //             return ErrE(`DigitalComponentInfo: Illegal output-to-output connection on port ${myPort.id}`);
+    //         return OkVoid();
+    //     });
+    // }
 }
 
 

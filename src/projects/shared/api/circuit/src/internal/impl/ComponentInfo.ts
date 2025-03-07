@@ -24,7 +24,8 @@ export interface ComponentInfo extends ObjInfo {
     makePortsForConfig(id: Schema.GUID, p: PortConfig): Result<Schema.Port[]>;
 
     // i.e. Prevents fan-in on digital ports, could prevent illegal self-connectivity
-    checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result;
+    // checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result;
+    checkPortConnectivity(port: Schema.Port, newPort: Schema.Port, curPorts: Schema.Port[]): Result;
 
     // Also i.e. thumbnail, display name, description, etc.
 }
@@ -178,5 +179,5 @@ export abstract class BaseComponentInfo extends BaseObjInfo<"Component"> impleme
         return hasValidConfig ? OkVoid() : ErrE(`BaseComponentInfo: Failed to find matching config for ${p}`);
     }
 
-    public abstract checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result;
+    public abstract checkPortConnectivity(port: Schema.Port, newPort: Schema.Port, curPorts: Schema.Port[]): Result;
 }

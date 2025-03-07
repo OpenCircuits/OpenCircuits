@@ -16,6 +16,7 @@ export function PortImpl<T extends CircuitTypes>(
     circuit: Circuit,
     state: CircuitState<T>,
     id: GUID,
+    getWireKind: (p1: GUID, p2: GUID) => string,
 ) {
     const { internal, assembler, constructComponent, constructWire } = state;
 
@@ -60,6 +61,16 @@ export function PortImpl<T extends CircuitTypes>(
 
         get path(): T["Path"] {
             throw new Error("Port.get path: Unimplemented!");
+        },
+
+        connectTo(other: T["Port"]): T["Wire"] | undefined {
+            internal.beginTransaction();
+
+            const id = internal.connectWire(getWireKind(base.id, other.id), base.id, other.id, {}).unwrap();
+
+            internal.commitTransaction();
+
+            return constructWire(id);
         },
 
         toSchema(): Schema.Port {

@@ -99,14 +99,8 @@ export function TestWireImpl(circuit: Circuit, state: CircuitState<CircuitTypes>
 }
 
 export function TestPortImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
-    const base = PortImpl(circuit, state, id);
+    const base = PortImpl(circuit, state, id, (_p1, _p2) => "TestWire");
     return extend(base, {
-        connectTo(other: Port) {
-            state.internal.beginTransaction();
-            const id = state.internal.connectWire("TestWire", base.id, other.id, {}).unwrap();
-            state.internal.commitTransaction();
-            return state.constructWire(id);
-        },
         getLegalWires(): Port.LegalWiresQuery {
             return {
                 isWireable: true,

@@ -9,15 +9,14 @@ import {Signal} from "digital/api/circuit/utils/Signal";
 
 import {DigitalCircuit} from "../DigitalCircuit";
 import {DigitalPort}    from "../DigitalPort";
-import {DigitalWire}    from "../DigitalWire";
 
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
 
 export function DigitalPortImpl(circuit: DigitalCircuit, state: DigitalCircuitState, id: GUID) {
-    const { internal, constructWire } = state;
+    const { internal } = state;
 
-    const base = PortImpl<DigitalTypes>(circuit, state, id);
+    const base = PortImpl<DigitalTypes>(circuit, state, id, (_p1, _p2) => "DigitalWire");
 
     return extend(base, {
         get isInputPort(): boolean {
@@ -29,16 +28,6 @@ export function DigitalPortImpl(circuit: DigitalCircuit, state: DigitalCircuitSt
 
         get signal(): Signal {
             return state.sim.getSignal(base.id);
-        },
-
-        connectTo(other: DigitalPort): DigitalWire | undefined {
-            internal.beginTransaction();
-
-            const id = internal.connectWire("DigitalWire", base.id, other.id, {}).unwrap();
-
-            internal.commitTransaction();
-
-            return constructWire(id);
         },
 
         getLegalWires(): Port.LegalWiresQuery {
