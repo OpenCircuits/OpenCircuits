@@ -283,33 +283,33 @@ describe("Component", () => {
             expect(() => c.setNumPorts("invalidGroup", 6)).toThrow();
         });
 
-        // test("firstAvailable", () => {
-        //     const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
-        //     const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
-        //     expect(c1.firstAvailable("")).toBeDefined();
-        //     c1.setNumPorts("", 2);
-        //     c1.firstAvailable("")!.connectTo(c2.firstAvailable("")!)
-        //     expect(c1.firstAvailable("")).toBeDefined();
-        //     expect(c2.firstAvailable("")).toBeUndefined();
-        //     expect(c1.ports[""][0].connections).toHaveLength(1);
-        //     expect(c1.ports[""][1].connections).toHaveLength(0);
-        // });
+        test("firstAvailable", () => {
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
+            expect(c1.firstAvailable("")).toBeDefined();
+            c1.setNumPorts("", 2);
+            c1.firstAvailable("")!.connectTo(c2.firstAvailable("")!)
+            expect(c1.firstAvailable("")).toBeDefined();
+            expect(c2.firstAvailable("")).toBeDefined();
+            expect(c1.ports[""][0].connections).toHaveLength(1);
+            expect(c1.ports[""][1].connections).toHaveLength(0);
+        });
 
-        // test("Use setNumPorts to remove connection", () => {
-        //     const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
-        //     const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
-        //     expect(c1.firstAvailable("")).toBeDefined();
-        //     c1.setNumPorts("", 2);
-        //     c1.ports[""][0].connectTo(c2.ports[""][0])
-        //     c1.ports[""][1].connectTo(c3.ports[""][0])
-        //     c1.setNumPorts("", 1);
-        //     expect(c1.ports[""]).toHaveLength(1);
-        //     expect(c1.ports[""][0].connections).toHaveLength(1);
-        //     expect(c2.ports[""]).toHaveLength(1);
-        //     expect(c2.ports[""][0].connections).toHaveLength(1);
-        //     expect(c3.ports[""]).toHaveLength(1);
-        //     expect(c3.ports[""][0]).toHaveLength(0);
-        // });
+        test("Use setNumPorts to remove connection", () => {
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
+            expect(c1.firstAvailable("")).toBeDefined();
+            c1.setNumPorts("", 2);
+            c1.ports[""][0].connectTo(c2.ports[""][0])
+            c1.ports[""][1].connectTo(c3.ports[""][0])
+            c1.setNumPorts("", 1);
+            expect(c1.ports[""]).toHaveLength(1);
+            expect(c1.ports[""][0].connections).toHaveLength(1);
+            expect(c2.ports[""]).toHaveLength(1);
+            expect(c2.ports[""][0].connections).toHaveLength(1);
+            expect(c3.ports[""]).toHaveLength(1);
+            expect(c3.ports[""][0].connections).toHaveLength(0);
+        });
 
     });
 

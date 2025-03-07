@@ -5,15 +5,15 @@ import {APIToDigital} from "./DigitalCircuit";
 
 
 export interface ReadonlyDigitalComponent extends APIToDigital<ReadonlyComponent> {
-    readonly firstAvailableInput: DigitalPort;
-    readonly firstOutput: DigitalPort;
+    readonly inputs: DigitalPort[];
+    readonly outputs: DigitalPort[];
 
     isNode(): this is DigitalNode;
 }
 type C = APIToDigital<Component> & ReadonlyDigitalComponent;
 export interface DigitalComponent extends C {
-    readonly firstAvailableInput: DigitalPort;
-    readonly firstOutput: DigitalPort;
+    readonly inputs: DigitalPort[];
+    readonly outputs: DigitalPort[];
 
     isNode(): this is DigitalNode;
 }

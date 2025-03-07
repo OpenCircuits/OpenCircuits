@@ -94,7 +94,16 @@ export function ComponentImpl<T extends CircuitTypes>(
             return true;
         },
         firstAvailable(group: string): T["Port"] | undefined {
-            throw new Error("Component.firstAvailable: Unimplemented!");
+            const ports = internal.getPortsByGroup(base.id).unwrap();
+            if (!(group in ports))
+                return undefined;
+
+            for (const portId of ports[group]) {
+                const port = constructPort(portId);
+                if (port.getLegalWires().isWireable)
+                    return port;
+            }
+            return undefined;
         },
         delete(): void {
             internal.beginTransaction();
