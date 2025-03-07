@@ -5,7 +5,7 @@ import {GUID}   from "shared/api/circuit/schema/GUID";
 import {Schema} from "shared/api/circuit/schema";
 
 import {CircuitOp, ConnectWireOp, InvertCircuitOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
-import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig}          from "./ComponentInfo";
+import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ComponentInfo";
 import {CircuitLog, LogEntry} from "./CircuitLog";
 import {Observable} from "../../utils/Observable";
 import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";

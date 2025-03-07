@@ -155,11 +155,18 @@ export abstract class BaseComponentInfo extends BaseObjInfo<"Component"> impleme
     }
 
     public checkPortConfig(p: PortConfig): Result {
+        const invalidGroups = Object.keys(p).filter((group) => !this.portGroups.includes(group));
+        if (invalidGroups.length > 0) {
+            return ErrE("BaseComponentInfo: Port config {"
+                + Object.entries(p).map(([k, v]) => `${k}: ${v}`).join(", ")
+                + `} has invalid groups: [${invalidGroups.join(", ")}]`);
+        }
+
         // Doesn't have all the port groups
         if (this.portGroups.some((group) => !(group in p))) {
             return ErrE("BaseComponentInfo: Port config {"
                 + Object.entries(p).map(([k, v]) => `${k}: ${v}`).join(", ")
-                + `} did not contain all groups ${this.portGroups}`);
+                + `} did not contain all groups [${this.portGroups.join(", ")}]`);
         }
 
         // Return is some valid config matches the given config

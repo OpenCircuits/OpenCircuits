@@ -229,7 +229,7 @@ describe("Component", () => {
         });
 
         test("Multiple moves in one transaction", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.x).toBe(0);
             expect(c.y).toBe(0);
@@ -265,7 +265,7 @@ describe("Component", () => {
             expect(Object.keys(c.ports)).toHaveLength(1);
             expect("" in c.ports).toBeTruthy();
             expect(c.ports[""]).toHaveLength(1);
-            expect(c.setNumPorts("", 3)).toBeFalsy();
+            expect(() => c.setNumPorts("", 3)).toThrow();
             expect(c.ports[""]).toHaveLength(1);
         });
 
@@ -273,12 +273,12 @@ describe("Component", () => {
             const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.allPorts).toHaveLength(1);
-            expect(c.setNumPorts("", 6)).toBeFalsy();
+            expect(() => c.setNumPorts("", 6)).toThrow();
             expect(c.allPorts).toHaveLength(1);
         });
 
         test(".setNumPorts on invalid port group", () => {
-            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(() => c.setNumPorts("invalidGroup", 6)).toThrow();
         });

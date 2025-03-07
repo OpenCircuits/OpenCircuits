@@ -75,13 +75,7 @@ export function ComponentImpl<T extends CircuitTypes>(
 
         setNumPorts(group: string, amt: number): boolean {
             // TODO[model_refactor](leon) revisit this and decide on a functionality
-            const curConfig = {} as Record<string, number>;
-            internal.getPortsForComponent(base.id)
-                .map((ids) => [...ids]
-                    .map((id) => circuit.getPort(id)!))
-                .unwrap()
-                .forEach(({ group }) =>
-                    curConfig[group] = (curConfig[group] ?? 0) + 1);
+            const curConfig = internal.getPortConfig(base.id).unwrap();
 
             // Already at that amount of ports, so do nothing
             if (curConfig[group] === amt)
@@ -91,16 +85,11 @@ export function ComponentImpl<T extends CircuitTypes>(
                 ...curConfig,
                 [group]: amt,
             };
-            const isValid = internal.getComponentInfo(base.kind).unwrap().checkPortConfig(config);
-            if (!isValid.ok)
-                return false;
+            internal.getComponentInfo(base.kind).unwrap()
+                .checkPortConfig(config).unwrap();
 
             internal.beginTransaction();
-            const result = internal.setPortConfig(base.id, config);
-            if (!result.ok) {
-                internal.cancelTransaction();
-                return false;
-            }
+            internal.setPortConfig(base.id, config).unwrap();
             internal.commitTransaction();
             return true;
         },
