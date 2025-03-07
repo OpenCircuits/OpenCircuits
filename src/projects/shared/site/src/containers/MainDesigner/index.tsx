@@ -41,6 +41,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
             return;
         // TODO[model_refactor](leon) - Make a global declaration for this so we can set it w/o gross cast
         (window as unknown as Record<string, unknown>).Circuit = designer.circuit;
+        (window as unknown as Record<string, unknown>).CircuitDesigner = designer;
         return designer.viewport.attachCanvas(canvas.current);
     }, [designer, canvas]);
 

@@ -3,6 +3,7 @@ import {SVGDrawing} from "svg2canvas";
 import {Margin} from "math/Rect";
 
 import {Circuit} from "shared/api/circuit/public";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 import {DebugOptions} from "shared/api/circuitdesigner/public/impl/DebugOptions";
 import {DefaultTool}  from "shared/api/circuitdesigner/tools/DefaultTool";
@@ -10,9 +11,8 @@ import {Tool}         from "shared/api/circuitdesigner/tools/Tool";
 import {Cursor}       from "shared/api/circuitdesigner/input/Cursor";
 
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
-import {CircuitDesignerState} from "./CircuitDesignerState";
 import {Viewport} from "../Viewport";
+import {CircuitDesignerState} from "./CircuitDesignerState";
 import {ViewportImpl} from "./Viewport";
 
 
@@ -34,6 +34,10 @@ export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitT
 
         get viewport(): Viewport {
             return viewport;
+        },
+
+        get curTool(): Tool | undefined {
+            return state.toolManager.curTool;
         },
 
         set curPressedObj(obj: T["Obj"] | undefined) {

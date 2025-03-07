@@ -32,8 +32,9 @@ describe("Main Popup", () => {
     const designer = CreateDesigner(
         {
             defaultTool: new DefaultTool(),
-            tools: [],
+            tools:       [],
         },
+        [],
     )
     const [circuit, _] = CreateCircuit();
     const store = configureStore({reducer: reducers});

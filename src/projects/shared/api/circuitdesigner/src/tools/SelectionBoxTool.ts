@@ -5,13 +5,16 @@ import {Rect} from "math/Rect";
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
-import {Tool} from "./Tool";
+import {Tool, ToolEvent} from "./Tool";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 
-export class SelectionBoxTool implements Tool {
+export class SelectionBoxTool extends Observable<ToolEvent> implements Tool {
     private rect: Rect;
 
     public constructor() {
+        super();
+
         this.rect = new Rect(V(), V());
     }
 
@@ -75,7 +78,7 @@ export class SelectionBoxTool implements Tool {
                 viewport.camera.toWorldPos(ev.input.mousePos),
             );
 
-            // circuit.forceRedraw();
+            this.publish({ type: "statechange" });
         }
     }
 

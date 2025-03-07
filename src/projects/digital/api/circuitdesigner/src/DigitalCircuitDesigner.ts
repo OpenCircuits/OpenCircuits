@@ -4,13 +4,14 @@ import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitState"
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {CircuitDesignerImpl, ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
 import {CircuitDesignerState} from "shared/api/circuitdesigner/public/impl/CircuitDesignerState";
+import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 import {ToolManager} from "shared/api/circuitdesigner/public/impl/ToolManager";
 
 import {SVGs} from "./rendering/svgs";
 
 export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalCircuit> {}
 
-export function CreateDesigner(toolConfig: ToolConfig) {
+export function CreateDesigner(toolConfig: ToolConfig, renderers: ToolRenderer[]) {
     const [circuit, state] = CreateCircuit();
 
     // create view and attach toolConfig.renderers as post-process rendering
@@ -40,5 +41,13 @@ export function CreateDesigner(toolConfig: ToolConfig) {
         },
     };
 
-    return CircuitDesignerImpl(circuit, designerState, SVGs, {});
+    const designer = CircuitDesignerImpl(circuit, designerState, SVGs, {});
+
+    designer.viewport.observe("onrender", (ev) => {
+        renderers.forEach((toolRenderer) => toolRenderer.render({
+            designer, renderer: ev.renderer,
+        }));
+    })
+
+    return designer;
 }

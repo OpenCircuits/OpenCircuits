@@ -5,8 +5,9 @@ import {Circuit, Component, isObjComponent} from "shared/api/circuit/public";
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
-import {Tool} from "./Tool";
+import {Tool, ToolEvent} from "./Tool";
 import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 
 export const ROTATION_CIRCLE_RADIUS = 1.5;
@@ -17,7 +18,7 @@ const ROTATION_CIRCLE_THRESHOLD = ROTATION_CIRCLE_THICKNESS + 0.06;
 const ROTATION_CIRCLE_R1 = (ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD) ** 2;
 const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) ** 2;
 
-export class RotateTool implements Tool {
+export class RotateTool extends Observable<ToolEvent> implements Tool {
     private components: Component[];
 
     private curAngles: number[];
@@ -26,6 +27,8 @@ export class RotateTool implements Tool {
     private prevAngle: number;
 
     public constructor() {
+        super();
+
         this.components = [];
 
         this.curAngles = [];
@@ -119,7 +122,7 @@ export class RotateTool implements Tool {
 
             this.prevAngle += dAngle;
 
-            // circuit.forceRedraw();
+            this.publish({ type: "statechange" });
         }
     }
 

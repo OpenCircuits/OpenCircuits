@@ -2,15 +2,26 @@ import {DefaultTool}       from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}              from "shared/api/circuitdesigner/tools/Tool";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {CircuitDesigner}   from "../CircuitDesigner";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 
-export class ToolManager {
+export type ToolManagerEvent = {
+    type: "toolactivate";
+    tool: Tool;
+} | {
+    type: "tooldeactivate";
+    tool: Tool;
+}
+
+export class ToolManager extends Observable<ToolManagerEvent> {
     public readonly defaultTool: DefaultTool;
     public readonly tools: Tool[];
 
     public curTool?: Tool;
 
     public constructor(defaultTool: DefaultTool, tools: Tool[]) {
+        super();
+
         this.defaultTool = defaultTool;
         this.tools = tools;
     }
@@ -18,16 +29,18 @@ export class ToolManager {
     public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void {
         // Call the current tool's (or default tool's) onEvent method
         if (this.curTool) {
-            this.curTool.onEvent(ev, designer);
+            const tool = this.curTool;
+
+            tool.onEvent(ev, designer);
             // Check if we should deactivate the current tool
-            if (this.curTool.shouldDeactivate(ev, designer)) {
-                // Deactivate the tool
-                this.curTool.onDeactivate(ev, designer);
+            if (tool.shouldDeactivate(ev, designer)) {
                 this.curTool = undefined;
+
+                // Deactivate the tool
+                tool.onDeactivate(ev, designer);
                 this.defaultTool.onEvent(ev, designer);
 
-                // TODO[.](leon) - I know this had a reason but I should document it
-                // designer.circuit.forceRedraw();
+                this.publish({ type: "tooldeactivate", tool });
 
                 return;
             }
@@ -41,7 +54,7 @@ export class ToolManager {
             newTool.onActivate(ev, designer);
             newTool.onEvent(ev, designer); // TODO[.](leon) - see if this is okay
 
-            // designer.circuit.forceRedraw();
+            this.publish({ type: "toolactivate", tool: newTool });
 
             return;
         }

@@ -6,14 +6,17 @@ import {CircuitDesigner}               from "shared/api/circuitdesigner/public/C
 import {LEFT_MOUSE_BUTTON}             from "shared/api/circuitdesigner/input/Constants";
 import {InputAdapterEvent}             from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {SnapToConnections, SnapToGrid} from "shared/api/circuitdesigner/utils/SnapUtils";
-import {Tool}                          from "./Tool";
+import {Tool, ToolEvent}               from "./Tool";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 
-export class TranslateTool implements Tool {
+export class TranslateTool extends Observable<ToolEvent> implements Tool {
     private components: Component[];
     private initialPositions: Vector[];
 
     public constructor() {
+        super();
+
         this.components = [];
         this.initialPositions = [];
     }

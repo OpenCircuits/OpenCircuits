@@ -1,35 +1,51 @@
-import {MIDDLE_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
-import {V}                   from "Vector";
-import {Tool}                from "./Tool";
+import {V} from "Vector";
+
+import {Observable} from "shared/api/circuit/utils/Observable";
+
+import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
+
+import {MIDDLE_MOUSE_BUTTON} from "../input/Constants";
+import {Tool, ToolEvent} from "./Tool";
 
 
 const ARROW_PAN_DISTANCE_NORMAL = 1.5;
 const ARROW_PAN_DISTANCE_SMALL = 0.1;
 
-export const PanTool: Tool = {
-    shouldActivate: (ev) => (
-        // Activate if the user just pressed the "option key"
-        //  or if the user began dragging with either 2 fingers
-        //                           or the middle mouse button
-        (ev.type === "keydown" && ((ev.key === "Alt") ||
-                                   (ev.key === "ArrowLeft" || ev.key === "ArrowRight"   ||
-                                    ev.key === "ArrowUp"   || ev.key === "ArrowDown"))) ||
-        (ev.type === "mousedrag" && (ev.button === MIDDLE_MOUSE_BUTTON ||
-                                    ev.input.touchCount === 2))
-    ),
-    shouldDeactivate: (ev) => (
-        (!ev.input.isDragging && !ev.input.isAltKeyDown) ||
-        (ev.type === "keyup" && (ev.key === "ArrowLeft" || ev.key === "ArrowRight" ||
-                                 ev.key === "ArrowUp"   || ev.key === "ArrowDown"))
-    ),
+export class PanTool extends Observable<ToolEvent> implements Tool {
+    public constructor() {
+        super();
+    }
 
-    onActivate: (_, { viewport }) => {
+    public shouldActivate(ev: InputAdapterEvent, { }: CircuitDesigner): boolean {
+        return (
+            // Activate if the user just pressed the "option key"
+            //  or if the user began dragging with either 2 fingers
+            //                           or the middle mouse button
+            (ev.type === "keydown" && ((ev.key === "Alt") ||
+                (ev.key === "ArrowLeft" || ev.key === "ArrowRight"   ||
+                 ev.key === "ArrowUp"   || ev.key === "ArrowDown"))) ||
+            (ev.type === "mousedrag" && (ev.button === MIDDLE_MOUSE_BUTTON ||
+                ev.input.touchCount === 2))
+        );
+    }
+    public shouldDeactivate(ev: InputAdapterEvent): boolean {
+        return (
+            (!ev.input.isDragging && !ev.input.isAltKeyDown) ||
+            (ev.type === "keyup" && (ev.key === "ArrowLeft" || ev.key === "ArrowRight" ||
+                                    ev.key === "ArrowUp"   || ev.key === "ArrowDown"))
+        );
+    }
+
+    public onActivate(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         viewport.camera.emit({ type: "dragStart" });
-    },
-    onDeactivate: (_, { viewport }) => {
+    }
+
+    public onDeactivate(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         viewport.camera.emit({ type: "dragEnd" });
-    },
-    onEvent: (ev, { viewport }) => {
+    }
+
+    public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             const { x: dx, y: dy } = ev.input.deltaMousePos;
             viewport.camera.translate(V(-dx, -dy), "screen");
@@ -49,5 +65,5 @@ export const PanTool: Tool = {
 
             viewport.camera.translate(V(dx, dy).scale(factor), "world");
         }
-    },
+    }
 }

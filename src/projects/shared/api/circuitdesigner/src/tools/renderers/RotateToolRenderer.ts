@@ -1,24 +1,29 @@
-import {CirclePrim}       from "shared/api/circuit/internal/assembly/rendering/prims/CirclePrim";
-import {CircleSectorPrim} from "shared/api/circuit/internal/assembly/rendering/prims/CircleSectorPrim";
+import {isObjComponent} from "shared/api/circuit/public";
 
 import {ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_THICKNESS, RotateTool} from "../RotateTool";
 
-import {ToolRenderer}   from "./ToolRenderer";
-import {isObjComponent} from "shared/api/circuit/public";
+import {ToolRenderer} from "./ToolRenderer";
 
 
 export const RotateToolRenderer: ToolRenderer = {
-    render: ({ circuit, renderer, curTool }) => {
-        const pos = circuit.selections.midpoint();
+    render: ({ designer: { circuit, curTool }, renderer }) => {
+        const pos = circuit.selections.bounds.center;
 
         const drawOutline = () => {
-            renderer.draw(new CirclePrim(pos, ROTATION_CIRCLE_RADIUS, {
-                stroke: {
-                    color: "#ff0000",
-                    size:  ROTATION_CIRCLE_THICKNESS,
+            renderer.draw({
+                kind: "Circle",
+
+                pos,
+                radius: ROTATION_CIRCLE_RADIUS,
+
+                style: {
+                    stroke: {
+                        color: "#ff0000",
+                        size:  ROTATION_CIRCLE_THICKNESS,
+                    },
+                    alpha: 0.4,
                 },
-                alpha: 0.5,
-            }));
+            });
         }
 
         const selections = circuit.selections;
@@ -38,9 +43,17 @@ export const RotateToolRenderer: ToolRenderer = {
         drawOutline();
 
         const a0 = curTool.getStartAngle(), a1 = curTool.getPrevAngle();
-        renderer.draw(new CircleSectorPrim(pos, ROTATION_CIRCLE_RADIUS, [a0, a1], {
-            fill:  "#ffffff",
-            alpha: 0.4,
-        }));
+        renderer.draw({
+            kind: "CircleSector",
+
+            pos,
+            radius: ROTATION_CIRCLE_RADIUS,
+            angles: [a0, a1],
+
+            style: {
+                fill:  "#ffffff",
+                alpha: 0.4,
+            },
+        });
     },
 }

@@ -1,23 +1,25 @@
-import {RenderOptions} from "shared/api/circuit/internal/view/rendering/RenderOptions";
-import {DigitalPort}   from "digital/api/circuit/public/api/DigitalPort";
-import {Signal}        from "digital/api/circuit/utils/Signal";
+import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
+import {Signal}      from "digital/api/circuit/utils/Signal";
 
-import {WiringToolRenderer} from "shared/api/circuitdesigner/tools/renderers/WiringToolRenderer"
+import {WiringToolRenderer} from "shared/api/circuitdesigner/tools/renderers/WiringToolRenderer";
 
 import {WiringTool} from "shared/api/circuitdesigner/tools/WiringTool";
 
 
-export class DigitalWiringToolRenderer extends WiringToolRenderer {
-    protected override getColor(options: RenderOptions, curTool: WiringTool): string | undefined  {
+export const DigitalWiringToolRenderer = WiringToolRenderer(
+    ({ designer: { curTool }, renderer }) => {
+        if (!(curTool instanceof WiringTool))
+            return;
+
         const port = curTool.getCurPort() as DigitalPort | undefined;
         if (!port)
-            return undefined;
+            return;
 
         const signal = port?.signal;
         if (signal === Signal.On)
-            return options.defaultOnColor;
+            return renderer.options.defaultOnColor;
         if (signal === Signal.Metastable)
-            return options.defaultMetastableColor;
-        return options.defaultWireColor;
+            return renderer.options.defaultMetastableColor;
+        return renderer.options.defaultWireColor;
     }
-}
+);

@@ -9,18 +9,24 @@ import {Circuit, Port} from "shared/api/circuit/public";
 import {CircuitDesigner}                       from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
 import {InputAdapterEvent}                     from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {Tool}                                  from "./Tool";
+import {Tool, ToolEvent}                       from "./Tool";
 import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 
 // The distance away from the port in selection for wiring.
 export const WIRING_PORT_SELECT_RADIUS = 0.34;
 
-export class WiringTool implements Tool {
+export class WiringTool extends Observable<ToolEvent> implements Tool {
     protected curPort: Port | undefined;
+    protected curTarget: Vector | undefined;
 
     /** Field to help differentiate between this tool when activated with a click vs drag. */
     protected stateType: "clicked" | "dragged" | undefined;
+
+    public constructor() {
+        super();
+    }
 
     /**
      * Utility function to help find the port to begin/end wiring.
@@ -88,6 +94,7 @@ export class WiringTool implements Tool {
 
     public onActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
         this.curPort = this.findPort(ev.input.mousePos, circuit, viewport);
+        this.curTarget = ev.input.mousePos;
 
         this.stateType = (ev.type === "click" ? "clicked" : "dragged");
     }
@@ -98,14 +105,22 @@ export class WiringTool implements Tool {
             this.curPort!.connectTo(port2);
 
         this.curPort = undefined;
+        this.curTarget = undefined
     }
 
-    public onEvent(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        // if (ev.type === "mousemove")
-        //     circuit.forceRedraw();
+    public onEvent(ev: InputAdapterEvent, {}: CircuitDesigner): void {
+        if (ev.type === "mousemove") {
+            this.curTarget = ev.input.mousePos;
+
+            this.publish({ type: "statechange" });
+        }
     }
 
     public getCurPort(): Port | undefined {
         return this.curPort;
+    }
+
+    public getTargetPos(): Vector | undefined {
+        return this.curTarget;
     }
 }

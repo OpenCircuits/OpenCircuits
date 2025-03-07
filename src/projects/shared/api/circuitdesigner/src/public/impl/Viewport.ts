@@ -26,17 +26,11 @@ import {RenderGrid}               from "./rendering/renderers/GridRenderer";
 
 import {Camera}                                  from "../Camera";
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
-import {Viewport, ViewportEvents}                from "../Viewport";
+import {Prim, Viewport, ViewportEvents}                from "../Viewport";
 
 import {CameraImpl}                            from "./Camera";
 import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
 
-
-export interface ToolConfig {
-    defaultTool: DefaultTool;
-    tools: Tool[];
-    renderers?: ToolRenderer[];
-}
 
 export function ViewportImpl<T extends CircuitTypes>(
     state: CircuitDesignerState<T>,
@@ -47,7 +41,7 @@ export function ViewportImpl<T extends CircuitTypes>(
     const observable = MultiObservableImpl<ViewportEvents>();
 
     let curState: {
-        canvas: HTMLCanvasElement;
+        mainCanvas: HTMLCanvasElement;
         renderer: RenderHelper;
     } | undefined;
 
@@ -115,7 +109,12 @@ export function ViewportImpl<T extends CircuitTypes>(
             // Debug rendering
 
             // Callback for post-rendering
-            view.emit("onrender", { renderer });
+            view.emit("onrender", {
+                renderer: {
+                    draw:    (prim: Prim) => primRenderer.render(renderer.ctx, prim),
+                    options: renderState.options,
+                },
+            });
         }
         renderer.restore();
     }
@@ -153,8 +152,8 @@ export function ViewportImpl<T extends CircuitTypes>(
             if (curState)
                 throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");
             curState = {
-                canvas,
-                renderer: new RenderHelper(canvas),
+                mainCanvas: canvas,
+                renderer:   new RenderHelper(canvas),
             };
 
             const u1 = state.circuitState.assembler.subscribe((data) => {
@@ -166,10 +165,23 @@ export function ViewportImpl<T extends CircuitTypes>(
             const inputAdapter = new InputAdapter(canvas, options.dragTime);
             const u2 = inputAdapter.subscribe((ev) => state.toolManager.onEvent(ev, designer));
 
+            let u4: (() => void) | undefined;
+            const u3 = state.toolManager.subscribe(({ type, tool }) => {
+                if (type === "toolactivate") {
+                    // TODO: Render in another canvas
+                    u4 = tool.subscribe((_) => scheduler.requestRender());
+                } else if (type === "tooldeactivate") {
+                    u4!();
+                }
+                scheduler.requestRender();
+            });
+
             // Unblock scheduler once a canvas is set
             scheduler.unblock();
 
             return () => {
+                u4?.();
+                u3();
                 u2();
                 u1();
                 view.detachCanvas();

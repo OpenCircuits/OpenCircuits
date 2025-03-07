@@ -33,10 +33,10 @@ import {SnipNodesHandler}   from "shared/api/circuitdesigner/tools/handlers/Snip
 import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
-// import {SelectionBoxToolRenderer} from "shared/api/circuitdesigner/tools/renderers/SelectionBoxToolRenderer";
-// import {RotateToolRenderer}       from "shared/api/circuitdesigner/tools/renderers/RotateToolRenderer";
+import {SelectionBoxToolRenderer} from "shared/api/circuitdesigner/tools/renderers/SelectionBoxToolRenderer";
+import {RotateToolRenderer}       from "shared/api/circuitdesigner/tools/renderers/RotateToolRenderer";
 
-// import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
+import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
 import {DevListFiles} from "shared/site/api/Dev";
 
@@ -52,7 +52,6 @@ import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 import {App} from "./containers/App";
 import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import {RenderHelper} from "shared/api/circuitdesigner/public/impl/rendering/RenderHelper";
 
 
 async function Init(): Promise<void> {
@@ -69,21 +68,14 @@ async function Init(): Promise<void> {
                 SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
             ),
             tools: [
-                PanTool,
+                new PanTool(),
                 new RotateTool(), new TranslateTool(),
                 new WiringTool(), new SplitWireTool(),
                 new SelectionBoxTool(),
             ],
-            // renderers: [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer],
         },
+        [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
     );
-
-    // const renderers = [RotateToolRenderer, new DigitalWiringToolRenderer(), SelectionBoxToolRenderer]
-    designer.viewport.observe("onrender", (ev) => {
-        // renderers.forEach((toolRenderer) => toolRenderer.render(
-        //     ...
-        // ));
-    })
 
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {

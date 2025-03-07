@@ -3,39 +3,28 @@ import {BezierCurve} from "math/BezierCurve";
 import {WiringTool} from "../WiringTool";
 
 import {ToolRenderer, ToolRendererArgs} from "./ToolRenderer";
-import {RenderOptions}                  from "shared/api/circuit/internal/view/rendering/RenderOptions";
 
 
-/**
- * WiringToolRenderer is a class since Wire colors need to be specified
- *  as they change per-project.
- */
-export class WiringToolRenderer implements ToolRenderer {
-    protected getColor(options: RenderOptions, _: WiringTool): string | undefined {
-        return options.defaultWireColor;
-    }
+export const WiringToolRenderer = (getColor: (params: ToolRendererArgs) => string | undefined): ToolRenderer => ({
+    render: (args) => {
+        const { designer: { curTool, viewport }, renderer } = args;
 
-    public render({ renderer, options, circuit, curTool, input }: ToolRendererArgs) {
         // If a non-selection-box-tool active, then do nothing
         if (!(curTool instanceof WiringTool))
             return;
 
         const port = curTool.getCurPort();
-        if (!port)
+        const target = curTool.getTargetPos();
+        if (!port || !target)
             return;
 
-        const mousePos = circuit.camera.toWorldPos(input.mousePos);
-        const curve = new BezierCurve(port.targetPos, mousePos, port.targetPos.add(port.dir.scale(1)), mousePos);
+        const targetPos = viewport.camera.toWorldPos(target);
+        const curve = new BezierCurve(port.targetPos, targetPos, port.targetPos.add(port.dir.scale(1)), targetPos);
+        renderer.draw({
+            kind: "BezierCurve",
 
-        renderer.save();
-
-        renderer.setStyle(options.wireStyle(false, this.getColor(options, curTool)));
-
-        renderer.beginPath();
-        renderer.moveTo(curve.p1)
-        renderer.ctx.bezierCurveTo(curve.c1.x, curve.c1.y, curve.c2.x, curve.c2.y, curve.p2.x, curve.p2.y);
-        renderer.stroke();
-
-        renderer.restore();
-    }
-}
+            curve,
+            style: renderer.options.wireStyle(false, getColor(args)),
+        });
+    },
+});
