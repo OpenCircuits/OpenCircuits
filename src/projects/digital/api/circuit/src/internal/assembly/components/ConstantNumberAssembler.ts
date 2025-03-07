@@ -55,6 +55,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     }
 
     private assembleRectangle(comp: Schema.Component) {
+        // Border is subtracted from size so that size matches constant high/low
         const transform = new Transform(this.getPos(comp), this.size.sub(V(this.options.defaultBorderWidth)), this.getAngle(comp));
         return {
             kind: "Rectangle",
