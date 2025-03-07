@@ -8,6 +8,7 @@ import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assem
 import {DigitalComponentInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {FontStyle, Style} from "shared/api/circuit/internal/assembly/Style";
+import {Transform} from "math/Transform";
 
 
 export class ConstantNumberAssembler extends ComponentAssembler {
@@ -45,7 +46,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("Switch").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("ConstantNumber").unwrap() as DigitalComponentInfo;
     }
 
     private getOutputLocations(index: number) {
@@ -54,8 +55,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     }
 
     private assembleRectangle(comp: Schema.Component) {
-        const transform = this.getTransform(comp).copy();
-        transform.setSize(transform.getSize().sub(V(this.options.defaultBorderWidth)));
+        const transform = new Transform(this.getPos(comp), this.size.sub(V(this.options.defaultBorderWidth)), this.getAngle(comp));
         return {
             kind: "Rectangle",
             transform,
@@ -83,7 +83,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
         const { stroke } = style
         return {
             ...style,
-            stroke: stroke? { ...stroke, lineCap: "square" } : undefined,
+            stroke: stroke ? { ...stroke, lineCap: "square" } : undefined,
         }
     }
 
