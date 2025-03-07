@@ -5,7 +5,7 @@ import {Vector} from "Vector";
 import {BezierCurve} from "math/BezierCurve";
 import {Transform} from "math/Transform";
 
-import {Style} from "./Style";
+import {FontStyle, Style} from "./Style";
 
 
 export interface BezierCurvePrim {
@@ -101,7 +101,18 @@ export interface SVGPrim {
     ignoreHit?: boolean;
 }
 
+export interface TextPrim {
+    kind: "Text";
+
+    contents: string;
+    pos: Vector;
+    angle: number;
+    fontStyle: FontStyle;
+    ignoreHit?: true;
+}
+
 export type Prim =
     | BaseShapePrim
     | SVGPrim
-    | GroupPrim;
+    | GroupPrim
+    | TextPrim;

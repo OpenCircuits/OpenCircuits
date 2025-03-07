@@ -16,6 +16,8 @@ import {ButtonAssembler}      from "./components/ButtonAssembler";
 import {ClockAssembler}       from "./components/ClockAssembler";
 import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
 import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
+import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
+
 
 export function MakeDigitalCircuitAssembler(
     circuit: CircuitInternal,
@@ -36,6 +38,7 @@ export function MakeDigitalCircuitAssembler(
         "Clock": new ClockAssembler(params, sim),
         "ConstantHigh": new ConstantHighAssembler(params, sim),
         "ConstantLow": new ConstantLowAssembler(params, sim),
+        "ConstantNumber": new ConstantNumberAssembler(params, sim),
 
         // // Outputs
         "LED": new LEDAssembler(params, sim),
