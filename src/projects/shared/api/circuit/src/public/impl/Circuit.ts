@@ -6,7 +6,7 @@ import {Schema} from "shared/api/circuit/schema";
 
 import {GUID, uuid} from "shared/api/circuit/internal";
 
-import {Circuit, CircuitEvent, ICInfo, ICPin, IntegratedCircuit,
+import {Circuit, CircuitEvent, ICPin, IntegratedCircuit,
         IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
 import {Selections}                from "../Selections";
 import {isObjComponent, isObjWire} from "../Utilities";
@@ -14,7 +14,6 @@ import {isObjComponent, isObjWire} from "../Utilities";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl}             from "./Observable";
-import {ComponentInfo} from "../ComponentInfo";
 import {PortConfig} from "../../internal/impl/ComponentInfo";
 import {PortFactory} from "../../internal/assembly/PortAssembler";
 
@@ -23,8 +22,6 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
     function pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
         return state.assembler.findNearestObj(pt, filter);
     }
-
-    let selections: Selections;
 
     const observable = ObservableImpl<CircuitEvent>();
 
@@ -69,8 +66,6 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
         },
 
         get selections(): Selections {
-            if (!selections)
-                selections = SelectionsImpl(circuit, state);
             return selections;
         },
 
@@ -191,6 +186,8 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
         // },
     }) satisfies Circuit;
 
+    const selections: Selections = SelectionsImpl(circuit, state);
+
     return circuit;
 }
 
@@ -254,11 +251,11 @@ export function RootCircuitImpl<
             //     // new DigitalComponentInfo(kind, {}, { "inputs": "input", "outputs": "output" }, [portConfig]),
             //     info.circuit.getObjs().map((o) => o.toSchema()),
             // );
-    
+
             // // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
             // mainState.assembler.addAssembler(kind, (params) =>
             //     new ICComponentAssembler(params, info.display.size, factory));
-    
+
             // return makeIC(id);
         },
         getICs(): T["IC[]"] {

@@ -8,6 +8,8 @@ declare global {
 
     interface Set<T> {
         intersection<U>(other: ReadonlySet<U>): Set<T & U>;
+        difference(other: ReadonlySet<T>): Set<T>;
+        symmetricDifference(other: ReadonlySet<T>): Set<T>;
     }
 }
 
@@ -29,6 +31,27 @@ Set.prototype.intersection = function<T, U>(this: Set<T>, other: Set<U>): Set<T 
         if (largerHas.has(elem as T & U)) {
           result.add(elem as T & U);
         }
+    }
+    return result;
+}
+Set.prototype.difference = function<T>(this: Set<T>, other: Set<T>): Set<T> {
+    const result = new Set<T>();
+    for (const item of this) {
+      if (!other.has(item)) {
+        result.add(item);
+      }
+    }
+    return result;
+}
+Set.prototype.symmetricDifference = function<T>(this: Set<T>, other: Set<T>): Set<T> {
+    const result = new Set<T>();
+    for (const item of this) {
+        if (!other.has(item))
+            result.add(item);
+    }
+    for (const item of other) {
+        if (!this.has(item))
+            result.add(item);
     }
     return result;
 }

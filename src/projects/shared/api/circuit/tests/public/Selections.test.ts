@@ -162,7 +162,7 @@ describe("Selections", () => {
             c2.select();
             circuit.deleteObjs([c1]);
             expect(circuit.selections).toHaveLength(1);
-            
+
             circuit.undo();
             expect(c1.isSelected).toBeTruthy();
             expect(circuit.selections).toHaveLength(2);

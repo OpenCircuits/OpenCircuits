@@ -7,6 +7,9 @@ import {Circuit}                     from "../Circuit";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {ObservableImpl}             from "./Observable";
+import {GUID} from "../../internal";
+
+import "shared/api/circuit/utils/Array";
 
 
 export function SelectionsImpl<T extends CircuitTypes>(
@@ -15,22 +18,22 @@ export function SelectionsImpl<T extends CircuitTypes>(
 ) {
     const observable = ObservableImpl<SelectionsEvent>();
 
-    function getSelectedObjs() {
-        // TODO: Make this more efficient, cache them in SelectionsImpl?
-        return [...internal.getAllObjs()]
-            .filter((o) => (o.props["isSelected"] === true));
-    }
+    let selections = new Set<GUID>();
 
-    internal.subscribe((ev) => {
-        const diff = ev.diff;
+    internal.subscribe((_) => {
+        // Update selections
+        const newSelections = new Set(
+            [...internal.getAllObjs()]
+                .filter((o) => (o.props["isSelected"] === true))
+                .map((o) => o.id));
 
-        const numSelectionsChanged = [...diff.propsChanged.entries()]
-            .reduce((total, [_, props]) => total + (props.has("isSelected") ? 1 : 0), 0);
+        const diff = selections.symmetricDifference(newSelections);
+        selections = newSelections;
 
-        if (numSelectionsChanged > 0) {
+        if (diff.size > 0) {
             observable.emit({
                 type:   "numSelectionsChanged",
-                newAmt: numSelectionsChanged,
+                newAmt: diff.size,
             });
         }
     })
@@ -41,30 +44,30 @@ export function SelectionsImpl<T extends CircuitTypes>(
         },
 
         get length(): number {
-            return getSelectedObjs().length;
+            return selections.size;
         },
         get isEmpty(): boolean {
             return (this.length === 0);
         },
 
         get all(): T["Obj[]"] {
-            return getSelectedObjs().map((o) => circuit.getObj(o.id)!);
+            return [...selections].map((id) => circuit.getObj(id)!);
         },
         get components(): T["Component[]"] {
-            return getSelectedObjs()
-                .filter((o) => (internal.hasComp(o.id)))
-                .map((o) => constructComponent(o.id));
+            return [...selections]
+                .filter((id) => internal.hasComp(id))
+                .map((id) => constructComponent(id));
         },
         get wires(): T["Wire[]"] {
-            return getSelectedObjs()
-                .filter((o) => (internal.hasWire(o.id)))
-                .map((o) => constructWire(o.id));
+            return [...selections]
+                .filter((id) => internal.hasWire(id))
+                .map((id) => constructWire(id));
         },
 
         clear(): void {
             internal.beginTransaction();
-            for (const obj of getSelectedObjs())
-                internal.setPropFor(obj.id, "isSelected", undefined);
+            for (const id of selections)
+                internal.setPropFor(id, "isSelected", undefined);
             internal.commitTransaction();
         },
 
