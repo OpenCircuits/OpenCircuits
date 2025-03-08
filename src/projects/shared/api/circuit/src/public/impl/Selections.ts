@@ -10,6 +10,7 @@ import {ObservableImpl}             from "./Observable";
 import {GUID} from "../../internal";
 
 import "shared/api/circuit/utils/Array";
+import {V, Vector} from "Vector";
 
 
 export function SelectionsImpl<T extends CircuitTypes>(
@@ -41,6 +42,17 @@ export function SelectionsImpl<T extends CircuitTypes>(
     return extend(observable, {
         get bounds(): Rect {
             return Rect.Bounding(this.all.map((o) => o.bounds));
+        },
+
+        get midpoint(): Vector {
+            const pts = [
+                ...this.components.map((c) => c.pos),
+                ...this.wires.map((w) => w.shape.getPos(0.5)),
+            ];
+            return Rect.FromPoints(
+                Vector.Min(...pts),
+                Vector.Max(...pts),
+            ).center;
         },
 
         get length(): number {

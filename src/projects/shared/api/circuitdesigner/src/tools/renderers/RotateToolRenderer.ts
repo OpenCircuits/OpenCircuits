@@ -7,7 +7,7 @@ import {ToolRenderer} from "./ToolRenderer";
 
 export const RotateToolRenderer: ToolRenderer = {
     render: ({ designer: { circuit, curTool }, renderer }) => {
-        const pos = circuit.selections.bounds.center;
+        const pos = circuit.selections.midpoint;
 
         const drawOutline = () => {
             renderer.draw({

@@ -1,4 +1,5 @@
-import {Rect} from "math/Rect";
+import {Vector} from "Vector";
+import {Rect}   from "math/Rect";
 
 import {Component}  from "./Component";
 import {Obj}        from "./Obj";
@@ -14,6 +15,10 @@ export type SelectionsEvent = {
 export interface Selections extends Observable<SelectionsEvent> {
     // Returns the bounding box of all the selections
     readonly bounds: Rect;
+
+    // Returns a midpoint of the set of selections based on the positions
+    // of the selected objects.
+    readonly midpoint: Vector;
 
     readonly length: number;
     readonly isEmpty: boolean;

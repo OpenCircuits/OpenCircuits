@@ -6,14 +6,14 @@ import {V} from "Vector";
 
 import {ROTATION_CIRCLE_RADIUS} from "shared/api/circuitdesigner/tools/RotateTool";
 
-import {CreateTestCircuitDesigner} from "tests/helpers/CreateTestCircuitDesigner";
+import {CreateCircuitDesigner} from "tests/helpers/CreateCircuitDesigner";
 
 
 describe("RotateTool", () => {
     describe("Single Object", () => {
         test("Rotate Component 45° CCW from side", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj = circuit.placeComponentAt("TestComp", V(0, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj = circuit.placeComponentAt("ANDGate", V(0, 0));
 
             input.click(V(0, 0)); // Select object
 
@@ -25,8 +25,8 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Component 45° CW from top", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj = circuit.placeComponentAt("TestComp", V(0, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj = circuit.placeComponentAt("ANDGate", V(0, 0));
 
             input.click(V(0, 0)); // Select object
 
@@ -38,8 +38,8 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Component 45° CW from top while holding Z", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj = circuit.placeComponentAt("TestComp", V(0, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj = circuit.placeComponentAt("ANDGate", V(0, 0));
 
             input.click(V(0, 0)); // Select object
 
@@ -53,11 +53,10 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Object 100 times around", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj = circuit.placeComponentAt("TestComp", V(0, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj = circuit.placeComponentAt("ANDGate", V(0, 0));
 
             input.click(V(0, 0)); // Select object
-
             input.move(V(ROTATION_CIRCLE_RADIUS, 0))
                     .press();
 
@@ -77,9 +76,9 @@ describe("RotateTool", () => {
 
     describe("Multiple Objects", () => {
         test("Rotate Objects 45° CW", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj1 = circuit.placeComponentAt("TestComp", V(-2, 2));
-            const obj2 = circuit.placeComponentAt("TestComp", V(2, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj1 = circuit.placeComponentAt("Switch", V(-2, 2));
+            const obj2 = circuit.placeComponentAt("LED", V(2, 0));
 
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects
@@ -89,9 +88,9 @@ describe("RotateTool", () => {
             const midpoint = circuit.selections.midpoint;
 
             input.moveTo(midpoint)
-                .move(V(-ROTATION_CIRCLE_RADIUS, 0))
+                .move(V(-ROTATION_CIRCLE_RADIUS, 0), 5)
                 .press()
-                .move(V(0, +ROTATION_CIRCLE_RADIUS))
+                .move(V(0, +ROTATION_CIRCLE_RADIUS), 5)
                 .release();
 
             expect(obj1.angle).toBeCloseTo(-Math.PI/4);
@@ -102,9 +101,9 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Objects 100 times around", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj1 = circuit.placeComponentAt("TestComp", V(-2, 2));
-            const obj2 = circuit.placeComponentAt("TestComp", V(2, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj1 = circuit.placeComponentAt("Switch", V(-2, 2));
+            const obj2 = circuit.placeComponentAt("LED", V(2, 0));
 
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects
@@ -116,7 +115,7 @@ describe("RotateTool", () => {
                 .move(V(ROTATION_CIRCLE_RADIUS, 0))
                 .press();
 
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 100; i++) {
                 for (let j = 0; j <= 2*Math.PI; j += 2*Math.PI/10) {
                     const pos = V(ROTATION_CIRCLE_RADIUS*Math.cos(j), ROTATION_CIRCLE_RADIUS*Math.sin(j));
                     input.moveTo(midpoint.add(pos), 1);
@@ -135,9 +134,9 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Objects 45° CW while holding Z", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj1 = circuit.placeComponentAt("TestComp", V(-2, 2));
-            const obj2 = circuit.placeComponentAt("TestComp", V(2, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj1 = circuit.placeComponentAt("Switch", V(-2, 2));
+            const obj2 = circuit.placeComponentAt("LED", V(2, 0));
 
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects
@@ -154,19 +153,18 @@ describe("RotateTool", () => {
                 .release()
                 .releaseKey("z");
 
-            const newMidpoint = circuit.selections.midpoint;
             const finalMidpoints = circuit.selections.components.map((o) => o.pos);
 
             expect(obj1.angle).toBeCloseTo(-Math.PI/4);
             expect(obj2.angle).toBeCloseTo(-Math.PI/4);
-            expect(newMidpoint).toStrictEqual(midpoint);
+            expect(circuit.selections.midpoint).toStrictEqual(midpoint);
             initialMidpoints.forEach((c, i) => expect(initialMidpoints[i]).toStrictEqual(finalMidpoints[i]));
         });
 
         test("Rotate Objects 45° CW then undo", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj1 = circuit.placeComponentAt("TestComp", V(-2, 2));
-            const obj2 = circuit.placeComponentAt("TestComp", V(2, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj1 = circuit.placeComponentAt("Switch", V(-2, 2));
+            const obj2 = circuit.placeComponentAt("LED", V(2, 0));
 
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects
@@ -195,9 +193,9 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Objects 45° CW while pressing Z then undo/redo", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj1 = circuit.placeComponentAt("TestComp", V(-2, 2));
-            const obj2 = circuit.placeComponentAt("TestComp", V(2, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj1 = circuit.placeComponentAt("Switch", V(-2, 2));
+            const obj2 = circuit.placeComponentAt("LED", V(2, 0));
 
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects
@@ -240,9 +238,9 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Objects 180° CW while toggling Z halfway through", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj1 = circuit.placeComponentAt("TestComp", V(-2, 2));
-            const obj2 = circuit.placeComponentAt("TestComp", V(2, 0));
+            const [{ circuit }, input] = CreateCircuitDesigner();
+            const obj1 = circuit.placeComponentAt("Switch", V(-2, 2));
+            const obj2 = circuit.placeComponentAt("LED", V(2, 0));
 
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects

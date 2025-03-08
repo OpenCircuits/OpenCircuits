@@ -28,13 +28,13 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     const itemNavCurItem = useSharedSelector((state) => state.itemNav.curItemID);
 
     const [numSelections, setNumSelections] = useState(0);
-    const [pos, setPos] = useState(camera.toScreenPos(circuit.selections.bounds.center));
+    const [pos, setPos] = useState(camera.toScreenPos(circuit.selections.midpoint));
     const [isDragging, setIsDragging] = useState(false);
     const [clickThrough, setClickThrough] = useState(false);
 
     useEffect(() => circuit.selections.observe(() => {
         setNumSelections(circuit.selections.length);
-        setPos(camera.toScreenPos(circuit.selections.bounds.center));
+        setPos(camera.toScreenPos(circuit.selections.midpoint));
 
         // When the selection changes, reset the clickThrough state and
         // let user click through box so it doesn't block a double click
@@ -50,7 +50,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     }), [circuit, setNumSelections, setClickThrough]);
 
     useEffect(() => camera.observe(() =>
-        setPos(camera.toScreenPos(circuit.selections.bounds.center))
+        setPos(camera.toScreenPos(circuit.selections.midpoint))
     ), [circuit, setPos]);
 
     useEffect(() => camera.observe((ev) => {

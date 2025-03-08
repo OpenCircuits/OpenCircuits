@@ -21,6 +21,8 @@ const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) 
 export class RotateTool extends Observable<ToolEvent> implements Tool {
     private components: Component[];
 
+    private initialMidpoint: Vector;
+    private initialPositions: Vector[];
     private curAngles: number[];
     private curAroundAngle: number;
     private startAngle: number;
@@ -31,6 +33,8 @@ export class RotateTool extends Observable<ToolEvent> implements Tool {
 
         this.components = [];
 
+        this.initialMidpoint = V(0, 0);
+        this.initialPositions = [];
         this.curAngles = [];
         this.curAroundAngle = 0;
         this.startAngle = 0;
@@ -39,7 +43,7 @@ export class RotateTool extends Observable<ToolEvent> implements Tool {
 
     private isOnCircle(pos: Vector, circuit: Circuit, viewport: Viewport): boolean {
         const worldPos = viewport.camera.toWorldPos(pos);
-        const d = worldPos.sub(circuit.selections.bounds.center).len2();
+        const d = worldPos.sub(circuit.selections.midpoint).len2();
 
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
     }
@@ -64,9 +68,11 @@ export class RotateTool extends Observable<ToolEvent> implements Tool {
         this.components = circuit.selections.components;
 
         // Get initial angles
+        this.initialMidpoint = circuit.selections.midpoint;
+        this.initialPositions = this.components.map((c) => c.pos);
         this.curAngles = this.components.map((c) => c.angle);
         this.curAroundAngle = 0;
-        this.startAngle = camera.toWorldPos(ev.input.mousePos).sub(circuit.selections.bounds.center).angle();
+        this.startAngle = camera.toWorldPos(ev.input.mousePos).sub(circuit.selections.midpoint).angle();
         this.prevAngle = this.startAngle;
 
         // Start the transaction
@@ -82,7 +88,7 @@ export class RotateTool extends Observable<ToolEvent> implements Tool {
             // Get whether z is presesed for independent rotation
             const isIndependent = ev.input.keysDown.has("z");
 
-            const midpoint = circuit.selections.bounds.center;
+            const midpoint = this.initialMidpoint;
 
             const dAngle = camera.toWorldPos(ev.input.mousePos).sub(midpoint).angle() - this.prevAngle;
 
@@ -108,9 +114,8 @@ export class RotateTool extends Observable<ToolEvent> implements Tool {
             );
 
             // Calculate new, snapped positions
-            const snappedPositions = this.components
-                .map((c) => V(c.x, c.y))
-                .map((v) => v.rotate(snappedAroundAngle, midpoint));
+            const snappedPositions = this.initialPositions
+                .map((c) => c.rotate(snappedAroundAngle, midpoint));
 
             this.components.forEach((c, i) => {
                 c.pos = snappedPositions[i];
