@@ -56,4 +56,69 @@ describe("IntegratedCircuit", () => {
         expect(icInstance.inputs[1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(1, 1));
         expect(icInstance.outputs[0].targetPos).toApproximatelyEqual(V(+2.7, 0).add(1, 1));
     });
+
+    test("Nested IC", () => {
+        const [circuit, _] = CreateCircuit();
+
+        const [innerIcCircuit] = CreateCircuit();
+        const [outerIcCircuit] = CreateCircuit();
+
+        const i1Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, -5));
+        const i2Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, +5));
+        const o1Inner = innerIcCircuit.placeComponentAt("LED", V(+5,  0));
+        const gInner  = innerIcCircuit.placeComponentAt("ANDGate", V(0, 0));
+
+        i1Inner.outputs[0].connectTo(gInner.inputs[0]);
+        i2Inner.outputs[0].connectTo(gInner.inputs[1]);
+        gInner.outputs[0].connectTo(o1Inner.inputs[0]);
+
+        innerIcCircuit.name = "Inner IC";
+        i1Inner.outputs[0].name = "Inner In 1";
+        i2Inner.outputs[0].name = "Inner In 2";
+        o1Inner.inputs[0].name = "Inner Out";
+
+        const innerIc = circuit.createIC({
+            circuit: innerIcCircuit,
+            display: {
+                size: V(4, 2),
+                pins: [
+                    { id: i1Inner.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
+                    { id: i2Inner.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
+                    { id: o1Inner.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                ],
+            },
+        });
+
+        const i1Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, -5));
+        const i2Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, +5));
+        const o1Outer = outerIcCircuit.placeComponentAt("LED", V(+5,  0));
+        const innerIcInstance = outerIcCircuit.placeComponentAt(innerIc.id, V(1, 1));
+
+        i1Outer.outputs[0].connectTo(innerIcInstance.inputs[0]);
+        i2Outer.outputs[0].connectTo(innerIcInstance.inputs[1]);
+        innerIcInstance.outputs[0].connectTo(o1Outer.inputs[0]);
+
+        innerIcCircuit.name = "Outer IC";
+        i1Outer.outputs[0].name = "Outer In 1";
+        i2Outer.outputs[0].name = "Outer In 2";
+        o1Outer.inputs[0].name = "Outer Out";
+
+        const outerIc = circuit.createIC({
+            circuit: outerIcCircuit,
+            display: {
+                size: V(4, 2),
+                pins: [
+                    { id: i1Outer.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
+                    { id: i2Outer.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
+                    { id: o1Outer.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                ],
+            },
+        });
+
+        const outerIcInstance = circuit.placeComponentAt(outerIc.id, V(1, 1));
+
+        expect(outerIcInstance.inputs).toHaveLength(2);
+        expect(outerIcInstance.outputs).toHaveLength(1);
+        expect(outerIcInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
+    });
 });
