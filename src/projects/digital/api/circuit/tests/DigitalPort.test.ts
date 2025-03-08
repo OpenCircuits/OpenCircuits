@@ -75,31 +75,16 @@ describe("DigitalPort", () => {
 
         a1.ports["outputs"][0].connectTo(a2.ports["inputs"][0]);
 
-        expect(a1.ports["outputs"][0].isAvailable()).toBeTruthy();
-        expect(a1.ports["inputs"][0].isAvailable()).toBeTruthy();
-        expect(a1.ports["inputs"][1].isAvailable()).toBeTruthy();
-        expect(a2.ports["outputs"][0].isAvailable()).toBeTruthy();
-        expect(a2.ports["inputs"][0].isAvailable()).toBeFalsy();
-        expect(a2.ports["inputs"][1].isAvailable()).toBeTruthy();
+        expect(a1.ports["outputs"][0].isAvailable).toBeTruthy();
+        expect(a1.ports["inputs"][0].isAvailable).toBeTruthy();
+        expect(a1.ports["inputs"][1].isAvailable).toBeTruthy();
+
+        expect(a2.ports["outputs"][0].isAvailable).toBeTruthy();
+        expect(a2.ports["inputs"][0].isAvailable).toBeFalsy();
+        expect(a2.ports["inputs"][1].isAvailable).toBeTruthy();
     });
 
-    test("getLegalWires isWireable", () => {
-        const [circuit] = CreateCircuit();
-        const a1 = circuit.placeComponentAt("ANDGate", V(0, 0));
-        const a2 = circuit.placeComponentAt("ANDGate", V(10, 10));
-
-        a1.outputs[0].connectTo(a2.inputs[0]);
-
-        expect(a1.outputs[0].getLegalWires().isWireable).toBeTruthy();
-        expect(a1.inputs[0].getLegalWires().isWireable).toBeTruthy();
-        expect(a1.inputs[1].getLegalWires().isWireable).toBeTruthy();
-
-        expect(a2.outputs[0].getLegalWires().isWireable).toBeTruthy();
-        expect(a2.inputs[0].getLegalWires().isWireable).toBeFalsy();
-        expect(a2.inputs[1].getLegalWires().isWireable).toBeTruthy();
-    });
-
-    test("getLegalWires contains", () => {
+    test("canConnectTo", () => {
         const [circuit] = CreateCircuit();
         const a1 = circuit.placeComponentAt("ANDGate", V(0, 0));
         const a2 = circuit.placeComponentAt("ANDGate", V(10, 10));
@@ -111,25 +96,25 @@ describe("DigitalPort", () => {
 
         a1o1.connectTo(a2i1);
 
-        expect(a1o1.getLegalWires().contains(a1o1)).toBeFalsy();
-        expect(a1o1.getLegalWires().contains(a1i1)).toBeTruthy();
-        expect(a1o1.getLegalWires().contains(a1i2)).toBeTruthy();
-        expect(a1o1.getLegalWires().contains(a2o1)).toBeFalsy();
-        expect(a1o1.getLegalWires().contains(a2i1)).toBeTruthy();
-        expect(a1o1.getLegalWires().contains(a2i2)).toBeTruthy();
+        expect(a1o1.canConnectTo(a1o1)).toBeFalsy();
+        expect(a1o1.canConnectTo(a1i1)).toBeTruthy();
+        expect(a1o1.canConnectTo(a1i2)).toBeTruthy();
+        expect(a1o1.canConnectTo(a2o1)).toBeFalsy();
+        expect(a1o1.canConnectTo(a2i1)).toBeTruthy();
+        expect(a1o1.canConnectTo(a2i2)).toBeTruthy();
 
-        expect(a1i1.getLegalWires().contains(a1o1)).toBeTruthy();
-        expect(a1i1.getLegalWires().contains(a1i1)).toBeFalsy();
-        expect(a1i1.getLegalWires().contains(a1i2)).toBeFalsy();
-        expect(a1i1.getLegalWires().contains(a2o1)).toBeTruthy();
-        expect(a1i1.getLegalWires().contains(a2i1)).toBeFalsy();
-        expect(a1i1.getLegalWires().contains(a2i2)).toBeFalsy();
+        expect(a1i1.canConnectTo(a1o1)).toBeTruthy();
+        expect(a1i1.canConnectTo(a1i1)).toBeFalsy();
+        expect(a1i1.canConnectTo(a1i2)).toBeFalsy();
+        expect(a1i1.canConnectTo(a2o1)).toBeTruthy();
+        expect(a1i1.canConnectTo(a2i1)).toBeFalsy();
+        expect(a1i1.canConnectTo(a2i2)).toBeFalsy();
 
-        expect(a2i1.getLegalWires().contains(a1o1)).toBeFalsy();
-        expect(a2i1.getLegalWires().contains(a1i1)).toBeFalsy();
-        expect(a2i1.getLegalWires().contains(a1i2)).toBeFalsy();
-        expect(a2i1.getLegalWires().contains(a2o1)).toBeFalsy();
-        expect(a2i1.getLegalWires().contains(a2i1)).toBeFalsy();
-        expect(a2i1.getLegalWires().contains(a2i2)).toBeFalsy();
+        expect(a2i1.canConnectTo(a1o1)).toBeFalsy();
+        expect(a2i1.canConnectTo(a1i1)).toBeFalsy();
+        expect(a2i1.canConnectTo(a1i2)).toBeFalsy();
+        expect(a2i1.canConnectTo(a2o1)).toBeFalsy();
+        expect(a2i1.canConnectTo(a2i1)).toBeFalsy();
+        expect(a2i1.canConnectTo(a2i2)).toBeFalsy();
     });
 });

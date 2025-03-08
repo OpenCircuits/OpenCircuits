@@ -122,6 +122,9 @@ export class CircuitInternal extends Observable<InternalEvent> {
     public getWiresForPort(id: GUID) {
         return this.doc.getCircuitInfo(this.id).unwrap().getWiresForPort(id);
     }
+    public getPortsForPort(id: GUID) {
+        return this.doc.getCircuitInfo(this.id).unwrap().getPortsForPort(id);
+    }
 
     public getComponentInfo(kind: string) {
         return this.doc.getCircuitInfo(this.id).unwrap().getComponentInfo(kind);

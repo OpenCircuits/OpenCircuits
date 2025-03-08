@@ -37,7 +37,14 @@ export class TestComponentInfo extends BaseComponentInfo {
             props: {},
         };
     }
-    public override checkPortConnectivity(_wires: Map<Schema.Port, Schema.Port[]>): Result {
+    public override isPortAvailable(_port: Schema.Port, _curConnections: Schema.Port[]): boolean {
+        return true;
+    }
+    public override checkPortConnectivity(
+        _port: Schema.Port,
+        _newConnection: Schema.Port,
+        _curConnections: Schema.Port[],
+    ): Result {
         return OkVoid();
     }
 }
@@ -99,15 +106,7 @@ export function TestWireImpl(circuit: Circuit, state: CircuitState<CircuitTypes>
 }
 
 export function TestPortImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
-    const base = PortImpl(circuit, state, id, (_p1, _p2) => "TestWire");
-    return extend(base, {
-        getLegalWires(): Port.LegalWiresQuery {
-            return {
-                isWireable: true,
-                contains:   (_: Port) => (true),
-            }
-        },
-    } as const) satisfies Port;
+    return PortImpl(circuit, state, id, (_p1, _p2) => "TestWire");
 }
 
 export interface TestRootCircuitHelpers {

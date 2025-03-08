@@ -56,12 +56,12 @@ export class WiringTool extends Observable<ToolEvent> implements Tool {
             .filter((obj) => (obj.baseKind === "Port")) as Port[];
         const validPorts = allPorts
             // Make sure port is wireable
-            .filter((port) => port.getLegalWires().isWireable)
+            .filter((port) => port.isAvailable)
             // Find only ports that are within the selection radius
             .filter((port) => CircleContains(port.targetPos, WIRING_PORT_SELECT_RADIUS, worldPos))
             // If `otherPort` is specified, then make sure we also only look for ports that
             //  can connect to `otherPort`
-            .filter((port) => (!otherPort ? true : port.getLegalWires().contains(otherPort)));
+            .filter((port) => (!otherPort ? true : port.canConnectTo(otherPort)));
 
         if (validPorts.length === 0)
             return undefined;
@@ -72,14 +72,15 @@ export class WiringTool extends Observable<ToolEvent> implements Tool {
             .reduce(MinDist).port;
     }
 
-    public shouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): boolean {
+    public shouldActivate(ev: InputAdapterEvent, { circuit, viewport, curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user drags or clicks on a port
         return (
             (
-                (ev.type === "mousedown" && ev.button === LEFT_MOUSE_BUTTON && ev.input.touchCount === 1) ||
+                (ev.type === "mousedrag" && ev.button === LEFT_MOUSE_BUTTON && ev.input.touchCount === 1) ||
                 (ev.type === "click")
             )
-            && (this.findPort(ev.input.mousePos, circuit, viewport) !== undefined)
+            && (curPressedObj?.baseKind === "Port" ||
+                this.findPort(ev.input.mousePos, circuit, viewport) !== undefined)
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
@@ -92,8 +93,10 @@ export class WiringTool extends Observable<ToolEvent> implements Tool {
         );
     }
 
-    public onActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
-        this.curPort = this.findPort(ev.input.mousePos, circuit, viewport);
+    public onActivate(ev: InputAdapterEvent, { circuit, viewport, curPressedObj }: CircuitDesigner): void {
+        this.curPort = curPressedObj?.baseKind === "Port"
+            ? curPressedObj
+            : this.findPort(ev.input.mousePos, circuit, viewport);
         this.curTarget = ev.input.mousePos;
 
         this.stateType = (ev.type === "click" ? "clicked" : "dragged");
@@ -101,7 +104,7 @@ export class WiringTool extends Observable<ToolEvent> implements Tool {
 
     public onDeactivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
         const port2 = this.findPort(ev.input.mousePos, circuit, viewport, this.curPort);
-        if (port2) // Connect the ports if we found a second port
+        if (port2 && this.curPort!.canConnectTo(port2)) // Connect the ports if we found a second port
             this.curPort!.connectTo(port2);
 
         this.curPort = undefined;

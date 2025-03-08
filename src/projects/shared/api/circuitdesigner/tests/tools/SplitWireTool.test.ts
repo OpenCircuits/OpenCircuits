@@ -27,6 +27,8 @@ describe("SplitWireTool", () => {
         input.drag(GetPort(obj1).targetPos,
                    GetPort(obj2).targetPos);
 
+        expect(obj1).toBeConnectedTo(obj2);
+
         // Split into Snap position
         const wire = GetPort(obj1).connections[0];
         input.press(wire.shape.getPos(0.5))
@@ -80,6 +82,8 @@ describe("SplitWireTool", () => {
         // Connect Comp -> Comp
         input.drag(GetPort(obj1).targetPos,
                    GetPort(obj2).targetPos);
+
+        expect(obj1).toBeConnectedTo(obj2);
 
         // Split twice
         input.press(GetPort(obj1).connections[0].shape.getPos(0.5))

@@ -7,16 +7,6 @@ import {ReadonlyWire, Wire}            from "./Wire";
 import {Schema} from "../schema";
 
 
-export namespace Port {
-    export interface LegalWiresQuery {
-        // Returns true if the given port has available space for more wires
-        readonly isWireable: boolean;
-
-        // Returns true if the given port can wire to the given `port`.
-        contains(port: Port): boolean;
-    }
-}
-
 export interface ReadonlyPort extends ReadonlyBaseObject {
     readonly baseKind: "Port";
 
@@ -36,7 +26,10 @@ export interface ReadonlyPort extends ReadonlyBaseObject {
     // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
     readonly path: Array<ReadonlyNode | ReadonlyWire>;
 
-    getLegalWires(): Port.LegalWiresQuery;
+    // "Availability" refers to the ability to have more connections added to this port.
+    readonly isAvailable: boolean;
+
+    canConnectTo(port: Port): boolean;
 
     toSchema(): Schema.Port;
 }
@@ -61,7 +54,10 @@ export interface Port extends P {
     // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
     readonly path: Array<Node | Wire>;
 
-    getLegalWires(): Port.LegalWiresQuery;
+    // "Availability" refers to the ability to have more connections added to this port.
+    readonly isAvailable: boolean;
+
+    canConnectTo(port: Port): boolean;
     connectTo(other: Port): Wire | undefined;
 
     toSchema(): Schema.Port;

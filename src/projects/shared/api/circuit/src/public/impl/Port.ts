@@ -63,6 +63,35 @@ export function PortImpl<T extends CircuitTypes>(
             throw new Error("Port.get path: Unimplemented!");
         },
 
+        get isAvailable(): boolean {
+            const p = getPort();
+            const curConnections = [...internal.getPortsForPort(base.id).unwrap()]
+                .map((id) => internal.getPortByID(id).unwrap());
+            const parent = internal.getCompByID(p.parent).unwrap();
+
+            return internal.getComponentInfo(parent.kind).unwrap()
+                .isPortAvailable(p, curConnections);
+        },
+        canConnectTo(other: T["Port"]): boolean {
+            const p1 = getPort();
+            const p1Info = internal.getCompByID(p1.parent)
+                .andThen((p) => internal.getComponentInfo(p.kind))
+                .unwrap();
+            const p1Connections = internal.getPortsForPort(p1.id)
+                .map((ids) => [...ids].map((id) => internal.getPortByID(id).unwrap()))
+                .unwrap();
+
+            const p2 = internal.getPortByID(other.id).unwrap();
+            const p2Info = internal.getCompByID(p2.parent)
+                .andThen((p) => internal.getComponentInfo(p.kind)).unwrap();
+            const p2Connections = internal.getPortsForPort(p2.id)
+                .map((ids) => [...ids].map((id) => internal.getPortByID(id).unwrap()))
+                .unwrap();
+
+            return p1Info.checkPortConnectivity(p1, p2, p1Connections)
+                .and(p2Info.checkPortConnectivity(p2, p1, p2Connections)).ok;
+        },
+
         connectTo(other: T["Port"]): T["Wire"] | undefined {
             internal.beginTransaction();
 
@@ -76,5 +105,5 @@ export function PortImpl<T extends CircuitTypes>(
         toSchema(): Schema.Port {
             return ({ ...getPort() });
         },
-    } as const) satisfies Omit<Port, "getLegalWires" | "connectTo">;
+    } as const) satisfies Port;
 }

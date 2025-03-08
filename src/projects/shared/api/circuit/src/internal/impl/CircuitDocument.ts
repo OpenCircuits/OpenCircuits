@@ -41,6 +41,7 @@ export interface ReadonlyCircuitStorage {
     getPortsForComponent(id: GUID): Result<ReadonlySet<GUID>>;
     getPortsForWire(id: GUID): Result<Readonly<[GUID, GUID]>>;
     getWiresForPort(id: GUID): Result<ReadonlySet<GUID>>;
+    getPortsForPort(id: GUID): Result<ReadonlySet<GUID>>;
 
     getPortConfig(id: GUID): Result<PortConfig>;
 }
@@ -147,8 +148,12 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
 
         const curPorts = [...this.getPortPortMapChecked(p1.id)].map((id) => this.getPortByID(id).unwrap());
         return this.getComponentAndInfoByID(p1.parent)
-            .andThen(([_, info]) => info.checkPortConnectivity(p1, p2, curPorts))
-                .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`));
+            .andThen(([_, info]) => {
+                if (!info.isPortAvailable(p1, curPorts))
+                    return ErrE(`Port ${p1.id} is not available for connection!`);
+                return info.checkPortConnectivity(p1, p2, curPorts);
+            })
+            .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`));
     }
 
     public getPortPortMapChecked(id: GUID): Set<GUID> {
@@ -179,10 +184,10 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public getObjectInfo(kind: string): Result<ObjInfo> {
-        return WrapResOrE(this.objInfo.get(kind), `Unknown obj type ${kind}!`);
+        return WrapResOrE(this.objInfo.get(kind), `Unknown obj kind ${kind}!`);
     }
     public getComponentInfo(kind: string): Result<ComponentInfo> {
-        return WrapResOrE(this.objInfo.getComponent(kind), `Unknown component type ${kind}!`);
+        return WrapResOrE(this.objInfo.getComponent(kind), `Unknown component kind ${kind}!`);
     }
 
     public getObjectAndInfoByID(id: GUID): Result<[Readonly<Schema.Obj>, ObjInfo]> {
@@ -284,6 +289,11 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     public getWiresForPort(id: GUID): Result<ReadonlySet<GUID>> {
         return WrapResOrE(this.portWireMap.get(id),
             `CircuitInternal: Attempted to get wires for port ${id}, but failed to find an entry!`);
+    }
+
+    public getPortsForPort(id: GUID): Result<ReadonlySet<GUID>> {
+        return WrapResOrE(this.portPortMap.get(id),
+            `CircuitInternal: Attempted to get ports for port ${id}, but failed to find an entry!`);
     }
 
     public getPortConfig(id: GUID): Result<PortConfig> {

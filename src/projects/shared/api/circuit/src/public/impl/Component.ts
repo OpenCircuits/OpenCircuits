@@ -100,7 +100,7 @@ export function ComponentImpl<T extends CircuitTypes>(
 
             for (const portId of ports[group]) {
                 const port = constructPort(portId);
-                if (port.getLegalWires().isWireable)
+                if (port.isAvailable)
                     return port;
             }
             return undefined;

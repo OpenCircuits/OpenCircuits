@@ -45,15 +45,23 @@ export class DigitalComponentInfo extends BaseComponentInfo {
         };
     }
 
-    public override checkPortConnectivity(port: Schema.Port, newPort: Schema.Port, curPorts: Schema.Port[]): Result {
+    public override isPortAvailable(port: Schema.Port, curPorts: Schema.Port[]): boolean {
+        return (this.isOutputPort(port) || curPorts.length === 0);
+    }
+
+    public override checkPortConnectivity(
+        port: Schema.Port,
+        newConnection: Schema.Port,
+        curConnections: Schema.Port[],
+    ): Result {
         // Prevent multiple ports connecting to a single input port
-        if (this.isInputPort(port) && curPorts.length > 0)
+        if (!this.isPortAvailable(port, curConnections))
             return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${port.id}`);
         // Prevent input->input port connections
-        if (this.isInputPort(port) && this.isInputPort(newPort))
+        if (this.isInputPort(port) && this.isInputPort(newConnection))
             return ErrE(`DigitalComponentInfo: Illegal input-to-input connection on port ${port.id}`);
         // Prevent output->output port connections
-        if (this.isOutputPort(port) && this.isOutputPort(newPort))
+        if (this.isOutputPort(port) && this.isOutputPort(newConnection))
             return ErrE(`DigitalComponentInfo: Illegal output-to-output connection on port ${port.id}`);
         return OkVoid();
     }

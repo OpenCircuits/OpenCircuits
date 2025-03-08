@@ -11,11 +11,10 @@ import {SVGs} from "./rendering/svgs";
 
 export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalCircuit> {}
 
-export function CreateDesigner(toolConfig: ToolConfig, renderers: ToolRenderer[]) {
+export function CreateDesigner(toolConfig: ToolConfig, renderers: ToolRenderer[], dragTime?: number) {
     const [circuit, state] = CreateCircuit();
 
-    // create view and attach toolConfig.renderers as post-process rendering
-
+    // create view and attach renderers as post-process rendering
     const designerState: CircuitDesignerState<DigitalTypes> = {
         circuitState: state,
 
@@ -41,7 +40,7 @@ export function CreateDesigner(toolConfig: ToolConfig, renderers: ToolRenderer[]
         },
     };
 
-    const designer = CircuitDesignerImpl(circuit, designerState, SVGs, {});
+    const designer = CircuitDesignerImpl(circuit, designerState, SVGs, { dragTime });
 
     designer.viewport.observe("onrender", (ev) => {
         renderers.forEach((toolRenderer) => toolRenderer.render({

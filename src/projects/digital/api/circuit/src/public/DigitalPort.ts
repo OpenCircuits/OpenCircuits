@@ -20,7 +20,7 @@ export interface ReadonlyDigitalPort extends APIToDigital<ReadonlyPort> {
      *
      * @returns True or false.
      */
-    isAvailable(): boolean;
+    readonly isAvailable: boolean;
 }
 type P = APIToDigital<Port> & ReadonlyDigitalPort;
 export interface DigitalPort extends P {
@@ -38,5 +38,5 @@ export interface DigitalPort extends P {
      *
      * @returns True or false.
      */
-    isAvailable(): boolean;
+    readonly isAvailable: boolean;
 }

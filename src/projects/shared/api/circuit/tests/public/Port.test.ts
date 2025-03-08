@@ -332,10 +332,10 @@ describe("Port", () => {
             const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
             const [c1] = PlaceAt(V(0, 0)), port = GetPort(c1);
 
-            expect(port.getLegalWires().contains(port)).toBeTruthy();
+            expect(port.canConnectTo(port)).toBeTruthy();
             port.connectTo(port);
-            expect(port.getLegalWires().isWireable).toBeTruthy();
-            expect(port.getLegalWires().contains(port)).toBeTruthy();
+            expect(port.isAvailable).toBeTruthy();
+            expect(port.canConnectTo(port)).toBeTruthy();
         });
     });
 });

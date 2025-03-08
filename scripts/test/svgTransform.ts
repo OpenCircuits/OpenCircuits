@@ -4,7 +4,7 @@ import path from "path";
 export default {
     process(sourceText: string, sourcePath: string, options: Object) {
         return {
-            code: `module.exports = "${Buffer.from(sourceText).toString("base64")}";`,
+            code: `module.exports = \`${Buffer.from(sourceText).toString("base64")}\`;`,
         };
     },
     getCacheKey(sourceText: string, sourcePath: string, options: Object) {

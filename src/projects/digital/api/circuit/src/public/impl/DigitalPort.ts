@@ -1,6 +1,5 @@
 import {GUID} from "shared/api/circuit/internal";
 
-import {Port}     from "shared/api/circuit/public";
 import {PortImpl} from "shared/api/circuit/public/impl/Port";
 
 import {extend} from "shared/api/circuit/utils/Functions";
@@ -14,8 +13,6 @@ import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 
 
 export function DigitalPortImpl(circuit: DigitalCircuit, state: DigitalCircuitState, id: GUID) {
-    const { internal } = state;
-
     const base = PortImpl<DigitalTypes>(circuit, state, id, (_p1, _p2) => "DigitalWire");
 
     return extend(base, {
@@ -28,29 +25,6 @@ export function DigitalPortImpl(circuit: DigitalCircuit, state: DigitalCircuitSt
 
         get signal(): Signal {
             return state.sim.getSignal(base.id);
-        },
-
-        getLegalWires(): Port.LegalWiresQuery {
-            return {
-                isWireable: this.isAvailable(),
-
-                contains: (port: DigitalPort) => (
-                    this.isAvailable() &&
-                    // Legal connections are only input -> output or output -> input ports
-                    ((this.isInputPort && port.isOutputPort) ||
-                     (this.isOutputPort && port.isInputPort))
-                ),
-            }
-        },
-
-        isAvailable(): boolean {
-            // Output ports are always available for more connections
-            if (this.isOutputPort)
-                return true;
-
-            // Input ports are only available if there isn't a connection already
-            const wires = internal.getWiresForPort(base.id).unwrap();
-            return (wires.size === 0);
         },
     } as const) satisfies DigitalPort;
 }
