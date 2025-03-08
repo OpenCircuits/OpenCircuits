@@ -20,12 +20,12 @@ export function FitToScreen(circuit: Circuit, camera: Camera, margin: Margin): v
 }
 
 export const FitToScreenHandler: ToolHandler = {
-    onEvent: (ev, { circuit, viewport, margin }) => {
+    onEvent: (ev, { circuit, viewport }) => {
         // Activate when releasing F key
         if (!(ev.type === "keyup" && ev.key === "f"))
             return ToolHandlerResponse.PASS;
 
-        FitToScreen(circuit, viewport.camera, margin);
+        FitToScreen(circuit, viewport.camera, viewport.margin);
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;

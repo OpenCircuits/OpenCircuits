@@ -3,27 +3,36 @@ import {CreateState} from "shared/site/utils/CreateState";
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        debugCullboxes:       false,
+        debugPrimBounds: false,
+
+        debugComponentBounds: false,
+        debugPortBounds:      false,
+        debugWireBounds:      false,
+
         debugPressableBounds: false,
-        debugSelectionBounds: false,
-        debugNoFill:          false,
     },
     {
-        ToggleDebugCullboxes:       () => ({ type: "TOGGLE_DEBUG_CULLBOXES"        }) as const,
+        ToggleDebugPrimBounds: () => ({ type: "TOGGLE_DEBUG_PRIM_BOUNDS" }) as const,
+
+        ToggleDebugComponentBounds: () => ({ type: "TOGGLE_DEBUG_COMPONENT_BOUNDS" }) as const,
+        ToggleDebugPortBounds:      () => ({ type: "TOGGLE_DEBUG_PORT_BOUNDS"      }) as const,
+        ToggleDebugWireBounds:      () => ({ type: "TOGGLE_DEBUG_WIRE_BOUNDS"      }) as const,
+
         ToggleDebugPressableBounds: () => ({ type: "TOGGLE_DEBUG_PRESSABLE_BOUNDS" }) as const,
-        ToggleDebugSelectionBounds: () => ({ type: "TOGGLE_DEBUG_SELECTION_BOUNDS" }) as const,
-        ToggleDebugNoFill:          () => ({ type: "TOGGLE_DEBUG_NO_FILL"          }) as const,
     },
     {
-        "TOGGLE_DEBUG_CULLBOXES":        (state) => ({ ...state, debugCullboxes: !state.debugCullboxes }),
+        "TOGGLE_DEBUG_PRIM_BOUNDS": (state) => ({ ...state, debugPrimBounds: !state.debugPrimBounds }),
+
+        "TOGGLE_DEBUG_COMPONENT_BOUNDS": (state) => ({ ...state, debugComponentBounds: !state.debugComponentBounds }),
+        "TOGGLE_DEBUG_PORT_BOUNDS":      (state) => ({ ...state, debugPortBounds: !state.debugPortBounds }),
+        "TOGGLE_DEBUG_WIRE_BOUNDS":      (state) => ({ ...state, debugWireBounds: !state.debugWireBounds }),
+
         "TOGGLE_DEBUG_PRESSABLE_BOUNDS": (state) => ({ ...state, debugPressableBounds: !state.debugPressableBounds }),
-        "TOGGLE_DEBUG_SELECTION_BOUNDS": (state) => ({ ...state, debugSelectionBounds: !state.debugSelectionBounds }),
-        "TOGGLE_DEBUG_NO_FILL":          (state) => ({ ...state, debugNoFill: !state.debugNoFill }),
     }
 );
 
 
 export type DebugInfoState = typeof initialState;
-export const { ToggleDebugCullboxes, ToggleDebugPressableBounds,
-              ToggleDebugSelectionBounds, ToggleDebugNoFill } = actions;
+export const { ToggleDebugPrimBounds, ToggleDebugComponentBounds,
+               ToggleDebugPortBounds, ToggleDebugWireBounds, ToggleDebugPressableBounds } = actions;
 export const debugInfoReducer = reducer;

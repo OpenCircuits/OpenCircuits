@@ -100,7 +100,7 @@ export const ContextMenu = ({ designer }: Props) => {
 
     /* Context Menu "Focus" */
     const onFocus = async () => {
-        FitToScreen(circuit, designer.viewport.camera, designer.margin);
+        FitToScreen(circuit, designer.viewport.camera, designer.viewport.margin);
     }
 
     /* Context Menu "Clean Up" */

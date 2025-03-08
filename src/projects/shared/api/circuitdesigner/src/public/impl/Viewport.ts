@@ -1,6 +1,7 @@
 import {SVGDrawing} from "svg2canvas";
 
 import {V, Vector} from "Vector";
+import {Margin}    from "math/Rect";
 
 import {GUID} from "shared/api/circuit/public";
 
@@ -12,10 +13,6 @@ import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderO
 import {CircuitTypes}        from "shared/api/circuit/public/impl/CircuitState";
 import {MultiObservableImpl} from "shared/api/circuit/public/impl/Observable";
 
-import {DefaultTool}  from "shared/api/circuitdesigner/tools/DefaultTool";
-import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
-import {Tool}         from "shared/api/circuitdesigner/tools/Tool";
-
 import {InputAdapter} from "shared/api/circuitdesigner/input/InputAdapter";
 
 import {RenderHelper}             from "./rendering/RenderHelper";
@@ -24,12 +21,17 @@ import {RenderScheduler}          from "./rendering/RenderScheduler";
 import {PrimRenderer}             from "./rendering/renderers/PrimRenderer";
 import {RenderGrid}               from "./rendering/renderers/GridRenderer";
 
+import {Cursor} from "../../input/Cursor";
+
 import {Camera}                                  from "../Camera";
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
 import {Prim, Viewport, ViewportEvents}                from "../Viewport";
 
 import {CameraImpl}                            from "./Camera";
 import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
+import {DebugOptions} from "./DebugOptions";
+import {Bounds} from "shared/api/circuit/internal/assembly/PrimBounds";
+import {DebugRenderBounds} from "./rendering/renderers/DebugRenderer";
 
 
 export function ViewportImpl<T extends CircuitTypes>(
@@ -107,6 +109,36 @@ export function ViewportImpl<T extends CircuitTypes>(
             });
 
             // Debug rendering
+            if (state.debugOptions.debugPrimBounds) {
+                const wireBounds = [...assembly.wirePrims.values()].flat().map(Bounds);
+                const compBounds = [...assembly.componentPrims.values()].flat().map(Bounds);
+                const portBounds =
+                    [...([...assembly.portPrims.values()].map((m) => [...m.values()]))].flat(2).map(Bounds);
+
+                wireBounds.forEach((b) =>
+                    DebugRenderBounds(primRenderer, renderer.ctx, b, "#ff5555"));
+                portBounds.forEach((b) =>
+                    DebugRenderBounds(primRenderer, renderer.ctx, b, "#00ff99"));
+                compBounds.forEach((b) =>
+                    DebugRenderBounds(primRenderer, renderer.ctx, b, "#00ff00"));
+            }
+
+            if (state.debugOptions.debugComponentBounds) {
+                designer.circuit.getComponents().forEach((comp) =>
+                    DebugRenderBounds(primRenderer, renderer.ctx, comp.bounds, "#00ff00"));
+            }
+
+            if (state.debugOptions.debugWireBounds) {
+                designer.circuit.getWires().forEach((wire) =>
+                    DebugRenderBounds(primRenderer, renderer.ctx, wire.bounds, "#00ff00"));
+            }
+
+            if (state.debugOptions.debugPortBounds) {
+                designer.circuit.getComponents().forEach((comp) => {
+                    comp.allPorts.forEach((port) =>
+                        DebugRenderBounds(primRenderer, renderer.ctx, port.bounds, "#00ff00"));
+                });
+            }
 
             // Callback for post-rendering
             view.emit("onrender", {
@@ -139,6 +171,28 @@ export function ViewportImpl<T extends CircuitTypes>(
             if (!curState)
                 return V(0, 0);
             return curState.renderer.size;
+        },
+
+        set cursor(cursor: Cursor | undefined) {
+            state.cursor = cursor;
+        },
+        get cursor(): Cursor | undefined {
+            return state.cursor;
+        },
+
+        set margin(m: Margin) {
+            state.margin = { ...state.margin, ...m };
+        },
+        get margin(): Margin {
+            return state.margin;
+        },
+
+        set debugOptions(val: DebugOptions) {
+            state.debugOptions = { ...state.debugOptions, ...val };
+            scheduler.requestRender();
+        },
+        get debugOptions(): DebugOptions {
+            return state.debugOptions;
         },
 
         resize(w: number, h: number): void {

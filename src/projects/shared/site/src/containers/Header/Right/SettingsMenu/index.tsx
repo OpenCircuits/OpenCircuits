@@ -3,8 +3,8 @@ import {useEffect} from "react";
 import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {ToggleDebugCullboxes, ToggleDebugNoFill,
-        ToggleDebugPressableBounds, ToggleDebugSelectionBounds} from "shared/site/state/DebugInfo";
+import {ToggleDebugPrimBounds, ToggleDebugComponentBounds, ToggleDebugWireBounds,
+        ToggleDebugPortBounds, ToggleDebugPressableBounds} from "shared/site/state/DebugInfo";
 import {CloseHeaderMenus, OpenHeaderMenu} from "shared/site/state/Header";
 
 import {SwitchToggle} from "shared/site/components/SwitchToggle";
@@ -27,9 +27,9 @@ export const SettingsMenu = () => {
     //  maybe even put all the react-redux stuff into the CircuitDesigner
     //  especially the gross 'useAPIMethods' thing
     useEffect(() => {
-        designer.debugOptions = debugInfo;
-    }, [designer, debugInfo, debugInfo.debugCullboxes, debugInfo.debugPressableBounds,
-        debugInfo.debugSelectionBounds, debugInfo.debugNoFill]); // Updates when any of the debugInfo values change
+        designer.viewport.debugOptions = debugInfo;
+    }, [designer, debugInfo, debugInfo.debugPrimBounds, debugInfo.debugComponentBounds, debugInfo.debugWireBounds,
+        debugInfo.debugPortBounds, debugInfo.debugPressableBounds]); // Updates when any of the debugInfo values change
 
     return (
         <Dropdown open={(curMenu === "settings")}
@@ -42,24 +42,29 @@ export const SettingsMenu = () => {
                     <h1>Debug</h1>
                     <hr />
                     <SwitchToggle
-                        isOn={debugInfo.debugCullboxes}
-                        onChange={() => dispatch(ToggleDebugCullboxes())}>
-                        Debug Cullboxes : {debugInfo.debugCullboxes ? "On" : "Off"}
+                        isOn={debugInfo.debugPrimBounds}
+                        onChange={() => dispatch(ToggleDebugPrimBounds())}>
+                        Debug Prims : {debugInfo.debugPrimBounds ? "On" : "Off"}
+                    </SwitchToggle>
+                    <SwitchToggle
+                        isOn={debugInfo.debugComponentBounds}
+                        onChange={() => dispatch(ToggleDebugComponentBounds())}>
+                        Debug Component Bounds : {debugInfo.debugComponentBounds ? "On" : "Off"}
+                    </SwitchToggle>
+                    <SwitchToggle
+                        isOn={debugInfo.debugWireBounds}
+                        onChange={() => dispatch(ToggleDebugWireBounds())}>
+                        Debug Wire Bounds : {debugInfo.debugWireBounds ? "On" : "Off"}
+                    </SwitchToggle>
+                    <SwitchToggle
+                        isOn={debugInfo.debugPortBounds}
+                        onChange={() => dispatch(ToggleDebugPortBounds())}>
+                        Debug Port Bounds : {debugInfo.debugPortBounds ? "On" : "Off"}
                     </SwitchToggle>
                     <SwitchToggle
                         isOn={debugInfo.debugPressableBounds}
                         onChange={() => dispatch(ToggleDebugPressableBounds())}>
                         Debug Pressable Bounds : {debugInfo.debugPressableBounds ? "On" : "Off"}
-                    </SwitchToggle>
-                    <SwitchToggle
-                        isOn={debugInfo.debugSelectionBounds}
-                        onChange={() => dispatch(ToggleDebugSelectionBounds())}>
-                        Debug Selection Bounds : {debugInfo.debugSelectionBounds ? "On" : "Off"}
-                    </SwitchToggle>
-                    <SwitchToggle
-                        isOn={debugInfo.debugNoFill}
-                        onChange={() => dispatch(ToggleDebugNoFill())}>
-                        Debug No Fill : {debugInfo.debugNoFill ? "On" : "Off"}
                     </SwitchToggle>
                 </>)}
         </Dropdown>

@@ -155,7 +155,7 @@ export const ItemNav = <D,_>({ designer, config, additionalData, onDelete, getIm
 
     // Updates camera margin when itemnav is open depending on size (Issue #656)
     useEffect(() => {
-        designer.margin = (
+        designer.viewport.margin = (
             side === "left"
             ? { left: (isOpen ? ITEMNAV_WIDTH : 0), bottom: 0 }
             : { bottom: (isOpen ? ITEMNAV_HEIGHT : 0), left: 0 }

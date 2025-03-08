@@ -1,6 +1,9 @@
 export interface DebugOptions {
-    debugCullboxes: boolean;
+    debugPrimBounds: boolean;
+
+    debugComponentBounds: boolean;
+    debugPortBounds: boolean;
+    debugWireBounds: boolean;
+
     debugPressableBounds: boolean;
-    debugSelectionBounds: boolean;
-    debugNoFill: boolean;
 }

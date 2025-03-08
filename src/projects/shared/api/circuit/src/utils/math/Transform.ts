@@ -221,7 +221,10 @@ export class Transform {
         return [...this.localCorners]; // Shallow copy array
     }
     public asRect(): Rect {
-        return new Rect(this.getPos(), this.getSize());
+        return Rect.FromPoints(
+            Vector.Min(...this.getCorners()),
+            Vector.Max(...this.getCorners()),
+        );
     }
 
     public copy(): Transform {

@@ -222,7 +222,7 @@ export const ImageExporterPreview = ({ designer: mainDesigner, canvas, width, he
         <img src="img/icons/fitscreen.svg"
              className="image-exporter-preview__button"
              alt="Fit to screen"
-             onClick={() => FitToScreen(designer.circuit, designer.viewport.camera, designer.margin)} />
+             onClick={() => FitToScreen(designer.circuit, designer.viewport.camera, designer.viewport.margin)} />
         <canvas ref={canvas}
                 width={`${width}px`}
                 height={`${height}px`}
