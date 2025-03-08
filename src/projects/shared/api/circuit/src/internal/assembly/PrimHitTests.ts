@@ -25,6 +25,8 @@ export function HitTest(prim: Prim, pt: Vector): boolean {
         return RectContains(prim.transform, pt);
     case "SVG":
         return RectContains(prim.transform, pt);
+    case "Text":
+        return false;
     case "Group":
         return prim.prims.some((p) => HitTest(p as Prim, pt));
     }

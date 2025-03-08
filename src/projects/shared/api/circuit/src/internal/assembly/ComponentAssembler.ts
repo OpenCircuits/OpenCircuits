@@ -7,8 +7,8 @@ import {Schema} from "shared/api/circuit/schema";
 import {Assembler, AssemblerParams,
         AssemblyReason} from "./Assembler";
 import {PortAssembler, PortFactory} from "./PortAssembler";
-import {BaseShapePrimWithoutStyle, GroupPrim, Prim, SVGPrim} from "./Prim";
-import {Style} from "./Style";
+import {BaseShapePrimWithoutStyle, GroupPrim, Prim, SVGPrim, TextPrim} from "./Prim";
+import {FontStyle, Style} from "./Style";
 import {parseColor} from "svg2canvas";
 
 import "shared/api/circuit/utils/Array";
@@ -32,7 +32,16 @@ export interface ComponentSVGPrimAssembly {
     tintChangesWhenSelected?: boolean;
     getTint:  (comp: Schema.Component) => string | undefined;
 }
-export type ComponentPrimAssembly = ComponentBaseShapePrimAssembly | ComponentSVGPrimAssembly;
+export interface ComponentTextPrimAssembly {
+    kind: "Text";
+
+    dependencies: Set<AssemblyReason>;
+    assemble: (comp: Schema.Component) => Omit<TextPrim, "fontStyle">;
+
+    styleChangesWhenSelected?: boolean;
+    getFontStyle: (comp: Schema.Component) => FontStyle;
+}
+export type ComponentPrimAssembly = ComponentBaseShapePrimAssembly | ComponentSVGPrimAssembly | ComponentTextPrimAssembly;
 
 export class ComponentAssembler extends Assembler<Schema.Component> {
     public readonly size: Vector;
@@ -76,6 +85,11 @@ export class ComponentAssembler extends Assembler<Schema.Component> {
             return {
                 ...assembly.assemble(comp),
                 tint: (tint ? parseColor(tint) : undefined),
+            } as const;
+        } else if (assembly.kind === "Text") {
+            return {
+                ...assembly.assemble(comp),
+                fontStyle: assembly.getFontStyle(comp),
             } as const;
         }
         throw new Error(`Invalid prim assembly kind: ${assembly}`!);
