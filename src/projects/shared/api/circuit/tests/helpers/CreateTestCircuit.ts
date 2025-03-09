@@ -2,7 +2,7 @@ import "./Extensions";
 
 import {V, Vector} from "Vector";
 
-import {extend, MapObj}         from "shared/api/circuit/utils/Functions";
+import {extend}         from "shared/api/circuit/utils/Functions";
 import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
@@ -27,7 +27,6 @@ import {BaseComponentInfo, BaseObjInfo,
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
-import {PartialPortPos} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 
 export class TestComponentInfo extends BaseComponentInfo {
@@ -167,7 +166,7 @@ export function CreateTestRootCircuit(
     doc.createCircuit(mainCircuitID);
     const mainState = MakeCircuit(mainCircuitID);
 
-    const circuit = RootCircuitImpl(mainState, (id, objs, metadata, portConfig, portFactory) => {
+    const circuit = new RootCircuitImpl(mainState, (id, objs, metadata, portConfig, portFactory) => {
         const kind = id;
 
         doc.createIC(
@@ -180,7 +179,7 @@ export function CreateTestRootCircuit(
         mainState.assembler.addAssembler(kind, (params) =>
             new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
 
-        return IntegratedCircuitImpl(id, MakeCircuit(id));
+        return new IntegratedCircuitImpl(MakeCircuit(id));
     });
 
     return [circuit, mainState, {
