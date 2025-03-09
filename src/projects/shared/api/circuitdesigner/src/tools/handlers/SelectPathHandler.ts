@@ -1,6 +1,35 @@
 import {LEFT_MOUSE_BUTTON}                from "shared/api/circuitdesigner/input/Constants";
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
+import {Component} from "shared/api/circuit/public";
 
+
+/**
+ * Gets all the components connected to this component
+ *  Note: this path is UN-ORDERED!
+ *
+ * @param c The component to start from.
+ * @returns The array of components in the same circuit (including c).
+ */
+export function GetComponentPath(c: Component): Component[] {
+    const path: Component[] = [];
+
+    // Breadth First Search
+    const queue = new Array<Component>(c);
+    const visited = new Set<string>();
+
+    while (queue.length > 0) {
+        const q = queue.shift()!;
+
+        visited.add(q.id);
+        path.push(q);
+        for (const c of q.allPorts.flatMap((port) => port.connectedPorts).map((port) => port.parent)) {
+            if (!visited.has(c.id))
+                queue.push(c);
+        }
+    }
+
+    return path;
+}
 
 export const SelectPathHandler: ToolHandler = {
     onEvent: (ev, { circuit, viewport: { camera } }) => {
@@ -21,8 +50,7 @@ export const SelectPathHandler: ToolHandler = {
                         return obj.path;
                     // For other components, return all of the components that are connected
                     // TODO: Get connected components
-                    // return [obj, ...obj.connectedComponents];
-                    throw new Error("SelectPathHandler: Component Unimplemented!");
+                    return GetComponentPath(obj);
                 case "Wire":
                     // For wires, return the path they are apart of
                     return obj.path;
