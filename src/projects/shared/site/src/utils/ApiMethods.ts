@@ -12,6 +12,8 @@ import {LoadUserCircuits} from "shared/site/state/thunks/User";
 import {GenerateThumbnail} from "./GenerateThumbnail";
 import {Schema} from "shared/api/circuit/schema";
 
+import {LoadCircuit as LoadCircuitHelper} from "./CircuitHelpers";
+
 
 export const useAPIMethods = (mainCircuit: RootCircuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
@@ -27,8 +29,7 @@ export const useAPIMethods = (mainCircuit: RootCircuit) => {
         }
 
         try {
-            // TODO: Make sure data is valid
-            mainCircuit.loadSchema(JSON.parse(data) as Schema.RootCircuit);
+            LoadCircuitHelper(mainCircuit, data);
         } catch (e) {
             console.error(e);
             dispatch(_SetCircuitLoading(false));

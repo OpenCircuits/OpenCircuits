@@ -38,7 +38,7 @@ import {RotateToolRenderer}       from "shared/api/circuitdesigner/tools/rendere
 
 import {DigitalWiringToolRenderer} from "./tools/renderers/DigitalWiringToolRenderer";
 
-import {DevListFiles} from "shared/site/api/Dev";
+import {DevGetFile, DevListFiles} from "shared/site/api/Dev";
 
 import {NoAuthState} from "shared/site/api/auth/NoAuthState";
 
@@ -52,6 +52,9 @@ import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 import {App} from "./containers/App";
 import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
+import {LoadCircuit} from "shared/site/utils/CircuitHelpers";
+import {Request} from "shared/site/utils/Request";
 
 
 async function Init(): Promise<void> {
@@ -151,13 +154,12 @@ async function Init(): Promise<void> {
 
             storeDesigner("main", designer);
 
-            // TODO[model_refactor](leon)
-            // if (process.env.NODE_ENV === "development") {
-            //     // Load dev state
-            //     const files = await DevListFiles();
-            //     // if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-            //     //     await circuit.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
-            // }
+            if (process.env.NODE_ENV === "development") {
+                // Load dev state
+                const files = await DevListFiles();
+                if (files.includes(DEV_CACHED_CIRCUIT_FILE))
+                    LoadCircuit(designer.circuit, await DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            }
 
             const root = createRoot(document.getElementById("root")!);
             root.render(
