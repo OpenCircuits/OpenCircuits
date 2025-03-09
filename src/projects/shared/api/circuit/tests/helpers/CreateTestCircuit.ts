@@ -78,7 +78,7 @@ export function TestComponentImpl(circuit: Circuit, state: CircuitState<CircuitT
         get info() {
             return ComponentInfoImpl(state, base.kind);
         },
-        isNode(): boolean {
+        isNode(): this is Node {
             return (base.kind === "TestNode");
         },
         isPin(): boolean {

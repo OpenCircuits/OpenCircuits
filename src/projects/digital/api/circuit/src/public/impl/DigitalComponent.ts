@@ -23,7 +23,7 @@ export function DigitalComponentImpl(circuit: DigitalCircuit, state: DigitalCirc
             return DigitalComponentInfoImpl(state, base.kind);
         },
 
-        isNode(): boolean {
+        isNode(): this is DigitalNode {
             return (base.kind === "DigitalNode");
         },
 

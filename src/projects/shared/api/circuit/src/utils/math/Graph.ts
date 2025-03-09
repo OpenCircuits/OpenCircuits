@@ -70,7 +70,7 @@ export class Graph<V, E> {
         const v = this.list.keys().next().value;
 
         const visited = new Map<V, boolean>();
-        this.dfs(visited, v);
+        this.dfs(visited, v!);
 
         return (visited.size === this.size());
     }
