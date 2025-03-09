@@ -1,5 +1,5 @@
 import {ErrE, Ok, Result} from "shared/api/circuit/utils/Result";
-import {BinOpChildren, InputToken, InputTree, InputTreeBinOpNode, InputTreeBinOpType,
+import {BinOpChildren, InputTree, InputTreeBinOpNode, InputTreeBinOpType,
         Token, TokenType} from "./Constants/DataStructures";
 import {FORMATS} from "./Constants/Formats";
 
@@ -256,9 +256,9 @@ export function GenerateInputTree(tokens: readonly Token[], ops = FORMATS[0].ops
 
             const prev = tokens.slice(0, index) // Decrementing through the array starting at right before the returned index
                             .reverse()
-                            .find((token) => token.type === "input") as InputToken;
+                            .find((token) => token.type === "input");
             const next = tokens.slice(index)
-                            .find((token) => token.type === "input") as InputToken;
+                            .find((token) => token.type === "input");
             if (prev && prev.name && next && next.name)
                 return ErrE(generateErrorMessage(prev.name, next.name, ops));
 

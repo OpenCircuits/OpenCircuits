@@ -48,7 +48,7 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
 
     const { open, targetDir, port } = await yargs(process.argv.slice(2))
         .boolean("open")
-        .choices("path", dirs.map((dir) => dir.path as string))
+        .choices("path", dirs.map((dir) => dir.path))
         .number("port")
         .argv;
 

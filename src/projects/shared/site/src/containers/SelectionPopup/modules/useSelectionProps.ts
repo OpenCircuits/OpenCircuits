@@ -39,7 +39,7 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     ignore: (s: Obj) => boolean = () => false,
 ) => {
     const [props, setProps] = useState(undefined as RecordOfArrays<Props> | undefined);
-    const [objs, setObjs] = useState([] as O[]);
+    const [objs, setObjs] = useState<O[]>([]);
 
     // This function is theoretically called anytime the Selections
     //  or their properties change
