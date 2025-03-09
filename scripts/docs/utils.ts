@@ -21,7 +21,7 @@ export function getAllFiles(p: string): string[] {
     const dir = fs.readdirSync(path.resolve(p), { withFileTypes: true });
     if (!dir || dir.length === 0)
         return [];
-    let files = [] as string[];
+    let files: string[] = [];
     for (const f of dir) {
         files = f.isDirectory()
             ? [...files, ...getAllFiles(path.resolve(p, f.name))]

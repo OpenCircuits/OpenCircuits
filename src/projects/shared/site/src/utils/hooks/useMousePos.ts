@@ -4,8 +4,8 @@ import {useDocEvent}         from "./useDocEvent";
 
 export const useMousePos = () => {
     const [pos, setPos] = useState({
-        x: 0 as number,
-        y: 0 as number,
+        x: 0,
+        y: 0,
     });
 
     useEffect(() => {
@@ -31,8 +31,8 @@ export const useMousePos = () => {
 
 export const useMouseDownPos = () => {
     const [pos, setPos] = useState({
-        x: 0 as number,
-        y: 0 as number,
+        x: 0,
+        y: 0,
     });
 
     useDocEvent("mousedown", (ev) => {

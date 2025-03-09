@@ -6,9 +6,9 @@ interface Action {}
 
 
 export const useHistory = (circuit: Circuit) => {
-    const [state, setState] = useState({
-        undoHistory: [] as Action[],
-        redoHistory: [] as Action[],
+    const [state, setState] = useState<{undoHistory: Action[], redoHistory: Action[]}>({
+        undoHistory: [],
+        redoHistory: [],
     });
 
     useEffect(() => {

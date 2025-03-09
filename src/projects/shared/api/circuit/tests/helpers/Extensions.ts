@@ -110,7 +110,7 @@ expect.extend({
     },
 
     toBeOk(received: Result) {
-        const result = received as Result;
+        const result = received;
         if (result.ok) {
             return {
                 message: () => "expected Result to be Ok",
@@ -128,7 +128,7 @@ expect.extend({
     },
 
     toIncludeError(received: Result, message: string) {
-        const result = received as Result;
+        const result = received;
         if (result.ok) {
             return {
                 message: () => "expected Result to be not be Ok",

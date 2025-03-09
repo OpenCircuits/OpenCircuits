@@ -37,7 +37,7 @@ export function CheckPortList(info: ComponentInfo, ports: Schema.Port[]): Result
 }
 
 export function PortListToConfig(ports: Schema.Port[]): PortConfig {
-    const counts = {} as Record<string, number>;
+    const counts: Record<string, number> = {};
     ports.forEach(({ group }) =>
         counts[group] = (counts[group] ?? 0) + 1);
     return counts;

@@ -14,8 +14,6 @@ import {ButtonToggle} from "shared/site/components/ButtonToggle";
 import {InputField}   from "shared/site/components/InputField";
 import {Popup}        from "shared/site/components/Popup";
 
-import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
-
 import {BooleanOption}  from "./BooleanOption";
 import {CustomOps}      from "./CustomOps";
 import {DropdownOption} from "./DropdownOption";
@@ -31,7 +29,7 @@ type Props = {
     circuit: DigitalCircuit;
     viewport: {camera: Camera};
 }
-export const ExprToCircuitPopup = (({ circuit, viewport: {camera} }: Props) => {
+export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) => {
     const { curPopup } = useSharedSelector(
         (state) => ({ curPopup: state.header.curPopup })
     );
@@ -118,8 +116,8 @@ export const ExprToCircuitPopup = (({ circuit, viewport: {camera} }: Props) => {
                             const result = Generate(circuit, camera, expression, {
                                 input, output, isIC,
                                 connectClocksToOscope: clocksToOscope,
+                                ops:                   customOps,
                                 label, format,
-                                ops: customOps,
                             });
                             if (!result.ok) {
                                 setErrorMessage(result.error.errors.map((err) => err.message).join("\n"));
