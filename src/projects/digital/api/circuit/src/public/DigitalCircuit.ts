@@ -58,14 +58,11 @@ export type APIToDigital<T> = {
 }
 
 
-export interface ReadonlyDigitalCircuit extends APIToDigital<ReadonlyCircuit> {
-    readonly propagationTime: number;
-}
-type C = APIToDigital<Circuit> & ReadonlyDigitalCircuit;
-export interface DigitalCircuit extends C {
-    propagationTime: number;
-}
+export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit>;
+export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit;
 
-export type DigitalRootCircuit = APIToDigital<RootCircuit> & DigitalCircuit;
+export type DigitalRootCircuit = APIToDigital<RootCircuit> & DigitalCircuit & {
+    propagationTime: number;
+};
 export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & ReadonlyDigitalCircuit;
 export type DigitalICInfo = APIToDigital<ICInfo>;

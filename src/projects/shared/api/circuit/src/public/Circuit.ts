@@ -12,8 +12,9 @@ import {Obj, ReadonlyObj}           from "./Obj";
 import {Port, ReadonlyPort}          from "./Port";
 import {ReadonlyWire, Wire}          from "./Wire";
 import {Selections}    from "./Selections";
-import {Observable}    from "./Observable";
+// import {Observable}    from "./Observable";
 import {Schema} from "../schema";
+import {Observable} from "../utils/Observable";
 
 
 export type {CircuitMetadata} from "shared/api/circuit/schema/CircuitMetadata";
@@ -93,6 +94,7 @@ export interface Circuit extends C {
 
     // Figure out HOW these need to be used first before implementing
     // It might be a motivator for some Query system and then you serialize the query
+    toSchema(): Schema.Circuit;
     // serialize(objs?: Obj[]): string;
     // deserialize(data: string): void;
 }
@@ -104,6 +106,7 @@ export interface ICInfo {
 export interface RootCircuit extends Circuit {
     createIC(info: ICInfo): IntegratedCircuit;
     getICs(): IntegratedCircuit[];
+    toSchema(): Schema.RootCircuit;
 }
 
 export interface ICPin {
@@ -117,4 +120,5 @@ export interface IntegratedCircuitDisplay {
 }
 export interface IntegratedCircuit extends ReadonlyCircuit {
     readonly display: IntegratedCircuitDisplay;
+    toSchema(): Schema.IntegratedCircuit;
 }

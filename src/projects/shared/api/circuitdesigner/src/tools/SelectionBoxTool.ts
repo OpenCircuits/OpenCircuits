@@ -6,10 +6,10 @@ import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesign
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
 import {Tool, ToolEvent} from "./Tool";
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
-export class SelectionBoxTool extends Observable<ToolEvent> implements Tool {
+export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool {
     private rect: Rect;
 
     public constructor() {

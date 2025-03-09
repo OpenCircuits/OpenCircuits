@@ -1,5 +1,5 @@
 import {CircuitInternal, GUID} from "shared/api/circuit/internal";
-import {Observable}            from "shared/api/circuit/utils/Observable";
+import {ObservableImpl}        from "shared/api/circuit/utils/Observable";
 import {Signal}                from "./Signal";
 
 
@@ -11,7 +11,7 @@ type DigitalSimEvent = {
     id: GUID;
 }
 
-export class DigitalSim extends Observable<DigitalSimEvent> {
+export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     private readonly circuit: CircuitInternal;
 
     public constructor(circuit: CircuitInternal) {

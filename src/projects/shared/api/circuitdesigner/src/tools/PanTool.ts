@@ -1,6 +1,6 @@
 import {V} from "Vector";
 
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
@@ -12,7 +12,7 @@ import {Tool, ToolEvent} from "./Tool";
 const ARROW_PAN_DISTANCE_NORMAL = 1.5;
 const ARROW_PAN_DISTANCE_SMALL = 0.1;
 
-export class PanTool extends Observable<ToolEvent> implements Tool {
+export class PanTool extends ObservableImpl<ToolEvent> implements Tool {
     public constructor() {
         super();
     }

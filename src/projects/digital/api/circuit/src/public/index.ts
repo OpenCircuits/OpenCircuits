@@ -1,3 +1,5 @@
+import {V} from "Vector";
+
 import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 import {CircuitLog}            from "shared/api/circuit/internal/impl/CircuitLog";
 import {CircuitDocument}       from "shared/api/circuit/internal/impl/CircuitDocument";
@@ -16,9 +18,6 @@ import {DigitalComponentImpl}   from "./impl/DigitalComponent";
 import {DigitalWireImpl}        from "./impl/DigitalWire";
 import {DigitalPortImpl}        from "./impl/DigitalPort";
 import {DigitalCircuitState}    from "./impl/DigitalCircuitState";
-import {Schema} from "shared/api/circuit/schema";
-import {V, Vector} from "Vector";
-import {PartialPortPos, PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 
 export * from "./DigitalCircuit";
@@ -55,7 +54,7 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
     doc.createCircuit(mainCircuitID);
     const mainState = MakeCircuitState(mainCircuitID);
 
-    const circuit = DigitalRootCircuitImpl(mainState, (id, objs, metadata, portConfig, portFactory) => {
+    const circuit = new DigitalRootCircuitImpl(mainState, (id, objs, metadata, portConfig, portFactory) => {
         const kind = id;
 
         doc.createIC(
@@ -68,7 +67,7 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
         mainState.assembler.addAssembler(kind, (params) =>
             new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
 
-        return DigitalIntegratedCircuitImpl(id, MakeCircuitState(id));
+        return new DigitalIntegratedCircuitImpl(MakeCircuitState(id));
     });
 
     return [circuit, mainState];

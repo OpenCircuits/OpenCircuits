@@ -1,13 +1,13 @@
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
 export interface ToolEvent {
     type: "statechange";
 }
 
-export interface Tool extends Observable<ToolEvent> {
+export interface Tool extends ObservableImpl<ToolEvent> {
     // Conditional method to see if the current state should transition to this tool
     shouldActivate(ev: InputAdapterEvent, designer: CircuitDesigner): boolean;
 

@@ -8,7 +8,7 @@ import {V, Vector} from "Vector";
 
 import {CalculateMidpoint} from "math/MathUtils";
 
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 import {Key}               from "./Key";
 import {InputAdapterEvent} from "./InputAdapterEvent";
@@ -67,7 +67,7 @@ export class UserInputStateImpl implements UserInputState {
 /**
  * Class to handle user input, and trigger appropriate event listeners.
  */
-export class InputAdapter extends Observable<InputAdapterEvent> {
+export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
     /** Amount of time a mousebutton needs to be held down to be considered a "drag" (rather than a "click"). */
     private readonly dragTime: number;
 

@@ -7,7 +7,7 @@ import {Schema} from "shared/api/circuit/schema";
 import {CircuitOp, ConnectWireOp, InvertCircuitOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
 import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ComponentInfo";
 import {CircuitLog, LogEntry} from "./CircuitLog";
-import {Observable} from "../../utils/Observable";
+import {ObservableImpl} from "../../utils/Observable";
 import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
 
 
@@ -315,7 +315,7 @@ export type CircuitDocEvent = {
 // Also contains the logic for transactions.
 //
 // See CircuitInternal for exception/reference policies.
-export class CircuitDocument extends Observable<CircuitDocEvent> implements ReadonlyCircuitDocument {
+export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements ReadonlyCircuitDocument {
     private readonly objInfo: ObjInfoProvider;
 
     // Map of [circuit ID: circuit contents]

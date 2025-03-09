@@ -1,4 +1,15 @@
-export abstract class Observable<Event = unknown> {
+export interface Observable<Event = unknown> {
+    subscribe(listener: (ev: Event) => void): () => void;
+    unsubscribe(listener: (ev: Event) => void): void;
+
+    setBlocked(blocked: boolean): void;
+    block(): void;
+    unblock(): void;
+
+    publish(ev: Event): void;
+}
+
+export abstract class ObservableImpl<Event = unknown> implements Observable<Event> {
     protected blocked: boolean;
     protected callbacks: Set<(data: Event) => void>;
 
@@ -7,7 +18,7 @@ export abstract class Observable<Event = unknown> {
         this.callbacks = new Set();
     }
 
-    protected publish(data: Event) {
+    public publish(data: Event) {
         // Blocked so don't trigger callbacks
         if (this.blocked)
             return;

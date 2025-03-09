@@ -11,13 +11,13 @@ import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "shared/api/circuitdesigner/
 import {InputAdapterEvent}                     from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {Tool, ToolEvent}                       from "./Tool";
 import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
 // The distance away from the port in selection for wiring.
 export const WIRING_PORT_SELECT_RADIUS = 0.34;
 
-export class WiringTool extends Observable<ToolEvent> implements Tool {
+export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
     protected curPort: Port | undefined;
     protected curTarget: Vector | undefined;
 

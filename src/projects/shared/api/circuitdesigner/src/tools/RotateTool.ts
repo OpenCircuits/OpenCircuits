@@ -7,7 +7,7 @@ import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEv
 
 import {Tool, ToolEvent} from "./Tool";
 import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
 export const ROTATION_CIRCLE_RADIUS = 1.5;
@@ -18,7 +18,7 @@ const ROTATION_CIRCLE_THRESHOLD = ROTATION_CIRCLE_THICKNESS + 0.06;
 const ROTATION_CIRCLE_R1 = (ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD) ** 2;
 const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) ** 2;
 
-export class RotateTool extends Observable<ToolEvent> implements Tool {
+export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
     private components: Component[];
 
     private initialMidpoint: Vector;

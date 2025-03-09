@@ -3,7 +3,7 @@ import {Curve}  from "math/Curve";
 import {Rect}   from "math/Rect";
 
 import {None, Option, Some} from "shared/api/circuit/utils/Result";
-import {Observable}         from "shared/api/circuit/utils/Observable";
+import {ObservableImpl}     from "shared/api/circuit/utils/Observable";
 
 import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
@@ -28,7 +28,7 @@ export type CircuitAssemblerEvent = {
 //  * asset is updated (i.e. set for the first time), dependencies of that
 //  * assets can be notified and update accordingly.
 //  */
-// export class CircuitViewAssetManager<T> extends Observable<{ key: string, val: T }> {
+// export class CircuitViewAssetManager<T> extends ObservableImpl<{ key: string, val: T }> {
 //     private readonly assets: Map<string, T>;
 
 //     public constructor() {
@@ -94,7 +94,7 @@ class DirtyMap<K> {
     }
 }
 
-export class CircuitAssembler extends Observable<CircuitAssemblerEvent> {
+export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
     private readonly circuit: CircuitInternal;
     private readonly options: RenderOptions;
 

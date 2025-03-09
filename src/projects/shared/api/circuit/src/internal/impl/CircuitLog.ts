@@ -1,4 +1,4 @@
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 import {GUID, uuid} from "shared/api/circuit/schema/GUID";
 
@@ -68,7 +68,7 @@ interface ProposedLogEntry {
 //  `propose(...)`: This client proposes a local change to the server
 //  `accept(...)`: The server has accepted one or more changes from other clients, or one from this client
 //
-export class CircuitLog extends Observable<LogEvent> {
+export class CircuitLog extends ObservableImpl<LogEvent> {
     private readonly log: LogEntry[];
 
     private proposedEntries: ProposedLogEntry[];

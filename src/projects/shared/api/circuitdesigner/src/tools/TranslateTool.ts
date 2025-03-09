@@ -7,10 +7,10 @@ import {LEFT_MOUSE_BUTTON}             from "shared/api/circuitdesigner/input/Co
 import {InputAdapterEvent}             from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {SnapToConnections, SnapToGrid} from "shared/api/circuitdesigner/utils/SnapUtils";
 import {Tool, ToolEvent}               from "./Tool";
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
-export class TranslateTool extends Observable<ToolEvent> implements Tool {
+export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
     private components: Component[];
     private initialPositions: Vector[];
 

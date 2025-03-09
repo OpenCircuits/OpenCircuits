@@ -1,6 +1,6 @@
 import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 import {Schema}     from "shared/api/circuit/schema";
 import {GUID}       from "shared/api/circuit/schema/GUID";
 
@@ -31,7 +31,7 @@ export type InternalEvent = {
 // EXCEPTION POLICY:
 //  ERRORS: thrown during unexpected, exceptional, irrecoverable scenarios
 //  OTHERWISE: The "Result" and "Option" types are used to communicate success/failure.
-export class CircuitInternal extends Observable<InternalEvent> {
+export class CircuitInternal extends ObservableImpl<InternalEvent> {
     private readonly id: GUID;
 
     private readonly doc: CircuitDocument;

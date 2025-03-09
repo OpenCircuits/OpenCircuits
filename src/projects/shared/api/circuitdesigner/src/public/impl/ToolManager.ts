@@ -2,7 +2,7 @@ import {DefaultTool}       from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}              from "shared/api/circuitdesigner/tools/Tool";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {CircuitDesigner}   from "../CircuitDesigner";
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
 export type ToolManagerEvent = {
@@ -13,7 +13,7 @@ export type ToolManagerEvent = {
     tool: Tool;
 }
 
-export class ToolManager extends Observable<ToolManagerEvent> {
+export class ToolManager extends ObservableImpl<ToolManagerEvent> {
     public readonly defaultTool: DefaultTool;
     public readonly tools: Tool[];
 

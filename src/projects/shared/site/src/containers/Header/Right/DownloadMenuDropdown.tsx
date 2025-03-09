@@ -17,14 +17,13 @@ export const DownloadMenuDropdown = () => {
     const dispatch = useSharedDispatch();
 
     const onDownloadClick = () => {
-        // TODO: Replace .serialize()
-        /**const data = designer.circuit.serialize();
+        const data = JSON.stringify(designer.circuit.toSchema());
 
         // Convert to URL data
         const file = new Blob([data], { type: "text/json" });
         const url = URL.createObjectURL(file);
 
-        SaveFile(url, circuitName, "circuit");*/
+        SaveFile(url, circuitName, "circuit");
     }
 
     return (

@@ -1,4 +1,4 @@
-import {Observable} from "shared/api/circuit/utils/Observable";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
 /**
@@ -7,7 +7,7 @@ import {Observable} from "shared/api/circuit/utils/Observable";
  *  by adding them to a scheduler and only rendering once
  *  every 'requestAnimationFrame' time (usually 60fps).
  */
-export class RenderScheduler extends Observable {
+export class RenderScheduler extends ObservableImpl {
     private queued: number;
     private lastFrameId: number;
 
