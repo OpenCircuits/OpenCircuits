@@ -64,7 +64,7 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
         outputs.forEach((l, i) => {
             l.pos = V(compBoundsWithPorts.size.x / 2 + AUTO_PLACE_LED_SPACE * (i + 1),
                 // This centers the LED around the port of the LED
-                outputPorts[i].dir.y - l.inputs[0].dir.y).add(comp.pos)
+                (outputPorts[i].targetPos.y - comp.y) - (l.inputs[0].targetPos.y - l.y)).add(comp.pos)
         });
     }
 
