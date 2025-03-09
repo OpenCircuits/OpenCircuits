@@ -1,4 +1,5 @@
-import {Rect} from "math/Rect";
+import {Vector} from "Vector";
+import {Rect}   from "math/Rect";
 
 import {extend} from "shared/api/circuit/utils/Functions";
 
@@ -10,7 +11,6 @@ import {ObservableImpl}             from "./Observable";
 import {GUID} from "../../internal";
 
 import "shared/api/circuit/utils/Array";
-import {V, Vector} from "Vector";
 
 
 export function SelectionsImpl<T extends CircuitTypes>(
@@ -20,7 +20,6 @@ export function SelectionsImpl<T extends CircuitTypes>(
     const observable = ObservableImpl<SelectionsEvent>();
 
     let selections = new Set<GUID>();
-
     internal.subscribe((_) => {
         // Update selections
         const newSelections = new Set(

@@ -25,12 +25,6 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
 
     const observable = ObservableImpl<CircuitEvent>();
 
-    state.internal.subscribe((ev) => {
-        if (ev.type !== "CircuitOp")
-            return;
-        observable.emit({ type: "change", diff: ev.diff });
-    });
-
     const circuit = extend(observable, {
         beginTransaction(): void {
             state.internal.beginTransaction();
@@ -187,6 +181,14 @@ function CircuitImpl<CircuitT extends Circuit, T extends CircuitTypes>(state: Ci
     }) satisfies Circuit;
 
     const selections: Selections = SelectionsImpl(circuit, state);
+
+    // This ordering is important, because it means that all previous circuit subscription calls will happen
+    // before any public/outside subscriptions. (i.e. selections are updated before circuit subscribers are called).
+    state.internal.subscribe((ev) => {
+        if (ev.type !== "CircuitOp")
+            return;
+        observable.emit({ type: "change", diff: ev.diff });
+    });
 
     return circuit;
 }
