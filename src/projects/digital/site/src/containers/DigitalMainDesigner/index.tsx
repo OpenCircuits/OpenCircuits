@@ -11,6 +11,7 @@ import "./index.scss";
 import {DigitalCircuit} from "digital/api/circuit/public";
 import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
 import {V, Vector} from "Vector";
+import {Rect} from "math/Rect";
 
 // import {useMainCircuit} from "shared/site/utils/hooks/useCircuit";
 
@@ -54,14 +55,16 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
             return led;
         });
 
+        // Using the bounding box of the component with ports gives more spacing betwen it and the inputs/outputs
+        const compBoundsWithPorts = Rect.Bounding([comp.bounds, ...comp.allPorts.map((port) => port.bounds)]);
         inputs.forEach((s, i) => {
-            s.pos = V(-comp.bounds.size.x / 2 - AUTO_PLACE_SWITCH_SPACE,
-                ((inputPorts.length - 1) / 2 - i) * comp.bounds.size.y).add(comp.pos);
+            s.pos = V(-compBoundsWithPorts.size.x / 2 - AUTO_PLACE_SWITCH_SPACE,
+                ((inputPorts.length - 1) / 2 - i) * s.bounds.size.y).add(comp.pos);
         });
         outputs.forEach((l, i) => {
-            l.pos = V(comp.bounds.size.x / 2 + AUTO_PLACE_LED_SPACE * (i + 1),
+            l.pos = V(compBoundsWithPorts.size.x / 2 + AUTO_PLACE_LED_SPACE * (i + 1),
                 // This centers the LED around the port of the LED
-                outputPorts[i].targetPos.y - comp.inputs[0].targetPos.y).add(comp.pos)
+                outputPorts[i].dir.y - (l.inputs[0].dir.y)).add(comp.pos)
         });
     }
 
