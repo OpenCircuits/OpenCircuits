@@ -169,7 +169,7 @@ export class Camera {
      * @returns The position.
      */
     public getPos(): Vector {
-        return V(this.pos as Vector);
+        return V(this.pos);
     }
     public getScale(): Vector {
         return V(this.getZoom(), -this.getZoom());

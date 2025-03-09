@@ -13,7 +13,7 @@ export class RenderHelper {
 
     public constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
-        this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
+        this.context = canvas.getContext("2d")!;
     }
 
     public get ctx(): CanvasRenderingContext2D {

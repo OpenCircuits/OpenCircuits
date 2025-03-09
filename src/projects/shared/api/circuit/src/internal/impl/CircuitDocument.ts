@@ -411,11 +411,11 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         const storage = this.getMutableCircuitStorage(circuit).unwrap();
 
         objs.filter((o) => (o.baseKind === "Component"))
-            .forEach((c) => storage.addComponent(c as Schema.Component));
+            .forEach((c) => storage.addComponent(c));
         objs.filter((o) => (o.baseKind === "Port"))
-            .forEach((p) => storage.addPort(p as Schema.Port));
+            .forEach((p) => storage.addPort(p));
         objs.filter((o) => (o.baseKind === "Wire"))
-            .forEach((w) => storage.addWire(w as Schema.Wire));
+            .forEach((w) => storage.addWire(w));
 
         this.publish({
             type: "CircuitOp",

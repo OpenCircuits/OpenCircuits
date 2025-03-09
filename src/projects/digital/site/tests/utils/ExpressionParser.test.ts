@@ -1,14 +1,16 @@
+import "shared/tests/helpers/Extensions";
 import {InputToken, InputTreeBinOpNode, InputTreeIdent,
         InputTreeUnOpNode, OperatorFormat,
         Token} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 
 import {GenerateInputTree} from "digital/site/utils/ExpressionParser/GenerateInputTree";
 
-import "shared/tests/helpers/Extensions";
 import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser";
 import {GenerateTokens}      from "digital/site/utils/ExpressionParser/GenerateTokens";
-import {Component}           from "shared/api/circuit/public";
 import {FORMATS}             from "digital/site/utils/ExpressionParser/Constants/Formats";
+import {Signal} from "digital/api/circuit/utils/Signal";
+import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
+import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 
 /**
@@ -32,14 +34,15 @@ import {FORMATS}             from "digital/site/utils/ExpressionParser/Constants
  *                 those same Switch objects must be present in circuit.
  * @param output   The component whose state will be evaluated in the test, must be present in circuit.
  * @param expected The expected states of the output LED for all the different switch combinations.
+ * @param sim      The sim instance used to turn inputs on or off.
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  */
-function testInputs(inputs: Array<[string, Component]>, output: Component, expected: boolean[]) {
+function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[], sim: DigitalSim) {
     if (2**inputs.length !== expected.length)
         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
                         2**inputs.length + ")");
 
-    // Decrements because there can be weird propagation issues when trying to read initial state
+    // TODO[model_refactor_api](trevor): Is this "Decrements because there can be weird propagation issues when trying to read initial state" still needed?
     for (let num = 2**inputs.length - 1; num >= 0; num--) {
         let testTitle = "Inputs on:";
         for (let index = 0; index < inputs.length; index++)
@@ -49,12 +52,12 @@ function testInputs(inputs: Array<[string, Component]>, output: Component, expec
             testTitle += " [none]";
 
         // The loop is repeated because the activation needs to happen within the test
-        // TODO[model_refactor_api](trevor) Fix, also check propagation issue
-        // test(testTitle, () => {
-        //     for (let index = 0; index < inputs.length; index++)
-        //         inputs[index][1].activate(!!(num & (2**index)));
-        //     expect(output.isOn()).toBe(expected[num]);
-        // });
+        // TODO[model_refactor_api](trevor) Check if propagation issue still exists
+        test(testTitle, () => {
+            for (const [index, input] of inputs.entries())
+                sim.setState(input[1].id, [num & (2**index) ? Signal.On : Signal.Off]);
+            expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
+        });
     }
 }
 
@@ -65,23 +68,23 @@ function testInputs(inputs: Array<[string, Component]>, output: Component, expec
  *                 those same Switch objects must be present in circuit.
  * @param output   The component whose state will be evaluated in the test, must be present in circuit.
  * @param expected The expected states of the output LED for all the different switch combinations.
+ * @param sim      The sim instance used to turn inputs on or off.
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  */
-function testInputsSimple(inputs: Array<[string, Component]>, output: Component, expected: boolean[]) {
+function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[], sim: DigitalSim) {
     if (2 ** inputs.length !== expected.length)
         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
                         2 ** inputs.length + ")");
 
     // Decrements because there can be weird propagation issues when trying to read initial state
-    // TODO[model_refactor_api](trevor) Fix, also check propagation issue
-    // test("Test all states", () => {
-    //     for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
-    //         for (let index = 0; index < inputs.length; index++)
-    //             inputs[index][1].activate(!!(num & (2 ** index)));
-    //         expect(output.isOn()).toBe(expected[num]);
-    //     }
-    // });
+    test("Test all states", () => {
+        for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
+            for (const [index, input] of inputs.entries())
+                sim.setState(input[1].id, [num & (2**index) ? Signal.On : Signal.Off]);
+            expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
+        }
+    });
 }
 
 /**
@@ -112,7 +115,7 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
             throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = "LED";
-        const inputs: Array<[string, string]> = [];
+        const inputs: Array<[string, "Switch"]> = [];
         const charCodeStart = "a".codePointAt(0)!;
         for (let i = 0; i < numInputs; i++)
             inputs.push([String.fromCodePoint(charCodeStart+i), "Switch"]);
@@ -123,25 +126,30 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
         test("Expression To Circuit Generation didn't error", () => {
             expect(result).toBeOk();
         });
-        // const circuit = result.unwrap();
+        const [circuit, { sim }] = result.unwrap();
 
-        // const inputComponents: Array<[string, Component]> = [];
-        // for (let i = 0; i < numInputs; i++) {
-        //     const code = String.fromCodePoint(charCodeStart+i);
-        //     // TODO[.](trevor) Improve this when API is improved
-        //     const comp = circuit.getObjs().find((o) => (o.name === code)) as Component;
-        //     inputComponents.push([code, comp]);
-        // }
-        // const outputComp = circuit.getObjs().find((o) => (o.name === "Output")) as Component;
+        const inputComponents: Array<[string, DigitalComponent]> = [];
+        for (let i = 0; i < numInputs; i++) {
+            const code = String.fromCodePoint(charCodeStart+i);
+            // TODO[.](trevor) Improve this when API is improved
+            const comp = circuit.getComponents().find((o) => (o.name === code));
+            if (!comp) {
+                throw new Error(`Input with name ${code} not found in generated circuit`);
+            }
+            inputComponents.push([code, comp]);
+        }
+        const outputComp = circuit.getComponents().find((o) => (o.name === "Output"));
+        if (!outputComp) {
+            throw new Error("Output with name Output not found in generated circuit");
+        }
 
-        // if (verbose === false || (verbose === undefined && numInputs > 3))
-        //     testInputsSimple(inputComponents, outputComp, expected);
-        // else
-        //     testInputs(inputComponents, outputComp, expected);
+        if (verbose === false || (verbose === undefined && numInputs > 3))
+            testInputsSimple(inputComponents, outputComp, expected, sim);
+        else
+            testInputs(inputComponents, outputComp, expected, sim);
     });
 }
 
-// TODO[model_refactor_api](trevor): Uncomment tests with `!`
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
         test("Unmatched '(' and ')'", () => {
@@ -386,11 +394,11 @@ describe("Expression Parser", () => {
 
         runTests(1, " (  a ) ", [false, true]);
 
-        // runTests(1, "!a", [true, false]);
+        runTests(1, "!a", [true, false]);
 
-        // runTests(1, "!!a", [false, true]);
+        runTests(1, "!!a", [false, true]);
 
-        // runTests(1, "!(!a)", [false, true]);
+        runTests(1, "!(!a)", [false, true]);
 
         runTests(1, "a&a", [false, true]);
 
@@ -398,7 +406,7 @@ describe("Expression Parser", () => {
 
         runTests(1, "a^a", [false, false]);
 
-        // runTests(1, "a^!a", [true, true]);
+        runTests(1, "a^!a", [true, true]);
 
         test("Parse: 'a' (ConstantHigh)", () => {
             const a = "ConstantHigh", o = "LED";
@@ -409,9 +417,10 @@ describe("Expression Parser", () => {
             const result = ExpressionToCircuit(inputMap, "a", o);
 
             expect(result).toBeOk();
-            const circuit = result.unwrap();
-            // TODO[model_refactor_api](trevor) Fix
-            // expect(o.isOn()).toBe(true);
+            const [circuit] = result.unwrap();
+            const output = circuit.getComponents().find((comp) => comp.kind === "LED");
+            expect(output).toBeDefined();
+            expect(output!.inputs[0].signal).toBe(Signal.On);
         });
 
         test("Parse: 'a' (ConstantLow)", () => {
@@ -423,23 +432,32 @@ describe("Expression Parser", () => {
             const result = ExpressionToCircuit(inputMap, "a", o);
 
             expect(result).toBeOk();
-            const circuit = result.unwrap();
-            // TODO[model_refactor_api](trevor) Fix
-            // expect(o.isOn()).toBe(false);
+            const [circuit] = result.unwrap();
+            const output = circuit.getComponents().find((comp) => comp.kind === "LED");
+            expect(output).toBeDefined();
+            expect(output!.inputs[0].signal).toBe(Signal.Off);
         });
 
         describe("Parse: 'longName'", () => {
             const a = "Switch", o = "LED";
             const inputs: ReadonlyArray<[string, string]> = [["longName", a]];
             const result = ExpressionToCircuit(new Map(inputs), "longName", o);
-            // expect(result).toBeOk();
-            const circuit = result.unwrap();
+            test("Result is ok", () => {
+                expect(result).toBeOk();
+            });
+            const [circuit, { sim }] = result.unwrap();
 
-            const inputComp = circuit.getObjs().find((o) => (o.name === "longName")) as Component;
-            const inputComponents: Array<[string, Component]> = [["longName", inputComp]];
-            const outputComp = circuit.getObjs().find((o) => (o.name === "Output")) as Component;
+            const inputComp = circuit.getComponents().find((o) => (o.name === "longName"));
+            test("Input component found", () => {
+                expect(inputComp).toBeDefined();
+            });
+            const inputComponents: Array<[string, DigitalComponent]> = [["longName", inputComp!]];
+            const outputComp = circuit.getComponents().find((o) => (o.name === "Output"));
+            test("Output component found", () => {
+                expect(outputComp).toBeDefined();
+            });
 
-            testInputs(inputComponents, outputComp, [false, true]);
+            testInputs(inputComponents, outputComp!, [false, true], sim);
         });
     });
 
@@ -457,13 +475,13 @@ describe("Expression Parser", () => {
 
         runTests(2, "!(a&b)", [true, true, true, false]);
 
-        // runTests(2, "!(!a|b)", [false, true, false, false]);
+        runTests(2, "!(!a|b)", [false, true, false, false]);
 
-        // runTests(2, "!a&b", [false, false, true, false]);
+        runTests(2, "!a&b", [false, false, true, false]);
 
-        // runTests(2, "a&!b", [false, true, false, false]);
+        runTests(2, "a&!b", [false, true, false, false]);
 
-        // runTests(2, "!a&!b", [true, false, false, false]);
+        runTests(2, "!a&!b", [true, false, false, false]);
 
         runTests(2, "!(a^b)", [true, false, false, true]);
 
@@ -472,7 +490,7 @@ describe("Expression Parser", () => {
         runTests(2, "!(a|b)", [true, false, false, false]);
     });
 
-    // // 0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
+    // 0, a, b, (a,b), c, (a,c), (b,c), (a,b,c)
     describe("3 Inputs", () => {
         runTests(3, "a&b&c", [false, false, false, false, false, false, false, true]);
 
@@ -498,7 +516,7 @@ describe("Expression Parser", () => {
 
         runTests(3, "a+b+c", [false, true, true, true, true, true, true, true], FORMATS[2]);
 
-        // runTests(1, "_a", [true, false], FORMATS[3]);
+        runTests(1, "_a", [true, false], FORMATS[3]);
     });
 
     describe("Binary gate variants", () => {
@@ -511,9 +529,9 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
             expect(result).toBeOk();
-            const circuit = result.unwrap();
+            const [circuit] = result.unwrap();
 
-            expect(circuit.getObjs().filter((obj) => (obj.baseKind === "Component"))).toHaveLength(9);
+            expect(circuit.getComponents()).toHaveLength(9);
         });
 
         test("8 variable OR", () => {
@@ -525,9 +543,9 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
             expect(result).toBeOk();
-            const circuit = result.unwrap();
+            const [circuit] = result.unwrap();
 
-            expect(circuit.getObjs().filter((obj) => (obj.baseKind === "Component"))).toHaveLength(10);
+            expect(circuit.getComponents()).toHaveLength(10);
         });
 
         test("9 variable OR", () => {
@@ -539,9 +557,9 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
             expect(result).toBeOk();
-            const circuit = result.unwrap();
+            const [circuit] = result.unwrap();
 
-            expect(circuit.getObjs().filter((obj) => (obj.baseKind === "Component"))).toHaveLength(12);
+            expect(circuit.getComponents()).toHaveLength(12);
         });
 
         test("(a|b)|(c|d)", () => {
@@ -553,9 +571,9 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
             expect(result).toBeOk();
-            const circuit = result.unwrap();
+            const [circuit] = result.unwrap();
 
-            expect(circuit.getObjs().filter((obj) => (obj.baseKind === "Component"))).toHaveLength(8);
+            expect(circuit.getComponents()).toHaveLength(8);
         });
 
         test("!(a|b|c)", () => {
@@ -567,9 +585,9 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
             expect(result).toBeOk();
-            const circuit = result.unwrap();
+            const [circuit] = result.unwrap();
 
-            expect(circuit.getObjs().filter((obj) => (obj.baseKind === "Component"))).toHaveLength(5);
+            expect(circuit.getComponents()).toHaveLength(5);
         });
     });
 

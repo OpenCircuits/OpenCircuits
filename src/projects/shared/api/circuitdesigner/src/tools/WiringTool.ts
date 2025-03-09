@@ -53,7 +53,7 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
         // Otherwise, gather all ports that are within the wireable
         //  bounds (and can be wired), and find the closest one
         const allPorts = circuit.getObjs()
-            .filter((obj) => (obj.baseKind === "Port")) as Port[];
+            .filter((obj) => (obj.baseKind === "Port"));
         const validPorts = allPorts
             // Make sure port is wireable
             .filter((port) => port.isAvailable)
