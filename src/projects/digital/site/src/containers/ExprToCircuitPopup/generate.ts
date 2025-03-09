@@ -3,7 +3,7 @@ import {DigitalCircuit} from "digital/api/circuit/public";
 import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser"
 import {GenerateTokens} from "digital/site/utils/ExpressionParser/GenerateTokens"
 import {OrganizeMinDepth} from "digital/site/utils/ExpressionParser/ComponentOrganizer"
-import {OperatorFormatLabel, OperatorFormat} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
+import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS} from "digital/site/utils/ExpressionParser/Constants/Formats";
 import {Circuit} from "shared/api/circuit/public";
 import {Err, Ok, Result} from "shared/api/circuit/utils/Result";
@@ -88,7 +88,7 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
 
 export function Generate(circuit: DigitalCircuit, camera: Camera, expression: string,
     userOptions: Partial<ExprToCirGeneratorOptions>): Result {
-    const options = {...defaultOptions, ...userOptions};
+    const options = { ...defaultOptions, ...userOptions };
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
     const ops = (options.format === "custom")
         ? (options.ops)
@@ -111,7 +111,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
         return Err(generatedCircuitRes.error);
     }
 
-    const generatedCircuit = generatedCircuitRes.value;
+    const [generatedCircuit] = generatedCircuitRes.value;
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     // const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
@@ -147,7 +147,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
             const newWire = newPort1.connectTo(newPort2)!;
             Object.entries(wire.getProps()).forEach((prop) => newWire.setProp(...prop));
         });
-        Array.from(generatedToReal.values()).forEach((comp) => comp.select);
+        [...generatedToReal.values()].forEach((comp) => comp.select);
         circuit.commitTransaction();
     }
 
