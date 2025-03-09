@@ -1,4 +1,4 @@
-import {Circuit} from "shared/api/circuit/public";
+import {RootCircuit} from "shared/api/circuit/public";
 
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
@@ -10,9 +10,10 @@ import {SaveCircuit}      from "shared/site/state/thunks/SaveCircuit";
 import {LoadUserCircuits} from "shared/site/state/thunks/User";
 
 import {GenerateThumbnail} from "./GenerateThumbnail";
+import {Schema} from "shared/api/circuit/schema";
 
 
-export const useAPIMethods = (mainCircuit: Circuit) => {
+export const useAPIMethods = (mainCircuit: RootCircuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
     const dispatch = useSharedDispatch();
 
@@ -26,8 +27,8 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         }
 
         try {
-            // TODO: Replacement for deserialize
-            // mainCircuit.deserialize(data);
+            // TODO: Make sure data is valid
+            mainCircuit.loadSchema(JSON.parse(data) as Schema.RootCircuit);
         } catch (e) {
             console.error(e);
             dispatch(_SetCircuitLoading(false));

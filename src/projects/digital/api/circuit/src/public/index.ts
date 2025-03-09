@@ -45,6 +45,9 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
             constructPort(id) {
                 return DigitalPortImpl(circuit, state, id);
             },
+            constructIC(id) {
+                return new DigitalIntegratedCircuitImpl(MakeCircuitState(id));
+            },
         }
 
         return state;
@@ -54,7 +57,7 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
     doc.createCircuit(mainCircuitID);
     const mainState = MakeCircuitState(mainCircuitID);
 
-    const circuit = new DigitalRootCircuitImpl(mainState, (id, objs, metadata, portConfig, portFactory) => {
+    const circuit = new DigitalRootCircuitImpl(doc, mainState, (id, objs, metadata, portConfig, portFactory) => {
         const kind = id;
 
         doc.createIC(
@@ -66,8 +69,6 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
         // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
         mainState.assembler.addAssembler(kind, (params) =>
             new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
-
-        return new DigitalIntegratedCircuitImpl(MakeCircuitState(id));
     });
 
     return [circuit, mainState];

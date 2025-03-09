@@ -9,7 +9,6 @@ import {InvertCircuitOp} from "./CircuitOps";
 import {PortConfig}      from "./ComponentInfo";
 import {CircuitDocument} from "./CircuitDocument";
 import {FastCircuitDiff} from "./FastCircuitDiff";
-import {V, Vector} from "Vector";
 
 
 export type InternalEvent = {
@@ -52,13 +51,10 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         this.undoStack = [];
         this.redoStack = [];
 
-        this.doc.subscribe(({ circuit, diff }) => {
-            if (circuit !== this.id)
+        this.doc.subscribe((ev) => {
+            if (ev.circuit !== this.id)
                 return;
-            this.publish({
-                type: "CircuitOp",
-                diff,
-            });
+            this.publish(ev);
         });
 
         // Subscribe to log to track events that change this circuit
@@ -86,7 +82,6 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     //
     // Convenience getters around CircuitDocument for this circuit
     //
-
     public hasComp(id: GUID) {
         return this.doc.getCircuitInfo(this.id).unwrap().hasComp(id);
     }

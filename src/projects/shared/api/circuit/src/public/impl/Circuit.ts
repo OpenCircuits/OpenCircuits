@@ -17,6 +17,7 @@ import {SelectionsImpl}             from "./Selections";
 import {PortConfig} from "../../internal/impl/ComponentInfo";
 import {PortFactory} from "../../internal/assembly/PortAssembler";
 import {ObservableImpl} from "../../utils/Observable";
+import {CircuitDocument} from "../../internal/impl/CircuitDocument";
 
 
 export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
@@ -208,35 +209,56 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 }
 
 
-export type MakeICFunc<T extends CircuitTypes> = (
+export type MakeICFunc = (
     id: GUID,
     objs: Schema.Obj[],
     metadata: Schema.IntegratedCircuit["metadata"],
     portConfig: PortConfig,
     portFactory: PortFactory,
-) => T["IC"];
+) => void;
 
 export class RootCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> implements RootCircuit {
-    private readonly makeIC: MakeICFunc<T>;
+    protected readonly doc: CircuitDocument;
+
+    private readonly makeIC: MakeICFunc;
 
     public constructor(
+        doc: CircuitDocument,
         state: CircuitState<T>,
-        makeIC: MakeICFunc<T>,
+        makeIC: MakeICFunc,
     ) {
         super(state);
 
+        this.doc = doc;
         this.makeIC = makeIC;
+    }
+
+    private createICHelper(ic: Schema.IntegratedCircuit) {
+        const ports = ic.metadata.pins.reduce((prev, pin) => ({
+            ...prev,
+            [pin.group]: [...(prev[pin.group] ?? []), pin],
+        }), {} as Record<string, Array<Schema.IntegratedCircuit["metadata"]["pins"][number]>>);
+
+        const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
+
+        const portFactory = MapObj(ports, ([_, ids]) =>
+            (index: number, _total: number) => {
+                const pos = V(ids[index].x, ids[index].y);
+                const size = V(ic.metadata.displayWidth, ic.metadata.displayHeight);
+                return {
+                    origin: V(pos.x, pos.y),
+
+                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
+                        ? V(1, 0).scale(Math.sign(pos.x))
+                        : V(0, 1).scale(Math.sign(pos.y)),
+                };
+            });
+
+        this.makeIC(ic.metadata.id, ic.objects, ic.metadata, portConfig, portFactory);
     }
 
     public createIC(info: T["ICInfo"]): T["IC"] {
         const id = uuid();
-
-        const ports = info.display.pins.reduce((prev, pin) => ({
-            ...prev,
-            [pin.group]: [...(prev[pin.group] ?? []), pin],
-        }), {} as Record<string, ICPin[]>);
-
-        const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
         const metadata: Schema.IntegratedCircuit["metadata"] = {
             id:      id,  // Make a new ID
@@ -251,35 +273,18 @@ export class RootCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> impl
             pins: info.display.pins.map(({ id, group, pos }) => ({ id, group, x: pos.x, y: pos.y })),
         };
 
-        const portFactory = MapObj(ports, ([_, ids]) =>
-            (index: number, _total: number) => {
-                const pos = ids[index].pos;
-                const size = info.display.size;
-                return {
-                    origin: V(pos.x, pos.y),
+        this.createICHelper({
+            metadata,
+            objects: info.circuit.getObjs().map((o) => o.toSchema()),
+            camera:  { x: 0, y: 0, zoom: 0 },
+        });
 
-                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
-                        ? V(1, 0).scale(Math.sign(pos.x))
-                        : V(0, 1).scale(Math.sign(pos.y)),
-                };
-            });
-
-        return this.makeIC(id, info.circuit.getObjs().map((o) => o.toSchema()), metadata, portConfig, portFactory);
-        // state.internal.createIC(
-        //     metadata,
-        //     getComponentICInfo(info),
-        //     // new DigitalComponentInfo(kind, {}, { "inputs": "input", "outputs": "output" }, [portConfig]),
-        //     info.circuit.getObjs().map((o) => o.toSchema()),
-        // );
-
-        // // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
-        // mainState.assembler.addAssembler(kind, (params) =>
-        //     new ICComponentAssembler(params, info.display.size, factory));
-
-        // return makeIC(id);
+        return this.state.constructIC(id);
     }
     public getICs(): T["IC[]"] {
-        throw new Error("RootCircuit.getICs: Unimplemented!");
+        return [...this.doc.getCircuitIds()]
+            .filter((id) => id !== this.id)
+            .map((id) => this.state.constructIC(id));
     }
 
     public override toSchema(): Schema.RootCircuit {
@@ -287,6 +292,16 @@ export class RootCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> impl
             ...super.toSchema(),
             ics: this.getICs().map((ic) => ic.toSchema()),
         }
+    }
+
+    public loadSchema(schema: Schema.RootCircuit): void {
+        // TODO[leon] - I believe this won't work for ICs in terms of assembling correctly
+        schema.ics
+            .filter((ic) => !this.doc.getCircuitIds().has(ic.metadata.id))
+            .forEach((ic) =>
+                this.createICHelper(ic));
+
+        this.doc.addObjs(this.id, schema.objects);
     }
 }
 

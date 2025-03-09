@@ -407,6 +407,33 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
             .unwrap();
     }
 
+    public addObjs(circuit: GUID, objs: Schema.Obj[]): Result {
+        const storage = this.getMutableCircuitStorage(circuit).unwrap();
+
+        objs.filter((o) => (o.baseKind === "Component"))
+            .forEach((c) => storage.addComponent(c as Schema.Component));
+        objs.filter((o) => (o.baseKind === "Port"))
+            .forEach((p) => storage.addPort(p as Schema.Port));
+        objs.filter((o) => (o.baseKind === "Wire"))
+            .forEach((w) => storage.addWire(w as Schema.Wire));
+
+        this.publish({
+            type: "CircuitOp",
+            circuit,
+            diff: {
+                addedComponents: new Set(objs.filter((o) => (o.baseKind === "Component")).map((o) => o.id)),
+                addedWires:      new Set(objs.filter((o) => (o.baseKind === "Wire")).map((o) => o.id)),
+
+                propsChanged:      new Map(),
+                portsChanged:      new Set<string>(),
+                removedComponents: new Set<string>(),
+                removedWires:      new Set<string>(),
+            },
+        });
+
+        return OkVoid();
+    }
+
     // TODO: Transaction? idk
     public createCircuit(id: GUID): Result {
         this.storage.set(id, new CircuitStorage(this.objInfo, {
@@ -420,17 +447,17 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     public createIC(metadata: Schema.IntegratedCircuit["metadata"], info: ComponentInfo, objs: Schema.Obj[]): Result {
         this.objInfo.addNewComponentInfo(info.kind, info);
 
-        const storage = new CircuitStorage<Schema.IntegratedCircuit["metadata"]>(this.objInfo, { ...metadata });
-        objs.filter((o) => (o.baseKind === "Component"))
-            .forEach((c) => storage.addComponent(c as Schema.Component));
-        objs.filter((o) => (o.baseKind === "Port"))
-            .forEach((p) => storage.addPort(p as Schema.Port));
-        objs.filter((o) => (o.baseKind === "Wire"))
-            .forEach((w) => storage.addWire(w as Schema.Wire));
-        this.storage.set(metadata.id, storage);
+        this.storage.set(metadata.id,
+            new CircuitStorage<Schema.IntegratedCircuit["metadata"]>(this.objInfo, { ...metadata }));
         this.diffBuilders.set(metadata.id, new FastCircuitDiffBuilder());
 
+        this.addObjs(metadata.id, objs);
+
         return OkVoid();
+    }
+
+    public getCircuitIds(): Set<GUID> {
+        return new Set(this.storage.keys());
     }
 
     public setMetadataFor<M extends Schema.CircuitMetadata>(circuit: GUID, newMetadata: Partial<M>) {

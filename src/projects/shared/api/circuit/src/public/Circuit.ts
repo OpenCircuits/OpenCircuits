@@ -47,6 +47,8 @@ export interface ReadonlyCircuit {
     getWires(): ReadonlyWire[];
 
     getComponentInfo(kind: string): ComponentInfo | undefined;
+
+    toSchema(): Schema.Circuit;
 }
 
 type C = Observable<CircuitEvent> & ReadonlyCircuit;
@@ -92,11 +94,7 @@ export interface Circuit extends C {
     // copy(): Circuit;
     // reset(): void;
 
-    // Figure out HOW these need to be used first before implementing
-    // It might be a motivator for some Query system and then you serialize the query
     toSchema(): Schema.Circuit;
-    // serialize(objs?: Obj[]): string;
-    // deserialize(data: string): void;
 }
 
 export interface ICInfo {
@@ -106,7 +104,11 @@ export interface ICInfo {
 export interface RootCircuit extends Circuit {
     createIC(info: ICInfo): IntegratedCircuit;
     getICs(): IntegratedCircuit[];
+
     toSchema(): Schema.RootCircuit;
+
+    // TODO: Come up with a better name for this
+    loadSchema(schema: Schema.RootCircuit): void;
 }
 
 export interface ICPin {

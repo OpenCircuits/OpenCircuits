@@ -24,4 +24,3 @@ export interface IntegratedCircuit extends Circuit {
 export interface RootCircuit extends Circuit {
     ics: IntegratedCircuit[];
 }
-

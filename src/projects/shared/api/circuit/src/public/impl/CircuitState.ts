@@ -46,6 +46,5 @@ export interface CircuitState<T extends CircuitTypes> {
     constructComponent(id: string): T["Component"];
     constructWire(id: string): T["Wire"];
     constructPort(id: string): T["Port"];
-
-    // constructIC(id: string): T["IC"];
+    constructIC(id: string): T["IC"];
 }

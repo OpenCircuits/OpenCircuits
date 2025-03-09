@@ -1,6 +1,6 @@
 import {SVGDrawing} from "svg2canvas";
 
-import {Circuit}      from "shared/api/circuit/public";
+import {RootCircuit}      from "shared/api/circuit/public";
 import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
@@ -17,7 +17,7 @@ export interface ToolConfig {
     tools: Tool[];
 }
 
-export function CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes>(
+export function CircuitDesignerImpl<CircuitT extends RootCircuit, T extends CircuitTypes>(
     circuit: CircuitT,
     state: CircuitDesignerState<T>,
     svgMap: Map<string, SVGDrawing>,

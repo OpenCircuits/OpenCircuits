@@ -135,8 +135,6 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         this.dirtyPorts = new DirtyMap();
 
         this.circuit.subscribe((ev) => {
-            // TODO[model_refactor_api](leon) - use events better, i.e. how do we collect the diffs until the next
-            //                                  render cycle or query for the dirty object(s)?
             const diff = ev.diff;
 
             // Mark all added/removed component dirty

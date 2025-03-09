@@ -1,4 +1,4 @@
-import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
+import {CreateCircuit, DigitalRootCircuit} from "digital/api/circuit/public";
 import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitState";
 
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
@@ -9,7 +9,7 @@ import {ToolManager} from "shared/api/circuitdesigner/public/impl/ToolManager";
 
 import {SVGs} from "./rendering/svgs";
 
-export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalCircuit> {}
+export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalRootCircuit> {}
 
 export function CreateDesigner(toolConfig: ToolConfig, renderers: ToolRenderer[], dragTime?: number) {
     const [circuit, state] = CreateCircuit();
