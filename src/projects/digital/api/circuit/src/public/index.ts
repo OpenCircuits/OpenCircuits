@@ -7,7 +7,8 @@ import {CircuitDocument}       from "shared/api/circuit/internal/impl/CircuitDoc
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {CreateDigitalComponentInfoProvider, DigitalComponentInfo} from "digital/api/circuit/internal/DigitalComponents";
+import {CreateDigitalComponentInfoProvider,
+        DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/DigitalComponents";
 import {MakeDigitalCircuitAssembler}        from "digital/api/circuit/internal/assembly/DigitalCircuitAssembler";
 import {DigitalSim}                         from "digital/api/circuit/internal/sim/DigitalSim";
 
@@ -18,6 +19,7 @@ import {DigitalComponentImpl}   from "./impl/DigitalComponent";
 import {DigitalWireImpl}        from "./impl/DigitalWire";
 import {DigitalPortImpl}        from "./impl/DigitalPort";
 import {DigitalCircuitState}    from "./impl/DigitalCircuitState";
+import {DigitalComponentInfoImpl} from "./impl/DigitalComponentInfo";
 
 
 export * from "./DigitalCircuit";
@@ -37,16 +39,19 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
             internal, assembler, sim, renderOptions,
 
             constructComponent(id) {
-                return DigitalComponentImpl(circuit, state, id);
+                return new DigitalComponentImpl(state, id);
             },
             constructWire(id) {
-                return DigitalWireImpl(circuit, state, id);
+                return new DigitalWireImpl(state, id);
             },
             constructPort(id) {
-                return DigitalPortImpl(circuit, state, id);
+                return new DigitalPortImpl(state, id);
             },
             constructIC(id) {
                 return new DigitalIntegratedCircuitImpl(MakeCircuitState(id));
+            },
+            constructComponentInfo(kind) {
+                return new DigitalComponentInfoImpl(state, kind);
             },
         }
 
@@ -62,7 +67,7 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
 
         doc.createIC(
             metadata,
-            new DigitalComponentInfo(kind, {}, { "inputs": "input", "outputs": "output" }, [portConfig]),
+            new DigitalComponentConfigurationInfo(kind, {}, { "inputs": "input", "outputs": "output" }, [portConfig]),
             objs,
         );
 

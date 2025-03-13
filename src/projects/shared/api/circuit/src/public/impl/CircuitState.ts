@@ -41,10 +41,14 @@ export type CircuitTypes<
 export interface CircuitState<T extends CircuitTypes> {
     internal: CircuitInternal;
     assembler: CircuitAssembler;
+
+    // TODO: Remove this, only Viewport references it
+    // -> find options that can be extracted and put in separately that relate to rendering rather than assembly
     renderOptions: RenderOptions;
 
     constructComponent(id: string): T["Component"];
     constructWire(id: string): T["Wire"];
     constructPort(id: string): T["Port"];
     constructIC(id: string): T["IC"];
+    constructComponentInfo(kind: string): T["ComponentInfo"];
 }

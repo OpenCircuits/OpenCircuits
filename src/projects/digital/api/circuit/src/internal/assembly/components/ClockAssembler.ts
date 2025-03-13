@@ -5,14 +5,14 @@ import {Schema} from "shared/api/circuit/schema";
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalComponentInfo} from "../../DigitalComponents";
+import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 
 
 export class ClockAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
-    protected info: DigitalComponentInfo;
+    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, V(1.2, 0.84), {
@@ -28,7 +28,7 @@ export class ClockAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("Clock").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("Clock").unwrap() as DigitalComponentConfigurationInfo;
     }
 
     private isOn(sw: Schema.Component) {

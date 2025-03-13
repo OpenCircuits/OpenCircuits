@@ -38,11 +38,11 @@ export class PanTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public onActivate(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
-        viewport.camera.emit({ type: "dragStart" });
+        viewport.camera.publish({ type: "dragStart" });
     }
 
     public onDeactivate(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
-        viewport.camera.emit({ type: "dragEnd" });
+        viewport.camera.publish({ type: "dragEnd" });
     }
 
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {

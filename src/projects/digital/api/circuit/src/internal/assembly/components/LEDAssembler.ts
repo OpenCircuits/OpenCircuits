@@ -10,13 +10,13 @@ import {Style}                           from "shared/api/circuit/internal/assem
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
-import {DigitalComponentInfo} from "../../DigitalComponents";
+import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 
 
 export class LEDAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
-    protected info: DigitalComponentInfo;
+    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, V(1, 1), {
@@ -49,7 +49,7 @@ export class LEDAssembler extends ComponentAssembler {
         ]);
 
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("LED").unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo("LED").unwrap() as DigitalComponentConfigurationInfo;
     }
 
     private assembleLightStyle(led: Schema.Component) {

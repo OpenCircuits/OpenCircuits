@@ -88,7 +88,7 @@ export function CreateTestCircuitDesigner(toolConfig: ToolConfig = GetDefaultToo
         },
     };
 
-    const designer = CircuitDesignerImpl(circuit, designerState, new Map(), { dragTime: -1 });
+    const designer = new CircuitDesignerImpl(circuit, designerState, new Map(), { dragTime: -1 });
     const [mockInput, canvas] = SetupMockCanvas(designer);
 
     return [designer, mockInput, canvas, helpers] as const;

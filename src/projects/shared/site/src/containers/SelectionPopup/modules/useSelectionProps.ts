@@ -80,7 +80,7 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
 
     // When number of selections change, update the list of objects
     useEffect(() =>
-        circuit.selections.observe(() =>
+        circuit.selections.subscribe(() =>
             setObjs(circuit.selections
                     .filter((s) => !ignore(s))
                     .filter(validTypes))),

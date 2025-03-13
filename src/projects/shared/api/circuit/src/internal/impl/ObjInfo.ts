@@ -12,13 +12,25 @@ export interface ObjInfo {
     checkPropValue(key: string, value?: Schema.Prop): Result;
 }
 
+export function PortListToConfig(ports: Schema.Port[]): PortConfig {
+    const counts: Record<string, number> = {};
+    ports.forEach(({ group }) =>
+        counts[group] = (counts[group] ?? 0) + 1);
+    return counts;
+}
+
 // Describes legal component configurations.
 // NOTE: The configuration wherein each port group has zero ports is IMPLICITLY LEGAL, because the
 //  component is UNREACHABLE in any propagator.
-export interface ComponentInfo extends ObjInfo {
+export interface ComponentConfigurationInfo extends ObjInfo {
     readonly baseKind: "Component";
     readonly portGroups: string[];
     readonly defaultPortConfig: PortConfig;
+
+    // Returns true if the 'kind' of this component is a 'Node'
+    // Node components are a special denomination that usually exist in-between wires via a 'split' operation.
+    // They have a few methods associated with them ('snipping', the inverse of a 'split').
+    readonly isNode: boolean;
 
     checkPortConfig(p: PortConfig): Result;
     makePortsForConfig(id: Schema.GUID, p: PortConfig): Result<Schema.Port[]>;
@@ -31,24 +43,12 @@ export interface ComponentInfo extends ObjInfo {
     // Also i.e. thumbnail, display name, description, etc.
 }
 
-// TODO: seems kind of heavy
-export function CheckPortList(info: ComponentInfo, ports: Schema.Port[]): Result {
-    return info.checkPortConfig(PortListToConfig(ports));
-}
-
-export function PortListToConfig(ports: Schema.Port[]): PortConfig {
-    const counts: Record<string, number> = {};
-    ports.forEach(({ group }) =>
-        counts[group] = (counts[group] ?? 0) + 1);
-    return counts;
-}
-
 export interface ObjInfoProvider {
     // TODO: Maybe use i.e. Option<ObjInfo>
     get(kind: string): ObjInfo | undefined;
-    getComponent(kind: string): ComponentInfo | undefined;
+    getComponent(kind: string): ComponentConfigurationInfo | undefined;
 
-    addNewComponentInfo(kind: string, info: ComponentInfo): void;
+    addNewComponentInfo(kind: string, info: ComponentConfigurationInfo): void;
     removeComponentInfo(kind: string): void;
     // TODO: potentially:
     // getWire(kind: string): WireInfo | undefined;
@@ -56,12 +56,12 @@ export interface ObjInfoProvider {
 }
 
 export class BaseObjInfoProvider implements ObjInfoProvider {
-    private readonly components: Map<string, ComponentInfo>;
+    private readonly components: Map<string, ComponentConfigurationInfo>;
     private readonly wires: Map<string, ObjInfo>;
     private readonly ports: Map<string, ObjInfo>;
 
     public constructor(
-        components: ComponentInfo[],
+        components: ComponentConfigurationInfo[],
         wires: ObjInfo[],
         ports: ObjInfo[],
     ) {
@@ -70,7 +70,7 @@ export class BaseObjInfoProvider implements ObjInfoProvider {
         this.ports      = new Map(ports     .map((info) => [info.kind, info]));
     }
 
-    public addNewComponentInfo(kind: string, info: ComponentInfo): void {
+    public addNewComponentInfo(kind: string, info: ComponentConfigurationInfo): void {
         this.components.set(kind, info);
     }
 
@@ -78,7 +78,7 @@ export class BaseObjInfoProvider implements ObjInfoProvider {
         this.components.delete(kind);
     }
 
-    public getComponent(kind: string): ComponentInfo | undefined {
+    public getComponent(kind: string): ComponentConfigurationInfo | undefined {
         return this.components.get(kind);
     }
 
@@ -118,17 +118,21 @@ export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
         return OkVoid();
     }
 }
-export abstract class BaseComponentInfo extends BaseObjInfo<"Component"> implements ComponentInfo {
+export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Component">
+                                                     implements ComponentConfigurationInfo {
     public readonly defaultPortConfig: PortConfig;
     public readonly portGroups: string[];
 
     protected readonly validPortConfigs: PortConfig[];
+
+    public readonly isNode: boolean;
 
     public constructor(
         kind: string,
         props: PropTypeMap,
         portGroups: string[],
         portConfigs: PortConfig[],
+        isNode: boolean,
         defaultConfig = 0
     ) {
         super("Component", kind, { ...props, "x": "number", "y": "number", "angle": "number" });
@@ -137,6 +141,8 @@ export abstract class BaseComponentInfo extends BaseObjInfo<"Component"> impleme
         this.portGroups = portGroups;
 
         this.validPortConfigs = portConfigs;
+
+        this.isNode = isNode;
     }
 
     protected abstract getPortInfo(p: PortConfig, group: string, index: number): Pick<Schema.Port, "kind" | "props">;

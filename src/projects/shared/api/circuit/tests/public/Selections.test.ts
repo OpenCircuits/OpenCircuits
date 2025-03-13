@@ -61,7 +61,7 @@ describe("Selections", () => {
             const [{ selections, undo, redo }, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             let observedCount = 0;
-            selections.observe(() => {observedCount++});
+            selections.subscribe(() => {observedCount++});
             c1.select();
             expect(observedCount).toBe(1);
             c2.select();
@@ -176,7 +176,7 @@ describe("Selections", () => {
             c1.select();
             c2.select();
             let observedCount = 0;
-            circuit.selections.observe(() => {observedCount++});
+            circuit.selections.subscribe(() => {observedCount++});
             circuit.deleteObjs([c1]);
             expect(observedCount).toBe(1);
             circuit.undo();

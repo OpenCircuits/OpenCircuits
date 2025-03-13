@@ -4,7 +4,7 @@ import {ComponentAssembler, ComponentBaseShapePrimAssembly} from "shared/api/cir
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
 
-import {DigitalComponentInfo} from "digital/api/circuit/internal/DigitalComponents";
+import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/DigitalComponents";
 import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
 
 
@@ -22,7 +22,7 @@ export interface GateAssemblerParams {
 }
 export class GateAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-    protected info: DigitalComponentInfo;
+    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(
         params: AssemblerParams,
@@ -85,6 +85,6 @@ export class GateAssembler extends ComponentAssembler {
         ]);
 
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentInfo;
+        this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
     }
 }

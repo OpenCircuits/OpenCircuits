@@ -1,24 +1,23 @@
+import {Vector} from "Vector";
+
 import {WireImpl} from "shared/api/circuit/public/impl/Wire";
 
-import {GUID} from "shared/api/circuit/internal";
-
-import {extend} from "shared/api/circuit/utils/Functions";
-
-import {DigitalCircuit} from "../DigitalCircuit";
-import {DigitalNode}    from "../DigitalComponent";
-import {DigitalWire}    from "../DigitalWire";
-
-import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
+import {DigitalWire}  from "../DigitalWire";
+import {DigitalPort}  from "../DigitalPort";
+import {DigitalTypes} from "./DigitalCircuitState";
 
 
-export function DigitalWireImpl(circuit: DigitalCircuit, state: DigitalCircuitState, id: GUID) {
-    const base = WireImpl<DigitalTypes>(circuit, state, id, (p1, p2, pos) => {
-        const node = circuit.placeComponentAt("DigitalNode", pos) as DigitalNode;
+export class DigitalWireImpl extends WireImpl<DigitalTypes> implements DigitalWire {
+    protected override connectNode(p1: DigitalPort, p2: DigitalPort, pos: Vector) {
+        const nodeId = this.state.internal.placeComponent("DigitalNode", { x: pos.x, y: pos.y }).unwrap();
+        const node = this.state.constructComponent(nodeId);
+        if (!node.isNode())
+            throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);
 
-        const nodeIn = node.ports["inputs"][0], nodeOut = node.ports["outputs"][0];
+        const portIn = node.ports["inputs"][0], portOut = node.ports["outputs"][0];
 
-        const wire1 = (p1.isOutputPort ? p1.connectTo(nodeIn) : p1.connectTo(nodeOut));
-        const wire2 = (p2.isOutputPort ? p2.connectTo(nodeIn) : p2.connectTo(nodeOut));
+        const wire1 = (p1.isOutputPort ? p1.connectTo(portIn) : p1.connectTo(portOut));
+        const wire2 = (p2.isOutputPort ? p2.connectTo(portIn) : p2.connectTo(portOut));
 
         if (!wire1)
             throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
@@ -26,7 +25,5 @@ export function DigitalWireImpl(circuit: DigitalCircuit, state: DigitalCircuitSt
             throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
 
         return { node, wire1, wire2 };
-    });
-
-    return extend(base, {} as const) satisfies DigitalWire;
+    }
 }

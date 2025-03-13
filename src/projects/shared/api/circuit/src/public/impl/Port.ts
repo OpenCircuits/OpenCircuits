@@ -1,109 +1,103 @@
 import {Vector} from "Vector";
 
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
-import {extend}  from "shared/api/circuit/utils/Functions";
 import {GUID}    from "shared/api/circuit/internal";
+import {Schema}  from "shared/api/circuit/schema";
 
 import {Port}    from "../Port";
-import {Circuit} from "../Circuit";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
-import {Schema} from "../../schema";
 
 
-export function PortImpl<T extends CircuitTypes>(
-    circuit: Circuit,
-    state: CircuitState<T>,
-    id: GUID,
-    getWireKind: (p1: GUID, p2: GUID) => string,
-) {
-    const { internal, assembler, constructComponent, constructWire } = state;
+export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Port {
+    public readonly baseKind = "Port";
 
-    function getPort() {
-        return internal.getPortByID(id)
-            .mapErr(AddErrE(`API Port: Attempted to get port with ID ${id} that doesn't exist!`))
+    public constructor(state: CircuitState<T>, id: GUID) {
+        super(state, id);
+    }
+
+    protected getPort() {
+        return this.state.internal.getPortByID(this.id)
+            .mapErr(AddErrE(`API Port: Attempted to get port with ID '${this.id}' that doesn't exist!`))
             .unwrap();
     }
 
-    const base = BaseObjectImpl(state, id);
+    protected abstract getWireKind(p1: GUID, p2: GUID): string;
 
-    return extend(base, {
-        baseKind: "Port",
+    public get parent(): T["Component"] {
+        return this.state.constructComponent(this.getPort().parent);
+    }
+    public get group(): string {
+        return this.getPort().group;
+    }
+    public get index(): number {
+        return this.getPort().index;
+    }
 
-        get parent(): T["Component"] {
-            return constructComponent(getPort().parent);
-        },
-        get group(): string {
-            return getPort().group;
-        },
-        get index(): number {
-            return getPort().index;
-        },
+    public get originPos(): Vector {
+        return this.state.assembler.getPortPos(this.id).unwrap().origin;
+    }
+    public get targetPos(): Vector {
+        return this.state.assembler.getPortPos(this.id).unwrap().target;
+    }
+    public get dir(): Vector {
+        return this.targetPos.sub(this.originPos).normalize();
+    }
 
-        get originPos(): Vector {
-            return assembler.getPortPos(id).unwrap().origin;
-        },
-        get targetPos(): Vector {
-            return assembler.getPortPos(id).unwrap().target;
-        },
-        get dir(): Vector {
-            return this.targetPos.sub(this.originPos).normalize();
-        },
+    public get connections(): T["Wire[]"] {
+        return [...this.state.internal.getWiresForPort(this.id).unwrap()]
+            .map((id) => this.state.constructWire(id));
+    }
+    public get connectedPorts(): T["Port[]"] {
+        return this.connections.map((w) => ((w.p1.id === this.id) ? w.p2 : w.p1));
+    }
 
-        get connections(): T["Wire[]"] {
-            return [...internal.getWiresForPort(base.id).unwrap()]
-                .map((id) => constructWire(id));
-        },
-        get connectedPorts(): T["Port[]"] {
-            return this.connections.map((w) => ((w.p1.id === base.id) ? w.p2 : w.p1));
-        },
+    public get path(): T["Path"] {
+        throw new Error("Port.get path: Unimplemented!");
+    }
 
-        get path(): T["Path"] {
-            throw new Error("Port.get path: Unimplemented!");
-        },
+    public get isAvailable(): boolean {
+        const p = this.getPort();
+        const curConnections = [...this.state.internal.getPortsForPort(this.id).unwrap()]
+            .map((id) => this.state.internal.getPortByID(id).unwrap());
+        const parent = this.state.internal.getCompByID(p.parent).unwrap();
 
-        get isAvailable(): boolean {
-            const p = getPort();
-            const curConnections = [...internal.getPortsForPort(base.id).unwrap()]
-                .map((id) => internal.getPortByID(id).unwrap());
-            const parent = internal.getCompByID(p.parent).unwrap();
+        return this.state.internal.getComponentInfo(parent.kind).unwrap()
+            .isPortAvailable(p, curConnections);
+    }
+    public canConnectTo(other: T["Port"]): boolean {
+        const p1 = this.getPort();
+        const p1Info = this.state.internal.getCompByID(p1.parent)
+            .andThen((p) => this.state.internal.getComponentInfo(p.kind))
+            .unwrap();
+        const p1Connections = this.state.internal.getPortsForPort(p1.id)
+            .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
+            .unwrap();
 
-            return internal.getComponentInfo(parent.kind).unwrap()
-                .isPortAvailable(p, curConnections);
-        },
-        canConnectTo(other: T["Port"]): boolean {
-            const p1 = getPort();
-            const p1Info = internal.getCompByID(p1.parent)
-                .andThen((p) => internal.getComponentInfo(p.kind))
-                .unwrap();
-            const p1Connections = internal.getPortsForPort(p1.id)
-                .map((ids) => [...ids].map((id) => internal.getPortByID(id).unwrap()))
-                .unwrap();
+        const p2 = this.state.internal.getPortByID(other.id).unwrap();
+        const p2Info = this.state.internal.getCompByID(p2.parent)
+            .andThen((p) => this.state.internal.getComponentInfo(p.kind)).unwrap();
+        const p2Connections = this.state.internal.getPortsForPort(p2.id)
+            .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
+            .unwrap();
 
-            const p2 = internal.getPortByID(other.id).unwrap();
-            const p2Info = internal.getCompByID(p2.parent)
-                .andThen((p) => internal.getComponentInfo(p.kind)).unwrap();
-            const p2Connections = internal.getPortsForPort(p2.id)
-                .map((ids) => [...ids].map((id) => internal.getPortByID(id).unwrap()))
-                .unwrap();
+        return p1Info.checkPortConnectivity(p1, p2, p1Connections)
+            .and(p2Info.checkPortConnectivity(p2, p1, p2Connections)).ok;
+    }
 
-            return p1Info.checkPortConnectivity(p1, p2, p1Connections)
-                .and(p2Info.checkPortConnectivity(p2, p1, p2Connections)).ok;
-        },
+    public connectTo(other: T["Port"]): T["Wire"] | undefined {
+        this.state.internal.beginTransaction();
 
-        connectTo(other: T["Port"]): T["Wire"] | undefined {
-            internal.beginTransaction();
+        const id = this.state.internal.connectWire(
+            this.getWireKind(this.id, other.id), this.id, other.id, {}).unwrap();
 
-            const id = internal.connectWire(getWireKind(base.id, other.id), base.id, other.id, {}).unwrap();
+        this.state.internal.commitTransaction();
 
-            internal.commitTransaction();
+        return this.state.constructWire(id);
+    }
 
-            return constructWire(id);
-        },
-
-        toSchema(): Schema.Port {
-            return ({ ...getPort() });
-        },
-    } as const) satisfies Port;
+    public toSchema(): Schema.Port {
+        return ({ ...this.getPort() });
+    }
 }
