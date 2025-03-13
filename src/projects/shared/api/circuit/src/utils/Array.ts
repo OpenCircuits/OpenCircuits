@@ -14,7 +14,7 @@ declare global {
 }
 
 Array.prototype.sum = function(this: number[]): number {
-    return this.length === 0 ? 0 : this.reduce((a, b) => (a + b));
+    return this.reduce((a, b) => (a + b), 0);
 }
 Set.prototype.intersection = function<T, U>(this: Set<T>, other: Set<U>): Set<T & U> {
     let smallerElems: Set<T> | Set<U>;

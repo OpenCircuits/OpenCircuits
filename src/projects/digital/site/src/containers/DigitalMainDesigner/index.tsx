@@ -38,11 +38,10 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
     for (let i = 0; i < N; i++) {
         const comp = circuit.placeComponentAt(itemId, pos);
 
-        // Need to do it like this rather then comp.getInputPorts() since this can
-        //  account for things like the Select ports on Multiplexers
-        const inputPorts = (options & SmartPlaceOptions.Inputs) ? comp.inputs : [];
+        // TODO: Revisit after deciding on exact behavior of .inputs and .outputs
+        const inputPorts = (options & SmartPlaceOptions.Inputs) ? (comp.inputs ?? []) : [];
 
-        const outputPorts = (options & SmartPlaceOptions.Outputs) ? comp.outputs : [];
+        const outputPorts = (options & SmartPlaceOptions.Outputs) ? (comp.outputs ?? []) : [];
 
         const inputs = inputPorts.map((port) => {
             const sw = circuit.placeComponentAt("Switch", V(0, 0));
