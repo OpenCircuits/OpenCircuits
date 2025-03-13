@@ -14,7 +14,7 @@ export class DigitalComponentInfoImpl extends ComponentInfoImpl<DigitalTypes> im
         return this.state.internal.getComponentInfo(this.kind)
             .andThen<DigitalComponentConfigurationInfo>((info) => {
                 if (!(info instanceof DigitalComponentConfigurationInfo))
-                    return ErrE("");
+                    return ErrE(`Received non-digital component info for ${this.kind}!`);
                 return Ok(info);
             })
             .mapErr(AddErrE(`API ComponentInfo: Attempted to get info with kind '${this.kind}' that doesn't exist!`))
