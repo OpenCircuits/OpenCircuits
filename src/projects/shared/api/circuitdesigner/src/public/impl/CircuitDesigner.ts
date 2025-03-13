@@ -17,34 +17,33 @@ export interface ToolConfig {
     tools: Tool[];
 }
 
-export function CircuitDesignerImpl<CircuitT extends RootCircuit, T extends CircuitTypes>(
-    circuit: CircuitT,
-    state: CircuitDesignerState<T>,
-    svgMap: Map<string, SVGDrawing>,
-    options: CircuitDesignerOptions,
-) {
-    const designer = {
-        get circuit(): CircuitT {
-            return circuit;
-        },
+export class CircuitDesignerImpl<CircuitT extends RootCircuit, T extends CircuitTypes> implements CircuitDesigner {
+    public readonly circuit: CircuitT;
 
-        get viewport(): Viewport {
-            return viewport;
-        },
+    public readonly viewport: Viewport;
 
-        get curTool(): Tool | undefined {
-            return state.toolManager.curTool;
-        },
+    protected readonly state: CircuitDesignerState<T>;
 
-        set curPressedObj(obj: T["Obj"] | undefined) {
-            state.curPressedObj = obj;
-        },
-        get curPressedObj(): T["Obj"] | undefined {
-            return state.curPressedObj;
-        },
-    } satisfies CircuitDesigner;
+    public constructor(
+        circuit: CircuitT,
+        state: CircuitDesignerState<T>,
+        svgMap: Map<string, SVGDrawing>,
+        options: CircuitDesignerOptions,
+    ) {
+        this.circuit = circuit;
+        this.state = state;
 
-    const viewport = ViewportImpl(state, designer, svgMap, options);
+        this.viewport = new ViewportImpl(state, this, svgMap, options);
+    }
 
-    return designer;
+    public get curTool(): Tool | undefined {
+        return this.state.toolManager.curTool;
+    }
+
+    public set curPressedObj(obj: T["Obj"] | undefined) {
+        this.state.curPressedObj = obj;
+    }
+    public get curPressedObj(): T["Obj"] | undefined {
+        return this.state.curPressedObj;
+    }
 }

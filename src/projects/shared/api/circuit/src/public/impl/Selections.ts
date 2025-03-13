@@ -1,101 +1,106 @@
 import {Vector} from "Vector";
 import {Rect}   from "math/Rect";
 
-import {extend} from "shared/api/circuit/utils/Functions";
-
-import {Selections, SelectionsEvent} from "../Selections";
-import {Circuit}                     from "../Circuit";
+import {GUID} from "../../internal";
+import {ObservableImpl} from "../../utils/Observable";
+import {SelectionsEvent} from "../Selections";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
-import {ObservableImpl}             from "./Observable";
-import {GUID} from "../../internal";
 
 import "shared/api/circuit/utils/Array";
 
 
-export function SelectionsImpl<T extends CircuitTypes>(
-    circuit: Circuit,
-    { internal, constructComponent, constructWire }: CircuitState<T>
-) {
-    const observable = ObservableImpl<SelectionsEvent>();
+export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<SelectionsEvent> {
+    protected readonly state: CircuitState<T>;
 
-    let selections = new Set<GUID>();
-    internal.subscribe((_) => {
-        // Update selections
-        const newSelections = new Set(
-            [...internal.getAllObjs()]
-                .filter((o) => (o.props["isSelected"] === true))
-                .map((o) => o.id));
+    protected selections: Set<GUID>;
 
-        const diff = selections.symmetricDifference(newSelections);
-        selections = newSelections;
+    public constructor(state: CircuitState<T>) {
+        super();
 
-        if (diff.size > 0) {
-            observable.emit({
-                type:   "numSelectionsChanged",
-                newAmt: diff.size,
-            });
-        }
-    })
+        this.state = state;
 
-    return extend(observable, {
-        get bounds(): Rect {
-            return Rect.Bounding(this.all.map((o) => o.bounds));
-        },
+        this.selections = new Set<GUID>();
+        this.state.internal.subscribe((_) => {
+            // Update selections
+            const newSelections = new Set(
+                [...this.state.internal.getAllObjs()]
+                    .filter((o) => (o.props["isSelected"] === true))
+                    .map((o) => o.id));
 
-        get midpoint(): Vector {
-            const pts = [
-                ...this.components.map((c) => c.pos),
-                ...this.wires.map((w) => w.shape.getPos(0.5)),
-            ];
-            return Rect.FromPoints(
-                Vector.Min(...pts),
-                Vector.Max(...pts),
-            ).center;
-        },
+            const diff = this.selections.symmetricDifference(newSelections);
+            this.selections = newSelections;
 
-        get length(): number {
-            return selections.size;
-        },
-        get isEmpty(): boolean {
-            return (this.length === 0);
-        },
+            if (diff.size > 0) {
+                this.publish({
+                    type:   "numSelectionsChanged",
+                    newAmt: diff.size,
+                });
+            }
+        })
+    }
 
-        get all(): T["Obj[]"] {
-            return [...selections].map((id) => circuit.getObj(id)!);
-        },
-        get components(): T["Component[]"] {
-            return [...selections]
-                .filter((id) => internal.hasComp(id))
-                .map((id) => constructComponent(id));
-        },
-        get wires(): T["Wire[]"] {
-            return [...selections]
-                .filter((id) => internal.hasWire(id))
-                .map((id) => constructWire(id));
-        },
+    public get bounds(): Rect {
+        return Rect.Bounding(this.all.map((o) => o.bounds));
+    }
 
-        clear(): void {
-            internal.beginTransaction();
-            for (const id of selections)
-                internal.setPropFor(id, "isSelected", undefined);
-            internal.commitTransaction();
-        },
+    public get midpoint(): Vector {
+        const pts = [
+            ...this.components.map((c) => c.pos),
+            ...this.wires.map((w) => w.shape.getPos(0.5)),
+        ];
+        return Rect.FromPoints(
+            Vector.Min(...pts),
+            Vector.Max(...pts),
+        ).center;
+    }
 
-        forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {
-            return this.all.forEach(f);
-        },
-        filter(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): T["Obj[]"] {
-            return this.all.filter(f);
-        },
-        every(condition: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): boolean {
-            return this.all.every(condition);
-        },
+    public get length(): number {
+        return this.selections.size;
+    }
+    public get isEmpty(): boolean {
+        return (this.length === 0);
+    }
 
-        duplicate(): T["Obj[]"] {
-            if (this.isEmpty)
-                return [];
-            throw new Error("Selections.duplicate: Unimplemented!");
-        },
-    }) satisfies Selections;
+    public get all(): T["Obj[]"] {
+        return [...this.components, ...this.wires, ...this.ports];
+    }
+    public get components(): T["Component[]"] {
+        return [...this.selections]
+            .filter((id) => this.state.internal.hasComp(id))
+            .map((id) => this.state.constructComponent(id));
+    }
+    public get wires(): T["Wire[]"] {
+        return [...this.selections]
+            .filter((id) => this.state.internal.hasWire(id))
+            .map((id) => this.state.constructWire(id));
+    }
+    public get ports(): T["Port[]"] {
+        return [...this.selections]
+            .filter((id) => this.state.internal.hasPort(id))
+            .map((id) => this.state.constructPort(id));
+    }
+
+    public clear(): void {
+        this.state.internal.beginTransaction();
+        for (const id of this.selections)
+            this.state.internal.setPropFor(id, "isSelected", undefined);
+        this.state.internal.commitTransaction();
+    }
+
+    public forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {
+        return this.all.forEach(f);
+    }
+    public filter(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): T["Obj[]"] {
+        return this.all.filter(f);
+    }
+    public every(condition: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): boolean {
+        return this.all.every(condition);
+    }
+
+    public duplicate(): T["Obj[]"] {
+        if (this.isEmpty)
+            return [];
+        throw new Error("Selections.duplicate: Unimplemented!");
+    }
 }

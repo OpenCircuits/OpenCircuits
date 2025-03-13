@@ -32,7 +32,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     const [isDragging, setIsDragging] = useState(false);
     const [clickThrough, setClickThrough] = useState(false);
 
-    useEffect(() => circuit.selections.observe(() => {
+    useEffect(() => circuit.selections.subscribe(() => {
         setNumSelections(circuit.selections.length);
         setPos(camera.toScreenPos(circuit.selections.midpoint));
 
@@ -49,11 +49,11 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
         });
     }), [circuit, setNumSelections, setClickThrough]);
 
-    useEffect(() => camera.observe(() =>
+    useEffect(() => camera.subscribe(() =>
         setPos(camera.toScreenPos(circuit.selections.midpoint))
     ), [circuit, setPos]);
 
-    useEffect(() => camera.observe((ev) => {
+    useEffect(() => camera.subscribe((ev) => {
         if (ev.type === "dragStart")
             setIsDragging(true); // Don't show popup if dragging
         if (ev.type === "dragEnd")

@@ -1,10 +1,12 @@
 import {Vector} from "Vector";
 import {Rect}   from "math/Rect";
 
+import {Observable} from "../utils/Observable";
+
 import {Component}  from "./Component";
 import {Obj}        from "./Obj";
-import {Observable} from "./Observable";
 import {Wire}       from "./Wire";
+import {Port}       from "./Port";
 
 
 export type SelectionsEvent = {
@@ -26,6 +28,7 @@ export interface Selections extends Observable<SelectionsEvent> {
     readonly all: Obj[];
     readonly components: Component[];
     readonly wires: Wire[];
+    readonly ports: Port[];
 
     clear(): void;
 

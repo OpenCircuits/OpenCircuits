@@ -6,7 +6,7 @@ import {GUID}       from "shared/api/circuit/schema/GUID";
 
 import {CircuitLog}      from "./CircuitLog";
 import {InvertCircuitOp} from "./CircuitOps";
-import {PortConfig}      from "./ComponentInfo";
+import {PortConfig}      from "./ObjInfo";
 import {CircuitDocument} from "./CircuitDocument";
 import {FastCircuitDiff} from "./FastCircuitDiff";
 

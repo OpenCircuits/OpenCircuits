@@ -1,4 +1,4 @@
-import {PortConfig} from "shared/api/circuit/internal/impl/ComponentInfo";
+import {PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
 
 
 export interface ComponentInfo {

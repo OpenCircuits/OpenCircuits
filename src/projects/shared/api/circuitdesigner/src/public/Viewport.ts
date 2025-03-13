@@ -4,7 +4,7 @@ import {Margin} from "math/Rect";
 import {GUID}        from "shared/api/circuit/public";
 import {CleanupFunc} from "shared/api/circuit/utils/types";
 
-import {MultiObservable} from "shared/api/circuit/public/Observable";
+import {MultiObservable} from "shared/api/circuit/utils/Observable";
 import {Prim}            from "shared/api/circuit/internal/assembly/Prim";
 import {RenderOptions}   from "shared/api/circuit/internal/assembly/RenderOptions";
 

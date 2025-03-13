@@ -67,7 +67,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
     public onActivate(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {
         this.components = circuit.selections.components;
 
-        camera.emit({ type: "dragStart" });
+        camera.publish({ type: "dragStart" });
 
         // Get initial angles
         this.initialMidpoint = circuit.selections.midpoint;
@@ -84,7 +84,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
     public onDeactivate(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {
         circuit.commitTransaction();
 
-        camera.emit({ type: "dragEnd" });
+        camera.publish({ type: "dragEnd" });
     }
 
     public onEvent(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {

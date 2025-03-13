@@ -2,13 +2,12 @@ import "./Extensions";
 
 import {V, Vector} from "Vector";
 
-import {extend}         from "shared/api/circuit/utils/Functions";
 import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Circuit, Component, Node, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
-import {IntegratedCircuitImpl, RootCircuitImpl}                             from "shared/api/circuit/public/impl/Circuit";
+import {Component, Node, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
+import {IntegratedCircuitImpl, RootCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
@@ -22,14 +21,14 @@ import {NodeAssembler}                   from "shared/api/circuit/internal/assem
 import {WireAssembler}                   from "shared/api/circuit/internal/assembly/WireAssembler";
 import {CircuitLog}                      from "shared/api/circuit/internal/impl/CircuitLog";
 import {CircuitDocument}                 from "shared/api/circuit/internal/impl/CircuitDocument";
-import {BaseComponentInfo, BaseObjInfo,
-        BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ComponentInfo";
+import {BaseComponentConfigurationInfo, BaseObjInfo,
+        BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 
 
-export class TestComponentInfo extends BaseComponentInfo {
+export class TestComponentInfo extends BaseComponentConfigurationInfo {
     protected override getPortInfo(_p: PortConfig, _group: string, _i: number): Pick<Schema.Port, "kind" | "props"> {
         return {
             kind:  "TestPort",
@@ -70,42 +69,27 @@ export class TestComponentAssembler extends ComponentAssembler {
     }
 }
 
-export function TestComponentImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
-    const base = ComponentImpl(circuit, state, id);
+export class TestComponentImpl extends ComponentImpl<CircuitTypes> {}
 
-    return extend(base, {
-        get info() {
-            return ComponentInfoImpl(state, base.kind);
-        },
-        isNode(): this is Node {
-            return (base.kind === "TestNode");
-        },
-        isPin(): boolean {
-            return (base.kind === "Pin");
-        },
-    } as const) satisfies Component;
-}
+export class TestWireImpl extends WireImpl<CircuitTypes> {
+    protected override getNodeKind(): string {
+        return "TestNode";
+    }
 
-export function TestWireImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
-    return WireImpl(circuit, state, id, (p1, p2, pos) => {
-        // Split logic
-        const node = circuit.placeComponentAt("TestNode", pos) as Node;
-
+    protected override connectNode(node: Node, p1: Port, p2: Port) {
         const port = node.ports[""][0];
-        const wire1 = p1.connectTo(port);
-        const wire2 = port.connectTo(p2);
-
-        if (!wire1)
-            throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
-        if (!wire2)
-            throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
-
-        return { node, wire1, wire2 };
-    });
+        return {
+            wire1: p1.connectTo(port),
+            wire2: port.connectTo(p2),
+        };
+    }
 }
 
-export function TestPortImpl(circuit: Circuit, state: CircuitState<CircuitTypes>, id: GUID) {
-    return PortImpl(circuit, state, id, (_p1, _p2) => "TestWire");
+
+export class TestPortImpl extends PortImpl<CircuitTypes> {
+    protected override getWireKind(_p1: GUID, _p2: GUID): string {
+        return "TestWire";
+    }
 }
 
 export interface TestRootCircuitHelpers {
@@ -135,13 +119,19 @@ export function CreateTestRootCircuit(
             internal, assembler, renderOptions,
 
             constructComponent(id) {
-                return TestComponentImpl(circuit, state, id);
+                return new TestComponentImpl(state, id);
             },
             constructWire(id) {
-                return TestWireImpl(circuit, state, id);
+                return new TestWireImpl(state, id);
             },
             constructPort(id) {
-                return TestPortImpl(circuit, state, id);
+                return new TestPortImpl(state, id);
+            },
+            constructIC(id) {
+                return new IntegratedCircuitImpl(MakeCircuit(id));
+            },
+            constructComponentInfo(kind) {
+                return new ComponentInfoImpl(state, kind);
             },
         };
 
@@ -153,10 +143,10 @@ export function CreateTestRootCircuit(
     const log = new CircuitLog();
     const doc = new CircuitDocument(new BaseObjInfoProvider(
         [
-            new TestComponentInfo("TestComp", {}, [""], portConfigs),
-            new TestComponentInfo("TestNode", {}, [""], portConfigs),
+            new TestComponentInfo("TestComp", {}, [""], portConfigs, false),
+            new TestComponentInfo("TestNode", {}, [""], portConfigs, true),
 
-            new TestComponentInfo("Pin", {}, [""], portConfigs),
+            new TestComponentInfo("Pin", {}, [""], portConfigs, false),
         ],
         [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
         [new BaseObjInfo("Port", "TestPort", {})],
@@ -166,20 +156,18 @@ export function CreateTestRootCircuit(
     doc.createCircuit(mainCircuitID);
     const mainState = MakeCircuit(mainCircuitID);
 
-    const circuit = new RootCircuitImpl(mainState, (id, objs, metadata, portConfig, portFactory) => {
+    const circuit = new RootCircuitImpl(doc, mainState, (id, objs, metadata, portConfig, portFactory) => {
         const kind = id;
 
         doc.createIC(
             metadata,
-            new TestComponentInfo(kind, {}, [""], [portConfig]),
+            new TestComponentInfo(kind, {}, [""], [portConfig], false),
             objs,
         );
 
         // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
         mainState.assembler.addAssembler(kind, (params) =>
             new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
-
-        return new IntegratedCircuitImpl(MakeCircuit(id));
     });
 
     return [circuit, mainState, {

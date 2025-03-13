@@ -5,7 +5,7 @@ import {GUID}   from "shared/api/circuit/schema/GUID";
 import {Schema} from "shared/api/circuit/schema";
 
 import {CircuitOp, ConnectWireOp, InvertCircuitOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
-import {ComponentInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ComponentInfo";
+import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";
 import {CircuitLog, LogEntry} from "./CircuitLog";
 import {ObservableImpl} from "../../utils/Observable";
 import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
@@ -16,10 +16,10 @@ export interface ReadonlyCircuitStorage {
     readonly metadata: Schema.CircuitMetadata;
 
     getObjectInfo(kind: string): Result<ObjInfo>;
-    getComponentInfo(kind: string): Result<ComponentInfo>;
+    getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
 
     getObjectAndInfoByID(id: GUID): Result<[Readonly<Schema.Obj>, ObjInfo]>;
-    getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentInfo]>;
+    getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]>;
 
     hasComp(id: GUID): boolean;
     hasWire(id: GUID): boolean;
@@ -184,10 +184,10 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public getObjectInfo(kind: string): Result<ObjInfo> {
-        return WrapResOrE(this.objInfo.get(kind), `Unknown obj kind ${kind}!`);
+        return WrapResOrE(this.objInfo.get(kind), `Failed to object info for kind: '${kind}'!`);
     }
-    public getComponentInfo(kind: string): Result<ComponentInfo> {
-        return WrapResOrE(this.objInfo.getComponent(kind), `Unknown component kind ${kind}!`);
+    public getComponentInfo(kind: string): Result<ComponentConfigurationInfo> {
+        return WrapResOrE(this.objInfo.getComponent(kind), `Failed to get component info for kind: '${kind}'!`);
     }
 
     public getObjectAndInfoByID(id: GUID): Result<[Readonly<Schema.Obj>, ObjInfo]> {
@@ -197,7 +197,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
                     .map((info) => [obj, info]));
     }
 
-    public getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentInfo]> {
+    public getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]> {
         return this.getCompByID(id)
             .andThen((comp) =>
                 this.getComponentInfo(comp.kind)
@@ -444,7 +444,11 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         return OkVoid();
     }
 
-    public createIC(metadata: Schema.IntegratedCircuit["metadata"], info: ComponentInfo, objs: Schema.Obj[]): Result {
+    public createIC(
+        metadata: Schema.IntegratedCircuit["metadata"],
+        info: ComponentConfigurationInfo,
+        objs: Schema.Obj[],
+    ): Result {
         this.objInfo.addNewComponentInfo(info.kind, info);
 
         this.storage.set(metadata.id,

@@ -1,17 +1,17 @@
 import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
-import {BaseComponentInfo,
+import {BaseComponentConfigurationInfo,
         BaseObjInfo,
         BaseObjInfoProvider,
         ObjInfoProvider,
         PortConfig,
-        PropTypeMap} from "shared/api/circuit/internal/impl/ComponentInfo";
+        PropTypeMap} from "shared/api/circuit/internal/impl/ObjInfo";
 import {Schema} from "shared/api/circuit/schema";
 
 
 type DigitalPortGroupInfo = Record<string, "input" | "output">
 
-export class DigitalComponentInfo extends BaseComponentInfo {
+export class DigitalComponentConfigurationInfo extends BaseComponentConfigurationInfo {
     public readonly portGroupInfo: DigitalPortGroupInfo;
     public readonly inputPortGroups: readonly string[];
     public readonly outputPortGroups: readonly string[];
@@ -21,9 +21,10 @@ export class DigitalComponentInfo extends BaseComponentInfo {
         props: PropTypeMap,
         portGroupInfo: DigitalPortGroupInfo,
         portConfigs: PortConfig[],
+        isNode = false,
         defaultConfig = 0
     ) {
-        super(kind, props, Object.keys(portGroupInfo), portConfigs, defaultConfig);
+        super(kind, props, Object.keys(portGroupInfo), portConfigs, isNode, defaultConfig);
 
         this.portGroupInfo = portGroupInfo;
 
@@ -84,7 +85,11 @@ export class DigitalComponentInfo extends BaseComponentInfo {
 
 // Inputs
 const DigitalOutputComponentInfo = (kind: string, outputs: number[], props: PropTypeMap = {}) =>
-    new DigitalComponentInfo(kind, props, { "outputs": "output" }, outputs.map((amt) => ({ "outputs": amt })));
+    new DigitalComponentConfigurationInfo(
+        kind,
+        props,
+        { "outputs": "output" },
+        outputs.map((amt) => ({ "outputs": amt })));
 
 const SwitchInfo = DigitalOutputComponentInfo("Switch", [1], { "isOn": "boolean" });
 const ButtonInfo = DigitalOutputComponentInfo("Button", [1], { "isOn": "boolean" });
@@ -95,7 +100,7 @@ const ClockInfo = DigitalOutputComponentInfo("Clock", [1], { "delay": "number", 
 
 // Outputs
 const DigitalInputComponentInfo = (kind: string, inputs: number[], props: PropTypeMap = {}) =>
-    new DigitalComponentInfo(kind, props, { "inputs": "input" }, inputs.map((amt) => ({ "inputs": amt })));
+    new DigitalComponentConfigurationInfo(kind, props, { "inputs": "input" }, inputs.map((amt) => ({ "inputs": amt })));
 
 const LEDInfo = DigitalInputComponentInfo("LED", [1], { "color": "string" });
 const BCDDisplayInfo     = DigitalInputComponentInfo("BCDDisplay",     [4], { "segmentCount": "number" });
@@ -109,7 +114,7 @@ const OscilloscopeInfo = DigitalInputComponentInfo(
 
 // Gates
 const DigitalGateComponentInfo = (kind: string) =>
-    new DigitalComponentInfo(
+    new DigitalComponentConfigurationInfo(
         kind,
         {},
         { "inputs": "input", "outputs": "output" },
@@ -127,7 +132,7 @@ const XNORGateInfo = DigitalGateComponentInfo("XNORGate");
 
 // Flip Flops
 const DigitalFlipFlopComponentInfo = (kind: string, inputs: string[]) =>
-    new DigitalComponentInfo(
+    new DigitalComponentConfigurationInfo(
         kind,
         {},
         {
@@ -155,7 +160,7 @@ const JKFlipFlopInfo = DigitalFlipFlopComponentInfo("JKFlipFlop", ["J", "K"]);
 
 // Flip Flops
 const DigitalLatchComponentInfo = (kind: string, inputs: string[]) =>
-    new DigitalComponentInfo(
+    new DigitalComponentConfigurationInfo(
         kind,
         {},
         {
@@ -173,56 +178,62 @@ const DLatchInfo  = DigitalLatchComponentInfo("DLatch",  ["D"]);
 const SRLatchInfo = DigitalLatchComponentInfo("SRLatch", ["S", "R"]);
 
 // Other
-const MultiplexerInfo = new DigitalComponentInfo(
+const MultiplexerInfo = new DigitalComponentConfigurationInfo(
     "Multiplexer",
     {},
     { "inputs": "input", "selects": "input", "outputs": "output" },
     [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": Math.pow(2, selects), "selects": selects, "outputs": 1 })),
+    false,
     1 // Default is 2-select-port mux
 );
-const DemultiplexerInfo = new DigitalComponentInfo(
+const DemultiplexerInfo = new DigitalComponentConfigurationInfo(
     "Demultiplexer",
     {},
     { "inputs": "input", "selects": "input", "outputs": "output" },
     [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": 1, "selects": selects, "outputs": Math.pow(2, selects) })),
+    false,
     1 // Default is 2-select-port demux
 );
-const EncoderInfo = new DigitalComponentInfo(
+const EncoderInfo = new DigitalComponentConfigurationInfo(
     "Encoder",
     {},
     { "inputs": "input", "outputs": "output" },
     [1,2,3,4,5,6,7,8].map((outputs) =>
         ({ "inputs": Math.pow(2, outputs), "outputs": outputs })),
+    false,
     1 // Default is 2-output-port Encoder
 );
-const DecoderInfo = new DigitalComponentInfo(
+const DecoderInfo = new DigitalComponentConfigurationInfo(
     "Decoder",
     {},
     { "inputs": "input", "outputs": "output" },
     [1,2,3,4,5,6,7,8].map((inputs) =>
         ({ "inputs": inputs, "outputs": Math.pow(2, inputs) })),
+    false,
     1 // Default is 2-input-port Decoder
 );
-const Comparator = new DigitalComponentInfo(
+const Comparator = new DigitalComponentConfigurationInfo(
     "Comparator",
     {},
     { "inputsA": "input", "inputsB": "input", "lt": "output", "eq": "output", "gt": "output" },
     [1,2,3,4,5,6,7,8].map((inputSize) =>
         ({ "inputsA": inputSize, "inputsB": inputSize, "lt": 1, "eq": 1, "gt": 1 })),
+    false,
     1 // Default is 2-bit-input-group Comparator
 );
-const Label = new DigitalComponentInfo("Label", {
+const Label = new DigitalComponentConfigurationInfo("Label", {
     "textColor": "string",
     "bgColor":   "string",
 }, {}, [{}]);
 
-const NodeInfo = new DigitalComponentInfo(
+const NodeInfo = new DigitalComponentConfigurationInfo(
     "DigitalNode",
     {},
     { "inputs": "input", "outputs": "output" },
-    [{ "inputs": 1, "outputs": 1 }]
+    [{ "inputs": 1, "outputs": 1 }],
+    true
 );
 
 

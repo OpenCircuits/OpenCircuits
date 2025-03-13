@@ -1,20 +1,31 @@
+import {AddErrE} from "../../utils/MultiError";
 import {ComponentInfo} from "../ComponentInfo";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export function ComponentInfoImpl<T extends CircuitTypes>(
-    state: CircuitState<T>,
-    kind: string,
-) {
-    const result = state.internal.getComponentInfo(kind);
-    if (!result.ok)
-        throw new Error(`Failed to find component info for ${kind}!`);
-    const info = result.unwrap();
+export class ComponentInfoImpl<T extends CircuitTypes> implements ComponentInfo {
+    protected readonly state: CircuitState<T>;
 
-    return {
-        kind,
-        portGroups:        info.portGroups,
-        defaultPortConfig: info.defaultPortConfig,
-    } satisfies ComponentInfo;
+    public readonly kind: string;
+
+    public constructor(state: CircuitState<T>, kind: string) {
+        this.state = state;
+
+        this.kind = kind;
+    }
+
+    protected getInfo() {
+        return this.state.internal.getComponentInfo(this.kind)
+            .mapErr(AddErrE(`API ComponentInfo: Attempted to get info with kind '${this.kind}' that doesn't exist!`))
+            .unwrap();
+    }
+
+    public get portGroups() {
+        return this.getInfo().portGroups;
+    }
+
+    public get defaultPortConfig() {
+        return this.getInfo().defaultPortConfig;
+    }
 }

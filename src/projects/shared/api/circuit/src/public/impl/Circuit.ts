@@ -14,7 +14,7 @@ import {isObjComponent, isObjWire} from "../Utilities";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
-import {PortConfig} from "../../internal/impl/ComponentInfo";
+import {PortConfig} from "../../internal/impl/ObjInfo";
 import {PortFactory} from "../../internal/assembly/PortAssembler";
 import {ObservableImpl} from "../../utils/Observable";
 import {CircuitDocument} from "../../internal/impl/CircuitDocument";
@@ -30,7 +30,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         this.state = state;
 
-        this.selections = SelectionsImpl(this, state);
+        this.selections = new SelectionsImpl(state);
 
         // This ordering is important, because it means that all previous circuit subscription calls will happen
         // before any public/outside subscriptions. (i.e. selections are updated before circuit subscribers are called).

@@ -1,119 +1,120 @@
 import {V, Vector} from "Vector";
 
-import {AddErrE}                         from "shared/api/circuit/utils/MultiError";
-import {FromConcatenatedEntries, extend} from "shared/api/circuit/utils/Functions";
-import {GUID}                            from "shared/api/circuit/internal";
+import {AddErrE}                 from "shared/api/circuit/utils/MultiError";
+import {FromConcatenatedEntries} from "shared/api/circuit/utils/Functions";
+import {GUID}                    from "shared/api/circuit/internal";
+import {Schema}                  from "shared/api/circuit/schema";
 
-import {Schema} from "shared/api/circuit/schema";
-
-import {Circuit}   from "../Circuit";
 import {Component} from "../Component";
-import {Port}      from "../Port";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 
 
-export function ComponentImpl<T extends CircuitTypes>(
-    circuit: Circuit,
-    state: CircuitState<T>,
-    id: GUID,
-) {
-    const { internal, constructPort } = state;
+export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Component {
+    public readonly baseKind = "Component";
 
-    function getComponent() {
-        return internal.getCompByID(id)
-            .mapErr(AddErrE(`API Component: Attempted to get component with ID ${id} that doesn't exist!`))
+    public constructor(state: CircuitState<T>, id: GUID) {
+        super(state, id);
+    }
+
+    protected getComponent() {
+        return this.state.internal.getCompByID(this.id)
+            .mapErr(AddErrE(`API Component: Attempted to get component with ID '${this.id}' that doesn't exist!`))
             .unwrap();
     }
 
-    const base = BaseObjectImpl(state, id);
+    public get info(): T["ComponentInfo"] {
+        return this.state.constructComponentInfo(this.kind);
+    }
 
-    return extend(base, {
-        baseKind: "Component",
+    public set x(val: number) {
+        this.state.internal.setPropFor<Schema.Component, "x">(this.id, "x", val);
+    }
+    public get x(): number {
+        return (this.getComponent().props.x ?? 0);
+    }
+    public set y(val: number) {
+        this.state.internal.setPropFor(this.id, "y", val);
+    }
+    public get y(): number {
+        return (this.getComponent().props.y ?? 0);
+    }
+    public set pos(val: Vector) {
+        this.state.internal.beginTransaction();
+        this.state.internal.setPropFor<Schema.Component, "x">(this.id, "x", val.x).unwrap();
+        this.state.internal.setPropFor<Schema.Component, "y">(this.id, "y", val.y).unwrap();
+        this.state.internal.commitTransaction();
+    }
+    public get pos(): Vector {
+        const obj = this.getComponent();
+        return V((obj.props.x ?? 0), (obj.props.y ?? 0));
+    }
+    public set angle(val: number) {
+        this.state.internal.setPropFor<Schema.Component, "angle">(this.id, "angle", val);
+    }
+    public get angle(): number {
+        return (this.getComponent().props.angle ?? 0);
+    }
 
-        set x(val: number) {
-            internal.setPropFor<Schema.Component, "x">(id, "x", val);
-        },
-        get x(): number {
-            return (getComponent().props.x ?? 0);
-        },
-        set y(val: number) {
-            internal.setPropFor(id, "y", val);
-        },
-        get y(): number {
-            return (getComponent().props.y ?? 0);
-        },
-        set pos(val: Vector) {
-            internal.beginTransaction();
-            internal.setPropFor<Schema.Component, "x">(id, "x", val.x).unwrap();
-            internal.setPropFor<Schema.Component, "y">(id, "y", val.y).unwrap();
-            internal.commitTransaction();
-        },
-        get pos(): Vector {
-            const obj = getComponent();
-            return V((obj.props.x ?? 0), (obj.props.y ?? 0));
-        },
-        set angle(val: number) {
-            internal.setPropFor<Schema.Component, "angle">(id, "angle", val);
-        },
-        get angle(): number {
-            return (getComponent().props.angle ?? 0);
-        },
+    public isNode(): this is T["Node"] {
+        return this.state.internal.getComponentInfo(this.kind)
+            .map((info) => info.isNode)
+            .unwrap();
+    }
 
-        get ports(): Record<string, T["Port[]"]> {
-            return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
-        },
-        get allPorts(): T["Port[]"] {
-            return [...internal.getPortsForComponent(id).unwrap()]
-                .map((id) => constructPort(id));
-        },
+    public get ports(): Record<string, T["Port[]"]> {
+        return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
+    }
+    public get allPorts(): T["Port[]"] {
+        return [...this.state.internal.getPortsForComponent(this.id).unwrap()]
+            .map((id) => this.state.constructPort(id));
+    }
 
-        // get connectedComponents(): T["Component[]"] {
-        //     throw new Error("Component.connectedComponents: Unimplemented!");
-        // },
+    // get connectedComponents(): T["Component[]"] {
+    //     throw new Error("Component.connectedComponents: Unimplemented!");
+    // },
 
-        setNumPorts(group: string, amt: number): boolean {
-            // TODO[model_refactor](leon) revisit this and decide on a functionality
-            const curConfig = internal.getPortConfig(base.id).unwrap();
+    public setNumPorts(group: string, amt: number): boolean {
+        // TODO[model_refactor](leon) revisit this and decide on a functionality
+        const curConfig = this.state.internal.getPortConfig(this.id).unwrap();
 
-            // Already at that amount of ports, so do nothing
-            if (curConfig[group] === amt)
-                return true;
-
-            const config = {
-                ...curConfig,
-                [group]: amt,
-            };
-            internal.getComponentInfo(base.kind).unwrap()
-                .checkPortConfig(config).unwrap();
-
-            internal.beginTransaction();
-            internal.setPortConfig(base.id, config).unwrap();
-            internal.commitTransaction();
+        // Already at that amount of ports, so do nothing
+        if (curConfig[group] === amt)
             return true;
-        },
-        firstAvailable(group: string): T["Port"] | undefined {
-            const ports = internal.getPortsByGroup(base.id).unwrap();
-            if (!(group in ports))
-                return undefined;
 
-            for (const portId of ports[group]) {
-                const port = constructPort(portId);
-                if (port.isAvailable)
-                    return port;
-            }
+        const config = {
+            ...curConfig,
+            [group]: amt,
+        };
+        this.state.internal.getComponentInfo(this.kind).unwrap()
+            .checkPortConfig(config).unwrap();
+
+        this.state.internal.beginTransaction();
+        this.state.internal.setPortConfig(this.id, config).unwrap();
+        this.state.internal.commitTransaction();
+        return true;
+    }
+    public firstAvailable(group: string): T["Port"] | undefined {
+        const ports = this.state.internal.getPortsByGroup(this.id).unwrap();
+        if (!(group in ports))
             return undefined;
-        },
-        delete(): void {
-            internal.beginTransaction();
-            internal.removePortsFor(base.id).unwrap();
-            internal.deleteComponent(base.id).unwrap();
-            internal.commitTransaction();
-        },
 
-        toSchema(): Schema.Component {
-            return ({ ...getComponent() });
-        },
-    } as const) satisfies Omit<Component, "isNode" | "isPin" | "info">;
+        for (const portId of ports[group]) {
+            const port = this.state.constructPort(portId);
+            if (port.isAvailable)
+                return port;
+        }
+        return undefined;
+    }
+    public delete(): void {
+        this.state.internal.beginTransaction();
+        this.state.internal.removePortsFor(this.id).unwrap();
+        this.state.internal.deleteComponent(this.id).unwrap();
+        this.state.internal.commitTransaction();
+    }
+
+    public toSchema(): Schema.Component {
+        return ({ ...this.getComponent() });
+    }
 }
