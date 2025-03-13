@@ -53,7 +53,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     return (
         <Droppable
             ref={canvas}
-            onDrop={(screenPos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {  
+            onDrop={(screenPos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {
                 if (!itemKind)
                     return;
 
