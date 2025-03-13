@@ -59,7 +59,7 @@ export const App = () => {
                 <DigitalHeader />
 
                 <main>
-                    <DigitalMainDesigner />
+                    <DigitalMainDesigner circuit={designer.circuit} />
 
                     <DigitalItemNav />
                     <HistoryBox circuit={designer.circuit} />

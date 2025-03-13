@@ -58,7 +58,7 @@ type Props<D> = {
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,_>({ designer, config, additionalData, onDelete, getImgSrc,
+export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImgSrc,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
     const circuit = designer.circuit;
     const { isOpen, isEnabled, isHistoryBoxOpen, curPressedObjID } = useSharedSelector(
@@ -280,6 +280,7 @@ export const ItemNav = <D,_>({ designer, config, additionalData, onDelete, getIm
                             {section.items.map((item, j) => (
                                 <ItemNavButton
                                     key={`itemnav-section-${i}-item-${j}`}
+                                    additionalData={additionalData}
                                     section={section}
                                     item={item}
                                     dragDir={(side === "left") ? "horizontal" : "vertical"}
@@ -328,7 +329,7 @@ type ItemNavItemPreviewProps<D> = {
     additionalData?: D;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-const ItemNavItemPreview = <D,_>({ curItemID, numClicks, curItemImg, additionalData,
+const ItemNavItemPreview = <D,>({ curItemID, numClicks, curItemImg, additionalData,
                                    additionalPreview }: ItemNavItemPreviewProps<D>) => {
     const MAX_STACK = 4;
 
@@ -381,7 +382,7 @@ type ItemProps<D> = {
     onStart?: () => void;
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
 }
-const ItemNavButton = <D,_>({ section, item, itemImgPath, numClicks, dragDir, additionalData,
+const ItemNavButton = <D,>({ section, item, itemImgPath, numClicks, dragDir, additionalData,
                               setCurItemState, onStart, onDelete }: ItemProps<D>) => {
     // Track whether mouse is over this item
     const [hovering, setHovering] = useState(false);

@@ -1,5 +1,5 @@
 import {GUID}                                      from "shared/api/circuit/public";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 
@@ -27,7 +27,7 @@ const SmartPlaceOrder = [
 export const DigitalItemNav = () => {
     const designer = useMainDigitalDesigner();
     const circuit = designer.circuit;
-    const [{ ics }, setState] = useState({ ics: [] as ItemNavItem[] });
+    const [{ ics }, setState] = useState<{ ics: ItemNavItem[] }>({ ics: [] });
 
     // State for if we should 'Smart Place' (issue #689)
     const [smartPlace, setSmartPlace] = useState(SmartPlaceOptions.Off);
