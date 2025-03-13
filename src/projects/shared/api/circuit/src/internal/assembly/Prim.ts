@@ -104,9 +104,13 @@ export interface SVGPrim {
 export interface TextPrim {
     kind: "Text";
 
+
     contents: string;
+
+    offset?: Vector;
     pos: Vector;
     angle: number;
+
     fontStyle: FontStyle;
     ignoreHit?: true;
 }

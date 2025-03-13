@@ -39,7 +39,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
             {
                 kind: "Text",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged, AssemblyReason.PropChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
                 assemble:     (comp) => this.assembleText(comp),
 
                 getFontStyle: () => this.getFontStyle(),
@@ -95,9 +95,10 @@ export class ConstantNumberAssembler extends ComponentAssembler {
         const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
         return {
             kind:     "Text",
-            pos:      this.getTransform(comp).getPos().sub(V(0, FONT_CAP_OFFSET)),
+            pos:      this.getPos(comp),
+            offset:   V(0, FONT_CAP_OFFSET),
             contents: text,
-            angle:    this.getTransform(comp).getAngle(),
+            angle:    this.getAngle(comp) * -1,
             font:     "lighter 0.8px arial",
         } as const
     }
