@@ -22,7 +22,9 @@ export class ConstantLowAssembler extends ComponentAssembler {
             {
                 kind: "SVG",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
+                tintChangesWhenSelected: true,
+
+                dependencies: new Set([AssemblyReason.TransformChanged]),
                 assemble:     (comp) => ({ kind: "SVG", svg: "constLow.svg", transform: this.getTransform(comp) }),
                 getTint:      (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
