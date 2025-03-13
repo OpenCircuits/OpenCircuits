@@ -168,6 +168,8 @@ export class PrimRenderer {
             if (angle !== 0) {
                 ctx.rotate(angle);
             }
+            // offset is after angle because we want the text to rotate around the center of the component and
+            // offset shifts the text away from the center
             if (offset) {
                 ctx.translate(offset.x, offset.y);
             }
