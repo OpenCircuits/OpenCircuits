@@ -1,5 +1,3 @@
-import {Vector} from "Vector";
-
 import {Curve} from "math/Curve";
 
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
@@ -25,10 +23,12 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
             .unwrap();
     }
 
+    protected abstract getNodeKind(): string;
+
     // This method is necessary since how the nodes are configured is project-dependent, so wiring them
     //  needs to be handled on a per-project-basis
-    protected abstract connectNode(p1: T["Port"], p2: T["Port"], pos: Vector):
-        { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] };
+    protected abstract connectNode(node: T["Node"], p1: T["Port"], p2: T["Port"]):
+        { wire1: T["Wire"] | undefined, wire2: T["Wire"] | undefined };
 
     public get shape(): Curve {
         return this.state.assembler.getWireShape(this.id).unwrap();
@@ -59,13 +59,26 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         // Need to get these properties before deleting this wire
         const { p1, p2 } = this;
 
+        // Create node
+        const kind = this.getNodeKind();
+        const info = this.state.internal.getComponentInfo(kind).unwrap();
+        const nodeId = this.state.internal.placeComponent(kind, { x: pos.x, y: pos.y }).unwrap();
+        this.state.internal.setPortConfig(nodeId, info!.defaultPortConfig).unwrap();
+        const node = this.state.constructComponent(nodeId);
+        if (!node.isNode())
+            throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);
+
         this.state.internal.deleteWire(this.id).unwrap();
 
-        const nodeAndWires = this.connectNode(p1, p2, pos);
+        const { wire1, wire2 } = this.connectNode(node, p1, p2);
+        if (!wire1)
+            throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
+        if (!wire2)
+            throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
 
         this.state.internal.commitTransaction();
 
-        return nodeAndWires;
+        return { node, wire1, wire2 };
     }
 
     public delete(): void {

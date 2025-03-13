@@ -6,8 +6,8 @@ import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Component, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
-import {IntegratedCircuitImpl, RootCircuitImpl}                             from "shared/api/circuit/public/impl/Circuit";
+import {Component, Node, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
+import {IntegratedCircuitImpl, RootCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
@@ -72,25 +72,16 @@ export class TestComponentAssembler extends ComponentAssembler {
 export class TestComponentImpl extends ComponentImpl<CircuitTypes> {}
 
 export class TestWireImpl extends WireImpl<CircuitTypes> {
-    protected override connectNode(p1: Port, p2: Port, pos: Vector) {
-        const info = this.state.internal.getComponentInfo("TestNode").unwrap();
-        const nodeId = this.state.internal.placeComponent("TestNode", { x: pos.x, y: pos.y }).unwrap();
-        this.state.internal.setPortConfig(nodeId, info!.defaultPortConfig).unwrap();
+    protected override getNodeKind(): string {
+        return "TestNode";
+    }
 
-        const node = this.state.constructComponent(nodeId);
-        if (!node.isNode())
-            throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);
-
+    protected override connectNode(node: Node, p1: Port, p2: Port) {
         const port = node.ports[""][0];
-        const wire1 = p1.connectTo(port);
-        const wire2 = port.connectTo(p2);
-
-        if (!wire1)
-            throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
-        if (!wire2)
-            throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
-
-        return { node, wire1, wire2 };
+        return {
+            wire1: p1.connectTo(port),
+            wire2: port.connectTo(p2),
+        };
     }
 }
 
