@@ -73,7 +73,10 @@ export class TestComponentImpl extends ComponentImpl<CircuitTypes> {}
 
 export class TestWireImpl extends WireImpl<CircuitTypes> {
     protected override connectNode(p1: Port, p2: Port, pos: Vector) {
+        const info = this.state.internal.getComponentInfo("TestNode").unwrap();
         const nodeId = this.state.internal.placeComponent("TestNode", { x: pos.x, y: pos.y }).unwrap();
+        this.state.internal.setPortConfig(nodeId, info!.defaultPortConfig).unwrap();
+
         const node = this.state.constructComponent(nodeId);
         if (!node.isNode())
             throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);

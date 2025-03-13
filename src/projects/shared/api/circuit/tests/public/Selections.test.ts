@@ -14,29 +14,32 @@ import {Rect} from "math/Rect";
 describe("Selections", () => {
     describe("Basic Queries", () => {
         test(".isEmpty", () => {
-            const [{ selections, undo, redo }, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1] = PlaceAt(V(0, 0));
             expect(selections.isEmpty).toBeTruthy();
             c1.select();
             expect(selections.isEmpty).toBeFalsy();
-            undo();
+            circuit.undo();
             expect(selections.isEmpty).toBeTruthy();
-            redo();
+            circuit.redo();
             expect(selections.isEmpty).toBeFalsy();
         });
         test(".length", () => {
-            const [{ selections, undo, redo }, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1] = PlaceAt(V(0, 0));
             expect(selections).toHaveLength(0);
             c1.select();
             expect(selections).toHaveLength(1);
-            undo();
+            circuit.undo();
             expect(selections).toHaveLength(0);
-            redo();
+            circuit.redo();
             expect(selections).toHaveLength(1);
         });
         test(".filter()", () => {
-            const [{ selections, undo, redo }, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             c1.select();
             c1.name = "filterMe";
@@ -46,7 +49,8 @@ describe("Selections", () => {
             expect(filtered[0]).toBeObj(c1);
         });
         test(".every()", () => {
-            const [{ selections, undo, redo }, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             c1.select();
             c1.name = "filterMe";
@@ -58,7 +62,8 @@ describe("Selections", () => {
 
     describe("Observe", () => {
         test("Basic selecting and undo/redo", () => {
-            const [{ selections, undo, redo }, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             let observedCount = 0;
             selections.subscribe(() => {observedCount++});
@@ -66,16 +71,17 @@ describe("Selections", () => {
             expect(observedCount).toBe(1);
             c2.select();
             expect(observedCount).toBe(2);
-            undo();
-            undo();
-            redo();
-            redo();
+            circuit.undo();
+            circuit.undo();
+            circuit.redo();
+            circuit.redo();
             expect(observedCount).toBe(6);
         });
     });
 
     describe("Obj Queries", () => {
-        const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+        const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+        const selections = circuit.selections;
         const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
         const w1 = Connect(c1, c2);
         const w2 = Connect(c1, c3);
@@ -102,14 +108,16 @@ describe("Selections", () => {
 
     describe("Midpoint", () => {
         test("2 components selected", () => {
-            const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(2, 2));
             c1.select();
             c2.select();
             expect(selections.bounds).toEqual(Rect.From({ cx: 1, cy: 1, width: 3, height: 3 }));
         });
         test("6 components selected", () => {
-            const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1, c2, c3, c4, c5, c6] = PlaceAt(V(0, 0), V(2, 2), V(0, 1), V(2, 1), V(1, 0), V(1, 2));
             c1.select();
             c2.select();
@@ -120,7 +128,8 @@ describe("Selections", () => {
             expect(selections.bounds).toEqual(Rect.From({ cx: 1, cy: 1, width: 3, height: 3 }));
         });
         test("Use bounding box midpoint, not weighted average", () => {
-            const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1, c2, c3] = PlaceAt(V(0, 0), V(2, 2), V(0, 0));
             c1.select();
             c2.select();
@@ -131,7 +140,8 @@ describe("Selections", () => {
 
     describe("Clear", () => {
         test("Basic with undo/redo", () => {
-            const [{ selections, undo, redo }, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const selections = circuit.selections;
             const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
             const w1 = Connect(c1, c2);
             const w2 = Connect(c1, c3);
@@ -146,10 +156,10 @@ describe("Selections", () => {
             expect(selections.all).toContainObjsExact([c1, c2, p3, w1]);
             selections.clear();
             expect(selections.all).toHaveLength(0);
-            undo();
+            circuit.undo();
             expect(selections.all).toHaveLength(4);
             expect(selections.all).toContainObjsExact([c1, c2, p3, w1]);
-            redo();
+            circuit.redo();
             expect(selections.all).toHaveLength(0);
         });
     });
@@ -204,10 +214,10 @@ describe("Selections", () => {
     //         expect(selections).toHaveLength(2);
     //         expect(selections.all).toContainObjsExact([c1, c2]);
 
-    //         undo();
+    //         circuit.undo();
     //         expect(duplicates).toHaveLength(2);
     //         expect(duplicates.every(comp => !comp.exists()));
-    //         redo();
+    //         circuit.redo();
     //         expect(duplicates).toHaveLength(2);
     //         expect(duplicates.every(comp => comp.exists()));
     //     });

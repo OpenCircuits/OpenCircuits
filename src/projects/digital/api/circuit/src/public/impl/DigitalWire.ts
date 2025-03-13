@@ -9,7 +9,10 @@ import {DigitalTypes} from "./DigitalCircuitState";
 
 export class DigitalWireImpl extends WireImpl<DigitalTypes> implements DigitalWire {
     protected override connectNode(p1: DigitalPort, p2: DigitalPort, pos: Vector) {
+        const info = this.state.internal.getComponentInfo("DigitalNode").unwrap();
         const nodeId = this.state.internal.placeComponent("DigitalNode", { x: pos.x, y: pos.y }).unwrap();
+        this.state.internal.setPortConfig(nodeId, info!.defaultPortConfig).unwrap();
+
         const node = this.state.constructComponent(nodeId);
         if (!node.isNode())
             throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);
