@@ -8,9 +8,9 @@ import {DigitalTypes} from "./DigitalCircuitState";
 
 export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements DigitalComponent {
     public get inputs(): DigitalPort[] {
-        return this.ports["inputs"];
+        return this.allPorts.filter((p) => (p.isInputPort));
     }
     public get outputs(): DigitalPort[] {
-        return this.ports["outputs"];
+        return this.allPorts.filter((p) => (p.isOutputPort));
     }
 }
