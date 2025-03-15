@@ -61,7 +61,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         this.primRenderer = new PrimRenderer(svgMap);
 
         this.scheduler = new RenderScheduler();
-        this.scheduler.subscribe(() => this.render);
+        this.scheduler.subscribe(() => this.render());
         this.scheduler.block();
 
         this.curState = undefined;

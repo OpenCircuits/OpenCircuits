@@ -176,8 +176,9 @@ const DigitalLatchComponentInfo = (kind: string, inputs: string[]) =>
             "Qinv": 1,
         }]
     );
-const DLatchInfo  = DigitalLatchComponentInfo("DLatch",  ["D"]);
-const SRLatchInfo = DigitalLatchComponentInfo("SRLatch", ["S", "R"]);
+// input port E is Enable
+const DLatchInfo  = DigitalLatchComponentInfo("DLatch",  ["D", "E"]);
+const SRLatchInfo = DigitalLatchComponentInfo("SRLatch", ["S", "E", "R"]);
 
 // Other
 const MultiplexerInfo = new DigitalComponentConfigurationInfo(

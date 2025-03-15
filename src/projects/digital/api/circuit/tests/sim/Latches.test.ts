@@ -10,6 +10,11 @@ describe("Latches", () => {
 
         const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
         const [D, E, Q, Q2, d] = Place("Switch", "Switch", "LED", "LED", "DLatch");
+        D.outputs[0].connectTo(d.ports["D"][0]);
+        E.outputs[0].connectTo(d.ports["E"][0]);
+        d.ports["Q"][0].connectTo(Q.inputs[0]);
+        d.ports["Qinv"][0].connectTo(Q2.inputs[0]);
+
         D.outputs[0].connectTo(d.inputs[0]);
         E.outputs[0].connectTo(d.inputs[1]);
         d.outputs[0].connectTo(Q.inputs[0]);
@@ -75,11 +80,11 @@ describe("Latches", () => {
 
         const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
         const [S, E, R, Q, Q2, sr] = Place("Switch", "Switch", "Switch", "LED", "LED", "SRLatch");
-        S.outputs[0].connectTo(sr.inputs[0]);
-        E.outputs[0].connectTo(sr.inputs[1]);
-        R.outputs[0].connectTo(sr.inputs[2]);
-        sr.outputs[0].connectTo(Q.inputs[0]);
-        sr.outputs[1].connectTo(Q2.inputs[0]);
+        S.outputs[0].connectTo(sr.ports["S"][0]);
+        E.outputs[0].connectTo(sr.ports["E"][0]);
+        R.outputs[0].connectTo(sr.ports["R"][0]);
+        sr.ports["Q"][0].connectTo(Q.inputs[0]);
+        sr.ports["Qinv"][0].connectTo(Q2.inputs[0]);
 
         function expectState(state: boolean): void {
             expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
