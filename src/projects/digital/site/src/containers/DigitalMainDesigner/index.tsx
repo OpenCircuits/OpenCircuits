@@ -39,9 +39,9 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
         const comp = circuit.placeComponentAt(itemId, pos);
 
         // TODO: Revisit after deciding on exact behavior of .inputs and .outputs
-        const inputPorts = (options & SmartPlaceOptions.Inputs) ? (comp.inputs ?? []) : [];
+        const inputPorts = (options & SmartPlaceOptions.Inputs) ? comp.inputs : [];
 
-        const outputPorts = (options & SmartPlaceOptions.Outputs) ? (comp.outputs ?? []) : [];
+        const outputPorts = (options & SmartPlaceOptions.Outputs) ? comp.outputs : [];
 
         const inputs = inputPorts.map((port) => {
             const sw = circuit.placeComponentAt("Switch", V(0, 0));

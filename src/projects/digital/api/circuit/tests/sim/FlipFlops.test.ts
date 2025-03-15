@@ -9,12 +9,12 @@ describe("Flip Flops", () => {
 
         const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
         const [PRE, CLR, D, C, Q, Q2, d] = Place("Switch", "Switch", "Switch", "Switch", "LED", "LED", "DFlipFlop");
-        PRE.outputs[0].connectTo(d.inputs[0]);
-        CLR.outputs[0].connectTo(d.inputs[1]);
-        D.outputs[0].connectTo(d.inputs[2]);
-        C.outputs[0].connectTo(d.inputs[3]);
-        d.outputs[0].connectTo(Q.inputs[0]);
-        d.outputs[1].connectTo(Q2.inputs[0]);
+        PRE.outputs[0].connectTo(d.ports["pre"][0]);
+        CLR.outputs[0].connectTo(d.ports["clr"][0]);
+        D.outputs[0].connectTo(d.ports["D"][0]);
+        C.outputs[0].connectTo(d.ports["clk"][0]);
+        d.ports["Q"][0].connectTo(Q.inputs[0]);
+        d.ports["Qinv"][0].connectTo(Q2.inputs[0]);
 
         function expectState(state: boolean): void {
             expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
@@ -101,13 +101,13 @@ describe("Flip Flops", () => {
 
         const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
         const [PRE, CLR, J, C, K, Q, Q2, jk] = Place("Switch", "Switch", "Switch", "Switch", "Switch", "LED", "LED", "JKFlipFlop");
-        PRE.outputs[0].connectTo(jk.inputs[0]);
-        CLR.outputs[0].connectTo(jk.inputs[1]);
-        J.outputs[0].connectTo(jk.inputs[2]);
-        C.outputs[0].connectTo(jk.inputs[3]);
-        K.outputs[0].connectTo(jk.inputs[4]);
-        jk.outputs[0].connectTo(Q.inputs[0]);
-        jk.outputs[1].connectTo(Q2.inputs[0]);
+        PRE.outputs[0].connectTo(jk.ports["pre"][0]);
+        CLR.outputs[0].connectTo(jk.ports["clr"][0]);
+        J.outputs[0].connectTo(jk.ports["J"][0]);
+        K.outputs[0].connectTo(jk.ports["K"][0]);
+        C.outputs[0].connectTo(jk.ports["clk"][0]);
+        jk.ports["Q"][0].connectTo(Q.inputs[0]);
+        jk.ports["Qinv"][0].connectTo(Q2.inputs[0]);
 
         function expectState(state: boolean): void {
             expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
@@ -189,13 +189,13 @@ describe("Flip Flops", () => {
 
         const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
         const [PRE, CLR, S, C, R, Q, Q2, sr] = Place("Switch", "Switch", "Switch", "Switch", "Switch", "LED", "LED", "SRFlipFlop");
-        PRE.outputs[0].connectTo(sr.inputs[0]);
-        CLR.outputs[0].connectTo(sr.inputs[1]);
-        S.outputs[0].connectTo(sr.inputs[2]);
-        C.outputs[0].connectTo(sr.inputs[3]);
-        R.outputs[0].connectTo(sr.inputs[4]);
-        sr.outputs[0].connectTo(Q.inputs[0]);
-        sr.outputs[1].connectTo(Q2.inputs[0]);
+        PRE.outputs[0].connectTo(sr.ports["pre"][0]);
+        CLR.outputs[0].connectTo(sr.ports["clr"][0]);
+        S.outputs[0].connectTo(sr.ports["S"][0]);
+        R.outputs[0].connectTo(sr.ports["R"][0]);
+        C.outputs[0].connectTo(sr.ports["clk"][0]);
+        sr.ports["Q"][0].connectTo(Q.inputs[0]);
+        sr.ports["Qinv"][0].connectTo(Q2.inputs[0]);
 
         function expectState(state: boolean): void {
             expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
@@ -272,12 +272,12 @@ describe("Flip Flops", () => {
 
         const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
         const [PRE, CLR, T, C, Q, Q2, t] = Place("Switch", "Switch", "Switch", "Switch", "LED", "LED", "TFlipFlop");
-        PRE.outputs[0].connectTo(t.inputs[0]);
-        CLR.outputs[0].connectTo(t.inputs[1]);
-        T.outputs[0].connectTo(t.inputs[2]);
-        C.outputs[0].connectTo(t.inputs[3]);
-        t.outputs[0].connectTo(Q.inputs[0]);
-        t.outputs[1].connectTo(Q2.inputs[0]);
+        PRE.outputs[0].connectTo(t.ports["pre"][0]);
+        CLR.outputs[0].connectTo(t.ports["clr"][0]);
+        T.outputs[0].connectTo(t.ports["T"][0]);
+        C.outputs[0].connectTo(t.ports["clk"][0]);
+        t.ports["Q"][0].connectTo(Q.inputs[0]);
+        t.ports["Qinv"][0].connectTo(Q2.inputs[0]);
 
         function expectState(state: boolean): void {
             expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
