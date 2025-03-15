@@ -1,10 +1,9 @@
 import {CircuitInternal, GUID} from "shared/api/circuit/internal";
 import {ObservableImpl}        from "shared/api/circuit/utils/Observable";
 import {Signal}                from "./Signal";
-import {PropagatorsMap} from "./DigitalPropagators";
+import {PropagatorFunc, PropagatorsMap} from "./DigitalPropagators";
 import {DigitalComponentConfigurationInfo} from "../DigitalComponents";
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
-import {ErrE, Ok} from "shared/api/circuit/utils/Result";
 
 
 type DigitalSimEvent = {
@@ -107,6 +106,23 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             });
     }
 
+    private getPortsByGroup(compId: GUID) {
+        return this.circuit.getPortsByGroup(compId)
+            .mapErr(AddErrE("DigitalSim: Failed to get ports by group!"))
+            .unwrap();
+    }
+
+    private getPortsForPort(portId: GUID) {
+        return this.circuit.getPortsForPort(portId)
+            .map((ids) =>
+                [...ids].map((id) =>
+                    this.circuit.getPortByID(id)
+                        .mapErr(AddErrE("DigitalSim: Failed to get port Schema for port"))
+                        .unwrap()))
+            .mapErr(AddErrE("DigitalSim: Failed to get ports for port!"))
+            .unwrap();
+    }
+
     private isInputPort(portId: GUID): boolean {
         return this.circuit.getPortByID(portId)
             .andThen((port) =>
@@ -123,6 +139,33 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                     .map(([_, info]) => (info.outputPortGroups.includes(port.group))))
             .unwrap();
 
+    }
+
+    private callPropagator(id: GUID): ReturnType<PropagatorFunc> {
+        const [comp, info] = this.getComponentAndInfoById(id).unwrap();
+        const ports = this.getPortsByGroup(id);
+
+        // Get signals from each input port and put it in a record of group: signals[]
+        const inputSignals = Object.fromEntries(
+            info.inputPortGroups.map((group) =>
+                [group, ports[group].map((id) => this.getSignal(id))]));
+        const state = this.states.get(comp.id);
+
+        const propagator = this.propagators[comp.kind];
+        if (!propagator)
+            throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
+
+        const { outputs, nextState } = propagator(comp, inputSignals, state);
+
+        // Maybe check this?
+        // for (const [group, signals] of Object.entries(outputs)) {
+        //     if (!info.outputPortGroups.includes(group)) {
+        //         throw new Error(`DigitalSim.step: Propagator for '${comp.kind}' returned ` +
+        //                         `a signal for group '${group}' which is not an output port!`);
+        //     }
+        // }
+
+        return { outputs, nextState };
     }
 
     /**
@@ -142,32 +185,14 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         this.next.clear();
 
         for (const id of next) {
-            const result = this.getComponentAndInfoById(id);
-            if (!result.ok)  // Ignore deleted objects
+            if (!this.circuit.hasComp(id))  // Ignore deleted objects
                 continue;
-            const [comp, info] = result.value;
 
-            const ports = this.circuit.getPortsByGroup(id)
-                .mapErr(AddErrE("DigitalSim.step: Failed to get ports by group!"))
-                .unwrap();
-
-            // Get signals from each input port and put it in a record of group: signals[]
-            const inputSignals = Object.fromEntries(
-                info.inputPortGroups.map((group) =>
-                    [group, ports[group].map((id) => this.getSignal(id))]));
-            const state = this.states.get(id);
-
-            const propagator = this.propagators[comp.kind];
-            if (!propagator)
-                throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
-            const { outputs, nextState } = propagator(comp, inputSignals, state);
+            const { outputs, nextState } = this.callPropagator(id);
 
             // Update signal outputs
+            const ports = this.getPortsByGroup(id);
             for (const [group, signals] of Object.entries(outputs)) {
-                if (!info.outputPortGroups.includes(group)) {
-                    throw new Error(`DigitalSim.step: Propagator for '${comp.kind}' returned ` +
-                                    `a signal for group '${group}' which is not an output port!`);
-                }
                 signals.forEach((val, i) => {
                     const portId = ports[group][i];
 
@@ -178,17 +203,11 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
                     // It is assumed (and hopefully constrained) that all ports connected to
                     // an output port will be input ports.
-                    const connections = this.circuit.getPortsForPort(portId)
-                        .mapErr(AddErrE("DigitalSim.step: Failed to get ports for port!"))
-                        .unwrap();
-                    connections.forEach((id) => {
-                        this.signals.set(id, val);
+                    this.getPortsForPort(portId).forEach((port) => {
+                        this.signals.set(port.id, val);
 
                         // Add parent for next step
-                        const parent = this.circuit.getPortByID(id)
-                            .mapErr(AddErrE("DigitalSim.step: Failed to get port from connection!"))
-                            .unwrap().parent;
-                        this.next.add(parent);
+                        this.next.add(port.parent);
                     });
                 });
             }
