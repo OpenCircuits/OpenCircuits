@@ -149,7 +149,7 @@ export function Generate(circuit: DigitalRootCircuit, camera: Camera, expression
                 ],
             },
         })
-        circuit.placeComponentAt(ic.id, Rect.Bounding(generatedCircuit.getComponents().map(({ bounds }) => bounds)).center);
+        circuit.placeComponentAt(ic.id, camera.pos);
         circuit.commitTransaction();
     } else {
         // TODO: Move the big copy into the api
