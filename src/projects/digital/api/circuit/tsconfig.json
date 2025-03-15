@@ -8,6 +8,7 @@
             "shared/api/circuit/*":   ["../../../shared/api/circuit/src/*"],
             "shared/tests/helpers/*": ["../../../shared/api/circuit/tests/helpers/*"],
             "digital/api/circuit/*":  ["./src/*"],
+            "tests/helpers/*":        ["./tests/helpers/*"],
         },
     },
     "include": ["."],

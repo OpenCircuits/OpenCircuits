@@ -8,7 +8,7 @@ import {GenerateInputTree} from "digital/site/utils/ExpressionParser/GenerateInp
 import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser";
 import {GenerateTokens}      from "digital/site/utils/ExpressionParser/GenerateTokens";
 import {FORMATS}             from "digital/site/utils/ExpressionParser/Constants/Formats";
-import {Signal} from "digital/api/circuit/utils/Signal";
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 

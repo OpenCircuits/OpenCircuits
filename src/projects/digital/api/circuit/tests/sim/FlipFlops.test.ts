@@ -1,6 +1,6 @@
 import "shared/tests/helpers/Extensions";
 
-import {Signal} from "digital/api/circuit/utils/Signal";
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
 describe("Flip Flops", () => {

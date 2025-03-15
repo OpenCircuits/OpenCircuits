@@ -20,6 +20,8 @@ import {DigitalWireImpl}        from "./impl/DigitalWire";
 import {DigitalPortImpl}        from "./impl/DigitalPort";
 import {DigitalCircuitState}    from "./impl/DigitalCircuitState";
 import {DigitalComponentInfoImpl} from "./impl/DigitalComponentInfo";
+import {DigitalPropagators} from "../internal/sim/DigitalPropagators";
+import {DigitalSimRunner} from "../internal/sim/DigitalSimRunner";
 
 
 export * from "./DigitalCircuit";
@@ -32,11 +34,12 @@ export function CreateCircuit(): [DigitalRootCircuit, DigitalCircuitState] {
         const internal = new CircuitInternal(circuitID, log, doc);
 
         const renderOptions = new DefaultRenderOptions();
-        const sim = new DigitalSim(internal);
+        const sim = new DigitalSim(internal, DigitalPropagators);
+        const simRunner = new DigitalSimRunner(sim);
         const assembler = MakeDigitalCircuitAssembler(internal, sim, renderOptions);
 
         const state: DigitalCircuitState = {
-            internal, assembler, sim, renderOptions,
+            internal, assembler, sim, simRunner, renderOptions,
 
             constructComponent(id) {
                 return new DigitalComponentImpl(state, id);
