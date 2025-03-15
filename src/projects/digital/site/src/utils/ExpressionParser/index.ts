@@ -5,8 +5,6 @@ import {FORMATS}        from "./Constants/Formats";
 import {GenerateInputTree} from "./GenerateInputTree";
 import {GenerateTokens}    from "./GenerateTokens";
 import {TreeToCircuit}     from "./TreeToCircuit";
-import {DigitalCircuit}    from "digital/api/circuit/public";
-import {DigitalCircuitState} from "digital/api/circuit/public/impl/DigitalCircuitState";
 
 
 /**
@@ -31,7 +29,7 @@ import {DigitalCircuitState} from "digital/api/circuit/public/impl/DigitalCircui
 export function ExpressionToCircuit(inputs: ReadonlyMap<string, string>,
                                     expression: string,
                                     output: string,
-                                    ops: OperatorFormat = FORMATS[0]): Result<[DigitalCircuit, DigitalCircuitState]> {
+                                    ops: OperatorFormat = FORMATS[0]): Result<ReturnType<typeof TreeToCircuit>> {
     return GenerateTokens(expression, ops).andThen((tokenList) =>
         GenerateInputTree(tokenList, ops.ops).map((connectedTree) =>
             TreeToCircuit(connectedTree, inputs, output)

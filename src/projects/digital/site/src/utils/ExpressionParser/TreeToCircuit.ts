@@ -107,7 +107,12 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
  * @throws If any connections fail.
  */
 export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
-                              output: string): [DigitalCircuit, DigitalCircuitState] {
+                              output: string): {
+                                circuit: DigitalCircuit;
+                                state: DigitalCircuitState;
+                                inputs: DigitalComponent[];
+                                output: DigitalComponent;
+                            } {
     const [circuit, state] = CreateCircuit();
 
     const outputComp = circuit.placeComponentAt(output, V(0, 0));
@@ -126,5 +131,5 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
     const prevComp = treeToCircuitCore(tree, inputMap, circuit);
     connect(prevComp, outputNode, outputComp);
 
-    return [circuit, state];
+    return { circuit, state, inputs: [...inputMap.values()], output: outputComp };
 }

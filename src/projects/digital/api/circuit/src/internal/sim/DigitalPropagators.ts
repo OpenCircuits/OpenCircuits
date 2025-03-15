@@ -58,6 +58,18 @@ export const DigitalPropagators: PropagatorsMap = {
     "LED": (_obj, _signals, _state) => ({
         outputs: {},
     }),
+    "ConstantHigh": () => ({
+        outputs: {
+            "outputs": [Signal.On],
+        },
+        nextState: [Signal.On],
+    }),
+    "ConstantLow": () => ({
+        outputs: {
+            "outputs": [Signal.Off],
+        },
+        nextState: [Signal.Off],
+    }),
     BUFGate, NOTGate,
     ANDGate, NANDGate,
     ORGate, NORGate,

@@ -4,16 +4,11 @@ import "@testing-library/jest-dom";
 import {act, render, screen}          from "@testing-library/react";
 import userEvent                      from "@testing-library/user-event";
 import {Provider}                     from "react-redux";
-import {applyMiddleware, createStore} from "redux";
-import thunk, {ThunkMiddleware}       from "redux-thunk";
 
 import {OpenHeaderPopup} from "shared/site/state/Header";
 
 import {PressToggle} from "shared/site/tests/helpers/PressToggle";
 
-import {AppState} from "digital/site/state";
-
-import {AllActions} from "digital/site/state/actions";
 import {reducers}   from "digital/site/state/reducers";
 
 import {ExprToCircuitPopup} from "digital/site/containers/ExprToCircuitPopup";
@@ -37,7 +32,7 @@ describe("Main Popup", () => {
         [],
     )
     const [circuit, _] = CreateCircuit();
-    const store = configureStore({reducer: reducers});
+    const store = configureStore({ reducer: reducers });
     const user = userEvent.setup();
 
     beforeEach(() => {

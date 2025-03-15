@@ -3,7 +3,7 @@ import {useState} from "react";
 import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS}                             from "digital/site/utils/ExpressionParser/Constants/Formats";
 
-import {DigitalCircuit} from "digital/api/circuit/public";
+import {DigitalRootCircuit} from "digital/api/circuit/public";
 
 import {useSharedDispatch,
         useSharedSelector} from "shared/site/utils/hooks/useShared";
@@ -26,7 +26,7 @@ import {Camera} from "shared/api/circuitdesigner/public/Camera";
 
 
 type Props = {
-    circuit: DigitalCircuit;
+    circuit: DigitalRootCircuit;
     viewport: {camera: Camera};
 }
 export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) => {
