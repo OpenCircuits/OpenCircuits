@@ -5,20 +5,15 @@ import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
 
 describe("Latches", () => {
+    const ON = Signal.On, OFF = Signal.Off;
+
     describe("DLatch", () => {
-        const ON = true, OFF = false;
+        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_, { D: [D], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("DLatch");
 
-        const [{}, {}, { Place, TurnOn, TurnOff, Connect }] = CreateTestCircuit();
-        const [D, E, Q, Q2, latch] = Place("Switch", "Switch", "LED", "LED", "DLatch");
-
-        Connect(D, latch.ports["D"]);
-        Connect(E, latch.ports["E"]);
-        Connect(latch.ports["Q"], Q);
-        Connect(latch.ports["Qinv"], Q2);
-
-        function expectState(state: boolean): void {
-            expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
-            expect(Q2.inputs[0].signal).toBe(!state ? Signal.On : Signal.Off);
+        function expectState(signal: Signal): void {
+            expect(Q.inputs[0].signal).toBe(signal);
+            expect(Q2.inputs[0].signal).toBe(Signal.invert(signal));
         }
 
         test("Initial State", () => {
@@ -72,20 +67,12 @@ describe("Latches", () => {
     });
 
     describe("SRLatch", () => {
-        const ON = true, OFF = false;
+        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_, { S: [S], R: [R], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("SRLatch");
 
-        const [{}, {}, { Place, TurnOn, TurnOff, Connect }] = CreateTestCircuit();
-        const [S, E, R, Q, Q2, sr] = Place("Switch", "Switch", "Switch", "LED", "LED", "SRLatch");
-
-        Connect(S, sr.ports["S"]);
-        Connect(E, sr.ports["E"]);
-        Connect(R, sr.ports["R"]);
-        Connect(sr.ports["Q"], Q);
-        Connect(sr.ports["Qinv"], Q2);
-
-        function expectState(state: boolean): void {
-            expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
-            expect(Q2.inputs[0].signal).toBe(!state ? Signal.On : Signal.Off);
+        function expectState(signal: Signal): void {
+            expect(Q.inputs[0].signal).toBe(signal);
+            expect(Q2.inputs[0].signal).toBe(Signal.invert(signal));
         }
 
         test("Initial State", () => {

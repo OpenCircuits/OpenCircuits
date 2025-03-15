@@ -1,392 +1,338 @@
 import "shared/tests/helpers/Extensions";
 
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
+
 describe("Gates", () => {
-    describe("Buffer", () => {
+    describe("BUFGate", () => {
         test("Standard", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw, gate, out] = Place("Switch", "BUFGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+            const [_, { inputs: [sw], outputs: [out] }] = PlaceAndConnect("BUFGate");
 
-            sw.outputs[0].connectTo(gate.inputs[0]);
-            gate.outputs[0].connectTo(out.inputs[0]);
-
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnMetastable, TurnOff }] = CreateTestCircuit();
-            const [sw, gate, out] = Place("Switch", "BUFGate", "LED");
-
-            sw.outputs[0].connectTo(gate.inputs[0]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOff, TurnMetastable, PlaceAndConnect }] = CreateTestCircuit();
+            const [_, { inputs: [sw], outputs: [out] }] = PlaceAndConnect("BUFGate");
 
             TurnMetastable(sw);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
         });
     });
 
     describe("NOTGate", () => {
         test("Basic", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw, gate, out] = Place("Switch", "NOTGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+            const [_, { inputs: [sw], outputs: [out] }] = PlaceAndConnect("NOTGate");
 
-            sw.outputs[0].connectTo(gate.inputs[0]);
-            gate.outputs[0].connectTo(out.inputs[0]);
-
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnMetastable, TurnOff }] = CreateTestCircuit();
-            const [sw, gate, out] = Place("Switch", "NOTGate", "LED");
-
-            sw.outputs[0].connectTo(gate.inputs[0]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOff, TurnMetastable, PlaceAndConnect }] = CreateTestCircuit();
+            const [_, { inputs: [sw], outputs: [out] }] = PlaceAndConnect("NOTGate");
 
             TurnMetastable(sw);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
         });
     });
 
     describe("ANDGate", () => {
         test("Basic", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "ANDGate", "LED");
-
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOn, TurnOff, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("ANDGate");
 
             // Basic
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
 
             // 3 inputs
             gate.setNumPorts("inputs", 3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
+            expect(out).toBeOff();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
 
             // Turning off
             TurnOff(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff, TurnMetastable }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "ANDGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("ANDGate");
 
             gate.setNumPorts("inputs", 3);
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
         });
     });
 
     describe("NANDGate", () => {
         test("Basic", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "NANDGate", "LED");
-
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOn, TurnOff, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("NANDGate");
 
             // Basic
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
 
             // 3 inputs
             gate.setNumPorts("inputs", 3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
+            expect(out).toBeOn();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
 
             // Turning off
             TurnOff(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff, TurnMetastable }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "NANDGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("NANDGate");
 
             gate.setNumPorts("inputs", 3);
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
         });
     });
 
     describe("ORGate", () => {
         test("Basic", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "ORGate", "LED");
-
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOn, TurnOff, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("ORGate");
 
             // Basic
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
 
             // 3 inputs
             gate.setNumPorts("inputs", 3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
+            expect(out).toBeOn();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
 
             // Turning off
             TurnOff(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff, TurnMetastable }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "ORGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("ORGate");
 
             gate.setNumPorts("inputs", 3);
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
         });
     });
 
     describe("NORGate", () => {
         test("Basic", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "NORGate", "LED");
-
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOn, TurnOff, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("NORGate");
 
             // Basic
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
 
             // 3 inputs
             gate.setNumPorts("inputs", 3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
+            expect(out).toBeOff();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
 
             // Turning off
             TurnOff(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff, TurnMetastable }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "NORGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("NORGate");
 
             gate.setNumPorts("inputs", 3);
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
         });
     })
 
     describe("XORGate", () => {
         test("Basic", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "XORGate", "LED");
-
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOn, TurnOff, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("XORGate");
 
             // Basic
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
 
             // 3 inputs
             gate.setNumPorts("inputs", 3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
+            expect(out).toBeOff();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
 
             // Turning off
             TurnOff(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff, TurnMetastable }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "XORGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("XORGate");
 
             gate.setNumPorts("inputs", 3);
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
         });
     });
 
     describe("XNORGate", () => {
         test("XNORGate", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "XNORGate", "LED");
-
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [{}, {}, { TurnOn, TurnOff, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("XNORGate");
 
             // Basic
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOn(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
 
             // 3 inputs
             gate.setNumPorts("inputs", 3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
+            expect(out).toBeOn();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
 
             // Turning off
             TurnOff(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Off);
+            expect(out).toBeOff();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.On);
+            expect(out).toBeOn();
         });
         test("Metastable", () => {
-            const [{}, {}, { Place, TurnOn, TurnOff, TurnMetastable }] = CreateTestCircuit();
-            const [sw1, sw2, sw3, gate, out] = Place("Switch", "Switch", "Switch", "XNORGate", "LED");
+            const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
+            const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("XNORGate");
 
             gate.setNumPorts("inputs", 3);
-            sw1.outputs[0].connectTo(gate.inputs[0]);
-            sw2.outputs[0].connectTo(gate.inputs[1]);
-            sw3.outputs[0].connectTo(gate.inputs[2]);
-            gate.outputs[0].connectTo(out.inputs[0]);
+            const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOn(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOn(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw2);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
             TurnOff(sw3);
-            expect(out.inputs[0].signal).toBe(Signal.Metastable);
+            expect(out).toBeMetastable();
         });
     });
 

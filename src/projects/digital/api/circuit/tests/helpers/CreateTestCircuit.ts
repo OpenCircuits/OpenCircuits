@@ -1,9 +1,12 @@
+import "./Extensions";
+
 import {CreateCircuit} from "digital/api/circuit/public"
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent"
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {V} from "Vector"
 import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
 import {DigitalWire} from "digital/api/circuit/public/DigitalWire";
+import {MapObj} from "shared/api/circuit/utils/Functions";
 
 
 export const CreateTestCircuit = () => {
@@ -34,8 +37,27 @@ export const CreateTestCircuit = () => {
             if (o1.baseKind === "Component" && o2.baseKind === "Component") {
                 return o1.outputs[0].connectTo(o2.inputs[0]);
             }
-            throw new Error("??");
-        }
+            throw new Error("?");
+        },
+        // Automatically places the component and returns switches connected to each input and leds to each output
+        PlaceAndConnect: (kind: string) => {
+            const component = circuit.placeComponentAt(kind, V(0, 0));
+            const objs = MapObj(component.ports, ([_, ports]) =>
+                ports.map((p) => {
+                    if (p.isInputPort) {
+                        const sw = circuit.placeComponentAt("Switch", V(0, 0));
+                        sw.outputs[0].connectTo(p);
+                        return sw;
+                    } else if (p.isOutputPort) {
+                        const led = circuit.placeComponentAt("LED", V(0, 0));
+                        p.connectTo(led.inputs[0]);
+                        return led;
+                    }
+                    throw new Error("Non input or output port!");
+                }));
+
+            return [component, objs] as const;
+        },
     };
 
     return [

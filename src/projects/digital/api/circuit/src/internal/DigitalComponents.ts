@@ -167,18 +167,20 @@ const DigitalLatchComponentInfo = (kind: string, inputs: string[]) =>
         {},
         {
             ...Object.fromEntries(inputs.map((input) => [input, "input"])),
+            // input port E is Enable
+            "E":    "input",
             "Q":    "output",
             "Qinv": "output",
         },
         [{
             ...Object.fromEntries(inputs.map((input) => [input, 1])),
+            "E":    1,
             "Q":    1,
             "Qinv": 1,
         }]
     );
-// input port E is Enable
-const DLatchInfo  = DigitalLatchComponentInfo("DLatch",  ["D", "E"]);
-const SRLatchInfo = DigitalLatchComponentInfo("SRLatch", ["S", "E", "R"]);
+const DLatchInfo  = DigitalLatchComponentInfo("DLatch",  ["D"]);
+const SRLatchInfo = DigitalLatchComponentInfo("SRLatch", ["S", "R"]);
 
 // Other
 const MultiplexerInfo = new DigitalComponentConfigurationInfo(

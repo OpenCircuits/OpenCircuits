@@ -80,6 +80,65 @@ const SRLatch = MakeLatchPropagator((signals, state) => {
     return state;
 });
 
+function MakeFlipFlopPropagator(
+    getState: (signals: Record<string, Signal[]>, state: Signal, up: boolean) => Signal,
+): PropagatorFunc {
+    return (_obj, signals, state = [Signal.Off, Signal.Off]) => {
+        const [curState, prevClk] = state, [CLK] = signals["clk"], [PRE] = signals["pre"], [CLR] = signals["clr"];
+
+        const up = (Signal.isOff(prevClk) && !Signal.isOff(CLK));
+
+        const nextState = (() => {
+            // If PRE or CLR are set, then don't care about data or clock since asynchronous
+            if (!Signal.isOff(PRE) && !Signal.isOff(CLR)) {
+                // undefined
+                return Signal.Metastable;
+            } else if (!Signal.isOff(PRE)) {
+                return Signal.On;
+            } else if (!Signal.isOff(CLR)) {
+                return Signal.Off;
+            }
+            return getState(signals, curState, up);
+        })();
+
+        return {
+            outputs: {
+                "Q":    [nextState],
+                "Qinv": [Signal.invert(nextState)],
+            },
+            nextState: [nextState, CLK],
+        }
+    };
+}
+const DFlipFlop = MakeFlipFlopPropagator((signals, state, up) => (up ? signals["D"][0] : state));
+const JKFlipFlop = MakeFlipFlopPropagator((signals, state, up) => {
+    const [J] = signals["J"], [K] = signals["K"];
+    if (up) {
+        if (!Signal.isOff(J) && !Signal.isOff(K))
+            return Signal.invert(state);
+        else if (!Signal.isOff(J))
+            return Signal.On;
+        else if (!Signal.isOff(K))
+            return Signal.Off;
+    }
+    return state;
+});
+const SRFlipFlop = MakeFlipFlopPropagator((signals, state, up) => {
+    const [S] = signals["S"], [R] = signals["R"];
+    if (up) {
+        if (!Signal.isOff(S) && !Signal.isOff(R))
+            return Signal.Metastable; // undefined
+        else if (!Signal.isOff(S))
+            return Signal.On;
+        else if (!Signal.isOff(R))
+            return Signal.Off;
+    }
+    return state;
+});
+const TFlipFlop = MakeFlipFlopPropagator((signals, state, up) =>
+    (up && !Signal.isOff(signals["T"][0]) ? Signal.invert(state) : state));
+
+
 export const DigitalPropagators: PropagatorsMap = {
     "Switch": (_obj, _signals, state = [Signal.Off]) => ({
         outputs: {
@@ -95,8 +154,9 @@ export const DigitalPropagators: PropagatorsMap = {
     ANDGate, NANDGate,
     ORGate, NORGate,
     XORGate, XNORGate,
-    // FlipFlosp
-
+    // FlipFlops
+    DFlipFlop, JKFlipFlop,
+    SRFlipFlop, TFlipFlop,
     // Latches
     DLatch, SRLatch,
 }
