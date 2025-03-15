@@ -48,6 +48,38 @@ const [XORGate, XNORGate] = MakeGatePropagators((inputs) => (
     : Signal.Off
 ));
 
+function MakeLatchPropagator(getState: (signals: Record<string, Signal[]>, state: Signal) => Signal): PropagatorFunc {
+    return (_obj, signals, state = [Signal.Off]) => {
+        const [curState] = state, [E] = signals["E"];
+
+        const nextState = (() => {
+            if (Signal.isOff(E))
+                return curState;
+            return getState(signals, curState);
+        })();
+        return {
+            outputs: {
+                "Q":    [nextState],
+                "Qinv": [Signal.invert(nextState)],
+            },
+            nextState: [nextState],
+        }
+    };
+}
+const DLatch = MakeLatchPropagator((signals, _state) => (signals["D"][0]));
+const SRLatch = MakeLatchPropagator((signals, state) => {
+    const [S] = signals["S"], [R] = signals["R"];
+
+    if (!Signal.isOff(S) && !Signal.isOff(R)) {
+        return Signal.Metastable;
+    } else if (!Signal.isOff(S)) {
+        return Signal.On;
+    } else if (!Signal.isOff(R)) {
+        return Signal.Off;
+    }
+    return state;
+});
+
 export const DigitalPropagators: PropagatorsMap = {
     "Switch": (_obj, _signals, state = [Signal.Off]) => ({
         outputs: {
@@ -58,8 +90,13 @@ export const DigitalPropagators: PropagatorsMap = {
     "LED": (_obj, _signals, _state) => ({
         outputs: {},
     }),
+    // Gates
     BUFGate, NOTGate,
     ANDGate, NANDGate,
     ORGate, NORGate,
     XORGate, XNORGate,
+    // FlipFlosp
+
+    // Latches
+    DLatch, SRLatch,
 }

@@ -147,10 +147,6 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 continue;
             const [comp, info] = result.value;
 
-            const propagator = this.propagators[comp.kind];
-            if (!propagator)
-                throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
-
             const ports = this.circuit.getPortsByGroup(id)
                 .mapErr(AddErrE("DigitalSim.step: Failed to get ports by group!"))
                 .unwrap();
@@ -161,6 +157,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                     [group, ports[group].map((id) => this.getSignal(id))]));
             const state = this.states.get(id);
 
+            const propagator = this.propagators[comp.kind];
+            if (!propagator)
+                throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
             const { outputs, nextState } = propagator(comp, inputSignals, state);
 
             // Update signal outputs

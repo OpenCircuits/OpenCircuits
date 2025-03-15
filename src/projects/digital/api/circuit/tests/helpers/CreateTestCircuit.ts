@@ -2,17 +2,45 @@ import {CreateCircuit} from "digital/api/circuit/public"
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent"
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {V} from "Vector"
+import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
+import {DigitalWire} from "digital/api/circuit/public/DigitalWire";
+
 
 export const CreateTestCircuit = () => {
     const [circuit, state] = CreateCircuit();
+
+    const helpers = {
+        Place:          (...comps: string[]) => comps.map((c) => circuit.placeComponentAt(c, V(0, 0))),
+        TurnOn:         (component: DigitalComponent) => state.sim.setState(component.id, [Signal.On]),
+        TurnOff:        (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Off]),
+        TurnMetastable: (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Metastable]),
+        Connect:        (o1: DigitalComponent | DigitalPort | DigitalPort[],
+                         o2: DigitalComponent | DigitalPort | DigitalPort[]): DigitalWire | undefined => {
+            if (Array.isArray(o1) || Array.isArray(o2)) {
+                return helpers.Connect(
+                    Array.isArray(o1) ? o1[0] : o1,
+                    Array.isArray(o2) ? o2[0] : o2,
+                );
+            }
+            if (o1.baseKind === "Port" && o2.baseKind === "Port") {
+                return o1.connectTo(o2);
+            }
+            if (o1.baseKind === "Port" && o2.baseKind === "Component") {
+                return o1.connectTo(o2.inputs[0]);
+            }
+            if (o1.baseKind === "Component" && o2.baseKind === "Port") {
+                return o1.outputs[0].connectTo(o2);
+            }
+            if (o1.baseKind === "Component" && o2.baseKind === "Component") {
+                return o1.outputs[0].connectTo(o2.inputs[0]);
+            }
+            throw new Error("??");
+        }
+    };
+
     return [
         circuit,
         state,
-        {
-            Place:          (...comps: string[]) => comps.map((c) => circuit.placeComponentAt(c, V(0, 0))),
-            TurnOn:         (component: DigitalComponent) => state.sim.setState(component.id, [Signal.On]),
-            TurnOff:        (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Off]),
-            TurnMetastable: (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Metastable]),
-        },
+        helpers,
      ] as const
 }

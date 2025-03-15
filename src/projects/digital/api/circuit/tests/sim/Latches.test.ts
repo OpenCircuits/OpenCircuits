@@ -8,17 +8,13 @@ describe("Latches", () => {
     describe("DLatch", () => {
         const ON = true, OFF = false;
 
-        const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-        const [D, E, Q, Q2, d] = Place("Switch", "Switch", "LED", "LED", "DLatch");
-        D.outputs[0].connectTo(d.ports["D"][0]);
-        E.outputs[0].connectTo(d.ports["E"][0]);
-        d.ports["Q"][0].connectTo(Q.inputs[0]);
-        d.ports["Qinv"][0].connectTo(Q2.inputs[0]);
+        const [{}, {}, { Place, TurnOn, TurnOff, Connect }] = CreateTestCircuit();
+        const [D, E, Q, Q2, latch] = Place("Switch", "Switch", "LED", "LED", "DLatch");
 
-        D.outputs[0].connectTo(d.inputs[0]);
-        E.outputs[0].connectTo(d.inputs[1]);
-        d.outputs[0].connectTo(Q.inputs[0]);
-        d.outputs[1].connectTo(Q2.inputs[0]);
+        Connect(D, latch.ports["D"]);
+        Connect(E, latch.ports["E"]);
+        Connect(latch.ports["Q"], Q);
+        Connect(latch.ports["Qinv"], Q2);
 
         function expectState(state: boolean): void {
             expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
@@ -78,13 +74,14 @@ describe("Latches", () => {
     describe("SRLatch", () => {
         const ON = true, OFF = false;
 
-        const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
+        const [{}, {}, { Place, TurnOn, TurnOff, Connect }] = CreateTestCircuit();
         const [S, E, R, Q, Q2, sr] = Place("Switch", "Switch", "Switch", "LED", "LED", "SRLatch");
-        S.outputs[0].connectTo(sr.ports["S"][0]);
-        E.outputs[0].connectTo(sr.ports["E"][0]);
-        R.outputs[0].connectTo(sr.ports["R"][0]);
-        sr.ports["Q"][0].connectTo(Q.inputs[0]);
-        sr.ports["Qinv"][0].connectTo(Q2.inputs[0]);
+
+        Connect(S, sr.ports["S"]);
+        Connect(E, sr.ports["E"]);
+        Connect(R, sr.ports["R"]);
+        Connect(sr.ports["Q"], Q);
+        Connect(sr.ports["Qinv"], Q2);
 
         function expectState(state: boolean): void {
             expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
