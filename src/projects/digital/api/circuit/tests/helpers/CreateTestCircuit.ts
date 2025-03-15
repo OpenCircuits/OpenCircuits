@@ -1,6 +1,6 @@
 import {CreateCircuit} from "digital/api/circuit/public"
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent"
-import {Signal} from "digital/api/circuit/utils/Signal"
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {V} from "Vector"
 
 export const CreateTestCircuit = () => {

@@ -20,6 +20,7 @@ export interface FastCircuitDiff {
     // Wires
     addedWires: ReadonlySet<GUID>;
     removedWires: ReadonlySet<GUID>;
+    removedWiresPorts: ReadonlyMap<GUID, [GUID, GUID]>;  // removedWire.id : [removedWire.p1, removedWire.p2]
 
     // All props on all objects that may have changed
     propsChanged: ReadonlyMap<GUID, Set<string>>;
@@ -34,6 +35,7 @@ export class FastCircuitDiffBuilder {
     // Wires
     private readonly addedWires: Set<GUID>;
     private readonly removedWires: Set<GUID>;
+    private readonly removedWiresPorts: Map<GUID, [GUID, GUID]>;
 
     // All objects that may have a prop changed
     private readonly propsChanged: Map<GUID, Set<string>>;
@@ -48,6 +50,7 @@ export class FastCircuitDiffBuilder {
         this.portsChanged      = new Set();
         this.addedWires        = new Set();
         this.removedWires      = new Set();
+        this.removedWiresPorts = new Map();
         this.propsChanged      = new Map();
     }
 
@@ -59,6 +62,7 @@ export class FastCircuitDiffBuilder {
             portsChanged:      this.portsChanged,
             addedWires:        this.addedWires,
             removedWires:      this.removedWires,
+            removedWiresPorts: this.removedWiresPorts,
             propsChanged:      this.propsChanged,
         };
     }
@@ -83,10 +87,12 @@ export class FastCircuitDiffBuilder {
                     op.deadWires.forEach((w) => {
                         this.addedWires.delete(w.id)
                         this.removedWires.add(w.id);
+                        this.removedWiresPorts.set(w.id, [w.p1, w.p2]);
                     });
                 } else {
                     op.deadWires.forEach((w) => {
                         this.removedWires.delete(w.id);
+                        this.removedWiresPorts.delete(w.id);
                         this.addedWires.add(w.id);
                     });
                 }
@@ -95,8 +101,10 @@ export class FastCircuitDiffBuilder {
                 if (op.inverted) {
                     this.addedWires.delete(op.w.id);
                     this.removedWires.add(op.w.id);
+                    this.removedWiresPorts.set(op.w.id, [op.w.p1, op.w.p2]);
                 } else {
                     this.removedWires.delete(op.w.id);
+                    this.removedWiresPorts.delete(op.w.id);
                     this.addedWires.add(op.w.id);
                 }
                 break;
@@ -117,6 +125,7 @@ export class FastCircuitDiffBuilder {
         merge(diff.portsChanged,      this.portsChanged);
         merge(diff.addedWires,        this.addedWires);
         merge(diff.removedWires,      this.removedWires);
+        diff.removedWiresPorts.forEach((ports, wire) => this.removedWiresPorts.set(wire, ports));
         diff.propsChanged.forEach((v, k) => merge(v, this.getOrCreatePropSet(k)));
     }
 }

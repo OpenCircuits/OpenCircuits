@@ -11,11 +11,24 @@ export namespace Signal {
     export function fromBool(b: boolean): Signal {
         return (b) ? (Signal.On) : (Signal.Off);
     }
+    export function invert(s: Signal): Signal {
+        switch (s) {
+            case Signal.On:
+                return Signal.Off;
+            case Signal.Off:
+                return Signal.On;
+            case Signal.Metastable:
+                return Signal.Metastable;
+        }
+    }
     export function isOn(s: Signal): boolean {
         return (s === Signal.On);
     }
     export function isOff(s: Signal): boolean {
         return (s === Signal.Off);
+    }
+    export function isMetastable(s: Signal): boolean {
+        return (s === Signal.Metastable);
     }
     export function isStable(s: Signal): boolean {
         return (s !== Signal.Metastable);

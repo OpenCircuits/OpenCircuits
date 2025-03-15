@@ -113,16 +113,18 @@ const OscilloscopeInfo = DigitalInputComponentInfo(
 );
 
 // Gates
-const DigitalGateComponentInfo = (kind: string) =>
+const DigitalGateComponentInfo = (kind: string, inputs = [2,3,4,5,6,7,8]) =>
     new DigitalComponentConfigurationInfo(
         kind,
         {},
         { "inputs": "input", "outputs": "output" },
         // 2->8 inputs, 1 output
-        [2,3,4,5,6,7,8].map((inputs) =>
+        inputs.map((inputs) =>
              ({ "inputs": inputs, "outputs": 1 })),
     );
 
+const BUFGateInfo = DigitalGateComponentInfo("BUFGate", [1]);
+const NOTGateInfo = DigitalGateComponentInfo("NOTGate", [1]);
 const ANDGateInfo  = DigitalGateComponentInfo("ANDGate");
 const NANDGateInfo = DigitalGateComponentInfo("NANDGate");
 const ORGateInfo   = DigitalGateComponentInfo("ORGate");
@@ -254,7 +256,7 @@ export function CreateDigitalComponentInfoProvider(): ObjInfoProvider {
         // Outputs
         LEDInfo, BCDDisplayInfo, ASCIIDisplayInfo, SegmentDisplayInfo, OscilloscopeInfo,
         // Gates
-        ANDGateInfo, NANDGateInfo, ORGateInfo, NORGateInfo, XORGateInfo, XNORGateInfo,
+        BUFGateInfo, NOTGateInfo, ANDGateInfo, NANDGateInfo, ORGateInfo, NORGateInfo, XORGateInfo, XNORGateInfo,
         // Flip Flops
         DFlipFlopInfo, TFlipFlopInfo, SRFlipFlopInfo, JKFlipFlopInfo,
         // Latches

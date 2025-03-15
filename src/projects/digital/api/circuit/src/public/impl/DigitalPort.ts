@@ -1,7 +1,7 @@
 import {GUID}     from "shared/api/circuit/internal";
 import {PortImpl} from "shared/api/circuit/public/impl/Port";
 
-import {Signal} from "digital/api/circuit/utils/Signal";
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
 
 import {DigitalPort} from "../DigitalPort";
 

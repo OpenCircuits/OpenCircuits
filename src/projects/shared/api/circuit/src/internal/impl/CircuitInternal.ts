@@ -124,6 +124,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     public getComponentInfo(kind: string) {
         return this.doc.getCircuitInfo(this.id).unwrap().getComponentInfo(kind);
     }
+    public getComponentAndInfoById(id: string) {
+        return this.doc.getCircuitInfo(this.id).unwrap().getComponentAndInfoByID(id);
+    }
 
     public getObjs() {
         return this.doc.getCircuitInfo(this.id).unwrap().getObjs();

@@ -428,6 +428,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 portsChanged:      new Set<string>(),
                 removedComponents: new Set<string>(),
                 removedWires:      new Set<string>(),
+                removedWiresPorts: new Map(),
             },
         });
 
