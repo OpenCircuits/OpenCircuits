@@ -98,16 +98,17 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
 /**
  * Converts a given InputTree to an array of connected components (and the wires used to connect them).
  *
- * @param tree   The root node of the InputTree to convert or an empty array if tree is null.
- * @param inputs The input components used by this expression.
- * @param output The component that the circuit outputs to.
- * @returns      The components and wires converted from the tree.
+ * @param tree       The root node of the InputTree to convert or an empty array if tree is null.
+ * @param inputs     The input components used by this expression.
+ * @param output     The component that the circuit outputs to.
+ * @param expression The input expression, used to name the newly created circuit.
+ * @returns          The components and wires converted from the tree.
  * @throws If `output` indicates a component without an input port.
  * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
  * @throws If any connections fail.
  */
 export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
-                              output: string): {
+                              output: string, expression: string): {
                                 circuit: DigitalCircuit;
                                 state: DigitalCircuitState;
                                 inputs: DigitalComponent[];
@@ -115,6 +116,7 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
                             } {
     const [circuit, state] = CreateCircuit();
 
+    circuit.name = expression;
     const outputComp = circuit.placeComponentAt(output, V(0, 0));
     outputComp.name = "Output";
     const outputNode = outputComp.firstAvailable("inputs");

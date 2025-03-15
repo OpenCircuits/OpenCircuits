@@ -45,7 +45,7 @@ export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) =>
     const [format, setFormat] = useState<OperatorFormatLabel>("|");
     const [customOps, setCustomOps] = useState<OperatorFormat>({ ...FORMATS[0], icon: "custom" });
 
-    function reset() {
+    const reset = () => {
         setExpression("");
         setErrorMessage("");
         dispatch(CloseHeaderPopups());
@@ -123,7 +123,7 @@ export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) =>
                                 setErrorMessage(result.error.errors.map((err) => err.message).join("\n"));
                                 console.error(result.error);
                             } else {
-                                dispatch(CloseHeaderPopups());
+                                reset();
                             }
                         }}>
                     Generate
