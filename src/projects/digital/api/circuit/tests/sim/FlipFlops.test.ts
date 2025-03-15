@@ -3,22 +3,19 @@ import "shared/tests/helpers/Extensions";
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
+
 describe("Flip Flops", () => {
+    const ON = Signal.On, OFF = Signal.Off;
+
     describe("DFlipFlop", () => {
-        const ON = true, OFF = false;
+        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_,
+            { pre: [PRE], clr: [CLR], D: [D], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        ] = PlaceAndConnect("DFlipFlop");
 
-        const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-        const [PRE, CLR, D, C, Q, Q2, d] = Place("Switch", "Switch", "Switch", "Switch", "LED", "LED", "DFlipFlop");
-        PRE.outputs[0].connectTo(d.ports["pre"][0]);
-        CLR.outputs[0].connectTo(d.ports["clr"][0]);
-        D.outputs[0].connectTo(d.ports["D"][0]);
-        C.outputs[0].connectTo(d.ports["clk"][0]);
-        d.ports["Q"][0].connectTo(Q.inputs[0]);
-        d.ports["Qinv"][0].connectTo(Q2.inputs[0]);
-
-        function expectState(state: boolean): void {
-            expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
-            expect(Q2.inputs[0].signal).toBe(!state ? Signal.On : Signal.Off);
+        function expectState(signal: Signal): void {
+            expect(Q.inputs[0].signal).toBe(signal);
+            expect(Q2.inputs[0].signal).toBe(Signal.invert(signal));
         }
 
         test("Initial State", () => {
@@ -31,55 +28,55 @@ describe("Flip Flops", () => {
             expectState(OFF);
         });
         test("Clock on and off w/o data on", () => {
-            TurnOn(C);
+            TurnOn(CLK);
             expectState(OFF);
-            TurnOff(C);
+            TurnOff(CLK);
             expectState(OFF);
         });
         test("Flip Flop to On", () => {
             TurnOn(D);
-            TurnOn(C);
+            TurnOn(CLK);
 
             expectState(ON);
 
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(ON);
         });
         test("Flip Flop to Off", () => {
             TurnOff(D);
-            TurnOn(C);
+            TurnOn(CLK);
 
             expectState(OFF);
 
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(OFF);
         });
         test("Toggle Data after Clock", () => {
             // Toggling on
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOn(D);
 
             expectState(OFF);
 
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(OFF);
 
             // Set on
             TurnOn(D);
-            TurnOn(C);
+            TurnOn(CLK);
             expectState(ON);
-            TurnOff(C);
+            TurnOff(CLK);
 
             // Toggling off
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(D);
 
             expectState(ON);
 
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(ON);
         });
@@ -97,28 +94,21 @@ describe("Flip Flops", () => {
     });
 
     describe("JKFlipFlop", () => {
-        const ON = true, OFF = false;
+        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_,
+            { pre: [PRE], clr: [CLR], J: [J], K: [K], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        ] = PlaceAndConnect("JKFlipFlop");
 
-        const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-        const [PRE, CLR, J, C, K, Q, Q2, jk] = Place("Switch", "Switch", "Switch", "Switch", "Switch", "LED", "LED", "JKFlipFlop");
-        PRE.outputs[0].connectTo(jk.ports["pre"][0]);
-        CLR.outputs[0].connectTo(jk.ports["clr"][0]);
-        J.outputs[0].connectTo(jk.ports["J"][0]);
-        K.outputs[0].connectTo(jk.ports["K"][0]);
-        C.outputs[0].connectTo(jk.ports["clk"][0]);
-        jk.ports["Q"][0].connectTo(Q.inputs[0]);
-        jk.ports["Qinv"][0].connectTo(Q2.inputs[0]);
-
-        function expectState(state: boolean): void {
-            expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
-            expect(Q2.inputs[0].signal).toBe(!state ? Signal.On : Signal.Off);
+        function expectState(signal: Signal): void {
+            expect(Q.inputs[0].signal).toBe(signal);
+            expect(Q2.inputs[0].signal).toBe(Signal.invert(signal));
         }
 
         test("Initial State", () => {
             expectState(OFF);
         });
         test("Turn On an Input", () => {
-            TurnOff(C);
+            TurnOff(CLK);
             TurnOn(J);
             TurnOff(J);
 
@@ -126,34 +116,34 @@ describe("Flip Flops", () => {
         });
         test("Set", () => {
             TurnOn(J);
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(J);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(ON);
         });
         test("Set while On, Reset falling edge", () => {
             TurnOn(J);
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(J);
             TurnOn(K);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(ON);
         });
         test("Reset", () => {
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(K);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(OFF);
         });
         test("Reset while Off, Set falling edge", () => {
             TurnOn(K);
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(K);
             TurnOn(J);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(OFF);
         });
@@ -161,13 +151,13 @@ describe("Flip Flops", () => {
             TurnOn(J);
             TurnOn(K);
 
-            TurnOn(C);
-            TurnOff(C);
+            TurnOn(CLK);
+            TurnOff(CLK);
 
             expectState(ON);
 
-            TurnOn(C);
-            TurnOff(C);
+            TurnOn(CLK);
+            TurnOff(CLK);
 
             expectState(OFF);
         });
@@ -185,28 +175,21 @@ describe("Flip Flops", () => {
     });
 
     describe("SRFlipFlop", () => {
-        const ON = true, OFF = false;
+        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_,
+            { pre: [PRE], clr: [CLR], S: [S], R: [R], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        ] = PlaceAndConnect("SRFlipFlop");
 
-        const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-        const [PRE, CLR, S, C, R, Q, Q2, sr] = Place("Switch", "Switch", "Switch", "Switch", "Switch", "LED", "LED", "SRFlipFlop");
-        PRE.outputs[0].connectTo(sr.ports["pre"][0]);
-        CLR.outputs[0].connectTo(sr.ports["clr"][0]);
-        S.outputs[0].connectTo(sr.ports["S"][0]);
-        R.outputs[0].connectTo(sr.ports["R"][0]);
-        C.outputs[0].connectTo(sr.ports["clk"][0]);
-        sr.ports["Q"][0].connectTo(Q.inputs[0]);
-        sr.ports["Qinv"][0].connectTo(Q2.inputs[0]);
-
-        function expectState(state: boolean): void {
-            expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
-            expect(Q2.inputs[0].signal).toBe(!state ? Signal.On : Signal.Off);
+        function expectState(signal: Signal): void {
+            expect(Q.inputs[0].signal).toBe(signal);
+            expect(Q2.inputs[0].signal).toBe(Signal.invert(signal));
         }
 
         test("Initial State", () => {
             expectState(OFF);
         });
         test("Turn On an Input", () => {
-            TurnOff(C);
+            TurnOff(CLK);
             TurnOn(S);
             TurnOff(S);
 
@@ -214,34 +197,34 @@ describe("Flip Flops", () => {
         });
         test("Set", () => {
             TurnOn(S);
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(S);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(ON);
         });
         test("Set while On, Reset falling edge", () => {
             TurnOn(S);
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(S);
             TurnOn(R);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(ON);
         });
         test("Reset", () => {
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(R);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(OFF);
         });
         test("Reset while Off, Set falling edge", () => {
             TurnOn(R);
-            TurnOn(C);
+            TurnOn(CLK);
             TurnOff(R);
             TurnOn(S);
-            TurnOff(C);
+            TurnOff(CLK);
 
             expectState(OFF);
         });
@@ -249,8 +232,8 @@ describe("Flip Flops", () => {
             TurnOn(R);
             TurnOn(S)
 
-            TurnOn(C);
-            TurnOff(C);
+            TurnOn(CLK);
+            TurnOff(CLK);
 
             expect.anything();
         });
@@ -268,20 +251,14 @@ describe("Flip Flops", () => {
     });
 
     describe("TFlipFlop", () => {
-        const ON = true, OFF = false;
+        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_,
+            { pre: [PRE], clr: [CLR], T: [T], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        ] = PlaceAndConnect("TFlipFlop");
 
-        const [{}, {}, { Place, TurnOn, TurnOff }] = CreateTestCircuit();
-        const [PRE, CLR, T, C, Q, Q2, t] = Place("Switch", "Switch", "Switch", "Switch", "LED", "LED", "TFlipFlop");
-        PRE.outputs[0].connectTo(t.ports["pre"][0]);
-        CLR.outputs[0].connectTo(t.ports["clr"][0]);
-        T.outputs[0].connectTo(t.ports["T"][0]);
-        C.outputs[0].connectTo(t.ports["clk"][0]);
-        t.ports["Q"][0].connectTo(Q.inputs[0]);
-        t.ports["Qinv"][0].connectTo(Q2.inputs[0]);
-
-        function expectState(state: boolean): void {
-            expect(Q.inputs[0].signal).toBe(state ? Signal.On : Signal.Off);
-            expect(Q2.inputs[0].signal).toBe(!state ? Signal.On : Signal.Off);
+        function expectState(signal: Signal): void {
+            expect(Q.inputs[0].signal).toBe(signal);
+            expect(Q2.inputs[0].signal).toBe(Signal.invert(signal));
         }
 
         test("Initial State", () => {
@@ -294,21 +271,21 @@ describe("Flip Flops", () => {
             expectState(OFF);
         });
         test("Clock on and off w/o data on", () => {
-            TurnOff(C);
+            TurnOff(CLK);
             expectState(OFF);
-            TurnOff(C);
+            TurnOff(CLK);
             expectState(OFF);
         });
         test("Flip Flop Toggle", () => {
-            TurnOff(T);
+            TurnOn(T);
 
-            TurnOff(C);
+            TurnOn(CLK);
             expectState(ON);
 
-            TurnOff(C);
+            TurnOff(CLK);
             expectState(ON);
 
-            TurnOff(C);
+            TurnOn(CLK);
             expectState(OFF);
         });
         test("PRE and CLR", () => {

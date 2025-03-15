@@ -3,7 +3,8 @@
 
 declare global {
     interface Array<T> {
-        sum: () => T;
+        sum(): T;
+        count(filter: (el: T, i: number, arr: T[]) => boolean): number;
     }
 
     interface Set<T> {
@@ -16,6 +17,10 @@ declare global {
 Array.prototype.sum = function(this: number[]): number {
     return this.reduce((a, b) => (a + b), 0);
 }
+Array.prototype.count = function<T>(this: T[], filter: (el: T, i: number, arr: T[]) => boolean): number {
+    return this.filter(filter).length;
+}
+
 Set.prototype.intersection = function<T, U>(this: Set<T>, other: Set<U>): Set<T & U> {
     let smallerElems: Set<T> | Set<U>;
     let largerHas: Set<T> | Set<U>;
