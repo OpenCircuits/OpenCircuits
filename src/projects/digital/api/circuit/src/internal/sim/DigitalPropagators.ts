@@ -1,5 +1,6 @@
 import {Schema} from "shared/api/circuit/schema";
 import {Signal} from "./Signal";
+import {BCDtoDecimal, DecimalToBCD} from "../../utils/MathUtil";
 
 
 export type PropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
@@ -15,11 +16,39 @@ export type PropagatorFunc = (obj: Schema.Component, signals: Record<string, Sig
 // Kind : Propagator
 export type PropagatorsMap = Record<string, PropagatorFunc>;
 
+function MakeNoOutputPropagator(): PropagatorFunc {
+    return (_obj: Schema.Component, _ignals: Record<string, Signal[]>, _state?: Signal[]) => ({
+        outputs: {},
+    });
+}
+
+function MakeSingleOutputPropagator(
+    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
+        signal: Signal;
+        nextState?: Signal[];
+    },
+): PropagatorFunc {
+    return (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
+        const { signal, nextState } = getOutput(obj, signals, state);
+        return {
+            outputs: { "outputs": [signal] },
+            nextState,
+        };
+    }
+}
+function MakeStatelessSingleOutputPropagator(
+    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => Signal,
+): PropagatorFunc {
+    return MakeSingleOutputPropagator((obj, signals, state) => ({
+        signal: getOutput(obj, signals, state),
+    }));
+}
+
 function MakeGatePropagators(func: (inputs: Signal[]) => Signal): [PropagatorFunc, PropagatorFunc] {
     return [
-        (_obj, signals, _state) => ({ outputs: { "outputs": [func(signals["inputs"])] } }),
-        (_obj, signals, _state) => ({ outputs: { "outputs": [Signal.invert(func(signals["inputs"]))] } }),
-    ]
+        MakeStatelessSingleOutputPropagator((_obj, signals, _state) => func(signals["inputs"])),
+        MakeStatelessSingleOutputPropagator((_obj, signals, _state) => Signal.invert(func(signals["inputs"]))),
+    ];
 }
 const [BUFGate, NOTGate] = MakeGatePropagators((inputs) => inputs[0]);
 const [ANDGate, NANDGate] = MakeGatePropagators((inputs) => (
@@ -140,23 +169,100 @@ const TFlipFlop = MakeFlipFlopPropagator((signals, state, up) =>
 
 
 export const DigitalPropagators: PropagatorsMap = {
-    "Switch": (_obj, _signals, state = [Signal.Off]) => ({
-        outputs: {
-            "outputs": [state[0]],
-        },
+    // Node
+    "DigitalNode": BUFGate,  // Acts like a buffer
+
+    // Inputs
+    "Switch": MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
+        signal:    state[0],
         nextState: state,
-    }),
-    "LED": (_obj, _signals, _state) => ({
-        outputs: {},
-    }),
+    })),
+    "Button": MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
+        signal:    state[0],
+        nextState: state,
+    })),
+    "ConstantLow":    MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.Off),
+    "ConstantHigh":   MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.On),
+    "ConstantNumber": (obj, _signals, _state) => {
+        // TODO: Figure out how to update propagation when this changes
+        const num = obj.props["inputNum"] as number ?? 0;
+        return { outputs: { "outputs": DecimalToBCD(num, 4).map(Signal.fromBool) } };
+    },
+    "Clock": MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
+        signal:    state[0],  // TODO: update this state periodically somehow
+        nextState: state,
+    })),
+
+    // Outputs
+    "LED":            MakeNoOutputPropagator(),
+    "SegmentDisplay": MakeNoOutputPropagator(),
+    "BCDDisplay":     MakeNoOutputPropagator(),
+    "ASCIIDisplay":   MakeNoOutputPropagator(),
+    "Oscilloscope":   MakeNoOutputPropagator(),
+
     // Gates
     BUFGate, NOTGate,
     ANDGate, NANDGate,
     ORGate, NORGate,
     XORGate, XNORGate,
+
     // FlipFlops
-    DFlipFlop, JKFlipFlop,
-    SRFlipFlop, TFlipFlop,
+    SRFlipFlop, JKFlipFlop,
+    DFlipFlop, TFlipFlop,
+
     // Latches
     DLatch, SRLatch,
+
+    // Other
+    "Multiplexer": MakeStatelessSingleOutputPropagator((_obj, signals, _state) => (
+        // TODO: Handle metastable
+        signals["inputs"][BCDtoDecimal(signals["selects"].map(Signal.toBool))]
+    )),
+    "Demultiplexer": (_obj, signals, _state) => {
+        // TODO: Handle metastable
+        const selects = signals["selects"].map(Signal.toBool);
+        return { outputs: {
+            "outputs": new Array<Signal>(Math.pow(2, selects.length))
+                // All ports should be off except the selected one should === the input signal
+                .fill(Signal.Off)
+                .with(BCDtoDecimal(selects), signals["inputs"][0]),
+        } };
+    },
+    "Encoder": (_obj, signals, _state) => {
+        const inputs = signals["inputs"];
+        const outputCount = Math.round(Math.log2(inputs.length));
+
+        // Undefined behavior
+        if (inputs.count(Signal.isOn) !== 1 || inputs.count(Signal.isMetastable) > 0) {
+            return { outputs: {
+                "outputs": new Array<Signal>(outputCount).fill(Signal.Metastable),
+            } };
+        }
+
+        const num = inputs.indexOf(Signal.On);
+        return { outputs: {
+            "outputs": DecimalToBCD(num, outputCount).map(Signal.fromBool),
+        } };
+    },
+    "Decoder": (_obj, signals, _state) => {
+        // TODO: Handle metastable
+        const inputs = signals["inputs"].map(Signal.toBool);
+        return { outputs: {
+            "outputs": new Array<Signal>(Math.pow(2, inputs.length))
+                // All ports should be off except the selected one should be On
+                .fill(Signal.Off)
+                .with(BCDtoDecimal(inputs), Signal.Off),
+        } };
+    },
+    "Comparator": (_obj, signals, _state) => {
+        // TODO: Handle metastable
+        const a = BCDtoDecimal(signals["inputsA"].map(Signal.toBool));
+        const b = BCDtoDecimal(signals["inputsB"].map(Signal.toBool));
+        return { outputs: {
+            "lt": [a < b   ? Signal.On : Signal.Off],
+            "eq": [a === b ? Signal.On : Signal.Off],
+            "gt": [a > b   ? Signal.On : Signal.Off],
+        } };
+    },
+    "Label": MakeNoOutputPropagator(),
 }

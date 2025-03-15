@@ -254,13 +254,13 @@ export function CreateDigitalComponentInfoProvider(): ObjInfoProvider {
         // Node
         NodeInfo,
         // Inputs
-        SwitchInfo, ButtonInfo, ConstantLowInfo, ConstantHighInfo, ConstantNumberInfo, ClockInfo,
+        ButtonInfo, SwitchInfo, ConstantLowInfo, ConstantHighInfo, ConstantNumberInfo, ClockInfo,
         // Outputs
-        LEDInfo, BCDDisplayInfo, ASCIIDisplayInfo, SegmentDisplayInfo, OscilloscopeInfo,
+        LEDInfo, SegmentDisplayInfo, BCDDisplayInfo, ASCIIDisplayInfo, OscilloscopeInfo,
         // Gates
         BUFGateInfo, NOTGateInfo, ANDGateInfo, NANDGateInfo, ORGateInfo, NORGateInfo, XORGateInfo, XNORGateInfo,
         // Flip Flops
-        DFlipFlopInfo, TFlipFlopInfo, SRFlipFlopInfo, JKFlipFlopInfo,
+        SRFlipFlopInfo, JKFlipFlopInfo, DFlipFlopInfo, TFlipFlopInfo,
         // Latches
         DLatchInfo, SRLatchInfo,
         // Other
