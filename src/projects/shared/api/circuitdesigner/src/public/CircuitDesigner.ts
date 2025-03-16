@@ -1,4 +1,4 @@
-import {Obj, Circuit} from "shared/api/circuit/public";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 import {Tool}         from "../tools/Tool";
 import {Viewport}     from "./Viewport";
@@ -12,11 +12,11 @@ export interface CircuitDesignerOptions {
 // All state variables within the CircuitDesigner will/should NOT be serialized
 // and shouldn't persist through user sessions. I.e. they will reset on page refresh
 // and represent temporary state for the user in the current session.
-export interface CircuitDesigner<CircuitT extends Circuit = Circuit> {
-    readonly circuit: CircuitT;
+export interface CircuitDesigner<T extends CircuitTypes = CircuitTypes> {
+    readonly circuit: T["Circuit"];
 
     readonly curTool?: Tool;
-    curPressedObj?: Obj;
+    curPressedObj?: T["Obj"];
 
     viewport: Viewport;
 }

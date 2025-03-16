@@ -12,8 +12,8 @@ import {CircuitDesignerState}                    from "./CircuitDesignerState";
 import {ViewportImpl}                            from "./Viewport";
 
 
-export interface ToolConfig {
-    defaultTool: DefaultTool;
+export interface ToolConfig<T extends CircuitTypes = CircuitTypes> {
+    defaultTool: DefaultTool<T>;
     tools: Tool[];
 }
 

@@ -5,11 +5,12 @@ import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOpti
 import {Component, Node}   from "../Component";
 import {Port}              from "../Port";
 import {Wire}              from "../Wire";
-import {ICInfo, IntegratedCircuit} from "../Circuit";
+import {Circuit, ICInfo, IntegratedCircuit} from "../Circuit";
 
 
 // Utility interface to hold utility types for the templated Circuit API.
 export type CircuitTypes<
+    CircuitT extends Circuit = Circuit,
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
@@ -17,6 +18,8 @@ export type CircuitTypes<
     ICT extends IntegratedCircuit = IntegratedCircuit,
     ICInfoT extends ICInfo = ICInfo,
 > = {
+    "Circuit": CircuitT;
+
     "Component": ComponentT;
     "Wire": WireT;
     "Port": PortT;

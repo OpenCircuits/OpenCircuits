@@ -32,7 +32,7 @@ import {IsDefined} from "shared/api/circuit/utils/Reducers";
 
 export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<ViewportEvents> implements Viewport {
     protected readonly state: CircuitDesignerState<T>;
-    protected readonly designer: CircuitDesigner;
+    protected readonly designer: CircuitDesigner<T>;
     // protected readonly svgMap: Map<string, SVGDrawing>;
     protected readonly options: CircuitDesignerOptions;
 
@@ -47,7 +47,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
     public constructor(
         state: CircuitDesignerState<T>,
-        designer: CircuitDesigner,
+        designer: CircuitDesigner<T>,
         svgMap: Map<string, SVGDrawing>,
         options: CircuitDesignerOptions,
     ) {

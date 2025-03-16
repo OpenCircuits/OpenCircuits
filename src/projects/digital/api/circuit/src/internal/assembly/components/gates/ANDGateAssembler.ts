@@ -26,8 +26,7 @@ export class ANDGateAssembler extends GateAssembler {
                     getStyle: (comp) => this.options.lineStyle(this.isSelected(comp.id)),
                 },
             ],
-    });
-
+        });
     }
 
     private assembleLine(gate: Schema.Component) {

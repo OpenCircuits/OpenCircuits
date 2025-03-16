@@ -9,9 +9,13 @@ import {ToolManager} from "shared/api/circuitdesigner/public/impl/ToolManager";
 
 import {SVGs} from "./rendering/svgs";
 
-export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalCircuit> {}
+export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalTypes> {}
 
-export function CreateDesigner(toolConfig: ToolConfig, renderers: ToolRenderer[], dragTime?: number) {
+export function CreateDesigner(
+    toolConfig: ToolConfig<DigitalTypes>,
+    renderers: ToolRenderer[],
+    dragTime?: number,
+) {
     const [circuit, state] = CreateCircuit();
 
     // create view and attach renderers as post-process rendering
@@ -27,7 +31,7 @@ export function CreateDesigner(toolConfig: ToolConfig, renderers: ToolRenderer[]
             },
         },
 
-        toolManager: new ToolManager(toolConfig.defaultTool, toolConfig.tools),
+        toolManager: new ToolManager<DigitalTypes>(toolConfig.defaultTool, toolConfig.tools),
 
         curPressedObj: undefined,
         cursor:        undefined,

@@ -16,7 +16,7 @@ export interface CircuitDesignerState<T extends CircuitTypes> {
     curCamera: CameraRecordKey;
     cameras: Record<CameraRecordKey, Schema.Camera>;
 
-    toolManager: ToolManager;
+    toolManager: ToolManager<T>;
 
     curPressedObj?: T["Obj"];
     cursor?: Cursor;

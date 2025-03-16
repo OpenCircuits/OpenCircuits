@@ -3,6 +3,7 @@ import {Tool}              from "shared/api/circuitdesigner/tools/Tool";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {CircuitDesigner}   from "../CircuitDesigner";
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 
 export type ToolManagerEvent = {
@@ -13,20 +14,20 @@ export type ToolManagerEvent = {
     tool: Tool;
 }
 
-export class ToolManager extends ObservableImpl<ToolManagerEvent> {
-    public readonly defaultTool: DefaultTool;
+export class ToolManager<T extends CircuitTypes = CircuitTypes> extends ObservableImpl<ToolManagerEvent> {
+    public readonly defaultTool: DefaultTool<T>;
     public readonly tools: Tool[];
 
     public curTool?: Tool;
 
-    public constructor(defaultTool: DefaultTool, tools: Tool[]) {
+    public constructor(defaultTool: DefaultTool<T>, tools: Tool[]) {
         super();
 
         this.defaultTool = defaultTool;
         this.tools = tools;
     }
 
-    public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner<T>): void {
         // Call the current tool's (or default tool's) onEvent method
         if (this.curTool) {
             const tool = this.curTool;

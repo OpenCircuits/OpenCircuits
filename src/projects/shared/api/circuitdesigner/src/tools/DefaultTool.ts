@@ -1,21 +1,22 @@
 import {CircuitDesigner}                  from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent}                from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {ToolHandler, ToolHandlerResponse} from "./handlers/ToolHandler";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 
-export class DefaultTool {
-    protected handlers: ToolHandler[];
+export class DefaultTool<T extends CircuitTypes = CircuitTypes> {
+    protected handlers: Array<ToolHandler<T>>;
 
-    public constructor(...handlers: ToolHandler[]) {
+    public constructor(...handlers: Array<ToolHandler<T>>) {
         this.handlers = handlers;
     }
 
-    public onActivate(ev: InputAdapterEvent, designer: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, designer: CircuitDesigner<T>): void {
         this.onEvent(ev, designer);
     }
 
     // Method called when this tool is currently active and an event occurs
-    public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner<T>): void {
         // // Don't do anything when circuit is locked
         // if (circuit.locked)
         //     return;

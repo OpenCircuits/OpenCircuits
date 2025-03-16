@@ -26,15 +26,20 @@ import {SnipNodesHandler}   from "shared/api/circuitdesigner/tools/handlers/Snip
 import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
+import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
+
 import {SetupMockCanvas} from "shared/api/circuitdesigner/tests/helpers/CreateTestCircuitDesigner";
 
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitState";
 
-export function GetDefaultTools(): ToolConfig {
+
+export function GetDefaultTools(): ToolConfig<DigitalTypes> {
     return {
         defaultTool: new DefaultTool(
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipNodesHandler, DeselectAllHandler,
+            InteractionHandler,  // Needs to be before the selection handler
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
             CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
             SaveHandler(() => {})
@@ -48,7 +53,7 @@ export function GetDefaultTools(): ToolConfig {
     };
 }
 
-export function CreateCircuitDesigner(toolConfig: ToolConfig = GetDefaultTools()) {
+export function CreateCircuitDesigner(toolConfig = GetDefaultTools()) {
     const designer = CreateDesigner(toolConfig, [], -1);
 
     const [mockInput, canvas] = SetupMockCanvas(designer);

@@ -33,6 +33,8 @@ import {SnipNodesHandler}   from "shared/api/circuitdesigner/tools/handlers/Snip
 import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
+import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
+
 import {SelectionBoxToolRenderer} from "shared/api/circuitdesigner/tools/renderers/SelectionBoxToolRenderer";
 import {RotateToolRenderer}       from "shared/api/circuitdesigner/tools/renderers/RotateToolRenderer";
 
@@ -66,6 +68,7 @@ async function Init(): Promise<void> {
             defaultTool: new DefaultTool(
                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                 DeleteHandler, SnipNodesHandler, DeselectAllHandler,
+                InteractionHandler,  // Needs to be before the selection handler
                 SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
                 CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
                 SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)

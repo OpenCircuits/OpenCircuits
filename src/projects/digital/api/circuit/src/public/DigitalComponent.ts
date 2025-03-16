@@ -2,6 +2,7 @@ import {Component, Node, ReadonlyComponent, ReadonlyNode} from "shared/api/circu
 
 import {DigitalPort}  from "./DigitalPort";
 import {APIToDigital} from "./DigitalCircuit";
+import {Signal} from "../internal/sim/Signal";
 
 
 export interface ReadonlyDigitalComponent extends APIToDigital<ReadonlyComponent> {
@@ -14,6 +15,9 @@ type C = APIToDigital<Component> & ReadonlyDigitalComponent;
 export interface DigitalComponent extends C {
     readonly inputs: DigitalPort[];
     readonly outputs: DigitalPort[];
+
+    // TODO: Is this too much to expose?
+    setSimState(state: Signal[]): void;
 
     isNode(): this is DigitalNode;
 }

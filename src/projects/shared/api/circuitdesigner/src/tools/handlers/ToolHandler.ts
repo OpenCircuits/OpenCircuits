@@ -1,3 +1,5 @@
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
@@ -9,7 +11,7 @@ export enum ToolHandlerResponse {
     HALT = 1,
 }
 
-export interface ToolHandler {
+export interface ToolHandler<T extends CircuitTypes = CircuitTypes>  {
     /**
      * This method will run when an event occurs and a previous handler
      *  has not sent a "HALT" response.
@@ -22,5 +24,5 @@ export interface ToolHandler {
      *                 other handlers to potentially handle the event as well. Return HALT if
      *                 this should be the only handler to handle the event.
      */
-    onEvent: (ev: InputAdapterEvent, designer: CircuitDesigner) => ToolHandlerResponse;
+    onEvent: (ev: InputAdapterEvent, designer: CircuitDesigner<T>) => ToolHandlerResponse;
 }
