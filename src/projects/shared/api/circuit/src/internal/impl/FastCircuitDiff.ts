@@ -85,15 +85,15 @@ export class FastCircuitDiffBuilder {
                 this.portsChanged.add(op.component);
                 if (op.inverted) {
                     op.deadWires.forEach((w) => {
-                        this.addedWires.delete(w.id)
-                        this.removedWires.add(w.id);
-                        this.removedWiresPorts.set(w.id, [w.p1, w.p2]);
-                    });
-                } else {
-                    op.deadWires.forEach((w) => {
                         this.removedWires.delete(w.id);
                         this.removedWiresPorts.delete(w.id);
                         this.addedWires.add(w.id);
+                    });
+                } else {
+                    op.deadWires.forEach((w) => {
+                        this.addedWires.delete(w.id)
+                        this.removedWires.add(w.id);
+                        this.removedWiresPorts.set(w.id, [w.p1, w.p2]);
                     });
                 }
                 break;

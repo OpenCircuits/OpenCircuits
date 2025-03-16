@@ -9,6 +9,7 @@ import {InvertCircuitOp} from "./CircuitOps";
 import {PortConfig}      from "./ObjInfo";
 import {CircuitDocument} from "./CircuitDocument";
 import {FastCircuitDiff} from "./FastCircuitDiff";
+import {AddErrE} from "../../utils/MultiError";
 
 
 export type InternalEvent = {
@@ -209,6 +210,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     props:    { ...props }, // Copy non-trivial object
                 },
             }).map(() => id)
+            .mapErr(AddErrE(`CircuitInternal.placeComponent: failed for ${kind}`))
             .uponErr(() => this.cancelTransaction());
     }
 
@@ -230,6 +232,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                         inverted: true,
                         c, // No copy needed
                     })))
+            .mapErr(AddErrE(`CircuitInternal.deleteComponent: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
 
@@ -246,6 +249,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     kind, id, p1, p2,
                 },
             }).map(() => id)
+            .mapErr(AddErrE(`CircuitInternal.connectWire: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
 
@@ -261,6 +265,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                         inverted: true,
                         w, // No copy needed
                     })))
+            .mapErr(AddErrE(`CircuitInternal.deleteWire: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
 
@@ -281,6 +286,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     oldVal:  obj.props[key],
                     newVal,
                 })))
+            .mapErr(AddErrE(`CircuitInternal.setPropFor: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
 
@@ -318,6 +324,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                             deadWires,
                         });
                     })))
+            .mapErr(AddErrE(`CircuitInternal.setPortConfig: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
 
@@ -345,6 +352,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                         deadWires,
                     });
                 }))
+            .mapErr(AddErrE(`CircuitInternal.removePortsFor: failed for ${compId}`))
             .uponErr(() => this.cancelTransaction());
     }
 

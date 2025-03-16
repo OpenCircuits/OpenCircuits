@@ -72,6 +72,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             }
 
             for (const [_wireId, [p1Id, p2Id]] of ev.diff.removedWiresPorts) {
+                // Ignore deleted ports that were deleted as well
+                if (!circuit.hasPort(p1Id) || !circuit.hasPort(p2Id))
+                    continue;
+
                 // Instantly turn off the input port on the wire and queue the component
                 const p1 = circuit.getPortByID(p1Id).unwrap(), p2 = circuit.getPortByID(p2Id).unwrap();
                 if (this.isInputPort(p1.id)) {
@@ -95,6 +99,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     public addPropagator(kind: string, propagator: PropagatorFunc): void {
         this.propagators[kind] = propagator;
+    }
+
+    private compExistsAndHasPorts(id: GUID) {
+        return this.circuit.hasComp(id) && this.circuit.getPortsForComponent(id).unwrap().size > 0;
     }
 
     private queueComp(id: GUID): void {
@@ -193,7 +201,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         const updatedInputPorts = new Set<GUID>(), updatedOutputPorts = new Set<GUID>();
 
         for (const id of next) {
-            if (!this.circuit.hasComp(id))  // Ignore deleted objects
+            if (!this.compExistsAndHasPorts(id))  // Ignore deleted objects
                 continue;
 
             const { outputs, nextState } = this.callPropagator(id);

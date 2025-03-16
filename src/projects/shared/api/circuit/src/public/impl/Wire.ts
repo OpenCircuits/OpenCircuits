@@ -82,7 +82,9 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
 
     public delete(): void {
-        throw new Error("Wire.delete: Unimplemented!");
+        this.state.internal.beginTransaction();
+        this.state.internal.deleteWire(this.id).unwrap();
+        this.state.internal.commitTransaction();
     }
 
     public toSchema(): Schema.Wire {

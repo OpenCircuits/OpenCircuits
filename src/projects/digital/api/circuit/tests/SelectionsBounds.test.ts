@@ -26,7 +26,7 @@ describe("SelectionsBounds", () => {
         const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
         const s2 = circuit.placeComponentAt("Switch", V(-5, -5));
         const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));
-        const l1 = circuit.placeComponentAt("LED", V(2.12, 0));
+        const l1 = circuit.placeComponentAt("LED", V(5, 0));
 
         // Select created components
         s1.isSelected = true;
@@ -41,6 +41,6 @@ describe("SelectionsBounds", () => {
         expect(l1.isSelected).toBe(true);
 
         const bounds = circuit.selections.bounds;
-        expect(bounds).toEqual(Rect.From({cx: -1, cy: 0, width: 2*4.62, height: 2*5.77}));
+        expect(bounds).toEqual(Rect.From({ left: -5.62, right: 5.5, bottom: -5.77, top: 5.77 }));
     });
 });

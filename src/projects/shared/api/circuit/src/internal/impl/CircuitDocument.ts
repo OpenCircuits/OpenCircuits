@@ -283,7 +283,9 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public getPortsForWire(id: GUID): Result<Readonly<[GUID, GUID]>> {
-        return this.getWireByID(id).map((wire) => [ wire.p1, wire.p2 ]);
+        return this.getWireByID(id)
+            .map((wire) => [ wire.p1, wire.p2 ] as const)
+            .mapErr(AddErrE(`CircuitInternal: Attempted to get ports for wire ${id}, but failed to find an entry!`));
     }
 
     public getWiresForPort(id: GUID): Result<ReadonlySet<GUID>> {
@@ -614,7 +616,11 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
         return info.getPortByID(op.w.p1)
             .andThen((p1) => info.getPortByID(op.w.p2)
-                .andThen((p2) => info.checkWireConnectivity(p1, p2).and(info.checkWireConnectivity(p2, p1)))
+                .andThen((p2) =>
+                    (op.inverted
+                        ? OkVoid()
+                        // Check connectivity when adding wire only
+                        : info.checkWireConnectivity(p1, p2).and(info.checkWireConnectivity(p2, p1))))
                 .map((_) => (op.inverted ? info.deleteWire(op.w) : info.addWire(op.w))));
     }
 
