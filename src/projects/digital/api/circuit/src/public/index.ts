@@ -1,6 +1,6 @@
 import {V} from "Vector";
 
-import {CircuitInternal, uuid} from "shared/api/circuit/internal";
+import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 import {CircuitLog}            from "shared/api/circuit/internal/impl/CircuitLog";
 import {CircuitDocument}       from "shared/api/circuit/internal/impl/CircuitDocument";
 
@@ -34,6 +34,7 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     doc.createCircuit(mainCircuitID);
 
     const internal = new CircuitInternal(mainCircuitID, log, doc);
+    const icInternals: Record<GUID, CircuitInternal> = {};
 
     const renderOptions = new DefaultRenderOptions();
     const sim = new DigitalSim(internal, DigitalPropagators);
@@ -53,7 +54,7 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
             return new DigitalPortImpl(state, id);
         },
         constructIC(id) {
-            return new DigitalIntegratedCircuitImpl(new CircuitInternal(id, log, doc));
+            return new DigitalIntegratedCircuitImpl(icInternals[id]);
         },
         constructComponentInfo(kind) {
             return new DigitalComponentInfoImpl(state, kind);
@@ -69,6 +70,8 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
             objs,
         );
 
+        icInternals[id] = new CircuitInternal(id, log, doc);
+
         state.assembler.addAssembler(kind, (params) =>
             new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
 
@@ -76,8 +79,4 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     });
 
     return [circuit, state];
-}
-
-export function ParseCircuit(_: string): DigitalCircuit {
-    throw new Error("ParseCircuit: Unimplemented");
 }
