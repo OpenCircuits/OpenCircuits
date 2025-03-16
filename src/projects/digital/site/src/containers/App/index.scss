@@ -5,6 +5,8 @@
     transition: 0.5s;
 
     &__container {
+        display: flex;
+        flex-direction: column;
         position: absolute;
 
         left: 0;
@@ -13,14 +15,8 @@
         height: 100vh;
 
         & > main {
-            position: absolute;
-
-            left: 0;
-            // TODO[model_refactor](leon) - reconsider if this is necessary
-            // top: $header-height;
-            width: 100%;
-            // height: calc(100vh - #{$header-height});
-            height: 100%;
+            position: relative;
+            flex-grow: 1;
         }
     }
 }
