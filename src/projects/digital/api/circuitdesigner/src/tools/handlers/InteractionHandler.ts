@@ -19,7 +19,7 @@ function isClickableComponent(obj: DigitalTypes["Obj"] | undefined): obj is Digi
 function isWithinInteractableBounds(obj: DigitalComponent, pos: Vector): boolean {
     switch (obj.kind) {
     case "Button":
-        return CircleContains(obj.pos, 0.9, pos);
+        return CircleContains(obj.pos, 0.45, pos);
     case "Switch":
         return RectContains(new Transform(obj.pos, V(0.96, 1.2), obj.angle), pos);
     default:
