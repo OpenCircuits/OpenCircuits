@@ -14,7 +14,6 @@ import type {
     ReadonlyNode,
     ReadonlyPort,
     ReadonlyWire,
-    RootCircuit,
     Wire,
 } from "shared/api/circuit/public";
 
@@ -59,10 +58,9 @@ export type APIToDigital<T> = {
 
 
 export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit>;
-export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit;
-
-export type DigitalRootCircuit = APIToDigital<RootCircuit> & DigitalCircuit & {
+export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
     propagationTime: number;
 };
-export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & ReadonlyDigitalCircuit;
+
+export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit>;
 export type DigitalICInfo = APIToDigital<ICInfo>;

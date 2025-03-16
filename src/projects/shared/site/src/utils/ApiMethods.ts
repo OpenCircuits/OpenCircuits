@@ -1,4 +1,4 @@
-import {RootCircuit} from "shared/api/circuit/public";
+import {Circuit} from "shared/api/circuit/public";
 
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
@@ -15,7 +15,7 @@ import {Schema} from "shared/api/circuit/schema";
 import {LoadCircuit as LoadCircuitHelper} from "./CircuitHelpers";
 
 
-export const useAPIMethods = (mainCircuit: RootCircuit) => {
+export const useAPIMethods = (mainCircuit: Circuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
     const dispatch = useSharedDispatch();
 

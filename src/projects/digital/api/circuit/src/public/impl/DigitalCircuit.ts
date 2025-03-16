@@ -1,10 +1,10 @@
-import {IntegratedCircuitImpl, RootCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
+import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
-import {DigitalIntegratedCircuit, DigitalRootCircuit} from "../DigitalCircuit";
+import {DigitalCircuit, DigitalIntegratedCircuit} from "../DigitalCircuit";
 import {DigitalTypes} from "./DigitalCircuitState";
 
 
-export class DigitalRootCircuitImpl extends RootCircuitImpl<DigitalTypes> implements DigitalRootCircuit {
+export class DigitalRootCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
     public set propagationTime(val: number) {
         throw new Error("DigitalCircuitImpl.set propagationTime: Unimplemented!");
     }
@@ -13,6 +13,6 @@ export class DigitalRootCircuitImpl extends RootCircuitImpl<DigitalTypes> implem
     }
 }
 
-export class DigitalIntegratedCircuitImpl extends IntegratedCircuitImpl<DigitalTypes>
+export class DigitalIntegratedCircuitImpl extends IntegratedCircuitImpl
                                           implements DigitalIntegratedCircuit {
 }
