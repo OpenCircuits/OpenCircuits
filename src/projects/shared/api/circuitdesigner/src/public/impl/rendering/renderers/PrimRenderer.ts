@@ -48,7 +48,7 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
         return;
     }
     case "QuadCurve": {
-        const { p1, p2, c } = prim;
+        const { p1, p2, c } = prim.curve;
 
         ctx.moveTo(p1.x, p1.y);
         ctx.quadraticCurveTo(c.x, c.y, p2.x, p2.y);

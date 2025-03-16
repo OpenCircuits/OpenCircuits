@@ -2,22 +2,23 @@ import {Rect} from "math/Rect";
 
 import {Prim} from "./Prim";
 import {V} from "Vector";
+import {IsDefined} from "../../utils/Reducers";
 
 
-export function Bounds(prim: Prim): Rect {
+export function Bounds(prim: Prim): Rect | undefined {
     switch (prim.kind) {
     case "BezierCurve":
         return prim.curve.bounds;
     case "Circle":
         return new Rect(prim.pos, V(prim.radius * 2));
     case "CircleSector":
-        throw new Error("Method not implemented.");
+        return undefined;
     case "Line":
         return Rect.FromPoints(prim.p1, prim.p2);
     case "Polygon":
-        throw new Error("Method not implemented.");
+        return undefined;
     case "QuadCurve":
-        throw new Error("Method not implemented.");
+        return prim.curve.bounds;
     case "Rectangle":
         return prim.transform.asRect();
     case "SVG":
@@ -27,6 +28,8 @@ export function Bounds(prim: Prim): Rect {
         // so make sure you have another prim surrounding it otherwise it will get culled.
         return Rect.From({ cx: prim.pos.x, cy: prim.pos.y, height: 0, width: 0 });
     case "Group":
-        return Rect.Bounding(prim.prims.map((p) => Bounds({ ...p, style: prim.style })));
+        if (prim.prims.length === 0)
+            return undefined;
+        return Rect.Bounding(prim.prims.map((p) => Bounds({ ...p, style: prim.style })).filter(IsDefined));
     }
 }

@@ -55,7 +55,7 @@ export class BezierCurve extends Curve {
      * @param c1 Initializes first control point with given coordinates.
      * @param c2 Initializes second control point with given coordinates.
      */
-    public constructor(p1: Vector = V(), p2: Vector = V(), c1: Vector = V(), c2: Vector = V()) {
+    public constructor(p1: Vector, p2: Vector, c1: Vector, c2: Vector) {
         super();
 
         this.p1 = p1;

@@ -7,6 +7,7 @@ import {QuadCurvePrim} from "shared/api/circuit/internal/assembly/Prim";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 import {GateAssembler, SimplifiedAssembly} from "./GateAssemblers";
+import {QuadCurve} from "math/QuadCurve";
 
 
 export interface ORGateAssemblerParams {
@@ -98,9 +99,12 @@ export class ORGateAssembler extends GateAssembler {
 
             const qc = {
                 kind: "QuadCurve",
-                p1:   transform.toWorldSpace(p1),
-                p2:   transform.toWorldSpace(p2),
-                c:    transform.toWorldSpace(c),
+
+                curve: new QuadCurve(
+                    transform.toWorldSpace(p1),
+                    transform.toWorldSpace(p2),
+                    transform.toWorldSpace(c),
+                ),
             } as const;
             if (amt === 1 && dx !== 0) {
                 quadCurves.push(qc);

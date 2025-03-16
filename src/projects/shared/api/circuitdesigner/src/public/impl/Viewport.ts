@@ -27,6 +27,7 @@ import {Prim, Viewport, ViewportEvents}          from "../Viewport";
 import {CameraImpl}                            from "./Camera";
 import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
 import {DebugOptions}                          from "./DebugOptions";
+import {IsDefined} from "shared/api/circuit/utils/Reducers";
 
 
 export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<ViewportEvents> implements Viewport {
@@ -116,10 +117,10 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
             // Debug rendering
             if (this.state.debugOptions.debugPrimBounds) {
-                const wireBounds = [...assembly.wirePrims.values()].flat().map(Bounds);
-                const compBounds = [...assembly.componentPrims.values()].flat().map(Bounds);
-                const portBounds =
-                    [...([...assembly.portPrims.values()].map((m) => [...m.values()]))].flat(2).map(Bounds);
+                const wireBounds = [...assembly.wirePrims.values()].flat().map(Bounds).filter(IsDefined);
+                const compBounds = [...assembly.componentPrims.values()].flat().map(Bounds).filter(IsDefined);
+                const portBounds = [...([...assembly.portPrims.values()]
+                    .map((m) => [...m.values()]))].flat(2).map(Bounds).filter(IsDefined);
 
                 wireBounds.forEach((b) =>
                     DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#ff5555"));

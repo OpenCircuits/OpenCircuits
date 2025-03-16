@@ -4,6 +4,7 @@ import {Vector} from "Vector";
 
 import {BezierCurve} from "math/BezierCurve";
 import {Transform} from "math/Transform";
+import {QuadCurve} from "math/QuadCurve";
 
 import {FontStyle, Style} from "./Style";
 
@@ -55,9 +56,7 @@ export interface PolygonPrim {
 export interface QuadCurvePrim {
     kind: "QuadCurve";
 
-    p1: Vector;
-    p2: Vector;
-    c: Vector;
+    curve: QuadCurve;
 
     style: Style;
     ignoreHit?: boolean;

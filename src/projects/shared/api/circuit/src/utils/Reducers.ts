@@ -11,3 +11,6 @@ export const MinDist = <O extends { dist: number }>(
     prev: O,
     cur: O
 ) => ((prev.dist <= cur.dist) ? prev : cur);
+
+
+export const IsDefined = <T>(val: T | undefined): val is T  => (!!val);

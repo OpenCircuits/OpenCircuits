@@ -9,9 +9,46 @@ export const DigitalPropInfo: PropInfoRecord = {
     "DigitalWire": DefaultWirePropInfo,
     "DigitalNode": DefaultComponentPropInfo,
 
-    "Switch":  DefaultComponentPropInfo,
-    "LED":     DefaultComponentPropInfo,
-    "ANDGate": DefaultComponentPropInfo,
-    "ORGate":  DefaultComponentPropInfo,
-    "NOTGate": DefaultComponentPropInfo,
+    // Inputs
+    "Button":         DefaultComponentPropInfo,
+    "Switch":         DefaultComponentPropInfo,
+    "ConstantLow":    DefaultComponentPropInfo,
+    "ConstantHigh":   DefaultComponentPropInfo,
+    "ConstantNumber": DefaultComponentPropInfo,
+    "Clock":          DefaultComponentPropInfo,
+
+    // Outputs
+    "LED":            DefaultComponentPropInfo,
+    "SegmentDisplay": DefaultComponentPropInfo,
+    "BCDDisplay":     DefaultComponentPropInfo,
+    "ASCIIDisplay":   DefaultComponentPropInfo,
+    "Oscilloscope":   DefaultComponentPropInfo,
+
+    // Logic Gates
+    "BUFGate":  DefaultComponentPropInfo,
+    "NOTGate":  DefaultComponentPropInfo,
+    "ANDGate":  DefaultComponentPropInfo,
+    "NANDGate": DefaultComponentPropInfo,
+    "ORGate":   DefaultComponentPropInfo,
+    "NORGate":  DefaultComponentPropInfo,
+    "XORGate":  DefaultComponentPropInfo,
+    "XNORGate": DefaultComponentPropInfo,
+
+    // Flip Flops
+    "SRFlipFlop": DefaultComponentPropInfo,
+    "JKFlipFlop": DefaultComponentPropInfo,
+    "DFlipFlop":  DefaultComponentPropInfo,
+    "TFlipFlop":  DefaultComponentPropInfo,
+
+    // Latches
+    "DLatch":  DefaultComponentPropInfo,
+    "SRLatch": DefaultComponentPropInfo,
+
+    // Latches
+    "Multiplexer":   DefaultComponentPropInfo,
+    "Demultiplexer": DefaultComponentPropInfo,
+    "Encoder":       DefaultComponentPropInfo,
+    "Decoder":       DefaultComponentPropInfo,
+    "Comparator":    DefaultComponentPropInfo,
+    "Label":         DefaultComponentPropInfo,
 } as const;

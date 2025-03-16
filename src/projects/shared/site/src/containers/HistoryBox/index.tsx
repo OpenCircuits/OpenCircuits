@@ -111,12 +111,13 @@ export const HistoryBox = ({ circuit }: Props) => {
 
     return (
         <AdjustableElement
+            className={(isHistoryBoxOpen ? "" : "hide")}
             initialWidth={240} initialHeight={400} minHeight={240}
             style={{
                 pointerEvents: (passthrough ? "none" : undefined),
                 opacity:       (passthrough ? 0.5    : undefined),
             }}>
-            <div className={`historybox ${isOpen ? "" : "historybox__move"} ${isHistoryBoxOpen ? "" : "hide"}`}
+            <div className={`historybox ${isOpen ? "" : "historybox__move"}`}
                  data-adjustable>
                 <div data-adjustable>
                     <span data-adjustable>History</span>

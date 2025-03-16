@@ -15,6 +15,7 @@ import {HitTest}                                       from "./PrimHitTests";
 import {RenderOptions}                                 from "./RenderOptions";
 
 import "shared/api/circuit/utils/Map";
+import {IsDefined} from "../../utils/Reducers";
 
 
 export type CircuitAssemblerEvent = {
@@ -263,16 +264,17 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
     public getBoundsFor(objID: GUID): Option<Rect> {
         if (this.circuit.hasComp(objID)) {
             this.reassembleComp(objID);
-            return Some(Rect.Bounding(this.cache.componentPrims.get(objID)?.map(Bounds) ?? []));
+            return Some(Rect.Bounding(this.cache.componentPrims.get(objID)?.map(Bounds).filter(IsDefined) ?? []));
         }
         if (this.circuit.hasWire(objID)) {
             this.reassembleWire(objID);
-            return Some(Rect.Bounding(this.cache.wirePrims.get(objID)?.map(Bounds) ?? []));
+            return Some(Rect.Bounding(this.cache.wirePrims.get(objID)?.map(Bounds).filter(IsDefined) ?? []));
         }
         if (this.circuit.hasPort(objID)) {
             const port = this.circuit.getPortByID(objID).unwrap();
             this.reassembleComp(port.parent);
-            return Some(Rect.Bounding(this.cache.portPrims.get(port.parent)?.get(objID)?.map(Bounds) ?? []));
+            return Some(Rect.Bounding(
+                this.cache.portPrims.get(port.parent)?.get(objID)?.map(Bounds).filter(IsDefined) ?? []));
         }
         return None();
     }
