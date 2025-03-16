@@ -14,7 +14,7 @@ import {DigitalSim}                         from "digital/api/circuit/internal/s
 
 import {DigitalCircuit} from "./DigitalCircuit";
 
-import {DigitalIntegratedCircuitImpl, DigitalRootCircuitImpl} from "./impl/DigitalCircuit";
+import {DigitalIntegratedCircuitImpl, DigitalCircuitImpl} from "./impl/DigitalCircuit";
 import {DigitalComponentImpl}   from "./impl/DigitalComponent";
 import {DigitalWireImpl}        from "./impl/DigitalWire";
 import {DigitalPortImpl}        from "./impl/DigitalPort";
@@ -60,7 +60,7 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
         },
     }
 
-    const circuit = new DigitalRootCircuitImpl(state, doc, (id, objs, metadata, portConfig, portFactory) => {
+    const circuit = new DigitalCircuitImpl(state, doc, (id, objs, metadata, portConfig, portFactory) => {
         const kind = id;
 
         doc.createIC(

@@ -4,15 +4,15 @@ import "tests/helpers/Extensions";
 
 import {V} from "Vector";
 
-import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
+import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 import {Rect} from "math/Rect";
 
 
 describe("IntegratedCircuit", () => {
     test("Basic IC", () => {
-        const [mainCircuit, mainState, { }] = CreateTestRootCircuit();
+        const [mainCircuit, mainState, { }] = CreateTestCircuit();
 
-        const [icCircuit, icState, { GetPort, Connect }] = CreateTestRootCircuit();
+        const [icCircuit, icState, { GetPort, Connect }] = CreateTestCircuit();
 
         const pin1 = icCircuit.placeComponentAt("Pin", V(-5, -5));
         const pin2 = icCircuit.placeComponentAt("Pin", V(-5, +5));

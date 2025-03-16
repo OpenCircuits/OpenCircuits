@@ -6,8 +6,8 @@ import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Component, Node, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
-import {IntegratedCircuitImpl, RootCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
+import {Component, Node, Port, Circuit, Wire, uuid} from "shared/api/circuit/public";
+import {IntegratedCircuitImpl, CircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
@@ -92,7 +92,7 @@ export class TestPortImpl extends PortImpl<CircuitTypes> {
     }
 }
 
-export interface TestRootCircuitHelpers {
+export interface TestCircuitHelpers {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     PlaceAt(...positions: Vector[]): Component[];
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -101,9 +101,9 @@ export interface TestRootCircuitHelpers {
     GetPort(c: Component): Port;
 }
 
-export function CreateTestRootCircuit(
+export function CreateTestCircuit(
     additionalPortConfigs: PortConfig[] = []
-): [RootCircuit, CircuitState<CircuitTypes>, TestRootCircuitHelpers] {
+): [Circuit, CircuitState<CircuitTypes>, TestCircuitHelpers] {
     function MakeCircuit(circuitID: GUID): CircuitState<CircuitTypes> {
         const internal = new CircuitInternal(circuitID, log, doc);
         const renderOptions = new DefaultRenderOptions();
@@ -156,7 +156,7 @@ export function CreateTestRootCircuit(
     doc.createCircuit(mainCircuitID);
     const mainState = MakeCircuit(mainCircuitID);
 
-    const circuit = new RootCircuitImpl(doc, mainState, (id, objs, metadata, portConfig, portFactory) => {
+    const circuit = new CircuitImpl(doc, mainState, (id, objs, metadata, portConfig, portFactory) => {
         const kind = id;
 
         doc.createIC(

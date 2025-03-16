@@ -4,7 +4,7 @@ import {DigitalCircuit, DigitalIntegratedCircuit} from "../DigitalCircuit";
 import {DigitalTypes} from "./DigitalCircuitState";
 
 
-export class DigitalRootCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
+export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
     public set propagationTime(val: number) {
         throw new Error("DigitalCircuitImpl.set propagationTime: Unimplemented!");
     }

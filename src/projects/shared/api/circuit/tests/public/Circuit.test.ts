@@ -6,12 +6,12 @@ import {V} from "Vector";
 
 import {Circuit, Obj} from "shared/api/circuit/public";
 
-import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
+import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
 
-describe("RootCircuit", () => {
+describe("Circuit", () => {
     // test("begin/commit/cancelTransaction", () => {
-    //     const [circuit, _] = CreateTestRootCircuit();
+    //     const [circuit, _] = CreateTestCircuit();
 
     //     expect(circuit.beginTransaction()).not.toThrow();
     // });
@@ -23,13 +23,13 @@ describe("RootCircuit", () => {
             thumbnail: circuit.thumbnail,
         } as const);
         test("id", () => {
-            const [circuit1] = CreateTestRootCircuit();
-            const [circuit2] = CreateTestRootCircuit();
+            const [circuit1] = CreateTestCircuit();
+            const [circuit2] = CreateTestCircuit();
 
             expect(circuit1.id).not.toBe(circuit2.id);
         });
         test("name", () => {
-            const [circuit] = CreateTestRootCircuit();
+            const [circuit] = CreateTestCircuit();
 
             const state = captureState(circuit);
             expect(circuit.name).toBe("");
@@ -40,7 +40,7 @@ describe("RootCircuit", () => {
             expect(circuit.thumbnail).toBe(state.thumbnail);
         });
         test("desc", () => {
-            const [circuit] = CreateTestRootCircuit();
+            const [circuit] = CreateTestCircuit();
 
             const state = captureState(circuit);
             expect(circuit.desc).toBe("");
@@ -51,7 +51,7 @@ describe("RootCircuit", () => {
             expect(circuit.thumbnail).toBe(state.thumbnail);
         });
         test("thumbnail", () => {
-            const [circuit] = CreateTestRootCircuit();
+            const [circuit] = CreateTestCircuit();
 
             const state = captureState(circuit);
             expect(circuit.thumbnail).toBe("");
@@ -64,7 +64,7 @@ describe("RootCircuit", () => {
     });
 
     test("selections", () => {
-        const [circuit, _] = CreateTestRootCircuit();
+        const [circuit, _] = CreateTestCircuit();
 
         expect(circuit.selections).toBeDefined();
         expect(circuit.selections).toBe(circuit.selections);
@@ -73,7 +73,7 @@ describe("RootCircuit", () => {
     describe("Pick", () => {
         // TODO: testing overlapping components and zIndex
         test("pickObjAt", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2, c3] = PlaceAt(V(0, 0), V(10, 0), V(5, 0)),
                             w = Connect(c, c2);
@@ -97,7 +97,7 @@ describe("RootCircuit", () => {
             expect(circuit.pickObjAt(V(5, 0))).toBeObj(c3);
         });
         test("pickComponentAt", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c0, c, c2, c3, c4] = PlaceAt(V(1, 0), V(0, 0), V(10, 0), V(5, 0), V(6, 0)),
                                     w = Connect(c, c2);
@@ -121,7 +121,7 @@ describe("RootCircuit", () => {
             expect(circuit.pickComponentAt(V(5, 0))).toBeObj(c3);
         });
         test("pickWireAt", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c0, c, c2, c3, c4] = PlaceAt(V(1, 0), V(0, 0), V(10, 0), V(5, 0), V(6, 0)),
                                     w = Connect(c, c2);
@@ -145,7 +145,7 @@ describe("RootCircuit", () => {
             expect(circuit.pickWireAt(V(5, 0))).toBeObj(w);
         });
         test("pickPortAt", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c0, c, c2, c3, c4] = PlaceAt(V(1, 0), V(0, 0), V(10, 0), V(5, 0), V(6, 0)),
                                     w = Connect(c, c2);
@@ -172,7 +172,7 @@ describe("RootCircuit", () => {
 
     describe("Get", () => {
         test("getObj", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -186,7 +186,7 @@ describe("RootCircuit", () => {
             expect(circuit.getObj(GetPort(c2).id)).toBeObj(GetPort(c2));
         });
         test("getComponent", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -200,7 +200,7 @@ describe("RootCircuit", () => {
             expect(circuit.getComponent(GetPort(c2).id)).toBeUndefined();
         });
         test("getWire", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -214,7 +214,7 @@ describe("RootCircuit", () => {
             expect(circuit.getWire(GetPort(c2).id)).toBeUndefined();
         });
         test("getPort", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -229,7 +229,7 @@ describe("RootCircuit", () => {
         });
 
         test("getObjs", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -238,7 +238,7 @@ describe("RootCircuit", () => {
             expect(circuit.getObjs()).toContainObjsExact([c, c2, w, GetPort(c), GetPort(c2)]);
         });
         test("getComponents", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -247,7 +247,7 @@ describe("RootCircuit", () => {
             expect(circuit.getComponents()).toContainObjsExact([c, c2]);
         });
         test("getWires", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -257,7 +257,7 @@ describe("RootCircuit", () => {
         });
 
         test("getComponentInfo", () => {
-            const [circuit, _, {}] = CreateTestRootCircuit();
+            const [circuit, _, {}] = CreateTestCircuit();
 
             const info = circuit.getComponentInfo("TestComp");
 
@@ -272,12 +272,12 @@ describe("RootCircuit", () => {
 
     describe("Place", () => {
         test("0, 0", () => {
-            const [circuit, _, {}] = CreateTestRootCircuit();
+            const [circuit, _, {}] = CreateTestCircuit();
             const c1 = circuit.placeComponentAt("TestComp", V(0, 0));
             expect(c1.pos).toEqual(V(0, 0));
         });
         test("-5, 16", () => {
-            const [circuit, _, { }] = CreateTestRootCircuit();
+            const [circuit, _, { }] = CreateTestCircuit();
             const c1 = circuit.placeComponentAt("TestComp", V(-5, 16));
             expect(c1.pos).toEqual(V(-5, 16));
         });
@@ -285,7 +285,7 @@ describe("RootCircuit", () => {
 
     describe("Delete", () => {
         test("Basic Delete 1 Component", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit();
 
             const [c] = PlaceAt(V(0, 0));
 
@@ -298,7 +298,7 @@ describe("RootCircuit", () => {
             expect(() => c.setProp("name", "test")).toThrow();
         });
         test("Basic Delete 1 Wire", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
                         w = Connect(c, c2);
@@ -312,7 +312,7 @@ describe("RootCircuit", () => {
             expect(() => w.setProp("name", "test")).toThrow();
         });
         test("Delete 2 objs with a Wire", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
                         w = Connect(c, c2);
@@ -332,7 +332,7 @@ describe("RootCircuit", () => {
     describe("Undo/Redo", () => {
         describe("Place Component", () => {
             test("Basic 1 Component", () => {
-                const [circuit, { internal }, { PlaceAt }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt }] = CreateTestCircuit();
                 const log = internal["log"];
 
                 let logCount = 0;
@@ -359,7 +359,7 @@ describe("RootCircuit", () => {
                 expect(logCount).toBe(3);
             });
             test("Basic 2 Components in transaction", () => {
-                const [circuit, { internal }, { PlaceAt }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt }] = CreateTestCircuit();
                 const log = internal["log"];
 
                 let logCount = 0;
@@ -392,7 +392,7 @@ describe("RootCircuit", () => {
                 expect(logCount).toBe(3);
             });
             test("Basic 2 Components in succession", () => {
-                const [circuit, { internal }, { PlaceAt }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt }] = CreateTestCircuit();
                 const log = internal["log"];
 
                 let logCount = 0;
@@ -442,7 +442,7 @@ describe("RootCircuit", () => {
 
         describe("Connect Wire", () => {
             test("Basic 1 Wire", () => {
-                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestCircuit();
                 const log = internal["log"];
 
                 let logCount = 0;
@@ -475,7 +475,7 @@ describe("RootCircuit", () => {
                 expect(logCount).toBe(5);
             });
             test("Components and Wire creation in transaction", () => {
-                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestRootCircuit();
+                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestCircuit();
                 const log = internal["log"];
 
                 let logCount = 0;
@@ -529,7 +529,7 @@ describe("RootCircuit", () => {
     //     }
 
     //     test("Basic Circuit Copy", () => {
-    //         const [circuit, _, { PlaceAt, Connect }] = CreateTestRootCircuit();
+    //         const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
     //         const [c1, c2, c3] = PlaceAt(V(0, -5), V(0, 5), V(5, 0));
     //         const w1 = Connect(c1, c2),
