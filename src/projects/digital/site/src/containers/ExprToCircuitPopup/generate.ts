@@ -1,11 +1,11 @@
 import {V} from "Vector";
-import {DigitalCircuit} from "digital/api/circuit/public";
+import {DigitalRootCircuit} from "digital/api/circuit/public";
 import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser"
 import {GenerateTokens} from "digital/site/utils/ExpressionParser/GenerateTokens"
 import {OrganizeMinDepth} from "digital/site/utils/ExpressionParser/ComponentOrganizer"
 import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS} from "digital/site/utils/ExpressionParser/Constants/Formats";
-import {Circuit} from "shared/api/circuit/public";
+import {Circuit, ICPin} from "shared/api/circuit/public";
 import {Err, Ok, Result} from "shared/api/circuit/utils/Result";
 import {Camera} from "shared/api/circuitdesigner/public/Camera";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
@@ -71,22 +71,7 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
     // }
 }
 
-// function handleIC(action: GroupAction, circuitComponents: DigitalComponent[], expression: string,
-//                   info: DigitalCircuitInfo) {
-//     const data = ICData.Create(circuitComponents);
-//     if (!data)
-//         throw new Error("Failed to create ICData");
-//     data.setName(expression);
-//     const ic = new IC(data);
-//     action.add(SetName(ic, expression));
-//     action.add(AddICData(data, info.designer));
-//     action.add(DeleteGroup(info.designer, circuitComponents));
-//     action.add(Place(info.designer, ic));
-//     action.add(Translate([ic], [info.camera.getPos()]));
-//     action.add(Select(info.selections, ic));
-// }
-
-export function Generate(circuit: DigitalCircuit, camera: Camera, expression: string,
+export function Generate(circuit: DigitalRootCircuit, camera: Camera, expression: string,
     userOptions: Partial<ExprToCirGeneratorOptions>): Result {
     const options = { ...defaultOptions, ...userOptions };
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
@@ -111,7 +96,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
         return Err(generatedCircuitRes.error);
     }
 
-    const [generatedCircuit] = generatedCircuitRes.value;
+    const { circuit: generatedCircuit, inputs, output } = generatedCircuitRes.value;
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     // const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
@@ -124,14 +109,38 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     if (options.input === "Clock")
         setClocks(inputMap, options, generatedCircuit);
 
+    circuit.beginTransaction();
+    circuit.selections.clear();
     if (options.isIC) {
-        // TODO: Add as IC
+        // TODO: Dimensions/positioning based off of https://github.com/OpenCircuits/OpenCircuits/blob/master/src/app/digital/models/ioobjects/other/ICData.ts#L63
+        //       Do we want to move this somewhere common? Maybe as a default for when users are creating ICs?
+        const longestName = Math.max(...inputs.map(({ name }) => name?.length ?? 0), output.name?.length ?? 0) + circuit.name.length;
+
+        const w = 1 + 0.3*longestName;
+        const h = inputs.length/2;
+
+        const inputPins: readonly ICPin[] = inputs.map((input, index) => ({
+            id:    input.outputs[0].id,
+            group: "inputs",
+            pos:   V(-w / 2, -(index - (inputs.length)/2 + 0.5)/2),
+        }))
+        const ic = circuit.createIC({
+            circuit: generatedCircuit,
+            display: {
+                size: V(w, h),
+                pins: [
+                    ...inputPins,
+                    { id: output.inputs[0].id, group: "outputs", pos: V(w/2, 0) },
+                ],
+            },
+        })
+        circuit.placeComponentAt(ic.id, camera.pos).select();
     } else {
         // TODO: Move the big copy into the api
-        circuit.beginTransaction();
         const generatedToReal = new Map<string, DigitalComponent>();
         generatedCircuit.getComponents().forEach((comp) => {
             const newComp = circuit.placeComponentAt(comp.kind, comp.pos);
+            newComp.select();
             generatedToReal.set(comp.id, newComp);
             if ("inputs" in comp.ports) {
                 newComp.setNumPorts("inputs", comp.ports["inputs"].length);
@@ -147,9 +156,8 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
             const newWire = newPort1.connectTo(newPort2)!;
             Object.entries(wire.getProps()).forEach((prop) => newWire.setProp(...prop));
         });
-        [...generatedToReal.values()].forEach((comp) => comp.select);
-        circuit.commitTransaction();
     }
+    circuit.commitTransaction();
 
     return Ok(undefined);
 }
