@@ -68,7 +68,7 @@ async function Init(): Promise<void> {
             defaultTool: new DefaultTool(
                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                 DeleteHandler, SnipNodesHandler, DeselectAllHandler,
-                InteractionHandler,  // Needs to be before the selection handler
+                InteractionHandler,  // Needs to be before the selection and select path handlers
                 SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
                 CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
                 SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
