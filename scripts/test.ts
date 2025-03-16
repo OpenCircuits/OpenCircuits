@@ -27,6 +27,7 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
         ...args,
         ...flags,
         silent: false,
+        passWithNoTests: true,
         config: JSON.stringify({
             "preset":           "ts-jest",
             "testEnvironment":  "jsdom",
