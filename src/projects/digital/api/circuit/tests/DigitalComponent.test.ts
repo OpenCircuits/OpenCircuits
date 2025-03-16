@@ -37,6 +37,33 @@ describe("DigitalComponent", () => {
         });
     });
 
+    describe("Delete", () => {
+        test("add/delete and undo/redo expect state to remain same", () => {
+            const [circuit, _, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
+            const [sw, { outputs: [led] }] = PlaceAndConnect("Switch");
+
+            expect(led).toBeOff();
+            sw.delete();
+            expect(led).toBeOff();
+            circuit.undo();
+            expect(led).toBeOff();
+            circuit.redo();
+            expect(led).toBeOff();
+            circuit.undo();
+            expect(led).toBeOff();
+
+            TurnOn(sw);
+
+            expect(led).toBeOn();
+            sw.delete();
+            expect(led).toBeOff();
+            circuit.undo();
+            expect(led).toBeOn();
+            circuit.redo();
+            expect(led).toBeOff();
+        });
+    });
+
     describe("Ports", () => {
         test(".ports", () => {
             const [circuit, _, { Place }] = CreateTestCircuit();

@@ -13,7 +13,8 @@ type DigitalSimEvent = {
     queueEmpty: boolean;
 } | {
     type: "queue";
-    id: GUID;
+    comps: Set<GUID>;
+    updatedInputPorts: Set<GUID>;
 }
 
 export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
@@ -40,7 +41,22 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         this.next = new Set();
 
         circuit.subscribe((ev) => {
-            const comps = new Set<GUID>();
+            const comps = new Set<GUID>(), updatedInputPorts = new Set<GUID>();
+
+            const updateInputPort = (portId: GUID) => {
+                const result = circuit.getPortByID(portId);
+                if (!result.ok)
+                    return;
+                const port = result.value;
+                if (this.isInputPort(port.id)) {
+                    if (this.getSignal(port.id) === Signal.Off)
+                        return;
+                    this.signals.set(port.id, Signal.Off);
+
+                    updatedInputPorts.add(port.id);
+                    comps.add(port.parent);
+                }
+            };
 
             // for (const compId of ev.diff.addedComponents)
             //     comps.add(compId);
@@ -72,28 +88,13 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             }
 
             for (const [_wireId, [p1Id, p2Id]] of ev.diff.removedWiresPorts) {
-                // Ignore deleted ports that were deleted as well
-                if (!circuit.hasPort(p1Id) || !circuit.hasPort(p2Id))
-                    continue;
-
                 // Instantly turn off the input port on the wire and queue the component
-                const p1 = circuit.getPortByID(p1Id).unwrap(), p2 = circuit.getPortByID(p2Id).unwrap();
-                if (this.isInputPort(p1.id)) {
-                    if (this.getSignal(p1.id) === Signal.Off)
-                        continue;
-                    this.signals.set(p1.id, Signal.Off);
-
-                    comps.add(p1.parent);
-                } else {
-                    if (this.getSignal(p2.id) === Signal.Off)
-                        continue;
-                    this.signals.set(p2.id, Signal.Off);
-
-                    comps.add(p2.parent);
-                }
+                updateInputPort(p1Id);
+                updateInputPort(p2Id);
             }
 
-            comps.forEach((id) => this.queueComp(id));
+            comps.forEach((id) => this.next.add(id));
+            this.publish({ type: "queue", comps, updatedInputPorts });
         })
     }
 
@@ -103,12 +104,6 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     private compExistsAndHasPorts(id: GUID) {
         return this.circuit.hasComp(id) && this.circuit.getPortsForComponent(id).unwrap().size > 0;
-    }
-
-    private queueComp(id: GUID): void {
-        this.next.add(id);
-
-        this.publish({ type: "queue", id });
     }
 
     private getComponentAndInfoById(compId: GUID) {
@@ -191,7 +186,13 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     public setState(id: GUID, state: Signal[]): void {
         this.states.set(id, state);
 
-        this.queueComp(id);
+        this.next.add(id);
+
+        this.publish({
+            type:              "queue",
+            comps:             new Set([id]),
+            updatedInputPorts: new Set(),
+        });
     }
 
     public step(): void {

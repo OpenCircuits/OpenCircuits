@@ -31,7 +31,13 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
 
         sim.subscribe((ev) => {
             if (ev.type === "queue") {
-                this.dirtyComponents.add(ev.id, AssemblyReason.StateUpdated);
+                const comps = ev.comps, inputPorts = ev.updatedInputPorts;
+                comps.forEach((compId) =>
+                    this.dirtyComponents.add(compId, AssemblyReason.StateUpdated));
+                inputPorts.forEach((portId) => {
+                    const port = circuit.getPortByID(portId).unwrap();
+                    this.dirtyComponents.add(port.parent, AssemblyReason.SignalsChanged);
+                });
             }
             if (ev.type === "step") {
                 const inputPorts = ev.updatedInputPorts, outputPorts = ev.updatedOutputPorts;
