@@ -17,6 +17,40 @@ import {ClockAssembler}       from "./components/ClockAssembler";
 import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
 import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
 import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
+import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+
+
+export class DigitalCircuitAssembler extends CircuitAssembler {
+    public constructor(
+        circuit: CircuitInternal,
+        options: RenderOptions,
+        sim: DigitalSim,
+        assemblers: (params: AssemblerParams) => Record<string, Assembler>,
+    ) {
+        super(circuit, options, assemblers);
+
+        sim.subscribe((ev) => {
+            if (ev.type === "queue") {
+                this.dirtyComponents.add(ev.id, AssemblyReason.StateUpdated);
+            }
+            if (ev.type === "step") {
+                const inputPorts = ev.updatedInputPorts, outputPorts = ev.updatedOutputPorts;
+
+                outputPorts.forEach((portId) => {
+                    const wires = circuit.getWiresForPort(portId).unwrap();
+                    wires.forEach((wireId) =>
+                        this.dirtyWires.add(wireId, AssemblyReason.SignalsChanged));
+                });
+                inputPorts.forEach((portId) => {
+                    const port = circuit.getPortByID(portId).unwrap();
+                    this.dirtyComponents.add(port.parent, AssemblyReason.SignalsChanged);
+                });
+            }
+
+            this.publish({ type: "onchange" });
+        })
+    }
+}
 
 
 export function MakeDigitalCircuitAssembler(
@@ -24,7 +58,7 @@ export function MakeDigitalCircuitAssembler(
     sim: DigitalSim,
     options: RenderOptions,
 ): CircuitAssembler {
-    return new CircuitAssembler(circuit, options, (params) => ({
+    return new DigitalCircuitAssembler(circuit, options, sim, (params) => ({
         // Base types
         "DigitalWire": new DigitalWireAssembler(params, sim),
         "DigitalNode": new NodeAssembler(params, {

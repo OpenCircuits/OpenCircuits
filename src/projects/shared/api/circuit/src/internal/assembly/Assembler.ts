@@ -19,6 +19,8 @@ export enum AssemblyReason {
     PortsChanged = 3,
     PropChanged = 4,
     SelectionChanged = 5,
+    StateUpdated = 6, // Used for digital simulation state
+    SignalsChanged = 7, // Used for digital simulation signals
 }
 
 export abstract class Assembler<Obj extends Schema.Obj = Schema.Obj> {

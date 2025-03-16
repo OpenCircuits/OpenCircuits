@@ -14,6 +14,7 @@ function isClickableComponent(obj: DigitalTypes["Obj"] | undefined): obj is Digi
 
 export const InteractionHandler: ToolHandler<DigitalTypes> = {
     onEvent: (ev, { circuit, viewport }) => {
+        // TODO: Check a smaller area "pressable bounds"
         if (ev.type === "mousedown" && ev.button === LEFT_MOUSE_BUTTON) {
             const obj = circuit.pickObjAt(viewport.camera.toWorldPos(ev.input.mousePos));
             if (isPressableComponent(obj)) {

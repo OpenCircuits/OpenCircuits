@@ -96,14 +96,14 @@ class DirtyMap<K> {
 }
 
 export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
-    private readonly circuit: CircuitInternal;
-    private readonly options: RenderOptions;
+    protected readonly circuit: CircuitInternal;
+    protected readonly options: RenderOptions;
 
     protected cache: AssemblyCache;
 
-    private readonly dirtyComponents: DirtyMap<GUID>;
-    private readonly dirtyWires: DirtyMap<GUID>;
-    private readonly dirtyPorts: DirtyMap<GUID>;
+    protected readonly dirtyComponents: DirtyMap<GUID>;
+    protected readonly dirtyWires: DirtyMap<GUID>;
+    protected readonly dirtyPorts: DirtyMap<GUID>;
 
     protected readonly assemblers: Record<string, Assembler>;
 
@@ -237,7 +237,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         this.dirtyWires.clear();
     }
 
-    private reassembleComp(compID: GUID) {
+    protected reassembleComp(compID: GUID) {
         // Reassemble component if dirty
         if (this.dirtyComponents.has(compID)) {
             const comp = this.circuit.getCompByID(compID).unwrap();
@@ -246,7 +246,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             this.dirtyComponents.delete(compID);
         }
     }
-    private reassembleWire(wireID: GUID) {
+    protected reassembleWire(wireID: GUID) {
         if (this.dirtyWires.has(wireID)) {
             // Also may need to reassemble the ports, meaning we need to reassemble the parent components
             const wire = this.circuit.getWireByID(wireID).unwrap();

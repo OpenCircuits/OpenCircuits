@@ -8,6 +8,7 @@ import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assem
 import {ComponentAssembler}              from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {Style}                           from "shared/api/circuit/internal/assembly/Style";
 
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
@@ -34,22 +35,33 @@ export class LEDAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
-                assemble: (comp) => ({
-                    kind:   "Circle",
-                    pos:    this.getPos(comp),
-                    radius: this.options.ledLightRadius,
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged]),
+                assemble: (led) => ({
+                    kind: "Group",
+
+                    prims: (!this.isOn(led) ? [] : [{
+                        kind:   "Circle",
+                        pos:    this.getPos(led),
+                        radius: this.options.ledLightRadius,
+
+                        ignoreHit: true,
+                    }]),
 
                     ignoreHit: true,
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => this.assembleLightStyle(comp),
+                getStyle: (led) => this.assembleLightStyle(led),
             },
         ]);
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("LED").unwrap() as DigitalComponentConfigurationInfo;
+    }
+
+    private isOn(led: Schema.Component) {
+        const [inputPort] = this.circuit.getPortsForComponent(led.id).unwrap();
+        return Signal.isOn(this.sim.getSignal(inputPort));
     }
 
     private assembleLightStyle(led: Schema.Component) {

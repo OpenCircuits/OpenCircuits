@@ -33,8 +33,7 @@ export class SwitchAssembler extends ComponentAssembler {
             {
                 kind: "SVG",
 
-                // TODO: Add dependency handling for state change (may or may not be part of PropChanged)
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
                 assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "switchDown.svg" : "switchUp.svg", transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp))}),
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
             },

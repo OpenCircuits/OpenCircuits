@@ -8,6 +8,8 @@ import {AddErrE} from "shared/api/circuit/utils/MultiError";
 
 type DigitalSimEvent = {
     type: "step";
+    updatedInputPorts: Set<GUID>;
+    updatedOutputPorts: Set<GUID>;
     queueEmpty: boolean;
 } | {
     type: "queue";
@@ -188,6 +190,8 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         const next = [...this.next];
         this.next.clear();
 
+        const updatedInputPorts = new Set<GUID>(), updatedOutputPorts = new Set<GUID>();
+
         for (const id of next) {
             if (!this.circuit.hasComp(id))  // Ignore deleted objects
                 continue;
@@ -204,11 +208,13 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                     if (this.signals.get(portId) === val)
                         return;
                     this.signals.set(portId, val);
+                    updatedOutputPorts.add(portId);
 
                     // It is assumed (and hopefully constrained) that all ports connected to
                     // an output port will be input ports.
                     this.getPortsForPort(portId).forEach((port) => {
                         this.signals.set(port.id, val);
+                        updatedInputPorts.add(port.id);
 
                         // Add parent for next step
                         this.next.add(port.parent);
@@ -221,7 +227,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 this.states.set(id, nextState);
         }
 
-        this.publish({ type: "step", queueEmpty: (this.next.size === 0) })
+        this.publish({ type: "step", updatedInputPorts, updatedOutputPorts, queueEmpty: (this.next.size === 0) });
     }
 
     /**

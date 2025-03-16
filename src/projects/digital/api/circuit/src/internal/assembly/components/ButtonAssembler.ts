@@ -32,8 +32,7 @@ export class ButtonAssembler extends ComponentAssembler {
             {
                 kind: "SVG",
 
-                // TODO: Add dependency handling for state change (may or may not be part of PropChanged)
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
                 assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "buttonDown.svg" : "buttonUp.svg", transform: this.getTransform(comp)}),
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
             },
