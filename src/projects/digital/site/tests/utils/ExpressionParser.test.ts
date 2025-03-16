@@ -42,8 +42,7 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
                         2**inputs.length + ")");
 
-    // TODO[model_refactor_api](trevor): Is this "Decrements because there can be weird propagation issues when trying to read initial state" still needed?
-    for (let num = 2**inputs.length - 1; num >= 0; num--) {
+    for (let num = 0; num < 2**inputs.length; num++) {
         let testTitle = "Inputs on:";
         for (let index = 0; index < inputs.length; index++)
             if (num & (2**index))
@@ -52,7 +51,6 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
             testTitle += " [none]";
 
         // The loop is repeated because the activation needs to happen within the test
-        // TODO[model_refactor_api](trevor) Check if propagation issue still exists
         test(testTitle, () => {
             for (const [index, input] of inputs.entries())
                 sim.setState(input[1].id, [num & (2**index) ? Signal.On : Signal.Off]);
@@ -77,9 +75,8 @@ function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: Dig
         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
                         2 ** inputs.length + ")");
 
-    // Decrements because there can be weird propagation issues when trying to read initial state
     test("Test all states", () => {
-        for (let num = 2 ** inputs.length - 1; num >= 0; num--) {
+        for (let num = 0; num < 2**inputs.length; num++) {
             for (const [index, input] of inputs.entries())
                 sim.setState(input[1].id, [num & (2**index) ? Signal.On : Signal.Off]);
             expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
@@ -126,7 +123,7 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
         test("Expression To Circuit Generation didn't error", () => {
             expect(result).toBeOk();
         });
-        const [circuit, { sim }] = result.unwrap();
+        const { circuit, state: { sim } } = result.unwrap();
 
         const inputComponents: Array<[string, DigitalComponent]> = [];
         for (let i = 0; i < numInputs; i++) {
@@ -417,7 +414,7 @@ describe("Expression Parser", () => {
             const result = ExpressionToCircuit(inputMap, "a", o);
 
             expect(result).toBeOk();
-            const [circuit] = result.unwrap();
+            const { circuit } = result.unwrap();
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
             expect(output!.inputs[0].signal).toBe(Signal.On);
@@ -432,7 +429,7 @@ describe("Expression Parser", () => {
             const result = ExpressionToCircuit(inputMap, "a", o);
 
             expect(result).toBeOk();
-            const [circuit] = result.unwrap();
+            const { circuit } = result.unwrap();
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
             expect(output!.inputs[0].signal).toBe(Signal.Off);
@@ -445,7 +442,7 @@ describe("Expression Parser", () => {
             test("Result is ok", () => {
                 expect(result).toBeOk();
             });
-            const [circuit, { sim }] = result.unwrap();
+            const { circuit, state: { sim } } = result.unwrap();
 
             const inputComp = circuit.getComponents().find((o) => (o.name === "longName"));
             test("Input component found", () => {
@@ -529,7 +526,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
             expect(result).toBeOk();
-            const [circuit] = result.unwrap();
+            const { circuit } = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(9);
         });
@@ -543,7 +540,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
             expect(result).toBeOk();
-            const [circuit] = result.unwrap();
+            const { circuit } = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(10);
         });
@@ -557,7 +554,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
             expect(result).toBeOk();
-            const [circuit] = result.unwrap();
+            const { circuit } = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(12);
         });
@@ -571,7 +568,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
             expect(result).toBeOk();
-            const [circuit] = result.unwrap();
+            const { circuit } = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(8);
         });
@@ -585,7 +582,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
             expect(result).toBeOk();
-            const [circuit] = result.unwrap();
+            const { circuit } = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(5);
         });
