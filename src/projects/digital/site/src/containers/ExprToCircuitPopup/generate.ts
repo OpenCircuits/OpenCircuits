@@ -1,5 +1,5 @@
 import {V} from "Vector";
-import {DigitalRootCircuit} from "digital/api/circuit/public";
+import {DigitalCircuit} from "digital/api/circuit/public";
 import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser"
 import {GenerateTokens} from "digital/site/utils/ExpressionParser/GenerateTokens"
 import {OrganizeMinDepth} from "digital/site/utils/ExpressionParser/ComponentOrganizer"
@@ -71,7 +71,7 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
     // }
 }
 
-export function Generate(circuit: DigitalRootCircuit, camera: Camera, expression: string,
+export function Generate(circuit: DigitalCircuit, camera: Camera, expression: string,
     userOptions: Partial<ExprToCirGeneratorOptions>): Result {
     const options = { ...defaultOptions, ...userOptions };
     options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;

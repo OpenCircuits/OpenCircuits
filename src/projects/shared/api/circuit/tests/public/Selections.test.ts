@@ -6,7 +6,7 @@ import {V} from "Vector";
 
 import {Circuit, Component, Obj, Wire} from "shared/api/circuit/public";
 
-import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
+import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 import {Rect} from "math/Rect";
 
 
@@ -14,7 +14,7 @@ import {Rect} from "math/Rect";
 describe("Selections", () => {
     describe("Basic Queries", () => {
         test(".isEmpty", () => {
-            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1] = PlaceAt(V(0, 0));
             expect(selections.isEmpty).toBeTruthy();
@@ -26,7 +26,7 @@ describe("Selections", () => {
             expect(selections.isEmpty).toBeFalsy();
         });
         test(".length", () => {
-            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1] = PlaceAt(V(0, 0));
             expect(selections).toHaveLength(0);
@@ -38,7 +38,7 @@ describe("Selections", () => {
             expect(selections).toHaveLength(1);
         });
         test(".filter()", () => {
-            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             c1.select();
@@ -49,7 +49,7 @@ describe("Selections", () => {
             expect(filtered[0]).toBeObj(c1);
         });
         test(".every()", () => {
-            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             c1.select();
@@ -62,7 +62,7 @@ describe("Selections", () => {
 
     describe("Observe", () => {
         test("Basic selecting and undo/redo", () => {
-            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             let observedCount = 0;
@@ -80,7 +80,7 @@ describe("Selections", () => {
     });
 
     describe("Obj Queries", () => {
-        const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+        const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
         const selections = circuit.selections;
         const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
         const w1 = Connect(c1, c2);
@@ -108,7 +108,7 @@ describe("Selections", () => {
 
     describe("Midpoint", () => {
         test("2 components selected", () => {
-            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(2, 2));
             c1.select();
@@ -116,7 +116,7 @@ describe("Selections", () => {
             expect(selections.bounds).toEqual(Rect.From({ cx: 1, cy: 1, width: 3, height: 3 }));
         });
         test("6 components selected", () => {
-            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1, c2, c3, c4, c5, c6] = PlaceAt(V(0, 0), V(2, 2), V(0, 1), V(2, 1), V(1, 0), V(1, 2));
             c1.select();
@@ -128,7 +128,7 @@ describe("Selections", () => {
             expect(selections.bounds).toEqual(Rect.From({ cx: 1, cy: 1, width: 3, height: 3 }));
         });
         test("Use bounding box midpoint, not weighted average", () => {
-            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1, c2, c3] = PlaceAt(V(0, 0), V(2, 2), V(0, 0));
             c1.select();
@@ -140,7 +140,7 @@ describe("Selections", () => {
 
     describe("Clear", () => {
         test("Basic with undo/redo", () => {
-            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestRootCircuit();
+            const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const selections = circuit.selections;
             const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
             const w1 = Connect(c1, c2);
@@ -166,7 +166,7 @@ describe("Selections", () => {
 
     describe("Deleting selected objects", () => {
         test("Deleted object also is deselected", () => {
-            const [circuit, { }, {PlaceAt, GetPort}] = CreateTestRootCircuit();
+            const [circuit, { }, {PlaceAt, GetPort}] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             c1.select();
             c2.select();
@@ -181,7 +181,7 @@ describe("Selections", () => {
             expect(circuit.selections).toHaveLength(1);
         });
         test("Observer is triggered", () => {
-            const [circuit, { }, {PlaceAt, GetPort}] = CreateTestRootCircuit();
+            const [circuit, { }, {PlaceAt, GetPort}] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             c1.select();
             c2.select();
@@ -198,7 +198,7 @@ describe("Selections", () => {
 
     // describe("Duplicate", () => {
     //     test("Basic component duplication", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -222,7 +222,7 @@ describe("Selections", () => {
     //         expect(duplicates.every(comp => comp.exists()));
     //     });
     //     test("Connected components, no wire selected", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -244,7 +244,7 @@ describe("Selections", () => {
     //         expect(dw1.id).not.toBe(w1.id);
     //     });
     //     test("Connected components, wire selected", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -264,7 +264,7 @@ describe("Selections", () => {
     //         expect(dw1.id).not.toBe(w1.id);
     //     });
     //     test("Component and port selected", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -277,7 +277,7 @@ describe("Selections", () => {
     //         expect(duplicates.some(comp => comp.name === "Port 1")).toBeTruthy();
     //     });
     //     test("Component and port on other component selected", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -290,7 +290,7 @@ describe("Selections", () => {
     //         expect(duplicates.some(comp => comp.name === "Component 2")).toBeTruthy();
     //     });
     //     test("One component and wire selected", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -306,7 +306,7 @@ describe("Selections", () => {
     //         expect(dc1.ports[""][0].connections).toHaveLength(0);
     //     });
     //     test("Ports, wires, and nodes selected only", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -323,7 +323,7 @@ describe("Selections", () => {
     //         expect(duplicates).toHaveLength(0);
     //     });
     //     test("Connected components with split wire, node selected", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";
@@ -341,7 +341,7 @@ describe("Selections", () => {
     //         expect(dn1.id).not.toBe(n1.id);
     //     });
     //     test("Connected components with split wire, node unselected", () => {
-    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestRootCircuit();
+    //         const [{selections, undo, redo}, { }, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
     //         const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
     //         c1.name = "Component 1";
     //         c2.name = "Component 2";

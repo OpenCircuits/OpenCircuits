@@ -1,6 +1,6 @@
 import {SVGDrawing} from "svg2canvas";
 
-import {RootCircuit}      from "shared/api/circuit/public";
+import {Circuit}      from "shared/api/circuit/public";
 import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
@@ -17,7 +17,7 @@ export interface ToolConfig {
     tools: Tool[];
 }
 
-export class CircuitDesignerImpl<CircuitT extends RootCircuit, T extends CircuitTypes> implements CircuitDesigner {
+export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes> implements CircuitDesigner {
     public readonly circuit: CircuitT;
 
     public readonly viewport: Viewport;

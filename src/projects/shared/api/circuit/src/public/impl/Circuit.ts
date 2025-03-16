@@ -8,7 +8,7 @@ import {Schema} from "shared/api/circuit/schema";
 import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, ICPin, IntegratedCircuit,
-        IntegratedCircuitDisplay, RootCircuit} from "../Circuit";
+        IntegratedCircuitDisplay} from "../Circuit";
 import {Selections}                from "../Selections";
 import {isObjComponent, isObjWire} from "../Utilities";
 
@@ -20,15 +20,27 @@ import {ObservableImpl} from "../../utils/Observable";
 import {CircuitDocument} from "../../internal/impl/CircuitDocument";
 
 
+export type MakeICFunc = (
+    id: GUID,
+    objs: Schema.Obj[],
+    metadata: Schema.IntegratedCircuit["metadata"],
+    portConfig: PortConfig,
+    portFactory: PortFactory,
+) => void;
+
 export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly state: CircuitState<T>;
+    protected readonly doc: CircuitDocument;
+    private readonly makeIC: MakeICFunc;
 
     public readonly selections: Selections;
 
-    public constructor(state: CircuitState<T>) {
+    public constructor(state: CircuitState<T>, doc: CircuitDocument, makeIC: MakeICFunc) {
         super();
 
         this.state = state;
+        this.doc = doc;
+        this.makeIC = makeIC;
 
         this.selections = new SelectionsImpl(state);
 
@@ -39,6 +51,30 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
                 return;
             this.publish({ type: "change", diff: ev.diff });
         });
+    }
+
+    private createICHelper(ic: Schema.IntegratedCircuit) {
+        const ports = ic.metadata.pins.reduce((prev, pin) => ({
+            ...prev,
+            [pin.group]: [...(prev[pin.group] ?? []), pin],
+        }), {} as Record<string, Array<Schema.IntegratedCircuit["metadata"]["pins"][number]>>);
+
+        const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
+
+        const portFactory = MapObj(ports, ([_, ids]) =>
+            (index: number, _total: number) => {
+                const pos = V(ids[index].x, ids[index].y);
+                const size = V(ic.metadata.displayWidth, ic.metadata.displayHeight);
+                return {
+                    origin: V(pos.x, pos.y),
+
+                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
+                        ? V(1, 0).scale(Math.sign(pos.x))
+                        : V(0, 1).scale(Math.sign(pos.y)),
+                };
+            });
+
+        this.makeIC(ic.metadata.id, ic.objects, ic.metadata, portConfig, portFactory);
     }
 
     private pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
@@ -176,87 +212,14 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.commitTransaction();
     }
 
-    public undo(): void {
-        this.state.internal.undo().unwrap();
+
+    public importICs(ics: IntegratedCircuit[]): void {
+        for (const ic of ics) {
+            if (this.doc.getCircuitIds().has(ic.id))
+                continue;
+            this.createICHelper(ic.toSchema());
+        }
     }
-    public redo(): void {
-        this.state.internal.redo().unwrap();
-    }
-
-    // reset(): void {
-    //     throw new Error("Circuit.reset: Unimplemented!");
-    // },
-
-    // serialize(objs?: T["Obj[]"]): string {
-    //     throw new Error("Circuit.serialize: Unimplemented!");
-    // },
-    // deserialize(data: string): void {
-    //     throw new Error("Circuit.deserialize: Unimplemented!");
-    // },
-    public toSchema(): Schema.Circuit {
-        return {
-            metadata: this.state.internal.getMetadata().unwrap(),
-            camera:   {
-                x:    0,
-                y:    0,
-                zoom: 0,
-            },
-            objects: [
-                ...this.getObjs().map((obj) => obj.toSchema()),
-            ],
-        };
-    }
-}
-
-
-export type MakeICFunc = (
-    id: GUID,
-    objs: Schema.Obj[],
-    metadata: Schema.IntegratedCircuit["metadata"],
-    portConfig: PortConfig,
-    portFactory: PortFactory,
-) => void;
-
-export class RootCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> implements RootCircuit {
-    protected readonly doc: CircuitDocument;
-
-    private readonly makeIC: MakeICFunc;
-
-    public constructor(
-        doc: CircuitDocument,
-        state: CircuitState<T>,
-        makeIC: MakeICFunc,
-    ) {
-        super(state);
-
-        this.doc = doc;
-        this.makeIC = makeIC;
-    }
-
-    private createICHelper(ic: Schema.IntegratedCircuit) {
-        const ports = ic.metadata.pins.reduce((prev, pin) => ({
-            ...prev,
-            [pin.group]: [...(prev[pin.group] ?? []), pin],
-        }), {} as Record<string, Array<Schema.IntegratedCircuit["metadata"]["pins"][number]>>);
-
-        const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
-
-        const portFactory = MapObj(ports, ([_, ids]) =>
-            (index: number, _total: number) => {
-                const pos = V(ids[index].x, ids[index].y);
-                const size = V(ic.metadata.displayWidth, ic.metadata.displayHeight);
-                return {
-                    origin: V(pos.x, pos.y),
-
-                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
-                        ? V(1, 0).scale(Math.sign(pos.x))
-                        : V(0, 1).scale(Math.sign(pos.y)),
-                };
-            });
-
-        this.makeIC(ic.metadata.id, ic.objects, ic.metadata, portConfig, portFactory);
-    }
-
     public createIC(info: T["ICInfo"]): T["IC"] {
         const id = uuid();
 
@@ -276,7 +239,6 @@ export class RootCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> impl
         this.createICHelper({
             metadata,
             objects: info.circuit.getObjs().map((o) => o.toSchema()),
-            camera:  { x: 0, y: 0, zoom: 0 },
         });
 
         return this.state.constructIC(id);
@@ -287,14 +249,24 @@ export class RootCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> impl
             .map((id) => this.state.constructIC(id));
     }
 
-    public override toSchema(): Schema.RootCircuit {
-        return {
-            ...super.toSchema(),
-            ics: this.getICs().map((ic) => ic.toSchema()),
-        }
+    public undo(): void {
+        this.state.internal.undo().unwrap();
+    }
+    public redo(): void {
+        this.state.internal.redo().unwrap();
     }
 
-    public loadSchema(schema: Schema.RootCircuit): void {
+    // reset(): void {
+    //     throw new Error("Circuit.reset: Unimplemented!");
+    // },
+
+    // serialize(objs?: T["Obj[]"]): string {
+    //     throw new Error("Circuit.serialize: Unimplemented!");
+    // },
+    // deserialize(data: string): void {
+    //     throw new Error("Circuit.deserialize: Unimplemented!");
+    // },
+    public loadSchema(schema: Schema.Circuit): void {
         // TODO[leon] - I believe this won't work for ICs in terms of assembling correctly
         schema.ics
             .filter((ic) => !this.doc.getCircuitIds().has(ic.metadata.id))
@@ -302,6 +274,20 @@ export class RootCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> impl
                 this.createICHelper(ic));
 
         this.doc.addObjs(this.id, schema.objects);
+    }
+    public toSchema(): Schema.Circuit {
+        return {
+            metadata: this.state.internal.getMetadata().unwrap(),
+            camera:   {
+                x:    0,
+                y:    0,
+                zoom: 0,
+            },
+            ics: this.getICs().map((ic) => ic.toSchema()),
+            objects: [
+                ...this.getObjs().map((obj) => obj.toSchema()),
+            ],
+        };
     }
 }
 
@@ -326,18 +312,35 @@ class IntegratedCircuitDisplayImpl implements IntegratedCircuitDisplay {
     }
 }
 
-export class IntegratedCircuitImpl<T extends CircuitTypes> extends CircuitImpl<T> implements IntegratedCircuit {
+export class IntegratedCircuitImpl implements IntegratedCircuit {
+    protected readonly internal: CircuitInternal;
+
     public readonly display: IntegratedCircuitDisplay;
 
-    public constructor(state: CircuitState<T>) {
-        super(state);
+    public constructor(internal: CircuitInternal) {
+        this.internal = internal;
 
-        this.display = new IntegratedCircuitDisplayImpl(state.internal);
+        this.display = new IntegratedCircuitDisplayImpl(internal);
     }
 
-    public override toSchema(): Schema.IntegratedCircuit {
-        // TODO: Find a way to do this without the cast
-        // (it works cause base circuit uses state.internal.getMetadata which will be correct for both)
-        return super.toSchema() as Schema.IntegratedCircuit;
+    // Metadata
+    public get id(): GUID {
+        return this.internal.getMetadata().unwrap().id;
+    }
+    public get name(): string {
+        return this.internal.getMetadata().unwrap().name;
+    }
+    public get desc(): string {
+        return this.internal.getMetadata().unwrap().desc;
+    }
+    public get thumbnail(): string {
+        return this.internal.getMetadata().unwrap().thumb;
+    }
+
+    public toSchema(): Schema.IntegratedCircuit {
+        return {
+            metadata: this.internal.getMetadata<Schema.IntegratedCircuitMetadata>().unwrap(),
+            objects:  [...this.internal.getAllObjs()],
+        };
     }
 }

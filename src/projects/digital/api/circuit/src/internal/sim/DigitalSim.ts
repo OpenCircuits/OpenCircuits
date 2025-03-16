@@ -91,6 +91,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         })
     }
 
+    public addPropagator(kind: string, propagator: PropagatorFunc): void {
+        this.propagators[kind] = propagator;
+    }
+
     private queueComp(id: GUID): void {
         this.next.add(id);
 

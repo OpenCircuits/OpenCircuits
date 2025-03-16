@@ -6,8 +6,8 @@ import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Component, Node, Port, RootCircuit, Wire, uuid} from "shared/api/circuit/public";
-import {IntegratedCircuitImpl, RootCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
+import {Component, Node, Port, Circuit, Wire, uuid} from "shared/api/circuit/public";
+import {IntegratedCircuitImpl, CircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
@@ -92,7 +92,7 @@ export class TestPortImpl extends PortImpl<CircuitTypes> {
     }
 }
 
-export interface TestRootCircuitHelpers {
+export interface TestCircuitHelpers {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     PlaceAt(...positions: Vector[]): Component[];
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -101,43 +101,9 @@ export interface TestRootCircuitHelpers {
     GetPort(c: Component): Port;
 }
 
-export function CreateTestRootCircuit(
+export function CreateTestCircuit(
     additionalPortConfigs: PortConfig[] = []
-): [RootCircuit, CircuitState<CircuitTypes>, TestRootCircuitHelpers] {
-    function MakeCircuit(circuitID: GUID): CircuitState<CircuitTypes> {
-        const internal = new CircuitInternal(circuitID, log, doc);
-        const renderOptions = new DefaultRenderOptions();
-        const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
-            "TestWire": new WireAssembler(params),
-            "TestComp": new TestComponentAssembler(params),
-            "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
-
-            "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
-        }));
-
-        const state: CircuitState<CircuitTypes> = {
-            internal, assembler, renderOptions,
-
-            constructComponent(id) {
-                return new TestComponentImpl(state, id);
-            },
-            constructWire(id) {
-                return new TestWireImpl(state, id);
-            },
-            constructPort(id) {
-                return new TestPortImpl(state, id);
-            },
-            constructIC(id) {
-                return new IntegratedCircuitImpl(MakeCircuit(id));
-            },
-            constructComponentInfo(kind) {
-                return new ComponentInfoImpl(state, kind);
-            },
-        };
-
-        return state;
-    }
-
+): [Circuit, CircuitState<CircuitTypes>, TestCircuitHelpers] {
     const portConfigs = [{ "": 1 }, ...additionalPortConfigs];
 
     const log = new CircuitLog();
@@ -154,9 +120,40 @@ export function CreateTestRootCircuit(
 
     const mainCircuitID = uuid();
     doc.createCircuit(mainCircuitID);
-    const mainState = MakeCircuit(mainCircuitID);
 
-    const circuit = new RootCircuitImpl(doc, mainState, (id, objs, metadata, portConfig, portFactory) => {
+    const internal = new CircuitInternal(mainCircuitID, log, doc);
+    const icInternals: Record<GUID, CircuitInternal> = {};
+
+    const renderOptions = new DefaultRenderOptions();
+    const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
+        "TestWire": new WireAssembler(params),
+        "TestComp": new TestComponentAssembler(params),
+        "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+
+        "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+    }));
+
+    const state: CircuitState<CircuitTypes> = {
+        internal, assembler, renderOptions,
+
+        constructComponent(id) {
+            return new TestComponentImpl(state, id);
+        },
+        constructWire(id) {
+            return new TestWireImpl(state, id);
+        },
+        constructPort(id) {
+            return new TestPortImpl(state, id);
+        },
+        constructIC(id) {
+            return new IntegratedCircuitImpl(icInternals[id]);
+        },
+        constructComponentInfo(kind) {
+            return new ComponentInfoImpl(state, kind);
+        },
+    };
+
+    const circuit = new CircuitImpl(state, doc, (id, objs, metadata, portConfig, portFactory) => {
         const kind = id;
 
         doc.createIC(
@@ -165,12 +162,14 @@ export function CreateTestRootCircuit(
             objs,
         );
 
+        icInternals[id] = new CircuitInternal(id, log, doc);
+
         // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
-        mainState.assembler.addAssembler(kind, (params) =>
+        state.assembler.addAssembler(kind, (params) =>
             new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
     });
 
-    return [circuit, mainState, {
+    return [circuit, state, {
         PlaceAt: (...positions) => positions.map((p) => circuit.placeComponentAt("TestComp", p)),
         Connect: (c1, c2) => c1.ports[""][0].connectTo(c2.ports[""][0])!,
         GetPort: (c) => c.ports[""][0],

@@ -61,7 +61,6 @@ describe("IntegratedCircuit", () => {
         const [circuit, _] = CreateCircuit();
 
         const [innerIcCircuit] = CreateCircuit();
-        const [outerIcCircuit] = CreateCircuit();
 
         const i1Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, -5));
         const i2Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, +5));
@@ -88,6 +87,10 @@ describe("IntegratedCircuit", () => {
                 ],
             },
         });
+
+        const [outerIcCircuit] = CreateCircuit();
+
+        outerIcCircuit.importICs(circuit.getICs());
 
         const i1Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, -5));
         const i2Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, +5));

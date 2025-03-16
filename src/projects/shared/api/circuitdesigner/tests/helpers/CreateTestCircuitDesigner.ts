@@ -32,7 +32,7 @@ import {SnipNodesHandler}   from "shared/api/circuitdesigner/tools/handlers/Snip
 import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
-import {CreateTestRootCircuit} from "shared/api/circuit/tests/helpers/CreateTestCircuit";
+import {CreateTestCircuit} from "shared/api/circuit/tests/helpers/CreateTestCircuit";
 import {MockInputFacade} from "./MockInputFacade";
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
@@ -56,7 +56,7 @@ export function GetDefaultTools(): ToolConfig {
 }
 
 export function CreateTestCircuitDesigner(toolConfig: ToolConfig = GetDefaultTools()) {
-    const [circuit, state, helpers] = CreateTestRootCircuit();
+    const [circuit, state, helpers] = CreateTestCircuit();
 
     // create view and attach toolConfig.renderers as post-process rendering
 

@@ -1,7 +1,5 @@
 import {Vector} from "Vector";
 
-import {Rect} from "math/Rect";
-
 import {GUID} from "shared/api/circuit/schema/GUID";
 
 import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff";
@@ -12,7 +10,6 @@ import {Obj, ReadonlyObj}           from "./Obj";
 import {Port, ReadonlyPort}          from "./Port";
 import {ReadonlyWire, Wire}          from "./Wire";
 import {Selections}    from "./Selections";
-// import {Observable}    from "./Observable";
 import {Schema} from "../schema";
 import {Observable} from "../utils/Observable";
 
@@ -87,6 +84,10 @@ export interface Circuit extends C {
     // Cannot delete ports
     deleteObjs(objs: Array<Wire | Component>): void;
 
+    importICs(ics: IntegratedCircuit[]): void;
+    createIC(info: ICInfo): IntegratedCircuit;
+    getICs(): IntegratedCircuit[];
+
     undo(): void;
     redo(): void;
 
@@ -94,6 +95,8 @@ export interface Circuit extends C {
     // copy(): Circuit;
     // reset(): void;
 
+    // TODO: Come up with a better name for this
+    loadSchema(schema: Schema.Circuit): void;
     toSchema(): Schema.Circuit;
 }
 
@@ -101,16 +104,6 @@ export interface ICInfo {
     circuit: ReadonlyCircuit;
     display: IntegratedCircuitDisplay;
 }
-export interface RootCircuit extends Circuit {
-    createIC(info: ICInfo): IntegratedCircuit;
-    getICs(): IntegratedCircuit[];
-
-    toSchema(): Schema.RootCircuit;
-
-    // TODO: Come up with a better name for this
-    loadSchema(schema: Schema.RootCircuit): void;
-}
-
 export interface ICPin {
     id: GUID;  // ID of corresponding PORT
     group: string;
@@ -120,7 +113,12 @@ export interface IntegratedCircuitDisplay {
     readonly size: Vector;
     readonly pins: readonly ICPin[];
 }
-export interface IntegratedCircuit extends ReadonlyCircuit {
+export interface IntegratedCircuit {
+    readonly id: GUID;
+    readonly name: string;
+    readonly desc: string;
+    readonly thumbnail: string;
+
     readonly display: IntegratedCircuitDisplay;
     toSchema(): Schema.IntegratedCircuit;
 }

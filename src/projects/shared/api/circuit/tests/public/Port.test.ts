@@ -8,7 +8,7 @@ import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderO
 
 import {Circuit, Obj} from "shared/api/circuit/public";
 
-import {CreateTestRootCircuit} from "tests/helpers/CreateTestCircuit";
+import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
 
 describe("Port", () => {
@@ -17,7 +17,7 @@ describe("Port", () => {
         const defaultPortRadius = 0.14;
 
         test("Default bounds", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.bounds).toApproximatelyEqual(Rect.From({
@@ -28,7 +28,7 @@ describe("Port", () => {
             }));
         });
         test("Rotation", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             c.angle = Math.PI / 2;
@@ -43,7 +43,7 @@ describe("Port", () => {
 
     describe("Name", () => {
         test("set and undo/redo", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.name).toBeUndefined();
@@ -58,7 +58,7 @@ describe("Port", () => {
 
     describe("isSelected", () => {
         test("Set/Get isSelected", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.isSelected).toBeFalsy();
@@ -79,7 +79,7 @@ describe("Port", () => {
         });
 
         test("Select/Deselect", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.isSelected).toBeFalsy();
@@ -107,7 +107,7 @@ describe("Port", () => {
 
     describe("Exists", () => {
         test("Add/delete and undo/redo", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit([{ "": 2 }]);
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.exists()).toBeTruthy();
@@ -135,7 +135,7 @@ describe("Port", () => {
             expect(p2.exists()).toBeFalsy();
         });
         test("circuit.deleteObjs", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             circuit.deleteObjs([c]);
@@ -149,7 +149,7 @@ describe("Port", () => {
 
     describe("Props", () => {
         test("getProps", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             port.name = "Test Port";
@@ -165,7 +165,7 @@ describe("Port", () => {
         });
 
         test("setProp", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             port.setProp("name", "Test Component");
@@ -173,7 +173,7 @@ describe("Port", () => {
         });
 
         test("getProp", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.getProp("name")).toBeUndefined();
@@ -182,14 +182,14 @@ describe("Port", () => {
         });
 
         test("getProp with invalid prop", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.getProp("fakeProp")).toBeUndefined();
         });
 
         test("Set invalid prop", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(() => { port.setProp("fakeProp", true) }).toThrow();
@@ -198,13 +198,13 @@ describe("Port", () => {
 
     describe("Info", () => {
         test("parent", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.parent).toBeObj(c);
         });
         test("group", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c] = PlaceAt(V(0, 0));
 
             expect(c.setNumPorts("", 2)).toBeTruthy();
@@ -212,7 +212,7 @@ describe("Port", () => {
             expect(c.ports[""][1].group).toBe("");
         });
         test("index", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c] = PlaceAt(V(0, 0));
 
             expect(c.setNumPorts("", 2)).toBeTruthy();
@@ -223,7 +223,7 @@ describe("Port", () => {
 
     describe("Position", () => {
         test("Origin/Target", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             expect(port.originPos.x).toApproximatelyEqual(0);
@@ -234,7 +234,7 @@ describe("Port", () => {
             expect(port.dir.y).toApproximatelyEqual(0);
         });
         test("Rotation", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             c.angle = Math.PI / 2;
@@ -250,7 +250,7 @@ describe("Port", () => {
 
     describe("Connections", () => {
         test("connections", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
 
             c2.setNumPorts("", 2);
@@ -265,7 +265,7 @@ describe("Port", () => {
             expect(p3.connections).toHaveLength(0);
         });
         test("connectedPorts", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
 
             c2.setNumPorts("", 2);
@@ -282,7 +282,7 @@ describe("Port", () => {
             expect(p3.connectedPorts).toHaveLength(0);
         });
         test("use same port twice", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
 
             c2.setNumPorts("", 2);
@@ -304,7 +304,7 @@ describe("Port", () => {
             expect(p3.connections).toHaveLength(1);
         });
         test("connected to self", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestRootCircuit([{ "": 2 }]);
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1] = PlaceAt(V(0, 0));
 
             c1.setNumPorts("", 2);
@@ -329,7 +329,7 @@ describe("Port", () => {
 
     describe("Get Legal Wires", () => {
         test("can connect to self", () => {
-            const [circuit, _, { PlaceAt, GetPort }] = CreateTestRootCircuit();
+            const [circuit, _, { PlaceAt, GetPort }] = CreateTestCircuit();
             const [c1] = PlaceAt(V(0, 0)), port = GetPort(c1);
 
             expect(port.canConnectTo(port)).toBeTruthy();
