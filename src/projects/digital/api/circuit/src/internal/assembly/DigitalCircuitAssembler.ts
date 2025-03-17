@@ -14,6 +14,7 @@ import {LEDAssembler}         from "./components/LEDAssembler";
 import {SwitchAssembler}      from "./components/SwitchAssembler";
 import {ButtonAssembler}      from "./components/ButtonAssembler";
 import {ClockAssembler}       from "./components/ClockAssembler";
+import {SegmentDisplayAssembler} from "./components/SegmentDisplayAssembler";
 import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
 import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
 import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
@@ -82,6 +83,7 @@ export function MakeDigitalCircuitAssembler(
 
         // // Outputs
         "LED": new LEDAssembler(params, sim),
+        "SegmentDisplay": new SegmentDisplayAssembler(params, sim),
 
         // Gates
         "ANDGate":  new ANDGateAssembler(params, sim, false),
