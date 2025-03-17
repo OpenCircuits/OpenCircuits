@@ -143,10 +143,10 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
             newComp.select();
             generatedToReal.set(comp.id, newComp);
             if ("inputs" in comp.ports) {
-                newComp.setNumPorts("inputs", comp.ports["inputs"].length);
+                newComp.setPortConfig({ "inputs": comp.ports["inputs"].length });
             }
             if ("outputs" in comp.ports) {
-                newComp.setNumPorts("outputs", comp.ports["outputs"].length);
+                newComp.setPortConfig({ "outputs": comp.ports["outputs"].length });
             }
             Object.entries(comp.getProps()).forEach((prop) => newComp.setProp(...prop));
         });

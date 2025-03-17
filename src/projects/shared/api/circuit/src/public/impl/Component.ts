@@ -5,7 +5,7 @@ import {FromConcatenatedEntries} from "shared/api/circuit/utils/Functions";
 import {GUID}                    from "shared/api/circuit/internal";
 import {Schema}                  from "shared/api/circuit/schema";
 
-import {Component} from "../Component";
+import {Component, PortConfig} from "../Component";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
@@ -75,17 +75,13 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     //     throw new Error("Component.connectedComponents: Unimplemented!");
     // },
 
-    public setNumPorts(group: string, amt: number): boolean {
+    public setPortConfig(cfg: PortConfig): boolean {
         // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = this.state.internal.getPortConfig(this.id).unwrap();
 
-        // Already at that amount of ports, so do nothing
-        if (curConfig[group] === amt)
-            return true;
-
         const config = {
             ...curConfig,
-            [group]: amt,
+            ...cfg,
         };
         this.state.internal.getComponentInfo(this.kind).unwrap()
             .checkPortConfig(config).unwrap();

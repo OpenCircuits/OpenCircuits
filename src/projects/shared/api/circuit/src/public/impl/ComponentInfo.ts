@@ -28,4 +28,8 @@ export class ComponentInfoImpl<T extends CircuitTypes> implements ComponentInfo 
     public get defaultPortConfig() {
         return this.getInfo().defaultPortConfig;
     }
+
+    public get portConfigs() {
+        return this.getInfo().getValidPortConfigs();
+    }
 }

@@ -5,6 +5,9 @@ import {ComponentInfo} from "./ComponentInfo";
 import {Port, ReadonlyPort} from "./Port";
 import {Wire, ReadonlyWire} from "./Wire";
 import {Schema} from "../schema";
+import {PortConfig} from "../internal/impl/ObjInfo";
+
+export type {PortConfig} from "../internal/impl/ObjInfo";
 
 
 export interface ReadonlyComponent extends ReadonlyBaseObject {
@@ -51,7 +54,7 @@ export interface Component extends C {
     // Do we even want this in the API?
     // readonly connectedComponents: Component[];
 
-    setNumPorts(group: string, amt: number): boolean;
+    setPortConfig(config: PortConfig): boolean;
     firstAvailable(group: string): Port | undefined;
 
     delete(): void;

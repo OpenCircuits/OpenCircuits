@@ -40,6 +40,8 @@ export interface ComponentConfigurationInfo extends ObjInfo {
     isPortAvailable(port: Schema.Port, curConnections: Schema.Port[]): boolean;
     checkPortConnectivity(port: Schema.Port, newConnection: Schema.Port, curConnections: Schema.Port[]): Result;
 
+    getValidPortConfigs(): ReadonlyArray<Readonly<PortConfig>>;
+
     // Also i.e. thumbnail, display name, description, etc.
 }
 
@@ -177,13 +179,17 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
                 + `} did not contain all groups [${this.portGroups.join(", ")}]`);
         }
 
-        // Return is some valid config matches the given config
+        // Return if some valid config matches the given config
         const hasValidConfig = this.validPortConfigs.some((counts) =>
             // Check each port group in the valid config and the given config to see
             //  if the counts all match
             this.portGroups.every((group) => (counts[group] === p[group])));
 
         return hasValidConfig ? OkVoid() : ErrE(`BaseComponentInfo: Failed to find matching config for ${p}`);
+    }
+
+    public getValidPortConfigs(): ReadonlyArray<Readonly<PortConfig>> {
+        return this.validPortConfigs;
     }
 
     public abstract isPortAvailable(port: Schema.Port, curConnections: Schema.Port[]): boolean;

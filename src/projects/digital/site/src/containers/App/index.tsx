@@ -66,7 +66,31 @@ export const App = () => {
 
                     <SelectionPopup designer={designer} docsUrlConfig={docsConfig}>
                         <PropertyModule designer={designer} propInfo={DigitalPropInfo} />
-                        <PortCountModule circuit={designer.circuit} />
+                        <PortCountModule
+                            circuit={designer.circuit}
+                            kinds={new Set(["ANDGate", "NANDGate", "ORGate", "NORGate", "XORGate", "XNORGate"])}
+                            basisPortGroup="inputs"
+                            label="Input" />
+                        <PortCountModule
+                            circuit={designer.circuit}
+                            kinds={new Set(["Multiplexer", "Demultiplexer"])}
+                            basisPortGroup="selects"
+                            label="Selector" />
+                        <PortCountModule
+                            circuit={designer.circuit}
+                            kinds={new Set(["Encoder"])}
+                            basisPortGroup="outputs"
+                            label="Output" />
+                        <PortCountModule
+                            circuit={designer.circuit}
+                            kinds={new Set(["Decoder"])}
+                            basisPortGroup="inputs"
+                            label="Input" />
+                        <PortCountModule
+                            circuit={designer.circuit}
+                            kinds={new Set(["Comparator"])}
+                            basisPortGroup="inputsA"
+                            label="Input" />
                         <OscilloscopeModule circuit={designer.circuit} />
                         <ClockSyncButtonModule circuit={designer.circuit} />
                         <BusButtonModule circuit={designer.circuit} />

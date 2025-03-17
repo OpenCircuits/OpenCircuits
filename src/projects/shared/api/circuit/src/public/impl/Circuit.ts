@@ -170,7 +170,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         const info = this.state.internal.getComponentInfo(kind);
         if (!info.ok)
             return undefined;
-        return info.unwrap();
+        return this.state.constructComponentInfo(kind);
     }
 
     // Object manipulation

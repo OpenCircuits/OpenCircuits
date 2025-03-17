@@ -265,7 +265,7 @@ describe("Component", () => {
             expect(Object.keys(c.ports)).toHaveLength(1);
             expect("" in c.ports).toBeTruthy();
             expect(c.ports[""]).toHaveLength(1);
-            expect(() => c.setNumPorts("", 3)).toThrow();
+            expect(() => c.setPortConfig({ "": 3 })).toThrow();
             expect(c.ports[""]).toHaveLength(1);
         });
 
@@ -273,21 +273,21 @@ describe("Component", () => {
             const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.allPorts).toHaveLength(1);
-            expect(() => c.setNumPorts("", 6)).toThrow();
+            expect(() => c.setPortConfig({ "": 6 })).toThrow();
             expect(c.allPorts).toHaveLength(1);
         });
 
-        test(".setNumPorts on invalid port group", () => {
+        test(".setPortConfig on invalid port group", () => {
             const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0));
-            expect(() => c.setNumPorts("invalidGroup", 6)).toThrow();
+            expect(() => c.setPortConfig({ "invalidGroup": 6 })).toThrow();
         });
 
         test("firstAvailable", () => {
             const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             expect(c1.firstAvailable("")).toBeDefined();
-            c1.setNumPorts("", 2);
+            c1.setPortConfig({ "": 2 });
             c1.firstAvailable("")!.connectTo(c2.firstAvailable("")!)
             expect(c1.firstAvailable("")).toBeDefined();
             expect(c2.firstAvailable("")).toBeDefined();
@@ -295,14 +295,14 @@ describe("Component", () => {
             expect(c1.ports[""][1].connections).toHaveLength(0);
         });
 
-        test("Use setNumPorts to remove connection", () => {
+        test("Use setPortConfig to remove connection", () => {
             const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
             expect(c1.firstAvailable("")).toBeDefined();
-            c1.setNumPorts("", 2);
+            c1.setPortConfig({ "": 2 });
             c1.ports[""][0].connectTo(c2.ports[""][0])
             c1.ports[""][1].connectTo(c3.ports[""][0])
-            c1.setNumPorts("", 1);
+            c1.setPortConfig({ "": 1 });
             expect(c1.ports[""]).toHaveLength(1);
             expect(c1.ports[""][0].connections).toHaveLength(1);
             expect(c2.ports[""]).toHaveLength(1);

@@ -61,7 +61,7 @@ describe("Gates", () => {
             expect(out).toBeOn();
 
             // 3 inputs
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             expect(out).toBeOff();
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
             expect(out).toBeOff();
@@ -80,7 +80,7 @@ describe("Gates", () => {
             const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
             const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("ANDGate");
 
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
@@ -109,7 +109,7 @@ describe("Gates", () => {
             expect(out).toBeOff();
 
             // 3 inputs
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             expect(out).toBeOn();
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
             expect(out).toBeOn();
@@ -128,7 +128,7 @@ describe("Gates", () => {
             const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
             const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("NANDGate");
 
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
@@ -157,7 +157,7 @@ describe("Gates", () => {
             expect(out).toBeOn();
 
             // 3 inputs
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             expect(out).toBeOn();
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
             expect(out).toBeOn();
@@ -176,7 +176,7 @@ describe("Gates", () => {
             const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
             const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("ORGate");
 
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
@@ -205,7 +205,7 @@ describe("Gates", () => {
             expect(out).toBeOff();
 
             // 3 inputs
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             expect(out).toBeOff();
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
             expect(out).toBeOff();
@@ -224,7 +224,7 @@ describe("Gates", () => {
             const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
             const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("NORGate");
 
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
@@ -253,7 +253,7 @@ describe("Gates", () => {
             expect(out).toBeOff();
 
             // 3 inputs
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             expect(out).toBeOff();
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
             expect(out).toBeOff();
@@ -272,7 +272,7 @@ describe("Gates", () => {
             const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
             const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("XORGate");
 
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);
@@ -301,7 +301,7 @@ describe("Gates", () => {
             expect(out).toBeOn();
 
             // 3 inputs
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             expect(out).toBeOn();
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
             expect(out).toBeOn();
@@ -320,7 +320,7 @@ describe("Gates", () => {
             const [{}, {}, { TurnOn, TurnOff, TurnMetastable, Place, Connect, PlaceAndConnect }] = CreateTestCircuit();
             const [gate, { inputs: [sw1, sw2], outputs: [out] }] = PlaceAndConnect("XNORGate");
 
-            gate.setNumPorts("inputs", 3);
+            gate.setPortConfig({ "inputs": 3 });
             const [sw3] = Place("Switch"); Connect(sw3, gate.inputs[2]);
 
             TurnMetastable(sw1);

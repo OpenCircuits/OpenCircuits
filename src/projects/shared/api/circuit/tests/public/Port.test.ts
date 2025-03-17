@@ -116,7 +116,7 @@ describe("Port", () => {
             circuit.redo();
             expect(port.exists()).toBeTruthy();
 
-            expect(c.setNumPorts("", 2)).toBeTruthy();
+            expect(c.setPortConfig({ "": 2 })).toBeTruthy();
             const p2 = c.ports[""][1];
 
             expect(p2.exists()).toBeTruthy();
@@ -125,7 +125,7 @@ describe("Port", () => {
             circuit.redo();
             expect(p2.exists()).toBeTruthy();
 
-            expect(c.setNumPorts("", 1)).toBeTruthy();
+            expect(c.setPortConfig({ "": 1 })).toBeTruthy();
             expect(port.exists()).toBeTruthy();
 
             expect(p2.exists()).toBeFalsy();
@@ -207,7 +207,7 @@ describe("Port", () => {
             const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c] = PlaceAt(V(0, 0));
 
-            expect(c.setNumPorts("", 2)).toBeTruthy();
+            expect(c.setPortConfig({ "": 2 })).toBeTruthy();
             expect(c.ports[""][0].group).toBe("");
             expect(c.ports[""][1].group).toBe("");
         });
@@ -215,7 +215,7 @@ describe("Port", () => {
             const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c] = PlaceAt(V(0, 0));
 
-            expect(c.setNumPorts("", 2)).toBeTruthy();
+            expect(c.setPortConfig({ "": 2 })).toBeTruthy();
             expect(c.ports[""][0].index).toBe(0);
             expect(c.ports[""][1].index).toBe(1);
         });
@@ -253,7 +253,7 @@ describe("Port", () => {
             const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
 
-            c2.setNumPorts("", 2);
+            c2.setPortConfig({ "": 2 });
             const p1 = c1.ports[""][0];
             const p2 = c2.ports[""][0];
             const p3 = c2.ports[""][1];
@@ -268,7 +268,7 @@ describe("Port", () => {
             const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
 
-            c2.setNumPorts("", 2);
+            c2.setPortConfig({ "": 2 });
             const p1 = c1.ports[""][0];
             const p2 = c2.ports[""][0];
             const p3 = c2.ports[""][1];
@@ -285,7 +285,7 @@ describe("Port", () => {
             const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
 
-            c2.setNumPorts("", 2);
+            c2.setPortConfig({ "": 2 });
             const p1 = c1.ports[""][0];
             const p2 = c2.ports[""][0];
             const p3 = c2.ports[""][1];
@@ -307,7 +307,7 @@ describe("Port", () => {
             const [circuit, _, { PlaceAt }] = CreateTestCircuit([{ "": 2 }]);
             const [c1] = PlaceAt(V(0, 0));
 
-            c1.setNumPorts("", 2);
+            c1.setPortConfig({ "": 2 });
             const p1 = c1.ports[""][0];
             const p2 = c1.ports[""][1];
 
