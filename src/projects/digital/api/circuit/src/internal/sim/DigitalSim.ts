@@ -58,11 +58,12 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 }
             };
 
-            // for (const compId of ev.diff.addedComponents)
-            //     comps.add(compId);
+            for (const compId of ev.diff.addedComponents)
+                comps.add(compId);
 
-            for (const compId of ev.diff.removedComponents)
-                this.states.delete(compId);
+            // Keep states in-case of undos, they can be forgotten when history is cleared
+            // for (const compId of ev.diff.removedComponents)
+            //     this.states.delete(compId);
 
             for (const compId of ev.diff.portsChanged)
                 comps.add(compId);
@@ -79,10 +80,12 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 if (this.isOutputPort(p1.id)) {
                     this.signals.set(p2.id, this.getSignal(p1.id));
 
+                    updatedInputPorts.add(p2.id);
                     comps.add(p2.parent);
                 } else {
                     this.signals.set(p1.id, this.getSignal(p2.id));
 
+                    updatedInputPorts.add(p1.id);
                     comps.add(p1.parent);
                 }
             }

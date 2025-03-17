@@ -1,5 +1,5 @@
 // import {SetPortConfig}    from "shared/api/circuit/actions/compositions/SetPortConfig";
-import {Circuit}          from "shared/api/circuit/public";
+import {Circuit, Component}          from "shared/api/circuit/public";
 // import {AllPortInfo}      from "shared/api/circuit/views/portinfo";
 // import {CalcPortConfigID} from "shared/api/circuit/views/portinfo/utils";
 
@@ -16,14 +16,14 @@ type Props = {
     circuit: Circuit;
 }
 export const PortCountModule = ({ circuit }: Props) => {
-    return null;
     // TODO: this
+    return null;
     // const [props, cs] = useSelectionProps(
-    //     info,
-    //     (c): c is AnyComponent => (
+    //     circuit,
+    //     (c): c is Component => (
     //         (c.baseKind === "Component") &&
     //         // Only allow components that allow changes to their port config
-    //         (AllPortInfo[c.kind].AllowChanges)
+    //         (c.info.defaultPortConfig)
     //     ),
     //     (c) => (() => {
     //         const info = AllPortInfo[c.kind];
