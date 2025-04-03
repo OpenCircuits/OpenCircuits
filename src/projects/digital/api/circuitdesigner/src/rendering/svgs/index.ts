@@ -11,13 +11,6 @@ import clockSVG from "./clock.svg";
 import clockOnSVG from "./clockOn.svg";
 import constHighSVG from "./constHigh.svg";
 import constLowSVG from "./constLow.svg";
-import segmentDiagonalBLSVG from "./segment_diagonalbl.svg";
-import segmentDiagonalBRSVG from "./segment_diagonalbR.svg";
-import segmentDiagonalTLSVG from "./segment_diagonaltl.svg";
-import segmentDiagonalTRSVG from "./segment_diagonaltR.svg";
-import segmentHorizontalSVG from "./segment_horizontal.svg";
-import segmentHorizontalHalfSVG from "./segment_horizontal0.5.svg";
-import segmentVerticalSVG from "./segment_vertical.svg";
 
 
 function ToSVGDrawing(name: string, svgStr: string): SVGDrawing {
@@ -45,11 +38,4 @@ export const SVGs: Map<string, SVGDrawing> = new Map([
     ["clockOn.svg", ToSVGDrawing("clockOn", clockOnSVG)],
     ["constHigh.svg", ToSVGDrawing("constHigh", constHighSVG)],
     ["constLow.svg", ToSVGDrawing("constLow", constLowSVG)],
-    ["./segment_diagonalbl.svg", ToSVGDrawing("segmentDiagonalBL", segmentDiagonalBLSVG)],
-    ["./segment_diagonalbR.svg", ToSVGDrawing("segmentDiagonalBR", segmentDiagonalBRSVG)],
-    ["./segment_diagonaltl.svg", ToSVGDrawing("segmentDiagonalTL", segmentDiagonalTLSVG)],
-    ["./segment_diagonaltR.svg", ToSVGDrawing("segmentDiagonalTR", segmentDiagonalTRSVG)],
-    ["./segment_horizontal.svg", ToSVGDrawing("segmentHorizontal", segmentHorizontalSVG)],
-    ["./segment_horizontal0.5.svg", ToSVGDrawing("segmentHorizontalHalf", segmentHorizontalHalfSVG)],
-    ["./segment_vertical.svg", ToSVGDrawing("segmentVertical", segmentVerticalSVG)],
 ]);
