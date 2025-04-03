@@ -10,20 +10,8 @@ import {ComponentAssembler} from "shared/api/circuit/internal/assembly/Component
 import {Transform} from "math/Transform";
 import {PolygonPrim} from "shared/api/circuit/internal/assembly/Prim";
 import {Style} from "shared/api/circuit/internal/assembly/Style";
+import {ASCIIFont, BCDFont, Segments, segmentToVector} from "./SegmentDisplayConstants";
 
-
-const horizontal = [V(-0.27,0.08), V(0.27,0.08), V(0.35,0), V(0.27,-0.08), V(-0.27,-0.08), V(-0.35,0)] as const;
-const vertical = horizontal.map((v) => v.negativeReciprocal());
-const horizontalHalf = [V(-0.095,0.08), V(0.095,0.08), V(0.175,0), V(0.095,-0.08), V(-0.095,-0.08), V(-0.175,0)] as const;
-const topLeft = [V(.095,-0.18), V(-0.045,0.27), V(-0.155,0.27), V(0.015,-0.27), V(.095,-0.27)]
-const topRight = topLeft.map((v) => v.scale(V(-1, 1)));
-const bottomLeft = topLeft.map((v) => v.scale(V(1, -1)));
-const bottomRight = topLeft.map((v) => v.scale(V(-1, -1)));
-const horizontalTopSegment = horizontal.map((v) => v.add(V(0, 1)))
-// bl - -47.5,40 47.5,40 87.5,0 47.5,-40 -47.5,-40 -87.5,0
-// br - 47.5,90 -22.5,-135 -77.5,-135 7.5,135 47.5,135
-// tl - -47.5,-90 22.5,135 77.5,135 -7.5,-135 -47.5,-135
-// tr - 47.5,-90 -22.5,135 -77.5,135 7.5,-135 47.5,-135
 
 export class SegmentDisplayAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
@@ -35,9 +23,10 @@ export class SegmentDisplayAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim, kind: "SegmentDisplay" | "BCDDisplay" | "ASCIIDisplay") {
         super(params, V(1.4, 2), {
             "inputs": (index, total) => {
-                const y = this.size.y * index / (total + 2);
+                const y = -((2*this.options.defaultPortRadius+.02) * (index - ((total - 1) / 2)));
                 return {
-                    origin: V(-(this.size.x/2 - this.options.defaultBorderWidth), y),
+                    // Subtracing the this.options.defaultBorderWidth prevent tiny gap between port stem and component
+                    origin: V(-((this.size.x - this.options.defaultBorderWidth)/2), y),
                     target: V(-(this.options.defaultPortLength + this.size.x/2), y),
                 }
             },
@@ -52,15 +41,32 @@ export class SegmentDisplayAssembler extends ComponentAssembler {
 
                 getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
+            {
+                kind: "BaseShape",
+
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged, AssemblyReason.PortsChanged]),
+                assemble:     (comp) => this.assembleLine(comp),
+
+                getStyle: (comp) => this.getLineStyle(comp),
+            },
             // Render off segments then on segments
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble:     (comp) => this.assembleSegments(comp),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged]),
+                assemble:     (comp) => this.assembleSegments(comp, false),
 
                 styleChangesWhenSelected: true,
-                getStyle:                 (comp) => this.getSegmentStyle(comp),
+                getStyle:                 (comp) => this.getSegmentStyle(comp, false),
+            },
+            {
+                kind: "BaseShape",
+
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged]),
+                assemble:     (comp) => this.assembleSegments(comp, true),
+
+                styleChangesWhenSelected: true,
+                getStyle:                 (comp) => this.getSegmentStyle(comp, true),
             },
         ]);
         this.sim = sim;
@@ -77,58 +83,81 @@ export class SegmentDisplayAssembler extends ComponentAssembler {
         } as const
     }
 
-    private getSegmentStyle(comp: Schema.Component): Style {
-        // If on, #1E5679 regardless of isSelected
+    private assembleLine(comp: Schema.Component) {
+        const numInputs = [...this.circuit.getPortsForComponent(comp.id).unwrap()].length
+        // const y = -((2*this.options.defaultPortRadius+.02) * (index - ((total - 1) / 2)));
+        const y1 = -((2*this.options.defaultPortRadius+.02) * (-((numInputs - 1) / 2)));
+        const y2 = -((2*this.options.defaultPortRadius+.02) * ((numInputs - 1) - ((numInputs - 1) / 2)));
+
+        const x = -(this.size.x - this.options.defaultBorderWidth) / 2;
+
+        const transform = this.getTransform(comp);
+        return {
+            kind: "Line",
+
+            p1: transform.toWorldSpace(V(x, y1)),
+            p2: transform.toWorldSpace(V(x, y2)),
+        } as const;
+    }
+
+    private getLineStyle(comp: Schema.Component): Style {
+        const style = this.options.lineStyle(this.isSelected(comp.id));
+        const { stroke } = style
+        return {
+            ...style,
+            stroke: stroke ? { ...stroke, lineCap: "square" } : undefined,
+        }
+    }
+
+    private getSegmentStyle(comp: Schema.Component, segmentsOn: boolean): Style {
         // These values come from the result of using a tint when these segments were SVGs
-        const color = this.isSelected(comp.id) ? "#0E801F" : "#808080";
+        const color = segmentsOn ? "#1E5679" : this.isSelected(comp.id) ? "#0E801F" : "#808080";
+        const fill = segmentsOn ? "#9ED6F9" : this.isSelected(comp.id) ? "#8EFF9F" : undefined;
         return {
             stroke: { color, size: 0.01, lineCap: "round", lineJoin: "round" },
+            fill,
         }
     }
 
-    private onPorts(comp: Schema.Component) {
-        const [...inputPorts] = this.circuit.getPortsForComponent(comp.id).unwrap();
-        return inputPorts.map((inputPort) => Signal.isOn(this.sim.getSignal(inputPort)));
-    }
-
-    private assembleSegments(comp: Schema.Component) {
+    private assembleSegments(comp: Schema.Component, segmentsOn: boolean) {
         // Border is subtracted from size so that size matches constant high/low
         // const transform = new Transform(this.getPos(comp), this.size.sub(V(this.options.defaultBorderWidth)), this.getAngle(comp));
+        const compPos = this.getPos(comp);
+        const inputValues = this.getInputValues(comp);
         if (this.kind === "SegmentDisplay") {
-            
+            const segments = Segments[inputValues.length];
+            const prims = inputValues.map((inputIsOn, index) => {
+                if (segmentsOn === inputIsOn) {
+                    const segment = segments[index];
+                    const prim: Omit<PolygonPrim, "style"> = {
+                        kind:   "Polygon",
+                        points: segmentToVector[segment[1]].map((vector) => vector.add(segment[0].scale(0.7)).add(compPos)),
+                    }
+                    return prim;
+                }
+            }).filter((prim) => prim !== undefined);
+            return {
+                kind: "Group",
+                prims,
+            } as const
         }
-        const prims: Array<Omit<PolygonPrim, "style">> = [
-        {
-            kind:   "Polygon",
-            points: [...horizontal],
-        },
-        // {
-        //     kind:   "Polygon",
-        //     points: [...vertical],
-        // },
-        {
-            kind:   "Polygon",
-            points: [...topLeft],
-        },
-        {
-            kind:   "Polygon",
-            points: [...bottomLeft],
-        },
-        {
-            kind:   "Polygon",
-            points: [...bottomRight],
-        }];
-        // const segmentCount = this.circuit.getCompByID(comp.id).unwrap().props["segmentCount"] ?? 7;
-        // if (segmentCount === 7) {
-        //     const prim: Omit<PolygonPrim, "style"> = {
-        //         kind:   "Polygon",
-        //         points: [...horizontal],
-        //     }
-        //     return {
-        //         kind:  "Group",
-        //         prims: [prim],
-        //     } as const
-        // }
+
+        // ASCII and BCD
+        const segmentCount = this.circuit.getCompByID(comp.id).unwrap().props["segmentCount"] as number;
+        const segments = Segments[segmentCount];
+        const dec = inputValues.reduce((accumulator, isOn, index) => accumulator + (isOn ? 2 ** index : 0), 0);
+        const font = (this.kind === "BCDDisplay" ? BCDFont : ASCIIFont)[segmentCount.toString()];
+        const glyph = font[dec];
+        const prims = segments.map((segment, index) => {
+            if (glyph.includes(index) === segmentsOn) {
+                const prim: Omit<PolygonPrim, "style"> = {
+                    kind: "Polygon",
+
+                    points: segmentToVector[segment[1]].map((vector) => vector.add(segment[0].scale(0.7)).add(compPos)),
+                }
+                return prim;
+            }
+        }).filter((prim) => prim !== undefined);
         return {
             kind: "Group",
             prims,
@@ -136,8 +165,8 @@ export class SegmentDisplayAssembler extends ComponentAssembler {
     }
 
     // TODO: Where should this value or function live?
-    private getOutValue(comp: Schema.Component) {
-        const [...outputs] = this.circuit.getPortsForComponent(comp.id).unwrap();
-        return outputs.reduce((accumulator, portId, index) => accumulator + (Signal.isOn(this.sim.getSignal(portId)) ? 2 ** index : 0), 0);
+    private getInputValues(comp: Schema.Component) {
+        const [...inputPorts] = this.circuit.getPortsForComponent(comp.id).unwrap();
+        return inputPorts.map((inputPort) => Signal.isOn(this.sim.getSignal(inputPort)));
     }
 }

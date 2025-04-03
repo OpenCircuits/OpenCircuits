@@ -83,7 +83,9 @@ export function MakeDigitalCircuitAssembler(
 
         // // Outputs
         "LED": new LEDAssembler(params, sim),
-        "SegmentDisplay": new SegmentDisplayAssembler(params, sim),
+        "SegmentDisplay": new SegmentDisplayAssembler(params, sim, "SegmentDisplay"),
+        "BCDDisplay": new SegmentDisplayAssembler(params, sim, "BCDDisplay"),
+        "ASCIIDisplay": new SegmentDisplayAssembler(params, sim, "ASCIIDisplay"),
 
         // Gates
         "ANDGate":  new ANDGateAssembler(params, sim, false),
