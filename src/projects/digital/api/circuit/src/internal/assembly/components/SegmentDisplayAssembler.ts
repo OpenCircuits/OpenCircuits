@@ -23,7 +23,10 @@ export class SegmentDisplayAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim, kind: "SegmentDisplay" | "BCDDisplay" | "ASCIIDisplay") {
         super(params, V(1.4, 2), {
             "inputs": (index, total) => {
-                const y = -((2*this.options.defaultPortRadius+.02) * (index - ((total - 1) / 2)));
+                const midpoint = (total - 1) / 2;
+                const y = (kind === "BCDDisplay")
+                    ? -(.6 * this.size.y /2 * (index - midpoint) + (index === 0 ? 0.02 : index === total - 1 ? -0.02 : 0))
+                    : -((2*this.options.defaultPortRadius+.02) * (index - midpoint))
                 return {
                     // Subtracing the this.options.defaultBorderWidth prevent tiny gap between port stem and component
                     origin: V(-((this.size.x - this.options.defaultBorderWidth)/2), y),
@@ -143,7 +146,7 @@ export class SegmentDisplayAssembler extends ComponentAssembler {
         }
 
         // ASCII and BCD
-        const segmentCount = this.circuit.getCompByID(comp.id).unwrap().props["segmentCount"] as number;
+        const segmentCount = this.circuit.getCompByID(comp.id).unwrap().props["segmentCount"] as number | undefined ?? 7;
         const segments = Segments[segmentCount];
         const dec = inputValues.reduce((accumulator, isOn, index) => accumulator + (isOn ? 2 ** index : 0), 0);
         const font = (this.kind === "BCDDisplay" ? BCDFont : ASCIIFont)[segmentCount.toString()];
