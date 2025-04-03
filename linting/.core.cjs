@@ -11,12 +11,12 @@ module.exports = {
         },
     ],
     "rules": {
-        "max-len": ["warn", {
-            "code": 120,
-            "ignoreUrls": true,
-            "ignoreTrailingComments": true,
-            "ignorePattern": "^import .*",
-        }],
+        // "max-len": ["warn", {
+        //     "code": 120,
+        //     "ignoreUrls": true,
+        //     "ignoreTrailingComments": true,
+        //     "ignorePattern": "^import .*",
+        // }],
         "quotes": ["error", "double"],
         "no-self-compare": "error",
         "default-case-last": "error",

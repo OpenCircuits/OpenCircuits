@@ -14,11 +14,13 @@ import {LEDAssembler}         from "./components/LEDAssembler";
 import {SwitchAssembler}      from "./components/SwitchAssembler";
 import {ButtonAssembler}      from "./components/ButtonAssembler";
 import {ClockAssembler}       from "./components/ClockAssembler";
-import {SegmentDisplayAssembler} from "./components/SegmentDisplayAssembler";
 import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
 import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
 import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
 import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {BCDDisplayAssembler} from "./components/displays/BCDDisplayAssembler";
+import {ASCIIDisplayAssembler} from "./components/displays/ASCIIDisplayAssembler";
+import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -82,10 +84,10 @@ export function MakeDigitalCircuitAssembler(
         "ConstantNumber": new ConstantNumberAssembler(params, sim),
 
         // // Outputs
-        "LED": new LEDAssembler(params, sim),
-        "SegmentDisplay": new SegmentDisplayAssembler(params, sim, "SegmentDisplay"),
-        "BCDDisplay": new SegmentDisplayAssembler(params, sim, "BCDDisplay"),
-        "ASCIIDisplay": new SegmentDisplayAssembler(params, sim, "ASCIIDisplay"),
+        "LED":            new LEDAssembler(params, sim),
+        "SegmentDisplay": new SegmentDisplayAssembler(params, sim),
+        "BCDDisplay":     new BCDDisplayAssembler(params, sim),
+        "ASCIIDisplay":   new ASCIIDisplayAssembler(params, sim),
 
         // Gates
         "ANDGate":  new ANDGateAssembler(params, sim, false),
