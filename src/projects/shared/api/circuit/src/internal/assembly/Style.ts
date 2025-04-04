@@ -15,6 +15,7 @@ export interface StrokeStyle {
     color: string;
     size: number;
     lineCap?: "butt" | "round" | "square";
+    lineJoin?: "round" | "bevel" | "miter";
 }
 
 export interface Style {

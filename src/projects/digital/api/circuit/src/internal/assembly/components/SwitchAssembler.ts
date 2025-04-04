@@ -17,14 +17,14 @@ export class SwitchAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, V(1.24, 1.54), {
-            "outputs": () => ({origin: V(0.62, 0), dir: V(1, 0)})
+            "outputs": () => ({ origin: V(0.62, 0), dir: V(1, 0) }),
         }, [
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble: (comp) => ({
-                    kind: "Rectangle",
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
+                assemble:     (comp) => ({
+                    kind:      "Rectangle",
                     transform: this.getTransform(comp),
                 }),
 
@@ -35,9 +35,8 @@ export class SwitchAssembler extends ComponentAssembler {
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
-                assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "switchDown.svg" : "switchUp.svg", transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp))}),
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
-                tintChangesWhenSelected: true,
+                assemble:     (comp) => ({ kind: "SVG", svg: this.isOn(comp) ? "switchDown.svg" : "switchUp.svg", transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp)) }),
+                getTint:      (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;

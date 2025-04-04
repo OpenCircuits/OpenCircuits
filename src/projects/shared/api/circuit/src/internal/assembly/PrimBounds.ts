@@ -28,8 +28,9 @@ export function Bounds(prim: Prim): Rect | undefined {
         // so make sure you have another prim surrounding it otherwise it will get culled.
         return Rect.From({ cx: prim.pos.x, cy: prim.pos.y, height: 0, width: 0 });
     case "Group":
-        if (prim.prims.length === 0)
+        const prims = prim.prims.map((p) => Bounds({ ...p, style: prim.style })).filter(IsDefined)
+        if (prims.length === 0)
             return undefined;
-        return Rect.Bounding(prim.prims.map((p) => Bounds({ ...p, style: prim.style })).filter(IsDefined));
+        return Rect.Bounding(prims);
     }
 }

@@ -100,6 +100,8 @@ export class PrimRenderer {
                 ctx.lineWidth = prim.style.stroke.size;
                 if (prim.style.stroke.lineCap !== undefined)
                     ctx.lineCap = prim.style.stroke.lineCap;
+                if (prim.style.stroke.lineJoin !== undefined)
+                    ctx.lineJoin = prim.style.stroke.lineJoin;
             }
             if (prim.style.alpha !== undefined)
                 ctx.globalAlpha = prim.style.alpha;
