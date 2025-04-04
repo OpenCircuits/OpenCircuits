@@ -9,7 +9,7 @@ const topLeft = [V(.095,-0.18), V(-0.045,0.27), V(-0.095,0.27), V(-0.095, .0794)
 const topRight = topLeft.map((v) => v.scale(V(-1, 1)));
 const bottomLeft = topLeft.map((v) => v.scale(V(1, -1)));
 const bottomRight = topLeft.map((v) => v.scale(V(-1, -1)));
-type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" |
+export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" |
                           "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
 export const segmentToVector: Record<SegmentType, Vector[]> = {
