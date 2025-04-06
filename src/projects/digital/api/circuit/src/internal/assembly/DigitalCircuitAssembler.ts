@@ -21,6 +21,7 @@ import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/int
 import {BCDDisplayAssembler} from "./components/displays/BCDDisplayAssembler";
 import {ASCIIDisplayAssembler} from "./components/displays/ASCIIDisplayAssembler";
 import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssembler";
+import {BufferAssembler} from "./components/gates/BufferAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -90,6 +91,8 @@ export function MakeDigitalCircuitAssembler(
         "ASCIIDisplay":   new ASCIIDisplayAssembler(params, sim),
 
         // Gates
+        "BUFGate":  new BufferAssembler(params, sim, false),
+        "NOTGate":  new BufferAssembler(params, sim, true),
         "ANDGate":  new ANDGateAssembler(params, sim, false),
         "NANDGate": new ANDGateAssembler(params, sim, true),
         "ORGate":   new ORGateAssembler(params, sim, { xor: false, not: false }),
