@@ -22,6 +22,8 @@ import {BCDDisplayAssembler} from "./components/displays/BCDDisplayAssembler";
 import {ASCIIDisplayAssembler} from "./components/displays/ASCIIDisplayAssembler";
 import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssembler";
 import {BufferAssembler} from "./components/gates/BufferAssembler";
+import {TwoInputFlipFlopAssembler} from "./components/flipflops/TwoInputFlipFlopAssembler";
+import {OneInputFlipFlopAssembler} from "./components/flipflops/OneInputFlipFlopAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -101,6 +103,10 @@ export function MakeDigitalCircuitAssembler(
         "XNORGate": new ORGateAssembler(params, sim, { xor: true,  not: true  }),
 
         // FlipFlops
+        "SRFlipFlop": new TwoInputFlipFlopAssembler(params, sim, "SRFlipFlop", "S", "R"),
+        "JKFlipFlop": new TwoInputFlipFlopAssembler(params, sim, "JKFlipFlop", "J", "K"),
+        "DFlipFlop":  new OneInputFlipFlopAssembler(params, sim, "DFlipFlop", "D"),
+        "TFlipFlop":  new OneInputFlipFlopAssembler(params, sim, "TFlipFlop", "T"),
 
         // Latches
 
