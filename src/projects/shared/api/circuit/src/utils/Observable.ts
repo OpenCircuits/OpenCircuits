@@ -24,7 +24,14 @@ export abstract class ObservableImpl<Event = unknown> implements Observable<Even
             return;
 
         // Shallow copy in case the callbacks try to sub/unsub while iterating
-        [...this.callbacks].forEach((c) => c(data));
+        [...this.callbacks].forEach((c) => {
+            try {
+                c(data);
+            } catch (e) {
+                // Don't let errors thrown by subscribers to cancel others
+                console.error(e);
+            }
+        });
     }
 
     protected unsubscribeAll() {

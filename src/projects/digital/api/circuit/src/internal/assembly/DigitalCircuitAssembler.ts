@@ -2,8 +2,6 @@ import {V} from "Vector";
 
 import {CircuitInternal, GUID} from "shared/api/circuit/internal";
 
-import {Schema} from "shared/api/circuit/schema";
-import {MapObj} from "shared/api/circuit/utils/Functions";
 import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
@@ -64,31 +62,10 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
     }
 
     protected override createIC(icId: GUID): Assembler {
-        const ic = this.circuit.getICInfo(icId).unwrap();
-
-        const ports = ic.metadata.pins.reduce((prev, pin) => ({
-            ...prev,
-            [pin.group]: [...(prev[pin.group] ?? []), pin],
-        }), {} as Record<string, Array<Schema.IntegratedCircuitMetadata["pins"][number]>>);
-
-        const portFactory = MapObj(ports, ([_, ids]) =>
-            (index: number, _total: number) => {
-                const pos = V(ids[index].x, ids[index].y);
-                const size = V(ic.metadata.displayWidth, ic.metadata.displayHeight);
-                return {
-                    origin: V(pos.x, pos.y),
-
-                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
-                        ? V(1, 0).scale(Math.sign(pos.x))
-                        : V(0, 1).scale(Math.sign(pos.y)),
-                };
-            });
-
         return new ICComponentAssembler(
             { circuit: this.circuit, cache: this.cache, options: this.options },
-            V(ic.metadata.displayWidth, ic.metadata.displayHeight),
-            portFactory,
-        )
+            icId,
+        );
     }
 }
 

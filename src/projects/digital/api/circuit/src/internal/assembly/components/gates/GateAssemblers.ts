@@ -6,6 +6,7 @@ import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/DigitalComponents";
 import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
+import {Schema} from "shared/api/circuit/schema";
 
 
 export type SimplifiedAssembly = {
@@ -24,12 +25,14 @@ export class GateAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
     protected info: DigitalComponentConfigurationInfo;
 
+    protected readonly size: Vector;
+
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
         { kind, size, svg, not, portFactory, otherPrims }: GateAssemblerParams
     ) {
-        super(params, size, portFactory, [
+        super(params, portFactory, [
             // NOT symbol
             ...((not ? [{
                 kind: "BaseShape",
@@ -86,5 +89,10 @@ export class GateAssembler extends ComponentAssembler {
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
+        this.size = size;
+    }
+
+    protected override getSize(_: Schema.Component): Vector {
+        return this.size;
     }
 }

@@ -20,7 +20,7 @@ export type PartialPortPos = {
 
 export type PortFactory = Record<
     string,
-    (index: number, total: number) => PartialPortPos
+    (parent: Schema.Component, index: number, total: number) => PartialPortPos
 >;
 
 export class PortAssembler extends Assembler<Schema.Component> {
@@ -32,8 +32,8 @@ export class PortAssembler extends Assembler<Schema.Component> {
         this.factory = factory;
     }
 
-    public calcPos(group: string, index: number, groupLen: number): PortPos {
-        const pPos = this.factory[group](index, groupLen);
+    public calcPos(parent: Schema.Component, group: string, index: number, groupLen: number): PortPos {
+        const pPos = this.factory[group](parent, index, groupLen);
 
         const origin = pPos.origin;
         const target = (pPos.target ?? origin.add(pPos.dir.scale(this.options.defaultPortLength)));
@@ -68,7 +68,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 portIDs.forEach((portID) => {
                     const port = this.circuit.getPortByID(portID).unwrap();
 
-                    this.cache.localPortPositions.set(portID, this.calcPos(group, port.index, portIDs.length));
+                    this.cache.localPortPositions.set(portID, this.calcPos(parent, group, port.index, portIDs.length));
                 });
             });
         }

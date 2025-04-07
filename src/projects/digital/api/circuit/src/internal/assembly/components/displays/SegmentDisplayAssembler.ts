@@ -22,7 +22,7 @@ export class SegmentDisplayAssembler extends BaseDisplayAssembler {
         });
     }
 
-    protected override getInputPortYValue(index: number, total: number): number {
+    protected override getInputPortYValue(_comp: Schema.Component, index: number, total: number): number {
         const midpoint = (total - 1) / 2;
         return -((2*this.options.defaultPortRadius+.02) * (index - midpoint));
     }
@@ -42,7 +42,7 @@ export class SegmentDisplayAssembler extends BaseDisplayAssembler {
         const y1 = -((2*this.options.defaultPortRadius+.02) * (-((numInputs - 1) / 2)));
         const y2 = -((2*this.options.defaultPortRadius+.02) * ((numInputs - 1) - ((numInputs - 1) / 2)));
 
-        const x = -(this.size.x - this.options.defaultBorderWidth) / 2;
+        const x = -(this.getSize(comp).x - this.options.defaultBorderWidth) / 2;
 
         const transform = this.getTransform(comp);
         return {

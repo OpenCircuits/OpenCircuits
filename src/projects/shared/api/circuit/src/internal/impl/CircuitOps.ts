@@ -36,6 +36,7 @@ export interface SplitWireOp {
 export interface SetPropertyOp {
     kind: "SetPropertyOp";
     id: Schema.GUID;
+    ic: boolean; // Indicates if this is a property on an IC
     key: string;
     newVal?: Schema.Prop;
     oldVal?: Schema.Prop;
@@ -55,6 +56,24 @@ export interface CreateICOp {
     inverted: boolean;
     ic: Schema.IntegratedCircuit;
 }
+
+// // TODO: Generalize these somehow
+// export interface EditICDisplaySizeOp {
+//     kind: "EditICDisplayOp";
+//     newWidth: number;
+//     newHeight: number;
+//     oldWidth: number;
+//     oldHeight: number;
+// }
+// export interface EditICPortPosOp {
+//     kind: "EditICPortPosOp";
+//     ic: Schema.GUID;
+//     index: number;
+//     newX: number;
+//     newY: number;
+//     oldX: number;
+//     oldY: number;
+// }
 
 export type CircuitOp = PlaceComponentOp
                       | ReplaceComponentOp

@@ -1,3 +1,4 @@
+import {linspace} from "math/MathUtils";
 import {Circuit, ICPin, IntegratedCircuitDisplay} from "shared/api/circuit/public";
 import {V} from "Vector";
 
@@ -16,18 +17,23 @@ export function CalculateICDisplay(circuit: Circuit): IntegratedCircuitDisplay {
     const w = 1 + 0.3*longestName;
     const h = inputs.length/2;
 
+    const inputYs  = linspace(-1, 1, inputs.length,  { endpoint: false, centered: true });
+    const outputYs = linspace(-1, 1, outputs.length, { endpoint: false, centered: true });
+
     return {
         size: V(w, h),
         pins: [
             ...inputs.map((input, index): ICPin => ({
                 id:    input.allPorts[0].id,
                 group: "inputs",
-                pos:   V(-w / 2, -(index - (inputs.length)/2 + 0.5)/2),
+                pos:   V(-1, inputYs[index]),
+                dir:   V(-1, 0),
             })),
             ...outputs.map((output, index): ICPin => ({
                 id:    output.allPorts[0].id,
                 group: "outputs",
-                pos:   V(+w / 2, -(index - (inputs.length)/2 + 0.5)/2),
+                pos:   V(+1, outputYs[index]),
+                dir:   V(+1, 0),
             })),
         ],
     };

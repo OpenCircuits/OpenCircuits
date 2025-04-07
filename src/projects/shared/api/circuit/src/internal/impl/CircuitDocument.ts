@@ -13,7 +13,7 @@ import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
 
 export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> {
     readonly id: GUID;
-    readonly metadata: M;
+    readonly metadata: Readonly<M>;
 
     getObjectInfo(kind: string): Result<ObjInfo>;
     getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
@@ -419,43 +419,10 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
             .unwrap();
     }
 
-    // public addObjs(objs: Schema.Obj[]): Result {
-    //     const storage = this.storage;
+    private getMutableICInfo(icId: GUID): Result<CircuitStorage<Schema.IntegratedCircuitMetadata>> {
+        return WrapResOrE(this.icStorage.get(icId), `CircuitDocument.getICInfo: Invalid IC ID ${icId}!`);
+    }
 
-    //     objs.filter((o) => (o.baseKind === "Component"))
-    //         .forEach((c) => storage.addComponent(c));
-    //     objs.filter((o) => (o.baseKind === "Port"))
-    //         .forEach((p) => storage.addPort(p));
-    //     objs.filter((o) => (o.baseKind === "Wire"))
-    //         .forEach((w) => storage.addWire(w));
-
-    //     this.publish({
-    //         type: "CircuitOp",
-    //         diff: {
-    //             addedComponents: new Set(objs.filter((o) => (o.baseKind === "Component")).map((o) => o.id)),
-    //             addedWires:      new Set(objs.filter((o) => (o.baseKind === "Wire")).map((o) => o.id)),
-
-    //             propsChanged:      new Map(),
-    //             portsChanged:      new Set<string>(),
-    //             removedComponents: new Set<string>(),
-    //             removedWires:      new Set<string>(),
-    //             removedWiresPorts: new Map(),
-    //         },
-    //     });
-
-    //     return OkVoid();
-    // }
-
-    // public getCircuitIds(): Set<GUID> {
-    //     return new Set(this.storage.keys());
-    // }
-
-    // public setMetadataFor<M extends Schema.CircuitMetadata>(circuit: GUID, newMetadata: Partial<M>) {
-    //     return this.getMutableCircuitStorage(circuit)
-    //         .map((c) => {
-    //             (c.metadata as M) = { ...(c.metadata as M), ...newMetadata };
-    //         });
-    // }
     public setMetadata(metadata: Partial<Schema.CircuitMetadata>) {
         this.storage.metadata = {
             ...this.storage.metadata,
@@ -487,8 +454,8 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         return new Set(this.icStorage.keys());
     }
 
-    public getICInfo(icID: GUID): Result<ReadonlyCircuitStorage<Schema.IntegratedCircuitMetadata>> {
-        return WrapResOrE(this.icStorage.get(icID), `CircuitDocument.getICInfo: Invalid IC ID ${icID}!`);
+    public getICInfo(icId: GUID): Result<ReadonlyCircuitStorage<Schema.IntegratedCircuitMetadata>> {
+        return this.getMutableICInfo(icId);
     }
 
     //
@@ -621,6 +588,26 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
     private setProperty(op: SetPropertyOp): Result {
         const storage = this.storage;
+
+        if (op.ic) {
+            return this.getMutableICInfo(op.id)
+                .map((ic) => {
+                    const val = (op.newVal ?? op.oldVal);
+
+                    if (op.key === "name" && typeof val === "string") {
+                        ic.metadata.name = val;
+                    } else if ((op.key === "displayWidth" || op.key === "displayHeight") && typeof val === "number") {
+                        ic.metadata[op.key] = val;
+                    } else if (op.key.startsWith("pins.") && typeof val === "number") {
+                        // pins.INDEX.(x|y)
+                        const [_, idx, key] = op.key.split(".");
+                        if (key === "x" || key === "y")
+                            ic.metadata.pins[parseInt(idx)][key] = val;
+                    } else {
+                        throw new Error(`Unknown property type ${op.key} or value type ${typeof val} for ICs!`);
+                    }
+                });
+        }
 
         return storage.getMutObjectAndInfoByID(op.id)
             .andThen(([obj, info]) => info.checkPropValue(op.key, op.newVal)

@@ -1,4 +1,4 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
@@ -15,15 +15,15 @@ export class ButtonAssembler extends ComponentAssembler {
     protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
-        super(params, V(1, 1), {
-            "outputs": () => ({origin: V(0.5, 0), dir: V(1, 0)})
+        super(params, {
+            "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) })
         }, [
             {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
                 assemble: (comp) => ({
-                    kind: "Rectangle",
+                    kind:      "Rectangle",
                     transform: this.getTransform(comp),
                 }),
 
@@ -33,7 +33,11 @@ export class ButtonAssembler extends ComponentAssembler {
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
-                assemble: (comp) => ({kind: "SVG", svg: this.isOn(comp) ? "buttonDown.svg" : "buttonUp.svg", transform: this.getTransform(comp)}),
+                assemble: (comp) => ({
+                    kind:      "SVG",
+                    svg:       this.isOn(comp) ? "buttonDown.svg" : "buttonUp.svg",
+                    transform: this.getTransform(comp),
+                }),
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
             },
         ]);
@@ -41,9 +45,12 @@ export class ButtonAssembler extends ComponentAssembler {
         this.info = this.circuit.getComponentInfo("Button").unwrap() as DigitalComponentConfigurationInfo;
     }
 
+    protected override getSize(_: Schema.Component): Vector {
+        return V(1, 1);
+    }
+
     private isOn(sw: Schema.Component) {
         const [outputPort] = this.circuit.getPortsForComponent(sw.id).unwrap();
         return Signal.isOn(this.sim.getSignal(outputPort));
     }
-
 }

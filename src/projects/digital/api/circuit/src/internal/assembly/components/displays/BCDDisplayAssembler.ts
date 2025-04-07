@@ -13,9 +13,10 @@ export class BCDDisplayAssembler extends BaseDisplayAssembler {
         });
     }
 
-    protected override getInputPortYValue(index: number, total: number): number {
+    protected override getInputPortYValue(comp: Schema.Component, index: number, total: number): number {
         const midpoint = (total - 1) / 2;
-        return -(.6 * this.size.y /2 * (index - midpoint) + (index === 0 ? 0.02 : index === total - 1 ? -0.02 : 0));
+        return -(.6 * this.getSize(comp).y /2 * (index - midpoint) +
+                (index === 0 ? 0.02 : index === total - 1 ? -0.02 : 0));
     }
     protected override getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]> {
         const inputValues = this.getInputValues(comp);

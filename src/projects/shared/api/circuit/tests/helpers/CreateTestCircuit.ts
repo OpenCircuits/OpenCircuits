@@ -63,9 +63,7 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
     }
 
     public override createIC(ic: Schema.IntegratedCircuit): void {
-        const ports = ic.metadata.pins.reduce<
-            Record<string, Array<Schema.IntegratedCircuitMetadata["pins"][number]>>
-        >((prev, pin) => ({
+        const ports = ic.metadata.pins.reduce<Record<string, Schema.IntegratedCircuitPin[]>>((prev, pin) => ({
             ...prev,
             [pin.group]: [...(prev[pin.group] ?? []), pin],
         }), {});
@@ -81,37 +79,16 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
 
 export class TestCircuitAssembler extends CircuitAssembler {
     protected override createIC(icId: GUID): Assembler {
-        const ic = this.circuit.getICInfo(icId).unwrap();
-
-        const ports = ic.metadata.pins.reduce((prev, pin) => ({
-            ...prev,
-            [pin.group]: [...(prev[pin.group] ?? []), pin],
-        }), {} as Record<string, Array<Schema.IntegratedCircuitMetadata["pins"][number]>>);
-
-        const portFactory = MapObj(ports, ([_, ids]) =>
-            (index: number, _total: number) => {
-                const pos = V(ids[index].x, ids[index].y);
-                const size = V(ic.metadata.displayWidth, ic.metadata.displayHeight);
-                return {
-                    origin: V(pos.x, pos.y),
-
-                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
-                        ? V(1, 0).scale(Math.sign(pos.x))
-                        : V(0, 1).scale(Math.sign(pos.y)),
-                };
-            });
-
         return new ICComponentAssembler(
             { circuit: this.circuit, cache: this.cache, options: this.options },
-            V(ic.metadata.displayWidth, ic.metadata.displayHeight),
-            portFactory,
-        )
+            icId,
+        );
     }
 }
 
 export class TestComponentAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams) {
-        super(params, V(1, 1),  {
+        super(params,  {
             "": () => ({ origin: V(0, 0), target: V(1, 0) }),
         }, [
             { // Line
@@ -128,6 +105,10 @@ export class TestComponentAssembler extends ComponentAssembler {
                 getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
         ]);
+    }
+
+    protected override getSize(_comp: Schema.Component): Vector {
+        return V(1, 1);
     }
 }
 

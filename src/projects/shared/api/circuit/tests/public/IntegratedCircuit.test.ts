@@ -31,9 +31,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: GetPort(pin1).id, group: "", pos: V(-2, -0.5) },
-                    { id: GetPort(pin2).id, group: "", pos: V(-2, +0.5) },
-                    { id: GetPort(pin3).id, group: "", pos: V(+2, 0) },
+                    { id: GetPort(pin1).id, group: "", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin2).id, group: "", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin3).id, group: "", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -49,13 +49,13 @@ describe("IntegratedCircuit", () => {
         expect(icInstance.ports[""]).toHaveLength(3);
         expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
 
-        expect(icInstance.ports[""][0].originPos).toApproximatelyEqual(V(-2, -0.5).add(1, 1));
-        expect(icInstance.ports[""][1].originPos).toApproximatelyEqual(V(-2, +0.5).add(1, 1));
-        expect(icInstance.ports[""][2].originPos).toApproximatelyEqual(V(+2, 0).add(1, 1));
+        expect(icInstance.ports[""][0].originPos).toApproximatelyEqual(V(-2, -0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][1].originPos).toApproximatelyEqual(V(-2, +0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][2].originPos).toApproximatelyEqual(V(+2, 0).add(icInstance.pos));
 
-        expect(icInstance.ports[""][0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(1, 1));
-        expect(icInstance.ports[""][1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(1, 1));
-        expect(icInstance.ports[""][2].targetPos).toApproximatelyEqual(V(+2.7, 0).add(1, 1));
+        expect(icInstance.ports[""][0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][2].targetPos).toApproximatelyEqual(V(+2.7, 0).add(icInstance.pos));
     });
 
     test("Nested IC", () => {
@@ -77,9 +77,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Inner.allPorts[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2Inner.allPorts[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1Inner.allPorts[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1Inner.allPorts[0].id, group: "inputs",  pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Inner.allPorts[0].id, group: "inputs",  pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Inner.allPorts[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -113,9 +113,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Outer.allPorts[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2Outer.allPorts[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1Outer.allPorts[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1Outer.allPorts[0].id, group: "inputs",  pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Outer.allPorts[0].id, group: "inputs",  pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Outer.allPorts[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -126,5 +126,71 @@ describe("IntegratedCircuit", () => {
         expect(outerIcInstance.ports["inputs"]).toHaveLength(2);
         expect(outerIcInstance.ports["outputs"]).toHaveLength(1);
         expect(outerIcInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
+    });
+
+    test("Change IC display", () => {
+        const [mainCircuit, mainState, { }] = CreateTestCircuit();
+
+        const [icCircuit, icState, { GetPort, Connect }] = CreateTestCircuit();
+
+        const pin1 = icCircuit.placeComponentAt("Pin", V(-5, -5));
+        const pin2 = icCircuit.placeComponentAt("Pin", V(-5, +5));
+        const pin3 = icCircuit.placeComponentAt("Pin", V(+5, 0));
+        const g = icCircuit.placeComponentAt("TestComp", V(0, 0));
+
+        icCircuit.name = "My IC";
+        GetPort(pin1).name = "In 1";
+        GetPort(pin2).name = "In 2";
+        GetPort(pin3).name = "Out";
+
+        Connect(pin1, g), Connect(pin2, g), Connect(g, pin3);
+
+        const ic = mainCircuit.createIC({
+            circuit: icCircuit,
+            display: {
+                size: V(4, 2),
+                pins: [
+                    { id: GetPort(pin1).id, group: "", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin2).id, group: "", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin3).id, group: "", pos: V(+1,    0), dir: V(+1, 0) },
+                ],
+            },
+        });
+        expect(mainCircuit.getICs()).toHaveLength(1);
+        expect(mainCircuit.getICs()[0].id).toEqual(ic.id);
+
+        expect(ic.name).toBe("My IC");
+        expect(ic.display.size).toEqual(V(4, 2));
+        expect(ic.display.pins).toHaveLength(3);
+
+        const icInstance = mainCircuit.placeComponentAt(ic.id, V(1, 1));
+
+        expect(icInstance.ports[""]).toHaveLength(3);
+        expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
+
+        expect(icInstance.ports[""][0].originPos).toApproximatelyEqual(V(-2, -0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][1].originPos).toApproximatelyEqual(V(-2, +0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][2].originPos).toApproximatelyEqual(V(+2, 0).add(icInstance.pos));
+
+        expect(icInstance.ports[""][0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(icInstance.pos));
+        expect(icInstance.ports[""][2].targetPos).toApproximatelyEqual(V(+2.7, 0).add(icInstance.pos));
+
+        // Change size
+        ic.display.size = V(6, 4);
+        expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(6, 4)));
+
+        expect(icInstance.ports[""][0].originPos).toApproximatelyEqual(V(-3, -1).add(icInstance.pos));
+        expect(icInstance.ports[""][1].originPos).toApproximatelyEqual(V(-3, +1).add(icInstance.pos));
+        expect(icInstance.ports[""][2].originPos).toApproximatelyEqual(V(+3, 0).add(icInstance.pos));
+
+        expect(icInstance.ports[""][0].targetPos).toApproximatelyEqual(V(-3.7, -1).add(icInstance.pos));
+        expect(icInstance.ports[""][1].targetPos).toApproximatelyEqual(V(-3.7, +1).add(icInstance.pos));
+        expect(icInstance.ports[""][2].targetPos).toApproximatelyEqual(V(+3.7, 0).add(icInstance.pos));
+
+        // Change port location
+        ic.display.pins[2].pos = V(1, 1);
+        expect(icInstance.ports[""][2].originPos).toApproximatelyEqual(V(+3, 2).add(icInstance.pos));
+        expect(icInstance.ports[""][2].targetPos).toApproximatelyEqual(V(+3.7, 2).add(icInstance.pos));
     });
 });

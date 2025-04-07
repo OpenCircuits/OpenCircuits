@@ -15,6 +15,7 @@ export interface FastCircuitDiff {
     // ICs
     addedICs: ReadonlySet<GUID>;
     removedICs: ReadonlySet<GUID>;
+    changedPropICs: ReadonlySet<GUID>;
 
     // Components
     addedComponents: ReadonlySet<GUID>;
@@ -34,6 +35,7 @@ export class FastCircuitDiffBuilder {
     // ICs
     private readonly addedICs: Set<GUID> = new Set();
     private readonly removedICs: Set<GUID> = new Set();
+    private readonly changedPropICs: Set<GUID> = new Set();
 
     // Components
     private readonly addedComponents: Set<GUID>;
@@ -55,6 +57,7 @@ export class FastCircuitDiffBuilder {
     public constructor() {
         this.addedICs          = new Set();
         this.removedICs        = new Set();
+        this.changedPropICs    = new Set();
         this.addedComponents   = new Set();
         this.removedComponents = new Set();
         this.portsChanged      = new Set();
@@ -69,6 +72,7 @@ export class FastCircuitDiffBuilder {
         return {
             addedICs:          this.addedICs,
             removedICs:        this.removedICs,
+            changedPropICs:    this.changedPropICs,
             addedComponents:   this.addedComponents,
             removedComponents: this.removedComponents,
             portsChanged:      this.portsChanged,
@@ -123,7 +127,11 @@ export class FastCircuitDiffBuilder {
             case "SplitWireOp":
                 throw new Error("Unimplemented");
             case "SetPropertyOp":
-                this.getOrCreatePropSet(op.id).add(op.key);
+                if (op.ic) {
+                    this.changedPropICs.add(op.id);
+                } else {
+                    this.getOrCreatePropSet(op.id).add(op.key);
+                }
                 break;
             case "CreateICOp":
                 if (op.inverted) {
@@ -143,6 +151,7 @@ export class FastCircuitDiffBuilder {
         const merge = <T>(from: ReadonlySet<T>, into: Set<T>) => from.forEach((v) => into.add(v));
         merge(diff.addedICs,          this.addedICs);
         merge(diff.removedICs,        this.removedICs);
+        merge(diff.changedPropICs,    this.changedPropICs);
         merge(diff.addedComponents,   this.addedComponents);
         merge(diff.removedComponents, this.removedComponents);
         merge(diff.portsChanged,      this.portsChanged);
@@ -172,6 +181,7 @@ export interface CircuitDiff {
     //
     addedICs: ReadonlyMap<GUID, Schema.IntegratedCircuit>;
     removedICs: ReadonlyMap<GUID, Schema.IntegratedCircuit>;
+    changedPropICs: ReadonlyMap<GUID, ReadonlyMap<string, Schema.Prop>>;
 
     //
     // Graph changes.  These contain NO "props".

@@ -31,9 +31,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         })
@@ -48,13 +48,13 @@ describe("IntegratedCircuit", () => {
         expect(icInstance.outputs).toHaveLength(1);
         expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
 
-        expect(icInstance.inputs[0].originPos).toApproximatelyEqual(V(-2, -0.5).add(1, 1));
-        expect(icInstance.inputs[1].originPos).toApproximatelyEqual(V(-2, +0.5).add(1, 1));
-        expect(icInstance.outputs[0].originPos).toApproximatelyEqual(V(+2, 0).add(1, 1));
+        expect(icInstance.inputs[0].originPos).toApproximatelyEqual(V(-2, -0.5).add(icInstance.pos));
+        expect(icInstance.inputs[1].originPos).toApproximatelyEqual(V(-2, +0.5).add(icInstance.pos));
+        expect(icInstance.outputs[0].originPos).toApproximatelyEqual(V(+2, 0).add(icInstance.pos));
 
-        expect(icInstance.inputs[0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(1, 1));
-        expect(icInstance.inputs[1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(1, 1));
-        expect(icInstance.outputs[0].targetPos).toApproximatelyEqual(V(+2.7, 0).add(1, 1));
+        expect(icInstance.inputs[0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(icInstance.pos));
+        expect(icInstance.inputs[1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(icInstance.pos));
+        expect(icInstance.outputs[0].targetPos).toApproximatelyEqual(V(+2.7, 0).add(icInstance.pos));
     });
 
     test("Nested IC", () => {
@@ -81,9 +81,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Inner.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2Inner.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1Inner.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1Inner.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Inner.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Inner.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -119,9 +119,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Outer.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2Outer.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1Outer.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1Outer.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Outer.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Outer.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });

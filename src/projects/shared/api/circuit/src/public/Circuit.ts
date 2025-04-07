@@ -110,13 +110,15 @@ export interface ICInfo {
     display: IntegratedCircuitDisplay;
 }
 export interface ICPin {
-    id: GUID;  // ID of corresponding PORT
-    group: string;
+    readonly id: GUID;  // ID of corresponding PORT
+    readonly group: string;
+
     pos: Vector;
+    dir: Vector;
 }
 export interface IntegratedCircuitDisplay {
-    readonly size: Vector;
-    readonly pins: readonly ICPin[];
+    size: Vector;
+    readonly pins: ICPin[];
 }
 export interface IntegratedCircuit {
     readonly id: GUID;

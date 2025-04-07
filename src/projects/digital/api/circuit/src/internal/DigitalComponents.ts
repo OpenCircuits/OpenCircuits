@@ -275,9 +275,7 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
     }
 
     public override createIC(ic: Schema.IntegratedCircuit): void {
-        const ports = ic.metadata.pins.reduce<
-            Record<string, Array<Schema.IntegratedCircuitMetadata["pins"][number]>>
-        >((prev, pin) => ({
+        const ports = ic.metadata.pins.reduce<Record<string, Schema.IntegratedCircuitPin[]>>((prev, pin) => ({
             ...prev,
             [pin.group]: [...(prev[pin.group] ?? []), pin],
         }), {});

@@ -126,14 +126,16 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         return undefined;
     }
     public getObjs(): T["Obj[]"] {
-        return [...this.state.internal.getObjs()]
+        return [...this.internal.getObjs()]
             .map((id) => this.getObj(id)!);
     }
     public getComponents(): T["Component[]"] {
-        return this.getObjs().filter(isObjComponent);
+        return [...this.internal.getComps()]
+            .map((id) => this.state.constructComponent(id));
     }
     public getWires(): T["Wire[]"] {
-        return this.getObjs().filter(isObjWire);
+        return [...this.internal.getWires()]
+            .map((id) => this.state.constructWire(id));
     }
     public getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
         const info = this.state.internal.getComponentInfo(kind);
@@ -221,7 +223,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             displayWidth:  info.display.size.x,
             displayHeight: info.display.size.y,
 
-            pins: info.display.pins.map(({ id, group, pos }) => ({ id, group, x: pos.x, y: pos.y })),
+            pins: info.display.pins.map(({ id, group, pos, dir }) =>
+                ({ id, group, x: pos.x, y: pos.y, dx: dir.x, dy: dir.y })),
         };
 
         this.internal.beginTransaction();
@@ -297,6 +300,56 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
 }
 
+class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
+    protected readonly icId: GUID;
+    protected readonly pinIndex: number;
+
+    protected readonly state: CircuitState<T>;
+
+    public constructor(state: CircuitState<T>, icId: GUID, pinIndex: number) {
+        this.state = state;
+        this.icId = icId;
+        this.pinIndex = pinIndex;
+    }
+
+    protected get ic() {
+        return this.state.internal.getICInfo(this.icId).unwrap();
+    }
+
+    public get id(): GUID {
+        return this.ic.metadata.pins[this.pinIndex].id;
+    }
+    public get group(): GUID {
+        return this.ic.metadata.pins[this.pinIndex].group;
+    }
+
+    public set pos(p: Vector) {
+        this.state.internal.beginTransaction();
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.x`, p.x);
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.y`, p.y);
+        this.state.internal.commitTransaction();
+    }
+    public get pos(): Vector {
+        return V(
+            this.ic.metadata.pins[this.pinIndex].x,
+            this.ic.metadata.pins[this.pinIndex].y,
+        );
+    }
+
+    public set dir(p: Vector) {
+        this.state.internal.beginTransaction();
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dx`, p.x);
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dy`, p.y);
+        this.state.internal.commitTransaction();
+    }
+    public get dir(): Vector {
+        return V(
+            this.ic.metadata.pins[this.pinIndex].dx,
+            this.ic.metadata.pins[this.pinIndex].dy,
+        );
+    }
+}
+
 class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements IntegratedCircuitDisplay {
     protected readonly id: GUID;
 
@@ -307,17 +360,21 @@ class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements Integrated
         this.id = id;
     }
 
-    public get size(): Vector {
-        const ic = this.state.internal.getICInfo(this.id).unwrap();
-        return V(ic.metadata.displayWidth, ic.metadata.displayHeight);
+    protected get ic() {
+        return this.state.internal.getICInfo(this.id).unwrap();
     }
-    public get pins(): readonly ICPin[] {
-        const ic = this.state.internal.getICInfo(this.id).unwrap();
-        return ic.metadata.pins.map(({ id, group, x, y }) => ({
-            id,
-            pos: V(x, y),
-            group,
-        }));
+
+    public set size(p: Vector) {
+        this.state.internal.beginTransaction();
+        this.state.internal.setPropForIC(this.id, "displayWidth", p.x);
+        this.state.internal.setPropForIC(this.id, "displayHeight", p.y);
+        this.state.internal.commitTransaction();
+    }
+    public get size(): Vector {
+        return V(this.ic.metadata.displayWidth, this.ic.metadata.displayHeight);
+    }
+    public get pins(): ICPin[] {
+        return this.ic.metadata.pins.map((_, i) => new IntegratedCircuitPinImpl(this.state, this.id, i));
     }
 }
 
