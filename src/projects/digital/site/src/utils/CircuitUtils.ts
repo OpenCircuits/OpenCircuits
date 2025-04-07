@@ -1,9 +1,9 @@
 import {linspace} from "math/MathUtils";
-import {Circuit, ICPin, IntegratedCircuitDisplay} from "shared/api/circuit/public";
+import {Circuit, ReadonlyICPin, ReadonlyIntegratedCircuitDisplay} from "shared/api/circuit/public";
 import {V} from "Vector";
 
 
-export function CalculateICDisplay(circuit: Circuit): IntegratedCircuitDisplay {
+export function CalculateICDisplay(circuit: Circuit): ReadonlyIntegratedCircuitDisplay {
     const validInputKinds = new Set(["Switch", "Button", "Clock"]);
     const validOutputKinds = new Set(["LED"]);
 
@@ -23,13 +23,13 @@ export function CalculateICDisplay(circuit: Circuit): IntegratedCircuitDisplay {
     return {
         size: V(w, h),
         pins: [
-            ...inputs.map((input, index): ICPin => ({
+            ...inputs.map((input, index): ReadonlyICPin => ({
                 id:    input.allPorts[0].id,
                 group: "inputs",
                 pos:   V(-1, inputYs[index]),
                 dir:   V(-1, 0),
             })),
-            ...outputs.map((output, index): ICPin => ({
+            ...outputs.map((output, index): ReadonlyICPin => ({
                 id:    output.allPorts[0].id,
                 group: "outputs",
                 pos:   V(+1, outputYs[index]),

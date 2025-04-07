@@ -10,7 +10,7 @@ import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 import {Camera, CameraEvent} from "../Camera";
 import {Viewport} from "../Viewport";
-import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
+import {CircuitDesignerState} from "./CircuitDesignerState";
 
 
 export const MIN_ZOOM = 1e-6;
@@ -20,22 +20,19 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
     protected readonly state: CircuitDesignerState<T>;
     protected readonly view: Viewport;
 
-    protected readonly key: CameraRecordKey;
-
     protected readonly mat: DirtyVar<Matrix2x3>;
 
-    public constructor(state: CircuitDesignerState<T>, view: Viewport, key: CameraRecordKey) {
+    public constructor(state: CircuitDesignerState<T>, view: Viewport) {
         super();
 
         this.state = state;
         this.view = view;
-        this.key = key;
-
         this.mat = new DirtyVar<Matrix2x3>(() => {
-            const { x, y, zoom } = state.cameras[key];
+            const { x, y, zoom } = state.camera;
 
+            const screenSize = view.canvasInfo?.screenSize ?? V(0, 0);
             return new Matrix2x3(
-                V(x - view.screenSize.x/2 * zoom, y - view.screenSize.y/2 * -zoom),
+                V(x - screenSize.x/2 * zoom, y - screenSize.y/2 * -zoom),
                 0,
                 V(zoom, -zoom)
             );
@@ -55,7 +52,7 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
     }
 
     public set cx(x: number) {
-        const cam = this.state.cameras[this.key];
+        const cam = this.state.camera;
         const dx = (cam.x - x);
 
         // No change, do nothing
@@ -67,10 +64,10 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
         this.mat.setDirty();
     }
     public get cx(): number {
-        return this.state.cameras[this.key].x;
+        return this.state.camera.x;
     }
     public set cy(y: number) {
-        const cam = this.state.cameras[this.key];
+        const cam = this.state.camera;
         const dy = (cam.y - y);
 
         // No change, do nothing
@@ -82,10 +79,10 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
         this.mat.setDirty();
     }
     public get cy(): number {
-        return this.state.cameras[this.key].y;
+        return this.state.camera.y;
     }
     public set pos({ x, y }: Vector) {
-        const cam = this.state.cameras[this.key];
+        const cam = this.state.camera;
         const dx = (cam.x - x), dy = (cam.y - y);
 
         // No change, do nothing
@@ -98,13 +95,13 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
         this.mat.setDirty();
     }
     public get pos(): Vector {
-        const camera = this.state.cameras[this.key];
+        const camera = this.state.camera;
 
         return V(camera.x, camera.y);
     }
 
     public set zoom(zoom: number) {
-        const cam = this.state.cameras[this.key];
+        const cam = this.state.camera;
         const dz = (cam.zoom - zoom);
 
         // No change, do nothing
@@ -116,7 +113,7 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
         this.mat.setDirty();
     }
     public get zoom(): number {
-        return this.state.cameras[this.key].zoom;
+        return this.state.camera.zoom;
     }
 
     public translate(delta: Vector, space: Vector.Spaces = "world"): void {

@@ -1,26 +1,23 @@
 import {V, Vector} from "Vector";
 
-import {RectContains} from "math/MathUtils";
-import {Transform}    from "math/Transform";
+import {GetNearestPointOnRect} from "math/MathUtils";
 
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
 import {Tool, ToolEvent} from "shared/api/circuitdesigner/tools/Tool";
-import {Circuit, GUID} from "shared/api/circuit/public";
+import {Circuit, GUID, ICPin} from "shared/api/circuit/public";
 import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
 import {Cursor} from "shared/api/circuitdesigner/input/Cursor";
+import {Rect} from "math/Rect";
 
 
-export type ICEdge = "horizontal" | "vertical" | "none";
-
-export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
+export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
     private readonly icId: GUID;
     private readonly icInstanceId: GUID;
 
-    private edge: ICEdge = "none";
-    private initialSize: Vector = V();
+    private curPin: ICPin | undefined;
 
     public constructor(icId: GUID, icInstanceId: GUID) {
         super();
@@ -43,39 +40,28 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
         return icData;
     }
 
-    private findEdge(pos: Vector, circuit: Circuit, viewport: Viewport): ICEdge {
-        const EDGE_BUFFER = 0.2;
-
+    private findPin(pos: Vector, circuit: Circuit, viewport: Viewport): ICPin | undefined {
         const ic = this.getIC(circuit), icData = this.getICData(circuit);
 
-        // Create slightly larger and smaller box and check
-        //  if the mouse is between the two for an edge check
-        const t1 = new Transform(ic.pos, icData.display.size.add(EDGE_BUFFER));
-        const t2 = new Transform(ic.pos, icData.display.size.sub(EDGE_BUFFER));
+        const port = circuit.pickPortAt(viewport.camera.toWorldPos(pos));
+        if (!port || port.parent.id !== ic.id)
+            return undefined;
 
-        const worldMousePos = viewport.camera.toWorldPos(pos);
-        if (!(RectContains(t1, worldMousePos) && !RectContains(t2, worldMousePos)))
-            return "none";
-
-        // Determine if mouse is over horizontal or vertical edge
-        return (worldMousePos.y < ic.pos.y + icData.display.size.y/2 - EDGE_BUFFER/2 &&
-                worldMousePos.y > ic.pos.y - icData.display.size.y/2 + EDGE_BUFFER/2)
-               ? "horizontal"
-               : "vertical";
+        return icData.display.pins.filter((pin) => (pin.group === port.group))[port.index];
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        const edge = this.findEdge(ev.input.mousePos, circuit, viewport);
-        if (edge === "none")
+        const pin = this.findPin(ev.input.mousePos, circuit, viewport);
+        if (!pin)
             return undefined;
-        return (edge === "horizontal" ? "ew-resize" : "ns-resize");
+        return "move";
     }
 
     public shouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): boolean {
         return (ev.type === "mousedrag" &&
                 ev.button === LEFT_MOUSE_BUTTON &&
                 ev.input.touchCount === 1 &&
-                this.findEdge(ev.input.mousePos, circuit, viewport) !== "none");
+                this.findPin(ev.input.mousePos, circuit, viewport) !== undefined);
     }
 
     public shouldDeactivate(ev: InputAdapterEvent, { }: CircuitDesigner): boolean {
@@ -83,14 +69,13 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public onActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
-        this.edge = this.findEdge(ev.input.mousePos, circuit, viewport);
-        this.initialSize = this.getICData(circuit).display.size;
+        this.curPin = this.findPin(ev.input.mousePos, circuit, viewport);
 
         circuit.beginTransaction();
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        this.edge = "none";
+        this.curPin = undefined;
 
         circuit.commitTransaction();
     }
@@ -101,14 +86,18 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
             return;
 
         const ic = this.getIC(circuit), icData = this.getICData(circuit);
+        const size = icData.display.size;
 
         const worldMousePos = viewport.camera.toWorldPos(ev.input.mousePos);
 
-        const newSize = worldMousePos.sub(ic.pos).scale(2).abs();
+        const p = GetNearestPointOnRect(new Rect(ic.pos, size, true), worldMousePos);
 
-        if (this.edge === "horizontal")
-            icData.display.size = V(newSize.x, this.initialSize.y);
-        else if (this.edge === "vertical")
-            icData.display.size = V(this.initialSize.x, newSize.y);
+        const dir = (ic.bounds.contains(worldMousePos))
+            ? p.sub(worldMousePos)
+            : worldMousePos.sub(p);
+
+        // Update pin pos
+        this.curPin!.pos = p.scale(V(2 / size.x, 2 / size.y));
+        this.curPin!.dir = dir.len() === 0 ? this.curPin!.dir : dir.normalize();
     }
 }

@@ -19,12 +19,16 @@ import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {ICResizeTool} from "digital/api/circuitdesigner/tools/ICResizeTool";
+import {ICPortTool} from "digital/api/circuitdesigner/tools/ICPortTool";
 import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
 import {V} from "Vector";
 import {useKeyDownEvent, useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 import {CloseICDesigner} from "digital/site/state/ICDesigner";
 import {InputField} from "shared/site/components/InputField";
 import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
+import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
+import {ZoomHandler} from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
 // const EdgesToCursors: Record<ICEdge, string> = {
 //     "none":       "default",
@@ -98,30 +102,35 @@ export const ICDesigner = ({ }: Props) => {
             return;
 
         // Block input for main designer
-        mainDesigner.viewport.setBlocked(true);
+        mainDesigner.viewport.canvasInfo!.input.setBlocked(true);
+
+        // Create main circuit
+        const [circuit, state] = CreateCircuit();
+
+        // Create the IC from the objIds in the main designer's circuit
+        const [icCircuit] = CreateCircuit();
+        const objs = mainDesigner.circuit.createContainer(objIds).withWiresAndPorts();
+        icCircuit.loadSchema(objs.toSchema());
+        const ic = circuit.createIC({
+            circuit: icCircuit,
+            display: CalculateICDisplay(icCircuit),
+        });
+        const icInstance = circuit.placeComponentAt(ic.id, V(0, 0));
 
         // Create new designer and add IC
         const designer = CreateDesigner(
             {
                 defaultTool: new DefaultTool(
-                    FitToScreenHandler, RedoHandler, UndoHandler,
+                    FitToScreenHandler, RedoHandler, UndoHandler, ZoomHandler
                 ),
                 tools: [
-                    new PanTool(), // ICPortTool, ICResizeTool
+                    new PanTool(), new ICResizeTool(ic.id, icInstance.id), new ICPortTool(ic.id, icInstance.id),
                 ],
             },
             [],
+            DRAG_TIME,
+            [circuit, state],
         );
-
-        // Create the IC from the objIds in the main designer's circuit
-        const [circuit] = CreateCircuit();
-        const objs = mainDesigner.circuit.createContainer(objIds).withWiresAndPorts();
-        circuit.loadSchema(objs.toSchema());
-        const ic = designer.circuit.createIC({
-            circuit: circuit,
-            display: CalculateICDisplay(circuit),
-        });
-        designer.circuit.placeComponentAt(ic.id, V(0, 0));
 
         // Synchronize current debug info from mainInfo
         designer.viewport.debugOptions = mainDesigner.viewport.debugOptions;
@@ -176,7 +185,7 @@ export const ICDesigner = ({ }: Props) => {
         }
 
         // Unblock main input
-        mainDesigner.viewport.setBlocked(false);
+        mainDesigner.viewport.canvasInfo!.input.setBlocked(false);
 
         dispatch(CloseICDesigner());
         setName({ name: "" }); // Clear name

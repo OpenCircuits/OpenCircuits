@@ -19,13 +19,14 @@ export function Clamp(x: number, min: number, max: number): number {
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
- * @param bl  Bottom left corner of the rectangle.
- * @param tr  Top right corner of the rectangle.
- * @param pos The position to get the nearest point on.
- * @returns   The closest position on the edge of
- *            the rectangle from 'pos'.
+ * @param rect The rectangle.
+ * @param pos  The position to get the nearest point on.
+ * @returns    The closest position on the edge of
+ *             the rectangle from 'pos'.
  */
-export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
+export function GetNearestPointOnRect(rect: Rect, pos: Vector): Vector {
+    const bl = rect.bottomLeft, tr = rect.topRight;
+
     // First clamp point to within the rectangle
     pos = Vector.Clamp(pos, bl, tr);
 

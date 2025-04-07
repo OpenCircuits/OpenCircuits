@@ -3,8 +3,6 @@ import {SVGDrawing} from "svg2canvas";
 import {V, Vector} from "Vector";
 import {Margin}    from "math/Rect";
 
-import {GUID} from "shared/api/circuit/public";
-
 import {CleanupFunc} from "shared/api/circuit/utils/types";
 import {MultiObservable} from "shared/api/circuit/utils/Observable";
 import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
@@ -22,30 +20,64 @@ import {Cursor} from "../../input/Cursor";
 
 import {Camera}                                  from "../Camera";
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
-import {Prim, Viewport, ViewportEvents}          from "../Viewport";
+import {AttachedCanvasInfo, Prim, Viewport, ViewportEvents}          from "../Viewport";
 
 import {CameraImpl}                            from "./Camera";
-import {CameraRecordKey, CircuitDesignerState} from "./CircuitDesignerState";
+import {CircuitDesignerState} from "./CircuitDesignerState";
 import {DebugOptions}                          from "./DebugOptions";
 import {IsDefined} from "shared/api/circuit/utils/Reducers";
 
 
+export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
+    public readonly canvas: HTMLCanvasElement;
+    public readonly input: InputAdapter;
+
+    public renderer: RenderHelper;
+
+    private readonly cleanupFunc: CleanupFunc;
+
+    public constructor(
+        canvas: HTMLCanvasElement,
+        dragTime: number | undefined,
+        callback: (input: InputAdapter) => CleanupFunc,
+    ) {
+        this.canvas = canvas;
+        this.input = new InputAdapter(canvas, dragTime);
+        this.renderer = new RenderHelper(canvas);
+
+        this.cleanupFunc = callback(this.input);
+    }
+
+    public get screenSize(): Vector {
+        return this.renderer.size ?? V(0, 0);
+    }
+
+    public set cursor(cursor: Cursor | undefined) {
+        this.canvas.style.cursor = cursor ?? "";
+    }
+    public get cursor(): Cursor | undefined {
+        const cursor = this.canvas.style.cursor;
+        return (cursor === "" ? undefined : cursor as Cursor);
+    }
+
+    public detach(): void {
+        this.input.block();
+        this.cleanupFunc();
+    }
+}
+
 export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<ViewportEvents> implements Viewport {
+    public readonly camera: Camera;
+
     protected readonly state: CircuitDesignerState<T>;
     protected readonly designer: CircuitDesigner<T>;
     // protected readonly svgMap: Map<string, SVGDrawing>;
     protected readonly options: CircuitDesignerOptions;
 
-    protected readonly cameras: Map<CameraRecordKey, Camera> = new Map();
     protected readonly primRenderer: PrimRenderer;
     protected readonly scheduler: RenderScheduler;
 
-    protected readonly inputs: Set<InputAdapter>;
-
-    protected curState: {
-        mainCanvas: HTMLCanvasElement;
-        renderer: RenderHelper;
-    } | undefined;
+    public canvasInfo?: AttachedCanvasInfoImpl;
 
     public constructor(
         state: CircuitDesignerState<T>,
@@ -60,25 +92,59 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         // this.svgMap = svgMap;
         this.options = options;
 
-        this.cameras = new Map();
+        this.camera = new CameraImpl(this.state, this);
         this.primRenderer = new PrimRenderer(svgMap);
 
         this.scheduler = new RenderScheduler();
         this.scheduler.subscribe(() => this.render());
         this.scheduler.block();
 
-        this.inputs = new Set();
+        // Re-render when camera changes
+        this.camera.subscribe((ev) => {
+            // No canvas attached -> no need to render
+            if (!this.canvasInfo)
+                return;
 
-        this.curState = undefined;
+            if (ev.type === "change")
+                this.scheduler.requestRender();
+        });
+
+        // Re-render when assembler changes
+        this.state.circuitState.assembler.subscribe((data) => {
+            // No canvas attached -> no need to render
+            if (!this.canvasInfo)
+                return;
+
+            if (data.type === "onchange")
+                this.scheduler.requestRender();
+        });
+
+        // Re-render when current tool changes state (For tool-renderers)
+        let curToolCallbackCleanup: (() => void) | undefined;
+        this.state.toolManager.subscribe(({ type, tool }) => {
+            if (type === "toolactivate") {
+                // TODO: Render in another canvas
+                curToolCallbackCleanup = tool.subscribe((_) => {
+                    // No canvas attached -> no need to render
+                    if (!this.canvasInfo)
+                        return;
+
+                    this.scheduler.requestRender();
+                });
+            } else if (type === "tooldeactivate") {
+                curToolCallbackCleanup!();
+            }
+            this.scheduler.requestRender();
+        });
     }
 
     protected render() {
-        if (!this.curState)
+        if (!this.canvasInfo)
             throw new Error("Viewport: Attempted Circuit render before a canvas was set!");
 
-        const { renderer } = this.curState;
+        const { renderer } = this.canvasInfo;
         const renderState: RenderState = {
-            camera:  this.state.cameras[this.state.curCamera],
+            camera:  this.state.camera,
             options: this.state.circuitState.renderOptions,
             circuit: this.state.circuitState.internal,
             renderer,
@@ -162,32 +228,6 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         renderer.restore();
     }
 
-    public get camera(): Camera {
-        if (!this.cameras.has(this.state.curCamera)) {
-            const camera = new CameraImpl(this.state, this, this.state.curCamera);
-            this.cameras.set(this.state.curCamera, camera);
-            camera.subscribe((ev) => {
-                if (ev.type === "change")
-                    this.scheduler.requestRender();
-            });
-        }
-        return this.cameras.get(this.state.curCamera)!;
-    }
-    public get screenSize(): Vector {
-        return this.curState?.renderer.size ?? V(0, 0);
-    }
-
-    public setInputBlocked(blocked: boolean) {
-        this.inputs.forEach((input) => input.setBlocked(blocked));
-    }
-
-    public set cursor(cursor: Cursor | undefined) {
-        this.state.cursor = cursor;
-    }
-    public get cursor(): Cursor | undefined {
-        return this.state.cursor;
-    }
-
     public set margin(m: Margin) {
         this.state.margin = { ...this.state.margin, ...m };
     }
@@ -211,58 +251,26 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
-        if (this.curState)
+        if (this.canvasInfo)
             throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");
-        this.curState = {
-            mainCanvas: canvas,
-            renderer:   new RenderHelper(canvas),
-        };
 
-        const u1 = this.state.circuitState.assembler.subscribe((data) => {
-            if (data.type === "onchange")
-                this.scheduler.requestRender();
-        });
+        this.canvasInfo = new AttachedCanvasInfoImpl(canvas, this.options.dragTime, (input: InputAdapter) => {
+            // Forward inputs to ToolManager
+            const u1 = input.subscribe((ev) => this.state.toolManager.onEvent(ev, this.designer));
 
-        // Setup inputs and forward them to the tool manager
-        const inputAdapter = new InputAdapter(canvas, this.options.dragTime);
-        this.inputs.add(inputAdapter);
-        const u2 = inputAdapter.subscribe((ev) => this.state.toolManager.onEvent(ev, this.designer));
+            // Unblock scheduler once a canvas is set
+            this.scheduler.unblock();
 
-        let u4: (() => void) | undefined;
-        const u3 = this.state.toolManager.subscribe(({ type, tool }) => {
-            if (type === "toolactivate") {
-                // TODO: Render in another canvas
-                u4 = tool.subscribe((_) => this.scheduler.requestRender());
-            } else if (type === "tooldeactivate") {
-                u4!();
+            return () => {
+                u1();
+                this.scheduler.block();
+                this.canvasInfo = undefined;
             }
-            this.scheduler.requestRender();
         });
 
-        // Unblock scheduler once a canvas is set
-        this.scheduler.unblock();
-
-        return () => {
-            u4?.();
-            u3();
-            u2();
-            this.inputs.delete(inputAdapter);
-            u1();
-            this.detachCanvas();
-        }
+        return () => this.canvasInfo?.detach();
     }
-    public detachCanvas(): void {
-        this.curState = undefined;
-        this.scheduler.block();
-    }
-
-    public setView(kind: "main" | "ic", id?: GUID, type?: "internal" | "display"): void {
-        if (kind === "main") {
-            this.state.curCamera = "main";
-        } else if (id && type) {
-            this.state.curCamera = `ic/${id}:${type}`;
-        } else {
-            throw new Error(`Unknown arguments for setView! ${kind}, ${id}, ${type}`);
-        }
+    public getCanvasInfo(): AttachedCanvasInfo | undefined {
+        return this.canvasInfo;
     }
 }

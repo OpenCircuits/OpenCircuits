@@ -105,20 +105,34 @@ export interface Circuit extends C {
     toSchema(): Schema.Circuit;
 }
 
-export interface ICInfo {
-    circuit: ReadonlyCircuit;
-    display: IntegratedCircuitDisplay;
+
+export interface ReadonlyICPin {
+    readonly id: GUID;  // ID of corresponding PORT
+    readonly group: string;
+
+    readonly pos: Vector;
+    readonly dir: Vector;
 }
-export interface ICPin {
+export interface ReadonlyIntegratedCircuitDisplay {
+    readonly size: Vector;
+    readonly pins: ReadonlyICPin[];
+}
+
+export interface ICPin extends ReadonlyICPin {
     readonly id: GUID;  // ID of corresponding PORT
     readonly group: string;
 
     pos: Vector;
     dir: Vector;
 }
-export interface IntegratedCircuitDisplay {
+export interface IntegratedCircuitDisplay extends ReadonlyIntegratedCircuitDisplay {
     size: Vector;
     readonly pins: ICPin[];
+}
+
+export interface ICInfo {
+    circuit: ReadonlyCircuit;
+    display: ReadonlyIntegratedCircuitDisplay;
 }
 export interface IntegratedCircuit {
     readonly id: GUID;

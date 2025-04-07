@@ -601,8 +601,10 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                     } else if (op.key.startsWith("pins.") && typeof val === "number") {
                         // pins.INDEX.(x|y)
                         const [_, idx, key] = op.key.split(".");
-                        if (key === "x" || key === "y")
+                        if (key === "x" || key === "y" || key === "dx" || key === "dy")
                             ic.metadata.pins[parseInt(idx)][key] = val;
+                        else
+                            throw new Error(`Unknown property type ${op.key} or value type ${typeof val} for ICs!`);
                     } else {
                         throw new Error(`Unknown property type ${op.key} or value type ${typeof val} for ICs!`);
                     }

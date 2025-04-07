@@ -336,10 +336,10 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
         );
     }
 
-    public set dir(p: Vector) {
+    public set dir(d: Vector) {
         this.state.internal.beginTransaction();
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dx`, p.x);
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dy`, p.y);
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dx`, d.x);
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dy`, d.y);
         this.state.internal.commitTransaction();
     }
     public get dir(): Vector {
