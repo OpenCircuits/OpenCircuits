@@ -71,7 +71,7 @@ export const App = () => {
                             kinds={new Set(["ANDGate", "NANDGate", "ORGate", "NORGate", "XORGate", "XNORGate"])}
                             basisPortGroup="inputs"
                             label="Input" />
-                        {/* <PortCountModule
+                        <PortCountModule
                             circuit={designer.circuit}
                             kinds={new Set(["Multiplexer", "Demultiplexer"])}
                             basisPortGroup="selects"
@@ -90,7 +90,7 @@ export const App = () => {
                             circuit={designer.circuit}
                             kinds={new Set(["Comparator"])}
                             basisPortGroup="inputsA"
-                            label="Input" /> */}
+                            label="Input" />
                         <OscilloscopeModule circuit={designer.circuit} />
                         <ClockSyncButtonModule circuit={designer.circuit} />
                         <BusButtonModule circuit={designer.circuit} />

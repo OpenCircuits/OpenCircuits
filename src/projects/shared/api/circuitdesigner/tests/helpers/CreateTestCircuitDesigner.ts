@@ -63,19 +63,15 @@ export function CreateTestCircuitDesigner(toolConfig: ToolConfig = GetDefaultToo
     const designerState: CircuitDesignerState<CircuitTypes> = {
         circuitState: state,
 
-        curCamera: "main",
-        cameras:   {
-            "main": {
-                x:    0,
-                y:    0,
-                zoom: 0.02,
-            },
+        camera: {
+            x:    0,
+            y:    0,
+            zoom: 0.02,
         },
 
         toolManager: new ToolManager(toolConfig.defaultTool, toolConfig.tools),
 
         curPressedObj: undefined,
-        cursor:        undefined,
         margin:        { left: 0, right: 0, top: 0, bottom: 0 },
         debugOptions:  {
             debugPrimBounds: false,
