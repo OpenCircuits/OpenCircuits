@@ -57,24 +57,6 @@ export interface CreateICOp {
     ic: Schema.IntegratedCircuit;
 }
 
-// // TODO: Generalize these somehow
-// export interface EditICDisplaySizeOp {
-//     kind: "EditICDisplayOp";
-//     newWidth: number;
-//     newHeight: number;
-//     oldWidth: number;
-//     oldHeight: number;
-// }
-// export interface EditICPortPosOp {
-//     kind: "EditICPortPosOp";
-//     ic: Schema.GUID;
-//     index: number;
-//     newX: number;
-//     newY: number;
-//     oldX: number;
-//     oldY: number;
-// }
-
 export type CircuitOp = PlaceComponentOp
                       | ReplaceComponentOp
                       | ConnectWireOp

@@ -3,14 +3,15 @@ import {V, Vector} from "Vector";
 import {RectContains} from "math/MathUtils";
 import {Transform}    from "math/Transform";
 
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import {ObservableImpl}    from "shared/api/circuit/utils/Observable";
+import {Circuit, GUID}     from "shared/api/circuit/public";
+
+import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {Viewport}          from "shared/api/circuitdesigner/public/Viewport";
 import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
-import {Tool, ToolEvent} from "shared/api/circuitdesigner/tools/Tool";
-import {Circuit, GUID} from "shared/api/circuit/public";
-import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
-import {Cursor} from "shared/api/circuitdesigner/input/Cursor";
+import {Cursor}            from "shared/api/circuitdesigner/input/Cursor";
+import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import {Tool, ToolEvent}   from "shared/api/circuitdesigner/tools/Tool";
 
 
 export type ICEdge = "horizontal" | "vertical" | "none";

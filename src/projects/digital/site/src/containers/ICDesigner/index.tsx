@@ -1,49 +1,39 @@
-import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
-import {PanTool}     from "shared/api/circuitdesigner/tools/PanTool";
+import {useLayoutEffect, useRef, useState} from "react";
 
+import {V} from "Vector";
+
+import {Cleanups} from "shared/api/circuit/utils/types";
+
+import {CircuitDesigner}    from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {DRAG_TIME}          from "shared/api/circuitdesigner/input/Constants";
+import {DefaultTool}        from "shared/api/circuitdesigner/tools/DefaultTool";
+import {PanTool}            from "shared/api/circuitdesigner/tools/PanTool";
 import {FitToScreenHandler} from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
 import {RedoHandler}        from "shared/api/circuitdesigner/tools/handlers/RedoHandler";
 import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
+import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
-// import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
+import {useMainDesigner}       from "shared/site/utils/hooks/useDesigner";
+import {useWindowSize}         from "shared/site/utils/hooks/useWindowSize";
+import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
+import {TextModuleInputField}  from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
 
+import {CreateCircuit} from "digital/api/circuit/public";
+
+import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {ICResizeTool}   from "digital/api/circuitdesigner/tools/ICResizeTool";
+import {ICPortTool}     from "digital/api/circuitdesigner/tools/ICPortTool";
+
+import {IC_DESIGNER_VH, IC_DESIGNER_VW}         from "digital/site/utils/Constants";
 import {useDigitalDispatch, useDigitalSelector} from "digital/site/utils/hooks/useDigital";
-
-import {IC_DESIGNER_VW, IC_DESIGNER_VH} from "digital/site/utils/Constants";
-
-// import {CreateInfo} from "digital/site/utils/CircuitInfo/CreateInfo";
+import {CloseICDesigner}                        from "digital/site/state/ICDesigner";
+import {CalculateICDisplay}                     from "digital/site/utils/CircuitUtils";
 
 import "./index.scss";
-import {useDesigner, useMainDesigner} from "shared/site/utils/hooks/useDesigner";
-import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
-import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import {ICResizeTool} from "digital/api/circuitdesigner/tools/ICResizeTool";
-import {ICPortTool} from "digital/api/circuitdesigner/tools/ICPortTool";
-import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
-import {V} from "Vector";
-import {useKeyDownEvent, useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
-import {CloseICDesigner} from "digital/site/state/ICDesigner";
-import {InputField} from "shared/site/components/InputField";
-import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
-import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
-import {ZoomHandler} from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
-import {TextModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
-import {Cleanups} from "shared/api/circuit/utils/types";
-
-// const EdgesToCursors: Record<ICEdge, string> = {
-//     "none":       "default",
-//     "horizontal": "ew-resize",
-//     "vertical":   "ns-resize",
-// };
 
 
-// export const ICDesigner = () => {return null}
-type Props = {
-    // mainInfo: DigitalCircuitInfo;
+interface Props {
 }
-// @TODO
 export const ICDesigner = ({ }: Props) => {
     const mainDesigner = useMainDesigner();
     const [icViewDesigner, setICViewDesigner] = useState<CircuitDesigner | undefined>();

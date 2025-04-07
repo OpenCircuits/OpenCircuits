@@ -1,16 +1,17 @@
 import {V, Vector} from "Vector";
 
+import {Rect} from "math/Rect";
 import {GetNearestPointOnRect} from "math/MathUtils";
 
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
-import {Tool, ToolEvent} from "shared/api/circuitdesigner/tools/Tool";
+import {ObservableImpl}       from "shared/api/circuit/utils/Observable";
 import {Circuit, GUID, ICPin} from "shared/api/circuit/public";
-import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
-import {Cursor} from "shared/api/circuitdesigner/input/Cursor";
-import {Rect} from "math/Rect";
+
+import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {Viewport}          from "shared/api/circuitdesigner/public/Viewport";
+import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
+import {Cursor}            from "shared/api/circuitdesigner/input/Cursor";
+import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import {Tool, ToolEvent}   from "shared/api/circuitdesigner/tools/Tool";
 
 
 export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
