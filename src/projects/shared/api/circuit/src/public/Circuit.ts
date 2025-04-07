@@ -96,6 +96,11 @@ export interface Circuit extends C {
     undo(): void;
     redo(): void;
 
+    history: {
+        // TODO: Get the current history?
+        clear(): void;
+    };
+
     // I'm not sure if these methods makes sense to have
     // copy(): Circuit;
     // reset(): void;
@@ -136,7 +141,8 @@ export interface ICInfo {
 }
 export interface IntegratedCircuit {
     readonly id: GUID;
-    readonly name: string;
+
+    name: string;
     readonly desc: string;
     readonly thumbnail: string;
 

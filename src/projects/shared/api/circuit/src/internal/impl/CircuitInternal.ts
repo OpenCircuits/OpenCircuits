@@ -35,7 +35,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     private readonly doc: CircuitDocument;
     private readonly log: CircuitLog;
 
-    private readonly undoStack: number[]; // Index in the `log` of the entry
+    private undoStack: number[]; // Index in the `log` of the entry
     private redoStack: number[]; // Index in the `log` of the entry
 
     public constructor(log: CircuitLog, doc: CircuitDocument) {
@@ -203,6 +203,11 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         this.doc.commitTransaction("redo");
 
         return OkVoid();
+    }
+
+    public clearHistory() {
+        this.undoStack = [];
+        this.redoStack = [];
     }
 
     public setMetadata(metadata: Partial<Schema.CircuitMetadata>) {

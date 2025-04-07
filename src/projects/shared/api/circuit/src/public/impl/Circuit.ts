@@ -51,36 +51,36 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
 
     public beginTransaction(): void {
-        this.state.internal.beginTransaction();
+        this.internal.beginTransaction();
     }
     public commitTransaction(): void {
-        this.state.internal.commitTransaction();
+        this.internal.commitTransaction();
     }
     public cancelTransaction(): void {
-        this.state.internal.cancelTransaction();
+        this.internal.cancelTransaction();
     }
 
     // Metadata
     public get id(): GUID {
-        return this.state.internal.getMetadata().id;
+        return this.internal.getMetadata().id;
     }
     public set name(val: string) {
-        this.state.internal.setMetadata({ name: val });
+        this.internal.setMetadata({ name: val });
     }
     public get name(): string {
-        return this.state.internal.getMetadata().name;
+        return this.internal.getMetadata().name;
     }
     public set desc(val: string) {
-        this.state.internal.setMetadata({ desc: val });
+        this.internal.setMetadata({ desc: val });
     }
     public get desc(): string {
-        return this.state.internal.getMetadata().desc;
+        return this.internal.getMetadata().desc;
     }
     public set thumbnail(val: string) {
-        this.state.internal.setMetadata({ thumb: val });
+        this.internal.setMetadata({ thumb: val });
     }
     public get thumbnail(): string {
-        return this.state.internal.getMetadata().thumb;
+        return this.internal.getMetadata().thumb;
     }
 
     // Queries
@@ -89,39 +89,39 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             .map((id) => this.getObj(id)).asUnion();
     }
     public pickComponentAt(pt: Vector): T["Component"] | undefined {
-        return this.pickObjAtHelper(pt, (id) => this.state.internal.hasComp(id))
+        return this.pickObjAtHelper(pt, (id) => this.internal.hasComp(id))
             .map((id) => this.getComponent(id)).asUnion();
     }
     public pickWireAt(pt: Vector): T["Wire"] | undefined {
-        return this.pickObjAtHelper(pt, (id) => this.state.internal.hasWire(id))
+        return this.pickObjAtHelper(pt, (id) => this.internal.hasWire(id))
             .map((id) => this.getWire(id)).asUnion();
     }
     public pickPortAt(pt: Vector): T["Port"] | undefined {
-        return this.pickObjAtHelper(pt, (id) => this.state.internal.hasPort(id))
+        return this.pickObjAtHelper(pt, (id) => this.internal.hasPort(id))
             .map((id) => this.getPort(id)).asUnion();
     }
 
     public getComponent(id: GUID): T["Component"] | undefined {
-        if (!this.state.internal.getCompByID(id).ok)
+        if (!this.internal.getCompByID(id).ok)
             return undefined;
         return this.state.constructComponent(id);
     }
     public getWire(id: GUID): T["Wire"] | undefined {
-        if (!this.state.internal.getWireByID(id).ok)
+        if (!this.internal.getWireByID(id).ok)
             return undefined;
         return this.state.constructWire(id);
     }
     public getPort(id: GUID): T["Port"] | undefined {
-        if (!this.state.internal.getPortByID(id).ok)
+        if (!this.internal.getPortByID(id).ok)
             return undefined;
         return this.state.constructPort(id);
     }
     public getObj(id: GUID): T["Obj"] | undefined {
-        if (this.state.internal.hasComp(id))
+        if (this.internal.hasComp(id))
             return this.getComponent(id);
-        if (this.state.internal.hasWire(id))
+        if (this.internal.hasWire(id))
             return this.getWire(id);
-        if (this.state.internal.hasPort(id))
+        if (this.internal.hasPort(id))
             return this.getPort(id);
         return undefined;
     }
@@ -138,7 +138,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             .map((id) => this.state.constructWire(id));
     }
     public getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
-        const info = this.state.internal.getComponentInfo(kind);
+        const info = this.internal.getComponentInfo(kind);
         if (!info.ok)
             return undefined;
         return this.state.constructComponentInfo(kind);
@@ -149,9 +149,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         // Validate all objects exist in the circuit
         for (const id of objSet) {
-            if (!this.state.internal.hasComp(id) &&
-                !this.state.internal.hasWire(id) &&
-                !this.state.internal.hasPort(id)) {
+            if (!this.internal.hasComp(id) &&
+                !this.internal.hasWire(id) &&
+                !this.internal.hasPort(id)) {
                 throw new Error(`Circuit.createContainer: Invalid object ID ${id}`);
             }
         }
@@ -168,10 +168,10 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.beginTransaction();
 
         // Place raw component (TODO[master](leon) - don't use unwrap...)
-        const id = this.state.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
+        const id = this.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
 
         // Set its config to place ports
-        this.state.internal.setPortConfig(id, info.defaultPortConfig).unwrap();
+        this.internal.setPortConfig(id, info.defaultPortConfig).unwrap();
 
         this.commitTransaction();
 
@@ -189,13 +189,13 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         // Delete wires first
         for (const wireId of wireIds)
-            this.state.internal.deleteWire(wireId).unwrap();
+            this.internal.deleteWire(wireId).unwrap();
 
         // Then remove all ports for each component, then delete them
         for (const compId of compIds)
-            this.state.internal.removePortsFor(compId).unwrap();
+            this.internal.removePortsFor(compId).unwrap();
         for (const compId of compIds)
-            this.state.internal.deleteComponent(compId).unwrap();
+            this.internal.deleteComponent(compId).unwrap();
 
         this.commitTransaction();
     }
@@ -256,10 +256,18 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
 
     public undo(): void {
-        this.state.internal.undo().unwrap();
+        this.internal.undo().unwrap();
     }
     public redo(): void {
-        this.state.internal.redo().unwrap();
+        this.internal.redo().unwrap();
+    }
+
+    public get history() {
+        return {
+            clear: () => {
+                this.internal.clearHistory();
+            },
+        };
     }
 
     // reset(): void {
@@ -286,7 +294,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
     public toSchema(): Schema.Circuit {
         return {
-            metadata: this.state.internal.getMetadata(),
+            metadata: this.internal.getMetadata(),
             camera:   {
                 x:    0,
                 y:    0,
@@ -325,8 +333,8 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
 
     public set pos(p: Vector) {
         this.state.internal.beginTransaction();
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.x`, p.x);
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.y`, p.y);
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.x`, p.x).unwrap();
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.y`, p.y).unwrap();
         this.state.internal.commitTransaction();
     }
     public get pos(): Vector {
@@ -338,8 +346,8 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
 
     public set dir(d: Vector) {
         this.state.internal.beginTransaction();
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dx`, d.x);
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dy`, d.y);
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dx`, d.x).unwrap();
+        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dy`, d.y).unwrap();
         this.state.internal.commitTransaction();
     }
     public get dir(): Vector {
@@ -366,8 +374,8 @@ class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements Integrated
 
     public set size(p: Vector) {
         this.state.internal.beginTransaction();
-        this.state.internal.setPropForIC(this.id, "displayWidth", p.x);
-        this.state.internal.setPropForIC(this.id, "displayHeight", p.y);
+        this.state.internal.setPropForIC(this.id, "displayWidth", p.x).unwrap();
+        this.state.internal.setPropForIC(this.id, "displayHeight", p.y).unwrap();
         this.state.internal.commitTransaction();
     }
     public get size(): Vector {
@@ -393,9 +401,13 @@ export class IntegratedCircuitImpl<T extends CircuitTypes> implements Integrated
     }
 
     // Metadata
+    public set name(name: string) {
+        this.state.internal.setPropForIC(this.id, "name", name).unwrap();
+    }
     public get name(): string {
         return this.state.internal.getICInfo(this.id).unwrap().metadata.name;
     }
+
     public get desc(): string {
         return this.state.internal.getICInfo(this.id).unwrap().metadata.desc;
     }

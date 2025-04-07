@@ -29,6 +29,8 @@ import {InputField} from "shared/site/components/InputField";
 import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
 import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {ZoomHandler} from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
+import {TextModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
+import {Cleanups} from "shared/api/circuit/utils/types";
 
 // const EdgesToCursors: Record<ICEdge, string> = {
 //     "none":       "default",
@@ -53,48 +55,8 @@ export const ICDesigner = ({ }: Props) => {
 
     const { w, h } = useWindowSize();
     const canvas = useRef<HTMLCanvasElement>(null);
-    const [{ name }, setName] = useState({ name: "" });
-    const [{ cursor }, setCursor] = useState({ cursor: "default" });
 
-
-    // // Initial function called after the canvas first shows up
-    // useLayoutEffect(() => {
-    //     if (!canvas.current)
-    //         return;
-    //     const cleanup = icViewDesigner?.viewport.attachCanvas(canvas.current);
-
-    //     // // Create input w/ canvas
-    //     // icInfo.input = new Input(canvas.current);
-
-    //     // // Get render function
-    //     // const renderFunc = GetRenderFunc({ canvas: canvas.current, info: icInfo });
-
-    //     // // Add input listener
-    //     // icInfo.input.addListener((event) => {
-    //     //     const change = icInfo.toolManager.onEvent(event, icInfo);
-
-    //     //     // Change cursor
-    //     //     let newCursor = ICPortTool.findPort(icInfo) === undefined ? "none" : "move";
-    //     //     if (newCursor === "none")
-    //     //         newCursor = EdgesToCursors[ICResizeTool.findEdge(icInfo)];
-    //     //     setCursor({ cursor: newCursor });
-
-    //     //     if (change)
-    //     //         icInfo.renderer.render();
-    //     // });
-
-    //     // // Input should be blocked initially
-    //     // icInfo.input.block();
-
-    //     // // Add render callbacks and set render function
-    //     // icInfo.designer.addCallback(() => icInfo.renderer.render());
-
-    //     // icInfo.renderer.setRenderFunction(() => renderFunc());
-    //     // icInfo.renderer.render();
-    //     icViewDesigner.viewport.setBlocked(true);
-
-    //     return cleanup;
-    // }, [icViewDesigner, canvas, setCursor]);
+    const [icName, setICName] = useState<string | undefined>(undefined);
 
     // Happens when activated
     useLayoutEffect(() => {
@@ -117,6 +79,9 @@ export const ICDesigner = ({ }: Props) => {
         });
         const icInstance = circuit.placeComponentAt(ic.id, V(0, 0));
 
+        // Clear the history so that the user can't accidentally undo the addition of the IC
+        circuit.history.clear();
+
         // Create new designer and add IC
         const designer = CreateDesigner(
             {
@@ -138,26 +103,29 @@ export const ICDesigner = ({ }: Props) => {
         // Attach canvas
         const cleanup = designer.viewport.attachCanvas(canvas.current);
 
+        // Subscribe to circuit to look for name changes to update text (to handle undo/redo mostly)
+        const cleanup2 = designer.circuit.subscribe(() =>
+            setICName(designer.circuit.getICs()[0].name));
+
         setICViewDesigner(designer);
 
-        return cleanup;
-    }, [isActive, objIds, mainDesigner, setICViewDesigner, setName]);
+        return Cleanups(cleanup, cleanup2);
+    }, [isActive, objIds, mainDesigner, setICViewDesigner, setICName]);
 
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
         if (!icViewDesigner)
             return;
-        icViewDesigner?.viewport.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH);
+        icViewDesigner.viewport.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH);
     }, [icViewDesigner, w, h]);
 
-    // Keeps the ICData/IC name's in sync with `name`
-    useLayoutEffect(() => {
-        if (!isActive || !icViewDesigner)
+
+    const doICNameChange = ([name]: string[]) => {
+        if (!icViewDesigner)
             return;
-        // Should only ever be the 1 component
-        icViewDesigner.circuit.getComponents()[0].name = name ?? "";
-    }, [name, icViewDesigner]);
+        icViewDesigner.circuit.getICs()[0].name = name;
+    }
 
 
     const close = (cancelled = false) => {
@@ -188,7 +156,6 @@ export const ICDesigner = ({ }: Props) => {
         mainDesigner.viewport.canvasInfo!.input.setBlocked(false);
 
         dispatch(CloseICDesigner());
-        setName({ name: "" }); // Clear name
     }
 
     useWindowKeyDownEvent("Escape", () => close(true), [objIds]);
@@ -198,13 +165,15 @@ export const ICDesigner = ({ }: Props) => {
         <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
             <canvas ref={canvas}
                     width={w*IC_DESIGNER_VW}
-                    height={h*IC_DESIGNER_VH}
-                    style={{ cursor }} />
+                    height={h*IC_DESIGNER_VH} />
 
-            <InputField type="text"
-                        value={name}
-                        placeholder="IC Name"
-                        onChange={(ev) => setName({ name: ev.target.value })} />
+            {icViewDesigner &&
+                <TextModuleInputField
+                    circuit={icViewDesigner.circuit}
+                    props={[icName ?? ""]}
+                    placeholder="Name of IC"
+                    alt="Name of IC"
+                    doChange={doICNameChange} />}
 
             <div className="icdesigner__buttons">
                 <button type="button" name="confirm" onClick={() => close()}>
