@@ -93,7 +93,6 @@ describe("IntegratedCircuit", () => {
         expect(outerIcCircuit.getICs()).toHaveLength(1);
         expect(outerIcCircuit.getICs()[0].id).toEqual(innerIc.id);
 
-
         const [i1Outer, i2Outer, o1Outer] = PlaceAt2(V(-5, -5), V(-5, +5), V(+5,  0));
         const innerIcInstance = outerIcCircuit.placeComponentAt(innerIc.id, V(1, 1));
         expect(innerIcInstance.allPorts).toHaveLength(3);

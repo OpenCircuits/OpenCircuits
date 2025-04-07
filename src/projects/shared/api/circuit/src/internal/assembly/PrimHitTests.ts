@@ -18,7 +18,7 @@ export function HitTest(prim: Prim, pt: Vector): boolean {
     case "Line":
         return CurveContains(new LineCurve(prim.p1, prim.p2), pt);
     case "Polygon":
-        throw new Error("Method not implemented.");
+        return false; // TODO: implement?
     case "QuadCurve":
         return false; // Maybe allow quad curves to be hit?
     case "Rectangle":
