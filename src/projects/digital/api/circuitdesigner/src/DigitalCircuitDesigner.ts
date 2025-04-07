@@ -15,26 +15,21 @@ export function CreateDesigner(
     toolConfig: ToolConfig<DigitalTypes>,
     renderers: ToolRenderer[],
     dragTime?: number,
+    [circuit, state] = CreateCircuit(),
 ) {
-    const [circuit, state] = CreateCircuit();
-
     // create view and attach renderers as post-process rendering
     const designerState: CircuitDesignerState<DigitalTypes> = {
         circuitState: state,
 
-        curCamera: "main",
-        cameras:   {
-            "main": {
-                x:    0,
-                y:    0,
-                zoom: 0.02,
-            },
+        camera: {
+            x:    0,
+            y:    0,
+            zoom: 0.02,
         },
 
         toolManager: new ToolManager<DigitalTypes>(toolConfig.defaultTool, toolConfig.tools),
 
         curPressedObj: undefined,
-        cursor:        undefined,
         margin:        { left: 0, right: 0, top: 0, bottom: 0 },
         debugOptions:  {
             debugPrimBounds: false,

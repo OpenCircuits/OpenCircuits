@@ -9,6 +9,7 @@ import {Circuit, ICPin} from "shared/api/circuit/public";
 import {Err, Ok, Result} from "shared/api/circuit/utils/Result";
 import {Camera} from "shared/api/circuitdesigner/public/Camera";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
+import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
 
 
 export type ExprToCirGeneratorOptions = {
@@ -96,7 +97,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
         return Err(generatedCircuitRes.error);
     }
 
-    const { circuit: generatedCircuit, inputs, output } = generatedCircuitRes.value;
+    const { circuit: generatedCircuit } = generatedCircuitRes.value;
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     // const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));
@@ -112,27 +113,9 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     circuit.beginTransaction();
     circuit.selections.clear();
     if (options.isIC) {
-        // TODO: Dimensions/positioning based off of https://github.com/OpenCircuits/OpenCircuits/blob/master/src/app/digital/models/ioobjects/other/ICData.ts#L63
-        //       Do we want to move this somewhere common? Maybe as a default for when users are creating ICs?
-        const longestName = Math.max(...inputs.map(({ name }) => name?.length ?? 0), output.name?.length ?? 0) + circuit.name.length;
-
-        const w = 1 + 0.3*longestName;
-        const h = inputs.length/2;
-
-        const inputPins: readonly ICPin[] = inputs.map((input, index) => ({
-            id:    input.outputs[0].id,
-            group: "inputs",
-            pos:   V(-w / 2, -(index - (inputs.length)/2 + 0.5)/2),
-        }))
         const ic = circuit.createIC({
             circuit: generatedCircuit,
-            display: {
-                size: V(w, h),
-                pins: [
-                    ...inputPins,
-                    { id: output.inputs[0].id, group: "outputs", pos: V(w/2, 0) },
-                ],
-            },
+            display: CalculateICDisplay(generatedCircuit),
         })
         circuit.placeComponentAt(ic.id, camera.pos).select();
     } else {

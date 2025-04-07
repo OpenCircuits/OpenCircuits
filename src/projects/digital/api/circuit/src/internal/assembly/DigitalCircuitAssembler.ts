@@ -1,10 +1,12 @@
 import {V} from "Vector";
 
-import {CircuitInternal} from "shared/api/circuit/internal";
+import {CircuitInternal, GUID} from "shared/api/circuit/internal";
 
+import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
 import {RenderOptions}    from "shared/api/circuit/internal/assembly/RenderOptions";
+import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 
 import {DigitalSim}           from "../sim/DigitalSim";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
@@ -17,7 +19,6 @@ import {ClockAssembler}       from "./components/ClockAssembler";
 import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
 import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
 import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
-import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {BCDDisplayAssembler} from "./components/displays/BCDDisplayAssembler";
 import {ASCIIDisplayAssembler} from "./components/displays/ASCIIDisplayAssembler";
 import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssembler";
@@ -59,6 +60,13 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
             this.publish({ type: "onchange" });
         })
     }
+
+    protected override createIC(icId: GUID): Assembler {
+        return new ICComponentAssembler(
+            { circuit: this.circuit, cache: this.cache, options: this.options },
+            icId,
+        );
+    }
 }
 
 
@@ -76,11 +84,11 @@ export function MakeDigitalCircuitAssembler(
             "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
         }),
         // // Inputs
-        "Switch": new SwitchAssembler(params, sim),
-        "Button": new ButtonAssembler(params, sim),
-        "Clock": new ClockAssembler(params, sim),
-        "ConstantHigh": new ConstantHighAssembler(params, sim),
-        "ConstantLow": new ConstantLowAssembler(params, sim),
+        "Switch":         new SwitchAssembler(params, sim),
+        "Button":         new ButtonAssembler(params, sim),
+        "Clock":          new ClockAssembler(params, sim),
+        "ConstantHigh":   new ConstantHighAssembler(params, sim),
+        "ConstantLow":    new ConstantLowAssembler(params, sim),
         "ConstantNumber": new ConstantNumberAssembler(params, sim),
 
         // // Outputs

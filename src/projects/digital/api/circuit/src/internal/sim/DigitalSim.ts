@@ -43,6 +43,14 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         circuit.subscribe((ev) => {
             const comps = new Set<GUID>(), updatedInputPorts = new Set<GUID>();
 
+            for (const icId of ev.diff.addedICs) {
+                // TODO:
+                this.propagators[icId] = (_obj, _signals, _state) => ({ outputs: {} });
+            }
+            for (const icId of ev.diff.removedICs)
+                delete this.propagators[icId];
+
+
             const updateInputPort = (portId: GUID) => {
                 const result = circuit.getPortByID(portId);
                 if (!result.ok)
@@ -99,10 +107,6 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             comps.forEach((id) => this.next.add(id));
             this.publish({ type: "queue", comps, updatedInputPorts });
         })
-    }
-
-    public addPropagator(kind: string, propagator: PropagatorFunc): void {
-        this.propagators[kind] = propagator;
     }
 
     private compExistsAndHasPorts(id: GUID) {

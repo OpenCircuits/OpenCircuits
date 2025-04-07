@@ -31,9 +31,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         })
@@ -48,13 +48,13 @@ describe("IntegratedCircuit", () => {
         expect(icInstance.outputs).toHaveLength(1);
         expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
 
-        expect(icInstance.inputs[0].originPos).toApproximatelyEqual(V(-2, -0.5).add(1, 1));
-        expect(icInstance.inputs[1].originPos).toApproximatelyEqual(V(-2, +0.5).add(1, 1));
-        expect(icInstance.outputs[0].originPos).toApproximatelyEqual(V(+2, 0).add(1, 1));
+        expect(icInstance.inputs[0].originPos).toApproximatelyEqual(V(-2, -0.5).add(icInstance.pos));
+        expect(icInstance.inputs[1].originPos).toApproximatelyEqual(V(-2, +0.5).add(icInstance.pos));
+        expect(icInstance.outputs[0].originPos).toApproximatelyEqual(V(+2, 0).add(icInstance.pos));
 
-        expect(icInstance.inputs[0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(1, 1));
-        expect(icInstance.inputs[1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(1, 1));
-        expect(icInstance.outputs[0].targetPos).toApproximatelyEqual(V(+2.7, 0).add(1, 1));
+        expect(icInstance.inputs[0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(icInstance.pos));
+        expect(icInstance.inputs[1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(icInstance.pos));
+        expect(icInstance.outputs[0].targetPos).toApproximatelyEqual(V(+2.7, 0).add(icInstance.pos));
     });
 
     test("Nested IC", () => {
@@ -81,21 +81,29 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Inner.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2Inner.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1Inner.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1Inner.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Inner.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Inner.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
+        expect(circuit.getICs()).toHaveLength(1);
+        expect(circuit.getICs()[0].id).toEqual(innerIc.id);
 
         const [outerIcCircuit] = CreateCircuit();
 
+        expect(outerIcCircuit.getICs()).toHaveLength(0);
         outerIcCircuit.importICs(circuit.getICs());
+        expect(outerIcCircuit.getICs()).toHaveLength(1);
+        expect(outerIcCircuit.getICs()[0].id).toEqual(innerIc.id);
 
         const i1Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, -5));
         const i2Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, +5));
         const o1Outer = outerIcCircuit.placeComponentAt("LED", V(+5,  0));
         const innerIcInstance = outerIcCircuit.placeComponentAt(innerIc.id, V(1, 1));
+        expect(innerIcInstance.allPorts).toHaveLength(3);
+        expect(innerIcInstance.ports["inputs"]).toHaveLength(2);
+        expect(innerIcInstance.ports["outputs"]).toHaveLength(1);
 
         i1Outer.outputs[0].connectTo(innerIcInstance.inputs[0]);
         i2Outer.outputs[0].connectTo(innerIcInstance.inputs[1]);
@@ -111,15 +119,16 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Outer.outputs[0].id, group: "inputs", pos: V(-2, -0.5) },
-                    { id: i2Outer.outputs[0].id, group: "inputs", pos: V(-2, +0.5) },
-                    { id: o1Outer.inputs[0].id, group: "outputs", pos: V(+2, 0) },
+                    { id: i1Outer.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Outer.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Outer.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
 
         const outerIcInstance = circuit.placeComponentAt(outerIc.id, V(1, 1));
 
+        expect(outerIcInstance.allPorts).toHaveLength(3);
         expect(outerIcInstance.inputs).toHaveLength(2);
         expect(outerIcInstance.outputs).toHaveLength(1);
         expect(outerIcInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));

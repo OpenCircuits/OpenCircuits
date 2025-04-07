@@ -1,6 +1,6 @@
 import {blend, parseColor} from "svg2canvas";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
@@ -20,7 +20,7 @@ export class LEDAssembler extends ComponentAssembler {
     protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
-        super(params, V(1, 1), {
+        super(params, {
             "inputs": () => ({ origin: V(0, - 0.5), target: V(0, -2) }),
         }, [
             {
@@ -57,6 +57,10 @@ export class LEDAssembler extends ComponentAssembler {
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("LED").unwrap() as DigitalComponentConfigurationInfo;
+    }
+
+    protected override getSize(_: Schema.Component): Vector {
+        return V(1, 1);
     }
 
     private isOn(led: Schema.Component) {

@@ -5,7 +5,6 @@ import {Schema} from "shared/api/circuit/schema"
 
 export interface PlaceComponentOp {
     kind: "PlaceComponentOp";
-    circuit: Schema.GUID;
     inverted: boolean;
     c: Schema.Component;
     // Components are born without ports. This helps reduce complexity of individual ops
@@ -14,7 +13,6 @@ export interface PlaceComponentOp {
 
 export interface ReplaceComponentOp {
     kind: "ReplaceComponentOp";
-    circuit: Schema.GUID;
     component: Schema.GUID;
     oldKind: string;
     newKind: string;
@@ -22,14 +20,12 @@ export interface ReplaceComponentOp {
 
 export interface ConnectWireOp {
     kind: "ConnectWireOp";
-    circuit: Schema.GUID;
     inverted: boolean;
     w: Schema.Wire;
 }
 
 export interface SplitWireOp {
     kind: "SplitWireOp";
-    circuit: Schema.GUID;
     inverted: boolean;
     splitParameter: number;
     tgt: Schema.Wire;
@@ -39,8 +35,8 @@ export interface SplitWireOp {
 
 export interface SetPropertyOp {
     kind: "SetPropertyOp";
-    circuit: Schema.GUID;
     id: Schema.GUID;
+    ic: boolean; // Indicates if this is a property on an IC
     key: string;
     newVal?: Schema.Prop;
     oldVal?: Schema.Prop;
@@ -48,7 +44,6 @@ export interface SetPropertyOp {
 
 export interface SetComponentPortsOp {
     kind: "SetComponentPortsOp";
-    circuit: Schema.GUID;
     inverted: boolean;
     component: Schema.GUID;
     addedPorts: Schema.Port[];
@@ -56,12 +51,19 @@ export interface SetComponentPortsOp {
     deadWires: Schema.Wire[];
 }
 
+export interface CreateICOp {
+    kind: "CreateICOp";
+    inverted: boolean;
+    ic: Schema.IntegratedCircuit;
+}
+
 export type CircuitOp = PlaceComponentOp
                       | ReplaceComponentOp
                       | ConnectWireOp
                       | SplitWireOp
                       | SetPropertyOp
-                      | SetComponentPortsOp;
+                      | SetComponentPortsOp
+                      | CreateICOp;
 
 export function InvertCircuitOp(op: CircuitOp): CircuitOp {
     switch (op.kind) {
@@ -69,6 +71,7 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
         case "ConnectWireOp":
         case "SplitWireOp":
         case "SetComponentPortsOp":
+        case "CreateICOp":
             return { ...op, inverted: !op.inverted };
         case "SetPropertyOp":
             return { ...op, newVal: op.oldVal, oldVal: op.newVal };

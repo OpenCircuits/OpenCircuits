@@ -1,4 +1,4 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
@@ -17,8 +17,8 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
-        super(params, V(1, 1), {
-            "outputs": (index) => this.getOutputLocations(index),
+        super(params, {
+            "outputs": (parent, index) => this.getOutputLocations(parent, index),
         }, [
             {
                 kind: "BaseShape",
@@ -49,14 +49,25 @@ export class ConstantNumberAssembler extends ComponentAssembler {
         this.info = this.circuit.getComponentInfo("ConstantNumber").unwrap() as DigitalComponentConfigurationInfo;
     }
 
-    private getOutputLocations(index: number) {
-        const targetY = .75 - (index * 1.5 / 3);
-        return { origin: V((this.size.x - this.options.defaultBorderWidth) / 2, targetY), target: V(1.2, targetY) } as const
+    protected override getSize(_: Schema.Component): Vector {
+        return V(1, 1);
+    }
+
+    private getOutputLocations(comp: Schema.Component, index: number) {
+        const targetY = 0.75 - (index * 1.5 / 3);
+        return {
+            origin: V((this.getSize(comp).x - this.options.defaultBorderWidth) / 2, targetY),
+            target: V(1.2, targetY),
+        } as const
     }
 
     private assembleRectangle(comp: Schema.Component) {
         // Border is subtracted from size so that size matches constant high/low
-        const transform = new Transform(this.getPos(comp), this.size.sub(V(this.options.defaultBorderWidth)), this.getAngle(comp));
+        const transform = new Transform(
+            this.getPos(comp),
+            this.getSize(comp).sub(V(this.options.defaultBorderWidth)),
+            this.getAngle(comp),
+        );
         return {
             kind: "Rectangle",
             transform,
@@ -64,11 +75,11 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     }
 
     private assembleLine(comp: Schema.Component) {
-        const dy = 1.5 * this.size.y / 2
+        const dy = 1.5 * this.getSize(comp).y / 2
         const y1 = -dy;
         const y2 = dy;
 
-        const x = (this.size.x - this.options.defaultBorderWidth) / 2;
+        const x = (this.getSize(comp).x - this.options.defaultBorderWidth) / 2;
 
         const transform = this.getTransform(comp);
         return {

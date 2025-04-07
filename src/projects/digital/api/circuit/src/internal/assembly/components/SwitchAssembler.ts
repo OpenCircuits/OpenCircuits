@@ -1,4 +1,4 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
@@ -16,7 +16,7 @@ export class SwitchAssembler extends ComponentAssembler {
     protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
-        super(params, V(1.24, 1.54), {
+        super(params, {
             "outputs": () => ({ origin: V(0.62, 0), dir: V(1, 0) }),
         }, [
             {
@@ -35,12 +35,20 @@ export class SwitchAssembler extends ComponentAssembler {
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
-                assemble:     (comp) => ({ kind: "SVG", svg: this.isOn(comp) ? "switchDown.svg" : "switchUp.svg", transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp)) }),
-                getTint:      (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
+                assemble:     (comp) => ({
+                    kind:      "SVG",
+                    svg:       this.isOn(comp) ? "switchDown.svg" : "switchUp.svg",
+                    transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp)),
+                }),
+                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("Switch").unwrap() as DigitalComponentConfigurationInfo;
+    }
+
+    protected override getSize(_: Schema.Component): Vector {
+        return V(1.24, 1.54);
     }
 
     private isOn(sw: Schema.Component) {

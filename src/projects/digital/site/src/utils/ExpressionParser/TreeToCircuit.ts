@@ -111,8 +111,6 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
                               output: string, expression: string): {
                                 circuit: DigitalCircuit;
                                 state: DigitalCircuitState;
-                                inputs: DigitalComponent[];
-                                output: DigitalComponent;
                             } {
     const [circuit, state] = CreateCircuit();
 
@@ -133,5 +131,5 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
     const prevComp = treeToCircuitCore(tree, inputMap, circuit);
     connect(prevComp, outputNode, outputComp);
 
-    return { circuit, state, inputs: [...inputMap.values()], output: outputComp };
+    return { circuit, state };
 }

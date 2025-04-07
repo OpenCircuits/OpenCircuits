@@ -1,4 +1,4 @@
-import {CircuitInternal}   from "shared/api/circuit/internal";
+import {CircuitInternal, GUID}   from "shared/api/circuit/internal";
 import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
 

@@ -6,8 +6,8 @@ import {OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Component, Node, Port, Circuit, Wire, uuid} from "shared/api/circuit/public";
-import {IntegratedCircuitImpl, CircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
+import {Circuit, Component, Node, Port, Wire, uuid} from "shared/api/circuit/public";
+import {CircuitImpl, IntegratedCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
@@ -24,8 +24,9 @@ import {CircuitDocument}                 from "shared/api/circuit/internal/impl/
 import {BaseComponentConfigurationInfo, BaseObjInfo,
         BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
+import {MapObj} from "shared/api/circuit/utils/Functions";
 
 
 export class TestComponentInfo extends BaseComponentConfigurationInfo {
@@ -47,9 +48,47 @@ export class TestComponentInfo extends BaseComponentConfigurationInfo {
     }
 }
 
+export class TestObjInfoProvider extends BaseObjInfoProvider {
+    public constructor(portConfigs: PortConfig[]) {
+        super(
+            [
+                new TestComponentInfo("TestComp", {}, [""], portConfigs, false),
+                new TestComponentInfo("TestNode", {}, [""], portConfigs, true),
+
+                new TestComponentInfo("Pin", {}, [""], portConfigs, false),
+            ],
+            [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
+            [new BaseObjInfo("Port", "TestPort", {})],
+        );
+    }
+
+    public override createIC(ic: Schema.IntegratedCircuit): void {
+        const ports = ic.metadata.pins.reduce<Record<string, Schema.IntegratedCircuitPin[]>>((prev, pin) => ({
+            ...prev,
+            [pin.group]: [...(prev[pin.group] ?? []), pin],
+        }), {});
+        const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
+
+        this.components.set(ic.metadata.id, new TestComponentInfo(ic.metadata.id, {}, [""], [portConfig], false));
+    }
+
+    public override deleteIC(ic: Schema.IntegratedCircuit): void {
+        this.components.delete(ic.metadata.id);
+    }
+}
+
+export class TestCircuitAssembler extends CircuitAssembler {
+    protected override createIC(icId: GUID): Assembler {
+        return new ICComponentAssembler(
+            { circuit: this.circuit, cache: this.cache, options: this.options },
+            icId,
+        );
+    }
+}
+
 export class TestComponentAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams) {
-        super(params, V(1, 1),  {
+        super(params,  {
             "": () => ({ origin: V(0, 0), target: V(1, 0) }),
         }, [
             { // Line
@@ -66,6 +105,10 @@ export class TestComponentAssembler extends ComponentAssembler {
                 getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
         ]);
+    }
+
+    protected override getSize(_comp: Schema.Component): Vector {
+        return V(1, 1);
     }
 }
 
@@ -106,26 +149,13 @@ export function CreateTestCircuit(
 ): [Circuit, CircuitState<CircuitTypes>, TestCircuitHelpers] {
     const portConfigs = [{ "": 1 }, ...additionalPortConfigs];
 
-    const log = new CircuitLog();
-    const doc = new CircuitDocument(new BaseObjInfoProvider(
-        [
-            new TestComponentInfo("TestComp", {}, [""], portConfigs, false),
-            new TestComponentInfo("TestNode", {}, [""], portConfigs, true),
-
-            new TestComponentInfo("Pin", {}, [""], portConfigs, false),
-        ],
-        [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
-        [new BaseObjInfo("Port", "TestPort", {})],
-    ), log);
-
     const mainCircuitID = uuid();
-    doc.createCircuit(mainCircuitID);
-
-    const internal = new CircuitInternal(mainCircuitID, log, doc);
-    const icInternals: Record<GUID, CircuitInternal> = {};
+    const log = new CircuitLog();
+    const doc = new CircuitDocument(mainCircuitID, new TestObjInfoProvider(portConfigs), log);
+    const internal = new CircuitInternal(log, doc);
 
     const renderOptions = new DefaultRenderOptions();
-    const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
+    const assembler = new TestCircuitAssembler(internal, renderOptions, (params) => ({
         "TestWire": new WireAssembler(params),
         "TestComp": new TestComponentAssembler(params),
         "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
@@ -146,28 +176,14 @@ export function CreateTestCircuit(
             return new TestPortImpl(state, id);
         },
         constructIC(id) {
-            return new IntegratedCircuitImpl(icInternals[id]);
+            return new IntegratedCircuitImpl(state, id);
         },
         constructComponentInfo(kind) {
             return new ComponentInfoImpl(state, kind);
         },
     };
 
-    const circuit = new CircuitImpl(state, doc, (id, objs, metadata, portConfig, portFactory) => {
-        const kind = id;
-
-        doc.createIC(
-            metadata,
-            new TestComponentInfo(kind, {}, [""], [portConfig], false),
-            objs,
-        );
-
-        icInternals[id] = new CircuitInternal(id, log, doc);
-
-        // TODO[leon] ----- THIS WILL ONLY LET ICS BE PUT IN MAIN CIRCUIT!!!! TODO TODO TODO
-        state.assembler.addAssembler(kind, (params) =>
-            new ICComponentAssembler(params, V(metadata.displayWidth, metadata.displayHeight), portFactory));
-    });
+    const circuit = new CircuitImpl(state);
 
     return [circuit, state, {
         PlaceAt: (...positions) => positions.map((p) => circuit.placeComponentAt("TestComp", p)),
