@@ -1,10 +1,14 @@
 import {V} from "Vector";
 
-import {CircuitInternal} from "shared/api/circuit/internal";
+import {CircuitInternal, GUID} from "shared/api/circuit/internal";
 
+import {Schema} from "shared/api/circuit/schema";
+import {MapObj} from "shared/api/circuit/utils/Functions";
+import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
 import {RenderOptions}    from "shared/api/circuit/internal/assembly/RenderOptions";
+import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 
 import {DigitalSim}           from "../sim/DigitalSim";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
@@ -17,7 +21,6 @@ import {ClockAssembler}       from "./components/ClockAssembler";
 import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
 import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
 import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
-import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -56,6 +59,34 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
             this.publish({ type: "onchange" });
         })
     }
+
+    protected override createIC(icId: GUID): Assembler {
+        const ic = this.circuit.getICInfo(icId).unwrap();
+
+        const ports = ic.metadata.pins.reduce((prev, pin) => ({
+            ...prev,
+            [pin.group]: [...(prev[pin.group] ?? []), pin],
+        }), {} as Record<string, Array<Schema.IntegratedCircuitMetadata["pins"][number]>>);
+
+        const portFactory = MapObj(ports, ([_, ids]) =>
+            (index: number, _total: number) => {
+                const pos = V(ids[index].x, ids[index].y);
+                const size = V(ic.metadata.displayWidth, ic.metadata.displayHeight);
+                return {
+                    origin: V(pos.x, pos.y),
+
+                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
+                        ? V(1, 0).scale(Math.sign(pos.x))
+                        : V(0, 1).scale(Math.sign(pos.y)),
+                };
+            });
+
+        return new ICComponentAssembler(
+            { circuit: this.circuit, cache: this.cache, options: this.options },
+            V(ic.metadata.displayWidth, ic.metadata.displayHeight),
+            portFactory,
+        )
+    }
 }
 
 
@@ -73,11 +104,11 @@ export function MakeDigitalCircuitAssembler(
             "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
         }),
         // // Inputs
-        "Switch": new SwitchAssembler(params, sim),
-        "Button": new ButtonAssembler(params, sim),
-        "Clock": new ClockAssembler(params, sim),
-        "ConstantHigh": new ConstantHighAssembler(params, sim),
-        "ConstantLow": new ConstantLowAssembler(params, sim),
+        "Switch":         new SwitchAssembler(params, sim),
+        "Button":         new ButtonAssembler(params, sim),
+        "Clock":          new ClockAssembler(params, sim),
+        "ConstantHigh":   new ConstantHighAssembler(params, sim),
+        "ConstantLow":    new ConstantLowAssembler(params, sim),
         "ConstantNumber": new ConstantNumberAssembler(params, sim),
 
         // // Outputs

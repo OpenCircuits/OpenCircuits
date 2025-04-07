@@ -12,6 +12,7 @@ import {ReadonlyWire, Wire}          from "./Wire";
 import {Selections}    from "./Selections";
 import {Schema} from "../schema";
 import {Observable} from "../utils/Observable";
+import {ObjContainer} from "./ObjContainer";
 
 
 export type {CircuitMetadata} from "shared/api/circuit/schema/CircuitMetadata";
@@ -79,6 +80,8 @@ export interface Circuit extends C {
 
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
+    createContainer(objs: GUID[]): ObjContainer;
+
     // Object manipulation
     placeComponentAt(kind: string, pt: Vector): Component;
     // Cannot delete ports
@@ -86,6 +89,8 @@ export interface Circuit extends C {
 
     importICs(ics: IntegratedCircuit[]): void;
     createIC(info: ICInfo): IntegratedCircuit;
+    deleteIC(id: GUID): void;
+    getIC(id: GUID): IntegratedCircuit | undefined;
     getICs(): IntegratedCircuit[];
 
     undo(): void;

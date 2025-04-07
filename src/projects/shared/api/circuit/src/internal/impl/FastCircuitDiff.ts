@@ -12,6 +12,10 @@ import "shared/api/circuit/utils/Map";
 // from circuit objects, namely the view.  This avoids the potentially complex logic of CircuitDiff for high-throughput
 // scenarios, like selecting many items and moving them around with the mouse.
 export interface FastCircuitDiff {
+    // ICs
+    addedICs: ReadonlySet<GUID>;
+    removedICs: ReadonlySet<GUID>;
+
     // Components
     addedComponents: ReadonlySet<GUID>;
     removedComponents: ReadonlySet<GUID>;
@@ -27,6 +31,10 @@ export interface FastCircuitDiff {
 }
 
 export class FastCircuitDiffBuilder {
+    // ICs
+    private readonly addedICs: Set<GUID> = new Set();
+    private readonly removedICs: Set<GUID> = new Set();
+
     // Components
     private readonly addedComponents: Set<GUID>;
     private readonly removedComponents: Set<GUID>;
@@ -45,6 +53,8 @@ export class FastCircuitDiffBuilder {
     }
 
     public constructor() {
+        this.addedICs          = new Set();
+        this.removedICs        = new Set();
         this.addedComponents   = new Set();
         this.removedComponents = new Set();
         this.portsChanged      = new Set();
@@ -57,6 +67,8 @@ export class FastCircuitDiffBuilder {
     // Discard this after calling
     public build(): FastCircuitDiff {
         return {
+            addedICs:          this.addedICs,
+            removedICs:        this.removedICs,
             addedComponents:   this.addedComponents,
             removedComponents: this.removedComponents,
             portsChanged:      this.portsChanged,
@@ -113,6 +125,15 @@ export class FastCircuitDiffBuilder {
             case "SetPropertyOp":
                 this.getOrCreatePropSet(op.id).add(op.key);
                 break;
+            case "CreateICOp":
+                if (op.inverted) {
+                    this.addedICs.delete(op.ic.metadata.id);
+                    this.removedICs.add(op.ic.metadata.id);
+                } else {
+                    this.removedICs.delete(op.ic.metadata.id);
+                    this.addedICs.add(op.ic.metadata.id);
+                }
+                break;
             default:
                 assertNever(op);
         }
@@ -120,6 +141,8 @@ export class FastCircuitDiffBuilder {
 
     public applyDiff(diff: FastCircuitDiff) {
         const merge = <T>(from: ReadonlySet<T>, into: Set<T>) => from.forEach((v) => into.add(v));
+        merge(diff.addedICs,          this.addedICs);
+        merge(diff.removedICs,        this.removedICs);
         merge(diff.addedComponents,   this.addedComponents);
         merge(diff.removedComponents, this.removedComponents);
         merge(diff.portsChanged,      this.portsChanged);
@@ -144,6 +167,12 @@ export type PropsDiff = Map<string, PropDiff>;
 // "delete C0; place C0; set C0.x 20" should appear as just a prop change on "C0.x".
 // NOTE: This logic may be moved to a higher level.
 export interface CircuitDiff {
+    //
+    // IC changes.
+    //
+    addedICs: ReadonlyMap<GUID, Schema.IntegratedCircuit>;
+    removedICs: ReadonlyMap<GUID, Schema.IntegratedCircuit>;
+
     //
     // Graph changes.  These contain NO "props".
     //

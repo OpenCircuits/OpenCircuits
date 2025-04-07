@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-parameter-properties */
 import {V, Vector} from "Vector";
 
-import {MapObj} from "shared/api/circuit/utils/Functions";
-
 import {Schema} from "shared/api/circuit/schema";
 
 import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
@@ -14,33 +12,24 @@ import {isObjComponent, isObjWire} from "../Utilities";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
-import {PortConfig} from "../../internal/impl/ObjInfo";
-import {PortFactory} from "../../internal/assembly/PortAssembler";
 import {ObservableImpl} from "../../utils/Observable";
-import {CircuitDocument} from "../../internal/impl/CircuitDocument";
+import {ObjContainer} from "../ObjContainer";
+import {ObjContainerImpl} from "./ObjContainer";
 
 
-export type MakeICFunc = (
-    id: GUID,
-    objs: Schema.Obj[],
-    metadata: Schema.IntegratedCircuit["metadata"],
-    portConfig: PortConfig,
-    portFactory: PortFactory,
-) => void;
+export type RemoveICCallback = (id: GUID) => void;
 
 export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly state: CircuitState<T>;
-    protected readonly doc: CircuitDocument;
-    private readonly makeIC: MakeICFunc;
 
     public readonly selections: Selections;
 
-    public constructor(state: CircuitState<T>, doc: CircuitDocument, makeIC: MakeICFunc) {
+    public constructor(
+        state: CircuitState<T>,
+    ) {
         super();
 
         this.state = state;
-        this.doc = doc;
-        this.makeIC = makeIC;
 
         this.selections = new SelectionsImpl(state);
 
@@ -53,28 +42,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         });
     }
 
-    private createICHelper(ic: Schema.IntegratedCircuit) {
-        const ports = ic.metadata.pins.reduce((prev, pin) => ({
-            ...prev,
-            [pin.group]: [...(prev[pin.group] ?? []), pin],
-        }), {} as Record<string, Array<Schema.IntegratedCircuit["metadata"]["pins"][number]>>);
-
-        const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
-
-        const portFactory = MapObj(ports, ([_, ids]) =>
-            (index: number, _total: number) => {
-                const pos = V(ids[index].x, ids[index].y);
-                const size = V(ic.metadata.displayWidth, ic.metadata.displayHeight);
-                return {
-                    origin: V(pos.x, pos.y),
-
-                    dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
-                        ? V(1, 0).scale(Math.sign(pos.x))
-                        : V(0, 1).scale(Math.sign(pos.y)),
-                };
-            });
-
-        this.makeIC(ic.metadata.id, ic.objects, ic.metadata, portConfig, portFactory);
+    private get internal(): CircuitInternal {
+        return this.state.internal;
     }
 
     private pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
@@ -93,25 +62,25 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
     // Metadata
     public get id(): GUID {
-        return this.state.internal.getMetadata().unwrap().id;
+        return this.state.internal.getMetadata().id;
     }
     public set name(val: string) {
-        this.state.internal.setMetadata({ name: val }).unwrap();
+        this.state.internal.setMetadata({ name: val });
     }
     public get name(): string {
-        return this.state.internal.getMetadata().unwrap().name;
+        return this.state.internal.getMetadata().name;
     }
     public set desc(val: string) {
-        this.state.internal.setMetadata({ desc: val }).unwrap();
+        this.state.internal.setMetadata({ desc: val });
     }
     public get desc(): string {
-        return this.state.internal.getMetadata().unwrap().desc;
+        return this.state.internal.getMetadata().desc;
     }
     public set thumbnail(val: string) {
-        this.state.internal.setMetadata({ thumb: val }).unwrap();
+        this.state.internal.setMetadata({ thumb: val });
     }
     public get thumbnail(): string {
-        return this.state.internal.getMetadata().unwrap().thumb;
+        return this.state.internal.getMetadata().thumb;
     }
 
     // Queries
@@ -173,9 +142,26 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         return this.state.constructComponentInfo(kind);
     }
 
+    public createContainer(objs: GUID[]): ObjContainer {
+        const objSet = new Set(objs);
+
+        // Validate all objects exist in the circuit
+        for (const id of objSet) {
+            if (!this.state.internal.hasComp(id) &&
+                !this.state.internal.hasWire(id) &&
+                !this.state.internal.hasPort(id)) {
+                throw new Error(`Circuit.createContainer: Invalid object ID ${id}`);
+            }
+        }
+
+        return new ObjContainerImpl<T>(this.state, objSet);
+    }
+
     // Object manipulation
     public placeComponentAt(kind: string, pt: Vector): T["Component"] {
         const info = this.getComponentInfo(kind);
+        if (!info)
+            throw new Error(`Circuit.placeComponentAt: Unknown component kind '${kind}'`);
 
         this.beginTransaction();
 
@@ -183,7 +169,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         const id = this.state.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
 
         // Set its config to place ports
-        this.state.internal.setPortConfig(id, info!.defaultPortConfig).unwrap();
+        this.state.internal.setPortConfig(id, info.defaultPortConfig).unwrap();
 
         this.commitTransaction();
 
@@ -214,16 +200,18 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
 
     public importICs(ics: IntegratedCircuit[]): void {
+        this.internal.beginTransaction();
         for (const ic of ics) {
-            if (this.doc.getCircuitIds().has(ic.id))
+            if (this.internal.hasIC(ic.id))
                 continue;
-            this.createICHelper(ic.toSchema());
+            this.internal.createIC(ic.toSchema()).unwrap();
         }
+        this.internal.commitTransaction();
     }
     public createIC(info: T["ICInfo"]): T["IC"] {
         const id = uuid();
 
-        const metadata: Schema.IntegratedCircuit["metadata"] = {
+        const metadata: Schema.IntegratedCircuitMetadata = {
             id:      id,  // Make a new ID
             name:    info.circuit.name,
             thumb:   info.circuit.thumbnail,
@@ -236,16 +224,31 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             pins: info.display.pins.map(({ id, group, pos }) => ({ id, group, x: pos.x, y: pos.y })),
         };
 
-        this.createICHelper({
+        this.internal.beginTransaction();
+        this.internal.createIC({
             metadata,
             objects: info.circuit.getObjs().map((o) => o.toSchema()),
-        });
+        }).unwrap();
+        this.internal.commitTransaction();
 
         return this.state.constructIC(id);
     }
+    public deleteIC(id: GUID): void {
+        // If there's a component referencing the IC, fail
+        if (this.getComponents().some((c) => (c.kind === id)))
+            throw new Error(`Circuit.deleteIC: Failed to delete IC(${id})! Found component referencing it!`);
+
+        this.internal.beginTransaction();
+        this.internal.deleteIC(id).unwrap();
+        this.internal.commitTransaction();
+    }
+    public getIC(id: GUID): T["IC"] | undefined {
+        if (!this.internal.hasIC(id))
+            return undefined;
+        return this.state.constructIC(id);
+    }
     public getICs(): T["IC[]"] {
-        return [...this.doc.getCircuitIds()]
-            .filter((id) => id !== this.id)
+        return [...this.internal.getICs()]
             .map((id) => this.state.constructIC(id));
     }
 
@@ -267,23 +270,26 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     //     throw new Error("Circuit.deserialize: Unimplemented!");
     // },
     public loadSchema(schema: Schema.Circuit): void {
-        // TODO[leon] - I believe this won't work for ICs in terms of assembling correctly
-        schema.ics
-            .filter((ic) => !this.doc.getCircuitIds().has(ic.metadata.id))
-            .forEach((ic) =>
-                this.createICHelper(ic));
+        this.beginTransaction();
 
-        this.doc.addObjs(this.id, schema.objects);
+        schema.ics
+            .filter((ic) => !this.internal.hasIC(ic.metadata.id))
+            .forEach((ic) =>
+                this.internal.createIC(ic));
+
+        this.internal.importObjs(schema.objects);
+
+        this.commitTransaction();
     }
     public toSchema(): Schema.Circuit {
         return {
-            metadata: this.state.internal.getMetadata().unwrap(),
+            metadata: this.state.internal.getMetadata(),
             camera:   {
                 x:    0,
                 y:    0,
                 zoom: 0,
             },
-            ics: this.getICs().map((ic) => ic.toSchema()),
+            ics:     this.getICs().map((ic) => ic.toSchema()),
             objects: [
                 ...this.getObjs().map((obj) => obj.toSchema()),
             ],
@@ -291,20 +297,23 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
 }
 
-class IntegratedCircuitDisplayImpl implements IntegratedCircuitDisplay {
-    protected readonly internal: CircuitInternal;
+class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements IntegratedCircuitDisplay {
+    protected readonly id: GUID;
 
-    public constructor(internal: CircuitInternal) {
-        this.internal = internal;
+    protected readonly state: CircuitState<T>;
+
+    public constructor(state: CircuitState<T>, id: GUID) {
+        this.state = state;
+        this.id = id;
     }
 
     public get size(): Vector {
-        const metadata = this.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
-        return V(metadata.displayWidth, metadata.displayHeight);
+        const ic = this.state.internal.getICInfo(this.id).unwrap();
+        return V(ic.metadata.displayWidth, ic.metadata.displayHeight);
     }
     public get pins(): readonly ICPin[] {
-        const metadata = this.internal.getMetadata<Schema.IntegratedCircuit["metadata"]>().unwrap();
-        return metadata.pins.map(({ id, group, x, y }) => ({
+        const ic = this.state.internal.getICInfo(this.id).unwrap();
+        return ic.metadata.pins.map(({ id, group, x, y }) => ({
             id,
             pos: V(x, y),
             group,
@@ -312,35 +321,36 @@ class IntegratedCircuitDisplayImpl implements IntegratedCircuitDisplay {
     }
 }
 
-export class IntegratedCircuitImpl implements IntegratedCircuit {
-    protected readonly internal: CircuitInternal;
+export class IntegratedCircuitImpl<T extends CircuitTypes> implements IntegratedCircuit {
+    public readonly id: GUID;
+
+    protected readonly state: CircuitState<T>;
 
     public readonly display: IntegratedCircuitDisplay;
 
-    public constructor(internal: CircuitInternal) {
-        this.internal = internal;
+    public constructor(state: CircuitState<T>, id: GUID) {
+        this.state = state;
+        this.id = id;
 
-        this.display = new IntegratedCircuitDisplayImpl(internal);
+        this.display = new IntegratedCircuitDisplayImpl(state, id);
     }
 
     // Metadata
-    public get id(): GUID {
-        return this.internal.getMetadata().unwrap().id;
-    }
     public get name(): string {
-        return this.internal.getMetadata().unwrap().name;
+        return this.state.internal.getICInfo(this.id).unwrap().metadata.name;
     }
     public get desc(): string {
-        return this.internal.getMetadata().unwrap().desc;
+        return this.state.internal.getICInfo(this.id).unwrap().metadata.desc;
     }
     public get thumbnail(): string {
-        return this.internal.getMetadata().unwrap().thumb;
+        return this.state.internal.getICInfo(this.id).unwrap().metadata.thumb;
     }
 
     public toSchema(): Schema.IntegratedCircuit {
+        const ic = this.state.internal.getICInfo(this.id).unwrap();
         return {
-            metadata: this.internal.getMetadata<Schema.IntegratedCircuitMetadata>().unwrap(),
-            objects:  [...this.internal.getAllObjs()],
+            metadata: ic.metadata,
+            objects:  [...ic.getAllObjs()],
         };
     }
 }

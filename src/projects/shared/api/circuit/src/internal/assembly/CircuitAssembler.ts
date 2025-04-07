@@ -95,12 +95,13 @@ class DirtyMap<K> {
     }
 }
 
-export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
+export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
     protected readonly circuit: CircuitInternal;
     protected readonly options: RenderOptions;
 
     protected cache: AssemblyCache;
 
+    protected readonly dirtyICs: Set<GUID>;
     protected readonly dirtyComponents: DirtyMap<GUID>;
     protected readonly dirtyWires: DirtyMap<GUID>;
     protected readonly dirtyPorts: DirtyMap<GUID>;
@@ -131,12 +132,18 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
 
         this.assemblers = assemblers({ circuit, cache: this.cache, options });
 
+        this.dirtyICs = new Set();
         this.dirtyComponents = new DirtyMap();
         this.dirtyWires = new DirtyMap();
         this.dirtyPorts = new DirtyMap();
 
         this.circuit.subscribe((ev) => {
             const diff = ev.diff;
+
+            for (const icId of ev.diff.addedICs)
+                this.dirtyICs.add(icId);
+            for (const icId of ev.diff.removedICs)
+                this.dirtyICs.add(icId);
 
             // Mark all added/removed component dirty
             for (const compID of diff.addedComponents)
@@ -188,14 +195,23 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         });
     }
 
-    public addAssembler(kind: string, getAssembler: (params: AssemblerParams) => Assembler) {
-        this.assemblers[kind] = getAssembler({ circuit: this.circuit, cache: this.cache, options: this.options });
-    }
-    public removeAssembler(kind: string) {
-        delete this.assemblers[kind];
-    }
+    protected abstract createIC(icId: GUID): Assembler;
 
     public reassemble() {
+        // Update ICs first (add/remove assemblers for them)
+        for (const icId of this.dirtyICs) {
+            // If IC doesn't exist anymore, remove its assembler
+            if (!this.circuit.hasIC(icId)) {
+                delete this.assemblers[icId];
+                continue;
+            }
+
+            // Otherwise, if we don't have an assembler for this IC, create one
+            if (!(icId in this.assemblers))
+                this.assemblers[icId] = this.createIC(icId);
+        }
+        this.dirtyICs.clear();
+
         // Update components first
         for (const [compID, reasons] of this.dirtyComponents) {
             // If component doesn't exist, remove it and any associated ports
@@ -241,6 +257,13 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         // Reassemble component if dirty
         if (this.dirtyComponents.has(compID)) {
             const comp = this.circuit.getCompByID(compID).unwrap();
+
+            // If component is an IC, ensure we have an assembler for it
+            if (this.circuit.hasIC(comp.kind) && this.dirtyICs.has(comp.kind) && !(comp.kind in this.assemblers)) {
+                this.assemblers[comp.kind] = this.createIC(comp.kind);
+                this.dirtyICs.delete(comp.kind);
+            }
+
             this.getAssemblerFor(comp.kind)
                 .assemble(comp, this.dirtyComponents.get(compID)!);
             this.dirtyComponents.delete(compID);

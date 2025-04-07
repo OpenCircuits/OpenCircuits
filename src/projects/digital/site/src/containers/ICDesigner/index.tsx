@@ -7,179 +7,204 @@ import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/Undo
 
 // import {DigitalCircuitInfo} from "digital/api/circuit/utils/DigitalCircuitInfo";
 
+import {useDigitalDispatch, useDigitalSelector} from "digital/site/utils/hooks/useDigital";
+
+import {IC_DESIGNER_VW, IC_DESIGNER_VH} from "digital/site/utils/Constants";
+
 // import {CreateInfo} from "digital/site/utils/CircuitInfo/CreateInfo";
 
 import "./index.scss";
+import {useDesigner, useMainDesigner} from "shared/site/utils/hooks/useDesigner";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
+import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
+import {V} from "Vector";
+import {useKeyDownEvent, useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
+import {CloseICDesigner} from "digital/site/state/ICDesigner";
+import {InputField} from "shared/site/components/InputField";
+import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
 
-export const ICDesigner = () => {return null}
-// type Props = {
-//     mainInfo: DigitalCircuitInfo;
-// }
+// const EdgesToCursors: Record<ICEdge, string> = {
+//     "none":       "default",
+//     "horizontal": "ew-resize",
+//     "vertical":   "ns-resize",
+// };
+
+
+// export const ICDesigner = () => {return null}
+type Props = {
+    // mainInfo: DigitalCircuitInfo;
+}
 // @TODO
-// export const ICDesigner = (() => {
-    // const info = CreateInfo(
-    //     new DefaultTool(FitToScreenHandler, RedoHandler, UndoHandler),
-    //     PanTool, // ICPortTool, ICResizeTool
-    // );
+export const ICDesigner = ({ }: Props) => {
+    const mainDesigner = useMainDesigner();
+    const [icViewDesigner, setICViewDesigner] = useState<CircuitDesigner | undefined>();
 
-    // const icInfo: ICCircuitInfo = {
-    //     ...info,
-    // };
+    const { isActive, objIds } = useDigitalSelector(
+        (state) => ({ ...state.icDesigner })
+    );
+    const dispatch = useDigitalDispatch();
 
-    // const EdgesToCursors: Record<ICEdge, string> = {
-    //     "none":       "default",
-    //     "horizontal": "ew-resize",
-    //     "vertical":   "ns-resize",
-    // };
-
-    // eslint-disable-next-line react/display-name, arrow-body-style
-    // return ({ mainInfo }: Props) => {
-    //     // const { isActive, ic: data } = useDigitalSelector(
-    //     //     (state) => ({ ...state.icDesigner })
-    //     // );
-    //     // const dispatch = useDigitalDispatch();
-
-    //     // const { w, h } = useWindowSize();
-    //     // const canvas = useRef<HTMLCanvasElement>(null);
-    //     // const [{ name }, setName] = useState({ name: "" });
-    //     // const [{ cursor }, setCursor] = useState({ cursor: "default" });
-
-    //     // // On resize (useLayoutEffect happens sychronously so
-    //     // //  there's no pause/glitch when resizing the screen)
-    //     // useLayoutEffect(() => {
-    //     //     if (!isActive)
-    //     //         return;
-    //     //     icInfo.camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-    //     //     icInfo.renderer.render(); // Re-render
-    //     // }, [isActive, w, h]);
+    const { w, h } = useWindowSize();
+    const canvas = useRef<HTMLCanvasElement>(null);
+    const [{ name }, setName] = useState({ name: "" });
+    const [{ cursor }, setCursor] = useState({ cursor: "default" });
 
 
-    //     // // Initial function called after the canvas first shows up
-    //     // useEffect(() => {
-    //     //     if (!canvas.current)
-    //     //         throw new Error("ICDesigner.useEffect failed: canvas.current is null");
-    //     //     // Create input w/ canvas
-    //     //     icInfo.input = new Input(canvas.current);
+    // // Initial function called after the canvas first shows up
+    // useLayoutEffect(() => {
+    //     if (!canvas.current)
+    //         return;
+    //     const cleanup = icViewDesigner?.viewport.attachCanvas(canvas.current);
 
-    //     //     // Get render function
-    //     //     const renderFunc = GetRenderFunc({ canvas: canvas.current, info: icInfo });
+    //     // // Create input w/ canvas
+    //     // icInfo.input = new Input(canvas.current);
 
-    //     //     // Add input listener
-    //     //     icInfo.input.addListener((event) => {
-    //     //         const change = icInfo.toolManager.onEvent(event, icInfo);
+    //     // // Get render function
+    //     // const renderFunc = GetRenderFunc({ canvas: canvas.current, info: icInfo });
 
-    //     //         // Change cursor
-    //     //         let newCursor = ICPortTool.findPort(icInfo) === undefined ? "none" : "move";
-    //     //         if (newCursor === "none")
-    //     //             newCursor = EdgesToCursors[ICResizeTool.findEdge(icInfo)];
-    //     //         setCursor({ cursor: newCursor });
+    //     // // Add input listener
+    //     // icInfo.input.addListener((event) => {
+    //     //     const change = icInfo.toolManager.onEvent(event, icInfo);
 
-    //     //         if (change)
-    //     //             icInfo.renderer.render();
-    //     //     });
+    //     //     // Change cursor
+    //     //     let newCursor = ICPortTool.findPort(icInfo) === undefined ? "none" : "move";
+    //     //     if (newCursor === "none")
+    //     //         newCursor = EdgesToCursors[ICResizeTool.findEdge(icInfo)];
+    //     //     setCursor({ cursor: newCursor });
 
-    //     //     // Input should be blocked initially
-    //     //     icInfo.input.block();
+    //     //     if (change)
+    //     //         icInfo.renderer.render();
+    //     // });
 
-    //     //     // Add render callbacks and set render function
-    //     //     icInfo.designer.addCallback(() => icInfo.renderer.render());
+    //     // // Input should be blocked initially
+    //     // icInfo.input.block();
 
-    //     //     icInfo.renderer.setRenderFunction(() => renderFunc());
-    //     //     icInfo.renderer.render();
-    //     // }, [setCursor]); // Pass empty array so that this only runs once on mount
+    //     // // Add render callbacks and set render function
+    //     // icInfo.designer.addCallback(() => icInfo.renderer.render());
 
-    //     // // Keeps the ICData/IC name's in sync with `name`
-    //     // useLayoutEffect(() => {
-    //     //     if (!data || !icInfo.ic)
-    //     //         return;
-    //     //     data.setName(name ?? "");
-    //     //     icInfo.ic.update();
-    //     //     icInfo.renderer.render();
-    //     // }, [name, data]);
+    //     // icInfo.renderer.setRenderFunction(() => renderFunc());
+    //     // icInfo.renderer.render();
+    //     icViewDesigner.viewport.setBlocked(true);
 
-    //     // // Happens when activated
-    //     // useLayoutEffect(() => {
-    //     //     if (!isActive || !data)
-    //     //         return;
+    //     return cleanup;
+    // }, [icViewDesigner, canvas, setCursor]);
 
-    //     //     // Retrieve current debug info from mainInfo
-    //     //     icInfo.debugOptions = mainInfo.debugOptions;
+    // Happens when activated
+    useLayoutEffect(() => {
+        if (!isActive || !objIds || !canvas.current)
+            return;
 
-    //     //     // Unlock input
-    //     //     icInfo.input.unblock();
+        // Block input for main designer
+        mainDesigner.viewport.setBlocked(true);
 
-    //     //     // Block input for main designer
-    //     //     mainInfo.input.block();
+        // Create new designer and add IC
+        const designer = CreateDesigner(
+            {
+                defaultTool: new DefaultTool(
+                    FitToScreenHandler, RedoHandler, UndoHandler,
+                ),
+                tools: [
+                    new PanTool(), // ICPortTool, ICResizeTool
+                ],
+            },
+            [],
+        );
 
-    //     //     // Reset designer and add IC
-    //     //     icInfo.designer.reset();
-    //     //     icInfo.ic = new IC(data);
-    //     //     icInfo.ic.setPos(V());
-    //     //     icInfo.designer.addObject(icInfo.ic);
+        // Create the IC from the objIds in the main designer's circuit
+        const [circuit] = CreateCircuit();
+        const objs = mainDesigner.circuit.createContainer(objIds).withWiresAndPorts();
+        circuit.loadSchema(objs.toSchema());
+        const ic = designer.circuit.createIC({
+            circuit: circuit,
+            display: CalculateICDisplay(circuit),
+        });
+        designer.circuit.placeComponentAt(ic.id, V(0, 0));
 
-    //     //     // Set camera
-    //     //     icInfo.camera.setPos(V());
+        // Synchronize current debug info from mainInfo
+        designer.viewport.debugOptions = mainDesigner.viewport.debugOptions;
 
-    //     //     icInfo.renderer.render();
-    //     // }, [isActive, data, mainInfo, setName]);
+        // Attach canvas
+        const cleanup = designer.viewport.attachCanvas(canvas.current);
+
+        setICViewDesigner(designer);
+
+        return cleanup;
+    }, [isActive, objIds, mainDesigner, setICViewDesigner, setName]);
+
+    // On resize (useLayoutEffect happens sychronously so
+    //  there's no pause/glitch when resizing the screen)
+    useLayoutEffect(() => {
+        if (!icViewDesigner)
+            return;
+        icViewDesigner?.viewport.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH);
+    }, [icViewDesigner, w, h]);
+
+    // Keeps the ICData/IC name's in sync with `name`
+    useLayoutEffect(() => {
+        if (!isActive || !icViewDesigner)
+            return;
+        // Should only ever be the 1 component
+        icViewDesigner.circuit.getComponents()[0].name = name ?? "";
+    }, [name, icViewDesigner]);
 
 
-    //     // const close = (cancelled = false) => {
-    //     //     // Block input while closed
-    //     //     icInfo.input.block();
+    const close = (cancelled = false) => {
+        if (!objIds)
+            throw new Error("ICDesigner.close failed: objIds were undefined");
 
-    //     //     if (!cancelled) {
-    //     //         if (!data)
-    //     //             throw new Error("ICDesigner.close failed: data was undefined");
+        // Block input while closed
+        setICViewDesigner(undefined);
 
-    //     //         // Create IC on center of screen
-    //     //         const ic = new IC(data);
-    //     //         ic.setPos(mainInfo.camera.getPos());
+        if (!cancelled) {
+            const circuit = mainDesigner.circuit;
 
-    //     //         // Deselect other things, create IC and select it
-    //     //         const action = new GroupAction([
-    //     //             DeselectAll(mainInfo.selections),
-    //     //             AddICData(data, mainInfo.designer),
-    //     //             Place(mainInfo.designer, ic),
-    //     //             Select(mainInfo.selections, ic),
-    //     //         ], "Create IC Action");
-    //     //         mainInfo.history.add(action);
-    //     //         mainInfo.renderer.render();
-    //     //     }
+            circuit.beginTransaction();
 
-    //     //     // Unblock main input
-    //     //     mainInfo.input.unblock();
+            const ic = icViewDesigner!.circuit.getICs()[0];
+            circuit.importICs([ic]);
 
-    //     //     icInfo.ic = undefined;
-    //     //     dispatch(CloseICDesigner());
-    //     //     setName({ name: "" }); // Clear name
-    //     // }
+            // Create IC on center of screen
+            const icInstance = circuit.placeComponentAt(ic.id, mainDesigner.viewport.camera.pos);
 
-    //     // useKeyDownEvent(icInfo.input, "Escape", () => close(true),  [data, mainInfo]);
-    //     // useKeyDownEvent(icInfo.input, "Enter",  () => close(false), [data, mainInfo]);
+            circuit.selections.clear();
+            icInstance.select();
 
-    //     // return (
-    //     //     <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
-    //     //         <canvas ref={canvas}
-    //     //                 width={w*IC_DESIGNER_VW}
-    //     //                 height={h*IC_DESIGNER_VH}
-    //     //                 style={{ cursor }} />
+            circuit.commitTransaction();
+        }
 
-    //     //         <InputField type="text"
-    //     //                     value={name}
-    //     //                     placeholder="IC Name"
-    //     //                     onChange={(ev) => setName({ name: ev.target.value })} />
+        // Unblock main input
+        mainDesigner.viewport.setBlocked(false);
 
-    //     //         <div className="icdesigner__buttons">
-    //     //             <button type="button" name="confirm" onClick={() => close()}>
-    //     //                 Confirm
-    //     //             </button>
-    //     //             <button type="button" name="cancel"  onClick={() => close(true)}>
-    //     //                 Cancel
-    //     //             </button>
-    //     //         </div>
-    //     //     </div>
-    //     // );
-    //     return null;
-    // }
-// })();
+        dispatch(CloseICDesigner());
+        setName({ name: "" }); // Clear name
+    }
+
+    useWindowKeyDownEvent("Escape", () => close(true), [objIds]);
+    useWindowKeyDownEvent("Enter", () => close(false), [objIds]);
+
+    return (
+        <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
+            <canvas ref={canvas}
+                    width={w*IC_DESIGNER_VW}
+                    height={h*IC_DESIGNER_VH}
+                    style={{ cursor }} />
+
+            <InputField type="text"
+                        value={name}
+                        placeholder="IC Name"
+                        onChange={(ev) => setName({ name: ev.target.value })} />
+
+            <div className="icdesigner__buttons">
+                <button type="button" name="confirm" onClick={() => close()}>
+                    Confirm
+                </button>
+                <button type="button" name="cancel"  onClick={() => close(true)}>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    );
+}

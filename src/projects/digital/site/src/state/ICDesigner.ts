@@ -1,21 +1,20 @@
-// import {ICData} from "digital/api/circuit/models/ioobjects";
+import {GUID} from "shared/api/circuit/public";
 
 import {CreateState} from "shared/site/utils/CreateState";
 
 
-// @TODO
 const [initialState, actions, reducer] = CreateState()(
     {
         isActive: false,
-        ic:       undefined as any | undefined,
+        objIds:   [] as GUID[] | undefined,
     },
     {
-        OpenICDesigner:  (data: any) => ({ type: "OPEN_ICDESIGNER_ID", data }) as const,
-        CloseICDesigner: ()          => ({ type: "CLOSE_ICDESIGNER_ID"      }) as const,
+        OpenICDesigner:  (ids: GUID[]) => ({ type: "OPEN_ICDESIGNER_ID", ids }) as const,
+        CloseICDesigner: ()            => ({ type: "CLOSE_ICDESIGNER_ID"     }) as const,
     },
     {
-        "OPEN_ICDESIGNER_ID":  (_, action) => ({ isActive: true, ic: action.data }),
-        "CLOSE_ICDESIGNER_ID": (_)         => ({ isActive: false, ic: undefined }),
+        "OPEN_ICDESIGNER_ID":  (_, action) => ({ isActive: true,  objIds: action.ids }),
+        "CLOSE_ICDESIGNER_ID": (_)         => ({ isActive: false, objIds: undefined  }),
     }
 );
 

@@ -4,16 +4,16 @@ import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "shared/api/circu
 import {GUID}   from "shared/api/circuit/schema/GUID";
 import {Schema} from "shared/api/circuit/schema";
 
-import {CircuitOp, ConnectWireOp, InvertCircuitOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
+import {CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
 import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";
 import {CircuitLog, LogEntry} from "./CircuitLog";
 import {ObservableImpl} from "../../utils/Observable";
 import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
 
 
-export interface ReadonlyCircuitStorage {
+export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> {
     readonly id: GUID;
-    readonly metadata: Schema.CircuitMetadata;
+    readonly metadata: M;
 
     getObjectInfo(kind: string): Result<ObjInfo>;
     getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
@@ -46,13 +46,13 @@ export interface ReadonlyCircuitStorage {
     getPortConfig(id: GUID): Result<PortConfig>;
 }
 export interface ReadonlyCircuitDocument {
-    getCircuitInfo(circuitID: GUID): Result<ReadonlyCircuitStorage>;
+    getCircuitInfo(): ReadonlyCircuitStorage;
 }
 
-class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> implements ReadonlyCircuitStorage {
+class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> implements ReadonlyCircuitStorage<M> {
     public readonly objInfo: ObjInfoProvider;
 
-    public readonly metadata: M;
+    public metadata: M;
 
     // Object storage
     public readonly objStorage: Map<GUID, Schema.Obj>;
@@ -80,6 +80,14 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     //
     // TODO: add helper that checks all invariants of the internal rep.
     //
+    public addObjs(objs: Schema.Obj[]) {
+        objs.filter((o) => (o.baseKind === "Component"))
+            .forEach((c) => this.addComponent(c));
+        objs.filter((o) => (o.baseKind === "Port"))
+            .forEach((p) => this.addPort(p));
+        objs.filter((o) => (o.baseKind === "Wire"))
+            .forEach((w) => this.addWire(w));
+    }
 
     public deleteComponent(c: Schema.Component) {
         this.objStorage.delete(c.id);
@@ -307,7 +315,6 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
 
 export type CircuitDocEvent = {
     type: "CircuitOp";
-    circuit: GUID;
     diff: FastCircuitDiff;
 }
 
@@ -320,9 +327,10 @@ export type CircuitDocEvent = {
 export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements ReadonlyCircuitDocument {
     private readonly objInfo: ObjInfoProvider;
 
-    // Map of [circuit ID: circuit contents]
-    private readonly storage: Map<GUID, CircuitStorage>;
-    private readonly diffBuilders: Map<GUID, FastCircuitDiffBuilder>;
+    private readonly storage: CircuitStorage;
+    private diffBuilder: FastCircuitDiffBuilder;
+
+    private readonly icStorage: Map<GUID, CircuitStorage<Schema.IntegratedCircuitMetadata>>;
 
     private readonly log: CircuitLog;
     private clock: number;
@@ -331,13 +339,17 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     private transactionCounter: number;
     private transactionOps: CircuitOp[];
 
-    public constructor(objInfo: ObjInfoProvider, log: CircuitLog) {
+    public constructor(id: GUID, objInfo: ObjInfoProvider, log: CircuitLog) {
         super();
 
         this.objInfo = objInfo;
 
-        this.storage = new Map();
-        this.diffBuilders = new Map();
+        this.storage = new CircuitStorage(objInfo, {
+            id, name: "", desc: "", thumb: "", version: "type/v0",
+        });
+        this.diffBuilder = new FastCircuitDiffBuilder();
+
+        this.icStorage = new Map();
 
         this.log = log;
         this.clock = log.clock;
@@ -359,9 +371,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 this.applyOpsChecked(evt.ops);
 
             // Emit event on remote updates
-            const circuits = new Set(evt.ops.map((o) => o.circuit));
-            circuits.forEach((circuit) =>
-                this.publishDiffEvent(circuit));
+            this.publishDiffEvent();
         });
     }
 
@@ -390,15 +400,15 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
             });
     }
 
-    private publishDiffEvent(circuit: GUID) {
-        const diff = this.diffBuilders.get(circuit)!.build();
-        this.diffBuilders.set(circuit, new FastCircuitDiffBuilder());
-        this.publish({ type: "CircuitOp", circuit, diff });
+    private publishDiffEvent() {
+        const diff = this.diffBuilder.build();
+        this.diffBuilder = new FastCircuitDiffBuilder();
+        this.publish({ type: "CircuitOp", diff });
     }
 
     private applyOp(op: CircuitOp): Result {
         return this.applyCircuitOp(op)
-            .map(() => this.diffBuilders.get(op.circuit)!.applyOp(op));
+            .map(() => this.diffBuilder.applyOp(op));
     }
 
     private applyOpsChecked(ops: readonly CircuitOp[]): void {
@@ -409,69 +419,48 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
             .unwrap();
     }
 
-    public addObjs(circuit: GUID, objs: Schema.Obj[]): Result {
-        const storage = this.getMutableCircuitStorage(circuit).unwrap();
+    // public addObjs(objs: Schema.Obj[]): Result {
+    //     const storage = this.storage;
 
-        objs.filter((o) => (o.baseKind === "Component"))
-            .forEach((c) => storage.addComponent(c));
-        objs.filter((o) => (o.baseKind === "Port"))
-            .forEach((p) => storage.addPort(p));
-        objs.filter((o) => (o.baseKind === "Wire"))
-            .forEach((w) => storage.addWire(w));
+    //     objs.filter((o) => (o.baseKind === "Component"))
+    //         .forEach((c) => storage.addComponent(c));
+    //     objs.filter((o) => (o.baseKind === "Port"))
+    //         .forEach((p) => storage.addPort(p));
+    //     objs.filter((o) => (o.baseKind === "Wire"))
+    //         .forEach((w) => storage.addWire(w));
 
-        this.publish({
-            type: "CircuitOp",
-            circuit,
-            diff: {
-                addedComponents: new Set(objs.filter((o) => (o.baseKind === "Component")).map((o) => o.id)),
-                addedWires:      new Set(objs.filter((o) => (o.baseKind === "Wire")).map((o) => o.id)),
+    //     this.publish({
+    //         type: "CircuitOp",
+    //         diff: {
+    //             addedComponents: new Set(objs.filter((o) => (o.baseKind === "Component")).map((o) => o.id)),
+    //             addedWires:      new Set(objs.filter((o) => (o.baseKind === "Wire")).map((o) => o.id)),
 
-                propsChanged:      new Map(),
-                portsChanged:      new Set<string>(),
-                removedComponents: new Set<string>(),
-                removedWires:      new Set<string>(),
-                removedWiresPorts: new Map(),
-            },
-        });
+    //             propsChanged:      new Map(),
+    //             portsChanged:      new Set<string>(),
+    //             removedComponents: new Set<string>(),
+    //             removedWires:      new Set<string>(),
+    //             removedWiresPorts: new Map(),
+    //         },
+    //     });
 
-        return OkVoid();
-    }
+    //     return OkVoid();
+    // }
 
-    // TODO: Transaction? idk
-    public createCircuit(id: GUID): Result {
-        this.storage.set(id, new CircuitStorage(this.objInfo, {
-            id, name: "", desc: "", thumb: "", version: "type/v0",
-        }));
-        this.diffBuilders.set(id, new FastCircuitDiffBuilder());
+    // public getCircuitIds(): Set<GUID> {
+    //     return new Set(this.storage.keys());
+    // }
 
-        return OkVoid();
-    }
-
-    public createIC(
-        metadata: Schema.IntegratedCircuit["metadata"],
-        info: ComponentConfigurationInfo,
-        objs: Schema.Obj[],
-    ): Result {
-        this.objInfo.addNewComponentInfo(info.kind, info);
-
-        this.storage.set(metadata.id,
-            new CircuitStorage<Schema.IntegratedCircuit["metadata"]>(this.objInfo, { ...metadata }));
-        this.diffBuilders.set(metadata.id, new FastCircuitDiffBuilder());
-
-        this.addObjs(metadata.id, objs);
-
-        return OkVoid();
-    }
-
-    public getCircuitIds(): Set<GUID> {
-        return new Set(this.storage.keys());
-    }
-
-    public setMetadataFor<M extends Schema.CircuitMetadata>(circuit: GUID, newMetadata: Partial<M>) {
-        return this.getMutableCircuitStorage(circuit)
-            .map((c) => {
-                (c.metadata as M) = { ...(c.metadata as M), ...newMetadata };
-            });
+    // public setMetadataFor<M extends Schema.CircuitMetadata>(circuit: GUID, newMetadata: Partial<M>) {
+    //     return this.getMutableCircuitStorage(circuit)
+    //         .map((c) => {
+    //             (c.metadata as M) = { ...(c.metadata as M), ...newMetadata };
+    //         });
+    // }
+    public setMetadata(metadata: Partial<Schema.CircuitMetadata>) {
+        this.storage.metadata = {
+            ...this.storage.metadata,
+            ...metadata,
+        };
     }
 
     public addTransactionOp(op: CircuitOp): Result {
@@ -487,16 +476,19 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 this.commitTransaction();
 
                 // Emit event per-transaction-op
-                this.publishDiffEvent(op.circuit);
+                this.publishDiffEvent();
             });
     }
 
-    private getMutableCircuitStorage(circuitID: GUID): Result<CircuitStorage> {
-        return WrapResOrE(this.storage.get(circuitID), `Invalid circuit GUID ${circuitID}`);
+    public getCircuitInfo(): ReadonlyCircuitStorage {
+        return this.storage;
+    }
+    public getICs(): ReadonlySet<GUID> {
+        return new Set(this.icStorage.keys());
     }
 
-    public getCircuitInfo(circuitID: GUID): Result<ReadonlyCircuitStorage> {
-        return this.getMutableCircuitStorage(circuitID);
+    public getICInfo(icID: GUID): Result<ReadonlyCircuitStorage<Schema.IntegratedCircuitMetadata>> {
+        return WrapResOrE(this.icStorage.get(icID), `CircuitDocument.getICInfo: Invalid IC ID ${icID}!`);
     }
 
     //
@@ -570,24 +562,27 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 throw new Error("Unimplemented");
             case "SetPropertyOp":
                 return this.setProperty(op);
+            case "CreateICOp":
+                this.createIC(op);
+                return OkVoid();
         }
     }
 
     private placeComponent(op: PlaceComponentOp) {
-        const info = this.getMutableCircuitStorage(op.circuit).unwrap();
+        const storage = this.storage;
 
         if (op.inverted) {
-            if (!info.componentPortsMap.has(op.c.id))
+            if (!storage.componentPortsMap.has(op.c.id))
                 throw new Error(`Deleted component ${op.c.id} should have componentPortsMap initialized!`);
-            if (info.componentPortsMap.get(op.c.id)!.size > 0)
+            if (storage.componentPortsMap.get(op.c.id)!.size > 0)
                 throw new Error(`Deleted component ${op.c.id} should not have ports`);
 
-            info.deleteComponent(op.c);
+            storage.deleteComponent(op.c);
         } else {
-            if (info.componentPortsMap.has(op.c.id))
+            if (storage.componentPortsMap.has(op.c.id))
                 throw new Error(`Placed component ${op.c.id} should not have any ports`);
 
-            info.addComponent(op.c);
+            storage.addComponent(op.c);
         }
     }
 
@@ -595,39 +590,39 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     // It assumes any configuration of added/removed ports is fine.
     // Checking it against a component's info should be done prior to calling this method.
     private setComponentPorts(op: SetComponentPortsOp): Result {
-        const info = this.getMutableCircuitStorage(op.circuit).unwrap();
+        const storage = this.storage;
 
         const addedPorts = op.inverted ? op.removedPorts : op.addedPorts;
         const removedPorts = op.inverted ? op.addedPorts : op.removedPorts;
 
-        return info.getCompByID(op.component)
+        return storage.getCompByID(op.component)
             .map((_) => {
                 if (!op.inverted)
-                    op.deadWires.forEach((w) => info.deleteWire(w));
-                removedPorts.forEach((p) => info.deletePort(p));
-                addedPorts.forEach((p) => info.addPort(p));
+                    op.deadWires.forEach((w) => storage.deleteWire(w));
+                removedPorts.forEach((p) => storage.deletePort(p));
+                addedPorts.forEach((p) => storage.addPort(p));
                 if (op.inverted)
-                    op.deadWires.forEach((w) => info.addWire(w));
+                    op.deadWires.forEach((w) => storage.addWire(w));
             });
     }
 
     private connectWire(op: ConnectWireOp): Result {
-        const info = this.getMutableCircuitStorage(op.circuit).unwrap();
+        const storage = this.storage;
 
-        return info.getPortByID(op.w.p1)
-            .andThen((p1) => info.getPortByID(op.w.p2)
+        return storage.getPortByID(op.w.p1)
+            .andThen((p1) => storage.getPortByID(op.w.p2)
                 .andThen((p2) =>
                     (op.inverted
                         ? OkVoid()
                         // Check connectivity when adding wire only
-                        : info.checkWireConnectivity(p1, p2).and(info.checkWireConnectivity(p2, p1))))
-                .map((_) => (op.inverted ? info.deleteWire(op.w) : info.addWire(op.w))));
+                        : storage.checkWireConnectivity(p1, p2).and(storage.checkWireConnectivity(p2, p1))))
+                .map((_) => (op.inverted ? storage.deleteWire(op.w) : storage.addWire(op.w))));
     }
 
     private setProperty(op: SetPropertyOp): Result {
-        const info = this.getMutableCircuitStorage(op.circuit).unwrap();
+        const storage = this.storage;
 
-        return info.getMutObjectAndInfoByID(op.id)
+        return storage.getMutObjectAndInfoByID(op.id)
             .andThen(([obj, info]) => info.checkPropValue(op.key, op.newVal)
                 .uponOk(() => {
                     // Copy-on-write
@@ -637,5 +632,24 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                     else
                         delete obj.props[op.key];
                 }));
+    }
+
+    // NOTE: This operation does NOT check or remove existing IC instances. This should be done beforehand.
+    private createIC(op: CreateICOp) {
+        if (op.inverted) {
+            if (!this.icStorage.has(op.ic.metadata.id))
+                throw new Error(`Deleted IC ${op.ic.metadata.id} should have an entry in icStorage!`);
+
+            this.icStorage.delete(op.ic.metadata.id);
+            this.objInfo.deleteIC(op.ic);
+        } else {
+            if (this.icStorage.has(op.ic.metadata.id))
+                throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);
+
+            const storage = new CircuitStorage<Schema.IntegratedCircuitMetadata>(this.objInfo, op.ic.metadata);
+            storage.addObjs(op.ic.objects);
+            this.icStorage.set(op.ic.metadata.id, storage);
+            this.objInfo.createIC(op.ic);
+        }
     }
 }

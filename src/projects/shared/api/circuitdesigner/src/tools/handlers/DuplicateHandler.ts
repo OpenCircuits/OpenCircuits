@@ -6,14 +6,14 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 export function DuplicateSelections(circuit: Circuit): void {
     circuit.beginTransaction();
 
-    const duplicates = circuit.selections.duplicate();
-    circuit.selections.clear();
-    duplicates.forEach((obj) => obj.select());
-    duplicates.forEach((obj) => {
-        // Offset the duplicates slightly
-        if (obj.baseKind === "Component")
-            obj.pos = obj.pos.add(V(0.5, 0.5));
-    });
+    // const duplicates = circuit.selections.duplicate();
+    // circuit.selections.clear();
+    // duplicates.forEach((obj) => obj.select());
+    // duplicates.forEach((obj) => {
+    //     // Offset the duplicates slightly
+    //     if (obj.baseKind === "Component")
+    //         obj.pos = obj.pos.add(V(0.5, 0.5));
+    // });
 
     circuit.commitTransaction();
 }

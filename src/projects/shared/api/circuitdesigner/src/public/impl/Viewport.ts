@@ -40,6 +40,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
     protected readonly primRenderer: PrimRenderer;
     protected readonly scheduler: RenderScheduler;
 
+    protected readonly inputs: Set<InputAdapter>;
+
     protected curState: {
         mainCanvas: HTMLCanvasElement;
         renderer: RenderHelper;
@@ -64,6 +66,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         this.scheduler = new RenderScheduler();
         this.scheduler.subscribe(() => this.render());
         this.scheduler.block();
+
+        this.inputs = new Set();
 
         this.curState = undefined;
     }
@@ -173,6 +177,10 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         return this.curState?.renderer.size ?? V(0, 0);
     }
 
+    public setInputBlocked(blocked: boolean) {
+        this.inputs.forEach((input) => input.setBlocked(blocked));
+    }
+
     public set cursor(cursor: Cursor | undefined) {
         this.state.cursor = cursor;
     }
@@ -217,6 +225,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
         // Setup inputs and forward them to the tool manager
         const inputAdapter = new InputAdapter(canvas, this.options.dragTime);
+        this.inputs.add(inputAdapter);
         const u2 = inputAdapter.subscribe((ev) => this.state.toolManager.onEvent(ev, this.designer));
 
         let u4: (() => void) | undefined;
@@ -237,6 +246,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
             u4?.();
             u3();
             u2();
+            this.inputs.delete(inputAdapter);
             u1();
             this.detachCanvas();
         }

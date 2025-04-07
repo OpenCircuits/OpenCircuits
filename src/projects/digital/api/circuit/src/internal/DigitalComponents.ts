@@ -7,6 +7,7 @@ import {BaseComponentConfigurationInfo,
         PortConfig,
         PropTypeMap} from "shared/api/circuit/internal/impl/ObjInfo";
 import {Schema} from "shared/api/circuit/schema";
+import {MapObj} from "shared/api/circuit/utils/Functions";
 
 
 type DigitalPortGroupInfo = Record<string, "input" | "output">
@@ -249,21 +250,70 @@ const WireInfo = new BaseObjInfo("Wire", "DigitalWire", { "color": "string" });
 const PortInfo = new BaseObjInfo("Port", "DigitalPort", {});
 
 
-export function CreateDigitalComponentInfoProvider(): ObjInfoProvider {
-    return new BaseObjInfoProvider([
-        // Node
-        NodeInfo,
-        // Inputs
-        ButtonInfo, SwitchInfo, ConstantLowInfo, ConstantHighInfo, ConstantNumberInfo, ClockInfo,
-        // Outputs
-        LEDInfo, SegmentDisplayInfo, BCDDisplayInfo, ASCIIDisplayInfo, OscilloscopeInfo,
-        // Gates
-        BUFGateInfo, NOTGateInfo, ANDGateInfo, NANDGateInfo, ORGateInfo, NORGateInfo, XORGateInfo, XNORGateInfo,
-        // Flip Flops
-        SRFlipFlopInfo, JKFlipFlopInfo, DFlipFlopInfo, TFlipFlopInfo,
-        // Latches
-        DLatchInfo, SRLatchInfo,
-        // Other
-        MultiplexerInfo, DemultiplexerInfo, EncoderInfo, DecoderInfo, Comparator, Label,
-    ], [WireInfo], [PortInfo]);
+export class DigitalObjInfoProvider extends BaseObjInfoProvider {
+    public constructor() {
+        super([
+            // Node
+            NodeInfo,
+            // Inputs
+            ButtonInfo, SwitchInfo, ConstantLowInfo, ConstantHighInfo, ConstantNumberInfo, ClockInfo,
+            // Outputs
+            LEDInfo, SegmentDisplayInfo, BCDDisplayInfo, ASCIIDisplayInfo, OscilloscopeInfo,
+            // Gates
+            BUFGateInfo, NOTGateInfo, ANDGateInfo, NANDGateInfo, ORGateInfo, NORGateInfo, XORGateInfo, XNORGateInfo,
+            // Flip Flops
+            SRFlipFlopInfo, JKFlipFlopInfo, DFlipFlopInfo, TFlipFlopInfo,
+            // Latches
+            DLatchInfo, SRLatchInfo,
+            // Other
+            MultiplexerInfo, DemultiplexerInfo, EncoderInfo, DecoderInfo, Comparator, Label,
+        ], [WireInfo], [PortInfo])
+    }
+
+    public override getComponent(kind: string): DigitalComponentConfigurationInfo | undefined {
+        return super.getComponent(kind) as DigitalComponentConfigurationInfo | undefined;
+    }
+
+    public override createIC(ic: Schema.IntegratedCircuit): void {
+        const ports = ic.metadata.pins.reduce<
+            Record<string, Array<Schema.IntegratedCircuitMetadata["pins"][number]>>
+        >((prev, pin) => ({
+            ...prev,
+            [pin.group]: [...(prev[pin.group] ?? []), pin],
+        }), {});
+
+        const portGroupInfo = MapObj(ports, ([_, pins]) => {
+            // Verify all the pins in this group belong to the same type (input/output)
+            const pinObjs = pins
+                .map(({ id }) => ic.objects.find((o) => (o.id === id)));
+            if (!pinObjs.every((o) => !!o && o.baseKind === "Port")) {
+                throw new Error(
+                    `DigitalObjInfoProvider.onICCreate: found undefined or non-Port pins for IC ${ic.metadata.id}!`);
+            }
+            const portObjs = pinObjs as Schema.Port[];
+            const parentObjs = portObjs.map((p) => ic.objects.find((o) => (o.id === p.parent))! as Schema.Component);
+            const types = parentObjs.map((c, i) => this.getComponent(c.kind)!.portGroupInfo[portObjs[i].group]);
+            if (!types.every((type) => (type === types[0]))) {
+                throw new Error(
+                    `DigitalObjInfoProvider.onICCreate: found inconsistent port types for IC ${ic.metadata.id}!`);
+            }
+            // Flip the type since an internal "Switch" output port would
+            // imply an "input" port on the outside of the IC, and vice versa.
+            const type = types[0];
+            return (type === "input" ? "output" : "input");
+        });
+
+        const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
+
+        this.components.set(ic.metadata.id, new DigitalComponentConfigurationInfo(
+            ic.metadata.id,
+            {},
+            portGroupInfo,
+            [portConfig],
+        ));
+    }
+
+    public override deleteIC(ic: Schema.IntegratedCircuit): void {
+        this.components.delete(ic.metadata.id);
+    }
 }

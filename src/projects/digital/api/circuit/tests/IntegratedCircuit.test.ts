@@ -87,15 +87,23 @@ describe("IntegratedCircuit", () => {
                 ],
             },
         });
+        expect(circuit.getICs()).toHaveLength(1);
+        expect(circuit.getICs()[0].id).toEqual(innerIc.id);
 
         const [outerIcCircuit] = CreateCircuit();
 
+        expect(outerIcCircuit.getICs()).toHaveLength(0);
         outerIcCircuit.importICs(circuit.getICs());
+        expect(outerIcCircuit.getICs()).toHaveLength(1);
+        expect(outerIcCircuit.getICs()[0].id).toEqual(innerIc.id);
 
         const i1Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, -5));
         const i2Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, +5));
         const o1Outer = outerIcCircuit.placeComponentAt("LED", V(+5,  0));
         const innerIcInstance = outerIcCircuit.placeComponentAt(innerIc.id, V(1, 1));
+        expect(innerIcInstance.allPorts).toHaveLength(3);
+        expect(innerIcInstance.ports["inputs"]).toHaveLength(2);
+        expect(innerIcInstance.ports["outputs"]).toHaveLength(1);
 
         i1Outer.outputs[0].connectTo(innerIcInstance.inputs[0]);
         i2Outer.outputs[0].connectTo(innerIcInstance.inputs[1]);
@@ -120,6 +128,7 @@ describe("IntegratedCircuit", () => {
 
         const outerIcInstance = circuit.placeComponentAt(outerIc.id, V(1, 1));
 
+        expect(outerIcInstance.allPorts).toHaveLength(3);
         expect(outerIcInstance.inputs).toHaveLength(2);
         expect(outerIcInstance.outputs).toHaveLength(1);
         expect(outerIcInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));

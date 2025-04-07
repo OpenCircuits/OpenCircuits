@@ -1,30 +1,40 @@
-import {Circuit} from "shared/api/circuit/public";
+import {CreateCircuit} from "digital/api/circuit/public";
+import {OpenICDesigner} from "digital/site/state/ICDesigner";
+import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
+import {useDigitalDispatch} from "digital/site/utils/hooks/useDigital";
+import {Circuit, Component} from "shared/api/circuit/public";
+import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
 
 type Props = {
     circuit: Circuit;
 }
-// eslint-disable-next-line arrow-body-style
 export const CreateICButtonModule = ({ circuit }: Props) => {
-    // @TODO
-    // const dispatch = useDigitalDispatch();
+    const dispatch = useDigitalDispatch();
 
-    // const [props, cs] = useSelectionProps(
-    //     info,
-    //     (s): s is Component => (s instanceof Component),
-    //     (s) => ({ name: s.getName() }) // Don't really need any props but
-    //                                    //  we need to be able to update the state
-    // );
+    const [props, cs] = useSelectionProps(
+        circuit,
+        (s): s is Component => (s.baseKind === "Component"),
+        (s) => ({ ids: s.id })
+    );
 
-    // if (!(props && ICData.IsValid(cs))) // Make selected components form valid set
-    //     return null;
+    if (!props)
+        return null;
 
-    // return (
-    //     <button type="button"
-    //             title="Create an IC from selections"
-    //             onClick={() => dispatch(OpenICDesigner(ICData.Create(cs)!))}>
-    //         Create IC
-    //     </button>
-    // );
-    return null;
+    const isValid = true; // ICData.IsValid(cs);
+
+    const open = () => {
+        if (!isValid)
+            return;
+        dispatch(OpenICDesigner(props["ids"]));
+    }
+
+    return (
+        <button type="button"
+                title="Create an IC from selections"
+                disabled={!isValid}
+                onClick={open}>
+            Create IC
+        </button>
+    );
 }

@@ -42,6 +42,9 @@ export interface Viewport extends MultiObservable<ViewportEvents> {
     readonly camera: Camera;
     readonly screenSize: Vector;
 
+    // TODO: Revisit this
+    setInputBlocked(blocked: boolean): void;
+
     cursor?: Cursor;
     // A margin relative to the current viewport (Camera) used
     // for calculating the current "usable" viewport specifically
