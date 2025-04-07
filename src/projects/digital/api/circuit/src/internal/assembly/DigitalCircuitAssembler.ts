@@ -24,6 +24,8 @@ import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssem
 import {BufferAssembler} from "./components/gates/BufferAssembler";
 import {TwoInputFlipFlopAssembler} from "./components/flipflops/TwoInputFlipFlopAssembler";
 import {OneInputFlipFlopAssembler} from "./components/flipflops/OneInputFlipFlopAssembler";
+import {OneInputLatchAssembler} from "./components/latches/OneInputLatchAssembler";
+import {TwoInputLatchAssembler} from "./components/latches/TwoInputLatchAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -109,6 +111,8 @@ export function MakeDigitalCircuitAssembler(
         "TFlipFlop":  new OneInputFlipFlopAssembler(params, sim, "TFlipFlop", "T"),
 
         // Latches
+        "DLatch":  new OneInputLatchAssembler(params, sim, "DLatch", "D"),
+        "SRLatch": new TwoInputLatchAssembler(params, sim, "SRLatch", "S", "R"),
 
         // Other
     }));
