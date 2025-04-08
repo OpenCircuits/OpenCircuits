@@ -9,13 +9,13 @@ export class TwoInputLatchAssembler extends LatchAssembler {
         super(params, sim, {
             kind,
             otherInputs: {
-                [inputPort1Name]: () => ({
-                    origin: V(-this.size.x/2, -3*this.size.y/8),
-                    target: V(-this.size.x/2 - this.options.defaultPortLength, -3*this.size.y/8),
+                [inputPort1Name]: (comp) => ({
+                    origin: V(-this.getSize(comp).x/2, -3*this.getSize(comp).y/8),
+                    target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, -3*this.getSize(comp).y/8),
                 }),
-                [inputPort2Name]: () => ({
-                    origin: V(-this.size.x/2, 3*this.size.y/8),
-                    target: V(-this.size.x/2 - this.options.defaultPortLength, 3*this.size.y/8),
+                [inputPort2Name]: (comp) => ({
+                    origin: V(-this.getSize(comp).x/2, 3*this.getSize(comp).y/8),
+                    target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, 3*this.getSize(comp).y/8),
                 }),
             },
         });

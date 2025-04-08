@@ -27,6 +27,7 @@ import {TwoInputFlipFlopAssembler} from "./components/flipflops/TwoInputFlipFlop
 import {OneInputFlipFlopAssembler} from "./components/flipflops/OneInputFlipFlopAssembler";
 import {OneInputLatchAssembler} from "./components/latches/OneInputLatchAssembler";
 import {TwoInputLatchAssembler} from "./components/latches/TwoInputLatchAssembler";
+import {OscilloscopeAssembler} from "./components/OscilloscopeAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -88,7 +89,7 @@ export function MakeDigitalCircuitAssembler(
             "outputs": () => ({ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }),
             "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
         }),
-        // // Inputs
+        // Inputs
         "Switch":         new SwitchAssembler(params, sim),
         "Button":         new ButtonAssembler(params, sim),
         "Clock":          new ClockAssembler(params, sim),
@@ -96,11 +97,12 @@ export function MakeDigitalCircuitAssembler(
         "ConstantLow":    new ConstantLowAssembler(params, sim),
         "ConstantNumber": new ConstantNumberAssembler(params, sim),
 
-        // // Outputs
+        // Outputs
         "LED":            new LEDAssembler(params, sim),
         "SegmentDisplay": new SegmentDisplayAssembler(params, sim),
         "BCDDisplay":     new BCDDisplayAssembler(params, sim),
         "ASCIIDisplay":   new ASCIIDisplayAssembler(params, sim),
+        "Oscilloscope":   new OscilloscopeAssembler(params, sim),
 
         // Gates
         "BUFGate":  new BufferAssembler(params, sim, false),

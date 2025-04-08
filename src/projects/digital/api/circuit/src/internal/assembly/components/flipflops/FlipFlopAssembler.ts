@@ -1,10 +1,11 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {DigitalComponentConfigurationInfo} from "../../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
+import {Schema} from "shared/api/circuit/schema";
 
 
 export interface FlipFlopAssemblerParams {
@@ -17,12 +18,12 @@ export abstract class FlipFlopAssembler extends ComponentAssembler {
     protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs }: FlipFlopAssemblerParams) {
-        super(params, V(2, 2.4), {
-            "pre":  () => ({ origin: V(0, this.size.y/2), target: V(0, this.size.y/2 + this.options.defaultPortLength) }),
-            "clr":  () => ({ origin: V(0, -this.size.y/2), target: V(0, -this.size.y/2 - this.options.defaultPortLength) }),
-            "Q":    () => ({ origin: V(this.size.x/2, this.size.y/4), target: V(this.size.x/2 + this.options.defaultPortLength, this.size.y/4) }),
-            "Qinv": () => ({ origin: V(this.size.x/2, -this.size.y/4), target: V(this.size.x/2 + this.options.defaultPortLength, -this.size.y/4) }),
-            "clk":  () => ({ origin: V(-this.size.x/2, this.getClkPortYValue()), target: V(-this.size.x/2 - this.options.defaultPortLength, this.getClkPortYValue()) }),
+        super(params, {
+            "pre":  (comp) => ({ origin: V(0, this.getSize(comp).y/2), target: V(0, this.getSize(comp).y/2 + this.options.defaultPortLength) }),
+            "clr":  (comp) => ({ origin: V(0, -this.getSize(comp).y/2), target: V(0, -this.getSize(comp).y/2 - this.options.defaultPortLength) }),
+            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, this.getSize(comp).y/4) }),
+            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, -this.getSize(comp).y/4) }),
+            "clk":  (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getClkPortYValue(comp)), target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, this.getClkPortYValue(comp)) }),
             ...otherInputs,
         }, [
             {
@@ -43,5 +44,9 @@ export abstract class FlipFlopAssembler extends ComponentAssembler {
         this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
     }
 
-    protected abstract getClkPortYValue(): number;
+    protected override getSize(_: Schema.Component): Vector {
+        return V(2, 2.4);
+    }
+
+    protected abstract getClkPortYValue(comp: Schema.Component): number;
 }

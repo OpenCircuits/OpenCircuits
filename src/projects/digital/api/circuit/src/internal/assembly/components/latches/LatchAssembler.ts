@@ -1,10 +1,11 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {DigitalComponentConfigurationInfo} from "../../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
+import {Schema} from "shared/api/circuit/schema";
 
 
 export interface LatchAssemblerParams {
@@ -17,10 +18,10 @@ export abstract class LatchAssembler extends ComponentAssembler {
     protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs }: LatchAssemblerParams) {
-        super(params, V(1.2, 1.2), {
-            "Q":    () => ({ origin: V(this.size.x/2, this.size.y/4), target: V(this.size.x/2 + this.options.defaultPortLength, this.size.y/4) }),
-            "Qinv": () => ({ origin: V(this.size.x/2, -this.size.y/4), target: V(this.size.x/2 + this.options.defaultPortLength, -this.size.y/4) }),
-            "E":    () => ({ origin: V(-this.size.x/2, this.getEnablePortYValue()), target: V(-this.size.x/2 - this.options.defaultPortLength, this.getEnablePortYValue()) }),
+        super(params, {
+            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, this.getSize(comp).y/4) }),
+            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, -this.getSize(comp).y/4) }),
+            "E":    (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getEnablePortYValue(comp)), target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, this.getEnablePortYValue(comp)) }),
             ...otherInputs,
         }, [
             {
@@ -41,5 +42,9 @@ export abstract class LatchAssembler extends ComponentAssembler {
         this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
     }
 
-    protected abstract getEnablePortYValue(): number;
+    protected override getSize(_: Schema.Component): Vector {
+        return V(1.2, 1.2);
+    }
+
+    protected abstract getEnablePortYValue(comp: Schema.Component): number;
 }

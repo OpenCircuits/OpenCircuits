@@ -2,7 +2,8 @@ import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/Di
 import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {ComponentAssembler, ComponentBaseShapePrimAssembly} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {V} from "Vector";
+import {Schema} from "shared/api/circuit/schema";
+import {V, Vector} from "Vector";
 
 
 export class BufferAssembler extends ComponentAssembler {
@@ -12,9 +13,9 @@ export class BufferAssembler extends ComponentAssembler {
     public constructor(
         params: AssemblerParams, sim: DigitalSim, not: boolean
     ) {
-        super(params, V(1, 1), {
+        super(params, {
             "outputs": () => ({ origin: V(0.4, 0), target: V(1.2, 0) }),
-            "inputs":  (index, total) => {
+            "inputs":  (_, index, total) => {
                 const spacing = 0.5 - this.options.defaultBorderWidth/2;
                 return { origin: V(-0.5, spacing*((total-1)/2 - index)), dir: V(-1, 0) };
             },
@@ -27,7 +28,7 @@ export class BufferAssembler extends ComponentAssembler {
                 assemble:     (gate) => ({
                     kind: "Circle",
 
-                    pos:    this.getPos(gate).add(this.size.x / 2 + this.options.notPortCircleRadius, 0),
+                    pos:    this.getPos(gate).add(this.getSize(gate).x / 2 + this.options.notPortCircleRadius, 0),
                     radius: this.options.notPortCircleRadius,
                 }),
 
@@ -64,5 +65,9 @@ export class BufferAssembler extends ComponentAssembler {
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo(not ? "NOTGate" : "BUFGate").unwrap() as DigitalComponentConfigurationInfo;
+    }
+
+    protected override getSize(_: Schema.Component): Vector {
+        return V(1, 1);
     }
 }
