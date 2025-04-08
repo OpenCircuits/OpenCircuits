@@ -4,11 +4,21 @@ import {GUID}      from "./GUID";
 import {Obj}             from "./Obj";
 
 
+export interface IntegratedCircuitPin {
+    id: GUID;
+    group: string;
+
+    x: number;
+    y: number;
+    dx: number;
+    dy: number;
+}
+
 export interface IntegratedCircuitMetadata extends CircuitMetadata {
     displayWidth: number;
     displayHeight: number;
 
-    pins: Array<{ id: GUID, group: string, x: number, y: number }>;
+    pins: IntegratedCircuitPin[];
 }
 
 export interface IntegratedCircuit {

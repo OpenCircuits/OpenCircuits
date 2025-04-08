@@ -18,18 +18,20 @@ export const PortCountModule = ({ circuit, kinds, basisPortGroup, label }: Props
     const [props, comps] = useSelectionProps(
         circuit,
         (c): c is Component => (
-            (c.baseKind === "Component") && (kinds.has(c.kind))
+            (c.baseKind === "Component")
+            && (kinds.has(c.kind))
         ),
         (c) => ({
             "configIndex": c.info.portConfigs.findIndex((config) =>
-                config[basisPortGroup] === c.ports[basisPortGroup].length),
+                config[basisPortGroup] === c.ports[basisPortGroup]?.length),
         }),
     );
 
-    if (!props)
+    if (!props || comps.length === 0)
         return null;
 
     const cfgIndices = props["configIndex"];
+
     // ASSUMES ALL PORT CONFIGS ARE THE SAME FOR NOW
     // Get all possible values for this group (from component 0)
     const options = comps[0].info.portConfigs.map((config, i) =>

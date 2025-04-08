@@ -13,6 +13,6 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     }
 }
 
-export class DigitalIntegratedCircuitImpl extends IntegratedCircuitImpl
+export class DigitalIntegratedCircuitImpl extends IntegratedCircuitImpl<DigitalTypes>
                                           implements DigitalIntegratedCircuit {
 }

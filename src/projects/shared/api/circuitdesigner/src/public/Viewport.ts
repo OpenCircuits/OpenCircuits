@@ -1,9 +1,6 @@
 import {Vector} from "Vector";
 import {Margin} from "math/Rect";
 
-import {GUID}        from "shared/api/circuit/public";
-import {CleanupFunc} from "shared/api/circuit/utils/types";
-
 import {MultiObservable} from "shared/api/circuit/utils/Observable";
 import {Prim}            from "shared/api/circuit/internal/assembly/Prim";
 import {RenderOptions}   from "shared/api/circuit/internal/assembly/RenderOptions";
@@ -11,6 +8,8 @@ import {RenderOptions}   from "shared/api/circuit/internal/assembly/RenderOption
 import {Camera} from "./Camera";
 import {Cursor} from "../input/Cursor";
 import {DebugOptions} from "./impl/DebugOptions";
+import {InputAdapter} from "../input/InputAdapter";
+import {CleanupFunc} from "shared/api/circuit/utils/types";
 
 
 // Re-export prim types
@@ -38,11 +37,21 @@ export type ViewportEvents = {
     // };
 }
 
+export interface AttachedCanvasInfo {
+    readonly screenSize: Vector;
+    readonly canvas: HTMLCanvasElement;
+    readonly input: InputAdapter;
+    cursor?: Cursor;
+
+    detach(): void;
+}
+
 export interface Viewport extends MultiObservable<ViewportEvents> {
     readonly camera: Camera;
-    readonly screenSize: Vector;
+    readonly canvasInfo?: AttachedCanvasInfo;
 
-    cursor?: Cursor;
+    attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
+
     // A margin relative to the current viewport (Camera) used
     // for calculating the current "usable" viewport specifically
     // for fitting the camera. I.e. when the ItemNav is open, this margin
@@ -53,10 +62,4 @@ export interface Viewport extends MultiObservable<ViewportEvents> {
     debugOptions: DebugOptions;
 
     resize(w: number, h: number): void;
-
-    attachCanvas(canvas: HTMLCanvasElement): CleanupFunc;
-    detachCanvas(): void;
-
-    setView(kind: "main"): void;
-    setView(kind: "ic", id: GUID, type: "internal" | "display"): void;
 }

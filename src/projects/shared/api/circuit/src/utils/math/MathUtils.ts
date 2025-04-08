@@ -19,13 +19,14 @@ export function Clamp(x: number, min: number, max: number): number {
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
- * @param bl  Bottom left corner of the rectangle.
- * @param tr  Top right corner of the rectangle.
- * @param pos The position to get the nearest point on.
- * @returns   The closest position on the edge of
- *            the rectangle from 'pos'.
+ * @param rect The rectangle.
+ * @param pos  The position to get the nearest point on.
+ * @returns    The closest position on the edge of
+ *             the rectangle from 'pos'.
  */
-export function GetNearestPointOnRect(bl: Vector, tr: Vector, pos: Vector): Vector {
+export function GetNearestPointOnRect(rect: Rect, pos: Vector): Vector {
+    const bl = rect.bottomLeft, tr = rect.topRight;
+
     // First clamp point to within the rectangle
     pos = Vector.Clamp(pos, bl, tr);
 
@@ -286,29 +287,38 @@ export function CalculateMidpoint(positions: Vector[]): Vector {
 }
 
 /**
- * Creates a "linear space" or uniform/collocated grid from [x0, xf] with n points
- *  uniformly between them.
+ * Return evenly spaced numbers over a specified interval.
  *
- * @param x0 Start point (inclusive).
- * @param xf End point (inclusive).
- * @param n  The number of points in the space.
- * @returns  An array of n uniform points on the domain [x0, xf].
+ * Returns num evenly spaced samples, calculated over the interval [`start`, `stop`].
+ *
+ * The endpoint of the interval can optionally be excluded.
+ *
+ * @param start            Start point (inclusive).
+ * @param stop             End point (inclusive), unless `endpoint` is set to False.
+ *                         In that case, the sequence consists of all but the last
+ *                         of num + 1 evenly spaced samples, so that stop is excluded.
+ * @param num              The number of points in the space.
+ * @param options          Optional options.
+ * @param options.endpoint If True, `stop` is the last sample. Otherwise, it is not included. Default is true.
+ * @param options.centered If True, the samples are shifted around the midpoint of [`start`, `stop`]. Default is false.
+ * @returns                An array of `num` uniform points on the domain [start, stop].
  */
-export function linspace(x0: number, xf: number, n: number) {
-    if (n === 1)
-        return [(x0 + xf)/2];
-    return new Array(n).fill(0).map((_, i) => x0 + (xf - x0) * i/(n-1));
+export function linspace(start: number, stop: number, num: number, options = { endpoint: true, centered: false }) {
+    const div = (options.endpoint ? num - 1 : num);
+    const offset = (options.centered ? (((stop - start) / 2) / div) : 0);
+    return new Array(num).fill(0).map((_, i) =>
+        (start + (stop - start) * i/div + offset));
 }
 
 /**
- * Creates a "linear space" or uniform/staggered grid from `[x0, xf)` with spacing dx.
+ * Return evenly spaced values within a given interval.
  *
  * @param x0 Start point (inclusive).
  * @param xf End point (exclusive).
  * @param dx The spacing between each point.
  * @returns  An array of n uniform points on the domain `[x0, xf)`.
  */
-export function linspaceDX(x0: number, xf: number, dx: number) {
+export function arange(x0: number, xf: number, dx: number) {
     const N = Math.ceil((xf - x0) / dx);
     return new Array(N).fill(0).map((_, i) => x0 + dx * i);
 }

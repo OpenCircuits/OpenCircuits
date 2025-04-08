@@ -48,6 +48,10 @@ export class ToolManager<T extends CircuitTypes = CircuitTypes> extends Observab
             return;
         }
 
+        // Find first tool indicating it could be activated
+        const cursor = this.tools.map((t) => t.indicateCouldActivate?.(ev, designer)).find((c) => !!c);
+        designer.viewport.canvasInfo!.cursor = cursor;
+
         // Check if some other tool should be activated
         const newTool = this.tools.find((t) => t.shouldActivate(ev, designer));
         if (newTool !== undefined) {

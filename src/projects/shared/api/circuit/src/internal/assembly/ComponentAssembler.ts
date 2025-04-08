@@ -41,26 +41,27 @@ export interface ComponentTextPrimAssembly {
     styleChangesWhenSelected?: boolean;
     getFontStyle: (comp: Schema.Component) => FontStyle;
 }
-export type ComponentPrimAssembly = ComponentBaseShapePrimAssembly | ComponentSVGPrimAssembly | ComponentTextPrimAssembly;
+export type ComponentPrimAssembly = ComponentBaseShapePrimAssembly
+    | ComponentSVGPrimAssembly
+    | ComponentTextPrimAssembly;
 
-export class ComponentAssembler extends Assembler<Schema.Component> {
-    public readonly size: Vector;
-
+export abstract class ComponentAssembler extends Assembler<Schema.Component> {
     protected portAssembler: PortAssembler;
     protected primAssembly: ComponentPrimAssembly[];
 
     public constructor(
         params: AssemblerParams,
-        size: Vector,
         factory: PortFactory,
         primAssembly: ComponentPrimAssembly[],
     ) {
         super(params);
 
-        this.size = size;
         this.portAssembler = new PortAssembler(params, factory);
         this.primAssembly = primAssembly;
     }
+
+    // Some components change size from miscellaneous props (i.e. Multiplexer or Oscilloscope).
+    protected abstract getSize(comp: Schema.Component): Vector;
 
     protected getPos(comp: Schema.Component): Vector {
         return V(comp.props.x ?? 0, comp.props.y ?? 0);
@@ -103,7 +104,7 @@ export class ComponentAssembler extends Assembler<Schema.Component> {
         if (added || transformChanged) {
             this.cache.componentTransforms.set(comp.id, new Transform(
                 this.getPos(comp),
-                this.size,
+                this.getSize(comp),
                 this.getAngle(comp),
             ));
         }

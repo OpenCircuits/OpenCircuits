@@ -13,7 +13,7 @@ export class ASCIIDisplayAssembler extends BaseDisplayAssembler {
         });
     }
 
-    protected override getInputPortYValue(index: number, total: number): number {
+    protected override getInputPortYValue(_comp: Schema.Component, index: number, total: number): number {
         const midpoint = (total - 1) / 2;
         return -((2*this.options.defaultPortRadius+.02) * (index - midpoint));
     }

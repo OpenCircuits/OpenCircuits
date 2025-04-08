@@ -391,7 +391,7 @@ export function WrapOpt<T>(t: T | undefined): Option<T> {
 // Helper functions that don't work with Result as the receiver
 export const ResultUtil = {
     // Like map, but stops after the first item returns an Err.
-    mapIter: <T, U, E>(it: IterableIterator<T>, f: (t: T) => Result<U, E>): Result<U[], E> => {
+    mapIter: <T, U, E>(it: IterableIterator<T> | T[], f: (t: T) => Result<U, E>): Result<U[], E> => {
         const res: U[] = [];
         for (const v of it) {
             const a = f(v);

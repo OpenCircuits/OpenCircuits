@@ -57,31 +57,12 @@ import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigne
 import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
 import {LoadCircuit} from "shared/site/utils/CircuitHelpers";
 import {Request} from "shared/site/utils/Request";
+import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 
 
 async function Init(): Promise<void> {
     const startPercent = 30;
     let store: AppStore;
-
-    const designer = CreateDesigner(
-        {
-            defaultTool: new DefaultTool(
-                SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-                DeleteHandler, SnipNodesHandler, DeselectAllHandler,
-                InteractionHandler,  // Needs to be before the selection and select path handlers
-                SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
-                SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
-            ),
-            tools: [
-                new PanTool(),
-                new RotateTool(), new TranslateTool(),
-                new WiringTool(), new SplitWireTool(),
-                new SelectionBoxTool(),
-            ],
-        },
-        [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
-    );
 
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading Images", async (onProgress) => {
@@ -150,18 +131,37 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            // TODO[model_refactor](leon)
-            // info.history.addCallback(() => {
-            //     store.dispatch(SetCircuitSaved(false));
-            // });
+            const mainDesigner = CreateDesigner(
+                {
+                    defaultTool: new DefaultTool(
+                        SelectAllHandler, FitToScreenHandler, DuplicateHandler,
+                        DeleteHandler, SnipNodesHandler, DeselectAllHandler,
+                        InteractionHandler,  // Needs to be before the selection and select path handlers
+                        SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+                        CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
+                        SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
+                    ),
+                    tools: [
+                        new PanTool(),
+                        new RotateTool(), new TranslateTool(),
+                        new WiringTool(), new SplitWireTool(),
+                        new SelectionBoxTool(),
+                    ],
+                },
+                [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
+            );
 
-            storeDesigner("main", designer);
+            mainDesigner.circuit.subscribe((_ev) => {
+                store.dispatch(SetCircuitSaved(false));
+            });
+
+            storeDesigner("main", mainDesigner);
 
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    LoadCircuit(designer.circuit, await DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+                    LoadCircuit(mainDesigner.circuit, await DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             }
 
             const root = createRoot(document.getElementById("root")!);

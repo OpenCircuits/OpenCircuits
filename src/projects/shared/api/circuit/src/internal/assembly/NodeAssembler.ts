@@ -1,13 +1,14 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {AssemblerParams, AssemblyReason}  from "./Assembler";
 import {ComponentAssembler} from "./ComponentAssembler";
 import {PortFactory} from "./PortAssembler";
+import {Schema} from "../../schema";
 
 
 export class NodeAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, factory: PortFactory) {
-        super(params, V(2*params.options.defaultPortRadius), factory, [{
+        super(params, factory, [{
             kind: "BaseShape",
 
             dependencies: new Set([AssemblyReason.TransformChanged]),
@@ -21,5 +22,9 @@ export class NodeAssembler extends ComponentAssembler {
             styleChangesWhenSelected: true,
             getStyle: (node) => this.options.portStyle(this.isSelected(node.id), false).circleStyle,
         }]);
+    }
+
+    protected override getSize(_: Schema.Component): Vector {
+        return V(2*this.options.defaultPortRadius);
     }
 }

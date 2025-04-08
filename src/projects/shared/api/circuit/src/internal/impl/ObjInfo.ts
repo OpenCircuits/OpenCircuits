@@ -50,17 +50,17 @@ export interface ObjInfoProvider {
     get(kind: string): ObjInfo | undefined;
     getComponent(kind: string): ComponentConfigurationInfo | undefined;
 
-    addNewComponentInfo(kind: string, info: ComponentConfigurationInfo): void;
-    removeComponentInfo(kind: string): void;
+    createIC(ic: Schema.IntegratedCircuit): void;
+    deleteIC(ic: Schema.IntegratedCircuit): void;
     // TODO: potentially:
     // getWire(kind: string): WireInfo | undefined;
     // getPort(kind: string): PortInfo | undefined;
 }
 
-export class BaseObjInfoProvider implements ObjInfoProvider {
-    private readonly components: Map<string, ComponentConfigurationInfo>;
-    private readonly wires: Map<string, ObjInfo>;
-    private readonly ports: Map<string, ObjInfo>;
+export abstract class BaseObjInfoProvider implements ObjInfoProvider {
+    protected readonly components: Map<string, ComponentConfigurationInfo>;
+    protected readonly wires: Map<string, ObjInfo>;
+    protected readonly ports: Map<string, ObjInfo>;
 
     public constructor(
         components: ComponentConfigurationInfo[],
@@ -72,13 +72,8 @@ export class BaseObjInfoProvider implements ObjInfoProvider {
         this.ports      = new Map(ports     .map((info) => [info.kind, info]));
     }
 
-    public addNewComponentInfo(kind: string, info: ComponentConfigurationInfo): void {
-        this.components.set(kind, info);
-    }
-
-    public removeComponentInfo(kind: string): void {
-        this.components.delete(kind);
-    }
+    public abstract createIC(ic: Schema.IntegratedCircuit): void;
+    public abstract deleteIC(ic: Schema.IntegratedCircuit): void;
 
     public getComponent(kind: string): ComponentConfigurationInfo | undefined {
         return this.components.get(kind);

@@ -25,13 +25,14 @@ export abstract class BaseDisplayAssembler extends ComponentAssembler {
         sim: DigitalSim,
         { kind, otherPrims }: BaseDisplayAssemblerParams
     ) {
-        super(params, V(1.4, 2), {
-                "inputs": (index, total) => {
-                    const y = this.getInputPortYValue(index, total);
+        super(params, {
+                "inputs": (comp, index, total) => {
+                    const y = this.getInputPortYValue(comp, index, total);
                     return {
-                        // Subtracting the this.options.defaultBorderWidth prevent tiny gap between port stem and component
-                        origin: V(-((this.size.x - this.options.defaultBorderWidth)/2), y),
-                        target: V(-(this.options.defaultPortLength + this.size.x/2), y),
+                        // Subtracting the this.options.defaultBorderWidth
+                        // prevents tiny gap between port stem and component
+                        origin: V(-((this.getSize(comp).x - this.options.defaultBorderWidth)/2), y),
+                        target: V(-(this.options.defaultPortLength + this.getSize(comp).x/2), y),
                     }
                 },
             },
@@ -73,7 +74,11 @@ export abstract class BaseDisplayAssembler extends ComponentAssembler {
         this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
     }
 
-    protected abstract getInputPortYValue(index: number, total: number): number;
+    protected override getSize(_: Schema.Component): Vector {
+        return V(1.4, 2);
+    }
+
+    protected abstract getInputPortYValue(comp: Schema.Component, index: number, total: number): number;
     protected abstract getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]>;
 
     private assembleSegments(comp: Schema.Component, segmentsOn: boolean) {
@@ -90,7 +95,11 @@ export abstract class BaseDisplayAssembler extends ComponentAssembler {
     }
 
     private assembleRectangle(comp: Schema.Component) {
-        const transform = new Transform(this.getPos(comp), this.size.sub(V(this.options.defaultBorderWidth)), this.getAngle(comp));
+        const transform = new Transform(
+            this.getPos(comp),
+            this.getSize(comp).sub(V(this.options.defaultBorderWidth)),
+            this.getAngle(comp),
+        );
         return {
             kind: "Rectangle",
             transform,

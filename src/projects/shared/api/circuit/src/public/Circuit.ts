@@ -12,6 +12,7 @@ import {ReadonlyWire, Wire}          from "./Wire";
 import {Selections}    from "./Selections";
 import {Schema} from "../schema";
 import {Observable} from "../utils/Observable";
+import {ObjContainer} from "./ObjContainer";
 
 
 export type {CircuitMetadata} from "shared/api/circuit/schema/CircuitMetadata";
@@ -79,6 +80,8 @@ export interface Circuit extends C {
 
     getComponentInfo(kind: string): ComponentInfo | undefined;
 
+    createContainer(objs: GUID[]): ObjContainer;
+
     // Object manipulation
     placeComponentAt(kind: string, pt: Vector): Component;
     // Cannot delete ports
@@ -86,10 +89,17 @@ export interface Circuit extends C {
 
     importICs(ics: IntegratedCircuit[]): void;
     createIC(info: ICInfo): IntegratedCircuit;
+    deleteIC(id: GUID): void;
+    getIC(id: GUID): IntegratedCircuit | undefined;
     getICs(): IntegratedCircuit[];
 
     undo(): void;
     redo(): void;
+
+    history: {
+        // TODO: Get the current history?
+        clear(): void;
+    };
 
     // I'm not sure if these methods makes sense to have
     // copy(): Circuit;
@@ -100,22 +110,39 @@ export interface Circuit extends C {
     toSchema(): Schema.Circuit;
 }
 
+
+export interface ReadonlyICPin {
+    readonly id: GUID;  // ID of corresponding PORT
+    readonly group: string;
+
+    readonly pos: Vector;
+    readonly dir: Vector;
+}
+export interface ReadonlyIntegratedCircuitDisplay {
+    readonly size: Vector;
+    readonly pins: ReadonlyICPin[];
+}
+
+export interface ICPin extends ReadonlyICPin {
+    readonly id: GUID;  // ID of corresponding PORT
+    readonly group: string;
+
+    pos: Vector;
+    dir: Vector;
+}
+export interface IntegratedCircuitDisplay extends ReadonlyIntegratedCircuitDisplay {
+    size: Vector;
+    readonly pins: ICPin[];
+}
+
 export interface ICInfo {
     circuit: ReadonlyCircuit;
-    display: IntegratedCircuitDisplay;
-}
-export interface ICPin {
-    id: GUID;  // ID of corresponding PORT
-    group: string;
-    pos: Vector;
-}
-export interface IntegratedCircuitDisplay {
-    readonly size: Vector;
-    readonly pins: readonly ICPin[];
+    display: ReadonlyIntegratedCircuitDisplay;
 }
 export interface IntegratedCircuit {
     readonly id: GUID;
-    readonly name: string;
+
+    name: string;
     readonly desc: string;
     readonly thumbnail: string;
 

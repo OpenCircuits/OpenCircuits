@@ -32,7 +32,7 @@ export class ORGateAssembler extends GateAssembler {
 
             portFactory: {
                 "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
-                "inputs":  (index, total) => {
+                "inputs":  (_comp, index, total) => {
                     if (total % 2 === 0) {
                         const spacing = 0.52 - this.options.defaultBorderWidth/2;
                         return {
