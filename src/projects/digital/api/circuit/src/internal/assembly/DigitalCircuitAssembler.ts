@@ -32,6 +32,7 @@ import {MultiplexerAssembler} from "./components/MultiplexerAssembler";
 import {DemultiplexerAssembler} from "./components/DemultiplexerAssembler";
 import {EncoderAssembler} from "./components/EncoderAssembler";
 import {DecoderAssembler} from "./components/DecoderAssembler";
+import {ComparatorAssembler} from "./components/ComparatorAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -134,5 +135,7 @@ export function MakeDigitalCircuitAssembler(
 
         "Encoder": new EncoderAssembler(params, sim),
         "Decoder": new DecoderAssembler(params, sim),
+
+        "Comparator": new ComparatorAssembler(params, sim),
     }));
 }
