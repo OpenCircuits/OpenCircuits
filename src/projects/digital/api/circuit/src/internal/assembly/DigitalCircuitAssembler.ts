@@ -28,6 +28,8 @@ import {OneInputFlipFlopAssembler} from "./components/flipflops/OneInputFlipFlop
 import {OneInputLatchAssembler} from "./components/latches/OneInputLatchAssembler";
 import {TwoInputLatchAssembler} from "./components/latches/TwoInputLatchAssembler";
 import {OscilloscopeAssembler} from "./components/OscilloscopeAssembler";
+import {MultiplexerAssembler} from "./components/MultiplexerAssembler";
+import {DemultiplexerAssembler} from "./components/DemultiplexerAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -125,5 +127,7 @@ export function MakeDigitalCircuitAssembler(
         "SRLatch": new TwoInputLatchAssembler(params, sim, "SRLatch", "S", "R"),
 
         // Other
+        "Multiplexer":   new MultiplexerAssembler(params, sim),
+        "Demultiplexer": new DemultiplexerAssembler(params, sim),
     }));
 }
