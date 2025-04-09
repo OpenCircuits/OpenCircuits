@@ -30,6 +30,8 @@ import {TwoInputLatchAssembler} from "./components/latches/TwoInputLatchAssemble
 import {OscilloscopeAssembler} from "./components/OscilloscopeAssembler";
 import {MultiplexerAssembler} from "./components/MultiplexerAssembler";
 import {DemultiplexerAssembler} from "./components/DemultiplexerAssembler";
+import {EncoderAssembler} from "./components/EncoderAssembler";
+import {DecoderAssembler} from "./components/DecoderAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -129,5 +131,8 @@ export function MakeDigitalCircuitAssembler(
         // Other
         "Multiplexer":   new MultiplexerAssembler(params, sim),
         "Demultiplexer": new DemultiplexerAssembler(params, sim),
+
+        "Encoder": new EncoderAssembler(params, sim),
+        "Decoder": new DecoderAssembler(params, sim),
     }));
 }

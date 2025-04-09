@@ -70,7 +70,7 @@ export class MultiplexerAssembler extends ComponentAssembler {
         return V((0.5 + numSelectPorts/2), (1 + Math.pow(2, numSelectPorts - 1)));
     }
 
-    protected getSelectPortCount(comp: Schema.Component) {
+    private getSelectPortCount(comp: Schema.Component) {
         return this.circuit.getPortsByGroup(comp.id).unwrap()["selects"]?.length ?? 2;
     }
 }
