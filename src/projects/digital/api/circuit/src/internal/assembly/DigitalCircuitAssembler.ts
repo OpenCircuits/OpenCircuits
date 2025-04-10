@@ -138,7 +138,5 @@ export function MakeDigitalCircuitAssembler(
         "Decoder": new DecoderAssembler(params, sim),
 
         "Comparator": new ComparatorAssembler(params, sim),
-
-        "Label": new LabelAssembler(params, sim),
     }));
 }
