@@ -22,6 +22,18 @@ import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
 import {BCDDisplayAssembler} from "./components/displays/BCDDisplayAssembler";
 import {ASCIIDisplayAssembler} from "./components/displays/ASCIIDisplayAssembler";
 import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssembler";
+import {BUFGateAssembler} from "./components/gates/BUFGateAssembler";
+import {TwoInputFlipFlopAssembler} from "./components/flipflops/TwoInputFlipFlopAssembler";
+import {OneInputFlipFlopAssembler} from "./components/flipflops/OneInputFlipFlopAssembler";
+import {OneInputLatchAssembler} from "./components/latches/OneInputLatchAssembler";
+import {TwoInputLatchAssembler} from "./components/latches/TwoInputLatchAssembler";
+import {OscilloscopeAssembler} from "./components/OscilloscopeAssembler";
+import {MultiplexerAssembler} from "./components/MultiplexerAssembler";
+import {DemultiplexerAssembler} from "./components/DemultiplexerAssembler";
+import {EncoderAssembler} from "./components/EncoderAssembler";
+import {DecoderAssembler} from "./components/DecoderAssembler";
+import {ComparatorAssembler} from "./components/ComparatorAssembler";
+import {LabelAssembler} from "./components/LabelAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -83,7 +95,7 @@ export function MakeDigitalCircuitAssembler(
             "outputs": () => ({ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }),
             "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
         }),
-        // // Inputs
+        // Inputs
         "Switch":         new SwitchAssembler(params, sim),
         "Button":         new ButtonAssembler(params, sim),
         "Clock":          new ClockAssembler(params, sim),
@@ -91,13 +103,16 @@ export function MakeDigitalCircuitAssembler(
         "ConstantLow":    new ConstantLowAssembler(params, sim),
         "ConstantNumber": new ConstantNumberAssembler(params, sim),
 
-        // // Outputs
+        // Outputs
         "LED":            new LEDAssembler(params, sim),
         "SegmentDisplay": new SegmentDisplayAssembler(params, sim),
         "BCDDisplay":     new BCDDisplayAssembler(params, sim),
         "ASCIIDisplay":   new ASCIIDisplayAssembler(params, sim),
+        "Oscilloscope":   new OscilloscopeAssembler(params, sim),
 
         // Gates
+        "BUFGate":  new BUFGateAssembler(params, sim, false),
+        "NOTGate":  new BUFGateAssembler(params, sim, true),
         "ANDGate":  new ANDGateAssembler(params, sim, false),
         "NANDGate": new ANDGateAssembler(params, sim, true),
         "ORGate":   new ORGateAssembler(params, sim, { xor: false, not: false }),
@@ -106,9 +121,22 @@ export function MakeDigitalCircuitAssembler(
         "XNORGate": new ORGateAssembler(params, sim, { xor: true,  not: true  }),
 
         // FlipFlops
+        "SRFlipFlop": new TwoInputFlipFlopAssembler(params, sim, "SRFlipFlop", "S", "R"),
+        "JKFlipFlop": new TwoInputFlipFlopAssembler(params, sim, "JKFlipFlop", "J", "K"),
+        "DFlipFlop":  new OneInputFlipFlopAssembler(params, sim, "DFlipFlop", "D"),
+        "TFlipFlop":  new OneInputFlipFlopAssembler(params, sim, "TFlipFlop", "T"),
 
         // Latches
+        "DLatch":  new OneInputLatchAssembler(params, sim, "DLatch", "D"),
+        "SRLatch": new TwoInputLatchAssembler(params, sim, "SRLatch", "S", "R"),
 
         // Other
+        "Multiplexer":   new MultiplexerAssembler(params, sim),
+        "Demultiplexer": new DemultiplexerAssembler(params, sim),
+
+        "Encoder": new EncoderAssembler(params, sim),
+        "Decoder": new DecoderAssembler(params, sim),
+
+        "Comparator": new ComparatorAssembler(params, sim),
     }));
 }
