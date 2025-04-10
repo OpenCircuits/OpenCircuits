@@ -38,7 +38,8 @@ export class ButtonAssembler extends ComponentAssembler {
                     svg:       this.isOn(comp) ? "buttonDown.svg" : "buttonUp.svg",
                     transform: this.getTransform(comp),
                 }),
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
+                tintChangesWhenSelected: true,
+                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;
