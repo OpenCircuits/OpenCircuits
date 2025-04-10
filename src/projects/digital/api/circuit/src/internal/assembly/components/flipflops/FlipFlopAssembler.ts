@@ -19,11 +19,11 @@ export abstract class FlipFlopAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs }: FlipFlopAssemblerParams) {
         super(params, {
-            "pre":  (comp) => ({ origin: V(0, this.getSize(comp).y/2), target: V(0, this.getSize(comp).y/2 + this.options.defaultPortLength) }),
-            "clr":  (comp) => ({ origin: V(0, -this.getSize(comp).y/2), target: V(0, -this.getSize(comp).y/2 - this.options.defaultPortLength) }),
-            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, this.getSize(comp).y/4) }),
-            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, -this.getSize(comp).y/4) }),
-            "clk":  (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getClkPortYValue(comp)), target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, this.getClkPortYValue(comp)) }),
+            "pre":  (comp) => ({ origin: V(0, this.getSize(comp).y/2), dir: V(0, 1) }),
+            "clr":  (comp) => ({ origin: V(0, -this.getSize(comp).y/2), dir: V(0, -1) }),
+            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), dir: V(1, 0) }),
+            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), dir: V(1, 0) }),
+            "clk":  (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getClkPortYValue(comp)), dir: V(-1, 0) }),
             ...otherInputs,
         }, [
             {

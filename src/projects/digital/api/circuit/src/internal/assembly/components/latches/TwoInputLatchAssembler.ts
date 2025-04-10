@@ -11,11 +11,11 @@ export class TwoInputLatchAssembler extends LatchAssembler {
             otherInputs: {
                 [inputPort1Name]: (comp) => ({
                     origin: V(-this.getSize(comp).x/2, -3*this.getSize(comp).y/8),
-                    target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, -3*this.getSize(comp).y/8),
+                    dir:    V(-1, 0),
                 }),
                 [inputPort2Name]: (comp) => ({
                     origin: V(-this.getSize(comp).x/2, 3*this.getSize(comp).y/8),
-                    target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, 3*this.getSize(comp).y/8),
+                    dir:    V(-1, 0),
                 }),
             },
         });

@@ -19,9 +19,9 @@ export abstract class LatchAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs }: LatchAssemblerParams) {
         super(params, {
-            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, this.getSize(comp).y/4) }),
-            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, -this.getSize(comp).y/4) }),
-            "E":    (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getEnablePortYValue(comp)), target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, this.getEnablePortYValue(comp)) }),
+            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), dir: V(1, 0) }),
+            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), dir: V(1, 0) }),
+            "E":    (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getEnablePortYValue(comp)), dir: V(-1, 0) }),
             ...otherInputs,
         }, [
             {

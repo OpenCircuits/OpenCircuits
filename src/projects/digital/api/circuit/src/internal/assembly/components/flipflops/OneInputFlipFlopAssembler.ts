@@ -12,7 +12,7 @@ export class OneInputFlipFlopAssembler extends FlipFlopAssembler {
             otherInputs: {
                 [inputPortName]: (comp) => ({
                     origin: V(-this.getSize(comp).x/2, -this.getSize(comp).y/4),
-                    target: V(-this.getSize(comp).x/2 - this.options.defaultPortLength, -this.getSize(comp).y/4),
+                    dir:    V(-1, 0),
                 }),
             },
         });

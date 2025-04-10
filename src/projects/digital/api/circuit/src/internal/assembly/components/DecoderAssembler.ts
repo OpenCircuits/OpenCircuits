@@ -14,22 +14,14 @@ export class DecoderAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
-            "inputs": (comp, index, total) => {
-                const x = -this.getSize(comp).x/2
-                const y = -(index - ((total - 1) / 2)) / 2
-                return {
-                    origin: V(x, y),
-                    target: V(x - this.options.defaultPortLength, y),
-                }
-            },
-            "outputs": (comp, index, total) => {
-                const x = this.getSize(comp).x/2
-                const y = -(index - ((total - 1) / 2)) / 2
-                return {
-                    origin: V(x, y),
-                    target: V(x + this.options.defaultPortLength, y),
-                }
-            },
+            "inputs": (comp, index, total) => ({
+                origin: V(-this.getSize(comp).x/2, -(index - ((total - 1) / 2)) / 2),
+                dir:    V(-1, 0),
+            }),
+            "outputs": (comp, index, total) => ({
+                origin: V(this.getSize(comp).x/2, -(index - ((total - 1) / 2)) / 2),
+                dir:    V(1, 0),
+            }),
         }, [
             {
                 kind: "BaseShape",

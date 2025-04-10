@@ -14,43 +14,26 @@ export class ComparatorAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
-            "inputsA": (comp, index, total) => {
-                const { x } = this.getSize(comp);
-                const y = (index - total) / 2;
-                return {
-                    origin: V(-x/2, y),
-                    target: V(-x/2 - this.options.defaultPortLength, y),
-                }
-            },
-            "inputsB": (comp, index) => {
-                const { x } = this.getSize(comp);
-                const y = (1 + index) / 2;
-                return {
-                    origin: V(-x/2, y),
-                    target: V(-x/2 - this.options.defaultPortLength, y),
-                }
-            },
-            "lt": (comp) => {
-                const { x } = this.getSize(comp);
-                return {
-                    origin: V(x/2, -.5),
-                    target: V(x/2 + this.options.defaultPortLength, -.5),
-                }
-            },
-            "eq": (comp) => {
-                const { x } = this.getSize(comp);
-                return {
-                    origin: V(x/2, 0),
-                    target: V(x/2 + this.options.defaultPortLength, 0),
-                }
-            },
-            "gt": (comp) => {
-                const { x } = this.getSize(comp);
-                return {
-                    origin: V(x/2, .5),
-                    target: V(x/2 + this.options.defaultPortLength, .5),
-                }
-            },
+            "inputsA": (comp, index, total) => ({
+                origin: V(-this.getSize(comp).x/2, (index - total) / 2),
+                dir:    V(-1, 0),
+            }),
+            "inputsB": (comp, index) => ({
+                origin: V(-this.getSize(comp).x/2, (1 + index) / 2),
+                dir:    V(-1, 0),
+            }),
+            "lt": (comp) => ({
+                origin: V(this.getSize(comp).x/2, -.5),
+                dir:    V(1, 0),
+            }),
+            "eq": (comp) => ({
+                origin: V(this.getSize(comp).x/2, 0),
+                dir:    V(1, 0),
+            }),
+            "gt": (comp) => ({
+                origin: V(this.getSize(comp).x/2, .5),
+                dir:    V(1, 0),
+            }),
         }, [
             {
                 kind: "BaseShape",
@@ -62,7 +45,7 @@ export class ComparatorAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                getStyle:                 (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
         ]);
         this.sim = sim;

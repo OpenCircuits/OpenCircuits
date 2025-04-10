@@ -15,17 +15,13 @@ export class MultiplexerAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
-            "inputs": (comp, index, total) => {
-                const x = -this.getSize(comp).x/2
-                const y = -(index - ((total - 1) / 2)) / 2 + .25
-                return {
-                    origin: V(x, y),
-                    target: V(x - this.options.defaultPortLength, y),
-                }
-            },
+            "inputs": (comp, index, total) => ({
+                origin: V(-this.getSize(comp).x/2, -(index - ((total - 1) / 2)) / 2 + .25),
+                dir:    V(-1, 0),
+            }),
             "outputs": (comp) => ({
                 origin: V(this.getSize(comp).x/2, 0),
-                target: V(this.getSize(comp).x/2 + this.options.defaultPortLength, 0),
+                dir:    V(1, 0),
             }),
             "selects": (comp, index, total) => {
                 const { x: width, y: height } = this.getSize(comp)

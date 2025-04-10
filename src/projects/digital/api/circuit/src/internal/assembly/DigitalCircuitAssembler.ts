@@ -22,7 +22,7 @@ import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
 import {BCDDisplayAssembler} from "./components/displays/BCDDisplayAssembler";
 import {ASCIIDisplayAssembler} from "./components/displays/ASCIIDisplayAssembler";
 import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssembler";
-import {BufferAssembler} from "./components/gates/BufferAssembler";
+import {BUFGateAssembler} from "./components/gates/BUFGateAssembler";
 import {TwoInputFlipFlopAssembler} from "./components/flipflops/TwoInputFlipFlopAssembler";
 import {OneInputFlipFlopAssembler} from "./components/flipflops/OneInputFlipFlopAssembler";
 import {OneInputLatchAssembler} from "./components/latches/OneInputLatchAssembler";
@@ -110,8 +110,8 @@ export function MakeDigitalCircuitAssembler(
         "Oscilloscope":   new OscilloscopeAssembler(params, sim),
 
         // Gates
-        "BUFGate":  new BufferAssembler(params, sim, false),
-        "NOTGate":  new BufferAssembler(params, sim, true),
+        "BUFGate":  new BUFGateAssembler(params, sim, false),
+        "NOTGate":  new BUFGateAssembler(params, sim, true),
         "ANDGate":  new ANDGateAssembler(params, sim, false),
         "NANDGate": new ANDGateAssembler(params, sim, true),
         "ORGate":   new ORGateAssembler(params, sim, { xor: false, not: false }),
