@@ -41,14 +41,14 @@ export class MultiplexerAssembler extends ComponentAssembler {
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
                 assemble:     (comp) => {
                     const { x, y } = this.getSize(comp);
-                    const pos = this.getPos(comp);
+                    const transform = this.getTransform(comp);
                     return {
                         kind:   "Polygon",
                         points: [
-                            V(-x/2, y/2).add(pos),
-                            V(-x/2, -y/2).add(pos),
-                            V(x/2, -y/2 + MULTIPLEXER_HEIGHT_OFFSET).add(pos),
-                            V(x/2, y/2 - MULTIPLEXER_HEIGHT_OFFSET).add(pos),
+                            transform.toWorldSpace(V(-x/2, y/2)),
+                            transform.toWorldSpace(V(-x/2, -y/2)),
+                            transform.toWorldSpace(V(x/2, -y/2 + MULTIPLEXER_HEIGHT_OFFSET)),
+                            transform.toWorldSpace(V(x/2, y/2 - MULTIPLEXER_HEIGHT_OFFSET)),
                         ],
                     }
                 },
