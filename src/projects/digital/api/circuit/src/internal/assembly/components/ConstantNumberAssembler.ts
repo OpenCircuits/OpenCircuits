@@ -110,7 +110,6 @@ export class ConstantNumberAssembler extends ComponentAssembler {
             offset:   V(0, FONT_CAP_OFFSET),
             contents: text,
             angle:    -this.getAngle(comp),
-            font:     "lighter 0.8px arial",
         } as const
     }
 

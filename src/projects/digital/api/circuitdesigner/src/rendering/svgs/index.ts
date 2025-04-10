@@ -1,5 +1,6 @@
 import {CreateDrawingFromSVG, SVGDrawing} from "svg2canvas";
 
+import bufSVG from "./buf.svg";
 import andSVG from "./and.svg";
 import orSVG from "./or.svg";
 import ledSVG from "./led.svg";
@@ -27,6 +28,7 @@ function ToSVGDrawing(name: string, svgStr: string): SVGDrawing {
 }
 
 export const SVGs: Map<string, SVGDrawing> = new Map([
+    ["buf.svg", ToSVGDrawing("buf", bufSVG)],
     ["and.svg", ToSVGDrawing("and", andSVG)],
     ["or.svg", ToSVGDrawing("or", orSVG)],
     ["led.svg", ToSVGDrawing("led", ledSVG)],

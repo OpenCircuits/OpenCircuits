@@ -82,11 +82,11 @@ export abstract class BaseDisplayAssembler extends ComponentAssembler {
     protected abstract getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]>;
 
     private assembleSegments(comp: Schema.Component, segmentsOn: boolean) {
-        const compPos = this.getPos(comp);
         const segments = this.getSegments(comp, segmentsOn);
+        const transform = this.getTransform(comp);
         const prims = segments.map(([pos, segmentType]) => ({
             kind:   "Polygon",
-            points: segmentToVector[segmentType].map((vector) => vector.add(pos.scale(0.7)).add(compPos)),
+            points: segmentToVector[segmentType].map((vector) => transform.toWorldSpace(vector.add(pos.scale(0.7)))),
         } as const));
         return {
             kind: "Group",
