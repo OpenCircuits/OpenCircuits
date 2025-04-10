@@ -22,7 +22,7 @@ export class SwitchAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged]),
                 assemble:     (comp) => ({
                     kind:      "Rectangle",
                     transform: this.getTransform(comp),
@@ -40,6 +40,8 @@ export class SwitchAssembler extends ComponentAssembler {
                     svg:       this.isOn(comp) ? "switchDown.svg" : "switchUp.svg",
                     transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp)),
                 }),
+
+                tintChangesWhenSelected: true,
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);

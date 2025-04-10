@@ -8,6 +8,6 @@ export type SelectionsEvent = {
     newAmt: number;
 }
 
-export interface Selections extends Omit<ObjContainer, "withWiresAndPorts">, Observable<SelectionsEvent> {
+export interface Selections extends ObjContainer, Observable<SelectionsEvent> {
     clear(): void;
 }
