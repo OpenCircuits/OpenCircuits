@@ -2,7 +2,7 @@ import {ErrE, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result"
 
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 import {Schema}     from "shared/api/circuit/schema";
-import {GUID}       from "shared/api/circuit/schema/GUID";
+import {GUID, uuid}       from "shared/api/circuit/schema/GUID";
 
 import {CircuitLog}      from "./CircuitLog";
 import {InvertCircuitOp} from "./CircuitOps";
@@ -214,7 +214,11 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         this.doc.setMetadata(metadata);
     }
 
-    public importObjs(objs: Schema.Obj[]): Result<void[]> {
+    public importObjs(objs: Schema.Obj[], refreshIds = false): Result<GUID[]> {
+        const newIds = new Map<GUID, GUID>();
+        objs.forEach((obj) =>
+            newIds.set(obj.id, (refreshIds ? uuid() : obj.id)));
+
         // Build component : ports[] map
         const portsForComp = new Map<GUID, Schema.Port[]>();
         objs.filter((obj) => (obj.baseKind === "Port"))
@@ -229,17 +233,24 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     this.doc.addTransactionOp({
                         kind:     "PlaceComponentOp",
                         inverted: false,
-                        c:        comp,
+                        c:        {
+                            ...comp,
+                            id: newIds.get(comp.id)!,
+                        },
                     })
             )
             .andThen(() => ResultUtil.mapIter(
                 portsForComp.entries(),
                 ([compId, ports]) =>
                     this.doc.addTransactionOp({
-                        kind:         "SetComponentPortsOp",
-                        inverted:     false,
-                        component:    compId,
-                        addedPorts:   ports,
+                        kind:       "SetComponentPortsOp",
+                        inverted:   false,
+                        component:  newIds.get(compId)!,
+                        addedPorts: ports.map((p) => ({
+                            ...p,
+                            parent: newIds.get(compId)!,
+                            id:     newIds.get(p.id)!,
+                        })),
                         deadWires:    [],
                         removedPorts: [],
                     })
@@ -250,9 +261,15 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     this.doc.addTransactionOp({
                         kind:     "ConnectWireOp",
                         inverted: false,
-                        w:        wire,
+                        w:        {
+                            ...wire,
+                            id: newIds.get(wire.id)!,
+                            p1: newIds.get(wire.p1)!,
+                            p2: newIds.get(wire.p2)!,
+                        },
                     })
             ))
+            .map((_) => [...newIds.values()])
             .mapErr(AddErrE("CircuitInternal.importObjs: failed!"))
             .uponErr(() => this.cancelTransaction());
     }

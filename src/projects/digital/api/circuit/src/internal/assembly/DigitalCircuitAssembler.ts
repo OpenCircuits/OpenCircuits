@@ -33,7 +33,6 @@ import {DemultiplexerAssembler} from "./components/DemultiplexerAssembler";
 import {EncoderAssembler} from "./components/EncoderAssembler";
 import {DecoderAssembler} from "./components/DecoderAssembler";
 import {ComparatorAssembler} from "./components/ComparatorAssembler";
-import {LabelAssembler} from "./components/LabelAssembler";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {

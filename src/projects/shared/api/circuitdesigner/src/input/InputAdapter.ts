@@ -179,22 +179,42 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
         }
         const onBlur = () => this.onBlur();
 
-        const onPaste = (ev: ClipboardEvent) => this.publish({ input: this.state, type: "paste", ev });
-        const onCopy  = (ev: ClipboardEvent) => this.publish({ input: this.state, type: "copy",  ev });
-        const onCut   = (ev: ClipboardEvent) => this.publish({ input: this.state, type: "cut",   ev });
+        const hasFocus = () => {
+            // If a label element is not selected,
+            // or if an editable component is selected but it is a "Caret" (cursor) instead of highlighted text,
+            // then copy the component
+            // Otherwise there is text selected, so do default copying
+            // Necessary to fix #874
+            // TODO[model_refactor](leon) - Find a better way to do this (See if canvas is focused somehow?)
+            const sel = document.getSelection();
+            return !(sel?.anchorNode?.nodeName === "LABEL" && sel?.type !== "Caret");
+        }
+
+        const onPaste = (ev: ClipboardEvent) => {
+            if (hasFocus())
+                this.publish({ input: this.state, type: "paste", ev });
+        }
+        const onCopy  = (ev: ClipboardEvent) => {
+            if (hasFocus())
+                this.publish({ input: this.state, type: "copy",  ev });
+        }
+        const onCut   = (ev: ClipboardEvent) => {
+            if (hasFocus())
+                this.publish({ input: this.state, type: "cut",   ev });
+        }
 
 
         window.addEventListener("keydown", onKeyDown, false);
         window.addEventListener("keyup",   onKeyUp,   false);
         window.addEventListener("blur",    onBlur);
-        // window.addEventListener("paste",   onPaste);
-        // window.addEventListener("copy",    onCopy);
-        // window.addEventListener("cut",     onCut);
+        window.addEventListener("paste",   onPaste);
+        window.addEventListener("copy",    onCopy);
+        window.addEventListener("cut",     onCut);
 
         return () => {
-            // window.removeEventListener("cut",     onCut);
-            // window.removeEventListener("copy",    onCopy);
-            // window.removeEventListener("paste",   onPaste);
+            window.removeEventListener("cut",     onCut);
+            window.removeEventListener("copy",    onCopy);
+            window.removeEventListener("paste",   onPaste);
             window.removeEventListener("blur",    onBlur);
             window.removeEventListener("keyup",   onKeyUp,   false);
             window.removeEventListener("keydown", onKeyDown, false);

@@ -22,7 +22,7 @@ export class SwitchAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged]),
                 assemble:     (comp) => ({
                     kind:      "Rectangle",
                     transform: this.getTransform(comp),

@@ -280,17 +280,19 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     // deserialize(data: string): void {
     //     throw new Error("Circuit.deserialize: Unimplemented!");
     // },
-    public loadSchema(schema: Schema.Circuit): void {
+    public loadSchema(schema: Schema.Circuit, refreshIds = false): T["Obj[]"] {
         this.beginTransaction();
 
         schema.ics
             .filter((ic) => !this.internal.hasIC(ic.metadata.id))
             .forEach((ic) =>
-                this.internal.createIC(ic));
+                this.internal.createIC(ic).unwrap());
 
-        this.internal.importObjs(schema.objects);
+        const objs = this.internal.importObjs(schema.objects, refreshIds).unwrap();
 
         this.commitTransaction();
+
+        return objs.map((id) => this.getObj(id)!);
     }
     public toSchema(): Schema.Circuit {
         return {

@@ -9,6 +9,7 @@ import {ObjContainerImpl} from "./ObjContainer";
 
 import "shared/api/circuit/utils/Array";
 import {Schema} from "../../schema";
+import {ObjContainer} from "../ObjContainer";
 
 
 export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<SelectionsEvent> implements Selections {
@@ -70,6 +71,10 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
     }
     public get ics(): T["IC[]"] {
         return this.selections.ics;
+    }
+
+    public withWiresAndPorts(): ObjContainer {
+        return this.selections.withWiresAndPorts();
     }
 
     public clear(): void {
