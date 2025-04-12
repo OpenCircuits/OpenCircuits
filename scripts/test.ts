@@ -26,19 +26,19 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
     return await jest.runCLI({
         ...args,
         ...flags,
-        silent: false,
+        silent:          false,
         passWithNoTests: true,
-        config: JSON.stringify({
+        config:          JSON.stringify({
             "preset":           "ts-jest",
             "testEnvironment":  "jsdom",
             "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
 
             "transform": {
                 "^.+\\.scss$": path.resolve("build/scripts/test/scssTransform.js"),
-                "^.+\\.svg$": path.resolve("build/scripts/test/svgTransform.js"),
+                "^.+\\.svg$":  path.resolve("build/scripts/test/svgTransform.js"),
             },
 
-            "setupFiles": ["jest-canvas-mock"]
+            "setupFiles": ["jest-canvas-mock"],
         }),
     }, [dir]);
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/site/utils/Constants";
@@ -183,7 +184,7 @@ export const ImageExporterPopup = ({ designer }: Props) => {
 
 export type ImageExporterPreviewProps = {
     designer: CircuitDesigner;
-    canvas: React.RefObject<HTMLCanvasElement>;
+    canvas: React.RefObject<HTMLCanvasElement | null>;
     width: number;
     height: number;
     useGrid: boolean;

@@ -10,7 +10,7 @@ import {useMainDesigner}    from "shared/site/utils/hooks/useDesigner";
 import {useSharedSelector} from "shared/site/utils/hooks/useShared";
 import {useWindowSize}     from "shared/site/utils/hooks/useWindowSize";
 
-import {Droppable} from "shared/site/components/DragDroppable/Droppable";
+import {useDrop} from "shared/site/components/DragDroppable/useDrop";
 
 import "./index.scss";
 
@@ -50,32 +50,32 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
     useLayoutEffect(() => designer.viewport.resize(w, h), [designer, w, h]);
 
+    useDrop(canvas, (screenPos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {
+        if (!itemKind)
+            return;
+
+        if (!canvas.current)
+            throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
+        if (typeof itemKind !== "string")
+            throw new Error(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);
+
+        const amt = (typeof num === "number" ? num : 1);
+        const pos = designer.viewport.camera.toWorldPos(
+            screenPos.sub(V(0, canvas.current.getBoundingClientRect().top)));
+
+        // TODO[model_refactor](leon)
+        // If other place options are specified then do those
+        //  otherwise default to CreateNComponents
+        if (!otherPlace?.(pos, itemKind, amt, otherData))
+            PlaceNComponents(designer.circuit, itemKind, amt, pos);
+    });
+
     return (
-        <Droppable
+        <canvas
             ref={canvas}
-            onDrop={(screenPos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {
-                if (!itemKind)
-                    return;
-
-                if (!canvas.current)
-                    throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
-                if (typeof itemKind !== "string")
-                    throw new Error(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);
-
-                const amt = (typeof num === "number" ? num : 1);
-                const pos = designer.viewport.camera.toWorldPos(screenPos.sub(V(0, canvas.current.getBoundingClientRect().top)));
-
-                // TODO[model_refactor](leon)
-                // If other place options are specified then do those
-                //  otherwise default to CreateNComponents
-                if (!otherPlace?.(pos, itemKind, amt, otherData))
-                    PlaceNComponents(designer.circuit, itemKind, amt, pos);
-            }}>
-            <canvas
-                className="main__canvas"
-                width={w}
-                // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
-                height={h} />
-        </Droppable>
+            className="main__canvas"
+            width={w}
+            // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
+            height={h} />
     );
 }

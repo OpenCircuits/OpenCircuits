@@ -22,7 +22,6 @@ export const SelectModuleInputField = <T extends number|string>({
         <select
             ref={ref}
             value={state.values[0]}
-            placeholder={placeholder}
             onFocus={() => setState.onFocus()}
             onBlur={() => setState.onBlur()}
             onChange={(ev) => {

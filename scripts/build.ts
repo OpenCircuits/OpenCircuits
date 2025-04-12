@@ -8,17 +8,14 @@ import prompts from "prompts";
 import yargs   from "yargs/yargs";
 
 import CopyDir      from "./utils/copyDir.js";
-// import getDirs      from "./utils/getDirs.js";
 import startWebpack from "./webpack/index.js";
+
+import {getOtherPageDirs, getProjectSiteDirs, getServerDir} from "./utils/getDirs.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
-
-
-const DIRS = []; //getDirs(true, false, false);
-const DIR_MAP = Object.fromEntries(DIRS.map((d) => [d.value, d]));
 
 
 function BuildServer(prod: boolean) {
@@ -47,6 +44,12 @@ async function BuildDir(dir: string, project: string) {
 
 // CLI
 (async () => {
+    const dirs = [
+        getServerDir(),
+        ...getProjectSiteDirs(),
+        ...getOtherPageDirs(),
+    ];
+
     const argv = await yargs(process.argv.slice(2))
         .boolean("ci")
         .boolean("prod")
@@ -55,23 +58,32 @@ async function BuildDir(dir: string, project: string) {
     const ci = argv.ci;
     const prod = argv.prod;
 
-    let dirs = argv._ as string[];
-    if (ci && dirs.length === 0) {
-        // Run tests on all directories
-        dirs = Object.keys(DIR_MAP);
-    } else if (dirs.length === 0) {
-        // Prompt user for directory
+    const dirPaths = await (async () => {
+        // If specified dirs in argv, then just use those.
+        if (argv._.length > 0)
+            return argv._;
+
+        // If nothing specified, but using CI, use all directories.
+        if (ci)
+            return dirs.map((d) => d.path);
+
+        // Else prompt user for a directory
         const { value } = await prompts({
             type:    "select",
             name:    "value",
             message: "Pick a project to build",
-            choices: DIRS,
+            choices: dirs.sort((a, b) => (a.title.localeCompare(b.title))).map((d) => ({
+                ...d,
+                value: d.path,
+            })),
             initial: 0,
         });
         if (!value)
             return;
-        dirs = [value];
-    }
+        return [value as string];
+    })();
+    if (!dirPaths)
+        return;
 
     // If prod, clear build directory first
     if (prod) {
@@ -86,25 +98,24 @@ async function BuildDir(dir: string, project: string) {
         CopyDir("src/secrets", "build");
 
     // Launch build in each directory
-    for (const dir of dirs) {
-        const info = DIR_MAP[dir];
-
+    const dirsToUse = dirPaths.map((path) => dirs.find((d) => (d.path === path)));
+    for (const dir of dirsToUse) {
         console.log();
-        if (!info) {
+        if (!dir) {
             console.log(chalk.red("Could not find directory,", chalk.underline(dir) + "!"));
             continue;
         }
-        if (info.disabled) {
-            console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
-            continue;
-        }
+        // if (info.disabled) {
+        //     console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
+        //     continue;
+        // }
 
-        if (dir === "server") {
+        if (dir.name === "server") {
             const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
             await BuildServer(prod);
             spinner.stop();
         } else {
-            await BuildDir(`src/site/pages/${dir}`, dir);
+            await BuildDir(dir.path, dir.name);
         }
 
         console.log(`${chalk.greenBright("Done!")}`);

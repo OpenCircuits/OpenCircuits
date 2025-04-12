@@ -15,6 +15,7 @@ import {TitleModule}       from "./modules/TitleModule";
 import {useSelectionProps} from "./modules/useSelectionProps";
 
 import "./index.scss";
+import {useEvent} from "shared/site/utils/hooks/useEvent";
 
 
 type Props = {
@@ -53,12 +54,13 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
         setPos(camera.toScreenPos(circuit.selections.midpoint))
     ), [circuit, setPos]);
 
-    useEffect(() => camera.subscribe((ev) => {
-        if (ev.type === "dragStart")
-            setIsDragging(true); // Don't show popup if dragging
-        if (ev.type === "dragEnd")
-            setIsDragging(false); // Show when stopped dragging
-    }), [circuit, setIsDragging]);
+    useEvent("mousedrag", (_) => {
+        setIsDragging(true); // Don't show popup if dragging
+    }, designer.viewport.canvasInfo?.input, [setIsDragging]);
+    useEvent("mouseup", (_) => {
+        setIsDragging(false); // Show when stopped dragging
+        setPos(camera.toScreenPos(circuit.selections.midpoint)); // And recalculate position
+    }, designer.viewport.canvasInfo?.input, [setPos, setIsDragging]);
 
     const popup = useRef<HTMLDivElement>(null);
 
