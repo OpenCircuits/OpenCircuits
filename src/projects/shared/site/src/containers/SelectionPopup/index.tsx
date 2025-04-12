@@ -53,6 +53,9 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     useEffect(() => camera.subscribe(() =>
         setPos(camera.toScreenPos(circuit.selections.midpoint))
     ), [circuit, setPos]);
+    useEffect(() => circuit.subscribe(() =>
+        setPos(camera.toScreenPos(circuit.selections.midpoint))
+    ), [circuit, setPos]);
 
     useEvent("mousedrag", (_) => {
         setIsDragging(true); // Don't show popup if dragging

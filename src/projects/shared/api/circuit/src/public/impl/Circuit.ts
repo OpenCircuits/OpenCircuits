@@ -50,8 +50,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         return this.state.assembler.findNearestObj(pt, filter);
     }
 
-    public beginTransaction(): void {
-        this.internal.beginTransaction();
+    public beginTransaction(options?: { batch?: boolean }): void {
+        this.internal.beginTransaction(options);
     }
     public commitTransaction(): void {
         this.internal.commitTransaction();

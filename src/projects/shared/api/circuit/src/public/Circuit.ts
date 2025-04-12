@@ -51,7 +51,7 @@ export interface ReadonlyCircuit {
 
 type C = Observable<CircuitEvent> & ReadonlyCircuit;
 export interface Circuit extends C {
-    beginTransaction(): void;
+    beginTransaction(options?: { batch?: boolean }): void;
     commitTransaction(): void;
     cancelTransaction(): void;
 

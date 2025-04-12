@@ -151,8 +151,8 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     // Convenience functions around CircuitOps
     //
 
-    public beginTransaction() {
-        this.doc.beginTransaction();
+    public beginTransaction(options?: { batch?: boolean }) {
+        this.doc.beginTransaction(options);
     }
     public cancelTransaction() {
         this.doc.cancelTransaction();
@@ -170,15 +170,11 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         const lastEntryIndex = this.undoStack.pop()!;
         this.redoStack.push(lastEntryIndex);
 
-        this.doc.beginTransaction();
+        this.doc.beginTransaction({ batch: true });  // Batch the undo for efficiency reasons
         this.log.entries[lastEntryIndex].ops
             .map(InvertCircuitOp)
             .reverse()
-            .forEach((op) => {
-                // TODO: Might need to add a method that does all the ops at once
-                // to avoid broadcasting a diff event for EACH operation
-                this.doc.addTransactionOp(op);
-            });
+            .forEach((op) => this.doc.addTransactionOp(op));
         this.doc.commitTransaction("undo");
 
         return OkVoid();
@@ -193,13 +189,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         const lastEntryIndex = this.redoStack.pop()!;
         this.undoStack.push(lastEntryIndex);
 
-        this.doc.beginTransaction();
+        this.doc.beginTransaction({ batch: true });  // Batch the redo for efficiency reasons
         this.log.entries[lastEntryIndex].ops
-            .forEach((op) => {
-                // TODO: Might need to add a method that does all the ops at once
-                // to avoid broadcasting a diff event for EACH operation
-                this.doc.addTransactionOp(op);
-            });
+            .forEach((op) => this.doc.addTransactionOp(op));
         this.doc.commitTransaction("redo");
 
         return OkVoid();

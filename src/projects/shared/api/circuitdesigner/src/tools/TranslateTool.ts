@@ -52,7 +52,7 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
         circuit.commitTransaction();
     }
 
-    public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
         // Using mousemove instead of mousedrag here because when a button besides
         //  mouse left is released, mousedrag events are no longer created, only mousemove.
         //  So instead mousemove is used and whether or not left mouse is still pressed is
@@ -65,16 +65,24 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
                 .sub(viewport.camera.toWorldPos(ev.input.mouseDownPos));
 
             // Translate all selected components
-            this.components.forEach((c, i) =>
-                c.pos = this.initialPositions[i].add(dPos));
+            circuit.beginTransaction({ batch: true });
+            {
+                this.components.forEach((c, i) =>
+                    c.pos = this.initialPositions[i].add(dPos));
+            }
+            circuit.commitTransaction();
 
             // Apply snapping AFTER to avoid issue #417.
-            this.components.forEach((c) => {
-                if (snapToGrid)
-                    c.pos = SnapToGrid(c.pos);
-                if (snapToConnections)
-                    c.pos = SnapToConnections(c.pos, c.allPorts);
-            });
+            circuit.beginTransaction({ batch: true });
+            {
+                this.components.forEach((c) => {
+                    if (snapToGrid)
+                        c.pos = SnapToGrid(c.pos);
+                    if (snapToConnections)
+                        c.pos = SnapToConnections(c.pos, c.allPorts);
+                });
+            }
+            circuit.commitTransaction();
         }
     }
 }

@@ -73,7 +73,11 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
 
     // State to keep track of the number of times an item is clicked
     //  in relation to https://github.com/OpenCircuits/OpenCircuits/issues/579
-    const [curItemState, setCurItemState] = useState({ numClicks: 1, curItemID: "", curItemImg: "" });
+    const [curItemState, setCurItemState] = useState({
+        numClicks:  1,
+        curItemID:  "",
+        curItemImg: undefined as string | undefined,
+    });
 
     // Keep in-sync with global state
     useLayoutEffect(() => {
@@ -108,7 +112,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
         setCurItemState({
             curItemID:  "",
             numClicks:  1,
-            curItemImg: "",
+            curItemImg: undefined,
         });
         onFinish?.(cancelled);
     }, [setCurItemState, onFinish]);
@@ -325,7 +329,7 @@ const ItemNavDeletionPreview = ({ deleteImg }: ItemNavDeletionPreviewProps) => {
 type ItemNavItemPreviewProps<D> = {
     curItemID: string;
     numClicks: number;
-    curItemImg: string;
+    curItemImg: string | undefined;
     additionalData?: D;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
@@ -377,7 +381,7 @@ type ItemProps<D> = {
     setCurItemState: React.Dispatch<React.SetStateAction<{
         numClicks: number;
         curItemID: string;
-        curItemImg: string;
+        curItemImg: string | undefined;
     }>>;
     onStart?: () => void;
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
@@ -425,7 +429,7 @@ const ItemNavButton = <D,>({ section, item, itemImgPath, numClicks, dragDir, add
             curItemID:  "",
             numClicks:  1,
             // Stops drag'n'drop preview when deleting
-            curItemImg: "",
+            curItemImg: undefined,
         });
         onDelete?.(section, item);
         setHovering(true);

@@ -336,6 +336,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     private clock: number;
 
     // Keep track of multiple "begin"/"commit" pairs and only commit when counter reaches zero.
+    private curBatchIndex: number;
     private transactionCounter: number;
     private transactionOps: CircuitOp[];
 
@@ -354,6 +355,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         this.log = log;
         this.clock = log.clock;
 
+        this.curBatchIndex = -1;
         this.transactionCounter = 0;
         this.transactionOps = [];
 
@@ -440,10 +442,11 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 // Push only after successful op
                 this.transactionOps.push(op);
 
-                this.commitTransaction();
+                // Emit event per-transaction-op only if we're not in a "batch", otherwise, wait till batch is done.
+                if (this.curBatchIndex === -1)
+                    this.publishDiffEvent();
 
-                // Emit event per-transaction-op
-                this.publishDiffEvent();
+                this.commitTransaction();
             });
     }
 
@@ -469,8 +472,13 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     }
 
     // We need "read-your-writes" so functions like "setProp" can correctly get tombstones like "oldVal".
-    public beginTransaction(): void {
+    public beginTransaction(options?: { batch?: boolean }): void {
         this.transactionCounter++;
+        if (options?.batch) {
+            if (this.curBatchIndex > -1)
+                throw new Error("Can't start a new transaction batch while already in one!");
+            this.curBatchIndex = this.transactionCounter;
+        }
     }
 
     // "clientData" is arbitrary data the client can store in the Log for higher-level semantics than CircuitOps.
@@ -478,8 +486,16 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         if (!this.isTransaction())
             throw new Error("Unexpected commitTransaction!");
 
+        this.transactionCounter--;
+
+        // If we just completed a "batch", publish diff now
+        if (this.transactionCounter < this.curBatchIndex) {
+            this.curBatchIndex = -1;
+            this.publishDiffEvent();
+        }
+
         // Early return if this isn't the last "commit"
-        if (--this.transactionCounter > 0)
+        if (this.transactionCounter > 0)
             return;
 
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
@@ -501,6 +517,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     public cancelTransaction(): void {
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
         this.transactionCounter = 0;
+        this.curBatchIndex = -1;
         if (this.transactionOps.length === 0)
             return;
 

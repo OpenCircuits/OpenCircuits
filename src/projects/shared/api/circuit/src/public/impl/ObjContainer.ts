@@ -15,6 +15,10 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
 
     protected objs: Set<GUID>;
 
+    protected componentIds?: Set<GUID>;
+    protected wireIds?: Set<GUID>;
+    protected portIds?: Set<GUID>;
+
     public constructor(state: CircuitState<T>, objs: Set<GUID>) {
         this.state = state;
 
@@ -47,18 +51,27 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
         return [...this.components, ...this.wires, ...this.ports];
     }
     public get components(): T["Component[]"] {
-        return [...this.objs]
-            .filter((id) => this.state.internal.hasComp(id))
+        if (!this.componentIds) {
+            this.componentIds = new Set([...this.objs]
+                .filter((id) => this.state.internal.hasComp(id)));
+        }
+        return [...this.componentIds]
             .map((id) => this.state.constructComponent(id));
     }
     public get wires(): T["Wire[]"] {
-        return [...this.objs]
-            .filter((id) => this.state.internal.hasWire(id))
+        if (!this.wireIds) {
+            this.wireIds = new Set([...this.objs]
+                .filter((id) => this.state.internal.hasWire(id)));
+        }
+        return [...this.wireIds]
             .map((id) => this.state.constructWire(id));
     }
     public get ports(): T["Port[]"] {
-        return [...this.objs]
-            .filter((id) => this.state.internal.hasPort(id))
+        if (!this.portIds) {
+            this.portIds = new Set([...this.objs]
+                .filter((id) => this.state.internal.hasPort(id)));
+        }
+        return [...this.portIds]
             .map((id) => this.state.constructPort(id));
     }
     public get ics(): T["IC[]"] {

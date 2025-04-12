@@ -1,4 +1,4 @@
-import {CircuitInternal, uuid} from "shared/api/circuit/internal";
+import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 import {CircuitLog}            from "shared/api/circuit/internal/impl/CircuitLog";
 import {CircuitDocument}       from "shared/api/circuit/internal/impl/CircuitDocument";
 
@@ -33,23 +33,31 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     const simRunner = new DigitalSimRunner(sim);
     const assembler = MakeDigitalCircuitAssembler(internal, sim, renderOptions);
 
+    const cache = {
+        comps:     new Map<GUID, DigitalComponentImpl>(),
+        wires:     new Map<GUID, DigitalWireImpl>(),
+        ports:     new Map<GUID, DigitalPortImpl>(),
+        ics:       new Map<GUID, DigitalIntegratedCircuitImpl>(),
+        compInfos: new Map<GUID, DigitalComponentInfoImpl>(),
+    }
+
     const state: DigitalCircuitState = {
         internal, assembler, sim, simRunner, renderOptions,
 
         constructComponent(id) {
-            return new DigitalComponentImpl(state, id);
+            return cache.comps.getOrInsert(id, (id) => new DigitalComponentImpl(state, id));
         },
         constructWire(id) {
-            return new DigitalWireImpl(state, id);
+            return cache.wires.getOrInsert(id, (id) => new DigitalWireImpl(state, id));
         },
         constructPort(id) {
-            return new DigitalPortImpl(state, id);
+            return cache.ports.getOrInsert(id, (id) => new DigitalPortImpl(state, id));
         },
         constructIC(id) {
-            return new DigitalIntegratedCircuitImpl(state, id);
+            return cache.ics.getOrInsert(id, (id) => new DigitalIntegratedCircuitImpl(state, id));
         },
         constructComponentInfo(kind) {
-            return new DigitalComponentInfoImpl(state, kind);
+            return cache.compInfos.getOrInsert(kind, (kind) => new DigitalComponentInfoImpl(state, kind));
         },
     }
 

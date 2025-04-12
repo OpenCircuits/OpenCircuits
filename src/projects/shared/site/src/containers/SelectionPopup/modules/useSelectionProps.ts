@@ -91,7 +91,7 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     //  TODO[model_refactor](leon) - Maybe somehow just listen to changes to objs
     useEffect(() => {
         updateState();
-        return circuit.subscribe(() => updateState())
+        return circuit.subscribe(() => updateState());
     }, [updateState]);
 
     return [props, objs, updateState] as const;
