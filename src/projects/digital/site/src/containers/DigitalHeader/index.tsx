@@ -1,3 +1,4 @@
+import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 import {Header} from "shared/site/containers/Header";
 
 
@@ -8,5 +9,5 @@ export const DigitalHeader = () => (
             img:       "img/icons/bool_expr_input_icon.svg",
             text:      "Boolean Expression to Circuit",
         },
-    ]} />
+    ]} versionConflictResolver={VersionConflictResolver} />
 );

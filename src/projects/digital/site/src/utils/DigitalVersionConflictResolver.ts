@@ -28,10 +28,20 @@ function isSerializationArrayEntry(o: unknown): o is SerializationArrayEntry {
     return ("type" in o && o.type === "Array" && "data" in o && Array.isArray(o.data));
 }
 
-export function VersionConflictResolver(fileContents: string, [circuit, { sim }] = CreateCircuit()): Schema.Circuit {
+export function VersionConflictResolver(fileContents: string): Schema.Circuit {
+    const  [circuit, { sim }] = CreateCircuit();
     const oldCircuit = JSON.parse(fileContents);
 
-    const v = parseFloat(oldCircuit.metadata.version);
+
+    const version = oldCircuit.metadata.version;
+    if (version === "type/v0") {
+        // TODO: Better validation
+        return oldCircuit as Schema.Circuit;
+    }
+    const v = parseFloat(version);
+
+    if (!oldCircuit.contents)
+        return circuit.toSchema();
 
     const contents = JSON.parse(oldCircuit.contents) as Record<string, SerializationEntry>;
 

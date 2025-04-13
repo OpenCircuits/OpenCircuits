@@ -2,7 +2,7 @@ import {CircuitMetadata} from "shared/api/circuit/public";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-import {useAPIMethods} from "shared/site/utils/ApiMethods";
+import {VersionConflictResolver, useAPIMethods} from "shared/site/utils/ApiMethods";
 import {Request}       from "shared/site/utils/Request";
 
 import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
@@ -28,8 +28,9 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
 
 type Props = {
     exampleCircuits: CircuitMetadata[];
+    versionConflictResolver: VersionConflictResolver
 }
-export const SideNav = ({ exampleCircuits }: Props) => {
+export const SideNav = ({ exampleCircuits, versionConflictResolver }: Props) => {
     const designer = useMainDesigner();
 
     const { auth, circuits, isOpen, loading, isSaved, loadingCircuits } = useSharedSelector(
@@ -90,7 +91,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
                                         return;
                                     if (!auth)
                                         throw new Error("Sidenav failed: auth is undefined");
-                                    await LoadCircuitRemote(circuit["id"]);
+                                    await LoadCircuitRemote(circuit["id"], versionConflictResolver);
                                     dispatch(ToggleSideNav());
                                 }}
                                 onDelete={() => {
@@ -115,7 +116,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
                             onClick={async () => {
                                 if (loading) // Don't load another circuit if already loading
                                     return;
-                                await LoadCircuit(LoadExampleCircuit(example));
+                                await LoadCircuit(LoadExampleCircuit(example), versionConflictResolver);
                                 dispatch(ToggleSideNav());
                             }} />)
                 )}

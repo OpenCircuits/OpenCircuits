@@ -10,16 +10,17 @@ import {SaveCircuit}      from "shared/site/state/thunks/SaveCircuit";
 import {LoadUserCircuits} from "shared/site/state/thunks/User";
 
 import {GenerateThumbnail} from "./GenerateThumbnail";
-import {Schema} from "shared/api/circuit/schema";
 
 import {LoadCircuit as LoadCircuitHelper} from "./CircuitHelpers";
+import {Schema} from "shared/api/circuit/schema";
 
 
+export type VersionConflictResolver = (fileContents: string) => Schema.Circuit
 export const useAPIMethods = (mainCircuit: Circuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
     const dispatch = useSharedDispatch();
 
-    const LoadCircuit = async (dataPromise: Promise<string | undefined>) => {
+    const LoadCircuit = async (dataPromise: Promise<string | undefined>, versionConflictResolver: VersionConflictResolver) => {
         dispatch(_SetCircuitLoading(true));
 
         const data = await dataPromise;
@@ -27,9 +28,10 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             dispatch(_SetCircuitLoading(false));
             throw new Error("APIMethods LoadCircuit: data is undefined");
         }
+        const schema = versionConflictResolver(data);
 
         try {
-            LoadCircuitHelper(mainCircuit, data);
+            LoadCircuitHelper(mainCircuit, schema);
         } catch (e) {
             console.error(e);
             dispatch(_SetCircuitLoading(false));
@@ -43,10 +45,10 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         dispatch(_SetCircuitLoading(false));
     }
 
-    const LoadCircuitRemote = async (id: string) => {
+    const LoadCircuitRemote = async (id: string, versionConflictResolver: VersionConflictResolver) => {
         if (!auth)
             throw new Error("LoadCircuitRemote: auth is undefined");
-        return LoadCircuit(LoadUserCircuit(auth, id));
+        return LoadCircuit(LoadUserCircuit(auth, id), versionConflictResolver);
     }
 
     const DeleteCircuitRemote = async (id: string) => {
