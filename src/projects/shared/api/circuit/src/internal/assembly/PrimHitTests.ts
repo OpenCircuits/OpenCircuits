@@ -2,6 +2,8 @@ import {Vector} from "Vector";
 import {CircleContains, CurveContains, RectContains} from "math/MathUtils";
 import {Prim} from "./Prim";
 import {LineCurve} from "math/Line";
+import {Transform} from "math/Transform";
+import {Bounds} from "./PrimBounds";
 
 
 export function HitTest(prim: Prim, pt: Vector): boolean {
@@ -18,7 +20,7 @@ export function HitTest(prim: Prim, pt: Vector): boolean {
     case "Line":
         return CurveContains(new LineCurve(prim.p1, prim.p2), pt);
     case "Polygon":
-        return false; // TODO: implement?
+        return RectContains(Transform.FromRect(Bounds(prim)!), pt);
     case "QuadCurve":
         return false; // Maybe allow quad curves to be hit?
     case "Rectangle":
