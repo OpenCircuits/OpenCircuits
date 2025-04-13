@@ -16,7 +16,7 @@ export const CopyHandler: ToolHandler = {
             throw new Error("CopyHandler failed: ev.clipboardData is null!");
 
         const objs = circuit.selections.withWiresAndPorts();
-        const str = JSON.stringify(objs.toSchema(), (key, val) => {
+        const str = JSON.stringify(circuit.toSchema(objs), (key, val) => {
             // TODO: Do this somewhere else? Ideally isSelected shouldn't even be a prop
             // Don't serialize 'isSelected' prop
             if (key === "isSelected")

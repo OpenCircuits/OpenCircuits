@@ -107,7 +107,7 @@ export interface Circuit extends C {
 
     // TODO: Come up with a better name for this
     loadSchema(schema: Schema.Circuit, refreshIds?: boolean): Obj[];
-    toSchema(): Schema.Circuit;
+    toSchema(container?: ObjContainer): Schema.Circuit;
 }
 
 
