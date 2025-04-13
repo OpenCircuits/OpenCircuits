@@ -165,6 +165,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
 
     const objs = getArrayEntries(objectRefsEntry);
     const refToNewPort = new Map<string, DigitalPort>();
+    // Helper function to generate connection between old ref string and new digital port, used to later connect wires
     const linkPorts = ({ ref, obj: port }: {ref?: string, obj: SerializationEntry}, newPort: DigitalPort) => {
         const portName = port["data"]["name"];
         if (typeof portName === "string") {
@@ -188,6 +189,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
         const inputCount = inputCountRef.data.value;
         const outputCountRef = getEntry(outputs, "count")!;
         const outputCount = outputCountRef.data.value;
+        // Set component specific properties
         switch (obj.type) {
             case "Switch":
                 sim.setState(newObj.id, [obj.data.on ? Signal.On : Signal.Off]);
@@ -259,9 +261,12 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
                 break;
         }
 
+        // Associate old port references with new ports
         const currentInputPorts = getArrayEntries(getArrayEntry(inputs, "currentPorts")!);
         const currentOutputPorts = getArrayEntries(getArrayEntry(outputs, "currentPorts")!);
         switch (obj.type) {
+            // Flip flops, latches, muxes, and comparator don't have the same exact input/output ordering,
+            //  so manually set them
             case "SRFlipFlop":
                 linkPorts(currentInputPorts[0], newObj.ports["pre"][0]);
                 linkPorts(currentInputPorts[1], newObj.ports["clr"][0]);
@@ -343,6 +348,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
                 break;
         }
 
+        // Copy over common properties
         const angle = transformRef.data.angle as number;
         newObj.angle = angle;
         const nameRef = getEntry(obj, "name")!
