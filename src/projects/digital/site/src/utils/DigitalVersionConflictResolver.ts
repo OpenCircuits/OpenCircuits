@@ -32,6 +32,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
     const  [circuit, { sim }] = CreateCircuit();
     const oldCircuit = JSON.parse(fileContents);
 
+    circuit.name = oldCircuit.metadata.name;
     const version = oldCircuit.metadata.version;
     if (version === "type/v0") {
         // TODO: Better validation
@@ -213,6 +214,8 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
             const selects = getEntry(obj, "selects");
             const inputCountRef = getEntry(inputs, "count")!;
             const inputCount = inputCountRef.data.value;
+            const outputCountRef = getEntry(outputs, "count")!;
+            const outputCount = outputCountRef.data.value;
             switch (obj.type) {
                 case "Switch":
                     sim.setState(newObj.id, [obj.data.on ? Signal.On : Signal.Off]);
@@ -259,8 +262,29 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
                     const selectCountRef = getEntry(selects!, "count")!;
                     const selectCount = selectCountRef.data.value;
                     if (typeof selectCount === "number") {
-                        newObj.setPortConfig({ "inputs": Math.pow(2, selectCount), "selects": selectCount });
+                        const otherPortGroup = obj.type === "Multiplexer" ? "inputs" : "outputs";
+                        newObj.setPortConfig({ [otherPortGroup]: Math.pow(2, selectCount), "selects": selectCount });
                     }
+                    break;
+                case "Encoder":
+                    if (typeof outputCount === "number") {
+                        newObj.setPortConfig({ "inputs": Math.pow(2, outputCount), "outputs": outputCount });
+                    }
+                    break;
+                case "Decoder":
+                    if (typeof inputCount === "number") {
+                        newObj.setPortConfig({ "inputs": inputCount, "outputs": Math.pow(2, inputCount) });
+                    }
+                    break;
+                case "Comparator":
+                    if (typeof inputCount === "number") {
+                        newObj.setPortConfig({ "inputsA": inputCount / 2, "inputsB": inputCount / 2 });
+                    }
+                    break;
+                case "Label":
+                    newObj.setProp("bgColor", obj.data.color as string);
+                    newObj.setProp("textColor", obj.data.textColor as string);
+                    break;
             }
 
             const currentInputPorts = getArrayEntries(getArrayEntry(inputs, "currentPorts")!);
@@ -314,6 +338,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
                     linkPorts(currentOutputPorts[1], newObj.ports["Qinv"][0]);
                     break;
                 case "Multiplexer":
+                case "Demultiplexer":
                     const currentSelectPorts = getArrayEntries(getArrayEntry(selects!, "currentPorts")!);
                     currentSelectPorts.forEach((info, index) => {
                         linkPorts(info, newObj.ports["selects"][index]);
@@ -322,8 +347,19 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
                         linkPorts(info, newObj.ports["inputs"][index]);
                     });
                     currentOutputPorts.forEach((info, index) => {
-                        linkPorts(info, newObj.outputs[index]);
+                        linkPorts(info, newObj.ports["outputs"][index]);
                     });
+                    break;
+                case "Comparator":
+                    newObj.ports["inputsA"].forEach((newPort, index) => {
+                        linkPorts(currentInputPorts[index], newPort);
+                    });
+                    newObj.ports["inputsB"].forEach((newPort, index) => {
+                        linkPorts(currentInputPorts[index + newObj.ports["inputsA"].length], newPort);
+                    });
+                    linkPorts(currentOutputPorts[0], newObj.ports["lt"][0]);
+                    linkPorts(currentOutputPorts[1], newObj.ports["eq"][0]);
+                    linkPorts(currentOutputPorts[2], newObj.ports["gt"][0]);
                     break;
                 default:
                     currentInputPorts.forEach((info, index) => {

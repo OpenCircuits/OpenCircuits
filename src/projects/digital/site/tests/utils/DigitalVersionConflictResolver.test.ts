@@ -18,6 +18,10 @@ import tFlipFlopCircuit from "./TestCircuitData/TFlipFlop.json";
 import dLatchCircuit from "./TestCircuitData/DLatch.json";
 import srLatchCircuit from "./TestCircuitData/SRLatch.json";
 import multiplexerCircuit from "./TestCircuitData/Multiplexer.json";
+import demultiplexerCircuit from "./TestCircuitData/Demultiplexer.json";
+import encoderDecoderCircuit from "./TestCircuitData/EncoderDecoder.json";
+import comparatorCircuit from "./TestCircuitData/Comparator.json";
+import labelCircuit from "./TestCircuitData/Label.json";
 import {CreateCircuit} from "digital/api/circuit/public";
 
 
@@ -380,6 +384,114 @@ describe("DigitalVersionConflictResolver", () => {
             expect(multiplexer.ports["selects"][1].connections[0].id).toBe(s1.outputs[0].connections[0].id);
             expect(multiplexer.ports["selects"][2].connections[0].id).toBe(s2.outputs[0].connections[0].id);
             expect(multiplexer.outputs[0].connections[0].id).toBe(output.inputs[0].connections[0].id);
+        });
+        test("Demultiplexer", () => {
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(demultiplexerCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(10);
+            expect(circuit.getWires()).toHaveLength(9);
+            const input = comps.find((comp) => comp.name === "Input")!;
+            expect(input).toBeDefined();
+            const s0 = comps.find((comp) => comp.name === "S0")!;
+            expect(s0).toBeDefined();
+            const s1 = comps.find((comp) => comp.name === "S1")!;
+            expect(s1).toBeDefined();
+            const s2 = comps.find((comp) => comp.name === "S2")!;
+            expect(s2).toBeDefined();
+
+            const o0 = comps.find((comp) => comp.name === "O0")!;
+            expect(o0).toBeDefined();
+            const o1 = comps.find((comp) => comp.name === "O1")!;
+            expect(o1).toBeDefined();
+            const o2 = comps.find((comp) => comp.name === "O2")!;
+            expect(o2).toBeDefined();
+            const o3 = comps.find((comp) => comp.name === "O3")!;
+            expect(o3).toBeDefined();
+            const o7 = comps.find((comp) => comp.name === "O7")!;
+            expect(o7).toBeDefined();
+
+            const demultiplexer = comps.find((comp) => comp.kind === "Demultiplexer")!;
+            expect(demultiplexer).toBeDefined();
+
+            expect(demultiplexer.ports["inputs"][0].connections[0].id).toBe(input.outputs[0].connections[0].id);
+            expect(demultiplexer.ports["outputs"][0].connections[0].id).toBe(o0.inputs[0].connections[0].id);
+            expect(demultiplexer.ports["outputs"][1].connections[0].id).toBe(o1.inputs[0].connections[0].id);
+            expect(demultiplexer.ports["outputs"][2].connections[0].id).toBe(o2.inputs[0].connections[0].id);
+            expect(demultiplexer.ports["outputs"][3].connections[0].id).toBe(o3.inputs[0].connections[0].id);
+            expect(demultiplexer.ports["outputs"][7].connections[0].id).toBe(o7.inputs[0].connections[0].id);
+            expect(demultiplexer.ports["selects"][0].connections[0].id).toBe(s0.outputs[0].connections[0].id);
+            expect(demultiplexer.ports["selects"][1].connections[0].id).toBe(s1.outputs[0].connections[0].id);
+            expect(demultiplexer.ports["selects"][2].connections[0].id).toBe(s2.outputs[0].connections[0].id);
+        });
+        test("Encoder/Decoder", () => {
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(encoderDecoderCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(2);
+
+            const encoder = comps.find((comp) => comp.kind === "Encoder")!;
+            expect(encoder).toBeDefined();
+            const decoder = comps.find((comp) => comp.kind === "Decoder")!;
+            expect(decoder).toBeDefined();
+
+            expect(encoder.inputs).toHaveLength(8);
+            expect(encoder.outputs).toHaveLength(3);
+            expect(decoder.inputs).toHaveLength(1);
+            expect(decoder.outputs).toHaveLength(2);
+        });
+        test("Comparator", () => {
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(comparatorCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(10);
+            expect(circuit.getWires()).toHaveLength(9);
+
+            const comparator = comps.find((comp) => comp.kind === "Comparator")!;
+            expect(comparator).toBeDefined();
+            const a0 = comps.find((comp) => comp.name === "a0")!;
+            expect(a0).toBeDefined();
+            const a1 = comps.find((comp) => comp.name === "a1")!;
+            expect(a1).toBeDefined();
+            const a2 = comps.find((comp) => comp.name === "a2")!;
+            expect(a2).toBeDefined();
+            const b0 = comps.find((comp) => comp.name === "b0")!;
+            expect(b0).toBeDefined();
+            const b1 = comps.find((comp) => comp.name === "b1")!;
+            expect(b1).toBeDefined();
+            const b2 = comps.find((comp) => comp.name === "b2")!;
+            expect(b2).toBeDefined();
+            const lt = comps.find((comp) => comp.name === "<")!;
+            expect(lt).toBeDefined();
+            const eq = comps.find((comp) => comp.name === "=")!;
+            expect(eq).toBeDefined();
+            const gt = comps.find((comp) => comp.name === ">")!;
+            expect(gt).toBeDefined();
+
+            expect(comparator.inputs).toHaveLength(6);
+            expect(comparator.outputs).toHaveLength(3);
+            expect(comparator.ports["inputsA"]).toHaveLength(3);
+            expect(comparator.ports["inputsB"]).toHaveLength(3);
+
+            expect(comparator.ports["inputsA"][0].connections[0].id).toBe(a0.outputs[0].connections[0].id);
+            expect(comparator.ports["inputsA"][1].connections[0].id).toBe(a1.outputs[0].connections[0].id);
+            expect(comparator.ports["inputsA"][2].connections[0].id).toBe(a2.outputs[0].connections[0].id);
+            expect(comparator.ports["inputsB"][0].connections[0].id).toBe(b0.outputs[0].connections[0].id);
+            expect(comparator.ports["inputsB"][1].connections[0].id).toBe(b1.outputs[0].connections[0].id);
+            expect(comparator.ports["inputsB"][2].connections[0].id).toBe(b2.outputs[0].connections[0].id);
+            expect(comparator.ports["lt"][0].connections[0].id).toBe(lt.inputs[0].connections[0].id);
+            expect(comparator.ports["eq"][0].connections[0].id).toBe(eq.inputs[0].connections[0].id);
+            expect(comparator.ports["gt"][0].connections[0].id).toBe(gt.inputs[0].connections[0].id);
+        });
+        test("Label", () => {
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(labelCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+            const label = comps[0];
+            expect(label.name).toBe("Test label");
+            expect(label.getProp("bgColor")).toBe("#0000ff");
+            expect(label.getProp("textColor")).toBe("#ffffff");
         });
     });
 });
