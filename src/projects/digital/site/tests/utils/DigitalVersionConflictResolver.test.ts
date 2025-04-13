@@ -56,10 +56,10 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led).toBeConnectedTo(orGate);
             expect(orGate.inputs[0].connections[0].id).toBe(a.outputs[0].connections[0].id);
 
-            expect(a.pos).toApproximatelyEqual(V(-2, 0.5));
-            expect(b.pos).toApproximatelyEqual(V(-2, -0.5));
+            expect(a.pos).toApproximatelyEqual(V(-4, 1));
+            expect(b.pos).toApproximatelyEqual(V(-4, -1));
             expect(orGate.pos).toApproximatelyEqual(V(0, 0));
-            expect(led.pos).toApproximatelyEqual(V(1.5, 1));
+            expect(led.pos).toApproximatelyEqual(V(3, 2));
         });
         test("Three input AND", () => {
             const [circuit] = CreateCircuit();

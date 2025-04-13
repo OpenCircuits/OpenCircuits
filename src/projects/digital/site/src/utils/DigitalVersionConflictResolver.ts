@@ -206,7 +206,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
             const posRef = getEntry(transformRef, "pos")!;
             const { x, y } = posRef.data as { x: number, y: number };
             // Scale x/y and flip y-axis
-            const newObj = circuit.placeComponentAt(obj.type, V(x/100, y/-100));
+            const newObj = circuit.placeComponentAt(obj.type, V(x/50, y/-50));
 
             const inputs = getEntry(obj, "inputs")!;
             const outputs = getEntry(obj, "outputs")!;
