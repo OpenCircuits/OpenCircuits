@@ -46,23 +46,29 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
 
         sim.subscribe((ev) => {
             if (ev.type === "queue") {
-                const comps = ev.comps, inputPorts = ev.updatedInputPorts;
-                comps.forEach((compId) =>
+                // Only get root comp/ports
+                const comps = [...ev.comps].filter((c) => c.length === 1);
+                const inputPorts = [...ev.updatedInputPorts].filter((p) => p.length === 1);
+
+
+                comps.forEach(([compId]) =>
                     this.dirtyComponents.add(compId, AssemblyReason.StateUpdated));
-                inputPorts.forEach((portId) => {
+                inputPorts.forEach(([portId]) => {
                     const port = circuit.getPortByID(portId).unwrap();
                     this.dirtyComponents.add(port.parent, AssemblyReason.SignalsChanged);
                 });
             }
             if (ev.type === "step") {
-                const inputPorts = ev.updatedInputPorts, outputPorts = ev.updatedOutputPorts;
+                // Only get root comp/ports
+                const inputPorts = [...ev.updatedInputPorts].filter((p) => p.length === 1);
+                const outputPorts =[...ev.updatedOutputPorts].filter((p) => p.length === 1);
 
-                outputPorts.forEach((portId) => {
+                outputPorts.forEach(([portId]) => {
                     const wires = circuit.getWiresForPort(portId).unwrap();
                     wires.forEach((wireId) =>
                         this.dirtyWires.add(wireId, AssemblyReason.SignalsChanged));
                 });
-                inputPorts.forEach((portId) => {
+                inputPorts.forEach(([portId]) => {
                     const port = circuit.getPortByID(portId).unwrap();
                     this.dirtyComponents.add(port.parent, AssemblyReason.SignalsChanged);
                 });
