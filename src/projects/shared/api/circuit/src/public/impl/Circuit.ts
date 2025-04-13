@@ -8,7 +8,6 @@ import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 import {Circuit, CircuitEvent, ICPin, IntegratedCircuit,
         IntegratedCircuitDisplay} from "../Circuit";
 import {Selections}                from "../Selections";
-import {isObjComponent, isObjWire} from "../Utilities";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
@@ -292,7 +291,10 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         return objs.map((id) => this.getObj(id)!);
     }
-    public toSchema(): Schema.Circuit {
+    public toSchema(container?: ObjContainer): Schema.Circuit {
+        const ics = container?.ics ?? this.getICs();
+        const objs = container?.all ?? this.getObjs();
+
         return {
             metadata: this.internal.getMetadata(),
             camera:   {
@@ -300,9 +302,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
                 y:    0,
                 zoom: 0,
             },
-            ics:     this.getICs().map((ic) => ic.toSchema()),
+            ics:     ics.map((ic) => ic.toSchema()),
             objects: [
-                ...this.getObjs().map((obj) => obj.toSchema()),
+                ...objs.map((obj) => obj.toSchema()),
             ],
         };
     }

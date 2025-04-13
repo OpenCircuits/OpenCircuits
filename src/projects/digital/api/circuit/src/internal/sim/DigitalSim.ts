@@ -4,22 +4,20 @@ import {Signal}                from "./Signal";
 import {DigitalComponentConfigurationInfo} from "../DigitalComponents";
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
 import {ReadonlyCircuitStorage} from "shared/api/circuit/internal/impl/CircuitDocument";
-import {Schema} from "shared/api/circuit/schema";
 import {MapObj} from "shared/api/circuit/utils/Functions";
+import {Schema} from "../../schema";
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
 export type PropagatorFunc = (
-    comp: Schema.Component,
+    comp: Schema.Core.Component,
     info: DigitalComponentConfigurationInfo,
     state: DigitalSimState,
 ) => {
     outputs: Map<ContextPath, Signal>;
     nextState?: Signal[];
 }
-// export type PropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
-//     outputs: Record<string, Signal[]>;
-//     nextState?: Signal[];
-// };
+
 // Kind : Propagator
 export type PropagatorsMap = Record<string, PropagatorFunc>;
 
@@ -35,7 +33,7 @@ type DigitalSimEvent = {
     updatedInputPorts: Set<ContextPath>;
 }
 
-class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> {
+class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.CircuitMetadata> {
     public readonly storage: ReadonlyCircuitStorage<M>;
 
     // PortID -> Signal
@@ -45,7 +43,7 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
     public readonly states: Map<GUID, Signal[]>;
 
     // ICInstance(Component)ID -> DigitalSimState
-    public readonly icStates: Map<GUID, DigitalSimState<Schema.IntegratedCircuitMetadata>>;
+    public readonly icStates: Map<GUID, DigitalSimState<Schema.Core.IntegratedCircuitMetadata>>;
 
     public readonly superState: DigitalSimState | undefined;
     private readonly prePath: ContextPath;
@@ -112,7 +110,8 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
 
     }
 
-    public isIC(): this is (DigitalSimState & { storage: ReadonlyCircuitStorage<Schema.IntegratedCircuitMetadata> }) {
+    public isIC(): this is (DigitalSimState &
+                           { storage: ReadonlyCircuitStorage<Schema.Core.IntegratedCircuitMetadata> }) {
         return "pins" in this.storage.metadata;
     }
 
@@ -130,6 +129,25 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
             throw new Error(`DigitalSim: Failed to find ic state for ${icInstance.id} in path ${path.join(".")}`);
         return this.icStates.get(icInstance.id)!.findState(rest);
     }
+
+    public toSchema(container?: ObjContainer): Schema.DigitalSimState {
+        const compIds = container?.components.map((c) => c.id);
+
+        const signalKeys = container?.ports.map((p) => p.id) ?? this.signals.keys();
+        const stateKeys = compIds?.filter((id) => this.states.has(id)) ?? this.states.keys();
+        const icStatesKeys = compIds?.filter((id) => this.icStates.has(id)) ?? this.icStates.keys();
+
+        return {
+            signals: Object.fromEntries(
+                [...signalKeys]
+                    .map((key) => [key, this.signals.get(key)!] as const)
+                    // Filter undefined or off signals for efficiency purposes
+                    .filter(([_, val]) => (!!val))
+            ),
+            states:   Object.fromEntries([...stateKeys].map((key) => [key, this.states.get(key)!])),
+            icStates: Object.fromEntries([...icStatesKeys].map((key) => [key, this.icStates.get(key)!.toSchema()])),
+        };
+    }
 }
 
 // [GUID_0]: Root component ID of GUID_0
@@ -141,6 +159,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     private readonly circuit: CircuitInternal;
     private readonly propagators: PropagatorsMap;
 
+    // States for ICs (not IC-instances), used to load initial states
+    // when an instance of the IC is created.
+    private readonly initialICStates: Map<GUID, Schema.DigitalSimState>;
+
     private readonly rootState: DigitalSimState;
 
     private readonly next: Map<ContextPath, Set<GUID>>; // ContextPath : InputPortIDs
@@ -151,6 +173,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         this.circuit = circuit;
         this.propagators = propagators;
 
+        this.initialICStates = new Map();
         this.rootState = new DigitalSimState(circuit.getInfo(), undefined, []);
 
         this.next = new Map();
@@ -164,8 +187,17 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 // Initialize ICs and sub-ICs if the added component is an IC instance
                 // TODO[model_refactor_api](leon) -- LOAD (AND SAVE) INITIAL IC STATES SOMEHOW
                 const comp = this.circuit.getCompByID(compId).unwrap();
-                if (this.circuit.isIC(comp))
-                    this.rootState.icStates.set(compId, this.initializeICInstance(this.rootState, compId, comp.kind));
+                if (this.circuit.isIC(comp)) {
+                    if (!this.initialICStates.has(comp.kind)) {
+                        throw new Error("DigitalSim.circuit.subscribe: Failed to find initial state " +
+                                        `for new IC instance ${comp.id} (IC: ${comp.kind})`);
+                    }
+                    this.rootState.icStates.set(
+                        compId,
+                        this.initializeICInstance(
+                            this.rootState, this.initialICStates.get(comp.kind)!, compId, comp.kind),
+                    );
+                }
             }
 
             // Keep states in-case of undos, they can be forgotten when history is cleared
@@ -233,6 +265,26 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         })
     }
 
+    public loadState(state: Schema.DigitalSimState) {
+        for (const [key, signal] of Object.entries(state.signals))
+            this.rootState.signals.set(key, signal);
+
+        for (const [key, s] of Object.entries(state.states))
+            this.rootState.states.set(key, s);
+
+        for (const [key, s] of Object.entries(state.icStates)) {
+            const comp = this.rootState.storage.getCompByID(key).unwrap();
+            this.rootState.icStates.set(
+                key,
+                this.initializeICInstance(this.rootState, s, comp.id, comp.kind),
+            );
+        }
+    }
+
+    public loadICState(id: GUID, icState: Schema.DigitalSimState) {
+        this.initialICStates.set(id, icState);
+    }
+
     private queueComp(path: ContextPath, ports: GUID[]) {
         const prevPorts = this.next.get(path) ?? new Set();
         this.next.set(path, new Set([...prevPorts, ...ports]))
@@ -249,17 +301,25 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     private initializeICInstance(
         cur: DigitalSimState,
+        initialState: Schema.DigitalSimState,
         compId: GUID,
         icId: GUID,
-    ): DigitalSimState<Schema.IntegratedCircuitMetadata> {
+    ): DigitalSimState<Schema.Core.IntegratedCircuitMetadata> {
         const ic = this.circuit.getICInfo(icId).unwrap();
         const newState = new DigitalSimState(ic, cur, cur.getPath(compId));
 
-        // Load sub-ICs
-        for (const compId of ic.getComponents()) {
-            const comp = ic.getCompByID(compId).unwrap();
-            if (this.circuit.isIC(comp))
-                newState.icStates.set(compId, this.initializeICInstance(newState, compId, comp.kind));
+        for (const [key, signal] of Object.entries(initialState.signals))
+            newState.signals.set(key, signal);
+
+        for (const [key, s] of Object.entries(initialState.states))
+            newState.states.set(key, s);
+
+        for (const [key, s] of Object.entries(initialState.icStates)) {
+            const [comp, _] = newState.getComponentAndInfoByID(key).unwrap();
+            newState.icStates.set(
+                comp.id,
+                this.initializeICInstance(newState, s, comp.id, comp.kind),
+            );
         }
 
         return newState;
@@ -366,5 +426,13 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
      */
     public getState(id: GUID): Signal[] | undefined {
         return this.rootState.states.get(id);
+    }
+
+    public getSimState() {
+        return this.rootState;
+    }
+
+    public getInitialICSimState(ic: GUID) {
+        return this.initialICStates.get(ic);
     }
 }

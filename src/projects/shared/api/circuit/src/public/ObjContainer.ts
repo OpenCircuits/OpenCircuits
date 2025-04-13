@@ -35,7 +35,4 @@ export interface ObjContainer {
     filter(f: (obj: Obj, i: number, arr: Obj[]) => boolean): Obj[];
     filter<O extends Obj>(f: (obj: Obj, i: number, arr: Obj[]) => obj is O): O[];
     every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean;
-
-    // Returns only the objects in this container and ICs that are used.
-    toSchema(): Schema.Circuit;
 }
