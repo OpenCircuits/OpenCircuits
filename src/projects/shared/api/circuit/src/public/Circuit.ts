@@ -88,7 +88,7 @@ export interface Circuit extends C {
     deleteObjs(objs: Array<Wire | Component>): void;
 
     importICs(ics: IntegratedCircuit[]): void;
-    createIC(info: ICInfo): IntegratedCircuit;
+    createIC(info: ICInfo, id?: GUID): IntegratedCircuit;
     deleteIC(id: GUID): void;
     getIC(id: GUID): IntegratedCircuit | undefined;
     getICs(): IntegratedCircuit[];

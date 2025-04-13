@@ -4,11 +4,8 @@ import {V} from "Vector";
 
 
 export function CalculateICDisplay(circuit: Circuit): ReadonlyIntegratedCircuitDisplay {
-    const validInputKinds = new Set(["Switch", "Button", "Clock"]);
-    const validOutputKinds = new Set(["LED"]);
-
-    const inputs = circuit.getComponents().filter((comp) => validInputKinds.has(comp.kind));
-    const outputs = circuit.getComponents().filter((comp) => validOutputKinds.has(comp.kind));
+    const inputs = circuit.getComponents().filter((comp) => (comp.kind === "InputPin"));
+    const outputs = circuit.getComponents().filter((comp) => (comp.kind === "OutputPin"));
 
     const longestName = Math.max(
         ...[...inputs, ...outputs].map((comp) => (comp.name?.length ?? 0)),

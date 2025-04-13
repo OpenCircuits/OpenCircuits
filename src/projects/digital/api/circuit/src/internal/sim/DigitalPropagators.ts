@@ -1,25 +1,50 @@
 import {Schema} from "shared/api/circuit/schema";
 import {Signal} from "./Signal";
 import {BCDtoDecimal, DecimalToBCD} from "../../utils/MathUtil";
+import {PropagatorFunc, PropagatorsMap} from "./DigitalSim";
 
 
-export type PropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
+type LocalPropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
     outputs: Record<string, Signal[]>;
     nextState?: Signal[];
 };
 
-// export interface PropagatorInfo {
-//     initialState?: Signal[];
-//     initialSignals: Record<string, Signal[]>;  // Port group -> port at index signals (only for output port)
-// }
+function MakeLocalPropagator(func: LocalPropagatorFunc): PropagatorFunc {
+    return (comp, info, state) => {
+        const ports = state.getPortsByGroup(comp.id);
 
-// Kind : Propagator
-export type PropagatorsMap = Record<string, PropagatorFunc>;
+        // Get signals from each input port and put it in a record of group: signals[]
+        const inputSignals = Object.fromEntries(
+            info.inputPortGroups.map((group) =>
+                [group, ports[group].map((id) => (state.signals.get(id) ?? Signal.Off))]));
+        const compState = state.states.get(comp.id);
+
+        const { outputs, nextState } = func(comp, inputSignals, compState);
+
+        // Maybe check this?
+        // for (const [group, signals] of Object.entries(outputs)) {
+        //     if (!info.outputPortGroups.includes(group)) {
+        //         throw new Error(`DigitalSim.step: Propagator for '${comp.kind}' returned ` +
+        //                         `a signal for group '${group}' which is not an output port!`);
+        //     }
+        // }
+
+        // [group: signal[]] -> [portId -> signal][]
+        return {
+            outputs: new Map(
+                Object.entries(outputs)
+                    .flatMap(([group, signals]) =>
+                        signals.map((s, i) => [state.getPath(ports[group][i]), s] as const))
+            ),
+            nextState,
+        }
+    }
+}
 
 function MakeNoOutputPropagator(): PropagatorFunc {
-    return (_obj: Schema.Component, _ignals: Record<string, Signal[]>, _state?: Signal[]) => ({
+    return MakeLocalPropagator((_obj: Schema.Component, _ignals: Record<string, Signal[]>, _state?: Signal[]) => ({
         outputs: {},
-    });
+    }));
 }
 
 function MakeSingleOutputPropagator(
@@ -28,13 +53,13 @@ function MakeSingleOutputPropagator(
         nextState?: Signal[];
     },
 ): PropagatorFunc {
-    return (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
+    return MakeLocalPropagator((obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
         const { signal, nextState } = getOutput(obj, signals, state);
         return {
             outputs: { "outputs": [signal] },
             nextState,
         };
-    }
+    });
 }
 function MakeStatelessSingleOutputPropagator(
     getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => Signal,
@@ -78,7 +103,7 @@ const [XORGate, XNORGate] = MakeGatePropagators((inputs) => (
 ));
 
 function MakeLatchPropagator(getState: (signals: Record<string, Signal[]>, state: Signal) => Signal): PropagatorFunc {
-    return (_obj, signals, state = [Signal.Off]) => {
+    return MakeLocalPropagator((_obj, signals, state = [Signal.Off]) => {
         const [curState] = state, [E] = signals["E"];
 
         const nextState = (() => {
@@ -93,7 +118,7 @@ function MakeLatchPropagator(getState: (signals: Record<string, Signal[]>, state
             },
             nextState: [nextState],
         }
-    };
+    });
 }
 const DLatch = MakeLatchPropagator((signals, _state) => (signals["D"][0]));
 const SRLatch = MakeLatchPropagator((signals, state) => {
@@ -112,7 +137,7 @@ const SRLatch = MakeLatchPropagator((signals, state) => {
 function MakeFlipFlopPropagator(
     getState: (signals: Record<string, Signal[]>, state: Signal, up: boolean) => Signal,
 ): PropagatorFunc {
-    return (_obj, signals, state = [Signal.Off, Signal.Off]) => {
+    return MakeLocalPropagator((_obj, signals, state = [Signal.Off, Signal.Off]) => {
         const [curState, prevClk] = state, [CLK] = signals["clk"], [PRE] = signals["pre"], [CLR] = signals["clr"];
 
         const up = (Signal.isOff(prevClk) && !Signal.isOff(CLK));
@@ -137,7 +162,7 @@ function MakeFlipFlopPropagator(
             },
             nextState: [nextState, CLK],
         }
-    };
+    });
 }
 const DFlipFlop = MakeFlipFlopPropagator((signals, state, up) => (up ? signals["D"][0] : state));
 const JKFlipFlop = MakeFlipFlopPropagator((signals, state, up) => {
@@ -169,6 +194,58 @@ const TFlipFlop = MakeFlipFlopPropagator((signals, state, up) =>
 
 
 export const DigitalPropagators: PropagatorsMap = {
+    "InputPin": (comp, info, state) => {
+        // No propagation when not in an IC
+        if (!state.isIC())
+            return { outputs: new Map() };
+
+        const outputPort = state.getPortsByGroup(comp.id)["outputs"][0];
+
+        const pin = state.storage.metadata.pins.find((pin) => (pin.id === outputPort));
+        if (!pin)
+            throw new Error(`DigitalSim.InputPin.propagate: Failed to find pin for input pin ${comp.id}!`);
+        const pinIndex = state.storage.metadata.pins.filter((p) => p.group === pin.group).indexOf(pin);
+
+        const icInstanceId = state["prePath"].at(-1)!, superState = state.superState!;
+
+        const inputPort = [...superState.storage.getPortsForGroup(icInstanceId, pin.group).unwrap()]
+            .map((p) => superState.storage.getPortByID(p).unwrap())
+            .find((port) => (port.index === pinIndex))!;
+
+        return {
+            "outputs": new Map([
+                // Output the input signal
+                [state.getPath(outputPort), superState.signals.get(inputPort.id) ?? Signal.Off],
+            ]),
+        };
+    },
+    "OutputPin": (comp, info, state) => {
+        // No propagation when not in an IC
+        if (!state.isIC())
+            return { outputs: new Map() };
+
+        const inputPort = state.getPortsByGroup(comp.id)["inputs"][0];
+
+        const pin = state.storage.metadata.pins.find((pin) => (pin.id === inputPort));
+        if (!pin)
+            throw new Error(`DigitalSim.InputPin.propagate: Failed to find pin for input pin ${comp.id}!`);
+        const pinIndex = state.storage.metadata.pins.filter((p) => p.group === pin.group).indexOf(pin);
+
+        const icInstanceId = state["prePath"].at(-1)!, superState = state.superState!;
+
+        // "Output port" is the IC instance's EXTERNAL output port
+        const outputPort = [...superState.storage.getPortsForGroup(icInstanceId, pin.group).unwrap()]
+            .map((p) => superState.storage.getPortByID(p).unwrap())
+            .find((port) => (port.index === pinIndex))!;
+
+        return {
+            "outputs": new Map([
+                // Output the input signal
+                [superState.getPath(outputPort.id), state.signals.get(inputPort) ?? Signal.Off],
+            ]),
+        };
+    },
+
     // Node
     "DigitalNode": BUFGate,  // Acts like a buffer
 
@@ -183,11 +260,11 @@ export const DigitalPropagators: PropagatorsMap = {
     })),
     "ConstantLow":    MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.Off),
     "ConstantHigh":   MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.On),
-    "ConstantNumber": (obj, _signals, _state) => {
+    "ConstantNumber": MakeLocalPropagator((obj, _signals, _state) => {
         // TODO: Figure out how to update propagation when this changes
         const num = obj.props["inputNum"] as number ?? 0;
         return { outputs: { "outputs": DecimalToBCD(num, 4).map(Signal.fromBool) } };
-    },
+    }),
     "Clock": MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
         signal:    state[0],  // TODO: update this state periodically somehow
         nextState: state,
@@ -218,7 +295,7 @@ export const DigitalPropagators: PropagatorsMap = {
         // TODO: Handle metastable
         signals["inputs"][BCDtoDecimal(signals["selects"].map(Signal.toBool))]
     )),
-    "Demultiplexer": (_obj, signals, _state) => {
+    "Demultiplexer": MakeLocalPropagator((_obj, signals, _state) => {
         // TODO: Handle metastable
         const selects = signals["selects"].map(Signal.toBool);
         return { outputs: {
@@ -227,8 +304,8 @@ export const DigitalPropagators: PropagatorsMap = {
                 .fill(Signal.Off)
                 .with(BCDtoDecimal(selects), signals["inputs"][0]),
         } };
-    },
-    "Encoder": (_obj, signals, _state) => {
+    }),
+    "Encoder": MakeLocalPropagator((_obj, signals, _state) => {
         const inputs = signals["inputs"];
         const outputCount = Math.round(Math.log2(inputs.length));
 
@@ -243,8 +320,8 @@ export const DigitalPropagators: PropagatorsMap = {
         return { outputs: {
             "outputs": DecimalToBCD(num, outputCount).map(Signal.fromBool),
         } };
-    },
-    "Decoder": (_obj, signals, _state) => {
+    }),
+    "Decoder": MakeLocalPropagator((_obj, signals, _state) => {
         // TODO: Handle metastable
         const inputs = signals["inputs"].map(Signal.toBool);
         return { outputs: {
@@ -253,8 +330,8 @@ export const DigitalPropagators: PropagatorsMap = {
                 .fill(Signal.Off)
                 .with(BCDtoDecimal(inputs), Signal.Off),
         } };
-    },
-    "Comparator": (_obj, signals, _state) => {
+    }),
+    "Comparator": MakeLocalPropagator((_obj, signals, _state) => {
         // TODO: Handle metastable
         const a = BCDtoDecimal(signals["inputsA"].map(Signal.toBool));
         const b = BCDtoDecimal(signals["inputsB"].map(Signal.toBool));
@@ -263,6 +340,6 @@ export const DigitalPropagators: PropagatorsMap = {
             "eq": [a === b ? Signal.On : Signal.Off],
             "gt": [a > b   ? Signal.On : Signal.Off],
         } };
-    },
+    }),
     "Label": MakeNoOutputPropagator(),
 }
