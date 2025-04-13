@@ -22,6 +22,7 @@ import demultiplexerCircuit from "./TestCircuitData/Demultiplexer.json";
 import encoderDecoderCircuit from "./TestCircuitData/EncoderDecoder.json";
 import comparatorCircuit from "./TestCircuitData/Comparator.json";
 import labelCircuit from "./TestCircuitData/Label.json";
+import nodesCircuit from "./TestCircuitData/Nodes.json";
 import {CreateCircuit} from "digital/api/circuit/public";
 
 
@@ -492,6 +493,13 @@ describe("DigitalVersionConflictResolver", () => {
             expect(label.name).toBe("Test label");
             expect(label.getProp("bgColor")).toBe("#0000ff");
             expect(label.getProp("textColor")).toBe("#ffffff");
+        });
+        test("Nodes", () => {
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(nodesCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(5);
+            expect(circuit.getWires()).toHaveLength(4);
         });
     });
 });
