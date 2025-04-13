@@ -32,7 +32,6 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
     const  [circuit, { sim }] = CreateCircuit();
     const oldCircuit = JSON.parse(fileContents);
 
-
     const version = oldCircuit.metadata.version;
     if (version === "type/v0") {
         // TODO: Better validation
@@ -320,7 +319,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
                         linkPorts(info, newObj.ports["selects"][index]);
                     });
                     currentInputPorts.forEach((info, index) => {
-                        linkPorts(info, newObj.inputs[index]);
+                        linkPorts(info, newObj.ports["inputs"][index]);
                     });
                     currentOutputPorts.forEach((info, index) => {
                         linkPorts(info, newObj.outputs[index]);
