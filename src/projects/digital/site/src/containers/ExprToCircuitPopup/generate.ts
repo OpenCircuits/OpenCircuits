@@ -22,8 +22,8 @@ export type ExprToCirGeneratorOptions = {
     ops: OperatorFormat;
 }
 
-export type InputTypes = "Button" | "Clock" | "Switch";
-export type OutputTypes = "Oscilloscope" | "LED";
+export type InputTypes = "Button" | "Clock" | "Switch" | "InputPin";
+export type OutputTypes = "Oscilloscope" | "LED" | "OutputPin";
 
 const defaultOptions: ExprToCirGeneratorOptions = {
     input:                 "Switch",

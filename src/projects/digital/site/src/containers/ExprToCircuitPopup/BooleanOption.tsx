@@ -6,13 +6,13 @@ import "./index.scss";
 
 
 type Props = {
-    displayCondition: boolean;
+    isDisplayed: boolean;
     option: boolean;
     setOption: React.Dispatch<React.SetStateAction<boolean>>;
     text: string;
 }
-export const BooleanOption = ({ displayCondition, option, setOption, text }: Props) => (
-    displayCondition ? (<>
+export const BooleanOption = ({ isDisplayed, option, setOption, text }: Props) => (
+    isDisplayed ? (<>
         <SwitchToggle isOn={option} height="40px"
                       onChange={() => setOption(!option)}>{text}</SwitchToggle>
         <br />

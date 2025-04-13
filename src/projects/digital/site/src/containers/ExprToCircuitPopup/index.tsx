@@ -86,26 +86,28 @@ export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) =>
                         <BooleanOption option={label}
                                        setOption={setLabel}
                                        text="Place labels for inputs"
-                                       displayCondition />
-                        <BooleanOption displayCondition={output !== "Oscilloscope"}
-                                       option={isIC}
+                                       isDisplayed />
+                        <BooleanOption option={isIC}
                                        setOption={setIsIC}
-                                       text="Generate into IC" />
-                        <BooleanOption displayCondition={output === "Oscilloscope" && input === "Clock"}
+                                       text="Generate into IC"
+                                       isDisplayed />
+                        <BooleanOption isDisplayed={output === "Oscilloscope" && input === "Clock"}
                                        option={clocksToOscope}
                                        setOption={setClocksToOscope}
                                        text="Connect Clocks to Oscilloscope" />
-                        <DropdownOption id="input"
-                                        option={input}
-                                        options={["Button", "Clock", "Switch"]}
-                                        setOption={setInput}
-                                        text="Input Component Type:  " />
-                        <br />
-                        <DropdownOption id="output"
-                                        option={output}
-                                        options={["LED", "Oscilloscope"]}
-                                        setOption={setOutput}
-                                        text="Output Component Type:  " />
+                        {!isIC && <>
+                            <DropdownOption id="input"
+                                            option={input}
+                                            options={["Button", "Clock", "Switch"]}
+                                            setOption={setInput}
+                                            text="Input Component Type:  " />
+                            <br />
+                            <DropdownOption id="output"
+                                            option={output}
+                                            options={["LED", "Oscilloscope"]}
+                                            setOption={setOutput}
+                                            text="Output Component Type:  " />
+                        </>}
                     </div>
                 </div>
 
@@ -114,10 +116,11 @@ export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) =>
                         disabled={expression===""}
                         onClick={() => {
                             const result = Generate(circuit, camera, expression, {
-                                input, output, isIC,
+                                input:                 isIC ? "InputPin" : input,
+                                output:                isIC ? "OutputPin" : output,
                                 connectClocksToOscope: clocksToOscope,
                                 ops:                   customOps,
-                                label, format,
+                                label, format, isIC,
                             });
                             if (!result.ok) {
                                 setErrorMessage(result.error.errors.map((err) => err.message).join("\n"));

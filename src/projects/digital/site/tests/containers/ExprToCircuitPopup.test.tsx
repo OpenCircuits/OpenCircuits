@@ -1,4 +1,6 @@
 import "shared/site/tests/helpers/Extensions";
+import "shared/tests/helpers/Extensions";
+import "digital/api/circuit/tests/helpers/Extensions";
 
 import "@testing-library/jest-dom";
 import {act, render, screen}          from "@testing-library/react";
@@ -19,19 +21,22 @@ import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner
 import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
 import {V} from "Vector";
 import {configureStore} from "@reduxjs/toolkit";
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
 
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro
 describe("Main Popup", () => {
+    const [circuit, state] = CreateCircuit();
     const designer = CreateDesigner(
         {
             defaultTool: new DefaultTool(),
             tools:       [],
         },
         [],
+        undefined,
+        [circuit, state],
     )
-    const [circuit, _] = CreateCircuit();
     const store = configureStore({ reducer: reducers });
     const user = userEvent.setup();
 
@@ -42,7 +47,7 @@ describe("Main Popup", () => {
 
     afterEach(() => {
         designer.circuit.deleteObjs([...circuit.getWires() , ...circuit.getComponents()]);
-        designer.viewport.camera.pos = V(0,0)
+        designer.viewport.camera.pos = V(0,0);
     });
 
     test("Popup Created with default states", () => {
@@ -94,30 +99,42 @@ describe("Main Popup", () => {
         await user.click(screen.getByText("Generate"));
         expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
 
-        // @TODO
-        // // Check that the components are placed and connected
-        // const components = info.designer.getObjects();
-        // expect(components).toHaveLength(4);
-        // const inputA = components.find((component) => component instanceof Switch
-        //                                            && component.getName() === "a") as Switch;
-        // const inputB = components.find((component) => component instanceof Switch
-        //                                            && component.getName() === "b") as Switch;
-        // const orGate = components.find((component) => component instanceof ORGate) as ORGate;
-        // const led = components.find((component) => component instanceof LED) as LED;
-        // expect(inputA).toBeDefined();
-        // expect(inputB).toBeDefined();
-        // expect(orGate).toBeDefined();
-        // expect(led).toBeDefined();
-        // expect(led.isOn()).toBeFalsy();
-        // inputA.click();
-        // expect(led.isOn()).toBeTruthy();
-        // inputA.click();
-        // inputB.click();
-        // expect(led.isOn()).toBeTruthy();
+        // Check that the components are placed and connected
+        const components = designer.circuit.getComponents();
+        expect(components).toHaveLength(4);
+        const inputA = components.find((comp) => comp.name === "a")!;
+        const inputB = components.find((comp) => comp.name === "b")!;
+        const orGate = components.find((comp) => comp.kind === "ORGate")!;
+        const led = components.find((comp) => comp.kind === "LED")!;
+        expect(inputA).toBeDefined();
+        expect(inputB).toBeDefined();
+        expect(orGate).toBeDefined();
+        expect(led).toBeDefined();
+        expect(led).toBeOff();
+        state.sim.setState(inputA.id, [Signal.On]);
+        expect(led).toBeOn();
+        state.sim.setState(inputA.id, [Signal.Off]);
+        state.sim.setState(inputB.id, [Signal.On]);
+        expect(led).toBeOn();
 
-        // // Reopen and requery in case reference changed
-        // act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
-        // expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
+        // Reopen and requery in case reference changed
+        act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
+        expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
+    });
+
+    test("Generate Button (IC)", async () => {
+        // Enter the expression and generate
+        await user.click(screen.getByText(/Generate into IC/));
+        await user.type(screen.getByRole("textbox"), "a | b");
+        expect(screen.getByText("Generate")).toBeEnabled();
+        await user.click(screen.getByText("Generate"));
+        expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
+
+        // Check that the components are placed and connected
+        const components = designer.circuit.getComponents();
+        expect(components).toHaveLength(1);
+        const ic = components[0];
+        expect(ic).toBeDefined();
     });
 
     test("Custom format settings appear", async () => {
@@ -128,7 +145,6 @@ describe("Main Popup", () => {
 
     test("Conditions for options to appear", async () => {
         await user.selectOptions(screen.getByLabelText(/Output Component/), "Oscilloscope");
-        expect(screen.queryByText(/Generate into IC/)).toBeNull();
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
 
         await user.selectOptions(screen.getByLabelText(/Input Component/), "Clock");
@@ -136,5 +152,9 @@ describe("Main Popup", () => {
 
         await user.selectOptions(screen.getByLabelText(/Input Component/), "Switch");
         expect(screen.queryByText(/Connect Clocks/)).toBeNull();
+
+        await user.click(screen.getByText(/Generate into IC/));
+        expect(screen.queryByLabelText(/Input Component/)).toBeNull();
+        expect(screen.queryByLabelText(/Output Component/)).toBeNull();
     });
 });
