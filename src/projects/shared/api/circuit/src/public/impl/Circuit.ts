@@ -210,9 +210,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         }
         this.internal.commitTransaction();
     }
-    public createIC(info: T["ICInfo"]): T["IC"] {
-        const id = uuid();
-
+    public createIC(info: T["ICInfo"], id = uuid()): T["IC"] {
         const metadata: Schema.IntegratedCircuitMetadata = {
             id:      id,  // Make a new ID
             name:    info.circuit.name,

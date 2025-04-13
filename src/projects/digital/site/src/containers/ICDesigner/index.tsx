@@ -62,7 +62,17 @@ export const ICDesigner = ({ }: Props) => {
         // Create the IC from the objIds in the main designer's circuit
         const [icCircuit] = CreateCircuit();
         const objs = mainDesigner.circuit.createContainer(objIds).withWiresAndPorts();
-        icCircuit.loadSchema(objs.toSchema());
+
+        const schema = objs.toSchema();
+        for (const obj of schema.objects) {
+            if (obj.kind === "Switch" || obj.kind === "Button" || obj.kind === "Clock")
+                obj.kind = "InputPin";
+            if (obj.kind === "LED")
+                obj.kind = "OutputPin";
+        }
+
+        icCircuit.loadSchema(schema);
+
         const ic = circuit.createIC({
             circuit: icCircuit,
             display: CalculateICDisplay(icCircuit),

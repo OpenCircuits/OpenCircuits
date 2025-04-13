@@ -3,7 +3,6 @@ import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {BaseComponentConfigurationInfo,
         BaseObjInfo,
         BaseObjInfoProvider,
-        ObjInfoProvider,
         PortConfig,
         PropTypeMap} from "shared/api/circuit/internal/impl/ObjInfo";
 import {Schema} from "shared/api/circuit/schema";
@@ -249,10 +248,26 @@ const WireInfo = new BaseObjInfo("Wire", "DigitalWire", { "color": "string" });
 // Ports
 const PortInfo = new BaseObjInfo("Port", "DigitalPort", {});
 
+// IC Pins
+const InputPinInfo = new DigitalComponentConfigurationInfo(
+    "InputPin",
+    {},
+    { "outputs": "output" },
+    [{ "outputs": 1 }],
+);
+const OutputPinInfo = new DigitalComponentConfigurationInfo(
+    "OutputPin",
+    {},
+    { "inputs": "input" },
+    [{ "inputs": 1 }],
+);
+
 
 export class DigitalObjInfoProvider extends BaseObjInfoProvider {
     public constructor() {
         super([
+            // IC Pins
+            InputPinInfo, OutputPinInfo,
             // Node
             NodeInfo,
             // Inputs

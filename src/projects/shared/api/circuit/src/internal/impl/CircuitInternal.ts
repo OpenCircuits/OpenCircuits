@@ -86,11 +86,17 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     public hasPort(id: GUID) {
         return this.doc.getCircuitInfo().hasPort(id);
     }
+    public isIC(comp: Schema.Component): boolean {
+        return this.doc.getICs().has(comp.kind);
+    }
 
     public getMetadata(): Readonly<Schema.CircuitMetadata> {
         return this.doc.getCircuitInfo().metadata;
     }
 
+    public getInfo() {
+        return this.doc.getCircuitInfo();
+    }
     public getICInfo(id: GUID) {
         return this.doc.getICInfo(id);
     }
