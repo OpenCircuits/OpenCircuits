@@ -8,7 +8,6 @@ import {CircuitState, CircuitTypes} from "./CircuitState";
 import {ObjContainerImpl} from "./ObjContainer";
 
 import "shared/api/circuit/utils/Array";
-import {Schema} from "../../schema";
 import {ObjContainer} from "../ObjContainer";
 
 
@@ -92,9 +91,5 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
     }
     public every(condition: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): boolean {
         return this.selections.every(condition);
-    }
-
-    public toSchema(): Schema.Circuit {
-        return this.selections.toSchema();
     }
 }

@@ -21,12 +21,16 @@ import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
 import type {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode} from "./DigitalComponent";
 import type {DigitalWire, ReadonlyDigitalWire}                   from "./DigitalWire";
 import type {DigitalPort, ReadonlyDigitalPort}                   from "./DigitalPort";
+import {Schema} from "../schema";
 
 
 export type ToDigital<T> = (
     // Core types to keep the same and return early on (and prevent infinite recursion)
     T extends Vector ? Vector :
     T extends Rect   ? Rect   :
+    // Schema-type
+    T extends Schema.Core.Circuit ? Schema.DigitalCircuit :
+    T extends Schema.Core.IntegratedCircuit ? Schema.DigitalIntegratedCircuit :
     // Base-type replacements
     T extends IntegratedCircuit ? DigitalIntegratedCircuit :
     T extends Circuit           ? DigitalCircuit :
