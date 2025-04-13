@@ -279,14 +279,19 @@ export class Rect {
     }
 
     /**
-     * Utility method to create a rectangle from two given points.
-     * This rectangle will be the closest bounding rectangle of the two points.
+     * Utility method to create a rectangle from given points.
+     * This rectangle will be the closest bounding rectangle of the points.
      *
-     * @param p1 The first point.
-     * @param p2 The second point.
-     * @returns  The closest bounding Rect between p1 and p2.
+     * @param points The points.
+     * @returns      The closest bounding Rect between p1 and p2.
      */
-    public static FromPoints(p1: Vector, p2: Vector): Rect {
+    public static FromPoints(...points: Vector[]): Rect {
+        const xMin = Math.min(...points.map(({ x }) => x));
+        const xMax = Math.max(...points.map(({ x }) => x));
+        const yMin = Math.min(...points.map(({ y }) => y));
+        const yMax = Math.max(...points.map(({ y }) => y));
+        const p1 = V(xMin, yMin);
+        const p2 = V(xMax, yMax);
         return new Rect(p1.add(p2).scale(0.5), p2.sub(p1).abs());
     }
 

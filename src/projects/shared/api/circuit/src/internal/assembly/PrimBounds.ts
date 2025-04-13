@@ -16,7 +16,7 @@ export function Bounds(prim: Prim): Rect | undefined {
     case "Line":
         return Rect.FromPoints(prim.p1, prim.p2);
     case "Polygon":
-        return undefined;
+        return Rect.FromPoints(...prim.points);
     case "QuadCurve":
         return prim.curve.bounds;
     case "Rectangle":
