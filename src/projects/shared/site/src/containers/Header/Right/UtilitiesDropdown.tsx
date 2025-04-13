@@ -4,7 +4,7 @@ import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/ut
 
 // import {useAPIMethods} from "shared/site/utils/ApiMethods";
 
-import {useAPIMethods} from "shared/site/utils/ApiMethods";
+import {useAPIMethods, VersionConflictResolver} from "shared/site/utils/ApiMethods";
 import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
@@ -23,8 +23,9 @@ export type Utility = {
 
 type Props = {
     extraUtilities: Utility[];
+    versionConflictResolver: VersionConflictResolver;
 }
-export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
+export const UtilitiesDropdown = ({ extraUtilities, versionConflictResolver }: Props) => {
     const designer = useMainDesigner();
     const { curMenu, isLocked, isSaved } = useSharedSelector(
         (state) => ({
@@ -47,7 +48,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
     const load = () => {
         dispatch(CloseHeaderMenus());
         if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
-            LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE), versionConflictResolver);
     }
 
     return (

@@ -4,13 +4,15 @@ import {HeaderLeft}  from "./Left";
 import {HeaderRight} from "./Right";
 
 import "./index.scss";
+import {VersionConflictResolver} from "shared/site/utils/ApiMethods";
 
 
 type Props = {
     img: string;
     extraUtilities: Utility[];
+    versionConflictResolver: VersionConflictResolver;
 }
-export const Header = ({ img, extraUtilities }: Props) => (
+export const Header = ({ img, extraUtilities, versionConflictResolver }: Props) => (
     <header id="header">
         <HeaderLeft />
 
@@ -25,6 +27,6 @@ export const Header = ({ img, extraUtilities }: Props) => (
             </a>
         </div>
 
-        <HeaderRight extraUtilities={extraUtilities} />
+        <HeaderRight extraUtilities={extraUtilities} versionConflictResolver={versionConflictResolver} />
     </header>
 );

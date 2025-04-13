@@ -17,5 +17,11 @@
     },
     // TODO[model_refactor_api](Leon) - Add back "src" to include
     "include": ["../../shared/api/circuitdesigner/src/types"],
-    "files": ["./src/index.tsx", "./tests/utils/ExpressionParser.test.ts", "./tests/containers/ExprToCircuitPopup.test.tsx"],
+    "files": [
+        "./src/index.tsx",
+        "./tests/utils/ExpressionParser.test.ts",
+        "./tests/containers/ExprToCircuitPopup.test.tsx",
+        "./src/utils/DigitalVersionConflictResolver.ts",
+        "./tests/utils/DigitalVersionConflictResolver.test.ts"
+    ],
 }

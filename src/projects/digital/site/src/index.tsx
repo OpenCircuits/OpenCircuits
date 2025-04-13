@@ -58,6 +58,7 @@ import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
 import {LoadCircuit} from "shared/site/utils/CircuitHelpers";
 import {Request} from "shared/site/utils/Request";
 import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
+import {VersionConflictResolver} from "./utils/DigitalVersionConflictResolver";
 
 
 async function Init(): Promise<void> {
@@ -161,7 +162,7 @@ async function Init(): Promise<void> {
                 // Load dev state
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    LoadCircuit(mainDesigner.circuit, await DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+                    LoadCircuit(mainDesigner.circuit, VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)));
             }
 
             const root = createRoot(document.getElementById("root")!);
