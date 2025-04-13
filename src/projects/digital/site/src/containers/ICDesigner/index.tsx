@@ -4,7 +4,6 @@ import {V} from "Vector";
 
 import {Cleanups} from "shared/api/circuit/utils/types";
 
-import {CircuitDesigner}    from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {DRAG_TIME}          from "shared/api/circuitdesigner/input/Constants";
 import {DefaultTool}        from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}            from "shared/api/circuitdesigner/tools/PanTool";
@@ -20,7 +19,7 @@ import {TextModuleInputField}  from "shared/site/containers/SelectionPopup/modul
 
 import {CreateCircuit} from "digital/api/circuit/public";
 
-import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {ICResizeTool}   from "digital/api/circuitdesigner/tools/ICResizeTool";
 import {ICPortTool}     from "digital/api/circuitdesigner/tools/ICPortTool";
 
@@ -35,8 +34,8 @@ import "./index.scss";
 interface Props {
 }
 export const ICDesigner = ({ }: Props) => {
-    const mainDesigner = useMainDesigner();
-    const [icViewDesigner, setICViewDesigner] = useState<CircuitDesigner | undefined>();
+    const mainDesigner = useMainDesigner() as DigitalCircuitDesigner;
+    const [icViewDesigner, setICViewDesigner] = useState<DigitalCircuitDesigner | undefined>();
 
     const { isActive, objIds } = useDigitalSelector(
         (state) => ({ ...state.icDesigner })
@@ -63,7 +62,13 @@ export const ICDesigner = ({ }: Props) => {
         const [icCircuit] = CreateCircuit();
         const objs = mainDesigner.circuit.createContainer(objIds).withWiresAndPorts();
 
-        const schema = objs.toSchema();
+        const schema = mainDesigner.circuit.toSchema(objs);
+        // TODO[model_refactor_api] --
+        //  a weird state could exist when replacing switches with InputPorts
+        //  since it'll copy the state so if the switch is on, it'll turn off
+        //  when placed (maybe enforce them to be off?)
+        //  Also maybe enforce that there's no propagation happening in the circuit
+        //  you're trying to create?
         for (const obj of schema.objects) {
             if (obj.kind === "Switch" || obj.kind === "Button" || obj.kind === "Clock")
                 obj.kind = "InputPin";

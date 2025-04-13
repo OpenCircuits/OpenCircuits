@@ -1,3 +1,4 @@
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import "shared/tests/helpers/Extensions";
 
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
@@ -114,6 +115,47 @@ describe("IC", () => {
             TurnOff(sw1);
             expect(out).toBeOff();
             TurnOff(sw2);
+            expect(out).toBeOff();
+        });
+    });
+
+    describe("IC with Switch keeps state", () => {
+        test("Basic", () => {
+            const [circuit, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+
+            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
+            const ic = (() => {
+                // const [_, { inputs: [sw1, sw2], outputs: [out] }] = ICPlaceAndConnect("ANDGate");
+                const [i1, i2, g, o1] = ICPlace("Switch", "InputPin", "ANDGate", "OutputPin");
+                ICConnect(i1, g.inputs[0]), ICConnect(i2, g.inputs[1]), ICConnect(g, o1);
+
+                i1.setSimState([Signal.On]);
+
+                icCircuit.name = "AND Gate IC";
+                i2.outputs[0].name = "In 2";
+                o1.inputs[0].name = "Out";
+
+                return circuit.createIC({
+                    circuit: icCircuit,
+                    display: {
+                        size: V(4, 2),
+                        pins: [
+                            { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                        ],
+                    },
+                });
+            })();
+
+            const [_, { inputs: [sw1], outputs: [out] }] = PlaceAndConnect(ic.id);
+
+            // Basic
+            expect(out).toBeOff();
+            TurnOn(sw1);
+            expect(out).toBeOn();
+
+            // Turning off
+            TurnOff(sw1);
             expect(out).toBeOff();
         });
     });

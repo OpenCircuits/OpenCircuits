@@ -104,19 +104,4 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
     public every(condition: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => boolean): boolean {
         return this.all.every(condition);
     }
-
-    public toSchema(): Schema.Circuit {
-        return {
-            metadata: this.state.internal.getMetadata(),
-            camera:   {
-                x:    0,
-                y:    0,
-                zoom: 0,
-            },
-            ics:     this.ics.map((ic) => ic.toSchema()),
-            objects: [
-                ...this.all.map((obj) => obj.toSchema()),
-            ],
-        }
-    }
 }
