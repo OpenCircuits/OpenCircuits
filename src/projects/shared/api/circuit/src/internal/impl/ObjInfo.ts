@@ -180,7 +180,7 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
             //  if the counts all match
             this.portGroups.every((group) => (counts[group] === p[group])));
 
-        return hasValidConfig ? OkVoid() : ErrE(`BaseComponentInfo: Failed to find matching config for ${p}`);
+        return hasValidConfig ? OkVoid() : ErrE(`BaseComponentInfo: ${JSON.stringify(this.validPortConfigs)} Failed to find matching config for ${JSON.stringify(p)}`);
     }
 
     public getValidPortConfigs(): ReadonlyArray<Readonly<PortConfig>> {
