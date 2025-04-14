@@ -30,10 +30,14 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
     }
 
     public get midpoint(): Vector {
-        const pts = [
+        const compAndWirePts = [
             ...this.components.map((c) => c.pos),
             ...this.wires.map((w) => w.shape.getPos(0.5)),
         ];
+        // If there aren't any components or wires, use port positions instead
+        const pts = (compAndWirePts.length === 0
+            ? [...this.ports.map((p) => p.targetPos)]
+            : compAndWirePts);
         return Rect.FromPoints(
             Vector.Min(...pts),
             Vector.Max(...pts),

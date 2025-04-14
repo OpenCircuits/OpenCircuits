@@ -2,7 +2,7 @@
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {CreateCircuit} from "digital/api/circuit/public";
 import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
-import {Schema} from "shared/api/circuit/schema";
+import {Schema} from "digital/api/circuit/schema";
 import {V} from "Vector";
 
 
@@ -28,7 +28,7 @@ function isSerializationArrayEntry(o: unknown): o is SerializationArrayEntry {
     return ("type" in o && o.type === "Array" && "data" in o && Array.isArray(o.data));
 }
 
-export function VersionConflictResolver(fileContents: string): Schema.Circuit {
+export function VersionConflictResolver(fileContents: string): Schema.DigitalCircuit {
     const  [circuit, { sim }] = CreateCircuit();
     const oldCircuit = JSON.parse(fileContents);
 
@@ -36,7 +36,7 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
     const version = oldCircuit.metadata.version;
     if (version === "type/v0") {
         // TODO: Better validation
-        return oldCircuit as Schema.Circuit;
+        return oldCircuit as Schema.DigitalCircuit;
     }
     const v = parseFloat(version);
 

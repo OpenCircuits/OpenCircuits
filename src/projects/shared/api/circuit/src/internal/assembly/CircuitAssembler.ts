@@ -104,8 +104,9 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
     protected readonly newOrRemovedICs: Set<GUID>;
 
     protected readonly dirtyComponents: DirtyMap<GUID>;
+    protected readonly dirtyComponentPorts: Map<GUID, DirtyMap<GUID>>;  // parent.id : port.id[]
     protected readonly dirtyWires: DirtyMap<GUID>;
-    protected readonly dirtyPorts: DirtyMap<GUID>;
+    // protected readonly dirtyPorts: DirtyMap<GUID>;
 
     protected readonly assemblers: Record<string, Assembler>;
 
@@ -135,8 +136,9 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
 
         this.newOrRemovedICs = new Set();
         this.dirtyComponents = new DirtyMap();
+        this.dirtyComponentPorts = new Map();
         this.dirtyWires = new DirtyMap();
-        this.dirtyPorts = new DirtyMap();
+        // this.dirtyPorts = new DirtyMap();
 
         this.circuit.subscribe((ev) => {
             const diff = ev.diff;
@@ -173,11 +175,21 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
                 this.dirtyComponents.add(compID, AssemblyReason.Removed);
 
             // Mark all components w/ changed ports dirty
-            // TODO: Does this need to set all wires dirty too since an update to
+            // TODO[]: Does this need to set all wires dirty too since an update to
             //  the port config of a component could theoretically change existing
             //  port locations?
-            for (const compID of diff.portsChanged)
-                this.dirtyComponents.add(compID, AssemblyReason.PortsChanged);
+            for (const [compId, newPorts] of diff.addedPorts) {
+                this.dirtyComponents.add(compId, AssemblyReason.PortsChanged);
+
+                const existing = this.dirtyComponentPorts.getOrInsert(compId, () => new DirtyMap());
+                newPorts.forEach((port) => existing.add(port, AssemblyReason.Added));
+            }
+            for (const [compId, newPorts] of diff.removedPorts) {
+                this.dirtyComponents.add(compId, AssemblyReason.PortsChanged);
+
+                const existing = this.dirtyComponentPorts.getOrInsert(compId, () => new DirtyMap());
+                newPorts.forEach((port) => existing.add(port, AssemblyReason.Removed));
+            }
 
             // Mark all added/removed wires dirty
             for (const wireID of diff.addedWires)
@@ -192,7 +204,7 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
                         this.dirtyComponents.add(id, AssemblyReason.SelectionChanged);
 
                     // Component transform changed, update connected wires
-                    // TODO: Size changes?
+                    // TODO[]: Size changes?
                     if (props.has("x") || props.has("y") || props.has("angle")) {
                         this.dirtyComponents.add(id, AssemblyReason.TransformChanged);
 
@@ -210,9 +222,11 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
                         this.dirtyWires.add(id, AssemblyReason.SelectionChanged);
                     this.dirtyWires.add(id, AssemblyReason.PropChanged);
                 } else if (circuit.hasPort(id)) {
+                    const port = circuit.getPortByID(id).unwrap();
+                    const existing = this.dirtyComponentPorts.getOrInsert(port.parent, () => new DirtyMap());
                     if (props.has("isSelected"))
-                        this.dirtyPorts.add(id, AssemblyReason.SelectionChanged);
-                    this.dirtyPorts.add(id, AssemblyReason.PropChanged);
+                        existing.add(port.id, AssemblyReason.SelectionChanged);
+                    existing.add(port.id, AssemblyReason.PropChanged);
                 }
             }
 
@@ -252,16 +266,26 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         }
         this.dirtyComponents.clear();
 
-        // TODO(leon) - does this work? I don't think it does
-        //   i.e. I don't think dirtyPorts gets set properly when portAmt changes?
-        // Remove any ports that were deleted
-        for (const [portID, _reasons] of this.dirtyPorts) {
-            if (!this.circuit.hasPort(portID)) {
-                this.cache.portPositions.delete(portID);
-                this.cache.localPortPositions.delete(portID);
+        // Remove any ports that were deleted and/or re-assemble component with port change reasons
+        // TODO[] - do this better, maybe make PortAssemblers separate somehow
+        for (const [compId, ports] of this.dirtyComponentPorts) {
+            const reasons = new Set<AssemblyReason>();
+            for (const [portId, portReasons] of ports) {
+                if (!this.circuit.hasPort(portId)) {
+                    this.cache.portPositions.delete(portId);
+                    this.cache.localPortPositions.delete(portId);
+                    continue;
+                }
+                portReasons.forEach((reason) => reasons.add(reason));
             }
+
+            if (!this.circuit.hasComp(compId) || reasons.size === 0)
+                continue;
+
+            const comp = this.circuit.getCompByID(compId).unwrap();
+            this.getAssemblerFor(comp.kind).assemble(comp, reasons);
         }
-        this.dirtyPorts.clear();
+        this.dirtyComponentPorts.clear();
 
         // Then update wires
         for (const [wireID, reasons] of this.dirtyWires) {
