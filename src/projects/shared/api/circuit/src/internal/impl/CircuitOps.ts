@@ -1,4 +1,5 @@
-import {Ok, Result, ResultUtil} from "shared/api/circuit/utils/Result";
+/* eslint-disable sonarjs/prefer-single-boolean-return */
+import {None, Ok, Option, Result, ResultUtil, Some} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema"
 
@@ -78,6 +79,34 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
         case "ReplaceComponentOp":
             return { ...op, newKind: op.oldKind, oldKind: op.newKind };
     }
+}
+
+export function CanCommuteOps(targetOp: CircuitOp, withOp: CircuitOp): boolean {
+    if (withOp.kind === "SetPropertyOp") {
+        if (targetOp.kind !== "SetPropertyOp")
+            return false;
+        // Can't swap the order of ops affecting the same thing (but can merge)
+        if (withOp.id === targetOp.id && withOp.key === targetOp.key)
+            return false;
+        return true;
+    }
+    return false;
+}
+
+export function MergeOps(targetOp: CircuitOp, withOp: CircuitOp): Option<CircuitOp> {
+    if (withOp.kind === "SetPropertyOp") {
+        if (targetOp.kind !== "SetPropertyOp")
+            return None();
+        if (withOp.id === targetOp.id && withOp.key === targetOp.key) {
+            return Some({
+                ...withOp,
+                newVal: withOp.newVal,
+                oldVal: targetOp.oldVal,
+            });
+        }
+        return None();
+    }
+    return None();
 }
 
 // Transforms "targetOp" to occur after "withOp".

@@ -13,6 +13,7 @@ import {Selections}    from "./Selections";
 import {Schema} from "../schema";
 import {Observable} from "../utils/Observable";
 import {ObjContainer} from "./ObjContainer";
+import {LogEntry} from "../internal/impl/CircuitLog";
 
 
 export type {CircuitMetadata} from "shared/api/circuit/schema/CircuitMetadata";
@@ -97,13 +98,10 @@ export interface Circuit extends C {
     redo(): void;
 
     history: {
-        // TODO: Get the current history?
+        // TODO[]: dont directly expose this
+        get(): ReadonlyArray<LogEntry>;
         clear(): void;
     };
-
-    // I'm not sure if these methods makes sense to have
-    // copy(): Circuit;
-    // reset(): void;
 
     // TODO: Come up with a better name for this
     loadSchema(schema: Schema.Circuit, refreshIds?: boolean): Obj[];

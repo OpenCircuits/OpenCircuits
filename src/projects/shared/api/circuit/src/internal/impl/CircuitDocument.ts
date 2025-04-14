@@ -4,7 +4,7 @@ import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "shared/api/circu
 import {GUID}   from "shared/api/circuit/schema/GUID";
 import {Schema} from "shared/api/circuit/schema";
 
-import {CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
+import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
 import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";
 import {CircuitLog, LogEntry} from "./CircuitLog";
 import {ObservableImpl} from "../../utils/Observable";
@@ -313,6 +313,58 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 }
 
+class TransactionList {
+    private transactionOps: CircuitOp[];
+
+    public constructor() {
+        this.transactionOps = [];
+    }
+
+    public get length() {
+        return this.transactionOps.length;
+    }
+
+    public set ops(ops: CircuitOp[]) {
+        this.transactionOps = ops;
+    }
+    public get ops() {
+        return this.transactionOps;
+    }
+
+    public push(op: CircuitOp): void {
+        // See if we can commute the op downwards and then potentially merge it
+        let i = this.length - 1;
+        while (i >= 0 && CanCommuteOps(this.ops[i], op))
+            i--;
+
+        // Nothing to merge with found, just push and move on.
+        if (i < 0) {
+            this.transactionOps.push(op);
+            return;
+        }
+
+        const merge = MergeOps(this.ops[i], op);
+        if (merge.some) {
+            this.ops.splice(i, 1);
+            this.transactionOps.push(merge.value);
+            return;
+        }
+
+        this.transactionOps.push(op);
+    }
+
+    public reset(): TransactionList {
+        const oldTxList = new TransactionList();
+        oldTxList.transactionOps = this.transactionOps;
+        this.transactionOps = [];
+        return oldTxList;
+    }
+
+    public inverted(): CircuitOp[] {
+        return this.transactionOps.map(InvertCircuitOp).reverse();
+    }
+}
+
 export type CircuitDocEvent = {
     type: "CircuitOp";
     diff: FastCircuitDiff;
@@ -338,7 +390,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     // Keep track of multiple "begin"/"commit" pairs and only commit when counter reaches zero.
     private curBatchIndex: number;
     private transactionCounter: number;
-    private transactionOps: CircuitOp[];
+    private readonly transactionList: TransactionList;
 
     public constructor(id: GUID, objInfo: ObjInfoProvider, log: CircuitLog) {
         super();
@@ -357,7 +409,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
         this.curBatchIndex = -1;
         this.transactionCounter = 0;
-        this.transactionOps = [];
+        this.transactionList = new TransactionList();
 
         // NOTE: THIS IS _COMPLETELY UNUSED_ AT THE MOMENT SINCE THERE IS NO REMOTE
         this.log.subscribe((evt) => {
@@ -380,25 +432,25 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     // NOTE THIS IS UNUSED SINCE THERE IS NO REMOTE
     private transformTransaction(ops: readonly CircuitOp[]): void {
         // Revert tx ops
-        this.applyOpsChecked(this.transactionOps.map(InvertCircuitOp).reverse());
+        this.applyOpsChecked(this.transactionList.inverted());
 
         // Apply ops
         this.applyOpsChecked(ops);
 
         // Transform tx ops
-        TransformCircuitOps(this.transactionOps, ops)
+        TransformCircuitOps(this.transactionList.ops, ops)
             .uponErr(() => {
                 // Failed to transform partial transaction, so cancel it and save the error.
                 this.transactionCounter = 0;
-                this.transactionOps = [];
+                this.transactionList.reset();
 
                 // TODO[model_refactor_api](kevin): propagate this error to the client.
                 // this.transactionTransformError = e;
             })
             .uponOk((txOps) => {
                 // Reapply tx ops
-                this.transactionOps = txOps;
-                this.applyOpsChecked(this.transactionOps);
+                this.transactionList.ops = txOps;
+                this.applyOpsChecked(this.transactionList.ops);
             });
     }
 
@@ -440,7 +492,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
             .uponErr(() => this.cancelTransaction())
             .uponOk(() => {
                 // Push only after successful op
-                this.transactionOps.push(op);
+                this.transactionList.push(op);
 
                 // Emit event per-transaction-op only if we're not in a "batch", otherwise, wait till batch is done.
                 if (this.curBatchIndex === -1)
@@ -500,30 +552,28 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
         this.transactionCounter = 0;
-        if (this.transactionOps.length === 0)
+        if (this.transactionList.length === 0)
             return;
 
-        const txOps = this.transactionOps;
-        this.transactionOps = [];
+        const txList = this.transactionList.reset();
         // Sanity check: Clock should be kept updated by the event handler.
         if (this.clock !== this.log.clock) {
             throw new Error(`Unexpected clock difference (${this.clock} vs ${this.log.clock})`
                             + ". Maybe a missed event?");
         }
 
-        return this.log.propose(txOps, clientData);
+        return this.log.propose(txList.ops, clientData);
     }
 
     public cancelTransaction(): void {
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
         this.transactionCounter = 0;
         this.curBatchIndex = -1;
-        if (this.transactionOps.length === 0)
+        if (this.transactionList.length === 0)
             return;
 
-        const txOps = this.transactionOps;
-        this.transactionOps = [];
-        this.applyOpsChecked(txOps.reverse().map(InvertCircuitOp));
+        const txList = this.transactionList.reset();
+        this.applyOpsChecked(txList.inverted());
     }
 
 
