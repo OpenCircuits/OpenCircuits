@@ -7,6 +7,7 @@ import {Obj}             from "./Obj";
 export interface IntegratedCircuitPin {
     id: GUID;  // ID of the internal PORT that this pin corresponds to.
     group: string;
+    name: string;
 
     x: number;
     y: number;

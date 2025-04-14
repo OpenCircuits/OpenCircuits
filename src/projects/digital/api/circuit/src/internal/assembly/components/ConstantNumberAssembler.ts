@@ -107,9 +107,9 @@ export class ConstantNumberAssembler extends ComponentAssembler {
         return {
             kind:     "Text",
             pos:      this.getPos(comp),
+            angle:    this.getAngle(comp),
             offset:   V(0, FONT_CAP_OFFSET),
             contents: text,
-            angle:    -this.getAngle(comp),
         } as const
     }
 

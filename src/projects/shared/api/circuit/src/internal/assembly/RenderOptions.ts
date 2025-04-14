@@ -86,8 +86,8 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public defaultFont = "lighter 0.3px arial";
     public defaultFontColor = "#000000";
-    public defaultTextBaseline = "middle" as const;
-    public defaultTextAlign = "center" as const;
+    public defaultTextBaseline: TextBaseline = "middle";
+    public defaultTextAlign: TextAlign = "center";
 
     public lineStyle(selected: boolean) {
         return {

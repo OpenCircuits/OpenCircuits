@@ -113,6 +113,8 @@ export interface ReadonlyICPin {
     readonly id: GUID;  // ID of corresponding PORT
     readonly group: string;
 
+    readonly name: string;
+
     readonly pos: Vector;
     readonly dir: Vector;
 }

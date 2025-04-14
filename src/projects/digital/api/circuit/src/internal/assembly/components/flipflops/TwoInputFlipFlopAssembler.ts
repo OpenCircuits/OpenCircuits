@@ -10,11 +10,11 @@ export class TwoInputFlipFlopAssembler extends FlipFlopAssembler {
             kind,
             otherInputs: {
                 [inputPort1Name]: (comp) => ({
-                    origin: V(-this.getSize(comp).x/2, -3*this.getSize(comp).y/8),
+                    origin: V(-this.getSize(comp).x/2, 3*this.getSize(comp).y/8),
                     dir:    V(-1, 0),
                 }),
                 [inputPort2Name]: (comp) => ({
-                    origin: V(-this.getSize(comp).x/2, 3*this.getSize(comp).y/8),
+                    origin: V(-this.getSize(comp).x/2, -3*this.getSize(comp).y/8),
                     dir:    V(-1, 0),
                 }),
             },

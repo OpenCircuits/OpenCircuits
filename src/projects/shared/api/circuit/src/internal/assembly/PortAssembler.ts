@@ -1,4 +1,4 @@
-import {Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
@@ -75,12 +75,41 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
         if (added || transformChanged || portAmtChanged) {
             const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
+            const parentTransform = this.cache.componentTransforms.get(parent.id)!;
+
+            const labelPrims: Prim[] = [];
 
             // Re-assemble all prims
             const prims = [...ports].map((portID) => {
                 // Transform all local port positions to new parent transform
                 const pos = this.calcWorldPos(parent.id, portID);
                 this.cache.portPositions.set(portID, pos);
+
+                // Get port name for label
+                const name = this.circuit.getPortByID(portID).map((p) => p.props.name).unwrap();
+                if (name) {
+                    const localPos = this.cache.localPortPositions.get(portID)!;
+                    const parentSize = parentTransform.getSize();
+                    const textAlign = (Math.abs(localPos.origin.x - (-parentSize.x/2)) <= 0.01) ? "left"
+                        : (Math.abs(localPos.origin.x - (parentSize.x/2)) <= 0.01) ? "right"
+                        : "center";
+                    const textBaseline = (Math.abs(localPos.origin.y - (-parentSize.y/2)) <= 0.01) ? "bottom"
+                        : (Math.abs(localPos.origin.y - (parentSize.y/2)) <= 0.01) ? "top"
+                        : "middle";
+                    labelPrims.push({
+                        kind:      "Text",
+                        contents:  name,
+                        pos:       pos.origin,
+                        angle:     parentTransform.getAngle(),
+                        offset:    localPos.dir.scale(V(-0.1, 0.1)),
+                        fontStyle: {
+                            color: "#000000",
+                            font:  "lighter 0.3px arial",
+                            textAlign,
+                            textBaseline,
+                        },
+                    })
+                }
 
                 // Assemble the port-line and port-circle
                 const selected = this.isSelected(portID);
@@ -107,6 +136,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
             });
 
             this.cache.portPrims.set(parent.id, new Map<GUID, Prim[]>(prims));
+            this.cache.portLabelPrims.set(parent.id, labelPrims);
         } else if (selectionChanged) {
             const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
             const prims = this.cache.portPrims.get(parent.id)!;

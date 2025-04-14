@@ -58,8 +58,6 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
     case "Rectangle": {
         const size = prim.transform.getSize();
         ctx.rect(-size.x/2, -size.y/2, size.x, size.y);
-
-
     }
     }
 }
@@ -165,15 +163,12 @@ export class PrimRenderer {
             ctx.textAlign = textAlign;
             ctx.fillStyle = color;
             ctx.translate(pos.x, pos.y);
+            ctx.rotate(angle);
             // Flip y-axis
             ctx.scale(1, -1);
-            ctx.rotate(angle);
             // offset is after angle because we want the text to rotate around the center of the component and
             // offset shifts the text away from the center
-            if (offset) {
-                ctx.translate(offset.x, offset.y);
-            }
-            ctx.fillText(contents, 0, 0);
+            ctx.fillText(contents, offset?.x ?? 0, offset?.y ?? 0);
             ctx.restore();
 
             break;
