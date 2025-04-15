@@ -9,6 +9,7 @@ import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {FontStyle, Style} from "shared/api/circuit/internal/assembly/Style";
 import {Transform} from "math/Transform";
+import {Rect} from "math/Rect";
 
 
 export class ConstantNumberAssembler extends ComponentAssembler {
@@ -75,24 +76,21 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     }
 
     private assembleLine(comp: Schema.Component) {
-        const dy = 1.5 * this.getSize(comp).y / 2
-        const y1 = -dy;
-        const y2 = dy;
-
+        const dy = 1.5 * this.getSize(comp).y / 2;
         const x = (this.getSize(comp).x - this.options.defaultBorderWidth) / 2;
 
         const transform = this.getTransform(comp);
         return {
             kind: "Line",
 
-            p1: transform.toWorldSpace(V(x, y1)),
-            p2: transform.toWorldSpace(V(x, y2)),
+            p1: transform.toWorldSpace(V(x, -dy)),
+            p2: transform.toWorldSpace(V(x, dy)),
         } as const;
     }
 
     private getLineStyle(comp: Schema.Component): Style {
         const style = this.options.lineStyle(this.isSelected(comp.id));
-        const { stroke } = style
+        const { stroke } = style;
         return {
             ...style,
             stroke: stroke ? { ...stroke, lineCap: "square" } : undefined,
@@ -100,25 +98,24 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     }
 
     private assembleText(comp: Schema.Component) {
-        // to adjust for cap-height of the Arial font (see https://stackoverflow.com/questions/61747006)
-        const FONT_CAP_OFFSET = 0.06;
         const value = this.getOutValue(comp);
         const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
+        const bounds = this.options.textMeasurer?.getBounds(this.getFontStyle(), text) ?? new Rect(V(), V());
         return {
             kind:     "Text",
             pos:      this.getPos(comp),
             angle:    this.getAngle(comp),
-            offset:   V(0, FONT_CAP_OFFSET),
+            offset:   bounds.center,
             contents: text,
-        } as const
+        } as const;
     }
 
     private getFontStyle(): FontStyle {
-        const fontStyle = this.options.fontStyle();
         return {
-            ...fontStyle,
-            font:  "lighter 0.8px arial",
+            ...this.options.fontStyle(),
+            font:  "lighter 800px arial",
             color: this.options.defaultOnColor,
+            scale: 1000,
         }
     }
 

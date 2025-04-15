@@ -155,7 +155,7 @@ export class PrimRenderer {
         }
         case "Text": {
             const { contents, pos, fontStyle, angle, offset } = prim;
-            const { font, textBaseline, textAlign, color } = fontStyle;
+            const { font, textBaseline, textAlign, color, scale } = fontStyle;
 
             ctx.save();
             ctx.font = font;
@@ -164,11 +164,11 @@ export class PrimRenderer {
             ctx.fillStyle = color;
             ctx.translate(pos.x, pos.y);
             ctx.rotate(angle);
-            // Flip y-axis
-            ctx.scale(1, -1);
+            // Flip y-axis and scale down
+            ctx.scale(1/scale, -1/scale);
             // offset is after angle because we want the text to rotate around the center of the component and
             // offset shifts the text away from the center
-            ctx.fillText(contents, offset?.x ?? 0, offset?.y ?? 0);
+            ctx.fillText(contents, offset ? offset.x*scale : 0, offset ? offset.y*scale : 0);
             ctx.restore();
 
             break;

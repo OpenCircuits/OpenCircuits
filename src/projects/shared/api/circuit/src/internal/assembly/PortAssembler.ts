@@ -6,6 +6,7 @@ import {GUID} from "..";
 import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";
 import {PortPos} from "./AssemblyCache";
 import {Prim} from "./Prim";
+import {Rect} from "math/Rect";
 
 
 export type PartialPortPos = {
@@ -88,26 +89,28 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 // Get port name for label
                 const name = this.circuit.getPortByID(portID).map((p) => p.props.name).unwrap();
                 if (name) {
+                    const padding = 0.1;
+
                     const localPos = this.cache.localPortPositions.get(portID)!;
-                    const parentSize = parentTransform.getSize();
-                    const textAlign = (Math.abs(localPos.origin.x - (-parentSize.x/2)) <= 0.01) ? "left"
-                        : (Math.abs(localPos.origin.x - (parentSize.x/2)) <= 0.01) ? "right"
-                        : "center";
-                    const textBaseline = (Math.abs(localPos.origin.y - (-parentSize.y/2)) <= 0.01) ? "bottom"
-                        : (Math.abs(localPos.origin.y - (parentSize.y/2)) <= 0.01) ? "top"
-                        : "middle";
+                    const textBounds = this.options.textMeasurer?.getBounds(this.options.fontStyle(), name)
+                        ?? new Rect(V(), V());
+
+                    const textSize = textBounds.size.add(2*padding);
+
+                    // Text pos is the backwards from the origin by the text size
+                    const textPos = localPos.origin.add(localPos.dir.scale(textSize.scale(-0.5)));
+
+                    // Clamp the position inside the box
+                    const boundSize = parentTransform.getSize().sub(textSize).scale(0.5);
+                    const pos = parentTransform.toWorldSpace(
+                        Vector.Clamp(textPos, V(-boundSize.x, -boundSize.y), V(boundSize.x, boundSize.y)));
+
                     labelPrims.push({
                         kind:      "Text",
                         contents:  name,
-                        pos:       pos.origin,
+                        pos:       pos.add(-textBounds.x, -textBounds.y),
                         angle:     parentTransform.getAngle(),
-                        offset:    localPos.dir.scale(V(-0.1, 0.1)),
-                        fontStyle: {
-                            color: "#000000",
-                            font:  "lighter 0.3px arial",
-                            textAlign,
-                            textBaseline,
-                        },
+                        fontStyle: this.options.fontStyle(),
                     })
                 }
 
