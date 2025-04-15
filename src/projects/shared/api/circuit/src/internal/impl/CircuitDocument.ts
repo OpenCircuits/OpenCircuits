@@ -346,7 +346,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         this.objInfo = objInfo;
 
         this.storage = new CircuitStorage(objInfo, {
-            id, name: "", desc: "", thumb: "", version: "type/v0",
+            id, name: "", desc: "", thumb: "", version: "digital/v0",
         });
         this.diffBuilder = new FastCircuitDiffBuilder();
 

@@ -23,6 +23,7 @@ import encoderDecoderCircuit from "./TestCircuitData/EncoderDecoder.json";
 import comparatorCircuit from "./TestCircuitData/Comparator.json";
 import labelCircuit from "./TestCircuitData/Label.json";
 import nodesCircuit from "./TestCircuitData/Nodes.json";
+import basicICCircuit from "./TestCircuitData/BasicIC.json";
 import {CreateCircuit} from "digital/api/circuit/public";
 
 
@@ -500,6 +501,15 @@ describe("DigitalVersionConflictResolver", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
+        });
+
+        test("Basic IC", () => {
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(basicICCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+            const ic = comps[0];
+            expect(ic.kind).toBe("IC");
         });
     });
 });

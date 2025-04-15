@@ -5,6 +5,7 @@ declare global {
     interface Array<T> {
         sum(): T;
         count(filter: (el: T, i: number, arr: T[]) => boolean): number;
+        with(index: number, value: T): T[];
     }
 
     interface Set<T> {
@@ -19,6 +20,11 @@ Array.prototype.sum = function(this: number[]): number {
 }
 Array.prototype.count = function<T>(this: T[], filter: (el: T, i: number, arr: T[]) => boolean): number {
     return this.filter(filter).length;
+}
+Array.prototype.with = function<T>(this: T[], index: number, value: T): T[] {
+    const newArray = [...this];
+    newArray[index] = value;
+    return newArray;
 }
 
 Set.prototype.intersection = function<T, U>(this: Set<T>, other: Set<U>): Set<T & U> {

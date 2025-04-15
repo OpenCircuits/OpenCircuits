@@ -1,9 +1,7 @@
 /* eslint-disable key-spacing */
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
-import {CreateCircuit} from "digital/api/circuit/public";
-import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
+import {Schema as DigitalSchema} from "digital/api/circuit/schema";
 import {Schema} from "shared/api/circuit/schema";
-import {V} from "Vector";
 
 
 interface SerializationEntry {
@@ -28,20 +26,20 @@ function isSerializationArrayEntry(o: unknown): o is SerializationArrayEntry {
     return ("type" in o && o.type === "Array" && "data" in o && Array.isArray(o.data));
 }
 
-export function VersionConflictResolver(fileContents: string): Schema.Circuit {
-    const  [circuit, { sim }] = CreateCircuit();
+export function VersionConflictResolver(fileContents: string): DigitalSchema.DigitalCircuit {
     const oldCircuit = JSON.parse(fileContents);
-
-    circuit.name = oldCircuit.metadata.name;
     const version = oldCircuit.metadata.version;
     if (version === "type/v0") {
         // TODO: Better validation
-        return oldCircuit as Schema.Circuit;
+        return oldCircuit as DigitalSchema.DigitalCircuit;
     }
-    const v = parseFloat(version);
-
-    if (!oldCircuit.contents)
-        return circuit.toSchema();
+    const metadata: Schema.CircuitMetadata = {
+        id: Schema.uuid(),
+        name: oldCircuit?.metadata?.name ?? "",
+        desc: oldCircuit?.metadata?.name ?? "",
+        thumb: oldCircuit?.metadata?.thumb ?? oldCircuit?.metadata?.thumbnail ?? "",
+        version: "digital/v0",
+    };
 
     const contents = JSON.parse(oldCircuit.contents) as Record<string, SerializationEntry>;
 
@@ -76,6 +74,14 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
             obj: entry,
         }
     );
+
+    const cameraRef = getEntry(contents["0"], "camera")!;
+    const cameraRefPos = getEntry(cameraRef, "pos")!;
+    const camera: Schema.Camera = {
+        x: (cameraRefPos.data.x as number) / 50,
+        y: (cameraRefPos.data.y as number) / -50,
+        zoom: (cameraRef.data.zoom as number),
+    }
 
     // TODO: Migrate from nightly or non-nightly?
     // Migrate from old property system to new "props" property system
@@ -162,102 +168,137 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
     // Migrate to model refactor api
     const designerRef = getEntry(contents["0"], "designer")!;
     const objectRefsEntry = getArrayEntry(designerRef, "objects")!;
+    const propagationTime = (designerRef.data.propagationTime as number | undefined) ?? 1;
 
     const objs = getArrayEntries(objectRefsEntry);
-    const refToNewPort = new Map<string, DigitalPort>();
+    const refToNewPort = new Map<string, string>();
     // Helper function to generate connection between old ref string and new digital port, used to later connect wires
-    const linkPorts = ({ ref, obj: port }: {ref?: string, obj: SerializationEntry}, newPort: DigitalPort) => {
+    const linkPorts = (
+        { ref, obj: port }: {ref?: string, obj: SerializationEntry},
+        portInfo: Omit<DigitalSchema.Core.Port, "baseKind" | "id" | "props" | "kind"> & {kind: "input" | "output"},
+    ): DigitalSchema.Core.Port => {
+        const guid = Schema.uuid();
+        if (ref) {
+            refToNewPort.set(ref, guid);
+        }
+        const props: DigitalSchema.Core.Port["props"] = {};
         const portName = port["data"]["name"];
         if (typeof portName === "string") {
-            newPort.name = portName;
+            props["name"] = portName;
         }
-        if (ref) {
-            refToNewPort.set(ref, newPort);
+        const { group, index, parent, kind } = portInfo;
+        return {
+            baseKind: "Port",
+            group,
+            index,
+            parent,
+            kind,
+            props,
+            id: guid,
         }
     };
-    objs.forEach(({ obj }) => {
+    const simState: DigitalSchema.DigitalSimState = {
+        signals: {},
+        states: {},
+        icStates: {},
+    }
+    const newPorts: DigitalSchema.Core.Port[] = [];
+    const newComponents = objs.map(({ obj }): DigitalSchema.Core.Component => {
         const transformRef = getEntry(obj, "transform")!;
         const posRef = getEntry(transformRef, "pos")!;
-        const { x, y } = posRef.data as { x: number, y: number };
+        const { x, y } = posRef.data as { x: unknown, y: unknown };
+        const nameRef = getEntry(obj, "name")!
+        const nameData = nameRef.data as { name: unknown, set: unknown };
         // Scale x/y and flip y-axis
-        const newObj = circuit.placeComponentAt(obj.type, V(x/50, y/-50));
+        const props: DigitalSchema.Core.Component["props"] = {};
+        if (typeof x === "number") {
+            props["x"] = x / 50;
+        }
+        if (typeof y === "number") {
+            props["y"] = y / -50;
+        }
+        if (typeof transformRef.data.angle === "number") {
+            props["angle"] = transformRef.data.angle;
+        }
+        if (typeof nameData.name === "string") {
+            props["name"] = nameData.name;
+        }
+        const guid = Schema.uuid();
 
         const inputs = getEntry(obj, "inputs")!;
         const outputs = getEntry(obj, "outputs")!;
         const selects = getEntry(obj, "selects");
-        const inputCountRef = getEntry(inputs, "count")!;
-        const inputCount = inputCountRef.data.value;
-        const outputCountRef = getEntry(outputs, "count")!;
-        const outputCount = outputCountRef.data.value;
+        // const outputCountRef = getEntry(outputs, "count")!;
+        // const outputCount = outputCountRef.data.value;
         // Set component specific properties
         switch (obj.type) {
             case "Switch":
-                sim.setState(newObj.id, [obj.data.on ? Signal.On : Signal.Off]);
+                simState.states[guid] = [obj.data.on ? Signal.On : Signal.Off];
                 break;
             case "ConstantNumber":
-                newObj.setProp("inputNum", obj.data.inputNum as number);
+                props["inputNum"] = obj.data.inputNum as number;
                 break;
             case "Clock":
-                newObj.setProp("paused", !!obj.data.paused);
-                newObj.setProp("delay", obj.data.frequency as number);
-                sim.setState(newObj.id, [obj.data.isOn ? Signal.On : Signal.Off]);
+                props["paused"] = !!obj.data.paused;
+                props["delay"] = obj.data.frequency as number;
+                simState.states[guid] = [obj.data.isOn ? Signal.On : Signal.Off];
                 break;
             case "LED":
-                newObj.setProp("color", obj.data.color as string);
+                props["color"] = obj.data.color as string;
                 break;
-            case "SegmentDisplay":
-            case "ORGate":
-            case "ANDGate":
-            case "XORGate":
-            case "NORGate":
-            case "NANDGate":
-            case "XNORGate":
-                if (typeof inputCount === "number") {
-                    newObj.setPortConfig({ "inputs": inputCount });
-                }
-                break;
+            // case "SegmentDisplay":
+            // case "ORGate":
+            // case "ANDGate":
+            // case "XORGate":
+            // case "NORGate":
+            // case "NANDGate":
+            // case "XNORGate":
+            //     if (typeof inputCount === "number") {
+            //         newObj.setPortConfig({ "inputs": inputCount });
+            //     }
+            //     break;
             case "ASCIIDisplay":
             case "BCDDisplay":
-                newObj.setProp("segmentCount", obj.data.segmentCount as number);
+                props["segmentCount"] = obj.data.segmentCount as string;
                 break;
             case "Oscilloscope":
-                newObj.setProp("paused", !!obj.data.paused);
-                if (typeof inputCount === "number") {
-                    newObj.setPortConfig({ "inputs": inputCount });
-                }
-                const displaySizeRef = getEntry(obj, "displaySize")!.data as { x: number, y: number };
-                newObj.setProp("w", displaySizeRef.x / 50);
-                newObj.setProp("h", displaySizeRef.y / 50);
-                newObj.setProp("delay", obj.data.frequency as number);
-                newObj.setProp("samples", obj.data.numSamples as number);
+                props["paused"] = !!obj.data.paused;
+                // if (typeof inputCount === "number") {
+                //     newObj.setPortConfig({ "inputs": inputCount });
+                // }
+                const displaySizeData = getEntry(obj, "displaySize")!.data as { x: number, y: number };
+                props["w"] = displaySizeData.x / 50;
+                props["h"] = displaySizeData.y / 50;
+                props["delay"] = obj.data.frequency as number;
+                props["samples"] = obj.data.numSamples as number;
                 break;
-            case "Multiplexer":
-            case "Demultiplexer":
-                const selectCountRef = getEntry(selects!, "count")!;
-                const selectCount = selectCountRef.data.value;
-                if (typeof selectCount === "number") {
-                    const otherPortGroup = obj.type === "Multiplexer" ? "inputs" : "outputs";
-                    newObj.setPortConfig({ [otherPortGroup]: Math.pow(2, selectCount), "selects": selectCount });
-                }
-                break;
-            case "Encoder":
-                if (typeof outputCount === "number") {
-                    newObj.setPortConfig({ "inputs": Math.pow(2, outputCount), "outputs": outputCount });
-                }
-                break;
-            case "Decoder":
-                if (typeof inputCount === "number") {
-                    newObj.setPortConfig({ "inputs": inputCount, "outputs": Math.pow(2, inputCount) });
-                }
-                break;
-            case "Comparator":
-                if (typeof inputCount === "number") {
-                    newObj.setPortConfig({ "inputsA": inputCount / 2, "inputsB": inputCount / 2 });
-                }
-                break;
+            // case "Multiplexer":
+            // case "Demultiplexer":
+            //     const selectCountRef = getEntry(selects!, "count")!;
+            //     const selectCount = selectCountRef.data.value;
+            //     if (typeof selectCount === "number") {
+            //         const otherPortGroup = obj.type === "Multiplexer" ? "inputs" : "outputs";
+            //         newObj.setPortConfig({ [otherPortGroup]: Math.pow(2, selectCount), "selects": selectCount });
+            //     }
+            //     break;
+            // case "Encoder":
+            //     if (typeof outputCount === "number") {
+            //         newObj.setPortConfig({ "inputs": Math.pow(2, outputCount), "outputs": outputCount });
+            //     }
+            //     break;
+            // case "Decoder":
+            //     if (typeof inputCount === "number") {
+            //         newObj.setPortConfig({ "inputs": inputCount, "outputs": Math.pow(2, inputCount) });
+            //     }
+            //     break;
+            // case "Comparator":
+            //     if (typeof inputCount === "number") {
+            //         newObj.setPortConfig({ "inputsA": inputCount / 2, "inputsB": inputCount / 2 });
+            //     }
+            //     break;
             case "Label":
-                newObj.setProp("bgColor", obj.data.color as string);
-                newObj.setProp("textColor", obj.data.textColor as string);
+                props["bgColor"] = obj.data.color as string;
+                props["textColor"] = obj.data.textColor as string;
                 break;
         }
 
@@ -268,114 +309,159 @@ export function VersionConflictResolver(fileContents: string): Schema.Circuit {
             // Flip flops, latches, muxes, and comparator don't have the same exact input/output ordering,
             //  so manually set them
             case "SRFlipFlop":
-                linkPorts(currentInputPorts[0], newObj.ports["pre"][0]);
-                linkPorts(currentInputPorts[1], newObj.ports["clr"][0]);
-                linkPorts(currentInputPorts[2], newObj.ports["S"][0]);
-                linkPorts(currentInputPorts[3], newObj.ports["clk"][0]);
-                linkPorts(currentInputPorts[4], newObj.ports["R"][0]);
-                linkPorts(currentOutputPorts[0], newObj.ports["Q"][0]);
-                linkPorts(currentOutputPorts[1], newObj.ports["Qinv"][0]);
+                newPorts.push(
+                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "S", index: 0 }),
+                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentInputPorts[4], { kind: "input", parent: guid, group: "R", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                );
                 break;
             case "JKFlipFlop":
-                linkPorts(currentInputPorts[0], newObj.ports["pre"][0]);
-                linkPorts(currentInputPorts[1], newObj.ports["clr"][0]);
-                linkPorts(currentInputPorts[2], newObj.ports["J"][0]);
-                linkPorts(currentInputPorts[3], newObj.ports["clk"][0]);
-                linkPorts(currentInputPorts[4], newObj.ports["K"][0]);
-                linkPorts(currentOutputPorts[0], newObj.ports["Q"][0]);
-                linkPorts(currentOutputPorts[1], newObj.ports["Qinv"][0]);
+                newPorts.push(
+                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "J", index: 0 }),
+                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentInputPorts[4], { kind: "input", parent: guid, group: "K", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                );
                 break;
             case "DFlipFlop":
-                linkPorts(currentInputPorts[0], newObj.ports["pre"][0]);
-                linkPorts(currentInputPorts[1], newObj.ports["clr"][0]);
-                linkPorts(currentInputPorts[2], newObj.ports["D"][0]);
-                linkPorts(currentInputPorts[3], newObj.ports["clk"][0]);
-                linkPorts(currentOutputPorts[0], newObj.ports["Q"][0]);
-                linkPorts(currentOutputPorts[1], newObj.ports["Qinv"][0]);
+                newPorts.push(
+                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "D", index: 0 }),
+                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                );
                 break;
             case "TFlipFlop":
-                linkPorts(currentInputPorts[0], newObj.ports["pre"][0]);
-                linkPorts(currentInputPorts[1], newObj.ports["clr"][0]);
-                linkPorts(currentInputPorts[2], newObj.ports["T"][0]);
-                linkPorts(currentInputPorts[3], newObj.ports["clk"][0]);
-                linkPorts(currentOutputPorts[0], newObj.ports["Q"][0]);
-                linkPorts(currentOutputPorts[1], newObj.ports["Qinv"][0]);
+                newPorts.push(
+                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "T", index: 0 }),
+                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                );
                 break;
             case "DLatch":
-                linkPorts(currentInputPorts[0], newObj.ports["D"][0]);
-                linkPorts(currentInputPorts[1], newObj.ports["E"][0]);
-                linkPorts(currentOutputPorts[0], newObj.ports["Q"][0]);
-                linkPorts(currentOutputPorts[1], newObj.ports["Qinv"][0]);
+                newPorts.push(
+                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "D", index: 0 }),
+                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "E", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                )
                 break;
             case "SRLatch":
-                linkPorts(currentInputPorts[0], newObj.ports["S"][0]);
-                linkPorts(currentInputPorts[1], newObj.ports["E"][0]);
-                linkPorts(currentInputPorts[2], newObj.ports["R"][0]);
-                linkPorts(currentOutputPorts[0], newObj.ports["Q"][0]);
-                linkPorts(currentOutputPorts[1], newObj.ports["Qinv"][0]);
+                newPorts.push(
+                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "S", index: 0 }),
+                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "E", index: 0 }),
+                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "R", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                )
                 break;
             case "Multiplexer":
             case "Demultiplexer":
                 const currentSelectPorts = getArrayEntries(getArrayEntry(selects!, "currentPorts")!);
-                currentSelectPorts.forEach((info, index) => {
-                    linkPorts(info, newObj.ports["selects"][index]);
-                });
-                currentInputPorts.forEach((info, index) => {
-                    linkPorts(info, newObj.ports["inputs"][index]);
-                });
-                currentOutputPorts.forEach((info, index) => {
-                    linkPorts(info, newObj.ports["outputs"][index]);
-                });
+                newPorts.push(
+                    ...currentSelectPorts.map((info, index) =>
+                        linkPorts(info, { kind: "input", parent: guid, group: "selects", index: index })
+                    ),
+                    ...currentInputPorts.map((info, index) =>
+                        linkPorts(info, { kind: "input", parent: guid, group: "inputs", index: index })
+                    ),
+                    ...currentOutputPorts.map((info, index) =>
+                        linkPorts(info, { kind: "output", parent: guid, group: "outputs", index: index })
+                    ),
+                );
                 break;
             case "Comparator":
-                newObj.ports["inputsA"].forEach((newPort, index) => {
-                    linkPorts(currentInputPorts[index], newPort);
-                });
-                newObj.ports["inputsB"].forEach((newPort, index) => {
-                    linkPorts(currentInputPorts[index + newObj.ports["inputsA"].length], newPort);
-                });
-                linkPorts(currentOutputPorts[0], newObj.ports["lt"][0]);
-                linkPorts(currentOutputPorts[1], newObj.ports["eq"][0]);
-                linkPorts(currentOutputPorts[2], newObj.ports["gt"][0]);
+                const inputCountRef = getEntry(inputs, "count")!;
+                const inputCount = inputCountRef.data.value as number;
+                const inputsPerGroup = inputCount / 2;
+                newPorts.push(
+                    ...currentInputPorts.map((info, index) => {
+                        const [group, groupIndex] = index < inputsPerGroup ? ["inputsA", index] : ["inputsB", index - inputsPerGroup];
+                        return linkPorts(info, { kind: "input", parent: guid, group, index: groupIndex })
+                    }),
+                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "lt", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "eq", index: 0 }),
+                    linkPorts(currentOutputPorts[2], { kind: "output", parent: guid, group: "gt", index: 0 }),
+                );
                 break;
             default:
-                currentInputPorts.forEach((info, index) => {
-                    linkPorts(info, newObj.inputs[index]);
-                });
-                currentOutputPorts.forEach((info, index) => {
-                    linkPorts(info, newObj.outputs[index]);
-                });
+                newPorts.push(
+                    ...currentInputPorts.map((info, index) =>
+                        linkPorts(info, { kind: "input", parent: guid, group: "inputs", index: index })
+                    ),
+                    ...currentOutputPorts.map((info, index) =>
+                        linkPorts(info, { kind: "output", parent: guid, group: "outputs", index: index })
+                    ),
+                );
                 break;
         }
 
-        // Copy over common properties
-        const angle = transformRef.data.angle as number;
-        newObj.angle = angle;
-        const nameRef = getEntry(obj, "name")!
-        const nameData = nameRef.data as { name: string, set: boolean };
-        newObj.name = nameData.name;
+        return {
+            baseKind: "Component",
+            kind: obj.type,
+            id: guid,
+            props,
+        };
     });
 
     const wiresRefsEntry = getArrayEntry(designerRef, "wires")!;
     const wires = getArrayEntries(wiresRefsEntry);
-    wires.forEach(({ obj }) => {
+    const newWires = wires.map(({ obj }): DigitalSchema.Core.Wire => {
         const p1 = (obj.data.p1 as Ref).ref;
         const newPort1 = refToNewPort.get(p1)!;
         const p2 = (obj.data.p2 as Ref).ref;
         const newPort2 = refToNewPort.get(p2)!;
-        const wire = newPort1.connectTo(newPort2)!;
+
+        const props: DigitalSchema.Core.Wire["props"] = {};
+        // export interface Wire extends BaseObj {
+        //     baseKind: "Wire";
+
+        //     p1: GUID;
+        //     p2: GUID;
+
+        //     props: BaseObj["props"] & {
+        //         color?: string;
+        //     };
+        // }
         const nameRef = getEntry(obj, "name")!
         const nameData = nameRef.data as { name: string, set: boolean };
         if (nameData.set) {
-            wire.name = nameData.name;
+            props["name"] = nameData.name;
         }
         const { color } = obj.data;
         if (typeof color === "string") {
-            wire.setProp("color", color);
+            props["color"] = color;
         }
+        return {
+            baseKind: "Wire",
+            kind: "DigitalWire",
+            id: Schema.uuid(),
+            p1: newPort1,
+            p2: newPort2,
+            props,
+        };
     });
 
-    return circuit.toSchema();
+    return {
+        camera: camera,
+        objects: [...newComponents, ...newPorts, ...newWires],
+        ics: [],
+        metadata,
+        propagationTime,
+        simState,
+    } satisfies DigitalSchema.DigitalCircuit;
 }
 
 // export function VersionConflictPostResolver(version: string, data: ContentsData) {
