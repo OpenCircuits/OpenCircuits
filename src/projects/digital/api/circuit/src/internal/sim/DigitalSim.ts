@@ -204,7 +204,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             // for (const compId of ev.diff.removedComponents)
             //     this.states.delete(compId);
 
-            for (const compId of ev.diff.portsChanged) {
+            for (const [compId] of [...ev.diff.addedPorts, ...ev.diff.removedPorts]) {
                 // Removal of ports + component *can* happen at once (batching)
                 // So don't add the comp in that case.
                 if (!ev.diff.removedComponents.has(compId))

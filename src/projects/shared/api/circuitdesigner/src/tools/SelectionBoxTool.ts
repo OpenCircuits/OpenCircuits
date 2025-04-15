@@ -61,7 +61,7 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
             circuit.beginTransaction();
             if (deselectAll)
                 circuit.selections.clear();
-            comps.forEach((c) => c.select());
+            ports.forEach((c) => c.select());
             circuit.commitTransaction();
             return;
         }

@@ -261,6 +261,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
     public get history() {
         return {
+            get:   () => this.internal.getHistory(),
             clear: () => {
                 this.internal.clearHistory();
             },

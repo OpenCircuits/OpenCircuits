@@ -20,7 +20,10 @@ export interface FastCircuitDiff {
     // Components
     addedComponents: ReadonlySet<GUID>;
     removedComponents: ReadonlySet<GUID>;
-    portsChanged: ReadonlySet<GUID>;
+
+    // Ports
+    addedPorts: ReadonlyMap<GUID, ReadonlySet<GUID>>;    // parentComp.id : addedPort.id[]
+    removedPorts: ReadonlyMap<GUID, ReadonlySet<GUID>>;  // parentComp.id : removePort.id[]
 
     // Wires
     addedWires: ReadonlySet<GUID>;
@@ -40,7 +43,10 @@ export class FastCircuitDiffBuilder {
     // Components
     private readonly addedComponents: Set<GUID>;
     private readonly removedComponents: Set<GUID>;
-    private readonly portsChanged: Set<GUID>;
+
+    // Ports
+    private readonly addedPorts: Map<GUID, Set<GUID>>;
+    private readonly removedPorts: Map<GUID, Set<GUID>>;
 
     // Wires
     private readonly addedWires: Set<GUID>;
@@ -60,7 +66,8 @@ export class FastCircuitDiffBuilder {
         this.changedPropICs    = new Set();
         this.addedComponents   = new Set();
         this.removedComponents = new Set();
-        this.portsChanged      = new Set();
+        this.addedPorts        = new Map();
+        this.removedPorts      = new Map();
         this.addedWires        = new Set();
         this.removedWires      = new Set();
         this.removedWiresPorts = new Map();
@@ -75,7 +82,8 @@ export class FastCircuitDiffBuilder {
             changedPropICs:    this.changedPropICs,
             addedComponents:   this.addedComponents,
             removedComponents: this.removedComponents,
-            portsChanged:      this.portsChanged,
+            addedPorts:        this.addedPorts,
+            removedPorts:      this.removedPorts,
             addedWires:        this.addedWires,
             removedWires:      this.removedWires,
             removedWiresPorts: this.removedWiresPorts,
@@ -98,14 +106,32 @@ export class FastCircuitDiffBuilder {
                 this.addedComponents.add(op.component);
                 break;
             case "SetComponentPortsOp":
-                this.portsChanged.add(op.component);
+                const addedPorts = this.addedPorts.getOrInsert(op.component, () => new Set());
+                const removedPorts = this.removedPorts.getOrInsert(op.component, () => new Set());
+
                 if (op.inverted) {
+                    op.removedPorts.forEach((p) => {
+                        addedPorts.add(p.id);
+                        removedPorts.delete(p.id);
+                    });
+                    op.addedPorts.forEach((p) => {
+                        addedPorts.delete(p.id);
+                        removedPorts.add(p.id);
+                    });
                     op.deadWires.forEach((w) => {
                         this.removedWires.delete(w.id);
                         this.removedWiresPorts.delete(w.id);
                         this.addedWires.add(w.id);
                     });
                 } else {
+                    op.addedPorts.forEach((p) => {
+                        addedPorts.add(p.id);
+                        removedPorts.delete(p.id);
+                    });
+                    op.removedPorts.forEach((p) => {
+                        addedPorts.delete(p.id);
+                        removedPorts.add(p.id);
+                    });
                     op.deadWires.forEach((w) => {
                         this.addedWires.delete(w.id)
                         this.removedWires.add(w.id);
@@ -154,7 +180,8 @@ export class FastCircuitDiffBuilder {
         merge(diff.changedPropICs,    this.changedPropICs);
         merge(diff.addedComponents,   this.addedComponents);
         merge(diff.removedComponents, this.removedComponents);
-        merge(diff.portsChanged,      this.portsChanged);
+        diff.addedPorts.forEach((ports, comp) => merge(ports, this.addedPorts.getOrInsert(comp, () => new Set())));
+        diff.removedPorts.forEach((ports, comp) => merge(ports, this.removedPorts.getOrInsert(comp, () => new Set())));
         merge(diff.addedWires,        this.addedWires);
         merge(diff.removedWires,      this.removedWires);
         diff.removedWiresPorts.forEach((ports, wire) => this.removedWiresPorts.set(wire, ports));
