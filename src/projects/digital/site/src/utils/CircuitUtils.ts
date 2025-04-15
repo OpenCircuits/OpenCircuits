@@ -23,12 +23,14 @@ export function CalculateICDisplay(circuit: Circuit): ReadonlyIntegratedCircuitD
             ...inputs.map((input, index): ReadonlyICPin => ({
                 id:    input.allPorts[0].id,
                 group: "inputs",
+                name:  input.name ?? "",
                 pos:   V(-1, inputYs[index]),
                 dir:   V(-1, 0),
             })),
             ...outputs.map((output, index): ReadonlyICPin => ({
                 id:    output.allPorts[0].id,
                 group: "outputs",
+                name:  output.name ?? "",
                 pos:   V(+1, outputYs[index]),
                 dir:   V(+1, 0),
             })),

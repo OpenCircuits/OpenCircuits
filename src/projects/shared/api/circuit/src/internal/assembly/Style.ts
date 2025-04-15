@@ -33,4 +33,7 @@ export interface FontStyle {
     textAlign: TextAlign;
     font: string;
     color: string;
+    // Scales down the font scale by this factor
+    // (font sizes can't be <0.5px, so we set them higher and scale it back down when rendering)
+    scale: number;
 }

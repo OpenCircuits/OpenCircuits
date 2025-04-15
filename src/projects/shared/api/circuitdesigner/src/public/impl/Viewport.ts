@@ -183,6 +183,9 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
                 // Draw prims for component
                 prims.forEach(renderPrim);
+
+                // Draw port labels afterwards
+                assembly.portLabelPrims.get(compId)?.forEach(renderPrim);
             });
 
             // Debug rendering

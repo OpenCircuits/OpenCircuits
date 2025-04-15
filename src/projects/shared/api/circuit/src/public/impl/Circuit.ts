@@ -220,8 +220,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             displayWidth:  info.display.size.x,
             displayHeight: info.display.size.y,
 
-            pins: info.display.pins.map(({ id, group, pos, dir }) =>
-                ({ id, group, x: pos.x, y: pos.y, dx: dir.x, dy: dir.y })),
+            pins: info.display.pins.map(({ id, group, name, pos, dir }) =>
+                ({ id, group, name, x: pos.x, y: pos.y, dx: dir.x, dy: dir.y })),
         };
 
         this.internal.beginTransaction();
@@ -332,6 +332,10 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
     }
     public get group(): GUID {
         return this.ic.metadata.pins[this.pinIndex].group;
+    }
+
+    public get name(): string {
+        return this.ic.metadata.pins[this.pinIndex].name;
     }
 
     public set pos(p: Vector) {

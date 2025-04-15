@@ -20,6 +20,7 @@ export interface AssemblyCache {
     localPortPositions: Map<GUID, PortPos>;  // Key'd by port ID
     portPositions: Map<GUID, PortPos>;       // Key'd by port ID
     portPrims: Map<GUID, Map<GUID, Prim[]>>; // Key'd by component parent, then by port ID
+    portLabelPrims: Map<GUID, Prim[]>;       // Key'd by component parent
 
     wireCurves: Map<GUID, Curve>;
     wirePrims: Map<GUID, Prim[]>;

@@ -96,9 +96,8 @@ export function MakeDigitalCircuitAssembler(
         // Base types
         "DigitalWire": new DigitalWireAssembler(params, sim),
         "DigitalNode": new NodeAssembler(params, {
-            // TODO[.](leon): transform the direction so that the angle of the node changes `dir`
-            "outputs": () => ({ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }),
-            "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
+            "outputs": () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
+            "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }),
         }),
         // Inputs
         "Switch":         new SwitchAssembler(params, sim),

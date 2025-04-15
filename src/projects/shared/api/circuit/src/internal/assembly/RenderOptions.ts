@@ -1,6 +1,13 @@
 import {ColorToHex, blend, parseColor} from "svg2canvas";
-import {FontStyle, Style, TextAlign, TextBaseline}                         from "./Style";
 
+import {Rect} from "math/Rect";
+
+import {FontStyle, Style, TextAlign, TextBaseline} from "./Style";
+
+
+export interface TextMeasurer {
+    getBounds(font: FontStyle, text: string): Rect;
+}
 
 export interface RenderOptions {
     showGrid: boolean;
@@ -38,6 +45,8 @@ export interface RenderOptions {
     defaultFontColor: string;
     defaultTextBaseline: TextBaseline;
     defaultTextAlign: TextAlign;
+
+    textMeasurer?: TextMeasurer;
 
     // fillColor(selected: boolean): string;
     // borderColor(selected: boolean): string;
@@ -84,10 +93,12 @@ export class DefaultRenderOptions implements RenderOptions {
     public defaultOnColor = "#3cacf2";
     public defaultMetastableColor = "#cc5e5e";
 
-    public defaultFont = "lighter 0.3px arial";
+    public defaultFont = "lighter 300px arial";  // Gets scaled down later (fuck Firefox)
     public defaultFontColor = "#000000";
-    public defaultTextBaseline = "middle" as const;
-    public defaultTextAlign = "center" as const;
+    public defaultTextBaseline: TextBaseline = "middle";
+    public defaultTextAlign: TextAlign = "center";
+
+    public textMeasurer?: TextMeasurer;
 
     public lineStyle(selected: boolean) {
         return {
@@ -122,6 +133,7 @@ export class DefaultRenderOptions implements RenderOptions {
             textBaseline: this.defaultTextBaseline,
             textAlign:    this.defaultTextAlign,
             color:        this.defaultFontColor,
+            scale:        1000,
         }
     }
 
