@@ -1,6 +1,6 @@
 import {V, Vector} from "Vector";
 
-import {Circuit, Component, isObjComponent} from "shared/api/circuit/public";
+import {Circuit, Component, isComponent} from "shared/api/circuit/public";
 
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
@@ -56,7 +56,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
             ev.type === "mousedown" &&
             ev.input.touchCount === 1 &&
             !circuit.selections.isEmpty &&
-            circuit.selections.every(isObjComponent) &&
+            circuit.selections.every(isComponent) &&
             this.isOnCircle(ev.input.mousePos, circuit, viewport)
         );
     }

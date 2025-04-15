@@ -1,4 +1,4 @@
-import {isObjComponent} from "shared/api/circuit/public";
+import {isComponent} from "shared/api/circuit/public";
 
 import {ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_THICKNESS, RotateTool} from "../RotateTool";
 
@@ -30,7 +30,7 @@ export const RotateToolRenderer: ToolRenderer = {
 
         // If we are in the default tool, draw the rotation circle outline if we have only components selected
         if (!curTool) {
-            if (!selections.isEmpty && selections.every((isObjComponent)))
+            if (!selections.isEmpty && selections.every((isComponent)))
                 drawOutline();
             return;
         }
