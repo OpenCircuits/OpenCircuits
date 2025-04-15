@@ -9,7 +9,7 @@ describe("CircuitAssembler", () => {
     const expectNoDirty = (assembler: CircuitAssembler) => {
         expect(assembler["dirtyComponents"]).toHaveLength(0);
         expect(assembler["dirtyWires"]).toHaveLength(0);
-        expect(assembler["dirtyComponentPorts"]).toHaveLength(0);
+        expect(assembler["dirtyComponentPorts"].size).toBe(0);
     }
 
     test("Single Selection", () => {
@@ -24,7 +24,7 @@ describe("CircuitAssembler", () => {
 
         expect(assembler["dirtyComponents"]).toHaveLength(1);
         expect(assembler["dirtyWires"]).toHaveLength(0);
-        expect(assembler["dirtyComponentPorts"].size).toBe(0);
+        expect(assembler["dirtyComponentPorts"].size).toBe(1);
 
         assembler.reassemble();
 
@@ -34,7 +34,7 @@ describe("CircuitAssembler", () => {
 
         expect(assembler["dirtyComponents"]).toHaveLength(1);
         expect(assembler["dirtyWires"]).toHaveLength(0);
-        expect(assembler["dirtyComponentPorts"].size).toBe(0);
+        expect(assembler["dirtyComponentPorts"].size).toBe(1);
 
         assembler.reassemble();
 

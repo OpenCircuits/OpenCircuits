@@ -17,18 +17,15 @@ describe("IC", () => {
                 ICConnect(i1, g.inputs[0]), ICConnect(i2, g.inputs[1]), ICConnect(g, o1);
 
                 icCircuit.name = "AND Gate IC";
-                i1.outputs[0].name = "In 1";
-                i2.outputs[0].name = "In 2";
-                o1.inputs[0].name = "Out";
 
                 return circuit.createIC({
                     circuit: icCircuit,
                     display: {
                         size: V(4, 2),
                         pins: [
-                            { id: i1.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
-                            { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
-                            { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                            { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                            { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                         ],
                     },
                 });
@@ -61,18 +58,15 @@ describe("IC", () => {
                 InnerICConnect(i1, g.inputs[0]), InnerICConnect(i2, g.inputs[1]), InnerICConnect(g, o1);
 
                 innerICCircuit.name = "AND Gate IC";
-                i1.outputs[0].name = "In 1";
-                i2.outputs[0].name = "In 2";
-                o1.inputs[0].name = "Out";
 
                 return circuit.createIC({
                     circuit: innerICCircuit,
                     display: {
                         size: V(4, 2),
                         pins: [
-                            { id: i1.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
-                            { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
-                            { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                            { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                            { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                         ],
                     },
                 });
@@ -85,18 +79,15 @@ describe("IC", () => {
                 OuterICConnect(i1, g.inputs[0]), OuterICConnect(i2, g.inputs[1]), OuterICConnect(g, o1);
 
                 outerICCircuit.name = "AND Gate IC 2";
-                i1.outputs[0].name = "In 1";
-                i2.outputs[0].name = "In 2";
-                o1.inputs[0].name = "Out";
 
                 return circuit.createIC({
                     circuit: outerICCircuit,
                     display: {
                         size: V(4, 2),
                         pins: [
-                            { id: i1.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
-                            { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
-                            { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                            { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                            { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                         ],
                     },
                 });
@@ -132,16 +123,14 @@ describe("IC", () => {
                 i1.setSimState([Signal.On]);
 
                 icCircuit.name = "AND Gate IC";
-                i2.outputs[0].name = "In 2";
-                o1.inputs[0].name = "Out";
 
                 return circuit.createIC({
                     circuit: icCircuit,
                     display: {
                         size: V(4, 2),
                         pins: [
-                            { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
-                            { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                            { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                         ],
                     },
                 });
