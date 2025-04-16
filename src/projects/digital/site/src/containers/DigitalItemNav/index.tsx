@@ -1,9 +1,9 @@
 import {GUID}                                      from "shared/api/circuit/public";
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 
-import {ItemNav, type ItemNavItem} from "shared/site/containers/ItemNav";
+import {ItemNav, type ItemNavItem, type ItemNavSection} from "shared/site/containers/ItemNav";
 
 import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
 
@@ -40,22 +40,21 @@ export const DigitalItemNav = () => {
         );
     });
 
-    // // Subscribe to CircuitDesigner
-    // //  and update the ItemNav w/
-    // //  ICs whenever they're added/removed
-    // useEffect(() => designer.subscribe((ev) => {
-    //     if (ev.type !== "ic")
-    //         return;
-    //     // TODO:
-    //     // setState({
-    //     //     ics: circuit.getICData().map((d, i) => ({
-    //     //         id:        `ic/${i}` as ICID,
-    //     //         label:     d.getName(),
-    //     //         icon:      "multiplexer.svg",
-    //     //         removable: true,
-    //     //     })),
-    //     // });
-    // }));
+    // Subscribe to CircuitDesigner
+    //  and update the ItemNav w/
+    //  ICs whenever they're added/removed
+    useEffect(() => designer.circuit.subscribe((ev) => {
+        if (ev.diff.addedICs.size === 0 && ev.diff.removedICs.size === 0)
+            return;
+        setState({
+            ics: designer.circuit.getICs().map((d) => ({
+                kind:      d.id,
+                label:     d.name,
+                icon:      "multiplexer.svg",
+                removable: true,
+            })),
+        });
+    }));
 
     // Generate ItemNavConfig with ICs included
     const config = useMemo(() => ({
@@ -113,14 +112,6 @@ export const DigitalItemNav = () => {
         const obj = circuit.getObj(id);
         if (!obj)
             throw new Error(`DigitalItemNav: Failed to find object with ID ${id}!`);
-        // // Get ID
-        // const id = (c instanceof IC)
-        //     // IC config 'id' is based on index of its ICData
-        //     ? (`ic/${designer.getICData().indexOf(c.getData())}`)
-        //     // Otherwise just get the Serialized ID
-        //     : (GetIDFor(c));
-        // if (!id)
-        //     throw new Error(`DigitalItemNav: Can't find ID for component ${c.getName()}`);
 
         // Get path within config of ItemNav icon
         const section = config.sections.find((s) => s.items.find((i) => (i.kind === obj.kind)));
@@ -131,17 +122,15 @@ export const DigitalItemNav = () => {
 
     const onSmartPlaceOff = useCallback(() => setSmartPlace(SmartPlaceOptions.Off), [setSmartPlace]);
 
-    // const onDelete = useCallback((sec: ItemNavSection, ic: ItemNavItem) => {
-    //     const id = ic.id as ICID;
-    //     const icData = designer.getICData()[parseInt(id.split("/")[1])];
-    //     if (IsICDataInUse(designer, icData)) {
-    //         window.alert("Cannot delete this IC while instances remain in the circuit.");
-    //         return false;
-    //     }
-    //     sec.items.splice(sec.items.indexOf(ic));
-    //     history.add(RemoveICData(icData, designer));
-    //     return true;
-    // }, [designer, history]);
+    const onDelete = useCallback((sec: ItemNavSection, ic: ItemNavItem) => {
+        const id = ic.kind;
+        if (designer.circuit.getComponents().some(({ kind }) => kind === id)) {
+            window.alert("Cannot delete this IC while instances remain in the circuit.");
+            return false;
+        }
+        designer.circuit.deleteIC(id);
+        return true;
+    }, [designer, history]);
 
     // Append regular ItemNav items with ICs
     return (
@@ -152,7 +141,7 @@ export const DigitalItemNav = () => {
             additionalPreview={additionalPreview}
             getImgSrc={getImgSrc}
             onStart={onSmartPlaceOff}
-            onFinish={onSmartPlaceOff} />
-            // onDelete={onDelete} />
+            onFinish={onSmartPlaceOff}
+            onDelete={onDelete} />
     );
 }
