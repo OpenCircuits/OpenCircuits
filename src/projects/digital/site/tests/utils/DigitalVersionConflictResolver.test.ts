@@ -23,6 +23,7 @@ import encoderDecoderCircuit from "./TestCircuitData/EncoderDecoder.json";
 import comparatorCircuit from "./TestCircuitData/Comparator.json";
 import labelCircuit from "./TestCircuitData/Label.json";
 import nodesCircuit from "./TestCircuitData/Nodes.json";
+import icDataOnlyCircuit from "./TestCircuitData/ICDataOnly.json";
 import basicICCircuit from "./TestCircuitData/BasicIC.json";
 import {CreateCircuit} from "digital/api/circuit/public";
 
@@ -501,7 +502,20 @@ describe("DigitalVersionConflictResolver", () => {
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
         });
-
+        test("IC Data Only (no instances)", () => {
+            const [circuit] = CreateCircuit();
+            const schema = VersionConflictResolver(JSON.stringify(icDataOnlyCircuit));
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(0);
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(1);
+            const ic = ics[0];
+            expect(ic.display.pins).toHaveLength(3);
+            expect(ic.display.size).toEqual(V(2.8, 1));
+            expect(ic.display.pins.filter(({ name }) => name === "Switch")).toHaveLength(2);
+            expect(ic.display.pins.filter(({ name }) => name === "LED")).toHaveLength(1);
+        });
         test("Basic IC", () => {
             const [circuit] = CreateCircuit();
             const schema = VersionConflictResolver(JSON.stringify(basicICCircuit));

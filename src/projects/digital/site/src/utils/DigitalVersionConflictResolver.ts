@@ -492,6 +492,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             const dir = getEntry(obj, "dir")!;
             const { x: dx, y: dy } = dir.data as {x: number, y: number};
             return {
+                name: obj.data.name as string,
                 id: pinRefToPortGuid.get(inputs[index].ref!)!,
                 group: "inputs",
                 x: x / 50,
@@ -508,6 +509,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             const dir = getEntry(obj, "dir")!;
             const { x: dx, y: dy } = dir.data as {x: number, y: number};
             return {
+                name: obj.data.name as string,
                 id: pinRefToPortGuid.get(outputs[index].ref!)!,
                 group: "outputs",
                 x: x / 50,
