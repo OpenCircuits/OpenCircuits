@@ -126,6 +126,7 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
             localPortPositions: new Map(),
             portPositions:      new Map(),
             portPrims:          new Map(),
+            portLabelPrims:     new Map(),
 
             wireCurves: new Map(),
             wirePrims:  new Map(),

@@ -11,12 +11,12 @@ export class OneInputFlipFlopAssembler extends FlipFlopAssembler {
             kind,
             otherInputs: {
                 [inputPortName]: (comp) => ({
-                    origin: V(-this.getSize(comp).x/2, -this.getSize(comp).y/4),
+                    origin: V(-this.getSize(comp).x/2, this.getSize(comp).y/4),
                     dir:    V(-1, 0),
                 }),
             },
         });
     }
 
-   protected override getClkPortYValue = (comp: Schema.Component) => this.getSize(comp).y/4;
+   protected override getClkPortYValue = (comp: Schema.Component) => -this.getSize(comp).y/4;
 }

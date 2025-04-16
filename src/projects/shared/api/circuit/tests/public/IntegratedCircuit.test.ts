@@ -20,9 +20,6 @@ describe("IntegratedCircuit", () => {
         const g = icCircuit.placeComponentAt("TestComp", V(0, 0));
 
         icCircuit.name = "My IC";
-        GetPort(pin1).name = "In 1";
-        GetPort(pin2).name = "In 2";
-        GetPort(pin3).name = "Out";
 
         Connect(pin1, g), Connect(pin2, g), Connect(g, pin3);
 
@@ -31,9 +28,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: GetPort(pin1).id, group: "", pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: GetPort(pin2).id, group: "", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: GetPort(pin3).id, group: "", pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: GetPort(pin1).id, group: "", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin2).id, group: "", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin3).id, group: "", name: "Out", pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -68,18 +65,15 @@ describe("IntegratedCircuit", () => {
         Connect(i1Inner, gInner), Connect(i2Inner, gInner), Connect(gInner, o1Inner);
 
         innerIcCircuit.name = "Inner IC";
-        i1Inner.allPorts[0].name = "Inner In 1";
-        i2Inner.allPorts[0].name = "Inner In 2";
-        o1Inner.allPorts[0].name = "Inner Out";
 
         const innerIc = mainCircuit.createIC({
             circuit: innerIcCircuit,
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Inner.allPorts[0].id, group: "inputs",  pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: i2Inner.allPorts[0].id, group: "inputs",  pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Inner.allPorts[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: i1Inner.allPorts[0].id, group: "inputs",  name: "Inner In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Inner.allPorts[0].id, group: "inputs",  name: "Inner In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Inner.allPorts[0].id, group: "outputs", name: "Inner Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -104,18 +98,15 @@ describe("IntegratedCircuit", () => {
         innerIcInstance.ports["outputs"][0].connectTo(o1Outer.allPorts[0]);
 
         innerIcCircuit.name = "Outer IC";
-        i1Outer.allPorts[0].name = "Outer In 1";
-        i2Outer.allPorts[0].name = "Outer In 2";
-        o1Outer.allPorts[0].name = "Outer Out";
 
         const outerIc = mainCircuit.createIC({
             circuit: outerIcCircuit,
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Outer.allPorts[0].id, group: "inputs",  pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: i2Outer.allPorts[0].id, group: "inputs",  pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Outer.allPorts[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: i1Outer.allPorts[0].id, group: "inputs",  name: "Outer In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Outer.allPorts[0].id, group: "inputs",  name: "Outer In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Outer.allPorts[0].id, group: "outputs", name: "Outer Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -139,9 +130,6 @@ describe("IntegratedCircuit", () => {
         const g = icCircuit.placeComponentAt("TestComp", V(0, 0));
 
         icCircuit.name = "My IC";
-        GetPort(pin1).name = "In 1";
-        GetPort(pin2).name = "In 2";
-        GetPort(pin3).name = "Out";
 
         Connect(pin1, g), Connect(pin2, g), Connect(g, pin3);
 
@@ -150,9 +138,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: GetPort(pin1).id, group: "", pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: GetPort(pin2).id, group: "", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: GetPort(pin3).id, group: "", pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: GetPort(pin1).id, group: "", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin2).id, group: "", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin3).id, group: "", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });

@@ -22,18 +22,14 @@ describe("IntegratedCircuit", () => {
         g.outputs[0].connectTo(o1.inputs[0]);
 
         icCircuit.name = "My IC";
-        i1.outputs[0].name = "In 1";
-        i2.outputs[0].name = "In 2";
-        o1.inputs[0].name = "Out";
-
         const ic = circuit.createIC({
             circuit: icCircuit,
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: i2.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         })
@@ -72,18 +68,15 @@ describe("IntegratedCircuit", () => {
         gInner.outputs[0].connectTo(o1Inner.inputs[0]);
 
         innerIcCircuit.name = "Inner IC";
-        i1Inner.outputs[0].name = "Inner In 1";
-        i2Inner.outputs[0].name = "Inner In 2";
-        o1Inner.inputs[0].name = "Inner Out";
 
         const innerIc = circuit.createIC({
             circuit: innerIcCircuit,
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Inner.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: i2Inner.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Inner.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: i1Inner.outputs[0].id, group: "inputs", name: "Inner In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Inner.outputs[0].id, group: "inputs", name: "Inner In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Inner.inputs[0].id, group: "outputs", name: "Inner Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -110,18 +103,15 @@ describe("IntegratedCircuit", () => {
         innerIcInstance.outputs[0].connectTo(o1Outer.inputs[0]);
 
         innerIcCircuit.name = "Outer IC";
-        i1Outer.outputs[0].name = "Outer In 1";
-        i2Outer.outputs[0].name = "Outer In 2";
-        o1Outer.inputs[0].name = "Outer Out";
 
         const outerIc = circuit.createIC({
             circuit: outerIcCircuit,
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Outer.outputs[0].id, group: "inputs", pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: i2Outer.outputs[0].id, group: "inputs", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Outer.inputs[0].id, group: "outputs", pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: i1Outer.outputs[0].id, group: "inputs", name: "Outer In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2Outer.outputs[0].id, group: "inputs", name: "Outer In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1Outer.inputs[0].id, group: "outputs", name: "Outer Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });

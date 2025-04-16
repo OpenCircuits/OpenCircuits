@@ -1,4 +1,4 @@
-import {Vector} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
@@ -6,6 +6,7 @@ import {GUID} from "..";
 import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";
 import {PortPos} from "./AssemblyCache";
 import {Prim} from "./Prim";
+import {Rect} from "math/Rect";
 
 
 export type PartialPortPos = {
@@ -75,12 +76,43 @@ export class PortAssembler extends Assembler<Schema.Component> {
 
         if (added || transformChanged || portAmtChanged) {
             const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
+            const parentTransform = this.cache.componentTransforms.get(parent.id)!;
+
+            const labelPrims: Prim[] = [];
 
             // Re-assemble all prims
             const prims = [...ports].map((portID) => {
                 // Transform all local port positions to new parent transform
                 const pos = this.calcWorldPos(parent.id, portID);
                 this.cache.portPositions.set(portID, pos);
+
+                // Get port name for label
+                const name = this.circuit.getPortByID(portID).map((p) => p.props.name).unwrap();
+                if (name) {
+                    const padding = 0.1;
+
+                    const localPos = this.cache.localPortPositions.get(portID)!;
+                    const textBounds = this.options.textMeasurer?.getBounds(this.options.fontStyle(), name)
+                        ?? new Rect(V(), V());
+
+                    const textSize = textBounds.size.add(2*padding);
+
+                    // Text pos is the backwards from the origin by the text size
+                    const textPos = localPos.origin.add(localPos.dir.scale(textSize.scale(-0.5)));
+
+                    // Clamp the position inside the box
+                    const boundSize = parentTransform.getSize().sub(textSize).scale(0.5);
+                    const pos = parentTransform.toWorldSpace(
+                        Vector.Clamp(textPos, V(-boundSize.x, -boundSize.y), V(boundSize.x, boundSize.y)));
+
+                    labelPrims.push({
+                        kind:      "Text",
+                        contents:  name,
+                        pos:       pos.add(-textBounds.x, -textBounds.y),
+                        angle:     parentTransform.getAngle(),
+                        fontStyle: this.options.fontStyle(),
+                    })
+                }
 
                 // Assemble the port-line and port-circle
                 const selected = this.isSelected(portID);
@@ -107,6 +139,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
             });
 
             this.cache.portPrims.set(parent.id, new Map<GUID, Prim[]>(prims));
+            this.cache.portLabelPrims.set(parent.id, labelPrims);
         } else if (selectionChanged) {
             const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
             const prims = this.cache.portPrims.get(parent.id)!;

@@ -103,7 +103,6 @@ export interface SVGPrim {
 export interface TextPrim {
     kind: "Text";
 
-
     contents: string;
 
     offset?: Vector;
