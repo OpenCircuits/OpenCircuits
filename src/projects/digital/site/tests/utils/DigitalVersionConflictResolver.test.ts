@@ -517,6 +517,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(ic.display.pins.filter(({ name }) => name === "LED")).toHaveLength(1);
         });
         test("Basic IC", () => {
+            const logErrorSpy = jest.spyOn(global.console, "error");
             const [circuit] = CreateCircuit();
             const schema = VersionConflictResolver(JSON.stringify(basicICCircuit));
             circuit.loadSchema(schema);
@@ -529,6 +530,9 @@ describe("DigitalVersionConflictResolver", () => {
             expect(icInstance.kind).toBe(icData.id);
             expect(icInstance.inputs).toHaveLength(2);
             expect(icInstance.outputs).toHaveLength(1);
+
+            // IC can get imported but errors end up logged from state
+            expect(logErrorSpy).not.toHaveBeenCalled();
         });
     });
 });

@@ -83,7 +83,7 @@ function migrateObjs(
     // Helper function to generate connection between old ref string and new digital port, used to later connect wires
     const linkPorts = (
         { ref, obj: port }: {ref?: string, obj: SerializationEntry},
-        portInfo: Omit<DigitalSchema.Core.Port, "baseKind" | "id" | "props" | "kind"> & {kind: "input" | "output"},
+        portInfo: Omit<DigitalSchema.Core.Port, "baseKind" | "id" | "props" | "kind">,
     ): DigitalSchema.Core.Port => {
         const guid = Schema.uuid();
         if (ref) {
@@ -94,13 +94,13 @@ function migrateObjs(
         if (typeof portName === "string") {
             props["name"] = portName;
         }
-        const { group, index, parent, kind } = portInfo;
+        const { group, index, parent } = portInfo;
         return {
             baseKind: "Port",
             group,
             index,
             parent,
-            kind,
+            kind: "DigitalPort",
             props,
             id: guid,
         }
@@ -179,61 +179,61 @@ function migrateObjs(
             //  so manually set them
             case "SRFlipFlop":
                 newPorts.push(
-                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
-                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
-                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "S", index: 0 }),
-                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
-                    linkPorts(currentInputPorts[4], { kind: "input", parent: guid, group: "R", index: 0 }),
-                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
-                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                    linkPorts(currentInputPorts[0], { parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { parent: guid, group: "S", index: 0 }),
+                    linkPorts(currentInputPorts[3], { parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentInputPorts[4], { parent: guid, group: "R", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { parent: guid, group: "Qinv", index: 0 }),
                 );
                 break;
             case "JKFlipFlop":
                 newPorts.push(
-                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
-                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
-                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "J", index: 0 }),
-                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
-                    linkPorts(currentInputPorts[4], { kind: "input", parent: guid, group: "K", index: 0 }),
-                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
-                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                    linkPorts(currentInputPorts[0], { parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { parent: guid, group: "J", index: 0 }),
+                    linkPorts(currentInputPorts[3], { parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentInputPorts[4], { parent: guid, group: "K", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { parent: guid, group: "Qinv", index: 0 }),
                 );
                 break;
             case "DFlipFlop":
                 newPorts.push(
-                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
-                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
-                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "D", index: 0 }),
-                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
-                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
-                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                    linkPorts(currentInputPorts[0], { parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { parent: guid, group: "D", index: 0 }),
+                    linkPorts(currentInputPorts[3], { parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { parent: guid, group: "Qinv", index: 0 }),
                 );
                 break;
             case "TFlipFlop":
                 newPorts.push(
-                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "pre", index: 0 }),
-                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "clr", index: 0 }),
-                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "T", index: 0 }),
-                    linkPorts(currentInputPorts[3], { kind: "input", parent: guid, group: "clk", index: 0 }),
-                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
-                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                    linkPorts(currentInputPorts[0], { parent: guid, group: "pre", index: 0 }),
+                    linkPorts(currentInputPorts[1], { parent: guid, group: "clr", index: 0 }),
+                    linkPorts(currentInputPorts[2], { parent: guid, group: "T", index: 0 }),
+                    linkPorts(currentInputPorts[3], { parent: guid, group: "clk", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { parent: guid, group: "Qinv", index: 0 }),
                 );
                 break;
             case "DLatch":
                 newPorts.push(
-                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "D", index: 0 }),
-                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "E", index: 0 }),
-                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
-                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                    linkPorts(currentInputPorts[0], { parent: guid, group: "D", index: 0 }),
+                    linkPorts(currentInputPorts[1], { parent: guid, group: "E", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { parent: guid, group: "Qinv", index: 0 }),
                 )
                 break;
             case "SRLatch":
                 newPorts.push(
-                    linkPorts(currentInputPorts[0], { kind: "input", parent: guid, group: "S", index: 0 }),
-                    linkPorts(currentInputPorts[1], { kind: "input", parent: guid, group: "E", index: 0 }),
-                    linkPorts(currentInputPorts[2], { kind: "input", parent: guid, group: "R", index: 0 }),
-                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "Q", index: 0 }),
-                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "Qinv", index: 0 }),
+                    linkPorts(currentInputPorts[0], { parent: guid, group: "S", index: 0 }),
+                    linkPorts(currentInputPorts[1], { parent: guid, group: "E", index: 0 }),
+                    linkPorts(currentInputPorts[2], { parent: guid, group: "R", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { parent: guid, group: "Q", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { parent: guid, group: "Qinv", index: 0 }),
                 )
                 break;
             case "Multiplexer":
@@ -241,13 +241,13 @@ function migrateObjs(
                 const currentSelectPorts = getArrayEntries(getArrayEntry(selects!, "currentPorts")!);
                 newPorts.push(
                     ...currentSelectPorts.map((info, index) =>
-                        linkPorts(info, { kind: "input", parent: guid, group: "selects", index: index })
+                        linkPorts(info, { parent: guid, group: "selects", index: index })
                     ),
                     ...currentInputPorts.map((info, index) =>
-                        linkPorts(info, { kind: "input", parent: guid, group: "inputs", index: index })
+                        linkPorts(info, { parent: guid, group: "inputs", index: index })
                     ),
                     ...currentOutputPorts.map((info, index) =>
-                        linkPorts(info, { kind: "output", parent: guid, group: "outputs", index: index })
+                        linkPorts(info, { parent: guid, group: "outputs", index: index })
                     ),
                 );
                 break;
@@ -258,20 +258,20 @@ function migrateObjs(
                 newPorts.push(
                     ...currentInputPorts.map((info, index) => {
                         const [group, groupIndex] = index < inputsPerGroup ? ["inputsA", index] : ["inputsB", index - inputsPerGroup];
-                        return linkPorts(info, { kind: "input", parent: guid, group, index: groupIndex })
+                        return linkPorts(info, { parent: guid, group, index: groupIndex })
                     }),
-                    linkPorts(currentOutputPorts[0], { kind: "output", parent: guid, group: "lt", index: 0 }),
-                    linkPorts(currentOutputPorts[1], { kind: "output", parent: guid, group: "eq", index: 0 }),
-                    linkPorts(currentOutputPorts[2], { kind: "output", parent: guid, group: "gt", index: 0 }),
+                    linkPorts(currentOutputPorts[0], { parent: guid, group: "lt", index: 0 }),
+                    linkPorts(currentOutputPorts[1], { parent: guid, group: "eq", index: 0 }),
+                    linkPorts(currentOutputPorts[2], { parent: guid, group: "gt", index: 0 }),
                 );
                 break;
             default:
                 newPorts.push(
                     ...currentInputPorts.map((info, index) =>
-                        linkPorts(info, { kind: "input", parent: guid, group: "inputs", index: index })
+                        linkPorts(info, { parent: guid, group: "inputs", index: index })
                     ),
                     ...currentOutputPorts.map((info, index) =>
-                        linkPorts(info, { kind: "output", parent: guid, group: "outputs", index: index })
+                        linkPorts(info, { parent: guid, group: "outputs", index: index })
                     ),
                 );
                 break;
@@ -313,10 +313,8 @@ function migrateObjs(
             }
         }
         return {
-            baseKind: "Component",
             kind: obj.type,
-            id: guid,
-            props,
+            ...comp,
         };
     });
 
@@ -473,7 +471,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
     const icRefToGuid = new Map<string, string>(
         icEntries.map(({ ref }, index): [string, string] | undefined => ref ? [ref, icGuids[index]] : undefined).filter(IsDefined)
     );
-    const ics = icEntries.map(({ obj }, index): DigitalSchema.DigitalIntegratedCircuit => {
+    const ics = icEntries.map(({ obj }, index): [string, DigitalSchema.DigitalIntegratedCircuit] => {
         const transformRef = getEntry(obj, "transform")!;
         const sizeRef = getEntry(transformRef, "size")!;
         const icContents = getEntry(obj, "collection")!;
@@ -495,8 +493,8 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
                 name: obj.data.name as string,
                 id: pinRefToPortGuid.get(inputs[index].ref!)!,
                 group: "inputs",
-                x: x / 50,
-                y: y / -50,
+                x: x / 25,
+                y: y / -25,
                 dx: dx,
                 dy: -dy,
             }
@@ -512,8 +510,8 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
                 name: obj.data.name as string,
                 id: pinRefToPortGuid.get(outputs[index].ref!)!,
                 group: "outputs",
-                x: x / 50,
-                y: y / -50,
+                x: x / 25,
+                y: y / -25,
                 dx: dx,
                 dy: -dy,
             }
@@ -530,22 +528,31 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             pins: [...inputPins, ...outputPins],
         };
 
-        return {
+        return [icGuids[index], {
             metadata,
             objects,
             initialSimState,
-        };
+        }];
     });
 
     const objectRefsEntry = getArrayEntry(designerRef, "objects")!;
     const wiresRefsEntry = getArrayEntry(designerRef, "wires")!;
     const info = migrateObjs(contents, objectRefsEntry, wiresRefsEntry, icRefToGuid);
 
+    // const simState = info.simState;
+    const icGuidToSchema = new Map<string, DigitalSchema.DigitalIntegratedCircuit>(ics);
+    const icInstances = info.objects.filter((obj): obj is DigitalSchema.Core.Component => obj.baseKind === "Component" && icGuidToSchema.has(obj.kind));
+    const icStates = Object.fromEntries(icInstances.map((ic) => [ic.id, icGuidToSchema.get(ic.kind)!.initialSimState]));
+    // simState.icStates = Object.fromEntries(ics.map((ic) => [ic.metadata.id, ic.initialSimState]));
+
     return {
         camera: camera,
         objects: info.objects,
-        simState: info.simState,
-        ics,
+        simState: {
+            ...info.simState,
+            icStates,
+        },
+        ics: ics.map(([, ic]) => ic),
         metadata,
         propagationTime,
     } satisfies DigitalSchema.DigitalCircuit;
