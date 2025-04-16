@@ -111,13 +111,12 @@ describe("DigitalVersionConflictResolver", () => {
             expect(customClock).toBeDefined();
             expect(customClock.getProp("paused")).toBeTruthy();
             expect(customClock.getProp("delay")).toBe(800);
-            // TODO: Check circuit state when circuit state gets saved to schema
+            // TODO: Check this when clocks fully work
             // expect(customClock.outputs[0].signal).toBe(Signal.On);
 
             const sw = comps.find((comp) => comp.kind === "Switch")!;
             expect(sw).toBeDefined();
-            // TODO: Check circuit state when circuit state gets saved to schema
-            // expect(sw.outputs[0].signal).toBe(Signal.On);
+            expect(sw.outputs[0].signal).toBe(Signal.On);
 
             const constantNumber0 = comps.find((comp) => comp.name === "Constant Number 0")!;
             expect(constantNumber0).toBeDefined();
@@ -505,11 +504,17 @@ describe("DigitalVersionConflictResolver", () => {
 
         test("Basic IC", () => {
             const [circuit] = CreateCircuit();
-            circuit.loadSchema(VersionConflictResolver(JSON.stringify(basicICCircuit)));
+            const schema = VersionConflictResolver(JSON.stringify(basicICCircuit));
+            circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
-            const ic = comps[0];
-            expect(ic.kind).toBe("IC");
+            const icInstance = comps[0];
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(1);
+            const icData = ics[0];
+            expect(icInstance.kind).toBe(icData.id);
+            expect(icInstance.inputs).toHaveLength(2);
+            expect(icInstance.outputs).toHaveLength(1);
         });
     });
 });

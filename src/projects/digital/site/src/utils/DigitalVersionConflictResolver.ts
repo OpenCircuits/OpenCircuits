@@ -2,6 +2,7 @@
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {Schema as DigitalSchema} from "digital/api/circuit/schema";
 import {Schema} from "shared/api/circuit/schema";
+import {IsDefined} from "shared/api/circuit/utils/Reducers";
 
 
 interface SerializationEntry {
@@ -17,32 +18,17 @@ function isRef(o: unknown): o is Ref {
 }
 
 type SerializationArrayEntry = {
-    type: "Array";
+    // Sets are stored as arrays so they are functionally the same here
+    type: "Array" | "Set";
     data: Array<Ref | SerializationEntry>;
 }
 function isSerializationArrayEntry(o: unknown): o is SerializationArrayEntry {
     if (!o || typeof o !== "object")
         return false;
-    return ("type" in o && o.type === "Array" && "data" in o && Array.isArray(o.data));
+    return ("type" in o && (o.type === "Array" || o.type === "Set") && "data" in o && Array.isArray(o.data));
 }
 
-export function VersionConflictResolver(fileContents: string): DigitalSchema.DigitalCircuit {
-    const oldCircuit = JSON.parse(fileContents);
-    const version = oldCircuit.metadata.version;
-    if (version === "type/v0") {
-        // TODO: Better validation
-        return oldCircuit as DigitalSchema.DigitalCircuit;
-    }
-    const metadata: Schema.CircuitMetadata = {
-        id: Schema.uuid(),
-        name: oldCircuit?.metadata?.name ?? "",
-        desc: oldCircuit?.metadata?.name ?? "",
-        thumb: oldCircuit?.metadata?.thumb ?? oldCircuit?.metadata?.thumbnail ?? "",
-        version: "digital/v0",
-    };
-
-    const contents = JSON.parse(oldCircuit.contents) as Record<string, SerializationEntry>;
-
+function getSerializationGetters(contents: Record<string, SerializationEntry>) {
     // Utility func to get vector data through a ref or directly
     const getEntry = (parent: SerializationEntry, key: string) => {
         const v = parent["data"][key];
@@ -74,104 +60,26 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             obj: entry,
         }
     );
+    return { getEntry, getArrayEntry, getArrayEntries };
+}
 
-    const cameraRef = getEntry(contents["0"], "camera")!;
-    const cameraRefPos = getEntry(cameraRef, "pos")!;
-    const camera: Schema.Camera = {
-        x: (cameraRefPos.data.x as number) / 50,
-        y: (cameraRefPos.data.y as number) / -50,
-        zoom: (cameraRef.data.zoom as number),
+function getICDataRef(ic: SerializationEntry) {
+    if (ic.data.data && typeof ic.data.data === "object" && "ref" in ic.data.data) {
+        return ic.data.data.ref as string;
     }
+}
 
-    // TODO: Migrate from nightly or non-nightly?
-    // Migrate from old property system to new "props" property system
-    //  https://github.com/OpenCircuits/OpenCircuits/pull/1087
-    // if (v < 3.1) {
-    //     // Represents the transformation of property keys by object type,
-    //     //  `newKey` is assumed to be part of the object's `props` struct
-    //     const transformations = {
-    //         "Clock": [
-    //             { prevKey: "frequency", newKey: "delay",  defaultVal: 0 },
-    //             { prevKey: "paused",    newKey: "paused", defaultVal: 0 },
-    //         ],
-    //         "ConstantNumber": [
-    //             { prevKey: "inputNum", newKey: "inputNum", defaultVal: 0 },
-    //         ],
-    //         "DigitalWire": [
-    //             { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
-    //         ],
-    //         "Label": [
-    //             { prevKey: "color",     newKey: "color",     defaultVal: "#ffffff"  },
-    //             { prevKey: "textColor", newKey: "textColor", defaultVal: "#000000" },
-    //         ],
-    //         "LED": [
-    //             { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
-    //         ],
-    //         "Oscilloscope": [
-    //             { prevKey: "frequency",   newKey: "delay"      , defaultVal: 0     },
-    //             { prevKey: "paused",      newKey: "paused"     , defaultVal: false },
-    //             { prevKey: "numSamples",  newKey: "samples"    , defaultVal: 100   },
-    //             { prevKey: "displaySize", newKey: "displaySize"                    },
-    //         ],
-    //     } as Record<string, Array<{ prevKey: string, newKey: string, defaultVal?: unknown }>>;
-
-    //     Object.values(contents).forEach(({ type, data }) => {
-    //         const transformation = transformations[type] ?? [];
-
-    //         if (transformation.length === 0)
-    //             return;
-
-    //         // Add props with all the new properties
-    //         data["props"] = {
-    //             type: "",
-    //             data: Object.fromEntries(
-    //                 transformation.map(({ prevKey, newKey, defaultVal }) =>
-    //                     [newKey, (data[prevKey] ?? defaultVal)]
-    //                 )
-    //             ),
-    //         };
-
-    //         // Remove old properties
-    //         transformation.forEach(({ prevKey }) => (delete data[prevKey]));
-    //     });
-    // }
-
-    // // Migrate transforms to Prop system and camera attributes to Props
-    // if (v < 3.2) {
-    //     Object.values(contents).forEach((entry) => {
-    //         const t = getEntry(entry, "transform");
-    //         if (!t)
-    //             return;
-
-    //         entry.data["props"] = {
-    //             type: "",
-    //             data: {
-    //                 ...(entry.data["props"] as SerializationEntry ?? ({ data: {} }))["data"],
-    //                 pos: getEntry(t, "pos")!,
-    //                 size: getEntry(t, "size")!,
-    //                 angle: t["data"]["angle"],
-    //             },
-    //         };
-    //         delete entry.data["transform"];
-    //     });
-
-    //     // Get camera info
-    //     const cam = getEntry(contents["0"], "camera")!;
-    //     const pos = getEntry(cam, "pos");
-    //     const zoom = cam["data"]["zoom"] as number;
-    //     cam.data["props"] = {
-    //         type: "",
-    //         data: { pos, zoom },
-    //     };
-    // }
-
-    // Migrate to model refactor api
-    const designerRef = getEntry(contents["0"], "designer")!;
-    const objectRefsEntry = getArrayEntry(designerRef, "objects")!;
-    const propagationTime = (designerRef.data.propagationTime as number | undefined) ?? 1;
-
-    const objs = getArrayEntries(objectRefsEntry);
+function migrateObjs(
+    contents: Record<string, SerializationEntry>,
+    componentsEntry: SerializationArrayEntry,
+    wiresEntry: SerializationArrayEntry,
+    icRefToGuid: Map<string, string>,
+    isIc?: boolean
+) {
+    const { getEntry, getArrayEntry, getArrayEntries } = getSerializationGetters(contents);
+    const objs = getArrayEntries(componentsEntry);
     const refToNewPort = new Map<string, string>();
+    const pinRefToPortGuid = new Map<string, string>();
     // Helper function to generate connection between old ref string and new digital port, used to later connect wires
     const linkPorts = (
         { ref, obj: port }: {ref?: string, obj: SerializationEntry},
@@ -203,7 +111,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         icStates: {},
     }
     const newPorts: DigitalSchema.Core.Port[] = [];
-    const newComponents = objs.map(({ obj }): DigitalSchema.Core.Component => {
+    const newComponents = objs.map(({ obj, ref }): DigitalSchema.Core.Component => {
         const transformRef = getEntry(obj, "transform")!;
         const posRef = getEntry(transformRef, "pos")!;
         const { x, y } = posRef.data as { x: unknown, y: unknown };
@@ -228,8 +136,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         const inputs = getEntry(obj, "inputs")!;
         const outputs = getEntry(obj, "outputs")!;
         const selects = getEntry(obj, "selects");
-        // const outputCountRef = getEntry(outputs, "count")!;
-        // const outputCount = outputCountRef.data.value;
+
         // Set component specific properties
         switch (obj.type) {
             case "Switch":
@@ -246,56 +153,18 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             case "LED":
                 props["color"] = obj.data.color as string;
                 break;
-            // case "SegmentDisplay":
-            // case "ORGate":
-            // case "ANDGate":
-            // case "XORGate":
-            // case "NORGate":
-            // case "NANDGate":
-            // case "XNORGate":
-            //     if (typeof inputCount === "number") {
-            //         newObj.setPortConfig({ "inputs": inputCount });
-            //     }
-            //     break;
             case "ASCIIDisplay":
             case "BCDDisplay":
                 props["segmentCount"] = obj.data.segmentCount as string;
                 break;
             case "Oscilloscope":
                 props["paused"] = !!obj.data.paused;
-                // if (typeof inputCount === "number") {
-                //     newObj.setPortConfig({ "inputs": inputCount });
-                // }
                 const displaySizeData = getEntry(obj, "displaySize")!.data as { x: number, y: number };
                 props["w"] = displaySizeData.x / 50;
                 props["h"] = displaySizeData.y / 50;
                 props["delay"] = obj.data.frequency as number;
                 props["samples"] = obj.data.numSamples as number;
                 break;
-            // case "Multiplexer":
-            // case "Demultiplexer":
-            //     const selectCountRef = getEntry(selects!, "count")!;
-            //     const selectCount = selectCountRef.data.value;
-            //     if (typeof selectCount === "number") {
-            //         const otherPortGroup = obj.type === "Multiplexer" ? "inputs" : "outputs";
-            //         newObj.setPortConfig({ [otherPortGroup]: Math.pow(2, selectCount), "selects": selectCount });
-            //     }
-            //     break;
-            // case "Encoder":
-            //     if (typeof outputCount === "number") {
-            //         newObj.setPortConfig({ "inputs": Math.pow(2, outputCount), "outputs": outputCount });
-            //     }
-            //     break;
-            // case "Decoder":
-            //     if (typeof inputCount === "number") {
-            //         newObj.setPortConfig({ "inputs": inputCount, "outputs": Math.pow(2, inputCount) });
-            //     }
-            //     break;
-            // case "Comparator":
-            //     if (typeof inputCount === "number") {
-            //         newObj.setPortConfig({ "inputsA": inputCount / 2, "inputsB": inputCount / 2 });
-            //     }
-            //     break;
             case "Label":
                 props["bgColor"] = obj.data.color as string;
                 props["textColor"] = obj.data.textColor as string;
@@ -408,6 +277,41 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
                 break;
         }
 
+        // Set inputs states
+        if (obj.type === "Switch" || obj.type === "Clock") {
+                simState.states[guid] = [obj.data.on ? Signal.On : Signal.Off];
+                // Most recent port should be the output port
+                simState.signals[newPorts.at(-1)!.id] = obj.data.on ? Signal.On : Signal.Off;
+        }
+
+        const comp = {
+            baseKind: "Component",
+            id: guid,
+            props,
+        } as const;
+
+        if (obj.type === "IC") {
+            return {
+                kind: icRefToGuid.get(getICDataRef(obj)!)!,
+                ...comp,
+            }
+        }
+        if (isIc) {
+            if (obj.type === "Switch" || obj.type === "Clock") {
+                pinRefToPortGuid.set(ref!, newPorts.at(-1)!.id);
+                return {
+                    kind: "InputPin",
+                    ...comp,
+                }
+            }
+            if (obj.type === "LED") {
+                pinRefToPortGuid.set(ref!, newPorts.at(-1)!.id);
+                return {
+                    kind: "OutputPin",
+                    ...comp,
+                }
+            }
+        }
         return {
             baseKind: "Component",
             kind: obj.type,
@@ -416,8 +320,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         };
     });
 
-    const wiresRefsEntry = getArrayEntry(designerRef, "wires")!;
-    const wires = getArrayEntries(wiresRefsEntry);
+    const wires = getArrayEntries(wiresEntry);
     const newWires = wires.map(({ obj }): DigitalSchema.Core.Wire => {
         const p1 = (obj.data.p1 as Ref).ref;
         const newPort1 = refToNewPort.get(p1)!;
@@ -425,16 +328,6 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         const newPort2 = refToNewPort.get(p2)!;
 
         const props: DigitalSchema.Core.Wire["props"] = {};
-        // export interface Wire extends BaseObj {
-        //     baseKind: "Wire";
-
-        //     p1: GUID;
-        //     p2: GUID;
-
-        //     props: BaseObj["props"] & {
-        //         color?: string;
-        //     };
-        // }
         const nameRef = getEntry(obj, "name")!
         const nameData = nameRef.data as { name: string, set: boolean };
         if (nameData.set) {
@@ -455,12 +348,204 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
     });
 
     return {
-        camera: camera,
         objects: [...newComponents, ...newPorts, ...newWires],
-        ics: [],
+        simState,
+        pinRefToPortGuid,
+    };
+}
+
+export function VersionConflictResolver(fileContents: string): DigitalSchema.DigitalCircuit {
+    const oldCircuit = JSON.parse(fileContents);
+    const version = oldCircuit.metadata.version;
+    if (version === "digital/v0") {
+        // TODO: Better validation
+        return oldCircuit as DigitalSchema.DigitalCircuit;
+    }
+    const metadata: Schema.CircuitMetadata = {
+        id: Schema.uuid(),
+        name: oldCircuit?.metadata?.name ?? "",
+        desc: oldCircuit?.metadata?.name ?? "",
+        thumb: oldCircuit?.metadata?.thumb ?? oldCircuit?.metadata?.thumbnail ?? "",
+        version: "digital/v0",
+    };
+
+    const contents = JSON.parse(oldCircuit.contents) as Record<string, SerializationEntry>;
+
+    const { getEntry, getArrayEntry, getArrayEntries } = getSerializationGetters(contents);
+
+    const cameraRef = getEntry(contents["0"], "camera")!;
+    const cameraRefPos = getEntry(cameraRef, "pos")!;
+    const camera: Schema.Camera = {
+        x: (cameraRefPos.data.x as number) / 50,
+        y: (cameraRefPos.data.y as number) / -50,
+        zoom: (cameraRef.data.zoom as number),
+    }
+
+    // TODO: Migrate from nightly or non-nightly?
+    // Migrate from old property system to new "props" property system
+    //  https://github.com/OpenCircuits/OpenCircuits/pull/1087
+    // if (v < 3.1) {
+    //     // Represents the transformation of property keys by object type,
+    //     //  `newKey` is assumed to be part of the object's `props` struct
+    //     const transformations = {
+    //         "Clock": [
+    //             { prevKey: "frequency", newKey: "delay",  defaultVal: 0 },
+    //             { prevKey: "paused",    newKey: "paused", defaultVal: 0 },
+    //         ],
+    //         "ConstantNumber": [
+    //             { prevKey: "inputNum", newKey: "inputNum", defaultVal: 0 },
+    //         ],
+    //         "DigitalWire": [
+    //             { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
+    //         ],
+    //         "Label": [
+    //             { prevKey: "color",     newKey: "color",     defaultVal: "#ffffff"  },
+    //             { prevKey: "textColor", newKey: "textColor", defaultVal: "#000000" },
+    //         ],
+    //         "LED": [
+    //             { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
+    //         ],
+    //         "Oscilloscope": [
+    //             { prevKey: "frequency",   newKey: "delay"      , defaultVal: 0     },
+    //             { prevKey: "paused",      newKey: "paused"     , defaultVal: false },
+    //             { prevKey: "numSamples",  newKey: "samples"    , defaultVal: 100   },
+    //             { prevKey: "displaySize", newKey: "displaySize"                    },
+    //         ],
+    //     } as Record<string, Array<{ prevKey: string, newKey: string, defaultVal?: unknown }>>;
+
+    //     Object.values(contents).forEach(({ type, data }) => {
+    //         const transformation = transformations[type] ?? [];
+
+    //         if (transformation.length === 0)
+    //             return;
+
+    //         // Add props with all the new properties
+    //         data["props"] = {
+    //             type: "",
+    //             data: Object.fromEntries(
+    //                 transformation.map(({ prevKey, newKey, defaultVal }) =>
+    //                     [newKey, (data[prevKey] ?? defaultVal)]
+    //                 )
+    //             ),
+    //         };
+
+    //         // Remove old properties
+    //         transformation.forEach(({ prevKey }) => (delete data[prevKey]));
+    //     });
+    // }
+
+    // // Migrate transforms to Prop system and camera attributes to Props
+    // if (v < 3.2) {
+    //     Object.values(contents).forEach((entry) => {
+    //         const t = getEntry(entry, "transform");
+    //         if (!t)
+    //             return;
+
+    //         entry.data["props"] = {
+    //             type: "",
+    //             data: {
+    //                 ...(entry.data["props"] as SerializationEntry ?? ({ data: {} }))["data"],
+    //                 pos: getEntry(t, "pos")!,
+    //                 size: getEntry(t, "size")!,
+    //                 angle: t["data"]["angle"],
+    //             },
+    //         };
+    //         delete entry.data["transform"];
+    //     });
+
+    //     // Get camera info
+    //     const cam = getEntry(contents["0"], "camera")!;
+    //     const pos = getEntry(cam, "pos");
+    //     const zoom = cam["data"]["zoom"] as number;
+    //     cam.data["props"] = {
+    //         type: "",
+    //         data: { pos, zoom },
+    //     };
+    // }
+
+    // Migrate to model refactor api
+    const designerRef = getEntry(contents["0"], "designer")!;
+    const propagationTime = (designerRef.data.propagationTime as number | undefined) ?? 1;
+
+    const icRefsEntry = getArrayEntry(designerRef, "ics")!;
+    const icEntries = getArrayEntries(icRefsEntry);
+    const icGuids = icEntries.map(() => Schema.uuid());
+    const icRefToGuid = new Map<string, string>(
+        icEntries.map(({ ref }, index): [string, string] | undefined => ref ? [ref, icGuids[index]] : undefined).filter(IsDefined)
+    );
+    const ics = icEntries.map(({ obj }, index): DigitalSchema.DigitalIntegratedCircuit => {
+        const transformRef = getEntry(obj, "transform")!;
+        const sizeRef = getEntry(transformRef, "size")!;
+        const icContents = getEntry(obj, "collection")!;
+        const { x, y } = sizeRef.data as {x: number, y: number};
+
+        const objectRefsEntry = getArrayEntry(icContents, "components")!;
+        const wiresRefsEntry = getArrayEntry(icContents, "wires")!;
+        const { objects, simState: initialSimState, pinRefToPortGuid } = migrateObjs(contents, objectRefsEntry, wiresRefsEntry, icRefToGuid, true);
+
+
+        const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
+        const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
+        const inputPins = inputPorts.map(({ obj }, index): DigitalSchema.Core.IntegratedCircuitPin => {
+            const origin = getEntry(obj, "origin")!;
+            const { x, y } = origin.data as {x: number, y: number};
+            const dir = getEntry(obj, "dir")!;
+            const { x: dx, y: dy } = dir.data as {x: number, y: number};
+            return {
+                id: pinRefToPortGuid.get(inputs[index].ref!)!,
+                group: "inputs",
+                x: x / 50,
+                y: y / -50,
+                dx: dx,
+                dy: -dy,
+            }
+        });
+        const outputs = getArrayEntries(getArrayEntry(icContents, "outputs")!);
+        const outputPorts = getArrayEntries(getArrayEntry(obj, "outputPorts")!);
+        const outputPins = outputPorts.map(({ obj }, index): DigitalSchema.Core.IntegratedCircuitPin => {
+            const origin = getEntry(obj, "origin")!;
+            const { x, y } = origin.data as {x: number, y: number};
+            const dir = getEntry(obj, "dir")!;
+            const { x: dx, y: dy } = dir.data as {x: number, y: number};
+            return {
+                id: pinRefToPortGuid.get(outputs[index].ref!)!,
+                group: "outputs",
+                x: x / 50,
+                y: y / -50,
+                dx: dx,
+                dy: -dy,
+            }
+        });
+
+        const metadata: DigitalSchema.Core.IntegratedCircuitMetadata = {
+            displayWidth: x / 50,
+            displayHeight: y / 50,
+            id: icGuids[index],
+            name: obj.data.name as string,
+            desc: "",
+            thumb: "",
+            version: "digital/v0",
+            pins: [...inputPins, ...outputPins],
+        };
+
+        return {
+            metadata,
+            objects,
+            initialSimState,
+        };
+    });
+
+    const objectRefsEntry = getArrayEntry(designerRef, "objects")!;
+    const wiresRefsEntry = getArrayEntry(designerRef, "wires")!;
+    const info = migrateObjs(contents, objectRefsEntry, wiresRefsEntry, icRefToGuid);
+
+    return {
+        camera: camera,
+        objects: info.objects,
+        simState: info.simState,
+        ics,
         metadata,
         propagationTime,
-        simState,
     } satisfies DigitalSchema.DigitalCircuit;
 }
 
