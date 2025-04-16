@@ -36,24 +36,25 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     validTypes: (s: Obj) => s is O,
     getProps: (s: O) => Props,
     deps: React.DependencyList = [],
-    ignore: (s: Obj) => boolean = () => false,
-) => {
+    ignore?: (s: Obj) => boolean,
+): [RecordOfArrays<Props> | undefined, O[], () => void] => {
     const [props, setProps] = useState(undefined as RecordOfArrays<Props> | undefined);
-    const [objs, setObjs] = useState<O[]>([]);
+    const [objs, setObjs] = useState<Obj[]>([]);
 
     // This function is theoretically called anytime the Selections
     //  or their properties change
     const updateState = useCallback(() => {
         // Get selections with ignored types filtered out
-        const selections = circuit.selections.filter((s) => !ignore(s));
+        const selections = ignore ? circuit.selections.filter((s) => !ignore(s)) : circuit.selections.all;
+        const filteredSelections = selections.filter(validTypes);
 
         // Ensure we only have the acceptable types selected
-        if (objs.length !== selections.length) {
+        if (filteredSelections.length !== selections.length) {
             setProps(undefined);
             return;
         }
 
-        const allProps = objs.map((s) => getProps(s));
+        const allProps = filteredSelections.map((s) => getProps(s));
         if (allProps.length === 0) {
             setProps(undefined);
             return;
@@ -80,10 +81,9 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
 
     // When number of selections change, update the list of objects
     useEffect(() =>
-        circuit.selections.subscribe(() =>
-            setObjs(circuit.selections
-                    .filter((s) => !ignore(s))
-                    .filter(validTypes))),
+        circuit.selections.subscribe(() => setObjs(
+            ignore ? circuit.selections.filter((s) => !ignore(s))
+                   : circuit.selections.all)),
         [setObjs]);
 
     // When the list of objects changes, update the props
@@ -94,5 +94,5 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
         return circuit.subscribe(() => updateState());
     }, [updateState]);
 
-    return [props, objs, updateState] as const;
+    return [props, objs.filter(validTypes), updateState] as const;
 }

@@ -21,6 +21,11 @@ import {DigitalSimRunner} from "../internal/sim/DigitalSimRunner";
 
 
 export * from "./DigitalCircuit";
+export * from "./DigitalComponent";
+export * from "./DigitalComponentInfo";
+export * from "./DigitalPort";
+export * from "./DigitalWire";
+export * from "./Utilities";
 
 export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     const mainCircuitID = uuid();
