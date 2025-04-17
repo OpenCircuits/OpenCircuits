@@ -3,7 +3,7 @@
 export enum Signal {
     Off        =  0,
     On         =  1,
-    Metastable =  2,
+    Metastable = -1,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
