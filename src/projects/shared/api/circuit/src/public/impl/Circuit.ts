@@ -166,8 +166,11 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         this.beginTransaction();
 
-        // Place raw component (TODO[master](leon) - don't use unwrap...)
-        const id = this.internal.placeComponent(kind, { x: pt.x, y: pt.y }).unwrap();
+        // Place raw component (TODO[model_refactor_api](leon) - don't use unwrap?)
+        const id = this.internal.placeComponent(
+            kind,
+            { x: pt.x, y: pt.y, zIndex: this.state.assembler.highestZ + 1 },
+        ).unwrap();
 
         // Set its config to place ports
         this.internal.setPortConfig(id, info.defaultPortConfig).unwrap();

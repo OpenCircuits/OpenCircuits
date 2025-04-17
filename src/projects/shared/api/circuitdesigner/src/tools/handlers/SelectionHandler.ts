@@ -28,6 +28,8 @@ export const SelectionHandler: ToolHandler = {
         if (deselectAll)
             circuit.selections.clear();
         obj.isSelected = shouldSelect;
+        if (obj.baseKind === "Component")
+            obj.shift();
 
         circuit.commitTransaction();
 

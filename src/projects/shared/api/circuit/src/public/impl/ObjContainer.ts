@@ -99,6 +99,15 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
         return new ObjContainerImpl<T>(this.state, new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)));
     }
 
+    public shift(): void {
+        this.state.internal.beginTransaction();
+        const highestZ = this.state.assembler.highestZ;
+        const cs = this.components.sort((a, b) => (a.zIndex - b.zIndex));
+        cs.forEach((c, i) =>
+            c.zIndex = highestZ + i + 1);
+        this.state.internal.commitTransaction();
+    }
+
     public forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {
         return this.all.forEach(f);
     }

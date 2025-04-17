@@ -43,6 +43,13 @@ export interface SetPropertyOp {
     oldVal?: Schema.Prop;
 }
 
+export interface ShiftOp {
+    kind: "ShiftOp";
+    id: Schema.GUID;
+    newIdx?: number;
+    oldIdx?: number;
+}
+
 export interface SetComponentPortsOp {
     kind: "SetComponentPortsOp";
     inverted: boolean;
@@ -63,6 +70,7 @@ export type CircuitOp = PlaceComponentOp
                       | ConnectWireOp
                       | SplitWireOp
                       | SetPropertyOp
+                    //   | ShiftOp
                       | SetComponentPortsOp
                       | CreateICOp;
 
@@ -76,6 +84,8 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
             return { ...op, inverted: !op.inverted };
         case "SetPropertyOp":
             return { ...op, newVal: op.oldVal, oldVal: op.newVal };
+        // case "ShiftOp":
+        //     return { ...op, newIdx: op.oldIdx, oldIdx: op.newIdx };
         case "ReplaceComponentOp":
             return { ...op, newKind: op.oldKind, oldKind: op.newKind };
     }
