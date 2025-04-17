@@ -1,8 +1,7 @@
 import {AddErrE}                              from "shared/api/circuit/utils/MultiError";
 import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "shared/api/circuit/utils/Result";
 
-import {GUID}   from "shared/api/circuit/schema/GUID";
-import {Schema} from "shared/api/circuit/schema";
+import {GUID, Schema} from "shared/api/circuit/schema";
 
 import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
 import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";

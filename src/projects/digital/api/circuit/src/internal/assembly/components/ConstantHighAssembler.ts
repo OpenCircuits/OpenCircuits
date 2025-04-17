@@ -33,7 +33,7 @@ export class ConstantHighAssembler extends ComponentAssembler {
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("ConstantHigh").unwrap() as DigitalComponentConfigurationInfo;
     }
-    
+
     protected override getSize(_: Schema.Component): Vector {
         return V(1, 1);
     }

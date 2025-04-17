@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "shared/api/circuit/public";
+import {Schema} from "shared/api/circuit/schema";
 
 import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
@@ -46,7 +46,7 @@ const exampleCircuits = exampleConfig.examples.map((example) => ({
     desc:    "Example Circuit",
     thumb:   example.thumbnail,
     version: "/",
-} as CircuitMetadata));
+} satisfies Schema.CircuitMetadata));
 
 export const App = () => {
     const designer = useMainDigitalDesigner();

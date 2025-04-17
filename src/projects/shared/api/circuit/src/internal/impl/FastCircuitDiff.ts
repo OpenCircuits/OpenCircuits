@@ -1,6 +1,4 @@
-import {GUID} from "shared/api/circuit/schema/GUID";
-
-import {Schema}      from "../../schema";
+import {GUID, Schema} from "shared/api/circuit/schema";
 import {assertNever} from "../utils/TypeEnforcement";
 
 import {CircuitOp} from "./CircuitOps";

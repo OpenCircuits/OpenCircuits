@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "shared/api/circuit/public";
+import {Schema} from "shared/api/circuit/schema";
 
 import {AUTO_SAVE_COOKIE_KEY} from "shared/site/utils/Constants";
 
@@ -12,7 +12,7 @@ const [initialState, actions, reducer] = CreateState()(
     {
         auth:       undefined as AuthState | undefined,
         isLoggedIn: false,
-        circuits:   [] as CircuitMetadata[],
+        circuits:   [] as Schema.CircuitMetadata[],
         loading:    false,
         error:      "",
         autoSave:   (JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false")) as boolean,
@@ -22,7 +22,7 @@ const [initialState, actions, reducer] = CreateState()(
         Logout:              ()                  => ({ type: "LOGOUT_ACTION_ID"                }) as const,
         _Login:              (auth: AuthState)   => ({ type: "LOGIN_ACTION_ID",       auth     }) as const,
         _LoadCircuitsStart:  ()                  => ({ type: "LOAD_CIRCUITS_START_ID"          }) as const,
-        _LoadCircuitsFinish: (circuits: CircuitMetadata[], err?: string) => (
+        _LoadCircuitsFinish: (circuits: Schema.CircuitMetadata[], err?: string) => (
             { type: "LOAD_CIRCUITS_FINISH_ID", circuits, err }
         ) as const,
     },

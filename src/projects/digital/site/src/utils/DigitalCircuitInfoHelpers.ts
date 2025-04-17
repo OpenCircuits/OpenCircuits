@@ -1,5 +1,5 @@
 import {DigitalCircuitDesignerController} from "digital/api/circuit/controllers/DigitalCircuitDesignerController";
-import {DigitalCircuit}                   from "digital/api/circuit/schema/DigitalCircuit";
+import {Schema}                           from "digital/api/circuit/schema";
 
 import {CircuitInfoHelpers} from "shared/site/utils/CircuitInfoHelpers";
 
@@ -25,7 +25,7 @@ export function GetDigitalCircuitInfoHelpers(
             // TODO
             const circuitData = rawCircuitData; // VersionConflictResolver(rawCircuitData);
 
-            const circuit = JSON.parse(circuitData) as DigitalCircuit;
+            const circuit = JSON.parse(circuitData) as Schema.DigitalCircuit;
 
             app.reset(circuit);
 

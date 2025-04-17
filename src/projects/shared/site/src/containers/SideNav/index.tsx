@@ -1,4 +1,4 @@
-import {CircuitMetadata} from "shared/api/circuit/public";
+import {Schema} from "shared/api/circuit/schema";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
@@ -18,7 +18,7 @@ import {SignInOutButtons} from "shared/site/containers/Header/Right/SignInOutBut
 import "./index.scss";
 
 
-function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
+function LoadExampleCircuit(data: Schema.CircuitMetadata): Promise<string> {
     return Request({
         method:  "GET",
         url:     `/examples/${data.id}`,
@@ -27,8 +27,8 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
 }
 
 type Props = {
-    exampleCircuits: CircuitMetadata[];
-    versionConflictResolver: VersionConflictResolver
+    exampleCircuits: Schema.CircuitMetadata[];
+    versionConflictResolver: VersionConflictResolver;
 }
 export const SideNav = ({ exampleCircuits, versionConflictResolver }: Props) => {
     const designer = useMainDesigner();

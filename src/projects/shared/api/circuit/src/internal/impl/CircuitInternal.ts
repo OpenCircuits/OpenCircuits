@@ -1,8 +1,8 @@
 import {ErrE, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result";
 
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {Schema}     from "shared/api/circuit/schema";
-import {GUID, uuid}       from "shared/api/circuit/schema/GUID";
+import {GUID, Schema} from "shared/api/circuit/schema";
+import {uuid}         from "shared/api/circuit/schema/GUID";
 
 import {CircuitLog}      from "./CircuitLog";
 import {InvertCircuitOp} from "./CircuitOps";
