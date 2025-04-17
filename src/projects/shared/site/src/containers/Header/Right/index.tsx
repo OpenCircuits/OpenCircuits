@@ -14,8 +14,9 @@ import {VersionConflictResolver} from "shared/site/utils/ApiMethods";
 type Props = {
     extraUtilities: Utility[];
     versionConflictResolver: VersionConflictResolver;
+    serialize: () => Blob;
 }
-export const HeaderRight = ({ extraUtilities, versionConflictResolver }: Props) => {
+export const HeaderRight = ({ extraUtilities, versionConflictResolver, serialize }: Props) => {
     const [isHidden, setHidden] = useState(true);
 
     return (<div className="header__right">
@@ -31,7 +32,7 @@ export const HeaderRight = ({ extraUtilities, versionConflictResolver }: Props) 
                 (extraUtilities.length > 0 || process.env.NODE_ENV === "development") &&
                     <UtilitiesDropdown extraUtilities={extraUtilities} versionConflictResolver={versionConflictResolver} />
                 }
-                <DownloadMenuDropdown />
+                <DownloadMenuDropdown serialize={serialize} />
                 <OpenFileButton versionConflictResolver={versionConflictResolver} />
                 <SettingsMenu />
                 <TutorialDropdown />

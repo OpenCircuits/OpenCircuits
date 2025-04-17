@@ -29,7 +29,8 @@
     "lint:fix": "node ./build/scripts/lint.js --cache --fix",
     "lint:fix:all": "node ./build/scripts/lint.js --cache --fix --all",
     "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build",
-    "asdf": "tsc ./src/projects/digital/api/circuitdesigner/tests/test.perf.ts"
+    "protoc": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=. ./src/projects/shared/site/src/proto/Circuit.proto",
+    "protoc-digital": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=. ./src/projects/shared/site/src/proto/Circuit.proto ./src/projects/digital/site/src/proto/DigitalCircuit.proto"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
@@ -102,6 +103,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.2",
     "ts-morph": "^18.0.0",
+    "ts-proto": "^2.7.0",
     "typescript": "^5.8.2",
     "url-loader": "^4.1.1",
     "webpack": "^5.73.0",
