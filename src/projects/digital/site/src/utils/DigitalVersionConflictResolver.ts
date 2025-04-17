@@ -16,6 +16,7 @@ function isRef(o: unknown): o is Ref {
         return false;
     return ("ref" in o);
 }
+type RefAndObject = Partial<Ref> & {obj: SerializationEntry};
 
 type SerializationArrayEntry = {
     // Sets are stored as arrays so they are functionally the same here
@@ -51,7 +52,7 @@ function getSerializationGetters(contents: Record<string, SerializationEntry>) {
             }
         }
     }
-    const getArrayEntries = (parent: SerializationArrayEntry) => parent.data.map((entry) => (isRef(entry))
+    const getArrayEntries = (parent: SerializationArrayEntry) => parent.data.map((entry): RefAndObject => (isRef(entry))
         ? {
             ref: entry.ref,
             obj: contents[entry.ref],
@@ -60,7 +61,14 @@ function getSerializationGetters(contents: Record<string, SerializationEntry>) {
             obj: entry,
         }
     );
-    return { getEntry, getArrayEntry, getArrayEntries };
+    // We can't rely on the order of ports in currentPorts to actually correlate to the index
+    //  (seems to be a <3.0 but haven't confirmed), so we have to sort by position to better guess.
+    const comparePortPos = (a: RefAndObject, b: RefAndObject) => {
+        const targetA = getEntry(a.obj, "target")!.data as { x: number, y: number };
+        const targetB = getEntry(b.obj, "target")!.data as { x: number, y: number };
+        return (targetA.x - targetB.x) + (targetA.y - targetB.y);
+    };
+    return { getEntry, getArrayEntry, getArrayEntries, comparePortPos };
 }
 
 function getICDataRef(ic: SerializationEntry) {
@@ -76,7 +84,7 @@ function migrateObjs(
     icRefToGuid: Map<string, string>,
     isIc?: boolean
 ) {
-    const { getEntry, getArrayEntry, getArrayEntries } = getSerializationGetters(contents);
+    const { getEntry, getArrayEntry, getArrayEntries, comparePortPos } = getSerializationGetters(contents);
     const objs = getArrayEntries(componentsEntry);
     const refToNewPort = new Map<string, string>();
     const pinRefToPortGuid = new Map<string, string>();
@@ -240,13 +248,13 @@ function migrateObjs(
             case "Demultiplexer":
                 const currentSelectPorts = getArrayEntries(getArrayEntry(selects!, "currentPorts")!);
                 newPorts.push(
-                    ...currentSelectPorts.map((info, index) =>
+                    ...currentSelectPorts.toSorted(comparePortPos).map((info, index) =>
                         linkPorts(info, { parent: guid, group: "selects", index: index })
                     ),
-                    ...currentInputPorts.map((info, index) =>
+                    ...currentInputPorts.toSorted(comparePortPos).map((info, index) =>
                         linkPorts(info, { parent: guid, group: "inputs", index: index })
                     ),
-                    ...currentOutputPorts.map((info, index) =>
+                    ...currentOutputPorts.toSorted(comparePortPos).map((info, index) =>
                         linkPorts(info, { parent: guid, group: "outputs", index: index })
                     ),
                 );
@@ -256,7 +264,7 @@ function migrateObjs(
                 const inputCount = inputCountRef.data.value as number;
                 const inputsPerGroup = inputCount / 2;
                 newPorts.push(
-                    ...currentInputPorts.map((info, index) => {
+                    ...currentInputPorts.toSorted(comparePortPos).map((info, index) => {
                         const [group, groupIndex] = index < inputsPerGroup ? ["inputsA", index] : ["inputsB", index - inputsPerGroup];
                         return linkPorts(info, { parent: guid, group, index: groupIndex })
                     }),
@@ -267,11 +275,13 @@ function migrateObjs(
                 break;
             default:
                 newPorts.push(
-                    ...currentInputPorts.map((info, index) =>
+                    ...currentInputPorts.toSorted(comparePortPos).map((info, index) =>
                         linkPorts(info, { parent: guid, group: "inputs", index: index })
+                        // linkPorts(info, { parent: guid, group: "outputs", index: currentInputPorts.length - 1 - index })
                     ),
-                    ...currentOutputPorts.map((info, index) =>
+                    ...currentOutputPorts.toSorted(comparePortPos).map((info, index) =>
                         linkPorts(info, { parent: guid, group: "outputs", index: index })
+                        // linkPorts(info, { parent: guid, group: "outputs", index: currentOutputPorts.length - 1 - index })
                     ),
                 );
                 break;

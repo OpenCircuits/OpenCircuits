@@ -6,6 +6,7 @@ declare global {
         sum(): T;
         count(filter: (el: T, i: number, arr: T[]) => boolean): number;
         with(index: number, value: T): T[];
+        toSorted(compareFn?: ((a: T, b: T) => number) | undefined): T[];
         zip<U>(other: U[]): Array<[T, U]>;
     }
 
@@ -27,7 +28,11 @@ Array.prototype.with = function<T>(this: T[], index: number, value: T): T[] {
     newArray[index] = value;
     return newArray;
 }
-
+Array.prototype.toSorted = function<T>(this: T[], compareFn?: ((a: T, b: T) => number) | undefined): T[] {
+    const newArray = [...this];
+    newArray.sort(compareFn);
+    return newArray;
+}
 Array.prototype.zip = function<T, U>(this: T[], other: U[]): Array<[T, U]> {
     return this.map((t, i) => [t, other[i]]);
 }

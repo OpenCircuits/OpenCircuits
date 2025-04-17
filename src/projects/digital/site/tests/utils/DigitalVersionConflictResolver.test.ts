@@ -4,31 +4,56 @@ import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 import {V} from "Vector";
 
-import switchCircuit from "./TestCircuitData/Switch.json";
-import orCircuit from "./TestCircuitData/OR.json";
-import threeInputAndCircuit from "./TestCircuitData/ThreeInputAND.json";
-import allInputsCircuit from "./TestCircuitData/Inputs.json";
-import ledCiruit from "./TestCircuitData/LED.json";
-import segmentDisplayCircuit from "./TestCircuitData/SegmentDisplays.json";
-import oscilloscopeCircuit from "./TestCircuitData/Oscilloscope.json";
-import srFlipFlopCircuit from "./TestCircuitData/SRFlipFlop.json";
-import jkFlipFlopCircuit from "./TestCircuitData/JKFlipFlop.json";
-import dFlipFlopCircuit from "./TestCircuitData/DFlipFlop.json";
-import tFlipFlopCircuit from "./TestCircuitData/TFlipFlop.json";
-import dLatchCircuit from "./TestCircuitData/DLatch.json";
-import srLatchCircuit from "./TestCircuitData/SRLatch.json";
-import multiplexerCircuit from "./TestCircuitData/Multiplexer.json";
-import demultiplexerCircuit from "./TestCircuitData/Demultiplexer.json";
-import encoderDecoderCircuit from "./TestCircuitData/EncoderDecoder.json";
-import comparatorCircuit from "./TestCircuitData/Comparator.json";
-import labelCircuit from "./TestCircuitData/Label.json";
-import nodesCircuit from "./TestCircuitData/Nodes.json";
-import icDataOnlyCircuit from "./TestCircuitData/ICDataOnly.json";
-import basicICCircuit from "./TestCircuitData/BasicIC.json";
+import andCircuit from "./TestCircuitData/2_1/AND.json";
+
+import switchCircuit from "./TestCircuitData/3_0/Switch.json";
+import orCircuit from "./TestCircuitData/3_0/OR.json";
+import threeInputAndCircuit from "./TestCircuitData/3_0/ThreeInputAND.json";
+import allInputsCircuit from "./TestCircuitData/3_0/Inputs.json";
+import ledCiruit from "./TestCircuitData/3_0/LED.json";
+import segmentDisplayCircuit from "./TestCircuitData/3_0/SegmentDisplays.json";
+import oscilloscopeCircuit from "./TestCircuitData/3_0/Oscilloscope.json";
+import srFlipFlopCircuit from "./TestCircuitData/3_0/SRFlipFlop.json";
+import jkFlipFlopCircuit from "./TestCircuitData/3_0/JKFlipFlop.json";
+import dFlipFlopCircuit from "./TestCircuitData/3_0/DFlipFlop.json";
+import tFlipFlopCircuit from "./TestCircuitData/3_0/TFlipFlop.json";
+import dLatchCircuit from "./TestCircuitData/3_0/DLatch.json";
+import srLatchCircuit from "./TestCircuitData/3_0/SRLatch.json";
+import multiplexerCircuit from "./TestCircuitData/3_0/Multiplexer.json";
+import demultiplexerCircuit from "./TestCircuitData/3_0/Demultiplexer.json";
+import encoderDecoderCircuit from "./TestCircuitData/3_0/EncoderDecoder.json";
+import comparatorCircuit from "./TestCircuitData/3_0/Comparator.json";
+import labelCircuit from "./TestCircuitData/3_0/Label.json";
+import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
+import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
+import basicICCircuit from "./TestCircuitData/3_0/BasicIC.json";
 import {CreateCircuit} from "digital/api/circuit/public";
 
 
 describe("DigitalVersionConflictResolver", () => {
+    describe("From version 2.1", () => {
+        test("Basic AND circuit", () => {
+            // This test circuit is the same as example1.circuit
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(andCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(4);
+            expect(circuit.getWires()).toHaveLength(3);
+            const andGate = comps.find((comp) => comp.kind === "ANDGate")!;
+            expect(andGate).toBeDefined();
+            const led = comps.find((comp) => comp.kind === "LED")!;
+            expect(led).toBeDefined();
+            const a = andGate.inputs[0].connectedPorts[0].parent;
+            const b = andGate.inputs[1].connectedPorts[0].parent;
+            expect(a).toBeDefined();
+            expect(b).toBeDefined();
+            expect(a.pos).toApproximatelyEqual(V(-4, 2));
+            expect(b.pos).toApproximatelyEqual(V(-4, -2));
+            expect(andGate.pos).toApproximatelyEqual(V(0, 0));
+            expect(led.pos).toApproximatelyEqual(V(4, 2));
+        });
+    });
+
     describe("From version 3.0", () => {
         test("Single Switch", () => {
             const [circuit] = CreateCircuit();
