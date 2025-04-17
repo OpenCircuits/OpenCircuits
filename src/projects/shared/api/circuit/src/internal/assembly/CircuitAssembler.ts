@@ -9,7 +9,7 @@ import {GUID}              from "..";
 import {CircuitInternal}   from "../impl/CircuitInternal";
 
 import {Assembler, AssemblerParams, AssemblyReason}    from "./Assembler";
-import {AssemblyCache, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
+import {AssemblyCache, DepthList, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
 import {Bounds}                                        from "./PrimBounds";
 import {HitTest}                                       from "./PrimHitTests";
 import {RenderOptions}                                 from "./RenderOptions";
@@ -21,35 +21,6 @@ import {IsDefined} from "../../utils/Reducers";
 export type CircuitAssemblerEvent = {
     type: "onchange";
 }
-
-// /**
-//  * Utility class to manage assets for the circuit view.
-//  *
-//  * Specifically used over a Map so that it can be observed so that when an
-//  * asset is updated (i.e. set for the first time), dependencies of that
-//  * assets can be notified and update accordingly.
-//  */
-// export class CircuitViewAssetManager<T> extends ObservableImpl<{ key: string, val: T }> {
-//     private readonly assets: Map<string, T>;
-
-//     public constructor() {
-//         super();
-
-//         this.assets = new Map();
-//     }
-
-//     public has(key: string): boolean {
-//         return this.assets.has(key);
-//     }
-//     public get(key: string): T | undefined {
-//         return this.assets.get(key);
-//     }
-//     public set(key: string, val: T) {
-//         this.assets.set(key, val);
-//         this.publish({ key, val });
-//     }
-// }
-
 
 class DirtyMap<K> {
     private readonly map: Map<K, Set<AssemblyReason>>;
@@ -108,6 +79,8 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
     protected readonly dirtyWires: DirtyMap<GUID>;
     // protected readonly dirtyPorts: DirtyMap<GUID>;
 
+    protected readonly dirtyComponentOrder: Set<GUID>;
+
     protected readonly assemblers: Record<string, Assembler>;
 
     public constructor(
@@ -122,6 +95,8 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         this.cache = {
             componentTransforms: new Map(),
             componentPrims:      new Map(),
+
+            componentOrder: new DepthList(),
 
             localPortPositions: new Map(),
             portPositions:      new Map(),
@@ -139,6 +114,8 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         this.dirtyComponents = new DirtyMap();
         this.dirtyComponentPorts = new Map();
         this.dirtyWires = new DirtyMap();
+
+        this.dirtyComponentOrder = new Set();
         // this.dirtyPorts = new DirtyMap();
 
         this.circuit.subscribe((ev) => {
@@ -170,10 +147,14 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
             }
 
             // Mark all added/removed component dirty
-            for (const compID of diff.addedComponents)
+            for (const compID of diff.addedComponents) {
                 this.dirtyComponents.add(compID, AssemblyReason.Added);
-            for (const compID of diff.removedComponents)
+                this.dirtyComponentOrder.add(compID);
+            }
+            for (const compID of diff.removedComponents) {
                 this.dirtyComponents.add(compID, AssemblyReason.Removed);
+                this.dirtyComponentOrder.add(compID);
+            }
 
             // Mark all components w/ changed ports dirty
             // TODO[]: Does this need to set all wires dirty too since an update to
@@ -201,6 +182,15 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
             // Mark all changed obj props dirty
             for (const [id, props] of diff.propsChanged) {
                 if (circuit.hasComp(id)) {
+                    // If z-index was set, dirty the component separately since it doesn't
+                    // need to reassemble, but the component order list needs updating.
+                    if (props.has("zIndex")) {
+                        props.delete("zIndex");
+                        this.dirtyComponentOrder.add(id);
+                        if (props.size === 0)
+                            continue;
+                    }
+
                     if (props.has("isSelected"))
                         this.dirtyComponents.add(id, AssemblyReason.SelectionChanged);
 
@@ -301,6 +291,27 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
             this.getAssemblerFor(wire.kind).assemble(wire, reasons);
         }
         this.dirtyWires.clear();
+
+        this.updateCompOrdering();
+    }
+
+    public get highestZ(): number {
+        this.updateCompOrdering();
+
+        return this.cache.componentOrder.highestDepth;
+    }
+
+    protected updateCompOrdering() {
+        // Update ordering of components
+        for (const compId of this.dirtyComponentOrder) {
+            if (!this.circuit.hasComp(compId)) {
+                this.cache.componentOrder.delete(compId);
+                continue;
+            }
+            const comp = this.circuit.getCompByID(compId).unwrap();
+            this.cache.componentOrder.set(compId, (comp.props.zIndex ?? 0));
+        }
+        this.dirtyComponentOrder.clear();
     }
 
     protected reassembleComp(compID: GUID) {
@@ -382,14 +393,16 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         // Must reassemble to refresh prims in caches
         this.reassemble();
 
-        // TODO[model_refactor](leon): sort by zIndex
-        for (const [id, prims] of this.cache.componentPrims) {
+        // Loop by REVERSE component order (top first)
+        for (let i = this.cache.componentOrder.length - 1; i >= 0; i--) {
+            const compId = this.cache.componentOrder.at(i)!;
+            const prims = this.cache.componentPrims.get(compId)!;
             // Skip components not in the filter
-            if (filter(id) && prims.some((prim) => HitTest(prim, pos)))
-                return Some(id);
+            if (filter(compId) && prims.some((prim) => HitTest(prim, pos)))
+                return Some(compId);
 
             // Hit test component's ports
-            for (const [portId, portPrims] of this.cache.portPrims.get(id) ?? []) {
+            for (const [portId, portPrims] of this.cache.portPrims.get(compId) ?? []) {
                 if (!filter(portId))
                     continue;
                 if (portPrims.some((prim) => HitTest(prim, pos)))

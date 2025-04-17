@@ -45,7 +45,7 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
 
         circuit.beginTransaction();
 
-        // TODO[model_refactor_api](leon): shift components
+        circuit.createContainer(this.components.map((c) => c.id)).shift();
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {

@@ -120,6 +120,13 @@ describe("Circuit", () => {
             // Component always ontop of wire
             expect(circuit.pickComponentAt(V(5, 0))).toBeObj(c3);
         });
+        test("pickComponentAt - overlapping", () => {
+            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+
+            const [c1, c2] = PlaceAt(V(0, 0), V(0, 0));
+
+            expect(circuit.pickComponentAt(V(0,  0))).toBeObj(c2);
+        });
         test("pickWireAt", () => {
             const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
 
@@ -280,6 +287,13 @@ describe("Circuit", () => {
             const [circuit, _, { }] = CreateTestCircuit();
             const c1 = circuit.placeComponentAt("TestComp", V(-5, 16));
             expect(c1.pos).toEqual(V(-5, 16));
+        });
+        test("zIndex increases", () => {
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit();
+            const [c1, c2, c3] = PlaceAt(V(0, 0), V(0, 0), V(0, 0));
+            expect(c1.zIndex).toBe(1);
+            expect(c2.zIndex).toBe(2);
+            expect(c3.zIndex).toBe(3);
         });
     });
 

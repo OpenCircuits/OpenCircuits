@@ -54,6 +54,8 @@ export interface Component extends C {
     // Do we even want this in the API?
     // readonly connectedComponents: Component[];
 
+    shift(): void;
+
     setPortConfig(config: PortConfig): boolean;
     firstAvailable(group: string): Port | undefined;
 
