@@ -39,6 +39,7 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
             },
 
             "setupFiles": ["jest-canvas-mock"],
+            "setupFilesAfterEnv": [path.resolve("build/scripts/test/setupFileAfterEnv.js")],
         }),
     }, [dir]);
 }

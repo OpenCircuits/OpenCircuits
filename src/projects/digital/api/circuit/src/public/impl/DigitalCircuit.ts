@@ -41,16 +41,38 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return ic;
     }
 
+    // TODO[model_refactor_api](leon) - revisit this
+    public step() {
+        this.state.sim.step();
+    }
+
     public override loadSchema(
         schema: Schema.DigitalCircuit,
         refreshIds?: boolean,
     ): Array<DigitalComponent | DigitalWire | DigitalPort> {
-        const objs = super.loadSchema(schema, refreshIds);
+        // TODO[] - might need it like this
+        // this.beginTransaction();
 
-        // this.state.simRunner.propagationTime = schema.propagationTime
+        // schema.ics
+        //     .filter((ic) => !this.state.internal.hasIC(ic.metadata.id))
+        //     .forEach((ic) => {
+        //         this.state.internal.createIC(ic).unwrap();
+        //         this.state.sim.loadICState(ic.metadata.id, ic.initialSimState);
+        //     });
+
+        // const objs = this.state.internal.importObjs(schema.objects, refreshIds).unwrap();
+        // this.state.sim.loadState(schema.simState);
+
+        // this.commitTransaction();
+
+        // return objs.map((id) => this.getObj(id)!);
 
         for (const ic of schema.ics)
             this.state.sim.loadICState(ic.metadata.id, ic.initialSimState);
+
+        const objs = super.loadSchema(schema, refreshIds);
+
+        // this.state.simRunner.propagationTime = schema.propagationTime
         this.state.sim.loadState(schema.simState);
 
         return objs;

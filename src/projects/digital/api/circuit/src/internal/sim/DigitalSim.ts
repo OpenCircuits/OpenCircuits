@@ -140,12 +140,24 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
         return {
             signals: Object.fromEntries(
                 [...signalKeys]
+                    // Only serialize for ports that exist
+                    .filter((portId) => this.storage.hasPort(portId))
                     .map((key) => [key, this.signals.get(key)!] as const)
                     // Filter undefined or off signals for efficiency purposes
                     .filter(([_, val]) => (!!val))
             ),
-            states:   Object.fromEntries([...stateKeys].map((key) => [key, this.states.get(key)!])),
-            icStates: Object.fromEntries([...icStatesKeys].map((key) => [key, this.icStates.get(key)!.toSchema()])),
+            states: Object.fromEntries(
+                [...stateKeys]
+                    // Only serialize for comps that exist
+                    .filter((compId) => this.storage.hasComp(compId))
+                    .map((key) => [key, this.states.get(key)!])
+            ),
+            icStates: Object.fromEntries(
+                [...icStatesKeys]
+                    // Only serialize for ic instances that exist
+                    .filter((compId) => this.storage.hasComp(compId))
+                    .map((key) => [key, this.icStates.get(key)!.toSchema()])
+            ),
         };
     }
 }
@@ -185,7 +197,6 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 comps.add(compId);
 
                 // Initialize ICs and sub-ICs if the added component is an IC instance
-                // TODO[model_refactor_api](leon) -- LOAD (AND SAVE) INITIAL IC STATES SOMEHOW
                 const comp = this.circuit.getCompByID(compId).unwrap();
                 if (this.circuit.isIC(comp)) {
                     if (!this.initialICStates.has(comp.kind)) {

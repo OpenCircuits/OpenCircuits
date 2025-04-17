@@ -54,9 +54,10 @@ describe("DigitalCircuit", () => {
         });
         test("Convert IC to schema and load back in", () => {
             const [circuit, _, { Place }] = CreateTestCircuit();
-            const [icCircuit, {}, { PlaceAndConnect: ICPlaceAndConnect }] = CreateTestCircuit();
+            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
-                const [gate, { inputs: [sw1, sw2], outputs: [out] }] = ICPlaceAndConnect("ANDGate");
+                const [i1, i2, g, o1] = ICPlace("InputPin", "InputPin", "ANDGate", "OutputPin");
+                ICConnect(i1, g.inputs[0]), ICConnect(i2, g.inputs[1]), ICConnect(g, o1);
                 icCircuit.name = "To be serialized IC";
 
                 return circuit.createIC({
@@ -64,9 +65,9 @@ describe("DigitalCircuit", () => {
                     display: {
                         size: V(4, 2),
                         pins: [
-                            { id: sw1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, +0.5), dir: V(-1, 0) },
-                            { id: sw2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, -0.5), dir: V(-1, 0) },
-                            { id: out.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                            { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                            { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                         ],
                     },
                 });
