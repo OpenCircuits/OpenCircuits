@@ -75,6 +75,10 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     //     throw new Error("Component.connectedComponents: Unimplemented!");
     // },
 
+    public shift(): void {
+        this.zIndex = this.state.assembler.highestZ + 1;
+    }
+
     public setPortConfig(cfg: PortConfig): boolean {
         // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = this.state.internal.getPortConfig(this.id).unwrap();

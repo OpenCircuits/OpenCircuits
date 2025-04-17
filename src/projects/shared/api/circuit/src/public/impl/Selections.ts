@@ -76,6 +76,10 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
         return this.selections.withWiresAndPorts();
     }
 
+    public shift(): void {
+        return this.selections.shift();
+    }
+
     public clear(): void {
         this.state.internal.beginTransaction();
         for (const id of this.selections["objs"])

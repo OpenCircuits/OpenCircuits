@@ -34,7 +34,7 @@ describe("CircuitAssembler", () => {
 
         expect(assembler["dirtyComponents"]).toHaveLength(1);
         expect(assembler["dirtyWires"]).toHaveLength(0);
-        expect(assembler["dirtyComponentPorts"].size).toBe(1);
+        expect(assembler["dirtyComponentPorts"].size).toBe(0);
 
         assembler.reassemble();
 

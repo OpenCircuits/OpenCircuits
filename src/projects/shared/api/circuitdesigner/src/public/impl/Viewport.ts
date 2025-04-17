@@ -175,8 +175,9 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
                 prims.forEach(renderPrim));
 
             // Render components
-            // TODO[model_refactor](leon) - render by depth
-            assembly.componentPrims.forEach((prims, compId) => {
+            assembly.componentOrder.forEach((compId) => {
+                const prims = assembly.componentPrims.get(compId)!;
+
                 // Draw ports first
                 assembly.portPrims.get(compId)?.forEach((prims) =>
                     prims.forEach(renderPrim));

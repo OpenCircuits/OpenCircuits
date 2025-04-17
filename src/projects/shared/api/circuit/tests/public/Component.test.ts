@@ -258,6 +258,27 @@ describe("Component", () => {
         });
     });
 
+    describe("Shift zIndex", () => {
+        test("Basic shift", () => {
+            const [circuit, _, { PlaceAt }] = CreateTestCircuit();
+            const [c, c2] = PlaceAt(V(0, 0), V(0, 0));
+
+            expect(c.zIndex).toBe(1);
+            expect(c2.zIndex).toBe(2);
+            c.shift();
+            expect(c.zIndex).toBe(3);
+            expect(c2.zIndex).toBe(2);
+
+            circuit.undo();
+            expect(c.zIndex).toBe(1);
+            expect(c2.zIndex).toBe(2);
+
+            circuit.redo();
+            expect(c.zIndex).toBe(3);
+            expect(c2.zIndex).toBe(2);
+        });
+    });
+
     describe("Ports", () => {
         test(".ports", () => {
             const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();

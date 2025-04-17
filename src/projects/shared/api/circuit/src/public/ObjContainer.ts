@@ -31,6 +31,8 @@ export interface ObjContainer {
     // and ports of components.
     withWiresAndPorts(): ObjContainer;
 
+    shift(): void;
+
     forEach(f: (obj: Obj, i: number, arr: Obj[]) => void): void;
     filter(f: (obj: Obj, i: number, arr: Obj[]) => boolean): Obj[];
     filter<O extends Obj>(f: (obj: Obj, i: number, arr: Obj[]) => obj is O): O[];

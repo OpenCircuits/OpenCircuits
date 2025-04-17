@@ -64,6 +64,8 @@ export type APIToDigital<T> = {
 export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit>;
 export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
     propagationTime: number;
+
+    step(): void;
 };
 
 export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit>;
