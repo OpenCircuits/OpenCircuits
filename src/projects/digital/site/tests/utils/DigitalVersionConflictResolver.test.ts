@@ -1,3 +1,4 @@
+import "digital/api/circuit/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
@@ -8,6 +9,7 @@ import andCircuit from "./TestCircuitData/2_1/AND.json";
 
 import switchCircuit from "./TestCircuitData/3_0/Switch.json";
 import orCircuit from "./TestCircuitData/3_0/OR.json";
+import poweredOrCircuit from "./TestCircuitData/3_0/PoweredOR.json";
 import threeInputAndCircuit from "./TestCircuitData/3_0/ThreeInputAND.json";
 import allInputsCircuit from "./TestCircuitData/3_0/Inputs.json";
 import ledCiruit from "./TestCircuitData/3_0/LED.json";
@@ -117,6 +119,13 @@ describe("DigitalVersionConflictResolver", () => {
             expect(c).toBeConnectedTo(andGate);
             expect(led).toBeConnectedTo(andGate);
             expect(andGate.inputs[2].connections[0].id).toBe(c.outputs[0].connections[0].id);
+        });
+        test("Powered OR circuit", () => {
+            const [circuit] = CreateCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(poweredOrCircuit)));
+            const comps = circuit.getComponents();
+            const led = comps.find((comp) => comp.kind === "LED")!;
+            expect(led).toBeOn();
         });
         test("All inputs", () => {
             const [circuit] = CreateCircuit();

@@ -86,6 +86,11 @@ function migrateObjs(
     const { getEntry, getArrayEntry, getArrayEntries, comparePortPos } = getSerializationGetters(contents);
     const objs = getArrayEntries(componentsEntry);
     const pinRefToPortGuid = new Map<string, string>();
+    const simState: DigitalSchema.DigitalSimState = {
+        signals: {},
+        states: {},
+        icStates: {},
+    }
     // Helper function to generate connection between old ref string and new digital port, used to later connect wires
     const linkPorts = (
         { ref, obj: port }: {ref?: string, obj: SerializationEntry},
@@ -94,8 +99,12 @@ function migrateObjs(
         const guid = refToGuid.get(ref) ?? Schema.uuid();
         const props: DigitalSchema.Core.Port["props"] = {};
         const portName = port["data"]["name"];
+        const isOn = port["data"]["isOn"];
         if (typeof portName === "string") {
             props["name"] = portName;
+        }
+        if (isOn) {
+            simState.signals[guid] = 1;
         }
         const { group, index, parent } = portInfo;
         return {
@@ -108,11 +117,6 @@ function migrateObjs(
             id: guid,
         }
     };
-    const simState: DigitalSchema.DigitalSimState = {
-        signals: {},
-        states: {},
-        icStates: {},
-    }
     const newPorts: DigitalSchema.Core.Port[] = [];
     const newComponents = objs.map(({ obj, ref }): DigitalSchema.Core.Component => {
         const transformRef = getEntry(obj, "transform")!;
@@ -279,9 +283,6 @@ function migrateObjs(
         // Set inputs states
         if (obj.type === "Switch" || obj.type === "Clock") {
                 simState.states[guid] = [obj.data.on ? Signal.On : Signal.Off];
-                // Most recent port should be the output port
-                if (obj.data.on)
-                    simState.signals[newPorts.at(-1)!.id] = Signal.On;
         }
 
         const comp = {
