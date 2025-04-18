@@ -76,6 +76,20 @@ function getICDataRef(ic: SerializationEntry) {
     }
 }
 
+function migrateSimState(
+    guidsToObjs: Map<string, SerializationEntry>,
+) {
+    const guidsToObjsArray = [...guidsToObjs.entries()];
+    const guidsToPorts = guidsToObjsArray.filter(([, { type }]) => type === "DigitalInputPort" || type === "DigitalOutputPort");
+    const guidsToInputs = guidsToObjsArray.filter(([, { type }]) => type === "Switch" || type === "Clock");
+    const simState: DigitalSchema.DigitalSimState = {
+        signals: Object.fromEntries(guidsToPorts.filter(([, { data }]) => data.isOn).map(([guid]) => [guid, Signal.On])),
+        states: Object.fromEntries(guidsToInputs.map(([guid, { data }]) => [guid, [data.isOn ? Signal.On : Signal.Off]])),
+        icStates: {},
+    }
+    return simState;
+}
+
 function migrateObjs(
     contents: Record<string, SerializationEntry>,
     refToGuid: Map<string | undefined, string>,
@@ -86,11 +100,7 @@ function migrateObjs(
     const { getEntry, getArrayEntry, getArrayEntries, comparePortPos } = getSerializationGetters(contents);
     const objs = getArrayEntries(componentsEntry);
     const pinRefToPortGuid = new Map<string, string>();
-    const simState: DigitalSchema.DigitalSimState = {
-        signals: {},
-        states: {},
-        icStates: {},
-    }
+    const guidsToObjs = new Map<string, SerializationEntry>();
     // Helper function to generate connection between old ref string and new digital port, used to later connect wires
     const linkPorts = (
         { ref, obj: port }: {ref?: string, obj: SerializationEntry},
@@ -99,13 +109,10 @@ function migrateObjs(
         const guid = refToGuid.get(ref) ?? Schema.uuid();
         const props: DigitalSchema.Core.Port["props"] = {};
         const portName = port["data"]["name"];
-        const isOn = port["data"]["isOn"];
         if (typeof portName === "string") {
             props["name"] = portName;
         }
-        if (isOn) {
-            simState.signals[guid] = 1;
-        }
+        guidsToObjs.set(guid, port);
         const { group, index, parent } = portInfo;
         return {
             baseKind: "Port",
@@ -282,7 +289,7 @@ function migrateObjs(
 
         // Set inputs states
         if (obj.type === "Switch" || obj.type === "Clock") {
-                simState.states[guid] = [obj.data.on ? Signal.On : Signal.Off];
+            guidsToObjs.set(guid, obj);
         }
 
         const comp = {
@@ -348,7 +355,7 @@ function migrateObjs(
 
     return {
         objects: [...newComponents, ...newPorts, ...newWires],
-        simState,
+        guidsToObjs,
         pinRefToPortGuid,
     };
 }
@@ -374,7 +381,8 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
 
     // Create guids for all refs from the start. This helps to link up initial states, particularly for ICs.
     // Inlined entries won't be in this Map which is fine because they aren't referenced by anything other than their parent.
-    const refToGuid = new Map<string | undefined, string>(Object.keys(contents).map((ref) => [ref, Schema.uuid()]));
+    const refGuidPairs: Array<[string, string]> = Object.keys(contents).map((ref) => [ref, Schema.uuid()]);
+    const refToGuid = new Map<string | undefined, string>(refGuidPairs);
     const cameraRef = getEntry(contents["0"], "camera")!;
     const cameraRefPos = getEntry(cameraRef, "pos")!;
     const camera: Schema.Camera = {
@@ -485,7 +493,8 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         //     states: Record<GUID, Signal[]>;
         //     icStates: Record<GUID, DigitalSimState>;
         // }
-        const { objects, simState: initialSimState, pinRefToPortGuid } = migrateObjs(contents, refToGuid, objectRefsEntry, wiresRefsEntry, true);
+        const { guidsToObjs, objects, pinRefToPortGuid } = migrateObjs(contents, refToGuid, objectRefsEntry, wiresRefsEntry, true);
+        const initialSimState = migrateSimState(guidsToObjs);
 
         const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
         const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
@@ -556,12 +565,13 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
 
     const icInstances = info.objects.filter((obj): obj is DigitalSchema.Core.Component => icGuidToSchema.has(obj.kind));
     const icStates = Object.fromEntries(icInstances.map(({ id, kind }) => [id, getICSimState(kind)]));
+    const simState = migrateSimState(info.guidsToObjs);
 
     return {
         camera: camera,
         objects: info.objects,
         simState: {
-            ...info.simState,
+            ...simState,
             icStates,
         },
         ics: ics.map(([, ic]) => ic),
