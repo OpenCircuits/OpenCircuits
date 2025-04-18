@@ -4,16 +4,13 @@ import {HeaderLeft}  from "./Left";
 import {HeaderRight} from "./Right";
 
 import "./index.scss";
-import {VersionConflictResolver} from "shared/site/utils/ApiMethods";
 
 
 type Props = {
     img: string;
     extraUtilities: Utility[];
-    versionConflictResolver: VersionConflictResolver;
-    serialize: () => Blob;
 }
-export const Header = ({ img, extraUtilities, versionConflictResolver, serialize }: Props) => (
+export const Header = ({ img, extraUtilities }: Props) => (
     <header id="header">
         <HeaderLeft />
 
@@ -28,8 +25,6 @@ export const Header = ({ img, extraUtilities, versionConflictResolver, serialize
             </a>
         </div>
 
-        <HeaderRight extraUtilities={extraUtilities}
-                     versionConflictResolver={versionConflictResolver}
-                     serialize={serialize} />
+        <HeaderRight extraUtilities={extraUtilities} />
     </header>
 );

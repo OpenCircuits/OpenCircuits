@@ -37,7 +37,6 @@ import "./index.scss";
 import {ICDesigner} from "digital/site/containers/ICDesigner";
 import {ICViewer} from "digital/site/containers/ICViewer";
 import {ExprToCircuitPopup} from "digital/site/containers/ExprToCircuitPopup";
-import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) => ({
@@ -54,7 +53,7 @@ export const App = () => {
 
     return (
         <div className="App">
-            <SideNav exampleCircuits={exampleCircuits} versionConflictResolver={VersionConflictResolver} />
+            <SideNav exampleCircuits={exampleCircuits} />
 
             <div className="App__container" style={{ height: h+"px" }}>
                 <DigitalHeader />

@@ -59,6 +59,16 @@ import {LoadCircuit} from "shared/site/utils/CircuitHelpers";
 import {Request} from "shared/site/utils/Request";
 import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 import {VersionConflictResolver} from "./utils/DigitalVersionConflictResolver";
+import {setDeserializeCircuitFunc, setSerializeCircuitFunc} from "shared/site/utils/CircuitIOMethods";
+import {Schema} from "digital/api/circuit/schema";
+
+import {DigitalProtoSchema} from "digital/site/proto";
+import {ProtoSchema} from "shared/site/proto";
+import {MapObj} from "shared/api/circuit/utils/Functions";
+import {v4, parse, stringify} from "uuid";
+import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {DigitalCircuit} from "digital/api/circuit/public";
+import {Circuit} from "shared/api/circuit/public";
 
 
 async function Init(): Promise<void> {
@@ -157,6 +167,187 @@ async function Init(): Promise<void> {
             });
 
             storeDesigner("main", mainDesigner);
+
+            setSerializeCircuitFunc((circuit: Circuit) => {
+                const schema = (circuit as DigitalCircuit).toSchema();
+
+                function GetProps(obj: Schema.Core.Obj): Record<string, ProtoSchema.Prop> {
+                    return MapObj(obj.props, ([_key, prop]) =>
+                                (typeof prop === "boolean"
+                                    ? { boolVal: prop }
+                                    : (typeof prop === "number")
+                                    ? (Number.isInteger(prop)
+                                        ? { intVal: prop }
+                                        : { floatVal: prop })
+                                    : (typeof prop === "string")
+                                    ? { strVal: prop } : {}));
+                }
+
+                function LoadObjs(objs: Schema.Core.Obj[]): { components: ProtoSchema.Component[], wires: ProtoSchema.Wire[], ports: ProtoSchema.Port[] } {
+                    return {
+                        components: objs
+                            .filter((o) => (o.baseKind === "Component"))
+                            .map((c) => ({
+                                id:    parse(c.id) as Uint8Array,
+                                kind:  c.kind,
+                                props: GetProps(c),
+                            })),
+                        wires: objs
+                            .filter((o) => (o.baseKind === "Wire"))
+                            .map((w) => ({
+                                id:    parse(w.id) as Uint8Array,
+                                kind:  w.kind,
+                                props: GetProps(w),
+                                p1:    parse(w.p1) as Uint8Array,
+                                p2:    parse(w.p2) as Uint8Array,
+                            })),
+                        ports: objs
+                            .filter((o) => (o.baseKind === "Port"))
+                            .map((p) => ({
+                                id:     parse(p.id) as Uint8Array,
+                                kind:   p.kind,
+                                props:  GetProps(p),
+                                parent: parse(p.parent) as Uint8Array,
+                                group:  p.group,
+                                index:  p.index,
+                            })),
+                    };
+                }
+
+                function LoadSignal(signal: Signal): DigitalProtoSchema.DigitalSimState_Signal {
+                    return (signal === Signal.On
+                        ? DigitalProtoSchema.DigitalSimState_Signal.On
+                        : (signal === Signal.Off)
+                        ? DigitalProtoSchema.DigitalSimState_Signal.Off
+                        : (signal === Signal.Metastable)
+                        ? DigitalProtoSchema.DigitalSimState_Signal.Metastable
+                        : DigitalProtoSchema.DigitalSimState_Signal.UNRECOGNIZED);
+                }
+
+                function LoadSimState(state: Schema.DigitalSimState): DigitalProtoSchema.DigitalSimState {
+                    return {
+                        signals:  MapObj(state.signals,  ([_id, signal]) => LoadSignal(signal)),
+                        states:   MapObj(state.states,   ([_id, state])  => ({ state: state.map(LoadSignal) })),
+                        icStates: MapObj(state.icStates, ([_id, state])  => LoadSimState(state)),
+                    };
+                }
+
+                const proto = DigitalProtoSchema.DigitalCircuit.create({
+                    circuit: {
+                        metadata: {
+                            ...schema.metadata,
+                            id: parse(schema.metadata.id) as Uint8Array,
+                        },
+                        camera: schema.camera,
+                        ics:    schema.ics.map((ic) => ({
+                            metadata: {
+                                metadata: {
+                                    id:   parse(ic.metadata.id) as Uint8Array,
+                                    name: ic.metadata.name,
+                                },
+                                displayWidth:  ic.metadata.displayWidth,
+                                displayHeight: ic.metadata.displayHeight,
+                                pins:          ic.metadata.pins.map((p) => ({
+                                    ...p,
+                                    id: parse(p.id) as Uint8Array,
+                                })),
+                            },
+                            ...LoadObjs(ic.objects),
+                        })),
+                        ...LoadObjs(schema.objects),
+                    },
+
+                    propagationTime: schema.propagationTime,
+
+                    icInitialSimStates: schema.ics.map((ic) => LoadSimState(ic.initialSimState)),
+
+                    simState: LoadSimState(schema.simState),
+                });
+
+                return new Blob([DigitalProtoSchema.DigitalCircuit.encode(proto).finish()]);
+                // return new Blob([JSON.stringify(schema)], { type: "text/json" });
+            });
+            setDeserializeCircuitFunc((data) => {
+                if (typeof data === "string")
+                    return VersionConflictResolver(data);
+
+                const protoCircuit = DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
+
+                function GetProps(props: Record<string, ProtoSchema.Prop>): Schema.Core.Obj["props"] {
+                    return MapObj(props, ([_key, prop]) =>
+                                    prop.boolVal ?? prop.floatVal ?? prop.intVal ?? prop.strVal ?? ""
+                                    );
+                }
+
+                function LoadObjs(components: ProtoSchema.Component[], wires: ProtoSchema.Wire[], ports: ProtoSchema.Port[]): Schema.Core.Obj[] {
+                    return [
+                        ...components.map((c) => ({
+                            baseKind: "Component",
+                            ...c,
+                            id: stringify(c.id),
+                            props: GetProps(c.props),
+                        } as Schema.Core.Component)),
+                        ...wires.map((w) => ({
+                            baseKind: "Wire",
+                            ...w,
+                            id: stringify(w.id),
+                            props: GetProps(w.props),
+                            p1: stringify(w.p1),
+                            p2: stringify(w.p2),
+                        } as Schema.Core.Wire)),
+                        ...ports.map((p) => ({
+                            baseKind: "Port",
+                            ...p,
+                            id: stringify(p.id),
+                            props: GetProps(p.props),
+                            parent: stringify(p.parent),
+                        } as Schema.Core.Port))
+                    ];
+                }
+
+                function LoadSignal(signal: DigitalProtoSchema.DigitalSimState_Signal): Signal {
+                    return (signal === DigitalProtoSchema.DigitalSimState_Signal.On
+                        ? Signal.On
+                        : (signal === DigitalProtoSchema.DigitalSimState_Signal.Off)
+                        ? Signal.Off
+                        : (signal === DigitalProtoSchema.DigitalSimState_Signal.Metastable)
+                        ? Signal.Metastable
+                        : Signal.Off);
+                }
+
+                function LoadSimState(state: DigitalProtoSchema.DigitalSimState): Schema.DigitalSimState {
+                    return {
+                        signals:  MapObj(state.signals,  ([_id, signal]) => LoadSignal(signal)),
+                        states:   MapObj(state.states,   ([_id, state])  => state.state.map(LoadSignal)),
+                        icStates: MapObj(state.icStates, ([_id, state])  => LoadSimState(state)),
+                    };
+                }
+
+                return {
+                    metadata: {
+                        ...protoCircuit.circuit!.metadata!,
+                        id: stringify(protoCircuit.circuit!.metadata!.id),
+                    } as Schema.Core.CircuitMetadata,
+                    camera: protoCircuit.circuit!.camera!,
+                    ics: protoCircuit.circuit!.ics!.map((ic, i) => ({
+                        metadata: {
+                            ...ic.metadata!,
+                            ...ic.metadata!.metadata!,
+                            id: stringify(ic.metadata!.metadata!.id),
+                            pins: ic.metadata!.pins.map((p) => ({
+                                ...p,
+                                id: stringify(p.id),
+                            })),
+                        } as Schema.Core.IntegratedCircuitMetadata,
+                        objects: LoadObjs(ic.components, ic.wires, ic.ports),
+                        initialSimState: LoadSimState(protoCircuit.icInitialSimStates[i]),
+                    })),
+                    objects: LoadObjs(protoCircuit.circuit!.components, protoCircuit.circuit!.wires, protoCircuit.circuit!.ports),
+
+                    propagationTime: protoCircuit.propagationTime,
+                    simState: LoadSimState(protoCircuit.simState!),
+                } satisfies Schema.DigitalCircuit;
+            });
 
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
