@@ -27,7 +27,9 @@ import labelCircuit from "./TestCircuitData/3_0/Label.json";
 import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
 import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
 import basicICCircuit from "./TestCircuitData/3_0/BasicIC.json";
+import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
 import {CreateCircuit} from "digital/api/circuit/public";
+import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
 
 describe("DigitalVersionConflictResolver", () => {
@@ -542,7 +544,6 @@ describe("DigitalVersionConflictResolver", () => {
             expect(ic.display.pins.filter(({ name }) => name === "LED")).toHaveLength(1);
         });
         test("Basic IC", () => {
-            const logErrorSpy = jest.spyOn(global.console, "error");
             const [circuit] = CreateCircuit();
             const schema = VersionConflictResolver(JSON.stringify(basicICCircuit));
             circuit.loadSchema(schema);
@@ -555,9 +556,35 @@ describe("DigitalVersionConflictResolver", () => {
             expect(icInstance.kind).toBe(icData.id);
             expect(icInstance.inputs).toHaveLength(2);
             expect(icInstance.outputs).toHaveLength(1);
+            const inputPortA = icInstance.inputs.find(({ name }) => name === "a")!;
+            const inputPortB = icInstance.inputs.find(({ name }) => name === "b")!;
+            expect(inputPortA).toBeDefined();
+            expect(inputPortB).toBeDefined();
+            expect(inputPortA.originPos.y).toBeGreaterThan(inputPortB.originPos.y);
+        });
+        test("Nested IC", () => {
+            const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
+            const schema = VersionConflictResolver(JSON.stringify(nestedICCircuit));
+            console.log(JSON.stringify(schema));
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+            const icInstance = comps[0];
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(2);
+            const outerIC = ics.find((ic) => ic.name === "Outer")!;
+            expect(outerIC).toBeDefined();
+            expect(icInstance.kind).toBe(outerIC.id);
 
-            // IC can get imported but errors end up logged from state
-            expect(logErrorSpy).not.toHaveBeenCalled();
+            const [sw1, sw2, led] = Place("Switch", "Switch", "LED");
+            Connect(sw1, icInstance.inputs[0]);
+            Connect(sw2, icInstance.inputs[1]);
+            Connect(icInstance, led);
+
+            expect(led).toBeOff();
+            TurnOn(sw1);
+            TurnOn(sw2);
+            expect(led).toBeOn();
         });
     });
 });
