@@ -10,10 +10,11 @@ import {MapObj} from "shared/api/circuit/utils/Functions";
 import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 
-export const CreateTestCircuit = () => {
+export const CreateTestCircuit = (sim = true) => {
     const [circuit, state] = CreateCircuit();
 
-    state.simRunner = new InstantSimRunner(state.sim);
+    if (sim)
+        state.simRunner = new InstantSimRunner(state.sim);
 
     const helpers = {
         Place:          (...comps: string[]) => comps.map((c) => circuit.placeComponentAt(c, V(0, 0))),
