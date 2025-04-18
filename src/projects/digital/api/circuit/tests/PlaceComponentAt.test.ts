@@ -2,12 +2,12 @@ import "shared/tests/helpers/Extensions";
 
 import {V} from "Vector";
 
-import {CreateCircuit} from "digital/api/circuit/public";
+import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 
 describe("PlaceComponentAt", () => {
     test("Basic Placement", () => {
-        const [circuit, _] = CreateCircuit();
+        const [circuit, _] = CreateTestCircuit();
 
         const c = circuit.placeComponentAt("ANDGate", V(0, 0));
 
@@ -15,7 +15,7 @@ describe("PlaceComponentAt", () => {
         expect(c.pos).toEqual(V(0, 0));
     });
     test("Multiple Placements", () => {
-        const [circuit, _] = CreateCircuit();
+        const [circuit, _] = CreateTestCircuit();
 
         const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
         const s2 = circuit.placeComponentAt("Switch", V(-5, -5));

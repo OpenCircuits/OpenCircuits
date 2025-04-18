@@ -21,5 +21,5 @@ export type DigitalTypes = CircuitTypes<
 
 export interface DigitalCircuitState extends CircuitState<DigitalTypes> {
     sim: DigitalSim;
-    simRunner: DigitalSimRunner;
+    simRunner?: DigitalSimRunner;
 }

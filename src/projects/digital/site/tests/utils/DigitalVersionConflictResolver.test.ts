@@ -4,6 +4,8 @@ import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 import {V} from "Vector";
 
+import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+
 import switchCircuit from "./TestCircuitData/Switch.json";
 import orCircuit from "./TestCircuitData/OR.json";
 import threeInputAndCircuit from "./TestCircuitData/ThreeInputAND.json";
@@ -23,13 +25,12 @@ import encoderDecoderCircuit from "./TestCircuitData/EncoderDecoder.json";
 import comparatorCircuit from "./TestCircuitData/Comparator.json";
 import labelCircuit from "./TestCircuitData/Label.json";
 import nodesCircuit from "./TestCircuitData/Nodes.json";
-import {CreateCircuit} from "digital/api/circuit/public";
 
 
 describe("DigitalVersionConflictResolver", () => {
     describe("From version 3.0", () => {
         test("Single Switch", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(switchCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -42,7 +43,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(sw.outputs[0].signal).toBe(Signal.Off);
         });
         test("Basic OR circuit", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(orCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(4);
@@ -67,7 +68,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led.pos).toApproximatelyEqual(V(3, 2));
         });
         test("Three input AND", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(threeInputAndCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -90,7 +91,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(andGate.inputs[2].connections[0].id).toBe(c.outputs[0].connections[0].id);
         });
         test("All inputs", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(allInputsCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -126,7 +127,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(constantNumber15.getProp("inputNum")).toBe(15);
         });
         test("LED with custom color", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(ledCiruit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -134,7 +135,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led.getProp("color")).toBe("#ff0000");
         });
         test("Segment displays", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(segmentDisplayCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
@@ -161,7 +162,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(asciiDisplay16.getProp("segmentCount")).toBe(16);
         });
         test("Oscilloscope", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(oscilloscopeCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -184,7 +185,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(customOscilloscope.getProp("paused")).toBeTruthy();
         });
         test("SRFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(srFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -215,7 +216,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("JKFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(jkFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -246,7 +247,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("DFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(dFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
@@ -274,7 +275,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("TFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(tFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
@@ -302,7 +303,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("DLatch", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(dLatchCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -324,7 +325,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("SRLatch", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(srLatchCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
@@ -349,7 +350,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("Multiplexer", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(multiplexerCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -387,7 +388,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(multiplexer.outputs[0].connections[0].id).toBe(output.inputs[0].connections[0].id);
         });
         test("Demultiplexer", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(demultiplexerCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -426,7 +427,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(demultiplexer.ports["selects"][2].connections[0].id).toBe(s2.outputs[0].connections[0].id);
         });
         test("Encoder/Decoder", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(encoderDecoderCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -442,7 +443,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(decoder.outputs).toHaveLength(2);
         });
         test("Comparator", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(comparatorCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -485,7 +486,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(comparator.ports["gt"][0].connections[0].id).toBe(gt.inputs[0].connections[0].id);
         });
         test("Label", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(labelCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -495,7 +496,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(label.getProp("textColor")).toBe("#ffffff");
         });
         test("Nodes", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(nodesCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
