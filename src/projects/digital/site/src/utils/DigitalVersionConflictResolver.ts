@@ -30,7 +30,12 @@ function isSerializationArrayEntry(o: unknown): o is SerializationArrayEntry {
 
 function getSerializationGetters(contents: Record<string, SerializationEntry>) {
     // Utility func to get vector data through a ref or directly
-    const deepEntryEquals = (entry1?: SerializationEntry | SerializationArrayEntry, entry2?: SerializationEntry | SerializationArrayEntry): boolean => {
+    const deepEntryEquals = (
+        entry1?: SerializationEntry | SerializationArrayEntry,
+        entry2?: SerializationEntry | SerializationArrayEntry,
+        visited?: Set<string>,
+    ): boolean => {
+        visited ??= new Set();
         if (entry1 === undefined || entry2 === undefined)
             return entry1 === entry2;
         if (entry1.type !== entry2.type)
@@ -41,9 +46,10 @@ function getSerializationGetters(contents: Record<string, SerializationEntry>) {
             const refsAndObjs1 = getArrayEntries(entry1);
             const refsAndObjs2 = getArrayEntries(entry2);
             // Check regardless of order
-            return entry1.data.length === entry2.data.length;
-            // return entry1.data.length === entry2.data.length &&
-            //     refsAndObjs1.every(({ obj: obj1 }) => refsAndObjs2.some(({ obj: obj2 }) => deepEntryEquals(obj1, obj2)));
+            return entry1.data.length === entry2.data.length &&
+                refsAndObjs1.every(({ obj: obj1 }) =>
+                    refsAndObjs2.some(({ obj: obj2 }) => deepEntryEquals(obj1, obj2, visited))
+                );
         }
         if (isSerializationArrayEntry(entry2))
             return false;
@@ -59,10 +65,19 @@ function getSerializationGetters(contents: Record<string, SerializationEntry>) {
                 return false;
             const value1 = entry1.data[key];
             const value2 = entry2.data[key];
+            // Not checking functions
             if (typeof value1 === "function" || typeof value2 === "function")
                 return false;
             if (typeof value1 === "object" && typeof value2 === "object") {
-                return deepEntryEquals(getEntry(entry1, key), getEntry(entry2, key));
+                const er1 = getEntryAndRef(entry1, key)!;
+                const er2 = getEntryAndRef(entry2, key)!;
+                if (er1.ref && er2.ref) {
+                    if (visited.has(er1.ref) && visited.has(er2.ref))
+                        return true;
+                    visited.add(er1.ref);
+                    visited.add(er2.ref);
+                }
+                return deepEntryEquals(getEntry(entry1, key), getEntry(entry2, key), visited);
             }
             return value1 === value2;
         });
@@ -141,7 +156,6 @@ function migrateSimState(
         const icDataComponents = getArrayEntries(getArrayEntry(icDataCollection, "components")!);
         const newGuidsToObjs: Array<[string, SerializationEntry]> = icDataComponents.map(({ ref, obj }) => [refToGuid.get(ref)!, obj]);
         return [guid, migrateSimState(contents, refToGuid, new Map<string, SerializationEntry>(newGuidsToObjs), icGuidsToObjects)];
-        // if (!refToGuid.get(entryAndRef.ref))
     });
 
     const simState: DigitalSchema.DigitalSimState = {
