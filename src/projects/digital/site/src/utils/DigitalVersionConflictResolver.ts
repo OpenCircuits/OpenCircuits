@@ -30,6 +30,43 @@ function isSerializationArrayEntry(o: unknown): o is SerializationArrayEntry {
 
 function getSerializationGetters(contents: Record<string, SerializationEntry>) {
     // Utility func to get vector data through a ref or directly
+    const deepEntryEquals = (entry1?: SerializationEntry | SerializationArrayEntry, entry2?: SerializationEntry | SerializationArrayEntry): boolean => {
+        if (entry1 === undefined || entry2 === undefined)
+            return entry1 === entry2;
+        if (entry1.type !== entry2.type)
+            return false;
+        if (isSerializationArrayEntry(entry1)) {
+            if (!isSerializationArrayEntry(entry2))
+                return false;
+            const refsAndObjs1 = getArrayEntries(entry1);
+            const refsAndObjs2 = getArrayEntries(entry2);
+            // Check regardless of order
+            return entry1.data.length === entry2.data.length;
+            // return entry1.data.length === entry2.data.length &&
+            //     refsAndObjs1.every(({ obj: obj1 }) => refsAndObjs2.some(({ obj: obj2 }) => deepEntryEquals(obj1, obj2)));
+        }
+        if (isSerializationArrayEntry(entry2))
+            return false;
+
+        const entry1Keys = Object.keys(entry1.data);
+        const entry2Keys = Object.keys(entry2.data);
+
+        if (entry1Keys.length !== entry2Keys.length)
+            return false;
+
+        return entry1Keys.every((key) => {
+            if (!Object.prototype.hasOwnProperty.call(entry2.data, key))
+                return false;
+            const value1 = entry1.data[key];
+            const value2 = entry2.data[key];
+            if (typeof value1 === "function" || typeof value2 === "function")
+                return false;
+            if (typeof value1 === "object" && typeof value2 === "object") {
+                return deepEntryEquals(getEntry(entry1, key), getEntry(entry2, key));
+            }
+            return value1 === value2;
+        });
+    }
     const getEntry = (parent: SerializationEntry, key: string) => {
         const v = parent["data"][key];
         if (!v)
@@ -37,6 +74,14 @@ function getSerializationGetters(contents: Record<string, SerializationEntry>) {
         if (isRef(v))
             return contents[v["ref"]];
         return v as SerializationEntry;
+    }
+    const getEntryAndRef = (parent: SerializationEntry, key: string): RefAndObject | undefined => {
+        const v = parent["data"][key];
+        if (!v)
+            return;
+        if (isRef(v))
+            return { ref: v.ref, obj: contents[v["ref"]] };
+        return { obj: v as SerializationEntry };
     }
     const getArrayEntry = (parent: SerializationEntry, key: string) => {
         const v = parent["data"][key];
@@ -67,25 +112,42 @@ function getSerializationGetters(contents: Record<string, SerializationEntry>) {
         const targetB = getEntry(b.obj, "target")!.data as { x: number, y: number };
         return (targetA.x - targetB.x) + (targetA.y - targetB.y);
     };
-    return { getEntry, getArrayEntry, getArrayEntries, comparePortPos };
-}
-
-function getICDataRef(ic: SerializationEntry) {
-    if (ic.data.data && typeof ic.data.data === "object" && "ref" in ic.data.data) {
-        return ic.data.data.ref as string;
-    }
+    const getICDataRef = (
+        refToGuid: Map<string | undefined, string>,
+        icGuids: Array<[string, SerializationEntry]>,
+        data: RefAndObject) => refToGuid.get(data.ref) ?? icGuids.find(([, entry]) => deepEntryEquals(entry, data.obj))![0]
+    return { getEntry, getEntryAndRef, getArrayEntry, getArrayEntries, comparePortPos, deepEntryEquals, getICDataRef };
 }
 
 function migrateSimState(
+    contents: Record<string, SerializationEntry>,
+    refToGuid: Map<string | undefined, string>,
     guidsToObjs: Map<string, SerializationEntry>,
+    icGuidsToObjects: Map<string, SerializationEntry>,
 ) {
+    const { getEntryAndRef, getEntry, getArrayEntry, getArrayEntries, getICDataRef } = getSerializationGetters(contents);
+    const icGuids = [...icGuidsToObjects.entries()];
     const guidsToObjsArray = [...guidsToObjs.entries()];
     const guidsToPorts = guidsToObjsArray.filter(([, { type }]) => type === "DigitalInputPort" || type === "DigitalOutputPort");
     const guidsToInputs = guidsToObjsArray.filter(([, { type }]) => type === "Switch" || type === "Clock");
+    const guidsToICInstances = guidsToObjsArray.filter(([, { type }]) => type === "IC");
+
+    const guidsToICInstancesEntries = guidsToICInstances.map(([guid, obj]) => {
+        const entryAndRef = getEntryAndRef(obj, "data")!;
+        // IC instances can inline a copy of ICData, we need to map it back to find the original guid
+        const icDataGuid = getICDataRef(refToGuid, icGuids, entryAndRef);
+        const icDataEntry = icGuidsToObjects.get(icDataGuid)!;
+        const icDataCollection = getEntry(icDataEntry, "collection")!;
+        const icDataComponents = getArrayEntries(getArrayEntry(icDataCollection, "components")!);
+        const newGuidsToObjs: Array<[string, SerializationEntry]> = icDataComponents.map(({ ref, obj }) => [refToGuid.get(ref)!, obj]);
+        return [guid, migrateSimState(contents, refToGuid, new Map<string, SerializationEntry>(newGuidsToObjs), icGuidsToObjects)];
+        // if (!refToGuid.get(entryAndRef.ref))
+    });
+
     const simState: DigitalSchema.DigitalSimState = {
         signals: Object.fromEntries(guidsToPorts.filter(([, { data }]) => data.isOn).map(([guid]) => [guid, Signal.On])),
         states: Object.fromEntries(guidsToInputs.map(([guid, { data }]) => [guid, [data.isOn ? Signal.On : Signal.Off]])),
-        icStates: {},
+        icStates: Object.fromEntries(guidsToICInstancesEntries),
     }
     return simState;
 }
@@ -95,11 +157,13 @@ function migrateObjs(
     refToGuid: Map<string | undefined, string>,
     componentsEntry: SerializationArrayEntry,
     wiresEntry: SerializationArrayEntry,
+    icGuids: Array<[string, SerializationEntry]>,
     isIc?: boolean
 ) {
-    const { getEntry, getArrayEntry, getArrayEntries, comparePortPos } = getSerializationGetters(contents);
+    const { getEntry, getEntryAndRef, getArrayEntry, getArrayEntries, comparePortPos, getICDataRef } = getSerializationGetters(contents);
     const objs = getArrayEntries(componentsEntry);
     const pinRefToPortGuid = new Map<string, string>();
+    // Because SerializationEntrys can be inlined, we need to build guidsToObjs in here
     const guidsToObjs = new Map<string, SerializationEntry>();
     // Helper function to generate connection between old ref string and new digital port, used to later connect wires
     const linkPorts = (
@@ -299,8 +363,10 @@ function migrateObjs(
         } as const;
 
         if (obj.type === "IC") {
+            guidsToObjs.set(guid, obj);
+            const entryAndRef = getEntryAndRef(obj, "data")!;
             return {
-                kind: refToGuid.get(getICDataRef(obj)!)!,
+                kind: getICDataRef(refToGuid, icGuids, entryAndRef),
                 ...comp,
             }
         }
@@ -479,7 +545,13 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
 
     const icRefsEntry = getArrayEntry(designerRef, "ics")!;
     const icEntries = getArrayEntries(icRefsEntry);
-    const icGuids = icEntries.map(({ ref }) => refToGuid.get(ref) ?? Schema.uuid());
+    const icGuids: Array<[string, SerializationEntry]> = icEntries.map(({ ref, obj }) => [refToGuid.get(ref) ?? Schema.uuid(), obj]);
+    const icGuidsToObjects = new Map<string, SerializationEntry>(icGuids);
+
+    const objectRefsEntry = getArrayEntry(designerRef, "objects")!;
+    const wiresRefsEntry = getArrayEntry(designerRef, "wires")!;
+    const info = migrateObjs(contents, refToGuid, objectRefsEntry, wiresRefsEntry, icGuids);
+
     const ics = icEntries.map(({ obj }, index): [string, DigitalSchema.DigitalIntegratedCircuit] => {
         const transformRef = getEntry(obj, "transform")!;
         const sizeRef = getEntry(transformRef, "size")!;
@@ -493,8 +565,10 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         //     states: Record<GUID, Signal[]>;
         //     icStates: Record<GUID, DigitalSimState>;
         // }
-        const { guidsToObjs, objects, pinRefToPortGuid } = migrateObjs(contents, refToGuid, objectRefsEntry, wiresRefsEntry, true);
-        const initialSimState = migrateSimState(guidsToObjs);
+        const { guidsToObjs, objects, pinRefToPortGuid } = migrateObjs(contents, refToGuid, objectRefsEntry, wiresRefsEntry, icGuids, true);
+        // console.log("Migrating IC state", obj.data.name);
+        const initialSimState = migrateSimState(contents, refToGuid, guidsToObjs, icGuidsToObjects);
+        // console.log("Done with state");
 
         const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
         const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
@@ -534,7 +608,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         const metadata: DigitalSchema.Core.IntegratedCircuitMetadata = {
             displayWidth: x / 50,
             displayHeight: y / 50,
-            id: icGuids[index],
+            id: icGuids[index][0],
             name: obj.data.name as string,
             desc: "",
             thumb: "",
@@ -542,38 +616,20 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             pins: [...inputPins, ...outputPins],
         };
 
-        return [icGuids[index], {
+        return [icGuids[index][0], {
             metadata,
             objects,
             initialSimState,
         }];
     });
 
-    const objectRefsEntry = getArrayEntry(designerRef, "objects")!;
-    const wiresRefsEntry = getArrayEntry(designerRef, "wires")!;
-    const info = migrateObjs(contents, refToGuid, objectRefsEntry, wiresRefsEntry);
+    const simState = migrateSimState(contents, refToGuid, info.guidsToObjs, icGuidsToObjects);
 
-    const icGuidToSchema = new Map<string, DigitalSchema.DigitalIntegratedCircuit>(ics);
-    const getICSimState = (icDataId: string): DigitalSchema.DigitalSimState => {
-        const icDataSchema = icGuidToSchema.get(icDataId)!;
-        const subICs = Object.fromEntries(icDataSchema.objects.filter(({ kind }) => icGuidToSchema.has(kind)).map(({ kind }) => [kind, getICSimState(kind)]));
-        return {
-            ...icDataSchema.initialSimState,
-            icStates: subICs,
-        }
-    }
-
-    const icInstances = info.objects.filter((obj): obj is DigitalSchema.Core.Component => icGuidToSchema.has(obj.kind));
-    const icStates = Object.fromEntries(icInstances.map(({ id, kind }) => [id, getICSimState(kind)]));
-    const simState = migrateSimState(info.guidsToObjs);
-
+    // ics.map(())
     return {
         camera: camera,
         objects: info.objects,
-        simState: {
-            ...simState,
-            icStates,
-        },
+        simState,
         ics: ics.map(([, ic]) => ic),
         metadata,
         propagationTime,
