@@ -10,6 +10,7 @@ import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 import {Transform} from "math/Transform";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {PolygonPrim} from "shared/api/circuit/internal/assembly/Prim";
 
 
 export class OscilloscopeAssembler extends ComponentAssembler {
@@ -32,40 +33,96 @@ export class OscilloscopeAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged]),
-                assemble:     (comp) => {
-                    const componentTranform = this.getTransform(comp);
-                    const size = V(this.getDisplayWidth(comp), this.getDisplayHeight(comp) * this.circuit.getPortsForComponent(comp.id).unwrap().size)
-                    return {
-                        kind: "Rectangle",
-
-                        transform: new Transform(componentTranform.getPos(), size, componentTranform.getAngle()),
-                    }
-                },
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
+                assemble:     (comp) => ({
+                    kind:      "Rectangle",
+                    transform: this.getTransform(comp),
+                }),
 
                 styleChangesWhenSelected: true,
                 getStyle:                 (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
+            {
+                kind: "BaseShape",
+
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged, AssemblyReason.StateUpdated]),
+                assemble:     (comp) => {
+                    const allSignals = this.sim.getState(comp.id)?.chunk(8) ?? [];
+                    return {
+                        kind:      "Group",
+                        prims:     new Array(this.numPorts(comp)).fill(0).map((_, i) => this.assembleDisplay(comp, allSignals, i)),
+                        ignoreHit: true,
+                    }
+                },
+
+                getStyle: (_comp) => ({
+                    stroke: {
+                        color:   this.options.defaultOnColor,
+                        size:    0.08,
+                        lineCap: "square",
+                    },
+                }),
+            },
         ]);
 
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("LED").unwrap() as DigitalComponentConfigurationInfo;
+        this.info = this.circuit.getComponentInfo("Oscilloscope").unwrap() as DigitalComponentConfigurationInfo;
     }
 
-    protected getSize(comp: Schema.Component): Vector {
-        return V(this.getDisplayWidth(comp), this.getDisplayHeight(comp) * this.circuit.getPortsForComponent(comp.id).unwrap().size);
+    protected assembleDisplay(comp: Schema.Component, allSignals: Signal[][], i: number): Omit<PolygonPrim, "style"> {
+        const numPorts = this.numPorts(comp);
+        const transform = this.getTransform(comp);
+        const displaySize = this.getDisplaySize(comp);
+        const size = this.getSize(comp);
+        const maxSamples = (comp.props["samples"] as number) ?? 100;
+
+        // Get y-offset for i'th graph
+        const dy = -size.y/2 + ((numPorts - 1 - i) + 0.5)*displaySize.y;
+
+        if (allSignals.length <= 1) {
+            return {
+                kind:   "Polygon",
+                points: [],
+            };
+        }
+
+        // Calculate offset to account for border/line widths
+        const offset = (0.08 + this.options.defaultBorderWidth)/2;
+
+        // Calculate the positions for each signal
+        const dx = (size.x - 2*offset)/(maxSamples - 1);
+        const positions = allSignals.map((s, j) => V(
+            -displaySize.x/2 + offset + j*dx,        // x-position: linear space
+            displaySize.y * (Signal.isOn(s[i]) ? 1/3 : -1/3) + dy // y-position: based on signal value
+        ));
+
+        return {
+            kind:   "Polygon",
+            points: [positions[0], ...positions.flatMap((pos, j) => {
+                // Draws a vertical line so that the jump looks better
+                //  from 0 -> 1 or 1 -> 0
+                if (j > 0 && allSignals[j-1][i] !== allSignals[j][i])
+                    return [pos, pos.add(dx, 0)];
+                return pos;
+            })].map((p) => transform.toWorldSpace(p)),
+            closed: false,
+        };
     }
 
-    private isOn(led: Schema.Component) {
-        const [inputPort] = this.circuit.getPortsForComponent(led.id).unwrap();
-        return Signal.isOn(this.sim.getSignal(inputPort));
+    protected override getSize(comp: Schema.Component): Vector {
+        const displaySize = this.getDisplaySize(comp);
+        return V(displaySize.x, displaySize.y * this.numPorts(comp));
     }
 
-    private getDisplayHeight(comp: Schema.Component) {
-        return this.circuit.getCompByID(comp.id).unwrap().props["h"] as number | undefined ?? 4;
+    protected numPorts(comp: Schema.Component): number {
+        return this.circuit.getPortsForComponent(comp.id).unwrap().size;
     }
 
-    private getDisplayWidth(comp: Schema.Component) {
-        return this.circuit.getCompByID(comp.id).unwrap().props["w"] as number | undefined ?? 8;
+    private getDisplaySize(comp: Schema.Component) {
+        const c = this.circuit.getCompByID(comp.id).unwrap();
+        return V(
+            (c.props["w"] as number) ?? 8,
+            (c.props["h"] as number) ?? 4,
+        );
     }
 }

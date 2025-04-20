@@ -508,9 +508,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             this.queue[0] = this.queue[0] ? this.queue[0].union(next) : next;
 
         this.publish({
-            type: "step",
-            updatedInputPorts, updatedOutputPorts, updatedCompStates,
+            type:       "step",
             queueEmpty: this.queue.length === 0,
+            updatedInputPorts, updatedOutputPorts, updatedCompStates,
         });
     }
 
