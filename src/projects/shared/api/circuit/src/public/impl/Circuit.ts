@@ -218,7 +218,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             name:    info.circuit.name,
             thumb:   info.circuit.thumbnail,
             desc:    info.circuit.desc,
-            version: "v/0",
+            version: "digital/v0",
 
             displayWidth:  info.display.size.x,
             displayHeight: info.display.size.y,

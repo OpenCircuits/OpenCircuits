@@ -1,35 +1,65 @@
+import "digital/api/circuit/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 import {V} from "Vector";
 
-import switchCircuit from "./TestCircuitData/Switch.json";
-import orCircuit from "./TestCircuitData/OR.json";
-import threeInputAndCircuit from "./TestCircuitData/ThreeInputAND.json";
-import allInputsCircuit from "./TestCircuitData/Inputs.json";
-import ledCiruit from "./TestCircuitData/LED.json";
-import segmentDisplayCircuit from "./TestCircuitData/SegmentDisplays.json";
-import oscilloscopeCircuit from "./TestCircuitData/Oscilloscope.json";
-import srFlipFlopCircuit from "./TestCircuitData/SRFlipFlop.json";
-import jkFlipFlopCircuit from "./TestCircuitData/JKFlipFlop.json";
-import dFlipFlopCircuit from "./TestCircuitData/DFlipFlop.json";
-import tFlipFlopCircuit from "./TestCircuitData/TFlipFlop.json";
-import dLatchCircuit from "./TestCircuitData/DLatch.json";
-import srLatchCircuit from "./TestCircuitData/SRLatch.json";
-import multiplexerCircuit from "./TestCircuitData/Multiplexer.json";
-import demultiplexerCircuit from "./TestCircuitData/Demultiplexer.json";
-import encoderDecoderCircuit from "./TestCircuitData/EncoderDecoder.json";
-import comparatorCircuit from "./TestCircuitData/Comparator.json";
-import labelCircuit from "./TestCircuitData/Label.json";
-import nodesCircuit from "./TestCircuitData/Nodes.json";
-import {CreateCircuit} from "digital/api/circuit/public";
+import andCircuit from "./TestCircuitData/2_1/AND.json";
+
+import switchCircuit from "./TestCircuitData/3_0/Switch.json";
+import orCircuit from "./TestCircuitData/3_0/OR.json";
+import poweredOrCircuit from "./TestCircuitData/3_0/PoweredOR.json";
+import threeInputAndCircuit from "./TestCircuitData/3_0/ThreeInputAND.json";
+import allInputsCircuit from "./TestCircuitData/3_0/Inputs.json";
+import ledCiruit from "./TestCircuitData/3_0/LED.json";
+import segmentDisplayCircuit from "./TestCircuitData/3_0/SegmentDisplays.json";
+import oscilloscopeCircuit from "./TestCircuitData/3_0/Oscilloscope.json";
+import srFlipFlopCircuit from "./TestCircuitData/3_0/SRFlipFlop.json";
+import jkFlipFlopCircuit from "./TestCircuitData/3_0/JKFlipFlop.json";
+import dFlipFlopCircuit from "./TestCircuitData/3_0/DFlipFlop.json";
+import tFlipFlopCircuit from "./TestCircuitData/3_0/TFlipFlop.json";
+import dLatchCircuit from "./TestCircuitData/3_0/DLatch.json";
+import srLatchCircuit from "./TestCircuitData/3_0/SRLatch.json";
+import multiplexerCircuit from "./TestCircuitData/3_0/Multiplexer.json";
+import demultiplexerCircuit from "./TestCircuitData/3_0/Demultiplexer.json";
+import encoderDecoderCircuit from "./TestCircuitData/3_0/EncoderDecoder.json";
+import comparatorCircuit from "./TestCircuitData/3_0/Comparator.json";
+import labelCircuit from "./TestCircuitData/3_0/Label.json";
+import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
+import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
+import basicICCircuit from "./TestCircuitData/3_0/BasicIC.json";
+import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
+import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
 
 describe("DigitalVersionConflictResolver", () => {
+    describe("From version 2.1", () => {
+        test("Basic AND circuit", () => {
+            // This test circuit is the same as example1.circuit
+            const [circuit] = CreateTestCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(andCircuit)));
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(4);
+            expect(circuit.getWires()).toHaveLength(3);
+            const andGate = comps.find((comp) => comp.kind === "ANDGate")!;
+            expect(andGate).toBeDefined();
+            const led = comps.find((comp) => comp.kind === "LED")!;
+            expect(led).toBeDefined();
+            const a = andGate.inputs[0].connectedPorts[0].parent;
+            const b = andGate.inputs[1].connectedPorts[0].parent;
+            expect(a).toBeDefined();
+            expect(b).toBeDefined();
+            expect(a.pos).toApproximatelyEqual(V(-4, 2));
+            expect(b.pos).toApproximatelyEqual(V(-4, -2));
+            expect(andGate.pos).toApproximatelyEqual(V(0, 0));
+            expect(led.pos).toApproximatelyEqual(V(4, 2));
+        });
+    });
+
     describe("From version 3.0", () => {
         test("Single Switch", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(switchCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -42,7 +72,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(sw.outputs[0].signal).toBe(Signal.Off);
         });
         test("Basic OR circuit", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(orCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(4);
@@ -67,7 +97,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led.pos).toApproximatelyEqual(V(3, 2));
         });
         test("Three input AND", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(threeInputAndCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -89,8 +119,15 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led).toBeConnectedTo(andGate);
             expect(andGate.inputs[2].connections[0].id).toBe(c.outputs[0].connections[0].id);
         });
+        test("Powered OR circuit", () => {
+            const [circuit] = CreateTestCircuit();
+            circuit.loadSchema(VersionConflictResolver(JSON.stringify(poweredOrCircuit)));
+            const comps = circuit.getComponents();
+            const led = comps.find((comp) => comp.kind === "LED")!;
+            expect(led).toBeOn();
+        });
         test("All inputs", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(allInputsCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -110,13 +147,12 @@ describe("DigitalVersionConflictResolver", () => {
             expect(customClock).toBeDefined();
             expect(customClock.getProp("paused")).toBeTruthy();
             expect(customClock.getProp("delay")).toBe(800);
-            // TODO: Check circuit state when circuit state gets saved to schema
+            // TODO: Check this when clocks fully work
             // expect(customClock.outputs[0].signal).toBe(Signal.On);
 
             const sw = comps.find((comp) => comp.kind === "Switch")!;
             expect(sw).toBeDefined();
-            // TODO: Check circuit state when circuit state gets saved to schema
-            // expect(sw.outputs[0].signal).toBe(Signal.On);
+            expect(sw.outputs[0].signal).toBe(Signal.On);
 
             const constantNumber0 = comps.find((comp) => comp.name === "Constant Number 0")!;
             expect(constantNumber0).toBeDefined();
@@ -126,7 +162,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(constantNumber15.getProp("inputNum")).toBe(15);
         });
         test("LED with custom color", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(ledCiruit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -134,7 +170,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led.getProp("color")).toBe("#ff0000");
         });
         test("Segment displays", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(segmentDisplayCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
@@ -161,7 +197,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(asciiDisplay16.getProp("segmentCount")).toBe(16);
         });
         test("Oscilloscope", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(oscilloscopeCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -184,7 +220,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(customOscilloscope.getProp("paused")).toBeTruthy();
         });
         test("SRFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(srFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -215,7 +251,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("JKFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(jkFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -246,7 +282,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("DFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(dFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
@@ -274,7 +310,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("TFlipFlop", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(tFlipFlopCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
@@ -302,7 +338,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("DLatch", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(dLatchCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -324,7 +360,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("SRLatch", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(srLatchCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
@@ -349,7 +385,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(flipFlop.ports["Qinv"][0].connections[0].id).toBe(qinv.inputs[0].connections[0].id);
         });
         test("Multiplexer", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(multiplexerCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -387,7 +423,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(multiplexer.outputs[0].connections[0].id).toBe(output.inputs[0].connections[0].id);
         });
         test("Demultiplexer", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(demultiplexerCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -426,7 +462,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(demultiplexer.ports["selects"][2].connections[0].id).toBe(s2.outputs[0].connections[0].id);
         });
         test("Encoder/Decoder", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(encoderDecoderCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -442,7 +478,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(decoder.outputs).toHaveLength(2);
         });
         test("Comparator", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(comparatorCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -485,7 +521,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(comparator.ports["gt"][0].connections[0].id).toBe(gt.inputs[0].connections[0].id);
         });
         test("Label", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(labelCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -495,11 +531,67 @@ describe("DigitalVersionConflictResolver", () => {
             expect(label.getProp("textColor")).toBe("#ffffff");
         });
         test("Nodes", () => {
-            const [circuit] = CreateCircuit();
+            const [circuit] = CreateTestCircuit();
             circuit.loadSchema(VersionConflictResolver(JSON.stringify(nodesCircuit)));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
+        });
+        test("IC Data Only (no instances)", () => {
+            const [circuit] = CreateTestCircuit();
+            const schema = VersionConflictResolver(JSON.stringify(icDataOnlyCircuit));
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(0);
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(1);
+            const ic = ics[0];
+            expect(ic.display.pins).toHaveLength(3);
+            expect(ic.display.size).toEqual(V(2.8, 1));
+            expect(ic.display.pins.filter(({ name }) => name === "Switch")).toHaveLength(2);
+            expect(ic.display.pins.filter(({ name }) => name === "LED")).toHaveLength(1);
+        });
+        test("Basic IC", () => {
+            const [circuit] = CreateTestCircuit();
+            const schema = VersionConflictResolver(JSON.stringify(basicICCircuit));
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+            const icInstance = comps[0];
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(1);
+            const icData = ics[0];
+            expect(icInstance.kind).toBe(icData.id);
+            expect(icInstance.inputs).toHaveLength(2);
+            expect(icInstance.outputs).toHaveLength(1);
+            const inputPortA = icInstance.inputs.find(({ name }) => name === "a")!;
+            const inputPortB = icInstance.inputs.find(({ name }) => name === "b")!;
+            expect(inputPortA).toBeDefined();
+            expect(inputPortB).toBeDefined();
+            expect(inputPortA.originPos.y).toBeGreaterThan(inputPortB.originPos.y);
+        });
+        test("Nested IC", () => {
+            const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
+            const schema = VersionConflictResolver(JSON.stringify(nestedICCircuit));
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+            const icInstance = comps[0];
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(2);
+            const outerIC = ics.find((ic) => ic.name === "Outer")!;
+            expect(outerIC).toBeDefined();
+            expect(icInstance.kind).toBe(outerIC.id);
+
+            const [sw1, sw2, led] = Place("Switch", "Switch", "LED");
+            Connect(sw1, icInstance.inputs[0]);
+            Connect(sw2, icInstance.inputs[1]);
+            Connect(icInstance, led);
+
+            expect(led).toBeOff();
+            TurnOn(sw1);
+            TurnOn(sw2);
+            expect(led).toBeOn();
         });
     });
 });
