@@ -197,7 +197,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         };
         const newPorts: DigitalSchema.Core.Port[] = [];
         // First map components (and get ports)
-        const newComponents = objs.map(({ obj, ref }): DigitalSchema.Core.Component => {
+        const newComponents = objs.map(({ obj, ref }, index): DigitalSchema.Core.Component => {
             // Copy common props
             const transformRef = getEntry(obj, "transform")!;
             const posRef = getEntry(transformRef, "pos")!;
@@ -205,7 +205,9 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             const nameRef = getEntry(obj, "name")!
             const nameData = nameRef.data as { name: unknown, set: unknown };
             // Scale x/y and flip y-axis
-            const props: DigitalSchema.Core.Component["props"] = {};
+            const props: DigitalSchema.Core.Component["props"] = {
+                zIndex: index,
+            };
             if (typeof x === "number") {
                 props["x"] = x / 50;
             }

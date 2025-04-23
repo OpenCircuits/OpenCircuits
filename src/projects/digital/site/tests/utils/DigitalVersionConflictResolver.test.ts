@@ -30,6 +30,7 @@ import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
 import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
 import basicICCircuit from "./TestCircuitData/3_0/BasicIC.json";
 import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
+import zIndexCircuit from "./TestCircuitData/3_0/ZIndex.json";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
 
@@ -592,6 +593,27 @@ describe("DigitalVersionConflictResolver", () => {
             TurnOn(sw1);
             TurnOn(sw2);
             expect(led).toBeOn();
+        });
+
+        test("Z Index", () => {
+            const [circuit, _, { }] = CreateTestCircuit();
+            const schema = VersionConflictResolver(JSON.stringify(zIndexCircuit));
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(3);
+            const bottom = comps.find(({ name }) => name === "Bottom")!;
+            const middle = comps.find(({ name }) => name === "Middle")!;
+            const top = comps.find(({ name }) => name === "Top")!;
+            expect(bottom).toBeDefined();
+            expect(middle).toBeDefined();
+            expect(top).toBeDefined();
+
+            expect(bottom.getProp("zIndex")).toBeDefined();
+            expect(middle.getProp("zIndex")).toBeDefined();
+            expect(top.getProp("zIndex")).toBeDefined();
+
+            expect(bottom.getProp("zIndex")).toBeLessThan(middle.getProp("zIndex") as number);
+            expect(middle.getProp("zIndex")).toBeLessThan(top.getProp("zIndex") as number);
         });
     });
 });
