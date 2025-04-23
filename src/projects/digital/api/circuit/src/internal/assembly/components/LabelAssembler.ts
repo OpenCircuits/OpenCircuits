@@ -89,9 +89,7 @@ export class LabelAssembler extends ComponentAssembler {
     private getFontStyle(comp: Schema.Component): FontStyle {
         return {
             ...this.options.fontStyle(),
-            font:  this.options.defaultFont,
             color: this.getTextColor(comp),
-            scale: 1000,
         }
     }
 }

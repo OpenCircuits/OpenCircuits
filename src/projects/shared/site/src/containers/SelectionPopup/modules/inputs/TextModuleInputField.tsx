@@ -22,7 +22,7 @@ export const TextModuleInputField = ({
             ref={ref}
             type="text"
             value={state.values}
-            placeholder={state.allSame[0] ? "" : (placeholder ?? "-")}
+            placeholder={(state.allSame[0] && state.values.length > 1) ? "" : (placeholder ?? "-")}
             alt={alt}
             onChange={(ev) => setState.onChange(ev.target.value)}
             onFocus={() => setState.onFocus()}

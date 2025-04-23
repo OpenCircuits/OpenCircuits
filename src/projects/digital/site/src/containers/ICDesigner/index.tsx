@@ -130,6 +130,7 @@ export const ICDesigner = ({ }: Props) => {
         if (!icViewDesigner)
             return;
         icViewDesigner.circuit.getICs()[0].name = name;
+        // TODO: Increase IC size if name gets too long for current size
     }
 
 
@@ -159,6 +160,9 @@ export const ICDesigner = ({ }: Props) => {
 
         // Unblock main input
         mainDesigner.viewport.canvasInfo!.input.setBlocked(false);
+
+        // Reset IC name input in designer back to empty
+        setICName(undefined);
 
         dispatch(CloseICDesigner());
     }
