@@ -15,7 +15,7 @@ import {LoadCircuit as LoadCircuitHelper} from "./CircuitHelpers";
 import {Schema} from "shared/api/circuit/schema";
 
 
-export type VersionConflictResolver = (fileContents: string) => Schema.Circuit
+export type VersionConflictResolver = (fileContents: string) => { schema: Schema.Circuit, warnings?: string[] }
 export const useAPIMethods = (mainCircuit: Circuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
     const dispatch = useSharedDispatch();
@@ -28,9 +28,11 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             dispatch(_SetCircuitLoading(false));
             throw new Error("APIMethods LoadCircuit: data is undefined");
         }
-        const schema = versionConflictResolver(data);
+        const { schema, warnings } = versionConflictResolver(data);
 
         try {
+            if (warnings)
+                window.alert(warnings);
             LoadCircuitHelper(mainCircuit, schema);
         } catch (e) {
             console.error(e);

@@ -2,6 +2,7 @@
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {Schema as DigitalSchema} from "digital/api/circuit/schema";
 import {Schema} from "shared/api/circuit/schema";
+import {IMPORT_IC_CLOCK_MESSAGE} from "./Constants";
 
 
 interface SerializationEntry {
@@ -28,12 +29,19 @@ function isSerializationArrayEntry(o: unknown): o is SerializationArrayEntry {
     return ("type" in o && (o.type === "Array" || o.type === "Set") && "data" in o && Array.isArray(o.data));
 }
 
-export function VersionConflictResolver(fileContents: string): DigitalSchema.DigitalCircuit {
+
+interface VersionConflictResolution {
+    schema: DigitalSchema.DigitalCircuit;
+    warnings?: string[];
+}
+export function VersionConflictResolver(fileContents: string): VersionConflictResolution {
     const oldCircuit = JSON.parse(fileContents);
     const version = oldCircuit.metadata.version;
     if (version === "digital/v0") {
         // TODO: Better validation
-        return oldCircuit as DigitalSchema.DigitalCircuit;
+        return {
+            schema: oldCircuit as DigitalSchema.DigitalCircuit,
+        };
     }
     const metadata: Schema.CircuitMetadata = {
         id: Schema.uuid(),
@@ -49,6 +57,9 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
     // Inlined entries won't be in this Map which is fine because they aren't referenced by anything other than their parent.
     const refGuidPairs: Array<[string, string]> = Object.keys(contents).map((ref) => [ref, Schema.uuid()]);
     const refToGuid = new Map<string | undefined, string>(refGuidPairs);
+
+    // This will keep track of if there has been a clock in an IC that got converted to a Switch
+    let hasClockInIc = false;
 
     // Check if two objects recursively contain equivalent data, even in the references are not the same.
     // This is mainly used to map ICData to IC instances.
@@ -197,7 +208,7 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
         };
         const newPorts: DigitalSchema.Core.Port[] = [];
         // First map components (and get ports)
-        const newComponents = objs.map(({ obj, ref }): DigitalSchema.Core.Component => {
+        const newComponents = objs.map(({ obj, ref }, index): DigitalSchema.Core.Component => {
             // Copy common props
             const transformRef = getEntry(obj, "transform")!;
             const posRef = getEntry(transformRef, "pos")!;
@@ -205,7 +216,9 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
             const nameRef = getEntry(obj, "name")!
             const nameData = nameRef.data as { name: unknown, set: unknown };
             // Scale x/y and flip y-axis
-            const props: DigitalSchema.Core.Component["props"] = {};
+            const props: DigitalSchema.Core.Component["props"] = {
+                zIndex: index,
+            };
             if (typeof x === "number") {
                 props["x"] = x / 50;
             }
@@ -230,8 +243,11 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
                     props["inputNum"] = obj.data.inputNum as number;
                     break;
                 case "Clock":
-                    props["paused"] = !!obj.data.paused;
-                    props["delay"] = obj.data.frequency as number;
+                    // If this is in an IC, the clock will be replaced with a switch so don't need these props
+                    if (!isIc) {
+                        props["paused"] = !!obj.data.paused;
+                        props["delay"] = obj.data.frequency as number;
+                    }
                     break;
                 case "LED":
                     props["color"] = obj.data.color as string;
@@ -380,7 +396,15 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
                 }
             }
             if (isIc) {
-                if (obj.type === "Switch" || obj.type === "Clock") {
+                if (obj.type === "Clock") {
+                    hasClockInIc = true;
+                    // Clocks in ICs no longer supported, switch to a Switch
+                    return {
+                        kind: "Switch",
+                        ...comp,
+                    }
+                }
+                if (obj.type === "Switch") {
                     pinRefToPortGuid.set(ref!, newPorts.at(-1)!.id);
                     return {
                         kind: "InputPin",
@@ -644,13 +668,16 @@ export function VersionConflictResolver(fileContents: string): DigitalSchema.Dig
     const simState = migrateSimState(info.guidsToObjs, icGuidsToObjects);
 
     return {
-        camera: camera,
-        objects: info.objects,
-        simState,
-        ics,
-        metadata,
-        propagationTime,
-    } satisfies DigitalSchema.DigitalCircuit;
+        schema: {
+            camera: camera,
+            objects: info.objects,
+            simState,
+            ics,
+            metadata,
+            propagationTime,
+        },
+        warnings: hasClockInIc ? [IMPORT_IC_CLOCK_MESSAGE] : undefined,
+    };
 }
 
 // export function VersionConflictPostResolver(version: string, data: ContentsData) {
