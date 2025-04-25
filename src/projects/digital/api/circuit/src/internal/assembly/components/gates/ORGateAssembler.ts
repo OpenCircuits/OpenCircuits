@@ -31,25 +31,27 @@ export class ORGateAssembler extends GateAssembler {
             not,
 
             portFactory: {
-                "outputs": () => ({ origin: V(0.5, 0), dir: V(1.1, 0) }),
+                "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
                 "inputs":  (_comp, index, total) => {
                     if (total % 2 === 0) {
                         const spacing = 0.52 - this.options.defaultBorderWidth/2;
+                        const y = spacing*((total-1)/2 - index);
                         return {
-                            origin: V(-0.42, spacing*((total-1)/2 - index)),
-                            dir:    V(-1.28, 0),
+                            origin: V(-0.42, y),
+                            target: V(-1.2, y),
                         };
                     }
                     const spacing = 0.5 - this.options.defaultBorderWidth/2;
+                    const y = spacing*((total-1)/2 - index);
                     if ((total === 7 && index === 0) || (total === 7 && index === 6)) {
                         return {
-                            origin: V(-0.53, spacing*((total-1)/2 - index)),
-                            dir:    V(-1.1, 0),
+                            origin: V(-0.53, y),
+                            target: V(-1.2, y),
                         };
                     }
                     return {
-                        origin: V(-0.4, spacing*((total-1)/2 - index)),
-                        dir:    V(-1.3, 0),
+                        origin: V(-0.4, y),
+                        target: V(-1.2, y),
                     };
                 },
             },

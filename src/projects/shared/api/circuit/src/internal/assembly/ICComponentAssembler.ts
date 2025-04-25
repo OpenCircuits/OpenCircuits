@@ -4,6 +4,7 @@ import {ComponentAssembler} from "./ComponentAssembler";
 import {Schema} from "../../schema";
 import {GUID} from "../../public";
 import {MapObj} from "../../utils/Functions";
+import {Rect} from "math/Rect";
 
 
 export class ICComponentAssembler extends ComponentAssembler {
@@ -43,8 +44,28 @@ export class ICComponentAssembler extends ComponentAssembler {
 
                 styleChangesWhenSelected: true,
                 getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+            },
+            {
+                kind: "Text",
+
+                dependencies: new Set([AssemblyReason.TransformChanged]),
+                assemble:     (comp) => this.assembleText(comp),
+
+                getFontStyle: () => this.options.fontStyle(),
             }]
         );
+    }
+
+    private assembleText(comp: Schema.Component) {
+        const name = this.circuit.getICInfo(comp.kind).unwrap().metadata.name;
+        const bounds = this.options.textMeasurer?.getBounds(this.options.fontStyle(), name) ?? new Rect(V(), V());
+        return {
+            kind:     "Text",
+            pos:      this.getPos(comp),
+            contents: name,
+            angle:    this.getAngle(comp),
+            offset:   bounds.center,
+        } as const
     }
 
     protected override getSize(comp: Schema.Component): Vector {

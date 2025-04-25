@@ -170,7 +170,7 @@ async function Init(): Promise<void> {
                 // Load dev state
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    LoadCircuit(mainDesigner.circuit, VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)));
+                    LoadCircuit(mainDesigner.circuit, VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)).schema);
             }
 
             const root = createRoot(document.getElementById("root")!);

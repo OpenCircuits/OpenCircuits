@@ -12,7 +12,7 @@ export function CalculateICDisplay(circuit: Circuit): ReadonlyIntegratedCircuitD
     ) + circuit.name.length;
 
     const w = 1 + 0.3*longestName;
-    const h = inputs.length/2;
+    const h = Math.max(inputs.length, outputs.length)/2;
 
     const inputYs  = linspace(1, -1, inputs.length,  { endpoint: false, centered: true });
     const outputYs = linspace(1, -1, outputs.length, { endpoint: false, centered: true });
