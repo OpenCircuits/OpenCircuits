@@ -311,42 +311,6 @@ export const DigitalPropagators: PropagatorsMap = {
             nextCycle: delay,
         };
     }, []),
-    // "Oscilloscope":   MakeLocalPropagator((obj, signals, state = [Signal.On, Signal.Off, Signal.Off]) => {
-    //     // First 3 bits are BCD representing the current number of inputs that the rest of state is holding
-    //     // This is required because we can't know when the number of ports changed
-    //     const [a, b, c, ...states] = state;
-    //     const curNumInputs = BCDtoDecimal([a, b, c].map(Signal.toBool));
-
-    //     const maxSamples = (obj.props["samples"] as number) ?? 100;
-    //     const numInputs = signals["inputs"].length;
-    //     const delay = (obj.props["delay"] as number) ?? 50;
-
-    //     let curStates = states.chunk(curNumInputs);
-
-    //     if (numInputs < curNumInputs) {
-    //         curStates  
-    //     }
-
-
-    //     // state, signals[0] -> [signals[0], ...state]
-
-
-
-    //     // Input 0: [On, Off, On, Off, ...]
-    //     // Input 1: [Off, Off, On, On, ...]
-    //     // Input 2: [Off, Off, Off]
-    //     // [state: On, Off, On, Off]
-    //     //
-    //     // state has to be flat, so just make it:
-    //     // [...Input 0, ...Input 1]
-    //     // 
-    //     // But next time around, how do we
-    //     // 
-    //     return {
-    //         outputs: {},
-    //         nextState: state,
-    //     };
-    // }, []),
 
     // Gates
     BUFGate, NOTGate,

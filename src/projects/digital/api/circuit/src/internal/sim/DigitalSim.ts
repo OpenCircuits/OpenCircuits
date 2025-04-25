@@ -131,6 +131,7 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
 
     }
 
+    // TODO[] - add these as CircuitStorage utilities somehow
     public getInputPorts(compId: GUID): GUID[] {
         return this.getComponentAndInfoByID(compId)
             .andThen(([_comp, info]) =>
@@ -303,10 +304,6 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                     const icState = this.initializeICInstance(
                         this.rootState, this.initialICStates.get(comp.kind)!, compId, comp.kind);
                     this.rootState.icStates.set(compId, icState);
-
-                    // // Queue all the sub-components
-                    // for (const comp of icState.storage.getComponents())
-                    //     this.queueComp(icState.getPath(comp));
                 }
             }
 
@@ -317,18 +314,18 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             for (const [compId] of [...ev.diff.addedPorts, ...ev.diff.removedPorts]) {
                 // Removal of ports + component *can* happen at once (batching)
                 // So don't add the comp in that case.
-                if (!ev.diff.removedComponents.has(compId)) {
-                    comps.add([compId]);
+                if (ev.diff.removedComponents.has(compId))
+                    continue;
 
-                    // Need to sync Output ports
-                    // TODO[] - does this work for nested ICs?
-                    const comp = this.circuit.getCompByID(compId).unwrap();
-                    if (this.circuit.isIC(comp)) {
-                        // Queue all OutputPin components in the IC instance, to sync with Output ports
-                        this.rootState.getOutputPorts(compId)
-                            .map((p) => this.rootState.getPinCompFromPort(p))
-                            .forEach((comp) => comps.add(comp));
-                    }
+                comps.add([compId]);
+
+                // Need to sync Output ports
+                const comp = this.circuit.getCompByID(compId).unwrap();
+                if (this.circuit.isIC(comp)) {
+                    // Queue all OutputPin components in the IC instance, to sync with Output ports
+                    this.rootState.getOutputPorts(compId)
+                        .map((p) => this.rootState.getPinCompFromPort(p))
+                        .forEach((comp) => comps.add(comp));
                 }
             }
 
