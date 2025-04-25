@@ -22,7 +22,7 @@ export class OscilloscopeAssembler extends ComponentAssembler {
             "inputs": (comp, index, total) => {
                 const size = this.getSize(comp);
                 const midpoint = (total - 1) / 2;
-                const y = -.6 * size.y/2 * (index - midpoint);
+                const y = -0.6 * size.y/2 * (index - midpoint);
                 return {
                     // Subtracting the this.options.defaultBorderWidth prevent tiny gap between port stem and component
                     origin: V(-((size.x - this.options.defaultBorderWidth)/2), y),
@@ -103,7 +103,7 @@ export class OscilloscopeAssembler extends ComponentAssembler {
                 //  from 0 -> 1 or 1 -> 0
                 if (j > 0 && allSignals[j-1][i] !== allSignals[j][i])
                     return [pos, pos.add(dx, 0)];
-                return pos;
+                return pos.add(dx, 0);
             })].map((p) => transform.toWorldSpace(p)),
             closed: false,
         };

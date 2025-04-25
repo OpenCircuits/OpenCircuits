@@ -4,7 +4,7 @@ import {BCDtoDecimal, DecimalToBCD} from "../../utils/MathUtil";
 import {PropagatorInfo, PropagatorsMap} from "./DigitalSim";
 
 
-type LocalPropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
+type LocalPropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[], tickInfo?: { curTick: number, lastStateTick?: number }) => {
     outputs: Record<string, Signal[]>;
     nextState?: Signal[];
     nextCycle?: number;
@@ -12,7 +12,7 @@ type LocalPropagatorFunc = (obj: Schema.Component, signals: Record<string, Signa
 
 function MakeLocalPropagator(func: LocalPropagatorFunc, stateProps?: string[]): PropagatorInfo {
     return {
-        propagator: (comp, info, state) => {
+        propagator: (comp, info, state, tickInfo) => {
             const ports = state.getPortsByGroup(comp.id);
 
             // Get signals from each input port and put it in a record of group: signals[]
@@ -21,7 +21,7 @@ function MakeLocalPropagator(func: LocalPropagatorFunc, stateProps?: string[]): 
                     [group, ports[group].map((id) => (state.signals.get(id) ?? Signal.Off))]));
             const compState = state.states.get(comp.id);
 
-            const { outputs, nextState, nextCycle } = func(comp, inputSignals, compState);
+            const { outputs, nextState, nextCycle } = func(comp, inputSignals, compState, tickInfo);
 
             // Maybe check this?
             // for (const [group, signals] of Object.entries(outputs)) {
@@ -47,21 +47,21 @@ function MakeLocalPropagator(func: LocalPropagatorFunc, stateProps?: string[]): 
 }
 
 function MakeNoOutputPropagator() {
-    return MakeLocalPropagator((_obj: Schema.Component, _signals: Record<string, Signal[]>, _state?: Signal[]) => ({
+    return MakeLocalPropagator((_obj, _signals, _state) => ({
         outputs: {},
     }));
 }
 
 function MakeSingleOutputPropagator(
-    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
+    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[], tickInfo?: { curTick: number, lastStateTick?: number }) => {
         signal: Signal;
         nextState?: Signal[];
         nextCycle?: number;
     },
     stateProps?: string[],
 ) {
-    return MakeLocalPropagator((obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => {
-        const { signal, nextState, nextCycle } = getOutput(obj, signals, state);
+    return MakeLocalPropagator((obj, signals, state, tickInfo) => {
+        const { signal, nextState, nextCycle } = getOutput(obj, signals, state, tickInfo);
         return {
             outputs: { "outputs": [signal] },
             nextState,
@@ -276,21 +276,31 @@ export const DigitalPropagators: PropagatorsMap = {
         const num = obj.props["inputNum"] as number ?? 0;
         return { outputs: { "outputs": DecimalToBCD(num, 4).map(Signal.fromBool) } };
     }, ["inputNum"]),
-    "Clock": MakeSingleOutputPropagator((obj, _signals, [state] = [Signal.On]) => ({
-        signal:    Signal.invert(state),
-        nextState: [Signal.invert(state)],
-        nextCycle: (obj.props["delay"] as number) ?? 250,
-    }), ["delay"]),
+    "Clock": MakeLocalPropagator((obj, _signals, [curSignal] = [Signal.On], tickInfo) => {
+        const { curTick, lastStateTick } = tickInfo!;
+        const delay = (obj.props["delay"] as number) ?? 250;
+        if ((curTick - (lastStateTick ?? curTick)) % delay !== 0)
+            return { outputs: { "outputs": [] } };
+        return ({
+            outputs:   { "outputs": [curSignal] },
+            nextState: [Signal.invert(curSignal)],
+            nextCycle: delay,
+        });
+    }, ["delay"]),
 
     // Outputs
     "LED":            MakeNoOutputPropagator(),
     "SegmentDisplay": MakeNoOutputPropagator(),
     "BCDDisplay":     MakeNoOutputPropagator(),
     "ASCIIDisplay":   MakeNoOutputPropagator(),
-    "Oscilloscope":   MakeLocalPropagator((obj, signals, state = []) => {
+    "Oscilloscope":   MakeLocalPropagator((obj, signals, state = [], tickInfo) => {
+        const { curTick, lastStateTick } = tickInfo!;
         const maxSamples = (obj.props["samples"] as number) ?? 100;
         const delay = (obj.props["delay"] as number) ?? 50;
         // const numInputs = signals["inputs"].length;
+
+        if ((curTick - (lastStateTick ?? curTick)) % delay !== 0)
+            return { outputs: {} };
 
         const nextSignals = new Array<Signal>(8).fill(Signal.Off);
         signals["inputs"].forEach((val, i) => nextSignals[i] = val);

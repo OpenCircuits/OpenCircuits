@@ -14,9 +14,6 @@ describe("Clock", () => {
         // Get initial state
         sim.step();
         expect(sim.getState(clock.id)![0]).toBeOff();
-
-        sim.step();
-        expect(sim.getState(clock.id)![0]).toBeOff();
         sim.step();
         expect(sim.getState(clock.id)![0]).toBeOff();
         sim.step();
@@ -36,9 +33,6 @@ describe("Clock", () => {
         // Get initial state
         sim.step();
         expect(sim.getState(clock.id)![0]).toBeOff();
-
-        sim.step();
-        expect(sim.getState(clock.id)![0]).toBeOff();
         sim.step();
         expect(sim.getState(clock.id)![0]).toBeOff();
         sim.step();
@@ -52,20 +46,16 @@ describe("Clock", () => {
         sim.step();
         expect(sim.getState(clock.id)![0]).toBeOn();
         sim.step();
-        expect(sim.getState(clock.id)![0]).toBeOn();
-        sim.step();
         expect(sim.getState(clock.id)![0]).toBeOff();
         sim.step();
         expect(sim.getState(clock.id)![0]).toBeOff();
         sim.step();
+        expect(sim.getState(clock.id)![0]).toBeOn();
+        sim.step();
+        expect(sim.getState(clock.id)![0]).toBeOn();
+        sim.step();
         expect(sim.getState(clock.id)![0]).toBeOff();
-        sim.step();
-        expect(sim.getState(clock.id)![0]).toBeOn();
-        sim.step();  // This is where the original value of 10 would activate and flip it to off
-        expect(sim.getState(clock.id)![0]).toBeOn();
-        sim.step();
-        expect(sim.getState(clock.id)![0]).toBeOn();
-        sim.step();
+        sim.step();  // This is where the original value of 10 would activate and flip it to on
         expect(sim.getState(clock.id)![0]).toBeOff();
     });
 });

@@ -16,10 +16,17 @@ export interface PropagatorInfo {
     // (i.e. `inputNum` for ConstantNumber)
     stateProps?: Set<string>;
 }
+export interface TickInfo {
+
+}
 export type PropagatorFunc = (
     comp: Schema.Core.Component,
     info: DigitalComponentConfigurationInfo,
     state: DigitalSimState,
+    tickInfo: {
+        curTick: number;
+        lastStateTick?: number;
+    },
 ) => {
     outputs: Map<ContextPath, Signal>;
     nextState?: Signal[];
@@ -57,6 +64,9 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
     public readonly superState: DigitalSimState | undefined;
     private readonly prePath: ContextPath;
 
+    public ticks: Map<GUID, { lastStateTick?: number }>;
+
+
     public constructor(
         storage: ReadonlyCircuitStorage<M>,
         superState: DigitalSimState | undefined,
@@ -69,6 +79,8 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
         this.signals = new Map();
         this.states = new Map();
         this.icStates = new Map();
+
+        this.ticks = new Map();
     }
 
     public compExistsAndHasPorts(id: GUID) {
@@ -226,7 +238,11 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     private readonly rootState: DigitalSimState;
 
     // Paths to components
+    // TODO: Maybe have a sorted data-structure to hold queues at certain ticks
+    // rather than abuse JS array indexing magic
     private readonly queue: Array<ContextPathSet | undefined>;
+
+    private curTick: number;
 
     public constructor(circuit: CircuitInternal, propagators: PropagatorsMap) {
         super();
@@ -238,6 +254,8 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         this.rootState = new DigitalSimState(circuit.getInfo(), undefined, []);
 
         this.queue = [];
+
+        this.curTick = 0;
 
         circuit.subscribe((ev) => {
             const comps = new Set<GUID>(), updatedInputPorts = new Set<GUID>();
@@ -258,6 +276,12 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                             this.rootState, this.initialICStates.get(comp.kind)!, compId, comp.kind),
                     );
                 }
+
+                // const propagatorInfo = propagators[comp.kind];
+                // if (propagatorInfo?.scheduler) {
+                //     // ...
+                //     this.schedules.set(compId, {});
+                // }
             }
 
             // Keep states in-case of undos, they can be forgotten when history is cleared
@@ -309,6 +333,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                         if (set?.has([objId]))
                             set.delete([objId]);
                     }
+                    this.rootState.ticks.set(objId, { lastStateTick: undefined });
                     // Add to queue
                     comps.add(objId);
                 }
@@ -465,7 +490,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             if (!propagatorInfo)
                 throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
 
-            const { outputs, nextState, nextCycle } = propagatorInfo.propagator(comp, info, state);
+            const { outputs, nextState, nextCycle } = propagatorInfo.propagator(comp, info, state, {
+                curTick:       this.curTick,
+                lastStateTick: state.ticks.get(comp.id)?.lastStateTick,
+            });
 
             for (const [portPath, signal] of outputs) {
                 const [portState, portId] = this.rootState.findState(portPath);
@@ -490,22 +518,25 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             // Update state
             if (nextState) {
                 state.states.set(id, nextState);
+                state.ticks.set(comp.id, { lastStateTick: this.curTick });
                 updatedCompStates.add(path);
             }
 
             // Queue further down the line
-            if (nextCycle && nextCycle >= 0) {
+            if (nextCycle && nextCycle >= 1) {
                 if (nextCycle > DigitalSim.MAX_QUEUE_AHEAD) {
                     console.error(`DigitalSim.step: nextCycle of ${nextCycle} is too large! Comp: ${path.join(".")}`);
                     continue;
                 }
-                const next = this.queue[nextCycle] ?? (this.queue[nextCycle] = new ContextPathSet());
+                const next = this.queue[nextCycle - 1] ?? (this.queue[nextCycle - 1] = new ContextPathSet());
                 next.add(path);
             }
         }
 
         if (next.size > 0)
             this.queue[0] = this.queue[0] ? this.queue[0].union(next) : next;
+
+        this.curTick++;
 
         this.publish({
             type:       "step",
