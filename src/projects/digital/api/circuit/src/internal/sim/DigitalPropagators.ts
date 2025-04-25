@@ -203,6 +203,7 @@ const TFlipFlop = MakeFlipFlopPropagator((signals, state, up) =>
 
 export const DigitalPropagators: PropagatorsMap = {
     "InputPin": {
+        // TODO[] - simplify this at some point
         propagator: (comp, _info, state) => {
             // No propagation when not in an IC
             if (!state.isIC())

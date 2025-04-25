@@ -141,7 +141,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led).toBeOn();
         });
         test("All inputs", () => {
-            const [circuit] = CreateTestCircuit();
+            const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
             const { schema, warnings } = VersionConflictResolver(JSON.stringify(allInputsCircuit));
             expect(warnings).toBeUndefined();
             circuit.loadSchema(schema);
@@ -216,7 +216,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(asciiDisplay16.getProp("segmentCount")).toBe(16);
         });
         test("Oscilloscope", () => {
-            const [circuit] = CreateTestCircuit();
+            const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
             const { schema, warnings } = VersionConflictResolver(JSON.stringify(oscilloscopeCircuit));
             expect(warnings).toBeUndefined();
             circuit.loadSchema(schema);
