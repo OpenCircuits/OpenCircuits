@@ -36,13 +36,14 @@ interface VersionConflictResolution {
 }
 export function VersionConflictResolver(fileContents: string): VersionConflictResolution {
     const oldCircuit = JSON.parse(fileContents);
-    const version = oldCircuit.metadata.version;
-    if (version === "digital/v0") {
+
+    if (!("contents" in oldCircuit)) {
         // TODO: Better validation
         return {
             schema: oldCircuit as DigitalSchema.DigitalCircuit,
         };
     }
+
     const metadata: Schema.CircuitMetadata = {
         id: Schema.uuid(),
         name: oldCircuit?.metadata?.name ?? "",

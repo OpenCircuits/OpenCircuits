@@ -25,10 +25,10 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             dispatch(_SetCircuitLoading(false));
             throw new Error("APIMethods LoadCircuit: data is undefined");
         }
-        const schema = DeserializeCircuit(data);
 
         try {
-            // TODO[] - create new circuit instead?
+            // TODO[model_refactor_api] - create new circuit instead?
+            const schema = DeserializeCircuit(data);
             mainCircuit.name = schema.metadata.name;
             mainCircuit.desc = schema.metadata.desc;
             mainCircuit.loadSchema(schema);

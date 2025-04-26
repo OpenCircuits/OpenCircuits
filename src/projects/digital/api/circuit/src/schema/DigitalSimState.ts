@@ -1,4 +1,5 @@
 import {GUID} from "shared/api/circuit/schema";
+// TODO[model_refactor_api] - define Signal in schema
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 
 
