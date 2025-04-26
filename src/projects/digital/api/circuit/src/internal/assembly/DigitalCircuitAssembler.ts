@@ -8,7 +8,7 @@ import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembl
 import {RenderOptions}    from "shared/api/circuit/internal/assembly/RenderOptions";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 
-import {DigitalSim}           from "../sim/DigitalSim";
+import {ContextPath, DigitalSim}           from "../sim/DigitalSim";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
 import {ANDGateAssembler}     from "./components/gates/ANDGateAssembler";
 import {ORGateAssembler}      from "./components/gates/ORGateAssembler";
@@ -46,35 +46,25 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
         super(circuit, options, assemblers);
 
         sim.subscribe((ev) => {
-            if (ev.type === "queue") {
-                // Only get root comp/ports
-                const comps = [...ev.comps].filter((c) => c.length === 1);
-                const inputPorts = [...ev.updatedInputPorts].filter((p) => p.length === 1);
+            const [comps, inputPorts, outputPorts] =
+                ((ev.type === "queue")
+                ? [ev.comps, ev.updatedInputPorts, new Set<ContextPath>()]
+                : [ev.updatedCompStates, ev.updatedInputPorts, ev.updatedOutputPorts])
+                // Only find root IDs (path length = 1)
+                .map((paths) =>
+                    [...paths].filter((p) => p.length === 1).map((p) => p[0]));
 
-
-                comps.forEach(([compId]) =>
-                    this.dirtyComponents.add(compId, AssemblyReason.StateUpdated));
-                inputPorts.forEach(([portId]) => {
-                    const port = circuit.getPortByID(portId).unwrap();
-                    this.dirtyComponents.add(port.parent, AssemblyReason.SignalsChanged);
-                });
-            }
-            if (ev.type === "step") {
-                // Only get root comp/ports
-                const inputPorts = [...ev.updatedInputPorts].filter((p) => p.length === 1);
-                const outputPorts =[...ev.updatedOutputPorts].filter((p) => p.length === 1);
-
-                outputPorts.forEach(([portId]) => {
-                    const wires = circuit.getWiresForPort(portId).unwrap();
-                    wires.forEach((wireId) =>
-                        this.dirtyWires.add(wireId, AssemblyReason.SignalsChanged));
-                });
-                inputPorts.forEach(([portId]) => {
-                    const port = circuit.getPortByID(portId).unwrap();
-                    this.dirtyComponents.add(port.parent, AssemblyReason.SignalsChanged);
-                });
-            }
-
+            comps.forEach((compId) =>
+                this.dirtyComponents.add(compId, AssemblyReason.StateUpdated));
+            outputPorts.forEach((portId) => {
+                const wires = circuit.getWiresForPort(portId).unwrap();
+                wires.forEach((wireId) =>
+                    this.dirtyWires.add(wireId, AssemblyReason.SignalsChanged));
+            });
+            inputPorts.forEach((portId) => {
+                const port = circuit.getPortByID(portId).unwrap();
+                this.dirtyComponents.add(port.parent, AssemblyReason.SignalsChanged);
+            });
             this.publish({ type: "onchange" });
         })
     }

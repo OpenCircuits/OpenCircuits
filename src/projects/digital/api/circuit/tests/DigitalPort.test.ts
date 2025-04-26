@@ -1,13 +1,13 @@
 import "shared/tests/helpers/Extensions";
 
 import {V}             from "Vector";
-import {CreateCircuit} from "digital/api/circuit/public";
+import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 
 describe("DigitalPort", () => {
     test("Connected Ports", () => {
         // Create and place new component
-        const [circuit, _] = CreateCircuit();
+        const [circuit, _] = CreateTestCircuit();
 
         const a1 = circuit.placeComponentAt("ANDGate", V(0, 0));
         const a2 = circuit.placeComponentAt("ANDGate", V(10, 10));
@@ -28,7 +28,7 @@ describe("DigitalPort", () => {
 
     describe("Connections", () => {
         test("Use input port twice should Error", () => {
-            const [circuit, _] = CreateCircuit();
+            const [circuit, _] = CreateTestCircuit();
 
             const i1 = circuit.placeComponentAt("Switch", V(0,  5));
             const i2 = circuit.placeComponentAt("Switch", V(0, -5));
@@ -45,7 +45,7 @@ describe("DigitalPort", () => {
             expect(o1.inputs[0].connections).toHaveLength(1);
         });
         test("Output port -> Output port should Error", () => {
-            const [circuit, _] = CreateCircuit();
+            const [circuit, _] = CreateTestCircuit();
 
             const i1 = circuit.placeComponentAt("Switch", V(0,  5));
             const i2 = circuit.placeComponentAt("Switch", V(0, -5));
@@ -56,7 +56,7 @@ describe("DigitalPort", () => {
             expect(i2.outputs[0].connections).toHaveLength(0);
         });
         test("Input port -> Input port should Error", () => {
-            const [circuit, _] = CreateCircuit();
+            const [circuit, _] = CreateTestCircuit();
 
             const o1 = circuit.placeComponentAt("LED", V(0,  5));
             const o2 = circuit.placeComponentAt("LED", V(0, -5));
@@ -69,7 +69,7 @@ describe("DigitalPort", () => {
     });
 
     test("isAvailable", () => {
-        const [circuit] = CreateCircuit();
+        const [circuit] = CreateTestCircuit();
         const a1 = circuit.placeComponentAt("ANDGate", V(0, 0));
         const a2 = circuit.placeComponentAt("ANDGate", V(10, 10));
 
@@ -85,7 +85,7 @@ describe("DigitalPort", () => {
     });
 
     test("canConnectTo", () => {
-        const [circuit] = CreateCircuit();
+        const [circuit] = CreateTestCircuit();
         const a1 = circuit.placeComponentAt("ANDGate", V(0, 0));
         const a2 = circuit.placeComponentAt("ANDGate", V(10, 10));
 

@@ -1,16 +1,16 @@
 import "shared/tests/helpers/Extensions";
 
-import {CreateCircuit} from "digital/api/circuit/public";
-
 import {V} from "Vector";
 import {Rect} from "math/Rect";
+
+import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 
 describe("IntegratedCircuit", () => {
     test("Basic IC", () => {
-        const [circuit, _] = CreateCircuit();
+        const [circuit, _] = CreateTestCircuit();
 
-        const [icCircuit] = CreateCircuit();
+        const [icCircuit] = CreateTestCircuit();
 
         const i1 = icCircuit.placeComponentAt("Switch", V(-5, -5));
         const i2 = icCircuit.placeComponentAt("Switch", V(-5, +5));
@@ -54,9 +54,9 @@ describe("IntegratedCircuit", () => {
     });
 
     test("Nested IC", () => {
-        const [circuit, _] = CreateCircuit();
+        const [circuit, _] = CreateTestCircuit();
 
-        const [innerIcCircuit] = CreateCircuit();
+        const [innerIcCircuit] = CreateTestCircuit();
 
         const i1Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, -5));
         const i2Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, +5));
@@ -83,7 +83,7 @@ describe("IntegratedCircuit", () => {
         expect(circuit.getICs()).toHaveLength(1);
         expect(circuit.getICs()[0].id).toEqual(innerIc.id);
 
-        const [outerIcCircuit] = CreateCircuit();
+        const [outerIcCircuit] = CreateTestCircuit();
 
         expect(outerIcCircuit.getICs()).toHaveLength(0);
         outerIcCircuit.importICs(circuit.getICs());

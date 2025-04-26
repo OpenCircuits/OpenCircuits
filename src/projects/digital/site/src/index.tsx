@@ -59,6 +59,9 @@ import {LoadCircuit} from "shared/site/utils/CircuitHelpers";
 import {Request} from "shared/site/utils/Request";
 import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 import {VersionConflictResolver} from "./utils/DigitalVersionConflictResolver";
+import {CreateCircuit} from "digital/api/circuit/public";
+import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
+import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 
 
 async function Init(): Promise<void> {
@@ -132,6 +135,7 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
+            const [mainCircuit, mainCircuitState] = CreateCircuit();
             const mainDesigner = CreateDesigner(
                 {
                     defaultTool: new DefaultTool(
@@ -150,7 +154,11 @@ async function Init(): Promise<void> {
                     ],
                 },
                 [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
+                DRAG_TIME,
+                [mainCircuit, mainCircuitState],
             );
+            // Setup propagator
+            mainCircuitState.simRunner = new TimedDigitalSimRunner(mainCircuitState.sim, 1);
 
             mainDesigner.circuit.subscribe((_ev) => {
                 store.dispatch(SetCircuitSaved(false));

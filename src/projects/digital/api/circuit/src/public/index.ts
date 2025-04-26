@@ -17,7 +17,6 @@ import {DigitalPortImpl}        from "./impl/DigitalPort";
 import {DigitalCircuitState}    from "./impl/DigitalCircuitState";
 import {DigitalComponentInfoImpl} from "./impl/DigitalComponentInfo";
 import {DigitalPropagators} from "../internal/sim/DigitalPropagators";
-import {DigitalSimRunner} from "../internal/sim/DigitalSimRunner";
 
 
 export * from "./DigitalCircuit";
@@ -35,7 +34,6 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
 
     const renderOptions = new DefaultRenderOptions();
     const sim = new DigitalSim(internal, DigitalPropagators);
-    const simRunner = new DigitalSimRunner(sim);
     const assembler = MakeDigitalCircuitAssembler(internal, sim, renderOptions);
 
     const cache = {
@@ -47,7 +45,7 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     }
 
     const state: DigitalCircuitState = {
-        internal, assembler, sim, simRunner, renderOptions,
+        internal, assembler, sim, renderOptions,
 
         constructComponent(id) {
             return cache.comps.getOrInsert(id, (id) => new DigitalComponentImpl(state, id));

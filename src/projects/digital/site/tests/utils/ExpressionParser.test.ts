@@ -11,6 +11,7 @@ import {FORMATS}             from "digital/site/utils/ExpressionParser/Constants
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
+import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 
 /**
@@ -123,7 +124,8 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
         test("Expression To Circuit Generation didn't error", () => {
             expect(result).toBeOk();
         });
-        const { circuit, state: { sim } } = result.unwrap();
+        const { circuit, state } = result.unwrap();
+        state.simRunner = new InstantSimRunner(state.sim);
 
         const inputComponents: Array<[string, DigitalComponent]> = [];
         for (let i = 0; i < numInputs; i++) {
@@ -141,9 +143,9 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
         }
 
         if (verbose === false || (verbose === undefined && numInputs > 3))
-            testInputsSimple(inputComponents, outputComp, expected, sim);
+            testInputsSimple(inputComponents, outputComp, expected, state.sim);
         else
-            testInputs(inputComponents, outputComp, expected, sim);
+            testInputs(inputComponents, outputComp, expected, state.sim);
     });
 }
 
@@ -412,9 +414,10 @@ describe("Expression Parser", () => {
             ]);
 
             const result = ExpressionToCircuit(inputMap, "a", o);
-
             expect(result).toBeOk();
-            const { circuit } = result.unwrap();
+            const { circuit, state } = result.unwrap();
+            state.simRunner = new InstantSimRunner(state.sim);
+
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
             expect(output!.inputs[0].signal).toBe(Signal.On);
@@ -427,9 +430,9 @@ describe("Expression Parser", () => {
             ]);
 
             const result = ExpressionToCircuit(inputMap, "a", o);
+            const { circuit, state } = result.unwrap();
+            state.simRunner = new InstantSimRunner(state.sim);
 
-            expect(result).toBeOk();
-            const { circuit } = result.unwrap();
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
             expect(output!.inputs[0].signal).toBe(Signal.Off);
@@ -442,7 +445,8 @@ describe("Expression Parser", () => {
             test("Result is ok", () => {
                 expect(result).toBeOk();
             });
-            const { circuit, state: { sim } } = result.unwrap();
+            const { circuit, state } = result.unwrap();
+            state.simRunner = new InstantSimRunner(state.sim);
 
             const inputComp = circuit.getComponents().find((o) => (o.name === "longName"));
             test("Input component found", () => {
@@ -454,7 +458,7 @@ describe("Expression Parser", () => {
                 expect(outputComp).toBeDefined();
             });
 
-            testInputs(inputComponents, outputComp!, [false, true], sim);
+            testInputs(inputComponents, outputComp!, [false, true], state.sim);
         });
     });
 

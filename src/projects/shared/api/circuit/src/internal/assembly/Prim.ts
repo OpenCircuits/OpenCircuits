@@ -49,6 +49,7 @@ export interface PolygonPrim {
     kind: "Polygon";
 
     points: Vector[];
+    closed?: boolean;  // If should close the polygon or not
 
     style: Style;
     ignoreHit?: boolean;

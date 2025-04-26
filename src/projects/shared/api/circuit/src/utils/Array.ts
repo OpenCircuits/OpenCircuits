@@ -8,6 +8,7 @@ declare global {
         with(index: number, value: T): T[];
         toSorted(compareFn?: ((a: T, b: T) => number) | undefined): T[];
         zip<U>(other: U[]): Array<[T, U]>;
+        chunk(chunkSize: number): T[][];
     }
 
     interface Set<T> {
@@ -35,6 +36,12 @@ Array.prototype.toSorted = function<T>(this: T[], compareFn?: ((a: T, b: T) => n
 }
 Array.prototype.zip = function<T, U>(this: T[], other: U[]): Array<[T, U]> {
     return this.map((t, i) => [t, other[i]]);
+}
+
+Array.prototype.chunk = function<T>(this: T[], chunkSize: number): T[][] {
+    return new Array(Math.ceil(this.length / chunkSize))
+        .fill([])
+        .map((_, i) => this.slice(i * chunkSize, i * chunkSize + chunkSize));
 }
 
 Set.prototype.intersection = function<T, U>(this: Set<T>, other: Set<U>): Set<T & U> {

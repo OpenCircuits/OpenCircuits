@@ -9,23 +9,39 @@ import {Schema} from "../../schema";
 import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
+export interface PropagatorInfo {
+    propagator: PropagatorFunc;
+    // Set of keys corresponding to props on the component
+    // that the output state of the component is dependent on
+    // (i.e. `inputNum` for ConstantNumber)
+    stateProps?: Set<string>;
+}
+export interface TickInfo {
+
+}
 export type PropagatorFunc = (
     comp: Schema.Core.Component,
     info: DigitalComponentConfigurationInfo,
     state: DigitalSimState,
+    tickInfo: {
+        curTick: number;
+        lastStateTick?: number;
+    },
 ) => {
     outputs: Map<ContextPath, Signal>;
     nextState?: Signal[];
+    nextCycle?: number;
 }
 
 // Kind : Propagator
-export type PropagatorsMap = Record<string, PropagatorFunc>;
+export type PropagatorsMap = Record<string, PropagatorInfo>;
 
 
 type DigitalSimEvent = {
     type: "step";
     updatedInputPorts: Set<ContextPath>;
     updatedOutputPorts: Set<ContextPath>;
+    updatedCompStates: Set<ContextPath>;
     queueEmpty: boolean;
 } | {
     type: "queue";
@@ -48,6 +64,9 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
     public readonly superState: DigitalSimState | undefined;
     private readonly prePath: ContextPath;
 
+    public ticks: Map<GUID, { lastStateTick?: number }>;
+
+
     public constructor(
         storage: ReadonlyCircuitStorage<M>,
         superState: DigitalSimState | undefined,
@@ -60,6 +79,8 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
         this.signals = new Map();
         this.states = new Map();
         this.icStates = new Map();
+
+        this.ticks = new Map();
     }
 
     public compExistsAndHasPorts(id: GUID) {
@@ -110,9 +131,40 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
 
     }
 
+    // TODO[] - add these as CircuitStorage utilities somehow
+    public getInputPorts(compId: GUID): GUID[] {
+        return this.getComponentAndInfoByID(compId)
+            .andThen(([_comp, info]) =>
+                this.storage.getPortsByGroup(compId)
+                    .map((ports) =>
+                        MapObj(ports, ([group, ports]) => info.inputPortGroups.includes(group) ? ports : [])))
+            .map((ports) => Object.values(ports).flat())
+            .unwrap();
+    }
+
+    public getOutputPorts(compId: GUID): GUID[] {
+        return this.getComponentAndInfoByID(compId)
+            .andThen(([_comp, info]) =>
+                this.storage.getPortsByGroup(compId)
+                    .map((ports) =>
+                        MapObj(ports, ([group, ports]) => info.outputPortGroups.includes(group) ? ports : [])))
+            .map((ports) => Object.values(ports).flat())
+            .unwrap();
+    }
+
     public isIC(): this is (DigitalSimState &
                            { storage: ReadonlyCircuitStorage<Schema.Core.IntegratedCircuitMetadata> }) {
         return "pins" in this.storage.metadata;
+    }
+
+    public getPinCompFromPort(portId: GUID): ContextPath {
+        const port = this.storage.getPortByID(portId).unwrap();
+        const icState = this.icStates.get(port.parent);
+        if (!icState)
+            throw new Error(`DigitalSim.getPinCompFromPort: Failed to find IC ${port.parent} from port ${portId}`);
+        const pin = icState.storage.metadata.pins.filter((pin) => (pin.group === port.group))[port.index];
+        const icPort = icState.storage.getPortByID(pin.id).unwrap();
+        return icState.getPath(icPort.parent);
     }
 
     public getPath(id: GUID): ContextPath {
@@ -165,9 +217,48 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
 // [GUID_0]: Root component ID of GUID_0
 // [GUID_1, GUID_0]: Component of ID GUID_0 in IC Instance 'GUID_1' in the root circuit
 // [GUID_2, GUID_1, GUID_0]: Component of ID GUID_0 in IC Instance 'GUID_1' in IC Instance 'GUID_2' in root circuit
-type ContextPath = GUID[];
+export type ContextPath = GUID[];
+
+class ContextPathSet {
+    private set: Set<string>;
+
+    public constructor() {
+        this.set = new Set();
+    }
+
+    public has(value: ContextPath): boolean {
+        return this.set.has(value.join("."));
+    }
+
+    public add(value: ContextPath): ContextPathSet {
+        this.set.add(value.join("."));
+        return this;
+    }
+
+    public delete(value: ContextPath): boolean {
+        return this.set.delete(value.join("."));
+    }
+
+    public union(other: ContextPathSet): ContextPathSet {
+        const newSet = new ContextPathSet();
+        newSet.set = this.set.union(other.set);
+        return newSet;
+    }
+
+    public get size() {
+        return this.set.size;
+    }
+
+    public *[Symbol.iterator]() {
+        for (const item of this.set) {
+            yield item.split(".");
+        }
+    }
+}
 
 export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
+    public static MAX_QUEUE_AHEAD = 10_000;
+
     private readonly circuit: CircuitInternal;
     private readonly propagators: PropagatorsMap;
 
@@ -177,7 +268,12 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     private readonly rootState: DigitalSimState;
 
-    private readonly next: Map<ContextPath, Set<GUID>>; // ContextPath : InputPortIDs
+    // Paths to components
+    // TODO: Maybe have a sorted data-structure to hold queues at certain ticks
+    // rather than abuse JS array indexing magic
+    private readonly queue: Array<ContextPathSet | undefined>;
+
+    private curTick: number;
 
     public constructor(circuit: CircuitInternal, propagators: PropagatorsMap) {
         super();
@@ -188,13 +284,15 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         this.initialICStates = new Map();
         this.rootState = new DigitalSimState(circuit.getInfo(), undefined, []);
 
-        this.next = new Map();
+        this.queue = [];
+
+        this.curTick = 0;
 
         circuit.subscribe((ev) => {
-            const comps = new Set<GUID>(), updatedInputPorts = new Set<GUID>();
+            const comps = new Set<ContextPath>(), updatedInputPorts = new Set<ContextPath>();
 
             for (const compId of ev.diff.addedComponents) {
-                comps.add(compId);
+                comps.add([compId]);
 
                 // Initialize ICs and sub-ICs if the added component is an IC instance
                 const comp = this.circuit.getCompByID(compId).unwrap();
@@ -203,11 +301,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                         throw new Error("DigitalSim.circuit.subscribe: Failed to find initial state " +
                                         `for new IC instance ${comp.id} (IC: ${comp.kind})`);
                     }
-                    this.rootState.icStates.set(
-                        compId,
-                        this.initializeICInstance(
-                            this.rootState, this.initialICStates.get(comp.kind)!, compId, comp.kind),
-                    );
+                    const icState = this.initializeICInstance(
+                        this.rootState, this.initialICStates.get(comp.kind)!, compId, comp.kind);
+                    this.rootState.icStates.set(compId, icState);
                 }
             }
 
@@ -218,8 +314,19 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             for (const [compId] of [...ev.diff.addedPorts, ...ev.diff.removedPorts]) {
                 // Removal of ports + component *can* happen at once (batching)
                 // So don't add the comp in that case.
-                if (!ev.diff.removedComponents.has(compId))
-                    comps.add(compId);
+                if (ev.diff.removedComponents.has(compId))
+                    continue;
+
+                comps.add([compId]);
+
+                // Need to sync Output ports
+                const comp = this.circuit.getCompByID(compId).unwrap();
+                if (this.circuit.isIC(comp)) {
+                    // Queue all OutputPin components in the IC instance, to sync with Output ports
+                    this.rootState.getOutputPorts(compId)
+                        .map((p) => this.rootState.getPinCompFromPort(p))
+                        .forEach((comp) => comps.add(comp));
+                }
             }
 
             for (const wireId of ev.diff.addedWires) {
@@ -234,13 +341,35 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 if (this.rootState.isOutputPort(p1.id)) {
                     this.rootState.signals.set(p2.id, this.getSignal(p1.id));
 
-                    updatedInputPorts.add(p2.id);
-                    comps.add(p2.parent);
+                    updatedInputPorts.add([p2.id]);
+                    comps.add([p2.parent]);
                 } else {
                     this.rootState.signals.set(p1.id, this.getSignal(p2.id));
 
-                    updatedInputPorts.add(p1.id);
-                    comps.add(p1.parent);
+                    updatedInputPorts.add([p1.id]);
+                    comps.add([p1.parent]);
+                }
+            }
+
+            // Check if a component prop has changed that requires re-propagating
+            for (const [objId, props] of ev.diff.propsChanged) {
+                if (circuit.hasComp(objId)) {
+                    const comp = circuit.getCompByID(objId);
+                    if (!comp.ok)
+                        continue;
+                    const propagatorInfo = propagators[comp.value.kind];
+                    if (!propagatorInfo || !propagatorInfo.stateProps)
+                        continue;
+                    if (props.intersection(propagatorInfo.stateProps).size === 0)
+                        continue;
+                    // Clear any forward queues (used i.e. for clock delay changes)
+                    for (const set of this.queue) {
+                        if (set?.has([objId]))
+                            set.delete([objId]);
+                    }
+                    this.rootState.ticks.set(objId, { lastStateTick: undefined });
+                    // Add to queue
+                    comps.add([objId]);
                 }
             }
 
@@ -254,8 +383,8 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                         return;
                     this.rootState.signals.set(port.id, Signal.Off);
 
-                    updatedInputPorts.add(port.id);
-                    comps.add(port.parent);
+                    updatedInputPorts.add([port.id]);
+                    comps.add([port.parent]);
                 }
             };
             for (const [_wireId, [p1Id, p2Id]] of ev.diff.removedWiresPorts) {
@@ -264,14 +393,12 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 updateInputPort(p2Id);
             }
 
-            comps.forEach((id) =>
-                this.queueCompWithAllPortsChanged(id));
+            comps.forEach((path) =>
+                this.queueComp(path));
             this.publish({
                 type: "queue",
 
-                // Make them root context paths
-                comps:             new Set([...comps].map((c) => [c])),
-                updatedInputPorts: new Set([...updatedInputPorts].map((p) => [p])),
+                comps, updatedInputPorts,
             });
         })
     }
@@ -296,18 +423,24 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         this.initialICStates.set(id, icState);
     }
 
-    private queueComp(path: ContextPath, ports: GUID[]) {
-        const prevPorts = this.next.get(path) ?? new Set();
-        this.next.set(path, new Set([...prevPorts, ...ports]))
-    }
-    private queueCompWithAllPortsChanged(id: GUID) {
-        // Newly added components should update ALL their input ports
-        const [_comp, info] = this.rootState.getComponentAndInfoByID(id).unwrap();
-        const ports = Object.values(
-            MapObj(this.circuit.getPortsByGroup(id).unwrap(), ([group, ports]) =>
-                (info.inputPortGroups.includes(group)) ? ports : [])
-        ).flat();
-        this.queueComp([id], ports);
+    private queueComp(path: ContextPath, next?: ContextPathSet, ports?: GUID[]) {
+        const [state, id] = this.rootState.findState(path);
+
+        if (!state.compExistsAndHasPorts(id))  // Ignore deleted objects
+            return;
+
+        next = next ?? (this.queue[0] ?? (this.queue[0] = new ContextPathSet()));
+
+        const [comp, _info] = state.getComponentAndInfoByID(id).unwrap();
+        if (this.circuit.isIC(comp)) {
+            // Get all ports if there aren't any given and queue the
+            // internal components associated with the changed input ports
+            (ports ?? state.getInputPorts(comp.id))
+                .map((p) => state.getPinCompFromPort(p))
+                .forEach((comp) => next.add(comp));
+        } else {
+            next.add(path);
+        }
     }
 
     private initializeICInstance(
@@ -345,7 +478,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     public setState(id: GUID, state: Signal[]): void {
         this.rootState.states.set(id, state);
 
-        this.queueCompWithAllPortsChanged(id);
+        this.queueComp([id]);
 
         this.publish({
             type:              "queue",
@@ -355,41 +488,29 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     }
 
     public step(): void {
-        const next = [...this.next];
-        this.next.clear();
+        const cur = this.queue.shift() ?? new ContextPathSet();
 
-        const updatedInputPorts = new Set<ContextPath>(), updatedOutputPorts = new Set<ContextPath>();
+        const next = new ContextPathSet();
 
-        for (const [path, changedInputPorts] of next) {
+        const updatedInputPorts = new Set<ContextPath>(),
+              updatedOutputPorts = new Set<ContextPath>(),
+              updatedCompStates = new Set<ContextPath>();
+
+        for (const path of cur) {
             const [state, id] = this.rootState.findState(path);
 
             if (!state.compExistsAndHasPorts(id))  // Ignore deleted objects
                 continue;
 
             const [comp, info] = state.getComponentAndInfoByID(id).unwrap();
-            if (this.circuit.isIC(comp)) {
-                // Queue the components associated with the changed input ports
-                for (const inputPortId of changedInputPorts) {
-                    // Get internal InputPin component and queue it
-                    const subState = state.icStates.get(comp.id);
-                    if (!subState)
-                        throw new Error(`DigitalSim.step: Failed to find sub-state for IC instance: ${comp.id}]`);
-                    const inputPort = state.storage.getPortByID(inputPortId).unwrap();
-
-                    const pin = subState.storage.metadata.pins
-                        .filter((pin) => (pin.group === inputPort.group))[inputPort.index];
-                    const outputPort = subState.storage.getPortByID(pin.id).unwrap();
-
-                    this.queueComp(subState.getPath(outputPort.parent), []);
-                }
-                continue;
-            }
-
-            const propagator = this.propagators[comp.kind];
-            if (!propagator)
+            const propagatorInfo = this.propagators[comp.kind];
+            if (!propagatorInfo)
                 throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
 
-            const { outputs, nextState } = propagator(comp, info, state);
+            const { outputs, nextState, nextCycle } = propagatorInfo.propagator(comp, info, state, {
+                curTick:       this.curTick,
+                lastStateTick: state.ticks.get(comp.id)?.lastStateTick,
+            });
 
             for (const [portPath, signal] of outputs) {
                 const [portState, portId] = this.rootState.findState(portPath);
@@ -407,16 +528,38 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                     portState.signals.set(port.id, signal);
                     updatedInputPorts.add(portState.getPath(port.id));
 
-                    this.queueComp(portState.getPath(port.parent), [port.id]);
+                    this.queueComp(portState.getPath(port.parent), next, [port.id]);
                 });
             }
 
             // Update state
-            if (nextState)
+            if (nextState) {
                 state.states.set(id, nextState);
+                state.ticks.set(comp.id, { lastStateTick: this.curTick });
+                updatedCompStates.add(path);
+            }
+
+            // Queue further down the line
+            if (nextCycle && nextCycle >= 1) {
+                if (nextCycle > DigitalSim.MAX_QUEUE_AHEAD) {
+                    console.error(`DigitalSim.step: nextCycle of ${nextCycle} is too large! Comp: ${path.join(".")}`);
+                    continue;
+                }
+                const next = this.queue[nextCycle - 1] ?? (this.queue[nextCycle - 1] = new ContextPathSet());
+                next.add(path);
+            }
         }
 
-        this.publish({ type: "step", updatedInputPorts, updatedOutputPorts, queueEmpty: (this.next.size === 0) });
+        if (next.size > 0)
+            this.queue[0] = this.queue[0] ? this.queue[0].union(next) : next;
+
+        this.curTick++;
+
+        this.publish({
+            type:       "step",
+            queueEmpty: this.queue.length === 0,
+            updatedInputPorts, updatedOutputPorts, updatedCompStates,
+        });
     }
 
     /**
