@@ -7,7 +7,7 @@ import {ItemNav, type ItemNavItem, type ItemNavSection} from "shared/site/contai
 
 import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
 
-import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
+import {useCurDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
 import itemNavConfig from "digital/site/data/itemNavConfig.json";
 
@@ -25,7 +25,7 @@ const SmartPlaceOrder = [
 // type ICID = `ic/${number}`;
 
 export const DigitalItemNav = () => {
-    const designer = useMainDigitalDesigner();
+    const designer = useCurDigitalDesigner();
     const circuit = designer.circuit;
     const [{ ics }, setState] = useState<{ ics: ItemNavItem[] }>({ ics: [] });
 
@@ -43,18 +43,18 @@ export const DigitalItemNav = () => {
     // Subscribe to CircuitDesigner
     //  and update the ItemNav w/
     //  ICs whenever they're added/removed
-    useEffect(() => designer.circuit.subscribe((ev) => {
+    useEffect(() => circuit.subscribe((ev) => {
         if (ev.diff.addedICs.size === 0 && ev.diff.removedICs.size === 0)
             return;
         setState({
-            ics: designer.circuit.getICs().map((d) => ({
+            ics: circuit.getICs().map((d) => ({
                 kind:      d.id,
                 label:     d.name,
                 icon:      "multiplexer.svg",
                 removable: true,
             })),
         });
-    }));
+    }), [circuit]);
 
     // Generate ItemNavConfig with ICs included
     const config = useMemo(() => ({
@@ -124,13 +124,13 @@ export const DigitalItemNav = () => {
 
     const onDelete = useCallback((sec: ItemNavSection, ic: ItemNavItem) => {
         const id = ic.kind;
-        if (designer.circuit.getComponents().some(({ kind }) => kind === id)) {
+        if (circuit.getComponents().some(({ kind }) => kind === id)) {
             window.alert("Cannot delete this IC while instances remain in the circuit.");
             return false;
         }
-        designer.circuit.deleteIC(id);
+        circuit.deleteIC(id);
         return true;
-    }, [designer, history]);
+    }, [circuit, history]);
 
     // Append regular ItemNav items with ICs
     return (

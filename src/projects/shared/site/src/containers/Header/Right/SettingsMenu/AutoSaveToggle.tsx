@@ -4,7 +4,7 @@ import {SAVE_TIME} from "shared/site/utils/Constants";
 
 import {useAPIMethods} from "shared/site/utils/ApiMethods";
 
-import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {SetAutoSave} from "shared/site/state/UserInfo";
@@ -13,7 +13,7 @@ import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 
 export const AutoSaveToggle = () => {
-    const designer = useMainDesigner();
+    const designer = useCurDesigner();
     const { SaveCircuitRemote } = useAPIMethods(designer.circuit);
     const { isLoggedIn, isSaved, autoSave } = useSharedSelector(
         (state) => ({ ...state.user, isSaved: state.circuit.isSaved })

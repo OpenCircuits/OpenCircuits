@@ -5,7 +5,7 @@ import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 import {useAPIMethods} from "shared/site/utils/ApiMethods";
 import {Request}       from "shared/site/utils/Request";
 
-import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {ToggleSideNav} from "shared/site/state/SideNav";
@@ -30,7 +30,7 @@ type Props = {
     exampleCircuits: Schema.CircuitMetadata[];
 }
 export const SideNav = ({ exampleCircuits }: Props) => {
-    const designer = useMainDesigner();
+    const designer = useCurDesigner();
 
     const { auth, circuits, isOpen, loading, isSaved, loadingCircuits } = useSharedSelector(
         (state) => ({

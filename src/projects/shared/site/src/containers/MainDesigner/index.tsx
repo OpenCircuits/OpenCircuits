@@ -1,4 +1,4 @@
-import {useLayoutEffect, useRef} from "react";
+import {useEffect, useLayoutEffect, useRef} from "react";
 
 import {HEADER_HEIGHT} from "shared/site/utils/Constants";
 
@@ -6,13 +6,14 @@ import {V, Vector} from "Vector";
 
 import {Circuit} from "shared/api/circuit/public";
 
-import {useMainDesigner}    from "shared/site/utils/hooks/useDesigner";
-import {useSharedSelector} from "shared/site/utils/hooks/useShared";
-import {useWindowSize}     from "shared/site/utils/hooks/useWindowSize";
+import {useCurDesigner} from "shared/site/utils/hooks/useDesigner";
+import {useWindowSize}  from "shared/site/utils/hooks/useWindowSize";
 
 import {useDrop} from "shared/site/components/DragDroppable/useDrop";
 
 import "./index.scss";
+import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
+import {useSharedDispatch} from "shared/site/utils/hooks/useShared";
 
 
 function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPos: Vector) {
@@ -32,9 +33,15 @@ type Props = {
     otherPlace?: (pos: Vector, itemKind: string, num: number, ...otherData: unknown[]) => boolean;
 }
 export const MainDesigner = ({ otherPlace }: Props) => {
-    const designer = useMainDesigner();
+    const designer = useCurDesigner();
     const { w, h } = useWindowSize();
     const canvas = useRef<HTMLCanvasElement>(null);
+
+    // When the circuit changes at all, set the circuit as unsaved
+    const dispatch = useSharedDispatch();
+    useEffect(() => designer.circuit.subscribe((_ev) =>
+        dispatch(SetCircuitSaved(false))),
+    [designer]);
 
     useLayoutEffect(() => {
         if (!canvas.current)
@@ -68,7 +75,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
         //  otherwise default to CreateNComponents
         if (!otherPlace?.(pos, itemKind, amt, otherData))
             PlaceNComponents(designer.circuit, itemKind, amt, pos);
-    });
+    }, [designer]);
 
     return (
         <canvas

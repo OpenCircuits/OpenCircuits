@@ -5,13 +5,14 @@ import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useS
 
 import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
 
+import {useCurDesigner}   from "shared/site/utils/hooks/useDesigner";
+import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
+
 import {Dropdown} from "./Dropdown";
-import {useMainDesigner} from "shared/site/utils/hooks/useDesigner";
-import {SerializeCircuit} from "shared/site/utils/CircuitIOMethods";
 
 
 export const DownloadMenuDropdown = () => {
-    const mainDesigner = useMainDesigner();
+    const mainDesigner = useCurDesigner();
     const { curMenu, circuitName } = useSharedSelector(
         (state) => ({ curMenu: state.header.curMenu, circuitName: state.circuit.name })
     );
@@ -19,7 +20,7 @@ export const DownloadMenuDropdown = () => {
 
     const onDownloadClick = () => {
         // Convert to URL data
-        const file = SerializeCircuit(mainDesigner.circuit);
+        const file = CircuitHelpers.SerializeCircuit(mainDesigner.circuit.toSchema());
         const url = URL.createObjectURL(file);
 
         SaveFile(url, circuitName, "circuit");

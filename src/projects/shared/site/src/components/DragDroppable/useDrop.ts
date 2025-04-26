@@ -9,6 +9,7 @@ import {DragDropHandlers} from "./DragDropHandlers";
 export const useDrop = (
     ref: React.RefObject<HTMLElement | null>,
     onDrop: (pos: Vector, ...data: unknown[]) => void,
+    deps: React.DependencyList = [],
 ) => {
     useEffect(() => {
         if (!ref.current)
@@ -24,5 +25,5 @@ export const useDrop = (
             current.removeEventListener("dragover", l1);
             DragDropHandlers.remove(current);
         };
-    }, [ref, onDrop]);
+    }, [ref, onDrop, ...deps]);
 }

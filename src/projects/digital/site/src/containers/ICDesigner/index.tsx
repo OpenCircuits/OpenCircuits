@@ -12,7 +12,6 @@ import {RedoHandler}        from "shared/api/circuitdesigner/tools/handlers/Redo
 import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
-import {useMainDesigner}       from "shared/site/utils/hooks/useDesigner";
 import {useWindowSize}         from "shared/site/utils/hooks/useWindowSize";
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 import {TextModuleInputField}  from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
@@ -25,6 +24,7 @@ import {ICPortTool}     from "digital/api/circuitdesigner/tools/ICPortTool";
 
 import {IC_DESIGNER_VH, IC_DESIGNER_VW}         from "digital/site/utils/Constants";
 import {useDigitalDispatch, useDigitalSelector} from "digital/site/utils/hooks/useDigital";
+import {useCurDigitalDesigner}                  from "digital/site/utils/hooks/useDigitalDesigner";
 import {CloseICDesigner}                        from "digital/site/state/ICDesigner";
 import {CalculateICDisplay}                     from "digital/site/utils/CircuitUtils";
 
@@ -34,7 +34,7 @@ import "./index.scss";
 interface Props {
 }
 export const ICDesigner = ({ }: Props) => {
-    const mainDesigner = useMainDesigner() as DigitalCircuitDesigner;
+    const mainDesigner = useCurDigitalDesigner();
     const [icViewDesigner, setICViewDesigner] = useState<DigitalCircuitDesigner | undefined>();
 
     const { isActive, objIds } = useDigitalSelector(

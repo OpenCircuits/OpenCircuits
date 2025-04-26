@@ -48,7 +48,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
             );
             return true;
         });
-    }), [circuit, setNumSelections, setClickThrough]);
+    }), [circuit, camera, setNumSelections, setClickThrough]);
 
     useEffect(() => camera.subscribe(() =>
         setPos(camera.toScreenPos(circuit.selections.midpoint))
@@ -63,7 +63,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     useEvent("mouseup", (_) => {
         setIsDragging(false); // Show when stopped dragging
         setPos(camera.toScreenPos(circuit.selections.midpoint)); // And recalculate position
-    }, designer.viewport.canvasInfo?.input, [setPos, setIsDragging]);
+    }, designer.viewport.canvasInfo?.input, [circuit, camera, setPos, setIsDragging]);
 
     const popup = useRef<HTMLDivElement>(null);
 

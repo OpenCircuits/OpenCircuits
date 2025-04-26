@@ -10,7 +10,7 @@ import {LoadUserCircuits} from "shared/site/state/thunks/User";
 
 import {GenerateThumbnail} from "./GenerateThumbnail";
 
-import {DeserializeCircuit} from "./CircuitIOMethods";
+import {CircuitHelpers} from "./CircuitHelpers";
 
 
 export const useAPIMethods = (mainCircuit: Circuit) => {
@@ -28,7 +28,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         try {
             // TODO[model_refactor_api] - create new circuit instead?
-            const schema = DeserializeCircuit(data);
+            const schema = CircuitHelpers.DeserializeCircuit(data);
             mainCircuit.name = schema.metadata.name;
             mainCircuit.desc = schema.metadata.desc;
             mainCircuit.loadSchema(schema);

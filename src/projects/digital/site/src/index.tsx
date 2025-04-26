@@ -1,13 +1,13 @@
-import React, {useLayoutEffect, useRef} from "react";
-import {createRoot}                     from "react-dom/client";
-import ReactGA                          from "react-ga";
-import {Provider}                       from "react-redux";
-import {configureStore}                 from "@reduxjs/toolkit";
+import React            from "react";
+import {createRoot}     from "react-dom/client";
+import ReactGA          from "react-ga";
+import {Provider}       from "react-redux";
+import {configureStore} from "@reduxjs/toolkit";
 
 import {GetCookie}     from "shared/site/utils/Cookies";
 import {LoadingScreen} from "shared/site/utils/LoadingScreen";
 
-import {storeDesigner} from "shared/site/utils/hooks/useDesigner";
+import {setCurDesigner} from "shared/site/utils/hooks/useDesigner";
 
 import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
@@ -52,17 +52,15 @@ import {reducers} from "./state/reducers";
 import {App} from "./containers/App";
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
-import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 import {VersionConflictResolver} from "./utils/DigitalVersionConflictResolver";
-import {setDeserializeCircuitFunc, setSerializeCircuitFunc} from "shared/site/utils/CircuitIOMethods";
+import {CircuitHelpers, SetCircuitHelpers} from "shared/site/utils/CircuitHelpers";
 
 import {DigitalProtoSchema} from "digital/site/proto";
-import {DigitalCircuit} from "digital/api/circuit/public";
-import {Circuit} from "shared/api/circuit/public";
 import {CreateCircuit} from "digital/api/circuit/public";
 import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalProtoToSchema, DigitalSchemaToProto} from "digital/site/proto/bridge";
+import {Schema} from "digital/api/circuit/schema";
 
 
 async function Init(): Promise<void> {
@@ -136,68 +134,73 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            const [mainCircuit, mainCircuitState] = CreateCircuit();
-            const mainDesigner = CreateDesigner(
-                {
-                    defaultTool: new DefaultTool(
-                        SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-                        DeleteHandler, SnipNodesHandler, DeselectAllHandler,
-                        InteractionHandler,  // Needs to be before the selection and select path handlers
-                        SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                        CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
-                        SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
-                    ),
-                    tools: [
-                        new PanTool(),
-                        new RotateTool(), new TranslateTool(),
-                        new WiringTool(), new SplitWireTool(),
-                        new SelectionBoxTool(),
-                    ],
+            SetCircuitHelpers({
+                CreateAndInitializeDesigner() {
+                    const [mainCircuit, mainCircuitState] = CreateCircuit();
+                    const mainDesigner = CreateDesigner(
+                        {
+                            defaultTool: new DefaultTool(
+                                SelectAllHandler, FitToScreenHandler, DuplicateHandler,
+                                DeleteHandler, SnipNodesHandler, DeselectAllHandler,
+                                InteractionHandler,  // Needs to be before the selection and select path handlers
+                                SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+                                CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
+                                SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
+                            ),
+                            tools: [
+                                new PanTool(),
+                                new RotateTool(), new TranslateTool(),
+                                new WiringTool(), new SplitWireTool(),
+                                new SelectionBoxTool(),
+                            ],
+                        },
+                        [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
+                        DRAG_TIME,
+                        [mainCircuit, mainCircuitState],
+                    );
+                    // Setup propagator
+                    mainCircuitState.simRunner = new TimedDigitalSimRunner(mainCircuitState.sim, 1);
+
+                    return mainDesigner;
                 },
-                [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
-                DRAG_TIME,
-                [mainCircuit, mainCircuitState],
-            );
-            // Setup propagator
-            mainCircuitState.simRunner = new TimedDigitalSimRunner(mainCircuitState.sim, 1);
+                SerializeCircuit(circuit) {
+                    return new Blob([
+                        DigitalProtoSchema.DigitalCircuit.encode(
+                            DigitalSchemaToProto(circuit as Schema.DigitalCircuit)
+                        ).finish(),
+                    ]);
+                },
+                DeserializeCircuit(data) {
+                    if (typeof data === "string")
+                        return VersionConflictResolver(data).schema;
 
-            mainDesigner.circuit.subscribe((_ev) => {
-                store.dispatch(SetCircuitSaved(false));
+                    const proto = (() => {
+                        try {
+                            return DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
+                        } catch {
+                            // If we failed to decode it, it could be an old version of the circuit format
+                            // (plain text), so handle that below.
+                        }
+                    })();
+
+                    if (proto)
+                        return DigitalProtoToSchema(proto);
+
+                    // Else, might be an old version, so decode as plain text and run through VersionConflictResolver.
+                    const text = new TextDecoder().decode(data);
+                    return VersionConflictResolver(text).schema;
+                },
             });
 
-            storeDesigner("main", mainDesigner);
+            const mainDesigner = CircuitHelpers.CreateAndInitializeDesigner();
 
-            setSerializeCircuitFunc((circuit: Circuit) => new Blob([
-                DigitalProtoSchema.DigitalCircuit.encode(
-                    DigitalSchemaToProto((circuit as DigitalCircuit).toSchema())
-                ).finish(),
-            ]));
-            setDeserializeCircuitFunc((data) => {
-                if (typeof data === "string")
-                    return VersionConflictResolver(data).schema;
+            setCurDesigner(mainDesigner);
 
-                const proto = (() => {
-                    try {
-                        return DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
-                    } catch {
-                        // If we failed to decode it, it could be an old version of the circuit format
-                        // (plain text), so handle that below.
-                    }
-                })();
-
-                if (proto)
-                    return DigitalProtoToSchema(proto);
-
-                // Else, might be an old version, so decode as plain text and run through VersionConflictResolver.
-                const text = new TextDecoder().decode(data);
-                return VersionConflictResolver(text).schema;
-            });
-
+            // Load cached circuit (dev-mode only)
             if (process.env.NODE_ENV === "development") {
-                // Load dev state
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    mainCircuit.loadSchema(VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)).schema);
+                    mainDesigner.circuit.loadSchema(VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)).schema);
             }
 
             const root = createRoot(document.getElementById("root")!);
