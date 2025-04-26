@@ -1,3 +1,4 @@
+// TODO[model_refactor_api] - .gitignore the generated .ts and generate it automatically via webpack?
 syntax = "proto3";
 
 import "src/projects/shared/site/src/proto/Circuit.proto";
