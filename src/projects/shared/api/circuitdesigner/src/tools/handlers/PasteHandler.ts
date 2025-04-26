@@ -63,7 +63,7 @@ export const PasteHandler: ToolHandler = {
 
             circuit.beginTransaction();
             circuit.selections.clear();
-            const newObjs = circuit.loadSchema(pastedCircuit, true);
+            const newObjs = circuit.loadSchema(pastedCircuit, { refreshIds: true });
             // Select the new components only (and offset them)
             newObjs.forEach((o) => {
                 if (o.baseKind === "Component") {

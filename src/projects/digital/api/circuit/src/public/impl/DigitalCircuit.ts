@@ -48,7 +48,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
 
     public override loadSchema(
         schema: Schema.DigitalCircuit,
-        refreshIds?: boolean,
+        opts?: { refreshIds?: boolean, loadMetadata?: boolean }
     ): Array<DigitalComponent | DigitalWire | DigitalPort> {
         // TODO[] - might need it like this
         // this.beginTransaction();
@@ -70,7 +70,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         for (const ic of schema.ics)
             this.state.sim.loadICState(ic.metadata.id, ic.initialSimState);
 
-        const objs = super.loadSchema(schema, refreshIds);
+        const objs = super.loadSchema(schema, opts);
 
         // this.state.simRunner.propagationTime = schema.propagationTime
         this.state.sim.loadState(schema.simState);

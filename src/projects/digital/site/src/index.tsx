@@ -200,7 +200,7 @@ async function Init(): Promise<void> {
             if (process.env.NODE_ENV === "development") {
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    mainDesigner.circuit.loadSchema(VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)).schema);
+                    CircuitHelpers.LoadNewCircuit(await DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             }
 
             const root = createRoot(document.getElementById("root")!);

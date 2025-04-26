@@ -10,7 +10,7 @@ export function DuplicateSelections(circuit: Circuit): void {
     circuit.beginTransaction();
 
     circuit.selections.clear();
-    const newObjs = circuit.loadSchema(circuit.toSchema(objs), true);
+    const newObjs = circuit.loadSchema(circuit.toSchema(objs), { refreshIds: true });
     newObjs.forEach((obj) => {
         // Offset the duplicates slightly
         if (obj.baseKind === "Component") {

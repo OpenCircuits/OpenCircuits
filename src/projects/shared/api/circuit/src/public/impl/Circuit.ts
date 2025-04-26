@@ -271,18 +271,15 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         };
     }
 
-    // reset(): void {
-    //     throw new Error("Circuit.reset: Unimplemented!");
-    // },
+    public loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["Obj[]"] {
+        const refreshIds = opts?.refreshIds ?? false,
+              loadMetadata = opts?.loadMetadata ?? false;
 
-    // serialize(objs?: T["Obj[]"]): string {
-    //     throw new Error("Circuit.serialize: Unimplemented!");
-    // },
-    // deserialize(data: string): void {
-    //     throw new Error("Circuit.deserialize: Unimplemented!");
-    // },
-    public loadSchema(schema: Schema.Circuit, refreshIds = false): T["Obj[]"] {
         this.beginTransaction();
+
+        // TODO[] - make this undoable?
+        if (loadMetadata)
+            this.internal.setMetadata(schema.metadata);
 
         schema.ics
             .filter((ic) => !this.internal.hasIC(ic.metadata.id))
