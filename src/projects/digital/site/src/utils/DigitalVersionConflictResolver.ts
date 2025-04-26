@@ -607,6 +607,9 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         const { guidsToObjs, objects, pinRefToPortGuid } = migrateObjs(objectRefsEntry, wiresRefsEntry, icGuids, true);
         const initialSimState = migrateSimState(guidsToObjs, icGuidsToObjects);
 
+        const displayWidth = x / 50;
+        const displayHeight = y / 50;
+
         const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
         const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
         const inputPins = inputPorts.map(({ obj }, index): DigitalSchema.Core.IntegratedCircuitPin => {
@@ -618,8 +621,8 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 name: obj.data.name as string,
                 id: pinRefToPortGuid.get(inputs[index].ref!)!,
                 group: "inputs",
-                x: x / 25,
-                y: y / 25,
+                x: x / (displayWidth * 25),
+                y: y / (displayHeight * 25),
                 dx: dx,
                 dy: -dy,
             }
@@ -635,16 +638,16 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 name: obj.data.name as string,
                 id: pinRefToPortGuid.get(outputs[index].ref!)!,
                 group: "outputs",
-                x: x / 25,
-                y: y / 25,
+                x: x / (displayWidth * 25),
+                y: y / (displayHeight * 25),
                 dx: dx,
                 dy: -dy,
             }
         });
 
         const metadata: DigitalSchema.Core.IntegratedCircuitMetadata = {
-            displayWidth: x / 50,
-            displayHeight: y / 50,
+            displayWidth,
+            displayHeight,
             id: icGuids[index][0],
             name: obj.data.name as string,
             desc: "",
