@@ -203,8 +203,12 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         return OkVoid();
     }
 
-    public getHistory() {
-        return this.log.entries;
+    public getUndoHistory() {
+        return this.undoStack.map((i) => this.log.entries[i]);
+    }
+
+    public getRedoHistory() {
+        return this.redoStack.map((i) => this.log.entries[i]);
     }
 
     public clearHistory() {

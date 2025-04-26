@@ -16,7 +16,7 @@ import {LogEntry} from "../internal/impl/CircuitLog";
 
 
 // TODO[model_refactor](leon) - make this more user friendly
-export type CircuitEvent = {
+export interface CircuitEvent {
     type: "change";
     diff: FastCircuitDiff;
 }
@@ -47,6 +47,16 @@ export interface ReadonlyCircuit {
     toSchema(): Schema.Circuit;
 }
 
+export interface CircuitHistoryEvent {
+    type: "change";
+}
+export interface CircuitHistory extends Observable<CircuitHistoryEvent> {
+    getUndoStack(): readonly LogEntry[];
+    getRedoStack(): readonly LogEntry[];
+
+    clear(): void;
+}
+
 type C = Observable<CircuitEvent> & ReadonlyCircuit;
 export interface Circuit extends C {
     beginTransaction(options?: { batch?: boolean }): void;
@@ -60,6 +70,7 @@ export interface Circuit extends C {
     thumbnail: string;
 
     readonly selections: Selections;
+    readonly history: CircuitHistory;
 
     // Queries
     pickObjAt(pt: Vector): Obj | undefined;
@@ -93,12 +104,6 @@ export interface Circuit extends C {
 
     undo(): void;
     redo(): void;
-
-    history: {
-        // TODO[]: dont directly expose this
-        get(): readonly LogEntry[];
-        clear(): void;
-    };
 
     // TODO: Come up with a better name for this
     loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): Obj[];
