@@ -69,6 +69,9 @@ import {v4, parse, stringify} from "uuid";
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
 import {DigitalCircuit} from "digital/api/circuit/public";
 import {Circuit} from "shared/api/circuit/public";
+import {CreateCircuit} from "digital/api/circuit/public";
+import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
+import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 
 
 async function Init(): Promise<void> {
@@ -142,6 +145,7 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
+            const [mainCircuit, mainCircuitState] = CreateCircuit();
             const mainDesigner = CreateDesigner(
                 {
                     defaultTool: new DefaultTool(
@@ -160,7 +164,11 @@ async function Init(): Promise<void> {
                     ],
                 },
                 [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
+                DRAG_TIME,
+                [mainCircuit, mainCircuitState],
             );
+            // Setup propagator
+            mainCircuitState.simRunner = new TimedDigitalSimRunner(mainCircuitState.sim, 1);
 
             mainDesigner.circuit.subscribe((_ev) => {
                 store.dispatch(SetCircuitSaved(false));
@@ -269,7 +277,7 @@ async function Init(): Promise<void> {
             });
             setDeserializeCircuitFunc((data) => {
                 if (typeof data === "string")
-                    return VersionConflictResolver(data);
+                    return VersionConflictResolver(data).schema;
 
                 const protoCircuit = DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
 
@@ -353,7 +361,7 @@ async function Init(): Promise<void> {
                 // Load dev state
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    LoadCircuit(mainDesigner.circuit, VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)));
+                    LoadCircuit(mainDesigner.circuit, VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)).schema);
             }
 
             const root = createRoot(document.getElementById("root")!);

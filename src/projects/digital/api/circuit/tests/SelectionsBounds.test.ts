@@ -1,14 +1,15 @@
 import "shared/tests/helpers/Extensions";
 
-import {V}             from "Vector";
-import {CreateCircuit} from "digital/api/circuit/public";
+import {V}    from "Vector";
 import {Rect} from "math/Rect";
+
+import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 
 describe("SelectionsBounds", () => {
     test("Single Selection", () => {
         // Create and place new component
-        const [circuit, _] = CreateCircuit();
+        const [circuit, _] = CreateTestCircuit();
         const s1 = circuit.placeComponentAt("ANDGate", V(0, 0));
 
         // Select created component
@@ -22,7 +23,7 @@ describe("SelectionsBounds", () => {
     });
     test("Multiple Selections", () => {
         // Create and place new components
-        const [circuit, _] = CreateCircuit();
+        const [circuit, _] = CreateTestCircuit();
         const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
         const s2 = circuit.placeComponentAt("Switch", V(-5, -5));
         const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));

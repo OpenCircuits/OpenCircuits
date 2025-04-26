@@ -148,4 +148,157 @@ describe("IC", () => {
             expect(out).toBeOff();
         });
     });
+
+    describe("IC with constant inputs", () => {
+        test("Constant Low", () => {
+            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+
+            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
+            const ic = (() => {
+                // const [_, { inputs: [sw1, sw2], outputs: [out] }] = ICPlaceAndConnect("ANDGate");
+                const [i1, o1] = ICPlace("ConstantLow", "OutputPin");
+                ICConnect(i1, o1);
+
+                icCircuit.name = "Constant Low IC";
+
+                return circuit.createIC({
+                    circuit: icCircuit,
+                    display: {
+                        size: V(4, 2),
+                        pins: [
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                        ],
+                    },
+                });
+            })();
+
+            const [_, { outputs: [out] }] = PlaceAndConnect(ic.id);
+
+            expect(out).toBeOff();
+        });
+        test("Constant High", () => {
+            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+
+            const ic = (() => {
+                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [i1, o1] = Place("ConstantHigh", "OutputPin");
+                Connect(i1, o1);
+
+                return circuit.createIC({
+                    circuit: icCircuit,
+                    display: {
+                        size: V(4, 2),
+                        pins: [
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                        ],
+                    },
+                });
+            })();
+
+            const [_, { outputs: [out] }] = PlaceAndConnect(ic.id);
+
+            expect(out).toBeOn();
+        });
+        test("Nested Constant High", () => {
+            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+
+            const innerIC = (() => {
+                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [i1, o1] = Place("ConstantHigh", "OutputPin");
+                Connect(i1, o1);
+
+                return circuit.createIC({
+                    circuit: icCircuit,
+                    display: {
+                        size: V(4, 2),
+                        pins: [{ id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) }],
+                    },
+                });
+            })();
+
+            // ANDGate with the innerIC (ConstantHigh) and another ConstantHigh connected to output
+            // (should always be on)
+            const outerIC = (() => {
+                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                icCircuit.importICs([innerIC]);
+                const [i1, i2, g, o1] = Place("ConstantHigh", innerIC.id, "ANDGate", "OutputPin");
+                Connect(i1, g.inputs[0]); Connect(i2, g.inputs[1]); Connect(g, o1);
+
+                return circuit.createIC({
+                    circuit: icCircuit,
+                    display: {
+                        size: V(4, 2),
+                        pins: [{ id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) }],
+                    },
+                });
+            })();
+
+            const [_, { outputs: [out] }] = PlaceAndConnect(outerIC.id);
+
+            expect(out).toBeOn();
+        });
+        test("Constant Number (0)", () => {
+            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+
+            const ic = (() => {
+                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
+                Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
+
+                icCircuit.name = "Constant Number IC";
+
+                return circuit.createIC({
+                    circuit: icCircuit,
+                    display: {
+                        size: V(4, 2),
+                        pins: [
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                            { id: o2.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                            { id: o3.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                            { id: o4.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                        ],
+                    },
+                });
+            })();
+
+            const [_, { outputs: [out1, out2, out3, out4] }] = PlaceAndConnect(ic.id);
+
+            expect(out1).toBeOff();
+            expect(out2).toBeOff();
+            expect(out3).toBeOff();
+            expect(out4).toBeOff();
+        });
+        test("Constant Number (F)", () => {
+            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+
+            const ic = (() => {
+                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
+                Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
+
+                i1.setProp("inputNum", 15);
+                icCircuit.name = "Constant Number IC";
+
+                return circuit.createIC({
+                    circuit: icCircuit,
+                    display: {
+                        size: V(4, 2),
+                        pins: [
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                            { id: o2.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                            { id: o3.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                            { id: o4.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
+                        ],
+                    },
+                });
+            })();
+
+            const [_, { outputs: [out1, out2, out3, out4] }] = PlaceAndConnect(ic.id);
+
+            expect(out1).toBeOn();
+            expect(out2).toBeOn();
+            expect(out3).toBeOn();
+            expect(out4).toBeOn();
+        });
+    });
 });

@@ -1,8 +1,8 @@
 import "shared/tests/helpers/Extensions";
 
 import {V}             from "Vector";
-import {CreateCircuit} from "digital/api/circuit/public";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 
 describe("CircuitAssembler", () => {
@@ -14,7 +14,7 @@ describe("CircuitAssembler", () => {
 
     test("Single Selection", () => {
         // Create and place new component
-        const [circuit, state] = CreateCircuit();
+        const [circuit, state] = CreateTestCircuit();
 
         const { assembler } = state;
 

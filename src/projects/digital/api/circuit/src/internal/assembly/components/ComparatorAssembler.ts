@@ -15,15 +15,15 @@ export class ComparatorAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
             "inputsA": (comp, index, total) => ({
-                origin: V(-this.getSize(comp).x/2, (index - total) / 2),
+                origin: V(-this.getSize(comp).x/2, -(index - total) / 2),
                 dir:    V(-1, 0),
             }),
             "inputsB": (comp, index) => ({
-                origin: V(-this.getSize(comp).x/2, (1 + index) / 2),
+                origin: V(-this.getSize(comp).x/2, -(1 + index) / 2),
                 dir:    V(-1, 0),
             }),
             "lt": (comp) => ({
-                origin: V(this.getSize(comp).x/2, -.5),
+                origin: V(this.getSize(comp).x/2, 0.5),
                 dir:    V(1, 0),
             }),
             "eq": (comp) => ({
@@ -31,7 +31,7 @@ export class ComparatorAssembler extends ComponentAssembler {
                 dir:    V(1, 0),
             }),
             "gt": (comp) => ({
-                origin: V(this.getSize(comp).x/2, .5),
+                origin: V(this.getSize(comp).x/2, -0.5),
                 dir:    V(1, 0),
             }),
         }, [

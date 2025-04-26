@@ -22,6 +22,7 @@ import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
 import {V} from "Vector";
 import {configureStore} from "@reduxjs/toolkit";
 import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
@@ -36,7 +37,8 @@ describe("Main Popup", () => {
         [],
         undefined,
         [circuit, state],
-    )
+    );
+    state.simRunner = new InstantSimRunner(state.sim);
     const store = configureStore({ reducer: reducers });
     const user = userEvent.setup();
 

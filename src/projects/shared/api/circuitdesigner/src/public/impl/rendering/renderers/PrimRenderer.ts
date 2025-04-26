@@ -38,12 +38,16 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
         return;
     }
     case "Polygon": {
-        const { points } = prim;
+        const { points, closed } = prim;
+
+        if (points.length === 0)
+            return;
 
         ctx.moveTo(points[0].x, points[0].y);
         for (let i = 1; i < points.length; i++)
             ctx.lineTo(points[i].x, points[i].y);
-        ctx.lineTo(points[0].x, points[0].y);
+        if (closed ?? true)
+            ctx.lineTo(points[0].x, points[0].y);
 
         return;
     }
@@ -106,7 +110,7 @@ export class PrimRenderer {
 
             ctx.save();
 
-            // TODO: See if we can get around this
+            // TODO[]: See if we can get around this
             if (prim.kind === "Rectangle") {
                 // Transform
                 const [a,b,c,d,e,f] = prim.transform.getMatrix().mat;

@@ -1,7 +1,13 @@
 import {DigitalSim} from "./DigitalSim";
 
 
-export class DigitalSimRunner {
+export interface DigitalSimRunner {
+    resume(): void;
+    pause(): void;
+    step(): void;
+}
+
+export class InstantSimRunner implements DigitalSimRunner {
     protected readonly sim: DigitalSim;
 
     protected paused: boolean;
@@ -20,6 +26,8 @@ export class DigitalSimRunner {
                 this.queueStep();
             }
         });
+
+        this.queueStep();
     }
 
     // By default, steps instantly
@@ -27,6 +35,17 @@ export class DigitalSimRunner {
         if (this.paused)
             return;
 
+        this.sim.step();
+    }
+
+    public resume(): void {
+        this.paused = false;
+        this.queueStep();
+    }
+    public pause(): void {
+        this.paused = true;
+    }
+    public step(): void {
         this.sim.step();
     }
 }

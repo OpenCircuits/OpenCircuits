@@ -58,13 +58,13 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
     }
 
     public override getPortInfo(_p: PortConfig, group: string, index: number): Pick<Schema.Port, "kind" | "props"> {
-        if (!this.defaultPortNames) {
+        const generator = this.defaultPortNames?.[group];
+        if (!generator) {
             return {
                 kind:  "DigitalPort",
                 props: {}, // TODO: any manditory props for Digial ports
             };
         }
-        const generator = this.defaultPortNames[group];
         return {
             kind:  "DigitalPort",
             props: {
@@ -232,6 +232,10 @@ const MultiplexerInfo = new DigitalComponentConfigurationInfo({
     portConfigs: [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": Math.pow(2, selects), "selects": selects, "outputs": 1 })),
     defaultConfig: 1, // Default is 2-select-port mux
+    defaultPortNames: {
+        "inputs":  (index) => `I${index}`,
+        "selects": (index) => `S${index}`,
+    },
 });
 const DemultiplexerInfo = new DigitalComponentConfigurationInfo({
     kind: "Demultiplexer",
@@ -239,6 +243,10 @@ const DemultiplexerInfo = new DigitalComponentConfigurationInfo({
     portConfigs: [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": 1, "selects": selects, "outputs": Math.pow(2, selects) })),
     defaultConfig: 1, // Default is 2-select-port demux
+    defaultPortNames: {
+        "selects": (index) => `S${index}`,
+        "outputs": (index) => `O${index}`,
+    },
 });
 const EncoderInfo = new DigitalComponentConfigurationInfo({
     kind: "Encoder",
@@ -246,6 +254,10 @@ const EncoderInfo = new DigitalComponentConfigurationInfo({
     portConfigs: [1,2,3,4,5,6,7,8].map((outputs) =>
         ({ "inputs": Math.pow(2, outputs), "outputs": outputs })),
     defaultConfig: 1, // Default is 2-output-port Encoder
+    defaultPortNames: {
+        "inputs":  (index) => `I${index}`,
+        "outputs": (index) => `O${index}`,
+    },
 });
 const DecoderInfo = new DigitalComponentConfigurationInfo({
     kind: "Decoder",
@@ -253,6 +265,10 @@ const DecoderInfo = new DigitalComponentConfigurationInfo({
     portConfigs: [1,2,3,4,5,6,7,8].map((inputs) =>
         ({ "inputs": inputs, "outputs": Math.pow(2, inputs) })),
     defaultConfig: 1, // Default is 2-input-port Decoder
+    defaultPortNames: {
+        "inputs":  (index) => `I${index}`,
+        "outputs": (index) => `O${index}`,
+    },
 });
 const Comparator = new DigitalComponentConfigurationInfo({
     kind: "Comparator",
@@ -260,6 +276,14 @@ const Comparator = new DigitalComponentConfigurationInfo({
     portConfigs: [1,2,3,4,5,6,7,8].map((inputSize) =>
         ({ "inputsA": inputSize, "inputsB": inputSize, "lt": 1, "eq": 1, "gt": 1 })),
     defaultConfig: 1, // Default is 2-bit-input-group Comparator
+    defaultPortNames: {
+        "inputsA": (index) => `a${index}`,
+        "inputsB": (index) => `b${index}`,
+
+        "lt": ["<"],
+        "eq": ["="],
+        "gt": [">"],
+    },
 });
 const Label = new DigitalComponentConfigurationInfo({
     kind:  "Label",

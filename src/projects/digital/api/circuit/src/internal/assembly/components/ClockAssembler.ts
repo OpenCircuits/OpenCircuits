@@ -22,13 +22,13 @@ export class ClockAssembler extends ComponentAssembler {
                 kind: "SVG",
 
                 // TODO: Add dependency handling for state change (may or may not be part of PropChanged)
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
                 assemble: (comp) => ({
                     kind:      "SVG",
                     svg:       this.isOn(comp) ? "clockOn.svg" : "clock.svg",
                     transform: this.getTransform(comp),
                 }),
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined)
+                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;
@@ -40,7 +40,9 @@ export class ClockAssembler extends ComponentAssembler {
     }
 
     private isOn(sw: Schema.Component) {
-        const [outputPort] = this.circuit.getPortsForComponent(sw.id).unwrap();
-        return Signal.isOn(this.sim.getSignal(outputPort));
+        const state = this.sim.getState(sw.id);
+        if (!state || state.length === 0)
+            return Signal.Off;
+        return Signal.isOn(state[0]);
     }
 }

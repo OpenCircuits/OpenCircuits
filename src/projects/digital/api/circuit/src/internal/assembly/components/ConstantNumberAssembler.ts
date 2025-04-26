@@ -1,15 +1,14 @@
 import {V, Vector} from "Vector";
+import {Rect} from "math/Rect";
+import {Transform} from "math/Transform";
 
 import {Schema} from "shared/api/circuit/schema";
-
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
-import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
-import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
-import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {FontStyle, Style} from "shared/api/circuit/internal/assembly/Style";
-import {Transform} from "math/Transform";
-import {Rect} from "math/Rect";
+import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+
+import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
+import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 
 
 export class ConstantNumberAssembler extends ComponentAssembler {
@@ -98,7 +97,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     }
 
     private assembleText(comp: Schema.Component) {
-        const value = this.getOutValue(comp);
+        const value = (comp.props["inputNum"] as number) ?? 0;
         const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
         const bounds = this.options.textMeasurer?.getBounds(this.getFontStyle(), text) ?? new Rect(V(), V());
         return {
@@ -117,11 +116,5 @@ export class ConstantNumberAssembler extends ComponentAssembler {
             color: this.options.defaultOnColor,
             scale: 1000,
         }
-    }
-
-    // TODO: Where should this value or function live?
-    private getOutValue(comp: Schema.Component) {
-        const [...outputs] = this.circuit.getPortsForComponent(comp.id).unwrap();
-        return outputs.reduce((accumulator, portId, index) => accumulator + (Signal.isOn(this.sim.getSignal(portId)) ? 2 ** index : 0), 0);
     }
 }
