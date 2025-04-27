@@ -596,7 +596,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
     const icEntries = getArrayEntries(icRefsEntry);
     const icGuids: Array<[string, SerializationEntry]> = icEntries.map(({ ref, obj }) => [refToGuid.get(ref) ?? Schema.uuid(), obj]);
     const icGuidsToObjects = new Map<string, SerializationEntry>(icGuids);
-    const ics = icEntries.map(({ obj }, index): DigitalSchema.DigitalIntegratedCircuit => {
+    const icsAndSimStates = icEntries.map(({ obj }, index) => {
         const transformRef = getEntry(obj, "transform")!;
         const sizeRef = getEntry(transformRef, "size")!;
         const icContents = getEntry(obj, "collection")!;
@@ -658,11 +658,10 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
             pins: [...inputPins, ...outputPins],
         };
 
-        return {
+        return [{
             metadata,
             objects,
-            initialSimState,
-        };
+        }, initialSimState] as const;
     });
 
     // Migrate all the main circuit data
@@ -674,11 +673,12 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
 
     return {
         schema: {
-            camera: camera,
-            objects: info.objects,
-            simState,
-            ics,
             metadata,
+            camera: camera,
+            ics:     icsAndSimStates.map(([ic, _]) => ic),
+            objects: info.objects,
+            initialICSimStates: icsAndSimStates.map(([_, sim]) => sim),
+            simState,
             propagationTime,
         },
         warnings: hasClockInIc ? [IMPORT_IC_CLOCK_MESSAGE] : undefined,

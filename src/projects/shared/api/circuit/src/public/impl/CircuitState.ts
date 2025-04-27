@@ -6,6 +6,7 @@ import {Component, Node}   from "../Component";
 import {Port}              from "../Port";
 import {Wire}              from "../Wire";
 import {Circuit, ICInfo, IntegratedCircuit} from "../Circuit";
+import {ObjContainer} from "../ObjContainer";
 
 
 // Utility interface to hold utility types for the templated Circuit API.
@@ -17,6 +18,7 @@ export type CircuitTypes<
     NodeT extends Node = Node,
     ICT extends IntegratedCircuit = IntegratedCircuit,
     ICInfoT extends ICInfo = ICInfo,
+    ObjContainerT extends ObjContainer = ObjContainer,
 > = {
     "Circuit": CircuitT;
 
@@ -39,6 +41,7 @@ export type CircuitTypes<
     "IC[]": ICT[];
 
     "ICInfo": ICInfoT;
+    "ObjContainerT": ObjContainerT;
 }
 
 export interface CircuitState<T extends CircuitTypes> {

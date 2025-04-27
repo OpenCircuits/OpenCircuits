@@ -34,7 +34,7 @@ export function DigitalSchemaToProto(schema: DigitalSchema.DigitalCircuit): Digi
         circuit: SchemaToProto(schema),
 
         propagationTime:    schema.propagationTime,
-        icInitialSimStates: schema.ics.map((ic) => ConvertSimState(ic.initialSimState)),
+        icInitialSimStates: schema.initialICSimStates.map(ConvertSimState),
         simState:           ConvertSimState(schema.simState),
     });
 }
@@ -68,12 +68,8 @@ export function DigitalProtoToSchema(proto: DigitalProtoSchema.DigitalCircuit): 
     return {
         ...schema,
 
-        ics: schema.ics.zip(proto.icInitialSimStates).map(([ic, sim]) => ({
-            ...ic,
-            initialSimState: ConvertSimState(sim),
-        })),
-
-        propagationTime: proto.propagationTime,
-        simState:        ConvertSimState(proto.simState),
+        initialICSimStates: proto.icInitialSimStates.map(ConvertSimState),
+        propagationTime:    proto.propagationTime,
+        simState:           ConvertSimState(proto.simState),
     }
 }
