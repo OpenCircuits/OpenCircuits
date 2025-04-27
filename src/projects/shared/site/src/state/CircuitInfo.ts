@@ -10,6 +10,8 @@ const [initialState, actions, reducer] = CreateState()(
         isSaved:  true,
         isLocked: false,
 
+        curCircuitKey: "",
+
         curPressedObjID: undefined as GUID | undefined,
 
         loading: false,
@@ -23,6 +25,7 @@ const [initialState, actions, reducer] = CreateState()(
         SetCircuitId:            (id: string)       => ({ type: "SET_CIRCUIT_ID_ID",            id    }) as const,
         SetCircuitName:          (name: string)     => ({ type: "SET_CIRCUIT_NAME_ID",          name  }) as const,
         SetCircuitSaved:         (saved: boolean)   => ({ type: "SET_CIRCUIT_SAVED_ID",         saved }) as const,
+        SetCurCircuitKey:        (key: GUID)        => ({ type: "SET_CUR_CIRCUIT_KEY_ID",         key }) as const,
         SetCurPressedObjID:      (id?: GUID)        => ({ type: "SET_CIRCUIT_CUR_PRESSED_OBJ_ID", id  }) as const,
         _SetCircuitLoading:      (loading: boolean) => ({ type: "SET_CIRCUIT_LOADING_ID",     loading }) as const,
         _SetCircuitSavingStart:  ()                 => ({ type: "SET_CIRCUIT_SAVING_START_ID"         }) as const,
@@ -33,6 +36,7 @@ const [initialState, actions, reducer] = CreateState()(
         "SET_CIRCUIT_ID_ID":              (state, action) => ({ ...state, id: action.id }),
         "SET_CIRCUIT_NAME_ID":            (state, action) => ({ ...state, name: action.name }),
         "SET_CIRCUIT_SAVED_ID":           (state, action) => ({ ...state, isSaved: action.saved }),
+        "SET_CUR_CIRCUIT_KEY_ID":         (state, action) => ({ ...state, curCircuitKey: action.key }),
         "SET_CIRCUIT_CUR_PRESSED_OBJ_ID": (state, action) => ({ ...state, curPressedObjID: action.id }),
         "SET_CIRCUIT_LOADING_ID":         (state, action) => ({ ...state, loading: action.loading }),
         "SET_CIRCUIT_SAVING_START_ID":    (state)         => ({ ...state, saving: true, error: "" }),
@@ -48,6 +52,6 @@ const [initialState, actions, reducer] = CreateState()(
 
 export type CircuitInfoState = typeof initialState;
 export const { ToggleCircuitLocked, SetCircuitId, SetCircuitName,
-              SetCircuitSaved, SetCurPressedObjID, _SetCircuitLoading,
+              SetCircuitSaved, SetCurCircuitKey, SetCurPressedObjID, _SetCircuitLoading,
               _SetCircuitSavingStart, _SetCircuitSavingFinish } = actions;
 export const circuitInfoReducer = reducer;

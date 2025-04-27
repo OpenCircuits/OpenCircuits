@@ -11,7 +11,7 @@ import {SideNav}            from "shared/site/containers/SideNav";
 
 import {PropertyModule} from "shared/site/containers/SelectionPopup/modules/PropertyModule";
 
-import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
+import {useCurDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
 import {DigitalHeader}       from "digital/site/containers/DigitalHeader";
 import {DigitalItemNav}      from "digital/site/containers/DigitalItemNav";
@@ -48,7 +48,7 @@ const exampleCircuits = exampleConfig.examples.map((example) => ({
 } satisfies Schema.CircuitMetadata));
 
 export const App = () => {
-    const designer = useMainDigitalDesigner();
+    const designer = useCurDigitalDesigner();
     const { h } = useWindowSize();
 
     return (

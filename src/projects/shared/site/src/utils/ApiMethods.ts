@@ -10,7 +10,7 @@ import {LoadUserCircuits} from "shared/site/state/thunks/User";
 
 import {GenerateThumbnail} from "./GenerateThumbnail";
 
-import {DeserializeCircuit} from "./CircuitIOMethods";
+import {CircuitHelpers} from "./CircuitHelpers";
 
 
 export const useAPIMethods = (mainCircuit: Circuit) => {
@@ -27,22 +27,17 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         }
 
         try {
-            // TODO[model_refactor_api] - create new circuit instead?
-            const schema = DeserializeCircuit(data);
-            mainCircuit.name = schema.metadata.name;
-            mainCircuit.desc = schema.metadata.desc;
-            mainCircuit.loadSchema(schema);
+            const newDesigner = CircuitHelpers.LoadNewCircuit(data);
+
+            // Success! So set name, id, and saved
+            dispatch(SetCircuitName(newDesigner.circuit.name));
+            dispatch(SetCircuitId(newDesigner.circuit.id));
+            dispatch(SetCircuitSaved(true));
+            dispatch(_SetCircuitLoading(false));
         } catch (e) {
             console.error(e);
             dispatch(_SetCircuitLoading(false));
-            return;
         }
-
-        // Success! So set name, id, and saved
-        dispatch(SetCircuitName(mainCircuit.name));
-        dispatch(SetCircuitId(mainCircuit.id));
-        dispatch(SetCircuitSaved(true));
-        dispatch(_SetCircuitLoading(false));
     }
 
     const LoadCircuitRemote = async (id: string) => {

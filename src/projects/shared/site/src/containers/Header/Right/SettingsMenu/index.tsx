@@ -1,6 +1,6 @@
 import {useEffect} from "react";
 
-import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {ToggleDebugPrimBounds, ToggleDebugComponentBounds, ToggleDebugWireBounds,
@@ -15,7 +15,7 @@ import {AutoSaveToggle} from "./AutoSaveToggle";
 
 
 export const SettingsMenu = () => {
-    const designer = useMainDesigner();
+    const designer = useCurDesigner();
     const { curMenu, debugInfo } = useSharedSelector(
         (state) => ({ curMenu: state.header.curMenu, debugInfo: state.debugInfo })
     );

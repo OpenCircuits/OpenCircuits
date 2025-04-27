@@ -25,7 +25,7 @@ import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} 
 import {DragDropHandlers} from "shared/site/components/DragDroppable/DragDropHandlers";
 import {Draggable}        from "shared/site/components/DragDroppable/Draggable";
 
-// TODO: Should be able to drive desktop width off of the value in _constants.scss but it isn't working
+// TODO: Should be able to derive desktop width off of the value in _constants.scss but it isn't working
 // import styles from "./index.scss";
 import "./index.scss";
 const DESKTOP_WIDTH = 768;

@@ -1,4 +1,6 @@
+import {useAPIMethods}                        from "shared/site/utils/ApiMethods";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
+import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
 
 import {SetCircuitName, ToggleCircuitLocked} from "shared/site/state/CircuitInfo";
 import {CloseHistoryBox, OpenHistoryBox}     from "shared/site/state/ItemNav";
@@ -8,13 +10,9 @@ import {InputField} from "shared/site/components/InputField";
 
 import "./index.scss";
 
-import {useMainDesigner} from "shared/site/utils/hooks/useDesigner";
-
-import {useAPIMethods} from "shared/site/utils/ApiMethods";
-
 
 export const HeaderLeft = () => {
-    const designer = useMainDesigner();
+    const designer = useCurDesigner();
     const { id, name, isSaved, isLocked, isLoggedIn, isHistoryBoxOpen, saving, error } = useSharedSelector(
         (state) => ({
             ...state.circuit,

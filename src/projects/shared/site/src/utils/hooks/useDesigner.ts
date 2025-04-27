@@ -1,20 +1,30 @@
+import {useEffect, useState} from "react";
+
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 
-const { storeDesigner, useDesigner, useMainDesigner } = (() => {
-    const storedDesigners = new Map<string, CircuitDesigner>();
+const { setCurDesigner, useCurDesigner } = (() => {
+    let curDesigner: CircuitDesigner | undefined;
+
+    const callbacks: Set<(newDesigner: CircuitDesigner) => void> = new Set();
     return {
-        storeDesigner: (key: string, designer: CircuitDesigner) => {
-            storedDesigners.set(key, designer);
+        setCurDesigner: (designer: CircuitDesigner) => {
+            curDesigner = designer;
+            callbacks.forEach((c) => c(designer));
         },
-        useDesigner:     (key: string) => storedDesigners.get(key),
-        useMainDesigner: () => {
-            const designer = storedDesigners.get("main");
-            if (!designer)
-                throw new Error("useMainDesigner: Failed to find a circuit designer labeled as 'main'!");
-            return designer;
+        useCurDesigner: () => {
+            if (!curDesigner)
+                throw new Error("useCurDesigner: No designer set!");
+
+            const [curDesignerState, setCurDesigner] = useState<CircuitDesigner>(curDesigner);
+            useEffect(() => {
+                callbacks.add(setCurDesigner);
+                return () => { callbacks.delete(setCurDesigner); };
+            }, [setCurDesigner]);
+
+            return curDesignerState;
         },
     };
 })();
 
-export {storeDesigner, useDesigner, useMainDesigner};
+export {setCurDesigner, useCurDesigner};

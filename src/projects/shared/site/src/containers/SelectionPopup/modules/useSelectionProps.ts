@@ -77,14 +77,14 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
         //  so we don't cause unnecessary updates and potential flickers
         //  from a `forceUpdate`
         setProps((oldProps) => (propsEquals(oldProps, newProps) ? oldProps : newProps));
-    }, [objs, ...deps]);
+    }, [circuit, objs, ...deps]);
 
     // When number of selections change, update the list of objects
     useEffect(() =>
         circuit.selections.subscribe(() => setObjs(
             ignore ? circuit.selections.filter((s) => !ignore(s))
                    : circuit.selections.all)),
-        [setObjs]);
+        [circuit, setObjs]);
 
     // When the list of objects changes, update the props
     //  and then listen for any circuit changes
@@ -92,7 +92,7 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     useEffect(() => {
         updateState();
         return circuit.subscribe(() => updateState());
-    }, [updateState]);
+    }, [circuit, updateState]);
 
     return [props, objs.filter(validTypes), updateState] as const;
 }

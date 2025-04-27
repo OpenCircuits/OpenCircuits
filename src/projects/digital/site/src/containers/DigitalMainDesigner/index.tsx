@@ -5,7 +5,7 @@ import {usePageVisibility} from "shared/site/utils/hooks/usePageVisibility";
 import {MainDesigner} from "shared/site/containers/MainDesigner";
 
 // import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
-import {useMainDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
+import {useCurDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
 import "./index.scss";
 import {DigitalCircuit} from "digital/api/circuit/public";
@@ -71,7 +71,7 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
 }
 
 export const DigitalMainDesigner = ({ circuit }: {circuit: DigitalCircuit}) => {
-    const designer = useMainDigitalDesigner();
+    const designer = useCurDigitalDesigner();
     const isPageVisible = usePageVisibility();
 
     useLayoutEffect(() => {

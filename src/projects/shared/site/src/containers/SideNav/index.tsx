@@ -1,11 +1,10 @@
 import {Schema} from "shared/api/circuit/schema";
 
-import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
-
-import {useAPIMethods} from "shared/site/utils/ApiMethods";
-import {Request}       from "shared/site/utils/Request";
-
-import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
+import {OVERWRITE_CIRCUIT_MESSAGE}            from "shared/site/utils/Constants";
+import {useAPIMethods}                        from "shared/site/utils/ApiMethods";
+import {CircuitHelpers}                       from "shared/site/utils/CircuitHelpers";
+import {Request}                              from "shared/site/utils/Request";
+import {setCurDesigner, useCurDesigner}       from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {ToggleSideNav} from "shared/site/state/SideNav";
@@ -30,7 +29,7 @@ type Props = {
     exampleCircuits: Schema.CircuitMetadata[];
 }
 export const SideNav = ({ exampleCircuits }: Props) => {
-    const designer = useMainDesigner();
+    const designer = useCurDesigner();
 
     const { auth, circuits, isOpen, loading, isSaved, loadingCircuits } = useSharedSelector(
         (state) => ({
@@ -48,8 +47,37 @@ export const SideNav = ({ exampleCircuits }: Props) => {
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
             return;
-        // TODO: reset?
-        // designer.circuit.reset();
+        // Create a new designer
+        setCurDesigner(CircuitHelpers.CreateAndInitializeDesigner());
+        dispatch(ToggleSideNav());
+    }
+    const onUserCircuitClick = async (metadata: Schema.CircuitMetadata) => {
+        if (loading) // Don't load another circuit if already loading
+            return;
+        if (!auth)
+            throw new Error("Sidenav failed: auth is undefined");
+        const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
+        if (!open)
+            return;
+        await LoadCircuitRemote(metadata.id);
+        dispatch(ToggleSideNav());
+    }
+    const onUserCircuitDeleteClick = async (metadata: Schema.CircuitMetadata) => {
+        if (loading) // Don't let user delete circuit while loading
+            return;
+        const shouldDelete = window.confirm(
+            `Are you sure you want to delete circuit "${metadata.name}"?`);
+        if (!shouldDelete)
+            return;
+        DeleteCircuitRemote(metadata.id);
+    }
+    const onExampleCircuitClick = async (metadata: Schema.CircuitMetadata) => {
+        if (loading) // Don't load another circuit if already loading
+            return;
+        const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
+        if (!open)
+            return;
+        await LoadCircuit(LoadExampleCircuit(metadata));
         dispatch(ToggleSideNav());
     }
 
@@ -85,23 +113,8 @@ export const SideNav = ({ exampleCircuits }: Props) => {
                             (<CircuitPreview
                                 key={`sidenav-user-circuit-${i}`}
                                 data={circuit}
-                                onClick={async () => {
-                                    if (loading) // Don't load another circuit if already loading
-                                        return;
-                                    if (!auth)
-                                        throw new Error("Sidenav failed: auth is undefined");
-                                    await LoadCircuitRemote(circuit["id"]);
-                                    dispatch(ToggleSideNav());
-                                }}
-                                onDelete={() => {
-                                    if (loading) // Don't let user delete circuit while loading
-                                        return;
-                                    const shouldDelete = window.confirm(
-                                        `Are you sure you want to delete circuit "${circuit.name}"?`);
-                                    if (!shouldDelete)
-                                        return;
-                                    DeleteCircuitRemote(circuit.id);
-                                }} />)
+                                onClick={() => onUserCircuitClick(circuit)}
+                                onDelete={() => onUserCircuitDeleteClick(circuit)} />)
                     )}
                 </div>
                 <h4 unselectable="on">Examples</h4>
@@ -112,12 +125,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
                             data={example}
                             readonly
                             onDelete={() => { /* Do nothing */ }}
-                            onClick={async () => {
-                                if (loading) // Don't load another circuit if already loading
-                                    return;
-                                await LoadCircuit(LoadExampleCircuit(example));
-                                dispatch(ToggleSideNav());
-                            }} />)
+                            onClick={async () => onExampleCircuitClick(example)} />)
                 )}
                 </div>
                 <div className="sidenav__content__footer">

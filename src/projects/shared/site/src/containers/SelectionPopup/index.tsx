@@ -33,22 +33,28 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     const [isDragging, setIsDragging] = useState(false);
     const [clickThrough, setClickThrough] = useState(false);
 
-    useEffect(() => circuit.selections.subscribe(() => {
+    useEffect(() => {
+        // Set it initially (like when new circuit is loaded)
         setNumSelections(circuit.selections.length);
         setPos(camera.toScreenPos(circuit.selections.midpoint));
 
-        // When the selection changes, reset the clickThrough state and
-        // let user click through box so it doesn't block a double click
-        setClickThrough((prevState) => {
-            if (prevState) // If already have a timeout then just ignore
-                return prevState;
-            setTimeout(() =>
-                setClickThrough(false),
-                DOUBLE_CLICK_DURATION
-            );
-            return true;
+        return circuit.selections.subscribe(() => {
+            setNumSelections(circuit.selections.length);
+            setPos(camera.toScreenPos(circuit.selections.midpoint));
+
+            // When the selection changes, reset the clickThrough state and
+            // let user click through box so it doesn't block a double click
+            setClickThrough((prevState) => {
+                if (prevState) // If already have a timeout then just ignore
+                    return prevState;
+                setTimeout(() =>
+                    setClickThrough(false),
+                    DOUBLE_CLICK_DURATION
+                );
+                return true;
+            });
         });
-    }), [circuit, setNumSelections, setClickThrough]);
+    }, [circuit, camera, setNumSelections, setClickThrough]);
 
     useEffect(() => camera.subscribe(() =>
         setPos(camera.toScreenPos(circuit.selections.midpoint))
@@ -63,7 +69,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     useEvent("mouseup", (_) => {
         setIsDragging(false); // Show when stopped dragging
         setPos(camera.toScreenPos(circuit.selections.midpoint)); // And recalculate position
-    }, designer.viewport.canvasInfo?.input, [setPos, setIsDragging]);
+    }, designer.viewport.canvasInfo?.input, [circuit, camera, setPos, setIsDragging]);
 
     const popup = useRef<HTMLDivElement>(null);
 
