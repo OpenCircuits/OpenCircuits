@@ -1,8 +1,9 @@
 import {Component, Node, ReadonlyComponent, ReadonlyNode} from "shared/api/circuit/public";
 
+import {Signal} from "digital/api/circuit/schema/Signal";
+
 import {DigitalPort}  from "./DigitalPort";
 import {APIToDigital} from "./DigitalCircuit";
-import {Signal} from "../internal/sim/Signal";
 
 
 export interface ReadonlyDigitalComponent extends APIToDigital<ReadonlyComponent> {

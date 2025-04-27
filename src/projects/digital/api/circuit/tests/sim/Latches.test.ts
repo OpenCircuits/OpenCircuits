@@ -1,6 +1,6 @@
 import "shared/tests/helpers/Extensions";
 
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
 

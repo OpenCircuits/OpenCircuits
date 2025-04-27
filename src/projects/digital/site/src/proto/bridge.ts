@@ -4,7 +4,7 @@
 import {MapObj} from "shared/api/circuit/utils/Functions";
 
 import {DigitalSchema} from "digital/api/circuit/schema";
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 
 import {ProtoToSchema, SchemaToProto} from "shared/site/proto/bridge";
 

@@ -1,4 +1,4 @@
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 
 

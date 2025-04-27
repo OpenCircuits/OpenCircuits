@@ -1,13 +1,15 @@
-import {CircuitInternal, GUID} from "shared/api/circuit/internal";
-import {ObservableImpl}        from "shared/api/circuit/utils/Observable";
-import {Signal}                from "./Signal";
-import {DigitalComponentConfigurationInfo} from "../DigitalComponents";
-import {AddErrE} from "shared/api/circuit/utils/MultiError";
+import {ObservableImpl}         from "shared/api/circuit/utils/Observable";
+import {AddErrE}                from "shared/api/circuit/utils/MultiError";
+import {MapObj}                 from "shared/api/circuit/utils/Functions";
+import {CircuitInternal, GUID}  from "shared/api/circuit/internal";
 import {ReadonlyCircuitStorage} from "shared/api/circuit/internal/impl/CircuitDocument";
-import {MapObj} from "shared/api/circuit/utils/Functions";
-import {Schema} from "shared/api/circuit/schema";
+import {Schema}                 from "shared/api/circuit/schema";
+import {ObjContainer}           from "shared/api/circuit/public/ObjContainer";
+
 import {DigitalSchema} from "digital/api/circuit/schema";
-import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
+import {Signal}        from "digital/api/circuit/schema/Signal";
+
+import {DigitalComponentConfigurationInfo} from "../DigitalComponents";
 
 
 export interface PropagatorInfo {
@@ -16,9 +18,6 @@ export interface PropagatorInfo {
     // that the output state of the component is dependent on
     // (i.e. `inputNum` for ConstantNumber)
     stateProps?: Set<string>;
-}
-export interface TickInfo {
-
 }
 export type PropagatorFunc = (
     comp: Schema.Component,

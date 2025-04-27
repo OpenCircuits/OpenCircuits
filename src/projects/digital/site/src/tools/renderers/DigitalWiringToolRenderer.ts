@@ -1,5 +1,5 @@
 import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 
 import {WiringToolRenderer} from "shared/api/circuitdesigner/tools/renderers/WiringToolRenderer";
 

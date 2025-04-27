@@ -1,5 +1,5 @@
 /* eslint-disable key-spacing */
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {Schema} from "shared/api/circuit/schema";
 import {IMPORT_IC_CLOCK_MESSAGE} from "./Constants";

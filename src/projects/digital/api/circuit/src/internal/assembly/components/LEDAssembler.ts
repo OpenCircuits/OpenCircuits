@@ -8,7 +8,7 @@ import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assem
 import {ComponentAssembler}              from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {Style}                           from "shared/api/circuit/internal/assembly/Style";
 
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";

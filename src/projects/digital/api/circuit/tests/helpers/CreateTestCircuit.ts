@@ -2,7 +2,7 @@ import "./Extensions";
 
 import {CreateCircuit} from "digital/api/circuit/public"
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent"
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {V} from "Vector"
 import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
 import {DigitalWire} from "digital/api/circuit/public/DigitalWire";
