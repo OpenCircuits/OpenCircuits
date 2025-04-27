@@ -13,6 +13,7 @@
 *.md                text    diff=markdown
 *.mdx               text    diff=markdown
 *.mod               text
+*.proto             text
 *.scss              text    diff=css
 *.sql               text
 *.sum               text
