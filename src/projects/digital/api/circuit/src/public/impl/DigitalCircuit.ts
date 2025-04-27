@@ -20,10 +20,13 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     }
 
     public set propagationTime(val: number) {
-        throw new Error("DigitalCircuitImpl.set propagationTime: Unimplemented!");
+        // TODO[model_refactor_api] - put this somewhere else?
+        if (!this.state.simRunner)
+            return;
+        this.state.simRunner.propagationTime = val;
     }
     public get propagationTime(): number {
-        throw new Error("DigitalCircuitImpl.get propagationTime: Unimplemented!");
+        return this.state.simRunner?.propagationTime ?? -1;
     }
 
     public override importICs(ics: Array<APIToDigital<IntegratedCircuit>>): void {
