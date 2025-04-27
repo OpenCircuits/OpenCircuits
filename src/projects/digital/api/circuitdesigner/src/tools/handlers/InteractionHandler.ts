@@ -28,6 +28,8 @@ function isWithinInteractableBounds(obj: DigitalComponent, pos: Vector): boolean
 }
 
 export const InteractionHandler: ToolHandler<DigitalTypes> = {
+    canActivateWhenLocked: true,
+
     onEvent: (ev, { circuit, viewport }) => {
         const pos = viewport.camera.toWorldPos(ev.input.mousePos);
 

@@ -36,6 +36,13 @@ export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitType
         this.viewport = new ViewportImpl(state, this, svgMap, options);
     }
 
+    public set isLocked(locked: boolean) {
+        this.state.isLocked = locked;
+    }
+    public get isLocked(): boolean {
+        return this.state.isLocked;
+    }
+
     public get curTool(): Tool | undefined {
         return this.state.toolManager.curTool;
     }

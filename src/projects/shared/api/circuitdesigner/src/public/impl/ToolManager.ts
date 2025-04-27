@@ -1,9 +1,10 @@
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
+import {CircuitTypes}   from "shared/api/circuit/public/impl/CircuitState";
+
 import {DefaultTool}       from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}              from "shared/api/circuitdesigner/tools/Tool";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {CircuitDesigner}   from "../CircuitDesigner";
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 
 export type ToolManagerEvent = {
@@ -48,12 +49,17 @@ export class ToolManager<T extends CircuitTypes = CircuitTypes> extends Observab
             return;
         }
 
+        // If circuit is locked, only use tools that can be used when locked
+        const tools = designer.isLocked
+            ? this.tools.filter((tool) => (tool.canActivateWhenLocked))
+            : this.tools;
+
         // Find first tool indicating it could be activated
-        const cursor = this.tools.map((t) => t.indicateCouldActivate?.(ev, designer)).find((c) => !!c);
+        const cursor = tools.map((t) => t.indicateCouldActivate?.(ev, designer)).find((c) => !!c);
         designer.viewport.canvasInfo!.cursor = cursor;
 
         // Check if some other tool should be activated
-        const newTool = this.tools.find((t) => t.shouldActivate(ev, designer));
+        const newTool = tools.find((t) => t.shouldActivate(ev, designer));
         if (newTool !== undefined) {
             this.curTool = newTool;
             newTool.onActivate(ev, designer);

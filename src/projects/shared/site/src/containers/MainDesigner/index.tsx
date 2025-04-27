@@ -13,7 +13,7 @@ import {useDrop} from "shared/site/components/DragDroppable/useDrop";
 
 import "./index.scss";
 import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
-import {useSharedDispatch} from "shared/site/utils/hooks/useShared";
+import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 
 function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPos: Vector) {
@@ -35,6 +35,7 @@ type Props = {
 export const MainDesigner = ({ otherPlace }: Props) => {
     const designer = useCurDesigner();
     const { w, h } = useWindowSize();
+    const { isLocked } = useSharedSelector((state) => ({ isLocked: state.circuit.isLocked }));
     const canvas = useRef<HTMLCanvasElement>(null);
 
     // When the circuit changes at all, set the circuit as unsaved
@@ -42,6 +43,15 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     useEffect(() => designer.circuit.subscribe((_ev) =>
         dispatch(SetCircuitSaved(false))),
     [designer]);
+
+    // Sync circuit-lock
+    useEffect(() => {
+        if (isLocked) {
+            // Clear selections when locking
+            designer.circuit.selections.clear();
+        }
+        designer.isLocked = isLocked;
+    }, [designer, isLocked]);
 
     useLayoutEffect(() => {
         if (!canvas.current)

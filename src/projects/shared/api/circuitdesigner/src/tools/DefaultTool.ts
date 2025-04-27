@@ -1,7 +1,9 @@
+import {CircuitTypes}                     from "shared/api/circuit/public/impl/CircuitState";
+
 import {CircuitDesigner}                  from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent}                from "shared/api/circuitdesigner/input/InputAdapterEvent";
+
 import {ToolHandler, ToolHandlerResponse} from "./handlers/ToolHandler";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
 
 export class DefaultTool<T extends CircuitTypes = CircuitTypes> {
@@ -17,10 +19,6 @@ export class DefaultTool<T extends CircuitTypes = CircuitTypes> {
 
     // Method called when this tool is currently active and an event occurs
     public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner<T>): void {
-        // // Don't do anything when circuit is locked
-        // if (circuit.locked)
-        //     return;
-
         if (ev.type === "mousedown") {
             // Find object if we pressed on one
             designer.curPressedObj = designer.circuit.pickObjAt(
@@ -29,8 +27,13 @@ export class DefaultTool<T extends CircuitTypes = CircuitTypes> {
             designer.curPressedObj = undefined;
         }
 
+        // If circuit is locked, only use handlers that can be used when locked
+        const handlers = designer.isLocked
+            ? this.handlers.filter((handler) => handler.canActivateWhenLocked)
+            : this.handlers;
+
         // Loop through each handler and see if we should trigger any of them
-        for (const handler of this.handlers) {
+        for (const handler of handlers) {
             // If handler triggered a stop, don't loop through any others
             if (handler.onEvent(ev, designer) === ToolHandlerResponse.HALT)
                 return;
