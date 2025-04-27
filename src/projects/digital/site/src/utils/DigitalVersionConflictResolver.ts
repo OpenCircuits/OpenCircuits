@@ -164,15 +164,15 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
     );
     // We can't rely on the order of ports in currentPorts to actually correlate to the index
     //  (seems to be a <3.0 issue but haven't confirmed), so we have to sort by position to better guess.
-    const comparePortPos = (a: RefAndObject, b: RefAndObject) => {
+    const comparePortPos = (a: RefAndObject, b: RefAndObject, invertY?: boolean) => {
         const targetA = getEntry(a.obj, "target")!.data as { x: number, y: number };
         const targetB = getEntry(b.obj, "target")!.data as { x: number, y: number };
-        return (targetA.x - targetB.x) + (targetA.y - targetB.y);
+        return (targetA.x - targetB.x) + (invertY ? -1 : 1) * (targetA.y - targetB.y);
     };
     // Used to find an IC data guid that corresponds to given IC instance uses
     const getICDataGuid = (
         icGuids: Array<[string, SerializationEntry]>,
-        data: RefAndObject) => refToGuid.get(data.ref) ?? icGuids.find(([, entry]) => areEntriesEquivalent(entry, data.obj))![0];
+        data: RefAndObject) => icGuids.find(([, entry]) => areEntriesEquivalent(entry, data.obj))![0];
 
     const migrateObjs = (
         objectsEntry: SerializationArrayEntry,
@@ -600,7 +600,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         const transformRef = getEntry(obj, "transform")!;
         const sizeRef = getEntry(transformRef, "size")!;
         const icContents = getEntry(obj, "collection")!;
-        const { x, y } = sizeRef.data as {x: number, y: number};
+        const { x: w, y: h } = sizeRef.data as {x: number, y: number};
 
         const objectRefsEntry = getArrayEntry(icContents, "components")!;
         const wiresRefsEntry = getArrayEntry(icContents, "wires")!;
@@ -609,43 +609,47 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         const initialSimState = migrateSimState(guidsToObjs, icGuidsToObjects);
 
         const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
-        const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
-        const inputPins = inputPorts.map(({ obj }, index): DigitalSchema.Core.IntegratedCircuitPin => {
+        const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!).toSorted(comparePortPos);
+        // inputs and their ports are (presumably) linked on index, so when sorting they need to be zipped together
+        const inputsAndPorts = inputs.zip(inputPorts).toSorted((a, b) => comparePortPos(a[1], b[1], true));
+        const inputPins = inputsAndPorts.map(([{ ref }, { obj }]): DigitalSchema.Core.IntegratedCircuitPin => {
             const origin = getEntry(obj, "origin")!;
             const { x, y } = origin.data as {x: number, y: number};
             const dir = getEntry(obj, "dir")!;
             const { x: dx, y: dy } = dir.data as {x: number, y: number};
+            // comparePortPos
             return {
                 name: obj.data.name as string,
-                id: pinRefToPortGuid.get(inputs[index].ref!)!,
+                id: pinRefToPortGuid.get(ref!)!,
                 group: "inputs",
-                x: x / 25,
-                y: y / 25,
+                x: x / (w / 2),
+                y: y / (h / 2),
                 dx: dx,
                 dy: -dy,
             }
         });
         const outputs = getArrayEntries(getArrayEntry(icContents, "outputs")!);
         const outputPorts = getArrayEntries(getArrayEntry(obj, "outputPorts")!);
-        const outputPins = outputPorts.map(({ obj }, index): DigitalSchema.Core.IntegratedCircuitPin => {
+        const outputsAndPorts = outputs.zip(outputPorts).toSorted((a, b) => comparePortPos(a[1], b[1], true));
+        const outputPins = outputsAndPorts.map(([{ ref }, { obj }]): DigitalSchema.Core.IntegratedCircuitPin => {
             const origin = getEntry(obj, "origin")!;
             const { x, y } = origin.data as {x: number, y: number};
             const dir = getEntry(obj, "dir")!;
             const { x: dx, y: dy } = dir.data as {x: number, y: number};
             return {
                 name: obj.data.name as string,
-                id: pinRefToPortGuid.get(outputs[index].ref!)!,
+                id: pinRefToPortGuid.get(ref!)!,
                 group: "outputs",
-                x: x / 25,
-                y: y / 25,
+                x: x / (w / 2),
+                y: y / (h / 2),
                 dx: dx,
                 dy: -dy,
             }
         });
 
         const metadata: DigitalSchema.Core.IntegratedCircuitMetadata = {
-            displayWidth: x / 50,
-            displayHeight: y / 50,
+            displayWidth: w / 50,
+            displayHeight: h / 50,
             id: icGuids[index][0],
             name: obj.data.name as string,
             desc: "",

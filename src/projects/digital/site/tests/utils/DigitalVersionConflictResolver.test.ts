@@ -33,6 +33,7 @@ import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
 import zIndexCircuit from "./TestCircuitData/3_0/ZIndex.json";
 import clockInICOffCircuit from "./TestCircuitData/3_0/ClockInICOff.json";
 import clockInICOnCircuit from "./TestCircuitData/3_0/ClockInICOn.json";
+import threeInputICCircuit from "./TestCircuitData/3_0/ThreeInputIC.json";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 import {IMPORT_IC_CLOCK_MESSAGE} from "digital/site/utils/Constants";
 
@@ -709,6 +710,28 @@ describe("DigitalVersionConflictResolver", () => {
             expect(icInstance.outputs).toHaveLength(1);
 
             expect(led).toBeOn();
+        });
+        test("Port heights", () => {
+            const [circuit] = CreateTestCircuit();
+            const { schema, warnings } = VersionConflictResolver(JSON.stringify(threeInputICCircuit));
+            expect(warnings).toBeUndefined();
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(5);
+
+            const sw1 = comps.find(({ name }) => name === "Switch1")!;
+            const sw2 = comps.find(({ name }) => name === "Switch2")!;
+            const sw3 = comps.find(({ name }) => name === "Switch3")!;
+            const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
+            expect(sw1).toBeDefined();
+            expect(sw2).toBeDefined();
+            expect(sw3).toBeDefined();
+            expect(icInstance).toBeDefined();
+
+            const icInputHeights = icInstance.inputs.map((port) => port.targetPos.y).sort();
+            expect(sw1.outputs[0].targetPos.y).toApproximatelyEqual(icInputHeights[0], 1e-6);
+            expect(sw2.outputs[0].targetPos.y).toApproximatelyEqual(icInputHeights[1], 1e-6);
+            expect(sw3.outputs[0].targetPos.y).toApproximatelyEqual(icInputHeights[2], 1e-6);
         });
     });
 });
