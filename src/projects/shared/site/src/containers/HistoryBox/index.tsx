@@ -31,13 +31,13 @@ const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
                  e.stopPropagation();
                  setDisplayExtraInfo(!displayExtraInfo);
              }}>
-            <div className="historybox__entry__header">
+            {/* <div className="historybox__entry__header">
                 {a.getCustomInfo &&
                     (<img src="img/icons/info.svg"
                           height="24px"
                           alt="Display extra info" />)}
                 <span>{a.getName()}</span>
-            </div>
+            </div> */}
             {/* {!displayExtraInfo && a.getCustomInfo?.()?.map((obj, i) =>
                 <div key={`entry-extrainfo-${i}`} className="historybox__entry__extrainfo">{obj}</div>
             )} */}

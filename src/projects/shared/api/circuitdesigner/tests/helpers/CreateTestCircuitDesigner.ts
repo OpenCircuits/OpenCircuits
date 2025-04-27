@@ -71,6 +71,7 @@ export function CreateTestCircuitDesigner(toolConfig: ToolConfig = GetDefaultToo
 
         toolManager: new ToolManager(toolConfig.defaultTool, toolConfig.tools),
 
+        isLocked:      false,
         curPressedObj: undefined,
         margin:        { left: 0, right: 0, top: 0, bottom: 0 },
         debugOptions:  {

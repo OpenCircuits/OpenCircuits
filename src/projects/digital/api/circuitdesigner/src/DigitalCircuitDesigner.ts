@@ -33,6 +33,7 @@ export function CreateDesigner(
 
         toolManager: new ToolManager<DigitalTypes>(toolConfig.defaultTool, toolConfig.tools),
 
+        isLocked:      false,
         curPressedObj: undefined,
         margin:        { left: 0, right: 0, top: 0, bottom: 0 },
         debugOptions:  {

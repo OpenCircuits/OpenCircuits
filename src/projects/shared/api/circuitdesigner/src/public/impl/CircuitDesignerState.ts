@@ -8,9 +8,11 @@ import {Schema} from "shared/api/circuit/schema";
 export interface CircuitDesignerState<T extends CircuitTypes> {
     circuitState: CircuitState<T>;
 
+    // TODO[model_refactor_api] - move to CircuitInternal
     // SoT for the cameras
     camera: Schema.Camera;
 
+    isLocked: boolean;
     toolManager: ToolManager<T>;
 
     curPressedObj?: T["Obj"];

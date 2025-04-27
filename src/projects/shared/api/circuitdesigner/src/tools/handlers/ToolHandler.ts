@@ -12,6 +12,8 @@ export enum ToolHandlerResponse {
 }
 
 export interface ToolHandler<T extends CircuitTypes = CircuitTypes>  {
+    canActivateWhenLocked?: boolean;
+
     /**
      * This method will run when an event occurs and a previous handler
      *  has not sent a "HALT" response.

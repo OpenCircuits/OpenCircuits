@@ -9,6 +9,8 @@ export interface ToolEvent {
 }
 
 export interface Tool extends ObservableImpl<ToolEvent> {
+    canActivateWhenLocked?: boolean;
+
     // Optional method to return a `Cursor` to indicate that the tool could be activated.
     indicateCouldActivate?: (ev: InputAdapterEvent, designer: CircuitDesigner) => Cursor | undefined;
 

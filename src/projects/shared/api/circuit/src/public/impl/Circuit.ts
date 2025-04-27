@@ -5,7 +5,7 @@ import {Schema} from "shared/api/circuit/schema";
 
 import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 
-import {Circuit, CircuitEvent, ICPin, IntegratedCircuit,
+import {Circuit, CircuitEvent, CircuitHistory, CircuitHistoryEvent, ICPin, IntegratedCircuit,
         IntegratedCircuitDisplay} from "../Circuit";
 import {Selections}                from "../Selections";
 
@@ -14,23 +14,50 @@ import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl} from "../../utils/Observable";
 import {ObjContainer} from "../ObjContainer";
 import {ObjContainerImpl} from "./ObjContainer";
+import {LogEntry} from "../../internal/impl/CircuitLog";
 
 
 export type RemoveICCallback = (id: GUID) => void;
+
+export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements CircuitHistory {
+    protected readonly internal: CircuitInternal;
+
+    public constructor(internal: CircuitInternal) {
+        super();
+
+        this.internal = internal;
+
+        this.internal["log"].subscribe((ev) => {
+            if (ev.accepted.length === 0)
+                return;
+            this.publish({ type: "change" });
+        })
+    }
+
+    public getUndoStack(): readonly LogEntry[] {
+        return this.internal.getUndoHistory();
+    }
+    public getRedoStack(): readonly LogEntry[] {
+        return this.internal.getRedoHistory();
+    }
+    public clear(): void {
+        return this.internal.clearHistory();
+    }
+}
 
 export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly state: CircuitState<T>;
 
     public readonly selections: Selections;
+    public readonly history: CircuitHistory;
 
-    public constructor(
-        state: CircuitState<T>,
-    ) {
+    public constructor(state: CircuitState<T>) {
         super();
 
         this.state = state;
 
         this.selections = new SelectionsImpl(state);
+        this.history = new HistoryImpl(state.internal);
 
         // This ordering is important, because it means that all previous circuit subscription calls will happen
         // before any public/outside subscriptions. (i.e. selections are updated before circuit subscribers are called).
@@ -260,15 +287,6 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
     public redo(): void {
         this.internal.redo().unwrap();
-    }
-
-    public get history() {
-        return {
-            get:   () => this.internal.getHistory(),
-            clear: () => {
-                this.internal.clearHistory();
-            },
-        };
     }
 
     public loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["Obj[]"] {

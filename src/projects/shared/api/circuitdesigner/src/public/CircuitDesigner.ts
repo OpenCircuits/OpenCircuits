@@ -15,6 +15,8 @@ export interface CircuitDesignerOptions {
 export interface CircuitDesigner<T extends CircuitTypes = CircuitTypes> {
     readonly circuit: T["Circuit"];
 
+    // When the circuit is 'locked', only specific actions can be performed.
+    isLocked: boolean;
     readonly curTool?: Tool;
     curPressedObj?: T["Obj"];
 

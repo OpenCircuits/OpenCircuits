@@ -13,6 +13,8 @@ const ARROW_PAN_DISTANCE_NORMAL = 1.5;
 const ARROW_PAN_DISTANCE_SMALL = 0.1;
 
 export class PanTool extends ObservableImpl<ToolEvent> implements Tool {
+    public readonly canActivateWhenLocked = true;
+
     public constructor() {
         super();
     }
