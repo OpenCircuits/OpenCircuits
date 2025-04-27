@@ -60,7 +60,7 @@ import {CreateCircuit} from "digital/api/circuit/public";
 import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalProtoToSchema, DigitalSchemaToProto} from "digital/site/proto/bridge";
-import {Schema} from "digital/api/circuit/schema";
+import {DigitalSchema} from "digital/api/circuit/schema";
 
 
 async function Init(): Promise<void> {
@@ -166,7 +166,7 @@ async function Init(): Promise<void> {
                 SerializeCircuit(circuit) {
                     return new Blob([
                         DigitalProtoSchema.DigitalCircuit.encode(
-                            DigitalSchemaToProto(circuit as Schema.DigitalCircuit)
+                            DigitalSchemaToProto(circuit as DigitalSchema.DigitalCircuit)
                         ).finish(),
                     ]);
                 },

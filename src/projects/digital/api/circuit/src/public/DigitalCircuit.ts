@@ -16,12 +16,13 @@ import type {
     ReadonlyWire,
     Wire,
 } from "shared/api/circuit/public";
+import type {Schema} from "shared/api/circuit/schema";
 
 import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
 import type {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode} from "./DigitalComponent";
 import type {DigitalWire, ReadonlyDigitalWire}                   from "./DigitalWire";
 import type {DigitalPort, ReadonlyDigitalPort}                   from "./DigitalPort";
-import {Schema} from "../schema";
+import type {DigitalSchema} from "digital/api/circuit/schema";
 
 
 export type ToDigital<T> = (
@@ -29,8 +30,8 @@ export type ToDigital<T> = (
     T extends Vector ? Vector :
     T extends Rect   ? Rect   :
     // Schema-type
-    T extends Schema.Core.Circuit ? Schema.DigitalCircuit :
-    T extends Schema.Core.IntegratedCircuit ? Schema.DigitalIntegratedCircuit :
+    T extends Schema.Circuit ? DigitalSchema.DigitalCircuit :
+    T extends Schema.IntegratedCircuit ? DigitalSchema.DigitalIntegratedCircuit :
     // Base-type replacements
     T extends IntegratedCircuit ? DigitalIntegratedCircuit :
     T extends Circuit           ? DigitalCircuit :

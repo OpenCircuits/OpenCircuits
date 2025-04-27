@@ -5,7 +5,8 @@ import {DigitalComponentConfigurationInfo} from "../DigitalComponents";
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
 import {ReadonlyCircuitStorage} from "shared/api/circuit/internal/impl/CircuitDocument";
 import {MapObj} from "shared/api/circuit/utils/Functions";
-import {Schema} from "../../schema";
+import {Schema} from "shared/api/circuit/schema";
+import {DigitalSchema} from "digital/api/circuit/schema";
 import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
@@ -20,7 +21,7 @@ export interface TickInfo {
 
 }
 export type PropagatorFunc = (
-    comp: Schema.Core.Component,
+    comp: Schema.Component,
     info: DigitalComponentConfigurationInfo,
     state: DigitalSimState,
     tickInfo: {
@@ -49,7 +50,7 @@ type DigitalSimEvent = {
     updatedInputPorts: Set<ContextPath>;
 }
 
-class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.CircuitMetadata> {
+class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> {
     public readonly storage: ReadonlyCircuitStorage<M>;
 
     // PortID -> Signal
@@ -59,7 +60,7 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
     public readonly states: Map<GUID, Signal[]>;
 
     // ICInstance(Component)ID -> DigitalSimState
-    public readonly icStates: Map<GUID, DigitalSimState<Schema.Core.IntegratedCircuitMetadata>>;
+    public readonly icStates: Map<GUID, DigitalSimState<Schema.IntegratedCircuitMetadata>>;
 
     public readonly superState: DigitalSimState | undefined;
     private readonly prePath: ContextPath;
@@ -153,7 +154,7 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
     }
 
     public isIC(): this is (DigitalSimState &
-                           { storage: ReadonlyCircuitStorage<Schema.Core.IntegratedCircuitMetadata> }) {
+                           { storage: ReadonlyCircuitStorage<Schema.IntegratedCircuitMetadata> }) {
         return "pins" in this.storage.metadata;
     }
 
@@ -182,7 +183,7 @@ class DigitalSimState<M extends Schema.Core.CircuitMetadata = Schema.Core.Circui
         return this.icStates.get(icInstance.id)!.findState(rest);
     }
 
-    public toSchema(container?: ObjContainer): Schema.DigitalSimState {
+    public toSchema(container?: ObjContainer): DigitalSchema.DigitalSimState {
         const compIds = container?.components.map((c) => c.id);
 
         const signalKeys = container?.ports.map((p) => p.id) ?? this.signals.keys();
@@ -264,7 +265,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     // States for ICs (not IC-instances), used to load initial states
     // when an instance of the IC is created.
-    private readonly initialICStates: Map<GUID, Schema.DigitalSimState>;
+    private readonly initialICStates: Map<GUID, DigitalSchema.DigitalSimState>;
 
     private readonly rootState: DigitalSimState;
 
@@ -403,7 +404,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         })
     }
 
-    public loadState(state: Schema.DigitalSimState) {
+    public loadState(state: DigitalSchema.DigitalSimState) {
         for (const [key, signal] of Object.entries(state.signals))
             this.rootState.signals.set(key, signal);
 
@@ -419,7 +420,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         }
     }
 
-    public loadICState(id: GUID, icState: Schema.DigitalSimState) {
+    public loadICState(id: GUID, icState: DigitalSchema.DigitalSimState) {
         this.initialICStates.set(id, icState);
     }
 
@@ -445,10 +446,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     private initializeICInstance(
         cur: DigitalSimState,
-        initialState: Schema.DigitalSimState,
+        initialState: DigitalSchema.DigitalSimState,
         compId: GUID,
         icId: GUID,
-    ): DigitalSimState<Schema.Core.IntegratedCircuitMetadata> {
+    ): DigitalSimState<Schema.IntegratedCircuitMetadata> {
         const ic = this.circuit.getICInfo(icId).unwrap();
         const newState = new DigitalSimState(ic, cur, cur.getPath(compId));
 

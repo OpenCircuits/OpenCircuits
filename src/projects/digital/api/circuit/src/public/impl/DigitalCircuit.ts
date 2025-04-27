@@ -1,8 +1,9 @@
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
+import {Schema} from "shared/api/circuit/schema";
 
 import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
-import {Schema} from "../../schema";
+import {DigitalSchema} from "digital/api/circuit/schema";
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort} from "../DigitalPort";
 import {DigitalWire} from "../DigitalWire";
@@ -50,7 +51,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     }
 
     public override loadSchema(
-        schema: Schema.DigitalCircuit,
+        schema: DigitalSchema.DigitalCircuit,
         opts?: { refreshIds?: boolean, loadMetadata?: boolean }
     ): Array<DigitalComponent | DigitalWire | DigitalPort> {
         // TODO[] - might need it like this
@@ -81,10 +82,10 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return objs;
     }
 
-    public override toSchema(container?: ObjContainer): Schema.DigitalCircuit {
+    public override toSchema(container?: ObjContainer): DigitalSchema.DigitalCircuit {
         return {
             // TODO[] - cleanup type cast maybe
-            ...super.toSchema(container) as Schema.Core.Circuit & { ics: Schema.DigitalIntegratedCircuit[] },
+            ...super.toSchema(container) as Schema.Circuit & { ics: DigitalSchema.DigitalIntegratedCircuit[] },
 
             propagationTime: -1, // TODO[model_refactor_api],
 
@@ -103,7 +104,7 @@ export class DigitalIntegratedCircuitImpl extends IntegratedCircuitImpl<DigitalT
         this.state = state;
     }
 
-    public override toSchema(): Schema.DigitalIntegratedCircuit {
+    public override toSchema(): DigitalSchema.DigitalIntegratedCircuit {
         return {
             ...super.toSchema(),
 
