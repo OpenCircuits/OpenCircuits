@@ -171,7 +171,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
     // Used to find an IC data guid that corresponds to given IC instance uses
     const getICDataGuid = (
         icGuids: Array<[string, SerializationEntry]>,
-        data: RefAndObject) => refToGuid.get(data.ref) ?? icGuids.find(([, entry]) => areEntriesEquivalent(entry, data.obj))![0];
+        data: RefAndObject) => icGuids.find(([, entry]) => areEntriesEquivalent(entry, data.obj))![0];
 
     const migrateObjs = (
         objectsEntry: SerializationArrayEntry,
