@@ -599,16 +599,13 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         const transformRef = getEntry(obj, "transform")!;
         const sizeRef = getEntry(transformRef, "size")!;
         const icContents = getEntry(obj, "collection")!;
-        const { x, y } = sizeRef.data as {x: number, y: number};
+        const { x: w, y: h } = sizeRef.data as {x: number, y: number};
 
         const objectRefsEntry = getArrayEntry(icContents, "components")!;
         const wiresRefsEntry = getArrayEntry(icContents, "wires")!;
 
         const { guidsToObjs, objects, pinRefToPortGuid } = migrateObjs(objectRefsEntry, wiresRefsEntry, icGuids, true);
         const initialSimState = migrateSimState(guidsToObjs, icGuidsToObjects);
-
-        const displayWidth = x / 50;
-        const displayHeight = y / 50;
 
         const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
         const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
@@ -621,8 +618,8 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 name: obj.data.name as string,
                 id: pinRefToPortGuid.get(inputs[index].ref!)!,
                 group: "inputs",
-                x: x / (displayWidth * 25),
-                y: y / (displayHeight * 25),
+                x: x / (w / 2),
+                y: y / (h / 2),
                 dx: dx,
                 dy: -dy,
             }
@@ -638,16 +635,16 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 name: obj.data.name as string,
                 id: pinRefToPortGuid.get(outputs[index].ref!)!,
                 group: "outputs",
-                x: x / (displayWidth * 25),
-                y: y / (displayHeight * 25),
+                x: x / (w / 2),
+                y: y / (h / 2),
                 dx: dx,
                 dy: -dy,
             }
         });
 
         const metadata: DigitalSchema.Core.IntegratedCircuitMetadata = {
-            displayWidth,
-            displayHeight,
+            displayWidth: w / 50,
+            displayHeight: h / 50,
             id: icGuids[index][0],
             name: obj.data.name as string,
             desc: "",
