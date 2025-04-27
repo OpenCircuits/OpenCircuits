@@ -1,5 +1,4 @@
 import {GUID} from "./GUID";
-import {Prop} from "./Prop";
 
 
 export interface CircuitMetadata {

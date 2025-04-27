@@ -1,6 +1,6 @@
 import {Rect} from "math/Rect";
 
-import {Prop} from "../schema/Prop";
+import {Prop} from "shared/api/circuit/schema";
 
 
 export interface ReadonlyBaseObject {

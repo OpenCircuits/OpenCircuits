@@ -1,4 +1,4 @@
-import {Wire} from "shared/api/circuit/schema/Wire";
+import {Schema} from "shared/api/circuit/schema";
 
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {Style}           from "shared/api/circuit/internal/assembly/Style";
@@ -17,7 +17,7 @@ export class DigitalWireAssembler extends WireAssembler {
         this.sim = sim;
     }
 
-    protected getColorForWire(wire: Wire): string | undefined {
+    protected getColorForWire(wire: Schema.Wire): string | undefined {
         const signal = this.sim.getSignal(wire.p1);
         if (signal === Signal.On)
             return this.options.defaultOnColor;
@@ -26,14 +26,14 @@ export class DigitalWireAssembler extends WireAssembler {
         return wire.props.color;
     }
 
-    protected override getWireStyle(wire: Wire): Style {
+    protected override getWireStyle(wire: Schema.Wire): Style {
         return this.options.wireStyle(
             this.isSelected(wire.id),
             this.getColorForWire(wire),
         );
     }
 
-    public override assemble(wire: Wire, reasons: Set<AssemblyReason>): void {
+    public override assemble(wire: Schema.Wire, reasons: Set<AssemblyReason>): void {
         super.assemble(wire, reasons);
 
         // Update if input signal changed

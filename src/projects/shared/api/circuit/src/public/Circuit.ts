@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {GUID} from "shared/api/circuit/schema/GUID";
+import {GUID, Schema} from "shared/api/circuit/schema";
 
 import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff";
 
@@ -10,13 +10,10 @@ import {Obj, ReadonlyObj}           from "./Obj";
 import {Port, ReadonlyPort}          from "./Port";
 import {ReadonlyWire, Wire}          from "./Wire";
 import {Selections}    from "./Selections";
-import {Schema} from "../schema";
 import {Observable} from "../utils/Observable";
 import {ObjContainer} from "./ObjContainer";
 import {LogEntry} from "../internal/impl/CircuitLog";
 
-
-export type {CircuitMetadata} from "shared/api/circuit/schema/CircuitMetadata";
 
 // TODO[model_refactor](leon) - make this more user friendly
 export type CircuitEvent = {
@@ -99,7 +96,7 @@ export interface Circuit extends C {
 
     history: {
         // TODO[]: dont directly expose this
-        get(): ReadonlyArray<LogEntry>;
+        get(): readonly LogEntry[];
         clear(): void;
     };
 

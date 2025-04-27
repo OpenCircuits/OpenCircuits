@@ -2,7 +2,7 @@ import React from "react";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-import {VersionConflictResolver, useAPIMethods} from "shared/site/utils/ApiMethods";
+import {useAPIMethods} from "shared/site/utils/ApiMethods";
 import {LoadFile}      from "shared/site/utils/Importer";
 
 import {useMainDesigner}   from "shared/site/utils/hooks/useDesigner";
@@ -11,7 +11,7 @@ import {useSharedSelector} from "shared/site/utils/hooks/useShared";
 import {InputField} from "shared/site/components/InputField";
 
 
-export const OpenFileButton = ({ versionConflictResolver }: {versionConflictResolver: VersionConflictResolver}) => {
+export const OpenFileButton = () => {
     const designer = useMainDesigner();
     const isSaved = useSharedSelector((state) => state.circuit.isSaved);
     const { LoadCircuit } = useAPIMethods(designer.circuit);
@@ -20,7 +20,7 @@ export const OpenFileButton = ({ versionConflictResolver }: {versionConflictReso
 
     const load = (file: File) => {
         if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
-            LoadCircuit(LoadFile(file), versionConflictResolver);
+            LoadCircuit(LoadFile(file, "binary"));
     }
 
     return (<>

@@ -49,19 +49,20 @@ import {Login} from "shared/site/state/thunks/User";
 import {AppStore} from "./state";
 import {reducers} from "./state/reducers";
 
-import ImageFiles      from "./data/images.json";
-import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
-
 import {App} from "./containers/App";
-import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
-import {LoadCircuit} from "shared/site/utils/CircuitHelpers";
-import {Request} from "shared/site/utils/Request";
 import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 import {VersionConflictResolver} from "./utils/DigitalVersionConflictResolver";
+import {setDeserializeCircuitFunc, setSerializeCircuitFunc} from "shared/site/utils/CircuitIOMethods";
+
+import {DigitalProtoSchema} from "digital/site/proto";
+import {DigitalCircuit} from "digital/api/circuit/public";
+import {Circuit} from "shared/api/circuit/public";
 import {CreateCircuit} from "digital/api/circuit/public";
 import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
+import {DigitalProtoToSchema, DigitalSchemaToProto} from "digital/site/proto/bridge";
 
 
 async function Init(): Promise<void> {
@@ -166,11 +167,37 @@ async function Init(): Promise<void> {
 
             storeDesigner("main", mainDesigner);
 
+            setSerializeCircuitFunc((circuit: Circuit) => new Blob([
+                DigitalProtoSchema.DigitalCircuit.encode(
+                    DigitalSchemaToProto((circuit as DigitalCircuit).toSchema())
+                ).finish(),
+            ]));
+            setDeserializeCircuitFunc((data) => {
+                if (typeof data === "string")
+                    return VersionConflictResolver(data).schema;
+
+                const proto = (() => {
+                    try {
+                        return DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
+                    } catch {
+                        // If we failed to decode it, it could be an old version of the circuit format
+                        // (plain text), so handle that below.
+                    }
+                })();
+
+                if (proto)
+                    return DigitalProtoToSchema(proto);
+
+                // Else, might be an old version, so decode as plain text and run through VersionConflictResolver.
+                const text = new TextDecoder().decode(data);
+                return VersionConflictResolver(text).schema;
+            });
+
             if (process.env.NODE_ENV === "development") {
                 // Load dev state
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    LoadCircuit(mainDesigner.circuit, VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)).schema);
+                    mainCircuit.loadSchema(VersionConflictResolver(await DevGetFile(DEV_CACHED_CIRCUIT_FILE)).schema);
             }
 
             const root = createRoot(document.getElementById("root")!);

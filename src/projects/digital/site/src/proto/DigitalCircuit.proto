@@ -1,0 +1,29 @@
+// TODO[model_refactor_api] - .gitignore the generated .ts and generate it automatically via webpack?
+syntax = "proto3";
+
+import "src/projects/shared/site/src/proto/Circuit.proto";
+
+
+message DigitalSimState {
+    enum Signal {
+        Off = 0;
+        On = 1;
+        Metastable = 2;
+    }
+    message State {
+        repeated Signal state = 1;
+    }
+
+    map<string, Signal> signals = 1;
+    map<string, State> states = 2;
+    map<string, DigitalSimState> icStates = 3;
+}
+
+message DigitalCircuit {
+    Circuit circuit = 1;
+
+    float propagationTime = 2;
+
+    repeated DigitalSimState icInitialSimStates = 3;
+    DigitalSimState simState = 4;
+}

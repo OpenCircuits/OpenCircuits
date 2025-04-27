@@ -2,25 +2,22 @@ import {Circuit} from "shared/api/circuit/public";
 
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {CreateUserCircuit, DeleteUserCircuit, LoadUserCircuit} from "shared/site/api/Circuits";
+import {DeleteUserCircuit, LoadUserCircuit} from "shared/site/api/Circuits";
 
 import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/site/state/CircuitInfo";
 
-import {SaveCircuit}      from "shared/site/state/thunks/SaveCircuit";
 import {LoadUserCircuits} from "shared/site/state/thunks/User";
 
 import {GenerateThumbnail} from "./GenerateThumbnail";
 
-import {LoadCircuit as LoadCircuitHelper} from "./CircuitHelpers";
-import {Schema} from "shared/api/circuit/schema";
+import {DeserializeCircuit} from "./CircuitIOMethods";
 
 
-export type VersionConflictResolver = (fileContents: string) => { schema: Schema.Circuit, warnings?: string[] }
 export const useAPIMethods = (mainCircuit: Circuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
     const dispatch = useSharedDispatch();
 
-    const LoadCircuit = async (dataPromise: Promise<string | undefined>, versionConflictResolver: VersionConflictResolver) => {
+    const LoadCircuit = async (dataPromise: Promise<string | ArrayBuffer | undefined>) => {
         dispatch(_SetCircuitLoading(true));
 
         const data = await dataPromise;
@@ -28,12 +25,13 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             dispatch(_SetCircuitLoading(false));
             throw new Error("APIMethods LoadCircuit: data is undefined");
         }
-        const { schema, warnings } = versionConflictResolver(data);
 
         try {
-            if (warnings)
-                window.alert(warnings);
-            LoadCircuitHelper(mainCircuit, schema);
+            // TODO[model_refactor_api] - create new circuit instead?
+            const schema = DeserializeCircuit(data);
+            mainCircuit.name = schema.metadata.name;
+            mainCircuit.desc = schema.metadata.desc;
+            mainCircuit.loadSchema(schema);
         } catch (e) {
             console.error(e);
             dispatch(_SetCircuitLoading(false));
@@ -47,10 +45,10 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         dispatch(_SetCircuitLoading(false));
     }
 
-    const LoadCircuitRemote = async (id: string, versionConflictResolver: VersionConflictResolver) => {
+    const LoadCircuitRemote = async (id: string) => {
         if (!auth)
             throw new Error("LoadCircuitRemote: auth is undefined");
-        return LoadCircuit(LoadUserCircuit(auth, id), versionConflictResolver);
+        return LoadCircuit(LoadUserCircuit(auth, id));
     }
 
     const DeleteCircuitRemote = async (id: string) => {
@@ -73,7 +71,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         // Save the circuit and reload the user circuits
         return (
-            // TODO: Replacement for serialize
+            // TODO[model_refactor_api]: Replacement for serialize
             // await dispatch(SaveCircuit(mainCircuit.serialize())) &&
             await dispatch(LoadUserCircuits())
         );
@@ -90,7 +88,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         const thumbnail = GenerateThumbnail(mainCircuit);
 
-        // TODO: Either implement circuit.copy() or workaround with copying selections and name
+        // TODO[model_refactor_api]: Either implement circuit.copy() or workaround with copying selections and name
         /**
         const circuitCopy = mainCircuit.copy();
         circuitCopy.name = circuitCopy.name + " (Copy)";

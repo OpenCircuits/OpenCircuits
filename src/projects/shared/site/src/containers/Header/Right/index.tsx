@@ -1,21 +1,19 @@
 import {useState} from "react";
 
-import {DownloadMenuDropdown}      from "./DownloadMenuDropdown";
-import {OpenFileButton}            from "./OpenFileButton";
-import {SettingsMenu}              from "./SettingsMenu";
-import {SignInOutButtons}          from "./SignInOutButtons";
-import {TutorialDropdown}          from "./TutorialDropdown";
-import {UtilitiesDropdown,Utility} from "./UtilitiesDropdown";
+import {DownloadMenuDropdown}       from "./DownloadMenuDropdown";
+import {OpenFileButton}             from "./OpenFileButton";
+import {SettingsMenu}               from "./SettingsMenu";
+import {SignInOutButtons}           from "./SignInOutButtons";
+import {TutorialDropdown}           from "./TutorialDropdown";
+import {UtilitiesDropdown, Utility} from "./UtilitiesDropdown";
 
 import "./index.scss";
-import {VersionConflictResolver} from "shared/site/utils/ApiMethods";
 
 
 type Props = {
     extraUtilities: Utility[];
-    versionConflictResolver: VersionConflictResolver;
 }
-export const HeaderRight = ({ extraUtilities, versionConflictResolver }: Props) => {
+export const HeaderRight = ({ extraUtilities }: Props) => {
     const [isHidden, setHidden] = useState(true);
 
     return (<div className="header__right">
@@ -29,10 +27,10 @@ export const HeaderRight = ({ extraUtilities, versionConflictResolver }: Props) 
                 <SignInOutButtons />
                 {  // Render only if there are utilities or in dev mode for dev utilities
                 (extraUtilities.length > 0 || process.env.NODE_ENV === "development") &&
-                    <UtilitiesDropdown extraUtilities={extraUtilities} versionConflictResolver={versionConflictResolver} />
+                    <UtilitiesDropdown extraUtilities={extraUtilities} />
                 }
                 <DownloadMenuDropdown />
-                <OpenFileButton versionConflictResolver={versionConflictResolver} />
+                <OpenFileButton />
                 <SettingsMenu />
                 <TutorialDropdown />
             </div>

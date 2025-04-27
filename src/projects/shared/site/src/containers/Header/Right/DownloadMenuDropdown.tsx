@@ -1,26 +1,25 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import {SaveFile} from "shared/site/utils/Exporter";
 
-import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
 
 import {Dropdown} from "./Dropdown";
+import {useMainDesigner} from "shared/site/utils/hooks/useDesigner";
+import {SerializeCircuit} from "shared/site/utils/CircuitIOMethods";
 
 
 export const DownloadMenuDropdown = () => {
-    const designer = useMainDesigner();
+    const mainDesigner = useMainDesigner();
     const { curMenu, circuitName } = useSharedSelector(
         (state) => ({ curMenu: state.header.curMenu, circuitName: state.circuit.name })
     );
     const dispatch = useSharedDispatch();
 
     const onDownloadClick = () => {
-        const data = JSON.stringify(designer.circuit.toSchema());
-
         // Convert to URL data
-        const file = new Blob([data], { type: "text/json" });
+        const file = SerializeCircuit(mainDesigner.circuit);
         const url = URL.createObjectURL(file);
 
         SaveFile(url, circuitName, "circuit");

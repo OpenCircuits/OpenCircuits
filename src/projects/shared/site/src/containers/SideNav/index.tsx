@@ -1,8 +1,8 @@
-import {CircuitMetadata} from "shared/api/circuit/public";
+import {Schema} from "shared/api/circuit/schema";
 
 import {OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-import {VersionConflictResolver, useAPIMethods} from "shared/site/utils/ApiMethods";
+import {useAPIMethods} from "shared/site/utils/ApiMethods";
 import {Request}       from "shared/site/utils/Request";
 
 import {useMainDesigner}                      from "shared/site/utils/hooks/useDesigner";
@@ -18,7 +18,7 @@ import {SignInOutButtons} from "shared/site/containers/Header/Right/SignInOutBut
 import "./index.scss";
 
 
-function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
+function LoadExampleCircuit(data: Schema.CircuitMetadata): Promise<string> {
     return Request({
         method:  "GET",
         url:     `/examples/${data.id}`,
@@ -27,10 +27,9 @@ function LoadExampleCircuit(data: CircuitMetadata): Promise<string> {
 }
 
 type Props = {
-    exampleCircuits: CircuitMetadata[];
-    versionConflictResolver: VersionConflictResolver
+    exampleCircuits: Schema.CircuitMetadata[];
 }
-export const SideNav = ({ exampleCircuits, versionConflictResolver }: Props) => {
+export const SideNav = ({ exampleCircuits }: Props) => {
     const designer = useMainDesigner();
 
     const { auth, circuits, isOpen, loading, isSaved, loadingCircuits } = useSharedSelector(
@@ -91,7 +90,7 @@ export const SideNav = ({ exampleCircuits, versionConflictResolver }: Props) => 
                                         return;
                                     if (!auth)
                                         throw new Error("Sidenav failed: auth is undefined");
-                                    await LoadCircuitRemote(circuit["id"], versionConflictResolver);
+                                    await LoadCircuitRemote(circuit["id"]);
                                     dispatch(ToggleSideNav());
                                 }}
                                 onDelete={() => {
@@ -116,7 +115,7 @@ export const SideNav = ({ exampleCircuits, versionConflictResolver }: Props) => 
                             onClick={async () => {
                                 if (loading) // Don't load another circuit if already loading
                                     return;
-                                await LoadCircuit(LoadExampleCircuit(example), versionConflictResolver);
+                                await LoadCircuit(LoadExampleCircuit(example));
                                 dispatch(ToggleSideNav());
                             }} />)
                 )}

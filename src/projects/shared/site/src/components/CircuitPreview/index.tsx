@@ -1,11 +1,11 @@
-import {CircuitMetadata} from "shared/api/circuit/public";
+import {Schema} from "shared/api/circuit/schema";
 
 import "./index.scss";
 
 
 type CircuitPreviewProps = {
     readonly?: boolean;
-    data: Readonly<CircuitMetadata>;
+    data: Readonly<Schema.CircuitMetadata>;
     onClick: () => void;
     onDelete: () => void;
 }
