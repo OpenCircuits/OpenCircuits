@@ -2,6 +2,8 @@ import {DigitalSim} from "./DigitalSim";
 
 
 export interface DigitalSimRunner {
+    propagationTime?: number;
+
     resume(): void;
     pause(): void;
     step(): void;
@@ -11,6 +13,9 @@ export class InstantSimRunner implements DigitalSimRunner {
     protected readonly sim: DigitalSim;
 
     protected paused: boolean;
+
+    // Ignored here, but used in Timed runner
+    public propagationTime?: number | undefined;
 
     public constructor(sim: DigitalSim) {
         this.sim = sim;

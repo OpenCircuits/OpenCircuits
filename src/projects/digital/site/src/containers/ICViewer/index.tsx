@@ -6,6 +6,21 @@ import {PanTool}     from "shared/api/circuitdesigner/tools/PanTool";
 // import {CreateInfo} from "digital/site/utils/CircuitInfo/CreateInfo";
 
 import "./index.scss";
+import {useDigitalDispatch, useDigitalSelector} from "digital/site/utils/hooks/useDigital";
+import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
+import {useLayoutEffect, useRef, useState} from "react";
+import {IC_DESIGNER_VH, IC_DESIGNER_VW} from "digital/site/utils/Constants";
+import {useCurDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
+import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import {CreateCircuit} from "digital/api/circuit/public";
+import {FitToScreenHandler} from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
+import {ZoomHandler} from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
+import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
+import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
+import {Cleanups} from "shared/api/circuit/utils/types";
+import {CloseICViewer} from "digital/site/state/ICViewer";
+import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
+import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
@@ -28,159 +43,184 @@ const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 //     return false;
 // }
 
-export const ICViewer = () => {return null}
-// type Props = {
-//     mainInfo: DigitalCircuitInfo;
-// }
-// // @TODO
-// export const ICViewer = (() => {
-//     const info = CreateInfo(new DefaultTool(), PanTool);
+export const ICViewer = () => {
+    const mainDesigner = useCurDigitalDesigner();
+    const [icViewDesigner, setICViewDesigner] = useState<DigitalCircuitDesigner | undefined>();
 
-//     // eslint-disable-next-line react/display-name, arrow-body-style
-//     return ({ mainInfo }: Props) => {
-//         // const { isActive, ic } = useDigitalSelector(
-//         //     (state) => ({ ...state.icViewer })
-//         // );
-//         // const dispatch = useDigitalDispatch();
+    const { isActive, icId } = useDigitalSelector(
+        (state) => ({ ...state.icViewer })
+    );
+    const dispatch = useDigitalDispatch();
 
-//         // const { w, h } = useWindowSize();
-//         // const canvas = useRef<HTMLCanvasElement>(null);
+    const { w, h } = useWindowSize();
+    const canvas = useRef<HTMLCanvasElement>(null);
 
-//         // // State controller for main designer callback
-//         // const [pauseUpdates, setPauseUpdates] = useState(false);
+    // TODO[model_refactor_api]
+    // State controller for main designer callback
+    const [pauseUpdates, setPauseUpdates] = useState(false);
+    //
+    // const updateViewer = useCallback(() => {
+    //     if (!ic)
+    //         return;
+    //     // loop through all the inputs for this IC
+    //     //  set their input value to be what the info.designer has for their input
+    //     const viewerInputs = info.designer.getObjects().filter(
+    //         (input) => [Switch, Button].some((type) => input instanceof type)
+    //     );
+    //     for (let i = 0; i < viewerInputs.length; ++i)
+    //         viewerInputs[i].activate(ic.getInputPort(i).getIsOn());
+    // }, [ic]);
 
-//         // const updateViewer = useCallback(() => {
-//         //     if (!ic)
-//         //         return;
-//         //     // loop through all the inputs for this IC
-//         //     //  set their input value to be what the info.designer has for their input
-//         //     const viewerInputs = info.designer.getObjects().filter(
-//         //         (input) => [Switch, Button].some((type) => input instanceof type)
-//         //     );
-//         //     for (let i = 0; i < viewerInputs.length; ++i)
-//         //         viewerInputs[i].activate(ic.getInputPort(i).getIsOn());
-//         // }, [ic]);
+    // // Initial function called after the canvas first shows up
+    // useEffect(() => {
+    //     if (!canvas.current)
+    //         throw new Error("ICViewer.useEffect failed: canvas.current is null");
 
-//         // // On resize (useLayoutEffect happens sychronously so
-//         // //  there's no pause/glitch when resizing the screen)
-//         // useLayoutEffect(() => {
-//         //     if (!isActive)
-//         //         return;
-//         //     info.camera.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH); // Update camera size when w/h changes
-//         //     info.renderer.render(); // Re-render
-//         // }, [isActive, w, h]);
+    //     // Create input w/ canvas
+    //     info.input = new Input(canvas.current);
 
+    //     // Get render function
+    //     const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
 
-//         // // Initial function called after the canvas first shows up
-//         // useEffect(() => {
-//         //     if (!canvas.current)
-//         //         throw new Error("ICViewer.useEffect failed: canvas.current is null");
+    //     // Add input listener
+    //     info.input.addListener((event) => {
+    //         const change = info.toolManager.onEvent(event, info);
+    //         if (!change)
+    //             return;
 
-//         //     // Create input w/ canvas
-//         //     info.input = new Input(canvas.current);
+    //         info.renderer.render();
+    //         if (CheckForInteraction(event, info))
+    //             setPauseUpdates(true);
+    //     });
 
-//         //     // Get render function
-//         //     const renderFunc = GetRenderFunc({ canvas: canvas.current, info });
+    //     // Input should be blocked initially
+    //     info.input.block();
 
-//         //     // Add input listener
-//         //     info.input.addListener((event) => {
-//         //         const change = info.toolManager.onEvent(event, info);
-//         //         if (!change)
-//         //             return;
+    //     // Add render callbacks and set render function
+    //     info.designer.addCallback(() => info.renderer.render());
 
-//         //         info.renderer.render();
-//         //         if (CheckForInteraction(event, info))
-//         //             setPauseUpdates(true);
-//         //     });
+    //     info.renderer.setRenderFunction(() => renderFunc());
+    //     info.renderer.render();
+    // }, []); // Pass empty array so that this only runs once on mount
 
-//         //     // Input should be blocked initially
-//         //     info.input.block();
+    // Happens when activated
+    useLayoutEffect(() => {
+        if (!isActive || !icId || !canvas.current)
+            return;
 
-//         //     // Add render callbacks and set render function
-//         //     info.designer.addCallback(() => info.renderer.render());
+        // Block input for main designer
+        mainDesigner.viewport.canvasInfo!.input.setBlocked(true);
 
-//         //     info.renderer.setRenderFunction(() => renderFunc());
-//         //     info.renderer.render();
-//         // }, []); // Pass empty array so that this only runs once on mount
+        // Create main circuit
+        const [circuit, state] = CreateCircuit();
 
-//         // // Synchronize the inputs in the original designer and this IC viewer
-//         // //  (issue #754)
-//         // useEffect(() => {
-//         //     if (pauseUpdates)
-//         //         return; // if paused, don't add callback
-//         //     mainInfo.designer.addCallback(updateViewer);
-//         //     // remove callback when done
-//         //     return () => mainInfo.designer.removeCallback(updateViewer);
-//         // }, [pauseUpdates, mainInfo, updateViewer]);
+        // Get the IC and load its contents into circuit
+        const icInstance = mainDesigner.circuit.getComponent(icId);
+        if (!icInstance)
+            throw new Error(`ICViewer: Failed to find ic instance with id ${icId}!`);
+        const ic = mainDesigner.circuit.getIC(icInstance.kind);
+        if (!ic)
+            throw new Error(`ICViewer: Failed to find ic with id ${icInstance.kind}!`);
+        const schema = ic.toSchema();
+        for (const obj of schema.objects) {
+            if (obj.kind === "InputPin")
+                obj.kind = "Switch";
+            if (obj.kind === "OutputPin")
+                obj.kind = "LED";
+        }
+        circuit.loadSchema({
+            metadata:        schema.metadata,
+            objects:         schema.objects,
+            ics:             mainDesigner.circuit.toSchema().ics,
+            camera:          { x: 0, y: 0, zoom: 0.02 },
+            propagationTime: mainDesigner.circuit.propagationTime,
+            simState:        schema.initialSimState,
+        });
+        // TODO[model_refactor_api]
+        // Adjust the camera so it all fits in the viewer
+        // const [pos, zoom] = GetCameraFit(
+        //     info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
+        // );
 
-//         // // Happens when activated
-//         // useLayoutEffect(() => {
-//         //     if (!isActive || !ic)
-//         //         return;
+        // Clear the history so that the user can't accidentally undo the addition of the IC
+        circuit.history.clear();
 
-//         //     const { input } = mainInfo;
+        // Create new designer
+        const designer = CreateDesigner(
+            {
+                defaultTool: new DefaultTool(InteractionHandler, FitToScreenHandler, ZoomHandler),
+                tools:       [new PanTool()],
+            },
+            [],
+            DRAG_TIME,
+            [circuit, state],
+        );
 
-//         //     // Retrieve current debug info from mainInfo
-//         //     info.debugOptions = mainInfo.debugOptions;
+        // Setup propagator
+        state.simRunner = new TimedDigitalSimRunner(state.sim, 1);
 
-//         //     // Unlock input
-//         //     info.input.unblock();
+        // Synchronize current debug info from mainInfo
+        designer.viewport.debugOptions = mainDesigner.viewport.debugOptions;
 
-//         //     // Block input for main designer
-//         //     input.block();
+        // Attach canvas
+        const cleanup = designer.viewport.attachCanvas(canvas.current);
 
-//         //     // Reset designer and add IC insides
-//         //     info.designer.reset();
-//         //     const inside = CopyGroup(ic.getCollection().toList());
-//         //     AddGroup(info.designer, inside);
+        setICViewDesigner(designer);
 
-//         //     // Adjust the camera so it all fits in the viewer
-//         //     const [pos, zoom] = GetCameraFit(
-//         //         info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
-//         //     );
-//         //     SetProperty(info.camera, "pos", pos);
-//         //     SetProperty(info.camera, "zoom", zoom);
+        return Cleanups(cleanup);
+    }, [isActive, icId, mainDesigner, setICViewDesigner]);
 
-//         //     updateViewer();
-//         //     info.renderer.render();
-//         // }, [mainInfo, isActive, ic, updateViewer]);
+    // On resize (useLayoutEffect happens sychronously so
+    //  there's no pause/glitch when resizing the screen)
+    useLayoutEffect(() => {
+        if (!icViewDesigner)
+            return;
+        icViewDesigner.viewport.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH);
+    }, [isActive, w, h]);
 
-//         // const close = () => {
-//         //     // Reset in case for next time
-//         //     setPauseUpdates(false);
+    // TODO[model_refactor_api]
+    // // Synchronize the inputs in the original designer and this IC viewer
+    // //  (issue #754)
+    // useEffect(() => {
+    //     if (pauseUpdates)
+    //         return; // if paused, don't add callback
+    //     mainInfo.designer.addCallback(updateViewer);
+    //     // remove callback when done
+    //     return () => mainInfo.designer.removeCallback(updateViewer);
+    // }, [pauseUpdates, mainInfo, updateViewer]);
 
-//         //     // Block input while closed
-//         //     info.input.block();
+    const close = () => {
+        // // Reset in case for next time
+        // setPauseUpdates(false);
+        setICViewDesigner(undefined);
 
-//         //     // Unblock main input
-//         //     mainInfo.input.unblock();
+        // Unblock main input
+        mainDesigner.viewport.canvasInfo!.input.setBlocked(false);
 
-//         //     dispatch(CloseICViewer());
-//         // }
+        dispatch(CloseICViewer());
+    }
 
-//         // const restore = () => {
-//         //     setPauseUpdates(false);
-//         //     updateViewer();
-//         // }
+    const sync = () => {
+        setPauseUpdates(false);
+        // updateViewer();
+    }
 
-//         // useKeyDownEvent(info.input, "Escape", close);
+    useWindowKeyDownEvent("Escape", () => close(), [mainDesigner]);
 
-//         // return (
-//         //     <div className="icviewer" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
-//         //         <canvas ref={canvas}
-//         //                 width={w*IC_DESIGNER_VW}
-//         //                 height={h*IC_DESIGNER_VH} />
+    return (
+        <div className="icviewer" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
+            <canvas ref={canvas}
+                    width={w*IC_DESIGNER_VW}
+                    height={h*IC_DESIGNER_VH} />
 
-//         //         <div className="icviewer__buttons">
-//         //             <button type="button" name="close" onClick={close}>
-//         //                 Close
-//         //             </button>
-//         //             <button type="button" name="restore" disabled={!pauseUpdates} onClick={restore}>
-//         //                 Restore
-//         //             </button>
-//         //         </div>
-//         //     </div>
-//         // );
-//         return null;
-//     }
-// })();
+            <div className="icviewer__buttons">
+                <button type="button" name="close" onClick={close}>
+                    Close
+                </button>
+                <button type="button" name="restore" disabled={!pauseUpdates} onClick={sync}>
+                    Sync
+                </button>
+            </div>
+        </div>
+    );
+}

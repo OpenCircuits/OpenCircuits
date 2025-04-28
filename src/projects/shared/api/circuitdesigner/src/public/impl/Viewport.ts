@@ -265,6 +265,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
             // Unblock scheduler once a canvas is set
             this.scheduler.unblock();
 
+            this.scheduler.requestRender();
+
             return () => {
                 u1();
                 this.scheduler.block();

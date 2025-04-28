@@ -115,6 +115,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     }
 
     public toSchema(): Schema.Component {
-        return ({ ...this.getComponent() });
+        const comp = this.getComponent();
+        return ({ ...comp, props: { ...comp.props } });
     }
 }

@@ -3,8 +3,6 @@ import {InstantSimRunner} from "./DigitalSimRunner";
 
 
 export class TimedDigitalSimRunner extends InstantSimRunner {
-    protected propagationTime: number;
-
     protected curTimeout?: number;
 
     public constructor(sim: DigitalSim, propagationTime: number) {

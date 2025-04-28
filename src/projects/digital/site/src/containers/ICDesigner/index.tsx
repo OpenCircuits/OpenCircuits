@@ -31,6 +31,7 @@ import {CalculateICDisplay}                     from "digital/site/utils/Circuit
 import "./index.scss";
 
 
+// TODO[master] - move this to shared
 interface Props {
 }
 export const ICDesigner = ({ }: Props) => {
@@ -74,6 +75,8 @@ export const ICDesigner = ({ }: Props) => {
                 obj.kind = "InputPin";
             if (obj.kind === "LED")
                 obj.kind = "OutputPin";
+            // Remove isSelected
+            delete obj.props["isSelected"];
         }
 
         icCircuit.loadSchema(schema);
@@ -87,7 +90,7 @@ export const ICDesigner = ({ }: Props) => {
         // Clear the history so that the user can't accidentally undo the addition of the IC
         circuit.history.clear();
 
-        // Create new designer and add IC
+        // Create new designer
         const designer = CreateDesigner(
             {
                 defaultTool: new DefaultTool(
@@ -167,8 +170,8 @@ export const ICDesigner = ({ }: Props) => {
         dispatch(CloseICDesigner());
     }
 
-    useWindowKeyDownEvent("Escape", () => close(true), [objIds]);
-    useWindowKeyDownEvent("Enter", () => close(false), [objIds]);
+    useWindowKeyDownEvent("Escape", () => close(true), [objIds, mainDesigner]);
+    useWindowKeyDownEvent("Enter", () => close(false), [objIds, mainDesigner]);
 
     return (
         <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>

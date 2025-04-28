@@ -88,6 +88,7 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
 
     public toSchema(): Schema.Wire {
-        return ({ ...this.getWire() });
+        const wire = this.getWire();
+        return ({ ...wire, props: { ...wire.props } });
     }
 }

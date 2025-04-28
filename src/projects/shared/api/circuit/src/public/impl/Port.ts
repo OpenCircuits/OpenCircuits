@@ -98,6 +98,7 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
 
     public toSchema(): Schema.Port {
-        return ({ ...this.getPort() });
+        const port = this.getPort();
+        return ({ ...port, props: { ...port.props } });
     }
 }
