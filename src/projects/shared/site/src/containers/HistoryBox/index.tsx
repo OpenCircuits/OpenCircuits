@@ -77,9 +77,10 @@ type GroupActionEntryProps = {
 }
 const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
+    // TODO[model_refactor_api]: Any extraInfo we would want to display on the log?
     const [displayExtraInfo, setDisplayExtraInfo] = useState(false);
 
-    // TODO[model_refactor_api] - Decide if we want to nest single op entries or not
+    // TODO[model_refactor_api]: Decide if we want to nest single op entries or not
     // if (a.ops.length === 1) {
     //     return <HistoryEntry op={a.ops[0]} isRedo={isRedo} />
     // }
@@ -104,6 +105,8 @@ const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
                                  setDisplayExtraInfo(!displayExtraInfo);
                              }} />
                     )} */}
+                    {/* TODO[model_refactor_api]: clientData isn't used/set now,
+                        should Circuit's commitTransaction take it in as a parameter like CircuitDocument? */}
                     <span>{a.clientData}</span>
                 </div>
                 <span className={`${isCollapsed ? "collapsed" : "" }`}>&rsaquo;</span>
