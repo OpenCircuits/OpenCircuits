@@ -1,11 +1,12 @@
 import {ComponentImpl} from "shared/api/circuit/public/impl/Component";
+import {GUID}          from "shared/api/circuit/public";
+
+import {Signal} from "digital/api/circuit/schema/Signal";
 
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort}      from "../DigitalPort";
 
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
-import {Signal} from "../../internal/sim/Signal";
-import {GUID} from "shared/api/circuit/public";
 
 
 export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements DigitalComponent {

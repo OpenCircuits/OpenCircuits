@@ -2,7 +2,7 @@ import {V, Vector} from "Vector";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";

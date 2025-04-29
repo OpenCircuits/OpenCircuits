@@ -21,7 +21,7 @@ import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner
 import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
 import {V} from "Vector";
 import {configureStore} from "@reduxjs/toolkit";
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 

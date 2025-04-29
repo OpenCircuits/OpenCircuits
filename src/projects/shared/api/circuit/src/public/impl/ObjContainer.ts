@@ -7,7 +7,6 @@ import {ObjContainer} from "../ObjContainer";
 import {CircuitState, CircuitTypes} from "./CircuitState";
 
 import "shared/api/circuit/utils/Array";
-import {Schema} from "../../schema";
 
 
 export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
@@ -85,7 +84,7 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
             .map((id) => this.state.constructIC(id));
     }
 
-    public withWiresAndPorts(): ObjContainer {
+    public withWiresAndPorts(): T["ObjContainerT"] {
         const comps = this.components;
         const ports = [
             ...this.ports,

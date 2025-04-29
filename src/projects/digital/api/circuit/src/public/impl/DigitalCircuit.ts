@@ -1,13 +1,12 @@
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
-import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
-import {Schema} from "../../schema";
+import {DigitalSchema} from "digital/api/circuit/schema";
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort} from "../DigitalPort";
 import {DigitalWire} from "../DigitalWire";
-import {GUID, ICInfo, IntegratedCircuit} from "shared/api/circuit/public";
-import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
+import {GUID, ICInfo} from "shared/api/circuit/public";
 
 
 export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
@@ -29,14 +28,14 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return this.state.simRunner?.propagationTime ?? -1;
     }
 
-    public override importICs(ics: Array<APIToDigital<IntegratedCircuit>>): void {
+    public override importICs(ics: DigitalIntegratedCircuit[]): void {
         super.importICs(ics);
 
         for (const ic of ics)
-            this.state.sim.loadICState(ic.id, ic.toSchema().initialSimState);
+            this.state.sim.loadICState(ic.id, ic.initialSimState);
     }
 
-    public override createIC(info: APIToDigital<ICInfo>, id?: string): APIToDigital<IntegratedCircuit> {
+    public override createIC(info: APIToDigital<ICInfo>, id?: string): DigitalIntegratedCircuit {
         const ic = super.createIC(info, id);
 
         this.state.sim.loadICState(ic.id, info.circuit.toSchema().simState);
@@ -50,7 +49,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     }
 
     public override loadSchema(
-        schema: Schema.DigitalCircuit,
+        schema: DigitalSchema.DigitalCircuit,
         opts?: { refreshIds?: boolean, loadMetadata?: boolean }
     ): Array<DigitalComponent | DigitalWire | DigitalPort> {
         // TODO[] - might need it like this
@@ -70,8 +69,8 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
 
         // return objs.map((id) => this.getObj(id)!);
 
-        for (const ic of schema.ics)
-            this.state.sim.loadICState(ic.metadata.id, ic.initialSimState);
+        for (const [ic, initialSimState] of schema.ics.zip(schema.initialICSimStates))
+            this.state.sim.loadICState(ic.metadata.id, initialSimState);
 
         const objs = super.loadSchema(schema, opts);
 
@@ -81,14 +80,16 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return objs;
     }
 
-    public override toSchema(container?: ObjContainer): Schema.DigitalCircuit {
+    public override toSchema(container?: DigitalObjContainer): DigitalSchema.DigitalCircuit {
+        const ics = container?.ics ?? this.getICs();
+
         return {
-            // TODO[] - cleanup type cast maybe
-            ...super.toSchema(container) as Schema.Core.Circuit & { ics: Schema.DigitalIntegratedCircuit[] },
+            ...super.toSchema(container),
 
             propagationTime: -1, // TODO[model_refactor_api],
 
-            simState: this.state.sim.getSimState().toSchema(container),
+            initialICSimStates: ics.map((ic) => ic.initialSimState),
+            simState:           this.state.sim.getSimState().toSchema(container),
         };
     }
 }
@@ -103,11 +104,7 @@ export class DigitalIntegratedCircuitImpl extends IntegratedCircuitImpl<DigitalT
         this.state = state;
     }
 
-    public override toSchema(): Schema.DigitalIntegratedCircuit {
-        return {
-            ...super.toSchema(),
-
-            initialSimState: this.state.sim.getInitialICSimState(this.id)!,
-        }
+    public get initialSimState(): DigitalSchema.DigitalSimState {
+        return this.state.sim.getInitialICSimState(this.id)!;
     }
 }

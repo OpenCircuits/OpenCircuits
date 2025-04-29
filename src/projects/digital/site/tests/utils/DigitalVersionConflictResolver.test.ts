@@ -1,7 +1,7 @@
 import "digital/api/circuit/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 import {V} from "Vector";
 

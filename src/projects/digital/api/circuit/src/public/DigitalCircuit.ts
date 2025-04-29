@@ -14,14 +14,17 @@ import type {
     ReadonlyNode,
     ReadonlyPort,
     ReadonlyWire,
+    Selections,
     Wire,
 } from "shared/api/circuit/public";
+import type {Schema} from "shared/api/circuit/schema";
 
 import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
 import type {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode} from "./DigitalComponent";
 import type {DigitalWire, ReadonlyDigitalWire}                   from "./DigitalWire";
 import type {DigitalPort, ReadonlyDigitalPort}                   from "./DigitalPort";
-import {Schema} from "../schema";
+import type {DigitalSchema} from "digital/api/circuit/schema";
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
 export type ToDigital<T> = (
@@ -29,8 +32,7 @@ export type ToDigital<T> = (
     T extends Vector ? Vector :
     T extends Rect   ? Rect   :
     // Schema-type
-    T extends Schema.Core.Circuit ? Schema.DigitalCircuit :
-    T extends Schema.Core.IntegratedCircuit ? Schema.DigitalIntegratedCircuit :
+    T extends Schema.Circuit ? DigitalSchema.DigitalCircuit :
     // Base-type replacements
     T extends IntegratedCircuit ? DigitalIntegratedCircuit :
     T extends Circuit           ? DigitalCircuit :
@@ -40,6 +42,8 @@ export type ToDigital<T> = (
     T extends Port              ? DigitalPort :
     T extends ComponentInfo     ? DigitalComponentInfo :
     T extends ICInfo            ? DigitalICInfo :
+    T extends Selections        ? APIToDigital<Selections> :
+    T extends ObjContainer      ? DigitalObjContainer :
     // Base-Readonly-type replacements
     T extends ReadonlyCircuit   ? ReadonlyDigitalCircuit :
     T extends ReadonlyNode      ? ReadonlyDigitalNode :
@@ -60,6 +64,7 @@ export type APIToDigital<T> = {
     [key in keyof T]: ToDigital<T[key]>;
 }
 
+export type DigitalObjContainer = APIToDigital<ObjContainer>;
 
 export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit>;
 export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
@@ -68,5 +73,7 @@ export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
     step(): void;
 };
 
-export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit>;
+export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & {
+    readonly initialSimState: DigitalSchema.DigitalSimState;
+}
 export type DigitalICInfo = APIToDigital<ICInfo>;

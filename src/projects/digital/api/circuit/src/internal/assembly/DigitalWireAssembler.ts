@@ -4,8 +4,8 @@ import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assem
 import {Style}           from "shared/api/circuit/internal/assembly/Style";
 import {WireAssembler}   from "shared/api/circuit/internal/assembly/WireAssembler";
 
-import {DigitalSim} from "../sim/DigitalSim";
-import {Signal}     from "../sim/Signal";
+import {Signal}     from "digital/api/circuit/schema/Signal";
+import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 
 export class DigitalWireAssembler extends WireAssembler {

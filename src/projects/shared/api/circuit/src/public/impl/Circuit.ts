@@ -48,7 +48,7 @@ export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements 
 export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly state: CircuitState<T>;
 
-    public readonly selections: Selections;
+    public readonly selections: SelectionsImpl<T>;
     public readonly history: CircuitHistory;
 
     public constructor(state: CircuitState<T>) {
@@ -56,7 +56,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         this.state = state;
 
-        this.selections = new SelectionsImpl(state);
+        this.selections = new SelectionsImpl<T>(state);
         this.history = new HistoryImpl(state.internal);
 
         // This ordering is important, because it means that all previous circuit subscription calls will happen
@@ -170,7 +170,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         return this.state.constructComponentInfo(kind);
     }
 
-    public createContainer(objs: GUID[]): ObjContainer {
+    public createContainer(objs: GUID[]): T["ObjContainerT"] {
         const objSet = new Set(objs);
 
         // Validate all objects exist in the circuit
@@ -310,7 +310,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         return objs.map((id) => this.getObj(id)!);
     }
-    public toSchema(container?: ObjContainer): Schema.Circuit {
+    public toSchema(container?: T["ObjContainerT"]): Schema.Circuit {
         const ics = container?.ics ?? this.getICs();
         const objs = container?.all ?? this.getObjs();
 

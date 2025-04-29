@@ -5,7 +5,7 @@ import {CircleContains, RectContains} from "math/MathUtils";
 import {LEFT_MOUSE_BUTTON}                from "shared/api/circuitdesigner/input/Constants";
 import {ToolHandler, ToolHandlerResponse} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
 
-import {Signal}           from "digital/api/circuit/internal/sim/Signal";
+import {Signal}           from "digital/api/circuit/schema/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 import {DigitalTypes}     from "digital/api/circuit/public/impl/DigitalCircuitState";
 

@@ -72,7 +72,7 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
         return this.selections.ics;
     }
 
-    public withWiresAndPorts(): ObjContainer {
+    public withWiresAndPorts(): T["ObjContainerT"] {
         return this.selections.withWiresAndPorts();
     }
 

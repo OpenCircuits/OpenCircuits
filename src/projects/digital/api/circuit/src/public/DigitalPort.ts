@@ -2,7 +2,7 @@ import type {Port, ReadonlyPort} from "shared/api/circuit/public";
 
 import type {APIToDigital} from "./DigitalCircuit";
 
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {Signal} from "digital/api/circuit/schema/Signal";
 
 
 export interface ReadonlyDigitalPort extends APIToDigital<ReadonlyPort> {

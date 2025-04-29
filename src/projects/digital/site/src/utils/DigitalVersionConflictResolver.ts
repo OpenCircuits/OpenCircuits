@@ -1,6 +1,6 @@
 /* eslint-disable key-spacing */
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
-import {Schema as DigitalSchema} from "digital/api/circuit/schema";
+import {Signal} from "digital/api/circuit/schema/Signal";
+import {DigitalSchema} from "digital/api/circuit/schema";
 import {Schema} from "shared/api/circuit/schema";
 import {IMPORT_IC_CLOCK_MESSAGE} from "./Constants";
 
@@ -187,10 +187,10 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         // Helper function to generate connection between old ref string and new digital port, used to later connect wires
         const linkPorts = (
             { ref, obj: port }: {ref?: string, obj: SerializationEntry},
-            portInfo: Omit<DigitalSchema.Core.Port, "baseKind" | "id" | "props" | "kind">,
-        ): DigitalSchema.Core.Port => {
+            portInfo: Omit<Schema.Port, "baseKind" | "id" | "props" | "kind">,
+        ): Schema.Port => {
             const guid = refToGuid.get(ref) ?? Schema.uuid();
-            const props: DigitalSchema.Core.Port["props"] = {};
+            const props: Schema.Port["props"] = {};
             const portName = port["data"]["name"];
             if (typeof portName === "string") {
                 props["name"] = portName;
@@ -207,9 +207,9 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 id: guid,
             }
         };
-        const newPorts: DigitalSchema.Core.Port[] = [];
+        const newPorts: Schema.Port[] = [];
         // First map components (and get ports)
-        const newComponents = objs.map(({ obj, ref }, index): DigitalSchema.Core.Component => {
+        const newComponents = objs.map(({ obj, ref }, index): Schema.Component => {
             // Copy common props
             const transformRef = getEntry(obj, "transform")!;
             const posRef = getEntry(transformRef, "pos")!;
@@ -217,7 +217,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
             const nameRef = getEntry(obj, "name")!
             const nameData = nameRef.data as { name: unknown, set: unknown };
             // Scale x/y and flip y-axis
-            const props: DigitalSchema.Core.Component["props"] = {
+            const props: Schema.Component["props"] = {
                 zIndex: index,
             };
             if (typeof x === "number") {
@@ -427,7 +427,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         });
 
         const wires = getArrayEntries(wiresEntry);
-        const newWires = wires.map(({ obj, ref }): DigitalSchema.Core.Wire => {
+        const newWires = wires.map(({ obj, ref }): Schema.Wire => {
             // Find connecting port guids
             const p1 = (obj.data.p1 as Ref).ref;
             const newPort1 = refToGuid.get(p1)!;
@@ -435,7 +435,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
             const newPort2 = refToGuid.get(p2)!;
 
             // Handle common props
-            const props: DigitalSchema.Core.Wire["props"] = {};
+            const props: Schema.Wire["props"] = {};
             const nameRef = getEntry(obj, "name")!
             const nameData = nameRef.data as { name: string, set: boolean };
             if (nameData.set) {
@@ -596,7 +596,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
     const icEntries = getArrayEntries(icRefsEntry);
     const icGuids: Array<[string, SerializationEntry]> = icEntries.map(({ ref, obj }) => [refToGuid.get(ref) ?? Schema.uuid(), obj]);
     const icGuidsToObjects = new Map<string, SerializationEntry>(icGuids);
-    const ics = icEntries.map(({ obj }, index): DigitalSchema.DigitalIntegratedCircuit => {
+    const icsAndSimStates = icEntries.map(({ obj }, index) => {
         const transformRef = getEntry(obj, "transform")!;
         const sizeRef = getEntry(transformRef, "size")!;
         const icContents = getEntry(obj, "collection")!;
@@ -612,7 +612,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!).toSorted(comparePortPos);
         // inputs and their ports are (presumably) linked on index, so when sorting they need to be zipped together
         const inputsAndPorts = inputs.zip(inputPorts).toSorted((a, b) => comparePortPos(a[1], b[1], true));
-        const inputPins = inputsAndPorts.map(([{ ref }, { obj }]): DigitalSchema.Core.IntegratedCircuitPin => {
+        const inputPins = inputsAndPorts.map(([{ ref }, { obj }]): Schema.IntegratedCircuitPin => {
             const origin = getEntry(obj, "origin")!;
             const { x, y } = origin.data as {x: number, y: number};
             const dir = getEntry(obj, "dir")!;
@@ -631,7 +631,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         const outputs = getArrayEntries(getArrayEntry(icContents, "outputs")!);
         const outputPorts = getArrayEntries(getArrayEntry(obj, "outputPorts")!);
         const outputsAndPorts = outputs.zip(outputPorts).toSorted((a, b) => comparePortPos(a[1], b[1], true));
-        const outputPins = outputsAndPorts.map(([{ ref }, { obj }]): DigitalSchema.Core.IntegratedCircuitPin => {
+        const outputPins = outputsAndPorts.map(([{ ref }, { obj }]): Schema.IntegratedCircuitPin => {
             const origin = getEntry(obj, "origin")!;
             const { x, y } = origin.data as {x: number, y: number};
             const dir = getEntry(obj, "dir")!;
@@ -647,7 +647,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
             }
         });
 
-        const metadata: DigitalSchema.Core.IntegratedCircuitMetadata = {
+        const metadata: Schema.IntegratedCircuitMetadata = {
             displayWidth: w / 50,
             displayHeight: h / 50,
             id: icGuids[index][0],
@@ -658,11 +658,10 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
             pins: [...inputPins, ...outputPins],
         };
 
-        return {
+        return [{
             metadata,
             objects,
-            initialSimState,
-        };
+        }, initialSimState] as const;
     });
 
     // Migrate all the main circuit data
@@ -674,11 +673,12 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
 
     return {
         schema: {
-            camera: camera,
-            objects: info.objects,
-            simState,
-            ics,
             metadata,
+            camera: camera,
+            ics:     icsAndSimStates.map(([ic, _]) => ic),
+            objects: info.objects,
+            initialICSimStates: icsAndSimStates.map(([_, sim]) => sim),
+            simState,
             propagationTime,
         },
         warnings: hasClockInIc ? [IMPORT_IC_CLOCK_MESSAGE] : undefined,

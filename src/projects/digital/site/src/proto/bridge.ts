@@ -3,15 +3,15 @@
 
 import {MapObj} from "shared/api/circuit/utils/Functions";
 
-import {Schema} from "digital/api/circuit/schema";
-import {Signal} from "digital/api/circuit/internal/sim/Signal";
+import {DigitalSchema} from "digital/api/circuit/schema";
+import {Signal} from "digital/api/circuit/schema/Signal";
 
 import {ProtoToSchema, SchemaToProto} from "shared/site/proto/bridge";
 
 import * as DigitalProtoSchema from "./DigitalCircuit";
 
 
-export function DigitalSchemaToProto(schema: Schema.DigitalCircuit): DigitalProtoSchema.DigitalCircuit {
+export function DigitalSchemaToProto(schema: DigitalSchema.DigitalCircuit): DigitalProtoSchema.DigitalCircuit {
     function ConvertSignal(signal: Signal): DigitalProtoSchema.DigitalSimState_Signal {
         return (signal === Signal.On
             ? DigitalProtoSchema.DigitalSimState_Signal.On
@@ -22,7 +22,7 @@ export function DigitalSchemaToProto(schema: Schema.DigitalCircuit): DigitalProt
             : DigitalProtoSchema.DigitalSimState_Signal.UNRECOGNIZED);
     }
 
-    function ConvertSimState(state: Schema.DigitalSimState): DigitalProtoSchema.DigitalSimState {
+    function ConvertSimState(state: DigitalSchema.DigitalSimState): DigitalProtoSchema.DigitalSimState {
         return {
             signals:  MapObj(state.signals,  ([_id, signal]) => ConvertSignal(signal)),
             states:   MapObj(state.states,   ([_id, state])  => ({ state: state.map(ConvertSignal) })),
@@ -34,12 +34,12 @@ export function DigitalSchemaToProto(schema: Schema.DigitalCircuit): DigitalProt
         circuit: SchemaToProto(schema),
 
         propagationTime:    schema.propagationTime,
-        icInitialSimStates: schema.ics.map((ic) => ConvertSimState(ic.initialSimState)),
+        icInitialSimStates: schema.initialICSimStates.map(ConvertSimState),
         simState:           ConvertSimState(schema.simState),
     });
 }
 
-export function DigitalProtoToSchema(proto: DigitalProtoSchema.DigitalCircuit): Schema.DigitalCircuit {
+export function DigitalProtoToSchema(proto: DigitalProtoSchema.DigitalCircuit): DigitalSchema.DigitalCircuit {
     function ConvertSignal(signal: DigitalProtoSchema.DigitalSimState_Signal): Signal {
         return (signal === DigitalProtoSchema.DigitalSimState_Signal.On
             ? Signal.On
@@ -50,7 +50,7 @@ export function DigitalProtoToSchema(proto: DigitalProtoSchema.DigitalCircuit): 
             : Signal.Off);
     }
 
-    function ConvertSimState(state: DigitalProtoSchema.DigitalSimState): Schema.DigitalSimState {
+    function ConvertSimState(state: DigitalProtoSchema.DigitalSimState): DigitalSchema.DigitalSimState {
         return {
             signals:  MapObj(state.signals,  ([_id, signal]) => ConvertSignal(signal)),
             states:   MapObj(state.states,   ([_id, state])  => state.state.map(ConvertSignal)),
@@ -68,12 +68,8 @@ export function DigitalProtoToSchema(proto: DigitalProtoSchema.DigitalCircuit): 
     return {
         ...schema,
 
-        ics: schema.ics.zip(proto.icInitialSimStates).map(([ic, sim]) => ({
-            ...ic,
-            initialSimState: ConvertSimState(sim),
-        })),
-
-        propagationTime: proto.propagationTime,
-        simState:        ConvertSimState(proto.simState),
+        initialICSimStates: proto.icInitialSimStates.map(ConvertSimState),
+        propagationTime:    proto.propagationTime,
+        simState:           ConvertSimState(proto.simState),
     }
 }

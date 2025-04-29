@@ -129,12 +129,14 @@ export const ICViewer = () => {
                 obj.kind = "LED";
         }
         circuit.loadSchema({
-            metadata:        schema.metadata,
-            objects:         schema.objects,
-            ics:             mainDesigner.circuit.toSchema().ics,
-            camera:          { x: 0, y: 0, zoom: 0.02 },
-            propagationTime: mainDesigner.circuit.propagationTime,
-            simState:        schema.initialSimState,
+            metadata: schema.metadata,
+            objects:  schema.objects,
+            ics:      mainDesigner.circuit.toSchema().ics,
+            camera:   { x: 0, y: 0, zoom: 0.02 },
+
+            propagationTime:    mainDesigner.circuit.propagationTime,
+            initialICSimStates: mainDesigner.circuit.getICs().map((ic) => ic.initialSimState),
+            simState:           ic.initialSimState,
         });
         // TODO[model_refactor_api]
         // Adjust the camera so it all fits in the viewer
