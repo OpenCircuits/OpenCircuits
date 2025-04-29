@@ -37,6 +37,7 @@ export const PropertyModule = ({ designer, propInfo }: Props) => {
     //  are the ones that every object's info has.
     const info0 = propInfo[objs[0].kind];
     if (!info0) {
+        console.warn(`Failed to find prop info for ${objs[0].kind}!`);
         return;
     }
 
