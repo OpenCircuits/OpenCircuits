@@ -27,7 +27,7 @@ export const DefaultComponentPropInfo: PropInfo = [
 ];
 
 export const DefaultWirePropInfo: PropInfo = [
-    { id: "color", type: "color", key: "color", label: "Color" },
+    { id: "color", type: "color", key: "color", label: "Color", default: "#FFFFFF" },
 ];
 
 export const DefaultPortPropInfo: PropInfo = [];

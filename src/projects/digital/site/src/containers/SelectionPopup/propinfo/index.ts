@@ -18,7 +18,16 @@ export const DigitalPropInfo: PropInfoRecord = {
     "Clock":          DefaultComponentPropInfo,
 
     // Outputs
-    "LED":            DefaultComponentPropInfo,
+    "LED": [
+        ...DefaultComponentPropInfo,
+        {
+            id:      "color",
+            type:    "color",
+            key:     "color",
+            label:   "Color",
+            default: "#FFFFFF",
+        },
+    ],
     "SegmentDisplay": DefaultComponentPropInfo,
     "BCDDisplay":     DefaultComponentPropInfo,
     "ASCIIDisplay":   DefaultComponentPropInfo,
