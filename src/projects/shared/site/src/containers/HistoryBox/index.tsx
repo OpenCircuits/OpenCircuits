@@ -14,15 +14,45 @@ import "./index.scss";
 import {Circuit} from "shared/api/circuit/public";
 
 
+// TODO[model_refactor_api] - put LogEntry and CircuitOp somewhere that isn't internal, useHistory currently imports from internal
+type LogEntry = ReturnType<typeof useHistory>["undoHistory"][number]
+type CircuitOp = LogEntry["ops"][number]
+
+interface OpInfo {
+    displayName: string;
+    extraInfo?: string;
+}
+const getOpInfo = (op: CircuitOp): OpInfo => {
+    switch (op.kind) {
+        case "PlaceComponentOp":
+            return { displayName: `${op.inverted ? "Removed" : "Placed"} ${op.c.kind}`, extraInfo: `ID: ${op.c.id}` };
+        case "ConnectWireOp":
+            // TODO[model_refactor]: Do we want to bring circuit into here so we can see what types of components p1 and p2 belong to?
+            return { displayName: `${op.inverted ? "Removed Connection From" : "Connected"} ${op.w.p1} to ${op.w.p2}`, extraInfo: `ID: ${op.w.id}` };
+        case "CreateICOp":
+            return { displayName: `${op.inverted ? "Removed" : "Created"} IC ${op.ic.metadata.name}`, extraInfo: `ID: ${op.ic.metadata.id}` };
+        case "ReplaceComponentOp":
+            return { displayName: "Replace Component", extraInfo: `Replaced ${op.oldKind} with ${op.newKind}` };
+        case "SetComponentPortsOp":
+            return { displayName: "Set Component Ports", extraInfo: `Added ${op.addedPorts.length} ports, removed ${op.removedPorts.length} ports` };
+        case "SetPropertyOp":
+            return { displayName: `Changed Property ${op.key}`, extraInfo: `Changed property ${op.key} from ${op.oldVal} to ${op.newVal} on ${op.id}` };
+        case "SplitWireOp":
+            return { displayName: "Split Wire", extraInfo: `Node ID: ${op.node.id}` };
+        default:
+            return { displayName: "Unrecognized Operation" };
+    }
+}
+
 type HistoryEntryProps = {
-    // a: Action;
-    a: any;
+    op: CircuitOp;
     isRedo: boolean;
 }
-const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
+const HistoryEntry = ({ op, isRedo }: HistoryEntryProps) => {
     const [displayExtraInfo, setDisplayExtraInfo] = useState(true);
-    // if (a instanceof GroupAction)
-    //     return (<GroupActionEntry g={a} isRedo={isRedo} />);
+
+    const opInfo = getOpInfo(op);
+
     return (
         <div className={`historybox__entry ${isRedo ? "historybox__entry--dashed" : ""}`}
              role="button" tabIndex={0}
@@ -31,64 +61,68 @@ const HistoryEntry = ({ a, isRedo }: HistoryEntryProps) => {
                  e.stopPropagation();
                  setDisplayExtraInfo(!displayExtraInfo);
              }}>
-            {/* <div className="historybox__entry__header">
-                {a.getCustomInfo &&
-                    (<img src="img/icons/info.svg"
-                          height="24px"
-                          alt="Display extra info" />)}
-                <span>{a.getName()}</span>
-            </div> */}
-            {/* {!displayExtraInfo && a.getCustomInfo?.()?.map((obj, i) =>
-                <div key={`entry-extrainfo-${i}`} className="historybox__entry__extrainfo">{obj}</div>
-            )} */}
+            <div className="historybox__entry__header">
+                {opInfo.extraInfo && (<img src="img/icons/info.svg"
+                                           height="24px"
+                                           alt="Display extra info" />)}
+                <span>{opInfo.displayName}</span>
+            </div>
+            {!displayExtraInfo && opInfo.extraInfo && <div className="historybox__entry__extrainfo">{opInfo.extraInfo}</div>}
         </div>
     );
 }
 
-// type GroupActionEntryProps = {
-//     g: GroupAction;
-//     isRedo: boolean;
-// }
-// const GroupActionEntry = ({ g, isRedo }: GroupActionEntryProps) => {
-//     const [isCollapsed, setIsCollapsed] = useState(true);
-//     const [displayExtraInfo, setDisplayExtraInfo] = useState(false);
+type GroupActionEntryProps = {
+    a: LogEntry;
+    isRedo: boolean;
+}
+const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
+    const [isCollapsed, setIsCollapsed] = useState(true);
+    // TODO[model_refactor_api]: Any extraInfo we would want to display on the log?
+    const [displayExtraInfo, setDisplayExtraInfo] = useState(false);
 
-//     return (
-//         <div className={`historybox__groupentry ${isRedo ? "historybox__groupentry--dashed" : ""}`}
-//              role="button" tabIndex={0}
-//              onClick={(e) => {
-//                  // Necessary to stop child entries from collapsing the parent history entry
-//                  e.stopPropagation();
-//                  setIsCollapsed(!isCollapsed);
-//              }}>
-//             <div className="historybox__groupentry__header">
-//                 <div>
-//                     {g.getCustomInfo() && (
-//                         <img src="img/icons/info.svg"
-//                              alt="Display extra info"
-//                              onClick={(e) => {
-//                                  // Necessary to stop child entries from displaying
-//                                  //  extra info about the parent history entry
-//                                  e.stopPropagation();
-//                                  setDisplayExtraInfo(!displayExtraInfo);
-//                              }} />
-//                     )}
-//                     <span>{g.getName()}</span>
-//                 </div>
-//                 <span className={`${isCollapsed ? "collapsed" : "" }`}>&rsaquo;</span>
-//             </div>
-//             {displayExtraInfo && g.getCustomInfo?.()?.map((obj, i) =>
-//                 <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
-//             )}
-//             {!isCollapsed && g.getActions().map((a, i) => (
-//                 <HistoryEntry key={`group-action-entry-${i}`}
-//                               a={a}
-//                               isRedo={isRedo} />
-//             ))}
-//             {!isCollapsed && g.isEmpty() && <div style={{ marginLeft: "10px" }}>Empty</div>}
-//         </div>
-//     );
-// }
+    if (a.ops.length === 1) {
+        return <HistoryEntry op={a.ops[0]} isRedo={isRedo} />
+    }
+
+    return (
+        <div className={`historybox__groupentry ${isRedo ? "historybox__groupentry--dashed" : ""}`}
+             role="button" tabIndex={0}
+             onClick={(e) => {
+                 // Necessary to stop child entries from collapsing the parent history entry
+                 e.stopPropagation();
+                 setIsCollapsed(!isCollapsed);
+             }}>
+            <div className="historybox__groupentry__header">
+                <div>
+                    {/* {g.getCustomInfo() && (
+                        <img src="img/icons/info.svg"
+                             alt="Display extra info"
+                             onClick={(e) => {
+                                 // Necessary to stop child entries from displaying
+                                 //  extra info about the parent history entry
+                                 e.stopPropagation();
+                                 setDisplayExtraInfo(!displayExtraInfo);
+                             }} />
+                    )} */}
+                    {/* TODO[model_refactor_api]: clientData isn't used/set now (except to mark as undo/redo in the log),
+                        should Circuit's commitTransaction take it in as a parameter like CircuitDocument? */}
+                    <span>{a.clientData}</span>
+                </div>
+                <span className={`${isCollapsed ? "collapsed" : "" }`}>&rsaquo;</span>
+            </div>
+            {/* {displayExtraInfo && g.getCustomInfo?.()?.map((obj, i) =>
+                <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
+            )} */}
+            {!isCollapsed && a.ops.map((op, i) => (
+                <HistoryEntry key={`group-action-entry-${i}`}
+                              op={op}
+                              isRedo={isRedo} />
+            ))}
+            {!isCollapsed && a.ops.length === 0 && <div style={{ marginLeft: "10px" }}>Empty</div>}
+        </div>
+    );
+}
 
 
 type Props = {
@@ -125,16 +159,16 @@ export const HistoryBox = ({ circuit }: Props) => {
                           onClick={() => dispatch(CloseHistoryBox())}>×</span>
                 </div>
                 <div data-adjustable>
-                    {[...redoHistory].map((a, i) =>
-                        <HistoryEntry key={`history-box-dashedentry-${i}`} a={a} isRedo />,
+                    {[...redoHistory].map((a) =>
+                        <GroupActionEntry key={a.id} a={a} isRedo />,
                     )}
                     { redoHistory.length > 0 && (<>
                         <div style={{ textAlign: "center", fontWeight: "bold" }}> Redo </div>
                         <div className="historybox__separator"></div>
                     </>)}
                     <div style={{ textAlign: "center", fontWeight: "bold" }}> Undo </div>
-                    {[...undoHistory].reverse().map((a, i) =>
-                        <HistoryEntry key={`history-box-entry-${i}`} a={a} isRedo={false} />,
+                    {[...undoHistory].reverse().map((a) =>
+                        <GroupActionEntry key={a.id} a={a} isRedo={false} />,
                     )}
                 </div>
             </div>
