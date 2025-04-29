@@ -25,21 +25,22 @@ interface OpInfo {
 const getOpInfo = (op: CircuitOp): OpInfo => {
     switch (op.kind) {
         case "PlaceComponentOp":
-            return { displayName: "Place Component", extraInfo: `${op.c.kind} with id ${op.c.id} placed` };
+            return { displayName: `${op.inverted ? "Removed" : "Placed"} ${op.c.kind}`, extraInfo: `ID: ${op.c.id}` };
         case "ConnectWireOp":
-            return { displayName: "Connect Wire", extraInfo: `Wire with id ${op.w} created` };
+            // TODO[model_refactor]: Do we want to bring circuit into here so we can see what types of components p1 and p2 belong to?
+            return { displayName: `${op.inverted ? "Removed Connection From" : "Connected"} ${op.w.p1} to ${op.w.p2}`, extraInfo: `ID: ${op.w.id}` };
         case "CreateICOp":
-            return { displayName: "Create IC", extraInfo: `IC ${op.ic.metadata.name} with id ${op.ic.metadata.id} created` };
+            return { displayName: `${op.inverted ? "Removed" : "Created"} IC ${op.ic.metadata.name}`, extraInfo: `ID: ${op.ic.metadata.id}` };
         case "ReplaceComponentOp":
             return { displayName: "Replace Component", extraInfo: `Replaced ${op.oldKind} with ${op.newKind}` };
         case "SetComponentPortsOp":
             return { displayName: "Set Component Ports", extraInfo: `Added ${op.addedPorts.length} ports, removed ${op.removedPorts.length} ports` };
         case "SetPropertyOp":
-            return { displayName: "Set Property", extraInfo: `Changed property ${op.key} from ${op.oldVal} to ${op.newVal} on ${op.id}` };
+            return { displayName: `Changed Property ${op.key}`, extraInfo: `Changed property ${op.key} from ${op.oldVal} to ${op.newVal} on ${op.id}` };
         case "SplitWireOp":
-            return { displayName: "Split Wire", extraInfo: `Split a wire, creating a node with id ${op.node.id}` };
+            return { displayName: "Split Wire", extraInfo: `Node ID: ${op.node.id}` };
         default:
-            return { displayName: "Unrecognized operation" };
+            return { displayName: "Unrecognized Operation" };
     }
 }
 
@@ -80,10 +81,9 @@ const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
     // TODO[model_refactor_api]: Any extraInfo we would want to display on the log?
     const [displayExtraInfo, setDisplayExtraInfo] = useState(false);
 
-    // TODO[model_refactor_api]: Decide if we want to nest single op entries or not
-    // if (a.ops.length === 1) {
-    //     return <HistoryEntry op={a.ops[0]} isRedo={isRedo} />
-    // }
+    if (a.ops.length === 1) {
+        return <HistoryEntry op={a.ops[0]} isRedo={isRedo} />
+    }
 
     return (
         <div className={`historybox__groupentry ${isRedo ? "historybox__groupentry--dashed" : ""}`}
@@ -159,16 +159,16 @@ export const HistoryBox = ({ circuit }: Props) => {
                           onClick={() => dispatch(CloseHistoryBox())}>×</span>
                 </div>
                 <div data-adjustable>
-                    {[...redoHistory].map((a, i) =>
-                        <GroupActionEntry key={`history-box-dashedentry-${i}`} a={a} isRedo />,
+                    {[...redoHistory].map((a) =>
+                        <GroupActionEntry key={a.id} a={a} isRedo />,
                     )}
                     { redoHistory.length > 0 && (<>
                         <div style={{ textAlign: "center", fontWeight: "bold" }}> Redo </div>
                         <div className="historybox__separator"></div>
                     </>)}
                     <div style={{ textAlign: "center", fontWeight: "bold" }}> Undo </div>
-                    {[...undoHistory].reverse().map((a, i) =>
-                        <GroupActionEntry key={`history-box-entry-${i}`} a={a} isRedo={false} />,
+                    {[...undoHistory].reverse().map((a) =>
+                        <GroupActionEntry key={a.id} a={a} isRedo={false} />,
                     )}
                 </div>
             </div>
