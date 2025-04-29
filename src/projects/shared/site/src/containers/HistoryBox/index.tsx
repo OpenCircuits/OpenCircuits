@@ -105,7 +105,7 @@ const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
                                  setDisplayExtraInfo(!displayExtraInfo);
                              }} />
                     )} */}
-                    {/* TODO[model_refactor_api]: clientData isn't used/set now,
+                    {/* TODO[model_refactor_api]: clientData isn't used/set now (except to mark as undo/redo in the log),
                         should Circuit's commitTransaction take it in as a parameter like CircuitDocument? */}
                     <span>{a.clientData}</span>
                 </div>
