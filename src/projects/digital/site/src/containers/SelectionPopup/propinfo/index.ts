@@ -50,5 +50,21 @@ export const DigitalPropInfo: PropInfoRecord = {
     "Encoder":       DefaultComponentPropInfo,
     "Decoder":       DefaultComponentPropInfo,
     "Comparator":    DefaultComponentPropInfo,
-    "Label":         DefaultComponentPropInfo,
+    "Label":         [
+        ...DefaultComponentPropInfo,
+        {
+            id:      "bgColor",
+            type:    "color",
+            key:     "bgColor",
+            label:   "Color",
+            default: "#FFFFFF",
+        },
+        {
+            id:      "textColor",
+            type:    "color",
+            key:     "textColor",
+            label:   "Text Color",
+            default: "#000000",
+        },
+    ],
 } as const;

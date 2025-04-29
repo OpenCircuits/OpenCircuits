@@ -31,14 +31,13 @@ export const PropertyModule = ({ designer, propInfo }: Props) => {
     );
 
     if (!props || objs.length === 0)
-        return null;
+        return;
 
     // Just get first entry's propInfo since the only actual props that will show
     //  are the ones that every object's info has.
     const info0 = propInfo[objs[0].kind];
     if (!info0) {
-        console.warn(`Failed to find prop info for ${objs[0].kind}!`);
-        return null;
+        return;
     }
 
     const isValidInfoEntry = (entry: PropInfoEntry): boolean => (
@@ -70,7 +69,7 @@ const PropInfoEntryWrapper = (allProps: PropInputFieldProps) => {
     // Check if this module is active
     const isActive = entry.isActive?.(props) ?? true;
     if (!isActive)
-        return null;
+        return;
 
     if (!entry.label)
         return (<PropInfoEntryInputField {...allProps} />);

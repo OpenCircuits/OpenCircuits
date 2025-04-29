@@ -28,6 +28,8 @@ export class ClockAssembler extends ComponentAssembler {
                     svg:       this.isOn(comp) ? "clockOn.svg" : "clock.svg",
                     transform: this.getTransform(comp),
                 }),
+
+                tintChangesWhenSelected: true,
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
