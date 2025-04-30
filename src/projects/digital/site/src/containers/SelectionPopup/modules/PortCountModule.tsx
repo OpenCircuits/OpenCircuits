@@ -14,7 +14,6 @@ type Props = {
     label: string;
 }
 export const PortCountModule = ({ circuit, kinds, basisPortGroup, label }: Props) => {
-    // TODO: this
     const [props, comps] = useSelectionProps(
         circuit,
         (c): c is Component => (

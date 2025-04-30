@@ -23,6 +23,14 @@ export type NumberPropInfo = BaseFieldPropInfo & {
         (v: number) => number, // Inverse transform
     ];
 }
+export type NumberSelectPropInfo = BaseFieldPropInfo & {
+    type: "number[]";
+    options: Array<[
+        string, // Display value
+        number, // Option value
+    ]>;
+    default?: number;
+}
 export type StringPropInfo = BaseFieldPropInfo & {
     type: "string";
     default?: string;
@@ -48,6 +56,7 @@ export type GroupPropInfo = BasePropInfo & {
 
 export type PropInfoEntryField =
     | NumberPropInfo
+    | NumberSelectPropInfo
     | StringSelectPropInfo
     | ColorPropInfo
     | StringPropInfo

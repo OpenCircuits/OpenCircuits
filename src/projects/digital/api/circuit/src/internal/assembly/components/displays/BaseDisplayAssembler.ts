@@ -51,7 +51,7 @@ export abstract class BaseDisplayAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged, AssemblyReason.PropChanged]),
                 assemble:     (comp) => this.assembleSegments(comp, false),
 
                 styleChangesWhenSelected: true,
@@ -60,7 +60,7 @@ export abstract class BaseDisplayAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged, AssemblyReason.PropChanged]),
                 assemble:     (comp) => this.assembleSegments(comp, true),
 
                 styleChangesWhenSelected: true,

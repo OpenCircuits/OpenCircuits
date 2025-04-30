@@ -91,6 +91,16 @@ export const App = () => {
                             kinds={new Set(["Comparator"])}
                             basisPortGroup="inputsA"
                             label="Input" />
+                        <PortCountModule
+                            circuit={designer.circuit}
+                            kinds={new Set(["SegmentDisplay"])}
+                            basisPortGroup="inputs"
+                            label="Segment" />
+                        <PortCountModule
+                            circuit={designer.circuit}
+                            kinds={new Set(["Oscilloscope"])}
+                            basisPortGroup="inputs"
+                            label="Input" />
                         <OscilloscopeModule circuit={designer.circuit} />
                         <ClockSyncButtonModule circuit={designer.circuit} />
                         <BusButtonModule circuit={designer.circuit} />

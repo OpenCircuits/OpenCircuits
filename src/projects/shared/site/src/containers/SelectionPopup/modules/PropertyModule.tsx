@@ -124,6 +124,19 @@ const PropInfoEntryInputField = ({
                     step={entry.step} min={entry.min} max={entry.max}
                     doChange={doChange} />
             );
+        case "number[]":
+            return (
+                <SelectModuleInputField
+                    circuit={circuit}
+                    kind="number[]"
+                    props={vals as number[]} options={entry.options}
+                    doChange={doChange}
+                    onSubmit={() => {
+                        // TODO[model_refactor_api](leon) - do we still need this?
+                        forceUpdate(); // Need to force update since these can trigger info-state changes
+                        //  and feel less inituitive to the user about focus/blur
+                    }} />
+            );
         case "string":
             return (
                 <TextModuleInputField
