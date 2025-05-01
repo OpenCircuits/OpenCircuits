@@ -46,7 +46,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
 
     const load = () => {
         dispatch(CloseHeaderMenus());
-        if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
+        if (isSaved && window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
             LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE));
     }
 
