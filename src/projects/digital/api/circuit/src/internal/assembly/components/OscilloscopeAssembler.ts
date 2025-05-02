@@ -33,7 +33,7 @@ export class OscilloscopeAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged, AssemblyReason.PortsChanged]),
                 assemble:     (comp) => ({
                     kind:      "Rectangle",
                     transform: this.getTransform(comp),

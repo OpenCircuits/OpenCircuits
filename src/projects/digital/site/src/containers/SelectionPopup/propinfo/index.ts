@@ -14,8 +14,28 @@ export const DigitalPropInfo: PropInfoRecord = {
     "Switch":         DefaultComponentPropInfo,
     "ConstantLow":    DefaultComponentPropInfo,
     "ConstantHigh":   DefaultComponentPropInfo,
-    "ConstantNumber": DefaultComponentPropInfo,
-    "Clock":          DefaultComponentPropInfo,
+    "ConstantNumber": [
+        ...DefaultComponentPropInfo,
+        {
+            id:      "inputNum",
+            type:    "int",
+            key:     "inputNum",
+            label:   "Input Number",
+            min:     0,
+            max:     15,
+            default: 0,
+        },
+    ],
+    "Clock": [
+        ...DefaultComponentPropInfo,
+        {
+            id:      "delay",
+            type:    "int",
+            key:     "delay",
+            label:   "Delay",
+            default: 250,
+        },
+    ],
 
     // Outputs
     "LED": [
@@ -29,9 +49,67 @@ export const DigitalPropInfo: PropInfoRecord = {
         },
     ],
     "SegmentDisplay": DefaultComponentPropInfo,
-    "BCDDisplay":     DefaultComponentPropInfo,
-    "ASCIIDisplay":   DefaultComponentPropInfo,
-    "Oscilloscope":   DefaultComponentPropInfo,
+    "BCDDisplay":     [
+        ...DefaultComponentPropInfo,
+        {
+            id:      "segmentCount",
+            type:    "number[]",
+            key:     "segmentCount",
+            label:   "Segment Count",
+            options: [
+                ["7", 7],
+                ["9", 9],
+                ["14", 14],
+                ["16", 16],
+            ],
+            default: 7,
+        },
+    ],
+    "ASCIIDisplay": [
+        ...DefaultComponentPropInfo,
+        {
+            id:      "segmentCount",
+            type:    "number[]",
+            key:     "segmentCount",
+            label:   "Segment Count",
+            options: [
+                ["7", 7],
+                ["9", 9],
+                ["14", 14],
+                ["16", 16],
+            ],
+            default: 7,
+        },
+    ],
+    "Oscilloscope": [
+        ...DefaultComponentPropInfo,
+        {
+            id:      "samples",
+            type:    "int",
+            key:     "samples",
+            label:   "Samples",
+            min:     10,
+            max:     400,
+            default: 100,
+        },
+        {
+            id:      "w",
+            type:    "int",
+            key:     "w",
+            label:   "Display Size",
+            min:     2,
+            max:     20,
+            default: 8,
+        },
+        {
+            id:      "h",
+            type:    "int",
+            key:     "h",
+            min:     1,
+            max:     10,
+            default: 4,
+        },
+    ],
 
     // Logic Gates
     "BUFGate":  DefaultComponentPropInfo,

@@ -8,6 +8,7 @@ export const DefaultEntryFieldDefaults = {
     "float":    0,
     "string":   "",
     "string[]": "",
+    "number[]": 0,
     "color":    "#000000",
 } as const;
 
