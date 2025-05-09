@@ -17,7 +17,14 @@ export const TitleModule = ({ designer }: Props) => {
     const [props] = useSelectionProps(
         circuit,
         (o): o is Obj => true,
-        (o) => ({ name: (o.name ?? o.kind) })
+        (o) => {
+            // If a name is manually set, then use that.
+            if (o.name)
+                return { name: o.name };
+            // Check if the obj is an IC, if so, use the user-set IC name
+            const ic = circuit.getIC(o.kind);
+            return { name: (ic?.name ?? o.kind) };
+        }
     );
 
     const s = circuit.selections;

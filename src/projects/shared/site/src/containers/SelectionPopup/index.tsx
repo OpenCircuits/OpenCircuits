@@ -59,9 +59,17 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     useEffect(() => camera.subscribe(() =>
         setPos(camera.toScreenPos(circuit.selections.midpoint))
     ), [circuit, setPos]);
-    useEffect(() => circuit.subscribe(() =>
-        setPos(camera.toScreenPos(circuit.selections.midpoint))
-    ), [circuit, setPos]);
+    // TODO[master] - Right now, the selection popup won't move when you edit
+    //                the position values in the popup, this is kinda nice since
+    //                it lets you easily edit multiple values in one-go, but it
+    //                also feels a bit janky. Uncommenting this makes it work *okay*
+    //                except when you switch from one input to another, it commits
+    //                and it'll move which also feels jank.
+    //                We can maybe make a smarter system that only commits events
+    //                when nothing is in-focus, but that'll be a somewhat difficult task.
+    // useEffect(() => circuit.history.subscribe(() =>
+    //     setPos(camera.toScreenPos(circuit.selections.midpoint))
+    // ), [circuit, setPos]);
 
     useEvent("mousedrag", (_) => {
         setIsDragging(true); // Don't show popup if dragging
@@ -133,7 +141,9 @@ const InfoDisplay = ({ designer, docsUrlConfig }: InfoDisplayProps) => {
     if (!allSame)
         return null;
 
-    const kind = props.kind[0];
+    // Check if the kind is an IC, if so, use the user-set IC name
+    const ic = circuit.getIC(props.kind[0]);
+    const kind = (ic?.name ?? props.kind[0]);
 
     return (
         <div className="info-button">

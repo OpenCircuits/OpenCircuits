@@ -9,7 +9,7 @@ import {SelectModuleInputField} from "shared/site/containers/SelectionPopup/modu
 
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
-import {PropInfoEntry, PropInfoRecord} from "../propinfo/PropInfo";
+import {PropInfoEntry, PropInfoGetter} from "../propinfo/PropInfo";
 import {GetPropsWithInfoFor}           from "../propinfo/PropUtils";
 
 import {TextModuleInputField} from "./inputs/TextModuleInputField";
@@ -17,7 +17,7 @@ import {TextModuleInputField} from "./inputs/TextModuleInputField";
 
 type Props = {
     designer: CircuitDesigner;
-    propInfo: PropInfoRecord;
+    propInfo: PropInfoGetter;
 }
 export const PropertyModule = ({ designer, propInfo }: Props) => {
     const circuit = designer.circuit;
@@ -35,7 +35,7 @@ export const PropertyModule = ({ designer, propInfo }: Props) => {
 
     // Just get first entry's propInfo since the only actual props that will show
     //  are the ones that every object's info has.
-    const info0 = propInfo[objs[0].kind];
+    const info0 = propInfo(objs[0]);
     if (!info0) {
         console.warn(`Failed to find prop info for ${objs[0].kind}!`);
         return;
@@ -117,12 +117,15 @@ const PropInfoEntryInputField = ({
     switch (entry.type) {
         case "float":
         case "int":
+            const [forwardTransform, inverseTransform] = entry.transform ?? [(v: number) => v, (v: number) => v];
             return (
                 <NumberModuleInputField
                     circuit={circuit}
-                    kind={entry.type} props={vals as number[]}
-                    step={entry.step} min={entry.min} max={entry.max}
-                    doChange={doChange} />
+                    kind={entry.type}
+                    props={(vals as number[]).map(forwardTransform)}
+                    step={entry.step}  min={entry.min} max={entry.max}
+                    doChange={(newVals) =>
+                        doChange(newVals.map(inverseTransform))} />
             );
         case "number[]":
             return (

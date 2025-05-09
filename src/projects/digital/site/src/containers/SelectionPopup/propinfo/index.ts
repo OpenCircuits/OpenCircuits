@@ -1,21 +1,21 @@
-import {PropInfoRecord} from "shared/site/containers/SelectionPopup/propinfo/PropInfo";
-import {DefaultComponentPropInfo,
-        DefaultPortPropInfo,
-        DefaultWirePropInfo} from "shared/site/containers/SelectionPopup/propinfo/DefaultPropInfo";
+import {MakeDefaultPropInfoGetter} from "shared/site/containers/SelectionPopup/propinfo/PropInfo";
+import {DEFAULT_COMPONENT_PROP_INFO,
+        DEFAULT_PORT_PROP_INFO,
+        DEFAULT_WIRE_PROP_INFO} from "shared/site/containers/SelectionPopup/propinfo/DefaultPropInfo";
 
 
-export const DigitalPropInfo: PropInfoRecord = {
-    "DigitalPort": DefaultPortPropInfo,
-    "DigitalWire": DefaultWirePropInfo,
-    "DigitalNode": DefaultComponentPropInfo,
+export const DigitalPropInfo = MakeDefaultPropInfoGetter({
+    "DigitalPort": DEFAULT_PORT_PROP_INFO,
+    "DigitalWire": DEFAULT_WIRE_PROP_INFO,
+    "DigitalNode": DEFAULT_COMPONENT_PROP_INFO,
 
     // Inputs
-    "Button":         DefaultComponentPropInfo,
-    "Switch":         DefaultComponentPropInfo,
-    "ConstantLow":    DefaultComponentPropInfo,
-    "ConstantHigh":   DefaultComponentPropInfo,
+    "Button":         DEFAULT_COMPONENT_PROP_INFO,
+    "Switch":         DEFAULT_COMPONENT_PROP_INFO,
+    "ConstantLow":    DEFAULT_COMPONENT_PROP_INFO,
+    "ConstantHigh":   DEFAULT_COMPONENT_PROP_INFO,
     "ConstantNumber": [
-        ...DefaultComponentPropInfo,
+        ...DEFAULT_COMPONENT_PROP_INFO,
         {
             id:      "inputNum",
             type:    "int",
@@ -27,7 +27,7 @@ export const DigitalPropInfo: PropInfoRecord = {
         },
     ],
     "Clock": [
-        ...DefaultComponentPropInfo,
+        ...DEFAULT_COMPONENT_PROP_INFO,
         {
             id:      "delay",
             type:    "int",
@@ -39,7 +39,7 @@ export const DigitalPropInfo: PropInfoRecord = {
 
     // Outputs
     "LED": [
-        ...DefaultComponentPropInfo,
+        ...DEFAULT_COMPONENT_PROP_INFO,
         {
             id:      "color",
             type:    "color",
@@ -48,9 +48,9 @@ export const DigitalPropInfo: PropInfoRecord = {
             default: "#FFFFFF",
         },
     ],
-    "SegmentDisplay": DefaultComponentPropInfo,
+    "SegmentDisplay": DEFAULT_COMPONENT_PROP_INFO,
     "BCDDisplay":     [
-        ...DefaultComponentPropInfo,
+        ...DEFAULT_COMPONENT_PROP_INFO,
         {
             id:      "segmentCount",
             type:    "number[]",
@@ -66,7 +66,7 @@ export const DigitalPropInfo: PropInfoRecord = {
         },
     ],
     "ASCIIDisplay": [
-        ...DefaultComponentPropInfo,
+        ...DEFAULT_COMPONENT_PROP_INFO,
         {
             id:      "segmentCount",
             type:    "number[]",
@@ -82,7 +82,7 @@ export const DigitalPropInfo: PropInfoRecord = {
         },
     ],
     "Oscilloscope": [
-        ...DefaultComponentPropInfo,
+        ...DEFAULT_COMPONENT_PROP_INFO,
         {
             id:      "samples",
             type:    "int",
@@ -90,55 +90,48 @@ export const DigitalPropInfo: PropInfoRecord = {
             label:   "Samples",
             min:     10,
             max:     400,
+            step:    10,
             default: 100,
         },
         {
-            id:      "w",
-            type:    "int",
-            key:     "w",
-            label:   "Display Size",
-            min:     2,
-            max:     20,
-            default: 8,
-        },
-        {
-            id:      "h",
-            type:    "int",
-            key:     "h",
-            min:     1,
-            max:     10,
-            default: 4,
+            id:    "size",
+            type:  "group",
+            label: "Display Size",
+            info:  [
+                { id: "w", type: "int", key: "w", min: 2, max: 20, step: 1, default: 8 },
+                { id: "h", type: "int", key: "h", min: 1, max: 10, step: 1, default: 4 },
+            ],
         },
     ],
 
     // Logic Gates
-    "BUFGate":  DefaultComponentPropInfo,
-    "NOTGate":  DefaultComponentPropInfo,
-    "ANDGate":  DefaultComponentPropInfo,
-    "NANDGate": DefaultComponentPropInfo,
-    "ORGate":   DefaultComponentPropInfo,
-    "NORGate":  DefaultComponentPropInfo,
-    "XORGate":  DefaultComponentPropInfo,
-    "XNORGate": DefaultComponentPropInfo,
+    "BUFGate":  DEFAULT_COMPONENT_PROP_INFO,
+    "NOTGate":  DEFAULT_COMPONENT_PROP_INFO,
+    "ANDGate":  DEFAULT_COMPONENT_PROP_INFO,
+    "NANDGate": DEFAULT_COMPONENT_PROP_INFO,
+    "ORGate":   DEFAULT_COMPONENT_PROP_INFO,
+    "NORGate":  DEFAULT_COMPONENT_PROP_INFO,
+    "XORGate":  DEFAULT_COMPONENT_PROP_INFO,
+    "XNORGate": DEFAULT_COMPONENT_PROP_INFO,
 
     // Flip Flops
-    "SRFlipFlop": DefaultComponentPropInfo,
-    "JKFlipFlop": DefaultComponentPropInfo,
-    "DFlipFlop":  DefaultComponentPropInfo,
-    "TFlipFlop":  DefaultComponentPropInfo,
+    "SRFlipFlop": DEFAULT_COMPONENT_PROP_INFO,
+    "JKFlipFlop": DEFAULT_COMPONENT_PROP_INFO,
+    "DFlipFlop":  DEFAULT_COMPONENT_PROP_INFO,
+    "TFlipFlop":  DEFAULT_COMPONENT_PROP_INFO,
 
     // Latches
-    "DLatch":  DefaultComponentPropInfo,
-    "SRLatch": DefaultComponentPropInfo,
+    "DLatch":  DEFAULT_COMPONENT_PROP_INFO,
+    "SRLatch": DEFAULT_COMPONENT_PROP_INFO,
 
     // Latches
-    "Multiplexer":   DefaultComponentPropInfo,
-    "Demultiplexer": DefaultComponentPropInfo,
-    "Encoder":       DefaultComponentPropInfo,
-    "Decoder":       DefaultComponentPropInfo,
-    "Comparator":    DefaultComponentPropInfo,
+    "Multiplexer":   DEFAULT_COMPONENT_PROP_INFO,
+    "Demultiplexer": DEFAULT_COMPONENT_PROP_INFO,
+    "Encoder":       DEFAULT_COMPONENT_PROP_INFO,
+    "Decoder":       DEFAULT_COMPONENT_PROP_INFO,
+    "Comparator":    DEFAULT_COMPONENT_PROP_INFO,
     "Label":         [
-        ...DefaultComponentPropInfo,
+        ...DEFAULT_COMPONENT_PROP_INFO,
         {
             id:      "bgColor",
             type:    "color",
@@ -154,4 +147,4 @@ export const DigitalPropInfo: PropInfoRecord = {
             default: "#000000",
         },
     ],
-} as const;
+})

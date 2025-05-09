@@ -1,7 +1,7 @@
 import {PropInfo} from "./PropInfo";
 
 
-export const DefaultComponentPropInfo: PropInfo = [
+export const DEFAULT_COMPONENT_PROP_INFO: PropInfo = [
     {
         id:    "pos",
         type:  "group",
@@ -18,7 +18,6 @@ export const DefaultComponentPropInfo: PropInfo = [
         label:     "Angle",
         step:      45,
         // Transform to degrees for display
-        // TODO: Actually use this
         transform: [
             (v) => (180/Math.PI * v), // Forward transform
             (v) => (Math.PI/180 * v), // Inverse transform
@@ -26,8 +25,8 @@ export const DefaultComponentPropInfo: PropInfo = [
     },
 ];
 
-export const DefaultWirePropInfo: PropInfo = [
+export const DEFAULT_WIRE_PROP_INFO: PropInfo = [
     { id: "color", type: "color", key: "color", label: "Color", default: "#FFFFFF" },
 ];
 
-export const DefaultPortPropInfo: PropInfo = [];
+export const DEFAULT_PORT_PROP_INFO: PropInfo = [];
