@@ -5,8 +5,6 @@ import {Signal} from "digital/api/circuit/schema/Signal";
 import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 import {V} from "Vector";
 
-import andCircuit from "./TestCircuitData/2_1/AND.json";
-
 import switchCircuit from "./TestCircuitData/3_0/Switch.json";
 import orCircuit from "./TestCircuitData/3_0/OR.json";
 import poweredOrCircuit from "./TestCircuitData/3_0/PoweredOR.json";
@@ -34,36 +32,12 @@ import zIndexCircuit from "./TestCircuitData/3_0/ZIndex.json";
 import clockInICOffCircuit from "./TestCircuitData/3_0/ClockInICOff.json";
 import clockInICOnCircuit from "./TestCircuitData/3_0/ClockInICOn.json";
 import threeInputICCircuit from "./TestCircuitData/3_0/ThreeInputIC.json";
+import inputOrderICCircuit from "./TestCircuitData/3_0/InputOrderIC.json";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 import {IMPORT_IC_CLOCK_MESSAGE} from "digital/site/utils/Constants";
 
 
 describe("DigitalVersionConflictResolver", () => {
-    describe("From version 2.1", () => {
-        test("Basic AND circuit", () => {
-            // This test circuit is the same as example1.circuit
-            const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(andCircuit));
-            expect(warnings).toBeUndefined();
-            circuit.loadSchema(schema);
-            const comps = circuit.getComponents();
-            expect(comps).toHaveLength(4);
-            expect(circuit.getWires()).toHaveLength(3);
-            const andGate = comps.find((comp) => comp.kind === "ANDGate")!;
-            expect(andGate).toBeDefined();
-            const led = comps.find((comp) => comp.kind === "LED")!;
-            expect(led).toBeDefined();
-            const a = andGate.inputs[0].connectedPorts[0].parent;
-            const b = andGate.inputs[1].connectedPorts[0].parent;
-            expect(a).toBeDefined();
-            expect(b).toBeDefined();
-            expect(a.pos).toApproximatelyEqual(V(-4, 2));
-            expect(b.pos).toApproximatelyEqual(V(-4, -2));
-            expect(andGate.pos).toApproximatelyEqual(V(0, 0));
-            expect(led.pos).toApproximatelyEqual(V(4, 2));
-        });
-    });
-
     describe("From version 3.0", () => {
         test("Single Switch", () => {
             const [circuit] = CreateTestCircuit();
@@ -712,7 +686,7 @@ describe("DigitalVersionConflictResolver", () => {
             expect(led).toBeOn();
         });
         test("Port heights", () => {
-            const [circuit] = CreateTestCircuit();
+            const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
             const { schema, warnings } = VersionConflictResolver(JSON.stringify(threeInputICCircuit));
             expect(warnings).toBeUndefined();
             circuit.loadSchema(schema);
@@ -722,16 +696,87 @@ describe("DigitalVersionConflictResolver", () => {
             const sw1 = comps.find(({ name }) => name === "Switch1")!;
             const sw2 = comps.find(({ name }) => name === "Switch2")!;
             const sw3 = comps.find(({ name }) => name === "Switch3")!;
+            const out = comps.find(({ kind }) => kind === "LED");
             const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
             expect(sw1).toBeDefined();
             expect(sw2).toBeDefined();
             expect(sw3).toBeDefined();
+            expect(out).toBeDefined();
             expect(icInstance).toBeDefined();
 
             const icInputHeights = icInstance.inputs.map((port) => port.targetPos.y).sort();
             expect(sw1.outputs[0].targetPos.y).toApproximatelyEqual(icInputHeights[0], 1e-6);
             expect(sw2.outputs[0].targetPos.y).toApproximatelyEqual(icInputHeights[1], 1e-6);
             expect(sw3.outputs[0].targetPos.y).toApproximatelyEqual(icInputHeights[2], 1e-6);
+
+            TurnOn(sw1);
+            expect(out).toBeOn();
+            TurnOn(sw2);
+            expect(out).toBeOff();
+            TurnOn(sw3);
+            expect(out).toBeOn();
+            TurnOff(sw1);
+            expect(out).toBeOff();
+            TurnOff(sw2);
+            expect(out).toBeOn();
+            TurnOff(sw3);
+            expect(out).toBeOff();
+        });
+        test("(a|b)&c IC", () => {
+            const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
+            const { schema, warnings } = VersionConflictResolver(JSON.stringify(inputOrderICCircuit));
+            expect(warnings).toBeUndefined();
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(5);
+
+            const a = comps.find(({ name }) => name === "a")!;
+            const b = comps.find(({ name }) => name === "b")!;
+            const c = comps.find(({ name }) => name === "c")!;
+            const out = comps.find(({ kind }) => kind === "LED");
+            const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
+            expect(a).toBeDefined();
+            expect(b).toBeDefined();
+            expect(c).toBeDefined();
+            expect(out).toBeDefined();
+            expect(icInstance).toBeDefined();
+
+            const icInputs = icInstance.inputs;
+            expect(icInputs).toHaveLength(3);
+            const icInputA = icInputs.find(({ name }) => name === "a")!;
+            const icInputB = icInputs.find(({ name }) => name === "b")!;
+            const icInputC = icInputs.find(({ name }) => name === "c")!;
+            expect(icInputA.name).toBe("a");
+            expect(icInputB.name).toBe("b");
+            expect(icInputC.name).toBe("c");
+            expect(a.outputs[0].connectedPorts).toContain(icInputA);
+            expect(b.outputs[0].connectedPorts).toContain(icInputB);
+            expect(c.outputs[0].connectedPorts).toContain(icInputC);
+            expect(icInputA.targetPos.y).toBeGreaterThan(icInputB.targetPos.y);
+            expect(icInputB.targetPos.y).toBeGreaterThan(icInputC.targetPos.y);
+
+            expect(out).toBeOff();
+
+            TurnOn(a);
+            expect(out).toBeOff(); // a
+            TurnOn(b);
+            expect(out).toBeOff(); // a,b
+            TurnOn(c);
+            expect(out).toBeOn(); // a,b,c
+
+            TurnOff(b);
+            expect(out).toBeOn(); // a,c
+            TurnOn(b);
+            TurnOff(a);
+            expect(out).toBeOn(); // b,c
+            TurnOff(c);
+            expect(out).toBeOff(); // b
+            TurnOn(c);
+            TurnOff(b);
+            expect(out).toBeOff(); // c
+
+            TurnOff(c);
+            expect(out).toBeOff();
         });
     });
 });

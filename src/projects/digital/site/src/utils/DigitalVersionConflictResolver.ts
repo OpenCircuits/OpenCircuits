@@ -162,13 +162,6 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
             obj: entry,
         }
     );
-    // We can't rely on the order of ports in currentPorts to actually correlate to the index
-    //  (seems to be a <3.0 issue but haven't confirmed), so we have to sort by position to better guess.
-    const comparePortPos = (a: RefAndObject, b: RefAndObject, invertY?: boolean) => {
-        const targetA = getEntry(a.obj, "target")!.data as { x: number, y: number };
-        const targetB = getEntry(b.obj, "target")!.data as { x: number, y: number };
-        return (targetA.x - targetB.x) + (invertY ? -1 : 1) * (targetA.y - targetB.y);
-    };
     // Used to find an IC data guid that corresponds to given IC instance uses
     const getICDataGuid = (
         icGuids: Array<[string, SerializationEntry]>,
@@ -340,13 +333,13 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 case "Demultiplexer":
                     const currentSelectPorts = getArrayEntries(getArrayEntry(selects!, "currentPorts")!);
                     newPorts.push(
-                        ...currentSelectPorts.toSorted(comparePortPos).map((info, index) =>
+                        ...currentSelectPorts.map((info, index) =>
                             linkPorts(info, { parent: guid, group: "selects", index: index })
                         ),
-                        ...currentInputPorts.toSorted(comparePortPos).map((info, index) =>
+                        ...currentInputPorts.map((info, index) =>
                             linkPorts(info, { parent: guid, group: "inputs", index: index })
                         ),
-                        ...currentOutputPorts.toSorted(comparePortPos).map((info, index) =>
+                        ...currentOutputPorts.map((info, index) =>
                             linkPorts(info, { parent: guid, group: "outputs", index: index })
                         ),
                     );
@@ -356,7 +349,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                     const inputCount = inputCountRef.data.value as number;
                     const inputsPerGroup = inputCount / 2;
                     newPorts.push(
-                        ...currentInputPorts.toSorted(comparePortPos).map((info, index) => {
+                        ...currentInputPorts.map((info, index) => {
                             const [group, groupIndex] = index < inputsPerGroup ? ["inputsA", index] : ["inputsB", index - inputsPerGroup];
                             return linkPorts(info, { parent: guid, group, index: groupIndex })
                         }),
@@ -367,10 +360,10 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                     break;
                 default:
                     newPorts.push(
-                        ...currentInputPorts.toSorted(comparePortPos).map((info, index) =>
+                        ...currentInputPorts.map((info, index) =>
                             linkPorts(info, { parent: guid, group: "inputs", index: index })
                         ),
-                        ...currentOutputPorts.toSorted(comparePortPos).map((info, index) =>
+                        ...currentOutputPorts.map((info, index) =>
                             linkPorts(info, { parent: guid, group: "outputs", index: index })
                         ),
                     );
@@ -502,90 +495,8 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
     const camera: Schema.Camera = {
         x: (cameraRefPos.data.x as number) / 50,
         y: (cameraRefPos.data.y as number) / -50,
-        zoom: (cameraRef.data.zoom as number),
+        zoom: (cameraRef.data.zoom as number) / 50,
     }
-
-    // TODO: Migrate from nightly or non-nightly?
-    // Migrate from old property system to new "props" property system
-    //  https://github.com/OpenCircuits/OpenCircuits/pull/1087
-    // if (v < 3.1) {
-    //     // Represents the transformation of property keys by object type,
-    //     //  `newKey` is assumed to be part of the object's `props` struct
-    //     const transformations = {
-    //         "Clock": [
-    //             { prevKey: "frequency", newKey: "delay",  defaultVal: 0 },
-    //             { prevKey: "paused",    newKey: "paused", defaultVal: 0 },
-    //         ],
-    //         "ConstantNumber": [
-    //             { prevKey: "inputNum", newKey: "inputNum", defaultVal: 0 },
-    //         ],
-    //         "DigitalWire": [
-    //             { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
-    //         ],
-    //         "Label": [
-    //             { prevKey: "color",     newKey: "color",     defaultVal: "#ffffff"  },
-    //             { prevKey: "textColor", newKey: "textColor", defaultVal: "#000000" },
-    //         ],
-    //         "LED": [
-    //             { prevKey: "color", newKey: "color", defaultVal: "#ffffff" },
-    //         ],
-    //         "Oscilloscope": [
-    //             { prevKey: "frequency",   newKey: "delay"      , defaultVal: 0     },
-    //             { prevKey: "paused",      newKey: "paused"     , defaultVal: false },
-    //             { prevKey: "numSamples",  newKey: "samples"    , defaultVal: 100   },
-    //             { prevKey: "displaySize", newKey: "displaySize"                    },
-    //         ],
-    //     } as Record<string, Array<{ prevKey: string, newKey: string, defaultVal?: unknown }>>;
-
-    //     Object.values(contents).forEach(({ type, data }) => {
-    //         const transformation = transformations[type] ?? [];
-
-    //         if (transformation.length === 0)
-    //             return;
-
-    //         // Add props with all the new properties
-    //         data["props"] = {
-    //             type: "",
-    //             data: Object.fromEntries(
-    //                 transformation.map(({ prevKey, newKey, defaultVal }) =>
-    //                     [newKey, (data[prevKey] ?? defaultVal)]
-    //                 )
-    //             ),
-    //         };
-
-    //         // Remove old properties
-    //         transformation.forEach(({ prevKey }) => (delete data[prevKey]));
-    //     });
-    // }
-
-    // // Migrate transforms to Prop system and camera attributes to Props
-    // if (v < 3.2) {
-    //     Object.values(contents).forEach((entry) => {
-    //         const t = getEntry(entry, "transform");
-    //         if (!t)
-    //             return;
-
-    //         entry.data["props"] = {
-    //             type: "",
-    //             data: {
-    //                 ...(entry.data["props"] as SerializationEntry ?? ({ data: {} }))["data"],
-    //                 pos: getEntry(t, "pos")!,
-    //                 size: getEntry(t, "size")!,
-    //                 angle: t["data"]["angle"],
-    //             },
-    //         };
-    //         delete entry.data["transform"];
-    //     });
-
-    //     // Get camera info
-    //     const cam = getEntry(contents["0"], "camera")!;
-    //     const pos = getEntry(cam, "pos");
-    //     const zoom = cam["data"]["zoom"] as number;
-    //     cam.data["props"] = {
-    //         type: "",
-    //         data: { pos, zoom },
-    //     };
-    // }
 
     // Migrate to model refactor api
     const designerRef = getEntry(contents["0"], "designer")!;
@@ -609,9 +520,10 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         const initialSimState = migrateSimState(guidsToObjs, icGuidsToObjects);
 
         const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
-        const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!).toSorted(comparePortPos);
+        const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
+        inputPorts.reverse();
         // inputs and their ports are (presumably) linked on index, so when sorting they need to be zipped together
-        const inputsAndPorts = inputs.zip(inputPorts).toSorted((a, b) => comparePortPos(a[1], b[1], true));
+        const inputsAndPorts = inputs.zip(inputPorts);
         const inputPins = inputsAndPorts.map(([{ ref }, { obj }]): Schema.IntegratedCircuitPin => {
             const origin = getEntry(obj, "origin")!;
             const { x, y } = origin.data as {x: number, y: number};
@@ -630,7 +542,8 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
         });
         const outputs = getArrayEntries(getArrayEntry(icContents, "outputs")!);
         const outputPorts = getArrayEntries(getArrayEntry(obj, "outputPorts")!);
-        const outputsAndPorts = outputs.zip(outputPorts).toSorted((a, b) => comparePortPos(a[1], b[1], true));
+        outputPorts.reverse();
+        const outputsAndPorts = outputs.zip(outputPorts);
         const outputPins = outputsAndPorts.map(([{ ref }, { obj }]): Schema.IntegratedCircuitPin => {
             const origin = getEntry(obj, "origin")!;
             const { x, y } = origin.data as {x: number, y: number};
