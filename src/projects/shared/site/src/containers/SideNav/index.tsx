@@ -74,7 +74,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
     const onExampleCircuitClick = async (metadata: Schema.CircuitMetadata) => {
         if (loading) // Don't load another circuit if already loading
             return;
-        const open = isSaved && window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
+        const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
             return;
         await LoadCircuit(LoadExampleCircuit(metadata));

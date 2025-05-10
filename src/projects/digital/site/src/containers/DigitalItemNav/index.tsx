@@ -40,19 +40,19 @@ export const DigitalItemNav = () => {
         );
     });
 
-    const updateICs = () => setState({
-        ics: circuit.getICs().map((d) => ({
-            kind:      d.id,
-            label:     d.name,
-            icon:      "multiplexer.svg",
-            removable: true,
-        })),
-    });
-
     // Subscribe to CircuitDesigner
     //  and update the ItemNav w/
     //  ICs whenever they're added/removed
     useEffect(() => {
+        const updateICs = () => setState({
+            ics: circuit.getICs().map((d) => ({
+                kind:      d.id,
+                label:     d.name,
+                icon:      "multiplexer.svg",
+                removable: true,
+            })),
+        });
+
         // Update ICs when circuit changes so importing a circuit also shows the ICs in the item nav
         updateICs();
         return circuit.subscribe((ev) => {
