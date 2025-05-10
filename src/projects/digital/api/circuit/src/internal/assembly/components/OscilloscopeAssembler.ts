@@ -3,14 +3,13 @@ import {V, Vector} from "Vector";
 import {Schema} from "shared/api/circuit/schema";
 
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {PolygonPrim} from "shared/api/circuit/internal/assembly/Prim";
 
 import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
-import {Transform} from "math/Transform";
-import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {PolygonPrim} from "shared/api/circuit/internal/assembly/Prim";
 
 
 export class OscilloscopeAssembler extends ComponentAssembler {
@@ -63,7 +62,10 @@ export class OscilloscopeAssembler extends ComponentAssembler {
                     },
                 }),
             },
-        ]);
+        ], {
+            "w": AssemblyReason.TransformChanged,
+            "h": AssemblyReason.TransformChanged,
+        });
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("Oscilloscope").unwrap() as DigitalComponentConfigurationInfo;

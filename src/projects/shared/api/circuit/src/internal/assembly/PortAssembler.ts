@@ -161,3 +161,122 @@ export class PortAssembler extends Assembler<Schema.Component> {
         }
     }
 }
+
+
+// export class PortAssembler2 extends Assembler<Schema.Port> {
+//     private readonly factories: Record<string, PortFactory>;
+
+//     public constructor(params: AssemblerParams, factories: Record<string, PortFactory>) {
+//         super(params);
+
+//         this.factories = factories;
+//     }
+
+//     public calcPos(parent: Schema.Component, group: string, index: number, groupLen: number): PortPos {
+//         const pPos = this.factories[parent.kind][group](parent, index, groupLen);
+
+//         const origin = pPos.origin;
+//         const target = (pPos.target ?? origin.add(pPos.dir.scale(this.options.defaultPortLength)));
+//         const dir    = (pPos.dir    ?? target.sub(origin).normalize());
+
+//         return { origin, target, dir };
+//     }
+
+//     protected calcWorldPos(parentID: GUID, portID: GUID) {
+//         const { origin, target, dir } = this.cache.localPortPositions.get(portID)!;
+//         const transform = this.cache.componentTransforms.get(parentID)!;
+//         return {
+//             origin: transform.toWorldSpace(origin),
+//             target: transform.toWorldSpace(target),
+//             dir:    dir.rotate(transform.getAngle()),
+//         };
+//     }
+
+//     public override assemble(port: Schema.Port, reasons: Set<AssemblyReason>) {
+//         const added            = reasons.has(AssemblyReason.Added);
+//         const transformChanged = reasons.has(AssemblyReason.TransformChanged);
+//         const portAmtChanged   = reasons.has(AssemblyReason.PortsChanged);
+//         const selectionChanged = reasons.has(AssemblyReason.SelectionChanged);
+
+//         const parent = this.circuit.getCompByID(port.parent).unwrap();
+
+//         if (added || portAmtChanged) {
+//             const numPorts = this.circuit.getPortConfig(parent.id).unwrap()[port.group];
+//             this.cache.localPortPositions.set(port.id, this.calcPos(parent, port.group, port.index, numPorts));
+//         }
+
+//         if (added || transformChanged || portAmtChanged) {
+//             const parentTransform = this.cache.componentTransforms.get(parent.id)!;
+
+//             const labelPrims: Prim[] = [];
+
+//             // Transform all local port positions to new parent transform
+//             const pos = this.calcWorldPos(parent.id, port.id);
+//             this.cache.portPositions.set(port.id, pos);
+
+//             // Get port name for label
+//             const name = this.circuit.getPortByID(port.id).map((p) => p.props.name).unwrap();
+//             if (name) {
+//                 const padding = 0.1;
+
+//                 const localPos = this.cache.localPortPositions.get(port.id)!;
+//                 const textBounds = this.options.textMeasurer?.getBounds(this.options.fontStyle(), name)
+//                     ?? new Rect(V(), V());
+
+//                 const textSize = textBounds.size.add(2*padding);
+
+//                 // Text pos is the backwards from the origin by the text size
+//                 const textPos = localPos.origin.add(localPos.dir.scale(textSize.scale(-0.5)));
+
+//                 // Clamp the position inside the box
+//                 const boundSize = parentTransform.getSize().sub(textSize).scale(0.5);
+//                 const pos = parentTransform.toWorldSpace(
+//                     Vector.Clamp(textPos, V(-boundSize.x, -boundSize.y), V(boundSize.x, boundSize.y)));
+
+//                 labelPrims.push({
+//                     kind:      "Text",
+//                     contents:  name,
+//                     pos:       pos.add(-textBounds.x, -textBounds.y),
+//                     angle:     parentTransform.getAngle(),
+//                     fontStyle: this.options.fontStyle(),
+//                 });
+//             }
+
+//             // Assemble the port-line and port-circle
+//             const { lineStyle, circleStyle } = this.options.portStyle(this.isSelected(port.id), this.isSelected(parent.id));
+//             const prims = [
+//                 {
+//                     kind:  "Line",
+//                     p1:    pos.origin,
+//                     p2:    pos.target,
+//                     style: lineStyle,
+
+//                     ignoreHit: true,
+//                 },
+//                 {
+//                     kind:   "Circle",
+//                     pos:    pos.target,
+//                     radius: this.options.defaultPortRadius,
+//                     style:  circleStyle,
+//                 },
+//             ];
+
+//             this.cache.portPrims.set(parent.id, new Map<GUID, Prim[]>(prims));
+//             this.cache.portLabelPrims.set(parent.id, labelPrims);
+//         } else if (selectionChanged) {
+//             const prims = this.cache.portPrims.get(parent.id)!;
+
+//             const [line, circle] = prims.get(port.id)!;
+
+//             if (line.kind !== "Line" || circle.kind !== "Circle") {
+//                 console.error(`Invalid prim type in PortAssembler! ${line.kind}, ${circle.kind}`);
+//                 return;
+//             }
+
+//             const { lineStyle, circleStyle } = this.options.portStyle(this.isSelected(port.id), this.isSelected(parent.id));
+
+//             line.style = lineStyle;
+//             circle.style = circleStyle;
+//         }
+//     }
+// }
