@@ -29,9 +29,9 @@ class DirtyMap<K> {
         this.map = new Map();
     }
 
-    public add(id: K, reason: AssemblyReason): void {
-        this.map.getOrInsert(id, () => new Set())
-            .add(reason);
+    public add(id: K, ...reasons: AssemblyReason[]): void {
+        const set = this.map.getOrInsert(id, () => new Set());
+        reasons.forEach((r) => set.add(r));
     }
 
     public has(id: K): boolean {
@@ -134,15 +134,10 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
                     .map((c) => this.circuit.getCompByID(c).unwrap())
                     .filter((c) => (c.kind === icId));
                 comps.forEach((c) => {
-                    this.dirtyComponents.add(c.id, AssemblyReason.TransformChanged);
-                    this.dirtyComponents.add(c.id, AssemblyReason.PortsChanged);
+                    this.dirtyComponents.add(c.id, AssemblyReason.TransformChanged, AssemblyReason.PortsChanged);
 
-                    const ports = this.circuit.getPortsForComponent(c.id);
-                    ports.map((ports) => ports.forEach((portID) => {
-                        this.circuit.getWiresForPort(portID)
-                            .map((wires) => wires.forEach((wireID) =>
-                                this.dirtyWires.add(wireID, AssemblyReason.TransformChanged)))
-                    }));
+                    this.circuit.getAllWiresForComponent(c.id).unwrap()
+                        .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
                 });
             }
 
@@ -165,12 +160,18 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
 
                 const existing = this.dirtyComponentPorts.getOrInsert(compId, () => new DirtyMap());
                 newPorts.forEach((port) => existing.add(port, AssemblyReason.Added));
+
+                // this.circuit.getAllWiresForComponent(compId).unwrap()
+                //     .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
             }
             for (const [compId, newPorts] of diff.removedPorts) {
                 this.dirtyComponents.add(compId, AssemblyReason.PortsChanged);
 
                 const existing = this.dirtyComponentPorts.getOrInsert(compId, () => new DirtyMap());
                 newPorts.forEach((port) => existing.add(port, AssemblyReason.Removed));
+
+                // this.circuit.getAllWiresForComponent(compId).unwrap()
+                //     .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
             }
 
             // Mark all added/removed wires dirty
@@ -181,43 +182,48 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
 
             // Mark all changed obj props dirty
             for (const [id, props] of diff.propsChanged) {
-                if (circuit.hasComp(id)) {
-                    // If z-index was set, dirty the component separately since it doesn't
-                    // need to reassemble, but the component order list needs updating.
-                    if (props.has("zIndex")) {
-                        props.delete("zIndex");
-                        this.dirtyComponentOrder.add(id);
-                        if (props.size === 0)
-                            continue;
+                const result = circuit.getObjByID(id);
+                if (!result.ok) // Object was deleted
+                    continue;
+                const obj = result.value;
+
+                // If z-index was set, dirty the component separately since it doesn't
+                // need to reassemble, but the component order list needs updating.
+                if (obj.baseKind === "Component" && props.has("zIndex")) {
+                    props.delete("zIndex");
+                    this.dirtyComponentOrder.add(id);
+                }
+
+                if (props.size === 0)
+                    continue;
+
+                // Ports are weird since they depend almost entirely on their parent component for assembly
+                // For now just manual check them for being selected
+                if (obj.baseKind === "Port") {
+                    const existing = this.dirtyComponentPorts.getOrInsert(obj.parent, () => new DirtyMap());
+                    if (props.has("isSelected"))
+                        existing.add(id, AssemblyReason.SelectionChanged);
+                    existing.add(id, AssemblyReason.PropChanged);
+                    continue;
+                }
+
+                // Ignore non-assemblable objects
+                if (!(obj.kind in this.assemblers))
+                    continue;
+
+                const assembler = this.getAssemblerFor(obj.kind);
+                const mapping = assembler.getPropMappings();
+
+                const reasons = new Set([...props].map((prop) => mapping[prop]));
+
+                if (obj.baseKind === "Component") {
+                    this.dirtyComponents.add(id, AssemblyReason.PortsChanged, ...reasons);
+                    if (reasons.has(AssemblyReason.TransformChanged)) {
+                        this.circuit.getAllWiresForComponent(id).unwrap()
+                            .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
                     }
-
-                    if (props.has("isSelected"))
-                        this.dirtyComponents.add(id, AssemblyReason.SelectionChanged);
-
-                    // Component transform changed, update connected wires
-                    // TODO[]: Size changes?
-                    if (props.has("x") || props.has("y") || props.has("angle")) {
-                        this.dirtyComponents.add(id, AssemblyReason.TransformChanged);
-
-                        const ports = this.circuit.getPortsForComponent(id);
-                        ports.map((ports) => ports.forEach((portID) => {
-                            this.circuit.getWiresForPort(portID)
-                                .map((wires) => wires.forEach((wireID) =>
-                                    this.dirtyWires.add(wireID, AssemblyReason.TransformChanged)))
-                        }));
-                    } else {
-                        this.dirtyComponents.add(id, AssemblyReason.PropChanged);
-                    }
-                } else if (circuit.hasWire(id)) {
-                    if (props.has("isSelected"))
-                        this.dirtyWires.add(id, AssemblyReason.SelectionChanged);
-                    this.dirtyWires.add(id, AssemblyReason.PropChanged);
-                } else if (circuit.hasPort(id)) {
-                    const port = circuit.getPortByID(id).unwrap();
-                    const existing = this.dirtyComponentPorts.getOrInsert(port.parent, () => new DirtyMap());
-                    if (props.has("isSelected"))
-                        existing.add(port.id, AssemblyReason.SelectionChanged);
-                    existing.add(port.id, AssemblyReason.PropChanged);
+                } else if (obj.baseKind === "Wire") {
+                    this.dirtyWires.add(id, AssemblyReason.PortsChanged, ...reasons);
                 }
             }
 

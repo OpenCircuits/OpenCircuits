@@ -113,11 +113,24 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         return this.doc.getCircuitInfo().getPortByID(id);
     }
 
+    public getAllWiresForComponent(id: GUID) {
+        return this.doc.getCircuitInfo().getPortsForComponent(id)
+            .andThen((ports) =>
+                ResultUtil.reduceIter(
+                    new Set<GUID>(),
+                    ports,
+                    (prev, portId) =>
+                        this.doc.getCircuitInfo().getWiresForPort(portId)
+                            .map((set) => prev.union(set))));
+    }
     public getPortsForComponent(id: GUID) {
         return this.doc.getCircuitInfo().getPortsForComponent(id);
     }
     public getPortsByGroup(id: GUID) {
         return this.doc.getCircuitInfo().getPortsByGroup(id);
+    }
+    public getPortsForGroup(id: GUID, group: string) {
+        return this.doc.getCircuitInfo().getPortsForGroup(id, group);
     }
     public getPortConfig(id: GUID) {
         return this.doc.getCircuitInfo().getPortConfig(id);

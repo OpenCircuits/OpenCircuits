@@ -12,6 +12,7 @@ declare global {
     }
 
     interface Set<T> {
+        union<U>(other: ReadonlySet<U>): Set<T | U>;
         intersection<U>(other: ReadonlySet<U>): Set<T & U>;
         difference(other: ReadonlySet<T>): Set<T>;
         symmetricDifference(other: ReadonlySet<T>): Set<T>;
@@ -44,6 +45,12 @@ Array.prototype.chunk = function<T>(this: T[], chunkSize: number): T[][] {
         .map((_, i) => this.slice(i * chunkSize, i * chunkSize + chunkSize));
 }
 
+Set.prototype.union = function<T, U>(this: Set<T>, other: Set<U>): Set<T | U> {
+    const result = new Set<T|U>(this);
+    for (const elem of other)
+        result.add(elem);
+    return result;
+}
 Set.prototype.intersection = function<T, U>(this: Set<T>, other: Set<U>): Set<T & U> {
     let smallerElems: Set<T> | Set<U>;
     let largerHas: Set<T> | Set<U>;

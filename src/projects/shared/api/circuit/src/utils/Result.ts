@@ -391,7 +391,7 @@ export function WrapOpt<T>(t: T | undefined): Option<T> {
 // Helper functions that don't work with Result as the receiver
 export const ResultUtil = {
     // Like map, but stops after the first item returns an Err.
-    mapIter: <T, U, E>(it: IterableIterator<T> | T[], f: (t: T) => Result<U, E>): Result<U[], E> => {
+    mapIter: <T, U, E>(it: Iterable<T>, f: (t: T) => Result<U, E>): Result<U[], E> => {
         const res: U[] = [];
         for (const v of it) {
             const a = f(v);
@@ -403,7 +403,7 @@ export const ResultUtil = {
     },
 
     // Like reduce, but stops after the first step returns an Err.
-    reduceIter: <T, U, E>(u: U, it: IterableIterator<T>, f: (u: U, t: T) => Result<U, E>): Result<U, E> => {
+    reduceIter: <T, U, E>(u: U, it: Iterable<T>, f: (u: U, t: T) => Result<U, E>): Result<U, E> => {
         for (const v of it) {
             const a = f(u, v);
             if (!a.ok)
@@ -413,14 +413,14 @@ export const ResultUtil = {
         return Ok(u);
     },
 
-    reduceIterU: <T, E>(it: IterableIterator<T>, f: (t: T) => Result<void, E>): Result<void, E> =>
+    reduceIterU: <T, E>(it: Iterable<T>, f: (t: T) => Result<void, E>): Result<void, E> =>
         ResultUtil.reduceIter<T, void, E>(undefined, it, (_, t) => f(t)),
 }
 
 export const OptionUtil = {
-    mapIter: <T, U>(it: IterableIterator<T>, f: (t: T) => Option<U>): Option<U[]> =>
+    mapIter: <T, U>(it: Iterable<T>, f: (t: T) => Option<U>): Option<U[]> =>
         ResultUtil.mapIter(it, (t) => f(t).okOr(undefined)).okToOption(),
 
-    reduceIter: <T, U>(u: U, it: IterableIterator<T>, f: (u: U, t: T) => Option<U>): Option<U> =>
+    reduceIter: <T, U>(u: U, it: Iterable<T>, f: (u: U, t: T) => Option<U>): Option<U> =>
         ResultUtil.reduceIter(u, it, (u, t) => f(u, t).okOr(undefined)).okToOption(),
 }

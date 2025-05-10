@@ -176,7 +176,11 @@ async function Init(): Promise<void> {
 
                     const proto = (() => {
                         try {
-                            return DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
+                            const proto = DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
+                            // TODO[] -- switch protobuf libraries cause this thing sucks
+                            if (!proto.circuit)
+                                throw new Error("Failed to parse!");
+                            return proto;
                         } catch {
                             // If we failed to decode it, it could be an old version of the circuit format
                             // (plain text), so handle that below.

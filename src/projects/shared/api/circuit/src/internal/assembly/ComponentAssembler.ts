@@ -5,7 +5,8 @@ import {Transform} from "math/Transform";
 import {Schema} from "shared/api/circuit/schema";
 
 import {Assembler, AssemblerParams,
-        AssemblyReason} from "./Assembler";
+        AssemblyReason,
+        AssemblyReasonPropMapping} from "./Assembler";
 import {PortAssembler, PortFactory} from "./PortAssembler";
 import {BaseShapePrimWithoutStyle, GroupPrim, Prim, SVGPrim, TextPrim} from "./Prim";
 import {FontStyle, Style} from "./Style";
@@ -53,8 +54,14 @@ export abstract class ComponentAssembler extends Assembler<Schema.Component> {
         params: AssemblerParams,
         factory: PortFactory,
         primAssembly: ComponentPrimAssembly[],
+        propMapping?: AssemblyReasonPropMapping,
     ) {
-        super(params);
+        super(params, {
+            "x":     AssemblyReason.TransformChanged,
+            "y":     AssemblyReason.TransformChanged,
+            "angle": AssemblyReason.TransformChanged,
+            ...propMapping,
+        });
 
         this.portAssembler = new PortAssembler(params, factory);
         this.primAssembly = primAssembly;
