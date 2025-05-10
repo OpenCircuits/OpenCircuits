@@ -90,10 +90,13 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
             ...this.ports,
             ...comps.flatMap((comp) => comp.allPorts),
         ];
+
+        const portIds = new Set(ports.map((p) => p.id));
+        // Only get connections that are connected to components that are BOTH in this set.
         const wires = [
             ...this.wires,
             ...ports.flatMap((p) => p.connections),
-        ];
+        ].filter((w) => portIds.has(w.p1.id) && portIds.has(w.p2.id));
 
         return new ObjContainerImpl<T>(this.state, new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)));
     }

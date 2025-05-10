@@ -138,6 +138,51 @@ describe("Selections", () => {
         });
     });
 
+    describe("withWiresAndPorts", () => {
+        test("Single component", () => {
+            const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+
+            const [c] = PlaceAt(V(0, 0));
+            c.select();
+
+            const container = selections.withWiresAndPorts();
+
+            expect(container.components).toHaveLength(1);
+            expect(container.ports).toHaveLength(1);
+            expect(container.wires).toHaveLength(0);
+            expect(container.all).toHaveLength(2);
+        });
+        test("Multiple components connected to eachother", () => {
+            const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+
+            const [c, c2] = PlaceAt(V(0, 0), V(2, 0));
+            Connect(c, c2);
+            c.select();
+            c2.select();
+
+            const container = selections.withWiresAndPorts();
+
+            expect(container.components).toHaveLength(2);
+            expect(container.ports).toHaveLength(2);
+            expect(container.wires).toHaveLength(1);
+            expect(container.all).toHaveLength(5);
+        });
+        test("Single component connected to another component", () => {
+            const [{ selections }, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+
+            const [c, c2] = PlaceAt(V(0, 0), V(2, 0));
+            Connect(c, c2);
+            c.select();
+
+            const container = selections.withWiresAndPorts();
+
+            expect(container.components).toHaveLength(1);
+            expect(container.ports).toHaveLength(1);
+            expect(container.wires).toHaveLength(0);
+            expect(container.all).toHaveLength(2);
+        });
+    });
+
     describe("Clear", () => {
         test("Basic with undo/redo", () => {
             const [circuit, { }, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
