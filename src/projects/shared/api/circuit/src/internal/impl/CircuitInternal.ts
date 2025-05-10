@@ -93,6 +93,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     public getMetadata(): Readonly<Schema.CircuitMetadata> {
         return this.doc.getCircuitInfo().metadata;
     }
+    public getCamera(): Readonly<Schema.Camera> {
+        return this.doc.getCircuitInfo().camera;
+    }
 
     public getInfo() {
         return this.doc.getCircuitInfo();
@@ -231,6 +234,10 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
 
     public setMetadata(metadata: Partial<Schema.CircuitMetadata>) {
         this.doc.setMetadata(metadata);
+    }
+
+    public setCamera(camera: Partial<Schema.Camera>) {
+        this.doc.setCamera(camera);
     }
 
     public importObjs(objs: Schema.Obj[], refreshIds = false): Result<GUID[]> {

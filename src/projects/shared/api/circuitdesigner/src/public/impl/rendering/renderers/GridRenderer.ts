@@ -3,7 +3,9 @@ import {V, Vector}   from "Vector";
 import {RenderState} from "../RenderState";
 
 
-export function RenderGrid({ camera, renderer, options }: RenderState) {
+export function RenderGrid({ circuit, renderer, options }: RenderState) {
+    const camera = circuit.getCamera();
+
     const step = options.gridSize;
 
     const size = renderer.size;

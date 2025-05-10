@@ -13,6 +13,7 @@ import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
 export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> {
     readonly id: GUID;
     readonly metadata: Readonly<M>;
+    readonly camera: Readonly<Schema.Camera>;
 
     getObjectInfo(kind: string): Result<ObjInfo>;
     getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
@@ -52,6 +53,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     public readonly objInfo: ObjInfoProvider;
 
     public metadata: M;
+    public camera: Schema.Camera;
 
     // Object storage
     public readonly objStorage: Map<GUID, Schema.Obj>;
@@ -65,6 +67,11 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     public constructor(objInfo: ObjInfoProvider, initialMetadata: M) {
         this.objInfo = objInfo;
         this.metadata = initialMetadata;
+        this.camera = {
+            x:    0,
+            y:    0,
+            zoom: 0.02,
+        };
 
         this.objStorage = new Map();
         this.wireSet = new Set();
@@ -480,6 +487,13 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         this.storage.metadata = {
             ...this.storage.metadata,
             ...metadata,
+        };
+    }
+
+    public setCamera(camera: Partial<Schema.Camera>) {
+        this.storage.camera = {
+            ...this.storage.camera,
+            ...camera,
         };
     }
 

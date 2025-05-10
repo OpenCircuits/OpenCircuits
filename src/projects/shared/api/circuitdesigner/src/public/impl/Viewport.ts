@@ -144,7 +144,6 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
         const { renderer } = this.canvasInfo;
         const renderState: RenderState = {
-            camera:  this.state.camera,
             options: this.state.circuitState.renderOptions,
             circuit: this.state.circuitState.internal,
             renderer,
