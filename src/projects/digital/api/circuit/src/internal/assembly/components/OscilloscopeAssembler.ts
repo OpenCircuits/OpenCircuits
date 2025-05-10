@@ -92,7 +92,7 @@ export class OscilloscopeAssembler extends ComponentAssembler {
         const offset = (0.08 + this.options.defaultBorderWidth)/2;
 
         // Calculate the positions for each signal
-        const dx = (size.x - 2*offset)/(maxSamples - 1);
+        const dx = (size.x - 2*offset)/(maxSamples);
         const positions = allSignals.map((s, j) => V(
             -displaySize.x/2 + offset + j*dx,        // x-position: linear space
             displaySize.y * (Signal.isOn(s[i]) ? 1/3 : -1/3) + dy // y-position: based on signal value

@@ -300,16 +300,16 @@ export const DigitalPropagators: PropagatorsMap = {
         const { curTick, lastStateTick } = tickInfo!;
         const maxSamples = (obj.props["samples"] as number) ?? 100;
         const delay = (obj.props["delay"] as number) ?? 50;
-        // const numInputs = signals["inputs"].length;
 
         if ((curTick - (lastStateTick ?? curTick)) % delay !== 0)
             return { outputs: {} };
 
-        const nextSignals = new Array<Signal>(8).fill(Signal.Off);
-        signals["inputs"].forEach((val, i) => nextSignals[i] = val);
+        const nextSignals = new Array<Signal>(8).fill(Signal.Off)
+            .map((_, i) => signals["inputs"][i]);
         return {
             outputs:   {},
-            nextState: [...(state.length >= (maxSamples - 1)*8 ? state.slice(8) : state), ...nextSignals],
+            // Slice off first X samples to make sure that state.length + 8 <= maxSamples.
+            nextState: [...state.slice(Math.max(state.length - (maxSamples - 1)*8, 0)), ...nextSignals],
             nextCycle: delay,
         };
     }, []),
