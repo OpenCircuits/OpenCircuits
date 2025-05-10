@@ -56,11 +56,12 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         //  down over the "rotation circle" which appears if
         //  there are ONLY Components being selected
         return (
-            ev.type === "mousedown" &&
+            // Must use `mousedrag` and NOT `mousedown` due to #1387
+            ev.type === "mousedrag" &&
             ev.input.touchCount === 1 &&
             !circuit.selections.isEmpty &&
             circuit.selections.every(isComponent) &&
-            this.isOnCircle(ev.input.mousePos, circuit, viewport)
+            this.isOnCircle(ev.input.mouseDownPos, circuit, viewport)
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
@@ -77,7 +78,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         this.initialPositions = this.components.map((c) => c.pos);
         this.curAngles = this.components.map((c) => c.angle);
         this.curAroundAngle = 0;
-        this.startAngle = camera.toWorldPos(ev.input.mousePos).sub(circuit.selections.midpoint).angle();
+        this.startAngle = camera.toWorldPos(ev.input.mouseDownPos).sub(circuit.selections.midpoint).angle();
         this.prevAngle = this.startAngle;
 
         // Start the transaction
