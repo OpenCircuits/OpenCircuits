@@ -97,7 +97,7 @@ const PropInfoEntryInputField = ({
     // Create doChange callback
     const doChange = useCallback(
         (newVals: Prop[]) => objs.forEach((o, i) => (o.setProp(key, newVals[i]))),
-        [key, objs]);
+        [key, ...objs]);
 
     // If group entry, then return the sub-entries
     if (entry.type === "group") {
@@ -117,15 +117,14 @@ const PropInfoEntryInputField = ({
     switch (entry.type) {
         case "float":
         case "int":
-            const [forwardTransform, inverseTransform] = entry.transform ?? [(v: number) => v, (v: number) => v];
             return (
                 <NumberModuleInputField
                     circuit={circuit}
                     kind={entry.type}
-                    props={(vals as number[]).map(forwardTransform)}
-                    step={entry.step}  min={entry.min} max={entry.max}
-                    doChange={(newVals) =>
-                        doChange(newVals.map(inverseTransform))} />
+                    props={(vals as number[])}
+                    step={entry.step} min={entry.min} max={entry.max}
+                    transform={entry.transform}
+                    doChange={doChange} />
             );
         case "number[]":
             return (
