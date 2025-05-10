@@ -3,6 +3,7 @@ import {Clamp} from "math/MathUtils";
 import {NumberInputField} from "shared/site/components/InputField";
 
 import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
+import {useCallback} from "react";
 
 
 type Props = SharedModuleInputFieldProps<number> & {
@@ -10,16 +11,28 @@ type Props = SharedModuleInputFieldProps<number> & {
     step?: number;
     min?: number;
     max?: number;
+    transform?: [(v: number) => number, (v: number) => number];
 }
 export const NumberModuleInputField = ({
-    kind, step, min, max, placeholder, alt,
-    getCustomDisplayVal, ...props
+    kind, step, min, max, transform, placeholder, alt, props,
+    getCustomDisplayVal, doChange, ...otherProps
 }: Props) => {
     const Min = min ?? -Infinity;
     const Max = max ?? +Infinity;
 
+    const [forwardTransform, inverseTransform] = transform ?? [(v: number) => v, (v: number) => v];
+
+    const doTransformedChange = useCallback(
+        (newVals: number[]) => doChange(newVals.map(inverseTransform)),
+        [doChange]);
+
     const [state, setState] = useBaseModule<[number]>({
-        ...DefaultConfig({ ...props, getCustomDisplayVal }),
+        ...DefaultConfig({
+            ...otherProps,
+            props:    props.map(forwardTransform),
+            doChange: doTransformedChange,
+            getCustomDisplayVal,
+        }),
 
         isValid:  (val) => (!isNaN(val) && (Min <= val && val <= Max)),
         parseVal: (val) => (kind === "float" ? parseFloat(val) : parseInt(val)),

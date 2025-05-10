@@ -20,6 +20,74 @@ type Props = {
     propInfo: PropInfoGetter;
 }
 export const PropertyModule = ({ designer, propInfo }: Props) => {
+    // const circuit = designer.circuit;
+
+    // // Props is now a record of every key that EVERY object in `objs` has
+    // //  associated with an array of the values for each object.
+    // const [angles, objs, forceUpdate] = useSelectionProps(
+    //     circuit,
+    //     (o): o is Obj => (true),
+    //     (o) => ({ angle: (o.getProp("angle") as number ?? 0) }),
+    // );
+
+    // // Create doChange callback
+    // const doChange = useCallback(
+    //     (newVals: Prop[]) => objs.forEach((o, i) => (o.setProp("angle", inverseTransform(newVals[i] as number)))),
+    //     [objs.map((o) => o.id).join("|")]);
+
+    // if (!angles || objs.length === 0)
+    //     return;
+
+    // const entry: PropInfoEntry = {
+    //     id:        "angle",
+    //     type:      "float",
+    //     key:       "angle",
+    //     label:     "Angle",
+    //     step:      45,
+    //     // Transform to degrees for display
+    //     transform: [
+    //         (v) => (180/Math.PI * v), // Forward transform
+    //         (v) => (Math.PI/180 * v), // Inverse transform
+    //     ],
+    // };
+
+    // const vals = angles.angle;
+    // const [forwardTransform, inverseTransform] = entry.transform ?? [(v: number) => v, (v: number) => v];
+    // return (
+    //     <NumberModuleInputField
+    //         circuit={circuit}
+    //         kind={entry.type}
+    //         props={(vals as number[]).map(forwardTransform)}
+    //         step={entry.step}  min={entry.min} max={entry.max}
+    //         doChange={doChange} />
+    // );
+
+    // // Just get first entry's propInfo since the only actual props that will show
+    // //  are the ones that every object's info has.
+    // const info0 = propInfo(objs[0]);
+    // if (!info0) {
+    //     console.warn(`Failed to find prop info for ${objs[0].kind}!`);
+    //     return;
+    // }
+
+    // const isValidInfoEntry = (entry: PropInfoEntry): boolean => (
+    //     entry.type !== "group"
+    //         // Get the info entries that have an associated key in the props
+    //         ? (entry.key in props)
+    //         // Or if they are groups, then make sure that EVERY sub-entry
+    //         //  has their key in the props
+    //         : (entry.info.every(isValidInfoEntry))
+    // );
+    // const infoList = info0.filter(isValidInfoEntry);
+
+    // // Map each info entry to
+    // return (<>{infoList.map((entry) => (
+    //     <PropInfoEntryWrapper
+    //         key={entry.id}
+    //         circuit={circuit} entry={entry}
+    //         props={props} objs={objs} forceUpdate={forceUpdate} />
+    // ))}</>);
+
     const circuit = designer.circuit;
 
     // Props is now a record of every key that EVERY object in `objs` has
@@ -97,7 +165,7 @@ const PropInfoEntryInputField = ({
     // Create doChange callback
     const doChange = useCallback(
         (newVals: Prop[]) => objs.forEach((o, i) => (o.setProp(key, newVals[i]))),
-        [key, objs]);
+        [key, ...objs]);
 
     // If group entry, then return the sub-entries
     if (entry.type === "group") {
@@ -117,15 +185,14 @@ const PropInfoEntryInputField = ({
     switch (entry.type) {
         case "float":
         case "int":
-            const [forwardTransform, inverseTransform] = entry.transform ?? [(v: number) => v, (v: number) => v];
             return (
                 <NumberModuleInputField
                     circuit={circuit}
                     kind={entry.type}
-                    props={(vals as number[]).map(forwardTransform)}
-                    step={entry.step}  min={entry.min} max={entry.max}
-                    doChange={(newVals) =>
-                        doChange(newVals.map(inverseTransform))} />
+                    props={(vals as number[])}
+                    step={entry.step} min={entry.min} max={entry.max}
+                    transform={entry.transform}
+                    doChange={doChange} />
             );
         case "number[]":
             return (
