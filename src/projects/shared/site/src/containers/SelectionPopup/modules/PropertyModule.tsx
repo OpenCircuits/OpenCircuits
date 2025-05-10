@@ -97,7 +97,7 @@ const PropInfoEntryInputField = ({
     // Create doChange callback
     const doChange = useCallback(
         (newVals: Prop[]) => objs.forEach((o, i) => (o.setProp(key, newVals[i]))),
-        [key, ...objs]);
+        [key, objs.map((o) => o.id).join("")]);
 
     // If group entry, then return the sub-entries
     if (entry.type === "group") {
