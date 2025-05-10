@@ -64,8 +64,9 @@ describe("RotateTool", () => {
             for (let i = 0; i < 100; i++) {
                 for (let j = 0; j <= 2*Math.PI; j += 2*Math.PI/10) {
                     const pos = V(ROTATION_CIRCLE_RADIUS*Math.cos(j), ROTATION_CIRCLE_RADIUS*Math.sin(j));
-                    input.moveTo(pos);
-                    // I DONT KNOW WHY THE EPSILON NEEDS TO BE SO LARGE
+                    input.moveTo(pos, 1);
+                    // Need to account for float->int conversion when going to screen-coords, hence the
+                    // large-ish epsilon
                     expect(obj.angle).toBeCloseToAngle(j, 0.02);
                 }
             }
@@ -102,28 +103,30 @@ describe("RotateTool", () => {
         });
 
         test("Rotate Objects 100 times around", () => {
-            const [{ circuit }, input, _] = CreateTestCircuitDesigner();
-            const obj1 = circuit.placeComponentAt("TestComp", V(-2, 2));
-            const obj2 = circuit.placeComponentAt("TestComp", V(2, 0));
+            const [{ circuit }, input, _, { PlaceAt }] = CreateTestCircuitDesigner();
+            const [obj1, obj2, obj3] = PlaceAt(V(-2, -2), V(2, 0), V(0, 2));
 
             input.drag(V(-4, -4),
                        V(+4, +4)); // Select objects
-            expect(circuit.selections).toHaveLength(2);
+            expect(circuit.selections).toHaveLength(3);
 
-            const obj1Pos = obj1.pos, obj2Pos = obj2.pos;
+            const obj1Pos = obj1.pos, obj2Pos = obj2.pos, obj3Pos = obj3.pos;
             const midpoint = circuit.selections.midpoint;
             input.moveTo(midpoint)
                 .move(V(ROTATION_CIRCLE_RADIUS, 0))
                 .press();
 
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 100; i++) {
                 for (let j = 0; j <= 2*Math.PI; j += 2*Math.PI/10) {
                     const pos = V(ROTATION_CIRCLE_RADIUS*Math.cos(j), ROTATION_CIRCLE_RADIUS*Math.sin(j));
                     input.moveTo(midpoint.add(pos), 1);
                     expect(obj1.angle).toBeCloseToAngle(j, 0.02);
                     expect(obj2.angle).toBeCloseToAngle(j, 0.02);
-                    expect(obj1.pos).toApproximatelyEqual(obj1Pos.rotate(j, midpoint), 0.03);
-                    expect(obj2.pos).toApproximatelyEqual(obj2Pos.rotate(j, midpoint), 0.03);
+                    expect(obj1.pos).toApproximatelyEqual(obj1Pos.rotate(j, midpoint), 0.05);
+                    expect(obj2.pos).toApproximatelyEqual(obj2Pos.rotate(j, midpoint), 0.05);
+                    expect(obj3.pos).toApproximatelyEqual(obj3Pos.rotate(j, midpoint), 0.05);
+                    // Make sure midpoint is stable
+                    expect(circuit.selections.midpoint).toApproximatelyEqual(midpoint);
                 }
             }
             input.release();

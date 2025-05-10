@@ -5,7 +5,6 @@ import {Component}  from "./Component";
 import {Obj}        from "./Obj";
 import {Wire}       from "./Wire";
 import {Port}       from "./Port";
-import {Schema} from "../schema";
 import {IntegratedCircuit} from "./Circuit";
 
 

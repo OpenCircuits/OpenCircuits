@@ -19,6 +19,8 @@ export class MockInputFacade {
         this.mousePos = V(0, 0);
     }
 
+    // NOTE: WHEN CREATING THE DOM EVENTS TO DISPATCH, CLIENTX/CLIENTY ARE __INTEGERS__ SO THERE
+    //       WILL BE SLIGHT NUMERICAL DIFFERENCES IF THE PASSED POSITION IS A FLOAT!!
     private onMouseEv(type: string, pos: Vector, button: number) {
         this.mousePos = pos;  // Update mouse pos
         this.canvas.dispatchEvent(new MouseEvent(type, { clientX: pos.x, clientY: pos.y, button }));
