@@ -28,7 +28,7 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
         this.state = state;
         this.view = view;
         this.mat = new DirtyVar<Matrix2x3>(() => {
-            const { x, y, zoom } = state.camera;
+            const { x, y, zoom } = this.internal.getCamera();
 
             const screenSize = view.canvasInfo?.screenSize ?? V(0, 0);
             return new Matrix2x3(
@@ -47,73 +47,76 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
         });
     }
 
+    protected get internal() {
+        return this.state.circuitState.internal;
+    }
+
     public get matrix(): Matrix2x3 {
         return this.mat.get();
     }
 
     public set cx(x: number) {
-        const cam = this.state.camera;
+        const cam = this.internal.getCamera();
         const dx = (cam.x - x);
 
         // No change, do nothing
         if (dx === 0)
             return;
 
-        cam.x = x;
+        this.internal.setCamera({ x });
         this.publish({ type: "change", dx, dy: 0, dz: 0 });
         this.mat.setDirty();
     }
     public get cx(): number {
-        return this.state.camera.x;
+        return this.internal.getCamera().x;
     }
     public set cy(y: number) {
-        const cam = this.state.camera;
+        const cam = this.internal.getCamera();
         const dy = (cam.y - y);
 
         // No change, do nothing
         if (dy === 0)
             return;
 
-        cam.y = y;
+        this.internal.setCamera({ y });
         this.publish({ type: "change", dx: 0, dy, dz: 0 });
         this.mat.setDirty();
     }
     public get cy(): number {
-        return this.state.camera.y;
+        return this.internal.getCamera().y;
     }
     public set pos({ x, y }: Vector) {
-        const cam = this.state.camera;
+        const cam = this.internal.getCamera();
         const dx = (cam.x - x), dy = (cam.y - y);
 
         // No change, do nothing
         if (dx === 0 && dy === 0)
             return;
 
-        cam.x = x;
-        cam.y = y;
+        this.internal.setCamera({ x, y });
         this.publish({ type: "change", dx, dy, dz: 0 });
         this.mat.setDirty();
     }
     public get pos(): Vector {
-        const camera = this.state.camera;
+        const camera = this.internal.getCamera();
 
         return V(camera.x, camera.y);
     }
 
     public set zoom(zoom: number) {
-        const cam = this.state.camera;
+        const cam = this.internal.getCamera();
         const dz = (cam.zoom - zoom);
 
         // No change, do nothing
         if (dz === 0)
             return;
 
-        cam.zoom = zoom;
+        this.internal.setCamera({ zoom });
         this.publish({ type: "change", dx: 0, dy: 0, dz: dz });
         this.mat.setDirty();
     }
     public get zoom(): number {
-        return this.state.camera.zoom;
+        return this.internal.getCamera().zoom;
     }
 
     public translate(delta: Vector, space: Vector.Spaces = "world"): void {

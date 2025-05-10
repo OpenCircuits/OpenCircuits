@@ -25,12 +25,6 @@ export function CreateDesigner(
     const designerState: CircuitDesignerState<DigitalTypes> = {
         circuitState: state,
 
-        camera: {
-            x:    0,
-            y:    0,
-            zoom: 0.02,
-        },
-
         toolManager: new ToolManager<DigitalTypes>(toolConfig.defaultTool, toolConfig.tools),
 
         isLocked:      false,

@@ -296,8 +296,10 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.beginTransaction();
 
         // TODO[] - make this undoable?
-        if (loadMetadata)
+        if (loadMetadata) {
             this.internal.setMetadata(schema.metadata);
+            this.internal.setCamera(schema.camera);
+        }
 
         schema.ics
             .filter((ic) => !this.internal.hasIC(ic.metadata.id))
@@ -316,13 +318,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         return {
             metadata: this.internal.getMetadata(),
-            camera:   {
-                x:    0,
-                y:    0,
-                zoom: 0,
-            },
-            ics:     ics.map((ic) => ic.toSchema()),
-            objects: [
+            camera:   this.internal.getCamera(),
+            ics:      ics.map((ic) => ic.toSchema()),
+            objects:  [
                 ...objs.map((obj) => obj.toSchema()),
             ],
         };
