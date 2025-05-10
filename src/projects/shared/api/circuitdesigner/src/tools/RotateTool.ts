@@ -21,6 +21,9 @@ const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) 
 export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
     private components: Component[];
 
+    // Store initial midpoint mostly for stability reasons otherwise
+    // you can numerical-inaccuracy yourself into flinging the rotation
+    // by switching between local and global rotation rapidly.
     private initialMidpoint: Vector;
     private initialPositions: Vector[];
     private curAngles: number[];
@@ -87,7 +90,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         camera.publish({ type: "dragEnd" });
     }
 
-    public onEvent(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { viewport: { camera } }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             // Get whether z is presesed for independent rotation
             const isIndependent = ev.input.keysDown.has("z");

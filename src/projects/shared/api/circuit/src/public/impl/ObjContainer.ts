@@ -1,5 +1,6 @@
 import {Vector} from "Vector";
 import {Rect}   from "math/Rect";
+import {CalculateMidpoint} from "math/MathUtils";
 
 import {GUID} from "../../internal";
 import {ObjContainer} from "../ObjContainer";
@@ -37,10 +38,24 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
         const pts = (compAndWirePts.length === 0
             ? [...this.ports.map((p) => p.targetPos)]
             : compAndWirePts);
-        return Rect.FromPoints(
-            Vector.Min(...pts),
-            Vector.Max(...pts),
-        ).center;
+
+        return CalculateMidpoint(pts);
+
+        // TODO[master] -- Maybe one day revisit this option
+        //  It used the bounding box of all the points to determine the center
+        //  which had the benefit of not 'weighting' the average, and felt more like
+        //  a visual center, i.e. if you had 100 objects overlapping and 1 object to
+        //  the right, a straight average would have the midpoint really close to just
+        //  the 100 overlapping objects, while a bounding box midpoint would have
+        //  it in the center.
+        //  The big problem with this is that the bounding box changes as you, i.e. rotate
+        //  since rotating a rectangle can change where the min/max points are in a non-continuous way
+        //  What we really need is the 'centroid' of the polygon created by all the points
+        //  See https://gist.github.com/HarryStevens/37287b23b345f394f8276dc87a9c2bc6
+        // return Rect.FromPoints(
+        //     Vector.Min(...pts),
+        //     Vector.Max(...pts),
+        // ).center;
     }
 
     public get length(): number {
