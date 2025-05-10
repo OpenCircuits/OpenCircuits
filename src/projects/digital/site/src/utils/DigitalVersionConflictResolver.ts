@@ -495,7 +495,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
     const camera: Schema.Camera = {
         x: (cameraRefPos.data.x as number) / 50,
         y: (cameraRefPos.data.y as number) / -50,
-        zoom: (cameraRef.data.zoom as number),
+        zoom: (cameraRef.data.zoom as number) / 50,
     }
 
     // Migrate to model refactor api
