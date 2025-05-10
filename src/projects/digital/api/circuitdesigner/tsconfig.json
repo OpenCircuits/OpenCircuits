@@ -9,6 +9,7 @@
             "shared/api/circuit/*":               ["../../../shared/api/circuit/src/*"],
             "shared/api/circuitdesigner/tests/*": ["../../../shared/api/circuitdesigner/tests/*"],
             "shared/api/circuitdesigner/*":       ["../../../shared/api/circuitdesigner/src/*"],
+            "digital/api/circuit/tests/*":        ["../circuit/tests/*"],
             "digital/api/circuit/*":              ["../circuit/src/*"],
             "digital/api/circuitdesigner/*":      ["./src/*"],
             "tests/helpers/*":                    ["./tests/helpers/*"],

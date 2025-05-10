@@ -3,7 +3,7 @@ import "./Extensions";
 import {CreateCircuit} from "digital/api/circuit/public"
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent"
 import {Signal} from "digital/api/circuit/schema/Signal";
-import {V} from "Vector"
+import {V, Vector} from "Vector"
 import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
 import {DigitalWire} from "digital/api/circuit/public/DigitalWire";
 import {MapObj} from "shared/api/circuit/utils/Functions";
@@ -18,6 +18,7 @@ export const CreateTestCircuit = (sim = true) => {
 
     const helpers = {
         Place:          (...comps: string[]) => comps.map((c) => circuit.placeComponentAt(c, V(0, 0))),
+        PlaceAt:        (...comps: Array<[string, Vector]>) => comps.map(([c, pos]) => circuit.placeComponentAt(c, pos)),
         TurnOn:         (component: DigitalComponent) => state.sim.setState(component.id, [Signal.On]),
         TurnOff:        (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Off]),
         TurnMetastable: (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Metastable]),

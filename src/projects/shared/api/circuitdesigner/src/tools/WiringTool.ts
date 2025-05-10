@@ -45,10 +45,11 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
         //     we probably want to find the next closest.
         const worldPos = viewport.camera.toWorldPos(pos);
 
-        // First see if there is a port that we are directly within the bounds of
-        const p1 = circuit.pickPortAt(worldPos);
-        if (p1)
-            return p1;
+        // TODO[] - Need to handle some z-index cases in here somehow
+        // // First see if there is a port that we are directly within the bounds of
+        // const p1 = circuit.pickPortAt(worldPos);
+        // if (p1)
+        //     return p1;
 
         // Otherwise, gather all ports that are within the wireable
         //  bounds (and can be wired), and find the closest one
