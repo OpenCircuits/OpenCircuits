@@ -1,6 +1,6 @@
 import {Obj, Prop} from "shared/api/circuit/public";
 
-import {PropInfo, PropInfoEntryField, PropInfoRecord} from "./PropInfo";
+import {PropInfo, PropInfoEntryField, PropInfoGetter} from "./PropInfo";
 
 
 export const DefaultEntryFieldDefaults = {
@@ -17,7 +17,7 @@ export const DefaultEntryFieldDefaults = {
 // (i.e. initially every component has x/y undefined but defaults to 0).
 // It uses the PropInfoRecord to find all the props that the object has
 // and then gets the props from the object, or uses a default value.
-export function GetPropsWithInfoFor(o: Obj, propInfo: PropInfoRecord): Record<string, Prop> {
+export function GetPropsWithInfoFor(o: Obj, propInfo: PropInfoGetter): Record<string, Prop> {
     // Recursively get all the info fields from the info
     // A field is an entry that isn't a group
     function getPropFields(info: PropInfo): PropInfoEntryField[] {
@@ -28,7 +28,7 @@ export function GetPropsWithInfoFor(o: Obj, propInfo: PropInfoRecord): Record<st
         });
     }
 
-    const info = propInfo[o.kind];
+    const info = propInfo(o);
     if (!info) {
         console.warn(`Failed to find prop info for ${o.kind}!`);
         return {};

@@ -1,4 +1,6 @@
-import {Prop} from "shared/api/circuit/public";
+import {Obj, Prop} from "shared/api/circuit/public";
+
+import {DEFAULT_COMPONENT_PROP_INFO, DEFAULT_PORT_PROP_INFO, DEFAULT_WIRE_PROP_INFO} from "./DefaultPropInfo";
 
 
 export type Props = Record<string, Prop>;
@@ -65,5 +67,14 @@ export type PropInfoEntry = PropInfoEntryField | GroupPropInfo;
 
 export type PropInfo = PropInfoEntry[];
 
-// Key'd by the an Object's `kind`, to its corresponding prop info
-export type PropInfoRecord = Record<string, PropInfo>;
+export type PropInfoGetter = (obj: Obj) => PropInfo | undefined;
+
+export function MakeDefaultPropInfoGetter(specificObjInfo: Record<string, PropInfo>): PropInfoGetter {
+    return (obj: Obj) => (
+        obj.kind in specificObjInfo ? specificObjInfo[obj.kind]
+        : obj.baseKind === "Component" ? DEFAULT_COMPONENT_PROP_INFO
+        : obj.baseKind === "Wire" ? DEFAULT_WIRE_PROP_INFO
+        : obj.baseKind === "Port" ? DEFAULT_PORT_PROP_INFO
+        : undefined
+    );
+}
