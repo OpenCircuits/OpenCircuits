@@ -43,10 +43,8 @@ export const DigitalItemNav = () => {
     // Subscribe to CircuitDesigner
     //  and update the ItemNav w/
     //  ICs whenever they're added/removed
-    useEffect(() => circuit.subscribe((ev) => {
-        if (ev.diff.addedICs.size === 0 && ev.diff.removedICs.size === 0)
-            return;
-        setState({
+    useEffect(() => {
+        const updateICs = () => setState({
             ics: circuit.getICs().map((d) => ({
                 kind:      d.id,
                 label:     d.name,
@@ -54,7 +52,15 @@ export const DigitalItemNav = () => {
                 removable: true,
             })),
         });
-    }), [circuit]);
+
+        // Update ICs when circuit changes so importing a circuit also shows the ICs in the item nav
+        updateICs();
+        return circuit.subscribe((ev) => {
+            if (ev.diff.addedICs.size === 0 && ev.diff.removedICs.size === 0)
+                return;
+            updateICs();
+        })
+    }, [circuit]);
 
     // Generate ItemNavConfig with ICs included
     const config = useMemo(() => ({
