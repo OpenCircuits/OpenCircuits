@@ -33,6 +33,7 @@ import clockInICOffCircuit from "./TestCircuitData/3_0/ClockInICOff.json";
 import clockInICOnCircuit from "./TestCircuitData/3_0/ClockInICOn.json";
 import threeInputICCircuit from "./TestCircuitData/3_0/ThreeInputIC.json";
 import inputOrderICCircuit from "./TestCircuitData/3_0/InputOrderIC.json";
+import allSidesICCircuit from "./TestCircuitData/3_0/AllSidesIC.json";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 import {IMPORT_IC_CLOCK_MESSAGE} from "digital/site/utils/Constants";
 
@@ -746,9 +747,9 @@ describe("DigitalVersionConflictResolver", () => {
             const icInputA = icInputs.find(({ name }) => name === "a")!;
             const icInputB = icInputs.find(({ name }) => name === "b")!;
             const icInputC = icInputs.find(({ name }) => name === "c")!;
-            expect(icInputA.name).toBe("a");
-            expect(icInputB.name).toBe("b");
-            expect(icInputC.name).toBe("c");
+            expect(icInputA).toBeDefined();
+            expect(icInputB).toBeDefined();
+            expect(icInputC).toBeDefined();
             expect(a.outputs[0].connectedPorts).toContain(icInputA);
             expect(b.outputs[0].connectedPorts).toContain(icInputB);
             expect(c.outputs[0].connectedPorts).toContain(icInputC);
@@ -777,6 +778,48 @@ describe("DigitalVersionConflictResolver", () => {
 
             TurnOff(c);
             expect(out).toBeOff();
+        });
+        test("All Sides IC", () => {
+            const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
+            const { schema, warnings } = VersionConflictResolver(JSON.stringify(allSidesICCircuit));
+            expect(warnings).toBeUndefined();
+            circuit.loadSchema(schema);
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(5);
+
+            const top = comps.find(({ name }) => name === "top")!;
+            const bottom = comps.find(({ name }) => name === "bottom")!;
+            const left = comps.find(({ name }) => name === "left")!;
+            const right = comps.find(({ name }) => name === "right")!;
+            const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
+            expect(top).toBeDefined();
+            expect(bottom).toBeDefined();
+            expect(left).toBeDefined();
+            expect(right).toBeDefined();
+            expect(icInstance).toBeDefined();
+
+            const icInputs = icInstance.inputs;
+            expect(icInputs).toHaveLength(2);
+            const icInputTop = icInputs.find(({ name }) => name === "top")!;
+            const icInputLeft = icInputs.find(({ name }) => name === "left")!;
+            const icOutputs = icInstance.outputs;
+            expect(icOutputs).toHaveLength(2);
+            const icOutputRight = icOutputs.find(({ name }) => name === "right")!;
+            const icOutputBottom = icOutputs.find(({ name }) => name === "bottom")!;
+            expect(icInputTop).toBeDefined();
+            expect(icInputLeft).toBeDefined();
+            expect(icOutputRight).toBeDefined();
+            expect(icOutputBottom).toBeDefined();
+
+            expect(top.outputs[0].connectedPorts).toContain(icInputTop);
+            expect(left.outputs[0].connectedPorts).toContain(icInputLeft);
+            expect(right.inputs[0].connectedPorts).toContain(icOutputRight);
+            expect(bottom.inputs[0].connectedPorts).toContain(icOutputBottom);
+
+            expect(icInputTop.targetPos.y).toBeGreaterThan(icInstance.bounds.top);
+            expect(icOutputBottom.targetPos.y).toBeLessThan(icInstance.bounds.bottom);
+            expect(icInputLeft.targetPos.x).toBeLessThan(icInstance.bounds.left);
+            expect(icOutputRight.targetPos.x).toBeGreaterThan(icInstance.bounds.right);
         });
     });
 });

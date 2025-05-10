@@ -521,7 +521,6 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
 
         const inputs = getArrayEntries(getArrayEntry(icContents, "inputs")!);
         const inputPorts = getArrayEntries(getArrayEntry(obj, "inputPorts")!);
-        inputPorts.reverse();
         // inputs and their ports are (presumably) linked on index, so when sorting they need to be zipped together
         const inputsAndPorts = inputs.zip(inputPorts);
         const inputPins = inputsAndPorts.map(([{ ref }, { obj }]): Schema.IntegratedCircuitPin => {
@@ -529,20 +528,18 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
             const { x, y } = origin.data as {x: number, y: number};
             const dir = getEntry(obj, "dir")!;
             const { x: dx, y: dy } = dir.data as {x: number, y: number};
-            // comparePortPos
             return {
                 name: obj.data.name as string,
                 id: pinRefToPortGuid.get(ref!)!,
                 group: "inputs",
                 x: x / (w / 2),
-                y: y / (h / 2),
+                y: -y / (h / 2),
                 dx: dx,
                 dy: -dy,
             }
         });
         const outputs = getArrayEntries(getArrayEntry(icContents, "outputs")!);
         const outputPorts = getArrayEntries(getArrayEntry(obj, "outputPorts")!);
-        outputPorts.reverse();
         const outputsAndPorts = outputs.zip(outputPorts);
         const outputPins = outputsAndPorts.map(([{ ref }, { obj }]): Schema.IntegratedCircuitPin => {
             const origin = getEntry(obj, "origin")!;
@@ -554,7 +551,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 id: pinRefToPortGuid.get(ref!)!,
                 group: "outputs",
                 x: x / (w / 2),
-                y: y / (h / 2),
+                y: -y / (h / 2),
                 dx: dx,
                 dy: -dy,
             }
