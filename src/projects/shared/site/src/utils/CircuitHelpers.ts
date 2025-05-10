@@ -2,13 +2,15 @@
 import {Schema} from "shared/api/circuit/schema";
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {setCurDesigner} from "./hooks/useDesigner";
+import {ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
+import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 
 
 // These are helpers that need to be overridden per-circuit-type (digital, analog, etc.)
 // But are used more broadly by the shared site.
 // Mostly relating to I/O and initializations.
 export interface OverrideCircuitHelpers {
-    CreateAndInitializeDesigner: () => CircuitDesigner;
+    CreateAndInitializeDesigner: (tools?: {config: ToolConfig, renderers?: ToolRenderer[]}) => CircuitDesigner;
 
     SerializeCircuit: (circuit: Schema.Circuit) => Blob;
     DeserializeCircuit: (data: string | ArrayBuffer) => Schema.Circuit;

@@ -61,6 +61,9 @@ import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalProtoToSchema, DigitalSchemaToProto} from "digital/site/proto/bridge";
 import {DigitalSchema} from "digital/api/circuit/schema";
+import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitState";
+import {ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
+import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 
 
 async function Init(): Promise<void> {
@@ -135,10 +138,13 @@ async function Init(): Promise<void> {
         }],
         [100, "Rendering", async () => {
             SetCircuitHelpers({
-                CreateAndInitializeDesigner() {
+                CreateAndInitializeDesigner(tools: {
+                    config: ToolConfig<DigitalTypes>;
+                    renderers?: ToolRenderer[];
+                } | undefined) {
                     const [mainCircuit, mainCircuitState] = CreateCircuit();
                     const mainDesigner = CreateDesigner(
-                        {
+                        tools?.config ?? {
                             defaultTool: new DefaultTool(
                                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                                 DeleteHandler, SnipNodesHandler, DeselectAllHandler,
@@ -154,7 +160,7 @@ async function Init(): Promise<void> {
                                 new SelectionBoxTool(),
                             ],
                         },
-                        [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
+                        tools?.renderers ?? [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
                         DRAG_TIME,
                         [mainCircuit, mainCircuitState],
                     );

@@ -20,7 +20,7 @@ import {Cursor} from "../../input/Cursor";
 
 import {Camera}                                  from "../Camera";
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
-import {AttachedCanvasInfo, Prim, Viewport, ViewportEvents}          from "../Viewport";
+import {AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents}          from "../Viewport";
 
 import {CameraImpl}                            from "./Camera";
 import {CircuitDesignerState} from "./CircuitDesignerState";
@@ -244,6 +244,10 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
     }
     public get debugOptions(): DebugOptions {
         return this.state.debugOptions;
+    }
+    public setRenderOptions(options: Partial<Pick<RenderOptions, "showGrid">>): void {
+        this.state.circuitState.renderOptions = { ...this.state.circuitState.renderOptions, ...options };
+        this.scheduler.requestRender();
     }
 
     public resize(w: number, h: number): void {
