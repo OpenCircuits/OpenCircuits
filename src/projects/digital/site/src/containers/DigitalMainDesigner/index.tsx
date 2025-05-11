@@ -38,7 +38,6 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
     for (let i = 0; i < N; i++) {
         const comp = circuit.placeComponentAt(itemId, pos);
 
-        // TODO: Revisit after deciding on exact behavior of .inputs and .outputs
         const inputPorts = (options & SmartPlaceOptions.Inputs) ? comp.inputs : [];
 
         const outputPorts = (options & SmartPlaceOptions.Outputs) ? comp.outputs : [];
@@ -65,6 +64,12 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
                 // This centers the LED around the port of the LED
                 (outputPorts[i].targetPos.y - comp.y) - (l.inputs[0].targetPos.y - l.y)).add(comp.pos)
         });
+
+        pos = pos.sub(V(0, Rect.Bounding([
+            compBoundsWithPorts,
+            ...inputs.flatMap(({ allPorts, bounds }) => [bounds, ...allPorts.map(({ bounds }) => bounds)]),
+            ...outputs.flatMap(({ allPorts, bounds }) => [bounds, ...allPorts.map(({ bounds }) => bounds)]),
+        ]).height));
     }
 
     circuit.commitTransaction();

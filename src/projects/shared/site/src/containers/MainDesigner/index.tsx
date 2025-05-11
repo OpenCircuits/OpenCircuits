@@ -14,6 +14,7 @@ import {useDrop} from "shared/site/components/DragDroppable/useDrop";
 import "./index.scss";
 import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
+import {Rect} from "math/Rect";
 
 
 function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPos: Vector) {
@@ -23,7 +24,8 @@ function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPo
         const comp = circuit.placeComponentAt(itemKind, pos);
 
         // Calculate bounds of the placed component to offset the position for the next one
-        pos = pos.sub(0, comp.bounds.height);
+        // Need to factor in port bounds, most noticeable with LEDs
+        pos = pos.sub(0, Rect.Bounding([comp.bounds, ...comp.allPorts.map(({ bounds }) => bounds)]).height);
     }
     circuit.commitTransaction();
 }
