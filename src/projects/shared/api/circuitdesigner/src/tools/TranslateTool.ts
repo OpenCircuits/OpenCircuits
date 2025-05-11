@@ -8,6 +8,7 @@ import {InputAdapterEvent}             from "shared/api/circuitdesigner/input/In
 import {SnapToConnections, SnapToGrid} from "shared/api/circuitdesigner/utils/SnapUtils";
 import {Tool, ToolEvent}               from "./Tool";
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
+import {Cursor} from "../input/Cursor";
 
 
 export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
@@ -21,6 +22,10 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
         this.initialPositions = [];
     }
 
+    public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
+        if (circuit.pickObjAt(viewport.camera.toWorldPos(ev.input.mousePos))?.baseKind === "Component")
+            return "pointer";
+    }
     public shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user is pressing down on a component
         return (
@@ -33,7 +38,7 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
         return (ev.type === "mouseup" && ev.button === LEFT_MOUSE_BUTTON);
     }
 
-    public onActivate(ev: InputAdapterEvent, { circuit, curPressedObj }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit, curPressedObj, viewport }: CircuitDesigner): void {
         // If the pressed component is part of the selected objects,
         //  then translate all of the selected objects
         //  otherwise, just translate the pressed object
@@ -42,6 +47,9 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
             : [curPressedObj as Component];
 
         this.initialPositions = this.components.map((c) => V(c.x, c.y));
+
+        // Set cursor
+        viewport.canvasInfo!.cursor = "grabbing";
 
         circuit.beginTransaction();
 

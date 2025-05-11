@@ -219,16 +219,22 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
                         DebugRenderBounds(this.primRenderer, renderer.ctx, port.bounds, "#00ff00"));
                 });
             }
-
-            // Callback for post-rendering
-            this.publish("onrender", {
-                renderer: {
-                    draw:    (prim: Prim) => this.primRenderer.render(renderer.ctx, prim),
-                    options: renderState.options,
-                },
-            });
         }
         renderer.restore();
+
+        // Callback for post-rendering
+        this.publish("onrender", {
+            renderer: {
+                draw: (prim: Prim, space = "world") => {
+                    renderer.save();
+                    if (space === "world")
+                        renderer.transform(this.camera.matrix.inverse());
+                    this.primRenderer.render(renderer.ctx, prim);
+                    renderer.restore();
+                },
+                options: renderState.options,
+            },
+        });
     }
 
     public set margin(m: Margin) {

@@ -17,7 +17,7 @@ export type * from "shared/api/circuit/internal/assembly/Prim";
 export type * from "shared/api/circuit/internal/assembly/RenderOptions";
 
 export interface RenderHelper {
-    draw(prim: Prim): void;
+    draw(prim: Prim, space?: "world" | "screen"): void;
     options: RenderOptions;
 }
 

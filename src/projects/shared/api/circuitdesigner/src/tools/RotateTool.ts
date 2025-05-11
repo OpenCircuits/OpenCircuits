@@ -8,6 +8,7 @@ import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEv
 import {Tool, ToolEvent} from "./Tool";
 import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
+import {Cursor} from "../input/Cursor";
 
 
 export const ROTATION_CIRCLE_RADIUS = 1.5;
@@ -51,6 +52,13 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
     }
 
+    public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
+        if (!circuit.selections.isEmpty &&
+            circuit.selections.every(isComponent) &&
+            this.isOnCircle(ev.input.mousePos, circuit, viewport)) {
+            return "grab";
+        }
+    }
     public shouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): boolean {
         // Activate if the user pressed their mouse or finger
         //  down over the "rotation circle" which appears if
@@ -68,7 +76,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         return (ev.type === "mouseup");
     }
 
-    public onActivate(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit, viewport: { camera, canvasInfo } }: CircuitDesigner): void {
         this.components = circuit.selections.components;
 
         camera.publish({ type: "dragStart" });
@@ -80,6 +88,9 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         this.curAroundAngle = 0;
         this.startAngle = camera.toWorldPos(ev.input.mouseDownPos).sub(circuit.selections.midpoint).angle();
         this.prevAngle = this.startAngle;
+
+        // Set cursor
+        canvasInfo!.cursor = "grabbing";
 
         // Start the transaction
         circuit.beginTransaction();
