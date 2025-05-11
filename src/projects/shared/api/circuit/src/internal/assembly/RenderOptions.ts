@@ -41,6 +41,8 @@ export interface RenderOptions {
     defaultOnColor: string;
     defaultMetastableColor: string;
 
+    defaultInvalidColor: string;
+
     defaultFont: string;
     defaultFontColor: string;
     defaultTextBaseline: TextBaseline;
@@ -92,6 +94,8 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public defaultOnColor = "#3cacf2";
     public defaultMetastableColor = "#cc5e5e";
+
+    public defaultInvalidColor = "#ff1c1c";
 
     public defaultFont = "lighter 300px arial";  // Gets scaled down later (fuck Firefox)
     public defaultFontColor = "#000000";
