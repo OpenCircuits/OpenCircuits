@@ -50,7 +50,7 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
             if (deselectAll)
                 circuit.selections.clear();
             comps.forEach((c) => c.select());
-            circuit.commitTransaction();
+            circuit.commitTransaction("Selection Box Tool");
             return;
         }
 
@@ -62,7 +62,7 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
             if (deselectAll)
                 circuit.selections.clear();
             ports.forEach((c) => c.select());
-            circuit.commitTransaction();
+            circuit.commitTransaction("Selection Box Tool");
             return;
         }
 

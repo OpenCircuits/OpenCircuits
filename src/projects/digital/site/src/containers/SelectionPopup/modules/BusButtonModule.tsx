@@ -119,7 +119,7 @@ export function Bus(circuit: DigitalCircuit, outputPorts: DigitalPort[], inputPo
         inputPort.connectTo(outputPort);
     }
 
-    circuit.commitTransaction();
+    circuit.commitTransaction("Bus Ports");
 }
 
 type Props = {

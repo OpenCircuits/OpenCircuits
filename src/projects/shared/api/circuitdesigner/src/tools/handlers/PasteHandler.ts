@@ -72,7 +72,7 @@ export const PasteHandler: ToolHandler = {
                         o.pos = o.pos.add(V(0.5, -0.5).scale(offsetAmount));
                 }
             });
-            circuit.commitTransaction();
+            circuit.commitTransaction("Paste Handler");
 
             // This should be the only handler to execute
             return ToolHandlerResponse.HALT;

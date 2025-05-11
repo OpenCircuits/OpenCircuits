@@ -18,7 +18,7 @@ export function DuplicateSelections(circuit: Circuit): void {
             obj.pos = obj.pos.add(0.5, -0.5);
         }
     });
-    circuit.commitTransaction();
+    circuit.commitTransaction("Duplicate Handler");
 }
 
 export const DuplicateHandler: ToolHandler = {

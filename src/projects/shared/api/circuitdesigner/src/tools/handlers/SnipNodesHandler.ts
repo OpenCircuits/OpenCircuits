@@ -21,7 +21,7 @@ export const SnipNodesHandler: ToolHandler = {
 
         circuit.beginTransaction();
         nodes.forEach((node) => node.snip());
-        circuit.commitTransaction();
+        circuit.commitTransaction("Snip Nodes Handler");
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;
