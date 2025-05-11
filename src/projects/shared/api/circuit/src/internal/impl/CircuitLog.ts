@@ -29,11 +29,19 @@ export interface LogEvent {
     local: ReadonlyArray<Readonly<LogEntry>>;
 }
 
+export enum LogEntryType {
+    NORMAL = 0,
+    UNDO = 1,
+    REDO = 2,
+}
+
 // LogEntry's are IMMUTABLE. It's OK to hold onto LogEntry references, but their contents may not be up-to-date.
 // Update LogEntry references on LogEvents.
 export interface LogEntry {
     // Identifies a log entry across mutations.
     id: GUID;
+
+    type: LogEntryType;
 
     // Log metadata.
     // user: string;
@@ -48,6 +56,8 @@ export interface LogEntry {
 
 interface ProposedLogEntry {
     id: GUID;
+
+    type: LogEntryType;
 
     // Log metadata.
     // user: string;
@@ -95,9 +105,9 @@ export class CircuitLog extends ObservableImpl<LogEvent> {
     }
 
     // NOTE: call-sites of propose should expect possible re-entrant calls.
-    public propose(ops: CircuitOp[], clientData: string): LogEntry {
+    public propose(ops: CircuitOp[], type: LogEntryType, clientData: string): LogEntry {
         // Propose "entry" with an invalid clock.  The server will provide a clock.
-        const entry: ProposedLogEntry = { id: uuid(), clock: -1, ops, clientData };
+        const entry: ProposedLogEntry = { id: uuid(), type, clock: -1, ops, clientData };
         this.proposedEntries.push(entry);
 
         const evt: LogEvent = {

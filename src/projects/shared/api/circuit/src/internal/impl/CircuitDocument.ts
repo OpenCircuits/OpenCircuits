@@ -5,7 +5,7 @@ import {GUID, Schema} from "shared/api/circuit/schema";
 
 import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
 import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";
-import {CircuitLog, LogEntry} from "./CircuitLog";
+import {CircuitLog, LogEntry, LogEntryType} from "./CircuitLog";
 import {ObservableImpl} from "../../utils/Observable";
 import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
 
@@ -511,7 +511,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 if (this.curBatchIndex === -1)
                     this.publishDiffEvent();
 
-                this.commitTransaction();
+                this.commitTransaction(LogEntryType.NORMAL);
             });
     }
 
@@ -547,7 +547,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     }
 
     // "clientData" is arbitrary data the client can store in the Log for higher-level semantics than CircuitOps.
-    public commitTransaction(clientData = ""): LogEntry | undefined {
+    public commitTransaction(type: LogEntryType, clientData = ""): LogEntry | undefined {
         if (!this.isTransaction())
             throw new Error("Unexpected commitTransaction!");
 
@@ -575,7 +575,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                             + ". Maybe a missed event?");
         }
 
-        return this.log.propose(txList.ops, clientData);
+        return this.log.propose(txList.ops, type, clientData);
     }
 
     public cancelTransaction(): void {

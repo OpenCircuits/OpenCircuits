@@ -79,8 +79,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     public beginTransaction(options?: { batch?: boolean }): void {
         this.internal.beginTransaction(options);
     }
-    public commitTransaction(): void {
-        this.internal.commitTransaction();
+    public commitTransaction(clientData?: string): void {
+        this.internal.commitTransaction(clientData);
     }
     public cancelTransaction(): void {
         this.internal.cancelTransaction();
