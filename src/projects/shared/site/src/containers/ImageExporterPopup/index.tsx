@@ -16,6 +16,7 @@ import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner
 import {DefaultTool}                     from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}                         from "shared/api/circuitdesigner/tools/PanTool";
 import {FitToScreen, FitToScreenHandler} from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
+import {ZoomHandler}                     from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
 import {ButtonToggle} from "shared/site/components/ButtonToggle";
 import {InputField}   from "shared/site/components/InputField";
@@ -23,6 +24,8 @@ import {Popup}        from "shared/site/components/Popup";
 import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 import "./index.scss";
+import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
+import {ToolHandler} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
 
 
 const MIN_IMG_SIZE = 50;
@@ -30,8 +33,9 @@ const MAX_IMG_SIZE = 10_000;
 
 type Props = {
     designer: CircuitDesigner;
+    extraHandlers?: ToolHandler[];
 }
-export const ImageExporterPopup = ({ designer }: Props) => {
+export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
     const { curPopup, circuitName } = useSharedSelector(
         (state) => ({ curPopup: state.header.curPopup, circuitName: state.circuit.name })
     );
@@ -87,6 +91,7 @@ export const ImageExporterPopup = ({ designer }: Props) => {
                      className={`imageexporter__popup__canvas-wrapper ${state.useBg ? "" : "checkered"}`}>
                     {isActive && (
                         <ImageExporterPreview
+                            extraHandlers={extraHandlers}
                             designer={designer}
                             canvas={canvas}
                             width={Clamp(state.width , MIN_IMG_SIZE, MAX_IMG_SIZE)}
@@ -182,7 +187,8 @@ export const ImageExporterPopup = ({ designer }: Props) => {
 }
 
 
-export type ImageExporterPreviewProps = {
+type ImageExporterPreviewProps = {
+    extraHandlers?: ToolHandler[];
     designer: CircuitDesigner;
     canvas: React.RefObject<HTMLCanvasElement | null>;
     width: number;
@@ -190,20 +196,23 @@ export type ImageExporterPreviewProps = {
     useGrid: boolean;
     style: React.CSSProperties;
 }
-export const ImageExporterPreview = ({ designer: mainDesigner, canvas, width, height,
+const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, width, height,
                                        style, ...renderingOptions }: ImageExporterPreviewProps) => {
     const { useGrid } = renderingOptions;
-
-    // TODO: CreateDesigner is in digital, this file here is in shared
     // Happens on-opening since this component should be used conditionally when active
-    // const designer: CircuitDesigner = useMemo(() => CreateDesigner(
-    //     mainDesigner.circuit.copy(),
-    //     {
-    //         defaultTool: new DefaultTool(FitToScreenHandler),
-    //         tools:       [PanTool],
-    //     }
-    // ), [mainDesigner]);
-    const designer = mainDesigner;
+    const designer = useMemo(() => {
+        const designer = CircuitHelpers.CreateAndInitializeDesigner({
+            config: {
+                defaultTool: new DefaultTool(...extraHandlers ?? [], FitToScreenHandler, ZoomHandler),
+                tools:       [
+                    new PanTool(),
+                ],
+            },
+            renderers: [],
+        });
+        designer.circuit.loadSchema(mainDesigner.circuit.toSchema());
+        return designer;
+    }, [mainDesigner.circuit]);
 
     useLayoutEffect(() => {
         if (!canvas.current)
@@ -216,9 +225,7 @@ export const ImageExporterPreview = ({ designer: mainDesigner, canvas, width, he
     useLayoutEffect(() => designer.viewport.resize(width, height), [designer, width, height]);
 
     // Keep render options in sync
-    // TODO
-    // useLayoutEffect(() => designer.circuit.setRenderOptions({ useGrid }), [designer, useGrid]);
-
+    useLayoutEffect(() => designer.viewport.setRenderOptions({ showGrid: useGrid }), [designer, useGrid]);
     return (<>
         <img src="img/icons/fitscreen.svg"
              className="image-exporter-preview__button"

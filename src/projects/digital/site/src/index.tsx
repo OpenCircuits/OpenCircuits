@@ -135,10 +135,10 @@ async function Init(): Promise<void> {
         }],
         [100, "Rendering", async () => {
             SetCircuitHelpers({
-                CreateAndInitializeDesigner() {
+                CreateAndInitializeDesigner(tools) {
                     const [mainCircuit, mainCircuitState] = CreateCircuit();
                     const mainDesigner = CreateDesigner(
-                        {
+                        tools?.config ?? {
                             defaultTool: new DefaultTool(
                                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
                                 DeleteHandler, SnipNodesHandler, DeselectAllHandler,
@@ -154,7 +154,7 @@ async function Init(): Promise<void> {
                                 new SelectionBoxTool(),
                             ],
                         },
-                        [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
+                        tools?.renderers ?? [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
                         DRAG_TIME,
                         [mainCircuit, mainCircuitState],
                     );

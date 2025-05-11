@@ -60,6 +60,7 @@ export interface Viewport extends MultiObservable<ViewportEvents> {
     margin: Margin;
 
     debugOptions: DebugOptions;
+    setRenderOptions(options: Partial<Pick<RenderOptions, "showGrid">>): void;
 
     resize(w: number, h: number): void;
 }
