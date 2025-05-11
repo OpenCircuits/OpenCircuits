@@ -4,7 +4,7 @@ import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 import {GUID, Schema} from "shared/api/circuit/schema";
 import {uuid}         from "shared/api/circuit/schema/GUID";
 
-import {CircuitLog}      from "./CircuitLog";
+import {CircuitLog, LogEntryType}      from "./CircuitLog";
 import {InvertCircuitOp} from "./CircuitOps";
 import {PortConfig}      from "./ObjInfo";
 import {CircuitDocument} from "./CircuitDocument";
@@ -60,7 +60,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
 
             // TODO: What if multiple entries? (only matters for multi-edit)
             const [entry] = ev.accepted;
-            if (entry.clientData === "undo" || entry.clientData === "redo") {
+            if (entry.type !== LogEntryType.NORMAL) {
                 // Don't consider undo/redo entries for the undo/redo history
                 return;
             }
@@ -180,7 +180,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         this.doc.cancelTransaction();
     }
     public commitTransaction() {
-        this.doc.commitTransaction();
+        this.doc.commitTransaction(LogEntryType.NORMAL);
     }
 
     public undo(): Result {
@@ -197,7 +197,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .map(InvertCircuitOp)
             .reverse()
             .forEach((op) => this.doc.addTransactionOp(op));
-        this.doc.commitTransaction("undo");
+        this.doc.commitTransaction(LogEntryType.UNDO);
 
         return OkVoid();
     }
@@ -214,7 +214,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         this.doc.beginTransaction({ batch: true });  // Batch the redo for efficiency reasons
         this.log.entries[lastEntryIndex].ops
             .forEach((op) => this.doc.addTransactionOp(op));
-        this.doc.commitTransaction("redo");
+        this.doc.commitTransaction(LogEntryType.REDO);
 
         return OkVoid();
     }
