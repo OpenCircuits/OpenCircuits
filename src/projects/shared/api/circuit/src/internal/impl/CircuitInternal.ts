@@ -179,8 +179,8 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     public cancelTransaction() {
         this.doc.cancelTransaction();
     }
-    public commitTransaction() {
-        this.doc.commitTransaction(LogEntryType.NORMAL);
+    public commitTransaction(clientData?: string) {
+        this.doc.commitTransaction(LogEntryType.NORMAL, clientData);
     }
 
     public undo(): Result {

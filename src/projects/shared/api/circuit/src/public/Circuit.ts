@@ -60,7 +60,7 @@ export interface CircuitHistory extends Observable<CircuitHistoryEvent> {
 type C = Observable<CircuitEvent> & ReadonlyCircuit;
 export interface Circuit extends C {
     beginTransaction(options?: { batch?: boolean }): void;
-    commitTransaction(): void;
+    commitTransaction(clientData?: string): void;
     cancelTransaction(): void;
 
     // Metadata
