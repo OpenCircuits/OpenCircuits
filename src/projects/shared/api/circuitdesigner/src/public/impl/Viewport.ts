@@ -246,7 +246,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         return this.state.debugOptions;
     }
     public setRenderOptions(options: Partial<Pick<RenderOptions, "showGrid">>): void {
-        this.state.circuitState.renderOptions = { ...this.state.circuitState.renderOptions, ...options };
+        if (options.showGrid !== undefined)
+            this.state.circuitState.renderOptions.showGrid = options.showGrid;
         this.scheduler.requestRender();
     }
 

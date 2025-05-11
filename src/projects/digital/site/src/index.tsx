@@ -61,9 +61,6 @@ import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalProtoToSchema, DigitalSchemaToProto} from "digital/site/proto/bridge";
 import {DigitalSchema} from "digital/api/circuit/schema";
-import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitState";
-import {ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
-import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 
 
 async function Init(): Promise<void> {
@@ -138,10 +135,7 @@ async function Init(): Promise<void> {
         }],
         [100, "Rendering", async () => {
             SetCircuitHelpers({
-                CreateAndInitializeDesigner(tools: {
-                    config: ToolConfig<DigitalTypes>;
-                    renderers?: ToolRenderer[];
-                } | undefined) {
+                CreateAndInitializeDesigner(tools) {
                     const [mainCircuit, mainCircuitState] = CreateCircuit();
                     const mainDesigner = CreateDesigner(
                         tools?.config ?? {

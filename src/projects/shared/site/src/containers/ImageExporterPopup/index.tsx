@@ -24,7 +24,6 @@ import {Popup}        from "shared/site/components/Popup";
 import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
 import "./index.scss";
-import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
 import {ToolHandler} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
 
@@ -34,7 +33,7 @@ const MAX_IMG_SIZE = 10_000;
 
 type Props = {
     designer: CircuitDesigner;
-    extraHandlers: ToolHandler[];
+    extraHandlers?: ToolHandler[];
 }
 export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
     const { curPopup, circuitName } = useSharedSelector(
@@ -44,12 +43,10 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
 
     const isActive = (curPopup === "image_exporter");
 
-    const { w, h } = useWindowSize();
-
     const [state, setState] = useState<ImageExportOptions>({
         type:   "png",
-        width:  w,
-        height: h-HEADER_HEIGHT,
+        width:  window.innerWidth,
+        height: window.innerHeight-HEADER_HEIGHT,
 
         bgColor: "#cccccc", useBg: true, useGrid: true,
     });
@@ -190,8 +187,8 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
 }
 
 
-export type ImageExporterPreviewProps = {
-    extraHandlers: ToolHandler[];
+type ImageExporterPreviewProps = {
+    extraHandlers?: ToolHandler[];
     designer: CircuitDesigner;
     canvas: React.RefObject<HTMLCanvasElement | null>;
     width: number;
@@ -199,14 +196,14 @@ export type ImageExporterPreviewProps = {
     useGrid: boolean;
     style: React.CSSProperties;
 }
-export const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, width, height,
+const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, width, height,
                                        style, ...renderingOptions }: ImageExporterPreviewProps) => {
     const { useGrid } = renderingOptions;
     // Happens on-opening since this component should be used conditionally when active
     const designer = useMemo(() => {
         const designer = CircuitHelpers.CreateAndInitializeDesigner({
             config: {
-                defaultTool: new DefaultTool(...extraHandlers, FitToScreenHandler, ZoomHandler),
+                defaultTool: new DefaultTool(...extraHandlers ?? [], FitToScreenHandler, ZoomHandler),
                 tools:       [
                     new PanTool(),
                 ],
@@ -228,7 +225,7 @@ export const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, ca
     useLayoutEffect(() => designer.viewport.resize(width, height), [designer, width, height]);
 
     // Keep render options in sync
-    useLayoutEffect(() => {designer.viewport.setRenderOptions({ showGrid: useGrid })}, [designer, useGrid]);
+    useLayoutEffect(() => designer.viewport.setRenderOptions({ showGrid: useGrid }), [designer, useGrid]);
     return (<>
         <img src="img/icons/fitscreen.svg"
              className="image-exporter-preview__button"
