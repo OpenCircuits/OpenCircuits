@@ -28,7 +28,7 @@ export function CleanUp(circuit: Circuit): boolean {
         comp.pos = SnapToGrid(comp.pos);
     });
 
-    circuit.commitTransaction("Clean Up Handler");
+    circuit.commitTransaction(`Cleaned Up ${circuit.selections.isEmpty ? "Circuit": "Selection"}`);
 
     return true;
 }

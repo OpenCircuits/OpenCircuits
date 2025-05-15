@@ -158,7 +158,7 @@ export const ICDesigner = ({ }: Props) => {
             circuit.selections.clear();
             icInstance.select();
 
-            circuit.commitTransaction("Create IC");
+            circuit.commitTransaction("Created IC");
         }
 
         // Unblock main input

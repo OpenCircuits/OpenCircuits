@@ -16,7 +16,7 @@ export const SelectAllHandler: ToolHandler = {
 
         circuit.beginTransaction();
         comps.forEach((comp) => comp.select());
-        circuit.commitTransaction("Select All Handler");
+        circuit.commitTransaction("Selected All");
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;

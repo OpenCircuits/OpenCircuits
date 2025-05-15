@@ -78,7 +78,7 @@ export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         this.curPin = undefined;
 
-        circuit.commitTransaction("IC Port Tool");
+        circuit.commitTransaction("Moved IC Ports");
     }
 
 

@@ -57,7 +57,7 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
-        circuit.commitTransaction("Translate Tool");
+        circuit.commitTransaction("Moved Objects");
     }
 
     public onEvent(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
@@ -78,7 +78,7 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
                 this.components.forEach((c, i) =>
                     c.pos = this.initialPositions[i].add(dPos));
             }
-            circuit.commitTransaction("Translate Tool");
+            circuit.commitTransaction("Moved Components");
 
             // Apply snapping AFTER to avoid issue #417.
             circuit.beginTransaction({ batch: true });
@@ -90,7 +90,7 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
                         c.pos = SnapToConnections(c.pos, c.allPorts);
                 });
             }
-            circuit.commitTransaction("Translate Tool");
+            circuit.commitTransaction("Snapped Components");
         }
     }
 }

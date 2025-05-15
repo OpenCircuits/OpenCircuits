@@ -62,7 +62,7 @@ export const SelectPathHandler: ToolHandler = {
 
         circuit.beginTransaction();
         path.forEach((o) => o.select());
-        circuit.commitTransaction("Select Path Handler");
+        circuit.commitTransaction("Selected All Connected Components");
 
         // This should be the only handler to handle the click event if we did something
         return ToolHandlerResponse.HALT;

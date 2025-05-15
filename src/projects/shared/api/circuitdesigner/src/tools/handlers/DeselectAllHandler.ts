@@ -13,7 +13,7 @@ export const DeselectAllHandler: ToolHandler = {
 
         circuit.beginTransaction();
         circuit.selections.forEach((obj) => obj.deselect());
-        circuit.commitTransaction("Deselect All");
+        circuit.commitTransaction("Deselected All");
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;

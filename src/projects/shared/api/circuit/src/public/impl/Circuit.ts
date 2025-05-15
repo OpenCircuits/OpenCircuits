@@ -202,7 +202,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         // Set its config to place ports
         this.internal.setPortConfig(id, info.defaultPortConfig).unwrap();
 
-        this.commitTransaction("Place Component");
+        this.commitTransaction("Placed Component");
 
         return this.state.constructComponent(id);
     }
@@ -226,7 +226,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         for (const compId of compIds)
             this.internal.deleteComponent(compId).unwrap();
 
-        this.commitTransaction("Delete Object");
+        this.commitTransaction("Deleted Object");
     }
 
 
@@ -308,7 +308,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         const objs = this.internal.importObjs(schema.objects, refreshIds).unwrap();
 
-        this.commitTransaction("Load Schema");
+        this.commitTransaction("Loaded Schema");
 
         return objs.map((id) => this.getObj(id)!);
     }

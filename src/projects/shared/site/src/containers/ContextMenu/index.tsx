@@ -95,7 +95,7 @@ export const ContextMenu = ({ designer }: Props) => {
     const onSelectAll = async () => {
         circuit.beginTransaction();
         circuit.getComponents().forEach((c) => c.select());
-        circuit.commitTransaction("Select All (Context Menu)");
+        circuit.commitTransaction("Selected All (Context Menu)");
     }
 
     /* Context Menu "Focus" */

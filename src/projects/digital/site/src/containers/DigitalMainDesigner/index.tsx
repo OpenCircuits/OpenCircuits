@@ -72,7 +72,7 @@ export function SmartPlace(pos: Vector, itemId: string, circuit: DigitalCircuit,
         ]).height));
     }
 
-    circuit.commitTransaction("Smart Place Group");
+    circuit.commitTransaction("Placed Group");
 }
 
 export const DigitalMainDesigner = ({ circuit }: {circuit: DigitalCircuit}) => {
