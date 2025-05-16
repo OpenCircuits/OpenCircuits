@@ -17,11 +17,15 @@ const defaultDebugVals = {
 
     debugPressableBounds: false,
 };
-const initialDebugVals: DebugOptions = JSON.parse(GetCookie(DEBUG_VALUES_COOKIE_KEY) || "false") || defaultDebugVals;
-Object.entries(defaultDebugVals).forEach(([key, val]) => {
-    if (!(key in initialDebugVals))
-        initialDebugVals[key as keyof DebugOptions] = val;
-});
+const initialDebugVals: DebugOptions = (() => {
+    const result = JSON.parse(GetCookie(DEBUG_VALUES_COOKIE_KEY) || "false") || defaultDebugVals;
+
+    // If there's an option that isn't in the loaded result, it was probably a new option
+    // so reset the cookies to include it.
+    if (Object.keys(defaultDebugVals).some((key) => !(key in result)))
+        return defaultDebugVals;
+    return result;
+})();
 
 const [initialState, actions, reducer] = CreateState()(
     initialDebugVals,
