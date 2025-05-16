@@ -14,7 +14,7 @@ import {V, Vector} from "./Vector";
  *
  * For performance reasons the transform also stores a list of corners to be able to quickly apply intersection testing.
  *
- * It should be noted that the Vector is immutable and its values can only be set on construction.
+ * It should be noted that the Transform is immutable and its values can only be set on construction.
  */
 export class Transform {
     private static readonly LOCAL_CORNERS = [V(-0.5, 0.5), V(0.5, 0.5), V(0.5, -0.5), V(-0.5, -0.5)];
