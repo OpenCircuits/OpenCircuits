@@ -97,7 +97,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit, viewport: { camera } }: CircuitDesigner): void {
-        circuit.commitTransaction();
+        circuit.commitTransaction("Rotated Object(s)");
 
         camera.publish({ type: "dragEnd" });
     }

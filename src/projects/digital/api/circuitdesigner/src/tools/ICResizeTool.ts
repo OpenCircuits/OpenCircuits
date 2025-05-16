@@ -93,7 +93,7 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {
         this.edge = "none";
 
-        circuit.commitTransaction();
+        circuit.commitTransaction("Resized IC");
     }
 
 

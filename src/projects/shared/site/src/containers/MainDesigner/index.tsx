@@ -27,7 +27,7 @@ function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPo
         // Need to factor in port bounds, most noticeable with LEDs
         pos = pos.sub(0, Rect.Bounding([comp.bounds, ...comp.allPorts.map(({ bounds }) => bounds)]).height);
     }
-    circuit.commitTransaction();
+    circuit.commitTransaction("Placed Multiple Of Component");
 }
 
 

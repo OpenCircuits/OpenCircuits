@@ -84,7 +84,7 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
         this.state.internal.beginTransaction();
         for (const id of this.selections["objs"])
             this.state.internal.setPropFor(id, "isSelected", undefined);
-        this.state.internal.commitTransaction();
+        this.state.internal.commitTransaction("Cleared Selections");
     }
 
     public forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {

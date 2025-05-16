@@ -31,7 +31,7 @@ export const SelectionHandler: ToolHandler = {
         if (obj.baseKind === "Component")
             obj.shift();
 
-        circuit.commitTransaction();
+        circuit.commitTransaction("Selected Object");
 
         // This should be the only handler to handle the click event if we did something
         return ToolHandlerResponse.HALT;

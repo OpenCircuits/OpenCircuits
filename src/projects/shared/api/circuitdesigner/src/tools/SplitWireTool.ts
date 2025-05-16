@@ -33,6 +33,6 @@ export class SplitWireTool extends TranslateTool {
 
         super.onActivate(ev, designer);
 
-        circuit.commitTransaction();
+        circuit.commitTransaction("Created Node");
     }
 }

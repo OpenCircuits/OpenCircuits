@@ -68,7 +68,7 @@ export const ContextMenu = ({ designer }: Props) => {
 
         circuit.beginTransaction();
         circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
-        circuit.commitTransaction();
+        circuit.commitTransaction("Cut (Context Menu)");
     }
 
     /* Context Menu "Copy" */
@@ -95,7 +95,7 @@ export const ContextMenu = ({ designer }: Props) => {
     const onSelectAll = async () => {
         circuit.beginTransaction();
         circuit.getComponents().forEach((c) => c.select());
-        circuit.commitTransaction();
+        circuit.commitTransaction("Selected All (Context Menu)");
     }
 
     /* Context Menu "Focus" */

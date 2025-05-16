@@ -140,7 +140,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
             Object.entries(wire.getProps()).forEach((prop) => newWire.setProp(...prop));
         });
     }
-    circuit.commitTransaction();
+    circuit.commitTransaction("Created Circuit From Expression");
 
     return Ok(undefined);
 }
