@@ -9,17 +9,10 @@ export class TwoInputLatchAssembler extends LatchAssembler {
         super(params, sim, {
             kind,
             otherInputs: {
-                [inputPort1Name]: (comp) => ({
-                    origin: V(-this.getSize(comp).x/2, 3*this.getSize(comp).y/8),
-                    dir:    V(-1, 0),
-                }),
-                [inputPort2Name]: (comp) => ({
-                    origin: V(-this.getSize(comp).x/2, -3*this.getSize(comp).y/8),
-                    dir:    V(-1, 0),
-                }),
+                [inputPort1Name]: () => ({ origin: V(-0.5,  1/3), dir: V(-1, 0) }),
+                [inputPort2Name]: () => ({ origin: V(-0.5, -1/3), dir: V(-1, 0) }),
             },
+            enablePortYValue: 0,
         });
     }
-
-   protected override getEnablePortYValue = () => 0;
 }

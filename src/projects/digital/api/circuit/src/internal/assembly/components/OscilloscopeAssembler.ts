@@ -1,12 +1,11 @@
 import {V, Vector} from "Vector";
 
-import {Schema} from "shared/api/circuit/schema";
-
+import {Schema}                          from "shared/api/circuit/schema";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {PolygonPrim} from "shared/api/circuit/internal/assembly/Prim";
+import {ComponentAssembler}              from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {PositioningHelpers}              from "shared/api/circuit/internal/assembly/PortAssembler";
 
-import {Signal} from "digital/api/circuit/schema/Signal";
+import {Signal}     from "digital/api/circuit/schema/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
@@ -18,16 +17,11 @@ export class OscilloscopeAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
-            "inputs": (comp, index, total) => {
-                const size = this.getSize(comp);
-                const midpoint = (total - 1) / 2;
-                const y = -0.6 * size.y/2 * (index - midpoint);
-                return {
-                    // Subtracting the this.options.defaultBorderWidth prevent tiny gap between port stem and component
-                    origin: V(-((size.x - this.options.defaultBorderWidth)/2), y),
-                    target: V(-(this.options.defaultPortLength + size.x/2), y),
-                };
-            },
+            "inputs": (comp, index, total) => ({
+                origin: V(-0.5, PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y,
+                                                                   { spacing: this.getDisplaySize(comp).y })),
+                dir: V(-1, 0),
+            }),
         }, [
             {
                 kind: "BaseShape",
@@ -44,7 +38,7 @@ export class OscilloscopeAssembler extends ComponentAssembler {
             {
                 kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged, AssemblyReason.StateUpdated]),
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged, AssemblyReason.PortsChanged, AssemblyReason.StateUpdated]),
                 assemble:     (comp) => {
                     const allSignals = this.sim.getState(comp.id)?.chunk(8) ?? [];
                     return {
@@ -56,46 +50,50 @@ export class OscilloscopeAssembler extends ComponentAssembler {
 
                 getStyle: (_comp) => ({
                     stroke: {
-                        color:   this.options.defaultOnColor,
-                        size:    0.08,
-                        lineCap: "square",
+                        color:    this.options.defaultOnColor,
+                        size:     0.08,
+                        lineCap:  "square",
+                        lineJoin: "miter",
                     },
                 }),
             },
         ], {
-            "w": AssemblyReason.TransformChanged,
-            "h": AssemblyReason.TransformChanged,
+            propMapping: {
+                "w": AssemblyReason.TransformChanged,
+                "h": AssemblyReason.TransformChanged,
+            },
+            sizeChangesWhenPortsChange: true,
         });
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("Oscilloscope").unwrap() as DigitalComponentConfigurationInfo;
     }
 
-    protected assembleDisplay(comp: Schema.Component, allSignals: Signal[][], i: number): Omit<PolygonPrim, "style"> {
+    protected assembleDisplay(comp: Schema.Component, allSignals: Signal[][], i: number) {
         const numPorts = this.numPorts(comp);
         const transform = this.getTransform(comp);
         const displaySize = this.getDisplaySize(comp);
-        const size = this.getSize(comp);
         const maxSamples = (comp.props["samples"] as number) ?? 100;
 
         // Get y-offset for i'th graph
-        const dy = -size.y/2 + ((numPorts - 1 - i) + 0.5)*displaySize.y;
+        const dy = -1/2 + ((numPorts - 1 - i) + 0.5) / numPorts;
 
         if (allSignals.length <= 1) {
             return {
-                kind:   "Polygon",
-                points: [],
-            };
+                kind:      "Polygon",
+                points:    [] as Vector[],
+                ignoreHit: true,
+            } as const;
         }
 
         // Calculate offset to account for border/line widths
-        const offset = (0.08 + this.options.defaultBorderWidth)/2;
+        const offset = (0.08 + this.options.defaultBorderWidth)/2/displaySize.x;
 
         // Calculate the positions for each signal
-        const dx = (size.x - 2*offset)/(maxSamples);
+        const dx = (1 - 2*offset)/(maxSamples);
         const positions = allSignals.map((s, j) => V(
-            -displaySize.x/2 + offset + j*dx,        // x-position: linear space
-            displaySize.y * (Signal.isOn(s[i]) ? 1/3 : -1/3) + dy // y-position: based on signal value
+            -1/2 + offset + j*dx,        // x-position: linear space
+            (Signal.isOn(s[i]) ? 1/3 : -1/3) / numPorts + dy // y-position: based on signal value
         ));
 
         return {
@@ -107,8 +105,9 @@ export class OscilloscopeAssembler extends ComponentAssembler {
                     return [pos, pos.add(dx, 0)];
                 return pos.add(dx, 0);
             })].map((p) => transform.toWorldSpace(p)),
-            closed: false,
-        };
+            closed:    false,
+            ignoreHit: true,
+        } as const;
     }
 
     protected override getSize(comp: Schema.Component): Vector {

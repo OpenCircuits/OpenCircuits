@@ -51,8 +51,8 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
 
         // Create slightly larger and smaller box and check
         //  if the mouse is between the two for an edge check
-        const t1 = new Transform(ic.pos, icData.display.size.add(EDGE_BUFFER));
-        const t2 = new Transform(ic.pos, icData.display.size.sub(EDGE_BUFFER));
+        const t1 = new Transform(ic.pos, 0, icData.display.size.add(EDGE_BUFFER));
+        const t2 = new Transform(ic.pos, 0, icData.display.size.sub(EDGE_BUFFER));
 
         const worldMousePos = viewport.camera.toWorldPos(pos);
         if (!(RectContains(t1, worldMousePos) && !RectContains(t2, worldMousePos)))

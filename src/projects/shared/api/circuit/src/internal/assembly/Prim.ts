@@ -45,15 +45,22 @@ export interface LinePrim {
     style: Style;
     ignoreHit?: boolean;
 }
-export interface PolygonPrim {
+export type PolygonPrim = {
     kind: "Polygon";
 
     points: Vector[];
     closed?: boolean;  // If should close the polygon or not
 
     style: Style;
-    ignoreHit?: boolean;
-}
+} & ({
+    ignoreHit: true;
+} | {
+    ignoreHit?: false;
+
+    // Arbitrarily calculating the best-fit bounds for a polygon
+    // is expensive, force user to provide them if it needs hit-detection.
+    bounds: Transform;
+})
 export interface QuadCurvePrim {
     kind: "QuadCurve";
 

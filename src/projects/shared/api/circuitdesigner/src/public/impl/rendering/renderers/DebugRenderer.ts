@@ -7,12 +7,12 @@ import {PrimRenderer} from "./PrimRenderer";
 export function DebugRenderBounds(
     primRenderer: PrimRenderer,
     ctx: CanvasRenderingContext2D,
-    bounds: Rect,
+    bounds: Rect | Transform,
     color: string,
 ) {
     primRenderer.render(ctx, {
         kind:      "Rectangle",
-        transform: Transform.FromRect(bounds),
+        transform: (bounds instanceof Transform ? bounds : Transform.FromRect(bounds)),
         style:     {
             fill:   color,
             stroke: {

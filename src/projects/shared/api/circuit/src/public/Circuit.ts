@@ -13,6 +13,7 @@ import {Selections}    from "./Selections";
 import {Observable} from "../utils/Observable";
 import {ObjContainer} from "./ObjContainer";
 import {LogEntry} from "../internal/impl/CircuitLog";
+import {Rect} from "math/Rect";
 
 
 // TODO[model_refactor](leon) - make this more user friendly
@@ -77,6 +78,10 @@ export interface Circuit extends C {
     pickComponentAt(pt: Vector): Component | undefined;
     pickWireAt(pt: Vector): Wire | undefined;
     pickPortAt(pt: Vector): Port | undefined;
+
+    pickObjectsWithin(bounds: Rect): Obj[];
+    pickComponentsWithin(bounds: Rect): Component[];
+    pickPortsWithin(bounds: Rect): Port[];
 
     getObj(id: GUID): Obj | undefined;
     getComponent(id: GUID): Component | undefined;

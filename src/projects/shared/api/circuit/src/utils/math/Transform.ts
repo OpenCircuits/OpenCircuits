@@ -1,100 +1,46 @@
+import {TransformContains, TransformContainsRect} from "./MathUtils";
 import {Matrix2x3} from "./Matrix";
 import {Rect}      from "./Rect";
 import {V, Vector} from "./Vector";
 
 
 /**
- * Class representing a Transform.
- * A Transform holds all the spacial information about an object
- * (ex. position, rotating, size, etc.).
+ * Class representing a 2D Transform.
  *
- * For performance reasons the transform also stores a list of corners
- *  to be able to quickly apply intersection testing.
+ * A Transform holds all the spacial information about an object: position, rotation, and scale.
+ * A Transform can be thought of as a rectangle at the given pos, angle, and with size = scale.
+ *
+ * In local space of a Transform, the unit square represents the bounds of the rectangle for the Transform.
+ *
+ * For performance reasons the transform also stores a list of corners to be able to quickly apply intersection testing.
+ *
+ * It should be noted that the Vector is immutable and its values can only be set on construction.
  */
 export class Transform {
-    private parent?: Transform;
-    private pos: Vector;
-    private scale: Vector;
-    private angle: number;
-    private size: Vector;
+    private static readonly LOCAL_CORNERS = [V(-0.5, 0.5), V(0.5, 0.5), V(0.5, -0.5), V(-0.5, -0.5)];
 
-    private corners: Vector[];
-    private localCorners: Vector[];
+    public readonly pos: Vector;
+    public readonly angle: number;
+    public readonly scale: Vector;
 
-    private dirty: boolean;
-    private dirtySize: boolean;
-    private dirtyCorners: boolean;
+    public readonly matrix: Matrix2x3;
 
-    private prevParentMatrix?: Matrix2x3;
-
-    private matrix: Matrix2x3;
-    private radius: number;
+    private corners?: Vector[];
+    private radius?: number;
 
     /**
      * Constructs a new Transform object.
      *
-     * @param pos   The initial position of the transform.
-     * @param size  The initial size of the transform.
-     * @param angle The initial angle of the transform.
+     * @param pos   The position of the transform.
+     * @param angle The angle of the transform.
+     * @param scale The scale of the transform.
      */
-    public constructor(pos: Vector = V(0), size: Vector = V(1), angle = 0) {
-        this.parent = undefined;
-
-        this.pos = V(pos.x, pos.y);
-        this.size = V(size.x, size.y);
+    public constructor(pos: Vector, angle: number, scale: Vector) {
+        this.pos = pos;
+        this.scale = scale;
         this.angle = angle;
 
-        this.scale = V(1, 1);
-        this.corners = [];
-        this.localCorners = [];
-
-        this.prevParentMatrix = undefined;
-        this.dirty = true;
-        this.dirtySize = true;
-        this.dirtyCorners = true;
-
-        this.matrix = new Matrix2x3();
-        this.radius = 0;
-    }
-    private updateMatrix(): void {
-        // If parent changed then we need to recalculate matrix
-        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
-            !this.parent.getMatrix().equals(this.prevParentMatrix))
-            this.dirty = true;
-
-        if (!this.dirty)
-            return;
-        this.dirty = false;
-
         this.matrix = new Matrix2x3(this.pos, this.angle, this.scale);
-        if (this.parent !== undefined) {
-            this.matrix = this.parent.getMatrix().mult(this.matrix);
-            this.prevParentMatrix = this.parent.getMatrix();
-        }
-    }
-    private updateSize(): void {
-        if (!this.dirtySize)
-            return;
-        this.dirtySize = false;
-
-        this.localCorners = [this.size.scale(V(-0.5, 0.5)), this.size.scale(V(0.5, 0.5)),
-                             this.size.scale(V(0.5, -0.5)), this.size.scale(V(-0.5, -0.5))];
-
-        this.radius = Math.sqrt(this.size.x*this.size.x + this.size.y*this.size.y)/2;
-    }
-    private updateCorners(): void {
-        // If parent changed then we need to recalculate corners
-        if (this.parent !== undefined && this.prevParentMatrix !== undefined &&
-            !this.parent.getMatrix().equals(this.prevParentMatrix))
-            this.dirtyCorners = true;
-
-        if (!this.dirtyCorners)
-            return;
-        this.dirtyCorners = false;
-
-        const corners = this.getLocalCorners();
-        for (let i = 0; i < 4; i++)
-            this.corners[i] = this.toWorldSpace(corners[i]);
     }
 
     /**
@@ -108,43 +54,8 @@ export class Transform {
     public calcRotationAbout(a: number, c: Vector) {
         return [
             this.pos.sub(c).rotate(a).add(c), // new position
-            this.getAngle() + a,              // new rotation
+            this.angle + a,              // new rotation
         ] as const;
-    }
-
-    public setParent(t: Transform): void {
-        this.parent = t;
-        this.dirty = true;
-        this.dirtyCorners = true;
-    }
-    public setPos(p: Vector): void {
-        this.pos = p;
-        this.dirty = true;
-        this.dirtyCorners = true;
-    }
-    public setAngle(a: number): void {
-        this.angle = a;
-        this.dirty = true;
-        this.dirtyCorners = true;
-    }
-    public setScale(s: Vector): void {
-        this.scale = s;
-        this.dirty = true;
-    }
-    public setSize(s: Vector): void {
-        this.size = s;
-        this.dirtySize = true;
-        this.dirtyCorners = true;
-    }
-    public setWidth(w: number): void {
-        this.size = V(w, this.size.y);
-        this.dirtySize = true;
-        this.dirtyCorners = true;
-    }
-    public setHeight(h: number): void {
-        this.size = V(this.size.x, h);
-        this.dirtySize = true;
-        this.dirtyCorners = true;
     }
 
     /**
@@ -155,7 +66,7 @@ export class Transform {
      * @returns The local space vector.
      */
     public toLocalSpace(v: Vector): Vector { // v must be in world coords
-        return this.getInverseMatrix().mul(v);
+        return this.matrix.inverse().mul(v);
     }
 
     /**
@@ -166,60 +77,24 @@ export class Transform {
      * @returns The world space vector.
      */
     public toWorldSpace(v: Vector): Vector {
-        return this.getMatrix().mul(v);
+        return this.matrix.mul(v);
     }
 
-    public getParent(): Transform | undefined {
-        return this.parent;
-    }
-    public getPos(): Vector {
-        return this.pos;
-    }
-    public getAngle(): number {
-        return this.angle;
-    }
-    public getScale(): Vector {
-        return this.scale;
-    }
-    public getSize(): Vector {
-        return this.size;
-    }
     public getRadius(): number {
-        this.updateSize();
+        if (!this.radius)
+            this.radius = Math.sqrt(this.scale.x*this.scale.x + this.scale.y*this.scale.y) / 2;
         return this.radius;
     }
-    public getMatrix(): Matrix2x3 {
-        this.updateMatrix();
-        return this.matrix;
+
+    public getCorners(): readonly Vector[] {
+        if (!this.corners)
+            this.corners = Transform.LOCAL_CORNERS.map((v) => this.toWorldSpace(v));
+        return this.corners;
     }
-    public getInverseMatrix(): Matrix2x3 {
-        this.updateMatrix();
-        return this.matrix.inverse();
+    public getLocalCorners(): readonly Vector[] {
+        return Transform.LOCAL_CORNERS;
     }
-    public getTopLeft(): Vector {
-        this.updateCorners();
-        return this.corners[0];
-    }
-    public getTopRight(): Vector {
-        this.updateCorners();
-        return this.corners[1];
-    }
-    public getBottomRight(): Vector {
-        this.updateCorners();
-        return this.corners[2];
-    }
-    public getBottomLeft(): Vector {
-        this.updateCorners();
-        return this.corners[3];
-    }
-    public getCorners(): Vector[] {
-        this.updateCorners();
-        return [...this.corners]; // Shallow copy array
-    }
-    public getLocalCorners(): Vector[] {
-        this.updateSize();
-        return [...this.localCorners]; // Shallow copy array
-    }
+
     public asRect(): Rect {
         return Rect.FromPoints(
             Vector.Min(...this.getCorners()),
@@ -227,15 +102,21 @@ export class Transform {
         );
     }
 
-    public copy(): Transform {
-        const trans = new Transform(this.pos, this.size, this.angle);
-        trans.scale = this.scale;
-        trans.dirty = true;
-        return trans;
+    public intersects(other: Rect | Transform): boolean {
+        if (other instanceof Rect)
+            return TransformContainsRect(this, other);
+        return TransformContains(this, other);
+    }
+
+    public withScale(newScale: Vector): Transform{
+        return new Transform(this.pos, this.angle, newScale);
+    }
+    public withoutScale(): Transform {
+        return this.withScale(V(1, 1));
     }
 
     public static FromCorners(p1: Vector, p2: Vector): Transform {
-        return new Transform(p1.add(p2).scale(0.5), p2.sub(p1).abs());
+        return new Transform(p1.add(p2).scale(0.5), 0, p2.sub(p1).abs());
     }
     public static FromRect(rect: Rect): Transform {
         return Transform.FromCorners(rect.bottomLeft, rect.topRight);

@@ -3,8 +3,7 @@ import {useEffect} from "react";
 import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {ToggleDebugPrimBounds, ToggleDebugComponentBounds, ToggleDebugWireBounds,
-        ToggleDebugPortBounds, ToggleDebugPressableBounds} from "shared/site/state/DebugInfo";
+import {ToggleDebugValue} from "shared/site/state/DebugInfo";
 import {CloseHeaderMenus, OpenHeaderMenu} from "shared/site/state/Header";
 
 import {SwitchToggle} from "shared/site/components/SwitchToggle";
@@ -12,6 +11,7 @@ import {SwitchToggle} from "shared/site/components/SwitchToggle";
 import {Dropdown} from "../Dropdown";
 
 import {AutoSaveToggle} from "./AutoSaveToggle";
+import {DebugOptions} from "shared/api/circuitdesigner/public/impl/DebugOptions";
 
 
 export const SettingsMenu = () => {
@@ -28,8 +28,7 @@ export const SettingsMenu = () => {
     //  especially the gross 'useAPIMethods' thing
     useEffect(() => {
         designer.viewport.debugOptions = debugInfo;
-    }, [designer, debugInfo, debugInfo.debugPrimBounds, debugInfo.debugComponentBounds, debugInfo.debugWireBounds,
-        debugInfo.debugPortBounds, debugInfo.debugPressableBounds]); // Updates when any of the debugInfo values change
+    }, [designer, ...Object.values(debugInfo)]); // Updates when any of the debugInfo values change
 
     return (
         <Dropdown open={(curMenu === "settings")}
@@ -41,31 +40,13 @@ export const SettingsMenu = () => {
                 (<>
                     <h1>Debug</h1>
                     <hr />
-                    <SwitchToggle
-                        isOn={debugInfo.debugPrimBounds}
-                        onChange={() => dispatch(ToggleDebugPrimBounds())}>
-                        Debug Prims : {debugInfo.debugPrimBounds ? "On" : "Off"}
-                    </SwitchToggle>
-                    <SwitchToggle
-                        isOn={debugInfo.debugComponentBounds}
-                        onChange={() => dispatch(ToggleDebugComponentBounds())}>
-                        Debug Component Bounds : {debugInfo.debugComponentBounds ? "On" : "Off"}
-                    </SwitchToggle>
-                    <SwitchToggle
-                        isOn={debugInfo.debugWireBounds}
-                        onChange={() => dispatch(ToggleDebugWireBounds())}>
-                        Debug Wire Bounds : {debugInfo.debugWireBounds ? "On" : "Off"}
-                    </SwitchToggle>
-                    <SwitchToggle
-                        isOn={debugInfo.debugPortBounds}
-                        onChange={() => dispatch(ToggleDebugPortBounds())}>
-                        Debug Port Bounds : {debugInfo.debugPortBounds ? "On" : "Off"}
-                    </SwitchToggle>
-                    <SwitchToggle
-                        isOn={debugInfo.debugPressableBounds}
-                        onChange={() => dispatch(ToggleDebugPressableBounds())}>
-                        Debug Pressable Bounds : {debugInfo.debugPressableBounds ? "On" : "Off"}
-                    </SwitchToggle>
+                    {Object.entries(debugInfo).map(([key, val]) => (
+                        <SwitchToggle
+                            key={key}
+                            isOn={val}
+                            onChange={() => dispatch(ToggleDebugValue(key as keyof DebugOptions))}>
+                            {key} : {val ? "On" : "Off"}
+                        </SwitchToggle>))}
                 </>)}
         </Dropdown>
     );

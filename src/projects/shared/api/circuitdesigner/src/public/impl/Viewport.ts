@@ -7,7 +7,7 @@ import {CleanupFunc} from "shared/api/circuit/utils/types";
 import {MultiObservable} from "shared/api/circuit/utils/Observable";
 import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 import {InputAdapter} from "shared/api/circuitdesigner/input/InputAdapter";
-import {Bounds} from "shared/api/circuit/internal/assembly/PrimBounds";
+import {Bounds, OrientedBounds} from "shared/api/circuit/internal/assembly/PrimBounds";
 
 import {RenderHelper}      from "./rendering/RenderHelper";
 import {RenderState}       from "./rendering/RenderState";
@@ -151,7 +151,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         const renderPrim = (prim: Prim) => {
             // if (!prim.cull(this.camera))
             //     return;
-            this.primRenderer.render(renderer.ctx, prim);
+            this.primRenderer.render(renderer.ctx, prim, this.debugOptions);
         }
 
         // Reassemble and get the cache
@@ -201,6 +201,19 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
                     DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#00ff99"));
                 compBounds.forEach((b) =>
                     DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#00ff00"));
+            }
+            if (this.state.debugOptions.debugPrimOrientedBounds) {
+                const wireBounds = [...assembly.wirePrims.values()].flat().map(OrientedBounds).filter(IsDefined);
+                const compBounds = [...assembly.componentPrims.values()].flat().map(OrientedBounds).filter(IsDefined);
+                const portBounds = [...([...assembly.portPrims.values()]
+                    .map((m) => [...m.values()]))].flat(2).map(OrientedBounds).filter(IsDefined);
+
+                wireBounds.forEach((b) =>
+                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#55ff55"));
+                portBounds.forEach((b) =>
+                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#99ff00"));
+                compBounds.forEach((b) =>
+                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#9803fc"));
             }
 
             if (this.state.debugOptions.debugComponentBounds) {

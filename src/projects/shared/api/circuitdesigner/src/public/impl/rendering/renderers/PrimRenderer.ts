@@ -1,6 +1,9 @@
 import {SVGDrawing} from "svg2canvas";
 
+import {Matrix2x3} from "math/Matrix";
+
 import {BaseShapePrimWithoutStyle, Prim} from "shared/api/circuit/internal/assembly/Prim";
+import {DebugOptions} from "shared/api/circuitdesigner/public/impl/DebugOptions";
 
 
 function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWithoutStyle): void {
@@ -60,7 +63,7 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
         return;
     }
     case "Rectangle": {
-        const size = prim.transform.getSize();
+        const size = prim.transform.scale;
         ctx.rect(-size.x/2, -size.y/2, size.x, size.y);
     }
     }
@@ -73,7 +76,7 @@ export class PrimRenderer {
         this.svgMap = svgMap;
     }
 
-    public render(ctx: CanvasRenderingContext2D, prim: Prim): void {
+    public render(ctx: CanvasRenderingContext2D, prim: Prim, debugOptions?: DebugOptions): void {
         switch (prim.kind) {
         case "BezierCurve":
         case "Circle":
@@ -112,8 +115,8 @@ export class PrimRenderer {
 
             // TODO[]: See if we can get around this
             if (prim.kind === "Rectangle") {
-                // Transform
-                const [a,b,c,d,e,f] = prim.transform.getMatrix().mat;
+                // Get transform without scale, otherwise it will scale borders and other things
+                const [a,b,c,d,e,f] = prim.transform.withoutScale().matrix.mat;
                 ctx.transform(a,b,c,d,e,f);
             }
 
@@ -126,7 +129,7 @@ export class PrimRenderer {
                 DrawBaseShapePrim(ctx, prim);
             }
 
-            if (prim.style.fill)
+            if (prim.style.fill && !debugOptions?.debugPrims)
                 ctx.fill();
             if (prim.style.stroke && prim.style.stroke.size > 0)
                 ctx.stroke();
@@ -147,11 +150,12 @@ export class PrimRenderer {
 
             ctx.save();
 
-            const [a,b,c,d,e,f] = prim.transform.getMatrix().mat;
+            // Get transform without scale, otherwise it will scale borders and other things
+            const [a,b,c,d,e,f] = prim.transform.withoutScale().matrix.mat;
             ctx.transform(a,b,c,d,e,f);
 
             const svg = this.svgMap.get(prim.svg)!;
-            svg.draw(ctx, 0, 0, prim.transform.getSize().x, -prim.transform.getSize().y, prim.tint);
+            svg.draw(ctx, 0, 0, prim.transform.scale.x, -prim.transform.scale.y, prim.tint);
 
             ctx.restore();
 

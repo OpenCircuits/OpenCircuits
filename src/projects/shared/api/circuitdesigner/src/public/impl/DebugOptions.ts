@@ -1,5 +1,7 @@
 export interface DebugOptions {
+    debugPrims: boolean;
     debugPrimBounds: boolean;
+    debugPrimOrientedBounds: boolean;
 
     debugComponentBounds: boolean;
     debugPortBounds: boolean;

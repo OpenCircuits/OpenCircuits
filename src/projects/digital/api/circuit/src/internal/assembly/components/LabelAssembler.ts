@@ -1,13 +1,15 @@
 import {V, Vector} from "Vector";
 
-import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
-import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
-import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {Schema} from "shared/api/circuit/schema";
-import {FontStyle} from "shared/api/circuit/internal/assembly/Style";
-import {Transform} from "math/Transform";
 import {Rect} from "math/Rect";
+
+import {Schema}                          from "shared/api/circuit/schema";
+import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {ComponentAssembler}              from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {FontStyle}                       from "shared/api/circuit/internal/assembly/Style";
+
+import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
+
+import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 
 
 export class LabelAssembler extends ComponentAssembler {
@@ -22,12 +24,7 @@ export class LabelAssembler extends ComponentAssembler {
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
                 assemble:     (comp) => ({
                     kind:      "Rectangle",
-                    // this.getTransform uses cache which doesn't get updated when name changes
-                    transform: new Transform(
-                        this.getPos(comp),
-                        this.getSize(comp),
-                        this.getAngle(comp),
-                    ),
+                    transform: this.getTransform(comp),
                 }),
 
                 styleChangesWhenSelected: true,
@@ -41,7 +38,11 @@ export class LabelAssembler extends ComponentAssembler {
 
                 getFontStyle: (comp) => this.getFontStyle(comp),
             },
-        ]);
+        ], {
+            propMapping: {
+                "name": AssemblyReason.TransformChanged,
+            },
+        });
         this.sim = sim;
         this.info = this.circuit.getComponentInfo("Label").unwrap() as DigitalComponentConfigurationInfo;
     }

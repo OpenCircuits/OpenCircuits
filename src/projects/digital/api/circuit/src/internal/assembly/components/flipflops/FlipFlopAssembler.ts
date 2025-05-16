@@ -11,19 +11,20 @@ import {Schema} from "shared/api/circuit/schema";
 export interface FlipFlopAssemblerParams {
     kind: string;
     otherInputs: PortFactory;
+    clkPortYValue: number;
 }
 export abstract class FlipFlopAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
     protected info: DigitalComponentConfigurationInfo;
 
-    public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs }: FlipFlopAssemblerParams) {
+    public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs, clkPortYValue }: FlipFlopAssemblerParams) {
         super(params, {
-            "pre":  (comp) => ({ origin: V(0, this.getSize(comp).y/2), dir: V(0, 1) }),
-            "clr":  (comp) => ({ origin: V(0, -this.getSize(comp).y/2), dir: V(0, -1) }),
-            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), dir: V(1, 0) }),
-            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), dir: V(1, 0) }),
-            "clk":  (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getClkPortYValue(comp)), dir: V(-1, 0) }),
+            "pre":  () => ({ origin: V(0,    0.5),  dir: V(0,  1) }),
+            "clr":  () => ({ origin: V(0,   -0.5),  dir: V(0, -1) }),
+            "Q":    () => ({ origin: V(0.5,  1/6), dir: V(1,  0) }),
+            "Qinv": () => ({ origin: V(0.5, -1/6), dir: V(1,  0) }),
+            "clk":  () => ({ origin: V(-0.5, clkPortYValue), dir: V(-1, 0) }),
             ...otherInputs,
         }, [
             {
@@ -45,8 +46,6 @@ export abstract class FlipFlopAssembler extends ComponentAssembler {
     }
 
     protected override getSize(_: Schema.Component): Vector {
-        return V(2, 2.4);
+        return V(1.5, 1.5);
     }
-
-    protected abstract getClkPortYValue(comp: Schema.Component): number;
 }

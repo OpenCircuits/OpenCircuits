@@ -34,12 +34,12 @@ export class RenderHelper {
         );
     }
 
-    public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
-        const col = (tint ? parseColor(tint) : undefined);
+    // public image(img: SVGDrawing, pos: Vector, size: Vector, tint?: string): void {
+    //     const col = (tint ? parseColor(tint) : undefined);
 
-        // Flip y-axis scale
-        img.draw(this.ctx, pos.x, pos.y, size.x, -size.y, col);
-    }
+    //     // Flip y-axis scale
+    //     img.draw(this.ctx, pos.x, pos.y, size.x, -size.y, col);
+    // }
 
     public createRadialGradient(pos1: Vector, r1: number, pos2: Vector, r2: number): CanvasGradient {
         return this.ctx.createRadialGradient(pos1.x, pos1.y, r1, pos2.x, pos2.y, r2);

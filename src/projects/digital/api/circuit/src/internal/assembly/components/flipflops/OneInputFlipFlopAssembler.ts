@@ -2,7 +2,6 @@ import {AssemblerParams} from "shared/api/circuit/internal/assembly/Assembler";
 import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
 import {V} from "Vector";
 import {FlipFlopAssembler} from "./FlipFlopAssembler";
-import {Schema} from "shared/api/circuit/schema";
 
 
 export class OneInputFlipFlopAssembler extends FlipFlopAssembler {
@@ -10,13 +9,9 @@ export class OneInputFlipFlopAssembler extends FlipFlopAssembler {
         super(params, sim, {
             kind,
             otherInputs: {
-                [inputPortName]: (comp) => ({
-                    origin: V(-this.getSize(comp).x/2, this.getSize(comp).y/4),
-                    dir:    V(-1, 0),
-                }),
+                [inputPortName]: () => ({ origin: V(-0.5, 1/6), dir: V(-1, 0) }),
             },
+            clkPortYValue: -1/6,
         });
     }
-
-   protected override getClkPortYValue = (comp: Schema.Component) => -this.getSize(comp).y/4;
 }

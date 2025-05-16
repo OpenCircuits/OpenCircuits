@@ -11,17 +11,18 @@ import {Schema} from "shared/api/circuit/schema";
 export interface LatchAssemblerParams {
     kind: string;
     otherInputs: PortFactory;
+    enablePortYValue: number;
 }
 export abstract class LatchAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
     protected info: DigitalComponentConfigurationInfo;
 
-    public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs }: LatchAssemblerParams) {
+    public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs, enablePortYValue }: LatchAssemblerParams) {
         super(params, {
-            "Q":    (comp) => ({ origin: V(this.getSize(comp).x/2, this.getSize(comp).y/4), dir: V(1, 0) }),
-            "Qinv": (comp) => ({ origin: V(this.getSize(comp).x/2, -this.getSize(comp).y/4), dir: V(1, 0) }),
-            "E":    (comp) => ({ origin: V(-this.getSize(comp).x/2, this.getEnablePortYValue(comp)), dir: V(-1, 0) }),
+            "Q":    () => ({ origin: V(0.5,  1/6), dir: V(1, 0) }),
+            "Qinv": () => ({ origin: V(0.5, -1/6), dir: V(1, 0) }),
+            "E":    () => ({ origin: V(-0.5, enablePortYValue), dir: V(-1, 0) }),
             ...otherInputs,
         }, [
             {
@@ -43,8 +44,6 @@ export abstract class LatchAssembler extends ComponentAssembler {
     }
 
     protected override getSize(_: Schema.Component): Vector {
-        return V(1.2, 1.2);
+        return V(1.5, 1.5);
     }
-
-    protected abstract getEnablePortYValue(comp: Schema.Component): number;
 }

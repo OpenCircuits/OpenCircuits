@@ -1,38 +1,43 @@
-import {CreateState} from "shared/site/utils/CreateState";
+import {DebugOptions} from "shared/api/circuitdesigner/public/impl/DebugOptions";
 
+import {DEBUG_VALUES_COOKIE_KEY} from "shared/site/utils/Constants";
+
+import {GetCookie, SetCookie} from "shared/site/utils/Cookies";
+import {CreateState}          from "shared/site/utils/CreateState";
+
+
+const defaultDebugVals = {
+    debugPrims:              false,
+    debugPrimBounds:         false,
+    debugPrimOrientedBounds: false,
+
+    debugComponentBounds: false,
+    debugPortBounds:      false,
+    debugWireBounds:      false,
+
+    debugPressableBounds: false,
+};
+const initialDebugVals: DebugOptions = JSON.parse(GetCookie(DEBUG_VALUES_COOKIE_KEY) || "false") || defaultDebugVals;
+Object.entries(defaultDebugVals).forEach(([key, val]) => {
+    if (!(key in initialDebugVals))
+        initialDebugVals[key as keyof DebugOptions] = val;
+});
 
 const [initialState, actions, reducer] = CreateState()(
+    initialDebugVals,
     {
-        debugPrimBounds: false,
-
-        debugComponentBounds: false,
-        debugPortBounds:      false,
-        debugWireBounds:      false,
-
-        debugPressableBounds: false,
+        ToggleDebugValue: (key: keyof DebugOptions) => ({ type: "TOGGLE_DEBUG_VALUE", key }) as const,
     },
     {
-        ToggleDebugPrimBounds: () => ({ type: "TOGGLE_DEBUG_PRIM_BOUNDS" }) as const,
-
-        ToggleDebugComponentBounds: () => ({ type: "TOGGLE_DEBUG_COMPONENT_BOUNDS" }) as const,
-        ToggleDebugPortBounds:      () => ({ type: "TOGGLE_DEBUG_PORT_BOUNDS"      }) as const,
-        ToggleDebugWireBounds:      () => ({ type: "TOGGLE_DEBUG_WIRE_BOUNDS"      }) as const,
-
-        ToggleDebugPressableBounds: () => ({ type: "TOGGLE_DEBUG_PRESSABLE_BOUNDS" }) as const,
-    },
-    {
-        "TOGGLE_DEBUG_PRIM_BOUNDS": (state) => ({ ...state, debugPrimBounds: !state.debugPrimBounds }),
-
-        "TOGGLE_DEBUG_COMPONENT_BOUNDS": (state) => ({ ...state, debugComponentBounds: !state.debugComponentBounds }),
-        "TOGGLE_DEBUG_PORT_BOUNDS":      (state) => ({ ...state, debugPortBounds: !state.debugPortBounds }),
-        "TOGGLE_DEBUG_WIRE_BOUNDS":      (state) => ({ ...state, debugWireBounds: !state.debugWireBounds }),
-
-        "TOGGLE_DEBUG_PRESSABLE_BOUNDS": (state) => ({ ...state, debugPressableBounds: !state.debugPressableBounds }),
+        "TOGGLE_DEBUG_VALUE": (state, { key }) => {
+            const newState = { ...state, [key]: !state[key] };
+            SetCookie(DEBUG_VALUES_COOKIE_KEY, JSON.stringify(newState));
+            return newState;
+        },
     }
 );
 
 
 export type DebugInfoState = typeof initialState;
-export const { ToggleDebugPrimBounds, ToggleDebugComponentBounds,
-               ToggleDebugPortBounds, ToggleDebugWireBounds, ToggleDebugPressableBounds } = actions;
+export const { ToggleDebugValue } = actions;
 export const debugInfoReducer = reducer;

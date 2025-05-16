@@ -16,6 +16,17 @@ export function Clamp(x: number, min: number, max: number): number {
 }
 
 /**
+ * Performs a floating-point modulo with proper negative handling.
+ *
+ * @param x The input number.
+ * @param q The modulu divisor.
+ * @returns `x` % `q` with proper negative handling.
+ */
+export function FMod(x: number, q: number): number {
+    return ((x % q) + q) % q;
+}
+
+/**
  * Returns the nearest point on the edge
  * of the given rectangle.
  *
@@ -55,15 +66,13 @@ export function GetNearestPointOnRect(rect: Rect, pos: Vector): Vector {
  *                  false otherwise.
  */
 export function RectContains(transform: Transform, pos: Vector): boolean {
-    const tr = transform.getSize().scale(0.5);  // top right corner
-    const bl = transform.getSize().scale(-0.5); // bottom left corner
     const p  = transform.toLocalSpace(pos);
 
     // Check if point is within bounds
-    return (p.x > bl.x &&
-            p.y > bl.y &&
-            p.x < tr.x &&
-            p.y < tr.y);
+    return (p.x > -0.5 &&
+            p.y > -0.5 &&
+            p.x < 0.5 &&
+            p.y < 0.5);
 }
 
 /**
@@ -85,9 +94,9 @@ export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
     return (pos2.sub(pos1).len2() <= r*r);
 }
 
-export function RectContainsTransform(rect: Rect, b: Transform): boolean {
+export function TransformContainsRect(a: Transform, rect: Rect): boolean {
     // TODO: Optimize this to not do full SAT
-    const a = new Transform(rect.center, rect.size, 0);
+    const b = new Transform(rect.center, 0, rect.size);
     return TransformContains(a, b);
 }
 
@@ -107,19 +116,16 @@ export function RectContainsTransform(rect: Rect, b: Transform): boolean {
  *          false otherwise.
  */
 export function TransformContains(A: Transform, B: Transform): boolean {
-    // If both transforms are non-rotated
-    if (Math.abs(A.getAngle()) <= 1e-5 && Math.abs(B.getAngle()) <= 1e-5) {
-        const aPos = A.getPos(), aSize = A.getSize();
-        const bPos = B.getPos(), bSize = B.getSize();
-        return (Math.abs(aPos.x - bPos.x) * 2 < (aSize.x + bSize.x)) &&
-               (Math.abs(aPos.y - bPos.y) * 2 < (aSize.y + bSize.y));
+    // If both transforms are non-rotated (modulu 180 degrees), do simple check
+    if (Math.abs(A.angle) % Math.PI <= 1e-5 && Math.abs(B.angle) % Math.PI <= 1e-5) {
+        return (Math.abs(A.pos.x - B.pos.x) * 2 < (A.scale.x + B.scale.x)) &&
+               (Math.abs(A.pos.y - B.pos.y) * 2 < (A.scale.y + B.scale.y));
     }
 
     // Quick check circle-circle intersection
-    const r1 = A.getRadius();
-    const r2 = B.getRadius();
-    const sr = r1 + r2;                       // Sum of radius
-    const dpos = A.getPos().sub(B.getPos());  // Delta position
+    const r1 = A.getRadius(), r2 = B.getRadius();
+    const sr = r1 + r2;             // Sum of radius
+    const dpos = A.pos.sub(B.pos);  // Delta position
     if (dpos.dot(dpos) > sr*sr)
         return false;
 
@@ -134,7 +140,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
     // Turn to local-space
     // and Offset x and y to fix perfect lines
     //  where b[0] = b[1] & b[2] = b[3]
-    const b = bworld.map(A.toLocalSpace)
+    const b = bworld.map((v) => A.toLocalSpace(v))
         .map((v, i) => v.add(0.0001*i));
 
     const corners = [...a, ...b];

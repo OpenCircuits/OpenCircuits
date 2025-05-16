@@ -35,6 +35,9 @@ export function Margin(left: number, right: number, bottom?: number, top?: numbe
 }
 
 
+/**
+ * Represents an Axis-Aligned Rectangle (an angle with no rotation).
+ */
 export class Rect {
     private readonly yIsUp: number; // +1 or -1
 

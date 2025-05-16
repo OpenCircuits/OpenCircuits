@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-parameter-properties */
 import {V, Vector} from "Vector";
+import {Rect} from "math/Rect";
 
 import {Schema} from "shared/api/circuit/schema";
 
@@ -7,12 +8,10 @@ import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, CircuitHistory, CircuitHistoryEvent, ICPin, IntegratedCircuit,
         IntegratedCircuitDisplay} from "../Circuit";
-import {Selections}                from "../Selections";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl} from "../../utils/Observable";
-import {ObjContainer} from "../ObjContainer";
 import {ObjContainerImpl} from "./ObjContainer";
 import {LogEntry} from "../../internal/impl/CircuitLog";
 
@@ -75,6 +74,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     private pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
         return this.state.assembler.findNearestObj(pt, filter);
     }
+    private pickObjsWithinHelper(bounds: Rect, filter?: (id: string) => boolean) {
+        return this.state.assembler.findObjsWithin(bounds, filter);
+    }
 
     public beginTransaction(options?: { batch?: boolean }): void {
         this.internal.beginTransaction(options);
@@ -125,6 +127,22 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     public pickPortAt(pt: Vector): T["Port"] | undefined {
         return this.pickObjAtHelper(pt, (id) => this.internal.hasPort(id))
             .map((id) => this.getPort(id)).asUnion();
+    }
+
+    public pickObjectsWithin(bounds: Rect): T["Obj[]"] {
+        return this.pickObjsWithinHelper(bounds)
+            .map((id) => this.getObj(id))
+            .filter((obj) => !!obj);
+    }
+    public pickComponentsWithin(bounds: Rect): T["Component[]"] {
+        return this.pickObjsWithinHelper(bounds, (id) => this.internal.hasComp(id))
+            .map((id) => this.getComponent(id))
+            .filter((comp) => !!comp);
+    }
+    public pickPortsWithin(bounds: Rect): T["Port[]"] {
+        return this.pickObjsWithinHelper(bounds, (id) => this.internal.hasPort(id))
+            .map((id) => this.getPort(id))
+            .filter((port) => !!port);
     }
 
     public getComponent(id: GUID): T["Component"] | undefined {

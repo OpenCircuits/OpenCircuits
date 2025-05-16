@@ -1,6 +1,6 @@
 import {Vector}         from "Vector";
 
-import {ComponentAssembler, ComponentBaseShapePrimAssembly} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {ComponentAssembler, ComponentBaseShapePrimAssembly, ComponentExtraAssemblerParams} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
 
@@ -13,13 +13,13 @@ export type SimplifiedAssembly = {
     assemble: ComponentBaseShapePrimAssembly["assemble"];
     getStyle: ComponentBaseShapePrimAssembly["getStyle"];
 }
-export interface GateAssemblerParams {
+export interface GateAssemblerParams extends ComponentExtraAssemblerParams {
     kind: string;
     size: Vector;
     svg: string;
     not: boolean;
     portFactory: PortFactory;
-    otherPrims: SimplifiedAssembly[];
+    otherPrims?: SimplifiedAssembly[];
 }
 export class GateAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
@@ -30,7 +30,7 @@ export class GateAssembler extends ComponentAssembler {
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
-        { kind, size, svg, not, portFactory, otherPrims }: GateAssemblerParams
+        { kind, size, svg, not, portFactory, otherPrims, ...otherParams }: GateAssemblerParams
     ) {
         super(params, portFactory, [
             // NOT symbol
@@ -60,7 +60,7 @@ export class GateAssembler extends ComponentAssembler {
             } satisfies ComponentBaseShapePrimAssembly] : [])),
 
             // Other prims
-            ...otherPrims.map((o) => ({
+            ...(otherPrims?.map((o) => ({
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
@@ -68,7 +68,7 @@ export class GateAssembler extends ComponentAssembler {
 
                 styleChangesWhenSelected: true,
                 getStyle: (gate) => o.getStyle(gate),
-            } satisfies ComponentBaseShapePrimAssembly)),
+            } satisfies ComponentBaseShapePrimAssembly)) ?? []),
 
             { // SVG
                 kind: "SVG",
@@ -85,7 +85,7 @@ export class GateAssembler extends ComponentAssembler {
                 getTint: (comp) =>
                     (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
-        ]);
+        ], otherParams);
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
