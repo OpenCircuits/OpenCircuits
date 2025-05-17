@@ -374,8 +374,7 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
 
     public set pos(p: Vector) {
         this.state.internal.beginTransaction();
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.x`, p.x).unwrap();
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.y`, p.y).unwrap();
+        this.state.internal.updateICPinMetadata(this.icId, this.pinIndex, { x: p.x, y: p.y }).unwrap();
         this.state.internal.commitTransaction();
     }
     public get pos(): Vector {
@@ -387,8 +386,7 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
 
     public set dir(d: Vector) {
         this.state.internal.beginTransaction();
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dx`, d.x).unwrap();
-        this.state.internal.setPropForIC(this.icId, `pins.${this.pinIndex}.dy`, d.y).unwrap();
+        this.state.internal.updateICPinMetadata(this.icId, this.pinIndex, { dx: d.x, dy: d.y }).unwrap();
         this.state.internal.commitTransaction();
     }
     public get dir(): Vector {
@@ -415,8 +413,7 @@ class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements Integrated
 
     public set size(p: Vector) {
         this.state.internal.beginTransaction();
-        this.state.internal.setPropForIC(this.id, "displayWidth", p.x).unwrap();
-        this.state.internal.setPropForIC(this.id, "displayHeight", p.y).unwrap();
+        this.state.internal.updateICMetadata(this.id, { displayWidth: p.x, displayHeight: p.y }).unwrap();
         this.state.internal.commitTransaction();
     }
     public get size(): Vector {
@@ -443,7 +440,9 @@ export class IntegratedCircuitImpl<T extends CircuitTypes> implements Integrated
 
     // Metadata
     public set name(name: string) {
-        this.state.internal.setPropForIC(this.id, "name", name).unwrap();
+        this.state.internal.beginTransaction();
+        this.state.internal.updateICMetadata(this.id, { name }).unwrap();
+        this.state.internal.commitTransaction();
     }
     public get name(): string {
         return this.state.internal.getICInfo(this.id).unwrap().metadata.name;

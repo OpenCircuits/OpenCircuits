@@ -34,10 +34,16 @@ export interface SplitWireOp {
     node: Schema.Component;
 }
 
+export interface UpdateICMetadataOp {
+    kind: "UpdateICMetadataOp";
+    icId: Schema.GUID;
+    newVal: Partial<Omit<Schema.IntegratedCircuitMetadata, "id">>;
+    oldVal: Partial<Omit<Schema.IntegratedCircuitMetadata, "id">>;
+}
+
 export interface SetPropertyOp {
     kind: "SetPropertyOp";
     id: Schema.GUID;
-    ic: boolean; // Indicates if this is a property on an IC
     key: string;
     newVal?: Schema.Prop;
     oldVal?: Schema.Prop;
@@ -62,6 +68,7 @@ export type CircuitOp = PlaceComponentOp
                       | ReplaceComponentOp
                       | ConnectWireOp
                       | SplitWireOp
+                      | UpdateICMetadataOp
                       | SetPropertyOp
                       | SetComponentPortsOp
                       | CreateICOp;
@@ -74,6 +81,8 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
         case "SetComponentPortsOp":
         case "CreateICOp":
             return { ...op, inverted: !op.inverted };
+        case "UpdateICMetadataOp":
+            return { ...op, newVal: op.oldVal, oldVal: op.newVal };
         case "SetPropertyOp":
             return { ...op, newVal: op.oldVal, oldVal: op.newVal };
         case "ReplaceComponentOp":

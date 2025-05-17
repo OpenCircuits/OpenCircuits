@@ -150,12 +150,11 @@ export class FastCircuitDiffBuilder {
                 break;
             case "SplitWireOp":
                 throw new Error("Unimplemented");
+            case "UpdateICMetadataOp":
+                this.changedPropICs.add(op.icId);
+                break;
             case "SetPropertyOp":
-                if (op.ic) {
-                    this.changedPropICs.add(op.id);
-                } else {
-                    this.getOrCreatePropSet(op.id).add(op.key);
-                }
+                this.getOrCreatePropSet(op.id).add(op.key);
                 break;
             case "CreateICOp":
                 if (op.inverted) {

@@ -5,7 +5,7 @@ import {GUID, Schema} from "shared/api/circuit/schema";
 import {uuid}         from "shared/api/circuit/schema/GUID";
 
 import {CircuitLog, LogEntryType}      from "./CircuitLog";
-import {InvertCircuitOp} from "./CircuitOps";
+import {InvertCircuitOp, UpdateICMetadataOp} from "./CircuitOps";
 import {PortConfig}      from "./ObjInfo";
 import {CircuitDocument} from "./CircuitDocument";
 import {FastCircuitDiff} from "./FastCircuitDiff";
@@ -366,6 +366,40 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
+    public updateICPinMetadata(
+        icId: GUID,
+        pinIndex: number,
+        newMetadata: Partial<Omit<Schema.IntegratedCircuitPin, "id" | "group" | "name">>,
+    ): Result {
+        return this.doc
+            .getICInfo(icId)
+            .andThen((ic) =>
+                this.doc.addTransactionOp({
+                    kind:   "UpdateICMetadataOp",
+                    icId,
+                    newVal: { pins: [
+                        ...ic.metadata.pins.slice(0, pinIndex),
+                        {
+                            ...ic.metadata.pins[pinIndex],
+                            ...newMetadata,
+                        },
+                        ...ic.metadata.pins.slice(pinIndex + 1),
+                    ] },
+                    oldVal: { ...ic.metadata },
+                }));
+    }
+    public updateICMetadata(icId: GUID, newMetadata: UpdateICMetadataOp["newVal"]): Result {
+        return this.doc
+            .getICInfo(icId)
+            .andThen((ic) =>
+                this.doc.addTransactionOp({
+                    kind:   "UpdateICMetadataOp",
+                    icId,
+                    newVal: newMetadata,
+                    oldVal: { ...ic.metadata },
+                }));
+    }
+
     public setPropFor<
         O extends Schema.Obj,
         K extends keyof O["props"] & string
@@ -377,49 +411,12 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .andThen((obj) =>
                 this.doc.addTransactionOp({
                     id,
-                    ic:     false,
                     kind:   "SetPropertyOp",
                     key,
                     oldVal: obj.props[key],
                     newVal,
                 }))
             .mapErr(AddErrE(`CircuitInternal.setPropFor: failed for ${id}`))
-            .uponErr(() => this.cancelTransaction());
-    }
-    public setPropForIC<
-        K extends ("name" | "displayWidth" | "displayHeight" | `pins.${number}.${"x" | "y" | "dx" | "dy"}`),
-    >(
-        id: GUID,
-        key: K,
-        newVal: (K extends "name" ? string : number),
-    ): Result {
-        // NOTE: applyOp will check the ComponentInfo that it is the correct type
-        return this.doc
-            .getICInfo(id)
-            .andThen((ic) => {
-                // TODO: This sucks to write
-                const oldVal = (() => {
-                    if (key === "name") {
-                        return ic.metadata.name;
-                    } else if (key === "displayWidth") {
-                        return ic.metadata.displayWidth;
-                    } else if (key === "displayHeight") {
-                        return ic.metadata.displayHeight;
-                    }
-                    const [_, idx, k2] = key.split(".");
-                    return ic.metadata.pins[parseInt(idx)][k2 as "x" | "y" | "dx" | "dy"];
-                })();
-
-                return this.doc.addTransactionOp({
-                    kind: "SetPropertyOp",
-                    id,
-                    ic:   true,
-                    key,
-                    oldVal,
-                    newVal,
-                })
-            })
-            .mapErr(AddErrE(`CircuitInternal.setPropForIC: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
 

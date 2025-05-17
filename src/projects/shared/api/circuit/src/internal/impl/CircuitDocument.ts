@@ -3,7 +3,7 @@ import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "shared/api/circu
 
 import {GUID, Schema} from "shared/api/circuit/schema";
 
-import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps} from "./CircuitOps";
+import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps, UpdateICMetadataOp} from "./CircuitOps";
 import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";
 import {CircuitLog, LogEntry, LogEntryType} from "./CircuitLog";
 import {ObservableImpl} from "../../utils/Observable";
@@ -607,6 +607,8 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 return this.connectWire(op);
             case "SplitWireOp":
                 throw new Error("Unimplemented");
+            case "UpdateICMetadataOp":
+                return this.updateICMetadata(op);
             case "SetPropertyOp":
                 return this.setProperty(op);
             case "CreateICOp":
@@ -666,32 +668,15 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 .map((_) => (op.inverted ? storage.deleteWire(op.w) : storage.addWire(op.w))));
     }
 
+    private updateICMetadata(op: UpdateICMetadataOp): Result {
+        return this.getMutableICInfo(op.icId)
+            .map((ic) => {
+                ic.metadata = { ...ic.metadata, ...op.newVal };
+            });
+    }
+
     private setProperty(op: SetPropertyOp): Result {
-        const storage = this.storage;
-
-        if (op.ic) {
-            return this.getMutableICInfo(op.id)
-                .map((ic) => {
-                    const val = (op.newVal ?? op.oldVal);
-
-                    if (op.key === "name" && typeof val === "string") {
-                        ic.metadata.name = val;
-                    } else if ((op.key === "displayWidth" || op.key === "displayHeight") && typeof val === "number") {
-                        ic.metadata[op.key] = val;
-                    } else if (op.key.startsWith("pins.") && typeof val === "number") {
-                        // pins.INDEX.(x|y)
-                        const [_, idx, key] = op.key.split(".");
-                        if (key === "x" || key === "y" || key === "dx" || key === "dy")
-                            ic.metadata.pins[parseInt(idx)][key] = val;
-                        else
-                            throw new Error(`Unknown property type ${op.key} or value type ${typeof val} for ICs!`);
-                    } else {
-                        throw new Error(`Unknown property type ${op.key} or value type ${typeof val} for ICs!`);
-                    }
-                });
-        }
-
-        return storage.getMutObjectAndInfoByID(op.id)
+        return this.storage.getMutObjectAndInfoByID(op.id)
             .andThen(([obj, info]) => info.checkPropValue(op.key, op.newVal)
                 .uponOk(() => {
                     // Copy-on-write
