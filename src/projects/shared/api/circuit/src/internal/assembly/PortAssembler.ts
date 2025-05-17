@@ -24,20 +24,32 @@ export type PortFactory = Record<
     (parent: Schema.Component, index: number, total: number) => PartialPortPos
 >;
 
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace PositioningHelpers {
+    export function ConstantSpacing(index: number, total: number, size: number, opts: { spacing: number, shift?: number } = { spacing: 0.5 }) {
+        return (index - (total - 1)/2 + (opts?.shift ?? 0)) * opts?.spacing / size;
+    }
+}
+
 export class PortAssembler extends Assembler<Schema.Component> {
     private readonly factory: PortFactory;
+    private readonly calcCompSize: (comp: Schema.Component) => Vector;
 
-    public constructor(params: AssemblerParams, factory: PortFactory) {
+    public constructor(params: AssemblerParams, factory: PortFactory, calcCompSize: (comp: Schema.Component) => Vector) {
         super(params);
 
         this.factory = factory;
+        this.calcCompSize = calcCompSize;
     }
 
     public calcPos(parent: Schema.Component, group: string, index: number, groupLen: number): PortPos {
         const pPos = this.factory[group](parent, index, groupLen);
 
+        const compSize = this.calcCompSize(parent);
+
         const origin = pPos.origin;
-        const target = (pPos.target ?? origin.add(pPos.dir.scale(this.options.defaultPortLength)));
+        const target = (pPos.target ?? origin.add(pPos.dir.scale(this.options.defaultPortLength).scale(compSize.reciprocal())));
         const dir    = (pPos.dir    ?? target.sub(origin).normalize());
 
         return { origin, target, dir };
@@ -49,7 +61,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
         return {
             origin: transform.toWorldSpace(origin),
             target: transform.toWorldSpace(target),
-            dir:    dir.rotate(transform.getAngle()),
+            dir:    dir.rotate(transform.angle),
         };
     }
 
@@ -98,18 +110,17 @@ export class PortAssembler extends Assembler<Schema.Component> {
                     const textSize = textBounds.size.add(2*padding);
 
                     // Text pos is the backwards from the origin by the text size
-                    const textPos = localPos.origin.add(localPos.dir.scale(textSize.scale(-0.5)));
+                    const textPos = localPos.origin.add(
+                        localPos.dir.scale(textSize.scale(-0.5)).scale(parentTransform.scale.reciprocal()));
 
                     // Clamp the position inside the box
-                    const boundSize = parentTransform.getSize().sub(textSize).scale(0.5);
-                    const pos = parentTransform.toWorldSpace(
-                        Vector.Clamp(textPos, V(-boundSize.x, -boundSize.y), V(boundSize.x, boundSize.y)));
+                    const pos = parentTransform.toWorldSpace(Vector.Clamp(textPos, V(-0.5, -0.5), V(0.5, 0.5)));
 
                     labelPrims.push({
                         kind:      "Text",
                         contents:  name,
                         pos:       pos.add(-textBounds.x, -textBounds.y),
-                        angle:     parentTransform.getAngle(),
+                        angle:     parentTransform.angle,
                         fontStyle: this.options.fontStyle(),
                     })
                 }

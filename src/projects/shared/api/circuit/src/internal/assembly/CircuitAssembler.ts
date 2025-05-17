@@ -11,7 +11,7 @@ import {CircuitInternal}   from "../impl/CircuitInternal";
 import {Assembler, AssemblerParams, AssemblyReason}    from "./Assembler";
 import {AssemblyCache, DepthList, PortPos, ReadonlyAssemblyCache} from "./AssemblyCache";
 import {Bounds}                                        from "./PrimBounds";
-import {HitTest}                                       from "./PrimHitTests";
+import {HitTest, IntersectionTest}                                       from "./PrimHitTests";
 import {RenderOptions}                                 from "./RenderOptions";
 
 import "shared/api/circuit/utils/Map";
@@ -217,13 +217,13 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
                 const reasons = new Set([...props].map((prop) => mapping[prop]));
 
                 if (obj.baseKind === "Component") {
-                    this.dirtyComponents.add(id, AssemblyReason.PortsChanged, ...reasons);
+                    this.dirtyComponents.add(id, AssemblyReason.PropChanged, ...reasons);
                     if (reasons.has(AssemblyReason.TransformChanged)) {
                         this.circuit.getAllWiresForComponent(id).unwrap()
                             .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
                     }
                 } else if (obj.baseKind === "Wire") {
-                    this.dirtyWires.add(id, AssemblyReason.PortsChanged, ...reasons);
+                    this.dirtyWires.add(id, AssemblyReason.PropChanged, ...reasons);
                 }
             }
 
@@ -393,6 +393,42 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         this.reassembleWire(wireID);
 
         return Some(this.cache.wireCurves.get(wireID)!);
+    }
+
+    // TODO: Reduce search space with some sort of space-paritioning data-structure (QuadTree).
+    public findObjsWithin(bounds: Rect, filter: (id: GUID) => boolean = ((_) => true)): GUID[] {
+        // Must reassemble to refresh prims in caches
+        this.reassemble();
+
+        const ids: GUID[] = [];
+
+        // Loop by REVERSE component order (top first)
+        for (let i = this.cache.componentOrder.length - 1; i >= 0; i--) {
+            const compId = this.cache.componentOrder.at(i)!;
+            const prims = this.cache.componentPrims.get(compId)!;
+            // Skip components not in the filter
+            if (filter(compId) && prims.some((prim) => IntersectionTest(prim, bounds))) {
+                ids.push(compId);
+                continue;
+            }
+
+            // Hit test component's ports
+            for (const [portId, portPrims] of this.cache.portPrims.get(compId) ?? []) {
+                if (!filter(portId))
+                    continue;
+                if (portPrims.some((prim) => IntersectionTest(prim, bounds)))
+                    ids.push(portId);
+            }
+        }
+
+        for (const [id, prims] of this.cache.wirePrims) {
+            if (!filter(id)) // Skip things not in the filter
+                continue;
+            if (prims.some((prim) => IntersectionTest(prim, bounds)))
+                ids.push(id);
+        }
+
+        return ids;
     }
 
     public findNearestObj(pos: Vector, filter: (id: GUID) => boolean = ((_) => true)): Option<GUID> {

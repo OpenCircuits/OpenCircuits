@@ -80,7 +80,7 @@ export function Bus(circuit: DigitalCircuit, outputPorts: DigitalPort[], inputPo
         //  -90 when they are both actually the same angle
         const avgRot = CalculateMidpoint(cs.map((c) => c.angle).map((a) => V(Math.cos(a), Math.sin(a))));
 
-        return new Transform(avgPos, V(), avgRot.angle());
+        return new Transform(avgPos, avgRot.angle(), V(1, 1));
     }
     const sortByAngle = (a: number, b: number) => a - b;
 

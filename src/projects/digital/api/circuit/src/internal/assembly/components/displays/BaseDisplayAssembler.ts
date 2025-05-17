@@ -1,47 +1,49 @@
 import {V, Vector} from "Vector";
 
-import {ComponentAssembler, ComponentPrimAssembly} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import {ComponentAssembler, ComponentExtraAssemblerParams} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 
 import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/DigitalComponents";
 import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
 import {Signal} from "digital/api/circuit/schema/Signal";
-import {Transform} from "math/Transform";
 import {Schema} from "shared/api/circuit/schema";
 import {Style} from "shared/api/circuit/internal/assembly/Style";
-import {SegmentType, segmentToVector} from "./SegmentDisplayConstants";
+import {SegmentType, SEGMENT_POINTS, SEGMENT_SIZE, Segments} from "./SegmentDisplayConstants";
+import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 
-export interface BaseDisplayAssemblerParams {
+export interface BaseDisplayAssemblerParams extends ComponentExtraAssemblerParams {
     kind: string;
-    otherPrims?: ComponentPrimAssembly[];
+    spacing?: number;
+    font?: Record<string, number[][]>;
 }
-export abstract class BaseDisplayAssembler extends ComponentAssembler {
+export class BaseDisplayAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
     protected info: DigitalComponentConfigurationInfo;
+    protected font?: Record<string, number[][]>;
 
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
-        { kind, otherPrims }: BaseDisplayAssemblerParams
+        { kind, spacing, font, ...otherParams }: BaseDisplayAssemblerParams
     ) {
         super(params, {
-                "inputs": (comp, index, total) => {
-                    const y = this.getInputPortYValue(comp, index, total);
-                    return {
-                        // Subtracting the this.options.defaultBorderWidth
-                        // prevents tiny gap between port stem and component
-                        origin: V(-((this.getSize(comp).x - this.options.defaultBorderWidth)/2), y),
-                        target: V(-(this.options.defaultPortLength + this.getSize(comp).x/2), y),
-                    }
-                },
+                "inputs": (comp, index, total) => ({
+                    origin: V(-0.5, -PositioningHelpers.ConstantSpacing(
+                                        index, total, this.getSize(comp).y,
+                                        { spacing: spacing ?? (this.options.defaultPortRadius*2 + 0.02) })),
+                    dir: V(-1, 0),
+                }),
             },
         [
             {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble:     (comp) => this.assembleRectangle(comp),
+                assemble:     (comp) => ({
+                    kind:      "Rectangle",
+                    transform: this.getTransform(comp),
+                }),
 
                 styleChangesWhenSelected: true,
 
@@ -66,43 +68,46 @@ export abstract class BaseDisplayAssembler extends ComponentAssembler {
                 styleChangesWhenSelected: true,
                 getStyle:                 (comp) => this.getSegmentStyle(comp, true),
             },
-            // Other prims
-            ...(otherPrims ?? []),
-        ]);
+        ], otherParams);
 
         this.sim = sim;
         this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
+        this.font = font;
     }
 
     protected override getSize(_: Schema.Component): Vector {
         return V(1.4, 2);
     }
 
-    protected abstract getInputPortYValue(comp: Schema.Component, index: number, total: number): number;
-    protected abstract getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]>;
+    protected getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]> {
+        if (!this.font)
+            throw new Error("BaseDisplayAssembler: No font set!");
+
+        // Get on glyphs for font
+        const dec = this.getInputValues(comp)
+            .reduce((accumulator, isOn, index) => accumulator + (isOn ? 2 ** index : 0), 0);
+
+        const segmentCount = this.getSegmentCount(comp);
+        const glyph = this.font[segmentCount.toString()][dec];
+
+        return Segments[segmentCount].map((segment, index) => {
+            if (glyph.includes(index) === segmentsOn)
+                return segment;
+        }).filter((prim) => prim !== undefined);
+    }
 
     private assembleSegments(comp: Schema.Component, segmentsOn: boolean) {
         const segments = this.getSegments(comp, segmentsOn);
-        const transform = this.getTransform(comp);
-        const prims = segments.map(([pos, segmentType]) => ({
-            kind:   "Polygon",
-            points: segmentToVector[segmentType].map((vector) => transform.toWorldSpace(vector.add(pos.scale(0.7)))),
-        } as const));
+        const transform = this.getTransform(comp).withoutScale();
         return {
-            kind: "Group",
-            prims,
-        } as const
-    }
-
-    private assembleRectangle(comp: Schema.Component) {
-        const transform = new Transform(
-            this.getPos(comp),
-            this.getSize(comp).sub(V(this.options.defaultBorderWidth)),
-            this.getAngle(comp),
-        );
-        return {
-            kind: "Rectangle",
-            transform,
+            kind:  "Group",
+            prims: segments.map(([pos, segmentType]) => ({
+                kind:   "Polygon",
+                points: SEGMENT_POINTS[segmentType].map((vector) =>
+                            transform.toWorldSpace(vector.add(pos.scale(SEGMENT_SIZE)))),
+                ignoreHit: true,
+            } as const)),
+            ignoreHit: true,
         } as const
     }
 

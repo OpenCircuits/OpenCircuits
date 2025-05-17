@@ -42,8 +42,7 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
         const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
         // Find all components that are within the selection box
-        const comps = circuit.getComponents()
-            .filter((c) => c.bounds.intersects(this.rect));
+        const comps = circuit.pickComponentsWithin(this.rect);
         if (comps.length > 0) {
             // If there are components, just select those
             circuit.beginTransaction();
@@ -55,8 +54,7 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
         }
 
         // Otherwise if no components were found, find all ports that may be in-bounds and return those.
-        const ports = circuit.getObjs()
-            .filter((o) => (o.baseKind === "Port" && o.bounds.intersects(this.rect)));
+        const ports = circuit.pickPortsWithin(this.rect);
         if (ports.length > 0) {
             circuit.beginTransaction();
             if (deselectAll)

@@ -46,25 +46,62 @@ export type ComponentPrimAssembly = ComponentBaseShapePrimAssembly
     | ComponentSVGPrimAssembly
     | ComponentTextPrimAssembly;
 
+
+export interface ComponentExtraAssemblerParams {
+    // Draws a line between first and last port in the given groups
+    drawPortLineForGroups?: string[];
+    propMapping?: AssemblyReasonPropMapping;
+    sizeChangesWhenPortsChange?: boolean;
+}
+
 export abstract class ComponentAssembler extends Assembler<Schema.Component> {
-    protected portAssembler: PortAssembler;
-    protected primAssembly: ComponentPrimAssembly[];
+    protected readonly portAssembler: PortAssembler;
+    protected readonly primAssembly: ComponentPrimAssembly[];
+    protected readonly sizeChangesWhenPortsChange: boolean;
 
     public constructor(
         params: AssemblerParams,
         factory: PortFactory,
         primAssembly: ComponentPrimAssembly[],
-        propMapping?: AssemblyReasonPropMapping,
+        otherParams: ComponentExtraAssemblerParams = {},
     ) {
         super(params, {
             "x":     AssemblyReason.TransformChanged,
             "y":     AssemblyReason.TransformChanged,
             "angle": AssemblyReason.TransformChanged,
-            ...propMapping,
+            ...otherParams?.propMapping,
         });
 
-        this.portAssembler = new PortAssembler(params, factory);
-        this.primAssembly = primAssembly;
+        this.portAssembler = new PortAssembler(params, factory, (comp) => this.getSize(comp));
+        this.primAssembly = [
+            ...(otherParams.drawPortLineForGroups?.map((group): ComponentPrimAssembly => ({
+                kind: "BaseShape",
+
+                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
+                assemble: (comp) => {
+                    const ports = this.circuit.getPortsByGroup(comp.id).unwrap();
+                    if (!(group in ports))
+                        throw new Error(`ComponentAssembler.drawPortLineForGroups: No group found '${group}'!`);
+                    const groupPorts = ports[group];
+                    return {
+                        kind: "Line",
+
+                        p1: this.cache.portPositions.get(groupPorts[0])!.origin,
+                        p2: this.cache.portPositions.get(groupPorts.at(-1)!)!.origin,
+                    };
+                },
+
+                styleChangesWhenSelected: true,
+                getStyle: (comp) => ({
+                    stroke: {
+                        ...this.options.strokeStyle(this.isSelected(comp.id)),
+                        lineCap: "square",
+                    },
+                }),
+            })) ?? []),
+            ...primAssembly,
+        ];
+        this.sizeChangesWhenPortsChange = otherParams?.sizeChangesWhenPortsChange ?? false;
     }
 
     // Some components change size from miscellaneous props (i.e. Multiplexer or Oscilloscope).
@@ -107,12 +144,13 @@ export abstract class ComponentAssembler extends Assembler<Schema.Component> {
         const added            = reasons.has(AssemblyReason.Added);
         const transformChanged = reasons.has(AssemblyReason.TransformChanged);
         const selectionChanged = reasons.has(AssemblyReason.SelectionChanged);
+        const portsChanged     = reasons.has(AssemblyReason.PortsChanged);
 
-        if (added || transformChanged) {
+        if (added || transformChanged || (portsChanged && this.sizeChangesWhenPortsChange)) {
             this.cache.componentTransforms.set(comp.id, new Transform(
                 this.getPos(comp),
-                this.getSize(comp),
                 this.getAngle(comp),
+                this.getSize(comp),
             ));
         }
         this.portAssembler.assemble(comp, reasons);

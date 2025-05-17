@@ -16,8 +16,8 @@ export class ConstantLowAssembler extends ComponentAssembler {
         super(params, {
             "outputs": () => ({
                 // Constant Low/High/Number have no border so we need to offset the output start point to match
-                origin: V(.5 - this.options.defaultBorderWidth, 0),
-                target: V(1.2, 0),
+                origin: V(0.5 - this.options.defaultBorderWidth, 0),
+                target: V(0.5 + this.options.defaultPortLength, 0),
             }),
         }, [
             {

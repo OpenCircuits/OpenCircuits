@@ -9,18 +9,19 @@ export class BUFGateAssembler extends GateAssembler {
         params: AssemblerParams, sim: DigitalSim, not: boolean
     ) {
         super(params, sim, {
-            kind:        not ? "NOTGate" : "BUFGate",
-            size:        V(1, 1),
-            svg:         "buf.svg",
+            kind: not ? "NOTGate" : "BUFGate",
+            size: V(1, 1),
+            svg:  "buf.svg",
             not,
+
             portFactory: {
-                "outputs": () => ({ origin: V(0.4, 0), target: V(1.2, 0) }),
-                "inputs":  (_, index, total) => {
-                    const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                    return { origin: V(-0.5, spacing*((total-1)/2 - index)), dir: V(-1, 0) };
-                },
+                "inputs":  () => ({ origin: V(-0.5, 0), dir: V(-1, 0) }),
+                "outputs": () => ({
+                    // Origin needs to be inset slightly since at 0.5 it's at the tip of the triangle
+                    origin: V(0.5 - this.options.defaultBorderWidth, 0),
+                    target: V(0.5 + this.options.defaultPortLength, 0),
+                }),
             },
-            otherPrims: [],
         });
     }
 }

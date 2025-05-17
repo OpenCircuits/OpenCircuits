@@ -1,9 +1,10 @@
 import {Vector} from "Vector";
 import {CircleContains, CurveContains, RectContains} from "math/MathUtils";
-import {Prim} from "./Prim";
 import {LineCurve} from "math/Line";
-import {Transform} from "math/Transform";
-import {Bounds} from "./PrimBounds";
+
+import {Prim} from "./Prim";
+import {Rect} from "math/Rect";
+import {Bounds, OrientedBounds} from "./PrimBounds";
 
 
 export function HitTest(prim: Prim, pt: Vector): boolean {
@@ -16,11 +17,11 @@ export function HitTest(prim: Prim, pt: Vector): boolean {
     case "Circle":
         return CircleContains(prim.pos, prim.radius, pt);
     case "CircleSector":
-        throw new Error("Method not implemented.");
+        return CircleContains(prim.pos, prim.radius, pt);
     case "Line":
         return CurveContains(new LineCurve(prim.p1, prim.p2), pt);
     case "Polygon":
-        return RectContains(Transform.FromRect(Bounds(prim)!), pt);
+        return RectContains(prim.bounds, pt);
     case "QuadCurve":
         return false; // Maybe allow quad curves to be hit?
     case "Rectangle":
@@ -32,4 +33,11 @@ export function HitTest(prim: Prim, pt: Vector): boolean {
     case "Group":
         return prim.prims.some((p) => HitTest(p as Prim, pt));
     }
+}
+
+export function IntersectionTest(prim: Prim, rect: Rect): boolean {
+    if (prim.ignoreHit)
+        return false;
+
+    return (OrientedBounds(prim) ?? Bounds(prim))?.intersects(rect) ?? false;
 }

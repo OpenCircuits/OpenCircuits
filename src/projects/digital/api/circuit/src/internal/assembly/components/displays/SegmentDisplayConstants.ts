@@ -1,25 +1,53 @@
+/* eslint-disable space-in-parens */
 import {V, Vector} from "Vector";
 
-const horizontal = [V(-0.27,0.08), V(0.27,0.08), V(0.35,0), V(0.27,-0.08), V(-0.27,-0.08), V(-0.35,0)];
-const vertical = horizontal.map((v) => v.negativeReciprocal());
-const horizontalHalf = [V(-0.095,0.08), V(0.095,0.08), V(0.175,0), V(0.095,-0.08), V(-0.095,-0.08), V(-0.175,0)];
-// Old segment display diagonal had top left point at V(-0.155,0.27), and would get painted over by the adjacent vertical.
-//  Now that the draw order is different, the added point at V(-0.095, .0794) approximates the same slope.
-const topLeft = [V(.095,-0.18), V(-0.045,0.27), V(-0.095,0.27), V(-0.095, .0794), V(0.015,-0.27), V(.095,-0.27)]
-const topRight = topLeft.map((v) => v.scale(V(-1, 1)));
-const bottomLeft = topLeft.map((v) => v.scale(V(1, -1)));
-const bottomRight = topLeft.map((v) => v.scale(V(-1, -1)));
 export type SegmentType = "vertical" | "horizontal" | "diagonaltr" | "diagonaltl" |
                           "diagonalbr" | "diagonalbl" | "horizontal0.5";
 
-export const segmentToVector: Record<SegmentType, Vector[]> = {
-    vertical,
-    horizontal,
-    "diagonaltr":    topRight,
-    "diagonaltl":    topLeft,
-    "diagonalbr":    bottomRight,
-    "diagonalbl":    bottomLeft,
-    "horizontal0.5": horizontalHalf,
+
+export const SEGMENT_SIZE = 0.7;
+
+const TOTAL_WIDTH = SEGMENT_SIZE, HEIGHT = 0.125, INNER_WIDTH = TOTAL_WIDTH - HEIGHT;
+const HALF_INNER_WIDTH = TOTAL_WIDTH/2 - (TOTAL_WIDTH - INNER_WIDTH);
+const DIAG_OFFSET = Math.min(HEIGHT * Math.SQRT1_2, HALF_INNER_WIDTH/2);
+
+const HORIZONTAL_PTS = [
+    V(-INNER_WIDTH/2, HEIGHT/2),
+    V( INNER_WIDTH/2, HEIGHT/2),
+    V( TOTAL_WIDTH/2, 0),
+    V( INNER_WIDTH/2, -HEIGHT/2),
+    V(-INNER_WIDTH/2, -HEIGHT/2),
+    V(-TOTAL_WIDTH/2, 0),
+];
+const VERTICAL_PTS = HORIZONTAL_PTS.map((v) => v.negativeReciprocal());
+const HORIZONTAL_HALF_PTS = [
+    V(-HALF_INNER_WIDTH/2, HEIGHT/2),
+    V( HALF_INNER_WIDTH/2, HEIGHT/2),
+    V( TOTAL_WIDTH/4, 0),
+    V( HALF_INNER_WIDTH/2, -HEIGHT/2),
+    V(-HALF_INNER_WIDTH/2, -HEIGHT/2),
+    V(-TOTAL_WIDTH/4, 0),
+];
+const UP_LEFT_DIAGONAL_PTS = [
+    V(-HALF_INNER_WIDTH/2,                INNER_WIDTH/2              ),
+    V(-HALF_INNER_WIDTH/2 + DIAG_OFFSET,  INNER_WIDTH/2              ),
+    V( HALF_INNER_WIDTH/2,               -INNER_WIDTH/2 + DIAG_OFFSET),
+    V( HALF_INNER_WIDTH/2,               -INNER_WIDTH/2              ),
+    V( HALF_INNER_WIDTH/2 - DIAG_OFFSET, -INNER_WIDTH/2              ),
+    V(-HALF_INNER_WIDTH/2,                INNER_WIDTH/2 - DIAG_OFFSET),
+];
+const UP_RIGHT_DIAGONAL_PTS = UP_LEFT_DIAGONAL_PTS.map((v) => v.scale(V(-1, 1)));
+const DOWN_LEFT_DIAGONAL_PTS = UP_LEFT_DIAGONAL_PTS.map((v) => v.scale(V(1, -1)));
+const DOWN_RIGHT_DIAGONAL_PTS = UP_LEFT_DIAGONAL_PTS.map((v) => v.scale(V(-1, -1)));
+
+export const SEGMENT_POINTS: Record<SegmentType, Vector[]> = {
+    "vertical":      VERTICAL_PTS,
+    "horizontal":    HORIZONTAL_PTS,
+    "diagonaltr":    UP_RIGHT_DIAGONAL_PTS,
+    "diagonaltl":    UP_LEFT_DIAGONAL_PTS,
+    "diagonalbr":    DOWN_RIGHT_DIAGONAL_PTS,
+    "diagonalbl":    DOWN_LEFT_DIAGONAL_PTS,
+    "horizontal0.5": HORIZONTAL_HALF_PTS,
 }
 
 export const Segments: Record<number, Array<[Vector, SegmentType]>> = {

@@ -182,6 +182,15 @@ export interface Vector {
      */
     negativeReciprocal(): Vector;
 
+    /**
+     * Returns an element-wise reciprocal vector of `this`.
+     *
+     * I.e., if this = {x1, x2}, this.reciprocal = {1/x1, 1/x2}.
+     *
+     * @returns A new vector with element-wise reciprocals of `this`.
+     */
+    reciprocal(): Vector;
+
     toString(): string;
 }
 
@@ -322,6 +331,9 @@ class VectorImpl implements Vector {
     }
     public negativeReciprocal(): Vector {
         return new VectorImpl(this.y, -this.x);
+    }
+    public reciprocal(): Vector {
+        return new VectorImpl(1/this.x, 1/this.y);
     }
 
     public toString(): string {

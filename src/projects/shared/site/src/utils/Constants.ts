@@ -10,6 +10,7 @@ export const THUMBNAIL_ZOOM_PADDING_RATIO = 1.025;
 
 export const DOUBLE_CLICK_DURATION = 500; // ms
 export const AUTO_SAVE_COOKIE_KEY = "IS_AUTO_SAVE";
+export const DEBUG_VALUES_COOKIE_KEY = "DEBUG_VALS";
 export const DEV_CACHED_CIRCUIT_FILE = "devCached.circuit";
 
 export const OVERWRITE_CIRCUIT_MESSAGE = "Are you sure you want to overwrite your current scene?";

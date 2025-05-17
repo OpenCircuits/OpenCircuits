@@ -1,13 +1,15 @@
 import {V} from "Vector";
 
-import {Schema} from "shared/api/circuit/schema";
-import {AssemblerParams} from "shared/api/circuit/internal/assembly/Assembler";
-import {QuadCurvePrim} from "shared/api/circuit/internal/assembly/Prim";
+import {FMod}      from "math/MathUtils";
+import {QuadCurve} from "math/QuadCurve";
+
+import {Schema}             from "shared/api/circuit/schema";
+import {AssemblerParams}    from "shared/api/circuit/internal/assembly/Assembler";
+import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
 import {GateAssembler, SimplifiedAssembly} from "./GateAssemblers";
-import {QuadCurve} from "math/QuadCurve";
 
 
 export interface ORGateAssemblerParams {
@@ -31,29 +33,21 @@ export class ORGateAssembler extends GateAssembler {
             not,
 
             portFactory: {
-                "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
-                "inputs":  (_comp, index, total) => {
-                    if (total % 2 === 0) {
-                        const spacing = 0.52 - this.options.defaultBorderWidth/2;
-                        const y = spacing*((total-1)/2 - index);
-                        return {
-                            origin: V(-0.42, y),
-                            target: V(-1.2, y),
-                        };
-                    }
-                    const spacing = 0.5 - this.options.defaultBorderWidth/2;
-                    const y = spacing*((total-1)/2 - index);
-                    if ((total === 7 && index === 0) || (total === 7 && index === 6)) {
-                        return {
-                            origin: V(-0.53, y),
-                            target: V(-1.2, y),
-                        };
-                    }
+                "inputs": (comp, index, total) => {
+                    // Calculate quad curve position as a function of y, assumes curve has the following properties:
+                    //  q.p1.x = q.p2.x ^ c.x = 0
+                    const q = this.calcBaseQuadCurve(), W = q.p2.y - q.p1.y;
+                    const QuadCurveAtPos = (y: number) =>
+                        (2*(q.p1.x - q.c.x)/(W**2) * (y**2) + (q.p1.x + q.c.x)/2);
+
+                    const y = -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y + this.options.defaultBorderWidth, { spacing: 0.5 });
+                    const x = QuadCurveAtPos(FMod(y + W/2, W) - W/2) - 0.005;
                     return {
-                        origin: V(-0.4, y),
-                        target: V(-1.2, y),
+                        origin: V(x, y),
+                        target: V(-1, y),
                     };
                 },
+                "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
             },
             otherPrims: [
                 { // Curve 1
@@ -69,55 +63,42 @@ export class ORGateAssembler extends GateAssembler {
         });
     }
 
-    private assembleQuadCurve(gate: Schema.Component, dx: number) {
-        const { defaultBorderWidth } = this.options;
+    private calcBaseQuadCurve() {
+        const h = this.options.defaultBorderWidth;
+        const W = 1 - h;
 
+        return new QuadCurve(
+            V(-0.5 + h, -W/2),
+            V(-0.5 + h, +W/2),
+            V(-0.15, 0)
+        );
+    }
+
+    private assembleQuadCurve(gate: Schema.Component, dx: number) {
         const { inputPortGroups } = this.info;
 
-        // Get current number of inputs
+        // Get current number of inputs and calculate # of curves needed
         const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
             .map((id) => this.circuit.getPortByID(id).unwrap())
-            .filter((p) => ((p) && (inputPortGroups.includes(p.group)))).length;
-
-        const quadCurves: Array<Omit<QuadCurvePrim, "style">> = [];
-
-        const transform = this.getTransform(gate);
+            .filter((p) => (p && inputPortGroups.includes(p.group))).length;
         const amt = 2 * Math.floor(numInputs / 4) + 1;
-        // Renders a specialized shorter curve for an xor and xnor gate (dx != 0) when there are 2 or 3 ports (amt == 1)
-        const [lNumMod, sMod] = (amt === 1 && dx !== 0) ? ([0.014, 0]) : ([0, 0.012]);
 
-        const h = defaultBorderWidth;
-        const l1 = -this.size.y / 2 + lNumMod;
-        const l2 = +this.size.y / 2 - lNumMod;
-
-        const s = this.size.x / 2 - h + sMod;
-        const l = this.size.x / 5 - h;
-
-        for (let i = 0; i < amt; i++) {
-            const d = (i - Math.floor(amt / 2)) * this.size.y;
-            const p1 = V(-s + dx, l1 + d);
-            const p2 = V(-s + dx, l2 + d);
-            const c = V(-l + dx, d);
-
-            const qc = {
-                kind: "QuadCurve",
-
-                curve: new QuadCurve(
-                    transform.toWorldSpace(p1),
-                    transform.toWorldSpace(p2),
-                    transform.toWorldSpace(c),
-                ),
-            } as const;
-            if (amt === 1 && dx !== 0) {
-                quadCurves.push(qc);
-            }
-            else if (amt !== 1 || dx !== 0) {
-                quadCurves.push(qc)
-            }
-        }
+        const baseQuadCurve = this.calcBaseQuadCurve();
+        const transform = this.getTransform(gate);
         return {
             kind:  "Group",
-            prims: quadCurves,
+            prims: new Array(amt).fill(0).map((_, i) => {
+                const d = (i - Math.floor(amt / 2)) * (baseQuadCurve.p2.y - baseQuadCurve.p1.y);
+                return {
+                    kind: "QuadCurve",
+
+                    curve: new QuadCurve(
+                        transform.toWorldSpace(baseQuadCurve.p1.add(dx, d)),
+                        transform.toWorldSpace(baseQuadCurve.p2.add(dx, d)),
+                        transform.toWorldSpace(baseQuadCurve.c.add(dx, d)),
+                    ),
+                } as const;
+            }),
         } as const;
     }
 }

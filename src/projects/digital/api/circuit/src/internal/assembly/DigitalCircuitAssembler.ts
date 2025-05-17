@@ -19,8 +19,6 @@ import {ClockAssembler}       from "./components/ClockAssembler";
 import {ConstantHighAssembler} from "./components/ConstantHighAssembler";
 import {ConstantLowAssembler} from "./components/ConstantLowAssembler";
 import {ConstantNumberAssembler} from "./components/ConstantNumberAssembler";
-import {BCDDisplayAssembler} from "./components/displays/BCDDisplayAssembler";
-import {ASCIIDisplayAssembler} from "./components/displays/ASCIIDisplayAssembler";
 import {SegmentDisplayAssembler} from "./components/displays/SegmentDisplayAssembler";
 import {BUFGateAssembler} from "./components/gates/BUFGateAssembler";
 import {TwoInputFlipFlopAssembler} from "./components/flipflops/TwoInputFlipFlopAssembler";
@@ -29,11 +27,11 @@ import {OneInputLatchAssembler} from "./components/latches/OneInputLatchAssemble
 import {TwoInputLatchAssembler} from "./components/latches/TwoInputLatchAssembler";
 import {OscilloscopeAssembler} from "./components/OscilloscopeAssembler";
 import {MultiplexerAssembler} from "./components/MultiplexerAssembler";
-import {DemultiplexerAssembler} from "./components/DemultiplexerAssembler";
 import {EncoderAssembler} from "./components/EncoderAssembler";
-import {DecoderAssembler} from "./components/DecoderAssembler";
 import {ComparatorAssembler} from "./components/ComparatorAssembler";
 import {LabelAssembler} from "./components/LabelAssembler";
+import {BaseDisplayAssembler} from "./components/displays/BaseDisplayAssembler";
+import {ASCIIFont, BCDFont} from "./components/displays/SegmentDisplayConstants";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -101,8 +99,8 @@ export function MakeDigitalCircuitAssembler(
         // Outputs
         "LED":            new LEDAssembler(params, sim),
         "SegmentDisplay": new SegmentDisplayAssembler(params, sim),
-        "BCDDisplay":     new BCDDisplayAssembler(params, sim),
-        "ASCIIDisplay":   new ASCIIDisplayAssembler(params, sim),
+        "BCDDisplay":     new BaseDisplayAssembler(params, sim, { kind: "BCDDisplay", font: BCDFont, spacing: 0.5 }),
+        "ASCIIDisplay":   new BaseDisplayAssembler(params, sim, { kind: "ASCIIDisplay", font: ASCIIFont }),
         "Oscilloscope":   new OscilloscopeAssembler(params, sim),
 
         // Gates
@@ -126,11 +124,11 @@ export function MakeDigitalCircuitAssembler(
         "SRLatch": new TwoInputLatchAssembler(params, sim, "SRLatch", "S", "R"),
 
         // Other
-        "Multiplexer":   new MultiplexerAssembler(params, sim),
-        "Demultiplexer": new DemultiplexerAssembler(params, sim),
+        "Multiplexer":   new MultiplexerAssembler(params, sim, "Multiplexer"),
+        "Demultiplexer": new MultiplexerAssembler(params, sim, "Demultiplexer"),
 
-        "Encoder": new EncoderAssembler(params, sim),
-        "Decoder": new DecoderAssembler(params, sim),
+        "Encoder": new EncoderAssembler(params, sim, "Encoder"),
+        "Decoder": new EncoderAssembler(params, sim, "Decoder"),
 
         "Comparator": new ComparatorAssembler(params, sim),
 

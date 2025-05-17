@@ -44,7 +44,7 @@ const [initialState, actions, reducer] = CreateState()(
         },
         "LOAD_CIRCUITS_FINISH_ID": (state, action) => {
             if (!state.auth)
-                return { ...state, circuits: [], loading: false, error: "MNot logged in!" };
+                return { ...state, circuits: [], loading: false, error: "Not logged in!" };
             return { ...state, circuits: (action.circuits ?? []), error: action.err ?? "", loading: false };
         },
     }

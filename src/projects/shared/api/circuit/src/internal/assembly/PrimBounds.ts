@@ -1,7 +1,10 @@
-import {Rect} from "math/Rect";
+import {V} from "Vector";
+
+import {CalculateMidpoint} from "math/MathUtils";
+import {Rect}              from "math/Rect";
+import {Transform}         from "math/Transform";
 
 import {Prim} from "./Prim";
-import {V} from "Vector";
 import {IsDefined} from "../../utils/Reducers";
 
 
@@ -12,7 +15,7 @@ export function Bounds(prim: Prim): Rect | undefined {
     case "Circle":
         return new Rect(prim.pos, V(prim.radius * 2));
     case "CircleSector":
-        return undefined;
+        return new Rect(prim.pos, V(prim.radius * 2));
     case "Line":
         return Rect.FromPoints(prim.p1, prim.p2);
     case "Polygon":
@@ -32,5 +35,32 @@ export function Bounds(prim: Prim): Rect | undefined {
         if (prims.length === 0)
             return undefined;
         return Rect.Bounding(prims);
+    }
+}
+
+export function OrientedBounds(prim: Prim): Transform | undefined {
+    // Only returns bounds if they are BETTER than AA bounds like above
+    switch (prim.kind) {
+    case "BezierCurve":
+        return undefined;
+    case "Circle":
+        return undefined;
+    case "CircleSector":
+        return undefined;
+    case "Line":
+        const { p1, p2 } = prim;
+        return new Transform(CalculateMidpoint([p1, p2]), p1.sub(p2).angle(), V(p1.distanceTo(p2), 0.1));
+    case "Polygon":
+        return prim.ignoreHit ? undefined : prim.bounds;
+    case "QuadCurve":
+        return undefined;
+    case "Rectangle":
+        return prim.transform;
+    case "SVG":
+        return prim.transform;
+    case "Text":
+        return undefined;
+    case "Group":
+        return undefined;
     }
 }

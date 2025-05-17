@@ -17,7 +17,7 @@ export class SwitchAssembler extends ComponentAssembler {
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
-            "outputs": () => ({ origin: V(0.62, 0), dir: V(1, 0) }),
+            "outputs": () => ({ origin: V(0.5, 0), dir: V(1, 0) }),
         }, [
             {
                 kind: "BaseShape",
@@ -38,7 +38,7 @@ export class SwitchAssembler extends ComponentAssembler {
                 assemble:     (comp) => ({
                     kind:      "SVG",
                     svg:       this.isOn(comp) ? "switchDown.svg" : "switchUp.svg",
-                    transform: new Transform(this.getPos(comp), V(0.96, 1.2), this.getAngle(comp)),
+                    transform: this.getTransform(comp).withScale(V(0.96, 1.2)),
                 }),
                 tintChangesWhenSelected: true,
                 getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),

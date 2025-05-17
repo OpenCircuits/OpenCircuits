@@ -21,7 +21,7 @@ function isWithinInteractableBounds(obj: DigitalComponent, pos: Vector): boolean
     case "Button":
         return CircleContains(obj.pos, 0.45, pos);
     case "Switch":
-        return RectContains(new Transform(obj.pos, V(0.96, 1.2), obj.angle), pos);
+        return RectContains(new Transform(obj.pos, obj.angle, V(0.96, 1.2)), pos);
     default:
         return false;
     }

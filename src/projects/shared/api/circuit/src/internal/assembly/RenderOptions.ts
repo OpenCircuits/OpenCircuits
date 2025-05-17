@@ -51,7 +51,7 @@ export interface RenderOptions {
     textMeasurer?: TextMeasurer;
 
     // fillColor(selected: boolean): string;
-    // borderColor(selected: boolean): string;
+    strokeStyle(selected: boolean): NonNullable<Style["stroke"]>;
 
     lineStyle(selected: boolean): Style;
     curveStyle(selected: boolean): Style;
@@ -104,13 +104,15 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public textMeasurer?: TextMeasurer;
 
-    public lineStyle(selected: boolean) {
+    public strokeStyle(selected: boolean): NonNullable<Style["stroke"]> {
         return {
-            stroke: {
-                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
-                size:  this.defaultBorderWidth,
-            },
+            color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
+            size:  this.defaultBorderWidth,
         };
+    }
+
+    public lineStyle(selected: boolean) {
+        return { stroke: this.strokeStyle(selected) };
     }
     public curveStyle(selected: boolean) {
         return {
@@ -124,10 +126,7 @@ export class DefaultRenderOptions implements RenderOptions {
     public fillStyle(selected: boolean): Style {
         return {
             fill:   (selected ? this.selectedFillColor : this.defaultFillColor),
-            stroke: {
-                color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
-                size:  this.defaultBorderWidth,
-            },
+            stroke: this.strokeStyle(selected),
         };
     }
 
