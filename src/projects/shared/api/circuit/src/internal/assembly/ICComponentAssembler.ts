@@ -25,9 +25,8 @@ export class ICComponentAssembler extends ComponentAssembler {
                     // TODO: This feels bad
                     const pin = data.pins.find((p) => (p.id === pins[index].id))!;
 
-                    const size = V(data.displayWidth, data.displayHeight);
                     return {
-                        origin: Vector.Clamp(V(pin.x, pin.y), V(-1, -1), V(1, 1)).scale(size.scale(0.5)),
+                        origin: Vector.Clamp(V(pin.x, pin.y), V(-1, -1), V(1, 1)).scale(0.5),
                         dir:    V(pin.dx, pin.dy),
                         // dir: Math.abs(Math.abs(pos.x)-size.x/2) < Math.abs(Math.abs(pos.y)-size.y/2)
                         //     ? V(1, 0).scale(Math.sign(pos.x))
