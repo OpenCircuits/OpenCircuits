@@ -16,9 +16,14 @@ export class ComponentInfoImpl<T extends CircuitTypes> implements ComponentInfo 
     }
 
     protected getInfo() {
-        return this.state.internal.getComponentInfo(this.kind)
-            .mapErr(AddErrE(`API ComponentInfo: Attempted to get info with kind '${this.kind}' that doesn't exist!`))
-            .unwrap();
+        return (
+            // API-wise, clients specify IC-instance-kinds with as the IC ID,
+            // but internally IC-kinds are just "IC", and the icId is stored separately.
+            this.state.internal.getICs().has(this.kind)
+                ? this.state.internal.getComponentInfo("IC", this.kind)
+                : this.state.internal.getComponentInfo(this.kind)
+        ).mapErr(AddErrE(`API ComponentInfo: Attempted to get info with kind '${this.kind}' that doesn't exist!`))
+         .unwrap();
     }
 
     public get portGroups() {

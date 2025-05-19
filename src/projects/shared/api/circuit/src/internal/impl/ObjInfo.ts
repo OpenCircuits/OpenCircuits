@@ -1,6 +1,6 @@
 import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
-import {Schema} from "shared/api/circuit/schema";
+import {GUID, Schema} from "shared/api/circuit/schema";
 import {uuid} from "../../public";
 
 
@@ -46,18 +46,22 @@ export interface ComponentConfigurationInfo extends ObjInfo {
 }
 
 export interface ObjInfoProvider {
-    // TODO: Maybe use i.e. Option<ObjInfo>
-    get(kind: string): ObjInfo | undefined;
-    getComponent(kind: string): ComponentConfigurationInfo | undefined;
+    // TODO: Maybe use i.e. Option<ObjInfo>=
+    getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined;
+    getWire(kind: string): ObjInfo | undefined;
+    getPort(kind: string): ObjInfo | undefined;
 
     createIC(ic: Schema.IntegratedCircuit): void;
     deleteIC(ic: Schema.IntegratedCircuit): void;
+
+    isIC(c: Schema.Component): boolean;
     // TODO: potentially:
     // getWire(kind: string): WireInfo | undefined;
     // getPort(kind: string): PortInfo | undefined;
 }
 
 export abstract class BaseObjInfoProvider implements ObjInfoProvider {
+    protected readonly ics: Map<string, ComponentConfigurationInfo>;
     protected readonly components: Map<string, ComponentConfigurationInfo>;
     protected readonly wires: Map<string, ObjInfo>;
     protected readonly ports: Map<string, ObjInfo>;
@@ -70,23 +74,30 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
         this.components = new Map(components.map((info) => [info.kind, info]));
         this.wires      = new Map(wires     .map((info) => [info.kind, info]));
         this.ports      = new Map(ports     .map((info) => [info.kind, info]));
+        this.ics        = new Map();
+    }
+
+    public getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined {
+        if (kind === "IC" && !icId)
+            throw new Error("BaseObjInfoProver: Must provide icId when getting info for an IC!");
+        if (icId)
+            return this.ics.get(icId);
+        return this.components.get(kind);
+    }
+
+    public getWire(kind: string): ObjInfo | undefined {
+        return this.wires.get(kind);
+    }
+
+    public getPort(kind: string): ObjInfo | undefined {
+        return this.ports.get(kind);
     }
 
     public abstract createIC(ic: Schema.IntegratedCircuit): void;
     public abstract deleteIC(ic: Schema.IntegratedCircuit): void;
 
-    public getComponent(kind: string): ComponentConfigurationInfo | undefined {
-        return this.components.get(kind);
-    }
-
-    public get(kind: string): ObjInfo | undefined {
-        if (this.components.has(kind))
-            return this.components.get(kind);
-        if (this.wires.has(kind))
-            return this.wires.get(kind);
-        if (this.ports.has(kind))
-            return this.ports.get(kind);
-        return undefined;
+    public isIC(c: Schema.Component): boolean {
+        return c.kind === "IC";
     }
 }
 

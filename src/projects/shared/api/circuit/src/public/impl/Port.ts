@@ -61,23 +61,19 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         const p = this.getPort();
         const curConnections = [...this.state.internal.getPortsForPort(this.id).unwrap()]
             .map((id) => this.state.internal.getPortByID(id).unwrap());
-        const parent = this.state.internal.getCompByID(p.parent).unwrap();
+        const [_, parentInfo] = this.state.internal.getComponentAndInfoById(p.parent).unwrap();
 
-        return this.state.internal.getComponentInfo(parent.kind).unwrap()
-            .isPortAvailable(p, curConnections);
+        return parentInfo.isPortAvailable(p, curConnections);
     }
     public canConnectTo(other: T["Port"]): boolean {
         const p1 = this.getPort();
-        const p1Info = this.state.internal.getCompByID(p1.parent)
-            .andThen((p) => this.state.internal.getComponentInfo(p.kind))
-            .unwrap();
+        const [_, p1Info] = this.state.internal.getComponentAndInfoById(p1.parent).unwrap();
         const p1Connections = this.state.internal.getPortsForPort(p1.id)
             .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
             .unwrap();
 
         const p2 = this.state.internal.getPortByID(other.id).unwrap();
-        const p2Info = this.state.internal.getCompByID(p2.parent)
-            .andThen((p) => this.state.internal.getComponentInfo(p.kind)).unwrap();
+        const [__, p2Info] = this.state.internal.getComponentAndInfoById(p2.parent).unwrap();
         const p2Connections = this.state.internal.getPortsForPort(p2.id)
             .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
             .unwrap();

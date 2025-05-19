@@ -75,12 +75,12 @@ export const DigitalItemNav = () => {
         ],
     }), [ics]);
 
-    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemID: string) => {
-        if (!curItemID || (smartPlace === SmartPlaceOptions.Off))
+    const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemKind: string) => {
+        if (!curItemKind || (smartPlace === SmartPlaceOptions.Off))
             return;
 
         // This function shows the display for 'Smart Place' (issue #689)
-        const { defaultPortConfig: config, inputPortGroups, outputPortGroups } = circuit.getComponentInfo(curItemID)!;
+        const { defaultPortConfig: config, inputPortGroups, outputPortGroups } = circuit.getComponentInfo(curItemKind)!;
         const numInputPorts  = inputPortGroups .map((g) => config[g]).sum();
         const numOutputPorts = outputPortGroups.map((g) => config[g]).sum();
         return (<>

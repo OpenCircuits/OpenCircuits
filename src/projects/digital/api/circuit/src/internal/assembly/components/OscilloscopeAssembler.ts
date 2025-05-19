@@ -8,12 +8,9 @@ import {PositioningHelpers}              from "shared/api/circuit/internal/assem
 import {Signal}     from "digital/api/circuit/schema/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
-
 
 export class OscilloscopeAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
@@ -66,7 +63,6 @@ export class OscilloscopeAssembler extends ComponentAssembler {
         });
 
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("Oscilloscope").unwrap() as DigitalComponentConfigurationInfo;
     }
 
     protected assembleDisplay(comp: Schema.Component, allSignals: Signal[][], i: number) {

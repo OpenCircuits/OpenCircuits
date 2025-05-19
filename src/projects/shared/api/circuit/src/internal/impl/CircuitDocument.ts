@@ -15,10 +15,11 @@ export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schem
     readonly metadata: Readonly<M>;
     readonly camera: Readonly<Schema.Camera>;
 
-    getObjectInfo(kind: string): Result<ObjInfo>;
+    getComponentInfo(kind: "IC", icId: GUID): Result<ComponentConfigurationInfo>;
     getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
+    getWireInfo(kind: string): Result<ObjInfo>;
+    getPortInfo(kind: string): Result<ObjInfo>;
 
-    getObjectAndInfoByID(id: GUID): Result<[Readonly<Schema.Obj>, ObjInfo]>;
     getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]>;
 
     hasComp(id: GUID): boolean;
@@ -182,10 +183,16 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public getMutObjectAndInfoByID(id: GUID): Result<[Schema.Obj, ObjInfo]> {
+        if (this.hasComp(id))
+            return this.getComponentAndInfoByID(id);
+
         return this.getMutableObjByID(id)
-            .andThen((obj) =>
-                this.getObjectInfo(obj.kind)
-                    .map((info) => [obj, info]));
+            .andThen((obj) => (
+                // Can only be wire or port
+                obj.baseKind === "Wire"
+                ? this.getWireInfo(obj.kind)
+                : this.getPortInfo(obj.kind)
+            ).map((info) => [obj, info]));
     }
 
 
@@ -197,25 +204,23 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         return this.metadata.id;
     }
 
-    public getObjectInfo(kind: string): Result<ObjInfo> {
-        return WrapResOrE(this.objInfo.get(kind), `Failed to object info for kind: '${kind}'!`);
+    public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
+        return WrapResOrE(this.objInfo.getComponent(kind, icId), `Failed to get component info for kind: '${kind}'!`);
     }
-    public getComponentInfo(kind: string): Result<ComponentConfigurationInfo> {
-        return WrapResOrE(this.objInfo.getComponent(kind), `Failed to get component info for kind: '${kind}'!`);
+    public getWireInfo(kind: string): Result<ObjInfo> {
+        return WrapResOrE(this.objInfo.getWire(kind), `Failed to get wire info for kind '${kind}`!);
     }
-
-    public getObjectAndInfoByID(id: GUID): Result<[Readonly<Schema.Obj>, ObjInfo]> {
-        return this.getObjByID(id)
-            .andThen((obj) =>
-                this.getObjectInfo(obj.kind)
-                    .map((info) => [obj, info]));
+    public getPortInfo(kind: string): Result<ObjInfo> {
+        return WrapResOrE(this.objInfo.getPort(kind), `Failed to get port info for kind '${kind}`!);
     }
 
     public getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]> {
         return this.getCompByID(id)
-            .andThen((comp) =>
-                this.getComponentInfo(comp.kind)
-                    .map((info) => [comp, info]));
+            .andThen((comp) => (
+                comp.kind === "IC"
+                ? this.getComponentInfo("IC", comp.props["icId"] as string)
+                : this.getComponentInfo(comp.kind)
+            ).map((info) => [comp, info]));
     }
 
     private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {
@@ -520,6 +525,10 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     }
     public getICs(): ReadonlySet<GUID> {
         return new Set(this.icStorage.keys());
+    }
+
+    public isIC(c: Schema.Component): boolean {
+        return this.objInfo.isIC(c);
     }
 
     public getICInfo(icId: GUID): Result<ReadonlyCircuitStorage<Schema.IntegratedCircuitMetadata>> {

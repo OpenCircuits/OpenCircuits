@@ -1,5 +1,3 @@
-import {ErrE, Ok} from "shared/api/circuit/utils/Result";
-import {AddErrE} from "shared/api/circuit/utils/MultiError";
 import {ComponentInfoImpl} from "shared/api/circuit/public/impl/ComponentInfo";
 
 import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/DigitalComponents";
@@ -11,14 +9,10 @@ import {DigitalTypes} from "./DigitalCircuitState";
 
 export class DigitalComponentInfoImpl extends ComponentInfoImpl<DigitalTypes> implements DigitalComponentInfo {
     protected override getInfo() {
-        return this.state.internal.getComponentInfo(this.kind)
-            .andThen<DigitalComponentConfigurationInfo>((info) => {
-                if (!(info instanceof DigitalComponentConfigurationInfo))
-                    return ErrE(`Received non-digital component info for ${this.kind}!`);
-                return Ok(info);
-            })
-            .mapErr(AddErrE(`API ComponentInfo: Attempted to get info with kind '${this.kind}' that doesn't exist!`))
-            .unwrap();
+        const info = super.getInfo();
+        if (!(info instanceof DigitalComponentConfigurationInfo))
+            throw new Error(`Received non-digital component info for ${this.kind}!`);
+        return info;
     }
 
     public get inputPortGroups(): readonly string[] {

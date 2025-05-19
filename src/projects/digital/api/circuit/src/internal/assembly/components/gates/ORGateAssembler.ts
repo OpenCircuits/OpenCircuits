@@ -75,12 +75,8 @@ export class ORGateAssembler extends GateAssembler {
     }
 
     private assembleQuadCurve(gate: Schema.Component, dx: number) {
-        const { inputPortGroups } = this.info;
-
         // Get current number of inputs and calculate # of curves needed
-        const numInputs = [...this.circuit.getPortsForComponent(gate.id).unwrap()]
-            .map((id) => this.circuit.getPortByID(id).unwrap())
-            .filter((p) => (p && inputPortGroups.includes(p.group))).length;
+        const numInputs = this.circuit.getPortsByGroup(gate.id).unwrap()["inputs"]?.length ?? 2;
         const amt = 2 * Math.floor(numInputs / 4) + 1;
 
         const baseQuadCurve = this.calcBaseQuadCurve();

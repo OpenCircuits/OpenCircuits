@@ -2,15 +2,12 @@ import {V, Vector} from "Vector";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {Schema} from "shared/api/circuit/schema";
 
 
 export class ConstantLowAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-
-    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
@@ -31,7 +28,6 @@ export class ConstantLowAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("ConstantLow").unwrap() as DigitalComponentConfigurationInfo;
     }
 
     protected override getSize(_: Schema.Component): Vector {

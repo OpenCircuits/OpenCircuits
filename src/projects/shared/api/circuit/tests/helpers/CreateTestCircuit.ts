@@ -24,9 +24,9 @@ import {CircuitDocument}                 from "shared/api/circuit/internal/impl/
 import {BaseComponentConfigurationInfo, BaseObjInfo,
         BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
+import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {MapObj} from "shared/api/circuit/utils/Functions";
+import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 
 
 export class TestComponentInfo extends BaseComponentConfigurationInfo {
@@ -69,20 +69,11 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
         }), {});
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
-        this.components.set(ic.metadata.id, new TestComponentInfo(ic.metadata.id, {}, [""], [portConfig], false));
+        this.ics.set(ic.metadata.id, new TestComponentInfo(ic.metadata.id, {}, [""], [portConfig], false));
     }
 
     public override deleteIC(ic: Schema.IntegratedCircuit): void {
-        this.components.delete(ic.metadata.id);
-    }
-}
-
-export class TestCircuitAssembler extends CircuitAssembler {
-    protected override createIC(icId: GUID): Assembler {
-        return new ICComponentAssembler(
-            { circuit: this.circuit, cache: this.cache, options: this.options },
-            icId,
-        );
+        this.ics.delete(ic.metadata.id);
     }
 }
 
@@ -155,7 +146,8 @@ export function CreateTestCircuit(
     const internal = new CircuitInternal(log, doc);
 
     const renderOptions = new DefaultRenderOptions();
-    const assembler = new TestCircuitAssembler(internal, renderOptions, (params) => ({
+    const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
+        "IC":       new ICComponentAssembler(params),
         "TestWire": new WireAssembler(params),
         "TestComp": new TestComponentAssembler(params),
         "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),

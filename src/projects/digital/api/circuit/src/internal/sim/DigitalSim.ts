@@ -297,12 +297,14 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 // Initialize ICs and sub-ICs if the added component is an IC instance
                 const comp = this.circuit.getCompByID(compId).unwrap();
                 if (this.circuit.isIC(comp)) {
-                    if (!this.initialICStates.has(comp.kind)) {
+                    const icId = comp.props["icId"] as string;
+
+                    if (!this.initialICStates.has(icId)) {
                         throw new Error("DigitalSim.circuit.subscribe: Failed to find initial state " +
-                                        `for new IC instance ${comp.id} (IC: ${comp.kind})`);
+                                        `for new IC instance ${comp.id} (IC: ${icId})`);
                     }
                     const icState = this.initializeICInstance(
-                        this.rootState, this.initialICStates.get(comp.kind)!, compId, comp.kind);
+                        this.rootState, this.initialICStates.get(icId)!, compId, icId);
                     this.rootState.icStates.set(compId, icState);
                 }
             }
@@ -412,9 +414,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
         for (const [key, s] of Object.entries(state.icStates)) {
             const comp = this.rootState.storage.getCompByID(key).unwrap();
+            const icId = comp.props["icId"] as string;
             this.rootState.icStates.set(
                 key,
-                this.initializeICInstance(this.rootState, s, comp.id, comp.kind),
+                this.initializeICInstance(this.rootState, s, comp.id, icId),
             );
         }
     }
@@ -460,9 +463,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
         for (const [key, s] of Object.entries(initialState.icStates)) {
             const [comp, _] = newState.getComponentAndInfoByID(key).unwrap();
+            const icId = comp.props["icId"] as string;
             newState.icStates.set(
                 comp.id,
-                this.initializeICInstance(newState, s, comp.id, comp.kind),
+                this.initializeICInstance(newState, s, comp.id, icId),
             );
         }
 

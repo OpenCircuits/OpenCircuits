@@ -165,7 +165,13 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
     // Used to find an IC data guid that corresponds to given IC instance uses
     const getICDataGuid = (
         icGuids: Array<[string, SerializationEntry]>,
-        data: RefAndObject) => icGuids.find(([, entry]) => areEntriesEquivalent(entry, data.obj))![0];
+        data: RefAndObject) => {
+            const res = icGuids.find(([, entry]) => areEntriesEquivalent(entry, data.obj));
+            if (!res) {
+                console.log(icGuids, data);
+            }
+            return res![0];
+        };
 
     const migrateObjs = (
         objectsEntry: SerializationArrayEntry,
@@ -385,8 +391,12 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 guidsToObjs.set(guid, obj);
                 const entryAndRef = getEntryAndRef(obj, "data")!;
                 return {
-                    kind: getICDataGuid(icGuids, entryAndRef),
+                    kind: "IC",
                     ...comp,
+                    props: {
+                        ...comp.props,
+                        "icId": getICDataGuid(icGuids, entryAndRef),
+                    },
                 }
             }
             if (isIc) {
@@ -504,6 +514,7 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
 
     // Migrate IC data
     const icRefsEntry = getArrayEntry(designerRef, "ics")!;
+    console.log(icRefsEntry);
     const icEntries = getArrayEntries(icRefsEntry);
     const icGuids: Array<[string, SerializationEntry]> = icEntries.map(({ ref, obj }) => [refToGuid.get(ref) ?? Schema.uuid(), obj]);
     const icGuidsToObjects = new Map<string, SerializationEntry>(icGuids);

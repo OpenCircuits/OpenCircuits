@@ -3,7 +3,6 @@ import {V, Vector} from "Vector";
 import {ComponentAssembler, ComponentExtraAssemblerParams} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 
-import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/DigitalComponents";
 import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
 import {Signal} from "digital/api/circuit/schema/Signal";
 import {Schema} from "shared/api/circuit/schema";
@@ -19,7 +18,6 @@ export interface BaseDisplayAssemblerParams extends ComponentExtraAssemblerParam
 }
 export class BaseDisplayAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-    protected info: DigitalComponentConfigurationInfo;
     protected font?: Record<string, number[][]>;
 
     public constructor(
@@ -71,7 +69,6 @@ export class BaseDisplayAssembler extends ComponentAssembler {
         ], otherParams);
 
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
         this.font = font;
     }
 

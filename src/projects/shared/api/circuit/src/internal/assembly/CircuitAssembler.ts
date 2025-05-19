@@ -66,13 +66,11 @@ class DirtyMap<K> {
     }
 }
 
-export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
+export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
     protected readonly circuit: CircuitInternal;
     protected readonly options: RenderOptions;
 
     protected cache: AssemblyCache;
-
-    protected readonly newOrRemovedICs: Set<GUID>;
 
     protected readonly dirtyComponents: DirtyMap<GUID>;
     protected readonly dirtyComponentPorts: Map<GUID, DirtyMap<GUID>>;  // parent.id : port.id[]
@@ -110,7 +108,6 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
 
         this.assemblers = assemblers({ circuit, cache: this.cache, options });
 
-        this.newOrRemovedICs = new Set();
         this.dirtyComponents = new DirtyMap();
         this.dirtyComponentPorts = new Map();
         this.dirtyWires = new DirtyMap();
@@ -121,18 +118,12 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         this.circuit.subscribe((ev) => {
             const diff = ev.diff;
 
-            // Mark all added/removed ICs dirty
-            for (const icId of ev.diff.addedICs)
-                this.newOrRemovedICs.add(icId);
-            for (const icId of ev.diff.removedICs)
-                this.newOrRemovedICs.add(icId);
-
             // IC prop changed -> size or ports changed
             // we need to mark all instances as dirty (and connected wires)
             for (const icId of ev.diff.changedPropICs) {
                 const comps = [...this.circuit.getComps()]
                     .map((c) => this.circuit.getCompByID(c).unwrap())
-                    .filter((c) => (c.kind === icId));
+                    .filter((c) => this.circuit.isIC(c) && c.props["icId"] === icId);
                 comps.forEach((c) => {
                     this.dirtyComponents.add(c.id, AssemblyReason.TransformChanged, AssemblyReason.PortsChanged);
 
@@ -231,23 +222,7 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         });
     }
 
-    protected abstract createIC(icId: GUID): Assembler;
-
     public reassemble() {
-        // Update ICs first (add/remove assemblers for them)
-        for (const icId of this.newOrRemovedICs) {
-            // If IC doesn't exist anymore, remove its assembler
-            if (!this.circuit.hasIC(icId)) {
-                delete this.assemblers[icId];
-                continue;
-            }
-
-            // Otherwise, if we don't have an assembler for this IC, create one
-            if (!(icId in this.assemblers))
-                this.assemblers[icId] = this.createIC(icId);
-        }
-        this.newOrRemovedICs.clear();
-
         // Update components first
         for (const [compID, reasons] of this.dirtyComponents) {
             // If component doesn't exist, remove it and any associated ports
@@ -324,15 +299,6 @@ export abstract class CircuitAssembler extends ObservableImpl<CircuitAssemblerEv
         // Reassemble component if dirty
         if (this.dirtyComponents.has(compID)) {
             const comp = this.circuit.getCompByID(compID).unwrap();
-
-            // If component is an IC, ensure we have an assembler for it
-            if (this.circuit.hasIC(comp.kind) &&
-                this.newOrRemovedICs.has(comp.kind) &&
-                !(comp.kind in this.assemblers)) {
-                this.assemblers[comp.kind] = this.createIC(comp.kind);
-                this.newOrRemovedICs.delete(comp.kind);
-            }
-
             this.getAssemblerFor(comp.kind)
                 .assemble(comp, this.dirtyComponents.get(compID)!);
             this.dirtyComponents.delete(compID);

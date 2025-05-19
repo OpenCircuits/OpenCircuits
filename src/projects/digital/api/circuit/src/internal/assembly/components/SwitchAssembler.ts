@@ -5,15 +5,12 @@ import {Schema} from "shared/api/circuit/schema";
 import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {Transform} from "math/Transform";
 
 
 export class SwitchAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-
-    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
@@ -45,7 +42,6 @@ export class SwitchAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("Switch").unwrap() as DigitalComponentConfigurationInfo;
     }
 
     protected override getSize(_: Schema.Component): Vector {
