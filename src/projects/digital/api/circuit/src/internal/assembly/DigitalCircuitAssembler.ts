@@ -66,13 +66,6 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
             this.publish({ type: "onchange" });
         })
     }
-
-    // protected override createIC(icId: GUID): Assembler {
-    //     return new ICComponentAssembler(
-    //         { circuit: this.circuit, cache: this.cache, options: this.options },
-    //         icId,
-    //     );
-    // }
 }
 
 

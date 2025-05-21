@@ -62,7 +62,7 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
         if (!generator) {
             return {
                 kind:  "DigitalPort",
-                props: {}, // TODO: any manditory props for Digital ports
+                props: {}, // TODO: any mandatory props for Digital ports
             };
         }
         return {
