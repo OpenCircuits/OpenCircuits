@@ -3,7 +3,7 @@ import {Signal} from "./Signal";
 
 
 export interface DigitalSimState {
-    signals: Record<GUID, Signal>;
-    states: Record<GUID, Signal[]>;
-    icStates: Record<GUID, DigitalSimState>;
+    signals: Record<GUID, Signal>;  // PortID -> Signal
+    states: Record<GUID, Signal[]>; // CompID -> Signal[]
+    icStates: Record<GUID, DigitalSimState>; // ICInstance(Comp)ID -> DigitalSimState
 }

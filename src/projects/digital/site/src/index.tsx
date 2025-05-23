@@ -52,7 +52,7 @@ import {reducers} from "./state/reducers";
 import {App} from "./containers/App";
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
-import {VersionConflictResolver} from "./utils/DigitalVersionConflictResolver";
+import {VersionMigrator} from "./utils/VersionMigrator";
 import {CircuitHelpers, SetCircuitHelpers} from "shared/site/utils/CircuitHelpers";
 
 import {DigitalProtoSchema} from "digital/site/proto";
@@ -172,7 +172,7 @@ async function Init(): Promise<void> {
                 },
                 DeserializeCircuit(data) {
                     if (typeof data === "string")
-                        return VersionConflictResolver(data).schema;
+                        return VersionMigrator(data).schema;
 
                     const proto = (() => {
                         try {
@@ -192,7 +192,7 @@ async function Init(): Promise<void> {
 
                     // Else, might be an old version, so decode as plain text and run through VersionConflictResolver.
                     const text = new TextDecoder().decode(data);
-                    return VersionConflictResolver(text).schema;
+                    return VersionMigrator(text).schema;
                 },
             });
 
