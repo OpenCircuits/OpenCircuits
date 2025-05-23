@@ -32,6 +32,7 @@ export function SchemaToProto(schema: Schema.Circuit): ProtoSchema.Circuit {
         return {
             id:    ConvertId(c.id),
             kind:  c.kind,
+            icId:  (c.icId ? ConvertId(c.icId) : undefined),
             props: ConvertProps(c.props),
         };
     }
@@ -120,6 +121,7 @@ export function ProtoToSchema(proto: ProtoSchema.Circuit): Schema.Circuit {
             baseKind: "Component",
             ...c,
             id:       ConvertId(c.id),
+            icId:     c.icId ? ConvertId(c.icId) : undefined,
             props:    ConvertProps(c.props),
         };
     }
