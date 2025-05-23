@@ -14,3 +14,5 @@ export const MinDist = <O extends { dist: number }>(
 
 
 export const IsDefined = <T>(val: T | undefined): val is T  => (!!val);
+
+export const Get = <I extends number>(i: I) => <T extends any[]>(val: T): T[I] => (val[i]);

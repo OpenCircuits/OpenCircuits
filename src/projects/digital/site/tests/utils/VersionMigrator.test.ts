@@ -1,49 +1,53 @@
 import "digital/api/circuit/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {VersionConflictResolver} from "digital/site/utils/DigitalVersionConflictResolver";
 import {V} from "Vector";
 
-import switchCircuit from "./TestCircuitData/3_0/Switch.json";
-import orCircuit from "./TestCircuitData/3_0/OR.json";
-import poweredOrCircuit from "./TestCircuitData/3_0/PoweredOR.json";
-import threeInputAndCircuit from "./TestCircuitData/3_0/ThreeInputAND.json";
-import allInputsCircuit from "./TestCircuitData/3_0/Inputs.json";
-import ledCiruit from "./TestCircuitData/3_0/LED.json";
-import segmentDisplayCircuit from "./TestCircuitData/3_0/SegmentDisplays.json";
-import oscilloscopeCircuit from "./TestCircuitData/3_0/Oscilloscope.json";
-import srFlipFlopCircuit from "./TestCircuitData/3_0/SRFlipFlop.json";
-import jkFlipFlopCircuit from "./TestCircuitData/3_0/JKFlipFlop.json";
-import dFlipFlopCircuit from "./TestCircuitData/3_0/DFlipFlop.json";
-import tFlipFlopCircuit from "./TestCircuitData/3_0/TFlipFlop.json";
-import dLatchCircuit from "./TestCircuitData/3_0/DLatch.json";
-import srLatchCircuit from "./TestCircuitData/3_0/SRLatch.json";
-import multiplexerCircuit from "./TestCircuitData/3_0/Multiplexer.json";
-import demultiplexerCircuit from "./TestCircuitData/3_0/Demultiplexer.json";
-import encoderDecoderCircuit from "./TestCircuitData/3_0/EncoderDecoder.json";
-import comparatorCircuit from "./TestCircuitData/3_0/Comparator.json";
-import labelCircuit from "./TestCircuitData/3_0/Label.json";
-import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
-import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
-import basicICCircuit from "./TestCircuitData/3_0/BasicIC.json";
-import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
-import zIndexCircuit from "./TestCircuitData/3_0/ZIndex.json";
-import clockInICOffCircuit from "./TestCircuitData/3_0/ClockInICOff.json";
-import clockInICOnCircuit from "./TestCircuitData/3_0/ClockInICOn.json";
-import threeInputICCircuit from "./TestCircuitData/3_0/ThreeInputIC.json";
-import inputOrderICCircuit from "./TestCircuitData/3_0/InputOrderIC.json";
-import allSidesICCircuit from "./TestCircuitData/3_0/AllSidesIC.json";
+import {Signal}            from "digital/api/circuit/schema/Signal";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+
 import {IMPORT_IC_CLOCK_MESSAGE} from "digital/site/utils/Constants";
+import {VersionMigrator}         from "digital/site/utils/VersionMigrator";
+
+import switchCircuit                from "./TestCircuitData/3_0/Switch.json";
+import orCircuit                    from "./TestCircuitData/3_0/OR.json";
+import poweredOrCircuit             from "./TestCircuitData/3_0/PoweredOR.json";
+import threeInputAndCircuit         from "./TestCircuitData/3_0/ThreeInputAND.json";
+import allInputsCircuit             from "./TestCircuitData/3_0/Inputs.json";
+import ledCiruit                    from "./TestCircuitData/3_0/LED.json";
+import segmentDisplayCircuit        from "./TestCircuitData/3_0/SegmentDisplays.json";
+import oscilloscopeCircuit          from "./TestCircuitData/3_0/Oscilloscope.json";
+import srFlipFlopCircuit            from "./TestCircuitData/3_0/SRFlipFlop.json";
+import jkFlipFlopCircuit            from "./TestCircuitData/3_0/JKFlipFlop.json";
+import dFlipFlopCircuit             from "./TestCircuitData/3_0/DFlipFlop.json";
+import tFlipFlopCircuit             from "./TestCircuitData/3_0/TFlipFlop.json";
+import dLatchCircuit                from "./TestCircuitData/3_0/DLatch.json";
+import srLatchCircuit               from "./TestCircuitData/3_0/SRLatch.json";
+import multiplexerCircuit           from "./TestCircuitData/3_0/Multiplexer.json";
+import demultiplexerCircuit         from "./TestCircuitData/3_0/Demultiplexer.json";
+import encoderDecoderCircuit        from "./TestCircuitData/3_0/EncoderDecoder.json";
+import comparatorCircuit            from "./TestCircuitData/3_0/Comparator.json";
+import labelCircuit                 from "./TestCircuitData/3_0/Label.json";
+import nodesCircuit                 from "./TestCircuitData/3_0/Nodes.json";
+import icDataOnlyCircuit            from "./TestCircuitData/3_0/ICDataOnly.json";
+import basicICCircuit               from "./TestCircuitData/3_0/BasicIC.json";
+import nestedICCircuit              from "./TestCircuitData/3_0/NestedIC.json";
+import zIndexCircuit                from "./TestCircuitData/3_0/ZIndex.json";
+import clockInICOffCircuit          from "./TestCircuitData/3_0/ClockInICOff.json";
+import clockInICOnCircuit           from "./TestCircuitData/3_0/ClockInICOn.json";
+import threeInputICCircuit          from "./TestCircuitData/3_0/ThreeInputIC.json";
+import inputOrderICCircuit          from "./TestCircuitData/3_0/InputOrderIC.json";
+import allSidesICCircuit            from "./TestCircuitData/3_0/AllSidesIC.json";
+import flipFlopInICCircuit          from "./TestCircuitData/3_0/FlipFlopInIC.json";
+import nestedICNotInDesignerCircuit from "./TestCircuitData/2_1/NestedICNotInDesigner.json";
 
 
-describe("DigitalVersionConflictResolver", () => {
+describe("DigitalVersionMigrator", () => {
     describe("From version 3.0", () => {
         test("Single Switch", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(switchCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(switchCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -57,8 +61,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Basic OR circuit", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(orCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(orCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(4);
@@ -84,8 +88,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Three input AND", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(threeInputAndCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(threeInputAndCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -109,8 +113,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Powered OR circuit", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(poweredOrCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(poweredOrCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             const led = comps.find((comp) => comp.kind === "LED")!;
@@ -118,8 +122,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("All inputs", () => {
             const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(allInputsCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(allInputsCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -154,8 +158,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("LED with custom color", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(ledCiruit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(ledCiruit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -164,8 +168,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Segment displays", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(segmentDisplayCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(segmentDisplayCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
@@ -193,8 +197,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Oscilloscope", () => {
             const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(oscilloscopeCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(oscilloscopeCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -218,8 +222,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("SRFlipFlop", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(srFlipFlopCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(srFlipFlopCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -251,8 +255,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("JKFlipFlop", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(jkFlipFlopCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(jkFlipFlopCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
@@ -284,8 +288,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("DFlipFlop", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(dFlipFlopCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(dFlipFlopCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
@@ -314,8 +318,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("TFlipFlop", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(tFlipFlopCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(tFlipFlopCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
@@ -344,8 +348,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("DLatch", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(dLatchCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(dLatchCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -368,8 +372,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("SRLatch", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(srLatchCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(srLatchCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
@@ -395,8 +399,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Multiplexer", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(multiplexerCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(multiplexerCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -435,8 +439,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Demultiplexer", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(demultiplexerCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(demultiplexerCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -476,8 +480,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Encoder/Decoder", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(encoderDecoderCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(encoderDecoderCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -494,8 +498,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Comparator", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(comparatorCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(comparatorCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
@@ -539,8 +543,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Label", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(labelCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(labelCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -551,8 +555,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Nodes", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(nodesCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(nodesCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -560,8 +564,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("IC Data Only (no instances)", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(icDataOnlyCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(icDataOnlyCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(0);
@@ -575,8 +579,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Basic IC", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(basicICCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(basicICCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -595,8 +599,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Nested IC", () => {
             const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(nestedICCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(nestedICCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -619,8 +623,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Z Index", () => {
             const [circuit, _, { }] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(zIndexCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(zIndexCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(3);
@@ -640,7 +644,7 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Clock in IC (off)", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(clockInICOffCircuit));
+            const { schema, warnings } = VersionMigrator(JSON.stringify(clockInICOffCircuit));
             expect(warnings).toBeDefined();
             expect(warnings).toHaveLength(1);
             expect(warnings).toContain(IMPORT_IC_CLOCK_MESSAGE);
@@ -664,7 +668,7 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Clock in IC (on)", () => {
             const [circuit] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(clockInICOnCircuit));
+            const { schema, warnings } = VersionMigrator(JSON.stringify(clockInICOnCircuit));
             expect(warnings).toBeDefined();
             expect(warnings).toHaveLength(1);
             expect(warnings).toContain(IMPORT_IC_CLOCK_MESSAGE);
@@ -688,8 +692,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("Port heights", () => {
             const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(threeInputICCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(threeInputICCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -725,8 +729,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("(a|b)&c IC", () => {
             const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(inputOrderICCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(inputOrderICCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -781,8 +785,8 @@ describe("DigitalVersionConflictResolver", () => {
         });
         test("All Sides IC", () => {
             const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
-            const { schema, warnings } = VersionConflictResolver(JSON.stringify(allSidesICCircuit));
-            expect(warnings).toBeUndefined();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(allSidesICCircuit));
+            expect(warnings).toHaveLength(0);
             circuit.loadSchema(schema);
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
@@ -820,6 +824,66 @@ describe("DigitalVersionConflictResolver", () => {
             expect(icOutputBottom.targetPos.y).toBeLessThan(icInstance.bounds.bottom);
             expect(icInputLeft.targetPos.x).toBeLessThan(icInstance.bounds.left);
             expect(icOutputRight.targetPos.x).toBeGreaterThan(icInstance.bounds.right);
+        });
+        test("Flip Flop in IC", () => {
+            // Need to make sure that FlipFlop state transfers over as initial IC state
+            const [circuit, _, { Place, Connect, TurnOn, TurnOff }] = CreateTestCircuit();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(flipFlopInICCircuit));
+            expect(warnings).toHaveLength(0);
+
+            circuit.loadSchema(schema);
+
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(1);
+
+            const icInstance = comps[0];
+            expect(icInstance.kind).toBe(ics[0].id);
+
+            const [S, CLK, R, led] = Place("Switch", "Switch", "Switch", "LED");
+            Connect(S, icInstance.inputs[0]);
+            Connect(CLK, icInstance.inputs[1]);
+            Connect(R, icInstance.inputs[2]);
+            Connect(icInstance, led);
+
+            expect(led).toBeOn();
+            TurnOn(CLK);
+            TurnOff(CLK);
+            expect(led).toBeOn();
+        });
+    });
+
+    describe("From version 2.1", () => {
+        test("Nested IC Not in Designer", () => {
+            const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(nestedICNotInDesignerCircuit));
+            expect(warnings).toHaveLength(0);
+
+            circuit.loadSchema(schema);
+
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(2);
+
+            const outerIC = ics.find((ic) => ic.name === "a2")!;
+            expect(outerIC).toBeDefined();
+
+            const icInstance = comps[0];
+            expect(icInstance.kind).toBe(outerIC.id);
+
+            const [sw1, sw2, led] = Place("Switch", "Switch", "LED");
+            Connect(sw1, icInstance.inputs[0]);
+            Connect(sw2, icInstance.inputs[1]);
+            Connect(icInstance, led);
+
+            expect(led).toBeOff();
+            TurnOn(sw1);
+            TurnOn(sw2);
+            expect(led).toBeOn();
         });
     });
 });
