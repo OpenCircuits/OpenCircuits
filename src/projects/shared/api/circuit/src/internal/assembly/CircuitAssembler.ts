@@ -123,7 +123,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             for (const icId of ev.diff.changedPropICs) {
                 const comps = [...this.circuit.getComps()]
                     .map((c) => this.circuit.getCompByID(c).unwrap())
-                    .filter((c) => this.circuit.isIC(c) && c.props["icId"] === icId);
+                    .filter((c) => this.circuit.isIC(c) && c.icId === icId);
                 comps.forEach((c) => {
                     this.dirtyComponents.add(c.id, AssemblyReason.TransformChanged, AssemblyReason.PortsChanged);
 

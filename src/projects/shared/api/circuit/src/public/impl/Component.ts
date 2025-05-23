@@ -32,7 +32,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         const comp = this.getComponent();
         // API-wise, IC kinds are represented as the icId.
         if (comp.kind === "IC")
-            return comp.props["icId"] as string;
+            return comp.icId!;
         return comp.kind;
     }
 

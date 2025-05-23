@@ -218,7 +218,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         return this.getCompByID(id)
             .andThen((comp) => (
                 comp.kind === "IC"
-                ? this.getComponentInfo("IC", comp.props["icId"] as string)
+                ? this.getComponentInfo("IC", comp.icId!)
                 : this.getComponentInfo(comp.kind)
             ).map((info) => [comp, info]));
     }

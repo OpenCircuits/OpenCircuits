@@ -86,7 +86,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     public hasPort(id: GUID) {
         return this.doc.getCircuitInfo().hasPort(id);
     }
-    public isIC(c: Schema.Component): boolean {
+    public isIC(c: Schema.Component): c is Schema.Component & { icId: GUID } {
         return this.doc.isIC(c);
     }
 
@@ -304,7 +304,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
-    public placeComponent(kind: string, props: Schema.Component["props"]): Result<GUID> {
+    public placeComponent(kind: string, props: Schema.Component["props"], icId?: GUID): Result<GUID> {
         const id = Schema.uuid();
         return this.doc.addTransactionOp({
                 kind:     "PlaceComponentOp",
@@ -313,6 +313,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     baseKind: "Component",
                     kind:     kind,
                     id:       id,
+                    icId,
                     props:    { ...props }, // Copy non-trivial object
                 },
             }).map(() => id)

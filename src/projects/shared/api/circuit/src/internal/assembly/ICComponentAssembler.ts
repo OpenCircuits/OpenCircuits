@@ -17,7 +17,7 @@ export class ICComponentAssembler extends Assembler<Schema.Component> {
     }
 
     protected getICInfo(comp: Schema.Component) {
-        return this.circuit.getICInfo(comp.props["icId"] as string).unwrap();
+        return this.circuit.getICInfo(comp.icId!).unwrap();
     }
 
     protected getPos(comp: Schema.Component): Vector {

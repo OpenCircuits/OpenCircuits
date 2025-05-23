@@ -12,7 +12,8 @@ message Prop {
 message Component {
     bytes id = 1;
     string kind = 2;
-    map<string, Prop> props = 3;
+    optional bytes icId = 3;
+    map<string, Prop> props = 4;
 }
 
 message Wire {

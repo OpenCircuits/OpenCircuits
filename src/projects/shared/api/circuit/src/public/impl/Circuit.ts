@@ -216,7 +216,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             const props = { x: pt.x, y: pt.y, zIndex: this.state.assembler.highestZ + 1 };
             // If user is trying to make an IC, need to construct component differently
             if (this.internal.getICs().has(kind))
-                return this.internal.placeComponent("IC", { ...props, icId: kind });
+                return this.internal.placeComponent("IC", props, kind);
             return this.internal.placeComponent(kind, props)
         })().unwrap();
 
