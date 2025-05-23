@@ -6,7 +6,7 @@ import {uuid}         from "shared/api/circuit/schema/GUID";
 
 import {CircuitLog, LogEntryType}      from "./CircuitLog";
 import {InvertCircuitOp, UpdateICMetadataOp} from "./CircuitOps";
-import {PortConfig}      from "./ObjInfo";
+import {ComponentConfigurationInfo, PortConfig}      from "./ObjInfo";
 import {CircuitDocument} from "./CircuitDocument";
 import {FastCircuitDiff} from "./FastCircuitDiff";
 import {AddErrE} from "../../utils/MultiError";
@@ -86,8 +86,8 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     public hasPort(id: GUID) {
         return this.doc.getCircuitInfo().hasPort(id);
     }
-    public isIC(comp: Schema.Component): boolean {
-        return this.doc.getICs().has(comp.kind);
+    public isIC(c: Schema.Component): c is Schema.Component & { icId: GUID } {
+        return this.doc.isIC(c);
     }
 
     public getMetadata(): Readonly<Schema.CircuitMetadata> {
@@ -145,7 +145,11 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         return this.doc.getCircuitInfo().getPortsForPort(id);
     }
 
-    public getComponentInfo(kind: string) {
+    public getComponentInfo(kind: "IC", icId: GUID): Result<ComponentConfigurationInfo>;
+    public getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
+    public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
+        if (kind === "IC" && icId)
+            return this.doc.getCircuitInfo().getComponentInfo(kind, icId);
         return this.doc.getCircuitInfo().getComponentInfo(kind);
     }
     public getComponentAndInfoById(id: string) {
@@ -300,7 +304,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
-    public placeComponent(kind: string, props: Schema.Component["props"]): Result<GUID> {
+    public placeComponent(kind: string, props: Schema.Component["props"], icId?: GUID): Result<GUID> {
         const id = Schema.uuid();
         return this.doc.addTransactionOp({
                 kind:     "PlaceComponentOp",
@@ -309,6 +313,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     baseKind: "Component",
                     kind:     kind,
                     id:       id,
+                    icId,
                     props:    { ...props }, // Copy non-trivial object
                 },
             }).map(() => id)
@@ -424,7 +429,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         const circuit = this.doc.getCircuitInfo();
         return circuit
             .getComponentAndInfoByID(id)
-            .andThen(([_, info]) => info.makePortsForConfig(id, portConfig))
+            .andThen(([comp, info]) => info.makePortsForConfig(comp.id, portConfig))
             .andThen((newPorts) => circuit.getPortsForComponent(id)
                 .andThen((oldPortIds) => {
                     const oldPorts = [...oldPortIds].map((portId) => circuit.getPortByID(portId).unwrap());

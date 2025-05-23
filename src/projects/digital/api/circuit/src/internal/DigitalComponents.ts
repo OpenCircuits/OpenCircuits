@@ -5,7 +5,7 @@ import {BaseComponentConfigurationInfo,
         BaseObjInfoProvider,
         PortConfig,
         PropTypeMap} from "shared/api/circuit/internal/impl/ObjInfo";
-import {Schema} from "shared/api/circuit/schema";
+import {GUID, Schema} from "shared/api/circuit/schema";
 import {MapObj} from "shared/api/circuit/utils/Functions";
 
 
@@ -62,7 +62,7 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
         if (!generator) {
             return {
                 kind:  "DigitalPort",
-                props: {}, // TODO: any manditory props for Digial ports
+                props: {}, // TODO: any mandatory props for Digital ports
             };
         }
         return {
@@ -344,8 +344,8 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
         ], [WireInfo], [PortInfo])
     }
 
-    public override getComponent(kind: string): DigitalComponentConfigurationInfo | undefined {
-        return super.getComponent(kind) as DigitalComponentConfigurationInfo | undefined;
+    public override getComponent(kind: string, icId?: GUID): DigitalComponentConfigurationInfo | undefined {
+        return super.getComponent(kind, icId) as DigitalComponentConfigurationInfo | undefined;
     }
 
     public override createIC(ic: Schema.IntegratedCircuit): void {
@@ -377,7 +377,7 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
 
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
-        this.components.set(ic.metadata.id, new DigitalComponentConfigurationInfo({
+        this.ics.set(ic.metadata.id, new DigitalComponentConfigurationInfo({
             kind: ic.metadata.id,
             portGroupInfo,
             portConfigs: [portConfig],
@@ -386,6 +386,6 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
     }
 
     public override deleteIC(ic: Schema.IntegratedCircuit): void {
-        this.components.delete(ic.metadata.id);
+        this.ics.delete(ic.metadata.id);
     }
 }

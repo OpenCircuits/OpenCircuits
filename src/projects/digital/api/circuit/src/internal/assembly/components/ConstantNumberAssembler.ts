@@ -8,14 +8,11 @@ import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assem
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 
 export class ConstantNumberAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-
-    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
@@ -45,7 +42,6 @@ export class ConstantNumberAssembler extends ComponentAssembler {
             },
         ], { drawPortLineForGroups: ["outputs"] });
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("ConstantNumber").unwrap() as DigitalComponentConfigurationInfo;
     }
 
     protected override getSize(_: Schema.Component): Vector {

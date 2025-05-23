@@ -182,7 +182,11 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             .map((id) => this.state.constructWire(id));
     }
     public getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
-        const info = this.internal.getComponentInfo(kind);
+        // API-wise, clients specify IC-instance-kinds with as the IC ID,
+        // but internally IC-kinds are just "IC", and the icId is stored separately.
+        const info = this.state.internal.getICs().has(kind)
+                ? this.state.internal.getComponentInfo("IC", kind)
+                : this.state.internal.getComponentInfo(kind);
         if (!info.ok)
             return undefined;
         return this.state.constructComponentInfo(kind);
@@ -205,19 +209,19 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
     // Object manipulation
     public placeComponentAt(kind: string, pt: Vector): T["Component"] {
-        const info = this.getComponentInfo(kind);
-        if (!info)
-            throw new Error(`Circuit.placeComponentAt: Unknown component kind '${kind}'`);
-
         this.beginTransaction();
 
         // Place raw component (TODO[model_refactor_api](leon) - don't use unwrap?)
-        const id = this.internal.placeComponent(
-            kind,
-            { x: pt.x, y: pt.y, zIndex: this.state.assembler.highestZ + 1 },
-        ).unwrap();
+        const id = (() => {
+            const props = { x: pt.x, y: pt.y, zIndex: this.state.assembler.highestZ + 1 };
+            // If user is trying to make an IC, need to construct component differently
+            if (this.internal.getICs().has(kind))
+                return this.internal.placeComponent("IC", props, kind);
+            return this.internal.placeComponent(kind, props)
+        })().unwrap();
 
         // Set its config to place ports
+        const [_, info] = this.internal.getComponentAndInfoById(id).unwrap();
         this.internal.setPortConfig(id, info.defaultPortConfig).unwrap();
 
         this.commitTransaction("Placed Component");

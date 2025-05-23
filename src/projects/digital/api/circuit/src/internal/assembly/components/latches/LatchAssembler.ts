@@ -2,7 +2,6 @@ import {V, Vector} from "Vector";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalComponentConfigurationInfo} from "../../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {PortFactory} from "shared/api/circuit/internal/assembly/PortAssembler";
 import {Schema} from "shared/api/circuit/schema";
@@ -15,8 +14,6 @@ export interface LatchAssemblerParams {
 }
 export abstract class LatchAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-
-    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs, enablePortYValue }: LatchAssemblerParams) {
         super(params, {
@@ -40,7 +37,6 @@ export abstract class LatchAssembler extends ComponentAssembler {
             },
         ]);
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
     }
 
     protected override getSize(_: Schema.Component): Vector {

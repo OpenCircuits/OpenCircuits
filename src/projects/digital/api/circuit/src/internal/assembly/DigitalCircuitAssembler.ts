@@ -66,13 +66,6 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
             this.publish({ type: "onchange" });
         })
     }
-
-    protected override createIC(icId: GUID): Assembler {
-        return new ICComponentAssembler(
-            { circuit: this.circuit, cache: this.cache, options: this.options },
-            icId,
-        );
-    }
 }
 
 
@@ -88,6 +81,8 @@ export function MakeDigitalCircuitAssembler(
             "outputs": () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
             "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }),
         }),
+        "IC": new ICComponentAssembler(params),
+
         // Inputs
         "Switch":         new SwitchAssembler(params, sim),
         "Button":         new ButtonAssembler(params, sim),

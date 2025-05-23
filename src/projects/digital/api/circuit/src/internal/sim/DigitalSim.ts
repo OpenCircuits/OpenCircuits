@@ -297,12 +297,13 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 // Initialize ICs and sub-ICs if the added component is an IC instance
                 const comp = this.circuit.getCompByID(compId).unwrap();
                 if (this.circuit.isIC(comp)) {
-                    if (!this.initialICStates.has(comp.kind)) {
+                    const icId = comp.icId;
+                    if (!this.initialICStates.has(icId)) {
                         throw new Error("DigitalSim.circuit.subscribe: Failed to find initial state " +
-                                        `for new IC instance ${comp.id} (IC: ${comp.kind})`);
+                                        `for new IC instance ${comp.id} (IC: ${icId})`);
                     }
                     const icState = this.initializeICInstance(
-                        this.rootState, this.initialICStates.get(comp.kind)!, compId, comp.kind);
+                        this.rootState, this.initialICStates.get(icId)!, compId, icId);
                     this.rootState.icStates.set(compId, icState);
                 }
             }
@@ -414,7 +415,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             const comp = this.rootState.storage.getCompByID(key).unwrap();
             this.rootState.icStates.set(
                 key,
-                this.initializeICInstance(this.rootState, s, comp.id, comp.kind),
+                this.initializeICInstance(this.rootState, s, comp.id, comp.icId!),
             );
         }
     }
@@ -462,7 +463,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             const [comp, _] = newState.getComponentAndInfoByID(key).unwrap();
             newState.icStates.set(
                 comp.id,
-                this.initializeICInstance(newState, s, comp.id, comp.kind),
+                this.initializeICInstance(newState, s, comp.id, comp.icId!),
             );
         }
 

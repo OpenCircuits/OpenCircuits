@@ -385,7 +385,8 @@ export function VersionConflictResolver(fileContents: string): VersionConflictRe
                 guidsToObjs.set(guid, obj);
                 const entryAndRef = getEntryAndRef(obj, "data")!;
                 return {
-                    kind: getICDataGuid(icGuids, entryAndRef),
+                    kind: "IC",
+                    icId: getICDataGuid(icGuids, entryAndRef),
                     ...comp,
                 }
             }

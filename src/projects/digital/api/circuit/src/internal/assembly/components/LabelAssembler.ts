@@ -9,12 +9,9 @@ import {FontStyle}                       from "shared/api/circuit/internal/assem
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
-
 
 export class LabelAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {}, [
@@ -44,7 +41,6 @@ export class LabelAssembler extends ComponentAssembler {
             },
         });
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo("Label").unwrap() as DigitalComponentConfigurationInfo;
     }
 
     protected override getSize(comp: Schema.Component): Vector {

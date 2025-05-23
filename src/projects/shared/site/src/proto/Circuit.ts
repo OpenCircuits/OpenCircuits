@@ -19,6 +19,7 @@ export interface Prop {
 export interface Component {
   id: Uint8Array;
   kind: string;
+  icId?: Uint8Array | undefined;
   props: { [key: string]: Prop };
 }
 
@@ -210,7 +211,7 @@ export const Prop: MessageFns<Prop> = {
 };
 
 function createBaseComponent(): Component {
-  return { id: new Uint8Array(0), kind: "", props: {} };
+  return { id: new Uint8Array(0), kind: "", icId: undefined, props: {} };
 }
 
 export const Component: MessageFns<Component> = {
@@ -221,8 +222,11 @@ export const Component: MessageFns<Component> = {
     if (message.kind !== "") {
       writer.uint32(18).string(message.kind);
     }
+    if (message.icId !== undefined) {
+      writer.uint32(26).bytes(message.icId);
+    }
     Object.entries(message.props).forEach(([key, value]) => {
-      Component_PropsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
+      Component_PropsEntry.encode({ key: key as any, value }, writer.uint32(34).fork()).join();
     });
     return writer;
   },
@@ -255,9 +259,17 @@ export const Component: MessageFns<Component> = {
             break;
           }
 
-          const entry3 = Component_PropsEntry.decode(reader, reader.uint32());
-          if (entry3.value !== undefined) {
-            message.props[entry3.key] = entry3.value;
+          message.icId = reader.bytes();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          const entry4 = Component_PropsEntry.decode(reader, reader.uint32());
+          if (entry4.value !== undefined) {
+            message.props[entry4.key] = entry4.value;
           }
           continue;
         }
@@ -274,6 +286,7 @@ export const Component: MessageFns<Component> = {
     return {
       id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
       kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
+      icId: isSet(object.icId) ? bytesFromBase64(object.icId) : undefined,
       props: isObject(object.props)
         ? Object.entries(object.props).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
           acc[key] = Prop.fromJSON(value);
@@ -290,6 +303,9 @@ export const Component: MessageFns<Component> = {
     }
     if (message.kind !== "") {
       obj.kind = message.kind;
+    }
+    if (message.icId !== undefined) {
+      obj.icId = base64FromBytes(message.icId);
     }
     if (message.props) {
       const entries = Object.entries(message.props);
@@ -310,6 +326,7 @@ export const Component: MessageFns<Component> = {
     const message = createBaseComponent();
     message.id = object.id ?? new Uint8Array(0);
     message.kind = object.kind ?? "";
+    message.icId = object.icId ?? undefined;
     message.props = Object.entries(object.props ?? {}).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
       if (value !== undefined) {
         acc[key] = Prop.fromPartial(value);

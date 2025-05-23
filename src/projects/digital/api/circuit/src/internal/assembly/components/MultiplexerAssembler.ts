@@ -2,7 +2,6 @@ import {V, Vector} from "Vector";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalComponentConfigurationInfo} from "../../DigitalComponents";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {Schema} from "shared/api/circuit/schema";
 import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
@@ -11,8 +10,6 @@ import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssem
 const MULTIPLEXER_HEIGHT_OFFSET = 0.5;
 export class MultiplexerAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
-
-    protected info: DigitalComponentConfigurationInfo;
 
     public constructor(params: AssemblerParams, sim: DigitalSim, kind: "Multiplexer" | "Demultiplexer") {
         super(params, {
@@ -67,7 +64,6 @@ export class MultiplexerAssembler extends ComponentAssembler {
             },
         ], { sizeChangesWhenPortsChange: true });
         this.sim = sim;
-        this.info = this.circuit.getComponentInfo(kind).unwrap() as DigitalComponentConfigurationInfo;
     }
 
     protected calcHeight(inputPortCount: number): number {

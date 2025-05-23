@@ -28,6 +28,14 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         return this.state.constructComponentInfo(this.kind);
     }
 
+    public override get kind(): string {
+        const comp = this.getComponent();
+        // API-wise, IC kinds are represented as the icId.
+        if (comp.kind === "IC")
+            return comp.icId!;
+        return comp.kind;
+    }
+
     public set x(val: number) {
         this.state.internal.setPropFor<Schema.Component, "x">(this.id, "x", val);
     }
@@ -58,8 +66,8 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     }
 
     public isNode(): this is T["Node"] {
-        return this.state.internal.getComponentInfo(this.kind)
-            .map((info) => info.isNode)
+        return this.state.internal.getComponentAndInfoById(this.id)
+            .map(([_, info]) => info.isNode)
             .unwrap();
     }
 
@@ -87,8 +95,9 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
             ...curConfig,
             ...cfg,
         };
-        this.state.internal.getComponentInfo(this.kind).unwrap()
-            .checkPortConfig(config).unwrap();
+        const [_, info] = this.state.internal.getComponentAndInfoById(this.id).unwrap();
+
+        info.checkPortConfig(config).unwrap();
 
         this.state.internal.beginTransaction();
         this.state.internal.setPortConfig(this.id, config).unwrap();
