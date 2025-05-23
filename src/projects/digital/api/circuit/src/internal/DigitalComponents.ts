@@ -9,10 +9,29 @@ import {GUID, Schema} from "shared/api/circuit/schema";
 import {MapObj} from "shared/api/circuit/utils/Functions";
 
 
+export enum DigitalKinds {
+    IC = 0, Wire, Port, Node,
+    // IC Pins
+    InputPin, OutputPin,
+    // Inputs
+    Button, Switch, ConstantLow, ConstantHigh, ConstantNumber, Clock,
+    // Outputs
+    LED, SegmentDisplay, BCDDisplay, ASCIIDisplay, Oscilloscope,
+    // Gates
+    BUFGate, NOTGate, ANDGate, NANDGate, ORGate, NORGate, XORGate, XNORGate,
+    // Flip Flops
+    SRFlipFlop, JKFlipFlop, DFlipFlop, TFlipFlop,
+    // Latches
+    DLatch, SRLatch,
+    // Other
+    Multiplexer, Demultiplexer, Encoder, Decoder, Comparator, Label,
+}
+
+
 type DigitalPortGroupInfo = Record<string, "input" | "output">
 
 interface DigitalComponentConfigurationInfoOptions {
-    kind: string;
+    kind: number;
 
     portGroupInfo: DigitalPortGroupInfo;
     portConfigs: PortConfig[];
@@ -61,12 +80,12 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
         const generator = this.defaultPortNames?.[group];
         if (!generator) {
             return {
-                kind:  "DigitalPort",
+                kind:  DigitalKinds.Port,
                 props: {}, // TODO: any mandatory props for Digital ports
             };
         }
         return {
-            kind:  "DigitalPort",
+            kind:  DigitalKinds.Port,
             props: {
                 name: (typeof generator === "function" ? generator(index) : generator[index]),
             },
@@ -111,7 +130,7 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
 
 
 // Inputs
-const DigitalOutputComponentInfo = (kind: string, outputs: number[], props: PropTypeMap = {}) =>
+const DigitalOutputComponentInfo = (kind: number, outputs: number[], props: PropTypeMap = {}) =>
     new DigitalComponentConfigurationInfo({
         kind,
         props,
@@ -119,15 +138,15 @@ const DigitalOutputComponentInfo = (kind: string, outputs: number[], props: Prop
         portConfigs:   outputs.map((amt) => ({ "outputs": amt })),
     });
 
-const SwitchInfo = DigitalOutputComponentInfo("Switch", [1], { "isOn": "boolean" });
-const ButtonInfo = DigitalOutputComponentInfo("Button", [1], { "isOn": "boolean" });
-const ConstantLowInfo    = DigitalOutputComponentInfo("ConstantLow",    [1]);
-const ConstantHighInfo   = DigitalOutputComponentInfo("ConstantHigh",   [1]);
-const ConstantNumberInfo = DigitalOutputComponentInfo("ConstantNumber", [4], { "inputNum": "number" });
-const ClockInfo = DigitalOutputComponentInfo("Clock", [1], { "delay": "number", "paused": "boolean" });
+const SwitchInfo = DigitalOutputComponentInfo(DigitalKinds.Switch, [1], { "isOn": "boolean" });
+const ButtonInfo = DigitalOutputComponentInfo(DigitalKinds.Button, [1], { "isOn": "boolean" });
+const ConstantLowInfo    = DigitalOutputComponentInfo(DigitalKinds.ConstantLow,    [1]);
+const ConstantHighInfo   = DigitalOutputComponentInfo(DigitalKinds.ConstantHigh,   [1]);
+const ConstantNumberInfo = DigitalOutputComponentInfo(DigitalKinds.ConstantNumber, [4], { "inputNum": "number" });
+const ClockInfo = DigitalOutputComponentInfo(DigitalKinds.Clock, [1], { "delay": "number", "paused": "boolean" });
 
 // Outputs
-const DigitalInputComponentInfo = (kind: string, inputs: number[], props: PropTypeMap = {}) =>
+const DigitalInputComponentInfo = (kind: number, inputs: number[], props: PropTypeMap = {}) =>
     new DigitalComponentConfigurationInfo({
         kind,
         props,
@@ -135,18 +154,18 @@ const DigitalInputComponentInfo = (kind: string, inputs: number[], props: PropTy
         portConfigs:   inputs.map((amt) => ({ "inputs": amt })),
     });
 
-const LEDInfo = DigitalInputComponentInfo("LED", [1], { "color": "string" });
-const BCDDisplayInfo     = DigitalInputComponentInfo("BCDDisplay",     [4], { "segmentCount": "number" });
-const ASCIIDisplayInfo   = DigitalInputComponentInfo("ASCIIDisplay",   [7], { "segmentCount": "number" });
-const SegmentDisplayInfo = DigitalInputComponentInfo("SegmentDisplay", [7,9,14,16]);
+const LEDInfo = DigitalInputComponentInfo(DigitalKinds.LED, [1], { "color": "string" });
+const BCDDisplayInfo     = DigitalInputComponentInfo(DigitalKinds.BCDDisplay,     [4], { "segmentCount": "number" });
+const ASCIIDisplayInfo   = DigitalInputComponentInfo(DigitalKinds.ASCIIDisplay,   [7], { "segmentCount": "number" });
+const SegmentDisplayInfo = DigitalInputComponentInfo(DigitalKinds.SegmentDisplay, [7,9,14,16]);
 const OscilloscopeInfo = DigitalInputComponentInfo(
-    "Oscilloscope",
+    DigitalKinds.Oscilloscope,
     [1,2,3,4,5,6,7,8],
     { "w": "number", "h": "number", "delay": "number", "samples": "number", "paused": "boolean" },
 );
 
 // Gates
-const DigitalGateComponentInfo = (kind: string, inputs = [2,3,4,5,6,7,8]) =>
+const DigitalGateComponentInfo = (kind: number, inputs = [2,3,4,5,6,7,8]) =>
     new DigitalComponentConfigurationInfo({
         kind,
         portGroupInfo: { "inputs": "input", "outputs": "output" },
@@ -154,17 +173,17 @@ const DigitalGateComponentInfo = (kind: string, inputs = [2,3,4,5,6,7,8]) =>
         portConfigs:   inputs.map((inputs) => ({ "inputs": inputs, "outputs": 1 })),
     });
 
-const BUFGateInfo = DigitalGateComponentInfo("BUFGate", [1]);
-const NOTGateInfo = DigitalGateComponentInfo("NOTGate", [1]);
-const ANDGateInfo  = DigitalGateComponentInfo("ANDGate");
-const NANDGateInfo = DigitalGateComponentInfo("NANDGate");
-const ORGateInfo   = DigitalGateComponentInfo("ORGate");
-const NORGateInfo  = DigitalGateComponentInfo("NORGate");
-const XORGateInfo  = DigitalGateComponentInfo("XORGate");
-const XNORGateInfo = DigitalGateComponentInfo("XNORGate");
+const BUFGateInfo = DigitalGateComponentInfo(DigitalKinds.BUFGate, [1]);
+const NOTGateInfo = DigitalGateComponentInfo(DigitalKinds.NOTGate, [1]);
+const ANDGateInfo  = DigitalGateComponentInfo(DigitalKinds.ANDGate);
+const NANDGateInfo = DigitalGateComponentInfo(DigitalKinds.NANDGate);
+const ORGateInfo   = DigitalGateComponentInfo(DigitalKinds.ORGate);
+const NORGateInfo  = DigitalGateComponentInfo(DigitalKinds.NORGate);
+const XORGateInfo  = DigitalGateComponentInfo(DigitalKinds.XORGate);
+const XNORGateInfo = DigitalGateComponentInfo(DigitalKinds.XNORGate);
 
 // Flip Flops
-const DigitalFlipFlopComponentInfo = (kind: string, inputs: string[]) =>
+const DigitalFlipFlopComponentInfo = (kind: number, inputs: string[]) =>
     new DigitalComponentConfigurationInfo({
         kind,
         portGroupInfo: {
@@ -193,13 +212,13 @@ const DigitalFlipFlopComponentInfo = (kind: string, inputs: string[]) =>
         },
     });
 
-const DFlipFlopInfo  = DigitalFlipFlopComponentInfo("DFlipFlop",  ["D"]);
-const TFlipFlopInfo  = DigitalFlipFlopComponentInfo("TFlipFlop",  ["T"]);
-const SRFlipFlopInfo = DigitalFlipFlopComponentInfo("SRFlipFlop", ["S", "R"]);
-const JKFlipFlopInfo = DigitalFlipFlopComponentInfo("JKFlipFlop", ["J", "K"]);
+const DFlipFlopInfo  = DigitalFlipFlopComponentInfo(DigitalKinds.DFlipFlop,  ["D"]);
+const TFlipFlopInfo  = DigitalFlipFlopComponentInfo(DigitalKinds.TFlipFlop,  ["T"]);
+const SRFlipFlopInfo = DigitalFlipFlopComponentInfo(DigitalKinds.SRFlipFlop, ["S", "R"]);
+const JKFlipFlopInfo = DigitalFlipFlopComponentInfo(DigitalKinds.JKFlipFlop, ["J", "K"]);
 
 // Latches
-const DigitalLatchComponentInfo = (kind: string, inputs: string[]) =>
+const DigitalLatchComponentInfo = (kind: number, inputs: string[]) =>
     new DigitalComponentConfigurationInfo({
         kind,
         portGroupInfo: {
@@ -222,60 +241,60 @@ const DigitalLatchComponentInfo = (kind: string, inputs: string[]) =>
             "Qinv": ["Q'"],
         },
     });
-const DLatchInfo  = DigitalLatchComponentInfo("DLatch",  ["D"]);
-const SRLatchInfo = DigitalLatchComponentInfo("SRLatch", ["S", "R"]);
+const DLatchInfo  = DigitalLatchComponentInfo(DigitalKinds.DLatch,  ["D"]);
+const SRLatchInfo = DigitalLatchComponentInfo(DigitalKinds.SRLatch, ["S", "R"]);
 
 // Other
 const MultiplexerInfo = new DigitalComponentConfigurationInfo({
-    kind: "Multiplexer",
+    kind:          DigitalKinds.Multiplexer,
     portGroupInfo: { "inputs": "input", "selects": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((selects) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": Math.pow(2, selects), "selects": selects, "outputs": 1 })),
-    defaultConfig: 1, // Default is 2-select-port mux
+    defaultConfig:    1, // Default is 2-select-port mux
     defaultPortNames: {
         "inputs":  (index) => `I${index}`,
         "selects": (index) => `S${index}`,
     },
 });
 const DemultiplexerInfo = new DigitalComponentConfigurationInfo({
-    kind: "Demultiplexer",
+    kind:          DigitalKinds.Demultiplexer,
     portGroupInfo: { "inputs": "input", "selects": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((selects) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": 1, "selects": selects, "outputs": Math.pow(2, selects) })),
-    defaultConfig: 1, // Default is 2-select-port demux
+    defaultConfig:    1, // Default is 2-select-port demux
     defaultPortNames: {
         "selects": (index) => `S${index}`,
         "outputs": (index) => `O${index}`,
     },
 });
 const EncoderInfo = new DigitalComponentConfigurationInfo({
-    kind: "Encoder",
+    kind:          DigitalKinds.Encoder,
     portGroupInfo: { "inputs": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((outputs) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((outputs) =>
         ({ "inputs": Math.pow(2, outputs), "outputs": outputs })),
-    defaultConfig: 1, // Default is 2-output-port Encoder
+    defaultConfig:    1, // Default is 2-output-port Encoder
     defaultPortNames: {
         "inputs":  (index) => `I${index}`,
         "outputs": (index) => `O${index}`,
     },
 });
 const DecoderInfo = new DigitalComponentConfigurationInfo({
-    kind: "Decoder",
+    kind:          DigitalKinds.Decoder,
     portGroupInfo: { "inputs": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((inputs) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((inputs) =>
         ({ "inputs": inputs, "outputs": Math.pow(2, inputs) })),
-    defaultConfig: 1, // Default is 2-input-port Decoder
+    defaultConfig:    1, // Default is 2-input-port Decoder
     defaultPortNames: {
         "inputs":  (index) => `I${index}`,
         "outputs": (index) => `O${index}`,
     },
 });
-const Comparator = new DigitalComponentConfigurationInfo({
-    kind: "Comparator",
+const ComparatorInfo = new DigitalComponentConfigurationInfo({
+    kind:          DigitalKinds.Comparator,
     portGroupInfo: { "inputsA": "input", "inputsB": "input", "lt": "output", "eq": "output", "gt": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((inputSize) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((inputSize) =>
         ({ "inputsA": inputSize, "inputsB": inputSize, "lt": 1, "eq": 1, "gt": 1 })),
-    defaultConfig: 1, // Default is 2-bit-input-group Comparator
+    defaultConfig:    1, // Default is 2-bit-input-group Comparator
     defaultPortNames: {
         "inputsA": (index) => `a${index}`,
         "inputsB": (index) => `b${index}`,
@@ -285,8 +304,8 @@ const Comparator = new DigitalComponentConfigurationInfo({
         "gt": [">"],
     },
 });
-const Label = new DigitalComponentConfigurationInfo({
-    kind:  "Label",
+const LabelInfo = new DigitalComponentConfigurationInfo({
+    kind:  DigitalKinds.Label,
     props: {
         "textColor": "string",
         "bgColor":   "string",
@@ -296,27 +315,27 @@ const Label = new DigitalComponentConfigurationInfo({
 });
 
 const NodeInfo = new DigitalComponentConfigurationInfo({
-    kind: "DigitalNode",
-    isNode: true,
+    kind:          DigitalKinds.Node,
+    isNode:        true,
     portGroupInfo: { "inputs": "input", "outputs": "output" },
     portConfigs:   [{ "inputs": 1, "outputs": 1 }],
 });
 
 
 // Wires
-const WireInfo = new BaseObjInfo("Wire", "DigitalWire", { "color": "string" });
+const WireInfo = new BaseObjInfo("Wire", DigitalKinds.Wire, { "color": "string" });
 
 // Ports
-const PortInfo = new BaseObjInfo("Port", "DigitalPort", {});
+const PortInfo = new BaseObjInfo("Port", DigitalKinds.Port, {});
 
 // IC Pins
 const InputPinInfo = new DigitalComponentConfigurationInfo({
-    kind: "InputPin",
+    kind:          DigitalKinds.InputPin,
     portGroupInfo: { "outputs": "output" },
     portConfigs:   [{ "outputs": 1 }],
 });
 const OutputPinInfo = new DigitalComponentConfigurationInfo({
-    kind: "OutputPin",
+    kind:          DigitalKinds.OutputPin,
     portGroupInfo: { "inputs": "input" },
     portConfigs:   [{ "inputs": 1 }],
 });
@@ -340,11 +359,11 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
             // Latches
             DLatchInfo, SRLatchInfo,
             // Other
-            MultiplexerInfo, DemultiplexerInfo, EncoderInfo, DecoderInfo, Comparator, Label,
+            MultiplexerInfo, DemultiplexerInfo, EncoderInfo, DecoderInfo, ComparatorInfo, LabelInfo,
         ], [WireInfo], [PortInfo])
     }
 
-    public override getComponent(kind: string, icId?: GUID): DigitalComponentConfigurationInfo | undefined {
+    public override getComponent(kind: number, icId?: GUID): DigitalComponentConfigurationInfo | undefined {
         return super.getComponent(kind, icId) as DigitalComponentConfigurationInfo | undefined;
     }
 
@@ -378,9 +397,9 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
         this.ics.set(ic.metadata.id, new DigitalComponentConfigurationInfo({
-            kind: ic.metadata.id,
+            kind:             DigitalKinds.IC,
             portGroupInfo,
-            portConfigs: [portConfig],
+            portConfigs:      [portConfig],
             defaultPortNames: MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
         }));
     }

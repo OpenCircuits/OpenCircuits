@@ -17,17 +17,8 @@ export interface ORGateAssemblerParams {
     not: boolean;
 }
 export class ORGateAssembler extends GateAssembler {
-    private static readonly KIND_MAP = {
-        // {xor},{not}
-        "true,true":   "XNORGate",
-        "true,false":  "XORGate",
-        "false,true":  "NORGate",
-        "false,false": "ORGate",
-    } as const;
-
     public constructor(params: AssemblerParams, sim: DigitalSim, { xor, not }: ORGateAssemblerParams) {
         super(params, sim, {
-            kind: ORGateAssembler.KIND_MAP[`${xor},${not}`],
             size: V(1.2, 1),
             svg:  "or.svg",
             not,

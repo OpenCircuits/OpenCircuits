@@ -5,9 +5,8 @@ import {LatchAssembler} from "./LatchAssembler";
 
 
 export class TwoInputLatchAssembler extends LatchAssembler {
-    public constructor(params: AssemblerParams, sim: DigitalSim, kind: string, inputPort1Name: string, inputPort2Name: string) {
+    public constructor(params: AssemblerParams, sim: DigitalSim, inputPort1Name: string, inputPort2Name: string) {
         super(params, sim, {
-            kind,
             otherInputs: {
                 [inputPort1Name]: () => ({ origin: V(-0.5,  1/3), dir: V(-1, 0) }),
                 [inputPort2Name]: () => ({ origin: V(-0.5, -1/3), dir: V(-1, 0) }),

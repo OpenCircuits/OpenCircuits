@@ -4,11 +4,12 @@ import {DigitalNode}  from "../DigitalComponent";
 import {DigitalPort}  from "../DigitalPort";
 import {DigitalWire}  from "../DigitalWire";
 import {DigitalTypes} from "./DigitalCircuitState";
+import {DigitalKinds} from "../../internal/DigitalComponents";
 
 
 export class DigitalWireImpl extends WireImpl<DigitalTypes> implements DigitalWire {
-    protected override getNodeKind(): string {
-        return "DigitalNode";
+    protected override getNodeKind(): number {
+        return DigitalKinds.Node;
     }
 
     protected override connectNode(node: DigitalNode, p1: DigitalPort, p2: DigitalPort) {

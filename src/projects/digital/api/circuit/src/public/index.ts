@@ -4,7 +4,7 @@ import {CircuitDocument}       from "shared/api/circuit/internal/impl/CircuitDoc
 
 import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {DigitalObjInfoProvider} from "digital/api/circuit/internal/DigitalComponents";
+import {DigitalKinds, DigitalObjInfoProvider} from "digital/api/circuit/internal/DigitalComponents";
 import {MakeDigitalCircuitAssembler}        from "digital/api/circuit/internal/assembly/DigitalCircuitAssembler";
 import {DigitalSim}                         from "digital/api/circuit/internal/sim/DigitalSim";
 
@@ -26,6 +26,58 @@ export * from "./DigitalPort";
 export * from "./DigitalWire";
 export * from "./Utilities";
 
+
+const DigitalKindsToStr: Record<DigitalKinds, string> = {
+    [DigitalKinds.IC]:   "IC",
+    [DigitalKinds.Wire]: "Wire",
+    [DigitalKinds.Port]: "Port",
+    [DigitalKinds.Node]: "Node",
+
+    [DigitalKinds.InputPin]:  "InputPin",
+    [DigitalKinds.OutputPin]: "OutputPin",
+
+    [DigitalKinds.Button]:         "Button",
+    [DigitalKinds.Switch]:         "Switch",
+    [DigitalKinds.ConstantLow]:    "ConstantLow",
+    [DigitalKinds.ConstantHigh]:   "ConstantHigh",
+    [DigitalKinds.ConstantNumber]: "ConstantNumber",
+    [DigitalKinds.Clock]:          "Clock",
+
+    [DigitalKinds.LED]:            "LED",
+    [DigitalKinds.SegmentDisplay]: "SegmentDisplay",
+    [DigitalKinds.BCDDisplay]:     "BCDDisplay",
+    [DigitalKinds.ASCIIDisplay]:   "ASCIIDisplay",
+    [DigitalKinds.Oscilloscope]:   "Oscilloscope",
+
+    [DigitalKinds.BUFGate]:  "BUFGate",
+    [DigitalKinds.NOTGate]:  "NOTGate",
+    [DigitalKinds.ANDGate]:  "ANDGate",
+    [DigitalKinds.NANDGate]: "NANDGate",
+    [DigitalKinds.ORGate]:   "ORGate",
+    [DigitalKinds.NORGate]:  "NORGate",
+    [DigitalKinds.XORGate]:  "XORGate",
+    [DigitalKinds.XNORGate]: "XNORGate",
+
+    [DigitalKinds.SRFlipFlop]: "SRFlipFlop",
+    [DigitalKinds.JKFlipFlop]: "JKFlipFlop",
+    [DigitalKinds.DFlipFlop]:  "DFlipFlop",
+    [DigitalKinds.TFlipFlop]:  "TFlipFlop",
+
+    [DigitalKinds.DLatch]:  "DLatch",
+    [DigitalKinds.SRLatch]: "SRLatch",
+
+    [DigitalKinds.Multiplexer]:   "Multiplexer",
+    [DigitalKinds.Demultiplexer]: "Demultiplexer",
+
+    [DigitalKinds.Encoder]:    "Encoder",
+    [DigitalKinds.Decoder]:    "Decoder",
+    [DigitalKinds.Comparator]: "Comparator",
+    [DigitalKinds.Label]:      "Label",
+};
+
+const StrToDigitalKinds: Record<string, DigitalKinds> =
+    Object.fromEntries(Object.entries(DigitalKindsToStr).map(([key, val]) => [val, parseInt(key) as DigitalKinds]));
+
 export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     const mainCircuitID = uuid();
     const log = new CircuitLog();
@@ -44,6 +96,7 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
         compInfos: new Map<GUID, DigitalComponentInfoImpl>(),
     }
 
+
     const state: DigitalCircuitState = {
         internal, assembler, sim, renderOptions,
 
@@ -61,6 +114,12 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
         },
         constructComponentInfo(kind) {
             return cache.compInfos.getOrInsert(kind, (kind) => new DigitalComponentInfoImpl(state, kind));
+        },
+
+        kinds: {
+            defaultICKind: DigitalKinds.IC,
+            asString:      (kind) => DigitalKindsToStr[kind as DigitalKinds] ?? "Unknown",
+            fromString:    (str)  => StrToDigitalKinds[str] ?? -1,
         },
     }
 

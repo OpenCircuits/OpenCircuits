@@ -8,7 +8,7 @@ export type PortConfig = Record<string, number>;
 
 export interface ObjInfo {
     readonly baseKind: Schema.Obj["baseKind"];
-    readonly kind: string;
+    readonly kind: number;
     checkPropValue(key: string, value?: Schema.Prop): Result;
 }
 
@@ -47,9 +47,9 @@ export interface ComponentConfigurationInfo extends ObjInfo {
 
 export interface ObjInfoProvider {
     // TODO: Maybe use i.e. Option<ObjInfo>=
-    getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined;
-    getWire(kind: string): ObjInfo | undefined;
-    getPort(kind: string): ObjInfo | undefined;
+    getComponent(kind: number, icId?: GUID): ComponentConfigurationInfo | undefined;
+    getWire(kind: number): ObjInfo | undefined;
+    getPort(kind: number): ObjInfo | undefined;
 
     createIC(ic: Schema.IntegratedCircuit): void;
     deleteIC(ic: Schema.IntegratedCircuit): void;
@@ -62,9 +62,9 @@ export interface ObjInfoProvider {
 
 export abstract class BaseObjInfoProvider implements ObjInfoProvider {
     protected readonly ics: Map<string, ComponentConfigurationInfo>;
-    protected readonly components: Map<string, ComponentConfigurationInfo>;
-    protected readonly wires: Map<string, ObjInfo>;
-    protected readonly ports: Map<string, ObjInfo>;
+    protected readonly components: Map<number, ComponentConfigurationInfo>;
+    protected readonly wires: Map<number, ObjInfo>;
+    protected readonly ports: Map<number, ObjInfo>;
 
     public constructor(
         components: ComponentConfigurationInfo[],
@@ -77,19 +77,17 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
         this.ics        = new Map();
     }
 
-    public getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined {
-        if (kind === "IC" && !icId)
-            throw new Error("BaseObjInfoProver: Must provide icId when getting info for an IC!");
+    public getComponent(kind: number, icId?: GUID): ComponentConfigurationInfo | undefined {
         if (icId)
             return this.ics.get(icId);
         return this.components.get(kind);
     }
 
-    public getWire(kind: string): ObjInfo | undefined {
+    public getWire(kind: number): ObjInfo | undefined {
         return this.wires.get(kind);
     }
 
-    public getPort(kind: string): ObjInfo | undefined {
+    public getPort(kind: number): ObjInfo | undefined {
         return this.ports.get(kind);
     }
 
@@ -97,20 +95,20 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
     public abstract deleteIC(ic: Schema.IntegratedCircuit): void;
 
     public isIC(c: Schema.Component): boolean {
-        return c.kind === "IC";
+        return c.icId !== undefined;
     }
 }
 
 export type PropTypeMap = Record<string, "string" | "number" | "boolean">;
 export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
     public readonly baseKind: K;
-    public readonly kind: string;
+    public readonly kind: number;
 
     protected readonly props: PropTypeMap;
 
     public constructor(
         baseKind: K,
-        kind: string,
+        kind: number,
         props: PropTypeMap,
     ) {
         this.baseKind = baseKind;
@@ -136,7 +134,7 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
     public readonly isNode: boolean;
 
     public constructor(
-        kind: string,
+        kind: number,
         props: PropTypeMap,
         portGroups: string[],
         portConfigs: PortConfig[],

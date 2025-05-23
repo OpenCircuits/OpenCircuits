@@ -5,12 +5,13 @@ import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assem
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {Schema} from "shared/api/circuit/schema";
 import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
+import {DigitalKinds} from "../../DigitalComponents";
 
 
 export class EncoderAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
-    public constructor(params: AssemblerParams, sim: DigitalSim, kind: "Encoder" | "Decoder") {
+    public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
             "inputs": (comp, index, total) => ({
                 origin: V(-0.5, -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y, { spacing: 0.5 })),
@@ -43,7 +44,7 @@ export class EncoderAssembler extends ComponentAssembler {
     }
 
     protected getPortCount(comp: Schema.Component) {
-        const group = (comp.kind === "Encoder" ? "outputs" : "inputs");
+        const group = (comp.kind === DigitalKinds.Encoder ? "outputs" : "inputs");
         return this.circuit.getPortsByGroup(comp.id).unwrap()[group]?.length ?? 2;
     }
 }

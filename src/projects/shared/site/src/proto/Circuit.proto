@@ -11,14 +11,14 @@ message Prop {
 
 message Component {
     bytes id = 1;
-    string kind = 2;
+    int32 kind = 2;
     optional bytes icId = 3;
     map<string, Prop> props = 4;
 }
 
 message Wire {
     bytes id = 1;
-    string kind = 2;
+    int32 kind = 2;
     map<string, Prop> props = 3;
 
     bytes p1 = 4;
@@ -27,7 +27,7 @@ message Wire {
 
 message Port {
     bytes id = 1;
-    string kind = 2;
+    int32 kind = 2;
     map<string, Prop> props = 3;
 
     bytes parent = 4;

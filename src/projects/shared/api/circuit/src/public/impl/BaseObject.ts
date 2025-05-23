@@ -26,7 +26,7 @@ export class BaseObjectImpl<T extends CircuitTypes> implements BaseObject {
     }
 
     public get kind(): string {
-        return this.getObj().kind;
+        return this.state.kinds.asString(this.getObj().kind);
     }
     public get bounds(): Rect {
         return this.state.assembler.getBoundsFor(this.id)

@@ -13,7 +13,6 @@ export type SimplifiedAssembly = {
     getStyle: ComponentBaseShapePrimAssembly["getStyle"];
 }
 export interface GateAssemblerParams extends ComponentExtraAssemblerParams {
-    kind: string;
     size: Vector;
     svg: string;
     not: boolean;
@@ -28,7 +27,7 @@ export class GateAssembler extends ComponentAssembler {
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
-        { kind, size, svg, not, portFactory, otherPrims, ...otherParams }: GateAssemblerParams
+        { size, svg, not, portFactory, otherPrims, ...otherParams }: GateAssemblerParams
     ) {
         super(params, portFactory, [
             // NOT symbol
