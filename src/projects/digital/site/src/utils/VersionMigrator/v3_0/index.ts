@@ -26,7 +26,6 @@ export function IsV3_0(json: any): json is V3_0Schema.Circuit {
 function ConvertCompProps(
     comp: Entry<V3_0Schema.DigitalComponent>,
     i: number,
-    refToICIDMap: Record<string, Schema.GUID>,
 ): Schema.Component["props"] {
     const props: Schema.Component["props"] = { zIndex: i };
 
@@ -63,9 +62,6 @@ function ConvertCompProps(
             props["bgColor"]   = comp["color"] as string;
             props["textColor"] = comp["textColor"] as string;
             break;
-        case "IC":
-            props["icId"] = refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref];
-            break;
     }
 
     return props;
@@ -90,7 +86,8 @@ function ConvertComponent(
         baseKind: "Component",
         kind:     comp.type,
         id:       uuid(),
-        props:    ConvertCompProps(comp, i, refToICIDMap),
+        icId:     (comp.type === "IC" ? refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref] : undefined),
+        props:    ConvertCompProps(comp, i),
     }, comp];
 }
 
@@ -290,7 +287,14 @@ function ConvertCompState(comp: Entry<V3_0Schema.DigitalComponent>): boolean[] {
     switch (comp.type) {
     case "Switch":
         return [comp["isOn"] as boolean];
-    // TODO: FlipFlop/Latch states
+    case "SRFlipFlop":
+    case "JKFlipFlop":
+    case "DFlipFlop":
+    case "TFlipFlop":
+        return [comp["state"] as boolean, comp["lastClock"] as boolean];
+    case "SRLatch":
+    case "DLatch":
+        return [comp["state"] as boolean];
     default:
         return [];
     }

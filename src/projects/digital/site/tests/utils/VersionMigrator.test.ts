@@ -9,35 +9,37 @@ import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCir
 import {IMPORT_IC_CLOCK_MESSAGE} from "digital/site/utils/Constants";
 import {VersionMigrator}         from "digital/site/utils/VersionMigrator";
 
-import switchCircuit         from "./TestCircuitData/3_0/Switch.json";
-import orCircuit             from "./TestCircuitData/3_0/OR.json";
-import poweredOrCircuit      from "./TestCircuitData/3_0/PoweredOR.json";
-import threeInputAndCircuit  from "./TestCircuitData/3_0/ThreeInputAND.json";
-import allInputsCircuit      from "./TestCircuitData/3_0/Inputs.json";
-import ledCiruit             from "./TestCircuitData/3_0/LED.json";
-import segmentDisplayCircuit from "./TestCircuitData/3_0/SegmentDisplays.json";
-import oscilloscopeCircuit   from "./TestCircuitData/3_0/Oscilloscope.json";
-import srFlipFlopCircuit     from "./TestCircuitData/3_0/SRFlipFlop.json";
-import jkFlipFlopCircuit     from "./TestCircuitData/3_0/JKFlipFlop.json";
-import dFlipFlopCircuit      from "./TestCircuitData/3_0/DFlipFlop.json";
-import tFlipFlopCircuit      from "./TestCircuitData/3_0/TFlipFlop.json";
-import dLatchCircuit         from "./TestCircuitData/3_0/DLatch.json";
-import srLatchCircuit        from "./TestCircuitData/3_0/SRLatch.json";
-import multiplexerCircuit    from "./TestCircuitData/3_0/Multiplexer.json";
-import demultiplexerCircuit  from "./TestCircuitData/3_0/Demultiplexer.json";
-import encoderDecoderCircuit from "./TestCircuitData/3_0/EncoderDecoder.json";
-import comparatorCircuit     from "./TestCircuitData/3_0/Comparator.json";
-import labelCircuit          from "./TestCircuitData/3_0/Label.json";
-import nodesCircuit          from "./TestCircuitData/3_0/Nodes.json";
-import icDataOnlyCircuit     from "./TestCircuitData/3_0/ICDataOnly.json";
-import basicICCircuit        from "./TestCircuitData/3_0/BasicIC.json";
-import nestedICCircuit       from "./TestCircuitData/3_0/NestedIC.json";
-import zIndexCircuit         from "./TestCircuitData/3_0/ZIndex.json";
-import clockInICOffCircuit   from "./TestCircuitData/3_0/ClockInICOff.json";
-import clockInICOnCircuit    from "./TestCircuitData/3_0/ClockInICOn.json";
-import threeInputICCircuit   from "./TestCircuitData/3_0/ThreeInputIC.json";
-import inputOrderICCircuit   from "./TestCircuitData/3_0/InputOrderIC.json";
-import allSidesICCircuit     from "./TestCircuitData/3_0/AllSidesIC.json";
+import switchCircuit                from "./TestCircuitData/3_0/Switch.json";
+import orCircuit                    from "./TestCircuitData/3_0/OR.json";
+import poweredOrCircuit             from "./TestCircuitData/3_0/PoweredOR.json";
+import threeInputAndCircuit         from "./TestCircuitData/3_0/ThreeInputAND.json";
+import allInputsCircuit             from "./TestCircuitData/3_0/Inputs.json";
+import ledCiruit                    from "./TestCircuitData/3_0/LED.json";
+import segmentDisplayCircuit        from "./TestCircuitData/3_0/SegmentDisplays.json";
+import oscilloscopeCircuit          from "./TestCircuitData/3_0/Oscilloscope.json";
+import srFlipFlopCircuit            from "./TestCircuitData/3_0/SRFlipFlop.json";
+import jkFlipFlopCircuit            from "./TestCircuitData/3_0/JKFlipFlop.json";
+import dFlipFlopCircuit             from "./TestCircuitData/3_0/DFlipFlop.json";
+import tFlipFlopCircuit             from "./TestCircuitData/3_0/TFlipFlop.json";
+import dLatchCircuit                from "./TestCircuitData/3_0/DLatch.json";
+import srLatchCircuit               from "./TestCircuitData/3_0/SRLatch.json";
+import multiplexerCircuit           from "./TestCircuitData/3_0/Multiplexer.json";
+import demultiplexerCircuit         from "./TestCircuitData/3_0/Demultiplexer.json";
+import encoderDecoderCircuit        from "./TestCircuitData/3_0/EncoderDecoder.json";
+import comparatorCircuit            from "./TestCircuitData/3_0/Comparator.json";
+import labelCircuit                 from "./TestCircuitData/3_0/Label.json";
+import nodesCircuit                 from "./TestCircuitData/3_0/Nodes.json";
+import icDataOnlyCircuit            from "./TestCircuitData/3_0/ICDataOnly.json";
+import basicICCircuit               from "./TestCircuitData/3_0/BasicIC.json";
+import nestedICCircuit              from "./TestCircuitData/3_0/NestedIC.json";
+import zIndexCircuit                from "./TestCircuitData/3_0/ZIndex.json";
+import clockInICOffCircuit          from "./TestCircuitData/3_0/ClockInICOff.json";
+import clockInICOnCircuit           from "./TestCircuitData/3_0/ClockInICOn.json";
+import threeInputICCircuit          from "./TestCircuitData/3_0/ThreeInputIC.json";
+import inputOrderICCircuit          from "./TestCircuitData/3_0/InputOrderIC.json";
+import allSidesICCircuit            from "./TestCircuitData/3_0/AllSidesIC.json";
+import flipFlopInICCircuit          from "./TestCircuitData/3_0/FlipFlopInIC.json";
+import nestedICNotInDesignerCircuit from "./TestCircuitData/2_1/NestedICNotInDesigner.json";
 
 
 describe("DigitalVersionMigrator", () => {
@@ -822,6 +824,66 @@ describe("DigitalVersionMigrator", () => {
             expect(icOutputBottom.targetPos.y).toBeLessThan(icInstance.bounds.bottom);
             expect(icInputLeft.targetPos.x).toBeLessThan(icInstance.bounds.left);
             expect(icOutputRight.targetPos.x).toBeGreaterThan(icInstance.bounds.right);
+        });
+        test("Flip Flop in IC", () => {
+            // Need to make sure that FlipFlop state transfers over as initial IC state
+            const [circuit, _, { Place, Connect, TurnOn, TurnOff }] = CreateTestCircuit();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(flipFlopInICCircuit));
+            expect(warnings).toHaveLength(0);
+
+            circuit.loadSchema(schema);
+
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(1);
+
+            const icInstance = comps[0];
+            expect(icInstance.kind).toBe(ics[0].id);
+
+            const [S, CLK, R, led] = Place("Switch", "Switch", "Switch", "LED");
+            Connect(S, icInstance.inputs[0]);
+            Connect(CLK, icInstance.inputs[1]);
+            Connect(R, icInstance.inputs[2]);
+            Connect(icInstance, led);
+
+            expect(led).toBeOn();
+            TurnOn(CLK);
+            TurnOff(CLK);
+            expect(led).toBeOn();
+        });
+    });
+
+    describe("From version 2.1", () => {
+        test("Nested IC Not in Designer", () => {
+            const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
+            const { schema, warnings } = VersionMigrator(JSON.stringify(nestedICNotInDesignerCircuit));
+            expect(warnings).toHaveLength(0);
+
+            circuit.loadSchema(schema);
+
+            const comps = circuit.getComponents();
+            expect(comps).toHaveLength(1);
+
+            const ics = circuit.getICs();
+            expect(ics).toHaveLength(2);
+
+            const outerIC = ics.find((ic) => ic.name === "a2")!;
+            expect(outerIC).toBeDefined();
+
+            const icInstance = comps[0];
+            expect(icInstance.kind).toBe(outerIC.id);
+
+            const [sw1, sw2, led] = Place("Switch", "Switch", "LED");
+            Connect(sw1, icInstance.inputs[0]);
+            Connect(sw2, icInstance.inputs[1]);
+            Connect(icInstance, led);
+
+            expect(led).toBeOff();
+            TurnOn(sw1);
+            TurnOn(sw2);
+            expect(led).toBeOn();
         });
     });
 });
