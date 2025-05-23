@@ -29,10 +29,15 @@ import {MapObj} from "shared/api/circuit/utils/Functions";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 
 
+enum TestKinds {
+    IC, Port, Node, Comp, Pin, Wire,
+}
+
+
 export class TestComponentInfo extends BaseComponentConfigurationInfo {
     protected override getPortInfo(_p: PortConfig, _group: string, _i: number): Pick<Schema.Port, "kind" | "props"> {
         return {
-            kind:  "TestPort",
+            kind:  TestKinds.Port,
             props: {},
         };
     }
@@ -52,13 +57,13 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
     public constructor(portConfigs: PortConfig[]) {
         super(
             [
-                new TestComponentInfo("TestComp", {}, [""], portConfigs, false),
-                new TestComponentInfo("TestNode", {}, [""], portConfigs, true),
+                new TestComponentInfo(TestKinds.Comp, {}, [""], portConfigs, false),
+                new TestComponentInfo(TestKinds.Node, {}, [""], portConfigs, true),
 
-                new TestComponentInfo("Pin", {}, [""], portConfigs, false),
+                new TestComponentInfo(TestKinds.Pin, {}, [""], portConfigs, false),
             ],
-            [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
-            [new BaseObjInfo("Port", "TestPort", {})],
+            [new BaseObjInfo("Wire", TestKinds.Wire, { "color": "string" })],
+            [new BaseObjInfo("Port", TestKinds.Port, {})],
         );
     }
 
@@ -69,7 +74,7 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
         }), {});
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
-        this.ics.set(ic.metadata.id, new TestComponentInfo(ic.metadata.id, {}, [""], [portConfig], false));
+        this.ics.set(ic.metadata.id, new TestComponentInfo(TestKinds.IC, {}, [""], [portConfig], false));
     }
 
     public override deleteIC(ic: Schema.IntegratedCircuit): void {
@@ -106,8 +111,8 @@ export class TestComponentAssembler extends ComponentAssembler {
 export class TestComponentImpl extends ComponentImpl<CircuitTypes> {}
 
 export class TestWireImpl extends WireImpl<CircuitTypes> {
-    protected override getNodeKind(): string {
-        return "TestNode";
+    protected override getNodeKind(): number {
+        return TestKinds.Node;
     }
 
     protected override connectNode(node: Node, p1: Port, p2: Port) {
@@ -121,8 +126,8 @@ export class TestWireImpl extends WireImpl<CircuitTypes> {
 
 
 export class TestPortImpl extends PortImpl<CircuitTypes> {
-    protected override getWireKind(_p1: GUID, _p2: GUID): string {
-        return "TestWire";
+    protected override getWireKind(_p1: GUID, _p2: GUID): number {
+        return TestKinds.Wire;
     }
 }
 
@@ -134,6 +139,18 @@ export interface TestCircuitHelpers {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     GetPort(c: Component): Port;
 }
+
+const TestKindsToStr: Record<TestKinds, string> = {
+    [TestKinds.IC]:   "IC",
+    [TestKinds.Port]: "TestPort",
+    [TestKinds.Node]: "TestNode",
+    [TestKinds.Comp]: "TestComp",
+    [TestKinds.Pin]:  "Pin",
+    [TestKinds.Wire]: "TestWire",
+};
+
+const StrToTestKinds: Record<string, TestKinds> =
+    Object.fromEntries(Object.entries(TestKindsToStr).map(([key, val]) => [val, parseInt(key) as TestKinds]));
 
 export function CreateTestCircuit(
     additionalPortConfigs: PortConfig[] = []
@@ -147,12 +164,12 @@ export function CreateTestCircuit(
 
     const renderOptions = new DefaultRenderOptions();
     const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
-        "IC":       new ICComponentAssembler(params),
-        "TestWire": new WireAssembler(params),
-        "TestComp": new TestComponentAssembler(params),
-        "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+        [TestKinds.IC]:   new ICComponentAssembler(params),
+        [TestKinds.Wire]: new WireAssembler(params),
+        [TestKinds.Comp]: new TestComponentAssembler(params),
+        [TestKinds.Node]: new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
 
-        "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+        [TestKinds.Pin]: new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
     }));
 
     const state: CircuitState<CircuitTypes> = {
@@ -172,6 +189,12 @@ export function CreateTestCircuit(
         },
         constructComponentInfo(kind) {
             return new ComponentInfoImpl(state, kind);
+        },
+
+        kinds: {
+            defaultICKind: TestKinds.IC,
+            asString:      (kind) => TestKindsToStr[kind as TestKinds] ?? "Unknown",
+            fromString:    (str)  => StrToTestKinds[str] ?? -1,
         },
     };
 
