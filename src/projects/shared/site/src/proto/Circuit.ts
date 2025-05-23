@@ -18,7 +18,7 @@ export interface Prop {
 
 export interface Component {
   id: Uint8Array;
-  kind: string;
+  kind: number;
   icId?: Uint8Array | undefined;
   props: { [key: string]: Prop };
 }
@@ -30,7 +30,7 @@ export interface Component_PropsEntry {
 
 export interface Wire {
   id: Uint8Array;
-  kind: string;
+  kind: number;
   props: { [key: string]: Prop };
   p1: Uint8Array;
   p2: Uint8Array;
@@ -43,7 +43,7 @@ export interface Wire_PropsEntry {
 
 export interface Port {
   id: Uint8Array;
-  kind: string;
+  kind: number;
   props: { [key: string]: Prop };
   parent: Uint8Array;
   group: string;
@@ -211,7 +211,7 @@ export const Prop: MessageFns<Prop> = {
 };
 
 function createBaseComponent(): Component {
-  return { id: new Uint8Array(0), kind: "", icId: undefined, props: {} };
+  return { id: new Uint8Array(0), kind: 0, icId: undefined, props: {} };
 }
 
 export const Component: MessageFns<Component> = {
@@ -219,8 +219,8 @@ export const Component: MessageFns<Component> = {
     if (message.id.length !== 0) {
       writer.uint32(10).bytes(message.id);
     }
-    if (message.kind !== "") {
-      writer.uint32(18).string(message.kind);
+    if (message.kind !== 0) {
+      writer.uint32(16).int32(message.kind);
     }
     if (message.icId !== undefined) {
       writer.uint32(26).bytes(message.icId);
@@ -247,11 +247,11 @@ export const Component: MessageFns<Component> = {
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.kind = reader.string();
+          message.kind = reader.int32();
           continue;
         }
         case 3: {
@@ -285,7 +285,7 @@ export const Component: MessageFns<Component> = {
   fromJSON(object: any): Component {
     return {
       id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
+      kind: isSet(object.kind) ? globalThis.Number(object.kind) : 0,
       icId: isSet(object.icId) ? bytesFromBase64(object.icId) : undefined,
       props: isObject(object.props)
         ? Object.entries(object.props).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
@@ -301,8 +301,8 @@ export const Component: MessageFns<Component> = {
     if (message.id.length !== 0) {
       obj.id = base64FromBytes(message.id);
     }
-    if (message.kind !== "") {
-      obj.kind = message.kind;
+    if (message.kind !== 0) {
+      obj.kind = Math.round(message.kind);
     }
     if (message.icId !== undefined) {
       obj.icId = base64FromBytes(message.icId);
@@ -325,7 +325,7 @@ export const Component: MessageFns<Component> = {
   fromPartial<I extends Exact<DeepPartial<Component>, I>>(object: I): Component {
     const message = createBaseComponent();
     message.id = object.id ?? new Uint8Array(0);
-    message.kind = object.kind ?? "";
+    message.kind = object.kind ?? 0;
     message.icId = object.icId ?? undefined;
     message.props = Object.entries(object.props ?? {}).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
       if (value !== undefined) {
@@ -414,7 +414,7 @@ export const Component_PropsEntry: MessageFns<Component_PropsEntry> = {
 };
 
 function createBaseWire(): Wire {
-  return { id: new Uint8Array(0), kind: "", props: {}, p1: new Uint8Array(0), p2: new Uint8Array(0) };
+  return { id: new Uint8Array(0), kind: 0, props: {}, p1: new Uint8Array(0), p2: new Uint8Array(0) };
 }
 
 export const Wire: MessageFns<Wire> = {
@@ -422,8 +422,8 @@ export const Wire: MessageFns<Wire> = {
     if (message.id.length !== 0) {
       writer.uint32(10).bytes(message.id);
     }
-    if (message.kind !== "") {
-      writer.uint32(18).string(message.kind);
+    if (message.kind !== 0) {
+      writer.uint32(16).int32(message.kind);
     }
     Object.entries(message.props).forEach(([key, value]) => {
       Wire_PropsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
@@ -453,11 +453,11 @@ export const Wire: MessageFns<Wire> = {
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.kind = reader.string();
+          message.kind = reader.int32();
           continue;
         }
         case 3: {
@@ -499,7 +499,7 @@ export const Wire: MessageFns<Wire> = {
   fromJSON(object: any): Wire {
     return {
       id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
+      kind: isSet(object.kind) ? globalThis.Number(object.kind) : 0,
       props: isObject(object.props)
         ? Object.entries(object.props).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
           acc[key] = Prop.fromJSON(value);
@@ -516,8 +516,8 @@ export const Wire: MessageFns<Wire> = {
     if (message.id.length !== 0) {
       obj.id = base64FromBytes(message.id);
     }
-    if (message.kind !== "") {
-      obj.kind = message.kind;
+    if (message.kind !== 0) {
+      obj.kind = Math.round(message.kind);
     }
     if (message.props) {
       const entries = Object.entries(message.props);
@@ -543,7 +543,7 @@ export const Wire: MessageFns<Wire> = {
   fromPartial<I extends Exact<DeepPartial<Wire>, I>>(object: I): Wire {
     const message = createBaseWire();
     message.id = object.id ?? new Uint8Array(0);
-    message.kind = object.kind ?? "";
+    message.kind = object.kind ?? 0;
     message.props = Object.entries(object.props ?? {}).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
       if (value !== undefined) {
         acc[key] = Prop.fromPartial(value);
@@ -633,7 +633,7 @@ export const Wire_PropsEntry: MessageFns<Wire_PropsEntry> = {
 };
 
 function createBasePort(): Port {
-  return { id: new Uint8Array(0), kind: "", props: {}, parent: new Uint8Array(0), group: "", index: 0 };
+  return { id: new Uint8Array(0), kind: 0, props: {}, parent: new Uint8Array(0), group: "", index: 0 };
 }
 
 export const Port: MessageFns<Port> = {
@@ -641,8 +641,8 @@ export const Port: MessageFns<Port> = {
     if (message.id.length !== 0) {
       writer.uint32(10).bytes(message.id);
     }
-    if (message.kind !== "") {
-      writer.uint32(18).string(message.kind);
+    if (message.kind !== 0) {
+      writer.uint32(16).int32(message.kind);
     }
     Object.entries(message.props).forEach(([key, value]) => {
       Port_PropsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
@@ -675,11 +675,11 @@ export const Port: MessageFns<Port> = {
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.kind = reader.string();
+          message.kind = reader.int32();
           continue;
         }
         case 3: {
@@ -729,7 +729,7 @@ export const Port: MessageFns<Port> = {
   fromJSON(object: any): Port {
     return {
       id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
+      kind: isSet(object.kind) ? globalThis.Number(object.kind) : 0,
       props: isObject(object.props)
         ? Object.entries(object.props).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
           acc[key] = Prop.fromJSON(value);
@@ -747,8 +747,8 @@ export const Port: MessageFns<Port> = {
     if (message.id.length !== 0) {
       obj.id = base64FromBytes(message.id);
     }
-    if (message.kind !== "") {
-      obj.kind = message.kind;
+    if (message.kind !== 0) {
+      obj.kind = Math.round(message.kind);
     }
     if (message.props) {
       const entries = Object.entries(message.props);
@@ -777,7 +777,7 @@ export const Port: MessageFns<Port> = {
   fromPartial<I extends Exact<DeepPartial<Port>, I>>(object: I): Port {
     const message = createBasePort();
     message.id = object.id ?? new Uint8Array(0);
-    message.kind = object.kind ?? "";
+    message.kind = object.kind ?? 0;
     message.props = Object.entries(object.props ?? {}).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
       if (value !== undefined) {
         acc[key] = Prop.fromPartial(value);

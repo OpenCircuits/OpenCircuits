@@ -6,6 +6,7 @@ import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalPort} from "../DigitalPort";
 
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
+import {DigitalKinds} from "../../internal/DigitalComponents";
 
 
 export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPort {
@@ -17,8 +18,8 @@ export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPo
         this.state = state;
     }
 
-    protected override getWireKind(_p1: GUID, _p2: GUID): string {
-        return "DigitalWire";
+    protected override getWireKind(_p1: GUID, _p2: GUID): number {
+        return DigitalKinds.Wire;
     }
 
     public get isInputPort(): boolean {

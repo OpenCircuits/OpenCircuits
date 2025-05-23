@@ -34,7 +34,7 @@ export type PropagatorFunc = (
 }
 
 // Kind : Propagator
-export type PropagatorsMap = Record<string, PropagatorInfo>;
+export type PropagatorsMap = Record<number, PropagatorInfo>;
 
 
 type DigitalSimEvent = {

@@ -31,9 +31,9 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     public override get kind(): string {
         const comp = this.getComponent();
         // API-wise, IC kinds are represented as the icId.
-        if (comp.kind === "IC")
-            return comp.icId!;
-        return comp.kind;
+        if (comp.icId)
+            return comp.icId;
+        return this.state.kinds.asString(comp.kind);
     }
 
     public set x(val: number) {

@@ -185,8 +185,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         // API-wise, clients specify IC-instance-kinds with as the IC ID,
         // but internally IC-kinds are just "IC", and the icId is stored separately.
         const info = this.state.internal.getICs().has(kind)
-                ? this.state.internal.getComponentInfo("IC", kind)
-                : this.state.internal.getComponentInfo(kind);
+                ? this.state.internal.getComponentInfo(this.state.kinds.defaultICKind, kind)
+                : this.state.internal.getComponentInfo(this.state.kinds.fromString(kind));
         if (!info.ok)
             return undefined;
         return this.state.constructComponentInfo(kind);
@@ -216,8 +216,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             const props = { x: pt.x, y: pt.y, zIndex: this.state.assembler.highestZ + 1 };
             // If user is trying to make an IC, need to construct component differently
             if (this.internal.getICs().has(kind))
-                return this.internal.placeComponent("IC", props, kind);
-            return this.internal.placeComponent(kind, props)
+                return this.internal.placeComponent(this.state.kinds.defaultICKind, props, kind);
+            return this.internal.placeComponent(this.state.kinds.fromString(kind), props)
         })().unwrap();
 
         // Set its config to place ports

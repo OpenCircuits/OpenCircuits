@@ -15,10 +15,9 @@ export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schem
     readonly metadata: Readonly<M>;
     readonly camera: Readonly<Schema.Camera>;
 
-    getComponentInfo(kind: "IC", icId: GUID): Result<ComponentConfigurationInfo>;
-    getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
-    getWireInfo(kind: string): Result<ObjInfo>;
-    getPortInfo(kind: string): Result<ObjInfo>;
+    getComponentInfo(kind: number, icId?: GUID): Result<ComponentConfigurationInfo>;
+    getWireInfo(kind: number): Result<ObjInfo>;
+    getPortInfo(kind: number): Result<ObjInfo>;
 
     getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]>;
 
@@ -168,7 +167,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
                     return ErrE(`Port ${p1.id} is not available for connection!`);
                 return info.checkPortConnectivity(p1, p2, curPorts);
             })
-            .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`));
+            .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} creates an illegal configuration.`));
     }
 
     public getPortPortMapChecked(id: GUID): Set<GUID> {
@@ -204,23 +203,21 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         return this.metadata.id;
     }
 
-    public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
+    public getComponentInfo(kind: number, icId?: GUID): Result<ComponentConfigurationInfo> {
         return WrapResOrE(this.objInfo.getComponent(kind, icId), `Failed to get component info for kind: '${kind}'!`);
     }
-    public getWireInfo(kind: string): Result<ObjInfo> {
+    public getWireInfo(kind: number): Result<ObjInfo> {
         return WrapResOrE(this.objInfo.getWire(kind), `Failed to get wire info for kind '${kind}`!);
     }
-    public getPortInfo(kind: string): Result<ObjInfo> {
+    public getPortInfo(kind: number): Result<ObjInfo> {
         return WrapResOrE(this.objInfo.getPort(kind), `Failed to get port info for kind '${kind}`!);
     }
 
     public getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]> {
         return this.getCompByID(id)
-            .andThen((comp) => (
-                comp.kind === "IC"
-                ? this.getComponentInfo("IC", comp.icId!)
-                : this.getComponentInfo(comp.kind)
-            ).map((info) => [comp, info]));
+            .andThen((comp) =>
+                this.getComponentInfo(comp.kind, comp.icId)
+                    .map((info) => [comp, info]));
     }
 
     private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {

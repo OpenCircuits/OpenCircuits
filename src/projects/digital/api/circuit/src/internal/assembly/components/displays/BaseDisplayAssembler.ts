@@ -12,7 +12,6 @@ import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssem
 
 
 export interface BaseDisplayAssemblerParams extends ComponentExtraAssemblerParams {
-    kind: string;
     spacing?: number;
     font?: Record<string, number[][]>;
 }
@@ -23,7 +22,7 @@ export class BaseDisplayAssembler extends ComponentAssembler {
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
-        { kind, spacing, font, ...otherParams }: BaseDisplayAssemblerParams
+        { spacing, font, ...otherParams }: BaseDisplayAssemblerParams
     ) {
         super(params, {
                 "inputs": (comp, index, total) => ({

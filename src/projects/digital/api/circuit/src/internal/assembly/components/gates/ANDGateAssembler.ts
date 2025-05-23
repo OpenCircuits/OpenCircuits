@@ -8,7 +8,6 @@ import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssem
 export class ANDGateAssembler extends GateAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim, not: boolean) {
         super(params, sim, {
-            kind: not ? "NANDGate" : "ANDGate",
             size: V(1, 1),
             svg:  "and.svg",
             not,

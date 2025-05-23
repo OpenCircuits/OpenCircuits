@@ -21,6 +21,7 @@ import {Cleanups} from "shared/api/circuit/utils/types";
 import {CloseICViewer} from "digital/site/state/ICViewer";
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
+import {DigitalKinds} from "digital/api/circuit/internal/DigitalComponents";
 
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
@@ -123,10 +124,10 @@ export const ICViewer = () => {
             throw new Error(`ICViewer: Failed to find ic with id ${icInstance.kind}!`);
         const schema = ic.toSchema();
         for (const obj of schema.objects) {
-            if (obj.kind === "InputPin")
-                obj.kind = "Switch";
-            if (obj.kind === "OutputPin")
-                obj.kind = "LED";
+            if (obj.kind === DigitalKinds.InputPin)
+                obj.kind = DigitalKinds.Switch;
+            if (obj.kind === DigitalKinds.OutputPin)
+                obj.kind = DigitalKinds.LED;
         }
         circuit.loadSchema({
             metadata: schema.metadata,

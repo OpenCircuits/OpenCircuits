@@ -29,6 +29,7 @@ import {CloseICDesigner}                        from "digital/site/state/ICDesig
 import {CalculateICDisplay}                     from "digital/site/utils/CircuitUtils";
 
 import "./index.scss";
+import {DigitalKinds} from "digital/api/circuit/internal/DigitalComponents";
 
 
 // TODO[master] - move this to shared
@@ -71,10 +72,10 @@ export const ICDesigner = ({ }: Props) => {
         //  Also maybe enforce that there's no propagation happening in the circuit
         //  you're trying to create?
         for (const obj of schema.objects) {
-            if (obj.kind === "Switch" || obj.kind === "Button" || obj.kind === "Clock")
-                obj.kind = "InputPin";
-            if (obj.kind === "LED")
-                obj.kind = "OutputPin";
+            if (obj.kind === DigitalKinds.Switch || obj.kind === DigitalKinds.Button || obj.kind === DigitalKinds.Clock)
+                obj.kind = DigitalKinds.InputPin;
+            if (obj.kind === DigitalKinds.LED)
+                obj.kind = DigitalKinds.OutputPin;
             // Remove isSelected
             delete obj.props["isSelected"];
         }

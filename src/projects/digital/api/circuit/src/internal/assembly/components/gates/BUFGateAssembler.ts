@@ -9,7 +9,6 @@ export class BUFGateAssembler extends GateAssembler {
         params: AssemblerParams, sim: DigitalSim, not: boolean
     ) {
         super(params, sim, {
-            kind: not ? "NOTGate" : "BUFGate",
             size: V(1, 1),
             svg:  "buf.svg",
             not,

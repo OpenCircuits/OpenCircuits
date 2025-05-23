@@ -23,7 +23,7 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
             .unwrap();
     }
 
-    protected abstract getWireKind(p1: GUID, p2: GUID): string;
+    protected abstract getWireKind(p1: GUID, p2: GUID): number;
 
     public get parent(): T["Component"] {
         return this.state.constructComponent(this.getPort().parent);
@@ -67,13 +67,13 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
     public canConnectTo(other: T["Port"]): boolean {
         const p1 = this.getPort();
-        const [_, p1Info] = this.state.internal.getComponentAndInfoById(p1.parent).unwrap();
+        const [_c1, p1Info] = this.state.internal.getComponentAndInfoById(p1.parent).unwrap();
         const p1Connections = this.state.internal.getPortsForPort(p1.id)
             .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
             .unwrap();
 
         const p2 = this.state.internal.getPortByID(other.id).unwrap();
-        const [__, p2Info] = this.state.internal.getComponentAndInfoById(p2.parent).unwrap();
+        const [_c2, p2Info] = this.state.internal.getComponentAndInfoById(p2.parent).unwrap();
         const p2Connections = this.state.internal.getPortsForPort(p2.id)
             .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
             .unwrap();

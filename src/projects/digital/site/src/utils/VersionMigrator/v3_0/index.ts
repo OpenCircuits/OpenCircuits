@@ -13,6 +13,7 @@ import {Get} from "shared/api/circuit/utils/Reducers";
 import {MapObj} from "shared/api/circuit/utils/Functions";
 import * as V3_0Schema from "./Schema";
 import {Decompress, Entry, MakeEntry} from "./SerialeazyUtils";
+import {DigitalKinds} from "digital/api/circuit/internal/DigitalComponents";
 
 
 enum Warnings {
@@ -77,6 +78,51 @@ function ConvertWireProps(wire: Entry<V3_0Schema.DigitalWire>, i: number): Schem
     return props;
 }
 
+const OldTypeToDigitalKindMap: Record<string, DigitalKinds> = {
+    "IC":   DigitalKinds.IC,
+    "DigitalWire": DigitalKinds.Wire,
+    "DigitalPort": DigitalKinds.Port,
+    "DigitalNode": DigitalKinds.Node,
+
+    "Button":         DigitalKinds.Button,
+    "Switch":         DigitalKinds.Switch,
+    "ConstantLow":    DigitalKinds.ConstantLow,
+    "ConstantHigh":   DigitalKinds.ConstantHigh,
+    "ConstantNumber": DigitalKinds.ConstantNumber,
+    "Clock":          DigitalKinds.Clock,
+
+    "LED":            DigitalKinds.LED,
+    "SegmentDisplay": DigitalKinds.SegmentDisplay,
+    "BCDDisplay":     DigitalKinds.BCDDisplay,
+    "ASCIIDisplay":   DigitalKinds.ASCIIDisplay,
+    "Oscilloscope":   DigitalKinds.Oscilloscope,
+
+    "BUFGate":  DigitalKinds.BUFGate,
+    "NOTGate":  DigitalKinds.NOTGate,
+    "ANDGate":  DigitalKinds.ANDGate,
+    "NANDGate": DigitalKinds.NANDGate,
+    "ORGate":   DigitalKinds.ORGate,
+    "NORGate":  DigitalKinds.NORGate,
+    "XORGate":  DigitalKinds.XORGate,
+    "XNORGate": DigitalKinds.XNORGate,
+
+    "SRFlipFlop": DigitalKinds.SRFlipFlop,
+    "JKFlipFlop": DigitalKinds.JKFlipFlop,
+    "DFlipFlop":  DigitalKinds.DFlipFlop,
+    "TFlipFlop":  DigitalKinds.TFlipFlop,
+
+    "DLatch":  DigitalKinds.DLatch,
+    "SRLatch": DigitalKinds.SRLatch,
+
+    "Multiplexer":   DigitalKinds.Multiplexer,
+    "Demultiplexer": DigitalKinds.Demultiplexer,
+
+    "Encoder":    DigitalKinds.Encoder,
+    "Decoder":    DigitalKinds.Decoder,
+    "Comparator": DigitalKinds.Comparator,
+    "Label":      DigitalKinds.Label,
+};
+
 function ConvertComponent(
     comp: Entry<V3_0Schema.DigitalComponent>,
     i: number,
@@ -84,7 +130,7 @@ function ConvertComponent(
 ): [Schema.Component, Entry<V3_0Schema.DigitalComponent>] {
     return [{
         baseKind: "Component",
-        kind:     comp.type,
+        kind:     OldTypeToDigitalKindMap[comp.type],
         id:       uuid(),
         icId:     (comp.type === "IC" ? refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref] : undefined),
         props:    ConvertCompProps(comp, i),
@@ -99,7 +145,7 @@ function ConvertPort(
 ): [Schema.Port, Entry<V3_0Schema.DigitalPort>] {
     return [{
         baseKind: "Port",
-        kind:     "DigitalPort",
+        kind:     DigitalKinds.Port,
         id:       uuid(),
         props:    { "name": port.name },
 
@@ -114,7 +160,7 @@ function ConvertWire(
 ): [Schema.Wire, Entry<V3_0Schema.DigitalWire>] {
     return [{
         baseKind: "Wire",
-        kind:     "DigitalWire",
+        kind:     DigitalKinds.Wire,
         id:       uuid(),
         props:    ConvertWireProps(wire, i),
 
@@ -254,14 +300,14 @@ function ConvertIC(
 
     for (const [c, _] of components) {
         // Replace all Switch/Buttons with InputPins and LEDs with OutputPins
-        if (c.kind === "Switch" || c.kind === "Button")
-            c.kind = "InputPin";
-        if (c.kind === "LED")
-            c.kind = "OutputPin";
+        if (c.kind === DigitalKinds.Switch || c.kind === DigitalKinds.Button)
+            c.kind = DigitalKinds.InputPin;
+        if (c.kind === DigitalKinds.LED)
+            c.kind = DigitalKinds.OutputPin;
 
         // Clocks in ICs are no longer supported, change to a switch and add to warnings.
-        if (c.kind === "Clock") {
-            c.kind = "Switch";
+        if (c.kind === DigitalKinds.Clock) {
+            c.kind = DigitalKinds.Switch;
             warnings.add(Warnings.ClockInIC);
         }
     }
@@ -313,7 +359,7 @@ function ConvertSimState(
         .filter(([_, state]) => (state.length > 0)));
 
     const icStates = Object.fromEntries(components
-        .filter(([comp, _]) => (comp.kind === "IC"))
+        .filter(([comp, _]) => (!!comp.icId))
         .map(([comp, entry]) => {
             const collection = entry["collection"] as Entry<V3_0Schema.DigitalObjectSet>;
 

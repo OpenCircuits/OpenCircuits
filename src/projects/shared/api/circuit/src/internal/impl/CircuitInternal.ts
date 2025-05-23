@@ -145,14 +145,10 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         return this.doc.getCircuitInfo().getPortsForPort(id);
     }
 
-    public getComponentInfo(kind: "IC", icId: GUID): Result<ComponentConfigurationInfo>;
-    public getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
-    public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
-        if (kind === "IC" && icId)
-            return this.doc.getCircuitInfo().getComponentInfo(kind, icId);
-        return this.doc.getCircuitInfo().getComponentInfo(kind);
+    public getComponentInfo(kind: number, icId?: GUID): Result<ComponentConfigurationInfo> {
+        return this.doc.getCircuitInfo().getComponentInfo(kind, icId);
     }
-    public getComponentAndInfoById(id: string) {
+    public getComponentAndInfoById(id: GUID) {
         return this.doc.getCircuitInfo().getComponentAndInfoByID(id);
     }
 
@@ -304,16 +300,14 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
-    public placeComponent(kind: string, props: Schema.Component["props"], icId?: GUID): Result<GUID> {
+    public placeComponent(kind: number, props: Schema.Component["props"], icId?: GUID): Result<GUID> {
         const id = Schema.uuid();
         return this.doc.addTransactionOp({
                 kind:     "PlaceComponentOp",
                 inverted: false,
                 c:        {
                     baseKind: "Component",
-                    kind:     kind,
-                    id:       id,
-                    icId,
+                    kind, id, icId,
                     props:    { ...props }, // Copy non-trivial object
                 },
             }).map(() => id)
@@ -341,7 +335,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
-    public connectWire(kind: string, p1: GUID, p2: GUID, props: Schema.Wire["props"] = {}): Result<GUID> {
+    public connectWire(kind: number, p1: GUID, p2: GUID, props: Schema.Wire["props"] = {}): Result<GUID> {
         const id = Schema.uuid();
         return this.doc
             .addTransactionOp({
