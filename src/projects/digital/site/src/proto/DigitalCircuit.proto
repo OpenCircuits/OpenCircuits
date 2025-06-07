@@ -14,7 +14,8 @@ message DigitalSimState {
         repeated Signal state = 1;
     }
 
-    map<string, Signal> signals = 1;
+    // Array of signals corresponding to the circuit.ports
+    repeated Signal signals = 1;
     map<string, State> states = 2;
     map<string, DigitalSimState> icStates = 3;
 }
@@ -24,6 +25,7 @@ message DigitalCircuit {
 
     float propagationTime = 2;
 
+    // Array of IC states corresponding to circuit.ics
     repeated DigitalSimState icInitialSimStates = 3;
     DigitalSimState simState = 4;
 }
