@@ -1,6 +1,7 @@
 import {Result} from "shared/api/circuit/utils/Result";
 import crypto   from "node:crypto";
 import {Component, Obj} from "../../src/public";
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
 // Define crypto for Jest for uuid generation
@@ -17,8 +18,8 @@ declare global {
             toIncludeError(message: string): CustomMatcherResult;
             toBeObj(obj: Obj): CustomMatcherResult;
             toEqualObj(obj: Obj): CustomMatcherResult;
-            toContainObjs(objs: Obj[]): CustomMatcherResult;
-            toContainObjsExact(objs: Obj[]): CustomMatcherResult;
+            toContainObjs(objs: Obj[] | ObjContainer): CustomMatcherResult;
+            toContainObjsExact(objs: Obj[] | ObjContainer): CustomMatcherResult;
             toBeConnectedTo(otherObj: Component): CustomMatcherResult;
             // toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
         }
@@ -166,17 +167,19 @@ expect.extend({
         }
     },
 
-    toContainObjs(received: Obj[], objs: Obj[]) {
-        const receivedIds = new Set(received.map((o) => o.id));
+    toContainObjs(received: Obj[] | ObjContainer, objs: Obj[]) {
+        const receivedObjs = (Array.isArray(received) ? received : received.all);
+        const receivedIds = new Set(receivedObjs.map((o) => o.id));
         const objs2 = objs.filter((o) => !receivedIds.has(o.id));
         return {
-            message: () => `missing ${FormatObjs(objs2)} from ${FormatObjs(received)}`,
+            message: () => `missing ${FormatObjs(objs2)} from ${FormatObjs(receivedObjs)}`,
             pass:    objs2.length === 0,
         }
     },
 
-    toContainObjsExact(received: Obj[], objs: Obj[]) {
-        const receivedIds = new Set(received.map((o) => o.id));
+    toContainObjsExact(received: Obj[] | ObjContainer, objs: Obj[]) {
+        const receivedObjs = (Array.isArray(received) ? received : received.all);
+        const receivedIds = new Set(receivedObjs.map((o) => o.id));
         const objsIds = new Set(objs.map((o) => o.id));
         const receivedDiff = SetDifference(receivedIds, objsIds);
         if (receivedDiff.size > 0) {
@@ -190,7 +193,7 @@ expect.extend({
         if (objsDiff.size > 0) {
             const objsDiffsObjs = objs.filter((o) => objsDiff.has(o.id));
             return {
-                message: () => `expected ${FormatObjs(received)} to have ${FormatObjs(objsDiffsObjs)}`,
+                message: () => `expected ${FormatObjs(receivedObjs)} to have ${FormatObjs(objsDiffsObjs)}`,
                 pass:    false,
             }
         }
