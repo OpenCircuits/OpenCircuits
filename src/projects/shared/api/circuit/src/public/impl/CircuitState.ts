@@ -57,10 +57,4 @@ export interface CircuitState<T extends CircuitTypes> {
     constructPort(id: string): T["Port"];
     constructIC(id: string): T["IC"];
     constructComponentInfo(kind: string): T["ComponentInfo"];
-
-    kinds: {
-        defaultICKind: number;
-        asString(kind: number): string;
-        fromString(str: string): number;
-    };
 }

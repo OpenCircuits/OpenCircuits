@@ -24,5 +24,7 @@
         "./src/index.tsx",
         "./tests/utils/VersionMigrator.test.ts",
         "./tests/containers/ExprToCircuitPopup.test.tsx",
+        "./src/utils/DigitalVersionConflictResolver.ts",
+        "tests/utils/VersionMigrator.ts"
     ],
 }

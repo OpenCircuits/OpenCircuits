@@ -79,12 +79,12 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
 
     protected readonly dirtyComponentOrder: Set<GUID>;
 
-    protected readonly assemblers: Record<number, Assembler>;
+    protected readonly assemblers: Record<string, Assembler>;
 
     public constructor(
         circuit: CircuitInternal,
         options: RenderOptions,
-        assemblers: (params: AssemblerParams) => Record<number, Assembler>,
+        assemblers: (params: AssemblerParams) => Record<string, Assembler>,
     ) {
         super();
 
@@ -430,7 +430,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         return this.cache;
     }
 
-    protected getAssemblerFor(kind: number): Assembler {
+    protected getAssemblerFor(kind: string): Assembler {
         if (!(kind in this.assemblers))
             throw new Error(`CircuitAssembler: Failed to get assembler for kind ${kind}! Unmapped!`);
         return this.assemblers[kind];

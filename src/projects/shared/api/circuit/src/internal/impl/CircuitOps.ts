@@ -15,8 +15,8 @@ export interface PlaceComponentOp {
 export interface ReplaceComponentOp {
     kind: "ReplaceComponentOp";
     component: Schema.GUID;
-    oldKind: number;
-    newKind: number;
+    oldKind: string;
+    newKind: string;
 }
 
 export interface ConnectWireOp {
