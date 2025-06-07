@@ -4,7 +4,6 @@ import {BCDtoDecimal, DecimalToBCD} from "digital/api/circuit/utils/MathUtil";
 import {Signal}                     from "digital/api/circuit/schema/Signal";
 
 import {PropagatorInfo, PropagatorsMap} from "./DigitalSim";
-import {DigitalKinds} from "../DigitalComponents";
 
 
 type LocalPropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[], tickInfo?: { curTick: number, lastStateTick?: number }) => {
@@ -205,7 +204,7 @@ const TFlipFlop = MakeFlipFlopPropagator((signals, state, up) =>
 
 
 export const DigitalPropagators: PropagatorsMap = {
-    [DigitalKinds.InputPin]: {
+    "InputPin": {
         // TODO[] - simplify this at some point
         propagator: (comp, _info, state) => {
             // No propagation when not in an IC
@@ -233,7 +232,7 @@ export const DigitalPropagators: PropagatorsMap = {
             };
         },
     },
-    [DigitalKinds.OutputPin]: {
+    "OutputPin": {
         propagator: (comp, _info, state) => {
             // No propagation when not in an IC
             if (!state.isIC())
@@ -263,24 +262,24 @@ export const DigitalPropagators: PropagatorsMap = {
     },
 
     // Node
-    [DigitalKinds.Node]: BUFGate,  // Acts like a buffer
+    "DigitalNode": BUFGate,  // Acts like a buffer
 
     // Inputs
-    [DigitalKinds.Switch]: MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
+    "Switch": MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
         signal:    state[0],
         nextState: state,
     })),
-    [DigitalKinds.Button]: MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
+    "Button": MakeSingleOutputPropagator((_obj, _signals, state = [Signal.Off]) => ({
         signal:    state[0],
         nextState: state,
     })),
-    [DigitalKinds.ConstantLow]:    MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.Off),
-    [DigitalKinds.ConstantHigh]:   MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.On),
-    [DigitalKinds.ConstantNumber]: MakeLocalPropagator((obj, _signals, _state) => {
+    "ConstantLow":    MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.Off),
+    "ConstantHigh":   MakeStatelessSingleOutputPropagator((_obj, _signals, _state) => Signal.On),
+    "ConstantNumber": MakeLocalPropagator((obj, _signals, _state) => {
         const num = obj.props["inputNum"] as number ?? 0;
         return { outputs: { "outputs": DecimalToBCD(num, 4).map(Signal.fromBool) } };
     }, ["inputNum"]),
-    [DigitalKinds.Clock]: MakeLocalPropagator((obj, _signals, [curSignal] = [Signal.On], tickInfo) => {
+    "Clock": MakeLocalPropagator((obj, _signals, [curSignal] = [Signal.On], tickInfo) => {
         const { curTick, lastStateTick } = tickInfo!;
         const delay = (obj.props["delay"] as number) ?? 250;
         if ((curTick - (lastStateTick ?? curTick)) % delay !== 0)
@@ -293,11 +292,11 @@ export const DigitalPropagators: PropagatorsMap = {
     }, ["delay"]),
 
     // Outputs
-    [DigitalKinds.LED]:            MakeNoOutputPropagator(),
-    [DigitalKinds.SegmentDisplay]: MakeNoOutputPropagator(),
-    [DigitalKinds.BCDDisplay]:     MakeNoOutputPropagator(),
-    [DigitalKinds.ASCIIDisplay]:   MakeNoOutputPropagator(),
-    [DigitalKinds.Oscilloscope]:   MakeLocalPropagator((obj, signals, state = [], tickInfo) => {
+    "LED":            MakeNoOutputPropagator(),
+    "SegmentDisplay": MakeNoOutputPropagator(),
+    "BCDDisplay":     MakeNoOutputPropagator(),
+    "ASCIIDisplay":   MakeNoOutputPropagator(),
+    "Oscilloscope":   MakeLocalPropagator((obj, signals, state = [], tickInfo) => {
         const { curTick, lastStateTick } = tickInfo!;
         const maxSamples = (obj.props["samples"] as number) ?? 100;
         const delay = (obj.props["delay"] as number) ?? 50;
@@ -316,31 +315,24 @@ export const DigitalPropagators: PropagatorsMap = {
     }, []),
 
     // Gates
-    [DigitalKinds.BUFGate]:  BUFGate,
-    [DigitalKinds.NOTGate]:  NOTGate,
-    [DigitalKinds.ANDGate]:  ANDGate,
-    [DigitalKinds.NANDGate]: NANDGate,
-    [DigitalKinds.ORGate]:   ORGate,
-    [DigitalKinds.NORGate]:  NORGate,
-    [DigitalKinds.XORGate]:  XORGate,
-    [DigitalKinds.XNORGate]: XNORGate,
+    BUFGate, NOTGate,
+    ANDGate, NANDGate,
+    ORGate, NORGate,
+    XORGate, XNORGate,
 
     // FlipFlops
-    [DigitalKinds.SRFlipFlop]: SRFlipFlop,
-    [DigitalKinds.JKFlipFlop]: JKFlipFlop,
-    [DigitalKinds.DFlipFlop]:  DFlipFlop,
-    [DigitalKinds.TFlipFlop]:  TFlipFlop,
+    SRFlipFlop, JKFlipFlop,
+    DFlipFlop, TFlipFlop,
 
     // Latches
-    [DigitalKinds.SRLatch]: SRLatch,
-    [DigitalKinds.DLatch]:  DLatch,
+    DLatch, SRLatch,
 
     // Other
-    [DigitalKinds.Multiplexer]: MakeStatelessSingleOutputPropagator((_obj, signals, _state) => (
+    "Multiplexer": MakeStatelessSingleOutputPropagator((_obj, signals, _state) => (
         // TODO: Handle metastable
         signals["inputs"][BCDtoDecimal(signals["selects"].map(Signal.toBool))]
     )),
-    [DigitalKinds.Demultiplexer]: MakeLocalPropagator((_obj, signals, _state) => {
+    "Demultiplexer": MakeLocalPropagator((_obj, signals, _state) => {
         // TODO: Handle metastable
         const selects = signals["selects"].map(Signal.toBool);
         return { outputs: {
@@ -350,7 +342,7 @@ export const DigitalPropagators: PropagatorsMap = {
                 .with(BCDtoDecimal(selects), signals["inputs"][0]),
         } };
     }),
-    [DigitalKinds.Encoder]: MakeLocalPropagator((_obj, signals, _state) => {
+    "Encoder": MakeLocalPropagator((_obj, signals, _state) => {
         const inputs = signals["inputs"];
         const outputCount = Math.round(Math.log2(inputs.length));
 
@@ -366,7 +358,7 @@ export const DigitalPropagators: PropagatorsMap = {
             "outputs": DecimalToBCD(num, outputCount).map(Signal.fromBool),
         } };
     }),
-    [DigitalKinds.Decoder]: MakeLocalPropagator((_obj, signals, _state) => {
+    "Decoder": MakeLocalPropagator((_obj, signals, _state) => {
         // TODO: Handle metastable
         const inputs = signals["inputs"].map(Signal.toBool);
         return { outputs: {
@@ -376,7 +368,7 @@ export const DigitalPropagators: PropagatorsMap = {
                 .with(BCDtoDecimal(inputs), Signal.Off),
         } };
     }),
-    [DigitalKinds.Comparator]: MakeLocalPropagator((_obj, signals, _state) => {
+    "Comparator": MakeLocalPropagator((_obj, signals, _state) => {
         // TODO: Handle metastable
         const a = BCDtoDecimal(signals["inputsA"].map(Signal.toBool));
         const b = BCDtoDecimal(signals["inputsB"].map(Signal.toBool));
@@ -386,5 +378,5 @@ export const DigitalPropagators: PropagatorsMap = {
             "gt": [a > b   ? Signal.On : Signal.Off],
         } };
     }),
-    [DigitalKinds.Label]: MakeNoOutputPropagator(),
-} satisfies Record<Exclude<DigitalKinds, DigitalKinds.IC | DigitalKinds.Wire | DigitalKinds.Port>, PropagatorInfo>;
+    "Label": MakeNoOutputPropagator(),
+}

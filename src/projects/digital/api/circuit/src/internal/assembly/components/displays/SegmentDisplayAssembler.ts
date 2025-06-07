@@ -8,7 +8,7 @@ import {SegmentType, Segments} from "./SegmentDisplayConstants";
 
 export class SegmentDisplayAssembler extends BaseDisplayAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim) {
-        super(params, sim, { drawPortLineForGroups: ["inputs"] });
+        super(params, sim, { kind: "SegmentDisplay", drawPortLineForGroups: ["inputs"] });
     }
 
     protected override getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]> {

@@ -23,7 +23,7 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
             .unwrap();
     }
 
-    protected abstract getNodeKind(): number;
+    protected abstract getNodeKind(): string;
 
     // This method is necessary since how the nodes are configured is project-dependent, so wiring them
     //  needs to be handled on a per-project-basis

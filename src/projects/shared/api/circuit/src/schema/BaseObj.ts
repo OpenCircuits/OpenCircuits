@@ -3,7 +3,7 @@ import {Prop} from "./Prop";
 
 
 export interface BaseObj {
-    kind: number;
+    kind: string;
     id: GUID;
     props: Record<string, Prop> & {
         name?: string;

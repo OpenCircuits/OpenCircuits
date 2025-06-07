@@ -8,6 +8,7 @@ import {CircuitState, CircuitTypes} from "./CircuitState";
 import {ObjContainerImpl} from "./ObjContainer";
 
 import "shared/api/circuit/utils/Array";
+import {ObjContainer} from "../ObjContainer";
 
 
 export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<SelectionsEvent> implements Selections {

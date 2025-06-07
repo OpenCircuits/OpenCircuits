@@ -1,6 +1,6 @@
 import {V} from "Vector";
 
-import {CircuitInternal} from "shared/api/circuit/internal";
+import {CircuitInternal, GUID} from "shared/api/circuit/internal";
 
 import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
@@ -32,7 +32,6 @@ import {ComparatorAssembler} from "./components/ComparatorAssembler";
 import {LabelAssembler} from "./components/LabelAssembler";
 import {BaseDisplayAssembler} from "./components/displays/BaseDisplayAssembler";
 import {ASCIIFont, BCDFont} from "./components/displays/SegmentDisplayConstants";
-import {DigitalKinds} from "../DigitalComponents";
 
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
@@ -40,7 +39,7 @@ export class DigitalCircuitAssembler extends CircuitAssembler {
         circuit: CircuitInternal,
         options: RenderOptions,
         sim: DigitalSim,
-        assemblers: (params: AssemblerParams) => Record<number, Assembler>,
+        assemblers: (params: AssemblerParams) => Record<string, Assembler>,
     ) {
         super(circuit, options, assemblers);
 
@@ -77,60 +76,57 @@ export function MakeDigitalCircuitAssembler(
 ): CircuitAssembler {
     return new DigitalCircuitAssembler(circuit, options, sim, (params) => ({
         // Base types
-        [DigitalKinds.Wire]: new DigitalWireAssembler(params, sim),
-        [DigitalKinds.Node]: new NodeAssembler(params, {
+        "DigitalWire": new DigitalWireAssembler(params, sim),
+        "DigitalNode": new NodeAssembler(params, {
             "outputs": () => ({ origin: V(0, 0), target: V(0, 0), dir: V(+1, 0) }),
             "inputs":  () => ({ origin: V(0, 0), target: V(0, 0), dir: V(-1, 0) }),
         }),
-        [DigitalKinds.IC]: new ICComponentAssembler(params),
+        "IC": new ICComponentAssembler(params),
 
         // Inputs
-        [DigitalKinds.Switch]:         new SwitchAssembler(params, sim),
-        [DigitalKinds.Button]:         new ButtonAssembler(params, sim),
-        [DigitalKinds.Clock]:          new ClockAssembler(params, sim),
-        [DigitalKinds.ConstantHigh]:   new ConstantHighAssembler(params, sim),
-        [DigitalKinds.ConstantLow]:    new ConstantLowAssembler(params, sim),
-        [DigitalKinds.ConstantNumber]: new ConstantNumberAssembler(params, sim),
+        "Switch":         new SwitchAssembler(params, sim),
+        "Button":         new ButtonAssembler(params, sim),
+        "Clock":          new ClockAssembler(params, sim),
+        "ConstantHigh":   new ConstantHighAssembler(params, sim),
+        "ConstantLow":    new ConstantLowAssembler(params, sim),
+        "ConstantNumber": new ConstantNumberAssembler(params, sim),
 
         // Outputs
-        [DigitalKinds.LED]:            new LEDAssembler(params, sim),
-        [DigitalKinds.SegmentDisplay]: new SegmentDisplayAssembler(params, sim),
-        [DigitalKinds.BCDDisplay]:     new BaseDisplayAssembler(params, sim, { font: BCDFont, spacing: 0.5 }),
-        [DigitalKinds.ASCIIDisplay]:   new BaseDisplayAssembler(params, sim, { font: ASCIIFont }),
-        [DigitalKinds.Oscilloscope]:   new OscilloscopeAssembler(params, sim),
+        "LED":            new LEDAssembler(params, sim),
+        "SegmentDisplay": new SegmentDisplayAssembler(params, sim),
+        "BCDDisplay":     new BaseDisplayAssembler(params, sim, { kind: "BCDDisplay", font: BCDFont, spacing: 0.5 }),
+        "ASCIIDisplay":   new BaseDisplayAssembler(params, sim, { kind: "ASCIIDisplay", font: ASCIIFont }),
+        "Oscilloscope":   new OscilloscopeAssembler(params, sim),
 
         // Gates
-        [DigitalKinds.BUFGate]:  new BUFGateAssembler(params, sim, false),
-        [DigitalKinds.NOTGate]:  new BUFGateAssembler(params, sim, true),
-        [DigitalKinds.ANDGate]:  new ANDGateAssembler(params, sim, false),
-        [DigitalKinds.NANDGate]: new ANDGateAssembler(params, sim, true),
-        [DigitalKinds.ORGate]:   new ORGateAssembler(params, sim, { xor: false, not: false }),
-        [DigitalKinds.NORGate]:  new ORGateAssembler(params, sim, { xor: false, not: true  }),
-        [DigitalKinds.XORGate]:  new ORGateAssembler(params, sim, { xor: true,  not: false }),
-        [DigitalKinds.XNORGate]: new ORGateAssembler(params, sim, { xor: true,  not: true  }),
+        "BUFGate":  new BUFGateAssembler(params, sim, false),
+        "NOTGate":  new BUFGateAssembler(params, sim, true),
+        "ANDGate":  new ANDGateAssembler(params, sim, false),
+        "NANDGate": new ANDGateAssembler(params, sim, true),
+        "ORGate":   new ORGateAssembler(params, sim, { xor: false, not: false }),
+        "NORGate":  new ORGateAssembler(params, sim, { xor: false, not: true  }),
+        "XORGate":  new ORGateAssembler(params, sim, { xor: true,  not: false }),
+        "XNORGate": new ORGateAssembler(params, sim, { xor: true,  not: true  }),
 
         // FlipFlops
-        [DigitalKinds.SRFlipFlop]: new TwoInputFlipFlopAssembler(params, sim, "S", "R"),
-        [DigitalKinds.JKFlipFlop]: new TwoInputFlipFlopAssembler(params, sim, "J", "K"),
-        [DigitalKinds.DFlipFlop]:  new OneInputFlipFlopAssembler(params, sim, "D"),
-        [DigitalKinds.TFlipFlop]:  new OneInputFlipFlopAssembler(params, sim, "T"),
+        "SRFlipFlop": new TwoInputFlipFlopAssembler(params, sim, "SRFlipFlop", "S", "R"),
+        "JKFlipFlop": new TwoInputFlipFlopAssembler(params, sim, "JKFlipFlop", "J", "K"),
+        "DFlipFlop":  new OneInputFlipFlopAssembler(params, sim, "DFlipFlop", "D"),
+        "TFlipFlop":  new OneInputFlipFlopAssembler(params, sim, "TFlipFlop", "T"),
 
         // Latches
-        [DigitalKinds.DLatch]:  new OneInputLatchAssembler(params, sim, "D"),
-        [DigitalKinds.SRLatch]: new TwoInputLatchAssembler(params, sim, "S", "R"),
+        "DLatch":  new OneInputLatchAssembler(params, sim, "DLatch", "D"),
+        "SRLatch": new TwoInputLatchAssembler(params, sim, "SRLatch", "S", "R"),
 
         // Other
-        [DigitalKinds.Multiplexer]:   new MultiplexerAssembler(params, sim, "Multiplexer"),
-        [DigitalKinds.Demultiplexer]: new MultiplexerAssembler(params, sim, "Demultiplexer"),
+        "Multiplexer":   new MultiplexerAssembler(params, sim, "Multiplexer"),
+        "Demultiplexer": new MultiplexerAssembler(params, sim, "Demultiplexer"),
 
-        [DigitalKinds.Encoder]: new EncoderAssembler(params, sim),
-        [DigitalKinds.Decoder]: new EncoderAssembler(params, sim),
+        "Encoder": new EncoderAssembler(params, sim, "Encoder"),
+        "Decoder": new EncoderAssembler(params, sim, "Decoder"),
 
-        [DigitalKinds.Comparator]: new ComparatorAssembler(params, sim),
+        "Comparator": new ComparatorAssembler(params, sim),
 
-        [DigitalKinds.Label]: new LabelAssembler(params, sim),
-    } satisfies Record<
-        Exclude<DigitalKinds, DigitalKinds.Port | DigitalKinds.InputPin | DigitalKinds.OutputPin>,
-        Assembler
-    >));
+        "Label": new LabelAssembler(params, sim),
+    }));
 }

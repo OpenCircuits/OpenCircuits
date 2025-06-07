@@ -8,13 +8,14 @@ import {Schema} from "shared/api/circuit/schema";
 
 
 export interface LatchAssemblerParams {
+    kind: string;
     otherInputs: PortFactory;
     enablePortYValue: number;
 }
 export abstract class LatchAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
-    public constructor(params: AssemblerParams, sim: DigitalSim, { otherInputs, enablePortYValue }: LatchAssemblerParams) {
+    public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs, enablePortYValue }: LatchAssemblerParams) {
         super(params, {
             "Q":    () => ({ origin: V(0.5,  1/6), dir: V(1, 0) }),
             "Qinv": () => ({ origin: V(0.5, -1/6), dir: V(1, 0) }),
