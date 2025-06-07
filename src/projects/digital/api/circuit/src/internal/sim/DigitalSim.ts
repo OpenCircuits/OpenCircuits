@@ -4,7 +4,7 @@ import {MapObj}                 from "shared/api/circuit/utils/Functions";
 import {CircuitInternal, GUID}  from "shared/api/circuit/internal";
 import {ReadonlyCircuitStorage} from "shared/api/circuit/internal/impl/CircuitDocument";
 import {Schema}                 from "shared/api/circuit/schema";
-import {ObjContainer}           from "shared/api/circuit/public/ObjContainer";
+import {ObjContainer, ReadonlyObjContainer}           from "shared/api/circuit/public/ObjContainer";
 
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {Signal}        from "digital/api/circuit/schema/Signal";
@@ -182,7 +182,7 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
         return this.icStates.get(icInstance.id)!.findState(rest);
     }
 
-    public toSchema(container?: ObjContainer): DigitalSchema.DigitalSimState {
+    public toSchema(container?: ReadonlyObjContainer): DigitalSchema.DigitalSimState {
         const compIds = container?.components.map((c) => c.id);
 
         const signalKeys = container?.ports.map((p) => p.id) ?? this.signals.keys();

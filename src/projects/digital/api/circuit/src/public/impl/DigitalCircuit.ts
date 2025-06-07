@@ -1,6 +1,6 @@
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
-import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {DigitalComponent} from "../DigitalComponent";
@@ -80,7 +80,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return objs;
     }
 
-    public override toSchema(container?: DigitalObjContainer): DigitalSchema.DigitalCircuit {
+    public override toSchema(container?: ReadonlyDigitalObjContainer): DigitalSchema.DigitalCircuit {
         const ics = container?.ics ?? this.getICs();
 
         return {

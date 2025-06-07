@@ -169,9 +169,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             return this.getPort(id);
         return undefined;
     }
-    public getObjs(): T["Obj[]"] {
-        return [...this.internal.getObjs()]
-            .map((id) => this.getObj(id)!);
+    public getObjs(): T["ObjContainerT"] {
+        return new ObjContainerImpl<T>(this.state, new Set(this.internal.getObjs()));
     }
     public getComponents(): T["Component[]"] {
         return [...this.internal.getComps()]
@@ -279,7 +278,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.internal.beginTransaction();
         this.internal.createIC({
             metadata,
-            objects: info.circuit.getObjs().map((o) => o.toSchema()),
+            objects: info.circuit.getObjs().all.map((o) => o.toSchema()),
         }).unwrap();
         this.internal.commitTransaction();
 
@@ -334,9 +333,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         return objs.map((id) => this.getObj(id)!);
     }
-    public toSchema(container?: T["ObjContainerT"]): Schema.Circuit {
+    public toSchema(container?: T["ReadonlyObjContainerT"]): Schema.Circuit {
         const ics = container?.ics ?? this.getICs();
-        const objs = container?.all ?? this.getObjs();
+        const objs = container?.all ?? this.getObjs().all;
 
         return {
             metadata: this.internal.getMetadata(),

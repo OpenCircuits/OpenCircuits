@@ -1,12 +1,12 @@
-import {CircuitInternal, GUID}   from "shared/api/circuit/internal";
+import {CircuitInternal}   from "shared/api/circuit/internal";
 import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
 
 import {Component, Node}   from "../Component";
-import {Port}              from "../Port";
+import {Port, ReadonlyPort}              from "../Port";
 import {Wire}              from "../Wire";
 import {Circuit, ICInfo, IntegratedCircuit} from "../Circuit";
-import {ObjContainer} from "../ObjContainer";
+import {ObjContainer, ReadonlyObjContainer} from "../ObjContainer";
 
 
 // Utility interface to hold utility types for the templated Circuit API.
@@ -15,15 +15,18 @@ export type CircuitTypes<
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
+    RPortT extends ReadonlyPort = ReadonlyPort,
     NodeT extends Node = Node,
     ICT extends IntegratedCircuit = IntegratedCircuit,
     ICInfoT extends ICInfo = ICInfo,
     ObjContainerT extends ObjContainer = ObjContainer,
+    RObjContainerT extends ReadonlyObjContainer = ReadonlyObjContainer,
 > = {
     "Circuit": CircuitT;
 
     "Component": ComponentT;
     "Wire": WireT;
+    "ReadonlyPort": RPortT;
     "Port": PortT;
     "Obj": ComponentT | WireT | PortT;
 
@@ -42,6 +45,7 @@ export type CircuitTypes<
 
     "ICInfo": ICInfoT;
     "ObjContainerT": ObjContainerT;
+    "ReadonlyObjContainerT": RObjContainerT;
 }
 
 export interface CircuitState<T extends CircuitTypes> {

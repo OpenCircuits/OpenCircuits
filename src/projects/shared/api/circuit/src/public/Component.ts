@@ -1,16 +1,16 @@
-import {Vector} from "Vector";
+import type {Vector} from "Vector";
 
-import {BaseObject, ReadonlyBaseObject} from "./BaseObject";
-import {ComponentInfo} from "./ComponentInfo";
-import {Port, ReadonlyPort} from "./Port";
-import {Wire, ReadonlyWire} from "./Wire";
-import {Schema} from "../schema";
-import {PortConfig} from "../internal/impl/ObjInfo";
+import type {BaseObject, ReadonlyBaseObject} from "./BaseObject";
+import type {ComponentInfo} from "./ComponentInfo";
+import type {Port, ReadonlyPort} from "./Port";
+import type {ReadonlyWire, Wire} from "./Wire";
+import type {Schema} from "../schema";
+import type {PortConfig} from "../internal/impl/ObjInfo";
 
 export type {PortConfig} from "../internal/impl/ObjInfo";
 
 
-export interface ReadonlyComponent extends ReadonlyBaseObject {
+interface BaseReadonlyComponent<PortT, NodeT> {
     readonly baseKind: "Component";
     readonly info: ComponentInfo;
 
@@ -19,40 +19,26 @@ export interface ReadonlyComponent extends ReadonlyBaseObject {
     readonly pos: Vector;
     readonly angle: number;
 
-    isNode(): this is Node;
+    isNode(): this is NodeT;
 
-    readonly ports: Record<string, ReadonlyPort[]>;
-    readonly allPorts: ReadonlyPort[];
+    readonly ports: Record<string, PortT[]>;
+    readonly allPorts: PortT[];
 
     // Do we even want this in the API?
     // readonly connectedComponents: Component[];
 
-    firstAvailable(group: string): ReadonlyPort | undefined;
+    firstAvailable(group: string): PortT | undefined;
 
     toSchema(): Schema.Component;
 }
 
-export interface ReadonlyNode extends ReadonlyComponent {
-    readonly path: Array<ReadonlyNode | ReadonlyWire>;
-}
+export type ReadonlyComponent = ReadonlyBaseObject & BaseReadonlyComponent<ReadonlyPort, ReadonlyNode>;
 
-type C = BaseObject & ReadonlyComponent;
-export interface Component extends C {
-    readonly baseKind: "Component";
-    readonly info: ComponentInfo;
-
+export type Component = BaseObject & BaseReadonlyComponent<Port, Node> & {
     x: number;
     y: number;
     pos: Vector;
     angle: number;
-
-    isNode(): this is Node;
-
-    readonly ports: Record<string, Port[]>;
-    readonly allPorts: Port[];
-
-    // Do we even want this in the API?
-    // readonly connectedComponents: Component[];
 
     shift(): void;
 
@@ -60,13 +46,14 @@ export interface Component extends C {
     firstAvailable(group: string): Port | undefined;
 
     delete(): void;
-
-    toSchema(): Schema.Component;
 }
 
-type N = Component & ReadonlyNode;
-export interface Node extends N {
-    snip(): Wire;
 
-    readonly path: Array<Node | Wire>;
+interface BaseNode<NodeT, WireT> {
+    readonly path: Array<NodeT | WireT>;
+}
+
+export type ReadonlyNode = ReadonlyComponent & BaseNode<ReadonlyNode, ReadonlyWire>;
+export type Node = Component & BaseNode<Node, Wire> & {
+    snip(): Wire;
 }

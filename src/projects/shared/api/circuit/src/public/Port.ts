@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import {Vector} from "Vector";
+import type {Vector} from "Vector";
 
-import {BaseObject, ReadonlyBaseObject}      from "./BaseObject";
-import {Component, Node, ReadonlyComponent, ReadonlyNode} from "./Component";
-import {ReadonlyWire, Wire}            from "./Wire";
-import {Schema} from "../schema";
+import type {BaseObject, ReadonlyBaseObject}      from "./BaseObject";
+import type {Component, Node, ReadonlyComponent, ReadonlyNode} from "./Component";
+import type {ReadonlyWire, Wire}            from "./Wire";
+import type {Schema} from "../schema";
 
 
-export interface ReadonlyPort extends ReadonlyBaseObject {
+interface BaseReadonlyPort<PortT, CompT, NodeT, WireT> {
     readonly baseKind: "Port";
 
-    readonly parent: ReadonlyComponent;
+    readonly parent: CompT;
     readonly group: string;
     readonly index: number;
 
@@ -18,47 +18,24 @@ export interface ReadonlyPort extends ReadonlyBaseObject {
     readonly targetPos: Vector;
     readonly dir: Vector;
 
-    readonly connections: ReadonlyWire[];
+    readonly connections: WireT[];
     // TODO[model_refactor_api]: What about nodes? Should this be endpoint non-node components?
-    readonly connectedPorts: ReadonlyPort[];
+    readonly connectedPorts: PortT[];
     // TODO[model_refactor_api]: connectedComponents?
 
     // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
-    readonly path: Array<ReadonlyNode | ReadonlyWire>;
+    readonly path: Array<NodeT | WireT>;
 
     // "Availability" refers to the ability to have more connections added to this port.
     readonly isAvailable: boolean;
 
-    canConnectTo(port: Port): boolean;
+    canConnectTo(port: PortT): boolean;
 
     toSchema(): Schema.Port;
 }
 
-type P = BaseObject & ReadonlyPort;
-export interface Port extends P {
-    readonly baseKind: "Port";
+export type ReadonlyPort = ReadonlyBaseObject & BaseReadonlyPort<ReadonlyPort, ReadonlyComponent, ReadonlyNode, ReadonlyWire>;
 
-    readonly parent: Component;
-    readonly group: string;
-    readonly index: number;
-
-    readonly originPos: Vector;
-    readonly targetPos: Vector;
-    readonly dir: Vector;
-
-    readonly connections: Wire[];
-    // TODO[model_refactor_api]: What about nodes? Should this be endpoint non-node components?
-    readonly connectedPorts: Port[];
-    // TODO[model_refactor_api]: connectedComponents?
-
-    // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
-    readonly path: Array<Node | Wire>;
-
-    // "Availability" refers to the ability to have more connections added to this port.
-    readonly isAvailable: boolean;
-
-    canConnectTo(port: Port): boolean;
+export type Port = BaseObject & BaseReadonlyPort<Port, Component, Node, Wire> & {
     connectTo(other: Port): Wire | undefined;
-
-    toSchema(): Schema.Port;
 }

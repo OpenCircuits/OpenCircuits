@@ -12,7 +12,7 @@ export function FitToScreen(circuit: Circuit, camera: Camera, margin: Margin): v
     camera.zoomToFit(
         // Fit selections if there are any, otherwise fit entire circuit
         (circuit.selections.isEmpty
-            ? circuit.getObjs()
+            ? circuit.getObjs().all
             : circuit.selections.all),
         margin,
         FIT_PADDING_RATIO

@@ -65,15 +65,15 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
 
         return parentInfo.isPortAvailable(p, curConnections);
     }
-    public canConnectTo(other: T["Port"]): boolean {
+    public canConnectTo(other: T["ReadonlyPort"] | T["Port"]): boolean {
         const p1 = this.getPort();
-        const [_, p1Info] = this.state.internal.getComponentAndInfoById(p1.parent).unwrap();
+        const [_c1, p1Info] = this.state.internal.getComponentAndInfoById(p1.parent).unwrap();
         const p1Connections = this.state.internal.getPortsForPort(p1.id)
             .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
             .unwrap();
 
         const p2 = this.state.internal.getPortByID(other.id).unwrap();
-        const [__, p2Info] = this.state.internal.getComponentAndInfoById(p2.parent).unwrap();
+        const [_c2, p2Info] = this.state.internal.getComponentAndInfoById(p2.parent).unwrap();
         const p2Connections = this.state.internal.getPortsForPort(p2.id)
             .map((ids) => [...ids].map((id) => this.state.internal.getPortByID(id).unwrap()))
             .unwrap();

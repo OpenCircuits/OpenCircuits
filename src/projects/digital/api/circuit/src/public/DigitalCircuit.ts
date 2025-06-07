@@ -24,7 +24,7 @@ import type {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDi
 import type {DigitalWire, ReadonlyDigitalWire}                   from "./DigitalWire";
 import type {DigitalPort, ReadonlyDigitalPort}                   from "./DigitalPort";
 import type {DigitalSchema} from "digital/api/circuit/schema";
-import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
+import type {ObjContainer, ReadonlyObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
 export type ToDigital<T> = (
@@ -45,11 +45,12 @@ export type ToDigital<T> = (
     T extends Selections        ? APIToDigital<Selections> :
     T extends ObjContainer      ? DigitalObjContainer :
     // Base-Readonly-type replacements
-    T extends ReadonlyCircuit   ? ReadonlyDigitalCircuit :
-    T extends ReadonlyNode      ? ReadonlyDigitalNode :
-    T extends ReadonlyComponent ? ReadonlyDigitalComponent :
-    T extends ReadonlyWire      ? ReadonlyDigitalWire :
-    T extends ReadonlyPort      ? ReadonlyDigitalPort :
+    T extends ReadonlyCircuit      ? ReadonlyDigitalCircuit :
+    T extends ReadonlyNode         ? ReadonlyDigitalNode :
+    T extends ReadonlyComponent    ? ReadonlyDigitalComponent :
+    T extends ReadonlyWire         ? ReadonlyDigitalWire :
+    T extends ReadonlyPort         ? ReadonlyDigitalPort :
+    T extends ReadonlyObjContainer ? ReadonlyDigitalObjContainer :
     // Replace all method args/return types
     T extends (...a: infer Args) => infer R ? (...a: ToDigital<Args>) => ToDigital<R> :
     // Recursively replace records
@@ -64,6 +65,7 @@ export type APIToDigital<T> = {
     [key in keyof T]: ToDigital<T[key]>;
 }
 
+export type ReadonlyDigitalObjContainer = APIToDigital<ReadonlyObjContainer>;
 export type DigitalObjContainer = APIToDigital<ObjContainer>;
 
 export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit>;
