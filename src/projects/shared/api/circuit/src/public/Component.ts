@@ -20,6 +20,7 @@ interface BaseReadonlyComponent<PortT, NodeT> {
     readonly angle: number;
 
     isNode(): this is NodeT;
+    isIC(): boolean;
 
     readonly ports: Record<string, PortT[]>;
     readonly allPorts: PortT[];

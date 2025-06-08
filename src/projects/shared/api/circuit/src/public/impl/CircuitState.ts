@@ -1,10 +1,10 @@
-import {CircuitInternal}   from "shared/api/circuit/internal";
+import {CircuitInternal, GUID}   from "shared/api/circuit/internal";
 import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {Component, Node}   from "../Component";
+import {Component, Node, ReadonlyComponent}   from "../Component";
 import {Port, ReadonlyPort}              from "../Port";
-import {Wire}              from "../Wire";
+import {ReadonlyWire, Wire}              from "../Wire";
 import {Circuit, ICInfo, IntegratedCircuit} from "../Circuit";
 import {ObjContainer, ReadonlyObjContainer} from "../ObjContainer";
 
@@ -12,13 +12,20 @@ import {ObjContainer, ReadonlyObjContainer} from "../ObjContainer";
 // Utility interface to hold utility types for the templated Circuit API.
 export type CircuitTypes<
     CircuitT extends Circuit = Circuit,
+
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
     PortT extends Port = Port,
+
+    RComponentT extends ReadonlyComponent = ReadonlyComponent,
+    RWireT extends ReadonlyWire = ReadonlyWire,
     RPortT extends ReadonlyPort = ReadonlyPort,
+
     NodeT extends Node = Node,
+
     ICT extends IntegratedCircuit = IntegratedCircuit,
     ICInfoT extends ICInfo = ICInfo,
+
     ObjContainerT extends ObjContainer = ObjContainer,
     RObjContainerT extends ReadonlyObjContainer = ReadonlyObjContainer,
 > = {
@@ -26,9 +33,23 @@ export type CircuitTypes<
 
     "Component": ComponentT;
     "Wire": WireT;
-    "ReadonlyPort": RPortT;
     "Port": PortT;
     "Obj": ComponentT | WireT | PortT;
+
+    "ReadonlyComponent": RComponentT;
+    "ReadonlyWire": RWireT;
+    "ReadonlyPort": RPortT;
+    "ReadonlyObj": RComponentT | RWireT | RPortT;
+
+    "Component[]": ComponentT[];
+    "Wire[]": WireT[];
+    "Port[]": PortT[];
+    "Obj[]": Array<ComponentT | WireT | PortT>;
+
+    "ReadonlyComponent[]": RComponentT[];
+    "ReadonlyWire[]": RWireT[];
+    "ReadonlyPort[]": RPortT[];
+    "ReadonlyObj[]": Array<RComponentT | RWireT | RPortT>;
 
     "IC": ICT;
 
@@ -36,11 +57,6 @@ export type CircuitTypes<
 
     "Node": NodeT;
     "Path": Array<NodeT | WireT>;
-
-    "Component[]": ComponentT[];
-    "Wire[]": WireT[];
-    "Port[]": PortT[];
-    "Obj[]": Array<ComponentT | WireT | PortT>;
     "IC[]": ICT[];
 
     "ICInfo": ICInfoT;
@@ -56,9 +72,9 @@ export interface CircuitState<T extends CircuitTypes> {
     // -> find options that can be extracted and put in separately that relate to rendering rather than assembly
     renderOptions: RenderOptions;
 
-    constructComponent(id: string): T["Component"];
-    constructWire(id: string): T["Wire"];
-    constructPort(id: string): T["Port"];
+    constructComponent(id: string, icId?: GUID): T["Component"];
+    constructWire(id: string, icId?: GUID): T["Wire"];
+    constructPort(id: string, icId?: GUID): T["Port"];
     constructIC(id: string): T["IC"];
     constructComponentInfo(kind: string): T["ComponentInfo"];
 }

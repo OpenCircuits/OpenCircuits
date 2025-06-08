@@ -1,7 +1,10 @@
 import {Camera}          from "./Camera";
 import {CircuitMetadata} from "./CircuitMetadata";
+import {Component} from "./Component";
 import {GUID}      from "./GUID";
 import {Obj}             from "./Obj";
+import {Port} from "./Port";
+import {Wire} from "./Wire";
 
 
 export interface IntegratedCircuitPin {
@@ -24,7 +27,10 @@ export interface IntegratedCircuitMetadata extends CircuitMetadata {
 
 export interface IntegratedCircuit {
     metadata: IntegratedCircuitMetadata;
-    objects: Obj[];
+
+    comps: Component[];
+    wires: Wire[];
+    ports: Port[];
 }
 
 export interface Circuit {
@@ -33,5 +39,7 @@ export interface Circuit {
     camera: Camera;
 
     ics: IntegratedCircuit[];
-    objects: Obj[];
+    comps: Component[];
+    wires: Wire[];
+    ports: Port[];
 }

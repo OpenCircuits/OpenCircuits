@@ -14,6 +14,9 @@ import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl} from "../../utils/Observable";
 import {ObjContainerImpl} from "./ObjContainer";
 import {LogEntry} from "../../internal/impl/CircuitLog";
+import {Component, ReadonlyComponent} from "../Component";
+import {ReadonlyWire, Wire} from "../Wire";
+import {Port, ReadonlyPort} from "../Port";
 
 
 export type RemoveICCallback = (id: GUID) => void;
@@ -129,10 +132,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             .map((id) => this.getPort(id)).asUnion();
     }
 
-    public pickObjectsWithin(bounds: Rect): T["Obj[]"] {
-        return this.pickObjsWithinHelper(bounds)
-            .map((id) => this.getObj(id))
-            .filter((obj) => !!obj);
+    public pickObjsWithin(bounds: Rect): T["ObjContainerT"] {
+        return this.createContainer(this.pickObjsWithinHelper(bounds));
     }
     public pickComponentsWithin(bounds: Rect): T["Component[]"] {
         return this.pickObjsWithinHelper(bounds, (id) => this.internal.hasComp(id))
@@ -261,7 +262,11 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.internal.commitTransaction();
     }
     public createIC(info: T["ICInfo"], id = uuid()): T["IC"] {
+        if (this.internal.hasIC(id))
+            throw new Error(`Circuit.createIC: IC with ID ${id} already exists!`);
+
         const metadata: Schema.IntegratedCircuitMetadata = {
+            // TODO[model_refactor_api](leon): do we need to allow this? maybe just use the info.circuit.id?
             id:      id,  // Make a new ID
             name:    info.circuit.name,
             thumb:   info.circuit.thumbnail,
@@ -278,7 +283,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.internal.beginTransaction();
         this.internal.createIC({
             metadata,
-            objects: info.circuit.getObjs().all.map((o) => o.toSchema()),
+            comps: info.circuit.getObjs().components.map((c) => c.toSchema()),
+            ports: info.circuit.getObjs().ports.map((c) => c.toSchema()),
+            wires: info.circuit.getObjs().wires.map((c) => c.toSchema()),
         }).unwrap();
         this.internal.commitTransaction();
 
@@ -310,6 +317,95 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.internal.redo().unwrap();
     }
 
+    public import(circuit: T["Circuit"], opts?: { refreshIds?: boolean; loadMetadata?: boolean; }): T["ObjContainerT"] {
+        const refreshIds = opts?.refreshIds ?? false,
+              loadMetadata = opts?.loadMetadata ?? false;
+
+        this.beginTransaction();
+
+        // TODO[] - make this undoable?
+        if (loadMetadata) {
+            this.internal.setMetadata({
+                id:    circuit.id,
+                name:  circuit.name,
+                desc:  circuit.desc,
+                thumb: circuit.thumbnail,
+            });
+            // TODODODODOD
+            // this.internal.setCamera(schema.camera);
+        }
+
+        function ConvertComp(c: ReadonlyComponent): Schema.Component {
+            return {
+                baseKind: "Component",
+                id:       c.id,
+                kind:     c.isIC() ? "IC" : c.kind,
+                icId:     c.isIC() ? c.kind : undefined,
+                props:    c.getProps(),
+            };
+        }
+        function ConvertWire(w: ReadonlyWire): Schema.Wire {
+            return {
+                baseKind: "Wire",
+                id:       w.id,
+                kind:     w.kind,
+                p1:       w.p1.id,
+                p2:       w.p2.id,
+                props:    w.getProps(),
+            };
+        }
+        function ConvertPort(p: ReadonlyPort): Schema.Port {
+            return {
+                baseKind: "Port",
+                id:       p.id,
+                kind:     p.kind,
+                parent:   p.parent.id,
+                group:    p.group,
+                index:    p.index,
+                props:    p.getProps(),
+            };
+        }
+
+        circuit.getICs()
+            .filter((ic) => !this.internal.hasIC(ic.id))
+            .forEach((ic) =>
+                this.internal.createIC({
+                    metadata: {
+                        id:      ic.id,
+                        name:    ic.name,
+                        desc:    ic.desc,
+                        thumb:   ic.thumbnail,
+                        version: "/",
+
+                        displayWidth:  ic.display.size.x,
+                        displayHeight: ic.display.size.y,
+                        pins:          ic.display.pins.map((p) => ({
+                            id:    p.id,
+                            group: p.group,
+                            name:  p.name,
+
+                            x:  p.pos.x,
+                            y:  p.pos.y,
+                            dx: p.dir.x,
+                            dy: p.dir.y,
+                        })),
+                    },
+                    comps: ic.components.map(ConvertComp),
+                    ports: ic.components.flatMap((c) => c.allPorts.map(ConvertPort)),
+                    wires: ic.wires.map(ConvertWire),
+                }).unwrap());
+
+        const objs = this.internal.importObjs([
+            ...circuit.getComponents().map(ConvertComp),
+            ...circuit.getComponents().flatMap((c) => c.allPorts.map(ConvertPort)),
+            ...circuit.getWires().map(ConvertWire),
+        ], refreshIds).unwrap();
+
+        this.commitTransaction("Imported Circuit");
+
+        return new ObjContainerImpl(this.state, new Set(objs));
+    }
+
     public loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["Obj[]"] {
         const refreshIds = opts?.refreshIds ?? false,
               loadMetadata = opts?.loadMetadata ?? false;
@@ -327,7 +423,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             .forEach((ic) =>
                 this.internal.createIC(ic).unwrap());
 
-        const objs = this.internal.importObjs(schema.objects, refreshIds).unwrap();
+        const objs = this.internal.importObjs([...schema.comps, ...schema.ports, ...schema.wires], refreshIds).unwrap();
 
         this.commitTransaction("Loaded Schema");
 
@@ -335,15 +431,15 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
     public toSchema(container?: T["ReadonlyObjContainerT"]): Schema.Circuit {
         const ics = container?.ics ?? this.getICs();
-        const objs = container?.all ?? this.getObjs().all;
+        const objs = container ?? this.getObjs();
 
         return {
             metadata: this.internal.getMetadata(),
             camera:   this.internal.getCamera(),
             ics:      ics.map((ic) => ic.toSchema()),
-            objects:  [
-                ...objs.map((obj) => obj.toSchema()),
-            ],
+            comps:    objs.components.map((c) => c.toSchema()),
+            ports:    objs.ports.map((c) => c.toSchema()),
+            wires:    objs.wires.map((c) => c.toSchema()),
         };
     }
 }
@@ -458,11 +554,22 @@ export class IntegratedCircuitImpl<T extends CircuitTypes> implements Integrated
         return this.state.internal.getICInfo(this.id).unwrap().metadata.thumb;
     }
 
+    public get components(): T["ReadonlyComponent[]"] {
+        return [...this.state.internal.getICInfo(this.id).unwrap().getComponents()]
+            .map((id) => this.state.constructComponent(id, this.id));
+    }
+    public get wires(): T["ReadonlyWire[]"] {
+        return [...this.state.internal.getICInfo(this.id).unwrap().getWires()]
+            .map((id) => this.state.constructWire(id, this.id));
+    }
+
     public toSchema(): Schema.IntegratedCircuit {
         const ic = this.state.internal.getICInfo(this.id).unwrap();
         return {
             metadata: ic.metadata,
-            objects:  [...ic.getAllObjs()],
+            comps:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Component")),
+            wires:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Wire")),
+            ports:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Port")),
         };
     }
 }

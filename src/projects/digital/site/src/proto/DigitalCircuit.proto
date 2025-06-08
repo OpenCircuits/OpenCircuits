@@ -14,10 +14,10 @@ message DigitalSimState {
         repeated Signal state = 1;
     }
 
-    // Array of signals corresponding to the circuit.ports
+    // Array of signals corresponding to the flat(circuit.components.map(allPorts))
     repeated Signal signals = 1;
-    map<string, State> states = 2;
-    map<string, DigitalSimState> icStates = 3;
+    map<uint32, State> states = 2;
+    map<uint32, DigitalSimState> icStates = 3;
 }
 
 message DigitalCircuit {

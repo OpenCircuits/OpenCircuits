@@ -13,6 +13,7 @@ import {Get} from "shared/api/circuit/utils/Reducers";
 import {MapObj} from "shared/api/circuit/utils/Functions";
 import * as V3_0Schema from "./Schema";
 import {Decompress, Entry, MakeEntry} from "./SerialeazyUtils";
+import {DigitalProtoSchema} from "digital/site/proto";
 
 
 enum Warnings {
@@ -427,7 +428,7 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
 
             initialICSimStates,
             simState,
-        } satisfies DigitalSchema.DigitalCircuit,
+        } satisfies DigitalProtoSchema.DigitalCircuit,
         warnings: [...warnings].map((w) => ({
             [Warnings.ClockInIC]: IMPORT_IC_CLOCK_MESSAGE,
         }[w])),

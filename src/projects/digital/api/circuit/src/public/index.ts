@@ -26,8 +26,7 @@ export * from "./DigitalPort";
 export * from "./DigitalWire";
 export * from "./Utilities";
 
-export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
-    const mainCircuitID = uuid();
+export function CreateCircuit(mainCircuitID = uuid()): [DigitalCircuit, DigitalCircuitState] {
     const log = new CircuitLog();
     const doc = new CircuitDocument(mainCircuitID, new DigitalObjInfoProvider(), log);
     const internal = new CircuitInternal(log, doc);
@@ -36,31 +35,37 @@ export function CreateCircuit(): [DigitalCircuit, DigitalCircuitState] {
     const sim = new DigitalSim(internal, DigitalPropagators);
     const assembler = MakeDigitalCircuitAssembler(internal, sim, renderOptions);
 
-    const cache = {
-        comps:     new Map<GUID, DigitalComponentImpl>(),
-        wires:     new Map<GUID, DigitalWireImpl>(),
-        ports:     new Map<GUID, DigitalPortImpl>(),
+    // Cache-logic for API-wrapper-types for efficiency reasons
+    const newCache = () => ({
+        comps: new Map<GUID, DigitalComponentImpl>(),
+        wires: new Map<GUID, DigitalWireImpl>(),
+        ports: new Map<GUID, DigitalPortImpl>(),
+    });
+    const mainCache = {
+        ...newCache(),
         ics:       new Map<GUID, DigitalIntegratedCircuitImpl>(),
         compInfos: new Map<GUID, DigitalComponentInfoImpl>(),
-    }
+    };
+    const icCaches = new Map<GUID, ReturnType<typeof newCache>>();
+    const getCache = (icId?: GUID) => (icId ? icCaches.getOrInsert(icId, newCache) : mainCache);
 
     const state: DigitalCircuitState = {
         internal, assembler, sim, renderOptions,
 
-        constructComponent(id) {
-            return cache.comps.getOrInsert(id, (id) => new DigitalComponentImpl(state, id));
+        constructComponent(id, icId) {
+            return getCache(icId).comps.getOrInsert(id, (id) => new DigitalComponentImpl(state, id, icId));
         },
-        constructWire(id) {
-            return cache.wires.getOrInsert(id, (id) => new DigitalWireImpl(state, id));
+        constructWire(id, icId) {
+            return getCache(icId).wires.getOrInsert(id, (id) => new DigitalWireImpl(state, id, icId));
         },
-        constructPort(id) {
-            return cache.ports.getOrInsert(id, (id) => new DigitalPortImpl(state, id));
+        constructPort(id, icId) {
+            return getCache(icId).ports.getOrInsert(id, (id) => new DigitalPortImpl(state, id, icId));
         },
         constructIC(id) {
-            return cache.ics.getOrInsert(id, (id) => new DigitalIntegratedCircuitImpl(state, id));
+            return mainCache.ics.getOrInsert(id, (id) => new DigitalIntegratedCircuitImpl(state, id));
         },
         constructComponentInfo(kind) {
-            return cache.compInfos.getOrInsert(kind, (kind) => new DigitalComponentInfoImpl(state, kind));
+            return mainCache.compInfos.getOrInsert(kind, (kind) => new DigitalComponentInfoImpl(state, kind));
         },
     }
 

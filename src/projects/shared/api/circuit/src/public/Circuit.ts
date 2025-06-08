@@ -52,7 +52,7 @@ interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
     pickWireAt(pt: Vector): WireT | undefined;
     pickPortAt(pt: Vector): PortT | undefined;
 
-    pickObjectsWithin(bounds: Rect): Array<PortT | CompT | WireT>;
+    pickObjsWithin(bounds: Rect): ObjCT;
     pickComponentsWithin(bounds: Rect): CompT[];
     pickPortsWithin(bounds: Rect): PortT[];
 
@@ -61,7 +61,7 @@ interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
     getWire(id: GUID): WireT | undefined;
     getPort(id: GUID): PortT | undefined;
 
-    getObjs(): ObjCT;  // TODO: Readonly
+    getObjs(): ObjCT;
     getComponents(): CompT[];
     getWires(): WireT[];
 
@@ -96,6 +96,8 @@ export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircu
 
     undo(): void;
     redo(): void;
+
+    import(circuit: Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): ObjContainer;
 
     // TODO: Come up with a better name for this
     loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): Obj[];
@@ -135,5 +137,9 @@ export interface IntegratedCircuit {
     readonly thumbnail: string;
 
     readonly display: IntegratedCircuitDisplay;
+
+    readonly components: ReadonlyComponent[];
+    readonly wires: ReadonlyWire[];
+
     toSchema(): Schema.IntegratedCircuit;
 }

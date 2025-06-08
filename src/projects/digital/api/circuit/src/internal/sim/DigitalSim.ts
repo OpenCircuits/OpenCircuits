@@ -4,7 +4,7 @@ import {MapObj}                 from "shared/api/circuit/utils/Functions";
 import {CircuitInternal, GUID}  from "shared/api/circuit/internal";
 import {ReadonlyCircuitStorage} from "shared/api/circuit/internal/impl/CircuitDocument";
 import {Schema}                 from "shared/api/circuit/schema";
-import {ObjContainer, ReadonlyObjContainer}           from "shared/api/circuit/public/ObjContainer";
+import {ReadonlyObjContainer}   from "shared/api/circuit/public/ObjContainer";
 
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {Signal}        from "digital/api/circuit/schema/Signal";
@@ -401,7 +401,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
                 comps, updatedInputPorts,
             });
-        })
+        });
     }
 
     public loadState(state: DigitalSchema.DigitalSimState) {

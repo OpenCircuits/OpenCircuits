@@ -72,6 +72,9 @@ export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit>;
 export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
     propagationTime: number;
 
+    // TODO: Make an API-specific wrapper for this
+    readonly simState: DigitalSchema.DigitalSimState;
+
     step(): void;
 };
 

@@ -1,20 +1,20 @@
-import {DigitalSchema} from "digital/api/circuit/schema";
+import {DigitalProtoSchema} from "digital/site/proto";
 
-import {IsV3_0, V3_0Migrator} from "./v3_0";
+// import {IsV3_0, V3_0Migrator} from "./v3_0";
 
 
 interface VersionMigratorResult {
-    schema: DigitalSchema.DigitalCircuit;
+    schema: DigitalProtoSchema.DigitalCircuit;
     warnings: string[];
 }
 export function VersionMigrator(fileContents: string): VersionMigratorResult {
     const json = JSON.parse(fileContents);
 
-    if (IsV3_0(json))
-        return V3_0Migrator(json);
+    // if (IsV3_0(json))
+    //     return V3_0Migrator(json);
 
     return {
-        schema:   json as DigitalSchema.DigitalCircuit,
+        schema:   json as DigitalProtoSchema.DigitalCircuit,
         warnings: [],
     };
 }
