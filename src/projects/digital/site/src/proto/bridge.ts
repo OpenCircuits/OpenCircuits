@@ -53,8 +53,6 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
 
 
 export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit): DigitalCircuit {
-    console.log(proto);
-
     function ConvertId(id: Uint8Array): Schema.GUID {
         return uuid.stringify(id);
     }

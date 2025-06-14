@@ -32,7 +32,7 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
     }
 
     function ConvertComponent(c: ReadonlyComponent): ProtoSchema.Component {
-        const { name, isSelected, x, y, angle, ...otherProps } = c.getProps()
+        const { name, isSelected, x, y, angle, zIndex, ...otherProps } = c.getProps()
 
         const matchesPortConfig = (pc: PortConfig) =>
             Object.entries(pc).every(([group, numPorts]) => c.ports[group]?.length === numPorts);
@@ -70,16 +70,18 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
     }
 
     function ConvertWire(w: ReadonlyWire, comps: ReadonlyComponent[]): ProtoSchema.Wire {
-        const { name, isSelected, color, ...otherProps } = w.getProps();
+        const { name, isSelected, color, zIndex, ...otherProps } = w.getProps();
 
         return {
             kind: w.kind,
 
             p1ParentIdx: comps.findIndex((c) => c.id === w.p1.parent.id),
-            p1Idx:       w.p1.parent.allPorts.findIndex((p) => p.id === w.p1.id),
+            p1Group:     w.p1.group,
+            p1Idx:       w.p1.index,
 
             p2ParentIdx: comps.findIndex((c) => c.id === w.p2.parent.id),
-            p2Idx:       w.p2.parent.allPorts.findIndex((p) => p.id === w.p2.id),
+            p2Group:     w.p2.group,
+            p2Idx:       w.p2.index,
 
             name:       (name ? name as string : undefined),
             isSelected: (isSelected ? isSelected as boolean : undefined),
@@ -100,7 +102,7 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
         };
     }
 
-    function ConvertICMetadata(ic: IntegratedCircuit): ProtoSchema.IntegratedCircuitMetadata {
+    function ConvertICMetadata(ic: IntegratedCircuit, components: ReadonlyComponent[]): ProtoSchema.IntegratedCircuitMetadata {
         return {
             metadata: ConvertMetadata(ic),
 
@@ -108,10 +110,10 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
             displayHeight: ic.display.size.y,
 
             pins: ic.display.pins.map((p) => {
-                const compIdx = ic.components.findIndex((c) => (c.allPorts.find((port) => port.id === p.id)));
-                const portIdx = ic.components[compIdx].allPorts.findIndex((port) => port.id === p.id);
+                const compIdx = components.findIndex((c) => (c.allPorts.find((port) => port.id === p.id)));
+                const portIdx = components[compIdx].allPorts.findIndex((port) => port.id === p.id);
                 return ({
-                    internalCompId:  compIdx,
+                    internalCompIdx: compIdx,
                     internalPortIdx: portIdx,
 
                     group: p.group,
@@ -127,19 +129,26 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
     }
 
     function ConvertIC(ic: IntegratedCircuit): ProtoSchema.IntegratedCircuit {
+        const comps = ic.components.sort((c1, c2) => (c1.zIndex - c2.zIndex));
+        const wires = ic.wires.sort((w1, w2) => (w1.zIndex, w2.zIndex));
+
         return {
-            metadata:   ConvertICMetadata(ic),
-            components: ic.components.map(ConvertComponent),
-            wires:      ic.wires.map((w) => ConvertWire(w, ic.components)),
+            metadata:   ConvertICMetadata(ic, comps),
+            components: comps.map(ConvertComponent),
+            wires:      wires.map((w) => ConvertWire(w, comps)),
         };
     }
+
+    // Sort by z-index
+    const comps = circuit.getComponents().sort((c1, c2) => (c1.zIndex - c2.zIndex));
+    const wires = circuit.getWires().sort((w1, w2) => (w1.zIndex, w2.zIndex));
 
     return ProtoSchema.Circuit.create({
         metadata:   ConvertMetadata(circuit),
         // camera:   schema.camera,  TODODOODOD
         ics:        circuit.getICs().map(ConvertIC),
-        components: circuit.getComponents().map(ConvertComponent),
-        wires:      circuit.getWires().map((w) => ConvertWire(w, circuit.getComponents())),
+        components: comps.map(ConvertComponent),
+        wires:      wires.map((w) => ConvertWire(w, comps)),
     });
 }
 
@@ -176,6 +185,7 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
             comp.name = c.name;
             comp.isSelected = c.isSelected ?? false;
             comp.angle = c.angle ?? 0;
+            comp.zIndex = i;
             SetProps(comp, c.otherProps);
 
             // Load port config and port overrides
@@ -194,10 +204,10 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
 
         for (const w of objs.wires) {
             const p1Parent = circuit.getComponent(compIdMap.get(w.p1ParentIdx)!)!;
-            const p1Port = p1Parent.allPorts[w.p1Idx];
+            const p1Port = p1Parent.ports[w.p1Group][w.p1Idx];
 
             const p2Parent = circuit.getComponent(compIdMap.get(w.p2ParentIdx)!)!;
-            const p2Port = p2Parent.allPorts[w.p2Idx];
+            const p2Port = p2Parent.ports[w.p2Group][w.p2Idx];
 
             const wire = p1Port.connectTo(p2Port)!;
 
@@ -248,8 +258,8 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
                 size: V(ic.metadata!.displayWidth, ic.metadata!.displayHeight),
                 pins: ic.metadata!.pins.map((p) => {
                     // Get internal port ID
-                    const internalComp = icCircuit.getComponent(compIdMap.get(p.internalCompId)!)!;
-                    const port = internalComp.allPorts[p.internalPortIdx];
+                    const internalComp = icCircuit.getComponent(compIdMap.get(p.internalCompIdx)!)!;
+                    const port = internalComp.allPorts[0];
 
                     return ({
                         id:    port.id,

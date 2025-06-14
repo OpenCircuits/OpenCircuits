@@ -16,6 +16,7 @@ export interface Prop {
   boolVal?: boolean | undefined;
 }
 
+/** TODO: kind? */
 export interface Port {
   group: string;
   index: number;
@@ -53,11 +54,11 @@ export interface Wire {
     | undefined;
   /** The index of the 1st port's parent component in circuit.components */
   p1ParentIdx: number;
-  /** The index of the 1st port in the parent component's ports */
+  p1Group: string;
   p1Idx: number;
   /** The index of the 2nd port's parent component in circuit.components */
   p2ParentIdx: number;
-  /** The index of the 2nd port in the parent component's ports */
+  p2Group: string;
   p2Idx: number;
   name?: string | undefined;
   isSelected?: boolean | undefined;
@@ -92,7 +93,7 @@ export interface IntegratedCircuitMetadata {
 }
 
 export interface IntegratedCircuitMetadata_Pin {
-  internalCompId: number;
+  internalCompIdx: number;
   internalPortIdx: number;
   group: string;
   name: string;
@@ -765,8 +766,10 @@ function createBaseWire(): Wire {
   return {
     kind: undefined,
     p1ParentIdx: 0,
+    p1Group: "",
     p1Idx: 0,
     p2ParentIdx: 0,
+    p2Group: "",
     p2Idx: 0,
     name: undefined,
     isSelected: undefined,
@@ -783,26 +786,32 @@ export const Wire: MessageFns<Wire> = {
     if (message.p1ParentIdx !== 0) {
       writer.uint32(16).uint32(message.p1ParentIdx);
     }
+    if (message.p1Group !== "") {
+      writer.uint32(26).string(message.p1Group);
+    }
     if (message.p1Idx !== 0) {
-      writer.uint32(24).uint32(message.p1Idx);
+      writer.uint32(32).uint32(message.p1Idx);
     }
     if (message.p2ParentIdx !== 0) {
-      writer.uint32(32).uint32(message.p2ParentIdx);
+      writer.uint32(40).uint32(message.p2ParentIdx);
+    }
+    if (message.p2Group !== "") {
+      writer.uint32(50).string(message.p2Group);
     }
     if (message.p2Idx !== 0) {
-      writer.uint32(40).uint32(message.p2Idx);
+      writer.uint32(56).uint32(message.p2Idx);
     }
     if (message.name !== undefined) {
-      writer.uint32(50).string(message.name);
+      writer.uint32(66).string(message.name);
     }
     if (message.isSelected !== undefined) {
-      writer.uint32(56).bool(message.isSelected);
+      writer.uint32(72).bool(message.isSelected);
     }
     if (message.color !== undefined) {
-      writer.uint32(64).uint32(message.color);
+      writer.uint32(80).uint32(message.color);
     }
     Object.entries(message.otherProps).forEach(([key, value]) => {
-      Wire_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(74).fork()).join();
+      Wire_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(90).fork()).join();
     });
     return writer;
   },
@@ -831,11 +840,11 @@ export const Wire: MessageFns<Wire> = {
           continue;
         }
         case 3: {
-          if (tag !== 24) {
+          if (tag !== 26) {
             break;
           }
 
-          message.p1Idx = reader.uint32();
+          message.p1Group = reader.string();
           continue;
         }
         case 4: {
@@ -843,7 +852,7 @@ export const Wire: MessageFns<Wire> = {
             break;
           }
 
-          message.p2ParentIdx = reader.uint32();
+          message.p1Idx = reader.uint32();
           continue;
         }
         case 5: {
@@ -851,7 +860,7 @@ export const Wire: MessageFns<Wire> = {
             break;
           }
 
-          message.p2Idx = reader.uint32();
+          message.p2ParentIdx = reader.uint32();
           continue;
         }
         case 6: {
@@ -859,7 +868,7 @@ export const Wire: MessageFns<Wire> = {
             break;
           }
 
-          message.name = reader.string();
+          message.p2Group = reader.string();
           continue;
         }
         case 7: {
@@ -867,25 +876,41 @@ export const Wire: MessageFns<Wire> = {
             break;
           }
 
-          message.isSelected = reader.bool();
+          message.p2Idx = reader.uint32();
           continue;
         }
         case 8: {
-          if (tag !== 64) {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 9: {
+          if (tag !== 72) {
+            break;
+          }
+
+          message.isSelected = reader.bool();
+          continue;
+        }
+        case 10: {
+          if (tag !== 80) {
             break;
           }
 
           message.color = reader.uint32();
           continue;
         }
-        case 9: {
-          if (tag !== 74) {
+        case 11: {
+          if (tag !== 90) {
             break;
           }
 
-          const entry9 = Wire_OtherPropsEntry.decode(reader, reader.uint32());
-          if (entry9.value !== undefined) {
-            message.otherProps[entry9.key] = entry9.value;
+          const entry11 = Wire_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry11.value !== undefined) {
+            message.otherProps[entry11.key] = entry11.value;
           }
           continue;
         }
@@ -902,8 +927,10 @@ export const Wire: MessageFns<Wire> = {
     return {
       kind: isSet(object.kind) ? globalThis.String(object.kind) : undefined,
       p1ParentIdx: isSet(object.p1ParentIdx) ? globalThis.Number(object.p1ParentIdx) : 0,
+      p1Group: isSet(object.p1Group) ? globalThis.String(object.p1Group) : "",
       p1Idx: isSet(object.p1Idx) ? globalThis.Number(object.p1Idx) : 0,
       p2ParentIdx: isSet(object.p2ParentIdx) ? globalThis.Number(object.p2ParentIdx) : 0,
+      p2Group: isSet(object.p2Group) ? globalThis.String(object.p2Group) : "",
       p2Idx: isSet(object.p2Idx) ? globalThis.Number(object.p2Idx) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
       isSelected: isSet(object.isSelected) ? globalThis.Boolean(object.isSelected) : undefined,
@@ -925,11 +952,17 @@ export const Wire: MessageFns<Wire> = {
     if (message.p1ParentIdx !== 0) {
       obj.p1ParentIdx = Math.round(message.p1ParentIdx);
     }
+    if (message.p1Group !== "") {
+      obj.p1Group = message.p1Group;
+    }
     if (message.p1Idx !== 0) {
       obj.p1Idx = Math.round(message.p1Idx);
     }
     if (message.p2ParentIdx !== 0) {
       obj.p2ParentIdx = Math.round(message.p2ParentIdx);
+    }
+    if (message.p2Group !== "") {
+      obj.p2Group = message.p2Group;
     }
     if (message.p2Idx !== 0) {
       obj.p2Idx = Math.round(message.p2Idx);
@@ -962,8 +995,10 @@ export const Wire: MessageFns<Wire> = {
     const message = createBaseWire();
     message.kind = object.kind ?? undefined;
     message.p1ParentIdx = object.p1ParentIdx ?? 0;
+    message.p1Group = object.p1Group ?? "";
     message.p1Idx = object.p1Idx ?? 0;
     message.p2ParentIdx = object.p2ParentIdx ?? 0;
+    message.p2Group = object.p2Group ?? "";
     message.p2Idx = object.p2Idx ?? 0;
     message.name = object.name ?? undefined;
     message.isSelected = object.isSelected ?? undefined;
@@ -1386,13 +1421,13 @@ export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = 
 };
 
 function createBaseIntegratedCircuitMetadata_Pin(): IntegratedCircuitMetadata_Pin {
-  return { internalCompId: 0, internalPortIdx: 0, group: "", name: "", x: 0, y: 0, dx: 0, dy: 0 };
+  return { internalCompIdx: 0, internalPortIdx: 0, group: "", name: "", x: 0, y: 0, dx: 0, dy: 0 };
 }
 
 export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata_Pin> = {
   encode(message: IntegratedCircuitMetadata_Pin, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.internalCompId !== 0) {
-      writer.uint32(8).uint32(message.internalCompId);
+    if (message.internalCompIdx !== 0) {
+      writer.uint32(8).uint32(message.internalCompIdx);
     }
     if (message.internalPortIdx !== 0) {
       writer.uint32(16).uint32(message.internalPortIdx);
@@ -1430,7 +1465,7 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
             break;
           }
 
-          message.internalCompId = reader.uint32();
+          message.internalCompIdx = reader.uint32();
           continue;
         }
         case 2: {
@@ -1500,7 +1535,7 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
 
   fromJSON(object: any): IntegratedCircuitMetadata_Pin {
     return {
-      internalCompId: isSet(object.internalCompId) ? globalThis.Number(object.internalCompId) : 0,
+      internalCompIdx: isSet(object.internalCompIdx) ? globalThis.Number(object.internalCompIdx) : 0,
       internalPortIdx: isSet(object.internalPortIdx) ? globalThis.Number(object.internalPortIdx) : 0,
       group: isSet(object.group) ? globalThis.String(object.group) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
@@ -1513,8 +1548,8 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
 
   toJSON(message: IntegratedCircuitMetadata_Pin): unknown {
     const obj: any = {};
-    if (message.internalCompId !== 0) {
-      obj.internalCompId = Math.round(message.internalCompId);
+    if (message.internalCompIdx !== 0) {
+      obj.internalCompIdx = Math.round(message.internalCompIdx);
     }
     if (message.internalPortIdx !== 0) {
       obj.internalPortIdx = Math.round(message.internalPortIdx);
@@ -1547,7 +1582,7 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
     object: I,
   ): IntegratedCircuitMetadata_Pin {
     const message = createBaseIntegratedCircuitMetadata_Pin();
-    message.internalCompId = object.internalCompId ?? 0;
+    message.internalCompIdx = object.internalCompIdx ?? 0;
     message.internalPortIdx = object.internalPortIdx ?? 0;
     message.group = object.group ?? "";
     message.name = object.name ?? "";

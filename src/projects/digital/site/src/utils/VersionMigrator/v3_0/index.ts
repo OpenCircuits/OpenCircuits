@@ -4,15 +4,15 @@
 /* eslint-disable key-spacing */
 
 // Migration logic for old circuit files, version <= 3.0
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {DigitalSchema} from "digital/api/circuit/schema";
-import {Schema} from "shared/api/circuit/schema";
+import * as uuid from "uuid";
+
 import {IMPORT_IC_CLOCK_MESSAGE} from "../../Constants";
-import {uuid} from "shared/api/circuit/public";
+import {GUID} from "shared/api/circuit/public";
 import {Get} from "shared/api/circuit/utils/Reducers";
 import {MapObj} from "shared/api/circuit/utils/Functions";
 import * as V3_0Schema from "./Schema";
 import {Decompress, Entry, MakeEntry} from "./SerialeazyUtils";
+import {ProtoSchema} from "shared/site/proto";
 import {DigitalProtoSchema} from "digital/site/proto";
 
 
@@ -24,110 +24,62 @@ export function IsV3_0(json: any): json is V3_0Schema.Circuit {
     return ("contents" in json && "metadata" in json);
 }
 
+function ConvertId(id: GUID): Uint8Array {
+    return uuid.parse(id) as Uint8Array;
+}
+
 function ConvertCompProps(
     comp: Entry<V3_0Schema.DigitalComponent>,
-    i: number,
-): Schema.Component["props"] {
-    const props: Schema.Component["props"] = { zIndex: i };
-
-    if (comp.name.set)
-        props["name"] = comp.name.name;
-    props["x"] = comp.transform.pos.x / 50;
-    props["y"] = comp.transform.pos.y / -50;
-    props["angle"] = comp.transform.angle;
+): ProtoSchema.Component["otherProps"] {
+    const props: ProtoSchema.Component["otherProps"] = {};
 
     // Component-specific properties
     switch (comp.type) {
         case "ConstantNumber":
-            props["inputNum"] = comp["inputNum"] as number;
+            props["inputNum"] = { intVal: comp["inputNum"] as number };
             break;
         case "Clock":
-            props["paused"] = comp["paused"] as boolean;
-            props["delay"]  = comp["frequency"] as number;
+            props["paused"] = { boolVal: comp["paused"] as boolean };
+            props["delay"]  = { intVal: comp["frequency"] as number };
             break;
         case "LED":
-            props["color"] = comp["color"] as string;
+            props["color"] = { strVal: comp["color"] as string };
             break;
         case "ASCIIDisplay":
         case "BCDDisplay":
-            props["segmentCount"] = comp["segmentCount"] as number;
+            props["segmentCount"] = { intVal: comp["segmentCount"] as number };
             break;
         case "Oscilloscope":
-            props["paused"]  = comp["paused"] as boolean;
-            props["delay"]   = comp["frequency"] as number;
-            props["w"]       = (comp["displaySize"] as V3_0Schema.Vector).x / 50;
-            props["h"]       = (comp["displaySize"] as V3_0Schema.Vector).y / 50;
-            props["samples"] = comp["numSamples"] as number;
+            props["paused"]  = { boolVal: comp["paused"] as boolean };
+            props["delay"]   = { intVal: comp["frequency"] as number };
+            props["w"]       = { floatVal: (comp["displaySize"] as V3_0Schema.Vector).x / 50 };
+            props["h"]       = { floatVal: (comp["displaySize"] as V3_0Schema.Vector).y / 50 };
+            props["samples"] = { intVal: comp["numSamples"] as number };
             break;
         case "Label":
-            props["bgColor"]   = comp["color"] as string;
-            props["textColor"] = comp["textColor"] as string;
+            props["bgColor"]   = { strVal: comp["color"] as string };
+            props["textColor"] = { strVal: comp["textColor"] as string };
             break;
     }
 
     return props;
 }
 
-function ConvertWireProps(wire: Entry<V3_0Schema.DigitalWire>, i: number): Schema.Wire["props"] {
-    const props: Schema.Component["props"] = { zIndex: i };
-
-    if (wire.name.set)
-        props["name"] = wire.name.name;
-    props["color"] = wire["color"] as string;
-
-    return props;
-}
-
-function ConvertComponent(
-    comp: Entry<V3_0Schema.DigitalComponent>,
-    i: number,
-    refToICIDMap: Record<string, Schema.GUID>,
-): [Schema.Component, Entry<V3_0Schema.DigitalComponent>] {
-    return [{
-        baseKind: "Component",
-        kind:     comp.type,
-        id:       uuid(),
-        icId:     (comp.type === "IC" ? refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref] : undefined),
-        props:    ConvertCompProps(comp, i),
-    }, comp];
-}
-
 function ConvertPort(
     port: Entry<V3_0Schema.DigitalPort>,
-    parent: Schema.GUID,
     group: string,
     index: number,
-): [Schema.Port, Entry<V3_0Schema.DigitalPort>] {
+): [ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>] {
     return [{
-        baseKind: "Port",
-        kind:     "DigitalPort",
-        id:       uuid(),
-        props:    { "name": port.name },
-
-        parent, group, index,
+        group, index,
+        name: (port.name ?? undefined),
+        otherProps: {},
     }, port];
 }
 
-function ConvertWire(
-    wire: Entry<V3_0Schema.DigitalWire>,
-    i: number,
-    refToPortsMap: Record<string, Schema.Port>,
-): [Schema.Wire, Entry<V3_0Schema.DigitalWire>] {
-    return [{
-        baseKind: "Wire",
-        kind:     "DigitalWire",
-        id:       uuid(),
-        props:    ConvertWireProps(wire, i),
-
-        p1: refToPortsMap[wire.p1.ref].id,
-        p2: refToPortsMap[wire.p2.ref].id,
-    }, wire];
-}
-
-function ConvertPorts(
-    comp: Entry<V3_0Schema.DigitalComponent>,
-    parentId: Schema.GUID,
-): Array<[Schema.Port, Entry<V3_0Schema.DigitalPort>]> {
+function FindPorts(
+    comp: Entry<V3_0Schema.DigitalComponent>
+): { cfgIdx: number, ports: Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]> } {
     const inputs = comp.inputs.currentPorts, outputs = comp.outputs.currentPorts;
     switch (comp.type) {
     // Flip flops, latches, muxes, and comparator don't have the same exact input/output ordering,
@@ -142,64 +94,151 @@ function ConvertPorts(
             "DFlipFlop":  ["D", "clk"],
             "TFlipFlop":  ["T", "clk"],
         }
-        return [
-            ConvertPort(inputs[0],  parentId, "pre",  0),
-            ConvertPort(inputs[1],  parentId, "clr",  0),
-            ...inputs.slice(2).map((port, i) => ConvertPort(port, parentId, FLIP_FLOP_GROUPS[comp.type][i], 0)),
-            ConvertPort(outputs[0], parentId, "Q",    0),
-            ConvertPort(outputs[1], parentId, "Qinv", 0),
-        ];
+        return {
+            cfgIdx: 0,
+            ports: [
+                ConvertPort(inputs[0], "pre",  0),
+                ConvertPort(inputs[1], "clr",  0),
+                ...inputs.slice(2).map((port, i) => ConvertPort(port, FLIP_FLOP_GROUPS[comp.type][i], 0)),
+                ConvertPort(outputs[0], "Q",    0),
+                ConvertPort(outputs[1], "Qinv", 0),
+            ],
+        };
     case "SRLatch":
     case "DLatch":
         const LATCH_GROUPS: Record<string, string[]> = {
             "SRLatch": ["S", "E", "R"],
             "DLatch":  ["D", "E"],
         }
-        return [
-            ...inputs.map((port, i) => ConvertPort(port, parentId, LATCH_GROUPS[comp.type][i], 0)),
-            ConvertPort(outputs[0], parentId, "Q",    0),
-            ConvertPort(outputs[1], parentId, "Qinv", 0),
-        ];
+        return {
+            cfgIdx: 0,
+            ports: [
+                ...inputs.map((port, i) => ConvertPort(port, LATCH_GROUPS[comp.type][i], 0)),
+                ConvertPort(outputs[0], "Q",    0),
+                ConvertPort(outputs[1], "Qinv", 0),
+            ],
+        };
     case "Multiplexer":
     case "Demultiplexer":
         const selects = (comp["selects"] as Entry<V3_0Schema.PortSet>).currentPorts;
-        return [
-            ...selects.map((port, i) => ConvertPort(port, parentId, "selects", i)),
-            ... inputs.map((port, i) => ConvertPort(port, parentId, "inputs",  i)),
-            ...outputs.map((port, i) => ConvertPort(port, parentId, "outputs", i)),
-        ];
+        return {
+            cfgIdx: selects.length - 1,
+            ports: [
+                ...selects.map((port, i) => ConvertPort(port, "selects", i)),
+                ... inputs.map((port, i) => ConvertPort(port, "inputs",  i)),
+                ...outputs.map((port, i) => ConvertPort(port, "outputs", i)),
+            ],
+        };
     case "Comparator":
-        return [
-            ...inputs.slice(0, inputs.length/2).map((port, i) => ConvertPort(port, parentId, "inputsA", i)),
-            ...inputs.slice(inputs.length/2)   .map((port, i) => ConvertPort(port, parentId, "inputsB", i)),
-            ConvertPort(outputs[0], parentId, "lt", 0),
-            ConvertPort(outputs[1], parentId, "eq", 0),
-            ConvertPort(outputs[2], parentId, "gt", 0),
-        ];
-    default:
-        return [
-            ... inputs.map((port, i) => ConvertPort(port, parentId, "inputs",  i)),
-            ...outputs.map((port, i) => ConvertPort(port, parentId, "outputs", i)),
-        ];
+        return {
+            cfgIdx: inputs.length/2 - 1,
+            ports: [
+                ...inputs.slice(0, inputs.length/2).map((port, i) => ConvertPort(port, "inputsA", i)),
+                ...inputs.slice(inputs.length/2)   .map((port, i) => ConvertPort(port, "inputsB", i)),
+                ConvertPort(outputs[0], "lt", 0),
+                ConvertPort(outputs[1], "eq", 0),
+                ConvertPort(outputs[2], "gt", 0),
+            ],
+        };
     }
+
+    // Everything else has just inputs/outputs, but the config index changes
+    const ports = [
+        ... inputs.map((port, i) => ConvertPort(port, "inputs",  i)),
+        ...outputs.map((port, i) => ConvertPort(port, "outputs", i)),
+    ];
+    const cfgIdx = (() => {
+        switch (comp.type) {
+        case "Encoder":
+            return outputs.length - 1;
+        case "ANDGate":
+        case "NANDGate":
+        case "ORGate":
+        case "NORGate":
+        case "XORGate":
+        case "XNORGate":
+            return inputs.length - 2;
+        case "SegmentDisplay":
+            return {
+                7: 0,
+                9: 1,
+                14: 2,
+                16: 3,
+            }[inputs.length] ?? 0;
+        case "Decoder":
+        case "Oscilloscope":
+            return inputs.length - 1;
+        default:
+            return 0;
+        }
+    })();
+
+    return { cfgIdx, ports };
+}
+
+function ConvertComponent(
+    comp: Entry<V3_0Schema.DigitalComponent>,
+    refToICIDMap: Record<string, string>,
+): [ProtoSchema.Component, Entry<V3_0Schema.DigitalComponent>, Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]>] {
+    const { cfgIdx, ports } = FindPorts(comp);
+
+    return [{
+        kind:  comp.type,
+        icId:  (comp.type === "IC" ? ConvertId(refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref]) : undefined),
+
+        portConfigIdx: cfgIdx,
+
+        name:  comp.name.set ? comp.name.name : undefined,
+        x:     comp.transform.pos.x / 50,
+        y:     comp.transform.pos.y / -50,
+        angle: comp.transform.angle,
+
+        otherProps: ConvertCompProps(comp),
+        portOverrides: ports.map(([p, _]) => p).filter((p) => (!!p.name)),
+    }, comp, ports];
+}
+
+function ConvertWire(
+    wire: Entry<V3_0Schema.DigitalWire>,
+    componentsAndPorts: Array<ReturnType<typeof ConvertComponent>>,
+): [ProtoSchema.Wire, Entry<V3_0Schema.DigitalWire>] {
+    const p1ParentIdx = componentsAndPorts.findIndex(([_, p]) => (p.ref === wire.p1.parent.ref));
+    const p2ParentIdx = componentsAndPorts.findIndex(([_, p]) => (p.ref === wire.p2.parent.ref));
+
+    const [_p1, _p1ParentEntry, p1Ports] = componentsAndPorts[p1ParentIdx];
+    const [_p2, _p2ParentEntry, p2Ports] = componentsAndPorts[p2ParentIdx];
+
+    const [port1, _port1Entry] = p1Ports.find(([_, p]) => (p.ref === wire.p1.ref))!;
+    const [port2, _port2Entry] = p2Ports.find(([_, p]) => (p.ref === wire.p2.ref))!;
+
+    return [{
+        p1ParentIdx,
+        p1Group: port1.group,
+        p1Idx:   port1.index,
+
+        p2ParentIdx,
+        p2Group: port2.group,
+        p2Idx:   port2.index,
+
+        name:  (wire.name.set ? wire.name.name : undefined),
+        color: ("color" in wire && wire["color"] ? parseInt((wire["color"] as string).slice(1), 16) : undefined),
+
+        otherProps: {},
+    }, wire];
 }
 
 function ConvertObjects(
     compEntries: Array<Entry<V3_0Schema.DigitalComponent>>,
     wireEntries: Array<Entry<V3_0Schema.DigitalWire>>,
-    refToICIDMap: Record<string, Schema.GUID>,
+    refToICIDMap: Record<string, GUID>,
 ) {
     // Convert all components to Schema
-    const components = compEntries.map((c, i) => ConvertComponent(c, i, refToICIDMap));
-
-    // Convert all ports to Schema
-    const ports = components.flatMap(([comp, entry]) => ConvertPorts(entry, comp.id));
-    const refToPortsMap = Object.fromEntries(ports.map(([port, entry]) => [entry.ref, port]));
+    const componentsAndPorts = compEntries.map((c) => ConvertComponent(c, refToICIDMap));
 
     // Convert all wires to Schema
-    const wires = wireEntries.map((w, i) => ConvertWire(w, i, refToPortsMap));
+    const wires = wireEntries.map((w) => ConvertWire(w, componentsAndPorts));
 
-    return { components, ports, wires };
+    return { componentsAndPorts, wires };
 }
 
 function AreICDataEqual(i1: V3_0Schema.ICData, i2: V3_0Schema.ICData) {
@@ -224,11 +263,14 @@ function AreICDataEqual(i1: V3_0Schema.ICData, i2: V3_0Schema.ICData) {
 
 function ConvertICPin(
     port: Entry<V3_0Schema.DigitalPort>,
-    id: Schema.GUID,
+    internalCompIdx: number,
     group: string, { x: w, y: h }: Entry<V3_0Schema.Vector>,
-): Schema.IntegratedCircuitPin {
+): ProtoSchema.IntegratedCircuitMetadata_Pin {
     return {
-        id, group,
+        internalCompIdx,
+        internalPortIdx: 0,
+
+        group,
         name: port.name,
 
         x:  port.origin.x / (w / 2),
@@ -242,45 +284,56 @@ function ConvertIC(
     ic: Entry<V3_0Schema.ICData>,
     refToICIDMap: Record<string, string>,
     warnings: Set<Warnings>,
-): [{ metadata: Schema.IntegratedCircuitMetadata } & ReturnType<typeof ConvertObjects>, Entry<V3_0Schema.ICData>] {
-    const { components, ports, wires } = ConvertObjects(ic.collection.components, ic.collection.wires, refToICIDMap);
-    const refToPortsMap = Object.fromEntries(ports.map(([port, entry]) => [entry.ref, port]));
+): [{ metadata: ProtoSchema.IntegratedCircuitMetadata } & ReturnType<typeof ConvertObjects>, Entry<V3_0Schema.ICData>] {
+    const { componentsAndPorts, wires } = ConvertObjects(ic.collection.components, ic.collection.wires, refToICIDMap);
 
     const inputPins = ic.collection.inputs
-        .map((obj, i) => [refToPortsMap[obj.outputs.currentPorts[0].ref].id, ic.inputPorts[i]] as const)
-        .map(([id, port]) => ConvertICPin(port, id, "inputs", ic.transform.size));
+        .map((obj, i) => [
+            componentsAndPorts.findIndex(([_, parent]) => (parent.ref === obj.ref)),
+            ic.inputPorts[i],
+        ] as const)
+        .map(([internalCompIdx, port]) => ConvertICPin(port, internalCompIdx, "inputs", ic.transform.size));
     const outputPins = ic.collection.outputs
-        .map((obj, i) => [refToPortsMap[obj.inputs.currentPorts[0].ref].id, ic.outputPorts[i]] as const)
-        .map(([id, port]) => ConvertICPin(port, id, "outputs", ic.transform.size));
+        .map((obj, i) => [
+            componentsAndPorts.findIndex(([_, parent]) => (parent.ref === obj.ref)),
+            ic.outputPorts[i],
+        ] as const)
+        .map(([internalCompIdx, port]) => ConvertICPin(port, internalCompIdx, "outputs", ic.transform.size));
 
-    for (const [c, _] of components) {
+    for (const [c, _] of componentsAndPorts) {
         // Replace all Switch/Buttons with InputPins and LEDs with OutputPins
         if (c.kind === "Switch" || c.kind === "Button")
             c.kind = "InputPin";
-        if (c.kind === "LED")
+        if (c.kind === "LED") {
             c.kind = "OutputPin";
+            delete c.otherProps["color"];
+        }
 
         // Clocks in ICs are no longer supported, change to a switch and add to warnings.
         if (c.kind === "Clock") {
             c.kind = "Switch";
+            delete c.otherProps["paused"];
+            delete c.otherProps["delay"];
             warnings.add(Warnings.ClockInIC);
         }
     }
 
     return [{
         metadata: {
-            id:      refToICIDMap[ic.ref],
-            name:    ic.name,
-            desc:    "",
-            thumb:   "",
-            version: "digital/v0",
+            metadata: {
+                id:      ConvertId(refToICIDMap[ic.ref]),
+                name:    ic.name,
+                desc:    "",
+                thumb:   "",
+                version: "digital/v0",
+            },
 
             displayWidth:  ic.transform.size.x/50,
             displayHeight: ic.transform.size.y/50,
 
             pins: [...inputPins, ...outputPins],
-        } satisfies Schema.IntegratedCircuitMetadata,
-        components, ports, wires,
+        } satisfies ProtoSchema.IntegratedCircuitMetadata,
+        componentsAndPorts, wires,
     }, ic] as const;
 }
 
@@ -301,21 +354,26 @@ function ConvertCompState(comp: Entry<V3_0Schema.DigitalComponent>): boolean[] {
     }
 }
 
+function ConvertSignal(signal: boolean): DigitalProtoSchema.DigitalSimState_Signal {
+    return (signal ? DigitalProtoSchema.DigitalSimState_Signal.On : DigitalProtoSchema.DigitalSimState_Signal.Off);
+}
+
 function ConvertSimState(
-    components: Array<[Schema.Component, Entry<V3_0Schema.DigitalComponent>]>,
-    ports: Array<[Schema.Port, Entry<V3_0Schema.DigitalPort>]>,
-    refToICIDMap: Record<string, Schema.GUID>,
+    componentsAndPorts: Array<[ProtoSchema.Component, Entry<V3_0Schema.DigitalComponent>, Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]>]>,
+    refToICIDMap: Record<string, GUID>,
     refToICsMap: Record<string, ReturnType<typeof ConvertIC>>,
-): DigitalSchema.DigitalSimState {
-    const signals = Object.fromEntries(ports.map(([port, entry]) => [port.id, Signal.fromBool(entry.isOn)]));
+): DigitalProtoSchema.DigitalSimState {
+    const signals = componentsAndPorts.flatMap(([_, _e, ports]) =>
+        ports.map(([_p, portEntry]) => ConvertSignal(portEntry.isOn)));
 
-    const states = Object.fromEntries(components
-        .map(([comp, entry]) => [comp.id, ConvertCompState(entry).map(Signal.fromBool)])
-        .filter(([_, state]) => (state.length > 0)));
+    const states = Object.fromEntries(componentsAndPorts
+        .map(([_, entry], i) => [i, { state: ConvertCompState(entry).map(ConvertSignal) }] as const)
+        .filter(([_, { state }]) => (state.length > 0)));
 
-    const icStates = Object.fromEntries(components
-        .filter(([comp, _]) => (comp.kind === "IC"))
-        .map(([comp, entry]) => {
+    const icStates = Object.fromEntries(componentsAndPorts
+        .map((compAndPort, i) => [i, compAndPort] as const)
+        .filter(([_i, [comp]]) => (comp.kind === "IC"))
+        .map(([i, [_comp, entry]]) => {
             const collection = entry["collection"] as Entry<V3_0Schema.DigitalObjectSet>;
 
             // The IC instance's collection is an independent copy of the ICData's collection
@@ -328,9 +386,6 @@ function ConvertSimState(
             const icDataObjs = refToICsMap[(entry["data"] as Entry<V3_0Schema.ICData>).ref][0];
             const icObjs = ConvertObjects(collection.components, collection.wires, refToICIDMap);
 
-            if (icDataObjs.components.length !== icObjs.components.length || icDataObjs.ports.length !== icObjs.ports.length)
-                throw new Error(`Invariant failed! ${entry.name} doesn't have a proper connection to ICData!`);
-
             // This technically will _not_ work if there are exactly overlapping components with the same names
             // and such, but oh well. A real solution would involve building graphs of each.
             const compareComps = (c1: Entry<V3_0Schema.DigitalComponent>, c2: Entry<V3_0Schema.DigitalComponent>) => (
@@ -339,27 +394,18 @@ function ConvertSimState(
                 (c1.transform.pos.x - c2.transform.pos.x) ||
                 (c1.transform.pos.y - c2.transform.pos.y))
             );
-            const comparePorts = (c1: Entry<V3_0Schema.DigitalPort>, c2: Entry<V3_0Schema.DigitalPort>) => (
-                (compareComps(c1.parent, c2.parent)) ||
-                (c1.name.localeCompare(c2.name) ||
-                (c1.target.x - c2.target.x) ||
-                (c1.target.y - c2.target.y))
-            );
 
-            const components = icDataObjs.components
-                .sort(([_, e1], [__, e2]) => compareComps(e1, e2))
-                .map(Get(0))
-                .zip(icObjs.components
-                    .sort(([_, e1], [__, e2]) => compareComps(e1, e2))
-                    .map(Get(1)));
-            const ports = icDataObjs.ports
-                .sort(([_, e1], [__, e2]) => comparePorts(e1, e2))
-                .map(Get(0))
-                .zip(icObjs.ports
-                    .sort(([_, e1], [__, e2]) => comparePorts(e1, e2))
-                    .map(Get(1)));
+            const componentsAndPorts = icDataObjs.componentsAndPorts
+                // Need the original indices, to sort back to the original order
+                .map(([comp, entry, ports], i) => [i, comp, entry, ports] as const)
+                .sort(([_i1, _c1, e1], [_i2, _c2, e2]) => compareComps(e1, e2))
+                .zip(icObjs.componentsAndPorts
+                    .sort(([_c1, e1], [_c2, e2]) => compareComps(e1, e2)))
+                .sort(([[i1]], [[i2]]) => (i1 - i2))
+                .map(([[_i, comp1, _e1, _ports1], [_comp2, e2, ports2]]) =>
+                    [comp1, e2, ports2] satisfies [ProtoSchema.Component, Entry<V3_0Schema.DigitalComponent>, Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]>])
 
-            return [comp.id, ConvertSimState(components, ports, refToICIDMap, refToICsMap)];
+            return [i, ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap)];
         }));
 
     return { signals, states, icStates };
@@ -387,7 +433,7 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
             return ref;
         return result[0];
     });
-    const allICIDsMap = MapObj(allICEntriesMap, (_) => uuid());
+    const allICIDsMap = MapObj(allICEntriesMap, (_) => uuid.v4());
     // Map of any ICData ref -> to the proper IC ID, duped ICData's will all point to the same ID.
     const refToICIDMap = MapObj(allICIDsMap, ([ref, _]) => allICIDsMap[icRefToRefMap[ref]]);
 
@@ -397,36 +443,40 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
 
 
     const ics = [...new Set(Object.values(refToICsMap))];
-    const { components, wires, ports } = ConvertObjects(root.designer.objects, root.designer.wires, refToICIDMap);
+    const { componentsAndPorts, wires } = ConvertObjects(root.designer.objects, root.designer.wires, refToICIDMap);
 
-    const initialICSimStates = ics.map(([ic, _]) =>
-        ConvertSimState(ic.components, ic.ports, refToICIDMap, refToICsMap));
-    const simState = ConvertSimState(components, ports, refToICIDMap, refToICsMap);
+    const icInitialSimStates = ics.map(([ic, _]) =>
+        ConvertSimState(ic.componentsAndPorts, refToICIDMap, refToICsMap));
+    const simState = ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap);
 
     return {
         schema: {
-            metadata: {
-                id:      Schema.uuid(),
-                name:    circuit.metadata.name,
-                desc:    "",
-                thumb:   "",
-                version: "digital/v0",
-            },
-            camera: {
-                x: root.camera.pos.x / 50,
-                y: root.camera.pos.y / -50,
-                zoom: root.camera.zoom / 50,
-            },
+            circuit: {
+                metadata: {
+                    id:      ConvertId(uuid.v4()),
+                    name:    circuit.metadata.name,
+                    desc:    "",
+                    thumb:   "",
+                    version: "digital/v0",
+                },
+                camera: {
+                    x: root.camera.pos.x / 50,
+                    y: root.camera.pos.y / -50,
+                    zoom: root.camera.zoom / 50,
+                },
+                ics: ics.map(Get(0)).map(({ metadata, componentsAndPorts, wires }) => ({
+                    metadata,
 
-            ics: ics.map(Get(0)).map(({ metadata, components, ports, wires }) => ({
-                metadata,
-                objects: [...components.map(Get(0)), ...wires.map(Get(0)), ...ports.map(Get(0))],
-            })),
-            objects: [...components.map(Get(0)), ...wires.map(Get(0)), ...ports.map(Get(0))],
+                    components: componentsAndPorts.map(Get(0)),
+                    wires:      wires.map(Get(0)),
+                })),
+                components: componentsAndPorts.map(Get(0)),
+                wires:      wires.map(Get(0)),
+            },
 
             propagationTime: root.designer.propagationTime,
 
-            initialICSimStates,
+            icInitialSimStates,
             simState,
         } satisfies DigitalProtoSchema.DigitalCircuit,
         warnings: [...warnings].map((w) => ({

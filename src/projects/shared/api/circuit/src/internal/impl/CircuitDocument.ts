@@ -690,7 +690,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 .uponOk(() => {
                     // Copy-on-write
                     obj.props = { ...obj.props };
-                    if (op.newVal)
+                    if (op.newVal !== undefined)
                         obj.props[op.key] = op.newVal;
                     else
                         delete obj.props[op.key];

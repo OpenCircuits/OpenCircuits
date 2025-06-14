@@ -16,7 +16,9 @@ message DigitalSimState {
 
     // Array of signals corresponding to the flat(circuit.components.map(allPorts))
     repeated Signal signals = 1;
+    // index of component in circuit.components : state of the component
     map<uint32, State> states = 2;
+    // index of component in circuit.components : state of the component
     map<uint32, DigitalSimState> icStates = 3;
 }
 

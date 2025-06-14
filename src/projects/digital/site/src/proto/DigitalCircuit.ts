@@ -15,7 +15,9 @@ export const protobufPackage = "";
 export interface DigitalSimState {
   /** Array of signals corresponding to the flat(circuit.components.map(allPorts)) */
   signals: DigitalSimState_Signal[];
+  /** index of component in circuit.components : state of the component */
   states: { [key: number]: DigitalSimState_State };
+  /** index of component in circuit.components : state of the component */
   icStates: { [key: number]: DigitalSimState };
 }
 

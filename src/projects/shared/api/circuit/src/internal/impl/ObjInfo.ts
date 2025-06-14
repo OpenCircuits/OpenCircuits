@@ -120,7 +120,7 @@ export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
 
     public checkPropValue(key: string, value?: Schema.Prop): Result {
         if (!(key in this.props))
-            return ErrE(`BaseObjInfo: ${key} not a valid prop`);
+            return ErrE(`BaseObjInfo: ${key} not a valid prop, valid props: [${Object.keys(this.props).join(",")}]`);
         if (value && (this.props[key] !== typeof value))
             return ErrE(`BaseObjInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
         return OkVoid();

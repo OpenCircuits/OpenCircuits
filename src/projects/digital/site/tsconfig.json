@@ -22,6 +22,7 @@
     "include": ["../../shared/api/circuitdesigner/src/types"],
     "files": [
         "./src/index.tsx",
-        "./tests/containers/ExprToCircuitPopup.test.tsx"
+        "./tests/containers/ExprToCircuitPopup.test.tsx",
+        "./tests/utils/VersionMigrator.test.ts"
     ],
 }

@@ -10,6 +10,8 @@ message Prop {
 }
 
 message Port {
+    // TODO: kind?
+
     string group = 1;
     int32 index = 2;
 
@@ -41,19 +43,19 @@ message Wire {
 
     // The index of the 1st port's parent component in circuit.components
     uint32 p1ParentIdx = 2;
-    // The index of the 1st port in the parent component's ports
-    uint32 p1Idx = 3;
+    string p1Group = 3;
+    uint32 p1Idx = 4;
 
     // The index of the 2nd port's parent component in circuit.components
-    uint32 p2ParentIdx = 4;
-    // The index of the 2nd port in the parent component's ports
-    uint32 p2Idx = 5;
+    uint32 p2ParentIdx = 5;
+    string p2Group = 6;
+    uint32 p2Idx = 7;
 
-    optional string name = 6;
-    optional bool isSelected = 7;
-    optional uint32 color = 8;
+    optional string name = 8;
+    optional bool isSelected = 9;
+    optional uint32 color = 10;
 
-    map<string, Prop> otherProps = 9;
+    map<string, Prop> otherProps = 11;
 }
 
 message Camera {
@@ -77,7 +79,7 @@ message IntegratedCircuitMetadata {
     float displayHeight = 3;
 
     message Pin {
-        uint32 internalCompId = 1;
+        uint32 internalCompIdx = 1;
         uint32 internalPortIdx = 2;
 
         string group = 3;
@@ -105,6 +107,7 @@ message Circuit {
 
     repeated IntegratedCircuit ics = 3;
 
+    // Order of components will dictate the z-ordering for them.
     repeated Component components = 4;
     repeated Wire wires = 5;
 }

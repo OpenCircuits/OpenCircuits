@@ -1,7 +1,7 @@
 import {V, Vector} from "Vector";
 
 import {AddErrE}                 from "shared/api/circuit/utils/MultiError";
-import {FromConcatenatedEntries} from "shared/api/circuit/utils/Functions";
+import {FromConcatenatedEntries, MapObj} from "shared/api/circuit/utils/Functions";
 import {GUID}                    from "shared/api/circuit/internal";
 import {Schema}                  from "shared/api/circuit/schema";
 
@@ -86,11 +86,15 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     }
 
     public get ports(): Record<string, T["Port[]"]> {
-        return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
+        // Guarantees order of ports in each group to be by port.index in increasing order.
+        return MapObj(
+            this.getCircuitInfo().getPortConfig(this.id).unwrap(),
+            ([group, _]) => [...this.getCircuitInfo().getPortsForGroup(this.id, group).unwrap()]
+                .map((id) => this.state.constructPort(id, this.icId))
+                .sort((p1, p2) => (p1.index - p2.index)));
     }
     public get allPorts(): T["Port[]"] {
-        return [...this.getCircuitInfo().getPortsForComponent(this.id).unwrap()]
-            .map((id) => this.state.constructPort(id, this.icId));
+        return Object.values(this.ports).flat();
     }
 
     // get connectedComponents(): T["Component[]"] {
