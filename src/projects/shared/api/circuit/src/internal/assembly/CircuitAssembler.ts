@@ -152,8 +152,10 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
                 const existing = this.dirtyComponentPorts.getOrInsert(compId, () => new DirtyMap());
                 newPorts.forEach((port) => existing.add(port, AssemblyReason.Added));
 
-                // this.circuit.getAllWiresForComponent(compId).unwrap()
-                //     .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
+                if (!diff.removedComponents.has(compId)) {
+                    this.circuit.getAllWiresForComponent(compId).unwrap()
+                        .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
+                }
             }
             for (const [compId, newPorts] of diff.removedPorts) {
                 this.dirtyComponents.add(compId, AssemblyReason.PortsChanged);
@@ -161,8 +163,10 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
                 const existing = this.dirtyComponentPorts.getOrInsert(compId, () => new DirtyMap());
                 newPorts.forEach((port) => existing.add(port, AssemblyReason.Removed));
 
-                // this.circuit.getAllWiresForComponent(compId).unwrap()
-                //     .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
+                if (!diff.removedComponents.has(compId)) {
+                    this.circuit.getAllWiresForComponent(compId).unwrap()
+                        .forEach((wireId) => this.dirtyWires.add(wireId, AssemblyReason.TransformChanged));
+                }
             }
 
             // Mark all added/removed wires dirty
