@@ -31,7 +31,7 @@ export const InteractionHandler: ToolHandler<DigitalTypes> = {
     canActivateWhenLocked: true,
 
     onEvent: (ev, { circuit, viewport }) => {
-        const pos = viewport.camera.toWorldPos(ev.input.mousePos);
+        const pos = viewport.toWorldPos(ev.input.mousePos);
 
         if (ev.type === "mousedown" && ev.button === LEFT_MOUSE_BUTTON) {
             const obj = circuit.pickObjAt(pos);

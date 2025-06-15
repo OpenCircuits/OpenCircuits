@@ -54,7 +54,7 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
         const t1 = new Transform(ic.pos, 0, icData.display.size.add(EDGE_BUFFER));
         const t2 = new Transform(ic.pos, 0, icData.display.size.sub(EDGE_BUFFER));
 
-        const worldMousePos = viewport.camera.toWorldPos(pos);
+        const worldMousePos = viewport.toWorldPos(pos);
         if (!(RectContains(t1, worldMousePos) && !RectContains(t2, worldMousePos)))
             return "none";
 
@@ -103,7 +103,7 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
 
         const ic = this.getIC(circuit), icData = this.getICData(circuit);
 
-        const worldMousePos = viewport.camera.toWorldPos(ev.input.mousePos);
+        const worldMousePos = viewport.toWorldPos(ev.input.mousePos);
 
         const newSize = worldMousePos.sub(ic.pos).scale(2).abs();
 

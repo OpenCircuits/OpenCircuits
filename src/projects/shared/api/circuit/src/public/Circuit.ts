@@ -14,6 +14,7 @@ import {Observable} from "../utils/Observable";
 import {ObjContainer, ReadonlyObjContainer} from "./ObjContainer";
 import {LogEntry} from "../internal/impl/CircuitLog";
 import {Rect} from "math/Rect";
+import {Camera} from "./Camera";
 
 
 // TODO[model_refactor](leon) - make this more user friendly
@@ -84,6 +85,7 @@ export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircu
     name: string;
     desc: string;
     thumbnail: string;
+    readonly camera: Camera;
 
     // Object manipulation
     placeComponentAt(kind: string, pt: Vector): Component;

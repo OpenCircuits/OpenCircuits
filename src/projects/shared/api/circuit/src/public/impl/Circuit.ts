@@ -17,6 +17,8 @@ import {LogEntry} from "../../internal/impl/CircuitLog";
 import {Component, ReadonlyComponent} from "../Component";
 import {ReadonlyWire, Wire} from "../Wire";
 import {Port, ReadonlyPort} from "../Port";
+import {Camera} from "../Camera";
+import {CameraImpl} from "./Camera";
 
 
 export type RemoveICCallback = (id: GUID) => void;
@@ -50,6 +52,8 @@ export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements 
 export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly state: CircuitState<T>;
 
+    public readonly camera: Camera;
+
     public readonly selections: SelectionsImpl<T>;
     public readonly history: CircuitHistory;
 
@@ -60,6 +64,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         this.selections = new SelectionsImpl<T>(state);
         this.history = new HistoryImpl(state.internal);
+
+        this.camera = new CameraImpl(state);
 
         // This ordering is important, because it means that all previous circuit subscription calls will happen
         // before any public/outside subscriptions. (i.e. selections are updated before circuit subscribers are called).
@@ -317,7 +323,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.internal.redo().unwrap();
     }
 
-    public import(circuit: T["Circuit"], opts?: { refreshIds?: boolean; loadMetadata?: boolean; }): T["ObjContainerT"] {
+    public import(circuit: T["Circuit"], opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["ObjContainerT"] {
         const refreshIds = opts?.refreshIds ?? false,
               loadMetadata = opts?.loadMetadata ?? false;
 
@@ -331,8 +337,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
                 desc:  circuit.desc,
                 thumb: circuit.thumbnail,
             });
-            // TODODODODOD
-            // this.internal.setCamera(schema.camera);
+            this.internal.setCamera({ x: circuit.camera.cx, y: circuit.camera.cy, zoom: circuit.camera.zoom });
         }
 
         function ConvertComp(c: ReadonlyComponent): Schema.Component {

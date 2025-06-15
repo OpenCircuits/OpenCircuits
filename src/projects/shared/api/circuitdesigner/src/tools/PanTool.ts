@@ -50,7 +50,7 @@ export class PanTool extends ObservableImpl<ToolEvent> implements Tool {
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             const { x: dx, y: dy } = ev.input.deltaMousePos;
-            viewport.camera.translate(V(-dx, -dy), "screen");
+            viewport.camera.translate(V(-dx, dy).scale(viewport.camera.zoom));
             return;
         }
 
@@ -65,7 +65,7 @@ export class PanTool extends ObservableImpl<ToolEvent> implements Tool {
             // Screen gets moved different amounts depending on if shift key is held
             const factor = (ev.input.isShiftKeyDown ? ARROW_PAN_DISTANCE_SMALL : ARROW_PAN_DISTANCE_NORMAL);
 
-            viewport.camera.translate(V(dx, dy).scale(factor), "world");
+            viewport.camera.translate(V(dx, dy).scale(factor));
         }
     }
 }

@@ -44,7 +44,7 @@ export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
     private findPin(pos: Vector, circuit: Circuit, viewport: Viewport): ICPin | undefined {
         const ic = this.getIC(circuit), icData = this.getICData(circuit);
 
-        const port = circuit.pickPortAt(viewport.camera.toWorldPos(pos));
+        const port = circuit.pickPortAt(viewport.toWorldPos(pos));
         if (!port || port.parent.id !== ic.id)
             return undefined;
 
@@ -89,7 +89,7 @@ export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
         const ic = this.getIC(circuit), icData = this.getICData(circuit);
         const size = icData.display.size;
 
-        const worldMousePos = viewport.camera.toWorldPos(ev.input.mousePos);
+        const worldMousePos = viewport.toWorldPos(ev.input.mousePos);
 
         const p = GetNearestPointOnRect(new Rect(ic.pos, size, true), worldMousePos);
 

@@ -23,7 +23,7 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        if (circuit.pickObjAt(viewport.camera.toWorldPos(ev.input.mousePos))?.baseKind === "Component")
+        if (circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos))?.baseKind === "Component")
             return "pointer";
     }
     public shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
@@ -69,8 +69,8 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
             const snapToGrid = ev.input.isShiftKeyDown;
             const snapToConnections = !ev.input.isShiftKeyDown;
 
-            const dPos = viewport.camera.toWorldPos(ev.input.mousePos)
-                .sub(viewport.camera.toWorldPos(ev.input.mouseDownPos));
+            const dPos = viewport.toWorldPos(ev.input.mousePos)
+                .sub(viewport.toWorldPos(ev.input.mouseDownPos));
 
             // Translate all selected components
             circuit.beginTransaction({ batch: true });

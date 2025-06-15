@@ -9,5 +9,5 @@
             "tests/helpers/*":      ["./tests/helpers/*"],
         },
     },
-    "include": ["."],
+    "include": ["."],, "../circuitdesigner/src/public/impl/Camera.ts"
 }

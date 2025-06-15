@@ -187,7 +187,6 @@ async function Init(): Promise<void> {
                             return VersionMigrator(text).schema;
                         }
                     })();
-                    console.log(schema);
                     return DigitalProtoToCircuit(schema);
                 },
             });

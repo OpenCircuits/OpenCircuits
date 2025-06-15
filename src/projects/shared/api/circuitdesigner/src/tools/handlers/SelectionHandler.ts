@@ -9,7 +9,7 @@ export const SelectionHandler: ToolHandler = {
 
         const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
-        const obj = circuit.pickObjAt(viewport.camera.toWorldPos(ev.input.mousePos));
+        const obj = circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos));
         if (!obj) {
             // Clear selections if not holding shift
             if (deselectAll) {

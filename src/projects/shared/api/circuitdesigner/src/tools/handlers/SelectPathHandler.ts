@@ -32,13 +32,13 @@ export function GetComponentPath(c: Component): Component[] {
 }
 
 export const SelectPathHandler: ToolHandler = {
-    onEvent: (ev, { circuit, viewport: { camera } }) => {
+    onEvent: (ev, { circuit, viewport }) => {
         // Activate on double LMB click
         if (!(ev.type === "dblclick" && ev.button === LEFT_MOUSE_BUTTON))
             return ToolHandlerResponse.PASS;
 
         // Make sure we double clicked on something
-        const obj = circuit.pickObjAt(camera.toWorldPos(ev.input.mousePos));
+        const obj = circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos));
         if (!obj)
             return ToolHandlerResponse.PASS;
 

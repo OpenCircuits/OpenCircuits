@@ -65,7 +65,7 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
 
                     otherProps: ConvertProps(otherProps),
                 });
-            }).filter((p) => (p.name || p.isSelected || Object.keys(p.otherProps).length > 0)), // TODODOTOTOTO
+            }).filter((p) => (p.name || p.isSelected || Object.keys(p.otherProps).length > 0)),
         };
     }
 
@@ -144,8 +144,12 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
     const wires = circuit.getWires().sort((w1, w2) => (w1.zIndex, w2.zIndex));
 
     return ProtoSchema.Circuit.create({
-        metadata:   ConvertMetadata(circuit),
-        // camera:   schema.camera,  TODODOODOD
+        metadata: ConvertMetadata(circuit),
+        camera:   {
+            x:    circuit.camera.cx,
+            y:    circuit.camera.cy,
+            zoom: circuit.camera.zoom,
+        },
         ics:        circuit.getICs().map(ConvertIC),
         components: comps.map(ConvertComponent),
         wires:      wires.map((w) => ConvertWire(w, comps)),
@@ -286,7 +290,9 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
     circuit.desc = proto.metadata.desc;
     circuit.thumbnail = proto.metadata.thumb;
 
-    // TODODOTOTOTO: Camera
+    circuit.camera.cx = proto.camera?.x ?? 0;
+    circuit.camera.cy = proto.camera?.y ?? 0;
+    circuit.camera.zoom = proto.camera?.zoom ?? 0.02;
 
     // Load ICs
     // This is mildly complicated because we need to load them in order of dependencies.
