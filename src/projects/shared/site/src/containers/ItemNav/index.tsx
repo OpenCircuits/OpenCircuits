@@ -89,6 +89,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
 
     const isShiftDown = useKey("Shift");
 
+    useDocEvent("mousedown", () => dispatch(SetCurPressedObjID(designer.curPressedObj?.id)));
     // Delete the object if its dragged over to the ItemNav (issue #478)
     useDocEvent("mouseup",    () => dispatch(SetCurPressedObjID(undefined)));
     useDocEvent("mouseleave", () => dispatch(SetCurPressedObjID(undefined)));
