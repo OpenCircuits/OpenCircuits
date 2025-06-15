@@ -25,4 +25,9 @@ describe("ConstantNumber", () => {
         expect(out3).toBeOff();
         expect(out4).toBeOff();
     });
+    test("Output order", () => {
+        const [{}, {}, { PlaceAndConnect }] = CreateTestCircuit();
+        const [comp] = PlaceAndConnect("ConstantNumber");
+        expect(comp.outputs[0].targetPos.y).toBeGreaterThan(comp.outputs[1].targetPos.y);
+    });
 });
