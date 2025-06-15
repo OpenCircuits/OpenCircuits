@@ -14,6 +14,7 @@ import * as V3_0Schema from "./Schema";
 import {Decompress, Entry, MakeEntry} from "./SerialeazyUtils";
 import {ProtoSchema} from "shared/site/proto";
 import {DigitalProtoSchema} from "digital/site/proto";
+import {DigitalKindMaps} from "digital/site/proto/bridge";
 
 
 enum Warnings {
@@ -176,6 +177,12 @@ function FindPorts(
     return { cfgIdx, ports };
 }
 
+function ConvertCompKind(str: string): number {
+    if (!DigitalKindMaps[0].compKinds.has(str))
+        throw new Error(`VersionMigratorv3_0: Unknown kind, ${str}!`);
+    return DigitalKindMaps[0].compKinds.get(str)!;
+}
+
 function ConvertComponent(
     comp: Entry<V3_0Schema.DigitalComponent>,
     refToICIDMap: Record<string, string>,
@@ -183,7 +190,7 @@ function ConvertComponent(
     const { cfgIdx, ports } = FindPorts(comp);
 
     return [{
-        kind:  comp.type,
+        kind:  ConvertCompKind(comp.type),
         icId:  (comp.type === "IC" ? ConvertId(refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref]) : undefined),
 
         portConfigIdx: cfgIdx,
@@ -300,18 +307,18 @@ function ConvertIC(
         ] as const)
         .map(([internalCompIdx, port]) => ConvertICPin(port, internalCompIdx, "outputs", ic.transform.size));
 
-    for (const [c, _] of componentsAndPorts) {
+    for (const [c, entry] of componentsAndPorts) {
         // Replace all Switch/Buttons with InputPins and LEDs with OutputPins
-        if (c.kind === "Switch" || c.kind === "Button")
-            c.kind = "InputPin";
-        if (c.kind === "LED") {
-            c.kind = "OutputPin";
+        if (entry.type === "Switch" || entry.type === "Button")
+            c.kind = ConvertCompKind("InputPin");
+        if (entry.type === "LED") {
+            c.kind = ConvertCompKind("OutputPin");
             delete c.otherProps["color"];
         }
 
         // Clocks in ICs are no longer supported, change to a switch and add to warnings.
-        if (c.kind === "Clock") {
-            c.kind = "Switch";
+        if (entry.type === "Clock") {
+            c.kind = ConvertCompKind("Switch");
             delete c.otherProps["paused"];
             delete c.otherProps["delay"];
             warnings.add(Warnings.ClockInIC);
@@ -372,7 +379,7 @@ function ConvertSimState(
 
     const icStates = Object.fromEntries(componentsAndPorts
         .map((compAndPort, i) => [i, compAndPort] as const)
-        .filter(([_i, [comp]]) => (comp.kind === "IC"))
+        .filter(([_i, [_comp, entry]]) => (entry.type === "IC"))
         .map(([i, [_comp, entry]]) => {
             const collection = entry["collection"] as Entry<V3_0Schema.DigitalObjectSet>;
 

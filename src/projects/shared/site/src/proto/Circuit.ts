@@ -31,7 +31,7 @@ export interface Port_OtherPropsEntry {
 }
 
 export interface Component {
-  kind: string;
+  kind: number;
   icId?: Uint8Array | undefined;
   portConfigIdx?: number | undefined;
   name?: string | undefined;
@@ -50,7 +50,7 @@ export interface Component_OtherPropsEntry {
 
 export interface Wire {
   kind?:
-    | string
+    | number
     | undefined;
   /** The index of the 1st port's parent component in circuit.components */
   p1ParentIdx: number;
@@ -113,6 +113,7 @@ export interface Circuit {
   metadata: CircuitMetadata | undefined;
   camera: Camera | undefined;
   ics: IntegratedCircuit[];
+  /** Order of components will dictate the z-ordering for them. */
   components: Component[];
   wires: Wire[];
 }
@@ -449,7 +450,7 @@ export const Port_OtherPropsEntry: MessageFns<Port_OtherPropsEntry> = {
 
 function createBaseComponent(): Component {
   return {
-    kind: "",
+    kind: 0,
     icId: undefined,
     portConfigIdx: undefined,
     name: undefined,
@@ -464,8 +465,8 @@ function createBaseComponent(): Component {
 
 export const Component: MessageFns<Component> = {
   encode(message: Component, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.kind !== "") {
-      writer.uint32(10).string(message.kind);
+    if (message.kind !== 0) {
+      writer.uint32(8).uint32(message.kind);
     }
     if (message.icId !== undefined) {
       writer.uint32(18).bytes(message.icId);
@@ -505,11 +506,11 @@ export const Component: MessageFns<Component> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.kind = reader.string();
+          message.kind = reader.uint32();
           continue;
         }
         case 2: {
@@ -598,7 +599,7 @@ export const Component: MessageFns<Component> = {
 
   fromJSON(object: any): Component {
     return {
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
+      kind: isSet(object.kind) ? globalThis.Number(object.kind) : 0,
       icId: isSet(object.icId) ? bytesFromBase64(object.icId) : undefined,
       portConfigIdx: isSet(object.portConfigIdx) ? globalThis.Number(object.portConfigIdx) : undefined,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
@@ -620,8 +621,8 @@ export const Component: MessageFns<Component> = {
 
   toJSON(message: Component): unknown {
     const obj: any = {};
-    if (message.kind !== "") {
-      obj.kind = message.kind;
+    if (message.kind !== 0) {
+      obj.kind = Math.round(message.kind);
     }
     if (message.icId !== undefined) {
       obj.icId = base64FromBytes(message.icId);
@@ -664,7 +665,7 @@ export const Component: MessageFns<Component> = {
   },
   fromPartial<I extends Exact<DeepPartial<Component>, I>>(object: I): Component {
     const message = createBaseComponent();
-    message.kind = object.kind ?? "";
+    message.kind = object.kind ?? 0;
     message.icId = object.icId ?? undefined;
     message.portConfigIdx = object.portConfigIdx ?? undefined;
     message.name = object.name ?? undefined;
@@ -781,7 +782,7 @@ function createBaseWire(): Wire {
 export const Wire: MessageFns<Wire> = {
   encode(message: Wire, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.kind !== undefined) {
-      writer.uint32(10).string(message.kind);
+      writer.uint32(8).uint32(message.kind);
     }
     if (message.p1ParentIdx !== 0) {
       writer.uint32(16).uint32(message.p1ParentIdx);
@@ -824,11 +825,11 @@ export const Wire: MessageFns<Wire> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.kind = reader.string();
+          message.kind = reader.uint32();
           continue;
         }
         case 2: {
@@ -925,7 +926,7 @@ export const Wire: MessageFns<Wire> = {
 
   fromJSON(object: any): Wire {
     return {
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : undefined,
+      kind: isSet(object.kind) ? globalThis.Number(object.kind) : undefined,
       p1ParentIdx: isSet(object.p1ParentIdx) ? globalThis.Number(object.p1ParentIdx) : 0,
       p1Group: isSet(object.p1Group) ? globalThis.String(object.p1Group) : "",
       p1Idx: isSet(object.p1Idx) ? globalThis.Number(object.p1Idx) : 0,
@@ -947,7 +948,7 @@ export const Wire: MessageFns<Wire> = {
   toJSON(message: Wire): unknown {
     const obj: any = {};
     if (message.kind !== undefined) {
-      obj.kind = message.kind;
+      obj.kind = Math.round(message.kind);
     }
     if (message.p1ParentIdx !== 0) {
       obj.p1ParentIdx = Math.round(message.p1ParentIdx);

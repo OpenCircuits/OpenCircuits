@@ -22,7 +22,7 @@ message Port {
 }
 
 message Component {
-    string kind = 1;
+    uint32 kind = 1;
 
     optional bytes icId = 2;
 
@@ -39,7 +39,7 @@ message Component {
 }
 
 message Wire {
-    optional string kind = 1;
+    optional uint32 kind = 1;
 
     // The index of the 1st port's parent component in circuit.components
     uint32 p1ParentIdx = 2;

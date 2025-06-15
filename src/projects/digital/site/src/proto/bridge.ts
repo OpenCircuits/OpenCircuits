@@ -7,10 +7,70 @@ import {Schema} from "shared/api/circuit/schema";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {Signal} from "digital/api/circuit/schema/Signal";
 
-import {CircuitToProto, ProtoToCircuit} from "shared/site/proto/bridge";
+import {CircuitToProto, MakeKindMaps, ProtoToCircuit} from "shared/site/proto/bridge";
 
 import * as DigitalProtoSchema from "./DigitalCircuit";
 import {CreateCircuit, DigitalCircuit, ReadonlyDigitalCircuit} from "digital/api/circuit/public";
+
+
+export const DigitalKindMaps = MakeKindMaps({
+    // IC
+    "IC": 0,
+
+    // IC Pins
+    "InputPin":  1,
+    "OutputPin": 2,
+
+    // Node
+    "DigitalNode": 3,
+
+    // Inputs
+    "Button":         4,
+    "Switch":         5,
+    "ConstantLow":    6,
+    "ConstantHigh":   7,
+    "ConstantNumber": 8,
+    "Clock":          9,
+
+    // Outputs
+    "LED":            10,
+    "SegmentDisplay": 11,
+    "BCDDisplay":     12,
+    "ASCIIDisplay":   13,
+    "Oscilloscope":   14,
+
+    // Gates
+    "BUFGate":  15,
+    "NOTGate":  16,
+    "ANDGate":  17,
+    "NANDGate": 18,
+    "ORGate":   19,
+    "NORGate":  20,
+    "XORGate":  21,
+    "XNORGate": 22,
+
+    // Flip Flops
+    "SRFlipFlop": 23,
+    "JKFlipFlop": 24,
+    "DFlipFlop":  25,
+    "TFlipFlop":  26,
+
+    // Latches
+    "DLatch":  27,
+    "SRLatch": 28,
+
+    // Other
+    "Multiplexer":   29,
+    "Demultiplexer": 30,
+    "Encoder":       31,
+    "Decoder":       32,
+    "Comparator":    33,
+    "Label":         34,
+}, {
+    "DigitalWire": 0,
+}, {
+    "DigitalPort": 0,
+})
 
 
 export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSchema.DigitalCircuit {
@@ -39,7 +99,7 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
     }
 
     return DigitalProtoSchema.DigitalCircuit.create({
-        circuit: CircuitToProto(circuit),
+        circuit: CircuitToProto(circuit, DigitalKindMaps[0]),
 
         propagationTime:    circuit.propagationTime,
         icInitialSimStates: circuit.getICs().map((ic) => ConvertSimState(circuit, ic.initialSimState, ic.id)),
@@ -82,7 +142,7 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
 
     const [circuit, state] = CreateCircuit(ConvertId(proto.circuit!.metadata!.id));
 
-    ProtoToCircuit(proto.circuit, circuit, (id) => CreateCircuit(id)[0]);
+    ProtoToCircuit(proto.circuit, circuit, (id) => CreateCircuit(id)[0], DigitalKindMaps[1]);
 
     circuit.propagationTime = proto.propagationTime;
 
