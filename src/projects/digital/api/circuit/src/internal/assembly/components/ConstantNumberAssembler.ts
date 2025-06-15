@@ -17,7 +17,7 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
             "outputs": (comp, index, total) => ({
-                origin: V(0.5, PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y, { spacing: 0.5 })),
+                origin: V(0.5, -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y, { spacing: 0.5 })),
                 dir:    V(1, 0),
             }),
         }, [
