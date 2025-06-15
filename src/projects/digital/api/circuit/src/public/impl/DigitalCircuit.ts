@@ -1,12 +1,13 @@
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
-import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort} from "../DigitalPort";
 import {DigitalWire} from "../DigitalWire";
 import {GUID, ICInfo} from "shared/api/circuit/public";
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
 export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
@@ -43,9 +44,28 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return ic;
     }
 
+    public get simState(): DigitalSchema.DigitalSimState {
+        return this.state.sim.getSimState().toSchema();
+    }
+
     // TODO[model_refactor_api](leon) - revisit this
     public step() {
         this.state.sim.step();
+    }
+
+    public override import(
+        circuit: DigitalCircuit,
+        opts?: { refreshIds?: boolean, loadMetadata?: boolean }
+    ): DigitalObjContainer {
+        for (const ic of circuit.getICs())
+            this.state.sim.loadICState(ic.id, ic.initialSimState);
+
+        const objs = super.import(circuit, opts);
+
+        // this.state.simRunner.propagationTime = schema.propagationTime
+        this.state.sim.loadState(circuit.simState);
+
+        return objs;
     }
 
     public override loadSchema(
@@ -73,14 +93,13 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
             this.state.sim.loadICState(ic.metadata.id, initialSimState);
 
         const objs = super.loadSchema(schema, opts);
-
-        // this.state.simRunner.propagationTime = schema.propagationTime
         this.state.sim.loadState(schema.simState);
+        this.propagationTime = schema.propagationTime;
 
         return objs;
     }
 
-    public override toSchema(container?: DigitalObjContainer): DigitalSchema.DigitalCircuit {
+    public override toSchema(container?: ReadonlyDigitalObjContainer): DigitalSchema.DigitalCircuit {
         const ics = container?.ics ?? this.getICs();
 
         return {

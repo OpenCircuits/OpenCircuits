@@ -122,7 +122,7 @@ export const ICViewer = () => {
         if (!ic)
             throw new Error(`ICViewer: Failed to find ic with id ${icInstance.kind}!`);
         const schema = ic.toSchema();
-        for (const obj of schema.objects) {
+        for (const obj of schema.comps) {
             if (obj.kind === "InputPin")
                 obj.kind = "Switch";
             if (obj.kind === "OutputPin")
@@ -130,7 +130,9 @@ export const ICViewer = () => {
         }
         circuit.loadSchema({
             metadata: schema.metadata,
-            objects:  schema.objects,
+            comps:    schema.comps,
+            ports:    schema.ports,
+            wires:    schema.wires,
             ics:      mainDesigner.circuit.toSchema().ics,
             camera:   { x: 0, y: 0, zoom: 0.02 },
 

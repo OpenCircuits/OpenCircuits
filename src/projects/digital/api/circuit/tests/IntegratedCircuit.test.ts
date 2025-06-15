@@ -123,4 +123,55 @@ describe("IntegratedCircuit", () => {
         expect(outerIcInstance.outputs).toHaveLength(1);
         expect(outerIcInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
     });
+
+    test("Basic IC from components in main circuit", () => {
+        const [circuit, _] = CreateTestCircuit();
+
+        const i1 = circuit.placeComponentAt("Switch", V(-5, -5));
+        const i2 = circuit.placeComponentAt("Switch", V(-5, +5));
+        const o1 = circuit.placeComponentAt("LED", V(+5,  0));
+        const g  = circuit.placeComponentAt("ANDGate", V(0, 0));
+
+        i1.outputs[0].connectTo(g.inputs[0]);
+        i2.outputs[0].connectTo(g.inputs[1]);
+        g.outputs[0].connectTo(o1.inputs[0]);
+
+        // Import into new circuit
+        const [icCircuit] = CreateTestCircuit();
+        icCircuit.import(circuit);
+        icCircuit.name = "My IC";
+        const ic = circuit.createIC({
+            circuit: icCircuit,
+            display: {
+                size: V(4, 2),
+                pins: [
+                    { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                ],
+            },
+        });
+
+        expect(ic.name).toBe("My IC");
+        expect(ic.display.size).toEqual(V(4, 2));
+        expect(ic.display.pins).toHaveLength(3);
+        // TODO[model_refactor_api]: This tests when we have replace-kind working
+        // (after importing above, replace switches/leds with pins)
+        // expect(ic.components.map((c) => c.kind)).toContain("InputPin");
+        // expect(ic.components.map((c) => c.kind)).toContain("OutputPin");
+
+        const icInstance = circuit.placeComponentAt(ic.id, V(1, 1));
+
+        expect(icInstance.inputs).toHaveLength(2);
+        expect(icInstance.outputs).toHaveLength(1);
+        expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
+
+        expect(icInstance.inputs[0].originPos).toApproximatelyEqual(V(-2, -0.5).add(icInstance.pos));
+        expect(icInstance.inputs[1].originPos).toApproximatelyEqual(V(-2, +0.5).add(icInstance.pos));
+        expect(icInstance.outputs[0].originPos).toApproximatelyEqual(V(+2, 0).add(icInstance.pos));
+
+        expect(icInstance.inputs[0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(icInstance.pos));
+        expect(icInstance.inputs[1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(icInstance.pos));
+        expect(icInstance.outputs[0].targetPos).toApproximatelyEqual(V(+2.7, 0).add(icInstance.pos));
+    });
 });

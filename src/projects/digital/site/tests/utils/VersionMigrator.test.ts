@@ -6,6 +6,8 @@ import {V} from "Vector";
 import {Signal}            from "digital/api/circuit/schema/Signal";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
+import {DigitalProtoToCircuit} from "digital/site/proto/bridge";
+
 import {IMPORT_IC_CLOCK_MESSAGE} from "digital/site/utils/Constants";
 import {VersionMigrator}         from "digital/site/utils/VersionMigrator";
 
@@ -48,7 +50,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(switchCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
             const sw = comps[0];
@@ -63,7 +65,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(orCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(4);
             expect(circuit.getWires()).toHaveLength(3);
@@ -90,7 +92,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(threeInputAndCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
@@ -115,7 +117,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(poweredOrCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             const led = comps.find((comp) => comp.kind === "LED")!;
             expect(led).toBeOn();
@@ -124,7 +126,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
             const { schema, warnings } = VersionMigrator(JSON.stringify(allInputsCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
 
@@ -160,7 +162,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(ledCiruit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
             const led = comps[0];
@@ -170,7 +172,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(segmentDisplayCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
 
@@ -199,7 +201,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
             const { schema, warnings } = VersionMigrator(JSON.stringify(oscilloscopeCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
 
@@ -224,7 +226,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(srFlipFlopCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
             expect(circuit.getWires()).toHaveLength(7);
@@ -257,7 +259,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(jkFlipFlopCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
             expect(circuit.getWires()).toHaveLength(7);
@@ -290,7 +292,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(dFlipFlopCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
             expect(circuit.getWires()).toHaveLength(6);
@@ -320,7 +322,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(tFlipFlopCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
             expect(circuit.getWires()).toHaveLength(6);
@@ -350,7 +352,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(dLatchCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
@@ -374,7 +376,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(srLatchCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
             expect(circuit.getWires()).toHaveLength(5);
@@ -401,7 +403,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(multiplexerCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
             expect(circuit.getWires()).toHaveLength(9);
@@ -441,7 +443,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(demultiplexerCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
             expect(circuit.getWires()).toHaveLength(9);
@@ -482,7 +484,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(encoderDecoderCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
 
@@ -500,7 +502,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(comparatorCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
             expect(circuit.getWires()).toHaveLength(9);
@@ -545,7 +547,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(labelCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
             const label = comps[0];
@@ -557,7 +559,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(nodesCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
@@ -566,7 +568,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(icDataOnlyCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(0);
             const ics = circuit.getICs();
@@ -581,7 +583,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(basicICCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
             const icInstance = comps[0];
@@ -601,7 +603,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(nestedICCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
             const icInstance = comps[0];
@@ -625,7 +627,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit, _, { }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(zIndexCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(3);
             const bottom = comps.find(({ name }) => name === "Bottom")!;
@@ -648,7 +650,7 @@ describe("DigitalVersionMigrator", () => {
             expect(warnings).toBeDefined();
             expect(warnings).toHaveLength(1);
             expect(warnings).toContain(IMPORT_IC_CLOCK_MESSAGE);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
 
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -672,7 +674,7 @@ describe("DigitalVersionMigrator", () => {
             expect(warnings).toBeDefined();
             expect(warnings).toHaveLength(1);
             expect(warnings).toContain(IMPORT_IC_CLOCK_MESSAGE);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
 
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -694,7 +696,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(threeInputICCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
 
@@ -731,7 +733,7 @@ describe("DigitalVersionMigrator", () => {
             const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(inputOrderICCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
 
@@ -784,10 +786,10 @@ describe("DigitalVersionMigrator", () => {
             expect(out).toBeOff();
         });
         test("All Sides IC", () => {
-            const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
+            const [circuit, _] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(allSidesICCircuit));
             expect(warnings).toHaveLength(0);
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
 
@@ -831,7 +833,7 @@ describe("DigitalVersionMigrator", () => {
             const { schema, warnings } = VersionMigrator(JSON.stringify(flipFlopInICCircuit));
             expect(warnings).toHaveLength(0);
 
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
 
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);
@@ -861,7 +863,7 @@ describe("DigitalVersionMigrator", () => {
             const { schema, warnings } = VersionMigrator(JSON.stringify(nestedICNotInDesignerCircuit));
             expect(warnings).toHaveLength(0);
 
-            circuit.loadSchema(schema);
+            circuit.import(DigitalProtoToCircuit(schema));
 
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(1);

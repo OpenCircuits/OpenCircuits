@@ -1,18 +1,18 @@
 import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
 import {Key} from "shared/api/circuitdesigner/input/Key";
-import {Camera} from "shared/api/circuitdesigner/public/Camera";
 import {V, Vector} from "Vector";
+import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
 
 
 export class MockInputFacade {
-    private readonly camera: Camera;
+    private readonly viewport: Viewport;
     private readonly canvas: HTMLCanvasElement;
 
     private touches: Vector[];
     private mousePos: Vector;
 
-    public constructor(camera: Camera, canvas: HTMLCanvasElement) {
-        this.camera = camera;
+    public constructor(viewport: Viewport, canvas: HTMLCanvasElement) {
+        this.viewport = viewport;
         this.canvas = canvas;
 
         this.touches = [];
@@ -44,7 +44,7 @@ export class MockInputFacade {
     }
 
     public click(worldPos?: Vector, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
-        const pos = (worldPos === undefined ? this.mousePos : this.camera.toScreenPos(worldPos));
+        const pos = (worldPos === undefined ? this.mousePos : this.viewport.toScreenPos(worldPos));
         this.onMouseEv("mousedown", pos, button);
         this.onMouseEv("mouseup", pos, button);
         this.onMouseEv("click", pos, button);
@@ -62,12 +62,12 @@ export class MockInputFacade {
 
     // Note that `pos` is in WORLD COORDINATES for testing purposes
     public press(worldPos?: Vector, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
-        const pos = (worldPos === undefined ? this.mousePos : this.camera.toScreenPos(worldPos));
+        const pos = (worldPos === undefined ? this.mousePos : this.viewport.toScreenPos(worldPos));
         this.onMouseEv("mousedown", pos, button);
         return this;
     }
     public move(amt: Vector, steps = 1, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
-        const step = this.camera.toScreenPos(amt).sub(this.camera.toScreenPos(V())).scale(1 / steps);
+        const step = this.viewport.toScreenPos(amt).sub(this.viewport.toScreenPos(V())).scale(1 / steps);
         for (let i = 1; i <= steps; i++)
             this.onMouseEv("mousemove", this.mousePos.add(step), button);
         return this;
@@ -75,7 +75,7 @@ export class MockInputFacade {
     public moveTo(target: Vector, steps = 5, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
         // Calculate step Vector
         // Keep in world coordinates since we're passing to `move`
-        const step = target.sub(this.camera.toWorldPos(this.mousePos)).scale(1 / steps);
+        const step = target.sub(this.viewport.toWorldPos(this.mousePos)).scale(1 / steps);
 
         // Move a bit for each step
         for (let i = 1; i <= steps; i++)
@@ -105,12 +105,12 @@ export class MockInputFacade {
     }
 
     public touch(pos: Vector): MockInputFacade {
-        this.touches.push(this.camera.toScreenPos(pos));
+        this.touches.push(this.viewport.toScreenPos(pos));
         this.onTouchEv("touchstart", this.touches);
         return this;
     }
     public moveTouch(i: number, amt: Vector, steps = 1): MockInputFacade {
-        const step = this.camera.toScreenPos(amt).sub(this.camera.toScreenPos(V())).scale(1 / steps);
+        const step = this.viewport.toScreenPos(amt).sub(this.viewport.toScreenPos(V())).scale(1 / steps);
         for (let s = 1; s <= steps; s++) {
             this.touches[i] = this.touches[i].add(step);
             this.onTouchEv("touchmove", this.touches);
@@ -132,7 +132,7 @@ export class MockInputFacade {
     public tap(pos: Vector): MockInputFacade {
         this.touch(pos);
         this.releaseTouch();
-        this.onMouseEv("click", this.camera.toScreenPos(pos), LEFT_MOUSE_BUTTON);
+        this.onMouseEv("click", this.viewport.toScreenPos(pos), LEFT_MOUSE_BUTTON);
         return this;
     }
 

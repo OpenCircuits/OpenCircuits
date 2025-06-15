@@ -507,7 +507,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     inverted: true,
                     ic:       {
                         metadata: ic.metadata,
-                        objects:  [...ic.getAllObjs()],
+                        comps:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Component")),
+                        wires:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Wire")),
+                        ports:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Port")),
                     },
                 }))
             .mapErr(AddErrE(`CircuitInternal.deleteIC: failed for ${id}`))

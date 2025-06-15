@@ -6,14 +6,15 @@ import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff"
 
 import {Component, ReadonlyComponent}     from "./Component";
 import {ComponentInfo} from "./ComponentInfo";
-import {Obj, ReadonlyObj}           from "./Obj";
+import {Obj}           from "./Obj";
 import {Port, ReadonlyPort}          from "./Port";
 import {ReadonlyWire, Wire}          from "./Wire";
-import {Selections}    from "./Selections";
+import {ReadonlySelections, Selections}    from "./Selections";
 import {Observable} from "../utils/Observable";
-import {ObjContainer} from "./ObjContainer";
+import {ObjContainer, ReadonlyObjContainer} from "./ObjContainer";
 import {LogEntry} from "../internal/impl/CircuitLog";
 import {Rect} from "math/Rect";
+import {Camera} from "./Camera";
 
 
 // TODO[model_refactor](leon) - make this more user friendly
@@ -21,33 +22,6 @@ export interface CircuitEvent {
     type: "change";
     diff: FastCircuitDiff;
 }
-
-export interface ReadonlyCircuit {
-    readonly id: GUID;
-    readonly name: string;
-    readonly desc: string;
-    readonly thumbnail: string;
-
-    // Queries
-    pickObjAt(pt: Vector): ReadonlyObj | undefined;
-    pickComponentAt(pt: Vector): ReadonlyComponent | undefined;
-    pickWireAt(pt: Vector): ReadonlyWire | undefined;
-    pickPortAt(pt: Vector): ReadonlyPort | undefined;
-
-    getObj(id: GUID): ReadonlyObj | undefined;
-    getComponent(id: GUID): ReadonlyComponent | undefined;
-    getWire(id: GUID): ReadonlyWire | undefined;
-    getPort(id: GUID): ReadonlyPort | undefined;
-
-    getObjs(): ReadonlyObj[];
-    getComponents(): ReadonlyComponent[];
-    getWires(): ReadonlyWire[];
-
-    getComponentInfo(kind: string): ComponentInfo | undefined;
-
-    toSchema(): Schema.Circuit;
-}
-
 export interface CircuitHistoryEvent {
     type: "change";
 }
@@ -57,44 +31,61 @@ export interface CircuitHistory extends Observable<CircuitHistoryEvent> {
 
     clear(): void;
 }
+export interface ICInfo {
+    circuit: ReadonlyCircuit;
+    display: ReadonlyIntegratedCircuitDisplay;
+}
 
-type C = Observable<CircuitEvent> & ReadonlyCircuit;
-export interface Circuit extends C {
+interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
+    readonly id: GUID;
+    readonly name: string;
+    readonly desc: string;
+    readonly thumbnail: string;
+
+    readonly history: CircuitHistory;
+    readonly selections: SelectionsT;
+
+    createContainer(objs: GUID[]): ObjCT;
+
+    // Queries
+    pickObjAt(pt: Vector): PortT | CompT | WireT | undefined;
+    pickComponentAt(pt: Vector): CompT | undefined;
+    pickWireAt(pt: Vector): WireT | undefined;
+    pickPortAt(pt: Vector): PortT | undefined;
+
+    pickObjsWithin(bounds: Rect): ObjCT;
+    pickComponentsWithin(bounds: Rect): CompT[];
+    pickPortsWithin(bounds: Rect): PortT[];
+
+    getObj(id: GUID): PortT | CompT | WireT | undefined;
+    getComponent(id: GUID): CompT | undefined;
+    getWire(id: GUID): WireT | undefined;
+    getPort(id: GUID): PortT | undefined;
+
+    getObjs(): ObjCT;
+    getComponents(): CompT[];
+    getWires(): WireT[];
+
+    getComponentInfo(kind: string): ComponentInfo | undefined;
+
+    getIC(id: GUID): ICT | undefined;
+    getICs(): ICT[];
+
+    toSchema(container?: ObjCT): Schema.Circuit;
+}
+
+export type ReadonlyCircuit = BaseReadonlyCircuit<ReadonlyPort, ReadonlyComponent, ReadonlyWire, IntegratedCircuit, ReadonlyObjContainer, ReadonlySelections> & Observable<CircuitEvent>;
+
+export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircuit, ObjContainer, Selections> & Observable<CircuitEvent> & {
     beginTransaction(options?: { batch?: boolean }): void;
     commitTransaction(clientData?: string): void;
     cancelTransaction(): void;
 
     // Metadata
-    readonly id: GUID;
     name: string;
     desc: string;
     thumbnail: string;
-
-    readonly selections: Selections;
-    readonly history: CircuitHistory;
-
-    // Queries
-    pickObjAt(pt: Vector): Obj | undefined;
-    pickComponentAt(pt: Vector): Component | undefined;
-    pickWireAt(pt: Vector): Wire | undefined;
-    pickPortAt(pt: Vector): Port | undefined;
-
-    pickObjectsWithin(bounds: Rect): Obj[];
-    pickComponentsWithin(bounds: Rect): Component[];
-    pickPortsWithin(bounds: Rect): Port[];
-
-    getObj(id: GUID): Obj | undefined;
-    getComponent(id: GUID): Component | undefined;
-    getWire(id: GUID): Wire | undefined;
-    getPort(id: GUID): Port | undefined;
-
-    getObjs(): Obj[];
-    getComponents(): Component[];
-    getWires(): Wire[];
-
-    getComponentInfo(kind: string): ComponentInfo | undefined;
-
-    createContainer(objs: GUID[]): ObjContainer;
+    readonly camera: Camera;
 
     // Object manipulation
     placeComponentAt(kind: string, pt: Vector): Component;
@@ -104,17 +95,15 @@ export interface Circuit extends C {
     importICs(ics: IntegratedCircuit[]): void;
     createIC(info: ICInfo, id?: GUID): IntegratedCircuit;
     deleteIC(id: GUID): void;
-    getIC(id: GUID): IntegratedCircuit | undefined;
-    getICs(): IntegratedCircuit[];
 
     undo(): void;
     redo(): void;
 
+    import(circuit: Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): ObjContainer;
+
     // TODO: Come up with a better name for this
     loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): Obj[];
-    toSchema(container?: ObjContainer): Schema.Circuit;
 }
-
 
 export interface ReadonlyICPin {
     readonly id: GUID;  // ID of corresponding PORT
@@ -125,11 +114,6 @@ export interface ReadonlyICPin {
     readonly pos: Vector;
     readonly dir: Vector;
 }
-export interface ReadonlyIntegratedCircuitDisplay {
-    readonly size: Vector;
-    readonly pins: ReadonlyICPin[];
-}
-
 export interface ICPin extends ReadonlyICPin {
     readonly id: GUID;  // ID of corresponding PORT
     readonly group: string;
@@ -137,15 +121,16 @@ export interface ICPin extends ReadonlyICPin {
     pos: Vector;
     dir: Vector;
 }
+
+export interface ReadonlyIntegratedCircuitDisplay {
+    readonly size: Vector;
+    readonly pins: ReadonlyICPin[];
+}
 export interface IntegratedCircuitDisplay extends ReadonlyIntegratedCircuitDisplay {
     size: Vector;
     readonly pins: ICPin[];
 }
 
-export interface ICInfo {
-    circuit: ReadonlyCircuit;
-    display: ReadonlyIntegratedCircuitDisplay;
-}
 export interface IntegratedCircuit {
     readonly id: GUID;
 
@@ -154,5 +139,9 @@ export interface IntegratedCircuit {
     readonly thumbnail: string;
 
     readonly display: IntegratedCircuitDisplay;
+
+    readonly components: ReadonlyComponent[];
+    readonly wires: ReadonlyWire[];
+
     toSchema(): Schema.IntegratedCircuit;
 }

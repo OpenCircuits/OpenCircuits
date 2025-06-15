@@ -1,4 +1,5 @@
 import {V} from "Vector";
+import {Camera} from "shared/api/circuit/public/Camera";
 import {DigitalCircuit} from "digital/api/circuit/public";
 import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser"
 import {GenerateTokens} from "digital/site/utils/ExpressionParser/GenerateTokens"
@@ -7,7 +8,6 @@ import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/Expression
 import {FORMATS} from "digital/site/utils/ExpressionParser/Constants/Formats";
 import {Circuit, ICPin} from "shared/api/circuit/public";
 import {Err, Ok, Result} from "shared/api/circuit/utils/Result";
-import {Camera} from "shared/api/circuitdesigner/public/Camera";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
 

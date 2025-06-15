@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {Schema} from "shared/api/circuit/schema";
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {setCurDesigner} from "./hooks/useDesigner";
 import {ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
 import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
+import {Circuit} from "shared/api/circuit/public";
 
 
 // These are helpers that need to be overridden per-circuit-type (digital, analog, etc.)
@@ -12,8 +12,8 @@ import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRende
 export interface OverrideCircuitHelpers {
     CreateAndInitializeDesigner: (tools?: {config: ToolConfig, renderers?: ToolRenderer[]}) => CircuitDesigner;
 
-    SerializeCircuit: (circuit: Schema.Circuit) => Blob;
-    DeserializeCircuit: (data: string | ArrayBuffer) => Schema.Circuit;
+    SerializeCircuit: (circuit: Circuit) => Blob;
+    DeserializeCircuit: (data: string | ArrayBuffer) => Circuit;
 }
 
 // These are helpers that can be defined in a shared context and apply to all types.
@@ -62,9 +62,9 @@ export const CircuitHelpers: CircuitHelpers = {
 
     LoadNewCircuit(data) {
         // Create new circuit to override old one
-        const schema = CircuitHelpers.DeserializeCircuit(data);
+        const circuit = CircuitHelpers.DeserializeCircuit(data);
         const newDesigner = CircuitHelpers.CreateAndInitializeDesigner();
-        newDesigner.circuit.loadSchema(schema, { loadMetadata: true });
+        newDesigner.circuit.import(circuit, { loadMetadata: true });
         newDesigner.circuit.history.clear();
         setCurDesigner(newDesigner);
 

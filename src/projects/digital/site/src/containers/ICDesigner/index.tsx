@@ -64,15 +64,12 @@ export const ICDesigner = ({ }: Props) => {
         const objs = mainDesigner.circuit.createContainer(objIds).withWiresAndPorts();
 
         const schema = mainDesigner.circuit.toSchema(objs);
-        // TODO[model_refactor_api] --
-        //  a weird state could exist when replacing switches with InputPorts
-        //  since it'll copy the state so if the switch is on, it'll turn off
-        //  when placed (maybe enforce them to be off?)
-        //  Also maybe enforce that there's no propagation happening in the circuit
-        //  you're trying to create?
-        for (const obj of schema.objects) {
-            if (obj.kind === "Switch" || obj.kind === "Button" || obj.kind === "Clock")
+        for (const obj of schema.comps) {
+            if (obj.kind === "Switch" || obj.kind === "Button" || obj.kind === "Clock") {
                 obj.kind = "InputPin";
+                // Remove sim state
+                delete schema.simState.states[obj.id];
+            }
             if (obj.kind === "LED")
                 obj.kind = "OutputPin";
             // Remove isSelected

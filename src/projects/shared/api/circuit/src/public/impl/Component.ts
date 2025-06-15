@@ -1,7 +1,7 @@
 import {V, Vector} from "Vector";
 
 import {AddErrE}                 from "shared/api/circuit/utils/MultiError";
-import {FromConcatenatedEntries} from "shared/api/circuit/utils/Functions";
+import {FromConcatenatedEntries, MapObj} from "shared/api/circuit/utils/Functions";
 import {GUID}                    from "shared/api/circuit/internal";
 import {Schema}                  from "shared/api/circuit/schema";
 
@@ -14,13 +14,14 @@ import {CircuitState, CircuitTypes} from "./CircuitState";
 export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Component {
     public readonly baseKind = "Component";
 
-    public constructor(state: CircuitState<T>, id: GUID) {
-        super(state, id);
+    public constructor(state: CircuitState<T>, id: GUID, icId?: GUID) {
+        super(state, id, icId);
     }
 
     protected getComponent() {
-        return this.state.internal.getCompByID(this.id)
-            .mapErr(AddErrE(`API Component: Attempted to get component with ID '${this.id}' that doesn't exist!`))
+        return this.getCircuitInfo()
+            .getCompByID(this.id)
+            .mapErr(AddErrE(`ComponentImpl: Attempted to get component with ID '${this.id}' that doesn't exist!`))
             .unwrap();
     }
 
@@ -37,18 +38,24 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     }
 
     public set x(val: number) {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot set 'x' for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.internal.setPropFor<Schema.Component, "x">(this.id, "x", val);
     }
     public get x(): number {
         return (this.getComponent().props.x ?? 0);
     }
     public set y(val: number) {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot set 'y' for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.internal.setPropFor(this.id, "y", val);
     }
     public get y(): number {
         return (this.getComponent().props.y ?? 0);
     }
     public set pos(val: Vector) {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot set position for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.internal.beginTransaction();
         this.state.internal.setPropFor<Schema.Component, "x">(this.id, "x", val.x).unwrap();
         this.state.internal.setPropFor<Schema.Component, "y">(this.id, "y", val.y).unwrap();
@@ -59,6 +66,8 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         return V((obj.props.x ?? 0), (obj.props.y ?? 0));
     }
     public set angle(val: number) {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot set 'angle' for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.internal.setPropFor<Schema.Component, "angle">(this.id, "angle", val);
     }
     public get angle(): number {
@@ -66,17 +75,26 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     }
 
     public isNode(): this is T["Node"] {
-        return this.state.internal.getComponentAndInfoById(this.id)
+        return this.getCircuitInfo()
+            .getComponentAndInfoByID(this.id)
             .map(([_, info]) => info.isNode)
+            .mapErr(AddErrE(`ComponentImpl: Attempted to get component with ID '${this.id}' that doesn't exist!`))
             .unwrap();
+    }
+    public isIC(): boolean {
+        return this.state.internal.hasIC(this.kind);
     }
 
     public get ports(): Record<string, T["Port[]"]> {
-        return FromConcatenatedEntries(this.allPorts.map((p) => [p.group, p]));
+        // Guarantees order of ports in each group to be by port.index in increasing order.
+        return MapObj(
+            this.getCircuitInfo().getPortConfig(this.id).unwrap(),
+            ([group, _]) => [...this.getCircuitInfo().getPortsForGroup(this.id, group).unwrap()]
+                .map((id) => this.state.constructPort(id, this.icId))
+                .sort((p1, p2) => (p1.index - p2.index)));
     }
     public get allPorts(): T["Port[]"] {
-        return [...this.state.internal.getPortsForComponent(this.id).unwrap()]
-            .map((id) => this.state.constructPort(id));
+        return Object.values(this.ports).flat();
     }
 
     // get connectedComponents(): T["Component[]"] {
@@ -88,6 +106,9 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     }
 
     public setPortConfig(cfg: PortConfig): boolean {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot set port config for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+
         // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = this.state.internal.getPortConfig(this.id).unwrap();
 
@@ -105,18 +126,20 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         return true;
     }
     public firstAvailable(group: string): T["Port"] | undefined {
-        const ports = this.state.internal.getPortsByGroup(this.id).unwrap();
+        const ports = this.getCircuitInfo().getPortsByGroup(this.id).unwrap();
         if (!(group in ports))
             return undefined;
 
         for (const portId of ports[group]) {
-            const port = this.state.constructPort(portId);
+            const port = this.state.constructPort(portId, this.icId);
             if (port.isAvailable)
                 return port;
         }
         return undefined;
     }
     public delete(): void {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot delete component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.internal.beginTransaction();
         this.state.internal.removePortsFor(this.id).unwrap();
         this.state.internal.deleteComponent(this.id).unwrap();

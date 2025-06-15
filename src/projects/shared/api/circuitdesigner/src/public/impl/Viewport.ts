@@ -18,14 +18,14 @@ import {DebugRenderBounds} from "./rendering/renderers/DebugRenderer";
 
 import {Cursor} from "../../input/Cursor";
 
-import {Camera}                                  from "../Camera";
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
 import {AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents}          from "../Viewport";
 
-import {CameraImpl}                            from "./Camera";
 import {CircuitDesignerState} from "./CircuitDesignerState";
 import {DebugOptions}                          from "./DebugOptions";
 import {IsDefined} from "shared/api/circuit/utils/Reducers";
+import {DirtyVar} from "shared/api/circuit/utils/DirtyVar";
+import {Matrix2x3} from "math/Matrix";
 
 
 export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
@@ -67,8 +67,6 @@ export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
 }
 
 export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<ViewportEvents> implements Viewport {
-    public readonly camera: Camera;
-
     protected readonly state: CircuitDesignerState<T>;
     protected readonly designer: CircuitDesigner<T>;
     // protected readonly svgMap: Map<string, SVGDrawing>;
@@ -76,6 +74,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
     protected readonly primRenderer: PrimRenderer;
     protected readonly scheduler: RenderScheduler;
+
+    protected readonly cameraMat: DirtyVar<Matrix2x3>;
 
     public canvasInfo?: AttachedCanvasInfoImpl;
 
@@ -92,15 +92,27 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         // this.svgMap = svgMap;
         this.options = options;
 
-        this.camera = new CameraImpl(this.state, this);
         this.primRenderer = new PrimRenderer(svgMap);
 
         this.scheduler = new RenderScheduler();
         this.scheduler.subscribe(() => this.render());
         this.scheduler.block();
 
+        this.cameraMat = new DirtyVar(() => {
+            const { cx, cy, zoom } = this.camera;
+
+            const screenSize = this.canvasInfo?.screenSize ?? V(0, 0);
+            return new Matrix2x3(
+                V(cx - screenSize.x/2 * zoom, cy - screenSize.y/2 * -zoom),
+                0,
+                V(zoom, -zoom)
+            );
+        });
+
         // Re-render when camera changes
         this.camera.subscribe((ev) => {
+            this.cameraMat.setDirty();
+
             // No canvas attached -> no need to render
             if (!this.canvasInfo)
                 return;
@@ -162,7 +174,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         renderer.save();
         {
             // Transform to world-space
-            renderer.transform(this.camera.matrix.inverse());
+            renderer.transform(this.cameraMat.get().inverse());
 
             // Render grid
             if (renderState.options.showGrid)
@@ -241,13 +253,17 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
                 draw: (prim: Prim, space = "world") => {
                     renderer.save();
                     if (space === "world")
-                        renderer.transform(this.camera.matrix.inverse());
+                        renderer.transform(this.cameraMat.get().inverse());
                     this.primRenderer.render(renderer.ctx, prim);
                     renderer.restore();
                 },
                 options: renderState.options,
             },
         });
+    }
+
+    public get camera() {
+        return this.designer.circuit.camera;
     }
 
     public set margin(m: Margin) {
@@ -274,7 +290,16 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         // Request a render on resize
         this.scheduler.requestRender();
 
+        this.cameraMat.setDirty();
+
         this.publish("onresize", { w, h });
+    }
+
+    public toWorldPos(screenPos: Vector): Vector {
+        return this.cameraMat.get().mul(screenPos);
+    }
+    public toScreenPos(worldPos: Vector): Vector {
+        return this.cameraMat.get().inverse().mul(worldPos);
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {

@@ -16,41 +16,57 @@ export interface Prop {
   boolVal?: boolean | undefined;
 }
 
-export interface Component {
-  id: Uint8Array;
-  kind: string;
-  icId?: Uint8Array | undefined;
-  props: { [key: string]: Prop };
+/** TODO: kind? */
+export interface Port {
+  group: string;
+  index: number;
+  name?: string | undefined;
+  isSelected?: boolean | undefined;
+  otherProps: { [key: string]: Prop };
 }
 
-export interface Component_PropsEntry {
+export interface Port_OtherPropsEntry {
+  key: string;
+  value: Prop | undefined;
+}
+
+export interface Component {
+  kind: string;
+  icId?: Uint8Array | undefined;
+  portConfigIdx?: number | undefined;
+  name?: string | undefined;
+  isSelected?: boolean | undefined;
+  x?: number | undefined;
+  y?: number | undefined;
+  angle?: number | undefined;
+  otherProps: { [key: string]: Prop };
+  portOverrides: Port[];
+}
+
+export interface Component_OtherPropsEntry {
   key: string;
   value: Prop | undefined;
 }
 
 export interface Wire {
-  id: Uint8Array;
-  kind: string;
-  props: { [key: string]: Prop };
-  p1: Uint8Array;
-  p2: Uint8Array;
+  kind?:
+    | string
+    | undefined;
+  /** The index of the 1st port's parent component in circuit.components */
+  p1ParentIdx: number;
+  p1Group: string;
+  p1Idx: number;
+  /** The index of the 2nd port's parent component in circuit.components */
+  p2ParentIdx: number;
+  p2Group: string;
+  p2Idx: number;
+  name?: string | undefined;
+  isSelected?: boolean | undefined;
+  color?: number | undefined;
+  otherProps: { [key: string]: Prop };
 }
 
-export interface Wire_PropsEntry {
-  key: string;
-  value: Prop | undefined;
-}
-
-export interface Port {
-  id: Uint8Array;
-  kind: string;
-  props: { [key: string]: Prop };
-  parent: Uint8Array;
-  group: string;
-  index: number;
-}
-
-export interface Port_PropsEntry {
+export interface Wire_OtherPropsEntry {
   key: string;
   value: Prop | undefined;
 }
@@ -77,7 +93,8 @@ export interface IntegratedCircuitMetadata {
 }
 
 export interface IntegratedCircuitMetadata_Pin {
-  id: Uint8Array;
+  internalCompIdx: number;
+  internalPortIdx: number;
   group: string;
   name: string;
   x: number;
@@ -90,7 +107,6 @@ export interface IntegratedCircuit {
   metadata: IntegratedCircuitMetadata | undefined;
   components: Component[];
   wires: Wire[];
-  ports: Port[];
 }
 
 export interface Circuit {
@@ -99,7 +115,6 @@ export interface Circuit {
   ics: IntegratedCircuit[];
   components: Component[];
   wires: Wire[];
-  ports: Port[];
 }
 
 function createBaseProp(): Prop {
@@ -210,452 +225,27 @@ export const Prop: MessageFns<Prop> = {
   },
 };
 
-function createBaseComponent(): Component {
-  return { id: new Uint8Array(0), kind: "", icId: undefined, props: {} };
-}
-
-export const Component: MessageFns<Component> = {
-  encode(message: Component, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id.length !== 0) {
-      writer.uint32(10).bytes(message.id);
-    }
-    if (message.kind !== "") {
-      writer.uint32(18).string(message.kind);
-    }
-    if (message.icId !== undefined) {
-      writer.uint32(26).bytes(message.icId);
-    }
-    Object.entries(message.props).forEach(([key, value]) => {
-      Component_PropsEntry.encode({ key: key as any, value }, writer.uint32(34).fork()).join();
-    });
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): Component {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseComponent();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.bytes();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.kind = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.icId = reader.bytes();
-          continue;
-        }
-        case 4: {
-          if (tag !== 34) {
-            break;
-          }
-
-          const entry4 = Component_PropsEntry.decode(reader, reader.uint32());
-          if (entry4.value !== undefined) {
-            message.props[entry4.key] = entry4.value;
-          }
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Component {
-    return {
-      id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
-      icId: isSet(object.icId) ? bytesFromBase64(object.icId) : undefined,
-      props: isObject(object.props)
-        ? Object.entries(object.props).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
-          acc[key] = Prop.fromJSON(value);
-          return acc;
-        }, {})
-        : {},
-    };
-  },
-
-  toJSON(message: Component): unknown {
-    const obj: any = {};
-    if (message.id.length !== 0) {
-      obj.id = base64FromBytes(message.id);
-    }
-    if (message.kind !== "") {
-      obj.kind = message.kind;
-    }
-    if (message.icId !== undefined) {
-      obj.icId = base64FromBytes(message.icId);
-    }
-    if (message.props) {
-      const entries = Object.entries(message.props);
-      if (entries.length > 0) {
-        obj.props = {};
-        entries.forEach(([k, v]) => {
-          obj.props[k] = Prop.toJSON(v);
-        });
-      }
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Component>, I>>(base?: I): Component {
-    return Component.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Component>, I>>(object: I): Component {
-    const message = createBaseComponent();
-    message.id = object.id ?? new Uint8Array(0);
-    message.kind = object.kind ?? "";
-    message.icId = object.icId ?? undefined;
-    message.props = Object.entries(object.props ?? {}).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key] = Prop.fromPartial(value);
-      }
-      return acc;
-    }, {});
-    return message;
-  },
-};
-
-function createBaseComponent_PropsEntry(): Component_PropsEntry {
-  return { key: "", value: undefined };
-}
-
-export const Component_PropsEntry: MessageFns<Component_PropsEntry> = {
-  encode(message: Component_PropsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
-    }
-    if (message.value !== undefined) {
-      Prop.encode(message.value, writer.uint32(18).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): Component_PropsEntry {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseComponent_PropsEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.key = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.value = Prop.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Component_PropsEntry {
-    return {
-      key: isSet(object.key) ? globalThis.String(object.key) : "",
-      value: isSet(object.value) ? Prop.fromJSON(object.value) : undefined,
-    };
-  },
-
-  toJSON(message: Component_PropsEntry): unknown {
-    const obj: any = {};
-    if (message.key !== "") {
-      obj.key = message.key;
-    }
-    if (message.value !== undefined) {
-      obj.value = Prop.toJSON(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Component_PropsEntry>, I>>(base?: I): Component_PropsEntry {
-    return Component_PropsEntry.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Component_PropsEntry>, I>>(object: I): Component_PropsEntry {
-    const message = createBaseComponent_PropsEntry();
-    message.key = object.key ?? "";
-    message.value = (object.value !== undefined && object.value !== null) ? Prop.fromPartial(object.value) : undefined;
-    return message;
-  },
-};
-
-function createBaseWire(): Wire {
-  return { id: new Uint8Array(0), kind: "", props: {}, p1: new Uint8Array(0), p2: new Uint8Array(0) };
-}
-
-export const Wire: MessageFns<Wire> = {
-  encode(message: Wire, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id.length !== 0) {
-      writer.uint32(10).bytes(message.id);
-    }
-    if (message.kind !== "") {
-      writer.uint32(18).string(message.kind);
-    }
-    Object.entries(message.props).forEach(([key, value]) => {
-      Wire_PropsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
-    });
-    if (message.p1.length !== 0) {
-      writer.uint32(34).bytes(message.p1);
-    }
-    if (message.p2.length !== 0) {
-      writer.uint32(42).bytes(message.p2);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): Wire {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseWire();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.id = reader.bytes();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.kind = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          const entry3 = Wire_PropsEntry.decode(reader, reader.uint32());
-          if (entry3.value !== undefined) {
-            message.props[entry3.key] = entry3.value;
-          }
-          continue;
-        }
-        case 4: {
-          if (tag !== 34) {
-            break;
-          }
-
-          message.p1 = reader.bytes();
-          continue;
-        }
-        case 5: {
-          if (tag !== 42) {
-            break;
-          }
-
-          message.p2 = reader.bytes();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Wire {
-    return {
-      id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
-      props: isObject(object.props)
-        ? Object.entries(object.props).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
-          acc[key] = Prop.fromJSON(value);
-          return acc;
-        }, {})
-        : {},
-      p1: isSet(object.p1) ? bytesFromBase64(object.p1) : new Uint8Array(0),
-      p2: isSet(object.p2) ? bytesFromBase64(object.p2) : new Uint8Array(0),
-    };
-  },
-
-  toJSON(message: Wire): unknown {
-    const obj: any = {};
-    if (message.id.length !== 0) {
-      obj.id = base64FromBytes(message.id);
-    }
-    if (message.kind !== "") {
-      obj.kind = message.kind;
-    }
-    if (message.props) {
-      const entries = Object.entries(message.props);
-      if (entries.length > 0) {
-        obj.props = {};
-        entries.forEach(([k, v]) => {
-          obj.props[k] = Prop.toJSON(v);
-        });
-      }
-    }
-    if (message.p1.length !== 0) {
-      obj.p1 = base64FromBytes(message.p1);
-    }
-    if (message.p2.length !== 0) {
-      obj.p2 = base64FromBytes(message.p2);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Wire>, I>>(base?: I): Wire {
-    return Wire.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Wire>, I>>(object: I): Wire {
-    const message = createBaseWire();
-    message.id = object.id ?? new Uint8Array(0);
-    message.kind = object.kind ?? "";
-    message.props = Object.entries(object.props ?? {}).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key] = Prop.fromPartial(value);
-      }
-      return acc;
-    }, {});
-    message.p1 = object.p1 ?? new Uint8Array(0);
-    message.p2 = object.p2 ?? new Uint8Array(0);
-    return message;
-  },
-};
-
-function createBaseWire_PropsEntry(): Wire_PropsEntry {
-  return { key: "", value: undefined };
-}
-
-export const Wire_PropsEntry: MessageFns<Wire_PropsEntry> = {
-  encode(message: Wire_PropsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
-    }
-    if (message.value !== undefined) {
-      Prop.encode(message.value, writer.uint32(18).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): Wire_PropsEntry {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseWire_PropsEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.key = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.value = Prop.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Wire_PropsEntry {
-    return {
-      key: isSet(object.key) ? globalThis.String(object.key) : "",
-      value: isSet(object.value) ? Prop.fromJSON(object.value) : undefined,
-    };
-  },
-
-  toJSON(message: Wire_PropsEntry): unknown {
-    const obj: any = {};
-    if (message.key !== "") {
-      obj.key = message.key;
-    }
-    if (message.value !== undefined) {
-      obj.value = Prop.toJSON(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<Wire_PropsEntry>, I>>(base?: I): Wire_PropsEntry {
-    return Wire_PropsEntry.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<Wire_PropsEntry>, I>>(object: I): Wire_PropsEntry {
-    const message = createBaseWire_PropsEntry();
-    message.key = object.key ?? "";
-    message.value = (object.value !== undefined && object.value !== null) ? Prop.fromPartial(object.value) : undefined;
-    return message;
-  },
-};
-
 function createBasePort(): Port {
-  return { id: new Uint8Array(0), kind: "", props: {}, parent: new Uint8Array(0), group: "", index: 0 };
+  return { group: "", index: 0, name: undefined, isSelected: undefined, otherProps: {} };
 }
 
 export const Port: MessageFns<Port> = {
   encode(message: Port, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id.length !== 0) {
-      writer.uint32(10).bytes(message.id);
-    }
-    if (message.kind !== "") {
-      writer.uint32(18).string(message.kind);
-    }
-    Object.entries(message.props).forEach(([key, value]) => {
-      Port_PropsEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
-    });
-    if (message.parent.length !== 0) {
-      writer.uint32(34).bytes(message.parent);
-    }
     if (message.group !== "") {
-      writer.uint32(42).string(message.group);
+      writer.uint32(10).string(message.group);
     }
     if (message.index !== 0) {
-      writer.uint32(48).int32(message.index);
+      writer.uint32(16).int32(message.index);
     }
+    if (message.name !== undefined) {
+      writer.uint32(26).string(message.name);
+    }
+    if (message.isSelected !== undefined) {
+      writer.uint32(32).bool(message.isSelected);
+    }
+    Object.entries(message.otherProps).forEach(([key, value]) => {
+      Port_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(42).fork()).join();
+    });
     return writer;
   },
 
@@ -671,15 +261,15 @@ export const Port: MessageFns<Port> = {
             break;
           }
 
-          message.id = reader.bytes();
+          message.group = reader.string();
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.kind = reader.string();
+          message.index = reader.int32();
           continue;
         }
         case 3: {
@@ -687,18 +277,15 @@ export const Port: MessageFns<Port> = {
             break;
           }
 
-          const entry3 = Port_PropsEntry.decode(reader, reader.uint32());
-          if (entry3.value !== undefined) {
-            message.props[entry3.key] = entry3.value;
-          }
+          message.name = reader.string();
           continue;
         }
         case 4: {
-          if (tag !== 34) {
+          if (tag !== 32) {
             break;
           }
 
-          message.parent = reader.bytes();
+          message.isSelected = reader.bool();
           continue;
         }
         case 5: {
@@ -706,15 +293,10 @@ export const Port: MessageFns<Port> = {
             break;
           }
 
-          message.group = reader.string();
-          continue;
-        }
-        case 6: {
-          if (tag !== 48) {
-            break;
+          const entry5 = Port_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry5.value !== undefined) {
+            message.otherProps[entry5.key] = entry5.value;
           }
-
-          message.index = reader.int32();
           continue;
         }
       }
@@ -728,45 +310,41 @@ export const Port: MessageFns<Port> = {
 
   fromJSON(object: any): Port {
     return {
-      id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
-      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
-      props: isObject(object.props)
-        ? Object.entries(object.props).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
+      group: isSet(object.group) ? globalThis.String(object.group) : "",
+      index: isSet(object.index) ? globalThis.Number(object.index) : 0,
+      name: isSet(object.name) ? globalThis.String(object.name) : undefined,
+      isSelected: isSet(object.isSelected) ? globalThis.Boolean(object.isSelected) : undefined,
+      otherProps: isObject(object.otherProps)
+        ? Object.entries(object.otherProps).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
           acc[key] = Prop.fromJSON(value);
           return acc;
         }, {})
         : {},
-      parent: isSet(object.parent) ? bytesFromBase64(object.parent) : new Uint8Array(0),
-      group: isSet(object.group) ? globalThis.String(object.group) : "",
-      index: isSet(object.index) ? globalThis.Number(object.index) : 0,
     };
   },
 
   toJSON(message: Port): unknown {
     const obj: any = {};
-    if (message.id.length !== 0) {
-      obj.id = base64FromBytes(message.id);
-    }
-    if (message.kind !== "") {
-      obj.kind = message.kind;
-    }
-    if (message.props) {
-      const entries = Object.entries(message.props);
-      if (entries.length > 0) {
-        obj.props = {};
-        entries.forEach(([k, v]) => {
-          obj.props[k] = Prop.toJSON(v);
-        });
-      }
-    }
-    if (message.parent.length !== 0) {
-      obj.parent = base64FromBytes(message.parent);
-    }
     if (message.group !== "") {
       obj.group = message.group;
     }
     if (message.index !== 0) {
       obj.index = Math.round(message.index);
+    }
+    if (message.name !== undefined) {
+      obj.name = message.name;
+    }
+    if (message.isSelected !== undefined) {
+      obj.isSelected = message.isSelected;
+    }
+    if (message.otherProps) {
+      const entries = Object.entries(message.otherProps);
+      if (entries.length > 0) {
+        obj.otherProps = {};
+        entries.forEach(([k, v]) => {
+          obj.otherProps[k] = Prop.toJSON(v);
+        });
+      }
     }
     return obj;
   },
@@ -776,27 +354,29 @@ export const Port: MessageFns<Port> = {
   },
   fromPartial<I extends Exact<DeepPartial<Port>, I>>(object: I): Port {
     const message = createBasePort();
-    message.id = object.id ?? new Uint8Array(0);
-    message.kind = object.kind ?? "";
-    message.props = Object.entries(object.props ?? {}).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key] = Prop.fromPartial(value);
-      }
-      return acc;
-    }, {});
-    message.parent = object.parent ?? new Uint8Array(0);
     message.group = object.group ?? "";
     message.index = object.index ?? 0;
+    message.name = object.name ?? undefined;
+    message.isSelected = object.isSelected ?? undefined;
+    message.otherProps = Object.entries(object.otherProps ?? {}).reduce<{ [key: string]: Prop }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = Prop.fromPartial(value);
+        }
+        return acc;
+      },
+      {},
+    );
     return message;
   },
 };
 
-function createBasePort_PropsEntry(): Port_PropsEntry {
+function createBasePort_OtherPropsEntry(): Port_OtherPropsEntry {
   return { key: "", value: undefined };
 }
 
-export const Port_PropsEntry: MessageFns<Port_PropsEntry> = {
-  encode(message: Port_PropsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const Port_OtherPropsEntry: MessageFns<Port_OtherPropsEntry> = {
+  encode(message: Port_OtherPropsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.key !== "") {
       writer.uint32(10).string(message.key);
     }
@@ -806,10 +386,10 @@ export const Port_PropsEntry: MessageFns<Port_PropsEntry> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): Port_PropsEntry {
+  decode(input: BinaryReader | Uint8Array, length?: number): Port_OtherPropsEntry {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBasePort_PropsEntry();
+    const message = createBasePort_OtherPropsEntry();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -838,14 +418,14 @@ export const Port_PropsEntry: MessageFns<Port_PropsEntry> = {
     return message;
   },
 
-  fromJSON(object: any): Port_PropsEntry {
+  fromJSON(object: any): Port_OtherPropsEntry {
     return {
       key: isSet(object.key) ? globalThis.String(object.key) : "",
       value: isSet(object.value) ? Prop.fromJSON(object.value) : undefined,
     };
   },
 
-  toJSON(message: Port_PropsEntry): unknown {
+  toJSON(message: Port_OtherPropsEntry): unknown {
     const obj: any = {};
     if (message.key !== "") {
       obj.key = message.key;
@@ -856,11 +436,656 @@ export const Port_PropsEntry: MessageFns<Port_PropsEntry> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Port_PropsEntry>, I>>(base?: I): Port_PropsEntry {
-    return Port_PropsEntry.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<Port_OtherPropsEntry>, I>>(base?: I): Port_OtherPropsEntry {
+    return Port_OtherPropsEntry.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Port_PropsEntry>, I>>(object: I): Port_PropsEntry {
-    const message = createBasePort_PropsEntry();
+  fromPartial<I extends Exact<DeepPartial<Port_OtherPropsEntry>, I>>(object: I): Port_OtherPropsEntry {
+    const message = createBasePort_OtherPropsEntry();
+    message.key = object.key ?? "";
+    message.value = (object.value !== undefined && object.value !== null) ? Prop.fromPartial(object.value) : undefined;
+    return message;
+  },
+};
+
+function createBaseComponent(): Component {
+  return {
+    kind: "",
+    icId: undefined,
+    portConfigIdx: undefined,
+    name: undefined,
+    isSelected: undefined,
+    x: undefined,
+    y: undefined,
+    angle: undefined,
+    otherProps: {},
+    portOverrides: [],
+  };
+}
+
+export const Component: MessageFns<Component> = {
+  encode(message: Component, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.kind !== "") {
+      writer.uint32(10).string(message.kind);
+    }
+    if (message.icId !== undefined) {
+      writer.uint32(18).bytes(message.icId);
+    }
+    if (message.portConfigIdx !== undefined) {
+      writer.uint32(24).uint32(message.portConfigIdx);
+    }
+    if (message.name !== undefined) {
+      writer.uint32(34).string(message.name);
+    }
+    if (message.isSelected !== undefined) {
+      writer.uint32(40).bool(message.isSelected);
+    }
+    if (message.x !== undefined) {
+      writer.uint32(53).float(message.x);
+    }
+    if (message.y !== undefined) {
+      writer.uint32(61).float(message.y);
+    }
+    if (message.angle !== undefined) {
+      writer.uint32(69).float(message.angle);
+    }
+    Object.entries(message.otherProps).forEach(([key, value]) => {
+      Component_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(74).fork()).join();
+    });
+    for (const v of message.portOverrides) {
+      Port.encode(v!, writer.uint32(82).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Component {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseComponent();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.kind = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.icId = reader.bytes();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.portConfigIdx = reader.uint32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.isSelected = reader.bool();
+          continue;
+        }
+        case 6: {
+          if (tag !== 53) {
+            break;
+          }
+
+          message.x = reader.float();
+          continue;
+        }
+        case 7: {
+          if (tag !== 61) {
+            break;
+          }
+
+          message.y = reader.float();
+          continue;
+        }
+        case 8: {
+          if (tag !== 69) {
+            break;
+          }
+
+          message.angle = reader.float();
+          continue;
+        }
+        case 9: {
+          if (tag !== 74) {
+            break;
+          }
+
+          const entry9 = Component_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry9.value !== undefined) {
+            message.otherProps[entry9.key] = entry9.value;
+          }
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.portOverrides.push(Port.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Component {
+    return {
+      kind: isSet(object.kind) ? globalThis.String(object.kind) : "",
+      icId: isSet(object.icId) ? bytesFromBase64(object.icId) : undefined,
+      portConfigIdx: isSet(object.portConfigIdx) ? globalThis.Number(object.portConfigIdx) : undefined,
+      name: isSet(object.name) ? globalThis.String(object.name) : undefined,
+      isSelected: isSet(object.isSelected) ? globalThis.Boolean(object.isSelected) : undefined,
+      x: isSet(object.x) ? globalThis.Number(object.x) : undefined,
+      y: isSet(object.y) ? globalThis.Number(object.y) : undefined,
+      angle: isSet(object.angle) ? globalThis.Number(object.angle) : undefined,
+      otherProps: isObject(object.otherProps)
+        ? Object.entries(object.otherProps).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
+          acc[key] = Prop.fromJSON(value);
+          return acc;
+        }, {})
+        : {},
+      portOverrides: globalThis.Array.isArray(object?.portOverrides)
+        ? object.portOverrides.map((e: any) => Port.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: Component): unknown {
+    const obj: any = {};
+    if (message.kind !== "") {
+      obj.kind = message.kind;
+    }
+    if (message.icId !== undefined) {
+      obj.icId = base64FromBytes(message.icId);
+    }
+    if (message.portConfigIdx !== undefined) {
+      obj.portConfigIdx = Math.round(message.portConfigIdx);
+    }
+    if (message.name !== undefined) {
+      obj.name = message.name;
+    }
+    if (message.isSelected !== undefined) {
+      obj.isSelected = message.isSelected;
+    }
+    if (message.x !== undefined) {
+      obj.x = message.x;
+    }
+    if (message.y !== undefined) {
+      obj.y = message.y;
+    }
+    if (message.angle !== undefined) {
+      obj.angle = message.angle;
+    }
+    if (message.otherProps) {
+      const entries = Object.entries(message.otherProps);
+      if (entries.length > 0) {
+        obj.otherProps = {};
+        entries.forEach(([k, v]) => {
+          obj.otherProps[k] = Prop.toJSON(v);
+        });
+      }
+    }
+    if (message.portOverrides?.length) {
+      obj.portOverrides = message.portOverrides.map((e) => Port.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Component>, I>>(base?: I): Component {
+    return Component.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Component>, I>>(object: I): Component {
+    const message = createBaseComponent();
+    message.kind = object.kind ?? "";
+    message.icId = object.icId ?? undefined;
+    message.portConfigIdx = object.portConfigIdx ?? undefined;
+    message.name = object.name ?? undefined;
+    message.isSelected = object.isSelected ?? undefined;
+    message.x = object.x ?? undefined;
+    message.y = object.y ?? undefined;
+    message.angle = object.angle ?? undefined;
+    message.otherProps = Object.entries(object.otherProps ?? {}).reduce<{ [key: string]: Prop }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = Prop.fromPartial(value);
+        }
+        return acc;
+      },
+      {},
+    );
+    message.portOverrides = object.portOverrides?.map((e) => Port.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseComponent_OtherPropsEntry(): Component_OtherPropsEntry {
+  return { key: "", value: undefined };
+}
+
+export const Component_OtherPropsEntry: MessageFns<Component_OtherPropsEntry> = {
+  encode(message: Component_OtherPropsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== undefined) {
+      Prop.encode(message.value, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Component_OtherPropsEntry {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseComponent_OtherPropsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = Prop.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Component_OtherPropsEntry {
+    return {
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? Prop.fromJSON(object.value) : undefined,
+    };
+  },
+
+  toJSON(message: Component_OtherPropsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== undefined) {
+      obj.value = Prop.toJSON(message.value);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Component_OtherPropsEntry>, I>>(base?: I): Component_OtherPropsEntry {
+    return Component_OtherPropsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Component_OtherPropsEntry>, I>>(object: I): Component_OtherPropsEntry {
+    const message = createBaseComponent_OtherPropsEntry();
+    message.key = object.key ?? "";
+    message.value = (object.value !== undefined && object.value !== null) ? Prop.fromPartial(object.value) : undefined;
+    return message;
+  },
+};
+
+function createBaseWire(): Wire {
+  return {
+    kind: undefined,
+    p1ParentIdx: 0,
+    p1Group: "",
+    p1Idx: 0,
+    p2ParentIdx: 0,
+    p2Group: "",
+    p2Idx: 0,
+    name: undefined,
+    isSelected: undefined,
+    color: undefined,
+    otherProps: {},
+  };
+}
+
+export const Wire: MessageFns<Wire> = {
+  encode(message: Wire, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.kind !== undefined) {
+      writer.uint32(10).string(message.kind);
+    }
+    if (message.p1ParentIdx !== 0) {
+      writer.uint32(16).uint32(message.p1ParentIdx);
+    }
+    if (message.p1Group !== "") {
+      writer.uint32(26).string(message.p1Group);
+    }
+    if (message.p1Idx !== 0) {
+      writer.uint32(32).uint32(message.p1Idx);
+    }
+    if (message.p2ParentIdx !== 0) {
+      writer.uint32(40).uint32(message.p2ParentIdx);
+    }
+    if (message.p2Group !== "") {
+      writer.uint32(50).string(message.p2Group);
+    }
+    if (message.p2Idx !== 0) {
+      writer.uint32(56).uint32(message.p2Idx);
+    }
+    if (message.name !== undefined) {
+      writer.uint32(66).string(message.name);
+    }
+    if (message.isSelected !== undefined) {
+      writer.uint32(72).bool(message.isSelected);
+    }
+    if (message.color !== undefined) {
+      writer.uint32(80).uint32(message.color);
+    }
+    Object.entries(message.otherProps).forEach(([key, value]) => {
+      Wire_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(90).fork()).join();
+    });
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Wire {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWire();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.kind = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.p1ParentIdx = reader.uint32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.p1Group = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.p1Idx = reader.uint32();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.p2ParentIdx = reader.uint32();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.p2Group = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.p2Idx = reader.uint32();
+          continue;
+        }
+        case 8: {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 9: {
+          if (tag !== 72) {
+            break;
+          }
+
+          message.isSelected = reader.bool();
+          continue;
+        }
+        case 10: {
+          if (tag !== 80) {
+            break;
+          }
+
+          message.color = reader.uint32();
+          continue;
+        }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          const entry11 = Wire_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry11.value !== undefined) {
+            message.otherProps[entry11.key] = entry11.value;
+          }
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Wire {
+    return {
+      kind: isSet(object.kind) ? globalThis.String(object.kind) : undefined,
+      p1ParentIdx: isSet(object.p1ParentIdx) ? globalThis.Number(object.p1ParentIdx) : 0,
+      p1Group: isSet(object.p1Group) ? globalThis.String(object.p1Group) : "",
+      p1Idx: isSet(object.p1Idx) ? globalThis.Number(object.p1Idx) : 0,
+      p2ParentIdx: isSet(object.p2ParentIdx) ? globalThis.Number(object.p2ParentIdx) : 0,
+      p2Group: isSet(object.p2Group) ? globalThis.String(object.p2Group) : "",
+      p2Idx: isSet(object.p2Idx) ? globalThis.Number(object.p2Idx) : 0,
+      name: isSet(object.name) ? globalThis.String(object.name) : undefined,
+      isSelected: isSet(object.isSelected) ? globalThis.Boolean(object.isSelected) : undefined,
+      color: isSet(object.color) ? globalThis.Number(object.color) : undefined,
+      otherProps: isObject(object.otherProps)
+        ? Object.entries(object.otherProps).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
+          acc[key] = Prop.fromJSON(value);
+          return acc;
+        }, {})
+        : {},
+    };
+  },
+
+  toJSON(message: Wire): unknown {
+    const obj: any = {};
+    if (message.kind !== undefined) {
+      obj.kind = message.kind;
+    }
+    if (message.p1ParentIdx !== 0) {
+      obj.p1ParentIdx = Math.round(message.p1ParentIdx);
+    }
+    if (message.p1Group !== "") {
+      obj.p1Group = message.p1Group;
+    }
+    if (message.p1Idx !== 0) {
+      obj.p1Idx = Math.round(message.p1Idx);
+    }
+    if (message.p2ParentIdx !== 0) {
+      obj.p2ParentIdx = Math.round(message.p2ParentIdx);
+    }
+    if (message.p2Group !== "") {
+      obj.p2Group = message.p2Group;
+    }
+    if (message.p2Idx !== 0) {
+      obj.p2Idx = Math.round(message.p2Idx);
+    }
+    if (message.name !== undefined) {
+      obj.name = message.name;
+    }
+    if (message.isSelected !== undefined) {
+      obj.isSelected = message.isSelected;
+    }
+    if (message.color !== undefined) {
+      obj.color = Math.round(message.color);
+    }
+    if (message.otherProps) {
+      const entries = Object.entries(message.otherProps);
+      if (entries.length > 0) {
+        obj.otherProps = {};
+        entries.forEach(([k, v]) => {
+          obj.otherProps[k] = Prop.toJSON(v);
+        });
+      }
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Wire>, I>>(base?: I): Wire {
+    return Wire.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Wire>, I>>(object: I): Wire {
+    const message = createBaseWire();
+    message.kind = object.kind ?? undefined;
+    message.p1ParentIdx = object.p1ParentIdx ?? 0;
+    message.p1Group = object.p1Group ?? "";
+    message.p1Idx = object.p1Idx ?? 0;
+    message.p2ParentIdx = object.p2ParentIdx ?? 0;
+    message.p2Group = object.p2Group ?? "";
+    message.p2Idx = object.p2Idx ?? 0;
+    message.name = object.name ?? undefined;
+    message.isSelected = object.isSelected ?? undefined;
+    message.color = object.color ?? undefined;
+    message.otherProps = Object.entries(object.otherProps ?? {}).reduce<{ [key: string]: Prop }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = Prop.fromPartial(value);
+        }
+        return acc;
+      },
+      {},
+    );
+    return message;
+  },
+};
+
+function createBaseWire_OtherPropsEntry(): Wire_OtherPropsEntry {
+  return { key: "", value: undefined };
+}
+
+export const Wire_OtherPropsEntry: MessageFns<Wire_OtherPropsEntry> = {
+  encode(message: Wire_OtherPropsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== undefined) {
+      Prop.encode(message.value, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Wire_OtherPropsEntry {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWire_OtherPropsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = Prop.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Wire_OtherPropsEntry {
+    return {
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? Prop.fromJSON(object.value) : undefined,
+    };
+  },
+
+  toJSON(message: Wire_OtherPropsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== undefined) {
+      obj.value = Prop.toJSON(message.value);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Wire_OtherPropsEntry>, I>>(base?: I): Wire_OtherPropsEntry {
+    return Wire_OtherPropsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Wire_OtherPropsEntry>, I>>(object: I): Wire_OtherPropsEntry {
+    const message = createBaseWire_OtherPropsEntry();
     message.key = object.key ?? "";
     message.value = (object.value !== undefined && object.value !== null) ? Prop.fromPartial(object.value) : undefined;
     return message;
@@ -1196,31 +1421,34 @@ export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = 
 };
 
 function createBaseIntegratedCircuitMetadata_Pin(): IntegratedCircuitMetadata_Pin {
-  return { id: new Uint8Array(0), group: "", name: "", x: 0, y: 0, dx: 0, dy: 0 };
+  return { internalCompIdx: 0, internalPortIdx: 0, group: "", name: "", x: 0, y: 0, dx: 0, dy: 0 };
 }
 
 export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata_Pin> = {
   encode(message: IntegratedCircuitMetadata_Pin, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id.length !== 0) {
-      writer.uint32(10).bytes(message.id);
+    if (message.internalCompIdx !== 0) {
+      writer.uint32(8).uint32(message.internalCompIdx);
+    }
+    if (message.internalPortIdx !== 0) {
+      writer.uint32(16).uint32(message.internalPortIdx);
     }
     if (message.group !== "") {
-      writer.uint32(18).string(message.group);
+      writer.uint32(26).string(message.group);
     }
     if (message.name !== "") {
-      writer.uint32(26).string(message.name);
+      writer.uint32(34).string(message.name);
     }
     if (message.x !== 0) {
-      writer.uint32(37).float(message.x);
+      writer.uint32(45).float(message.x);
     }
     if (message.y !== 0) {
-      writer.uint32(45).float(message.y);
+      writer.uint32(53).float(message.y);
     }
     if (message.dx !== 0) {
-      writer.uint32(53).float(message.dx);
+      writer.uint32(61).float(message.dx);
     }
     if (message.dy !== 0) {
-      writer.uint32(61).float(message.dy);
+      writer.uint32(69).float(message.dy);
     }
     return writer;
   },
@@ -1233,19 +1461,19 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.id = reader.bytes();
+          message.internalCompIdx = reader.uint32();
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.group = reader.string();
+          message.internalPortIdx = reader.uint32();
           continue;
         }
         case 3: {
@@ -1253,15 +1481,15 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
             break;
           }
 
-          message.name = reader.string();
+          message.group = reader.string();
           continue;
         }
         case 4: {
-          if (tag !== 37) {
+          if (tag !== 34) {
             break;
           }
 
-          message.x = reader.float();
+          message.name = reader.string();
           continue;
         }
         case 5: {
@@ -1269,7 +1497,7 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
             break;
           }
 
-          message.y = reader.float();
+          message.x = reader.float();
           continue;
         }
         case 6: {
@@ -1277,11 +1505,19 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
             break;
           }
 
-          message.dx = reader.float();
+          message.y = reader.float();
           continue;
         }
         case 7: {
           if (tag !== 61) {
+            break;
+          }
+
+          message.dx = reader.float();
+          continue;
+        }
+        case 8: {
+          if (tag !== 69) {
             break;
           }
 
@@ -1299,7 +1535,8 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
 
   fromJSON(object: any): IntegratedCircuitMetadata_Pin {
     return {
-      id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
+      internalCompIdx: isSet(object.internalCompIdx) ? globalThis.Number(object.internalCompIdx) : 0,
+      internalPortIdx: isSet(object.internalPortIdx) ? globalThis.Number(object.internalPortIdx) : 0,
       group: isSet(object.group) ? globalThis.String(object.group) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       x: isSet(object.x) ? globalThis.Number(object.x) : 0,
@@ -1311,8 +1548,11 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
 
   toJSON(message: IntegratedCircuitMetadata_Pin): unknown {
     const obj: any = {};
-    if (message.id.length !== 0) {
-      obj.id = base64FromBytes(message.id);
+    if (message.internalCompIdx !== 0) {
+      obj.internalCompIdx = Math.round(message.internalCompIdx);
+    }
+    if (message.internalPortIdx !== 0) {
+      obj.internalPortIdx = Math.round(message.internalPortIdx);
     }
     if (message.group !== "") {
       obj.group = message.group;
@@ -1342,7 +1582,8 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
     object: I,
   ): IntegratedCircuitMetadata_Pin {
     const message = createBaseIntegratedCircuitMetadata_Pin();
-    message.id = object.id ?? new Uint8Array(0);
+    message.internalCompIdx = object.internalCompIdx ?? 0;
+    message.internalPortIdx = object.internalPortIdx ?? 0;
     message.group = object.group ?? "";
     message.name = object.name ?? "";
     message.x = object.x ?? 0;
@@ -1354,7 +1595,7 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
 };
 
 function createBaseIntegratedCircuit(): IntegratedCircuit {
-  return { metadata: undefined, components: [], wires: [], ports: [] };
+  return { metadata: undefined, components: [], wires: [] };
 }
 
 export const IntegratedCircuit: MessageFns<IntegratedCircuit> = {
@@ -1367,9 +1608,6 @@ export const IntegratedCircuit: MessageFns<IntegratedCircuit> = {
     }
     for (const v of message.wires) {
       Wire.encode(v!, writer.uint32(34).fork()).join();
-    }
-    for (const v of message.ports) {
-      Port.encode(v!, writer.uint32(42).fork()).join();
     }
     return writer;
   },
@@ -1405,14 +1643,6 @@ export const IntegratedCircuit: MessageFns<IntegratedCircuit> = {
           message.wires.push(Wire.decode(reader, reader.uint32()));
           continue;
         }
-        case 5: {
-          if (tag !== 42) {
-            break;
-          }
-
-          message.ports.push(Port.decode(reader, reader.uint32()));
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1429,7 +1659,6 @@ export const IntegratedCircuit: MessageFns<IntegratedCircuit> = {
         ? object.components.map((e: any) => Component.fromJSON(e))
         : [],
       wires: globalThis.Array.isArray(object?.wires) ? object.wires.map((e: any) => Wire.fromJSON(e)) : [],
-      ports: globalThis.Array.isArray(object?.ports) ? object.ports.map((e: any) => Port.fromJSON(e)) : [],
     };
   },
 
@@ -1444,9 +1673,6 @@ export const IntegratedCircuit: MessageFns<IntegratedCircuit> = {
     if (message.wires?.length) {
       obj.wires = message.wires.map((e) => Wire.toJSON(e));
     }
-    if (message.ports?.length) {
-      obj.ports = message.ports.map((e) => Port.toJSON(e));
-    }
     return obj;
   },
 
@@ -1460,13 +1686,12 @@ export const IntegratedCircuit: MessageFns<IntegratedCircuit> = {
       : undefined;
     message.components = object.components?.map((e) => Component.fromPartial(e)) || [];
     message.wires = object.wires?.map((e) => Wire.fromPartial(e)) || [];
-    message.ports = object.ports?.map((e) => Port.fromPartial(e)) || [];
     return message;
   },
 };
 
 function createBaseCircuit(): Circuit {
-  return { metadata: undefined, camera: undefined, ics: [], components: [], wires: [], ports: [] };
+  return { metadata: undefined, camera: undefined, ics: [], components: [], wires: [] };
 }
 
 export const Circuit: MessageFns<Circuit> = {
@@ -1485,9 +1710,6 @@ export const Circuit: MessageFns<Circuit> = {
     }
     for (const v of message.wires) {
       Wire.encode(v!, writer.uint32(42).fork()).join();
-    }
-    for (const v of message.ports) {
-      Port.encode(v!, writer.uint32(50).fork()).join();
     }
     return writer;
   },
@@ -1539,14 +1761,6 @@ export const Circuit: MessageFns<Circuit> = {
           message.wires.push(Wire.decode(reader, reader.uint32()));
           continue;
         }
-        case 6: {
-          if (tag !== 50) {
-            break;
-          }
-
-          message.ports.push(Port.decode(reader, reader.uint32()));
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1565,7 +1779,6 @@ export const Circuit: MessageFns<Circuit> = {
         ? object.components.map((e: any) => Component.fromJSON(e))
         : [],
       wires: globalThis.Array.isArray(object?.wires) ? object.wires.map((e: any) => Wire.fromJSON(e)) : [],
-      ports: globalThis.Array.isArray(object?.ports) ? object.ports.map((e: any) => Port.fromJSON(e)) : [],
     };
   },
 
@@ -1586,9 +1799,6 @@ export const Circuit: MessageFns<Circuit> = {
     if (message.wires?.length) {
       obj.wires = message.wires.map((e) => Wire.toJSON(e));
     }
-    if (message.ports?.length) {
-      obj.ports = message.ports.map((e) => Port.toJSON(e));
-    }
     return obj;
   },
 
@@ -1606,7 +1816,6 @@ export const Circuit: MessageFns<Circuit> = {
     message.ics = object.ics?.map((e) => IntegratedCircuit.fromPartial(e)) || [];
     message.components = object.components?.map((e) => Component.fromPartial(e)) || [];
     message.wires = object.wires?.map((e) => Wire.fromPartial(e)) || [];
-    message.ports = object.ports?.map((e) => Port.fromPartial(e)) || [];
     return message;
   },
 };

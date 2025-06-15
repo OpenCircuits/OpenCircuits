@@ -2,26 +2,27 @@ import {Component, Node, ReadonlyComponent, ReadonlyNode} from "shared/api/circu
 
 import {Signal} from "digital/api/circuit/schema/Signal";
 
-import {DigitalPort}  from "./DigitalPort";
+import {DigitalPort, ReadonlyDigitalPort}  from "./DigitalPort";
 import {APIToDigital} from "./DigitalCircuit";
 
 
-export interface ReadonlyDigitalComponent extends APIToDigital<ReadonlyComponent> {
-    readonly inputs: DigitalPort[];
-    readonly outputs: DigitalPort[];
+interface BaseReadonlyDigitalComponent<P, N> {
+    readonly inputs: P[];
+    readonly outputs: P[];
 
-    isNode(): this is DigitalNode;
+    isNode(): this is N;
 }
-type C = APIToDigital<Component> & ReadonlyDigitalComponent;
-export interface DigitalComponent extends C {
-    readonly inputs: DigitalPort[];
-    readonly outputs: DigitalPort[];
 
+export type ReadonlyDigitalComponent = APIToDigital<ReadonlyComponent> &
+    BaseReadonlyDigitalComponent<ReadonlyDigitalPort, ReadonlyDigitalNode>;
+
+
+export type DigitalComponent = APIToDigital<Component> &
+    BaseReadonlyDigitalComponent<DigitalPort, DigitalNode> & {
     // TODO: Is this too much to expose?
     setSimState(state: Signal[]): void;
-
-    isNode(): this is DigitalNode;
 }
+
 
 type ReadonlyDigitalNodeBase = (APIToDigital<ReadonlyNode> & ReadonlyDigitalComponent);
 export interface ReadonlyDigitalNode extends ReadonlyDigitalNodeBase {}

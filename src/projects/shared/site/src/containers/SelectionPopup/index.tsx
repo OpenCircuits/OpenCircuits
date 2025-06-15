@@ -24,23 +24,22 @@ type Props = {
     children: React.ReactNode;
 }
 export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => {
-    const circuit = designer.circuit;
-    const camera = designer.viewport.camera;
+    const circuit = designer.circuit, viewport = designer.viewport;
     const itemNavCurItem = useSharedSelector((state) => state.itemNav.curItemID);
 
     const [numSelections, setNumSelections] = useState(0);
-    const [pos, setPos] = useState(camera.toScreenPos(circuit.selections.midpoint));
+    const [pos, setPos] = useState(viewport.toScreenPos(circuit.selections.midpoint));
     const [isDragging, setIsDragging] = useState(false);
     const [clickThrough, setClickThrough] = useState(false);
 
     useEffect(() => {
         // Set it initially (like when new circuit is loaded)
         setNumSelections(circuit.selections.length);
-        setPos(camera.toScreenPos(circuit.selections.midpoint));
+        setPos(viewport.toScreenPos(circuit.selections.midpoint));
 
         return circuit.selections.subscribe(() => {
             setNumSelections(circuit.selections.length);
-            setPos(camera.toScreenPos(circuit.selections.midpoint));
+            setPos(viewport.toScreenPos(circuit.selections.midpoint));
 
             // When the selection changes, reset the clickThrough state and
             // let user click through box so it doesn't block a double click
@@ -54,10 +53,10 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
                 return true;
             });
         });
-    }, [circuit, camera, setNumSelections, setClickThrough]);
+    }, [circuit, viewport, setNumSelections, setClickThrough]);
 
-    useEffect(() => camera.subscribe(() =>
-        setPos(camera.toScreenPos(circuit.selections.midpoint))
+    useEffect(() => viewport.camera.subscribe(() =>
+        setPos(viewport.toScreenPos(circuit.selections.midpoint))
     ), [circuit, setPos]);
     // TODO[master] - Right now, the selection popup won't move when you edit
     //                the position values in the popup, this is kinda nice since
@@ -76,8 +75,8 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     }, designer.viewport.canvasInfo?.input, [setIsDragging]);
     useEvent("mouseup", (_) => {
         setIsDragging(false); // Show when stopped dragging
-        setPos(camera.toScreenPos(circuit.selections.midpoint)); // And recalculate position
-    }, designer.viewport.canvasInfo?.input, [circuit, camera, setPos, setIsDragging]);
+        setPos(viewport.toScreenPos(circuit.selections.midpoint)); // And recalculate position
+    }, designer.viewport.canvasInfo?.input, [circuit, viewport, setPos, setIsDragging]);
 
     const popup = useRef<HTMLDivElement>(null);
 

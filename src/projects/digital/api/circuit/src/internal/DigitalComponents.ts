@@ -357,13 +357,13 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
         const portGroupInfo = MapObj(ports, ([_, pins]) => {
             // Verify all the pins in this group belong to the same type (input/output)
             const pinObjs = pins
-                .map(({ id }) => ic.objects.find((o) => (o.id === id)));
-            if (!pinObjs.every((o) => !!o && o.baseKind === "Port")) {
+                .map(({ id }) => ic.ports.find((o) => (o.id === id)));
+            if (pinObjs.some((o) => !o)) {
                 throw new Error(
-                    `DigitalObjInfoProvider.onICCreate: found undefined or non-Port pins for IC ${ic.metadata.id}!`);
+                    `DigitalObjInfoProvider.onICCreate: found undefined pins for IC ${ic.metadata.id}!`);
             }
             const portObjs = pinObjs as Schema.Port[];
-            const parentObjs = portObjs.map((p) => ic.objects.find((o) => (o.id === p.parent))! as Schema.Component);
+            const parentObjs = portObjs.map((p) => ic.comps.find((o) => (o.id === p.parent))!);
             const types = parentObjs.map((c, i) => this.getComponent(c.kind)!.portGroupInfo[portObjs[i].group]);
             if (!types.every((type) => (type === types[0]))) {
                 throw new Error(

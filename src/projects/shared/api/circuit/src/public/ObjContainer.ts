@@ -1,14 +1,13 @@
 import {Vector} from "Vector";
 import {Rect}   from "math/Rect";
 
-import {Component}  from "./Component";
-import {Obj}        from "./Obj";
-import {Wire}       from "./Wire";
-import {Port}       from "./Port";
-import {IntegratedCircuit} from "./Circuit";
+import {Component, ReadonlyComponent} from "./Component";
+import {ReadonlyWire, Wire}           from "./Wire";
+import {Port, ReadonlyPort}           from "./Port";
+import {IntegratedCircuit}            from "./Circuit";
 
 
-export interface ObjContainer {
+interface BaseReadonlyObjContainer<PortT, CompT, WireT, ICT, ObjCT> {
     // Returns the bounding box of all the objects in the container.
     readonly bounds: Rect;
 
@@ -18,22 +17,26 @@ export interface ObjContainer {
     readonly length: number;
     readonly isEmpty: boolean;
 
-    readonly all: Obj[];
-    readonly components: Component[];
-    readonly wires: Wire[];
-    readonly ports: Port[];
+    readonly all: Array<PortT | CompT | WireT>;
+    readonly components: CompT[];
+    readonly wires: WireT[];
+    readonly ports: PortT[];
 
     // Returns only the ICs that are referenced by components in this container.
-    readonly ics: IntegratedCircuit[];
+    readonly ics: ICT[];
 
     // Returns a new ObjContainer with the wires that are connected between components in this container
     // and ports of components.
-    withWiresAndPorts(): ObjContainer;
+    withWiresAndPorts(): ObjCT;
 
+    forEach(f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => void): void;
+    filter(f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => boolean): Array<PortT | CompT | WireT>;
+    filter<O extends PortT | CompT | WireT>(f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => obj is O): O[];
+    every(condition: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => boolean): boolean;
+}
+
+export type ReadonlyObjContainer = BaseReadonlyObjContainer<ReadonlyPort, ReadonlyComponent, ReadonlyWire, IntegratedCircuit, ReadonlyObjContainer>;
+
+export type ObjContainer = BaseReadonlyObjContainer<Port, Component, Wire, IntegratedCircuit, ObjContainer> & {
     shift(): void;
-
-    forEach(f: (obj: Obj, i: number, arr: Obj[]) => void): void;
-    filter(f: (obj: Obj, i: number, arr: Obj[]) => boolean): Obj[];
-    filter<O extends Obj>(f: (obj: Obj, i: number, arr: Obj[]) => obj is O): O[];
-    every(condition: (obj: Obj, i: number, arr: Obj[]) => boolean): boolean;
 }

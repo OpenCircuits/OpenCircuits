@@ -1,6 +1,6 @@
 import {Observable} from "../utils/Observable";
 
-import {ObjContainer} from "./ObjContainer";
+import {ObjContainer, ReadonlyObjContainer} from "./ObjContainer";
 
 
 export type SelectionsEvent = {
@@ -8,6 +8,7 @@ export type SelectionsEvent = {
     newAmt: number;
 }
 
-export interface Selections extends ObjContainer, Observable<SelectionsEvent> {
+export type ReadonlySelections = ReadonlyObjContainer;
+export type Selections = ObjContainer & Observable<SelectionsEvent> & {
     clear(): void;
 }

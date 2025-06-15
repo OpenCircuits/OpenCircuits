@@ -46,7 +46,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     private isOnCircle(pos: Vector, circuit: Circuit, viewport: Viewport): boolean {
-        const worldPos = viewport.camera.toWorldPos(pos);
+        const worldPos = viewport.toWorldPos(pos);
         const d = worldPos.sub(circuit.selections.midpoint).len2();
 
         return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
@@ -76,7 +76,9 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         return (ev.type === "mouseup");
     }
 
-    public onActivate(ev: InputAdapterEvent, { circuit, viewport: { camera, canvasInfo } }: CircuitDesigner): void {
+    public onActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
+        const { camera, canvasInfo } = viewport;
+
         this.components = circuit.selections.components;
 
         camera.publish({ type: "dragStart" });
@@ -86,7 +88,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         this.initialPositions = this.components.map((c) => c.pos);
         this.curAngles = this.components.map((c) => c.angle);
         this.curAroundAngle = 0;
-        this.startAngle = camera.toWorldPos(ev.input.mouseDownPos).sub(circuit.selections.midpoint).angle();
+        this.startAngle = viewport.toWorldPos(ev.input.mouseDownPos).sub(circuit.selections.midpoint).angle();
         this.prevAngle = this.startAngle;
 
         // Set cursor
@@ -102,14 +104,14 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         camera.publish({ type: "dragEnd" });
     }
 
-    public onEvent(ev: InputAdapterEvent, { viewport: { camera } }: CircuitDesigner): void {
+    public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             // Get whether z is presesed for independent rotation
             const isIndependent = ev.input.keysDown.has("z");
 
             const midpoint = this.initialMidpoint;
 
-            const dAngle = camera.toWorldPos(ev.input.mousePos).sub(midpoint).angle() - this.prevAngle;
+            const dAngle = viewport.toWorldPos(ev.input.mousePos).sub(midpoint).angle() - this.prevAngle;
 
             // Calculate new and snapped angles
             const newAngles = this.curAngles.map((a) => (a + dAngle));

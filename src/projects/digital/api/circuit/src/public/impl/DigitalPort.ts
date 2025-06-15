@@ -11,8 +11,8 @@ import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPort {
     protected override readonly state: DigitalCircuitState;
 
-    public constructor(state: DigitalCircuitState, id: GUID) {
-        super(state, id);
+    public constructor(state: DigitalCircuitState, id: GUID, icId?: GUID) {
+        super(state, id, icId);
 
         this.state = state;
     }
@@ -29,6 +29,8 @@ export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPo
     }
 
     public get signal(): Signal {
+        if (this.icId)
+            throw new Error(`DigitalPortImpl: Signal cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`);
         return this.state.sim.getSignal(this.id);
     }
 }

@@ -22,7 +22,7 @@ export class DefaultTool<T extends CircuitTypes = CircuitTypes> {
         if (ev.type === "mousedown") {
             // Find object if we pressed on one
             designer.curPressedObj = designer.circuit.pickObjAt(
-                designer.viewport.camera.toWorldPos(ev.input.mousePos));
+                designer.viewport.toWorldPos(ev.input.mousePos));
         } else if (ev.type === "mouseup") {
             designer.curPressedObj = undefined;
         }

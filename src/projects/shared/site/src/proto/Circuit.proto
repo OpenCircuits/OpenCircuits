@@ -9,30 +9,53 @@ message Prop {
     }
 }
 
+message Port {
+    // TODO: kind?
+
+    string group = 1;
+    int32 index = 2;
+
+    optional string name = 3;
+    optional bool isSelected = 4;
+
+    map<string, Prop> otherProps = 5;
+}
+
 message Component {
-    bytes id = 1;
-    string kind = 2;
-    optional bytes icId = 3;
-    map<string, Prop> props = 4;
+    string kind = 1;
+
+    optional bytes icId = 2;
+
+    optional uint32 portConfigIdx = 3;
+
+    optional string name = 4;
+    optional bool isSelected = 5;
+    optional float x = 6;
+    optional float y = 7;
+    optional float angle = 8;
+
+    map<string, Prop> otherProps = 9;
+    repeated Port portOverrides = 10;
 }
 
 message Wire {
-    bytes id = 1;
-    string kind = 2;
-    map<string, Prop> props = 3;
+    optional string kind = 1;
 
-    bytes p1 = 4;
-    bytes p2 = 5;
-}
+    // The index of the 1st port's parent component in circuit.components
+    uint32 p1ParentIdx = 2;
+    string p1Group = 3;
+    uint32 p1Idx = 4;
 
-message Port {
-    bytes id = 1;
-    string kind = 2;
-    map<string, Prop> props = 3;
+    // The index of the 2nd port's parent component in circuit.components
+    uint32 p2ParentIdx = 5;
+    string p2Group = 6;
+    uint32 p2Idx = 7;
 
-    bytes parent = 4;
-    string group = 5;
-    int32 index = 6;
+    optional string name = 8;
+    optional bool isSelected = 9;
+    optional uint32 color = 10;
+
+    map<string, Prop> otherProps = 11;
 }
 
 message Camera {
@@ -56,14 +79,16 @@ message IntegratedCircuitMetadata {
     float displayHeight = 3;
 
     message Pin {
-        bytes id = 1;
-        string group = 2;
-        string name = 3;
+        uint32 internalCompIdx = 1;
+        uint32 internalPortIdx = 2;
 
-        float x = 4;
-        float y = 5;
-        float dx = 6;
-        float dy = 7;
+        string group = 3;
+        string name = 4;
+
+        float x = 5;
+        float y = 6;
+        float dx = 7;
+        float dy = 8;
     }
     repeated Pin pins = 4;
 }
@@ -73,7 +98,6 @@ message IntegratedCircuit {
     
     repeated Component components = 3;
     repeated Wire wires = 4;
-    repeated Port ports = 5;
 }
 
 message Circuit {
@@ -83,7 +107,7 @@ message Circuit {
 
     repeated IntegratedCircuit ics = 3;
 
+    // Order of components will dictate the z-ordering for them.
     repeated Component components = 4;
     repeated Wire wires = 5;
-    repeated Port ports = 6;
 }

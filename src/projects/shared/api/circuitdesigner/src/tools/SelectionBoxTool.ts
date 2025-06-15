@@ -33,8 +33,8 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
 
     public onActivate(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         this.rect = Rect.FromPoints(
-            viewport.camera.toWorldPos(ev.input.mouseDownPos),
-            viewport.camera.toWorldPos(ev.input.mousePos),
+            viewport.toWorldPos(ev.input.mouseDownPos),
+            viewport.toWorldPos(ev.input.mousePos),
         );
     }
 
@@ -72,8 +72,8 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         if (ev.type === "mousedrag") {
             this.rect = Rect.FromPoints(
-                viewport.camera.toWorldPos(ev.input.mouseDownPos),
-                viewport.camera.toWorldPos(ev.input.mousePos),
+                viewport.toWorldPos(ev.input.mouseDownPos),
+                viewport.toWorldPos(ev.input.mousePos),
             );
 
             this.publish({ type: "statechange" });

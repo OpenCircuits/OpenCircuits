@@ -56,11 +56,10 @@ import {VersionMigrator} from "./utils/VersionMigrator";
 import {CircuitHelpers, SetCircuitHelpers} from "shared/site/utils/CircuitHelpers";
 
 import {DigitalProtoSchema} from "digital/site/proto";
-import {CreateCircuit} from "digital/api/circuit/public";
+import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
 import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
-import {DigitalProtoToSchema, DigitalSchemaToProto} from "digital/site/proto/bridge";
-import {DigitalSchema} from "digital/api/circuit/schema";
+import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
 
 
 async function Init(): Promise<void> {
@@ -166,15 +165,15 @@ async function Init(): Promise<void> {
                 SerializeCircuit(circuit) {
                     return new Blob([
                         DigitalProtoSchema.DigitalCircuit.encode(
-                            DigitalSchemaToProto(circuit as DigitalSchema.DigitalCircuit)
+                            DigitalCircuitToProto(circuit as DigitalCircuit)
                         ).finish(),
                     ]);
                 },
                 DeserializeCircuit(data) {
-                    if (typeof data === "string")
-                        return VersionMigrator(data).schema;
+                    const schema = (() => {
+                        if (typeof data === "string")
+                            return VersionMigrator(data).schema;
 
-                    const proto = (() => {
                         try {
                             const proto = DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
                             // TODO[] -- switch protobuf libraries cause this thing sucks
@@ -183,16 +182,12 @@ async function Init(): Promise<void> {
                             return proto;
                         } catch {
                             // If we failed to decode it, it could be an old version of the circuit format
-                            // (plain text), so handle that below.
+                            // (plain text), so decode as plain text and run through VersionMigrator.
+                            const text = new TextDecoder().decode(data);
+                            return VersionMigrator(text).schema;
                         }
                     })();
-
-                    if (proto)
-                        return DigitalProtoToSchema(proto);
-
-                    // Else, might be an old version, so decode as plain text and run through VersionConflictResolver.
-                    const text = new TextDecoder().decode(data);
-                    return VersionMigrator(text).schema;
+                    return DigitalProtoToCircuit(schema);
                 },
             });
 

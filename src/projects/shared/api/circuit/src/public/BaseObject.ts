@@ -3,7 +3,7 @@ import {Rect} from "math/Rect";
 import {Prop} from "shared/api/circuit/schema";
 
 
-export interface ReadonlyBaseObject {
+interface BaseReadonlyBaseObject {
     readonly kind: string;
     readonly id: string;
     readonly bounds: Rect;
@@ -19,11 +19,9 @@ export interface ReadonlyBaseObject {
     getProps(): Readonly<Record<string, Prop>>;
 }
 
-export interface BaseObject extends ReadonlyBaseObject {
-    readonly kind: string;
-    readonly id: string;
-    readonly bounds: Rect;
+export type ReadonlyBaseObject = BaseReadonlyBaseObject;
 
+export type BaseObject = BaseReadonlyBaseObject & {
     name: string | undefined;
 
     isSelected: boolean;
@@ -32,9 +30,5 @@ export interface BaseObject extends ReadonlyBaseObject {
     select(): void;
     deselect(): void;
 
-    exists(): boolean;
-
     setProp(key: string, val: Prop): void;
-    getProp(key: string): Prop | undefined;
-    getProps(): Readonly<Record<string, Prop>>;
 }

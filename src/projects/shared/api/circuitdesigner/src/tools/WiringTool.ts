@@ -51,8 +51,7 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
 
         // Otherwise, gather all ports that are within the wireable
         //  bounds (and can be wired), and find the closest one
-        const allPorts = circuit.getObjs()
-            .filter((obj) => (obj.baseKind === "Port"));
+        const allPorts = circuit.getObjs().ports;
         const validPorts = allPorts
             // Make sure port is wireable
             .filter((port) => port.isAvailable)
@@ -72,7 +71,7 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        if (this.findPort(viewport.camera.toWorldPos(ev.input.mousePos), circuit) !== undefined)
+        if (this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit) !== undefined)
             return "pointer";
     }
     public shouldActivate(ev: InputAdapterEvent, { circuit, viewport, curPressedObj }: CircuitDesigner): boolean {
@@ -83,7 +82,7 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
                 (ev.type === "click")
             )
             && (curPressedObj?.baseKind === "Port" ||
-                this.findPort(viewport.camera.toWorldPos(ev.input.mousePos), circuit) !== undefined)
+                this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit) !== undefined)
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
@@ -97,7 +96,7 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public onActivate(ev: InputAdapterEvent, { circuit, curPressedObj, viewport }: CircuitDesigner): void {
-        const targetPos = viewport.camera.toWorldPos(ev.input.mousePos);
+        const targetPos = viewport.toWorldPos(ev.input.mousePos);
         this.curPort = curPressedObj?.baseKind === "Port"
             ? curPressedObj
             : this.findPort(targetPos, circuit);
@@ -110,7 +109,7 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
-        const port2 = this.findPort(viewport.camera.toWorldPos(ev.input.mousePos), circuit, this.curPort);
+        const port2 = this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit, this.curPort);
         if (port2 && this.curPort!.canConnectTo(port2)) // Connect the ports if we found a second port
             this.curPort!.connectTo(port2);
 
@@ -120,7 +119,7 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
 
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {
         if (ev.type === "mousemove") {
-            this.curTarget = viewport.camera.toWorldPos(ev.input.mousePos);
+            this.curTarget = viewport.toWorldPos(ev.input.mousePos);
 
             this.publish({ type: "statechange" });
         }

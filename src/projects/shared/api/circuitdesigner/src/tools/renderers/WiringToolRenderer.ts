@@ -89,7 +89,7 @@ export const WiringToolRenderer = (getColor: (params: ToolRendererArgs) => strin
         const OFFSET = V(12, 0), LEN = 7.5;
 
         // Also draw checkmark or 'x' next to the cursor
-        const pos2 = viewport.camera.toScreenPos(target).add(OFFSET);
+        const pos2 = viewport.toScreenPos(target).add(OFFSET);
         if (targetCanConnectPort) {
             const POS_OFFSET = V(-1, 1), STROKE_WIDTH = 3;
 

@@ -690,7 +690,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 .uponOk(() => {
                     // Copy-on-write
                     obj.props = { ...obj.props };
-                    if (op.newVal)
+                    if (op.newVal !== undefined)
                         obj.props[op.key] = op.newVal;
                     else
                         delete obj.props[op.key];
@@ -710,7 +710,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);
 
             const storage = new CircuitStorage<Schema.IntegratedCircuitMetadata>(this.objInfo, op.ic.metadata);
-            storage.addObjs(op.ic.objects);
+            storage.addObjs([...op.ic.comps, ...op.ic.ports, ...op.ic.wires]);
             this.icStorage.set(op.ic.metadata.id, storage);
             this.objInfo.createIC(op.ic);
         }

@@ -20,7 +20,7 @@ export const DownloadMenuDropdown = () => {
 
     const onDownloadClick = () => {
         // Convert to URL data
-        const file = CircuitHelpers.SerializeCircuit(mainDesigner.circuit.toSchema());
+        const file = CircuitHelpers.SerializeCircuit(mainDesigner.circuit);
         const url = URL.createObjectURL(file);
 
         SaveFile(url, circuitName, "circuit");

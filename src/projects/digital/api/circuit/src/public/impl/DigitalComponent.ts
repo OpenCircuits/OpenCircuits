@@ -12,8 +12,8 @@ import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements DigitalComponent {
     protected override readonly state: DigitalCircuitState;
 
-    public constructor(state: DigitalCircuitState, id: GUID) {
-        super(state, id);
+    public constructor(state: DigitalCircuitState, id: GUID, icId?: GUID) {
+        super(state, id, icId);
 
         this.state = state;
     }
@@ -26,6 +26,8 @@ export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements
     }
 
     public setSimState(state: Signal[]): void {
+        if (this.icId)
+            throw new Error(`DigitalComponentImpl: Cannot set sim state for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.sim.setState(this.id, state);
     }
 }

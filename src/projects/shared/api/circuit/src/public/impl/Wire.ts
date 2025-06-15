@@ -13,12 +13,13 @@ import {CircuitState, CircuitTypes} from "./CircuitState";
 export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Wire {
     public readonly baseKind = "Wire";
 
-    public constructor(state: CircuitState<T>, id: GUID) {
-        super(state, id);
+    public constructor(state: CircuitState<T>, id: GUID, icId?: GUID) {
+        super(state, id, icId);
     }
 
     protected getWire() {
-        return this.state.internal.getWireByID(this.id)
+        return this.getCircuitInfo()
+            .getWireByID(this.id)
             .mapErr(AddErrE(`API Wire: Attempted to get wire with ID '${this.id}' that doesn't exist!`))
             .unwrap();
     }
@@ -31,14 +32,16 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         { wire1: T["Wire"] | undefined, wire2: T["Wire"] | undefined };
 
     public get shape(): Curve {
+        if (this.icId)
+            throw new Error(`WireImpl: Wire shape cannot be accessed inside an IC! Wire ID: '${this.id}', IC ID: '${this.icId}'`);
         return this.state.assembler.getWireShape(this.id).unwrap();
     }
 
     public get p1(): T["Port"] {
-        return this.state.constructPort(this.getWire().p1);
+        return this.state.constructPort(this.getWire().p1, this.icId);
     }
     public get p2(): T["Port"] {
-        return this.state.constructPort(this.getWire().p2);
+        return this.state.constructPort(this.getWire().p2, this.icId);
     }
 
     // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
@@ -47,6 +50,9 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
 
     public split(): { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] } {
+        if (this.icId)
+            throw new Error(`WireImpl: Cannot split wire with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+
         // TODO[model_refactor_api](kevin)
         //  Need to make an explicit CircuitInternal operation for splitting wires
         // Need to guarantee that wire1 is connected to the p1 of initial wire and wire2 for p2
@@ -82,6 +88,9 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
 
     public delete(): void {
+        if (this.icId)
+            throw new Error(`WireImpl: Cannot delete wire with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+
         this.state.internal.beginTransaction();
         this.state.internal.deleteWire(this.id).unwrap();
         this.state.internal.commitTransaction();

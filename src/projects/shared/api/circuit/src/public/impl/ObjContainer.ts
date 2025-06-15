@@ -13,7 +13,7 @@ import "shared/api/circuit/utils/Array";
 export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
     protected readonly state: CircuitState<T>;
 
-    protected objs: Set<GUID>;
+    protected readonly objs: Set<GUID>;
 
     protected componentIds?: Set<GUID>;
     protected wireIds?: Set<GUID>;
