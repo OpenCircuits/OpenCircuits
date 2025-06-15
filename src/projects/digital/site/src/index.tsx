@@ -61,6 +61,13 @@ import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
 
+import * as proto from "shared/site/proto/proto2/Circuit_pb";
+import * as digital_proto from "digital/site/proto/proto2/DigitalCircuit_pb";
+
+// import "shared/site/proto/proto2/Circuit_pb";
+// import "digital/site/proto/proto2/DigitalCircuit_pb";
+import {ProtoSchema} from "shared/site/proto";
+
 
 async function Init(): Promise<void> {
     const startPercent = 30;
@@ -169,11 +176,130 @@ async function Init(): Promise<void> {
                     return mainDesigner;
                 },
                 SerializeCircuit(circuit) {
-                    return new Blob([
-                        DigitalProtoSchema.DigitalCircuit.encode(
-                            DigitalCircuitToProto(circuit as DigitalCircuit)
-                        ).finish(),
-                    ]);
+                    const c0 = DigitalCircuitToProto(circuit as DigitalCircuit);
+
+                    const d = new digital_proto.DigitalCircuit();
+                    const c = new proto.Circuit();
+
+                    function MakeProp(p: ProtoSchema.Prop): proto.Prop {
+                        const prop = new proto.Prop();
+                        if (p.intVal)
+                            prop.setIntVal(p.intVal);
+                        if (p.floatVal)
+                            prop.setFloatVal(p.floatVal);
+                        if (p.strVal)
+                            prop.setStrVal(p.strVal);
+                        if (p.boolVal)
+                            prop.setBoolVal(p.boolVal);
+                        return prop;
+                    }
+
+                    function MakeComp(c: ProtoSchema.Component): proto.Component {
+                        const c2 = new proto.Component();
+                        c2.setKind(c.kind);
+                        if (c.icIdx !== undefined)
+                            c2.setIcidx(c.icIdx);
+                        if (c.portConfigIdx !== undefined)
+                            c2.setPortconfigidx(c.portConfigIdx);
+                        if (c.name !== undefined)
+                            c2.setName(c.name);
+                        if (c.x !== undefined)
+                            c2.setX(c.x);
+                        if (c.y !== undefined)
+                            c2.setY(c.y);
+                        if (c.angle !== undefined)
+                            c2.setAngle(c.angle);
+
+                        const props = c2.getOtherpropsMap();
+                        for (const [key, val] of Object.entries(c.otherProps))
+                            props.set(key, MakeProp(val));
+
+                        for (const p of c.portOverrides) {
+                            const port = new proto.Port();
+                            port.setGroup(p.group)
+                            port.setIndex(p.index);
+                            if (p.name)
+                                port.setName(p.name);
+                            const props = port.getOtherpropsMap();
+                            for (const [key, val] of Object.entries(p.otherProps))
+                                props.set(key, MakeProp(val));
+                            c2.addPortoverrides(port);
+                        }
+                        return c2;
+                    }
+
+                    function MakeWire(w: ProtoSchema.Wire): proto.Wire {
+                        const w2 = new proto.Wire();
+                        if (w.kind !== undefined)
+                            w2.setKind(w.kind);
+                        w2.setP1parentidx(w.p1ParentIdx);
+                        w2.setP1group(w.p1Group);
+                        w2.setP1idx(w.p1Idx);
+                        w2.setP2parentidx(w.p2ParentIdx);
+                        w2.setP2group(w.p2Group);
+                        w2.setP2idx(w.p2Idx);
+                        if (w.name !== undefined)
+                            w2.setName(w.name);
+                        if (w.color !== undefined)
+                            w2.setColor(w.color);
+                        const props = w2.getOtherpropsMap();
+                        for (const [key, val] of Object.entries(w.otherProps))
+                            props.set(key, MakeProp(val));
+                        return w2;
+                    }
+
+                    for (const ic of c0.circuit!.ics!) {
+                        const ic2 = new proto.IntegratedCircuit() as proto.IntegratedCircuit;
+                        for (const comp of ic.components)
+                            ic2.addComponents(MakeComp(comp));
+                        for (const wire of ic.wires)
+                            ic2.addWires(MakeWire(wire));
+                        c.addIcs(ic2);
+                    }
+
+                    for (const comp of c0.circuit!.components!)
+                        c.addComponents(MakeComp(comp));
+                    for (const wire of c0.circuit!.wires!)
+                        c.addWires(MakeWire(wire));
+
+                    d.setCircuit(c);
+                    d.setPropagationtime(c0.propagationTime);
+
+                    function MakeSignal(s: DigitalProtoSchema.DigitalSimState_Signal): digital_proto.DigitalSimState.SignalMap[keyof digital_proto.DigitalSimState.SignalMap] {
+                        if (s === DigitalProtoSchema.DigitalSimState_Signal.Off)
+                            return 0;
+                        if (s === DigitalProtoSchema.DigitalSimState_Signal.On)
+                            return 1;
+                        return 2;
+                    }
+                    function MakeSimState(s: DigitalProtoSchema.DigitalSimState): digital_proto.DigitalSimState {
+                        const s2 = new digital_proto.DigitalSimState();
+                        for (const sig of s.signals)
+                            s2.addSignals(MakeSignal(sig));
+                        const statesMap = s2.getStatesMap();
+                        for (const [key, state] of Object.entries(s.states)) {
+                            const s = new digital_proto.DigitalSimState.State();
+                            for (const ss of state.state)
+                                s.addState(MakeSignal(ss));
+                            statesMap.set(parseInt(key), s);
+                        }
+                        const icStatesMap = s2.getIcstatesMap();
+                        for (const [key, state] of Object.entries(s.icStates))
+                            icStatesMap.set(parseInt(key), MakeSimState(state));
+                        return s2;
+                    }
+
+                    for (const ic of c0.icInitialSimStates)
+                        d.addIcinitialsimstates(MakeSimState(ic));
+                    d.setSimstate(MakeSimState(c0.simState!));
+
+                    return new Blob([d.serializeBinary()]);
+                    // return new Blob(digital_proto.DigitalCircuit.serializeBinaryToWriter(d, ))
+                    // return new Blob([
+                    //     DigitalProtoSchema.DigitalCircuit.encode(
+                    //         c0
+                    //     ).finish(),
+                    // ]);
                 },
                 SerializeCircuitAsString(circuit) {
                     return JSON.stringify(DigitalCircuitToProto(circuit as DigitalCircuit));
