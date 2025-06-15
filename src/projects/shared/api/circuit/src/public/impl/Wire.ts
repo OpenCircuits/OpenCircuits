@@ -45,7 +45,32 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
 
     // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
     public get path(): T["Path"] {
-        throw new Error("Wire.get path: Unimplemented!");
+        const path: T["Path"] = [];
+
+        // Breadth First Search
+        const queue: T["Path"] = new Array(this);
+        const visited = new Set<string>();
+
+        while (queue.length > 0) {
+            const q = queue.shift()!;
+
+            visited.add(q.id);
+            path.push(q);
+            if (q.baseKind === "Wire") {
+                const p1 = q.p1.parent;
+                if (p1.isNode() && !visited.has(p1.id))
+                    queue.push(p1);
+
+                const p2 = q.p2.parent;
+                if (p2.isNode() && !visited.has(p2.id))
+                    queue.push(p2);
+            } else {
+                // Push all of the Node's connecting wires, filtered by if they've been visited
+                queue.push(...q.allPorts.flatMap((p) => p.connections).filter((w) => !visited.has(w.id)));
+            }
+        }
+
+        return path;
     }
 
     public split(): { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] } {
