@@ -14,7 +14,7 @@ export interface PlaceComponentOp {
 
 export interface ReplaceComponentOp {
     kind: "ReplaceComponentOp";
-    component: Schema.GUID;
+    id: Schema.GUID;
     oldKind: string;
     newKind: string;
 }

@@ -321,11 +321,20 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .uponErr(() => this.cancelTransaction());
     }
 
-    // public replaceComponent(id: GUID, newKind: string): void {
-    //     // TODO: Check that component's current port list is compatable with the "newKind" ComponentInfo
-    //     // TODO: Maybe this needs a dedicated Op b/c updating kind isn't covered by `SetPropertyOp`
-    //     throw new Error("Unimplemented");
-    // }
+    public replaceComponent(id: GUID, newKind: string): Result {
+        return this.doc
+            .getCircuitInfo()
+            .getCompByID(id)
+            .andThen((c) =>
+                 this.doc.addTransactionOp({
+                    kind:    "ReplaceComponentOp",
+                    id,
+                    oldKind: c.kind,
+                    newKind,
+                }))
+            .mapErr(AddErrE(`CircuitInternal.replaceComponent: failed for ${id}, newKind: ${newKind}`))
+            .uponErr(() => this.cancelTransaction());
+    }
 
     public deleteComponent(id: GUID): Result {
         return this.doc

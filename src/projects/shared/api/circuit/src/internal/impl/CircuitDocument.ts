@@ -3,7 +3,7 @@ import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "shared/api/circu
 
 import {GUID, Schema} from "shared/api/circuit/schema";
 
-import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps, UpdateICMetadataOp} from "./CircuitOps";
+import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, ReplaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps, UpdateICMetadataOp} from "./CircuitOps";
 import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";
 import {CircuitLog, LogEntry, LogEntryType} from "./CircuitLog";
 import {ObservableImpl} from "../../utils/Observable";
@@ -609,7 +609,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 this.placeComponent(op);
                 return OkVoid();
             case "ReplaceComponentOp":
-                throw new Error("Unimplemented");
+                return this.replaceComponent(op);
             case "SetComponentPortsOp":
                 return this.setComponentPorts(op);
             case "ConnectWireOp":
@@ -642,6 +642,16 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
             storage.addComponent(op.c);
         }
+    }
+
+    private replaceComponent(op: ReplaceComponentOp) {
+        return this.storage.getMutableObjByID(op.id)
+            .andThen((obj) => this.storage.getPortConfig(op.id)
+                .andThen((config) => this.storage.getComponentInfo(op.newKind)
+                    .andThen((otherInfo) => otherInfo.checkPortConfig(config))
+                        .uponOk(() => {
+                            obj.kind = op.newKind;
+                        })));
     }
 
     // NOTE: This operation does NOT check the given port configuration for correctness.

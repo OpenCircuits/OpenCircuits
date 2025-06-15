@@ -1,9 +1,9 @@
 import {V, Vector} from "Vector";
 
-import {AddErrE}                 from "shared/api/circuit/utils/MultiError";
-import {FromConcatenatedEntries, MapObj} from "shared/api/circuit/utils/Functions";
-import {GUID}                    from "shared/api/circuit/internal";
-import {Schema}                  from "shared/api/circuit/schema";
+import {AddErrE} from "shared/api/circuit/utils/MultiError";
+import {MapObj}  from "shared/api/circuit/utils/Functions";
+import {GUID}    from "shared/api/circuit/internal";
+import {Schema}  from "shared/api/circuit/schema";
 
 import {Component, PortConfig} from "../Component";
 
@@ -136,6 +136,14 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
                 return port;
         }
         return undefined;
+    }
+    public replaceWith(newKind: string): void {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot replace component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+
+        this.state.internal.beginTransaction();
+        this.state.internal.replaceComponent(this.id, newKind).unwrap();
+        this.state.internal.commitTransaction();
     }
     public delete(): void {
         if (this.icId)
