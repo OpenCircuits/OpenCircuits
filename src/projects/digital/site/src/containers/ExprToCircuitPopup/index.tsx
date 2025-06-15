@@ -1,5 +1,7 @@
 import {useState} from "react";
 
+import {Camera} from "shared/api/circuit/public/Camera";
+
 import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS}                             from "digital/site/utils/ExpressionParser/Constants/Formats";
 
@@ -22,7 +24,6 @@ import {Generate,
         OutputTypes}    from "./generate";
 
 import "./index.scss";
-import {Camera} from "shared/api/circuitdesigner/public/Camera";
 
 
 type Props = {
