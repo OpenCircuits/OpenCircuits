@@ -21,7 +21,6 @@ export interface Port {
   group: string;
   index: number;
   name?: string | undefined;
-  isSelected?: boolean | undefined;
   otherProps: { [key: string]: Prop };
 }
 
@@ -32,10 +31,10 @@ export interface Port_OtherPropsEntry {
 
 export interface Component {
   kind: number;
-  icId?: Uint8Array | undefined;
+  /** Index of the IC in circuit.ics */
+  icIdx?: number | undefined;
   portConfigIdx?: number | undefined;
   name?: string | undefined;
-  isSelected?: boolean | undefined;
   x?: number | undefined;
   y?: number | undefined;
   angle?: number | undefined;
@@ -61,7 +60,6 @@ export interface Wire {
   p2Group: string;
   p2Idx: number;
   name?: string | undefined;
-  isSelected?: boolean | undefined;
   color?: number | undefined;
   otherProps: { [key: string]: Prop };
 }
@@ -227,7 +225,7 @@ export const Prop: MessageFns<Prop> = {
 };
 
 function createBasePort(): Port {
-  return { group: "", index: 0, name: undefined, isSelected: undefined, otherProps: {} };
+  return { group: "", index: 0, name: undefined, otherProps: {} };
 }
 
 export const Port: MessageFns<Port> = {
@@ -241,11 +239,8 @@ export const Port: MessageFns<Port> = {
     if (message.name !== undefined) {
       writer.uint32(26).string(message.name);
     }
-    if (message.isSelected !== undefined) {
-      writer.uint32(32).bool(message.isSelected);
-    }
     Object.entries(message.otherProps).forEach(([key, value]) => {
-      Port_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(42).fork()).join();
+      Port_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(34).fork()).join();
     });
     return writer;
   },
@@ -282,21 +277,13 @@ export const Port: MessageFns<Port> = {
           continue;
         }
         case 4: {
-          if (tag !== 32) {
+          if (tag !== 34) {
             break;
           }
 
-          message.isSelected = reader.bool();
-          continue;
-        }
-        case 5: {
-          if (tag !== 42) {
-            break;
-          }
-
-          const entry5 = Port_OtherPropsEntry.decode(reader, reader.uint32());
-          if (entry5.value !== undefined) {
-            message.otherProps[entry5.key] = entry5.value;
+          const entry4 = Port_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry4.value !== undefined) {
+            message.otherProps[entry4.key] = entry4.value;
           }
           continue;
         }
@@ -314,7 +301,6 @@ export const Port: MessageFns<Port> = {
       group: isSet(object.group) ? globalThis.String(object.group) : "",
       index: isSet(object.index) ? globalThis.Number(object.index) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
-      isSelected: isSet(object.isSelected) ? globalThis.Boolean(object.isSelected) : undefined,
       otherProps: isObject(object.otherProps)
         ? Object.entries(object.otherProps).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
           acc[key] = Prop.fromJSON(value);
@@ -334,9 +320,6 @@ export const Port: MessageFns<Port> = {
     }
     if (message.name !== undefined) {
       obj.name = message.name;
-    }
-    if (message.isSelected !== undefined) {
-      obj.isSelected = message.isSelected;
     }
     if (message.otherProps) {
       const entries = Object.entries(message.otherProps);
@@ -358,7 +341,6 @@ export const Port: MessageFns<Port> = {
     message.group = object.group ?? "";
     message.index = object.index ?? 0;
     message.name = object.name ?? undefined;
-    message.isSelected = object.isSelected ?? undefined;
     message.otherProps = Object.entries(object.otherProps ?? {}).reduce<{ [key: string]: Prop }>(
       (acc, [key, value]) => {
         if (value !== undefined) {
@@ -451,10 +433,9 @@ export const Port_OtherPropsEntry: MessageFns<Port_OtherPropsEntry> = {
 function createBaseComponent(): Component {
   return {
     kind: 0,
-    icId: undefined,
+    icIdx: undefined,
     portConfigIdx: undefined,
     name: undefined,
-    isSelected: undefined,
     x: undefined,
     y: undefined,
     angle: undefined,
@@ -468,8 +449,8 @@ export const Component: MessageFns<Component> = {
     if (message.kind !== 0) {
       writer.uint32(8).uint32(message.kind);
     }
-    if (message.icId !== undefined) {
-      writer.uint32(18).bytes(message.icId);
+    if (message.icIdx !== undefined) {
+      writer.uint32(16).uint32(message.icIdx);
     }
     if (message.portConfigIdx !== undefined) {
       writer.uint32(24).uint32(message.portConfigIdx);
@@ -477,23 +458,20 @@ export const Component: MessageFns<Component> = {
     if (message.name !== undefined) {
       writer.uint32(34).string(message.name);
     }
-    if (message.isSelected !== undefined) {
-      writer.uint32(40).bool(message.isSelected);
-    }
     if (message.x !== undefined) {
-      writer.uint32(53).float(message.x);
+      writer.uint32(45).float(message.x);
     }
     if (message.y !== undefined) {
-      writer.uint32(61).float(message.y);
+      writer.uint32(53).float(message.y);
     }
     if (message.angle !== undefined) {
-      writer.uint32(69).float(message.angle);
+      writer.uint32(61).float(message.angle);
     }
     Object.entries(message.otherProps).forEach(([key, value]) => {
-      Component_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(74).fork()).join();
+      Component_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(66).fork()).join();
     });
     for (const v of message.portOverrides) {
-      Port.encode(v!, writer.uint32(82).fork()).join();
+      Port.encode(v!, writer.uint32(74).fork()).join();
     }
     return writer;
   },
@@ -514,11 +492,11 @@ export const Component: MessageFns<Component> = {
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.icId = reader.bytes();
+          message.icIdx = reader.uint32();
           continue;
         }
         case 3: {
@@ -538,11 +516,11 @@ export const Component: MessageFns<Component> = {
           continue;
         }
         case 5: {
-          if (tag !== 40) {
+          if (tag !== 45) {
             break;
           }
 
-          message.isSelected = reader.bool();
+          message.x = reader.float();
           continue;
         }
         case 6: {
@@ -550,7 +528,7 @@ export const Component: MessageFns<Component> = {
             break;
           }
 
-          message.x = reader.float();
+          message.y = reader.float();
           continue;
         }
         case 7: {
@@ -558,30 +536,22 @@ export const Component: MessageFns<Component> = {
             break;
           }
 
-          message.y = reader.float();
+          message.angle = reader.float();
           continue;
         }
         case 8: {
-          if (tag !== 69) {
+          if (tag !== 66) {
             break;
           }
 
-          message.angle = reader.float();
+          const entry8 = Component_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry8.value !== undefined) {
+            message.otherProps[entry8.key] = entry8.value;
+          }
           continue;
         }
         case 9: {
           if (tag !== 74) {
-            break;
-          }
-
-          const entry9 = Component_OtherPropsEntry.decode(reader, reader.uint32());
-          if (entry9.value !== undefined) {
-            message.otherProps[entry9.key] = entry9.value;
-          }
-          continue;
-        }
-        case 10: {
-          if (tag !== 82) {
             break;
           }
 
@@ -600,10 +570,9 @@ export const Component: MessageFns<Component> = {
   fromJSON(object: any): Component {
     return {
       kind: isSet(object.kind) ? globalThis.Number(object.kind) : 0,
-      icId: isSet(object.icId) ? bytesFromBase64(object.icId) : undefined,
+      icIdx: isSet(object.icIdx) ? globalThis.Number(object.icIdx) : undefined,
       portConfigIdx: isSet(object.portConfigIdx) ? globalThis.Number(object.portConfigIdx) : undefined,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
-      isSelected: isSet(object.isSelected) ? globalThis.Boolean(object.isSelected) : undefined,
       x: isSet(object.x) ? globalThis.Number(object.x) : undefined,
       y: isSet(object.y) ? globalThis.Number(object.y) : undefined,
       angle: isSet(object.angle) ? globalThis.Number(object.angle) : undefined,
@@ -624,17 +593,14 @@ export const Component: MessageFns<Component> = {
     if (message.kind !== 0) {
       obj.kind = Math.round(message.kind);
     }
-    if (message.icId !== undefined) {
-      obj.icId = base64FromBytes(message.icId);
+    if (message.icIdx !== undefined) {
+      obj.icIdx = Math.round(message.icIdx);
     }
     if (message.portConfigIdx !== undefined) {
       obj.portConfigIdx = Math.round(message.portConfigIdx);
     }
     if (message.name !== undefined) {
       obj.name = message.name;
-    }
-    if (message.isSelected !== undefined) {
-      obj.isSelected = message.isSelected;
     }
     if (message.x !== undefined) {
       obj.x = message.x;
@@ -666,10 +632,9 @@ export const Component: MessageFns<Component> = {
   fromPartial<I extends Exact<DeepPartial<Component>, I>>(object: I): Component {
     const message = createBaseComponent();
     message.kind = object.kind ?? 0;
-    message.icId = object.icId ?? undefined;
+    message.icIdx = object.icIdx ?? undefined;
     message.portConfigIdx = object.portConfigIdx ?? undefined;
     message.name = object.name ?? undefined;
-    message.isSelected = object.isSelected ?? undefined;
     message.x = object.x ?? undefined;
     message.y = object.y ?? undefined;
     message.angle = object.angle ?? undefined;
@@ -773,7 +738,6 @@ function createBaseWire(): Wire {
     p2Group: "",
     p2Idx: 0,
     name: undefined,
-    isSelected: undefined,
     color: undefined,
     otherProps: {},
   };
@@ -805,14 +769,11 @@ export const Wire: MessageFns<Wire> = {
     if (message.name !== undefined) {
       writer.uint32(66).string(message.name);
     }
-    if (message.isSelected !== undefined) {
-      writer.uint32(72).bool(message.isSelected);
-    }
     if (message.color !== undefined) {
-      writer.uint32(80).uint32(message.color);
+      writer.uint32(72).uint32(message.color);
     }
     Object.entries(message.otherProps).forEach(([key, value]) => {
-      Wire_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(90).fork()).join();
+      Wire_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(82).fork()).join();
     });
     return writer;
   },
@@ -893,25 +854,17 @@ export const Wire: MessageFns<Wire> = {
             break;
           }
 
-          message.isSelected = reader.bool();
-          continue;
-        }
-        case 10: {
-          if (tag !== 80) {
-            break;
-          }
-
           message.color = reader.uint32();
           continue;
         }
-        case 11: {
-          if (tag !== 90) {
+        case 10: {
+          if (tag !== 82) {
             break;
           }
 
-          const entry11 = Wire_OtherPropsEntry.decode(reader, reader.uint32());
-          if (entry11.value !== undefined) {
-            message.otherProps[entry11.key] = entry11.value;
+          const entry10 = Wire_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry10.value !== undefined) {
+            message.otherProps[entry10.key] = entry10.value;
           }
           continue;
         }
@@ -934,7 +887,6 @@ export const Wire: MessageFns<Wire> = {
       p2Group: isSet(object.p2Group) ? globalThis.String(object.p2Group) : "",
       p2Idx: isSet(object.p2Idx) ? globalThis.Number(object.p2Idx) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
-      isSelected: isSet(object.isSelected) ? globalThis.Boolean(object.isSelected) : undefined,
       color: isSet(object.color) ? globalThis.Number(object.color) : undefined,
       otherProps: isObject(object.otherProps)
         ? Object.entries(object.otherProps).reduce<{ [key: string]: Prop }>((acc, [key, value]) => {
@@ -971,9 +923,6 @@ export const Wire: MessageFns<Wire> = {
     if (message.name !== undefined) {
       obj.name = message.name;
     }
-    if (message.isSelected !== undefined) {
-      obj.isSelected = message.isSelected;
-    }
     if (message.color !== undefined) {
       obj.color = Math.round(message.color);
     }
@@ -1002,7 +951,6 @@ export const Wire: MessageFns<Wire> = {
     message.p2Group = object.p2Group ?? "";
     message.p2Idx = object.p2Idx ?? 0;
     message.name = object.name ?? undefined;
-    message.isSelected = object.isSelected ?? undefined;
     message.color = object.color ?? undefined;
     message.otherProps = Object.entries(object.otherProps ?? {}).reduce<{ [key: string]: Prop }>(
       (acc, [key, value]) => {

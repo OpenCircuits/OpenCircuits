@@ -62,7 +62,7 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
                         ? { strVal: prop } : {}));
     }
 
-    function ConvertComponent(c: ReadonlyComponent): ProtoSchema.Component {
+    function ConvertComponent(c: ReadonlyComponent, ics: IntegratedCircuit[]): ProtoSchema.Component {
         const { name, isSelected, x, y, angle, zIndex, ...otherProps } = c.getProps()
 
         const matchesPortConfig = (pc: PortConfig) =>
@@ -74,15 +74,14 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
         return {
             kind: kindMap.compKinds.get(c.isIC() ? "IC" : c.kind)!,
 
-            icId: (c.isIC() ? ConvertId(c.kind) : undefined),
+            icIdx: (c.isIC() ? ics.findIndex((ic) => ic.id === c.kind) : undefined),
 
             portConfigIdx: (isDefaultPortConfig || portConfigIdx === -1 ? undefined : portConfigIdx),
 
-            name:       (name ? name as string : undefined),
-            isSelected: (isSelected ? isSelected as boolean : undefined),
-            x:          (x ? x as number : undefined),
-            y:          (y ? y as number : undefined),
-            angle:      (angle ? angle as number : undefined),
+            name:  (name ? name as string : undefined),
+            x:     (x ? x as number : undefined),
+            y:     (y ? y as number : undefined),
+            angle: (angle ? angle as number : undefined),
 
             otherProps:    ConvertProps(otherProps),
             portOverrides: c.allPorts.map((p) => {
@@ -114,10 +113,9 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
             p2Group:     w.p2.group,
             p2Idx:       w.p2.index,
 
-            name:       (name ? name as string : undefined),
-            isSelected: (isSelected ? isSelected as boolean : undefined),
-            //          Convert color to hex integer
-            color:      (color ? parseInt((color as string).slice(1), 16) : undefined),
+            name:  (name ? name as string : undefined),
+            //     Convert color to hex integer
+            color: (color ? parseInt((color as string).slice(1), 16) : undefined),
 
             otherProps: ConvertProps(otherProps),
         };
@@ -159,13 +157,13 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
         };
     }
 
-    function ConvertIC(ic: IntegratedCircuit): ProtoSchema.IntegratedCircuit {
+    function ConvertIC(ic: IntegratedCircuit, ics: IntegratedCircuit[]): ProtoSchema.IntegratedCircuit {
         const comps = ic.components.sort((c1, c2) => (c1.zIndex - c2.zIndex));
         const wires = ic.wires.sort((w1, w2) => (w1.zIndex, w2.zIndex));
 
         return {
             metadata:   ConvertICMetadata(ic, comps),
-            components: comps.map(ConvertComponent),
+            components: comps.map((c) => ConvertComponent(c, ics)),
             wires:      wires.map((w) => ConvertWire(w, comps)),
         };
     }
@@ -174,6 +172,8 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
     const comps = circuit.getComponents().sort((c1, c2) => (c1.zIndex - c2.zIndex));
     const wires = circuit.getWires().sort((w1, w2) => (w1.zIndex, w2.zIndex));
 
+    const ics = circuit.getICs();
+
     return ProtoSchema.Circuit.create({
         metadata: ConvertMetadata(circuit),
         camera:   {
@@ -181,8 +181,8 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
             y:    circuit.camera.cy,
             zoom: circuit.camera.zoom,
         },
-        ics:        circuit.getICs().map(ConvertIC),
-        components: comps.map(ConvertComponent),
+        ics:        ics.map((ic) => ConvertIC(ic, ics)),
+        components: comps.map((c) => ConvertComponent(c, ics)),
         wires:      wires.map((w) => ConvertWire(w, comps)),
     });
 }
@@ -211,7 +211,11 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
         }
     }
 
-    function SetObjects(circuit: Circuit, objs: { components: ProtoSchema.Component[], wires: ProtoSchema.Wire[] }) {
+    function ConvertICIdx(idx: number | undefined, ics: ProtoSchema.IntegratedCircuit[]) {
+        return (idx !== undefined ? ConvertId(ics[idx].metadata!.metadata!.id) : undefined);
+    }
+
+    function SetObjects(circuit: Circuit, objs: { components: ProtoSchema.Component[], wires: ProtoSchema.Wire[] }, ics: ProtoSchema.IntegratedCircuit[]) {
         const compIdMap = new Map<number, GUID>();
 
         for (let i = 0; i < objs.components.length; i++) {
@@ -219,13 +223,15 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
 
             const kind = kindMap.compKinds.get(c.kind)!;
 
-            const comp = circuit.placeComponentAt(kind === "IC" ? ConvertId(c.icId!) : kind, V(c.x ?? 0, c.y ?? 0));
+            const comp = circuit.placeComponentAt(
+                kind === "IC" ? ConvertICIdx(c.icIdx, ics)! : kind,
+                V(c.x ?? 0, c.y ?? 0),
+            );
 
             compIdMap.set(i, comp.id);
 
             // Load props
             comp.name = c.name;
-            comp.isSelected = c.isSelected ?? false;
             comp.angle = c.angle ?? 0;
             comp.zIndex = i;
             SetProps(comp, c.otherProps);
@@ -239,7 +245,6 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
 
                 // Load props
                 port.name = p.name;
-                port.isSelected = p.isSelected ?? false;
                 SetProps(port, p.otherProps);
             }
         }
@@ -255,7 +260,6 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
 
             // Load props
             wire.name = w.name;
-            wire.isSelected = w.isSelected ?? false;
             if (w.color !== undefined) // Convert color to hex string
                 wire.setProp("color", `#${(w.color & 0xFF_FF_FF).toString(16).padStart(6, "0")}`);
             SetProps(wire, w.otherProps);
@@ -264,7 +268,7 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
         return compIdMap;
     }
 
-    function SetIC(circuit: Circuit, ic: ProtoSchema.IntegratedCircuit, allICs: Map<GUID, ProtoSchema.IntegratedCircuit>) {
+    function SetIC(circuit: Circuit, ic: ProtoSchema.IntegratedCircuit, allICs: Map<GUID, ProtoSchema.IntegratedCircuit>, ics: ProtoSchema.IntegratedCircuit[]) {
         const id = ConvertId(ic.metadata!.metadata!.id);
 
         // If IC already added, skip
@@ -272,9 +276,9 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
             return;
 
         // Find IC dependencies and load them first
-        const dependencies = new Set(ic.components.map((c) => c.icId).filter((id) => id !== undefined).map(ConvertId));
+        const dependencies = new Set(ic.components.map((c) => ConvertICIdx(c.icIdx, ics)).filter((id) => id !== undefined));
         for (const depId of dependencies)
-            SetIC(circuit, allICs.get(depId)!, allICs);
+            SetIC(circuit, allICs.get(depId)!, allICs, ics);
 
         // Create the IC circuit
         const icCircuit = CreateCircuit(id);
@@ -290,7 +294,7 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
         icCircuit.thumbnail = ic.metadata!.metadata!.thumb;
 
         // Load objects
-        const compIdMap = SetObjects(icCircuit, ic);
+        const compIdMap = SetObjects(icCircuit, ic, ics);
 
         icCircuit.commitTransaction();
 
@@ -339,10 +343,10 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
     const icMap = new Map(
         proto.ics.map((ic) => [ConvertId(ic.metadata!.metadata!.id), ic]));
     for (const ic of proto.ics)
-        SetIC(circuit, ic, icMap);
+        SetIC(circuit, ic, icMap, proto.ics);
 
     // Load objects
-    SetObjects(circuit, proto);
+    SetObjects(circuit, proto, proto.ics);
 
     circuit.commitTransaction();
 

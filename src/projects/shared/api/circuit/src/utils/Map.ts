@@ -35,7 +35,7 @@ Map.prototype.getOrInsert = function<K, V>(key: K, insert: ((k: K) => V)): V {
 }
 
 export function InvertMap<K, V>(map: Map<K, V>): Map<V, K> {
-    return new Map(map.entries().map(([k, v]) => [v, k]));
+    return new Map([...map.entries()].map(([k, v]) => [v, k]));
 }
 
 export {};
