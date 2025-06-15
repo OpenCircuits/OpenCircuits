@@ -12,9 +12,40 @@ import * as ProtoSchema from "./Circuit";
 import {Circuit, Component, IntegratedCircuit, Obj, PortConfig, ReadonlyComponent, ReadonlyWire, Wire} from "shared/api/circuit/public";
 import {V} from "Vector";
 import {BaseObject} from "shared/api/circuit/public/BaseObject";
+import {InvertMap} from "shared/api/circuit/utils/Map";
 
 
-export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
+export function MakeKindMaps(
+    comps: Record<string, number>,
+    wires: Record<string, number>,
+    ports: Record<string, number>,
+): [StrKindMap, IntKindMap] {
+    function MakeAndCheckMap(r: Record<string, number>): Map<string, number> {
+        const map = new Map(Object.entries(r));
+        if (new Set(map.values()).size !== map.size)
+            throw new Error("Duplicate keys found in KindMap!");
+        return map;
+    }
+
+    const strMap = {
+        compKinds: MakeAndCheckMap(comps),
+        wireKinds: MakeAndCheckMap(wires),
+        portKinds: MakeAndCheckMap(ports),
+    };
+    return [strMap, {
+        compKinds: InvertMap(strMap.compKinds),
+        wireKinds: InvertMap(strMap.wireKinds),
+        portKinds: InvertMap(strMap.portKinds),
+    }];
+}
+
+
+type StrKindMap = {
+    compKinds: Map<string, number>;
+    wireKinds: Map<string, number>;
+    portKinds: Map<string, number>;
+}
+export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSchema.Circuit {
     function ConvertId(id: GUID): Uint8Array {
         return uuid.parse(id) as Uint8Array;
     }
@@ -41,7 +72,7 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
         const portConfigIdx = c.info.portConfigs.findIndex(matchesPortConfig);
 
         return {
-            kind: (c.isIC() ? "IC" : c.kind),
+            kind: kindMap.compKinds.get(c.isIC() ? "IC" : c.kind)!,
 
             icId: (c.isIC() ? ConvertId(c.kind) : undefined),
 
@@ -73,7 +104,7 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
         const { name, isSelected, color, zIndex, ...otherProps } = w.getProps();
 
         return {
-            kind: w.kind,
+            kind: kindMap.wireKinds.get(w.kind),
 
             p1ParentIdx: comps.findIndex((c) => c.id === w.p1.parent.id),
             p1Group:     w.p1.group,
@@ -156,7 +187,12 @@ export function CircuitToProto(circuit: Circuit): ProtoSchema.Circuit {
     });
 }
 
-export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, mainCircuit: C, CreateCircuit: (id: GUID) => C): C {
+type IntKindMap = {
+    compKinds: Map<number, string>;
+    wireKinds: Map<number, string>;
+    portKinds: Map<number, string>;
+}
+export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, mainCircuit: C, CreateCircuit: (id: GUID) => C, kindMap: IntKindMap): C {
     function ConvertId(id: Uint8Array): GUID {
         return uuid.stringify(id);
     }
@@ -181,7 +217,9 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
         for (let i = 0; i < objs.components.length; i++) {
             const c = objs.components[i];
 
-            const comp = circuit.placeComponentAt(c.kind === "IC" ? ConvertId(c.icId!) : c.kind, V(c.x ?? 0, c.y ?? 0));
+            const kind = kindMap.compKinds.get(c.kind)!;
+
+            const comp = circuit.placeComponentAt(kind === "IC" ? ConvertId(c.icId!) : kind, V(c.x ?? 0, c.y ?? 0));
 
             compIdMap.set(i, comp.id);
 
