@@ -60,7 +60,11 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
 
     public get path(): T["Path"] {
-        throw new Error("Port.get path: Unimplemented!");
+        const wire = this.connections.at(0);
+        if (!wire) {
+            return [];
+        }
+        return wire.path;
     }
 
     public get isAvailable(): boolean {

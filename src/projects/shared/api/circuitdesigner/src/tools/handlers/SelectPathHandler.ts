@@ -47,7 +47,7 @@ export const SelectPathHandler: ToolHandler = {
                 case "Component":
                     // For nodes, return the path of one of the ports (they are all on the same path by definition)
                     if (obj.isNode())
-                        return obj.path;
+                        return obj.allPorts[0].path;
                     // For other components, return all of the components that are connected
                     // TODO: Get connected components
                     return GetComponentPath(obj);
