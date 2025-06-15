@@ -5,7 +5,7 @@
 
 import * as uuid from "uuid";
 
-import {MapObj}       from "shared/api/circuit/utils/Functions";
+import {InvertRecord, MapObj}       from "shared/api/circuit/utils/Functions";
 import {GUID, Schema} from "shared/api/circuit/schema";
 
 import * as ProtoSchema from "./Circuit";
@@ -15,37 +15,54 @@ import {BaseObject} from "shared/api/circuit/public/BaseObject";
 import {InvertMap} from "shared/api/circuit/utils/Map";
 
 
-export function MakeKindMaps(
-    comps: Record<string, number>,
+export interface CompConversionInfo {
+    kind: number;
+    ports: Record<string, number>;
+}
+export function MakeConversionMaps(
+    comps: Record<string, CompConversionInfo>,
     wires: Record<string, number>,
     ports: Record<string, number>,
-): [StrKindMap, IntKindMap] {
-    function MakeAndCheckMap(r: Record<string, number>): Map<string, number> {
-        const map = new Map(Object.entries(r));
-        if (new Set(map.values()).size !== map.size)
+): [ForwardConversionInfo, BackwardConversionInfo] {
+    function MakeAndCheckCompInfo(r: Record<string, CompConversionInfo>) {
+        const kindsMap = new Map([...Object.entries(r)].map(([kind, info]) => [kind, info.kind]));
+        if (new Set(kindsMap.values()).size !== kindsMap.size)
             throw new Error("Duplicate keys found in KindMap!");
-        return map;
+        const portsMap = new Map([...Object.entries(r)].map(([kind, info]) => [kind, new Map(Object.entries(info.ports))]));
+        return { kindsMap, portsMap };
     }
 
-    const strMap = {
-        compKinds: MakeAndCheckMap(comps),
-        wireKinds: MakeAndCheckMap(wires),
-        portKinds: MakeAndCheckMap(ports),
+    const compInfo = MakeAndCheckCompInfo(comps);
+
+    const forwardMap = {
+        kinds: {
+            comps: compInfo.kindsMap,
+            wires: new Map(Object.entries(wires)),
+            ports: new Map(Object.entries(ports)),
+        },
+        portGroups: compInfo.portsMap,
     };
-    return [strMap, {
-        compKinds: InvertMap(strMap.compKinds),
-        wireKinds: InvertMap(strMap.wireKinds),
-        portKinds: InvertMap(strMap.portKinds),
+    return [forwardMap, {
+        kinds: {
+            comps: InvertMap(forwardMap.kinds.comps),
+            wires: InvertMap(forwardMap.kinds.wires),
+            ports: InvertMap(forwardMap.kinds.ports),
+        },
+        portGroups: new Map([...forwardMap.portGroups.entries()].map(([kind, ports]) => [kind, InvertMap(ports)] as const)),
     }];
 }
 
 
-type StrKindMap = {
-    compKinds: Map<string, number>;
-    wireKinds: Map<string, number>;
-    portKinds: Map<string, number>;
+type ForwardConversionInfo = {
+    kinds: {
+        comps: Map<string, number>;
+        wires: Map<string, number>;
+        ports: Map<string, number>;
+    };
+    // Component kind : (Port group name : Port group ID)
+    portGroups: Map<string, Map<string, number>>;
 }
-export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSchema.Circuit {
+export function CircuitToProto(circuit: Circuit, conversionInfo: ForwardConversionInfo): ProtoSchema.Circuit {
     function ConvertId(id: GUID): Uint8Array {
         return uuid.parse(id) as Uint8Array;
     }
@@ -72,7 +89,7 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
         const portConfigIdx = c.info.portConfigs.findIndex(matchesPortConfig);
 
         return {
-            kind: kindMap.compKinds.get(c.isIC() ? "IC" : c.kind)!,
+            kind: conversionInfo.kinds.comps.get(c.isIC() ? "IC" : c.kind)!,
 
             icIdx: (c.isIC() ? ics.findIndex((ic) => ic.id === c.kind) : undefined),
 
@@ -99,18 +116,25 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
         };
     }
 
-    function ConvertWire(w: ReadonlyWire, comps: ReadonlyComponent[]): ProtoSchema.Wire {
+    function GetPortGroups(c: ReadonlyComponent, ics: IntegratedCircuit[]): Map<string, number> {
+        if (!c.isIC())
+            return conversionInfo.portGroups.get(c.kind)!;
+        const ic = ics.find((ic) => (ic.id === c.kind))!;
+        return new Map([...new Set(ic.display.pins.map((p) => p.group))].map((g, i) => [g, i]));
+    }
+
+    function ConvertWire(w: ReadonlyWire, comps: ReadonlyComponent[], ics: IntegratedCircuit[]): ProtoSchema.Wire {
         const { name, isSelected, color, zIndex, ...otherProps } = w.getProps();
 
         return {
-            kind: kindMap.wireKinds.get(w.kind),
+            kind: conversionInfo.kinds.wires.get(w.kind)!,
 
             p1ParentIdx: comps.findIndex((c) => c.id === w.p1.parent.id),
-            p1Group:     w.p1.group,
+            p1Group:     GetPortGroups(w.p1.parent, ics)!.get(w.p1.group)!,
             p1Idx:       w.p1.index,
 
             p2ParentIdx: comps.findIndex((c) => c.id === w.p2.parent.id),
-            p2Group:     w.p2.group,
+            p2Group:     GetPortGroups(w.p2.parent, ics)!.get(w.p2.group)!,
             p2Idx:       w.p2.index,
 
             name:  (name ? name as string : undefined),
@@ -132,11 +156,14 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
     }
 
     function ConvertICMetadata(ic: IntegratedCircuit, components: ReadonlyComponent[]): ProtoSchema.IntegratedCircuitMetadata {
+        const portGroups = Object.fromEntries([...new Set(ic.display.pins.map((p) => p.group))].map((g, i) => [g, i]));
         return {
             metadata: ConvertMetadata(ic),
 
             displayWidth:  ic.display.size.x,
             displayHeight: ic.display.size.y,
+
+            portGroups,
 
             pins: ic.display.pins.map((p) => {
                 const compIdx = components.findIndex((c) => (c.allPorts.find((port) => port.id === p.id)));
@@ -145,7 +172,7 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
                     internalCompIdx: compIdx,
                     internalPortIdx: portIdx,
 
-                    group: p.group,
+                    group: portGroups[p.group],
                     name:  p.name,
 
                     x:  p.pos.x,
@@ -164,7 +191,7 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
         return {
             metadata:   ConvertICMetadata(ic, comps),
             components: comps.map((c) => ConvertComponent(c, ics)),
-            wires:      wires.map((w) => ConvertWire(w, comps)),
+            wires:      wires.map((w) => ConvertWire(w, comps, ics)),
         };
     }
 
@@ -183,16 +210,20 @@ export function CircuitToProto(circuit: Circuit, kindMap: StrKindMap): ProtoSche
         },
         ics:        ics.map((ic) => ConvertIC(ic, ics)),
         components: comps.map((c) => ConvertComponent(c, ics)),
-        wires:      wires.map((w) => ConvertWire(w, comps)),
+        wires:      wires.map((w) => ConvertWire(w, comps, ics)),
     });
 }
 
-type IntKindMap = {
-    compKinds: Map<number, string>;
-    wireKinds: Map<number, string>;
-    portKinds: Map<number, string>;
+type BackwardConversionInfo = {
+    kinds: {
+        comps: Map<number, string>;
+        wires: Map<number, string>;
+        ports: Map<number, string>;
+    };
+    // Component kind : (Port group ID : Port group name)
+    portGroups: Map<string, Map<number, string>>;
 }
-export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, mainCircuit: C, CreateCircuit: (id: GUID) => C, kindMap: IntKindMap): C {
+export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, mainCircuit: C, CreateCircuit: (id: GUID) => C, conversionInfo: BackwardConversionInfo): C {
     function ConvertId(id: Uint8Array): GUID {
         return uuid.stringify(id);
     }
@@ -215,13 +246,20 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
         return (idx !== undefined ? ConvertId(ics[idx].metadata!.metadata!.id) : undefined);
     }
 
+    function GetPortGroups(c: Component, ics: ProtoSchema.IntegratedCircuit[]): Map<number, string> {
+        const ic = ics.find((ic) => (ConvertId(ic.metadata!.metadata!.id) === c.kind));
+        if (!ic)
+            return conversionInfo.portGroups.get(c.kind)!;
+        return InvertMap(new Map(Object.entries(ic.metadata!.portGroups!)));
+    }
+
     function SetObjects(circuit: Circuit, objs: { components: ProtoSchema.Component[], wires: ProtoSchema.Wire[] }, ics: ProtoSchema.IntegratedCircuit[]) {
         const compIdMap = new Map<number, GUID>();
 
         for (let i = 0; i < objs.components.length; i++) {
             const c = objs.components[i];
 
-            const kind = kindMap.compKinds.get(c.kind)!;
+            const kind = conversionInfo.kinds.comps.get(c.kind)!;
 
             const comp = circuit.placeComponentAt(
                 kind === "IC" ? ConvertICIdx(c.icIdx, ics)! : kind,
@@ -251,10 +289,12 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
 
         for (const w of objs.wires) {
             const p1Parent = circuit.getComponent(compIdMap.get(w.p1ParentIdx)!)!;
-            const p1Port = p1Parent.ports[w.p1Group][w.p1Idx];
+            const p1Group = GetPortGroups(p1Parent, ics)!.get(w.p1Group)!;
+            const p1Port = p1Parent.ports[p1Group][w.p1Idx];
 
             const p2Parent = circuit.getComponent(compIdMap.get(w.p2ParentIdx)!)!;
-            const p2Port = p2Parent.ports[w.p2Group][w.p2Idx];
+            const p2Group = GetPortGroups(p2Parent, ics)!.get(w.p2Group)!;
+            const p2Port = p2Parent.ports[p2Group][w.p2Idx];
 
             const wire = p1Port.connectTo(p2Port)!;
 
@@ -298,6 +338,7 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
 
         icCircuit.commitTransaction();
 
+        const portGroups = InvertRecord<string, number>(ic.metadata!.portGroups!);
         circuit.createIC({
             circuit: icCircuit,
             display: {
@@ -309,7 +350,7 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
 
                     return ({
                         id:    port.id,
-                        group: p.group,
+                        group: portGroups[p.group],
                         name:  p.name,
                         pos:   V(p.x, p.y),
                         dir:   V(p.dx, p.dy),

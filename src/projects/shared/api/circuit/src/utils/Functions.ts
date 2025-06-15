@@ -33,6 +33,10 @@ export function FromConcatenatedEntries<K extends string, V>(entries: Array<[K, 
     }), {} as Record<K, V[]>);
 }
 
+export function InvertRecord<K extends string | number, V extends string | number>(r: Record<K, V>): Record<V, K> {
+    return Object.fromEntries(Object.entries(r).map(([k, v]) => [v, k]));
+}
+
 
 export function extend<
     O extends Record<string | number | symbol, unknown>,
