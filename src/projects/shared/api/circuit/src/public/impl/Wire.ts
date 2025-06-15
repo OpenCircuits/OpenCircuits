@@ -2,7 +2,6 @@ import {Curve} from "math/Curve";
 
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
 import {GUID}    from "shared/api/circuit/internal";
-import {Schema}  from "shared/api/circuit/schema";
 
 import {Wire}    from "../Wire";
 
@@ -94,10 +93,5 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         this.state.internal.beginTransaction();
         this.state.internal.deleteWire(this.id).unwrap();
         this.state.internal.commitTransaction();
-    }
-
-    public toSchema(): Schema.Wire {
-        const wire = this.getWire();
-        return ({ ...wire, props: { ...wire.props } });
     }
 }

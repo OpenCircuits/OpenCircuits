@@ -4,6 +4,7 @@ import {CalculateMidpoint} from "math/MathUtils";
 
 import {GUID} from "../../internal";
 import {ObjContainer} from "../ObjContainer";
+import {AddErrE} from "../../utils/MultiError";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 
@@ -15,14 +16,25 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
 
     protected readonly objs: Set<GUID>;
 
+    protected readonly icId?: GUID;
+
     protected componentIds?: Set<GUID>;
     protected wireIds?: Set<GUID>;
     protected portIds?: Set<GUID>;
 
-    public constructor(state: CircuitState<T>, objs: Set<GUID>) {
+    public constructor(state: CircuitState<T>, objs: Set<GUID>, icId?: GUID) {
         this.state = state;
-
         this.objs = objs;
+        this.icId = icId;
+    }
+
+    protected getCircuitInfo() {
+        if (this.icId) {
+            return this.state.internal.getICInfo(this.icId)
+                .mapErr(AddErrE(`ObjContainerImpl: Attempted to get IC info that doesn't exist in IC ${this.icId}!`))
+                .unwrap();
+        }
+        return this.state.internal.getInfo();
     }
 
     public get bounds(): Rect {
@@ -71,26 +83,26 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
     public get components(): T["Component[]"] {
         if (!this.componentIds) {
             this.componentIds = new Set([...this.objs]
-                .filter((id) => this.state.internal.hasComp(id)));
+                .filter((id) => this.getCircuitInfo().hasComp(id)));
         }
         return [...this.componentIds]
-            .map((id) => this.state.constructComponent(id));
+            .map((id) => this.state.constructComponent(id, this.icId));
     }
     public get wires(): T["Wire[]"] {
         if (!this.wireIds) {
             this.wireIds = new Set([...this.objs]
-                .filter((id) => this.state.internal.hasWire(id)));
+                .filter((id) => this.getCircuitInfo().hasWire(id)));
         }
         return [...this.wireIds]
-            .map((id) => this.state.constructWire(id));
+            .map((id) => this.state.constructWire(id, this.icId));
     }
     public get ports(): T["Port[]"] {
         if (!this.portIds) {
             this.portIds = new Set([...this.objs]
-                .filter((id) => this.state.internal.hasPort(id)));
+                .filter((id) => this.getCircuitInfo().hasPort(id)));
         }
         return [...this.portIds]
-            .map((id) => this.state.constructPort(id));
+            .map((id) => this.state.constructPort(id, this.icId));
     }
     public get ics(): T["IC[]"] {
         const componentKinds = new Set(this.components.map((c) => c.info.kind));
@@ -113,10 +125,22 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
             ...ports.flatMap((p) => p.connections),
         ].filter((w) => portIds.has(w.p1.id) && portIds.has(w.p2.id));
 
-        return new ObjContainerImpl<T>(this.state, new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)));
+        return new ObjContainerImpl<T>(this.state, new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)), this.icId);
+    }
+
+    public select(): void {
+        if (this.icId)
+            throw new Error(`ObjContainerImpl: Cannot select objects in IC ${this.icId}! IC objects are immutable!`);
+
+        this.state.internal.beginTransaction();
+        this.components.forEach((c) => c.select());
+        this.state.internal.commitTransaction();
     }
 
     public shift(): void {
+        if (this.icId)
+            throw new Error(`ObjContainerImpl: Cannot shift objects in IC ${this.icId}! IC objects are immutable!`);
+
         this.state.internal.beginTransaction();
         // Need to keep the zIndices the same relative to eachother
         // We can do that by sorting the set by their current zIndex

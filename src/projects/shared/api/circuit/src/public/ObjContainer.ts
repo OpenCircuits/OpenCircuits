@@ -38,5 +38,6 @@ interface BaseReadonlyObjContainer<PortT, CompT, WireT, ICT, ObjCT> {
 export type ReadonlyObjContainer = BaseReadonlyObjContainer<ReadonlyPort, ReadonlyComponent, ReadonlyWire, IntegratedCircuit, ReadonlyObjContainer>;
 
 export type ObjContainer = BaseReadonlyObjContainer<Port, Component, Wire, IntegratedCircuit, ObjContainer> & {
+    select(): void;
     shift(): void;
 }

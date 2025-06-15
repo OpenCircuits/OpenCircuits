@@ -1,13 +1,9 @@
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
-import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
-import {DigitalComponent} from "../DigitalComponent";
-import {DigitalPort} from "../DigitalPort";
-import {DigitalWire} from "../DigitalWire";
 import {GUID, ICInfo} from "shared/api/circuit/public";
-import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
 export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
@@ -39,7 +35,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     public override createIC(info: APIToDigital<ICInfo>, id?: string): DigitalIntegratedCircuit {
         const ic = super.createIC(info, id);
 
-        this.state.sim.loadICState(ic.id, info.circuit.toSchema().simState);
+        this.state.sim.loadICState(ic.id, info.circuit.simState);
 
         return ic;
     }
@@ -54,62 +50,24 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     }
 
     public override import(
-        circuit: DigitalCircuit,
+        circuit: ReadonlyDigitalCircuit | ReadonlyDigitalObjContainer,
         opts?: { refreshIds?: boolean, loadMetadata?: boolean }
     ): DigitalObjContainer {
-        for (const ic of circuit.getICs())
+        const isCircuit = (o: ReadonlyDigitalCircuit | ReadonlyDigitalObjContainer): o is ReadonlyDigitalCircuit => (o instanceof DigitalCircuitImpl);
+
+        for (const ic of (isCircuit(circuit) ? circuit.getICs() : circuit.ics))
             this.state.sim.loadICState(ic.id, ic.initialSimState);
+
+        if (opts?.loadMetadata && isCircuit(circuit))
+            this.propagationTime = circuit.propagationTime;
 
         const objs = super.import(circuit, opts);
 
-        // this.state.simRunner.propagationTime = schema.propagationTime
-        this.state.sim.loadState(circuit.simState);
+        // TODO:
+        if (isCircuit(circuit))
+            this.state.sim.loadState(circuit.simState);
 
         return objs;
-    }
-
-    public override loadSchema(
-        schema: DigitalSchema.DigitalCircuit,
-        opts?: { refreshIds?: boolean, loadMetadata?: boolean }
-    ): Array<DigitalComponent | DigitalWire | DigitalPort> {
-        // TODO[] - might need it like this
-        // this.beginTransaction();
-
-        // schema.ics
-        //     .filter((ic) => !this.state.internal.hasIC(ic.metadata.id))
-        //     .forEach((ic) => {
-        //         this.state.internal.createIC(ic).unwrap();
-        //         this.state.sim.loadICState(ic.metadata.id, ic.initialSimState);
-        //     });
-
-        // const objs = this.state.internal.importObjs(schema.objects, refreshIds).unwrap();
-        // this.state.sim.loadState(schema.simState);
-
-        // this.commitTransaction();
-
-        // return objs.map((id) => this.getObj(id)!);
-
-        for (const [ic, initialSimState] of schema.ics.zip(schema.initialICSimStates))
-            this.state.sim.loadICState(ic.metadata.id, initialSimState);
-
-        const objs = super.loadSchema(schema, opts);
-        this.state.sim.loadState(schema.simState);
-        this.propagationTime = schema.propagationTime;
-
-        return objs;
-    }
-
-    public override toSchema(container?: ReadonlyDigitalObjContainer): DigitalSchema.DigitalCircuit {
-        const ics = container?.ics ?? this.getICs();
-
-        return {
-            ...super.toSchema(container),
-
-            propagationTime: -1, // TODO[model_refactor_api],
-
-            initialICSimStates: ics.map((ic) => ic.initialSimState),
-            simState:           this.state.sim.getSimState().toSchema(container),
-        };
     }
 }
 

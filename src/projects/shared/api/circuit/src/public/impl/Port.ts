@@ -2,7 +2,6 @@ import {Vector} from "Vector";
 
 import {AddErrE} from "shared/api/circuit/utils/MultiError";
 import {GUID}    from "shared/api/circuit/internal";
-import {Schema}  from "shared/api/circuit/schema";
 
 import {Port}    from "../Port";
 
@@ -101,10 +100,5 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         this.state.internal.commitTransaction();
 
         return this.state.constructWire(id);
-    }
-
-    public toSchema(): Schema.Port {
-        const port = this.getPort();
-        return ({ ...port, props: { ...port.props } });
     }
 }

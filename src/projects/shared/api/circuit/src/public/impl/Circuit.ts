@@ -14,12 +14,70 @@ import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl} from "../../utils/Observable";
 import {ObjContainerImpl} from "./ObjContainer";
 import {LogEntry} from "../../internal/impl/CircuitLog";
-import {Component, ReadonlyComponent} from "../Component";
-import {ReadonlyWire, Wire} from "../Wire";
-import {Port, ReadonlyPort} from "../Port";
+import {ReadonlyComponent} from "../Component";
+import {ReadonlyWire} from "../Wire";
+import {ReadonlyPort} from "../Port";
 import {Camera} from "../Camera";
 import {CameraImpl} from "./Camera";
 
+
+function ConvertComp(c: ReadonlyComponent): Schema.Component {
+    return {
+        baseKind: "Component",
+        id:       c.id,
+        kind:     c.isIC() ? "IC" : c.kind,
+        icId:     c.isIC() ? c.kind : undefined,
+        props:    c.getProps(),
+    };
+}
+function ConvertWire(w: ReadonlyWire): Schema.Wire {
+    return {
+        baseKind: "Wire",
+        id:       w.id,
+        kind:     w.kind,
+        p1:       w.p1.id,
+        p2:       w.p2.id,
+        props:    w.getProps(),
+    };
+}
+function ConvertPort(p: ReadonlyPort): Schema.Port {
+    return {
+        baseKind: "Port",
+        id:       p.id,
+        kind:     p.kind,
+        parent:   p.parent.id,
+        group:    p.group,
+        index:    p.index,
+        props:    p.getProps(),
+    };
+}
+function ConvertIC(ic: IntegratedCircuit): Schema.IntegratedCircuit {
+    return {
+        metadata: {
+            id:      ic.id,
+            name:    ic.name,
+            desc:    ic.desc,
+            thumb:   ic.thumbnail,
+            version: "/",
+
+            displayWidth:  ic.display.size.x,
+            displayHeight: ic.display.size.y,
+            pins:          ic.display.pins.map((p) => ({
+                id:    p.id,
+                group: p.group,
+                name:  p.name,
+
+                x:  p.pos.x,
+                y:  p.pos.y,
+                dx: p.dir.x,
+                dy: p.dir.y,
+            })),
+        },
+        comps: ic.components.map(ConvertComp),
+        ports: ic.all.ports.map(ConvertPort),
+        wires: ic.wires.map(ConvertWire),
+    };
+}
 
 export type RemoveICCallback = (id: GUID) => void;
 
@@ -263,13 +321,18 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         for (const ic of ics) {
             if (this.internal.hasIC(ic.id))
                 continue;
-            this.internal.createIC(ic.toSchema()).unwrap();
+            this.internal.createIC(ConvertIC(ic)).unwrap();
         }
         this.internal.commitTransaction();
     }
     public createIC(info: T["ICInfo"], id = uuid()): T["IC"] {
         if (this.internal.hasIC(id))
             throw new Error(`Circuit.createIC: IC with ID ${id} already exists!`);
+
+        const dependentICIDs = new Set(info.circuit.getComponents().filter((c) => c.isIC()).map((c) => c.kind));
+        const missingICIDs = dependentICIDs.difference(this.internal.getICs());
+        if (missingICIDs.size > 0)
+            throw new Error(`Circuit.createIC: Found sub-ICs when trying to create a new IC that haven't been imported yet: [${[...missingICIDs].join(", ")}]. Please import them first!`);
 
         const metadata: Schema.IntegratedCircuitMetadata = {
             // TODO[model_refactor_api](leon): do we need to allow this? maybe just use the info.circuit.id?
@@ -289,9 +352,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.internal.beginTransaction();
         this.internal.createIC({
             metadata,
-            comps: info.circuit.getObjs().components.map((c) => c.toSchema()),
-            ports: info.circuit.getObjs().ports.map((c) => c.toSchema()),
-            wires: info.circuit.getObjs().wires.map((c) => c.toSchema()),
+            comps: info.circuit.getObjs().components.map(ConvertComp),
+            ports: info.circuit.getObjs().ports.map(ConvertPort),
+            wires: info.circuit.getObjs().wires.map(ConvertWire),
         }).unwrap();
         this.internal.commitTransaction();
 
@@ -323,14 +386,16 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.internal.redo().unwrap();
     }
 
-    public import(circuit: T["Circuit"], opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["ObjContainerT"] {
+    public import(circuit: T["ReadonlyCircuit"] | T["ReadonlyObjContainerT"], opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["ObjContainerT"] {
         const refreshIds = opts?.refreshIds ?? false,
               loadMetadata = opts?.loadMetadata ?? false;
+
+        const isCircuit = (o: T["ReadonlyCircuit"] | T["ReadonlyObjContainerT"]): o is T["ReadonlyCircuit"] => (o instanceof CircuitImpl);
 
         this.beginTransaction();
 
         // TODO[] - make this undoable?
-        if (loadMetadata) {
+        if (loadMetadata && isCircuit(circuit)) {
             this.internal.setMetadata({
                 id:    circuit.id,
                 name:  circuit.name,
@@ -340,112 +405,22 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             this.internal.setCamera({ x: circuit.camera.cx, y: circuit.camera.cy, zoom: circuit.camera.zoom });
         }
 
-        function ConvertComp(c: ReadonlyComponent): Schema.Component {
-            return {
-                baseKind: "Component",
-                id:       c.id,
-                kind:     c.isIC() ? "IC" : c.kind,
-                icId:     c.isIC() ? c.kind : undefined,
-                props:    c.getProps(),
-            };
-        }
-        function ConvertWire(w: ReadonlyWire): Schema.Wire {
-            return {
-                baseKind: "Wire",
-                id:       w.id,
-                kind:     w.kind,
-                p1:       w.p1.id,
-                p2:       w.p2.id,
-                props:    w.getProps(),
-            };
-        }
-        function ConvertPort(p: ReadonlyPort): Schema.Port {
-            return {
-                baseKind: "Port",
-                id:       p.id,
-                kind:     p.kind,
-                parent:   p.parent.id,
-                group:    p.group,
-                index:    p.index,
-                props:    p.getProps(),
-            };
-        }
-
-        circuit.getICs()
+        (isCircuit(circuit) ? circuit.getICs() : circuit.ics)
             .filter((ic) => !this.internal.hasIC(ic.id))
-            .forEach((ic) =>
-                this.internal.createIC({
-                    metadata: {
-                        id:      ic.id,
-                        name:    ic.name,
-                        desc:    ic.desc,
-                        thumb:   ic.thumbnail,
-                        version: "/",
+            .forEach((ic) => this.internal.createIC(ConvertIC(ic)).unwrap());
 
-                        displayWidth:  ic.display.size.x,
-                        displayHeight: ic.display.size.y,
-                        pins:          ic.display.pins.map((p) => ({
-                            id:    p.id,
-                            group: p.group,
-                            name:  p.name,
-
-                            x:  p.pos.x,
-                            y:  p.pos.y,
-                            dx: p.dir.x,
-                            dy: p.dir.y,
-                        })),
-                    },
-                    comps: ic.components.map(ConvertComp),
-                    ports: ic.components.flatMap((c) => c.allPorts.map(ConvertPort)),
-                    wires: ic.wires.map(ConvertWire),
-                }).unwrap());
+        const comps = (isCircuit(circuit) ? circuit.getComponents() : circuit.components);
+        const wires = (isCircuit(circuit) ? circuit.getWires() : circuit.wires);
 
         const objs = this.internal.importObjs([
-            ...circuit.getComponents().map(ConvertComp),
-            ...circuit.getComponents().flatMap((c) => c.allPorts.map(ConvertPort)),
-            ...circuit.getWires().map(ConvertWire),
+            ...comps.map(ConvertComp),
+            ...comps.flatMap((c) => c.allPorts.map(ConvertPort)),
+            ...wires.map(ConvertWire),
         ], refreshIds).unwrap();
 
         this.commitTransaction("Imported Circuit");
 
         return new ObjContainerImpl(this.state, new Set(objs));
-    }
-
-    public loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["Obj[]"] {
-        const refreshIds = opts?.refreshIds ?? false,
-              loadMetadata = opts?.loadMetadata ?? false;
-
-        this.beginTransaction();
-
-        // TODO[] - make this undoable?
-        if (loadMetadata) {
-            this.internal.setMetadata(schema.metadata);
-            this.internal.setCamera(schema.camera);
-        }
-
-        schema.ics
-            .filter((ic) => !this.internal.hasIC(ic.metadata.id))
-            .forEach((ic) =>
-                this.internal.createIC(ic).unwrap());
-
-        const objs = this.internal.importObjs([...schema.comps, ...schema.ports, ...schema.wires], refreshIds).unwrap();
-
-        this.commitTransaction("Loaded Schema");
-
-        return objs.map((id) => this.getObj(id)!);
-    }
-    public toSchema(container?: T["ReadonlyObjContainerT"]): Schema.Circuit {
-        const ics = container?.ics ?? this.getICs();
-        const objs = container ?? this.getObjs();
-
-        return {
-            metadata: this.internal.getMetadata(),
-            camera:   this.internal.getCamera(),
-            ics:      ics.map((ic) => ic.toSchema()),
-            comps:    objs.components.map((c) => c.toSchema()),
-            ports:    objs.ports.map((c) => c.toSchema()),
-            wires:    objs.wires.map((c) => c.toSchema()),
-        };
     }
 }
 
@@ -559,6 +534,14 @@ export class IntegratedCircuitImpl<T extends CircuitTypes> implements Integrated
         return this.state.internal.getICInfo(this.id).unwrap().metadata.thumb;
     }
 
+    public get all(): T["ObjContainerT"] {
+        return new ObjContainerImpl<T>(
+            this.state,
+            new Set(this.state.internal.getICInfo(this.id).unwrap().getObjs()),
+            this.id
+        );
+    }
+
     public get components(): T["ReadonlyComponent[]"] {
         return [...this.state.internal.getICInfo(this.id).unwrap().getComponents()]
             .map((id) => this.state.constructComponent(id, this.id));
@@ -566,15 +549,5 @@ export class IntegratedCircuitImpl<T extends CircuitTypes> implements Integrated
     public get wires(): T["ReadonlyWire[]"] {
         return [...this.state.internal.getICInfo(this.id).unwrap().getWires()]
             .map((id) => this.state.constructWire(id, this.id));
-    }
-
-    public toSchema(): Schema.IntegratedCircuit {
-        const ic = this.state.internal.getICInfo(this.id).unwrap();
-        return {
-            metadata: ic.metadata,
-            comps:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Component")),
-            wires:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Wire")),
-            ports:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Port")),
-        };
     }
 }

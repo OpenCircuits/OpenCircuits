@@ -5,16 +5,16 @@ import {V} from "Vector";
 
 
 describe("DigitalCircuit", () => {
-    describe(".toSchema()", () => {
+    describe("Simulation State", () => {
         test("Deleted off Switch should not be in simState", () => {
             const [circuit, _, { Place }] = CreateTestCircuit();
             const [sw] = Place("Switch");
 
             sw.delete();
-            const schema = circuit.toSchema();
-            expect(Object.keys(schema.simState.signals)).toHaveLength(0);
-            expect(Object.keys(schema.simState.states)).toHaveLength(0);
-            expect(Object.keys(schema.simState.icStates)).toHaveLength(0);
+            const simState = circuit.simState;
+            expect(Object.keys(simState.signals)).toHaveLength(0);
+            expect(Object.keys(simState.states)).toHaveLength(0);
+            expect(Object.keys(simState.icStates)).toHaveLength(0);
         });
         test("Deleted on Switch should not be in simState", () => {
             const [circuit, _, { Place, TurnOn }] = CreateTestCircuit();
@@ -22,10 +22,10 @@ describe("DigitalCircuit", () => {
             TurnOn(sw);
 
             sw.delete();
-            const schema = circuit.toSchema();
-            expect(Object.keys(schema.simState.signals)).toHaveLength(0);
-            expect(Object.keys(schema.simState.states)).toHaveLength(0);
-            expect(Object.keys(schema.simState.icStates)).toHaveLength(0);
+            const simState = circuit.simState;
+            expect(Object.keys(simState.signals)).toHaveLength(0);
+            expect(Object.keys(simState.states)).toHaveLength(0);
+            expect(Object.keys(simState.icStates)).toHaveLength(0);
         });
         test("Deleted IC should not be in simState", () => {
             const [circuit, _, { Place }] = CreateTestCircuit();
@@ -47,11 +47,14 @@ describe("DigitalCircuit", () => {
             })();
             const [icInstance] = Place(ic.id);
             icInstance.delete();
-            const schema = circuit.toSchema();
-            expect(Object.keys(schema.simState.signals)).toHaveLength(0);
-            expect(Object.keys(schema.simState.states)).toHaveLength(0);
-            expect(Object.keys(schema.simState.icStates)).toHaveLength(0);
+            const simState = circuit.simState;
+            expect(Object.keys(simState.signals)).toHaveLength(0);
+            expect(Object.keys(simState.states)).toHaveLength(0);
+            expect(Object.keys(simState.icStates)).toHaveLength(0);
         });
+    });
+
+    describe("Import", () => {
         test("Convert IC to schema and load back in", () => {
             const [circuit, _, { Place }] = CreateTestCircuit();
             const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
@@ -73,10 +76,9 @@ describe("DigitalCircuit", () => {
                 });
             })();
             Place(ic.id);
-            const schema = circuit.toSchema();
 
             const [newCircuit, _state, { Place: PlaceNew, Connect: ConnectNew, TurnOn: TurnOnNew }] = CreateTestCircuit();
-            newCircuit.loadSchema(schema);
+            newCircuit.import(circuit);
             const newComps = newCircuit.getComponents();
             expect(newComps).toHaveLength(1);
             const icInstance = newComps[0];

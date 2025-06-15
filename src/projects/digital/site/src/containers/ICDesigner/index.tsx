@@ -60,24 +60,20 @@ export const ICDesigner = ({ }: Props) => {
         const [circuit, state] = CreateCircuit();
 
         // Create the IC from the objIds in the main designer's circuit
+        // and replace all input/output components with input/output pins.
         const [icCircuit] = CreateCircuit();
-        const objs = mainDesigner.circuit.createContainer(objIds).withWiresAndPorts();
+        icCircuit.importICs(mainDesigner.circuit.getICs());
+        icCircuit.import(mainDesigner.circuit.createContainer(objIds).withWiresAndPorts());
 
-        const schema = mainDesigner.circuit.toSchema(objs);
-        for (const obj of schema.comps) {
-            if (obj.kind === "Switch" || obj.kind === "Button" || obj.kind === "Clock") {
-                obj.kind = "InputPin";
-                // Remove sim state
-                delete schema.simState.states[obj.id];
-            }
-            if (obj.kind === "LED")
-                obj.kind = "OutputPin";
-            // Remove isSelected
-            delete obj.props["isSelected"];
+        for (const comp of icCircuit.getComponents()) {
+            if (comp.kind === "Switch" || comp.kind === "Button" || comp.kind === "Clock")
+                comp.replaceWith("InputPin");
+            if (comp.kind === "LED")
+                comp.replaceWith("OutputPin");
+            comp.deselect();
         }
 
-        icCircuit.loadSchema(schema);
-
+        circuit.importICs(mainDesigner.circuit.getICs());
         const ic = circuit.createIC({
             circuit: icCircuit,
             display: CalculateICDisplay(icCircuit),
@@ -129,7 +125,7 @@ export const ICDesigner = ({ }: Props) => {
     const doICNameChange = ([name]: string[]) => {
         if (!icViewDesigner)
             return;
-        icViewDesigner.circuit.getICs()[0].name = name;
+        icViewDesigner.circuit.getICs().at(-1)!.name = name;
         // TODO: Increase IC size if name gets too long for current size
     }
 
@@ -146,7 +142,7 @@ export const ICDesigner = ({ }: Props) => {
 
             circuit.beginTransaction();
 
-            const ic = icViewDesigner!.circuit.getICs()[0];
+            const ic = icViewDesigner!.circuit.getICs().at(-1)!;
             circuit.importICs([ic]);
 
             // Create IC on center of screen

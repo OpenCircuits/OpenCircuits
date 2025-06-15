@@ -1,27 +1,11 @@
-/* eslint-disable sonarjs/prefer-single-boolean-return */
-import {Schema} from "shared/api/circuit/schema";
-import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 import {V} from "Vector";
 
+import {Circuit} from "shared/api/circuit/public";
 
-function IsCircuit(data: any): data is Schema.Circuit {
-    // TODO[model_refactor](leon) - validate schema better
-    if (typeof data !== "object")
-        return false;
-    if (!("metadata" in data && "camera" in data && "ics" in data && "objects" in data))
-        return false;
-    if (typeof data["metadata"] !== "object")
-        return false;
-    if (typeof data["camera"] !== "object")
-        return false;
-    if (typeof data["ics"] !== "object")
-        return false;
-    if (typeof data["objects"] !== "object")
-        return false;
-    return true;
-}
+import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
-export const PasteHandler: ToolHandler = {
+
+export const PasteHandler = (deserialize: (str: string) => Circuit): ToolHandler => ({
     onEvent: (ev, { circuit }) => {
         // Activate when paste event is fired
         if (!(ev.type === "paste"))
@@ -36,9 +20,7 @@ export const PasteHandler: ToolHandler = {
             return ToolHandlerResponse.PASS;
 
         try {
-            const pastedCircuit = JSON.parse(data);
-            if (!IsCircuit(pastedCircuit))
-                return ToolHandlerResponse.PASS;
+            const pastedCircuit = deserialize(data);
 
             // If the data is identical to the last paste, offset the paste
             // TODO(master): This is a hard problem :/
@@ -63,15 +45,14 @@ export const PasteHandler: ToolHandler = {
 
             circuit.beginTransaction();
             circuit.selections.clear();
-            const newObjs = circuit.loadSchema(pastedCircuit, { refreshIds: true });
-            // Select the new components only (and offset them)
-            newObjs.forEach((o) => {
-                if (o.baseKind === "Component") {
-                    o.select();
-                    if (offsetAmount > 0)
-                        o.pos = o.pos.add(V(0.5, -0.5).scale(offsetAmount));
-                }
-            });
+            const newObjs = circuit.import(pastedCircuit, { refreshIds: true });
+            // Select, shift, and offset the components
+            newObjs.shift();
+            newObjs.select();
+            if (offsetAmount) {
+                newObjs.components.forEach((o) =>
+                    (o.pos = o.pos.add(V(0.5, -0.5).scale(offsetAmount))));
+            }
             circuit.commitTransaction("Pasted From Clipboard");
 
             // This should be the only handler to execute
@@ -80,4 +61,4 @@ export const PasteHandler: ToolHandler = {
             return ToolHandlerResponse.PASS;
         }
     },
-}
+});

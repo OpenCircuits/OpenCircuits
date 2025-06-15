@@ -4,7 +4,6 @@ import type {BaseObject, ReadonlyBaseObject} from "./BaseObject";
 import type {ComponentInfo} from "./ComponentInfo";
 import type {Port, ReadonlyPort} from "./Port";
 import type {ReadonlyWire, Wire} from "./Wire";
-import type {Schema} from "../schema";
 import type {PortConfig} from "../internal/impl/ObjInfo";
 
 export type {PortConfig} from "../internal/impl/ObjInfo";
@@ -29,8 +28,6 @@ interface BaseReadonlyComponent<PortT, NodeT> {
     // readonly connectedComponents: Component[];
 
     firstAvailable(group: string): PortT | undefined;
-
-    toSchema(): Schema.Component;
 }
 
 export type ReadonlyComponent = ReadonlyBaseObject & BaseReadonlyComponent<ReadonlyPort, ReadonlyNode>;

@@ -6,7 +6,6 @@ import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff"
 
 import {Component, ReadonlyComponent}     from "./Component";
 import {ComponentInfo} from "./ComponentInfo";
-import {Obj}           from "./Obj";
 import {Port, ReadonlyPort}          from "./Port";
 import {ReadonlyWire, Wire}          from "./Wire";
 import {ReadonlySelections, Selections}    from "./Selections";
@@ -14,7 +13,7 @@ import {Observable} from "../utils/Observable";
 import {ObjContainer, ReadonlyObjContainer} from "./ObjContainer";
 import {LogEntry} from "../internal/impl/CircuitLog";
 import {Rect} from "math/Rect";
-import {Camera} from "./Camera";
+import {Camera, ReadonlyCamera} from "./Camera";
 
 
 // TODO[model_refactor](leon) - make this more user friendly
@@ -41,6 +40,8 @@ interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
     readonly name: string;
     readonly desc: string;
     readonly thumbnail: string;
+
+    readonly camera: ReadonlyCamera;
 
     readonly history: CircuitHistory;
     readonly selections: SelectionsT;
@@ -70,8 +71,6 @@ interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
 
     getIC(id: GUID): ICT | undefined;
     getICs(): ICT[];
-
-    toSchema(container?: ObjCT): Schema.Circuit;
 }
 
 export type ReadonlyCircuit = BaseReadonlyCircuit<ReadonlyPort, ReadonlyComponent, ReadonlyWire, IntegratedCircuit, ReadonlyObjContainer, ReadonlySelections> & Observable<CircuitEvent>;
@@ -99,10 +98,7 @@ export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircu
     undo(): void;
     redo(): void;
 
-    import(circuit: Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): ObjContainer;
-
-    // TODO: Come up with a better name for this
-    loadSchema(schema: Schema.Circuit, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): Obj[];
+    import(circuit: ReadonlyCircuit | ReadonlyObjContainer, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): ObjContainer;
 }
 
 export interface ReadonlyICPin {
@@ -140,8 +136,7 @@ export interface IntegratedCircuit {
 
     readonly display: IntegratedCircuitDisplay;
 
+    readonly all: ReadonlyObjContainer;
     readonly components: ReadonlyComponent[];
     readonly wires: ReadonlyWire[];
-
-    toSchema(): Schema.IntegratedCircuit;
 }
