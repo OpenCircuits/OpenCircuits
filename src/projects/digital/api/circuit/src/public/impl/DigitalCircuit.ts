@@ -63,7 +63,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
 
         const objs = super.import(circuit, opts);
 
-        // TODO:
+        // TODO[model_refactor_api] - load circuit state from set of objects too (and unit test this)
         if (isCircuit(circuit))
             this.state.sim.loadState(circuit.simState);
 
