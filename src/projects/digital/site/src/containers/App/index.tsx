@@ -48,6 +48,7 @@ const exampleCircuits = exampleConfig.examples.map((example) => ({
     desc:    "Example Circuit",
     thumb:   example.thumbnail,
     version: "/",
+    // TODO[model_refactor_api] - remove dependency on Schema
 } satisfies Schema.CircuitMetadata));
 
 export const App = () => {

@@ -17,6 +17,7 @@ import {SignInOutButtons} from "shared/site/containers/Header/Right/SignInOutBut
 import "./index.scss";
 
 
+// TODO[model_refactor_api] - remove dependency on Schema
 function LoadExampleCircuit(data: Schema.CircuitMetadata): Promise<string> {
     return Request({
         method:  "GET",

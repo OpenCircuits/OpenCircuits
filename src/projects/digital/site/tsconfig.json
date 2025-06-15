@@ -18,12 +18,5 @@
             "digital/site/*":                ["./src/*"],
         }
     },
-    // TODO[model_refactor_api](Leon) - Add back "src" to include
-    "include": ["../../shared/api/circuitdesigner/src/types"],
-    "files": [
-        "./src/index.tsx",
-        "./tests/containers/ExprToCircuitPopup.test.tsx",
-        "./tests/utils/VersionMigrator.test.ts",
-        "./tests/utils/SmartPlace.test.ts"
-    ],
+    "include": ["src", "tests"],
 }

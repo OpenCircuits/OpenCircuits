@@ -5,6 +5,7 @@ import "./index.scss";
 
 type CircuitPreviewProps = {
     readonly?: boolean;
+    // TODO[model_refactor_api] - remove dependency on Schema
     data: Readonly<Schema.CircuitMetadata>;
     onClick: () => void;
     onDelete: () => void;

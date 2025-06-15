@@ -1,3 +1,5 @@
+import "shared/api/circuitdesigner/types/declarations";
+
 import {CreateDrawingFromSVG, SVGDrawing} from "svg2canvas";
 
 import bufSVG from "./buf.svg";

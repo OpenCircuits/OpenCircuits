@@ -12,6 +12,7 @@ const [initialState, actions, reducer] = CreateState()(
     {
         auth:       undefined as AuthState | undefined,
         isLoggedIn: false,
+        // TODO[model_refactor_api] - remove dependency on Schema
         circuits:   [] as Schema.CircuitMetadata[],
         loading:    false,
         error:      "",

@@ -5,6 +5,7 @@ import {Request} from "shared/site/utils/Request";
 import {AuthState} from "./auth/AuthState";
 
 
+// TODO[model_refactor_api] - remove dependency on Schema
 export async function CreateUserCircuit(auth: AuthState, data: string): Promise<Schema.CircuitMetadata | undefined> {
     return JSON.parse(await Request({
         method:  "POST",
