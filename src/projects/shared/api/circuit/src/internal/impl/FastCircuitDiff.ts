@@ -101,7 +101,8 @@ export class FastCircuitDiffBuilder {
                 }
                 break;
             case "ReplaceComponentOp":
-                this.addedComponents.add(op.component);
+                this.removedComponents.add(op.id);
+                this.addedComponents.add(op.id);
                 break;
             case "SetComponentPortsOp":
                 const addedPorts = this.addedPorts.getOrInsert(op.component, () => new Set());

@@ -46,6 +46,8 @@ export type Component = BaseObject & BaseReadonlyComponent<Port, Node> & {
     setPortConfig(config: PortConfig): boolean;
     firstAvailable(group: string): Port | undefined;
 
+    replaceWith(newKind: string): void;
+
     delete(): void;
 }
 
