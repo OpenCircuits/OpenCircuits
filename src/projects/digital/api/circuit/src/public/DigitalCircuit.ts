@@ -68,12 +68,14 @@ export type APIToDigital<T> = {
 export type ReadonlyDigitalObjContainer = APIToDigital<ReadonlyObjContainer>;
 export type DigitalObjContainer = APIToDigital<ObjContainer>;
 
-export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit>;
-export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
-    propagationTime: number;
+export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit> & {
+    readonly propagationTime: number;
 
     // TODO[model_refactor_api]: Make an API-specific wrapper for this
     readonly simState: DigitalSchema.DigitalSimState;
+}
+export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
+    propagationTime: number;
 
     step(): void;
 };

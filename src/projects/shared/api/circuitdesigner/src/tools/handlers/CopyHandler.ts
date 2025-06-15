@@ -1,7 +1,9 @@
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
+
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
-export const CopyHandler: ToolHandler = {
+export const CopyHandler = (serialize: (objs: ObjContainer) => string): ToolHandler => ({
     onEvent: (ev, { circuit }) => {
         // Activate when copy or cut events are fired
         if (!(ev.type === "copy" || ev.type === "cut"))
@@ -19,13 +21,7 @@ export const CopyHandler: ToolHandler = {
         if (objs.components.length === 0)
             return ToolHandlerResponse.PASS;
 
-        const str = JSON.stringify(circuit.toSchema(objs), (key, val) => {
-            // TODO: Do this somewhere else? Ideally isSelected shouldn't even be a prop
-            // Don't serialize 'isSelected' prop
-            if (key === "isSelected")
-                return;
-            return val;
-        });
+        const str = serialize(objs);
 
         // We don't copy the data from the json since it will cause
         // some weird error, which will cause the issue #746
@@ -39,4 +35,4 @@ export const CopyHandler: ToolHandler = {
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;
     },
-}
+});

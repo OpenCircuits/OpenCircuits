@@ -13,6 +13,7 @@ import {DevCreateFile, DevGetFile, DevListFiles} from "shared/site/api/Dev";
 import {CloseHeaderMenus, HeaderPopups, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
 
 import {Dropdown} from "./Dropdown";
+import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
 
 
 export type Utility = {
@@ -75,7 +76,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
                 <div role="button" tabIndex={0}
                      onClick={async () => {
                         dispatch(CloseHeaderMenus());
-                        await DevCreateFile(JSON.stringify(designer.circuit.toSchema()), DEV_CACHED_CIRCUIT_FILE);
+                        await DevCreateFile(CircuitHelpers.SerializeCircuitAsString(designer.circuit), DEV_CACHED_CIRCUIT_FILE);
                         setEnableReload(true);
                      }}>
                     <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />

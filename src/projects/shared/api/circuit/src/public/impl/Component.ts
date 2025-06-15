@@ -153,9 +153,4 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         this.state.internal.deleteComponent(this.id).unwrap();
         this.state.internal.commitTransaction();
     }
-
-    public toSchema(): Schema.Component {
-        const comp = this.getComponent();
-        return ({ ...comp, props: { ...comp.props } });
-    }
 }

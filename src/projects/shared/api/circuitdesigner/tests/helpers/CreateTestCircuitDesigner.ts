@@ -43,7 +43,9 @@ export function GetDefaultTools(): ToolConfig {
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,
             DeleteHandler, SnipNodesHandler, DeselectAllHandler,
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
+            CleanupHandler, ZoomHandler,
+            // CopyHandler,
+            // PasteHandler,
             SaveHandler(() => {})
         ),
         tools: [

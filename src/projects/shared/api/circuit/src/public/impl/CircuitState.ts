@@ -5,13 +5,14 @@ import {RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOpti
 import {Component, Node, ReadonlyComponent}   from "../Component";
 import {Port, ReadonlyPort}              from "../Port";
 import {ReadonlyWire, Wire}              from "../Wire";
-import {Circuit, ICInfo, IntegratedCircuit} from "../Circuit";
+import {Circuit, ICInfo, IntegratedCircuit, ReadonlyCircuit} from "../Circuit";
 import {ObjContainer, ReadonlyObjContainer} from "../ObjContainer";
 
 
 // Utility interface to hold utility types for the templated Circuit API.
 export type CircuitTypes<
     CircuitT extends Circuit = Circuit,
+    RCircuitT extends ReadonlyCircuit = ReadonlyCircuit,
 
     ComponentT extends Component = Component,
     WireT extends Wire = Wire,
@@ -30,6 +31,7 @@ export type CircuitTypes<
     RObjContainerT extends ReadonlyObjContainer = ReadonlyObjContainer,
 > = {
     "Circuit": CircuitT;
+    "ReadonlyCircuit": RCircuitT;
 
     "Component": ComponentT;
     "Wire": WireT;

@@ -42,7 +42,9 @@ export function GetDefaultTools(): ToolConfig<DigitalTypes> {
             DeleteHandler, SnipNodesHandler, DeselectAllHandler,
             InteractionHandler,  // Needs to be before the selection handler
             SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-            CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
+            CleanupHandler, ZoomHandler,
+            // CopyHandler,
+            // PasteHandler,
             SaveHandler(() => {})
         ),
         tools: [

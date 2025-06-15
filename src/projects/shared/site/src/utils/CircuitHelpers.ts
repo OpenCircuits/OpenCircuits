@@ -13,6 +13,7 @@ export interface OverrideCircuitHelpers {
     CreateAndInitializeDesigner: (tools?: {config: ToolConfig, renderers?: ToolRenderer[]}) => CircuitDesigner;
 
     SerializeCircuit: (circuit: Circuit) => Blob;
+    SerializeCircuitAsString: (circuit: Circuit) => string;
     DeserializeCircuit: (data: string | ArrayBuffer) => Circuit;
 }
 
@@ -47,6 +48,7 @@ const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
         OverrideCircuitHelpers: {
             CreateAndInitializeDesigner: errIfUndefined("CreateAndInitializeDesigner"),
             SerializeCircuit:            errIfUndefined("SerializeCircuit"),
+            SerializeCircuitAsString:    errIfUndefined("SerializeCircuitAsString"),
             DeserializeCircuit:          errIfUndefined("DeserializeCircuit"),
         } satisfies OverrideCircuitHelpers,
         SetCircuitHelpers: (helpers: OverrideCircuitHelpers) => {

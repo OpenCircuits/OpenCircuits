@@ -15,6 +15,14 @@ export type CameraEvent = {
     dz: number;
 }
 
+export interface ReadonlyCamera {
+    readonly cx: number;
+    readonly cy: number;
+    readonly pos: Vector;
+
+    readonly zoom: number;
+}
+
 export interface Camera extends Observable<CameraEvent> {
     cx: number;
     cy: number;

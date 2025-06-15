@@ -10,14 +10,13 @@ export function DuplicateSelections(circuit: Circuit): void {
     circuit.beginTransaction();
 
     circuit.selections.clear();
-    const newObjs = circuit.loadSchema(circuit.toSchema(objs), { refreshIds: true });
-    newObjs.forEach((obj) => {
+    const newObjs = circuit.import(objs, { refreshIds: true });
+    newObjs.components.forEach((obj) => {
         // Offset the duplicates slightly
-        if (obj.baseKind === "Component") {
-            obj.select();
-            obj.pos = obj.pos.add(0.5, -0.5);
-        }
+        obj.select();
+        obj.pos = obj.pos.add(0.5, -0.5);
     });
+
     circuit.commitTransaction("Duplicated Selection");
 }
 

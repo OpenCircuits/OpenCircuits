@@ -4,7 +4,6 @@ import type {Vector} from "Vector";
 import type {BaseObject, ReadonlyBaseObject}      from "./BaseObject";
 import type {Component, Node, ReadonlyComponent, ReadonlyNode} from "./Component";
 import type {ReadonlyWire, Wire}            from "./Wire";
-import type {Schema} from "../schema";
 
 
 interface BaseReadonlyPort<PortT, CompT, NodeT, WireT> {
@@ -30,8 +29,6 @@ interface BaseReadonlyPort<PortT, CompT, NodeT, WireT> {
     readonly isAvailable: boolean;
 
     canConnectTo(port: PortT): boolean;
-
-    toSchema(): Schema.Port;
 }
 
 export type ReadonlyPort = ReadonlyBaseObject & BaseReadonlyPort<ReadonlyPort, ReadonlyComponent, ReadonlyNode, ReadonlyWire>;

@@ -210,7 +210,7 @@ const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, w
             },
             renderers: [],
         });
-        designer.circuit.loadSchema(mainDesigner.circuit.toSchema());
+        designer.circuit.import(mainDesigner.circuit);
         return designer;
     }, [mainDesigner.circuit]);
 

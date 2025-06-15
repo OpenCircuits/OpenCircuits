@@ -56,7 +56,7 @@ import {VersionMigrator} from "./utils/VersionMigrator";
 import {CircuitHelpers, SetCircuitHelpers} from "shared/site/utils/CircuitHelpers";
 
 import {DigitalProtoSchema} from "digital/site/proto";
-import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
+import {CreateCircuit, DigitalCircuit, DigitalObjContainer} from "digital/api/circuit/public";
 import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
@@ -143,7 +143,13 @@ async function Init(): Promise<void> {
                                 DeleteHandler, SnipNodesHandler, DeselectAllHandler,
                                 InteractionHandler,  // Needs to be before the selection and select path handlers
                                 SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
-                                CleanupHandler, CopyHandler, PasteHandler, ZoomHandler,
+                                CleanupHandler, ZoomHandler,
+                                CopyHandler((objs) => {
+                                    const [circuit, _] = CreateCircuit();
+                                    circuit.import(objs as DigitalObjContainer);
+                                    return JSON.stringify(DigitalCircuitToProto(circuit));
+                                }),
+                                PasteHandler((str) => CircuitHelpers.DeserializeCircuit(str)),
                                 SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
                             ),
                             tools: [
@@ -168,6 +174,9 @@ async function Init(): Promise<void> {
                             DigitalCircuitToProto(circuit as DigitalCircuit)
                         ).finish(),
                     ]);
+                },
+                SerializeCircuitAsString(circuit) {
+                    return JSON.stringify(DigitalCircuitToProto(circuit as DigitalCircuit));
                 },
                 DeserializeCircuit(data) {
                     const schema = (() => {

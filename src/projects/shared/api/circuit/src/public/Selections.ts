@@ -9,6 +9,6 @@ export type SelectionsEvent = {
 }
 
 export type ReadonlySelections = ReadonlyObjContainer;
-export type Selections = ObjContainer & Observable<SelectionsEvent> & {
+export type Selections = Omit<ObjContainer, "select"> & Observable<SelectionsEvent> & {
     clear(): void;
 }

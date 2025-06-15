@@ -111,9 +111,6 @@ export const ICViewer = () => {
         // Block input for main designer
         mainDesigner.viewport.canvasInfo!.input.setBlocked(true);
 
-        // Create main circuit
-        const [circuit, state] = CreateCircuit();
-
         // Get the IC and load its contents into circuit
         const icInstance = mainDesigner.circuit.getComponent(icId);
         if (!icInstance)
@@ -121,25 +118,16 @@ export const ICViewer = () => {
         const ic = mainDesigner.circuit.getIC(icInstance.kind);
         if (!ic)
             throw new Error(`ICViewer: Failed to find ic with id ${icInstance.kind}!`);
-        const schema = ic.toSchema();
-        for (const obj of schema.comps) {
-            if (obj.kind === "InputPin")
-                obj.kind = "Switch";
-            if (obj.kind === "OutputPin")
-                obj.kind = "LED";
-        }
-        circuit.loadSchema({
-            metadata: schema.metadata,
-            comps:    schema.comps,
-            ports:    schema.ports,
-            wires:    schema.wires,
-            ics:      mainDesigner.circuit.toSchema().ics,
-            camera:   { x: 0, y: 0, zoom: 0.02 },
 
-            propagationTime:    mainDesigner.circuit.propagationTime,
-            initialICSimStates: mainDesigner.circuit.getICs().map((ic) => ic.initialSimState),
-            simState:           ic.initialSimState,
-        });
+        // Create main circuit
+        const [circuit, state] = CreateCircuit();
+        circuit.import(ic.all);
+        for (const comp of circuit.getComponents()) {
+            if (comp.kind === "InputPin")
+                comp.replaceWith("Switch");
+            if (comp.kind === "OutputPin")
+                comp.replaceWith("LED");
+        }
         // TODO[model_refactor_api]
         // Adjust the camera so it all fits in the viewer
         // const [pos, zoom] = GetCameraFit(

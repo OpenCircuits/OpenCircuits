@@ -158,14 +158,14 @@ export function CreateTestCircuit(
     const state: CircuitState<CircuitTypes> = {
         internal, assembler, renderOptions,
 
-        constructComponent(id) {
-            return new TestComponentImpl(state, id);
+        constructComponent(id, icId) {
+            return new TestComponentImpl(state, id, icId);
         },
-        constructWire(id) {
-            return new TestWireImpl(state, id);
+        constructWire(id, icId) {
+            return new TestWireImpl(state, id, icId);
         },
-        constructPort(id) {
-            return new TestPortImpl(state, id);
+        constructPort(id, icId) {
+            return new TestPortImpl(state, id, icId);
         },
         constructIC(id) {
             return new IntegratedCircuitImpl(state, id);
