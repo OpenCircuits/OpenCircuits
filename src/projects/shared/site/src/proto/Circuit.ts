@@ -53,11 +53,11 @@ export interface Wire {
     | undefined;
   /** The index of the 1st port's parent component in circuit.components */
   p1ParentIdx: number;
-  p1Group: string;
+  p1Group: number;
   p1Idx: number;
   /** The index of the 2nd port's parent component in circuit.components */
   p2ParentIdx: number;
-  p2Group: string;
+  p2Group: number;
   p2Idx: number;
   name?: string | undefined;
   color?: number | undefined;
@@ -87,13 +87,19 @@ export interface IntegratedCircuitMetadata {
   metadata: CircuitMetadata | undefined;
   displayWidth: number;
   displayHeight: number;
+  portGroups: { [key: string]: number };
   pins: IntegratedCircuitMetadata_Pin[];
+}
+
+export interface IntegratedCircuitMetadata_PortGroupsEntry {
+  key: string;
+  value: number;
 }
 
 export interface IntegratedCircuitMetadata_Pin {
   internalCompIdx: number;
   internalPortIdx: number;
-  group: string;
+  group: number;
   name: string;
   x: number;
   y: number;
@@ -732,10 +738,10 @@ function createBaseWire(): Wire {
   return {
     kind: undefined,
     p1ParentIdx: 0,
-    p1Group: "",
+    p1Group: 0,
     p1Idx: 0,
     p2ParentIdx: 0,
-    p2Group: "",
+    p2Group: 0,
     p2Idx: 0,
     name: undefined,
     color: undefined,
@@ -751,8 +757,8 @@ export const Wire: MessageFns<Wire> = {
     if (message.p1ParentIdx !== 0) {
       writer.uint32(16).uint32(message.p1ParentIdx);
     }
-    if (message.p1Group !== "") {
-      writer.uint32(26).string(message.p1Group);
+    if (message.p1Group !== 0) {
+      writer.uint32(24).uint32(message.p1Group);
     }
     if (message.p1Idx !== 0) {
       writer.uint32(32).uint32(message.p1Idx);
@@ -760,8 +766,8 @@ export const Wire: MessageFns<Wire> = {
     if (message.p2ParentIdx !== 0) {
       writer.uint32(40).uint32(message.p2ParentIdx);
     }
-    if (message.p2Group !== "") {
-      writer.uint32(50).string(message.p2Group);
+    if (message.p2Group !== 0) {
+      writer.uint32(48).uint32(message.p2Group);
     }
     if (message.p2Idx !== 0) {
       writer.uint32(56).uint32(message.p2Idx);
@@ -802,11 +808,11 @@ export const Wire: MessageFns<Wire> = {
           continue;
         }
         case 3: {
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.p1Group = reader.string();
+          message.p1Group = reader.uint32();
           continue;
         }
         case 4: {
@@ -826,11 +832,11 @@ export const Wire: MessageFns<Wire> = {
           continue;
         }
         case 6: {
-          if (tag !== 50) {
+          if (tag !== 48) {
             break;
           }
 
-          message.p2Group = reader.string();
+          message.p2Group = reader.uint32();
           continue;
         }
         case 7: {
@@ -881,10 +887,10 @@ export const Wire: MessageFns<Wire> = {
     return {
       kind: isSet(object.kind) ? globalThis.Number(object.kind) : undefined,
       p1ParentIdx: isSet(object.p1ParentIdx) ? globalThis.Number(object.p1ParentIdx) : 0,
-      p1Group: isSet(object.p1Group) ? globalThis.String(object.p1Group) : "",
+      p1Group: isSet(object.p1Group) ? globalThis.Number(object.p1Group) : 0,
       p1Idx: isSet(object.p1Idx) ? globalThis.Number(object.p1Idx) : 0,
       p2ParentIdx: isSet(object.p2ParentIdx) ? globalThis.Number(object.p2ParentIdx) : 0,
-      p2Group: isSet(object.p2Group) ? globalThis.String(object.p2Group) : "",
+      p2Group: isSet(object.p2Group) ? globalThis.Number(object.p2Group) : 0,
       p2Idx: isSet(object.p2Idx) ? globalThis.Number(object.p2Idx) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
       color: isSet(object.color) ? globalThis.Number(object.color) : undefined,
@@ -905,8 +911,8 @@ export const Wire: MessageFns<Wire> = {
     if (message.p1ParentIdx !== 0) {
       obj.p1ParentIdx = Math.round(message.p1ParentIdx);
     }
-    if (message.p1Group !== "") {
-      obj.p1Group = message.p1Group;
+    if (message.p1Group !== 0) {
+      obj.p1Group = Math.round(message.p1Group);
     }
     if (message.p1Idx !== 0) {
       obj.p1Idx = Math.round(message.p1Idx);
@@ -914,8 +920,8 @@ export const Wire: MessageFns<Wire> = {
     if (message.p2ParentIdx !== 0) {
       obj.p2ParentIdx = Math.round(message.p2ParentIdx);
     }
-    if (message.p2Group !== "") {
-      obj.p2Group = message.p2Group;
+    if (message.p2Group !== 0) {
+      obj.p2Group = Math.round(message.p2Group);
     }
     if (message.p2Idx !== 0) {
       obj.p2Idx = Math.round(message.p2Idx);
@@ -945,10 +951,10 @@ export const Wire: MessageFns<Wire> = {
     const message = createBaseWire();
     message.kind = object.kind ?? undefined;
     message.p1ParentIdx = object.p1ParentIdx ?? 0;
-    message.p1Group = object.p1Group ?? "";
+    message.p1Group = object.p1Group ?? 0;
     message.p1Idx = object.p1Idx ?? 0;
     message.p2ParentIdx = object.p2ParentIdx ?? 0;
-    message.p2Group = object.p2Group ?? "";
+    message.p2Group = object.p2Group ?? 0;
     message.p2Idx = object.p2Idx ?? 0;
     message.name = object.name ?? undefined;
     message.color = object.color ?? undefined;
@@ -1258,7 +1264,7 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
 };
 
 function createBaseIntegratedCircuitMetadata(): IntegratedCircuitMetadata {
-  return { metadata: undefined, displayWidth: 0, displayHeight: 0, pins: [] };
+  return { metadata: undefined, displayWidth: 0, displayHeight: 0, portGroups: {}, pins: [] };
 }
 
 export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = {
@@ -1272,8 +1278,11 @@ export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = 
     if (message.displayHeight !== 0) {
       writer.uint32(29).float(message.displayHeight);
     }
+    Object.entries(message.portGroups).forEach(([key, value]) => {
+      IntegratedCircuitMetadata_PortGroupsEntry.encode({ key: key as any, value }, writer.uint32(34).fork()).join();
+    });
     for (const v of message.pins) {
-      IntegratedCircuitMetadata_Pin.encode(v!, writer.uint32(34).fork()).join();
+      IntegratedCircuitMetadata_Pin.encode(v!, writer.uint32(42).fork()).join();
     }
     return writer;
   },
@@ -1314,6 +1323,17 @@ export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = 
             break;
           }
 
+          const entry4 = IntegratedCircuitMetadata_PortGroupsEntry.decode(reader, reader.uint32());
+          if (entry4.value !== undefined) {
+            message.portGroups[entry4.key] = entry4.value;
+          }
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
           message.pins.push(IntegratedCircuitMetadata_Pin.decode(reader, reader.uint32()));
           continue;
         }
@@ -1331,6 +1351,12 @@ export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = 
       metadata: isSet(object.metadata) ? CircuitMetadata.fromJSON(object.metadata) : undefined,
       displayWidth: isSet(object.displayWidth) ? globalThis.Number(object.displayWidth) : 0,
       displayHeight: isSet(object.displayHeight) ? globalThis.Number(object.displayHeight) : 0,
+      portGroups: isObject(object.portGroups)
+        ? Object.entries(object.portGroups).reduce<{ [key: string]: number }>((acc, [key, value]) => {
+          acc[key] = Number(value);
+          return acc;
+        }, {})
+        : {},
       pins: globalThis.Array.isArray(object?.pins)
         ? object.pins.map((e: any) => IntegratedCircuitMetadata_Pin.fromJSON(e))
         : [],
@@ -1348,6 +1374,15 @@ export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = 
     if (message.displayHeight !== 0) {
       obj.displayHeight = message.displayHeight;
     }
+    if (message.portGroups) {
+      const entries = Object.entries(message.portGroups);
+      if (entries.length > 0) {
+        obj.portGroups = {};
+        entries.forEach(([k, v]) => {
+          obj.portGroups[k] = Math.round(v);
+        });
+      }
+    }
     if (message.pins?.length) {
       obj.pins = message.pins.map((e) => IntegratedCircuitMetadata_Pin.toJSON(e));
     }
@@ -1364,13 +1399,102 @@ export const IntegratedCircuitMetadata: MessageFns<IntegratedCircuitMetadata> = 
       : undefined;
     message.displayWidth = object.displayWidth ?? 0;
     message.displayHeight = object.displayHeight ?? 0;
+    message.portGroups = Object.entries(object.portGroups ?? {}).reduce<{ [key: string]: number }>(
+      (acc, [key, value]) => {
+        if (value !== undefined) {
+          acc[key] = globalThis.Number(value);
+        }
+        return acc;
+      },
+      {},
+    );
     message.pins = object.pins?.map((e) => IntegratedCircuitMetadata_Pin.fromPartial(e)) || [];
     return message;
   },
 };
 
+function createBaseIntegratedCircuitMetadata_PortGroupsEntry(): IntegratedCircuitMetadata_PortGroupsEntry {
+  return { key: "", value: 0 };
+}
+
+export const IntegratedCircuitMetadata_PortGroupsEntry: MessageFns<IntegratedCircuitMetadata_PortGroupsEntry> = {
+  encode(message: IntegratedCircuitMetadata_PortGroupsEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.key !== "") {
+      writer.uint32(10).string(message.key);
+    }
+    if (message.value !== 0) {
+      writer.uint32(16).uint32(message.value);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): IntegratedCircuitMetadata_PortGroupsEntry {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIntegratedCircuitMetadata_PortGroupsEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.key = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.value = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): IntegratedCircuitMetadata_PortGroupsEntry {
+    return {
+      key: isSet(object.key) ? globalThis.String(object.key) : "",
+      value: isSet(object.value) ? globalThis.Number(object.value) : 0,
+    };
+  },
+
+  toJSON(message: IntegratedCircuitMetadata_PortGroupsEntry): unknown {
+    const obj: any = {};
+    if (message.key !== "") {
+      obj.key = message.key;
+    }
+    if (message.value !== 0) {
+      obj.value = Math.round(message.value);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<IntegratedCircuitMetadata_PortGroupsEntry>, I>>(
+    base?: I,
+  ): IntegratedCircuitMetadata_PortGroupsEntry {
+    return IntegratedCircuitMetadata_PortGroupsEntry.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<IntegratedCircuitMetadata_PortGroupsEntry>, I>>(
+    object: I,
+  ): IntegratedCircuitMetadata_PortGroupsEntry {
+    const message = createBaseIntegratedCircuitMetadata_PortGroupsEntry();
+    message.key = object.key ?? "";
+    message.value = object.value ?? 0;
+    return message;
+  },
+};
+
 function createBaseIntegratedCircuitMetadata_Pin(): IntegratedCircuitMetadata_Pin {
-  return { internalCompIdx: 0, internalPortIdx: 0, group: "", name: "", x: 0, y: 0, dx: 0, dy: 0 };
+  return { internalCompIdx: 0, internalPortIdx: 0, group: 0, name: "", x: 0, y: 0, dx: 0, dy: 0 };
 }
 
 export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata_Pin> = {
@@ -1381,8 +1505,8 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
     if (message.internalPortIdx !== 0) {
       writer.uint32(16).uint32(message.internalPortIdx);
     }
-    if (message.group !== "") {
-      writer.uint32(26).string(message.group);
+    if (message.group !== 0) {
+      writer.uint32(24).uint32(message.group);
     }
     if (message.name !== "") {
       writer.uint32(34).string(message.name);
@@ -1426,11 +1550,11 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
           continue;
         }
         case 3: {
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.group = reader.string();
+          message.group = reader.uint32();
           continue;
         }
         case 4: {
@@ -1486,7 +1610,7 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
     return {
       internalCompIdx: isSet(object.internalCompIdx) ? globalThis.Number(object.internalCompIdx) : 0,
       internalPortIdx: isSet(object.internalPortIdx) ? globalThis.Number(object.internalPortIdx) : 0,
-      group: isSet(object.group) ? globalThis.String(object.group) : "",
+      group: isSet(object.group) ? globalThis.Number(object.group) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       x: isSet(object.x) ? globalThis.Number(object.x) : 0,
       y: isSet(object.y) ? globalThis.Number(object.y) : 0,
@@ -1503,8 +1627,8 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
     if (message.internalPortIdx !== 0) {
       obj.internalPortIdx = Math.round(message.internalPortIdx);
     }
-    if (message.group !== "") {
-      obj.group = message.group;
+    if (message.group !== 0) {
+      obj.group = Math.round(message.group);
     }
     if (message.name !== "") {
       obj.name = message.name;
@@ -1533,7 +1657,7 @@ export const IntegratedCircuitMetadata_Pin: MessageFns<IntegratedCircuitMetadata
     const message = createBaseIntegratedCircuitMetadata_Pin();
     message.internalCompIdx = object.internalCompIdx ?? 0;
     message.internalPortIdx = object.internalPortIdx ?? 0;
-    message.group = object.group ?? "";
+    message.group = object.group ?? 0;
     message.name = object.name ?? "";
     message.x = object.x ?? 0;
     message.y = object.y ?? 0;

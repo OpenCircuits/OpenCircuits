@@ -7,65 +7,71 @@ import {Schema} from "shared/api/circuit/schema";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {Signal} from "digital/api/circuit/schema/Signal";
 
-import {CircuitToProto, MakeKindMaps, ProtoToCircuit} from "shared/site/proto/bridge";
+import {CircuitToProto, MakeConversionMaps, ProtoToCircuit} from "shared/site/proto/bridge";
 
 import * as DigitalProtoSchema from "./DigitalCircuit";
 import {CreateCircuit, DigitalCircuit, ReadonlyDigitalCircuit} from "digital/api/circuit/public";
 
 
-export const DigitalKindMaps = MakeKindMaps({
+const InputOutputGroups = { "inputs": 0, "outputs": 1 };
+const FlipFlopGroups = { "pre": 0, "clr": 1, "clk": 2, "Q": 3, "Qinv": 4 };
+const LatchGroups = { "E": 0, "Q": 1, "Qinv": 2 };
+export const DigitalKindMaps = MakeConversionMaps({
     // IC
-    "IC": 0,
+    "IC": {
+        kind:  0,
+        ports: {},
+    },
 
     // IC Pins
-    "InputPin":  1,
-    "OutputPin": 2,
+    "InputPin":  { kind: 1, ports: { "outputs": 0 } },
+    "OutputPin": { kind: 2, ports: { "inputs": 0 } },
 
     // Node
-    "DigitalNode": 3,
+    "DigitalNode": { kind: 3, ports: InputOutputGroups },
 
     // Inputs
-    "Button":         4,
-    "Switch":         5,
-    "ConstantLow":    6,
-    "ConstantHigh":   7,
-    "ConstantNumber": 8,
-    "Clock":          9,
+    "Button":         { kind: 4, ports: { "outputs": 0 } },
+    "Switch":         { kind: 5, ports: { "outputs": 0 } },
+    "ConstantLow":    { kind: 6, ports: { "outputs": 0 } },
+    "ConstantHigh":   { kind: 7, ports: { "outputs": 0 } },
+    "ConstantNumber": { kind: 8, ports: { "outputs": 0 } },
+    "Clock":          { kind: 9, ports: { "outputs": 0 } },
 
     // Outputs
-    "LED":            10,
-    "SegmentDisplay": 11,
-    "BCDDisplay":     12,
-    "ASCIIDisplay":   13,
-    "Oscilloscope":   14,
+    "LED":            { kind: 10, ports: { "inputs": 0 } },
+    "SegmentDisplay": { kind: 11, ports: { "inputs": 0 } },
+    "BCDDisplay":     { kind: 12, ports: { "inputs": 0 } },
+    "ASCIIDisplay":   { kind: 13, ports: { "inputs": 0 } },
+    "Oscilloscope":   { kind: 14, ports: { "inputs": 0 } },
 
     // Gates
-    "BUFGate":  15,
-    "NOTGate":  16,
-    "ANDGate":  17,
-    "NANDGate": 18,
-    "ORGate":   19,
-    "NORGate":  20,
-    "XORGate":  21,
-    "XNORGate": 22,
+    "BUFGate":  { kind: 15, ports: InputOutputGroups },
+    "NOTGate":  { kind: 16, ports: InputOutputGroups },
+    "ANDGate":  { kind: 17, ports: InputOutputGroups },
+    "NANDGate": { kind: 18, ports: InputOutputGroups },
+    "ORGate":   { kind: 19, ports: InputOutputGroups },
+    "NORGate":  { kind: 20, ports: InputOutputGroups },
+    "XORGate":  { kind: 21, ports: InputOutputGroups },
+    "XNORGate": { kind: 22, ports: InputOutputGroups },
 
     // Flip Flops
-    "SRFlipFlop": 23,
-    "JKFlipFlop": 24,
-    "DFlipFlop":  25,
-    "TFlipFlop":  26,
+    "SRFlipFlop": { kind: 23, ports: { ...FlipFlopGroups, "S": 5, "R": 6 } },
+    "JKFlipFlop": { kind: 24, ports: { ...FlipFlopGroups, "J": 5, "K": 6 } },
+    "DFlipFlop":  { kind: 25, ports: { ...FlipFlopGroups, "D": 5 } },
+    "TFlipFlop":  { kind: 26, ports: { ...FlipFlopGroups, "T": 5 } },
 
     // Latches
-    "DLatch":  27,
-    "SRLatch": 28,
+    "DLatch":  { kind: 27, ports: { ...LatchGroups, "D": 3 } },
+    "SRLatch": { kind: 28, ports: { ...LatchGroups, "S": 3, "R": 4 } },
 
     // Other
-    "Multiplexer":   29,
-    "Demultiplexer": 30,
-    "Encoder":       31,
-    "Decoder":       32,
-    "Comparator":    33,
-    "Label":         34,
+    "Multiplexer":   { kind: 29, ports: { ...InputOutputGroups, "selects": 2 } },
+    "Demultiplexer": { kind: 30, ports: { ...InputOutputGroups, "selects": 2 } },
+    "Encoder":       { kind: 31, ports: InputOutputGroups },
+    "Decoder":       { kind: 32, ports: InputOutputGroups },
+    "Comparator":    { kind: 33, ports: { "inputsA": 0, "inputsB": 1, "lt": 2, "eq": 3, "gt": 4 } },
+    "Label":         { kind: 34, ports: {} },
 }, {
     "DigitalWire": 0,
 }, {

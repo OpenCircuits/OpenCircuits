@@ -42,12 +42,12 @@ message Wire {
 
     // The index of the 1st port's parent component in circuit.components
     uint32 p1ParentIdx = 2;
-    string p1Group = 3;
+    uint32 p1Group = 3;
     uint32 p1Idx = 4;
 
     // The index of the 2nd port's parent component in circuit.components
     uint32 p2ParentIdx = 5;
-    string p2Group = 6;
+    uint32 p2Group = 6;
     uint32 p2Idx = 7;
 
     optional string name = 8;
@@ -76,11 +76,13 @@ message IntegratedCircuitMetadata {
     float displayWidth = 2;
     float displayHeight = 3;
 
+    map<string, uint32> portGroups = 4;
+
     message Pin {
         uint32 internalCompIdx = 1;
         uint32 internalPortIdx = 2;
 
-        string group = 3;
+        uint32 group = 3;
         string name = 4;
 
         float x = 5;
@@ -88,7 +90,7 @@ message IntegratedCircuitMetadata {
         float dx = 7;
         float dy = 8;
     }
-    repeated Pin pins = 4;
+    repeated Pin pins = 5;
 }
 
 message IntegratedCircuit {

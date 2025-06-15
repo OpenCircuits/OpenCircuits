@@ -178,9 +178,20 @@ function FindPorts(
 }
 
 function ConvertCompKind(str: string): number {
-    if (!DigitalKindMaps[0].compKinds.has(str))
-        throw new Error(`VersionMigratorv3_0: Unknown kind, ${str}!`);
-    return DigitalKindMaps[0].compKinds.get(str)!;
+    if (!DigitalKindMaps[0].kinds.comps.has(str))
+        throw new Error(`VersionMigratorv3_0.ConvertCompKind: Unknown kind, ${str}!`);
+    return DigitalKindMaps[0].kinds.comps.get(str)!;
+}
+
+function ConvertPortGroup(parentKind: string, group: string): number {
+    if (parentKind === "IC")
+        return { "inputs": 0, "outputs": 1 }[group]!;
+
+    if (!DigitalKindMaps[0].portGroups.has(parentKind))
+        throw new Error(`VersionMigratorv3_0.ConvertPortGroup: Unknown parentKind, ${parentKind}!`);
+    if (!DigitalKindMaps[0].portGroups.get(parentKind)!.has(group))
+        throw new Error(`VersionMigratorv3_0.ConvertPortGroup: Unknown group ${group} for parentKind ${parentKind}!`);
+    return DigitalKindMaps[0].portGroups.get(parentKind)!.get(group)!;
 }
 
 function ConvertComponent(
@@ -223,11 +234,11 @@ function ConvertWire(
 
     return [{
         p1ParentIdx,
-        p1Group: port1.group,
+        p1Group: ConvertPortGroup(wire.p1.parent.type, port1.group),
         p1Idx:   port1.index,
 
         p2ParentIdx,
-        p2Group: port2.group,
+        p2Group: ConvertPortGroup(wire.p2.parent.type, port2.group),
         p2Idx:   port2.index,
 
         name:  (wire.name.set ? wire.name.name : undefined),
@@ -275,7 +286,8 @@ function AreICDataEqual(i1: V3_0Schema.ICData, i2: V3_0Schema.ICData) {
 function ConvertICPin(
     port: Entry<V3_0Schema.DigitalPort>,
     internalCompIdx: number,
-    group: string, { x: w, y: h }: Entry<V3_0Schema.Vector>,
+    group: number,
+    { x: w, y: h }: Entry<V3_0Schema.Vector>,
 ): ProtoSchema.IntegratedCircuitMetadata_Pin {
     return {
         internalCompIdx,
@@ -299,18 +311,19 @@ function ConvertIC(
 ): [{ metadata: ProtoSchema.IntegratedCircuitMetadata } & ReturnType<typeof ConvertObjects>, Entry<V3_0Schema.ICData>] {
     const { componentsAndPorts, wires } = ConvertObjects(ic.collection.components, ic.collection.wires, refToICIDMap, allICIDs);
 
+    const portGroups = { "inputs": 0, "outputs": 1 };
     const inputPins = ic.collection.inputs
         .map((obj, i) => [
             componentsAndPorts.findIndex(([_, parent]) => (parent.ref === obj.ref)),
             ic.inputPorts[i],
         ] as const)
-        .map(([internalCompIdx, port]) => ConvertICPin(port, internalCompIdx, "inputs", ic.transform.size));
+        .map(([internalCompIdx, port]) => ConvertICPin(port, internalCompIdx, 0, ic.transform.size));
     const outputPins = ic.collection.outputs
         .map((obj, i) => [
             componentsAndPorts.findIndex(([_, parent]) => (parent.ref === obj.ref)),
             ic.outputPorts[i],
         ] as const)
-        .map(([internalCompIdx, port]) => ConvertICPin(port, internalCompIdx, "outputs", ic.transform.size));
+        .map(([internalCompIdx, port]) => ConvertICPin(port, internalCompIdx, 1, ic.transform.size));
 
     for (const [c, entry] of componentsAndPorts) {
         // Replace all Switch/Buttons with InputPins and LEDs with OutputPins
@@ -342,6 +355,8 @@ function ConvertIC(
 
             displayWidth:  ic.transform.size.x/50,
             displayHeight: ic.transform.size.y/50,
+
+            portGroups,
 
             pins: [...inputPins, ...outputPins],
         } satisfies ProtoSchema.IntegratedCircuitMetadata,
