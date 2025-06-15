@@ -38,17 +38,13 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
         };
     }
 
-    const proto = DigitalProtoSchema.DigitalCircuit.create({
+    return DigitalProtoSchema.DigitalCircuit.create({
         circuit: CircuitToProto(circuit),
 
         propagationTime:    circuit.propagationTime,
         icInitialSimStates: circuit.getICs().map((ic) => ConvertSimState(circuit, ic.initialSimState, ic.id)),
         simState:           ConvertSimState(circuit, circuit.simState),
     });
-
-    console.log(proto);
-
-    return proto;
 }
 
 

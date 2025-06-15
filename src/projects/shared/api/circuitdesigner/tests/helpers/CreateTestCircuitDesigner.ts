@@ -98,5 +98,5 @@ export function SetupMockCanvas(designer: CircuitDesigner) {
 
     designer.viewport.attachCanvas(canvas);
 
-    return [new MockInputFacade(designer.viewport.camera, canvas), canvas] as const;
+    return [new MockInputFacade(designer.viewport, canvas), canvas] as const;
 }
