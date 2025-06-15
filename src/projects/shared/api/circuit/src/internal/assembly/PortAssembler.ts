@@ -70,6 +70,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
         const transformChanged = reasons.has(AssemblyReason.TransformChanged);
         const portAmtChanged   = reasons.has(AssemblyReason.PortsChanged);
         const selectionChanged = reasons.has(AssemblyReason.SelectionChanged);
+        const propChanged      = reasons.has(AssemblyReason.PropChanged);
 
         const parentSelected = this.isSelected(parent.id);
 
@@ -86,7 +87,7 @@ export class PortAssembler extends Assembler<Schema.Component> {
             });
         }
 
-        if (added || transformChanged || portAmtChanged) {
+        if (added || transformChanged || portAmtChanged || propChanged) {
             const ports = this.circuit.getPortsForComponent(parent.id).unwrap();
             const parentTransform = this.cache.componentTransforms.get(parent.id)!;
 
