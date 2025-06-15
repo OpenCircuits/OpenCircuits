@@ -185,13 +185,16 @@ function ConvertCompKind(str: string): number {
 
 function ConvertComponent(
     comp: Entry<V3_0Schema.DigitalComponent>,
-    refToICIDMap: Record<string, string>,
+    refToICIDMap: Record<string, GUID>,
+    allICIDs: GUID[],
 ): [ProtoSchema.Component, Entry<V3_0Schema.DigitalComponent>, Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]>] {
     const { cfgIdx, ports } = FindPorts(comp);
 
+    const icId = (comp.type === "IC" ? refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref] : undefined);
+
     return [{
         kind:  ConvertCompKind(comp.type),
-        icId:  (comp.type === "IC" ? ConvertId(refToICIDMap[(comp["data"] as Entry<V3_0Schema.ICData>).ref]) : undefined),
+        icIdx: (icId ? allICIDs.indexOf(icId) : undefined),
 
         portConfigIdx: cfgIdx,
 
@@ -238,9 +241,10 @@ function ConvertObjects(
     compEntries: Array<Entry<V3_0Schema.DigitalComponent>>,
     wireEntries: Array<Entry<V3_0Schema.DigitalWire>>,
     refToICIDMap: Record<string, GUID>,
+    allICIDs: GUID[],
 ) {
     // Convert all components to Schema
-    const componentsAndPorts = compEntries.map((c) => ConvertComponent(c, refToICIDMap));
+    const componentsAndPorts = compEntries.map((c) => ConvertComponent(c, refToICIDMap, allICIDs));
 
     // Convert all wires to Schema
     const wires = wireEntries.map((w) => ConvertWire(w, componentsAndPorts));
@@ -290,9 +294,10 @@ function ConvertICPin(
 function ConvertIC(
     ic: Entry<V3_0Schema.ICData>,
     refToICIDMap: Record<string, string>,
+    allICIDs: GUID[],
     warnings: Set<Warnings>,
 ): [{ metadata: ProtoSchema.IntegratedCircuitMetadata } & ReturnType<typeof ConvertObjects>, Entry<V3_0Schema.ICData>] {
-    const { componentsAndPorts, wires } = ConvertObjects(ic.collection.components, ic.collection.wires, refToICIDMap);
+    const { componentsAndPorts, wires } = ConvertObjects(ic.collection.components, ic.collection.wires, refToICIDMap, allICIDs);
 
     const inputPins = ic.collection.inputs
         .map((obj, i) => [
@@ -369,6 +374,7 @@ function ConvertSimState(
     componentsAndPorts: Array<[ProtoSchema.Component, Entry<V3_0Schema.DigitalComponent>, Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]>]>,
     refToICIDMap: Record<string, GUID>,
     refToICsMap: Record<string, ReturnType<typeof ConvertIC>>,
+    allICIDs: GUID[],
 ): DigitalProtoSchema.DigitalSimState {
     const signals = componentsAndPorts.flatMap(([_, _e, ports]) =>
         ports.map(([_p, portEntry]) => ConvertSignal(portEntry.isOn)));
@@ -391,7 +397,7 @@ function ConvertSimState(
             // However, collections aren't guaranteed to be in the same order (frustratingly),
             // so we need to sort them by something stable.
             const icDataObjs = refToICsMap[(entry["data"] as Entry<V3_0Schema.ICData>).ref][0];
-            const icObjs = ConvertObjects(collection.components, collection.wires, refToICIDMap);
+            const icObjs = ConvertObjects(collection.components, collection.wires, refToICIDMap, allICIDs);
 
             // This technically will _not_ work if there are exactly overlapping components with the same names
             // and such, but oh well. A real solution would involve building graphs of each.
@@ -412,7 +418,7 @@ function ConvertSimState(
                 .map(([[_i, comp1, _e1, _ports1], [_comp2, e2, ports2]]) =>
                     [comp1, e2, ports2] satisfies [ProtoSchema.Component, Entry<V3_0Schema.DigitalComponent>, Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]>])
 
-            return [i, ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap)];
+            return [i, ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap, allICIDs)];
         }));
 
     return { signals, states, icStates };
@@ -443,18 +449,20 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
     const allICIDsMap = MapObj(allICEntriesMap, (_) => uuid.v4());
     // Map of any ICData ref -> to the proper IC ID, duped ICData's will all point to the same ID.
     const refToICIDMap = MapObj(allICIDsMap, ([ref, _]) => allICIDsMap[icRefToRefMap[ref]]);
+    const uniqueICIDs = [...new Set(Object.values(refToICIDMap))];
 
-    const allICsMap = MapObj(allICEntriesMap, ([_, entry]) => ConvertIC(entry, refToICIDMap, warnings));
+    const allICsMap = MapObj(allICEntriesMap, ([_, entry]) => ConvertIC(entry, refToICIDMap, uniqueICIDs, warnings));
     // Map of any ICData -> IC Schema, duped ICData's will all point to the same Schema.
     const refToICsMap = MapObj(allICsMap, ([ref, _]) => allICsMap[icRefToRefMap[ref]]);
 
-
-    const ics = [...new Set(Object.values(refToICsMap))];
-    const { componentsAndPorts, wires } = ConvertObjects(root.designer.objects, root.designer.wires, refToICIDMap);
+    const ics = [...new Set(Object.values(refToICsMap))]
+        // Make sure it's in the same index-order as `uniqueICIDs` since IC instances are index-dependent
+        .sort(([_i1, e1], [_i2, e2]) => uniqueICIDs.indexOf(refToICIDMap[e1.ref]) - uniqueICIDs.indexOf(refToICIDMap[e2.ref]));
+    const { componentsAndPorts, wires } = ConvertObjects(root.designer.objects, root.designer.wires, refToICIDMap, uniqueICIDs);
 
     const icInitialSimStates = ics.map(([ic, _]) =>
-        ConvertSimState(ic.componentsAndPorts, refToICIDMap, refToICsMap));
-    const simState = ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap);
+        ConvertSimState(ic.componentsAndPorts, refToICIDMap, refToICsMap, uniqueICIDs));
+    const simState = ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap, uniqueICIDs);
 
     return {
         schema: {

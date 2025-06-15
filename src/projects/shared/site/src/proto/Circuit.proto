@@ -16,26 +16,25 @@ message Port {
     int32 index = 2;
 
     optional string name = 3;
-    optional bool isSelected = 4;
 
-    map<string, Prop> otherProps = 5;
+    map<string, Prop> otherProps = 4;
 }
 
 message Component {
     uint32 kind = 1;
 
-    optional bytes icId = 2;
+    // Index of the IC in circuit.ics
+    optional uint32 icIdx = 2;
 
     optional uint32 portConfigIdx = 3;
 
     optional string name = 4;
-    optional bool isSelected = 5;
-    optional float x = 6;
-    optional float y = 7;
-    optional float angle = 8;
+    optional float x = 5;
+    optional float y = 6;
+    optional float angle = 7;
 
-    map<string, Prop> otherProps = 9;
-    repeated Port portOverrides = 10;
+    map<string, Prop> otherProps = 8;
+    repeated Port portOverrides = 9;
 }
 
 message Wire {
@@ -52,10 +51,9 @@ message Wire {
     uint32 p2Idx = 7;
 
     optional string name = 8;
-    optional bool isSelected = 9;
-    optional uint32 color = 10;
+    optional uint32 color = 9;
 
-    map<string, Prop> otherProps = 11;
+    map<string, Prop> otherProps = 10;
 }
 
 message Camera {
