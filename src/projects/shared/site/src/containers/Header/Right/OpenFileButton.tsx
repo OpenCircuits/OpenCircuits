@@ -27,8 +27,11 @@ export const OpenFileButton = () => {
         <InputField ref={fileInput} type="file" multiple={false} accept=".circuit,.json"
                     style={{ display: "none" }}
                     onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0)
+                        if (e.target.files && e.target.files.length > 0) {
                             load(e.target.files![0]);
+                            // Need to reset target so trying to load the same file twice in a row works, #1377
+                            e.target.value = "";
+                        }
                     }} />
         <button type="button" title="Open file" onClick={() => fileInput.current?.click()}>
             <img src="img/icons/open.svg" width="34px" height="34px" alt="Open a file" />
