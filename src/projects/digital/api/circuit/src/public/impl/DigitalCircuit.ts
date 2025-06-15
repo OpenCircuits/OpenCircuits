@@ -93,9 +93,8 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
             this.state.sim.loadICState(ic.metadata.id, initialSimState);
 
         const objs = super.loadSchema(schema, opts);
-
-        // this.state.simRunner.propagationTime = schema.propagationTime
         this.state.sim.loadState(schema.simState);
+        this.propagationTime = schema.propagationTime;
 
         return objs;
     }
