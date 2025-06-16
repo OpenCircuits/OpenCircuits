@@ -2,6 +2,7 @@ import {Result} from "shared/api/circuit/utils/Result";
 import crypto   from "node:crypto";
 import {Component, Obj} from "../../src/public";
 import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
+import {BaseObject} from "shared/api/circuit/public/BaseObject";
 
 
 // Define crypto for Jest for uuid generation
@@ -21,7 +22,7 @@ declare global {
             toContainObjs(objs: Obj[] | ObjContainer): CustomMatcherResult;
             toContainObjsExact(objs: Obj[] | ObjContainer): CustomMatcherResult;
             toBeConnectedTo(otherObj: Component): CustomMatcherResult;
-            // toBeConnectedTo(a: DigitalComponent, options?: {depth?: number}): CustomMatcherResult;
+            toExist(): CustomMatcherResult;
         }
     }
 }
@@ -211,5 +212,12 @@ expect.extend({
             message: () => `expected ${FormatObj(received)} to be connected to ${FormatObj(otherObj)}`,
             pass,
         };
+    },
+
+    toExist(received: BaseObject) {
+        return {
+            message: () => "expected object to exist",
+            pass:    received.exists(),
+        }
     },
 });

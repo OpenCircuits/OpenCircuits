@@ -99,4 +99,45 @@ describe("DigitalComponent", () => {
             expect(led.outputs).toHaveLength(0);
         });
     });
+
+    describe("Node", () => {
+        describe("Snip", () => {
+            test("Basic snip", () => {
+                const [circuit, _, { Place, Connect }] = CreateTestCircuit();
+                const [sw, led] = Place("Switch", "LED");
+                const w = Connect(sw, led)!;
+
+                const { node, wire1, wire2 } = w.split();
+
+                const w2 = node.snip();
+
+                expect(wire1).not.toExist();
+                expect(wire2).not.toExist();
+                expect(node).not.toExist();
+
+                expect(sw).toBeConnectedTo(led);
+
+                circuit.undo();
+
+                expect(w2).not.toExist();
+                expect(wire1).toExist();
+                expect(wire2).toExist();
+                expect(node).toExist();
+            });
+            test("Attempt to snip with more connections to node", () => {
+                const [circuit, _, { Place, Connect }] = CreateTestCircuit();
+                const [sw, led, led2] = Place("Switch", "LED", "LED");
+                const w = Connect(sw, led)!;
+
+                const { node, wire1, wire2 } = w.split();
+
+                // Connect a third wire to the Node
+                const wire3 = Connect(node, led2);
+
+                expect(() => node.snip()).toThrow();
+
+                expect(wire3).toExist();
+            });
+        });
+    });
 });

@@ -29,6 +29,9 @@ export class SplitWireTool extends TranslateTool {
         const { node } = wire.split();
         node.select();
 
+        // Set the position
+        node.pos = designer.viewport.toWorldPos(ev.input.mouseDownPos);
+
         designer.curPressedObj = node;
 
         super.onActivate(ev, designer);
