@@ -145,8 +145,6 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         return this.doc.getCircuitInfo().getPortsForPort(id);
     }
 
-    public getComponentInfo(kind: "IC", icId: GUID): Result<ComponentConfigurationInfo>;
-    public getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
     public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
         if (kind === "IC" && icId)
             return this.doc.getCircuitInfo().getComponentInfo(kind, icId);

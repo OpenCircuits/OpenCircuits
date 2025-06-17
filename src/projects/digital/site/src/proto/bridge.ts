@@ -76,8 +76,23 @@ export const DigitalKindMaps = MakeConversionMaps({
     "DigitalWire": 0,
 }, {
     "DigitalPort": 0,
-})
+});
 
+
+export const StateFullKinds: Set<string> = new Set([
+    "Switch", "Clock", "Oscilloscope", "SRFlipFlop", "JKFlipFlop", "DFlipFlop", "TFlipFlop", "DLatch", "SRLatch",
+])
+
+
+export function CompressSignals(signals: number[]): number[] {
+    return signals.chunk(20)
+        // Need to pad the final chunk if it's not 20-signals-long
+        // otherwise it's interpreted incorrectly.
+        .map((chunk) => parseInt(chunk.padEnd(20, 0).join(""), 3));
+}
+export function UncompressSignals(signals: number[]): number[] {
+    return signals.flatMap((n) => [...n.toString(3).padStart(20, "0")].map((v) => parseInt(v)))
+}
 
 export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSchema.DigitalCircuit {
     function ConvertSignal(signal: Signal): DigitalProtoSchema.DigitalSimState_Signal {
@@ -91,16 +106,20 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
     }
 
     function ConvertSimState(circuit: ReadonlyDigitalCircuit, state: DigitalSchema.DigitalSimState, icId?: Schema.GUID): DigitalProtoSchema.DigitalSimState {
-        const comps = (icId ? circuit.getIC(icId)!.components : circuit.getComponents());
-        const ports = comps.flatMap((c) => c.allPorts);
+        const comps = (icId ? circuit.getIC(icId)!.components : circuit.getComponents()).sort((c1, c2) => (c1.zIndex - c2.zIndex));
+        const ports = comps.flatMap((c) => c.allPorts).filter((p) => (p.isOutputPort));
         return {
-            signals: ports.map((p) => ConvertSignal(state.signals[p.id] ?? Signal.Off)),
-            states:  Object.fromEntries(Object.entries(state.states)
-                .map(([id, state]) =>
-                    [comps.findIndex((c) => (c.id === id)), ({ state: state.map(ConvertSignal) })])),
-            icStates: Object.fromEntries(Object.entries(state.icStates)
-                .map(([id, state]) =>
-                    [comps.findIndex((c) => (c.id === id)), ConvertSimState(circuit, state, comps.find((c) => (c.id === id))!.kind)])),
+            signals: CompressSignals(ports.map((p) => (state.signals[p.id] === Signal.On ? 1 : 0))),
+
+            metastableSignals: [],
+
+            states: comps
+                .filter((c) => StateFullKinds.has(c.kind))
+                .map((c) => ({ state: state.states[c.id].map(ConvertSignal) })),
+
+            icStates: comps
+                .filter((c) => c.isIC())
+                .map((c) => ConvertSimState(circuit, state.icStates[c.id], c.kind)),
         };
     }
 
@@ -131,13 +150,26 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
 
     function ConvertSimState(circuit: ReadonlyDigitalCircuit, state: DigitalProtoSchema.DigitalSimState, icId?: Schema.GUID): DigitalSchema.DigitalSimState {
         const comps = (icId ? circuit.getIC(icId)!.components : circuit.getComponents());
-        const ports = comps.flatMap((c) => c.allPorts);
+        const ports = comps.flatMap((c) => c.allPorts).filter((p) => (p.isOutputPort));
         return {
-            signals: Object.fromEntries(ports.zip(state.signals).map(([p, s]) => [p.id, ConvertSignal(s)])),
-            states:  Object.fromEntries(Object.entries(state.states)
-                .map(([idx, state]) => [comps[parseInt(idx)].id, state.state.map(ConvertSignal)])),
-            icStates: Object.fromEntries(Object.entries(state.icStates)
-                .map(([idx, state]) => [comps[parseInt(idx)].id, ConvertSimState(circuit, state, comps[parseInt(idx)].kind)])),
+            signals: Object.fromEntries(ports
+                // Uncompress signals as uint32 -> 0,1,2
+                .zip(UncompressSignals(state.signals))
+                .flatMap(([p, s]) => [
+                    [p.id, ConvertSignal(s)],
+                    // Also load the input ports this port is connected to (if any)
+                    ...p.connectedPorts.map((p2) => [p2.id, ConvertSignal(s)]),
+                ])),
+
+            states: Object.fromEntries(comps
+                .filter((c) => StateFullKinds.has(c.kind))
+                .map((c) => c.id)
+                .zip(state.states.map((s) => (s.state.map(ConvertSignal))))),
+
+            icStates: Object.fromEntries(comps
+                .filter((c) => c.isIC())
+                .zip(state.icStates)
+                .map(([c, icState]) => [c.id, ConvertSimState(circuit, icState, c.kind)])),
         };
     }
 

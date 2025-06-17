@@ -96,11 +96,13 @@ export class PortAssembler extends Assembler<Schema.Component> {
             // Re-assemble all prims
             const prims = [...ports].map((portID) => {
                 // Transform all local port positions to new parent transform
+                const parentInfo = this.circuit.getComponentInfo(parent.kind, parent.icId).unwrap();
                 const pos = this.calcWorldPos(parent.id, portID);
                 this.cache.portPositions.set(portID, pos);
 
                 // Get port name for label
-                const name = this.circuit.getPortByID(portID).map((p) => p.props.name).unwrap();
+                const name = this.circuit.getPortByID(portID)
+                    .map((p) => p.props.name ?? parentInfo.getDefaultPortName(p)).unwrap();
                 if (name) {
                     const padding = 0.1;
 

@@ -53,7 +53,7 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
 
     public get connections(): T["Wire[]"] {
         return [...this.getCircuitInfo().getWiresForPort(this.id).unwrap()]
-            .map((id) => this.state.constructWire(id));
+            .map((id) => this.state.constructWire(id, this.icId));
     }
     public get connectedPorts(): T["Port[]"] {
         return this.connections.map((w) => ((w.p1.id === this.id) ? w.p2 : w.p1));

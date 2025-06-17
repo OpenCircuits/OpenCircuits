@@ -14,7 +14,7 @@ import * as V3_0Schema from "./Schema";
 import {Decompress, Entry, MakeEntry} from "./SerialeazyUtils";
 import {ProtoSchema} from "shared/site/proto";
 import {DigitalProtoSchema} from "digital/site/proto";
-import {DigitalKindMaps} from "digital/site/proto/bridge";
+import {CompressSignals, DigitalKindMaps, StateFullKinds} from "digital/site/proto/bridge";
 
 
 enum Warnings {
@@ -37,29 +37,38 @@ function ConvertCompProps(
     // Component-specific properties
     switch (comp.type) {
         case "ConstantNumber":
-            props["inputNum"] = { intVal: comp["inputNum"] as number };
+            if (comp["inputNum"])
+                props["inputNum"] = { intVal: comp["inputNum"] as number };
             break;
         case "Clock":
-            props["paused"] = { boolVal: comp["paused"] as boolean };
-            props["delay"]  = { intVal: comp["frequency"] as number };
+            if (comp["paused"])
+                props["paused"] = { boolVal: comp["paused"] as boolean };
+            if (comp["frequency"])
+                props["delay"]  = { intVal: comp["frequency"] as number };
             break;
         case "LED":
-            props["color"] = { strVal: comp["color"] as string };
+            if (comp["color"] && comp["color"] !== "#ffffff")
+                props["color"] = { strVal: comp["color"] as string };
             break;
         case "ASCIIDisplay":
         case "BCDDisplay":
-            props["segmentCount"] = { intVal: comp["segmentCount"] as number };
+            if (comp["segmentCount"] && comp["segmentCount"] !== 7)
+                props["segmentCount"] = { intVal: comp["segmentCount"] as number };
             break;
         case "Oscilloscope":
-            props["paused"]  = { boolVal: comp["paused"] as boolean };
-            props["delay"]   = { intVal: comp["frequency"] as number };
+            if (comp["paused"])
+                props["paused"]  = { boolVal: comp["paused"] as boolean };
+            if (comp["frequency"])
+                props["delay"]   = { intVal: comp["frequency"] as number };
             props["w"]       = { floatVal: (comp["displaySize"] as V3_0Schema.Vector).x / 50 };
             props["h"]       = { floatVal: (comp["displaySize"] as V3_0Schema.Vector).y / 50 };
             props["samples"] = { intVal: comp["numSamples"] as number };
             break;
         case "Label":
-            props["bgColor"]   = { strVal: comp["color"] as string };
-            props["textColor"] = { strVal: comp["textColor"] as string };
+            if (comp["color"] && comp["color"] !== "#ffffff")
+                props["bgColor"]   = { strVal: comp["color"] as string };
+            if (comp["textColor"] && comp["textColor"] !== "#000000")
+                props["textColor"] = { strVal: comp["textColor"] as string };
             break;
     }
 
@@ -215,7 +224,11 @@ function ConvertComponent(
         angle: comp.transform.angle,
 
         otherProps: ConvertCompProps(comp),
-        portOverrides: ports.map(([p, _]) => p).filter((p) => (!!p.name)),
+        // Throw out any ports with names because it's hard to discern them
+        // from default names (and aren't too important).
+        // If we need them back:
+        // portOverrides: ports.map(([p, _]) => p).filter((p) => (!!p.name)),
+        portOverrides: [],
     }, comp, ports];
 }
 
@@ -242,7 +255,7 @@ function ConvertWire(
         p2Idx:   port2.index,
 
         name:  (wire.name.set ? wire.name.name : undefined),
-        color: ("color" in wire && wire["color"] ? parseInt((wire["color"] as string).slice(1), 16) : undefined),
+        color: ("color" in wire && wire["color"] && wire["color"] !== "#ffffff" ? parseInt((wire["color"] as string).slice(1), 16) : undefined),
 
         otherProps: {},
     }, wire];
@@ -391,17 +404,18 @@ function ConvertSimState(
     refToICsMap: Record<string, ReturnType<typeof ConvertIC>>,
     allICIDs: GUID[],
 ): DigitalProtoSchema.DigitalSimState {
-    const signals = componentsAndPorts.flatMap(([_, _e, ports]) =>
-        ports.map(([_p, portEntry]) => ConvertSignal(portEntry.isOn)));
+    const signals = CompressSignals(
+        componentsAndPorts.flatMap(([_, _e, ports]) => ports)
+            .filter(([_p, portEntry]) => portEntry.type === "DigitalOutputPort")
+            .map(([_p, portEntry]) => (portEntry.isOn ? 1 : 0)));
 
-    const states = Object.fromEntries(componentsAndPorts
-        .map(([_, entry], i) => [i, { state: ConvertCompState(entry).map(ConvertSignal) }] as const)
-        .filter(([_, { state }]) => (state.length > 0)));
+    const states = componentsAndPorts
+        .filter(([_, entry]) => StateFullKinds.has(entry.type))
+        .map(([_, entry]) => ({ state: ConvertCompState(entry).map(ConvertSignal) }));
 
-    const icStates = Object.fromEntries(componentsAndPorts
-        .map((compAndPort, i) => [i, compAndPort] as const)
-        .filter(([_i, [_comp, entry]]) => (entry.type === "IC"))
-        .map(([i, [_comp, entry]]) => {
+    const icStates = componentsAndPorts
+        .filter(([_comp, entry]) => (entry.type === "IC"))
+        .map(([_comp, entry]) => {
             const collection = entry["collection"] as Entry<V3_0Schema.DigitalObjectSet>;
 
             // The IC instance's collection is an independent copy of the ICData's collection
@@ -433,10 +447,10 @@ function ConvertSimState(
                 .map(([[_i, comp1, _e1, _ports1], [_comp2, e2, ports2]]) =>
                     [comp1, e2, ports2] satisfies [ProtoSchema.Component, Entry<V3_0Schema.DigitalComponent>, Array<[ProtoSchema.Port, Entry<V3_0Schema.DigitalPort>]>])
 
-            return [i, ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap, allICIDs)];
-        }));
+            return ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap, allICIDs);
+        });
 
-    return { signals, states, icStates };
+    return { signals, metastableSignals: [], states, icStates };
 }
 
 export function V3_0Migrator(circuit: V3_0Schema.Circuit) {

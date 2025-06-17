@@ -14,12 +14,14 @@ message DigitalSimState {
         repeated Signal state = 1;
     }
 
-    // Array of signals corresponding to the flat(circuit.components.map(allPorts))
-    repeated Signal signals = 1;
-    // index of component in circuit.components : state of the component
-    map<uint32, State> states = 2;
-    // index of component in circuit.components : state of the component
-    map<uint32, DigitalSimState> icStates = 3;
+    // Array of signals corresponding to the port in filter(flat(circuit.components.map(allPorts)), 'is output port')
+    // -> Compressed into 32bit ints storing 20 signals (ternaries) each
+    repeated uint32 signals = 1;
+
+    // Array of states corresponding to the component in filter(circuit.components, 'is stateful')
+    repeated State states = 3;
+    // Array of states corresponding to the IC component in filter(circuit.components, 'is IC')
+    repeated DigitalSimState icStates = 4;
 }
 
 message DigitalCircuit {

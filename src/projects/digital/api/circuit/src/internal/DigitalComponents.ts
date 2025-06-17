@@ -3,6 +3,7 @@ import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {BaseComponentConfigurationInfo,
         BaseObjInfo,
         BaseObjInfoProvider,
+        DefaultPortNameGenerator,
         PortConfig,
         PropTypeMap} from "shared/api/circuit/internal/impl/ObjInfo";
 import {GUID, Schema} from "shared/api/circuit/schema";
@@ -17,19 +18,16 @@ interface DigitalComponentConfigurationInfoOptions {
     portGroupInfo: DigitalPortGroupInfo;
     portConfigs: PortConfig[];
 
-    defaultPortNames?: Record<string, string[] | ((index: number) => string)>;
+    defaultPortNames?: DefaultPortNameGenerator;
 
     props?: PropTypeMap;
     isNode?: boolean;
     defaultConfig?: number;
-
 }
 export class DigitalComponentConfigurationInfo extends BaseComponentConfigurationInfo {
     public readonly portGroupInfo: DigitalPortGroupInfo;
     public readonly inputPortGroups: readonly string[];
     public readonly outputPortGroups: readonly string[];
-
-    private readonly defaultPortNames: DigitalComponentConfigurationInfoOptions["defaultPortNames"];
 
     public constructor({
         kind,
@@ -40,14 +38,12 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
         isNode,
         defaultConfig,
     }: DigitalComponentConfigurationInfoOptions) {
-        super(kind, props ?? {}, Object.keys(portGroupInfo), portConfigs, isNode ?? false, defaultConfig ?? 0);
+        super(kind, props ?? {}, Object.keys(portGroupInfo), portConfigs, isNode ?? false, defaultPortNames, defaultConfig ?? 0);
 
         this.portGroupInfo = portGroupInfo;
 
         this.inputPortGroups  = this.portGroups.filter((g) => (this.portGroupInfo[g] ===  "input"));
         this.outputPortGroups = this.portGroups.filter((g) => (this.portGroupInfo[g] === "output"));
-
-        this.defaultPortNames = defaultPortNames;
     }
 
     private isInputPort(port: Schema.Port): boolean {
@@ -57,19 +53,10 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
         return this.outputPortGroups.includes(port.group);
     }
 
-    public override getPortInfo(_p: PortConfig, group: string, index: number): Pick<Schema.Port, "kind" | "props"> {
-        const generator = this.defaultPortNames?.[group];
-        if (!generator) {
-            return {
-                kind:  "DigitalPort",
-                props: {}, // TODO: any mandatory props for Digital ports
-            };
-        }
+    public override getPortInfo(_p: PortConfig, _group: string, _index: number): Pick<Schema.Port, "kind" | "props"> {
         return {
             kind:  "DigitalPort",
-            props: {
-                name: (typeof generator === "function" ? generator(index) : generator[index]),
-            },
+            props: {}, // TODO: any mandatory props for Digital ports
         };
     }
 

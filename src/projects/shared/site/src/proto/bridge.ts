@@ -96,8 +96,8 @@ export function CircuitToProto(circuit: Circuit, conversionInfo: ForwardConversi
             portConfigIdx: (isDefaultPortConfig || portConfigIdx === -1 ? undefined : portConfigIdx),
 
             name:  (name ? name as string : undefined),
-            x:     (x ? x as number : undefined),
-            y:     (y ? y as number : undefined),
+            x:     (x ? Math.round(x as number * 100)/100 : undefined),
+            y:     (y ? Math.round(y as number * 100)/100 : undefined),
             angle: (angle ? angle as number : undefined),
 
             otherProps:    ConvertProps(otherProps),

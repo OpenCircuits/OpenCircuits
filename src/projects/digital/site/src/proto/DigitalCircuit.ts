@@ -13,12 +13,18 @@ export const protobufPackage = "";
 /** TODO[model_refactor_api] - .gitignore the generated .ts and generate it automatically via webpack? */
 
 export interface DigitalSimState {
-  /** Array of signals corresponding to the flat(circuit.components.map(allPorts)) */
-  signals: DigitalSimState_Signal[];
-  /** index of component in circuit.components : state of the component */
-  states: { [key: number]: DigitalSimState_State };
-  /** index of component in circuit.components : state of the component */
-  icStates: { [key: number]: DigitalSimState };
+  /**
+   * Array of signals corresponding to the port in filter(flat(circuit.components.map(allPorts)), 'is output port')
+   * -> Compressed into 32bit ints storing 20 signals each
+   * (Only represents the signal as a BOOL)
+   */
+  signals: number[];
+  /** Array of indices of ports in filter(flat(circuit.components.map(allPorts)), 'is output port') that are metastable */
+  metastableSignals: number[];
+  /** Array of states corresponding to the component in filter(circuit.components, 'is stateful') */
+  states: DigitalSimState_State[];
+  /** Array of states corresponding to the IC component in filter(circuit.components, 'is IC') */
+  icStates: DigitalSimState[];
 }
 
 export enum DigitalSimState_Signal {
@@ -64,16 +70,6 @@ export interface DigitalSimState_State {
   state: DigitalSimState_Signal[];
 }
 
-export interface DigitalSimState_StatesEntry {
-  key: number;
-  value: DigitalSimState_State | undefined;
-}
-
-export interface DigitalSimState_IcStatesEntry {
-  key: number;
-  value: DigitalSimState | undefined;
-}
-
 export interface DigitalCircuit {
   circuit: Circuit | undefined;
   propagationTime: number;
@@ -83,22 +79,27 @@ export interface DigitalCircuit {
 }
 
 function createBaseDigitalSimState(): DigitalSimState {
-  return { signals: [], states: {}, icStates: {} };
+  return { signals: [], metastableSignals: [], states: [], icStates: [] };
 }
 
 export const DigitalSimState: MessageFns<DigitalSimState> = {
   encode(message: DigitalSimState, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     writer.uint32(10).fork();
     for (const v of message.signals) {
-      writer.int32(v);
+      writer.uint32(v);
     }
     writer.join();
-    Object.entries(message.states).forEach(([key, value]) => {
-      DigitalSimState_StatesEntry.encode({ key: key as any, value }, writer.uint32(18).fork()).join();
-    });
-    Object.entries(message.icStates).forEach(([key, value]) => {
-      DigitalSimState_IcStatesEntry.encode({ key: key as any, value }, writer.uint32(26).fork()).join();
-    });
+    writer.uint32(18).fork();
+    for (const v of message.metastableSignals) {
+      writer.uint32(v);
+    }
+    writer.join();
+    for (const v of message.states) {
+      DigitalSimState_State.encode(v!, writer.uint32(26).fork()).join();
+    }
+    for (const v of message.icStates) {
+      DigitalSimState.encode(v!, writer.uint32(34).fork()).join();
+    }
     return writer;
   },
 
@@ -111,7 +112,7 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
       switch (tag >>> 3) {
         case 1: {
           if (tag === 8) {
-            message.signals.push(reader.int32() as any);
+            message.signals.push(reader.uint32());
 
             continue;
           }
@@ -119,7 +120,7 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
           if (tag === 10) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.signals.push(reader.int32() as any);
+              message.signals.push(reader.uint32());
             }
 
             continue;
@@ -128,25 +129,37 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
           break;
         }
         case 2: {
-          if (tag !== 18) {
-            break;
+          if (tag === 16) {
+            message.metastableSignals.push(reader.uint32());
+
+            continue;
           }
 
-          const entry2 = DigitalSimState_StatesEntry.decode(reader, reader.uint32());
-          if (entry2.value !== undefined) {
-            message.states[entry2.key] = entry2.value;
+          if (tag === 18) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.metastableSignals.push(reader.uint32());
+            }
+
+            continue;
           }
-          continue;
+
+          break;
         }
         case 3: {
           if (tag !== 26) {
             break;
           }
 
-          const entry3 = DigitalSimState_IcStatesEntry.decode(reader, reader.uint32());
-          if (entry3.value !== undefined) {
-            message.icStates[entry3.key] = entry3.value;
+          message.states.push(DigitalSimState_State.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
           }
+
+          message.icStates.push(DigitalSimState.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -160,46 +173,32 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
 
   fromJSON(object: any): DigitalSimState {
     return {
-      signals: globalThis.Array.isArray(object?.signals)
-        ? object.signals.map((e: any) => digitalSimState_SignalFromJSON(e))
+      signals: globalThis.Array.isArray(object?.signals) ? object.signals.map((e: any) => globalThis.Number(e)) : [],
+      metastableSignals: globalThis.Array.isArray(object?.metastableSignals)
+        ? object.metastableSignals.map((e: any) => globalThis.Number(e))
         : [],
-      states: isObject(object.states)
-        ? Object.entries(object.states).reduce<{ [key: number]: DigitalSimState_State }>((acc, [key, value]) => {
-          acc[globalThis.Number(key)] = DigitalSimState_State.fromJSON(value);
-          return acc;
-        }, {})
-        : {},
-      icStates: isObject(object.icStates)
-        ? Object.entries(object.icStates).reduce<{ [key: number]: DigitalSimState }>((acc, [key, value]) => {
-          acc[globalThis.Number(key)] = DigitalSimState.fromJSON(value);
-          return acc;
-        }, {})
-        : {},
+      states: globalThis.Array.isArray(object?.states)
+        ? object.states.map((e: any) => DigitalSimState_State.fromJSON(e))
+        : [],
+      icStates: globalThis.Array.isArray(object?.icStates)
+        ? object.icStates.map((e: any) => DigitalSimState.fromJSON(e))
+        : [],
     };
   },
 
   toJSON(message: DigitalSimState): unknown {
     const obj: any = {};
     if (message.signals?.length) {
-      obj.signals = message.signals.map((e) => digitalSimState_SignalToJSON(e));
+      obj.signals = message.signals.map((e) => Math.round(e));
     }
-    if (message.states) {
-      const entries = Object.entries(message.states);
-      if (entries.length > 0) {
-        obj.states = {};
-        entries.forEach(([k, v]) => {
-          obj.states[k] = DigitalSimState_State.toJSON(v);
-        });
-      }
+    if (message.metastableSignals?.length) {
+      obj.metastableSignals = message.metastableSignals.map((e) => Math.round(e));
     }
-    if (message.icStates) {
-      const entries = Object.entries(message.icStates);
-      if (entries.length > 0) {
-        obj.icStates = {};
-        entries.forEach(([k, v]) => {
-          obj.icStates[k] = DigitalSimState.toJSON(v);
-        });
-      }
+    if (message.states?.length) {
+      obj.states = message.states.map((e) => DigitalSimState_State.toJSON(e));
+    }
+    if (message.icStates?.length) {
+      obj.icStates = message.icStates.map((e) => DigitalSimState.toJSON(e));
     }
     return obj;
   },
@@ -210,24 +209,9 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
   fromPartial<I extends Exact<DeepPartial<DigitalSimState>, I>>(object: I): DigitalSimState {
     const message = createBaseDigitalSimState();
     message.signals = object.signals?.map((e) => e) || [];
-    message.states = Object.entries(object.states ?? {}).reduce<{ [key: number]: DigitalSimState_State }>(
-      (acc, [key, value]) => {
-        if (value !== undefined) {
-          acc[globalThis.Number(key)] = DigitalSimState_State.fromPartial(value);
-        }
-        return acc;
-      },
-      {},
-    );
-    message.icStates = Object.entries(object.icStates ?? {}).reduce<{ [key: number]: DigitalSimState }>(
-      (acc, [key, value]) => {
-        if (value !== undefined) {
-          acc[globalThis.Number(key)] = DigitalSimState.fromPartial(value);
-        }
-        return acc;
-      },
-      {},
-    );
+    message.metastableSignals = object.metastableSignals?.map((e) => e) || [];
+    message.states = object.states?.map((e) => DigitalSimState_State.fromPartial(e)) || [];
+    message.icStates = object.icStates?.map((e) => DigitalSimState.fromPartial(e)) || [];
     return message;
   },
 };
@@ -302,164 +286,6 @@ export const DigitalSimState_State: MessageFns<DigitalSimState_State> = {
   fromPartial<I extends Exact<DeepPartial<DigitalSimState_State>, I>>(object: I): DigitalSimState_State {
     const message = createBaseDigitalSimState_State();
     message.state = object.state?.map((e) => e) || [];
-    return message;
-  },
-};
-
-function createBaseDigitalSimState_StatesEntry(): DigitalSimState_StatesEntry {
-  return { key: 0, value: undefined };
-}
-
-export const DigitalSimState_StatesEntry: MessageFns<DigitalSimState_StatesEntry> = {
-  encode(message: DigitalSimState_StatesEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.key !== 0) {
-      writer.uint32(8).uint32(message.key);
-    }
-    if (message.value !== undefined) {
-      DigitalSimState_State.encode(message.value, writer.uint32(18).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): DigitalSimState_StatesEntry {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDigitalSimState_StatesEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 8) {
-            break;
-          }
-
-          message.key = reader.uint32();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.value = DigitalSimState_State.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DigitalSimState_StatesEntry {
-    return {
-      key: isSet(object.key) ? globalThis.Number(object.key) : 0,
-      value: isSet(object.value) ? DigitalSimState_State.fromJSON(object.value) : undefined,
-    };
-  },
-
-  toJSON(message: DigitalSimState_StatesEntry): unknown {
-    const obj: any = {};
-    if (message.key !== 0) {
-      obj.key = Math.round(message.key);
-    }
-    if (message.value !== undefined) {
-      obj.value = DigitalSimState_State.toJSON(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DigitalSimState_StatesEntry>, I>>(base?: I): DigitalSimState_StatesEntry {
-    return DigitalSimState_StatesEntry.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DigitalSimState_StatesEntry>, I>>(object: I): DigitalSimState_StatesEntry {
-    const message = createBaseDigitalSimState_StatesEntry();
-    message.key = object.key ?? 0;
-    message.value = (object.value !== undefined && object.value !== null)
-      ? DigitalSimState_State.fromPartial(object.value)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseDigitalSimState_IcStatesEntry(): DigitalSimState_IcStatesEntry {
-  return { key: 0, value: undefined };
-}
-
-export const DigitalSimState_IcStatesEntry: MessageFns<DigitalSimState_IcStatesEntry> = {
-  encode(message: DigitalSimState_IcStatesEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.key !== 0) {
-      writer.uint32(8).uint32(message.key);
-    }
-    if (message.value !== undefined) {
-      DigitalSimState.encode(message.value, writer.uint32(18).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): DigitalSimState_IcStatesEntry {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseDigitalSimState_IcStatesEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 8) {
-            break;
-          }
-
-          message.key = reader.uint32();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.value = DigitalSimState.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): DigitalSimState_IcStatesEntry {
-    return {
-      key: isSet(object.key) ? globalThis.Number(object.key) : 0,
-      value: isSet(object.value) ? DigitalSimState.fromJSON(object.value) : undefined,
-    };
-  },
-
-  toJSON(message: DigitalSimState_IcStatesEntry): unknown {
-    const obj: any = {};
-    if (message.key !== 0) {
-      obj.key = Math.round(message.key);
-    }
-    if (message.value !== undefined) {
-      obj.value = DigitalSimState.toJSON(message.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<DigitalSimState_IcStatesEntry>, I>>(base?: I): DigitalSimState_IcStatesEntry {
-    return DigitalSimState_IcStatesEntry.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DigitalSimState_IcStatesEntry>, I>>(
-    object: I,
-  ): DigitalSimState_IcStatesEntry {
-    const message = createBaseDigitalSimState_IcStatesEntry();
-    message.key = object.key ?? 0;
-    message.value = (object.value !== undefined && object.value !== null)
-      ? DigitalSimState.fromPartial(object.value)
-      : undefined;
     return message;
   },
 };
@@ -589,10 +415,6 @@ export type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
-
-function isObject(value: any): boolean {
-  return typeof value === "object" && value !== null;
-}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
