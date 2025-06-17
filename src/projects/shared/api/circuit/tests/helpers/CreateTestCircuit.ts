@@ -29,6 +29,21 @@ import {MapObj} from "shared/api/circuit/utils/Functions";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
 
 
+// TestCircuit is a circuit with the following specifications:
+// Components:
+//  TestComp
+//    Only 1 Port Configuration - { "": 1 }
+//    The component is a 1x1 Rectangle with a single port pointing to the right 0.5 units away
+//     i.e, if the component is (0, 0), it's right edge is at (0.5, 0) and the port target is at (1, 0).
+//  TestNode
+//    Only 1 Port Configuration - { "": 1 }
+//    The component is a default Node, a 1x1 circle a single port inside it.
+// Wires:
+//  TestWire
+//    Can connect any port to any other port.
+// Ports:
+//  TestPort
+
 export class TestComponentInfo extends BaseComponentConfigurationInfo {
     protected override getPortInfo(_p: PortConfig, _group: string, _i: number): Pick<Schema.Port, "kind" | "props"> {
         return {

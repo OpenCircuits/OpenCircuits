@@ -20,7 +20,10 @@ export const SnipNodesHandler: ToolHandler = {
         const nodes = circuit.selections.components as Node[];
 
         circuit.beginTransaction();
-        nodes.forEach((node) => node.snip());
+        nodes
+            // Only get nodes with exactly 2 connections since those are the ones that are 'snippable'
+            .filter((node) => (node.allPorts.flatMap((p) => p.connections)).length === 2)
+            .forEach((node) => node.snip());
         circuit.commitTransaction("Snipped Node");
 
         // This should be the only handler to execute

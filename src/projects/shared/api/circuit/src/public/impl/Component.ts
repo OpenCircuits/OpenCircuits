@@ -5,13 +5,14 @@ import {MapObj}  from "shared/api/circuit/utils/Functions";
 import {GUID}    from "shared/api/circuit/internal";
 import {Schema}  from "shared/api/circuit/schema";
 
-import {Component, PortConfig} from "../Component";
+import {Component, Node, PortConfig} from "../Component";
 
 import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitState, CircuitTypes} from "./CircuitState";
+import {Wire} from "../Wire";
 
 
-export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Component {
+export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Component, Node {
     public readonly baseKind = "Component";
 
     public constructor(state: CircuitState<T>, id: GUID, icId?: GUID) {
@@ -152,5 +153,37 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         this.state.internal.removePortsFor(this.id).unwrap();
         this.state.internal.deleteComponent(this.id).unwrap();
         this.state.internal.commitTransaction();
+    }
+
+    // Node methods
+    public get path(): Array<T["Node"] | T["Wire"]> {
+        // Nodes are guarantee to always have wires connecting them, so get path from a wire
+        return this.allPorts[0].connections[0].path;
+    }
+
+    public snip(): Wire {
+        if (this.icId)
+            throw new Error(`ComponentImpl: Cannot snip component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+
+        const wires = this.allPorts.flatMap((p) => p.connections);
+        if (wires.length !== 2) {
+            this.state.internal.cancelTransaction();
+            throw new Error(`ComponentImpl.snip: Cannot snip a Node with not exactly 2 wires! Node: ${this.id}`);
+        }
+
+        this.state.internal.beginTransaction();
+        // Get the other ports that the wires are connecting to that aren't this Node's ports.
+        const [p1, p2] = wires.flatMap((w) => [w.p1, w.p2]).filter((p) => (p.parent.id !== this.id));
+        wires.forEach((w) => this.state.internal.deleteWire(w.id));
+        const wire = p1.connectTo(p2);
+        if (!wire) {
+            this.state.internal.cancelTransaction();
+            throw new Error(`ComponentImpl.snip: Failed to snip node! Connections failed! Node: ${this.id}`);
+        }
+        this.delete();
+        this.state.internal.commitTransaction();
+
+
+        return wire;
     }
 }
