@@ -450,7 +450,7 @@ function ConvertSimState(
             return ConvertSimState(componentsAndPorts, refToICIDMap, refToICsMap, allICIDs);
         });
 
-    return { signals, metastableSignals: [], states, icStates };
+    return { signals, states, icStates };
 }
 
 export function V3_0Migrator(circuit: V3_0Schema.Circuit) {

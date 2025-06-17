@@ -15,12 +15,9 @@ export const protobufPackage = "";
 export interface DigitalSimState {
   /**
    * Array of signals corresponding to the port in filter(flat(circuit.components.map(allPorts)), 'is output port')
-   * -> Compressed into 32bit ints storing 20 signals each
-   * (Only represents the signal as a BOOL)
+   * -> Compressed into 32bit ints storing 20 signals (ternaries) each
    */
   signals: number[];
-  /** Array of indices of ports in filter(flat(circuit.components.map(allPorts)), 'is output port') that are metastable */
-  metastableSignals: number[];
   /** Array of states corresponding to the component in filter(circuit.components, 'is stateful') */
   states: DigitalSimState_State[];
   /** Array of states corresponding to the IC component in filter(circuit.components, 'is IC') */
@@ -79,18 +76,13 @@ export interface DigitalCircuit {
 }
 
 function createBaseDigitalSimState(): DigitalSimState {
-  return { signals: [], metastableSignals: [], states: [], icStates: [] };
+  return { signals: [], states: [], icStates: [] };
 }
 
 export const DigitalSimState: MessageFns<DigitalSimState> = {
   encode(message: DigitalSimState, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     writer.uint32(10).fork();
     for (const v of message.signals) {
-      writer.uint32(v);
-    }
-    writer.join();
-    writer.uint32(18).fork();
-    for (const v of message.metastableSignals) {
       writer.uint32(v);
     }
     writer.join();
@@ -128,24 +120,6 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
 
           break;
         }
-        case 2: {
-          if (tag === 16) {
-            message.metastableSignals.push(reader.uint32());
-
-            continue;
-          }
-
-          if (tag === 18) {
-            const end2 = reader.uint32() + reader.pos;
-            while (reader.pos < end2) {
-              message.metastableSignals.push(reader.uint32());
-            }
-
-            continue;
-          }
-
-          break;
-        }
         case 3: {
           if (tag !== 26) {
             break;
@@ -174,9 +148,6 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
   fromJSON(object: any): DigitalSimState {
     return {
       signals: globalThis.Array.isArray(object?.signals) ? object.signals.map((e: any) => globalThis.Number(e)) : [],
-      metastableSignals: globalThis.Array.isArray(object?.metastableSignals)
-        ? object.metastableSignals.map((e: any) => globalThis.Number(e))
-        : [],
       states: globalThis.Array.isArray(object?.states)
         ? object.states.map((e: any) => DigitalSimState_State.fromJSON(e))
         : [],
@@ -190,9 +161,6 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
     const obj: any = {};
     if (message.signals?.length) {
       obj.signals = message.signals.map((e) => Math.round(e));
-    }
-    if (message.metastableSignals?.length) {
-      obj.metastableSignals = message.metastableSignals.map((e) => Math.round(e));
     }
     if (message.states?.length) {
       obj.states = message.states.map((e) => DigitalSimState_State.toJSON(e));
@@ -209,7 +177,6 @@ export const DigitalSimState: MessageFns<DigitalSimState> = {
   fromPartial<I extends Exact<DeepPartial<DigitalSimState>, I>>(object: I): DigitalSimState {
     const message = createBaseDigitalSimState();
     message.signals = object.signals?.map((e) => e) || [];
-    message.metastableSignals = object.metastableSignals?.map((e) => e) || [];
     message.states = object.states?.map((e) => DigitalSimState_State.fromPartial(e)) || [];
     message.icStates = object.icStates?.map((e) => DigitalSimState.fromPartial(e)) || [];
     return message;

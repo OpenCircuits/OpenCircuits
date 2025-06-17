@@ -84,12 +84,15 @@ export const StateFullKinds: Set<string> = new Set([
 ])
 
 
+// Compresses ternary signals to uint32s for added efficiency.
+// We can fit ~20 ternary bits in 32 binary bits.
 export function CompressSignals(signals: number[]): number[] {
     return signals.chunk(20)
         // Need to pad the final chunk if it's not 20-signals-long
         // otherwise it's interpreted incorrectly.
         .map((chunk) => parseInt(chunk.padEnd(20, 0).join(""), 3));
 }
+// Uncompresses ternary signals from uint32s.
 export function UncompressSignals(signals: number[]): number[] {
     return signals.flatMap((n) => [...n.toString(3).padStart(20, "0")].map((v) => parseInt(v)))
 }
@@ -106,12 +109,13 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
     }
 
     function ConvertSimState(circuit: ReadonlyDigitalCircuit, state: DigitalSchema.DigitalSimState, icId?: Schema.GUID): DigitalProtoSchema.DigitalSimState {
+        // MUST SORT BY THE SAME METRIC AS `CircuitToProto`
         const comps = (icId ? circuit.getIC(icId)!.components : circuit.getComponents()).sort((c1, c2) => (c1.zIndex - c2.zIndex));
+        // Only need to serialize output port signals, since input
+        // ports are simply derived from their connected output port.
         const ports = comps.flatMap((c) => c.allPorts).filter((p) => (p.isOutputPort));
         return {
             signals: CompressSignals(ports.map((p) => (state.signals[p.id] === Signal.On ? 1 : 0))),
-
-            metastableSignals: [],
 
             states: comps
                 .filter((c) => StateFullKinds.has(c.kind))
