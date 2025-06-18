@@ -192,6 +192,12 @@ function ConvertCompKind(str: string): number {
     return DigitalKindMaps[0].kinds.comps.get(str)!;
 }
 
+function GetCompKind(num: number): string {
+    if (!DigitalKindMaps[1].kinds.comps.has(num))
+        throw new Error(`VersionMigratorv3_0.GetCompKind: Unknown kind num, ${num}!`);
+    return DigitalKindMaps[1].kinds.comps.get(num)!;
+}
+
 function ConvertPortGroup(parentKind: string, group: string): number {
     if (parentKind === "IC")
         return { "inputs": 0, "outputs": 1 }[group]!;
@@ -379,8 +385,10 @@ function ConvertIC(
 
 function ConvertCompState(comp: Entry<V3_0Schema.DigitalComponent>): boolean[] {
     switch (comp.type) {
-    case "Switch":
+    case "Clock":
         return [comp["isOn"] as boolean];
+    case "Switch":
+        return [comp["on"] as boolean];
     case "SRFlipFlop":
     case "JKFlipFlop":
     case "DFlipFlop":
@@ -410,8 +418,8 @@ function ConvertSimState(
             .map(([_p, portEntry]) => (portEntry.isOn ? 1 : 0)));
 
     const states = componentsAndPorts
-        .filter(([_, entry]) => StateFullKinds.has(entry.type))
-        .map(([_, entry]) => ({ state: ConvertCompState(entry).map(ConvertSignal) }));
+        .filter(([c, _]) => StateFullKinds.has(GetCompKind(c.kind)))
+        .map(([_c, entry]) => ({ state: ConvertCompState(entry).map(ConvertSignal) }));
 
     const icStates = componentsAndPorts
         .filter(([_comp, entry]) => (entry.type === "IC"))
@@ -487,6 +495,7 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
     const ics = [...new Set(Object.values(refToICsMap))]
         // Make sure it's in the same index-order as `uniqueICIDs` since IC instances are index-dependent
         .sort(([_i1, e1], [_i2, e2]) => uniqueICIDs.indexOf(refToICIDMap[e1.ref]) - uniqueICIDs.indexOf(refToICIDMap[e2.ref]));
+
     const { componentsAndPorts, wires } = ConvertObjects(root.designer.objects, root.designer.wires, refToICIDMap, uniqueICIDs);
 
     const icInitialSimStates = ics.map(([ic, _]) =>

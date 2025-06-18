@@ -25,6 +25,12 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
 
     protected abstract getWireKind(p1: GUID, p2: GUID): string;
 
+    public get defaultName(): string | undefined {
+        const port = this.getPort();
+        const [_parent, info] = this.getCircuitInfo().getComponentAndInfoByID(port.parent).unwrap();
+        return info.getDefaultPortName(port);
+    }
+
     public get parent(): T["Component"] {
         return this.state.constructComponent(this.getPort().parent, this.icId);
     }

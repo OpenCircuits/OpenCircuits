@@ -9,6 +9,8 @@ import type {ReadonlyWire, Wire}            from "./Wire";
 interface BaseReadonlyPort<PortT, CompT, NodeT, WireT> {
     readonly baseKind: "Port";
 
+    readonly defaultName: string | undefined;
+
     readonly parent: CompT;
     readonly group: string;
     readonly index: number;

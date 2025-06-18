@@ -69,13 +69,13 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(4);
             expect(circuit.getWires()).toHaveLength(3);
-            const a = comps.find((comp) => comp.name === "a")!;
+            const a = comps.find((c) => c.name === "a")!;
             expect(a).toBeDefined();
-            const b = comps.find((comp) => comp.name === "b")!;
+            const b = comps.find((c) => c.name === "b")!;
             expect(b).toBeDefined();
-            const orGate = comps.find((comp) => comp.kind === "ORGate")!;
+            const orGate = comps.find((c) => c.kind === "ORGate")!;
             expect(orGate).toBeDefined();
-            const led = comps.find((comp) => comp.name === "Output")!;
+            const led = comps.find((c) => c.name === "Output")!;
             expect(led).toBeDefined();
 
             expect(a).toBeConnectedTo(orGate);
@@ -96,15 +96,15 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
-            const a = comps.find((comp) => comp.name === "a")!;
+            const a = comps.find((c) => c.name === "a")!;
             expect(a).toBeDefined();
-            const b = comps.find((comp) => comp.name === "b")!;
+            const b = comps.find((c) => c.name === "b")!;
             expect(b).toBeDefined();
-            const c = comps.find((comp) => comp.name === "c")!;
+            const c = comps.find((c) => c.name === "c")!;
             expect(c).toBeDefined();
-            const andGate = comps.find((comp) => comp.kind === "ANDGate")!;
+            const andGate = comps.find((c) => c.kind === "ANDGate")!;
             expect(andGate).toBeDefined();
-            const led = comps.find((comp) => comp.kind === "LED")!;
+            const led = comps.find((c) => c.kind === "LED")!;
             expect(led).toBeDefined();
 
             expect(a).toBeConnectedTo(andGate);
@@ -119,7 +119,7 @@ describe("DigitalVersionMigrator", () => {
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
-            const led = comps.find((comp) => comp.kind === "LED")!;
+            const led = comps.find((c) => c.kind === "LED")!;
             expect(led).toBeOn();
         });
         test("All inputs", () => {
@@ -130,31 +130,31 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
 
-            const button = comps.find((comp) => comp.kind === "Button")!;
+            const button = comps.find((c) => c.kind === "Button")!;
             expect(button).toBeDefined();
-            const low = comps.find((comp) => comp.kind === "ConstantLow")!;
+            const low = comps.find((c) => c.kind === "ConstantLow")!;
             expect(low).toBeDefined();
-            const high = comps.find((comp) => comp.kind === "ConstantHigh")!;
+            const high = comps.find((c) => c.kind === "ConstantHigh")!;
             expect(high).toBeDefined();
 
-            const defaultClock = comps.find((comp) => comp.name === "Default Clock")!;
+            const defaultClock = comps.find((c) => c.name === "Default Clock")!;
             expect(defaultClock).toBeDefined();
             expect(defaultClock.getProp("paused")).toBeFalsy();
             expect(defaultClock.getProp("delay")).toBe(1000);
-            const customClock = comps.find((comp) => comp.name === "Custom Clock")!;
+            const customClock = comps.find((c) => c.name === "Custom Clock")!;
             expect(customClock).toBeDefined();
             expect(customClock.getProp("paused")).toBeTruthy();
             expect(customClock.getProp("delay")).toBe(800);
             expect(customClock.outputs[0].signal).toBe(Signal.On);
 
-            const sw = comps.find((comp) => comp.kind === "Switch")!;
+            const sw = comps.find((c) => c.kind === "Switch")!;
             expect(sw).toBeDefined();
             expect(sw.outputs[0].signal).toBe(Signal.On);
 
-            const constantNumber0 = comps.find((comp) => comp.name === "Constant Number 0")!;
+            const constantNumber0 = comps.find((c) => c.name === "Constant Number 0")!;
             expect(constantNumber0).toBeDefined();
             expect(constantNumber0.getProp("inputNum") === undefined || constantNumber0.getProp("inputNum") === 0).toBeTruthy();
-            const constantNumber15 = comps.find((comp) => comp.name === "Constant Number 15")!;
+            const constantNumber15 = comps.find((c) => c.name === "Constant Number 15")!;
             expect(constantNumber15).toBeDefined();
             expect(constantNumber15.getProp("inputNum")).toBe(15);
         });
@@ -176,24 +176,24 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
 
-            const segmentDisplay7 = comps.find((comp) => comp.name === "7 Segment Display")!;
+            const segmentDisplay7 = comps.find((c) => c.name === "7 Segment Display")!;
             expect(segmentDisplay7).toBeDefined();
             expect(segmentDisplay7.inputs).toHaveLength(7);
-            const segmentDisplay16 = comps.find((comp) => comp.name === "16 Segment Display")!;
+            const segmentDisplay16 = comps.find((c) => c.name === "16 Segment Display")!;
             expect(segmentDisplay16).toBeDefined();
             expect(segmentDisplay16.inputs).toHaveLength(16);
 
-            const bcdDisplay7 = comps.find((comp) => comp.name === "7 BCD Display")!;
+            const bcdDisplay7 = comps.find((c) => c.name === "7 BCD Display")!;
             expect(bcdDisplay7).toBeDefined();
-            expect(bcdDisplay7.getProp("segmentCount")).toBe(7);
-            const bcdDisplay16 = comps.find((comp) => comp.name === "16 BCD Display")!;
+            expect(bcdDisplay7.getProp("segmentCount")).toBeUndefined();  // default value -> unset
+            const bcdDisplay16 = comps.find((c) => c.name === "16 BCD Display")!;
             expect(bcdDisplay16).toBeDefined();
             expect(bcdDisplay16.getProp("segmentCount")).toBe(16);
 
-            const asciiDisplay7 = comps.find((comp) => comp.name === "7 ASCII Display")!;
+            const asciiDisplay7 = comps.find((c) => c.name === "7 ASCII Display")!;
             expect(asciiDisplay7).toBeDefined();
-            expect(asciiDisplay7.getProp("segmentCount")).toBe(7);
-            const asciiDisplay16 = comps.find((comp) => comp.name === "16 ASCII Display")!;
+            expect(asciiDisplay7.getProp("segmentCount")).toBeUndefined();  // default value -> unset
+            const asciiDisplay16 = comps.find((c) => c.name === "16 ASCII Display")!;
             expect(asciiDisplay16).toBeDefined();
             expect(asciiDisplay16.getProp("segmentCount")).toBe(16);
         });
@@ -205,7 +205,7 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
 
-            const defaultOscilloscope = comps.find((comp) => comp.name === "Default Oscilloscope")!;
+            const defaultOscilloscope = comps.find((c) => c.name === "Default Oscilloscope")!;
             expect(defaultOscilloscope).toBeDefined();
             expect(defaultOscilloscope.inputs).toHaveLength(1);
             expect(defaultOscilloscope.getProp("w")).toApproximatelyEqual(8);
@@ -213,7 +213,7 @@ describe("DigitalVersionMigrator", () => {
             expect(defaultOscilloscope.getProp("delay")).toApproximatelyEqual(100);
             expect(defaultOscilloscope.getProp("samples")).toApproximatelyEqual(100);
             expect(defaultOscilloscope.getProp("paused")).toBeFalsy();
-            const customOscilloscope = comps.find((comp) => comp.name === "Custom Oscilloscope")!;
+            const customOscilloscope = comps.find((c) => c.name === "Custom Oscilloscope")!;
             expect(customOscilloscope).toBeDefined();
             expect(customOscilloscope.inputs).toHaveLength(3);
             expect(customOscilloscope.getProp("w")).toApproximatelyEqual(12);
@@ -230,21 +230,21 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
             expect(circuit.getWires()).toHaveLength(7);
-            const pre = comps.find((comp) => comp.name === "PRE")!;
+            const pre = comps.find((c) => c.name === "PRE")!;
             expect(pre).toBeDefined();
-            const s = comps.find((comp) => comp.name === "S")!;
+            const s = comps.find((c) => c.name === "S")!;
             expect(s).toBeDefined();
-            const clk = comps.find((comp) => comp.name === ">")!;
+            const clk = comps.find((c) => c.name === ">")!;
             expect(clk).toBeDefined();
-            const r = comps.find((comp) => comp.name === "R")!;
+            const r = comps.find((c) => c.name === "R")!;
             expect(r).toBeDefined();
-            const clr = comps.find((comp) => comp.name === "CLR")!;
+            const clr = comps.find((c) => c.name === "CLR")!;
             expect(clr).toBeDefined();
-            const q = comps.find((comp) => comp.name === "Q")!;
+            const q = comps.find((c) => c.name === "Q")!;
             expect(q).toBeDefined();
-            const qinv = comps.find((comp) => comp.name === "Q'")!;
+            const qinv = comps.find((c) => c.name === "Q'")!;
             expect(qinv).toBeDefined();
-            const flipFlop = comps.find((comp) => comp.kind === "SRFlipFlop")!;
+            const flipFlop = comps.find((c) => c.kind === "SRFlipFlop")!;
             expect(flipFlop).toBeDefined();
 
             expect(flipFlop.ports["S"][0].connections[0].id).toBe(s.outputs[0].connections[0].id);
@@ -263,21 +263,21 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(8);
             expect(circuit.getWires()).toHaveLength(7);
-            const pre = comps.find((comp) => comp.name === "PRE")!;
+            const pre = comps.find((c) => c.name === "PRE")!;
             expect(pre).toBeDefined();
-            const j = comps.find((comp) => comp.name === "J")!;
+            const j = comps.find((c) => c.name === "J")!;
             expect(j).toBeDefined();
-            const clk = comps.find((comp) => comp.name === ">")!;
+            const clk = comps.find((c) => c.name === ">")!;
             expect(clk).toBeDefined();
-            const k = comps.find((comp) => comp.name === "K")!;
+            const k = comps.find((c) => c.name === "K")!;
             expect(k).toBeDefined();
-            const clr = comps.find((comp) => comp.name === "CLR")!;
+            const clr = comps.find((c) => c.name === "CLR")!;
             expect(clr).toBeDefined();
-            const q = comps.find((comp) => comp.name === "Q")!;
+            const q = comps.find((c) => c.name === "Q")!;
             expect(q).toBeDefined();
-            const qinv = comps.find((comp) => comp.name === "Q'")!;
+            const qinv = comps.find((c) => c.name === "Q'")!;
             expect(qinv).toBeDefined();
-            const flipFlop = comps.find((comp) => comp.kind === "JKFlipFlop")!;
+            const flipFlop = comps.find((c) => c.kind === "JKFlipFlop")!;
             expect(flipFlop).toBeDefined();
 
             expect(flipFlop.ports["J"][0].connections[0].id).toBe(j.outputs[0].connections[0].id);
@@ -296,19 +296,19 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
             expect(circuit.getWires()).toHaveLength(6);
-            const pre = comps.find((comp) => comp.name === "PRE")!;
+            const pre = comps.find((c) => c.name === "PRE")!;
             expect(pre).toBeDefined();
-            const d = comps.find((comp) => comp.name === "D")!;
+            const d = comps.find((c) => c.name === "D")!;
             expect(d).toBeDefined();
-            const clk = comps.find((comp) => comp.name === ">")!;
+            const clk = comps.find((c) => c.name === ">")!;
             expect(clk).toBeDefined();
-            const clr = comps.find((comp) => comp.name === "CLR")!;
+            const clr = comps.find((c) => c.name === "CLR")!;
             expect(clr).toBeDefined();
-            const q = comps.find((comp) => comp.name === "Q")!;
+            const q = comps.find((c) => c.name === "Q")!;
             expect(q).toBeDefined();
-            const qinv = comps.find((comp) => comp.name === "Q'")!;
+            const qinv = comps.find((c) => c.name === "Q'")!;
             expect(qinv).toBeDefined();
-            const flipFlop = comps.find((comp) => comp.kind === "DFlipFlop")!;
+            const flipFlop = comps.find((c) => c.kind === "DFlipFlop")!;
             expect(flipFlop).toBeDefined();
 
             expect(flipFlop.ports["D"][0].connections[0].id).toBe(d.outputs[0].connections[0].id);
@@ -326,19 +326,19 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(7);
             expect(circuit.getWires()).toHaveLength(6);
-            const pre = comps.find((comp) => comp.name === "PRE")!;
+            const pre = comps.find((c) => c.name === "PRE")!;
             expect(pre).toBeDefined();
-            const t = comps.find((comp) => comp.name === "T")!;
+            const t = comps.find((c) => c.name === "T")!;
             expect(t).toBeDefined();
-            const clk = comps.find((comp) => comp.name === ">")!;
+            const clk = comps.find((c) => c.name === ">")!;
             expect(clk).toBeDefined();
-            const clr = comps.find((comp) => comp.name === "CLR")!;
+            const clr = comps.find((c) => c.name === "CLR")!;
             expect(clr).toBeDefined();
-            const q = comps.find((comp) => comp.name === "Q")!;
+            const q = comps.find((c) => c.name === "Q")!;
             expect(q).toBeDefined();
-            const qinv = comps.find((comp) => comp.name === "Q'")!;
+            const qinv = comps.find((c) => c.name === "Q'")!;
             expect(qinv).toBeDefined();
-            const flipFlop = comps.find((comp) => comp.kind === "TFlipFlop")!;
+            const flipFlop = comps.find((c) => c.kind === "TFlipFlop")!;
             expect(flipFlop).toBeDefined();
 
             expect(flipFlop.ports["T"][0].connections[0].id).toBe(t.outputs[0].connections[0].id);
@@ -356,15 +356,15 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
             expect(circuit.getWires()).toHaveLength(4);
-            const e = comps.find((comp) => comp.name === "E")!;
+            const e = comps.find((c) => c.name === "E")!;
             expect(e).toBeDefined();
-            const d = comps.find((comp) => comp.name === "D")!;
+            const d = comps.find((c) => c.name === "D")!;
             expect(d).toBeDefined();
-            const q = comps.find((comp) => comp.name === "Q")!;
+            const q = comps.find((c) => c.name === "Q")!;
             expect(q).toBeDefined();
-            const qinv = comps.find((comp) => comp.name === "Q'")!;
+            const qinv = comps.find((c) => c.name === "Q'")!;
             expect(qinv).toBeDefined();
-            const flipFlop = comps.find((comp) => comp.kind === "DLatch")!;
+            const flipFlop = comps.find((c) => c.kind === "DLatch")!;
             expect(flipFlop).toBeDefined();
 
             expect(flipFlop.ports["D"][0].connections[0].id).toBe(d.outputs[0].connections[0].id);
@@ -380,17 +380,17 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(6);
             expect(circuit.getWires()).toHaveLength(5);
-            const e = comps.find((comp) => comp.name === "E")!;
+            const e = comps.find((c) => c.name === "E")!;
             expect(e).toBeDefined();
-            const s = comps.find((comp) => comp.name === "S")!;
+            const s = comps.find((c) => c.name === "S")!;
             expect(s).toBeDefined();
-            const r = comps.find((comp) => comp.name === "R")!;
+            const r = comps.find((c) => c.name === "R")!;
             expect(r).toBeDefined();
-            const q = comps.find((comp) => comp.name === "Q")!;
+            const q = comps.find((c) => c.name === "Q")!;
             expect(q).toBeDefined();
-            const qinv = comps.find((comp) => comp.name === "Q'")!;
+            const qinv = comps.find((c) => c.name === "Q'")!;
             expect(qinv).toBeDefined();
-            const flipFlop = comps.find((comp) => comp.kind === "SRLatch")!;
+            const flipFlop = comps.find((c) => c.kind === "SRLatch")!;
             expect(flipFlop).toBeDefined();
 
             expect(flipFlop.ports["S"][0].connections[0].id).toBe(s.outputs[0].connections[0].id);
@@ -407,26 +407,26 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
             expect(circuit.getWires()).toHaveLength(9);
-            const i0 = comps.find((comp) => comp.name === "I0")!;
+            const i0 = comps.find((c) => c.name === "I0")!;
             expect(i0).toBeDefined();
-            const i1 = comps.find((comp) => comp.name === "I1")!;
+            const i1 = comps.find((c) => c.name === "I1")!;
             expect(i1).toBeDefined();
-            const i2 = comps.find((comp) => comp.name === "I2")!;
+            const i2 = comps.find((c) => c.name === "I2")!;
             expect(i2).toBeDefined();
-            const i3 = comps.find((comp) => comp.name === "I3")!;
+            const i3 = comps.find((c) => c.name === "I3")!;
             expect(i3).toBeDefined();
-            const i7 = comps.find((comp) => comp.name === "I7")!;
+            const i7 = comps.find((c) => c.name === "I7")!;
             expect(i7).toBeDefined();
-            const s0 = comps.find((comp) => comp.name === "S0")!;
+            const s0 = comps.find((c) => c.name === "S0")!;
             expect(s0).toBeDefined();
-            const s1 = comps.find((comp) => comp.name === "S1")!;
+            const s1 = comps.find((c) => c.name === "S1")!;
             expect(s1).toBeDefined();
-            const s2 = comps.find((comp) => comp.name === "S2")!;
+            const s2 = comps.find((c) => c.name === "S2")!;
             expect(s2).toBeDefined();
 
-            const output = comps.find((comp) => comp.kind === "LED")!;
+            const output = comps.find((c) => c.kind === "LED")!;
             expect(output).toBeDefined();
-            const multiplexer = comps.find((comp) => comp.kind === "Multiplexer")!;
+            const multiplexer = comps.find((c) => c.kind === "Multiplexer")!;
             expect(multiplexer).toBeDefined();
 
             expect(multiplexer.ports["inputs"][0].connections[0].id).toBe(i0.outputs[0].connections[0].id);
@@ -447,24 +447,24 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(10);
             expect(circuit.getWires()).toHaveLength(9);
-            const input = comps.find((comp) => comp.name === "Input")!;
+            const input = comps.find((c) => c.name === "Input")!;
             expect(input).toBeDefined();
-            const s0 = comps.find((comp) => comp.name === "S0")!;
+            const s0 = comps.find((c) => c.name === "S0")!;
             expect(s0).toBeDefined();
-            const s1 = comps.find((comp) => comp.name === "S1")!;
+            const s1 = comps.find((c) => c.name === "S1")!;
             expect(s1).toBeDefined();
-            const s2 = comps.find((comp) => comp.name === "S2")!;
+            const s2 = comps.find((c) => c.name === "S2")!;
             expect(s2).toBeDefined();
 
-            const o0 = comps.find((comp) => comp.name === "O0")!;
+            const o0 = comps.find((c) => c.name === "O0")!;
             expect(o0).toBeDefined();
-            const o1 = comps.find((comp) => comp.name === "O1")!;
+            const o1 = comps.find((c) => c.name === "O1")!;
             expect(o1).toBeDefined();
-            const o2 = comps.find((comp) => comp.name === "O2")!;
+            const o2 = comps.find((c) => c.name === "O2")!;
             expect(o2).toBeDefined();
-            const o3 = comps.find((comp) => comp.name === "O3")!;
+            const o3 = comps.find((c) => c.name === "O3")!;
             expect(o3).toBeDefined();
-            const o7 = comps.find((comp) => comp.name === "O7")!;
+            const o7 = comps.find((c) => c.name === "O7")!;
             expect(o7).toBeDefined();
 
             const demultiplexer = comps.find((comp) => comp.kind === "Demultiplexer")!;
@@ -488,9 +488,9 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
 
-            const encoder = comps.find((comp) => comp.kind === "Encoder")!;
+            const encoder = comps.find((c) => c.kind === "Encoder")!;
             expect(encoder).toBeDefined();
-            const decoder = comps.find((comp) => comp.kind === "Decoder")!;
+            const decoder = comps.find((c) => c.kind === "Decoder")!;
             expect(decoder).toBeDefined();
 
             expect(encoder.inputs).toHaveLength(8);
@@ -509,23 +509,23 @@ describe("DigitalVersionMigrator", () => {
 
             const comparator = comps.find((comp) => comp.kind === "Comparator")!;
             expect(comparator).toBeDefined();
-            const a0 = comps.find((comp) => comp.name === "a0")!;
+            const a0 = comps.find((c) => c.name === "a0")!;
             expect(a0).toBeDefined();
-            const a1 = comps.find((comp) => comp.name === "a1")!;
+            const a1 = comps.find((c) => c.name === "a1")!;
             expect(a1).toBeDefined();
-            const a2 = comps.find((comp) => comp.name === "a2")!;
+            const a2 = comps.find((c) => c.name === "a2")!;
             expect(a2).toBeDefined();
-            const b0 = comps.find((comp) => comp.name === "b0")!;
+            const b0 = comps.find((c) => c.name === "b0")!;
             expect(b0).toBeDefined();
-            const b1 = comps.find((comp) => comp.name === "b1")!;
+            const b1 = comps.find((c) => c.name === "b1")!;
             expect(b1).toBeDefined();
-            const b2 = comps.find((comp) => comp.name === "b2")!;
+            const b2 = comps.find((c) => c.name === "b2")!;
             expect(b2).toBeDefined();
-            const lt = comps.find((comp) => comp.name === "<")!;
+            const lt = comps.find((c) => c.name === "<")!;
             expect(lt).toBeDefined();
-            const eq = comps.find((comp) => comp.name === "=")!;
+            const eq = comps.find((c) => c.name === "=")!;
             expect(eq).toBeDefined();
-            const gt = comps.find((comp) => comp.name === ">")!;
+            const gt = comps.find((c) => c.name === ">")!;
             expect(gt).toBeDefined();
 
             expect(comparator.inputs).toHaveLength(6);
@@ -576,8 +576,8 @@ describe("DigitalVersionMigrator", () => {
             const ic = ics[0];
             expect(ic.display.pins).toHaveLength(3);
             expect(ic.display.size).toEqual(V(2.8, 1));
-            expect(ic.display.pins.filter(({ name }) => name === "Switch")).toHaveLength(2);
-            expect(ic.display.pins.filter(({ name }) => name === "LED")).toHaveLength(1);
+            expect(ic.display.pins.filter((p) => p.name === "Switch")).toHaveLength(2);
+            expect(ic.display.pins.filter((p) => p.name === "LED")).toHaveLength(1);
         });
         test("Basic IC", () => {
             const [circuit] = CreateTestCircuit();
@@ -593,8 +593,8 @@ describe("DigitalVersionMigrator", () => {
             expect(icInstance.kind).toBe(icData.id);
             expect(icInstance.inputs).toHaveLength(2);
             expect(icInstance.outputs).toHaveLength(1);
-            const inputPortA = icInstance.inputs.find(({ name }) => name === "a")!;
-            const inputPortB = icInstance.inputs.find(({ name }) => name === "b")!;
+            const inputPortA = icInstance.inputs.find((p) => (p.name ?? p.defaultName) === "a")!;
+            const inputPortB = icInstance.inputs.find((p) => (p.name ?? p.defaultName) === "b")!;
             expect(inputPortA).toBeDefined();
             expect(inputPortB).toBeDefined();
             expect(inputPortA.originPos.y).toBeGreaterThan(inputPortB.originPos.y);
@@ -630,9 +630,9 @@ describe("DigitalVersionMigrator", () => {
             circuit.import(DigitalProtoToCircuit(schema));
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(3);
-            const bottom = comps.find(({ name }) => name === "Bottom")!;
-            const middle = comps.find(({ name }) => name === "Middle")!;
-            const top = comps.find(({ name }) => name === "Top")!;
+            const bottom = comps.find((c) => c.name === "Bottom")!;
+            const middle = comps.find((c) => c.name === "Middle")!;
+            const top    = comps.find((c) => c.name === "Top")!;
             expect(bottom).toBeDefined();
             expect(middle).toBeDefined();
             expect(top).toBeDefined();
@@ -645,17 +645,19 @@ describe("DigitalVersionMigrator", () => {
             expect(middle.getProp("zIndex")).toBeLessThan(top.getProp("zIndex") as number);
         });
         test("Clock in IC (off)", () => {
-            const [circuit] = CreateTestCircuit();
+            const [circuit, state] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(clockInICOffCircuit));
             expect(warnings).toBeDefined();
             expect(warnings).toHaveLength(1);
             expect(warnings).toContain(IMPORT_IC_CLOCK_MESSAGE);
+            state.simRunner?.pause();
             circuit.import(DigitalProtoToCircuit(schema));
+            state.simRunner?.resume();
 
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
-            const icInstance = comps.find(({ kind }) => kind !== "LED")!;
-            const led = comps.find(({ kind }) => kind === "LED")!;
+            const icInstance = comps.find((c) => c.kind !== "LED")!;
+            const led        = comps.find((c) => c.kind === "LED")!;
             expect(icInstance).toBeDefined();
             expect(led).toBeDefined();
 
@@ -678,8 +680,8 @@ describe("DigitalVersionMigrator", () => {
 
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
-            const icInstance = comps.find(({ kind }) => kind !== "LED")!;
-            const led = comps.find(({ kind }) => kind === "LED")!;
+            const icInstance = comps.find((c) => c.kind !== "LED")!;
+            const led        = comps.find((c) => c.kind === "LED")!;
             expect(icInstance).toBeDefined();
             expect(led).toBeDefined();
 
@@ -700,10 +702,10 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
 
-            const sw1 = comps.find(({ name }) => name === "Switch1")!;
-            const sw2 = comps.find(({ name }) => name === "Switch2")!;
-            const sw3 = comps.find(({ name }) => name === "Switch3")!;
-            const out = comps.find(({ kind }) => kind === "LED");
+            const sw1 = comps.find((c) => c.name === "Switch1")!;
+            const sw2 = comps.find((c) => c.name === "Switch2")!;
+            const sw3 = comps.find((c) => c.name === "Switch3")!;
+            const out = comps.find((c) => c.kind === "LED");
             const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
             expect(sw1).toBeDefined();
             expect(sw2).toBeDefined();
@@ -737,9 +739,9 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
 
-            const a = comps.find(({ name }) => name === "a")!;
-            const b = comps.find(({ name }) => name === "b")!;
-            const c = comps.find(({ name }) => name === "c")!;
+            const a = comps.find((c) => c.name === "a")!;
+            const b = comps.find((c) => c.name === "b")!;
+            const c = comps.find((c) => c.name === "c")!;
             const out = comps.find(({ kind }) => kind === "LED");
             const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
             expect(a).toBeDefined();
@@ -750,9 +752,9 @@ describe("DigitalVersionMigrator", () => {
 
             const icInputs = icInstance.inputs;
             expect(icInputs).toHaveLength(3);
-            const icInputA = icInputs.find(({ name }) => name === "a")!;
-            const icInputB = icInputs.find(({ name }) => name === "b")!;
-            const icInputC = icInputs.find(({ name }) => name === "c")!;
+            const icInputA = icInputs.find((p) => (p.name ?? p.defaultName) === "a")!;
+            const icInputB = icInputs.find((p) => (p.name ?? p.defaultName) === "b")!;
+            const icInputC = icInputs.find((p) => (p.name ?? p.defaultName) === "c")!;
             expect(icInputA).toBeDefined();
             expect(icInputB).toBeDefined();
             expect(icInputC).toBeDefined();
@@ -793,10 +795,10 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
 
-            const top = comps.find(({ name }) => name === "top")!;
-            const bottom = comps.find(({ name }) => name === "bottom")!;
-            const left = comps.find(({ name }) => name === "left")!;
-            const right = comps.find(({ name }) => name === "right")!;
+            const top    = comps.find((c) => c.name === "top")!;
+            const bottom = comps.find((c) => c.name === "bottom")!;
+            const left   = comps.find((c) => c.name === "left")!;
+            const right  = comps.find((c) => c.name === "right")!;
             const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
             expect(top).toBeDefined();
             expect(bottom).toBeDefined();
@@ -806,12 +808,12 @@ describe("DigitalVersionMigrator", () => {
 
             const icInputs = icInstance.inputs;
             expect(icInputs).toHaveLength(2);
-            const icInputTop = icInputs.find(({ name }) => name === "top")!;
-            const icInputLeft = icInputs.find(({ name }) => name === "left")!;
+            const icInputTop  = icInputs.find((p) => (p.name ?? p.defaultName) === "top")!;
+            const icInputLeft = icInputs.find((p) => (p.name ?? p.defaultName) === "left")!;
             const icOutputs = icInstance.outputs;
             expect(icOutputs).toHaveLength(2);
-            const icOutputRight = icOutputs.find(({ name }) => name === "right")!;
-            const icOutputBottom = icOutputs.find(({ name }) => name === "bottom")!;
+            const icOutputRight  = icOutputs.find((p) => (p.name ?? p.defaultName) === "right")!;
+            const icOutputBottom = icOutputs.find((p) => (p.name ?? p.defaultName) === "bottom")!;
             expect(icInputTop).toBeDefined();
             expect(icInputLeft).toBeDefined();
             expect(icOutputRight).toBeDefined();

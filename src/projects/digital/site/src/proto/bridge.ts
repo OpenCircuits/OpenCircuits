@@ -193,6 +193,7 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
         const id = ConvertId(ic.metadata!.metadata!.id);
         state.sim.loadICState(id, ConvertSimState(circuit, initialSimState, id));
     }
+
     state.sim.loadState(ConvertSimState(circuit, proto.simState));
 
     return circuit;

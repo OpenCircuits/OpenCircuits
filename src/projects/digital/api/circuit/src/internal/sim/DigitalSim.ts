@@ -297,6 +297,11 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 // Initialize ICs and sub-ICs if the added component is an IC instance
                 const comp = this.circuit.getCompByID(compId).unwrap();
                 if (this.circuit.isIC(comp)) {
+                    // If we already have state for it, it might've been loaded externally
+                    // So don't override with default.
+                    if (this.rootState.icStates.has(compId))
+                        continue;
+
                     const icId = comp.icId;
                     if (!this.initialICStates.has(icId)) {
                         throw new Error("DigitalSim.circuit.subscribe: Failed to find initial state " +
