@@ -25,10 +25,6 @@ export function IsV3_0(json: any): json is V3_0Schema.Circuit {
     return ("contents" in json && "metadata" in json);
 }
 
-function ConvertId(id: GUID): Uint8Array {
-    return uuid.parse(id) as Uint8Array;
-}
-
 function ConvertCompProps(
     comp: Entry<V3_0Schema.DigitalComponent>,
 ): ProtoSchema.Component["otherProps"] {
@@ -365,7 +361,7 @@ function ConvertIC(
     return [{
         metadata: {
             metadata: {
-                id:      ConvertId(refToICIDMap[ic.ref]),
+                id:      refToICIDMap[ic.ref],
                 name:    ic.name,
                 desc:    "",
                 thumb:   "",
@@ -506,7 +502,7 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
         schema: {
             circuit: {
                 metadata: {
-                    id:      ConvertId(uuid.v4()),
+                    id:      uuid.v4(),
                     name:    circuit.metadata.name,
                     desc:    "",
                     thumb:   "",

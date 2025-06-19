@@ -63,7 +63,7 @@ message Camera {
 }
 
 message CircuitMetadata {
-    bytes id = 1;
+    string id = 1;
     string name = 2;
     string desc = 3;
     string thumb = 4;
