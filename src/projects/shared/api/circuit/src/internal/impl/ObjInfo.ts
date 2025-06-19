@@ -41,6 +41,7 @@ export interface ComponentConfigurationInfo extends ObjInfo {
     checkPortConnectivity(port: Schema.Port, newConnection: Schema.Port, curConnections: Schema.Port[]): Result;
 
     getValidPortConfigs(): ReadonlyArray<Readonly<PortConfig>>;
+    getDefaultPortName(port: Schema.Port): string | undefined;
 
     // Also i.e. thumbnail, display name, description, etc.
 }
@@ -126,12 +127,15 @@ export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
         return OkVoid();
     }
 }
+export type DefaultPortNameGenerator = Record<string, string[] | ((index: number) => string)>;
 export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Component">
                                                      implements ComponentConfigurationInfo {
     public readonly defaultPortConfig: PortConfig;
     public readonly portGroups: string[];
 
     protected readonly validPortConfigs: PortConfig[];
+
+    protected readonly defaultPortNames?: DefaultPortNameGenerator;
 
     public readonly isNode: boolean;
 
@@ -141,6 +145,7 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
         portGroups: string[],
         portConfigs: PortConfig[],
         isNode: boolean,
+        defaultPortNames?: DefaultPortNameGenerator,
         defaultConfig = 0
     ) {
         super("Component", kind, { ...props, "x": "number", "y": "number", "angle": "number" });
@@ -149,6 +154,7 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
         this.portGroups = portGroups;
 
         this.validPortConfigs = portConfigs;
+        this.defaultPortNames = defaultPortNames;
 
         this.isNode = isNode;
     }
@@ -196,6 +202,12 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
 
     public getValidPortConfigs(): ReadonlyArray<Readonly<PortConfig>> {
         return this.validPortConfigs;
+    }
+    public getDefaultPortName(port: Schema.Port): string | undefined {
+        const generator = this.defaultPortNames?.[port.group];
+        if (!generator)
+            return;
+        return (typeof generator === "function" ? generator(port.index) : generator[port.index]);
     }
 
     public abstract isPortAvailable(port: Schema.Port, curConnections: Schema.Port[]): boolean;

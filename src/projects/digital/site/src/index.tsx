@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React            from "react";
 import {createRoot}     from "react-dom/client";
 import ReactGA          from "react-ga";
@@ -60,6 +61,7 @@ import {CreateCircuit, DigitalCircuit, DigitalObjContainer} from "digital/api/ci
 import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
+import {PrintDebugStats} from "./proto/debug";
 
 
 async function Init(): Promise<void> {
@@ -169,11 +171,13 @@ async function Init(): Promise<void> {
                     return mainDesigner;
                 },
                 SerializeCircuit(circuit) {
-                    return new Blob([
-                        DigitalProtoSchema.DigitalCircuit.encode(
-                            DigitalCircuitToProto(circuit as DigitalCircuit)
-                        ).finish(),
-                    ]);
+                    const proto = DigitalCircuitToProto(circuit as DigitalCircuit);
+
+                    // Log debug-stats
+                    if (process.env.NODE_ENV === "development")
+                        PrintDebugStats(proto);
+
+                    return new Blob([DigitalProtoSchema.DigitalCircuit.encode(proto).finish()]);
                 },
                 SerializeCircuitAsString(circuit) {
                     return JSON.stringify(DigitalCircuitToProto(circuit as DigitalCircuit));

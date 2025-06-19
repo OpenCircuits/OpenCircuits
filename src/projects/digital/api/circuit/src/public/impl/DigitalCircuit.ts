@@ -55,6 +55,8 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     ): DigitalObjContainer {
         const isCircuit = (o: ReadonlyDigitalCircuit | ReadonlyDigitalObjContainer): o is ReadonlyDigitalCircuit => (o instanceof DigitalCircuitImpl);
 
+        this.beginTransaction({ batch: true });
+
         for (const ic of (isCircuit(circuit) ? circuit.getICs() : circuit.ics))
             this.state.sim.loadICState(ic.id, ic.initialSimState);
 
@@ -66,6 +68,8 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         // TODO[model_refactor_api] - load circuit state from set of objects too (and unit test this)
         if (isCircuit(circuit))
             this.state.sim.loadState(circuit.simState);
+
+        this.commitTransaction("Imported Circuit");
 
         return objs;
     }

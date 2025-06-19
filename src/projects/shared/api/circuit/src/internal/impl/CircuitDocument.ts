@@ -216,11 +216,8 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
 
     public getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]> {
         return this.getCompByID(id)
-            .andThen((comp) => (
-                comp.kind === "IC"
-                ? this.getComponentInfo("IC", comp.icId!)
-                : this.getComponentInfo(comp.kind)
-            ).map((info) => [comp, info]));
+            .andThen((comp) => this.getComponentInfo(comp.kind, comp.icId)
+                .map((info) => [comp, info]));
     }
 
     private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {
