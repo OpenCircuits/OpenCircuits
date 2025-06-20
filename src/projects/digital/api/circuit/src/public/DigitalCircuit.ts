@@ -17,7 +17,8 @@ import type {
     Selections,
     Wire,
 } from "shared/api/circuit/public";
-import type {Schema} from "shared/api/circuit/schema";
+
+import type {GUID, Schema} from "shared/api/circuit/schema";
 
 import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
 import type {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode} from "./DigitalComponent";
@@ -68,16 +69,33 @@ export type APIToDigital<T> = {
 export type ReadonlyDigitalObjContainer = APIToDigital<ReadonlyObjContainer>;
 export type DigitalObjContainer = APIToDigital<ObjContainer>;
 
+export interface ReadonlySimState {
+    // PortID -> Signal
+    readonly signals: Readonly<Record<GUID, DigitalSchema.Signal>>;
+    // CompID -> Signal[]
+    readonly states: Readonly<Record<GUID, DigitalSchema.Signal[]>>;
+    // ICInstance(Comp)ID -> DigitalSimState
+    readonly icStates: Readonly<Record<GUID, ReadonlySimState>>;
+}
+export interface ReadonlyDigitalSim {
+    readonly state: ReadonlySimState;
+}
+
 export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit> & {
     readonly propagationTime: number;
-
-    // TODO[model_refactor_api]: Make an API-specific wrapper for this
-    readonly simState: DigitalSchema.DigitalSimState;
+    readonly sim: ReadonlyDigitalSim;
 }
+
+export interface DigitalSim extends ReadonlyDigitalSim {
+    sync(comps: GUID[]): void;
+}
+
 export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
     propagationTime: number;
 
     step(): void;
+
+    readonly sim: DigitalSim;
 };
 
 export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & {

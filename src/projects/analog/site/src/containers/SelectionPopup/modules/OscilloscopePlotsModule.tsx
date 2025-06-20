@@ -9,7 +9,7 @@ export const OscilloscopePlotsModule = ({ info }: Props) => {
 
     return null;
 
-    // @TODO
+    // TODO[model_refactor_api]
     // const [props, os, forceUpdate] = useSelectionProps(
     //     info,
     //     (s): s is Oscilloscope => (s instanceof Oscilloscope),
