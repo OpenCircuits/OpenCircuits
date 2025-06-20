@@ -116,7 +116,14 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
             throw new Error(`WireImpl: Cannot delete wire with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
 
         this.state.internal.beginTransaction();
-        this.state.internal.deleteWire(this.id).unwrap();
+        const path = this.path;
+        path.filter((o): o is T["Wire"] => o.baseKind === "Wire")
+            .forEach((w) => this.state.internal.deleteWire(w.id).unwrap());
+        path.filter((o): o is T["Node"] => o.baseKind === "Component")
+            .forEach((n) => {
+                this.state.internal.removePortsFor(n.id).unwrap();
+                this.state.internal.deleteComponent(n.id).unwrap();
+            });
         this.state.internal.commitTransaction();
     }
 }
