@@ -1,7 +1,5 @@
 // This file has "bridge" functions from the internal rep (DigitalCircuit.Schema)
 // to the wire rep (DigitalCircuit.proto) and vice versa.
-import * as uuid from "uuid";
-
 import {Schema} from "shared/api/circuit/schema";
 
 import {DigitalSchema} from "digital/api/circuit/schema";
@@ -138,10 +136,6 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
 
 
 export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit): DigitalCircuit {
-    function ConvertId(id: Uint8Array): Schema.GUID {
-        return uuid.stringify(id);
-    }
-
     function ConvertSignal(signal: DigitalProtoSchema.DigitalSimState_Signal): Signal {
         return (signal === DigitalProtoSchema.DigitalSimState_Signal.On
             ? Signal.On
@@ -182,7 +176,7 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
     if (!proto.simState)
         throw new Error(`DigitalProtoToSchema: Failed to find simState! ${proto}`);
 
-    const [circuit, state] = CreateCircuit(ConvertId(proto.circuit!.metadata!.id));
+    const [circuit, state] = CreateCircuit(proto.circuit!.metadata!.id);
 
     ProtoToCircuit(proto.circuit, circuit, (id) => CreateCircuit(id)[0], DigitalKindMaps[1]);
 
@@ -190,7 +184,7 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
 
     // Load simulation state
     for (const [ic, initialSimState] of proto.circuit.ics.zip(proto.icInitialSimStates)) {
-        const id = ConvertId(ic.metadata!.metadata!.id);
+        const id = ic.metadata!.metadata!.id;
         state.sim.loadICState(id, ConvertSimState(circuit, initialSimState, id));
     }
 

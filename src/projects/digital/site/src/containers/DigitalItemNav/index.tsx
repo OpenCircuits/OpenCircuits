@@ -56,6 +56,8 @@ export const DigitalItemNav = () => {
         // Update ICs when circuit changes so importing a circuit also shows the ICs in the item nav
         updateICs();
         return circuit.subscribe((ev) => {
+            if (ev.type !== "contents")
+                return;
             if (ev.diff.addedICs.size === 0 && ev.diff.removedICs.size === 0)
                 return;
             updateICs();

@@ -1,5 +1,3 @@
-import {Schema} from "shared/api/circuit/schema";
-
 import {OVERWRITE_CIRCUIT_MESSAGE}            from "shared/site/utils/Constants";
 import {useAPIMethods}                        from "shared/site/utils/ApiMethods";
 import {CircuitHelpers}                       from "shared/site/utils/CircuitHelpers";
@@ -9,6 +7,8 @@ import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useS
 
 import {ToggleSideNav} from "shared/site/state/SideNav";
 
+import {BackendCircuitMetadata} from "shared/site/api/Circuits";
+
 import {CircuitPreview} from "shared/site/components/CircuitPreview";
 import {Overlay}        from "shared/site/components/Overlay";
 
@@ -17,8 +17,7 @@ import {SignInOutButtons} from "shared/site/containers/Header/Right/SignInOutBut
 import "./index.scss";
 
 
-// TODO[model_refactor_api] - remove dependency on Schema
-function LoadExampleCircuit(data: Schema.CircuitMetadata): Promise<string> {
+function LoadExampleCircuit(data: BackendCircuitMetadata): Promise<string> {
     return Request({
         method:  "GET",
         url:     `/examples/${data.id}`,
@@ -27,7 +26,7 @@ function LoadExampleCircuit(data: Schema.CircuitMetadata): Promise<string> {
 }
 
 type Props = {
-    exampleCircuits: Schema.CircuitMetadata[];
+    exampleCircuits: BackendCircuitMetadata[];
 }
 export const SideNav = ({ exampleCircuits }: Props) => {
     const designer = useCurDesigner();
@@ -52,7 +51,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
         setCurDesigner(CircuitHelpers.CreateAndInitializeDesigner());
         dispatch(ToggleSideNav());
     }
-    const onUserCircuitClick = async (metadata: Schema.CircuitMetadata) => {
+    const onUserCircuitClick = async (metadata: BackendCircuitMetadata) => {
         if (loading) // Don't load another circuit if already loading
             return;
         if (!auth)
@@ -63,7 +62,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
         await LoadCircuitRemote(metadata.id);
         dispatch(ToggleSideNav());
     }
-    const onUserCircuitDeleteClick = async (metadata: Schema.CircuitMetadata) => {
+    const onUserCircuitDeleteClick = async (metadata: BackendCircuitMetadata) => {
         if (loading) // Don't let user delete circuit while loading
             return;
         const shouldDelete = window.confirm(
@@ -72,7 +71,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
             return;
         DeleteCircuitRemote(metadata.id);
     }
-    const onExampleCircuitClick = async (metadata: Schema.CircuitMetadata) => {
+    const onExampleCircuitClick = async (metadata: BackendCircuitMetadata) => {
         if (loading) // Don't load another circuit if already loading
             return;
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);

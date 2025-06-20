@@ -57,7 +57,6 @@ function ConvertIC(ic: IntegratedCircuit): Schema.IntegratedCircuit {
             id:      ic.id,
             name:    ic.name,
             desc:    ic.desc,
-            thumb:   ic.thumbnail,
             version: "/",
 
             displayWidth:  ic.display.size.x,
@@ -130,7 +129,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         state.internal.subscribe((ev) => {
             if (ev.type !== "CircuitOp")
                 return;
-            this.publish({ type: "change", diff: ev.diff });
+            this.publish({ type: "contents", diff: ev.diff });
         });
     }
 
@@ -161,21 +160,17 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
     public set name(val: string) {
         this.internal.setMetadata({ name: val });
+        this.publish({ type: "metadata", change: "name" })
     }
     public get name(): string {
         return this.internal.getMetadata().name;
     }
     public set desc(val: string) {
         this.internal.setMetadata({ desc: val });
+        this.publish({ type: "metadata", change: "desc" })
     }
     public get desc(): string {
         return this.internal.getMetadata().desc;
-    }
-    public set thumbnail(val: string) {
-        this.internal.setMetadata({ thumb: val });
-    }
-    public get thumbnail(): string {
-        return this.internal.getMetadata().thumb;
     }
 
     // Queries
@@ -338,7 +333,6 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             // TODO[model_refactor_api](leon): do we need to allow this? maybe just use the info.circuit.id?
             id:      id,  // Make a new ID
             name:    info.circuit.name,
-            thumb:   info.circuit.thumbnail,
             desc:    info.circuit.desc,
             version: "digital/v0",
 
@@ -397,10 +391,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         // TODO[] - make this undoable?
         if (loadMetadata && isCircuit(circuit)) {
             this.internal.setMetadata({
-                id:    circuit.id,
-                name:  circuit.name,
-                desc:  circuit.desc,
-                thumb: circuit.thumbnail,
+                id:   circuit.id,
+                name: circuit.name,
+                desc: circuit.desc,
             });
             this.internal.setCamera({ x: circuit.camera.cx, y: circuit.camera.cy, zoom: circuit.camera.zoom });
         }
@@ -529,9 +522,6 @@ export class IntegratedCircuitImpl<T extends CircuitTypes> implements Integrated
 
     public get desc(): string {
         return this.state.internal.getICInfo(this.id).unwrap().metadata.desc;
-    }
-    public get thumbnail(): string {
-        return this.state.internal.getICInfo(this.id).unwrap().metadata.thumb;
     }
 
     public get all(): T["ObjContainerT"] {

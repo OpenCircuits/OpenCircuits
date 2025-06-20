@@ -63,10 +63,6 @@ type ForwardConversionInfo = {
     portGroups: Map<string, Map<string, number>>;
 }
 export function CircuitToProto(circuit: Circuit, conversionInfo: ForwardConversionInfo): ProtoSchema.Circuit {
-    function ConvertId(id: GUID): Uint8Array {
-        return uuid.parse(id) as Uint8Array;
-    }
-
     function ConvertProps(props: Record<string, number | string | boolean>): Record<string, ProtoSchema.Prop> {
         return MapObj(props, ([_key, prop]) =>
                     (typeof prop === "boolean"
@@ -147,10 +143,9 @@ export function CircuitToProto(circuit: Circuit, conversionInfo: ForwardConversi
 
     function ConvertMetadata(circuit: Circuit | IntegratedCircuit): ProtoSchema.CircuitMetadata {
         return {
-            id:      ConvertId(circuit.id),
+            id:      circuit.id,
             name:    circuit.name,
             desc:    circuit.desc,
-            thumb:   circuit.thumbnail,
             version: "1.0/0",  // TODO: Update this to use the actual version
         };
     }
@@ -243,11 +238,11 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
     }
 
     function ConvertICIdx(idx: number | undefined, ics: ProtoSchema.IntegratedCircuit[]) {
-        return (idx !== undefined ? ConvertId(ics[idx].metadata!.metadata!.id) : undefined);
+        return (idx !== undefined ? ics[idx].metadata!.metadata!.id : undefined);
     }
 
     function GetPortGroups(c: Component, ics: ProtoSchema.IntegratedCircuit[]): Map<number, string> {
-        const ic = ics.find((ic) => (ConvertId(ic.metadata!.metadata!.id) === c.kind));
+        const ic = ics.find((ic) => (ic.metadata!.metadata!.id === c.kind));
         if (!ic)
             return conversionInfo.portGroups.get(c.kind)!;
         return InvertMap(new Map(Object.entries(ic.metadata!.portGroups!)));
@@ -309,7 +304,7 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
     }
 
     function SetIC(circuit: Circuit, ic: ProtoSchema.IntegratedCircuit, allICs: Map<GUID, ProtoSchema.IntegratedCircuit>, ics: ProtoSchema.IntegratedCircuit[]) {
-        const id = ConvertId(ic.metadata!.metadata!.id);
+        const id = ic.metadata!.metadata!.id;
 
         // If IC already added, skip
         if (circuit.getIC(id))
@@ -331,7 +326,6 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
         // Load metadata
         icCircuit.name = ic.metadata!.metadata!.name;
         icCircuit.desc = ic.metadata!.metadata!.desc;
-        icCircuit.thumbnail = ic.metadata!.metadata!.thumb;
 
         // Load objects
         const compIdMap = SetObjects(icCircuit, ic, ics);
@@ -371,7 +365,6 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
     // Load metadata
     circuit.name = proto.metadata.name;
     circuit.desc = proto.metadata.desc;
-    circuit.thumbnail = proto.metadata.thumb;
 
     circuit.camera.cx = proto.camera?.x ?? 0;
     circuit.camera.cy = proto.camera?.y ?? 0;
@@ -382,7 +375,7 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
     // I.e., if we have IC 1, and IC 2 that contains an instance of IC 1,
     // we need to load IC 1 first.
     const icMap = new Map(
-        proto.ics.map((ic) => [ConvertId(ic.metadata!.metadata!.id), ic]));
+        proto.ics.map((ic) => [ic.metadata!.metadata!.id, ic]));
     for (const ic of proto.ics)
         SetIC(circuit, ic, icMap, proto.ics);
 

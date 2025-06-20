@@ -76,10 +76,9 @@ export interface Camera {
 }
 
 export interface CircuitMetadata {
-  id: Uint8Array;
+  id: string;
   name: string;
   desc: string;
-  thumb: string;
   version: string;
 }
 
@@ -1140,13 +1139,13 @@ export const Camera: MessageFns<Camera> = {
 };
 
 function createBaseCircuitMetadata(): CircuitMetadata {
-  return { id: new Uint8Array(0), name: "", desc: "", thumb: "", version: "" };
+  return { id: "", name: "", desc: "", version: "" };
 }
 
 export const CircuitMetadata: MessageFns<CircuitMetadata> = {
   encode(message: CircuitMetadata, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.id.length !== 0) {
-      writer.uint32(10).bytes(message.id);
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
@@ -1154,11 +1153,8 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
     if (message.desc !== "") {
       writer.uint32(26).string(message.desc);
     }
-    if (message.thumb !== "") {
-      writer.uint32(34).string(message.thumb);
-    }
     if (message.version !== "") {
-      writer.uint32(42).string(message.version);
+      writer.uint32(34).string(message.version);
     }
     return writer;
   },
@@ -1175,7 +1171,7 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
             break;
           }
 
-          message.id = reader.bytes();
+          message.id = reader.string();
           continue;
         }
         case 2: {
@@ -1199,14 +1195,6 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
             break;
           }
 
-          message.thumb = reader.string();
-          continue;
-        }
-        case 5: {
-          if (tag !== 42) {
-            break;
-          }
-
           message.version = reader.string();
           continue;
         }
@@ -1221,27 +1209,23 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
 
   fromJSON(object: any): CircuitMetadata {
     return {
-      id: isSet(object.id) ? bytesFromBase64(object.id) : new Uint8Array(0),
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       desc: isSet(object.desc) ? globalThis.String(object.desc) : "",
-      thumb: isSet(object.thumb) ? globalThis.String(object.thumb) : "",
       version: isSet(object.version) ? globalThis.String(object.version) : "",
     };
   },
 
   toJSON(message: CircuitMetadata): unknown {
     const obj: any = {};
-    if (message.id.length !== 0) {
-      obj.id = base64FromBytes(message.id);
+    if (message.id !== "") {
+      obj.id = message.id;
     }
     if (message.name !== "") {
       obj.name = message.name;
     }
     if (message.desc !== "") {
       obj.desc = message.desc;
-    }
-    if (message.thumb !== "") {
-      obj.thumb = message.thumb;
     }
     if (message.version !== "") {
       obj.version = message.version;
@@ -1254,10 +1238,9 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
   },
   fromPartial<I extends Exact<DeepPartial<CircuitMetadata>, I>>(object: I): CircuitMetadata {
     const message = createBaseCircuitMetadata();
-    message.id = object.id ?? new Uint8Array(0);
+    message.id = object.id ?? "";
     message.name = object.name ?? "";
     message.desc = object.desc ?? "";
-    message.thumb = object.thumb ?? "";
     message.version = object.version ?? "";
     return message;
   },
@@ -1892,31 +1875,6 @@ export const Circuit: MessageFns<Circuit> = {
     return message;
   },
 };
-
-function bytesFromBase64(b64: string): Uint8Array {
-  if ((globalThis as any).Buffer) {
-    return Uint8Array.from(globalThis.Buffer.from(b64, "base64"));
-  } else {
-    const bin = globalThis.atob(b64);
-    const arr = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; ++i) {
-      arr[i] = bin.charCodeAt(i);
-    }
-    return arr;
-  }
-}
-
-function base64FromBytes(arr: Uint8Array): string {
-  if ((globalThis as any).Buffer) {
-    return globalThis.Buffer.from(arr).toString("base64");
-  } else {
-    const bin: string[] = [];
-    arr.forEach((byte) => {
-      bin.push(globalThis.String.fromCharCode(byte));
-    });
-    return globalThis.btoa(bin.join(""));
-  }
-}
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
