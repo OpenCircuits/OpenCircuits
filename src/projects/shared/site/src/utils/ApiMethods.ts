@@ -2,7 +2,7 @@ import {Circuit} from "shared/api/circuit/public";
 
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {DeleteUserCircuit, LoadUserCircuit} from "shared/site/api/Circuits";
+import {BackendCircuitMetadata, DeleteUserCircuit, LoadCircuitResponse, LoadUserCircuit} from "shared/site/api/Circuits";
 
 import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/site/state/CircuitInfo";
 
@@ -11,13 +11,14 @@ import {LoadUserCircuits} from "shared/site/state/thunks/User";
 import {GenerateThumbnail} from "./GenerateThumbnail";
 
 import {CircuitHelpers} from "./CircuitHelpers";
+import {SaveCircuit} from "../state/thunks/SaveCircuit";
 
 
 export const useAPIMethods = (mainCircuit: Circuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
     const dispatch = useSharedDispatch();
 
-    const LoadCircuit = async (dataPromise: Promise<string | ArrayBuffer | undefined>) => {
+    const LoadCircuit = async (dataPromise: Promise<string | ArrayBuffer | LoadCircuitResponse | undefined>) => {
         dispatch(_SetCircuitLoading(true));
 
         const data = await dataPromise;
@@ -27,11 +28,32 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         }
 
         try {
-            const newDesigner = CircuitHelpers.LoadNewCircuit(data);
+            const [newDesigner, id] = await (async () => {
+                // If loaded from backend, we need to override the metadata with the backend-metadata.
+                if (typeof data !== "string" && "metadata" in data && "contents" in data) {
+                    const dataURLtoArrayBuffer = (dataurl: string) => {
+                        // b64 url is of form:
+                        // data:application/octet-stream;base64,DATA
+                        // Split by comma to get DATA and decode
+                        const bstr = window.atob(dataurl.split(",")[1]); // Decode Base64 data
+
+                        // eslint-disable-next-line unicorn/prefer-code-point
+                        return Uint8Array.from(bstr, (c) => c.charCodeAt(0)); // Return the Blob object
+                    }
+                    const designer = CircuitHelpers.LoadNewCircuit(dataURLtoArrayBuffer(data.contents).buffer);
+                    // Specifically don't set the ID since the circuit ID needs to be distinct from
+                    // the redux-state-ID to help avoid issues with local and remote saving.
+                    // designer.circuit.id = data.metadata.id;
+                    designer.circuit.name = data.metadata.name;
+                    designer.circuit.desc = data.metadata.desc;
+                    return [designer, data.metadata.id] as const;
+                }
+                return [CircuitHelpers.LoadNewCircuit(data), undefined];
+            })();
 
             // Success! So set name, id, and saved
             dispatch(SetCircuitName(newDesigner.circuit.name));
-            dispatch(SetCircuitId(newDesigner.circuit.id));
+            dispatch(SetCircuitId(id ?? ""));
             dispatch(SetCircuitSaved(true));
             dispatch(_SetCircuitLoading(false));
         } catch (e) {
@@ -61,13 +83,33 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         if (saving || loading)
             return;
 
-        // Update thumbnail
-        mainCircuit.thumbnail = GenerateThumbnail(mainCircuit);
+        const metadata: BackendCircuitMetadata = {
+            // Specifically use the redux-state-ID.
+            // This ID will be distinct from mainCircuit.id to help avoid issues with local and remote saving.
+            id:        curID,
+            name:      mainCircuit.name,
+            desc:      mainCircuit.desc,
+            thumbnail: GenerateThumbnail(mainCircuit),
+            // TODO[model_refactor_api] -- version!!
+            version:   "",
+        };
+
+        const rawContents = CircuitHelpers.SerializeCircuit(mainCircuit);
+        const contents = await new Promise<string>((resolve, reject) => {
+            // TODO: gzip?
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const b64Contents = reader.result as string;
+                resolve(b64Contents);
+            }
+            // eslint-disable-next-line unicorn/prefer-add-event-listener
+            reader.onabort = reader.onerror = reject;
+            reader.readAsDataURL(rawContents);
+        });
 
         // Save the circuit and reload the user circuits
         return (
-            // TODO[model_refactor_api]: Replacement for serialize
-            // await dispatch(SaveCircuit(mainCircuit.serialize())) &&
+            await dispatch(SaveCircuit(metadata, contents)) &&
             await dispatch(LoadUserCircuits())
         );
     }

@@ -130,7 +130,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         state.internal.subscribe((ev) => {
             if (ev.type !== "CircuitOp")
                 return;
-            this.publish({ type: "change", diff: ev.diff });
+            this.publish({ type: "contents", diff: ev.diff });
         });
     }
 
@@ -156,17 +156,23 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     }
 
     // Metadata
+    public set id(id: GUID) {
+        this.internal.setMetadata({ id });
+        this.publish({ type: "metadata", change: "id" })
+    }
     public get id(): GUID {
         return this.internal.getMetadata().id;
     }
     public set name(val: string) {
         this.internal.setMetadata({ name: val });
+        this.publish({ type: "metadata", change: "name" })
     }
     public get name(): string {
         return this.internal.getMetadata().name;
     }
     public set desc(val: string) {
         this.internal.setMetadata({ desc: val });
+        this.publish({ type: "metadata", change: "desc" })
     }
     public get desc(): string {
         return this.internal.getMetadata().desc;

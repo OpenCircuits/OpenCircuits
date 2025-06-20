@@ -17,9 +17,12 @@ import {Camera, ReadonlyCamera} from "./Camera";
 
 
 // TODO[model_refactor](leon) - make this more user friendly
-export interface CircuitEvent {
-    type: "change";
+export type CircuitEvent = {
+    type: "contents";
     diff: FastCircuitDiff;
+} | {
+    type: "metadata";
+    change: "id" | "name" | "desc";
 }
 export interface CircuitHistoryEvent {
     type: "change";
@@ -81,6 +84,7 @@ export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircu
     cancelTransaction(): void;
 
     // Metadata
+    id: string;
     name: string;
     desc: string;
     thumbnail: string;

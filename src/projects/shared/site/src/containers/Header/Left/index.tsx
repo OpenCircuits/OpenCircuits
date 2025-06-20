@@ -1,3 +1,5 @@
+import {useEffect} from "react";
+
 import {useAPIMethods}                        from "shared/site/utils/ApiMethods";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
@@ -12,7 +14,7 @@ import "./index.scss";
 
 
 export const HeaderLeft = () => {
-    const designer = useCurDesigner();
+    const designer = useCurDesigner(), circuit = designer.circuit;
     const { id, name, isSaved, isLocked, isLoggedIn, isHistoryBoxOpen, saving, error } = useSharedSelector(
         (state) => ({
             ...state.circuit,
@@ -21,7 +23,14 @@ export const HeaderLeft = () => {
         })
     );
     const dispatch = useSharedDispatch();
-    const { SaveCircuitRemote, DuplicateCircuitRemote } = useAPIMethods(designer.circuit);
+    const { SaveCircuitRemote, DuplicateCircuitRemote } = useAPIMethods(circuit);
+
+    // Sync circuit's name with the redux state name
+    useEffect(() => circuit.subscribe((ev) => {
+        if (ev.type !== "metadata" || ev.change !== "name")
+            return;
+        dispatch(SetCircuitName(circuit.name));
+    }));
 
     return (
         <div className="header__left">
@@ -48,7 +57,7 @@ export const HeaderLeft = () => {
 
             <InputField title="Circuit Name" type="text" value={name}
                         placeholder="Untitled Circuit*" alt="Name of project"
-                        onChange={(s) => dispatch(SetCircuitName(s.target.value))}
+                        onChange={(s) => circuit.name = s.target.value}
                         onEnter={() => SaveCircuitRemote()} />
 
             <button type="button" title="Save the circuit remotely" disabled={saving}

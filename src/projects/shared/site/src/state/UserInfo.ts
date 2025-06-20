@@ -1,19 +1,17 @@
-import {Schema} from "shared/api/circuit/schema";
-
 import {AUTO_SAVE_COOKIE_KEY} from "shared/site/utils/Constants";
 
 import {GetCookie, SetCookie} from "shared/site/utils/Cookies";
 import {CreateState}          from "shared/site/utils/CreateState";
 
-import {AuthState} from "shared/site/api/auth/AuthState";
+import {BackendCircuitMetadata} from "shared/site/api/Circuits";
+import {AuthState}              from "shared/site/api/auth/AuthState";
 
 
 const [initialState, actions, reducer] = CreateState()(
     {
         auth:       undefined as AuthState | undefined,
         isLoggedIn: false,
-        // TODO[model_refactor_api] - remove dependency on Schema
-        circuits:   [] as Schema.CircuitMetadata[],
+        circuits:   [] as BackendCircuitMetadata[],
         loading:    false,
         error:      "",
         autoSave:   (JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false")) as boolean,
@@ -23,7 +21,7 @@ const [initialState, actions, reducer] = CreateState()(
         Logout:              ()                  => ({ type: "LOGOUT_ACTION_ID"                }) as const,
         _Login:              (auth: AuthState)   => ({ type: "LOGIN_ACTION_ID",       auth     }) as const,
         _LoadCircuitsStart:  ()                  => ({ type: "LOAD_CIRCUITS_START_ID"          }) as const,
-        _LoadCircuitsFinish: (circuits: Schema.CircuitMetadata[], err?: string) => (
+        _LoadCircuitsFinish: (circuits: BackendCircuitMetadata[], err?: string) => (
             { type: "LOAD_CIRCUITS_FINISH_ID", circuits, err }
         ) as const,
     },

@@ -1,5 +1,3 @@
-import {Schema} from "shared/api/circuit/schema";
-
 import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
 import {ContextMenu}        from "shared/site/containers/ContextMenu";
@@ -40,16 +38,16 @@ import {ExprToCircuitPopup} from "digital/site/containers/ExprToCircuitPopup";
 import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
 import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 import {ToolHandler} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
+import {BackendCircuitMetadata} from "shared/site/api/Circuits";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) => ({
-    id:      example.file,
-    name:    example.name,
-    desc:    "Example Circuit",
-    thumb:   example.thumbnail,
-    version: "/",
-    // TODO[model_refactor_api] - remove dependency on Schema
-} satisfies Schema.CircuitMetadata));
+    id:        example.file,
+    name:      example.name,
+    desc:      "Example Circuit",
+    thumbnail: example.thumbnail,
+    version:   "/",
+} satisfies BackendCircuitMetadata));
 
 export const App = () => {
     const designer = useCurDigitalDesigner();
