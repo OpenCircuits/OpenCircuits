@@ -290,13 +290,16 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     public deleteObjs(objs: Array<T["Component"] | T["Wire"]>): void {
         this.beginTransaction();
 
-        const wireIds = new Set(objs
-            .filter((o) => o.baseKind === "Wire")
-            .map((w) => w.id));
+        const wirePaths = objs.filter((o): o is T["Wire"] | T["Node"] => o.baseKind === "Wire" || o.isNode()).flatMap((o) => o.path);
+        const wireIds = new Set(wirePaths
+            .filter((o): o is T["Wire"] => o.baseKind === "Wire")
+            .map((o) => o.id));
+        const nodeIds = new Set(wirePaths
+            .filter((o): o is T["Node"] => o.baseKind === "Component")
+            .map((o) => o.id));
         const compIds = new Set(objs
             .filter((o) => o.baseKind === "Component")
-            .map((c) => c.id));
-
+            .map((c) => c.id)).union(nodeIds);
         // Delete wires first
         for (const wireId of wireIds)
             this.internal.deleteWire(wireId).unwrap();
