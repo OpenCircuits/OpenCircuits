@@ -232,4 +232,68 @@ describe("Wire", () => {
             expect(n1.isNode()).toBeTruthy();
         });
     });
+
+    describe("Delete full path", () => {
+        test("Delete full path with 1 node", () => {
+            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
+            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            sw1.delete();
+
+            expect(sw1.exists()).toBeFalsy();
+            expect(n1.exists()).toBeFalsy();
+            expect(sw2.exists()).toBeFalsy();
+            expect(circuit.getComponents()).toHaveLength(2);
+            expect(circuit.getWires()).toHaveLength(0);
+
+            circuit.undo();
+            expect(sw1.exists()).toBeTruthy();
+            expect(n1.exists()).toBeTruthy();
+            expect(sw2.exists()).toBeTruthy();
+            expect(circuit.getComponents()).toHaveLength(3);
+            expect(circuit.getWires()).toHaveLength(2);
+
+            circuit.redo();
+            expect(sw1.exists()).toBeFalsy();
+            expect(n1.exists()).toBeFalsy();
+            expect(sw2.exists()).toBeFalsy();
+            expect(circuit.getComponents()).toHaveLength(2);
+            expect(circuit.getWires()).toHaveLength(0);
+        });
+        test("Delete full path with 2 nodes", () => {
+            const [circuit, _, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
+            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            const {node: n2, wire1: sw21, wire2: sw22} = sw2.split();
+            sw21.delete();
+
+            expect(sw1.exists()).toBeFalsy();
+            expect(n1.exists()).toBeFalsy();
+            expect(n2.exists()).toBeFalsy();
+            expect(sw21.exists()).toBeFalsy();
+            expect(sw22.exists()).toBeFalsy();
+            expect(circuit.getComponents()).toHaveLength(2);
+            expect(circuit.getWires()).toHaveLength(0);
+
+            circuit.undo();
+            expect(sw1.exists()).toBeTruthy();
+            expect(n1.exists()).toBeTruthy();
+            expect(n2.exists()).toBeTruthy();
+            expect(sw21.exists()).toBeTruthy();
+            expect(sw22.exists()).toBeTruthy();
+            expect(circuit.getComponents()).toHaveLength(4);
+            expect(circuit.getWires()).toHaveLength(3);
+
+            circuit.redo();
+            expect(sw1.exists()).toBeFalsy();
+            expect(n1.exists()).toBeFalsy();
+            expect(n2.exists()).toBeFalsy();
+            expect(sw21.exists()).toBeFalsy();
+            expect(sw22.exists()).toBeFalsy();
+            expect(circuit.getComponents()).toHaveLength(2);
+            expect(circuit.getWires()).toHaveLength(0);
+        });
+    });
 });
