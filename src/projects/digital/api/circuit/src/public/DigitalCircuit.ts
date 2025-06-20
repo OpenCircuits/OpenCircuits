@@ -72,8 +72,8 @@ export type DigitalObjContainer = APIToDigital<ObjContainer>;
 export interface ReadonlySimState {
     // PortID -> Signal
     readonly signals: Readonly<Record<GUID, DigitalSchema.Signal>>;
-    // CompID -> Signal[]
-    readonly states: Readonly<Record<GUID, DigitalSchema.Signal[]>>;
+    // CompID -> number[]
+    readonly states: Readonly<Record<GUID, number[]>>;
     // ICInstance(Comp)ID -> DigitalSimState
     readonly icStates: Readonly<Record<GUID, ReadonlySimState>>;
 }

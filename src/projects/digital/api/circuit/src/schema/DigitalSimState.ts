@@ -3,7 +3,13 @@ import {Signal} from "./Signal";
 
 
 export interface DigitalSimState {
-    signals: Record<GUID, Signal>;  // PortID -> Signal
-    states: Record<GUID, Signal[]>; // CompID -> Signal[]
-    icStates: Record<GUID, DigitalSimState>; // ICInstance(Comp)ID -> DigitalSimState
+    // PortID -> Signal
+    signals: Record<GUID, Signal>;
+
+    // CompID -> number[]
+    // States are arbitrary numbers (usually signals).
+    states: Record<GUID, number[]>;
+
+    // ICInstance(Comp)ID -> DigitalSimState
+    icStates: Record<GUID, DigitalSimState>;
 }

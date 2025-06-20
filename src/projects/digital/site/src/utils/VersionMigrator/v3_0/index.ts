@@ -38,7 +38,7 @@ function ConvertCompProps(
             break;
         case "Clock":
             if (comp["paused"])
-                props["paused"] = { boolVal: comp["paused"] as boolean };
+                props["pausedTick"] = { boolVal: comp["paused"] as boolean };
             if (comp["frequency"])
                 props["delay"]  = { intVal: comp["frequency"] as number };
             break;
@@ -397,8 +397,8 @@ function ConvertCompState(comp: Entry<V3_0Schema.DigitalComponent>): boolean[] {
     }
 }
 
-function ConvertSignal(signal: boolean): DigitalProtoSchema.DigitalSimState_Signal {
-    return (signal ? DigitalProtoSchema.DigitalSimState_Signal.On : DigitalProtoSchema.DigitalSimState_Signal.Off);
+function ConvertSignal(signal: boolean): number {
+    return (signal ? 1 : 0);
 }
 
 function ConvertSimState(

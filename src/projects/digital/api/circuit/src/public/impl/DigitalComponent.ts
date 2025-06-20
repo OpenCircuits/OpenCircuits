@@ -1,8 +1,6 @@
 import {ComponentImpl} from "shared/api/circuit/public/impl/Component";
 import {GUID}          from "shared/api/circuit/public";
 
-import {Signal} from "digital/api/circuit/schema/Signal";
-
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort}      from "../DigitalPort";
 
@@ -25,7 +23,7 @@ export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements
         return this.allPorts.filter((p) => (p.isOutputPort));
     }
 
-    public setSimState(state: Signal[]): void {
+    public setSimState(state: number[]): void {
         if (this.icId)
             throw new Error(`DigitalComponentImpl: Cannot set sim state for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.sim.setState(this.id, state);
