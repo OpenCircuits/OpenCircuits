@@ -167,7 +167,7 @@ export class DefaultRenderOptions implements RenderOptions {
             0.2
         ));
 
-        // @TODO move to function for getting color based on being selection/on/off
+        // TODO[model_refactor_api] move to function for getting color based on being selection/on/off
         // Use getColor so that it can overwritten for use in digital isOn/isOff coloring
         return {
             stroke: {

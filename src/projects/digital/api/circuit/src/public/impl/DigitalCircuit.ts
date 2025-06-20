@@ -1,6 +1,6 @@
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
-import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSim, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {GUID, ICInfo} from "shared/api/circuit/public";
@@ -35,13 +35,21 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     public override createIC(info: APIToDigital<ICInfo>, id?: string): DigitalIntegratedCircuit {
         const ic = super.createIC(info, id);
 
-        this.state.sim.loadICState(ic.id, info.circuit.simState);
+        this.state.sim.loadICState(ic.id, info.circuit.sim.state);
 
         return ic;
     }
 
-    public get simState(): DigitalSchema.DigitalSimState {
-        return this.state.sim.getSimState().toSchema();
+    public get sim(): DigitalSim {
+        return {
+            state: this.state.sim.getSimState().toSchema(),
+
+            sync: (comps) => {
+                comps
+                    .filter((c) => this.state.internal.hasComp(c))
+                    .forEach((id) => this.state.sim.resetQueueForComp(id));
+            },
+        };
     }
 
     // TODO[model_refactor_api](leon) - revisit this
@@ -67,7 +75,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
 
         // TODO[model_refactor_api] - load circuit state from set of objects too (and unit test this)
         if (isCircuit(circuit))
-            this.state.sim.loadState(circuit.simState);
+            this.state.sim.loadState(circuit.sim.state);
 
         this.commitTransaction("Imported Circuit");
 

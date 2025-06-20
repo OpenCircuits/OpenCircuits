@@ -58,4 +58,57 @@ describe("Clock", () => {
         sim.step();  // This is where the original value of 10 would activate and flip it to on
         expect(sim.getState(clock.id)![0]).toBeOff();
     });
+    test("Sync clocks", () => {
+        const [_, { sim }, { Place }] = CreateTestCircuit(false);
+
+        const [c1] = Place("Clock");
+        c1.setProp("delay", 5);
+
+        // Step a few times
+        sim.step();
+        sim.step();
+
+        // Then add a second clock
+        const [c2] = Place("Clock");
+        c2.setProp("delay", 5);
+
+        sim.step();
+
+        expect(sim.getState(c1.id)![0]).toBeOff();
+        expect(sim.getState(c2.id)![0]).toBeOff();
+
+        sim.step();
+        sim.step();
+        sim.step();
+        expect(sim.getState(c1.id)![0]).toBeOn();
+        expect(sim.getState(c2.id)![0]).toBeOff();
+
+        // Now sync them
+        sim.resetQueueForComp(c1.id);
+        sim.resetQueueForComp(c2.id);
+
+        sim.step();
+        expect(sim.getState(c1.id)![0]).toBeOff();
+        expect(sim.getState(c2.id)![0]).toBeOff();
+
+        sim.step();
+        expect(sim.getState(c1.id)![0]).toBeOff();
+        expect(sim.getState(c2.id)![0]).toBeOff();
+
+        sim.step();
+        expect(sim.getState(c1.id)![0]).toBeOff();
+        expect(sim.getState(c2.id)![0]).toBeOff();
+
+        sim.step();
+        expect(sim.getState(c1.id)![0]).toBeOff();
+        expect(sim.getState(c2.id)![0]).toBeOff();
+
+        sim.step();
+        expect(sim.getState(c1.id)![0]).toBeOff();
+        expect(sim.getState(c2.id)![0]).toBeOff();
+
+        sim.step();
+        expect(sim.getState(c1.id)![0]).toBeOn();
+        expect(sim.getState(c2.id)![0]).toBeOn();
+    });
 });

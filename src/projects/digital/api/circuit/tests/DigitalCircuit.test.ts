@@ -11,7 +11,7 @@ describe("DigitalCircuit", () => {
             const [sw] = Place("Switch");
 
             sw.delete();
-            const simState = circuit.simState;
+            const simState = circuit.sim.state;
             expect(Object.keys(simState.signals)).toHaveLength(0);
             expect(Object.keys(simState.states)).toHaveLength(0);
             expect(Object.keys(simState.icStates)).toHaveLength(0);
@@ -22,7 +22,7 @@ describe("DigitalCircuit", () => {
             TurnOn(sw);
 
             sw.delete();
-            const simState = circuit.simState;
+            const simState = circuit.sim.state;
             expect(Object.keys(simState.signals)).toHaveLength(0);
             expect(Object.keys(simState.states)).toHaveLength(0);
             expect(Object.keys(simState.icStates)).toHaveLength(0);
@@ -47,7 +47,7 @@ describe("DigitalCircuit", () => {
             })();
             const [icInstance] = Place(ic.id);
             icInstance.delete();
-            const simState = circuit.simState;
+            const simState = circuit.sim.state;
             expect(Object.keys(simState.signals)).toHaveLength(0);
             expect(Object.keys(simState.states)).toHaveLength(0);
             expect(Object.keys(simState.icStates)).toHaveLength(0);

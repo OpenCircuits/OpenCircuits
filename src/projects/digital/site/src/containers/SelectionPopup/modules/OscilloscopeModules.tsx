@@ -5,7 +5,7 @@ type Props = {
     circuit: Circuit;
 }
 export const OscilloscopeModule = ({ circuit }: Props) =>
-    // @TODO
+    // TODO[model_refactor_api]
     // const { history, renderer } = info;
 
     // const [props, cs, forceUpdate] = useSelectionProps(
