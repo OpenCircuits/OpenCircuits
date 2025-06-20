@@ -146,7 +146,6 @@ export function CircuitToProto(circuit: Circuit, conversionInfo: ForwardConversi
             id:      circuit.id,
             name:    circuit.name,
             desc:    circuit.desc,
-            thumb:   circuit.thumbnail,
             version: "1.0/0",  // TODO: Update this to use the actual version
         };
     }
@@ -327,7 +326,6 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
         // Load metadata
         icCircuit.name = ic.metadata!.metadata!.name;
         icCircuit.desc = ic.metadata!.metadata!.desc;
-        icCircuit.thumbnail = ic.metadata!.metadata!.thumb;
 
         // Load objects
         const compIdMap = SetObjects(icCircuit, ic, ics);
@@ -367,7 +365,6 @@ export function ProtoToCircuit<C extends Circuit>(proto: ProtoSchema.Circuit, ma
     // Load metadata
     circuit.name = proto.metadata.name;
     circuit.desc = proto.metadata.desc;
-    circuit.thumbnail = proto.metadata.thumb;
 
     circuit.camera.cx = proto.camera?.x ?? 0;
     circuit.camera.cy = proto.camera?.y ?? 0;

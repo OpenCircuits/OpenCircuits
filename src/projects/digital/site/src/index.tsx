@@ -118,7 +118,6 @@ async function Init(): Promise<void> {
                 },
             };
             try {
-                console.log(process.env.OC_AUTH_TYPES);
                 if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
                     await Promise.all(process.env.OC_AUTH_TYPES!.split(" ").map((a) => AuthMethods[a]()));
             } catch (e) {
@@ -185,7 +184,6 @@ async function Init(): Promise<void> {
                 },
                 DeserializeCircuit(data) {
                     const schema = (() => {
-                        console.log(data);
                         if (typeof data === "string")
                             return VersionMigrator(data).schema;
 
@@ -195,8 +193,7 @@ async function Init(): Promise<void> {
                             if (!proto.circuit)
                                 throw new Error("Failed to parse!");
                             return proto;
-                        } catch(e) {
-                            console.log(e);
+                        } catch {
                             // If we failed to decode it, it could be an old version of the circuit format
                             // (plain text), so decode as plain text and run through VersionMigrator.
                             const text = new TextDecoder().decode(data);

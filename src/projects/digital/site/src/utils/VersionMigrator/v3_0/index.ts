@@ -364,7 +364,6 @@ function ConvertIC(
                 id:      refToICIDMap[ic.ref],
                 name:    ic.name,
                 desc:    "",
-                thumb:   "",
                 version: "digital/v0",
             },
 
@@ -505,7 +504,6 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
                     id:      uuid.v4(),
                     name:    circuit.metadata.name,
                     desc:    "",
-                    thumb:   "",
                     version: "digital/v0",
                 },
                 camera: {

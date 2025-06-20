@@ -22,7 +22,7 @@ export type CircuitEvent = {
     diff: FastCircuitDiff;
 } | {
     type: "metadata";
-    change: "id" | "name" | "desc";
+    change: "name" | "desc";
 }
 export interface CircuitHistoryEvent {
     type: "change";
@@ -42,7 +42,6 @@ interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
     readonly id: GUID;
     readonly name: string;
     readonly desc: string;
-    readonly thumbnail: string;
 
     readonly camera: ReadonlyCamera;
 
@@ -84,10 +83,8 @@ export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircu
     cancelTransaction(): void;
 
     // Metadata
-    id: string;
     name: string;
     desc: string;
-    thumbnail: string;
     readonly camera: Camera;
 
     // Object manipulation
@@ -136,7 +133,6 @@ export interface IntegratedCircuit {
 
     name: string;
     readonly desc: string;
-    readonly thumbnail: string;
 
     readonly display: IntegratedCircuitDisplay;
 

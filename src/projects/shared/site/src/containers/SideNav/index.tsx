@@ -1,5 +1,3 @@
-import {Schema} from "shared/api/circuit/schema";
-
 import {OVERWRITE_CIRCUIT_MESSAGE}            from "shared/site/utils/Constants";
 import {useAPIMethods}                        from "shared/site/utils/ApiMethods";
 import {CircuitHelpers}                       from "shared/site/utils/CircuitHelpers";

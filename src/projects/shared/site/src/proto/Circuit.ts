@@ -79,7 +79,6 @@ export interface CircuitMetadata {
   id: string;
   name: string;
   desc: string;
-  thumb: string;
   version: string;
 }
 
@@ -1140,7 +1139,7 @@ export const Camera: MessageFns<Camera> = {
 };
 
 function createBaseCircuitMetadata(): CircuitMetadata {
-  return { id: "", name: "", desc: "", thumb: "", version: "" };
+  return { id: "", name: "", desc: "", version: "" };
 }
 
 export const CircuitMetadata: MessageFns<CircuitMetadata> = {
@@ -1154,11 +1153,8 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
     if (message.desc !== "") {
       writer.uint32(26).string(message.desc);
     }
-    if (message.thumb !== "") {
-      writer.uint32(34).string(message.thumb);
-    }
     if (message.version !== "") {
-      writer.uint32(42).string(message.version);
+      writer.uint32(34).string(message.version);
     }
     return writer;
   },
@@ -1199,14 +1195,6 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
             break;
           }
 
-          message.thumb = reader.string();
-          continue;
-        }
-        case 5: {
-          if (tag !== 42) {
-            break;
-          }
-
           message.version = reader.string();
           continue;
         }
@@ -1224,7 +1212,6 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       desc: isSet(object.desc) ? globalThis.String(object.desc) : "",
-      thumb: isSet(object.thumb) ? globalThis.String(object.thumb) : "",
       version: isSet(object.version) ? globalThis.String(object.version) : "",
     };
   },
@@ -1240,9 +1227,6 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
     if (message.desc !== "") {
       obj.desc = message.desc;
     }
-    if (message.thumb !== "") {
-      obj.thumb = message.thumb;
-    }
     if (message.version !== "") {
       obj.version = message.version;
     }
@@ -1257,7 +1241,6 @@ export const CircuitMetadata: MessageFns<CircuitMetadata> = {
     message.id = object.id ?? "";
     message.name = object.name ?? "";
     message.desc = object.desc ?? "";
-    message.thumb = object.thumb ?? "";
     message.version = object.version ?? "";
     return message;
   },

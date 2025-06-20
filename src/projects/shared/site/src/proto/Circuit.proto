@@ -66,8 +66,7 @@ message CircuitMetadata {
     string id = 1;
     string name = 2;
     string desc = 3;
-    string thumb = 4;
-    string version = 5;
+    string version = 4;
 }
 
 message IntegratedCircuitMetadata {
