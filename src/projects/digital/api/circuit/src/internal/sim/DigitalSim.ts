@@ -481,8 +481,11 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
      * @param id    Component's id.
      * @param state Component's state.
      */
-    public setState(id: GUID, state: Signal[]): void {
-        this.rootState.states.set(id, state);
+    public setState(id: GUID, state: Signal[] | undefined): void {
+        if (state)
+            this.rootState.states.set(id, state);
+        else
+            this.rootState.states.delete(id);
 
         this.queueComp([id]);
 
@@ -566,6 +569,18 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             queueEmpty: this.queue.length === 0,
             updatedInputPorts, updatedOutputPorts, updatedCompStates,
         });
+    }
+
+    public resetQueueForComp(id: GUID) {
+        for (const set of this.queue) {
+            if (set?.has([id])) {
+                set.delete([id]);
+
+                this.rootState.ticks.set(id, { lastStateTick: undefined });
+            }
+        }
+
+        this.setState(id, undefined);
     }
 
     /**

@@ -11,7 +11,7 @@ type Props = {
 }
 // eslint-disable-next-line arrow-body-style
 export const ReplaceComponentDropdownModule = ({ circuit }: Props) => {
-    // @TODO
+    // TODO[model_refactor_api]
     // const { designer, history, renderer, selections } = info;
 
     // const [props, components] = useSelectionProps(

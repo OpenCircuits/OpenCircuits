@@ -130,7 +130,7 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
 
         propagationTime:    circuit.propagationTime,
         icInitialSimStates: circuit.getICs().map((ic) => ConvertSimState(circuit, ic.initialSimState, ic.id)),
-        simState:           ConvertSimState(circuit, circuit.simState),
+        simState:           ConvertSimState(circuit, circuit.sim.state),
     });
 }
 
