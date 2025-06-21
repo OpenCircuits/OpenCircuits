@@ -186,7 +186,8 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
             this.state.internal.cancelTransaction();
             throw new Error(`ComponentImpl.snip: Failed to snip node! Connections failed! Node: ${this.id}`);
         }
-        this.delete();
+        this.state.internal.removePortsFor(this.id).unwrap();
+        this.state.internal.deleteComponent(this.id).unwrap();
         this.state.internal.commitTransaction();
 
 

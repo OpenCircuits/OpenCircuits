@@ -22,7 +22,6 @@ export const PauseButtonModule = ({ circuit }: Props) => {
     const isPaused = (props.isPaused.every(Boolean));
 
     const onClick = () => {
-        console.log(isPaused)
         cs.forEach((c) =>
             c.setProp("paused", !isPaused));
     };

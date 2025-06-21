@@ -38,7 +38,7 @@ function ConvertCompProps(
             break;
         case "Clock":
             if (comp["paused"])
-                props["pausedTick"] = { boolVal: comp["paused"] as boolean };
+                props["paused"] = { boolVal: comp["paused"] as boolean };
             if (comp["frequency"])
                 props["delay"]  = { intVal: comp["frequency"] as number };
             break;
