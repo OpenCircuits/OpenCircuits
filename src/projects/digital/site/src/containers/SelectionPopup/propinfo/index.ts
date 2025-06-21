@@ -34,6 +34,10 @@ export const DigitalPropInfo = MakeDefaultPropInfoGetter({
             key:     "delay",
             label:   "Delay",
             default: 250,
+            step:    10,
+            min:     1,
+            // MUST BE <= DigitalSim.MAX_QUEUE_AHEAD
+            max:     10_000,
         },
     ],
 
@@ -101,6 +105,17 @@ export const DigitalPropInfo = MakeDefaultPropInfoGetter({
                 { id: "w", type: "int", key: "w", min: 2, max: 20, step: 1, default: 8 },
                 { id: "h", type: "int", key: "h", min: 1, max: 10, step: 1, default: 4 },
             ],
+        },
+        {
+            id:      "delay",
+            type:    "int",
+            key:     "delay",
+            label:   "Delay",
+            default: 50,
+            step:    10,
+            min:     1,
+            // MUST BE <= DigitalSim.MAX_QUEUE_AHEAD
+            max:     10_000,
         },
     ],
 
