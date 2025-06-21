@@ -37,7 +37,7 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
     getProps: (s: O) => Props,
     deps: React.DependencyList = [],
     ignore?: (s: Obj) => boolean,
-): [RecordOfArrays<Props> | undefined, O[], () => void] => {
+): [RecordOfArrays<Props> | undefined, O[]] => {
     const [props, setProps] = useState(undefined as RecordOfArrays<Props> | undefined);
     const [objs, setObjs] = useState<Obj[]>([]);
 
@@ -94,5 +94,5 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
         return circuit.subscribe(() => updateState());
     }, [circuit, updateState]);
 
-    return [props, objs.filter(validTypes), updateState] as const;
+    return [props, objs.filter(validTypes)] as const;
 }
