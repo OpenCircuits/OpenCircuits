@@ -153,7 +153,7 @@ export const DigitalSimState_State: MessageFns<DigitalSimState_State> = {
   encode(message: DigitalSimState_State, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     writer.uint32(10).fork();
     for (const v of message.state) {
-      writer.uint32(v);
+      writer.int32(v);
     }
     writer.join();
     return writer;
@@ -168,7 +168,7 @@ export const DigitalSimState_State: MessageFns<DigitalSimState_State> = {
       switch (tag >>> 3) {
         case 1: {
           if (tag === 8) {
-            message.state.push(reader.uint32());
+            message.state.push(reader.int32());
 
             continue;
           }
@@ -176,7 +176,7 @@ export const DigitalSimState_State: MessageFns<DigitalSimState_State> = {
           if (tag === 10) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.state.push(reader.uint32());
+              message.state.push(reader.int32());
             }
 
             continue;

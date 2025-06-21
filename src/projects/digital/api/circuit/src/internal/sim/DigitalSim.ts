@@ -12,6 +12,9 @@ import {Signal}        from "digital/api/circuit/schema/Signal";
 import {DigitalComponentConfigurationInfo} from "../DigitalComponents";
 
 
+export interface TickInfo {
+    curTick: number;
+}
 export interface PropagatorInfo {
     propagator: PropagatorFunc;
 
@@ -21,13 +24,13 @@ export interface PropagatorInfo {
     stateProps?: Set<string>;
 
     // Called when one of the `stateProps` are changed and hard-sets the state.
-    getNewStateForPropChange?: (prop: string, c: Schema.Component, curState?: number[]) => number[];
+    getNewStateForPropChange?: (prop: string, c: Schema.Component, curState?: number[], tickInfo?: TickInfo) => number[];
 }
 export type PropagatorFunc = (
     comp: Schema.Component,
     info: DigitalComponentConfigurationInfo,
     state: DigitalSimState,
-    tickInfo: { curTick: number },
+    tickInfo: TickInfo,
 ) => {
     outputs: Map<ContextPath, Signal>;
     nextState?: number[];
@@ -375,7 +378,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                     if (propagatorInfo.getNewStateForPropChange) {
                         changedProps.forEach((prop) => {
                             const newState = propagatorInfo.getNewStateForPropChange!(
-                                prop, comp.value, this.rootState.states.get(objId));
+                                prop, comp.value, this.rootState.states.get(objId), { curTick: this.curTick });
                             this.rootState.states.set(objId, newState);
                         });
                     }
@@ -551,6 +554,8 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 state.states.set(id, nextState);
                 updatedCompStates.add(path);
             }
+
+            // console.log(nextCycle);
 
             // Queue further down the line
             if (nextCycle && nextCycle >= 1) {

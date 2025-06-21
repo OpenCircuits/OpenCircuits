@@ -1,5 +1,6 @@
 import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
+import {DigitalPort} from "digital/api/circuit/public";
 
 
 declare global {
@@ -16,7 +17,7 @@ declare global {
 }
 
 expect.extend({
-    toBeOn(received: Signal | DigitalComponent) {
+    toBeOn(received: Signal | DigitalComponent | DigitalPort) {
         function check(signal: Signal) {
             return {
                 message: () => "expected Signal to be On",
@@ -24,9 +25,11 @@ expect.extend({
             };
         }
 
-        return typeof received === "number" ? check(received) : check(received.inputs[0].signal);
+        return typeof received === "number" ? check(received) :
+               received.baseKind === "Component" ? check(received.allPorts[0].signal) :
+               check(received.signal);
     },
-    toBeOff(received: Signal | DigitalComponent) {
+    toBeOff(received: Signal | DigitalComponent | DigitalPort) {
         function check(signal: Signal) {
             return {
                 message: () => "expected Signal to be Off",
@@ -34,7 +37,9 @@ expect.extend({
             };
         }
 
-        return typeof received === "number" ? check(received) : check(received.inputs[0].signal);
+        return typeof received === "number" ? check(received) :
+               received.baseKind === "Component" ? check(received.allPorts[0].signal) :
+               check(received.signal);
     },
     toBeStable(received: Signal | DigitalComponent) {
         function check(signal: Signal) {

@@ -37,8 +37,8 @@ export class OscilloscopeAssembler extends ComponentAssembler {
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged, AssemblyReason.PortsChanged, AssemblyReason.StateUpdated]),
                 assemble:     (comp) => {
-                    // Slice off first element which is for other state
-                    const state = this.sim.getState(comp.id)?.slice(1);
+                    // Slice off first two elements which are for other state
+                    const state = this.sim.getState(comp.id)?.slice(2);
                     const allSignals = state?.chunk(8) ?? [];
                     return {
                         kind:      "Group",

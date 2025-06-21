@@ -7,7 +7,7 @@ import "src/projects/shared/site/src/proto/Circuit.proto";
 message DigitalSimState {
     message State {
         // States are arbitrary numbers (usually signals)
-        repeated uint32 state = 1;
+        repeated int32 state = 1;
     }
 
     // Array of signals corresponding to the port in filter(flat(circuit.components.map(allPorts)), 'is output port')
