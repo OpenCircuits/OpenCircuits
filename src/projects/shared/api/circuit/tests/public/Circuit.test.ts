@@ -17,10 +17,9 @@ describe("Circuit", () => {
     // });
     describe("Metadata", () => {
         const captureState = (circuit: Circuit) => ({
-            id:        circuit.id,
-            name:      circuit.name,
-            desc:      circuit.desc,
-            thumbnail: circuit.thumbnail,
+            id:   circuit.id,
+            name: circuit.name,
+            desc: circuit.desc,
         } as const);
         test("id", () => {
             const [circuit1] = CreateTestCircuit();
@@ -37,7 +36,6 @@ describe("Circuit", () => {
             expect(circuit.id).toBe(state.id);
             expect(circuit.name).toBe("Circuit 1");
             expect(circuit.desc).toBe(state.desc);
-            expect(circuit.thumbnail).toBe(state.thumbnail);
         });
         test("desc", () => {
             const [circuit] = CreateTestCircuit();
@@ -48,18 +46,6 @@ describe("Circuit", () => {
             expect(circuit.id).toBe(state.id);
             expect(circuit.name).toBe(state.name);
             expect(circuit.desc).toBe("Circuit 1");
-            expect(circuit.thumbnail).toBe(state.thumbnail);
-        });
-        test("thumbnail", () => {
-            const [circuit] = CreateTestCircuit();
-
-            const state = captureState(circuit);
-            expect(circuit.thumbnail).toBe("");
-            circuit.thumbnail = "Circuit 1";
-            expect(circuit.id).toBe(state.id);
-            expect(circuit.name).toBe(state.name);
-            expect(circuit.desc).toBe(state.desc);
-            expect(circuit.thumbnail).toBe("Circuit 1");
         });
     });
 
@@ -340,6 +326,26 @@ describe("Circuit", () => {
             expect(() => c.setProp("name", "test")).toThrow();
             expect(circuit.getObj(w.id)).toBeUndefined();
             expect(() => w.setProp("name", "test")).toThrow();
+        });
+        test("Delete Wire path", () => {
+            const [circuit, _, {PlaceAt, Connect}] = CreateTestCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
+            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            circuit.deleteObjs([sw1]);
+
+            expect(circuit.getComponents()).toHaveLength(2);
+            expect(circuit.getWires()).toHaveLength(0);
+        });
+        test("Delete Node path", () => {
+            const [circuit, _, {PlaceAt, Connect}] = CreateTestCircuit();
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+
+            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            circuit.deleteObjs([n1]);
+
+            expect(circuit.getComponents()).toHaveLength(2);
+            expect(circuit.getWires()).toHaveLength(0);
         });
     });
 

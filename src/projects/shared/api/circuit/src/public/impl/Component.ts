@@ -150,8 +150,14 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot delete component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
         this.state.internal.beginTransaction();
-        this.state.internal.removePortsFor(this.id).unwrap();
-        this.state.internal.deleteComponent(this.id).unwrap();
+        if (this.isNode() as boolean) {
+            // Wire deletion will delete the whole path, including the node
+            this.allPorts[0].connections[0].delete();
+        }
+        else {
+            this.state.internal.removePortsFor(this.id).unwrap();
+            this.state.internal.deleteComponent(this.id).unwrap();
+        }
         this.state.internal.commitTransaction();
     }
 
