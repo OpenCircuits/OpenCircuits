@@ -1,5 +1,5 @@
 import {Obj}                                from "shared/api/circuit/public";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 
 import {DOUBLE_CLICK_DURATION, HEADER_HEIGHT} from "shared/site/utils/Constants";
 
@@ -32,14 +32,28 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     const [isDragging, setIsDragging] = useState(false);
     const [clickThrough, setClickThrough] = useState(false);
 
+    // When the contents of the popup change, because the selections change, this can cause the
+    // SIZE of the popup to change depending on the selected contents.
+    // Without this, when calculating the `finalPos` using bounding-client-rect, it will use
+    // the size of the popup previously, since the popup hasn't re-rendered yet.
+    // This variable helps bounce the popup by 1-call so that when the selections change, this
+    // is set to true, the popup renders, the effect changes it to false, causing another render
+    // which then allows the position to be properly calculated. See #1434.
+    const [selectionsChanged, setSelectionsChanged] = useState(false);
+    useLayoutEffect(() => {
+        setSelectionsChanged(false);
+    }, [selectionsChanged, setSelectionsChanged]);
+
     useEffect(() => {
         // Set it initially (like when new circuit is loaded)
         setNumSelections(circuit.selections.length);
         setPos(viewport.toScreenPos(circuit.selections.midpoint));
+        setSelectionsChanged(true);
 
         return circuit.selections.subscribe(() => {
             setNumSelections(circuit.selections.length);
             setPos(viewport.toScreenPos(circuit.selections.midpoint));
+            setSelectionsChanged(true);
 
             // When the selection changes, reset the clickThrough state and
             // let user click through box so it doesn't block a double click
@@ -67,7 +81,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     //                We can maybe make a smarter system that only commits events
     //                when nothing is in-focus, but that'll be a somewhat difficult task.
     // useEffect(() => circuit.history.subscribe(() =>
-    //     setPos(camera.toScreenPos(circuit.selections.midpoint))
+    //     setPos(viewport.toScreenPos(circuit.selections.midpoint))
     // ), [circuit, setPos]);
 
     useEvent("mousedrag", (_) => {
@@ -80,7 +94,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
 
     const popup = useRef<HTMLDivElement>(null);
 
-    const isVisible = (numSelections > 0 && !isDragging);
+    const isVisible = (numSelections > 0 && !isDragging && !selectionsChanged);
 
     // Clamp position to screen if visible
     const finalPos = (() => {

@@ -24,7 +24,7 @@ export const PropertyModule = ({ designer, propInfo }: Props) => {
 
     // Props is now a record of every key that EVERY object in `objs` has
     //  associated with an array of the values for each object.
-    const [props, objs, forceUpdate] = useSelectionProps(
+    const [props, objs] = useSelectionProps(
         circuit,
         (o): o is Obj => (true),
         (o) => GetPropsWithInfoFor(o, propInfo),
@@ -56,7 +56,7 @@ export const PropertyModule = ({ designer, propInfo }: Props) => {
         <PropInfoEntryWrapper
             key={entry.id}
             circuit={circuit} entry={entry}
-            props={props} objs={objs} forceUpdate={forceUpdate} />
+            props={props} objs={objs} />
     ))}</>);
 }
 
@@ -87,10 +87,9 @@ type PropInputFieldProps = {
     entry: PropInfoEntry;
     props: Record<string, Prop[]>;
     objs: Obj[];
-    forceUpdate: () => void;
 }
 const PropInfoEntryInputField = ({
-    circuit, entry, props, objs, forceUpdate,
+    circuit, entry, props, objs,
 }: PropInputFieldProps) => {
     const key = (entry.type === "group" ? "" : entry.key);
 
@@ -106,7 +105,7 @@ const PropInfoEntryInputField = ({
                 <PropInfoEntryWrapper
                     key={subentry.id}
                     circuit={circuit} entry={subentry}
-                    props={props} objs={objs} forceUpdate={forceUpdate} />
+                    props={props} objs={objs} />
             ))
         }</>);
     }
@@ -132,12 +131,7 @@ const PropInfoEntryInputField = ({
                     circuit={circuit}
                     kind="number[]"
                     props={vals as number[]} options={entry.options}
-                    doChange={doChange}
-                    onSubmit={() => {
-                        // TODO[model_refactor_api](leon) - do we still need this?
-                        forceUpdate(); // Need to force update since these can trigger info-state changes
-                        //  and feel less inituitive to the user about focus/blur
-                    }} />
+                    doChange={doChange} />
             );
         case "string":
             return (
@@ -152,12 +146,7 @@ const PropInfoEntryInputField = ({
                     circuit={circuit}
                     kind="string[]"
                     props={vals as string[]} options={entry.options}
-                    doChange={doChange}
-                    onSubmit={() => {
-                        // TODO[model_refactor_api](leon) - do we still need this?
-                        forceUpdate(); // Need to force update since these can trigger info-state changes
-                                    //  and feel less inituitive to the user about focus/blur
-                    }} />
+                    doChange={doChange} />
             );
         case "color":
             return (
