@@ -5,13 +5,9 @@ import "src/projects/shared/site/src/proto/Circuit.proto";
 
 
 message DigitalSimState {
-    enum Signal {
-        Off = 0;
-        On = 1;
-        Metastable = 2;
-    }
     message State {
-        repeated Signal state = 1;
+        // States are arbitrary numbers (usually signals)
+        repeated int32 state = 1;
     }
 
     // Array of signals corresponding to the port in filter(flat(circuit.components.map(allPorts)), 'is output port')

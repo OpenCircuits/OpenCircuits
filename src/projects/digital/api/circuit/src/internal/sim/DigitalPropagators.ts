@@ -6,13 +6,15 @@ import {Signal}                     from "digital/api/circuit/schema/Signal";
 import {PropagatorInfo, PropagatorsMap} from "./DigitalSim";
 
 
-type LocalPropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[], tickInfo?: { curTick: number, lastStateTick?: number }) => {
+type LocalPropagatorFunc = (obj: Schema.Component, signals: Record<string, Signal[]>, state?: number[], tickInfo?: { curTick: number }) => {
     outputs: Record<string, Signal[]>;
-    nextState?: Signal[];
+    nextState?: number[];
     nextCycle?: number;
 };
 
-function MakeLocalPropagator(func: LocalPropagatorFunc, stateProps?: string[]): PropagatorInfo {
+type StateProps = Record<string, (c: Schema.Component, curState?: number[], tickInfo?: { curTick: number }) => number[]>;
+
+function MakeLocalPropagator(func: LocalPropagatorFunc, stateProps?: StateProps): PropagatorInfo {
     return {
         propagator: (comp, info, state, tickInfo) => {
             const ports = state.getPortsByGroup(comp.id);
@@ -44,7 +46,9 @@ function MakeLocalPropagator(func: LocalPropagatorFunc, stateProps?: string[]): 
                 nextCycle,
             };
         },
-        stateProps: new Set(stateProps),
+        stateProps: new Set(Object.keys(stateProps ?? {})),
+
+        getNewStateForPropChange: stateProps ? (prop, c, curState, tickInfo) => stateProps[prop](c, curState, tickInfo) : undefined,
     };
 }
 
@@ -55,12 +59,12 @@ function MakeNoOutputPropagator() {
 }
 
 function MakeSingleOutputPropagator(
-    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[], tickInfo?: { curTick: number, lastStateTick?: number }) => {
+    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: number[], tickInfo?: { curTick: number, lastStateTick?: number }) => {
         signal: Signal;
-        nextState?: Signal[];
+        nextState?: number[];
         nextCycle?: number;
     },
-    stateProps?: string[],
+    stateProps?: StateProps,
 ) {
     return MakeLocalPropagator((obj, signals, state, tickInfo) => {
         const { signal, nextState, nextCycle } = getOutput(obj, signals, state, tickInfo);
@@ -72,7 +76,7 @@ function MakeSingleOutputPropagator(
     }, stateProps);
 }
 function MakeStatelessSingleOutputPropagator(
-    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: Signal[]) => Signal,
+    getOutput: (obj: Schema.Component, signals: Record<string, Signal[]>, state?: number[]) => Signal,
 ) {
     return MakeSingleOutputPropagator((obj, signals, state) => ({
         signal: getOutput(obj, signals, state),
@@ -202,6 +206,61 @@ const SRFlipFlop = MakeFlipFlopPropagator((signals, state, up) => {
 const TFlipFlop = MakeFlipFlopPropagator((signals, state, up) =>
     (up && !Signal.isOff(signals["T"][0]) ? Signal.invert(state) : state));
 
+function MakeTimedPropagator(onTick: LocalPropagatorFunc, defaultDelay: number, defaultExtraState: number[] = []) {
+    return MakeLocalPropagator((obj, signals, [lastStateTick, pausedTick, ...rest] = [-1, -1, ...defaultExtraState], tickInfo) => {
+        const { curTick } = tickInfo!;
+        const delay = (obj.props["delay"] as number) ?? defaultDelay;
+        const paused = (obj.props["paused"] as boolean) ?? false;
+
+        // If paused, do nothing
+        if (paused)
+            return { outputs: { "outputs": [] } };
+
+        // Just resumed, queue next cycle
+        if (!paused && pausedTick !== -1) {
+            // If we're resuming before hitting the next tick, just wait for that next tick.
+            if (curTick < lastStateTick + delay)
+                return { outputs: { "outputs": [] } };
+            // If we're right on the tick, then do the tick
+            if ((curTick - ((lastStateTick === -1 ? curTick - delay : lastStateTick))) === delay) {
+                const { outputs, nextState } = onTick(obj, signals, [...rest], tickInfo);
+                return ({
+                    outputs,
+                    nextState: [curTick, -1, ...(nextState ?? [])],
+                    nextCycle: delay,
+                });
+            }
+            // Otherwise, we need to queue a new tick, accounting for difference between lastTick and pausedTick
+            return ({
+                outputs:   { "outputs": [] },
+                nextState: [curTick - (pausedTick - lastStateTick), -1, ...rest],
+                nextCycle: delay - (pausedTick - lastStateTick),
+            });
+        }
+
+        // Normal tick-time
+        if ((curTick - ((lastStateTick === -1 ? curTick - delay : lastStateTick))) % delay === 0) {
+            const { outputs, nextState } = onTick(obj, signals, [...rest], tickInfo);
+            return ({
+                outputs,
+                nextState: [curTick, -1, ...(nextState ?? [])],
+                nextCycle: delay,
+            });
+        }
+
+        // Do nothing, but make sure nextCycle is where it's supposed to be
+        // This is a mild hack to help make sure cycles are set when loading clocks from disk
+        return { outputs: { "outputs": [] }, nextCycle: (delay - (curTick - lastStateTick)) % delay };
+    }, {
+        // Reset lastStateTick when delay changes
+        "delay": (_c, [_lastStateTick, pausedTick, ...rest] = [-1, -1, ...defaultExtraState]) =>
+            [-1, pausedTick, ...rest],
+        // When paused, set the tick
+        "paused": (c, [lastStateTick, pausedTick, ...rest] = [-1, -1, ...defaultExtraState], tickInfo) =>
+            [lastStateTick, (c.props["paused"] === true) ? tickInfo!.curTick : pausedTick, ...rest],
+    });
+}
+
 
 export const DigitalPropagators: PropagatorsMap = {
     "InputPin": {
@@ -278,41 +337,28 @@ export const DigitalPropagators: PropagatorsMap = {
     "ConstantNumber": MakeLocalPropagator((obj, _signals, _state) => {
         const num = obj.props["inputNum"] as number ?? 0;
         return { outputs: { "outputs": DecimalToBCD(num, 4).map(Signal.fromBool) } };
-    }, ["inputNum"]),
-    "Clock": MakeLocalPropagator((obj, _signals, [curSignal] = [Signal.On], tickInfo) => {
-        const { curTick, lastStateTick } = tickInfo!;
-        const delay = (obj.props["delay"] as number) ?? 250;
-        if ((curTick - (lastStateTick ?? curTick)) % delay !== 0)
-            return { outputs: { "outputs": [] } };
-        return ({
-            outputs:   { "outputs": [curSignal] },
-            nextState: [Signal.invert(curSignal)],
-            nextCycle: delay,
-        });
-    }, ["delay"]),
+    }, { "inputNum": () => [] }),
+    "Clock": MakeTimedPropagator((obj, _signals, [curSignal] = [Signal.Off], _tickInfo) => ({
+        outputs:   { "outputs": [curSignal] },
+        nextState: [Signal.invert(curSignal)],
+    }), 250, [Signal.Off]),
 
     // Outputs
     "LED":            MakeNoOutputPropagator(),
     "SegmentDisplay": MakeNoOutputPropagator(),
     "BCDDisplay":     MakeNoOutputPropagator(),
     "ASCIIDisplay":   MakeNoOutputPropagator(),
-    "Oscilloscope":   MakeLocalPropagator((obj, signals, state = [], tickInfo) => {
-        const { curTick, lastStateTick } = tickInfo!;
+    "Oscilloscope":   MakeTimedPropagator((obj, signals, state = [], _tickInfo) => {
         const maxSamples = (obj.props["samples"] as number) ?? 100;
-        const delay = (obj.props["delay"] as number) ?? 50;
-
-        if ((curTick - (lastStateTick ?? curTick)) % delay !== 0)
-            return { outputs: {} };
-
         const nextSignals = new Array<Signal>(8).fill(Signal.Off)
             .map((_, i) => signals["inputs"][i]);
         return {
             outputs:   {},
+            // First element is the lastStateTick, for the rest:
             // Slice off first X samples to make sure that state.length + 8 <= maxSamples.
             nextState: [...state.slice(Math.max(state.length - (maxSamples - 1)*8, 0)), ...nextSignals],
-            nextCycle: delay,
         };
-    }, []),
+    }, 50),
 
     // Gates
     BUFGate, NOTGate,

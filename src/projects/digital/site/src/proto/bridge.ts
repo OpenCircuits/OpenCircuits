@@ -96,14 +96,14 @@ export function UncompressSignals(signals: number[]): number[] {
 }
 
 export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSchema.DigitalCircuit {
-    function ConvertSignal(signal: Signal): DigitalProtoSchema.DigitalSimState_Signal {
-        return (signal === Signal.On
-            ? DigitalProtoSchema.DigitalSimState_Signal.On
-            : (signal === Signal.Off)
-            ? DigitalProtoSchema.DigitalSimState_Signal.Off
+    function ConvertSignal(signal: Signal): number {
+        return (signal === Signal.Off
+            ? 0
+            : (signal === Signal.On)
+            ? 1
             : (signal === Signal.Metastable)
-            ? DigitalProtoSchema.DigitalSimState_Signal.Metastable
-            : DigitalProtoSchema.DigitalSimState_Signal.UNRECOGNIZED);
+            ? 2
+            : 0);
     }
 
     function ConvertSimState(circuit: ReadonlyDigitalCircuit, state: DigitalSchema.DigitalSimState, icId?: Schema.GUID): DigitalProtoSchema.DigitalSimState {
@@ -113,11 +113,11 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
         // ports are simply derived from their connected output port.
         const ports = comps.flatMap((c) => c.allPorts).filter((p) => (p.isOutputPort));
         return {
-            signals: CompressSignals(ports.map((p) => (state.signals[p.id] === Signal.On ? 1 : 0))),
+            signals: CompressSignals(ports.map((p) => ConvertSignal(state.signals[p.id]))),
 
             states: comps
                 .filter((c) => StateFullKinds.has(c.kind))
-                .map((c) => ({ state: state.states[c.id].map(ConvertSignal) })),
+                .map((c) => ({ state: state.states[c.id] })),
 
             icStates: comps
                 .filter((c) => c.isIC())
@@ -136,12 +136,12 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
 
 
 export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit): DigitalCircuit {
-    function ConvertSignal(signal: DigitalProtoSchema.DigitalSimState_Signal): Signal {
-        return (signal === DigitalProtoSchema.DigitalSimState_Signal.On
-            ? Signal.On
-            : (signal === DigitalProtoSchema.DigitalSimState_Signal.Off)
+    function ConvertSignal(signal: number): Signal {
+        return (signal === 0
             ? Signal.Off
-            : (signal === DigitalProtoSchema.DigitalSimState_Signal.Metastable)
+            : (signal === 1)
+            ? Signal.On
+            : (signal === 2)
             ? Signal.Metastable
             : Signal.Off);
     }
@@ -162,7 +162,7 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
             states: Object.fromEntries(comps
                 .filter((c) => StateFullKinds.has(c.kind))
                 .map((c) => c.id)
-                .zip(state.states.map((s) => (s.state.map(ConvertSignal))))),
+                .zip(state.states.map((s) => (s.state)))),
 
             icStates: Object.fromEntries(comps
                 .filter((c) => c.isIC())

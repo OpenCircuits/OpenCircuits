@@ -21,11 +21,12 @@ import {QuickStartPopup}        from "digital/site/containers/QuickStartPopup";
 import {DigitalPropInfo} from "digital/site/containers/SelectionPopup/propinfo";
 
 import {BusButtonModule}                from "digital/site/containers/SelectionPopup/modules/BusButtonModule";
-import {ClockSyncButtonModule}          from "digital/site/containers/SelectionPopup/modules/ClockSyncButtonModule";
 import {CreateICButtonModule}           from "digital/site/containers/SelectionPopup/modules/CreateICButtonModule";
 import {OscilloscopeModule}             from "digital/site/containers/SelectionPopup/modules/OscilloscopeModules";
+import {PauseButtonModule}              from "digital/site/containers/SelectionPopup/modules/PauseButtonModule";
 import {PortCountModule}                from "digital/site/containers/SelectionPopup/modules/PortCountModule";
 import {ReplaceComponentDropdownModule} from "digital/site/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
+import {SyncButtonModule}               from "digital/site/containers/SelectionPopup/modules/SyncButtonModule";
 import {ViewICButtonModule}             from "digital/site/containers/SelectionPopup/modules/ViewICButtonModule";
 
 import docsConfig    from "digital/site/data/docsUrlConfig.json";
@@ -104,7 +105,8 @@ export const App = () => {
                             basisPortGroup="inputs"
                             label="Input" />
                         <OscilloscopeModule circuit={designer.circuit} />
-                        <ClockSyncButtonModule circuit={designer.circuit} />
+                        <PauseButtonModule circuit={designer.circuit} />
+                        <SyncButtonModule circuit={designer.circuit} />
                         <BusButtonModule circuit={designer.circuit} />
                         <ReplaceComponentDropdownModule circuit={designer.circuit} />
                         <CreateICButtonModule circuit={designer.circuit} />

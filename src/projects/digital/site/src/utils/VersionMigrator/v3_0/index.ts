@@ -397,8 +397,8 @@ function ConvertCompState(comp: Entry<V3_0Schema.DigitalComponent>): boolean[] {
     }
 }
 
-function ConvertSignal(signal: boolean): DigitalProtoSchema.DigitalSimState_Signal {
-    return (signal ? DigitalProtoSchema.DigitalSimState_Signal.On : DigitalProtoSchema.DigitalSimState_Signal.Off);
+function ConvertSignal(signal: boolean): number {
+    return (signal ? 1 : 0);
 }
 
 function ConvertSimState(

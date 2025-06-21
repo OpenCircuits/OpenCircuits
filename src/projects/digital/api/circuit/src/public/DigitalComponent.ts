@@ -1,7 +1,5 @@
 import {Component, Node, ReadonlyComponent, ReadonlyNode} from "shared/api/circuit/public";
 
-import {Signal} from "digital/api/circuit/schema/Signal";
-
 import {DigitalPort, ReadonlyDigitalPort}  from "./DigitalPort";
 import {APIToDigital} from "./DigitalCircuit";
 
@@ -20,7 +18,7 @@ export type ReadonlyDigitalComponent = APIToDigital<ReadonlyComponent> &
 export type DigitalComponent = APIToDigital<Component> &
     BaseReadonlyDigitalComponent<DigitalPort, DigitalNode> & {
     // TODO: Is this too much to expose?
-    setSimState(state: Signal[]): void;
+    setSimState(state: number[]): void;
 }
 
 

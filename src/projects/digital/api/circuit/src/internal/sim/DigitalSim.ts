@@ -12,24 +12,28 @@ import {Signal}        from "digital/api/circuit/schema/Signal";
 import {DigitalComponentConfigurationInfo} from "../DigitalComponents";
 
 
+export interface TickInfo {
+    curTick: number;
+}
 export interface PropagatorInfo {
     propagator: PropagatorFunc;
+
     // Set of keys corresponding to props on the component
     // that the output state of the component is dependent on
     // (i.e. `inputNum` for ConstantNumber)
     stateProps?: Set<string>;
+
+    // Called when one of the `stateProps` are changed and hard-sets the state.
+    getNewStateForPropChange?: (prop: string, c: Schema.Component, curState?: number[], tickInfo?: TickInfo) => number[];
 }
 export type PropagatorFunc = (
     comp: Schema.Component,
     info: DigitalComponentConfigurationInfo,
     state: DigitalSimState,
-    tickInfo: {
-        curTick: number;
-        lastStateTick?: number;
-    },
+    tickInfo: TickInfo,
 ) => {
     outputs: Map<ContextPath, Signal>;
-    nextState?: Signal[];
+    nextState?: number[];
     nextCycle?: number;
 }
 
@@ -56,16 +60,13 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
     public readonly signals: Map<GUID, Signal>;
 
     // ComponentID -> Signal[]
-    public readonly states: Map<GUID, Signal[]>;
+    public readonly states: Map<GUID, number[]>;
 
     // ICInstance(Component)ID -> DigitalSimState
     public readonly icStates: Map<GUID, DigitalSimState<Schema.IntegratedCircuitMetadata>>;
 
     public readonly superState: DigitalSimState | undefined;
     private readonly prePath: ContextPath;
-
-    public ticks: Map<GUID, { lastStateTick?: number }>;
-
 
     public constructor(
         storage: ReadonlyCircuitStorage<M>,
@@ -79,8 +80,6 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
         this.signals = new Map();
         this.states = new Map();
         this.icStates = new Map();
-
-        this.ticks = new Map();
     }
 
     public compExistsAndHasPorts(id: GUID) {
@@ -366,14 +365,24 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                     const propagatorInfo = propagators[comp.value.kind];
                     if (!propagatorInfo || !propagatorInfo.stateProps)
                         continue;
-                    if (props.intersection(propagatorInfo.stateProps).size === 0)
+                    const changedProps = props.intersection(propagatorInfo.stateProps);
+                    if (changedProps.size === 0)
                         continue;
                     // Clear any forward queues (used i.e. for clock delay changes)
                     for (const set of this.queue) {
                         if (set?.has([objId]))
                             set.delete([objId]);
                     }
-                    this.rootState.ticks.set(objId, { lastStateTick: undefined });
+
+                    // Reset state
+                    if (propagatorInfo.getNewStateForPropChange) {
+                        changedProps.forEach((prop) => {
+                            const newState = propagatorInfo.getNewStateForPropChange!(
+                                prop, comp.value, this.rootState.states.get(objId), { curTick: this.curTick });
+                            this.rootState.states.set(objId, newState);
+                        });
+                    }
+
                     // Add to queue
                     comps.add([objId]);
                 }
@@ -481,7 +490,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
      * @param id    Component's id.
      * @param state Component's state.
      */
-    public setState(id: GUID, state: Signal[] | undefined): void {
+    public setState(id: GUID, state: number[] | undefined): void {
         if (state)
             this.rootState.states.set(id, state);
         else
@@ -517,8 +526,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
 
             const { outputs, nextState, nextCycle } = propagatorInfo.propagator(comp, info, state, {
-                curTick:       this.curTick,
-                lastStateTick: state.ticks.get(comp.id)?.lastStateTick,
+                curTick: this.curTick,
             });
 
             for (const [portPath, signal] of outputs) {
@@ -544,7 +552,6 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             // Update state
             if (nextState) {
                 state.states.set(id, nextState);
-                state.ticks.set(comp.id, { lastStateTick: this.curTick });
                 updatedCompStates.add(path);
             }
 
@@ -573,11 +580,8 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     public resetQueueForComp(id: GUID) {
         for (const set of this.queue) {
-            if (set?.has([id])) {
+            if (set?.has([id]))
                 set.delete([id]);
-
-                this.rootState.ticks.set(id, { lastStateTick: undefined });
-            }
         }
 
         this.setState(id, undefined);

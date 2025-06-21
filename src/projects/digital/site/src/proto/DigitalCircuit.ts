@@ -24,47 +24,9 @@ export interface DigitalSimState {
   icStates: DigitalSimState[];
 }
 
-export enum DigitalSimState_Signal {
-  Off = 0,
-  On = 1,
-  Metastable = 2,
-  UNRECOGNIZED = -1,
-}
-
-export function digitalSimState_SignalFromJSON(object: any): DigitalSimState_Signal {
-  switch (object) {
-    case 0:
-    case "Off":
-      return DigitalSimState_Signal.Off;
-    case 1:
-    case "On":
-      return DigitalSimState_Signal.On;
-    case 2:
-    case "Metastable":
-      return DigitalSimState_Signal.Metastable;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return DigitalSimState_Signal.UNRECOGNIZED;
-  }
-}
-
-export function digitalSimState_SignalToJSON(object: DigitalSimState_Signal): string {
-  switch (object) {
-    case DigitalSimState_Signal.Off:
-      return "Off";
-    case DigitalSimState_Signal.On:
-      return "On";
-    case DigitalSimState_Signal.Metastable:
-      return "Metastable";
-    case DigitalSimState_Signal.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
 export interface DigitalSimState_State {
-  state: DigitalSimState_Signal[];
+  /** States are arbitrary numbers (usually signals) */
+  state: number[];
 }
 
 export interface DigitalCircuit {
@@ -206,7 +168,7 @@ export const DigitalSimState_State: MessageFns<DigitalSimState_State> = {
       switch (tag >>> 3) {
         case 1: {
           if (tag === 8) {
-            message.state.push(reader.int32() as any);
+            message.state.push(reader.int32());
 
             continue;
           }
@@ -214,7 +176,7 @@ export const DigitalSimState_State: MessageFns<DigitalSimState_State> = {
           if (tag === 10) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
-              message.state.push(reader.int32() as any);
+              message.state.push(reader.int32());
             }
 
             continue;
@@ -232,17 +194,13 @@ export const DigitalSimState_State: MessageFns<DigitalSimState_State> = {
   },
 
   fromJSON(object: any): DigitalSimState_State {
-    return {
-      state: globalThis.Array.isArray(object?.state)
-        ? object.state.map((e: any) => digitalSimState_SignalFromJSON(e))
-        : [],
-    };
+    return { state: globalThis.Array.isArray(object?.state) ? object.state.map((e: any) => globalThis.Number(e)) : [] };
   },
 
   toJSON(message: DigitalSimState_State): unknown {
     const obj: any = {};
     if (message.state?.length) {
-      obj.state = message.state.map((e) => digitalSimState_SignalToJSON(e));
+      obj.state = message.state.map((e) => Math.round(e));
     }
     return obj;
   },
