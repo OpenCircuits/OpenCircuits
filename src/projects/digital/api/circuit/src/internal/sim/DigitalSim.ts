@@ -555,8 +555,6 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 updatedCompStates.add(path);
             }
 
-            // console.log(nextCycle);
-
             // Queue further down the line
             if (nextCycle && nextCycle >= 1) {
                 if (nextCycle > DigitalSim.MAX_QUEUE_AHEAD) {
