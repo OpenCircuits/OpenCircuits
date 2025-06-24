@@ -20,7 +20,7 @@ export const IsValidIC = (cs: Component[]): boolean => {
         if (visited.has(c.id))
             continue;
         visited.add(c.id);
-        // TODO[]: Add something to the api to get all components connected
+        // TODO[]: Add something to the api to get all components connected.
         // bfs search connected components
         const circuit = [c];
         const queue = c.allPorts.flatMap((p1) => p1.connectedPorts.flatMap((p2) => p2.parent));
