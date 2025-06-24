@@ -31,12 +31,18 @@ import {CalculateICDisplay}                     from "digital/site/utils/Circuit
 import "./index.scss";
 
 
+const enum NameErrorStates {
+    None,
+    NoName,
+    DuplicateName,
+}
 // TODO[master] - move this to shared
 interface Props {
 }
 export const ICDesigner = ({ }: Props) => {
     const mainDesigner = useCurDigitalDesigner();
     const [icViewDesigner, setICViewDesigner] = useState<DigitalCircuitDesigner | undefined>();
+    const [showError, setShowError] = useState(NameErrorStates.None);
 
     const { isActive, objIds } = useDigitalSelector(
         (state) => ({ ...state.icDesigner })
@@ -125,6 +131,7 @@ export const ICDesigner = ({ }: Props) => {
     const doICNameChange = ([name]: string[]) => {
         if (!icViewDesigner)
             return;
+        setShowError(NameErrorStates.None);
         icViewDesigner.circuit.getICs().at(-1)!.name = name;
         // TODO: Increase IC size if name gets too long for current size
     }
@@ -179,12 +186,31 @@ export const ICDesigner = ({ }: Props) => {
                     placeholder="Name of IC"
                     alt="Name of IC"
                     doChange={doICNameChange} />}
+            {showError !== NameErrorStates.None &&
+                // TODO[]: Create a more generic error tooltip component
+                <span className="tooltip">{
+                    showError === NameErrorStates.NoName ?
+                        "Please enter a name for this IC" :
+                        "This name is already used by another IC"
+                }</span>}
 
             <div className="icdesigner__buttons">
-                <button type="button" name="confirm" onClick={() => close()}>
+                <button type="button" name="confirm" onClick={() => {
+                    if (!icName) {
+                        setShowError(NameErrorStates.NoName);
+                    } else if (mainDesigner.circuit.getICs().some((ic) => ic.name === icName)) {
+                        setShowError(NameErrorStates.DuplicateName);
+                    } else {
+                        setShowError(NameErrorStates.None);
+                        close();
+                    }
+                }}>
                     Confirm
                 </button>
-                <button type="button" name="cancel"  onClick={() => close(true)}>
+                <button type="button" name="cancel"  onClick={() => {
+                    setShowError(NameErrorStates.None);
+                    close(true)
+                }}>
                     Cancel
                 </button>
             </div>

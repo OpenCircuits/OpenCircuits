@@ -2,6 +2,12 @@
 @use "~shared/site/utils/theme" as *;
 
 .icdesigner {
+    $icdesigner-name-input-width: 15vw;
+    $icdesigner-name-input-height: 18.5px;
+    $icdesigner-name-input-vertical-padding: 32px;
+    $icdesigner-name-input-border-width: 1px;
+    $icdesigner-name-input-top: 12vh;
+
     position: absolute;
     z-index: 5;
 
@@ -35,21 +41,20 @@
     //     width: 100vw;
 
     & > input {
-        $icdesigner-name-input-width: 15vw;
-
         position: absolute;
 
-        top: 12vh;
+        top: $icdesigner-name-input-top;
         left: calc(50vw - #{math.div($icdesigner-name-input-width,2)} - 32px);
 
         width: $icdesigner-name-input-width;
-        padding: 15px 32px;
+        height: $icdesigner-name-input-height;
+        padding: 15px $icdesigner-name-input-vertical-padding;
 
         font-size: 16px;
         text-align: center;
 
         color: $primary-color;
-        border: 1px solid black;
+        border: $icdesigner-name-input-border-width solid black;
         background-color: $ic-background-color;
     }
 
@@ -85,6 +90,36 @@
                     background-color: darken($danger-color, 10%);
                 }
             }
+        }
+    }
+
+    & .tooltip {
+        position: absolute;
+
+        top: calc($icdesigner-name-input-top +
+                  $icdesigner-name-input-height +
+                  $icdesigner-name-input-vertical-padding +
+                  $icdesigner-name-input-border-width);
+        left: 0;
+        right: 0;
+        margin-inline: auto;
+        width: fit-content;
+        height: fit-content;
+        padding: 5px 10px;
+        border-radius: 3px;
+        background-color: $danger-color;
+
+        text-align: center;
+        position: absolute;
+        &::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent $danger-color transparent;
         }
     }
 }
