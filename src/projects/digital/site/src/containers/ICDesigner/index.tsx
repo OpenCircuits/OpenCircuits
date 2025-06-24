@@ -54,6 +54,19 @@ export const ICDesigner = ({ }: Props) => {
 
     const [icName, setICName] = useState<string | undefined>(undefined);
 
+    const measureTextWidth = (text: string): number => {
+        if (!canvas.current)
+            return 0;
+        const ctx = canvas.current.getContext("2d")!;
+        ctx.save();
+        ctx.font = "lighter 300px arial";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        const result = ctx.measureText(text);
+        ctx.restore();
+        return ((result.actualBoundingBoxLeft + result.actualBoundingBoxRight) / 1000);
+    }
+
     // Happens when activated
     useLayoutEffect(() => {
         if (!isActive || !objIds || !canvas.current)
@@ -132,8 +145,9 @@ export const ICDesigner = ({ }: Props) => {
         if (!icViewDesigner)
             return;
         setShowError(NameErrorStates.None);
-        icViewDesigner.circuit.getICs().at(-1)!.name = name;
-        // TODO: Increase IC size if name gets too long for current size
+        const ic = icViewDesigner.circuit.getICs().at(-1)!;
+        ic.name = name;
+        ic.display.size = V(Math.max(ic.display.size.x, measureTextWidth(name) + 1), ic.display.size.y);
     }
 
 
