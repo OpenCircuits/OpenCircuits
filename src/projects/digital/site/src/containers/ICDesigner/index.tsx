@@ -60,8 +60,6 @@ export const ICDesigner = ({ }: Props) => {
         const ctx = canvas.current.getContext("2d")!;
         ctx.save();
         ctx.font = "lighter 300px arial";
-        ctx.textBaseline = "middle";
-        ctx.textAlign = "center";
         const result = ctx.measureText(text);
         ctx.restore();
         return ((result.actualBoundingBoxLeft + result.actualBoundingBoxRight) / 1000);

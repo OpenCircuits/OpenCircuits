@@ -1,13 +1,25 @@
 import {Component} from "shared/api/circuit/public";
 
 
-const bannedComponents = new Set(["Oscilloscope", "Clock", "SegmentDispaly", "ASCIIDisplay", "BCDDisplay"]);
+const timedComponents = new Set(["Oscilloscope", "Clock"]);
+const segmentDisplays = new Set(["SegmentDisplay", "ASCIIDisplay", "BCDDisplay"]);
 const requiredInputComponents = new Set(["Button", "Switch", "ConstantLow", "ConstantHigh", "ConstantNumber"]);
 
-export const IsValidIC = (cs: Component[]): boolean => {
+export const enum ICValidationStatus {
+    Valid = 0,
+    NoOutput,
+    NoInput,
+    Incomplete,
+    ContainsTimedComponents,
+    ContainsSegmentDisplays,
+    Empty,
+}
+export const IsValidIC = (cs: Component[]): ICValidationStatus => {
     // Timed components and segment displays are not allowed
-    if (cs.some((c) => bannedComponents.has(c.kind)))
-        return false;
+    if (cs.some((c) => timedComponents.has(c.kind)))
+        return ICValidationStatus.ContainsTimedComponents;
+    if (cs.some((c) => segmentDisplays.has(c.kind)))
+        return ICValidationStatus.ContainsSegmentDisplays;
 
     // Split the provided components into which circuit group they are a part of,
     // then we will check that each one is valid
@@ -37,19 +49,19 @@ export const IsValidIC = (cs: Component[]): boolean => {
 
     // Should only happen with an empty selection or a selection of only Labels
     if (circuits.length === 0)
-        return false;
+        return ICValidationStatus.Empty;
 
     const selectedComponents = new Set(cs.map(({ id }) => id));
-    return circuits.every((circuit) => {
+    return circuits.map((circuit) => {
         // Must have an output, all non-LED outputs are banned
         if (!circuit.some((c) => c.kind === "LED"))
-            return false;
+            return ICValidationStatus.NoOutput;
 
         // Must have a valid input
         if (!circuit.some((c) => requiredInputComponents.has(c.kind)))
-            return false;
+            return ICValidationStatus.NoInput;
 
         // All the components that make up this circuit must be in the selection
-        return circuit.every((c) => selectedComponents.has(c.id));
-    });
+        return circuit.every((c) => selectedComponents.has(c.id)) ? ICValidationStatus.Valid : ICValidationStatus.Incomplete;
+    }).find((status) => status !== ICValidationStatus.Valid) ?? ICValidationStatus.Valid;
 }
