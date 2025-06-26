@@ -1,6 +1,5 @@
 import {V, Vector} from "Vector";
 import {Clamp}     from "math/MathUtils";
-import {Margin}    from "math/Rect";
 
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
@@ -94,9 +93,5 @@ export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEve
     public zoomTo(dz: number, pos: Vector): void {
         this.zoom *= dz;
         this.translate(pos.sub(this.pos).scale(1 - dz));
-    }
-
-    public zoomToFit(_objs: T["Obj[]"], _margin?: Margin, _padRatio?: number): void {
-        throw new Error("Camera.zoomToFit: Unimplemented!");
     }
 }
