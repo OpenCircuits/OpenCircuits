@@ -67,4 +67,6 @@ export interface Viewport extends MultiObservable<ViewportEvents> {
 
     toWorldPos(screenPos: Vector): Vector;
     toScreenPos(worldPos: Vector): Vector;
+
+    zoomToFit(objs: Obj[], padRatio?: number): void;
 }
