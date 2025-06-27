@@ -29,7 +29,6 @@ const swappableComponents = [
 type Props = {
     circuit: Circuit;
 }
-// eslint-disable-next-line arrow-body-style
 export const ReplaceComponentDropdownModule = ({ circuit }: Props) => {
     // TODO[model_refactor_api]
     const [props] = useSelectionProps(
