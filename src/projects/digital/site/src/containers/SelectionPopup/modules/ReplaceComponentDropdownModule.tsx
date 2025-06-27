@@ -1,10 +1,30 @@
+import {DigitalComponent} from "digital/api/circuit/public";
 import {Circuit} from "shared/api/circuit/public";
+import {SelectModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
+import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
 
-// const allBaseComponentIDs = [
-//     ...itemNavConfig.sections.flatMap((s) => s.items.map((i) => i.id)),
-//     "DigitalNode",
-// ];
+const swappableComponents = [
+    {
+        "Button": "Button",
+        "Switch": "Switch",
+        "ConstantLow": "Constant Low",
+        "ConstantHigh": "Constant High",
+        "Clock": "Clock",
+    },
+    {
+        "BUFGate": "Buffer",
+        "NOTGate": "NOT Gate",
+    },
+    {
+        "ANDGate": "AND Gate",
+        "NANDGate": "NAND Gate",
+        "ORGate": "OR Gate",
+        "NORGate": "NOR Gate",
+        "XORGate": "XOR Gate",
+        "XNORGate": "XNOR Gate",
+    },
+] as const;
 
 type Props = {
     circuit: Circuit;
@@ -12,68 +32,35 @@ type Props = {
 // eslint-disable-next-line arrow-body-style
 export const ReplaceComponentDropdownModule = ({ circuit }: Props) => {
     // TODO[model_refactor_api]
-    // const { designer, history, renderer, selections } = info;
+    const [props] = useSelectionProps(
+        circuit,
+        (c): c is DigitalComponent => (c.baseKind === "Component"),
+        (c) => ({ kind: c.kind, id: c.id }),
+    );
 
-    // const [props, components] = useSelectionProps(
-    //     info,
-    //     (s): s is DigitalComponent => (s instanceof DigitalComponent),
-    //     (c) => ({ componentId: c instanceof IC
-    //                            ? `ic/${designer.getICData().indexOf(c.getData())}`
-    //                            : GetIDFor(c)! })
-    // );
+    // Show if only one component is selected
+    if (!props || props.kind.length !== 1)
+        return;
 
-    // // Replace list is a utility data structure to map replacements
-    // const initialReplacementList = useMemo(() => GenerateReplacementList(designer, allBaseComponentIDs), [designer]);
-    // const [replacementList, setReplacementList] = useState(initialReplacementList);
+    const [kind] = props.kind;
+    const swapGroup = swappableComponents.find((group) => kind in group);
+    if (!swapGroup)
+        return;
 
-    // // Need to update the replacement list whenever the ICs are changed
-    // useEffect(() => {
-    //     const callback = (ev: DigitalEvent) => {
-    //         if (ev.type !== "ic")
-    //             return;
+    const comp = circuit.getComponent(props.id[0])!;
+    const options = Object.entries(swapGroup).map(([kind, display]) => [display, kind] as const);
 
-    //         const ics = designer.getICData().map((_,i) => `ic/${i}`);
-    //         const newList = GenerateReplacementList(designer, [...allBaseComponentIDs, ...ics]);
-    //         setReplacementList(newList);
-    //     }
-
-    //     designer.addCallback(callback);
-    //     return () => designer.removeCallback(callback);
-    // }, [designer]);
-
-    // if (!(props && props.componentId && components.length === 1))
-    //     return null;
-
-    // const replaceables = GetReplacements(components[0], designer, replacementList);
-    // if (replaceables.length <= 1)
-    //     return null;
-
-    // // updateImmediately is required because this action changes the selected item thus changing the selection popup.
-    // // updateImmediately forces the selection popup to update.
-    // // TODO: Remove the need for updateImmediately with/after the model refactor
-    // return (<div>
-    //     Replace Component
-    //     <label>
-    //         <SelectModuleInputField
-    //             kind="string[]"
-    //             options={replaceables.map((rep, i) => [rep.id, `${i}`])}
-    //             props={props.componentId}
-    //             getAction={(vals) =>
-    //                 new GroupAction(
-    //                     components.map((c, i) => {
-    //                         const replacementIdx = parseInt(vals[i]);
-    //                         const replacement = replaceables[replacementIdx];
-    //                         return ReplaceComponent(designer, c, replacement, selections)[0];
-    //                     }),
-    //                     "Replace Component Module"
-    //                 )}
-    //             updateImmediately
-    //             onSubmit={(info) => {
-    //                 renderer.render();
-    //                 if (info.isFinal)
-    //                     history.add(info.action);
-    //             }} />
-    //     </label>
-    // </div>);
-    return null;
+    return (<div>
+        Replace Component
+        <label>
+            <SelectModuleInputField
+                kind="string[]"
+                circuit={circuit}
+                options={options}
+                props={[kind]}
+                doChange={([selection]) => {
+                    comp.replaceWith(selection);
+                }} />
+        </label>
+    </div>);
 }
