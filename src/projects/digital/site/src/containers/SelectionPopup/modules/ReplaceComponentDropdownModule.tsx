@@ -30,7 +30,6 @@ type Props = {
     circuit: Circuit;
 }
 export const ReplaceComponentDropdownModule = ({ circuit }: Props) => {
-    // TODO[model_refactor_api]
     const [props] = useSelectionProps(
         circuit,
         (c): c is DigitalComponent => (c.baseKind === "Component"),
