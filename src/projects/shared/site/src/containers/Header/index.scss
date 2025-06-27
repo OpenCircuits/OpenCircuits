@@ -7,6 +7,11 @@
 header {
     z-index: 3;
 
+    // Prevent using the header to drag/scroll offscreen on mobile (iOS Safari in particular)
+    & * {
+        touch-action: none;
+    }
+
     position: relative;
 
     display: flex;

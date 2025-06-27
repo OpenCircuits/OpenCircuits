@@ -1,5 +1,7 @@
 import {useEffect, useState} from "react";
 import {useDocEvent}         from "./useDocEvent";
+import {CalculateMidpoint} from "math/MathUtils";
+import {Vector, V} from "Vector";
 
 
 export const useMousePos = () => {
@@ -9,20 +11,23 @@ export const useMousePos = () => {
     });
 
     useEffect(() => {
-        // const getTouchPositions = (touches: TouchList): Vector[] => {
-        //     return Array.from(touches).map((t) => V(t.pageX, t.pageY));
-        // };
+        const getTouchPositions = (touches: TouchList): Vector[] => {
+            return Array.from(touches).map((t) => V(t.pageX, t.pageY));
+        };
 
-        const mouseListener = (ev: PointerEvent) => {
+        const mouseListener = (ev: MouseEvent) => {
             setPos({ x: ev.pageX, y: ev.pageY });
         }
-        // const touchListener = (ev: TouchEvent) => {
-        //     setPos(CalculateMidpoint(getTouchPositions(ev.touches)));
-        // }
+        const touchListener = (ev: TouchEvent) => {
+            setPos(CalculateMidpoint(getTouchPositions(ev.touches)));
+        }
 
-        window.addEventListener("pointermove", mouseListener);
+        // For some reason, webkit has issues with pointermove so we need to use separate mousemove and touchmove, see #1443
+        window.addEventListener("mousemove", mouseListener);
+        window.addEventListener("touchmove", touchListener);
         return () => {
-            window.removeEventListener("pointermove", mouseListener);
+            window.removeEventListener("mousemove", mouseListener);
+            window.removeEventListener("touchmove", touchListener);
         }
     }, [setPos]);
 

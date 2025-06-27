@@ -27,6 +27,14 @@ $tab-padding: 8px;
     border-right-width: $header-border-width;
     background-color: rgba($background-color, 0.7);
 
+    // Prevent using the itemnav to drag/scroll offscreen on mobile (iOS Safari in particular)
+    & * {
+        touch-action: pan-y;
+        @media (max-width: $desktop-width) and (orientation:portrait) {
+            touch-action: pan-x;
+        }
+    }
+
     @media (max-width: $desktop-width) and (orientation:portrait) {
         top: unset;
         right: 0;
