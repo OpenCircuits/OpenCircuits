@@ -65,7 +65,7 @@ export const App = () => {
                     <DigitalMainDesigner circuit={designer.circuit} />
 
                     <DigitalItemNav />
-                    <HistoryBox circuit={designer.circuit} />
+                    <HistoryBox designer={designer} />
 
                     <SelectionPopup designer={designer} docsUrlConfig={docsConfig}>
                         <PropertyModule designer={designer} propInfo={DigitalPropInfo} />
