@@ -153,7 +153,6 @@ describe("Port", () => {
             const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
 
             port.name = "Test Port";
-            port.zIndex = 1;
             port.select();
 
             const props = port.getProps();
@@ -161,7 +160,6 @@ describe("Port", () => {
             expect("name" in props).toBeTruthy();
             expect("isSelected" in props).toBeTruthy();
             expect("exists" in props).toBeFalsy();
-            expect("zIndex" in props).toBeTruthy();
         });
 
         test("setProp", () => {
