@@ -2,7 +2,7 @@ import {Circuit} from "shared/api/circuit/public";
 
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
 
-import {BackendCircuitMetadata, DeleteUserCircuit, LoadCircuitResponse, LoadUserCircuit} from "shared/site/api/Circuits";
+import {BackendCircuitMetadata, CreateUserCircuit, DeleteUserCircuit, LoadCircuitResponse, LoadUserCircuit} from "shared/site/api/Circuits";
 
 import {SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading} from "shared/site/state/CircuitInfo";
 
@@ -13,6 +13,19 @@ import {GenerateThumbnail} from "./GenerateThumbnail";
 import {CircuitHelpers} from "./CircuitHelpers";
 import {SaveCircuit} from "../state/thunks/SaveCircuit";
 
+
+const blobToString = async (rawContents: Blob) =>
+    await new Promise<string>((resolve, reject) => {
+        // TODO: gzip?
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const b64Contents = reader.result as string;
+            resolve(b64Contents);
+        }
+        // eslint-disable-next-line unicorn/prefer-add-event-listener
+        reader.onabort = reader.onerror = reject;
+        reader.readAsDataURL(rawContents);
+    });
 
 export const useAPIMethods = (mainCircuit: Circuit) => {
     const { id: curID, auth, saving, loading } = useSharedSelector((state) => ({ ...state.user, ...state.circuit }));
@@ -95,17 +108,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             version,
         };
 
-        const contents = await new Promise<string>((resolve, reject) => {
-            // TODO: gzip?
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const b64Contents = reader.result as string;
-                resolve(b64Contents);
-            }
-            // eslint-disable-next-line unicorn/prefer-add-event-listener
-            reader.onabort = reader.onerror = reject;
-            reader.readAsDataURL(rawContents);
-        });
+        const contents = await blobToString(rawContents);
 
         // Save the circuit and reload the user circuits
         return (
@@ -123,22 +126,29 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         if (curID === "")
             return;
 
-        const thumbnail = GenerateThumbnail(mainCircuit);
+        const { data: rawContents, version } = CircuitHelpers.SerializeCircuit(mainCircuit);
 
-        // TODO[model_refactor_api]: Either implement circuit.copy() or workaround with copying selections and name
-        /**
-        const circuitCopy = mainCircuit.copy();
-        circuitCopy.name = circuitCopy.name + " (Copy)";
-        circuitCopy.thumbnail = thumbnail;
+        const circuitCopy = CircuitHelpers.DeserializeCircuit(await rawContents.arrayBuffer());
+        circuitCopy.name += " (Copy)";
+        const metadata: BackendCircuitMetadata = {
+            // Specifically use the redux-state-ID.
+            // This ID will be distinct from mainCircuit.id to help avoid issues with local and remote saving.
+            id:        "", // Backend will give us a new id
+            name:      circuitCopy.name,
+            desc:      circuitCopy.desc,
+            thumbnail: GenerateThumbnail(mainCircuit),
+            version,
+        };
+
+        const contents = await blobToString(CircuitHelpers.SerializeCircuit(circuitCopy).data);
 
         // Create circuit copy
-        const circuitCopyMetadata = await CreateUserCircuit(auth, circuitCopy.serialize());
+        const circuitCopyMetadata = await CreateUserCircuit(auth, { metadata, contents });
         if (!circuitCopyMetadata)
             throw new Error("DuplicateCircuitRemote: circuitCopyMetadata is undefined!");
 
         // Load circuit copy onto canvas
         await LoadCircuitRemote(circuitCopyMetadata.id);
-        */
 
         await dispatch(LoadUserCircuits());
     }
