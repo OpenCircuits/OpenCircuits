@@ -4,6 +4,7 @@ import {setCurDesigner} from "./hooks/useDesigner";
 import {ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
 import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 import {Circuit} from "shared/api/circuit/public";
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
 
 // These are helpers that need to be overridden per-circuit-type (digital, analog, etc.)
@@ -12,8 +13,8 @@ import {Circuit} from "shared/api/circuit/public";
 export interface OverrideCircuitHelpers {
     CreateAndInitializeDesigner: (tools?: {config: ToolConfig, renderers?: ToolRenderer[]}) => CircuitDesigner;
 
-    SerializeCircuit: (circuit: Circuit) => { data: Blob, version: string };
-    SerializeCircuitAsString: (circuit: Circuit) => string;
+    Serialize: (circuitOrObjs: Circuit | ObjContainer) => { data: Blob, version: string };
+    SerializeAsString: (circuitOrObjs: Circuit | ObjContainer) => string;
     DeserializeCircuit: (data: string | ArrayBuffer) => Circuit;
 }
 
@@ -47,8 +48,8 @@ const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
     return {
         OverrideCircuitHelpers: {
             CreateAndInitializeDesigner: errIfUndefined("CreateAndInitializeDesigner"),
-            SerializeCircuit:            errIfUndefined("SerializeCircuit"),
-            SerializeCircuitAsString:    errIfUndefined("SerializeCircuitAsString"),
+            Serialize:                   errIfUndefined("Serialize"),
+            SerializeAsString:           errIfUndefined("SerializeAsString"),
             DeserializeCircuit:          errIfUndefined("DeserializeCircuit"),
         } satisfies OverrideCircuitHelpers,
         SetCircuitHelpers: (helpers: OverrideCircuitHelpers) => {

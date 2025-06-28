@@ -9,12 +9,15 @@ import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useS
 import {CleanUp}             from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
 import {DuplicateSelections} from "shared/api/circuitdesigner/tools/handlers/DuplicateHandler";
 import {FitToScreen}         from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
+import {DoPaste}             from "shared/api/circuitdesigner/tools/handlers/PasteHandler";
 
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import {CloseContextMenu, OpenContextMenu} from "shared/site/state/ContextMenu";
 
 import "./index.scss";
+import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
+import {CalculateMidpoint} from "math/MathUtils";
 
 
 function isClipboardSupported(type: "read" | "write"): boolean {
@@ -30,8 +33,8 @@ export const ContextMenu = ({ designer }: Props) => {
     const circuit = designer.circuit;
     const { undoHistory, redoHistory } = useHistory(circuit);
 
-    const { isOpen } = useSharedSelector(
-        (state) => ({ isOpen: state.contextMenu.isOpen })
+    const { isOpen, isLocked } = useSharedSelector(
+        (state) => ({ isOpen: state.contextMenu.isOpen, isLocked: state.circuit.isLocked })
     );
     const dispatch = useSharedDispatch();
 
@@ -63,8 +66,7 @@ export const ContextMenu = ({ designer }: Props) => {
             alert("Your web browser does not support right click CUT operation. Please use CTRL+X");
             return;
         }
-        // TODO: replace serialize
-        // await navigator.clipboard.writeText(circuit.serialize(circuit.selections.all));
+        onCopy();
 
         circuit.beginTransaction();
         circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
@@ -77,8 +79,8 @@ export const ContextMenu = ({ designer }: Props) => {
             alert("Your web browser does not support right click COPY operation. Please use CTRL+C");
             return;
         }
-        // TODO: replace serialize
-        // await navigator.clipboard.writeText(circuit.serialize(circuit.selections.all));
+        await navigator.clipboard.writeText(
+            CircuitHelpers.SerializeAsString(circuit.selections.withWiresAndPorts()));
     }
 
     /* Context Menu "Paste" */
@@ -87,8 +89,12 @@ export const ContextMenu = ({ designer }: Props) => {
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
             return;
         }
-        // TODO[model_refactor](leon) - figure out pasting API
-        // paste(await navigator.clipboard.readText(), camera.getWorldPos(V(posX, posY)));
+        const pastedCircuit = CircuitHelpers.DeserializeCircuit(await navigator.clipboard.readText());
+
+        // Calculate offset to move components to mouse pos
+        const avgPos = CalculateMidpoint(pastedCircuit.getComponents().map((c) => c.pos));
+        const offset = designer.viewport.toWorldPos(V(posX, posY)).sub(avgPos);
+        DoPaste(circuit, pastedCircuit, offset);
     }
 
     /* Context Menu "Select All" */
@@ -120,10 +126,6 @@ export const ContextMenu = ({ designer }: Props) => {
 
     /* Helper function for buttons to call the function and render/close the popup */
     const doFunc = (func: () => void) => {
-        // Don't do anything if locked
-        // TODO: Move locked functionality to frontend only
-        // if (circuit.locked)
-        //     return;
         func();
         dispatch(CloseContextMenu());
     }
@@ -151,7 +153,7 @@ export const ContextMenu = ({ designer }: Props) => {
              }}>
             <button type="button"
                     title="Cut"
-                    disabled={circuit.selections.isEmpty}
+                    disabled={circuit.selections.isEmpty || isLocked}
                     onClick={() => doFunc(onCut)}>Cut</button>
             <button type="button"
                     title="Copy"
@@ -159,6 +161,7 @@ export const ContextMenu = ({ designer }: Props) => {
                     onClick={() => doFunc(onCopy)}>Copy</button>
             <button type="button"
                     title="Paste"
+                    disabled={isLocked}
                     onClick={() => doFunc(onPaste)}>Paste</button>
             <button type="button"
                     title="Select All"
@@ -170,20 +173,20 @@ export const ContextMenu = ({ designer }: Props) => {
                     onClick={() => doFunc(onFocus)}>Focus</button>
             <button type="button"
                     title="CleanUp"
-                    disabled={circuit.getObjs().length === 0}
+                    disabled={circuit.getObjs().length === 0 || isLocked}
                     onClick={() => doFunc(onCleanUp)}>Clean Up</button>
             <button type="button"
                     title="Duplicate"
-                    disabled={circuit.selections.isEmpty}
+                    disabled={circuit.selections.isEmpty || isLocked}
                     onClick={() => doFunc(onDuplicate)}>Duplicate</button>
             <hr />
             <button type="button"
                     title="Undo"
-                    disabled={undoHistory.length === 0}
+                    disabled={undoHistory.length === 0 || isLocked}
                     onClick={() => doFunc(onUndo)}>Undo</button>
             <button type="button"
                     title="Redo"
-                    disabled={redoHistory.length === 0}
+                    disabled={redoHistory.length === 0 || isLocked}
                     onClick={() => doFunc(onRedo)}>Redo</button>
         </div>
     );
