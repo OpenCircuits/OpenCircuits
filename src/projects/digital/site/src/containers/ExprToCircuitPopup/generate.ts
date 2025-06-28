@@ -49,27 +49,25 @@ function addLabels(inputMap: Map<string, string>, circuit: Circuit) {
 }
 
 function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOptions,
-    circuit: Circuit) {
+    circuit: DigitalCircuit) {
     let inIndex = 0;
     // Set clock frequencies
     for (const name of inputMap.keys()) {
         const clock = circuit.getComponents().find((comp) => comp.name === name);
-        clock?.setProp("delay", 500 * (2 ** inIndex));
-        inIndex = Math.min(inIndex + 1, 4);
+        clock?.setProp("delay", 100 * (2 ** (inIndex)));
+        inIndex = Math.min(inIndex + 1, 6);
     }
-    // TODO[model_refactor](trevor): Revisit when oscilloscopes implemented
-    // New version will query to output oscilloscope
     // Connect clocks to oscilloscope
-    // if (options.connectClocksToOscope) {
-    //     inIndex = 0;
-    //     action.add(SetInputPortCount(o, Math.min(inputMap.size + 1, 6)));
-    //     for (const clock of inputMap.values()) {
-    //         action.add(Connect(designer, clock.getOutputPort(0), o.getInputPort(inIndex + 1)));
-    //         inIndex++;
-    //         if (inIndex === 5)
-    //             break;
-    //     }
-    // }
+    if (options.connectClocksToOscope) {
+        const o = circuit.getComponents().find(({ kind }) => kind === "Oscilloscope")!;
+        o.setPortConfig({ "inputs": Math.min(inputMap.size + 1, 8) });
+        [...inputMap.keys()].forEach((name, inIndex) => {
+            if (inIndex >= 7) // max 8 inputs and the first is reserved for circuit output
+                return;
+            const clock = circuit.getComponents().find((comp) => comp.name === name)!;
+            clock.outputs[0].connectTo(o.inputs[inIndex + 1]);
+        });
+    }
 }
 
 export function Generate(circuit: DigitalCircuit, camera: Camera, expression: string,
