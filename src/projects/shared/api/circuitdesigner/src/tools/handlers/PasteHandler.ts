@@ -9,13 +9,13 @@ export function DoPaste(circuit: Circuit, pastedCircuit: Circuit, offset?: Vecto
     circuit.beginTransaction();
     circuit.selections.clear();
     const newObjs = circuit.import(pastedCircuit, { refreshIds: true });
-    // Select, shift, and offset the components
-    newObjs.shift();
-    newObjs.select();
+    // Offset, Select, and shift the components
     if (offset) {
         newObjs.components.forEach((o) =>
             (o.pos = o.pos.add(offset)));
     }
+    newObjs.shift();
+    newObjs.select();
     circuit.commitTransaction("Pasted from Clipboard");
 }
 

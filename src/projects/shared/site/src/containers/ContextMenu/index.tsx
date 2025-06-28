@@ -17,7 +17,8 @@ import {CloseContextMenu, OpenContextMenu} from "shared/site/state/ContextMenu";
 
 import "./index.scss";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
-import {CalculateMidpoint} from "math/MathUtils";
+import {CalculateMidpoint, Clamp} from "math/MathUtils";
+import {HEADER_HEIGHT} from "shared/site/utils/Constants";
 
 
 function isClipboardSupported(type: "read" | "write"): boolean {
@@ -89,12 +90,16 @@ export const ContextMenu = ({ designer }: Props) => {
             alert("Your web browser does not support right click PASTE operation. Please use CTRL+V");
             return;
         }
-        const pastedCircuit = CircuitHelpers.DeserializeCircuit(await navigator.clipboard.readText());
+        try {
+            const pastedCircuit = CircuitHelpers.DeserializeCircuit(await navigator.clipboard.readText());
 
-        // Calculate offset to move components to mouse pos
-        const avgPos = CalculateMidpoint(pastedCircuit.getComponents().map((c) => c.pos));
-        const offset = designer.viewport.toWorldPos(V(posX, posY)).sub(avgPos);
-        DoPaste(circuit, pastedCircuit, offset);
+            // Calculate offset to move components to mouse pos
+            const avgPos = CalculateMidpoint(pastedCircuit.getComponents().map((c) => c.pos));
+            const offset = designer.viewport.toWorldPos(V(posX, posY)).sub(avgPos);
+            DoPaste(circuit, pastedCircuit, offset);
+        } catch {
+            // Do nothing on fail
+        }
     }
 
     /* Context Menu "Select All" */
@@ -138,8 +143,10 @@ export const ContextMenu = ({ designer }: Props) => {
         const { width, height } = menu.current.getBoundingClientRect();
 
         return V(
-            (posX + width  > window.innerWidth)  ? (posX - width)  : posX,
-            (posY + height > window.innerHeight) ? (posY - height) : posY,
+            // Flip width-wise
+            (posX + width  > window.innerWidth) ? (posX - width) : posX,
+            // Clamp height-wise
+            Clamp(posY, 0, window.innerHeight - height),
         );
     })();
 
