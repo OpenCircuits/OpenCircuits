@@ -119,7 +119,6 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
         })
         circuit.placeComponentAt(ic.id, camera.pos).select();
     } else {
-        // TODO: Move the big copy into the api
         const generatedToReal = new Map<string, DigitalComponent>();
         generatedCircuit.getComponents().forEach((comp) => {
             const newComp = circuit.placeComponentAt(comp.kind, comp.pos);
