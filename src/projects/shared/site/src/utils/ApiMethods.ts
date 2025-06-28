@@ -14,8 +14,8 @@ import {CircuitHelpers} from "./CircuitHelpers";
 import {SaveCircuit} from "../state/thunks/SaveCircuit";
 
 
-const blobToString = async (rawContents: Blob) =>
-    await new Promise<string>((resolve, reject) => {
+const blobToString = (rawContents: Blob) =>
+    new Promise<string>((resolve, reject) => {
         // TODO: gzip?
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -131,8 +131,6 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         const circuitCopy = CircuitHelpers.DeserializeCircuit(await rawContents.arrayBuffer());
         circuitCopy.name += " (Copy)";
         const metadata: BackendCircuitMetadata = {
-            // Specifically use the redux-state-ID.
-            // This ID will be distinct from mainCircuit.id to help avoid issues with local and remote saving.
             id:        "", // Backend will give us a new id
             name:      circuitCopy.name,
             desc:      circuitCopy.desc,
