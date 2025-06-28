@@ -17,8 +17,8 @@ export type ReadonlyDigitalComponent = APIToDigital<ReadonlyComponent> &
 
 export type DigitalComponent = APIToDigital<Component> &
     BaseReadonlyDigitalComponent<DigitalPort, DigitalNode> & {
-    // TODO: Is this too much to expose?
-    setSimState(state: number[]): void;
+
+    setSimState(state?: number[]): void;
 }
 
 

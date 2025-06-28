@@ -58,15 +58,13 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     useLayoutEffect(() => {
         if (!canvas.current)
             return;
-        // TODO[model_refactor](leon) - Make a global declaration for this so we can set it w/o gross cast
-        (window as unknown as Record<string, unknown>).Circuit = designer.circuit;
-        (window as unknown as Record<string, unknown>).CircuitDesigner = designer;
+        window.Circuit = designer.circuit;
+        window.CircuitDesigner = designer;
         return designer.viewport.attachCanvas(canvas.current);
     }, [designer, canvas]);
 
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
-    // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
     useLayoutEffect(() => designer.viewport.resize(w, h), [designer, w, h]);
 
     useDrop(canvas, (screenPos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {
@@ -82,7 +80,6 @@ export const MainDesigner = ({ otherPlace }: Props) => {
         const pos = designer.viewport.toWorldPos(
             screenPos.sub(V(0, canvas.current.getBoundingClientRect().top)));
 
-        // TODO[model_refactor](leon)
         // If other place options are specified then do those
         //  otherwise default to CreateNComponents
         if (!otherPlace?.(pos, itemKind, amt, otherData))
@@ -94,7 +91,6 @@ export const MainDesigner = ({ otherPlace }: Props) => {
             ref={canvas}
             className="main__canvas"
             width={w}
-            // TODO[model_refactor](leon) - reconsinder if we need to subtract HEADER_HEIGHT
             height={h} />
     );
 }

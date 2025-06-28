@@ -18,5 +18,5 @@
             "digital/site/*":                ["./src/*"],
         }
     },
-    "include": ["src", "tests"],
+    "include": ["src", "../../shared/site/src/**/*.d.ts", "tests"],
 }
