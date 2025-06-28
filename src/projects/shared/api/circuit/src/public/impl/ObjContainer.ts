@@ -145,10 +145,19 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
         // Need to keep the zIndices the same relative to eachother
         // We can do that by sorting the set by their current zIndex
         // and then set their new zIndex to be the new highest z + the relative index.
-        const highestZ = this.state.assembler.highestZ;
-        const cs = this.components.sort((a, b) => (a.zIndex - b.zIndex));
-        cs.forEach((c, i) =>
-            c.zIndex = highestZ + i + 1);
+        {
+            const highestZ = this.state.assembler.highestZ;
+            const cs = this.components.sort((a, b) => (a.zIndex - b.zIndex));
+            cs.forEach((c, i) =>
+                c.zIndex = highestZ + i + 1);
+        }
+        // Do the same for wires
+        {
+            const highestZ = this.state.assembler.highestWireZ;
+            const ws = this.wires.sort((a, b) => (a.zIndex - b.zIndex));
+            ws.forEach((w, i) =>
+                w.zIndex = highestZ + i + 1);
+        }
         this.state.internal.commitTransaction();
     }
 

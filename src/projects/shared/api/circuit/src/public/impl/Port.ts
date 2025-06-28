@@ -105,7 +105,7 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         this.state.internal.beginTransaction();
 
         const id = this.state.internal.connectWire(
-            this.getWireKind(this.id, other.id), this.id, other.id, {}).unwrap();
+            this.getWireKind(this.id, other.id), this.id, other.id, { zIndex: this.state.assembler.highestWireZ + 1 }).unwrap();
 
         this.state.internal.commitTransaction();
 

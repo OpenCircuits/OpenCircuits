@@ -180,12 +180,11 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
             if (renderState.options.showGrid)
                 RenderGrid(renderState);
 
-            // Render wires
-            // TODO[model_refactor](leon) - render by depth
-            assembly.wirePrims.forEach((prims) =>
-                prims.forEach(renderPrim));
+            // Render wires (by depth)
+            assembly.wireOrder.forEach((wireId) =>
+                assembly.wirePrims.get(wireId)!.forEach(renderPrim));
 
-            // Render components
+            // Render components (by depth)
             assembly.componentOrder.forEach((compId) => {
                 const prims = assembly.componentPrims.get(compId)!;
 
