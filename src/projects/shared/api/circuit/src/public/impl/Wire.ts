@@ -43,7 +43,6 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         return this.state.constructPort(this.getWire().p2, this.icId);
     }
 
-    // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
     public get path(): T["Path"] {
         const path: T["Path"] = [];
 

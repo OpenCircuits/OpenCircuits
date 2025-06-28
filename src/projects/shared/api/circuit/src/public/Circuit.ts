@@ -16,7 +16,7 @@ import {Rect} from "math/Rect";
 import {Camera, ReadonlyCamera} from "./Camera";
 
 
-// TODO[model_refactor](leon) - make this more user friendly
+// TODO[master](leon) - make this more user friendly
 export type CircuitEvent = {
     type: "contents";
     diff: FastCircuitDiff;
@@ -93,6 +93,7 @@ export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircu
     deleteObjs(objs: Array<Wire | Component>): void;
 
     importICs(ics: IntegratedCircuit[]): void;
+    // The ID of the IC will be randomly generated unelss `id` is specified, in which case, it will use that instead.
     createIC(info: ICInfo, id?: GUID): IntegratedCircuit;
     deleteIC(id: GUID): void;
 

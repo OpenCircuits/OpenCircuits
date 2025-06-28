@@ -88,7 +88,7 @@ export const useSelectionProps = <O extends Obj, Props extends Record<string, Pr
 
     // When the list of objects changes, update the props
     //  and then listen for any circuit changes
-    //  TODO[model_refactor](leon) - Maybe somehow just listen to changes to objs
+    //  TODO[master](leon) - Maybe somehow just listen to changes to objs
     useEffect(() => {
         updateState();
         return circuit.subscribe(() => updateState());

@@ -6,23 +6,55 @@ import {DigitalSchema} from "digital/api/circuit/schema";
 import {GUID, ICInfo} from "shared/api/circuit/public";
 
 
+class DigitalSimImpl implements DigitalSim {
+    protected readonly circuitState: DigitalCircuitState;
+
+    public constructor(circuitState: DigitalCircuitState) {
+        this.circuitState = circuitState;
+    }
+
+    public set propagationTime(val: number) {
+        if (!this.circuitState.simRunner)
+            return;
+        this.circuitState.simRunner.propagationTime = val;
+    }
+    public get propagationTime(): number {
+        return this.circuitState.simRunner?.propagationTime ?? -1;
+    }
+
+    public get state() {
+        return this.circuitState.sim.getSimState().toSchema();
+    }
+
+    public resume() {
+        this.circuitState.simRunner?.resume();
+    }
+    public pause() {
+        this.circuitState.simRunner?.pause();
+    }
+
+    public step() {
+        this.circuitState.sim.step();
+    }
+
+    public sync(comps: GUID[]) {
+        comps
+            .filter((c) => this.circuitState.internal.hasComp(c))
+            .forEach((id) => this.circuitState.sim.resetQueueForComp(id));
+    }
+}
+
+
 export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
     protected override readonly state: DigitalCircuitState;
+
+    public readonly sim: DigitalSimImpl;
 
     public constructor(state: DigitalCircuitState) {
         super(state);
 
         this.state = state;
-    }
-
-    public set propagationTime(val: number) {
-        // TODO[model_refactor_api] - put this somewhere else?
-        if (!this.state.simRunner)
-            return;
-        this.state.simRunner.propagationTime = val;
-    }
-    public get propagationTime(): number {
-        return this.state.simRunner?.propagationTime ?? -1;
+        this.sim = new DigitalSimImpl(state);
     }
 
     public override importICs(ics: DigitalIntegratedCircuit[]): void {
@@ -40,23 +72,6 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return ic;
     }
 
-    public get sim(): DigitalSim {
-        return {
-            state: this.state.sim.getSimState().toSchema(),
-
-            sync: (comps) => {
-                comps
-                    .filter((c) => this.state.internal.hasComp(c))
-                    .forEach((id) => this.state.sim.resetQueueForComp(id));
-            },
-        };
-    }
-
-    // TODO[model_refactor_api](leon) - revisit this
-    public step() {
-        this.state.sim.step();
-    }
-
     public override import(
         circuit: ReadonlyDigitalCircuit | ReadonlyDigitalObjContainer,
         opts?: { refreshIds?: boolean, loadMetadata?: boolean }
@@ -69,7 +84,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
             this.state.sim.loadICState(ic.id, ic.initialSimState);
 
         if (opts?.loadMetadata && isCircuit(circuit))
-            this.propagationTime = circuit.propagationTime;
+            this.sim.propagationTime = circuit.sim.propagationTime;
 
         const objs = super.import(circuit, opts);
 

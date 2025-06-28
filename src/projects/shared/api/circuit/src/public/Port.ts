@@ -20,11 +20,11 @@ interface BaseReadonlyPort<PortT, CompT, NodeT, WireT> {
     readonly dir: Vector;
 
     readonly connections: WireT[];
-    // TODO[model_refactor_api]: What about nodes? Should this be endpoint non-node components?
+    // TODO[master]: What about nodes? Should this be endpoint non-node components?
     readonly connectedPorts: PortT[];
-    // TODO[model_refactor_api]: connectedComponents?
+    // TODO[master]: connectedComponents?
 
-    // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
+    // TODO[master](leon): Maybe make some Path API object? Could be 'walkable'
     readonly path: Array<NodeT | WireT>;
 
     // "Availability" refers to the ability to have more connections added to this port.

@@ -332,8 +332,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
             throw new Error(`Circuit.createIC: Found sub-ICs when trying to create a new IC that haven't been imported yet: [${[...missingICIDs].join(", ")}]. Please import them first!`);
 
         const metadata: Schema.IntegratedCircuitMetadata = {
-            // TODO[model_refactor_api](leon): do we need to allow this? maybe just use the info.circuit.id?
-            id:   id,  // Make a new ID
+            id,
             name: info.circuit.name,
             desc: info.circuit.desc,
 

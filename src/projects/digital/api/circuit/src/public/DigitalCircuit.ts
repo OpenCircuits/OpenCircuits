@@ -78,23 +78,26 @@ export interface ReadonlySimState {
     readonly icStates: Readonly<Record<GUID, ReadonlySimState>>;
 }
 export interface ReadonlyDigitalSim {
+    readonly propagationTime: number;
+
     readonly state: ReadonlySimState;
 }
 
 export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit> & {
-    readonly propagationTime: number;
     readonly sim: ReadonlyDigitalSim;
 }
 
 export interface DigitalSim extends ReadonlyDigitalSim {
+    propagationTime: number;
+
+    resume(): void;
+    pause(): void;
+    step(): void;
+
     sync(comps: GUID[]): void;
 }
 
 export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
-    propagationTime: number;
-
-    step(): void;
-
     readonly sim: DigitalSim;
 };
 
