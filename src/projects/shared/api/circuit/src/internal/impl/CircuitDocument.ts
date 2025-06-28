@@ -405,9 +405,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
         this.objInfo = objInfo;
 
-        this.storage = new CircuitStorage(objInfo, {
-            id, name: "", desc: "", thumb: "", version: "digital/v0",
-        });
+        this.storage = new CircuitStorage(objInfo, { id, name: "", desc: "" });
         this.diffBuilder = new FastCircuitDiffBuilder();
 
         this.icStorage = new Map();
@@ -452,7 +450,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 this.transactionCounter = 0;
                 this.transactionList.reset();
 
-                // TODO[model_refactor_api](kevin): propagate this error to the client.
+                // TODO(kevin): propagate this error to the client.
                 // this.transactionTransformError = e;
             })
             .uponOk((txOps) => {

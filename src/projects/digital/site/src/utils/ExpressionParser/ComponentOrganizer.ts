@@ -1,4 +1,3 @@
-// TODO[model_refactor_api](trevor): Get this working for expression to circuit frontend
 import {Vector} from "Vector";
 import {Circuit} from "shared/api/circuit/public";
 

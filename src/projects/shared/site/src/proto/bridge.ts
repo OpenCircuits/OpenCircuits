@@ -62,7 +62,7 @@ type ForwardConversionInfo = {
     // Component kind : (Port group name : Port group ID)
     portGroups: Map<string, Map<string, number>>;
 }
-export function CircuitToProto(circuit: Circuit, conversionInfo: ForwardConversionInfo): ProtoSchema.Circuit {
+export function CircuitToProto(circuit: Circuit, version: string, conversionInfo: ForwardConversionInfo): ProtoSchema.Circuit {
     function ConvertProps(props: Record<string, number | string | boolean>): Record<string, ProtoSchema.Prop> {
         return MapObj(props, ([_key, prop]) =>
                     (typeof prop === "boolean"
@@ -143,10 +143,10 @@ export function CircuitToProto(circuit: Circuit, conversionInfo: ForwardConversi
 
     function ConvertMetadata(circuit: Circuit | IntegratedCircuit): ProtoSchema.CircuitMetadata {
         return {
-            id:      circuit.id,
-            name:    circuit.name,
-            desc:    circuit.desc,
-            version: "1.0/0",  // TODO: Update this to use the actual version
+            id:   circuit.id,
+            name: circuit.name,
+            desc: circuit.desc,
+            version,
         };
     }
 

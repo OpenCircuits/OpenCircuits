@@ -12,7 +12,7 @@ import {Circuit} from "shared/api/circuit/public";
 export interface OverrideCircuitHelpers {
     CreateAndInitializeDesigner: (tools?: {config: ToolConfig, renderers?: ToolRenderer[]}) => CircuitDesigner;
 
-    SerializeCircuit: (circuit: Circuit) => Blob;
+    SerializeCircuit: (circuit: Circuit) => { data: Blob, version: string };
     SerializeCircuitAsString: (circuit: Circuit) => string;
     DeserializeCircuit: (data: string | ArrayBuffer) => Circuit;
 }

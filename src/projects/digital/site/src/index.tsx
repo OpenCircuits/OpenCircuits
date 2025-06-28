@@ -62,6 +62,7 @@ import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
 import {PrintDebugStats} from "./proto/debug";
+import {CUR_SAVE_VERSION} from "./utils/Constants";
 
 
 async function Init(): Promise<void> {
@@ -177,7 +178,10 @@ async function Init(): Promise<void> {
                     if (process.env.NODE_ENV === "development")
                         PrintDebugStats(proto);
 
-                    return new Blob([DigitalProtoSchema.DigitalCircuit.encode(proto).finish()]);
+                    return {
+                        data:    new Blob([DigitalProtoSchema.DigitalCircuit.encode(proto).finish()]),
+                        version: CUR_SAVE_VERSION,
+                    };
                 },
                 SerializeCircuitAsString(circuit) {
                     return JSON.stringify(DigitalCircuitToProto(circuit as DigitalCircuit));

@@ -77,10 +77,6 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         if (this.icId)
             throw new Error(`WireImpl: Cannot split wire with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
 
-        // TODO[model_refactor_api](kevin)
-        //  Need to make an explicit CircuitInternal operation for splitting wires
-        // Need to guarantee that wire1 is connected to the p1 of initial wire and wire2 for p2
-
         // Default to making the node in the middle of the wire
         const pos = this.shape.getPos(0.5);
 

@@ -364,7 +364,7 @@ function ConvertIC(
                 id:      refToICIDMap[ic.ref],
                 name:    ic.name,
                 desc:    "",
-                version: "digital/v0",
+                version: "digital/4.0",
             },
 
             displayWidth:  ic.transform.size.x/50,
@@ -504,7 +504,7 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
                     id:      uuid.v4(),
                     name:    circuit.metadata.name,
                     desc:    "",
-                    version: "digital/v0",
+                    version: "digital/4.0",
                 },
                 camera: {
                     x: root.camera.pos.x / 50,

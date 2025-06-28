@@ -101,7 +101,6 @@ export class CircuitDiffBuilder {
         });
 
         return { ...this.diff };
-        // TODO[model_refactor_api](kevin): re-add "reset" behavior
     }
 
     private addComponent(c: Schema.Component) {

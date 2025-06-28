@@ -9,6 +9,7 @@ import {CircuitToProto, MakeConversionMaps, ProtoToCircuit} from "shared/site/pr
 
 import * as DigitalProtoSchema from "./DigitalCircuit";
 import {CreateCircuit, DigitalCircuit, ReadonlyDigitalCircuit} from "digital/api/circuit/public";
+import {CUR_SAVE_VERSION} from "../utils/Constants";
 
 
 const InputOutputGroups = { "inputs": 0, "outputs": 1 };
@@ -126,7 +127,7 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
     }
 
     return DigitalProtoSchema.DigitalCircuit.create({
-        circuit: CircuitToProto(circuit, DigitalKindMaps[0]),
+        circuit: CircuitToProto(circuit, CUR_SAVE_VERSION, DigitalKindMaps[0]),
 
         propagationTime:    circuit.propagationTime,
         icInitialSimStates: circuit.getICs().map((ic) => ConvertSimState(circuit, ic.initialSimState, ic.id)),
