@@ -16,8 +16,8 @@ export interface Prop {
   boolVal?: boolean | undefined;
 }
 
-/** TODO: kind? */
 export interface Port {
+  kind?: number | undefined;
   group: string;
   index: number;
   name?: string | undefined;
@@ -230,22 +230,25 @@ export const Prop: MessageFns<Prop> = {
 };
 
 function createBasePort(): Port {
-  return { group: "", index: 0, name: undefined, otherProps: {} };
+  return { kind: undefined, group: "", index: 0, name: undefined, otherProps: {} };
 }
 
 export const Port: MessageFns<Port> = {
   encode(message: Port, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.kind !== undefined) {
+      writer.uint32(8).uint32(message.kind);
+    }
     if (message.group !== "") {
-      writer.uint32(10).string(message.group);
+      writer.uint32(18).string(message.group);
     }
     if (message.index !== 0) {
-      writer.uint32(16).int32(message.index);
+      writer.uint32(24).int32(message.index);
     }
     if (message.name !== undefined) {
-      writer.uint32(26).string(message.name);
+      writer.uint32(34).string(message.name);
     }
     Object.entries(message.otherProps).forEach(([key, value]) => {
-      Port_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(34).fork()).join();
+      Port_OtherPropsEntry.encode({ key: key as any, value }, writer.uint32(42).fork()).join();
     });
     return writer;
   },
@@ -258,27 +261,27 @@ export const Port: MessageFns<Port> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.kind = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
             break;
           }
 
           message.group = reader.string();
           continue;
         }
-        case 2: {
-          if (tag !== 16) {
+        case 3: {
+          if (tag !== 24) {
             break;
           }
 
           message.index = reader.int32();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.name = reader.string();
           continue;
         }
         case 4: {
@@ -286,9 +289,17 @@ export const Port: MessageFns<Port> = {
             break;
           }
 
-          const entry4 = Port_OtherPropsEntry.decode(reader, reader.uint32());
-          if (entry4.value !== undefined) {
-            message.otherProps[entry4.key] = entry4.value;
+          message.name = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          const entry5 = Port_OtherPropsEntry.decode(reader, reader.uint32());
+          if (entry5.value !== undefined) {
+            message.otherProps[entry5.key] = entry5.value;
           }
           continue;
         }
@@ -303,6 +314,7 @@ export const Port: MessageFns<Port> = {
 
   fromJSON(object: any): Port {
     return {
+      kind: isSet(object.kind) ? globalThis.Number(object.kind) : undefined,
       group: isSet(object.group) ? globalThis.String(object.group) : "",
       index: isSet(object.index) ? globalThis.Number(object.index) : 0,
       name: isSet(object.name) ? globalThis.String(object.name) : undefined,
@@ -317,6 +329,9 @@ export const Port: MessageFns<Port> = {
 
   toJSON(message: Port): unknown {
     const obj: any = {};
+    if (message.kind !== undefined) {
+      obj.kind = Math.round(message.kind);
+    }
     if (message.group !== "") {
       obj.group = message.group;
     }
@@ -343,6 +358,7 @@ export const Port: MessageFns<Port> = {
   },
   fromPartial<I extends Exact<DeepPartial<Port>, I>>(object: I): Port {
     const message = createBasePort();
+    message.kind = object.kind ?? undefined;
     message.group = object.group ?? "";
     message.index = object.index ?? 0;
     message.name = object.name ?? undefined;

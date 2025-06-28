@@ -96,7 +96,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         if (saving || loading)
             return;
 
-        const { data: rawContents, version } = CircuitHelpers.SerializeCircuit(mainCircuit);
+        const { data: rawContents, version } = CircuitHelpers.Serialize(mainCircuit);
 
         const metadata: BackendCircuitMetadata = {
             // Specifically use the redux-state-ID.

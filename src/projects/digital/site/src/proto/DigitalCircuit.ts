@@ -10,7 +10,7 @@ import { Circuit } from "../../../../shared/site/src/proto/Circuit";
 
 export const protobufPackage = "";
 
-/** TODO[model_refactor_api] - .gitignore the generated .ts and generate it automatically via webpack? */
+/** TODO[master] - .gitignore the generated .ts and generate it automatically via webpack? */
 
 export interface DigitalSimState {
   /**

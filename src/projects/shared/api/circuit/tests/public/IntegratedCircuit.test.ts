@@ -58,11 +58,14 @@ describe("IntegratedCircuit", () => {
     test("Nested IC", () => {
         const [mainCircuit, _, { }] = CreateTestCircuit();
 
-        const [innerIcCircuit, __, { PlaceAt, Connect }] = CreateTestCircuit();
+        const [innerIcCircuit, __, { Connect, GetPort }] = CreateTestCircuit();
 
-        const [i1Inner, i2Inner, o1Inner, gInner] = PlaceAt(V(-5, -5), V(-5, +5), V(+5,  0), V(0, 0));
+        const pin1Inner = innerIcCircuit.placeComponentAt("Pin", V(-5, -5));
+        const pin2Inner = innerIcCircuit.placeComponentAt("Pin", V(-5, +5));
+        const pin3Inner = innerIcCircuit.placeComponentAt("Pin", V(+5, 0));
+        const gInner = innerIcCircuit.placeComponentAt("TestComp", V(0, 0));
 
-        Connect(i1Inner, gInner), Connect(i2Inner, gInner), Connect(gInner, o1Inner);
+        Connect(pin1Inner, gInner), Connect(pin2Inner, gInner), Connect(gInner, pin3Inner);
 
         innerIcCircuit.name = "Inner IC";
 
@@ -71,31 +74,34 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Inner.allPorts[0].id, group: "inputs",  name: "Inner In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: i2Inner.allPorts[0].id, group: "inputs",  name: "Inner In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Inner.allPorts[0].id, group: "outputs", name: "Inner Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: GetPort(pin1Inner).id, group: "inputs",  name: "Inner In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin2Inner).id, group: "inputs",  name: "Inner In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin3Inner).id, group: "outputs", name: "Inner Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });
         expect(mainCircuit.getICs()).toHaveLength(1);
         expect(mainCircuit.getICs()[0].id).toEqual(innerIc.id);
 
-        const [outerIcCircuit, ___, { PlaceAt: PlaceAt2, Connect: Connect2 }] = CreateTestCircuit();
+        const [outerIcCircuit, ___, { Connect: Connect2, GetPort: GetPort2 }] = CreateTestCircuit();
 
         expect(outerIcCircuit.getICs()).toHaveLength(0);
         outerIcCircuit.importICs(mainCircuit.getICs());
         expect(outerIcCircuit.getICs()).toHaveLength(1);
         expect(outerIcCircuit.getICs()[0].id).toEqual(innerIc.id);
 
-        const [i1Outer, i2Outer, o1Outer] = PlaceAt2(V(-5, -5), V(-5, +5), V(+5,  0));
+        const pin1Outer = outerIcCircuit.placeComponentAt("Pin", V(-5, -5));
+        const pin2Outer = outerIcCircuit.placeComponentAt("Pin", V(-5, +5));
+        const pin3Outer = outerIcCircuit.placeComponentAt("Pin", V(+5, 0));
         const innerIcInstance = outerIcCircuit.placeComponentAt(innerIc.id, V(1, 1));
+
         expect(innerIcInstance.allPorts).toHaveLength(3);
         expect(innerIcInstance.ports["inputs"]).toHaveLength(2);
         expect(innerIcInstance.ports["outputs"]).toHaveLength(1);
 
-        i1Outer.allPorts[0].connectTo(innerIcInstance.ports["inputs"][0]);
-        i2Outer.allPorts[0].connectTo(innerIcInstance.ports["inputs"][1]);
-        innerIcInstance.ports["outputs"][0].connectTo(o1Outer.allPorts[0]);
+        pin1Outer.allPorts[0].connectTo(innerIcInstance.ports["inputs"][0]);
+        pin2Outer.allPorts[0].connectTo(innerIcInstance.ports["inputs"][1]);
+        innerIcInstance.ports["outputs"][0].connectTo(pin3Outer.allPorts[0]);
 
         innerIcCircuit.name = "Outer IC";
 
@@ -104,9 +110,9 @@ describe("IntegratedCircuit", () => {
             display: {
                 size: V(4, 2),
                 pins: [
-                    { id: i1Outer.allPorts[0].id, group: "inputs",  name: "Outer In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
-                    { id: i2Outer.allPorts[0].id, group: "inputs",  name: "Outer In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Outer.allPorts[0].id, group: "outputs", name: "Outer Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: pin1Outer.allPorts[0].id, group: "inputs",  name: "Outer In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: pin2Outer.allPorts[0].id, group: "inputs",  name: "Outer In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: pin3Outer.allPorts[0].id, group: "outputs", name: "Outer Out",  pos: V(+1,    0), dir: V(+1, 0) },
                 ],
             },
         });

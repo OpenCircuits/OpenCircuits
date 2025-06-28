@@ -129,7 +129,7 @@ export function DigitalCircuitToProto(circuit: DigitalCircuit): DigitalProtoSche
     return DigitalProtoSchema.DigitalCircuit.create({
         circuit: CircuitToProto(circuit, CUR_SAVE_VERSION, DigitalKindMaps[0]),
 
-        propagationTime:    circuit.propagationTime,
+        propagationTime:    circuit.sim.propagationTime,
         icInitialSimStates: circuit.getICs().map((ic) => ConvertSimState(circuit, ic.initialSimState, ic.id)),
         simState:           ConvertSimState(circuit, circuit.sim.state),
     });
@@ -181,7 +181,7 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
 
     ProtoToCircuit(proto.circuit, circuit, (id) => CreateCircuit(id)[0], DigitalKindMaps[1]);
 
-    circuit.propagationTime = proto.propagationTime;
+    circuit.sim.propagationTime = proto.propagationTime;
 
     // Load simulation state
     for (const [ic, initialSimState] of proto.circuit.ics.zip(proto.icInitialSimStates)) {

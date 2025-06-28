@@ -110,7 +110,6 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot set port config for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
 
-        // TODO[model_refactor](leon) revisit this and decide on a functionality
         const curConfig = this.state.internal.getPortConfig(this.id).unwrap();
 
         const config = {

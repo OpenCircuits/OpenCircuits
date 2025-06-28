@@ -29,9 +29,10 @@ describe("DigitalCircuit", () => {
         });
         test("Deleted IC should not be in simState", () => {
             const [circuit, _, { Place }] = CreateTestCircuit();
-            const [icCircuit, {}, { PlaceAndConnect: ICPlaceAndConnect }] = CreateTestCircuit();
+            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
-                const [sw, { outputs: [led] }] = ICPlaceAndConnect("Switch");
+                const [i1, o1] = ICPlace("InputPin", "OutputPin");
+                ICConnect(i1, o1);
                 icCircuit.name = "To be deleted IC";
 
                 return circuit.createIC({
@@ -39,8 +40,8 @@ describe("DigitalCircuit", () => {
                     display: {
                         size: V(4, 2),
                         pins: [
-                            { id: sw.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
-                            { id: led.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,   0), dir: V(+1, 0) },
+                            { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
                         ],
                     },
                 });

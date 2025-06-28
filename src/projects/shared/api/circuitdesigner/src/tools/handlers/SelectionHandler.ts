@@ -19,8 +19,6 @@ export const SelectionHandler: ToolHandler = {
             return ToolHandlerResponse.PASS;
         }
 
-        // TODO[model_refactor_api](leon) - think about how this works w/ ports and WireTool (like in master)
-
         const shouldSelect = (!ev.input.isShiftKeyDown || !obj.isSelected);
 
         circuit.beginTransaction();

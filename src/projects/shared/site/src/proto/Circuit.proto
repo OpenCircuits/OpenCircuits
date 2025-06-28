@@ -10,14 +10,14 @@ message Prop {
 }
 
 message Port {
-    // TODO: kind?
+    optional uint32 kind = 1;
 
-    string group = 1;
-    int32 index = 2;
+    string group = 2;
+    int32 index = 3;
 
-    optional string name = 3;
+    optional string name = 4;
 
-    map<string, Prop> otherProps = 4;
+    map<string, Prop> otherProps = 5;
 }
 
 message Component {

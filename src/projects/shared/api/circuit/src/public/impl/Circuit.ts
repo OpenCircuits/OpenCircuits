@@ -7,7 +7,8 @@ import {Schema} from "shared/api/circuit/schema";
 import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, CircuitHistory, CircuitHistoryEvent, ICPin, IntegratedCircuit,
-        IntegratedCircuitDisplay} from "../Circuit";
+        IntegratedCircuitDisplay,
+        ReadonlyICPin} from "../Circuit";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
@@ -19,6 +20,8 @@ import {ReadonlyWire} from "../Wire";
 import {ReadonlyPort} from "../Port";
 import {Camera} from "../Camera";
 import {CameraImpl} from "./Camera";
+import {Result} from "../../utils/Result";
+import {AddErrE} from "../../utils/MultiError";
 
 
 function ConvertComp(c: ReadonlyComponent): Schema.Component {
@@ -105,7 +108,7 @@ export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements 
     }
 }
 
-export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
+export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly state: CircuitState<T>;
 
     public readonly camera: Camera;
@@ -135,6 +138,8 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     private get internal(): CircuitInternal {
         return this.state.internal;
     }
+
+    protected abstract checkIfPinIsValid(pin: ReadonlyICPin, port: T["Port"]): Result;
 
     private pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
         return this.state.assembler.findNearestObj(pt, filter);
@@ -331,9 +336,18 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         if (missingICIDs.size > 0)
             throw new Error(`Circuit.createIC: Found sub-ICs when trying to create a new IC that haven't been imported yet: [${[...missingICIDs].join(", ")}]. Please import them first!`);
 
+        // Check that all pins correspond to allowed objects internally
+        for (const pin of info.display.pins) {
+            const port = info.circuit.getPort(pin.id);
+            if (!port)
+                throw new Error(`Circuit.createIC: Failed to find port with id ${pin.id} corresponding to pin ${pin.name}!`);
+            this.checkIfPinIsValid(pin, port as T["Port"])
+                .mapErr(AddErrE(`Circuit.createIC: Pin '${pin.name}' corresponding to port '${port.id}' is invalid!`))
+                .unwrap();
+        }
+
         const metadata: Schema.IntegratedCircuitMetadata = {
-            // TODO[model_refactor_api](leon): do we need to allow this? maybe just use the info.circuit.id?
-            id:   id,  // Make a new ID
+            id,
             name: info.circuit.name,
             desc: info.circuit.desc,
 
