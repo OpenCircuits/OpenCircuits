@@ -20,7 +20,7 @@ expect.extend({
     toBeOn(received: Signal | DigitalComponent | DigitalPort) {
         function check(signal: Signal) {
             return {
-                message: () => "expected Signal to be On",
+                message: () => `expected Signal (${signal}) to be On`,
                 pass:    (Signal.isOn(signal)),
             };
         }
@@ -32,7 +32,7 @@ expect.extend({
     toBeOff(received: Signal | DigitalComponent | DigitalPort) {
         function check(signal: Signal) {
             return {
-                message: () => "expected Signal to be Off",
+                message: () => `expected Signal (${signal}) to be Off`,
                 pass:    (Signal.isOff(signal)),
             };
         }
@@ -44,7 +44,7 @@ expect.extend({
     toBeStable(received: Signal | DigitalComponent) {
         function check(signal: Signal) {
             return {
-                message: () => "expected Signal to be Stable (On | Off)",
+                message: () => `expected Signal (${signal}) to be Stable (On | Off)`,
                 pass:    (Signal.isStable(signal)),
             };
         }
@@ -54,7 +54,7 @@ expect.extend({
     toBeMetastable(received: Signal | DigitalComponent) {
         function check(signal: Signal) {
             return {
-                message: () => "expected Signal to be Metastable",
+                message: () => `expected Signal (${signal}) to be Metastable`,
                 pass:    (Signal.isMetastable(signal)),
             };
         }

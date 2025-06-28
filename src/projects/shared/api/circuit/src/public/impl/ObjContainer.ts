@@ -111,6 +111,10 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
             .map((id) => this.state.constructIC(id));
     }
 
+    public get ids(): ReadonlySet<GUID> {
+        return this.objs;
+    }
+
     public withWiresAndPorts(): T["ObjContainerT"] {
         const comps = this.components;
         const ports = [
@@ -125,7 +129,7 @@ export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
             ...ports.flatMap((p) => p.connections),
         ].filter((w) => portIds.has(w.p1.id) && portIds.has(w.p2.id));
 
-        return new ObjContainerImpl<T>(this.state, new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)), this.icId);
+        return this.state.constructObjContainer(new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)), this.icId);
     }
 
     public select(): void {

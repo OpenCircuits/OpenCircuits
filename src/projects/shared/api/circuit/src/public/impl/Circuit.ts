@@ -13,7 +13,6 @@ import {Circuit, CircuitEvent, CircuitHistory, CircuitHistoryEvent, ICPin, Integ
 import {CircuitState, CircuitTypes} from "./CircuitState";
 import {SelectionsImpl}             from "./Selections";
 import {ObservableImpl} from "../../utils/Observable";
-import {ObjContainerImpl} from "./ObjContainer";
 import {LogEntry} from "../../internal/impl/CircuitLog";
 import {ReadonlyComponent} from "../Component";
 import {ReadonlyWire} from "../Wire";
@@ -113,15 +112,15 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
 
     public readonly camera: Camera;
 
-    public readonly selections: SelectionsImpl<T>;
+    public readonly selections: T["SelectionsT"];
     public readonly history: CircuitHistory;
 
-    public constructor(state: CircuitState<T>) {
+    public constructor(state: CircuitState<T>, selections: T["SelectionsT"]) {
         super();
 
         this.state = state;
 
-        this.selections = new SelectionsImpl<T>(state);
+        this.selections = selections;
         this.history = new HistoryImpl(state.internal);
 
         this.camera = new CameraImpl(state);
@@ -234,7 +233,7 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
         return undefined;
     }
     public getObjs(): T["ObjContainerT"] {
-        return new ObjContainerImpl<T>(this.state, new Set(this.internal.getObjs()));
+        return this.state.constructObjContainer(new Set(this.internal.getObjs()));
     }
     public getComponents(): T["Component[]"] {
         return [...this.internal.getComps()]
@@ -267,7 +266,7 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
             }
         }
 
-        return new ObjContainerImpl<T>(this.state, objSet);
+        return this.state.constructObjContainer(objSet);
     }
 
     // Object manipulation
@@ -395,13 +394,11 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
         this.internal.redo().unwrap();
     }
 
-    public import(circuit: T["ReadonlyCircuit"] | T["ReadonlyObjContainerT"], opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["ObjContainerT"] {
+    protected doImport(circuit: T["ReadonlyCircuit"] | T["ReadonlyObjContainerT"], opts?: { refreshIds?: boolean, loadMetadata?: boolean }): Map<GUID, GUID> {
         const refreshIds = opts?.refreshIds ?? false,
-              loadMetadata = opts?.loadMetadata ?? false;
+            loadMetadata = opts?.loadMetadata ?? false;
 
         const isCircuit = (o: T["ReadonlyCircuit"] | T["ReadonlyObjContainerT"]): o is T["ReadonlyCircuit"] => (o instanceof CircuitImpl);
-
-        this.beginTransaction();
 
         // TODO[] - make this undoable?
         if (loadMetadata && isCircuit(circuit)) {
@@ -420,15 +417,19 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
         const comps = (isCircuit(circuit) ? circuit.getComponents() : circuit.components);
         const wires = (isCircuit(circuit) ? circuit.getWires() : circuit.wires);
 
-        const objs = this.internal.importObjs([
+        return this.internal.importObjs([
             ...comps.map(ConvertComp),
             ...comps.flatMap((c) => c.allPorts.map(ConvertPort)),
             ...wires.map(ConvertWire),
         ], refreshIds).unwrap();
+    }
 
+    public import(circuit: T["ReadonlyCircuit"] | T["ReadonlyObjContainerT"], opts?: { refreshIds?: boolean, loadMetadata?: boolean }): T["ObjContainerT"] {
+        this.beginTransaction();
+        const objs = this.doImport(circuit, opts);
         this.commitTransaction("Imported Circuit");
 
-        return new ObjContainerImpl(this.state, new Set(objs));
+        return this.state.constructObjContainer(new Set(objs.values()));
     }
 }
 
@@ -540,8 +541,7 @@ export class IntegratedCircuitImpl<T extends CircuitTypes> implements Integrated
     }
 
     public get all(): T["ObjContainerT"] {
-        return new ObjContainerImpl<T>(
-            this.state,
+        return this.state.constructObjContainer(
             new Set(this.state.internal.getICInfo(this.id).unwrap().getObjs()),
             this.id
         );

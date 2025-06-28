@@ -5,6 +5,7 @@ import {Component, ReadonlyComponent} from "./Component";
 import {ReadonlyWire, Wire}           from "./Wire";
 import {Port, ReadonlyPort}           from "./Port";
 import {IntegratedCircuit}            from "./Circuit";
+import {GUID} from "../schema";
 
 
 interface BaseReadonlyObjContainer<PortT, CompT, WireT, ICT, ObjCT> {
@@ -21,6 +22,9 @@ interface BaseReadonlyObjContainer<PortT, CompT, WireT, ICT, ObjCT> {
     readonly components: CompT[];
     readonly wires: WireT[];
     readonly ports: PortT[];
+
+    // All the IDs of all the objects in this container.
+    readonly ids: ReadonlySet<GUID>;
 
     // Returns only the ICs that are referenced by components in this container.
     readonly ics: ICT[];

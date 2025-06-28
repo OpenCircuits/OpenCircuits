@@ -27,6 +27,8 @@ import {ComponentAssembler} from "shared/api/circuit/internal/assembly/Component
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {MapObj} from "shared/api/circuit/utils/Functions";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
+import {SelectionsImpl} from "shared/api/circuit/public/impl/Selections";
+import {ObjContainerImpl} from "shared/api/circuit/public/impl/ObjContainer";
 
 
 // TestCircuit is a circuit with the following specifications:
@@ -196,9 +198,12 @@ export function CreateTestCircuit(
         constructComponentInfo(kind) {
             return new ComponentInfoImpl(state, kind);
         },
+        constructObjContainer(objs, icId) {
+            return new ObjContainerImpl(state, objs, icId);
+        },
     };
 
-    const circuit = new TestCircuitImpl(state);
+    const circuit = new TestCircuitImpl(state, new SelectionsImpl<CircuitTypes>(state));
 
     return [circuit, state, {
         PlaceAt: (...positions) => positions.map((p) => circuit.placeComponentAt("TestComp", p)),

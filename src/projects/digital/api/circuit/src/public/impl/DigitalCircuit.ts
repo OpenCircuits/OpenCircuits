@@ -5,7 +5,9 @@ import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {GUID, ICInfo, ReadonlyICPin} from "shared/api/circuit/public";
 import {DigitalPort} from "../DigitalPort";
-import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {DigitalSelectionsImpl} from "./DigitalSelections";
+import {MapObjKeys} from "shared/api/circuit/utils/Functions";
 
 
 class DigitalSimImpl implements DigitalSim {
@@ -53,7 +55,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
     public readonly sim: DigitalSimImpl;
 
     public constructor(state: DigitalCircuitState) {
-        super(state);
+        super(state, new DigitalSelectionsImpl(state));
 
         this.state = state;
         this.sim = new DigitalSimImpl(state);
@@ -96,15 +98,20 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         if (opts?.loadMetadata && isCircuit(circuit))
             this.sim.propagationTime = circuit.sim.propagationTime;
 
-        const objs = super.import(circuit, opts);
+        const objIdsMap = super.doImport(circuit, opts);
 
-        // TODO[model_refactor_api] - load circuit state from set of objects too (and unit test this)
-        if (isCircuit(circuit))
-            this.state.sim.loadState(circuit.sim.state);
+        const newState = isCircuit(circuit) ? circuit.sim.state : circuit.simState;
+
+        // If `refreshIds` was set to true, we need to map the states to the new IDs
+        this.state.sim.loadState({
+            signals:  MapObjKeys(newState.signals,  ([oldId]) => objIdsMap.get(oldId)!),
+            states:   MapObjKeys(newState.states,   ([oldId]) => objIdsMap.get(oldId)!),
+            icStates: MapObjKeys(newState.icStates, ([oldId]) => objIdsMap.get(oldId)!),
+        });
 
         this.commitTransaction("Imported Circuit");
 
-        return objs;
+        return this.state.constructObjContainer(new Set(objIdsMap.values()));
     }
 }
 

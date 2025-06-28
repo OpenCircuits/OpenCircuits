@@ -17,6 +17,7 @@ import {DigitalPortImpl}        from "./impl/DigitalPort";
 import {DigitalCircuitState}    from "./impl/DigitalCircuitState";
 import {DigitalComponentInfoImpl} from "./impl/DigitalComponentInfo";
 import {DigitalPropagators} from "../internal/sim/DigitalPropagators";
+import {DigitalObjContainerImpl} from "./impl/DigitalObjContainer";
 
 
 export * from "./DigitalCircuit";
@@ -66,6 +67,9 @@ export function CreateCircuit(mainCircuitID = uuid()): [DigitalCircuit, DigitalC
         },
         constructComponentInfo(kind) {
             return mainCache.compInfos.getOrInsert(kind, (kind) => new DigitalComponentInfoImpl(state, kind));
+        },
+        constructObjContainer(objs, icId) {
+            return new DigitalObjContainerImpl(state, objs, icId);
         },
     }
 
