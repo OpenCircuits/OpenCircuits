@@ -18,10 +18,10 @@ export class CanvasTextMeasurer implements TextMeasurer {
         this.ctx.textAlign = fontStyle.textAlign;
         const result = this.ctx.measureText(text);
         return Rect.From({
-            left:   -result.actualBoundingBoxLeft / fontStyle.scale,
-            right:  result.actualBoundingBoxRight / fontStyle.scale,
-            bottom: -result.actualBoundingBoxDescent / fontStyle.scale,
-            top:    result.actualBoundingBoxAscent / fontStyle.scale,
+            left:   -result.width / 2 / fontStyle.scale,
+            right:  result.width / 2 / fontStyle.scale,
+            bottom: -result.fontBoundingBoxDescent / fontStyle.scale,
+            top:    result.fontBoundingBoxAscent / fontStyle.scale,
         });
     }
 }

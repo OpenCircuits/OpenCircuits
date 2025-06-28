@@ -1,5 +1,9 @@
 import {useState} from "react";
 
+import {CircuitHistoryEntry, CircuitHistoryOp} from "shared/api/circuit/public";
+
+import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
+
 import {useDocEvent}                          from "shared/site/utils/hooks/useDocEvent";
 import {useEvent}                             from "shared/site/utils/hooks/useEvent";
 import {useHistory}                           from "shared/site/utils/hooks/useHistory";
@@ -11,18 +15,12 @@ import {AdjustableElement} from "shared/site/components/AdjustableElement";
 
 import "./index.scss";
 
-import {Circuit} from "shared/api/circuit/public";
-
-
-// TODO[model_refactor_api] - put LogEntry and CircuitOp somewhere that isn't internal, useHistory currently imports from internal
-type LogEntry = ReturnType<typeof useHistory>["undoHistory"][number]
-type CircuitOp = LogEntry["ops"][number]
 
 interface OpInfo {
     displayName: string;
     extraInfo?: string;
 }
-const getOpInfo = (op: CircuitOp): OpInfo => {
+const getOpInfo = (op: CircuitHistoryOp): OpInfo => {
     switch (op.kind) {
         case "PlaceComponentOp":
             return { displayName: `${op.inverted ? "Removed" : "Placed"} ${op.c.kind}`, extraInfo: `ID: ${op.c.id}` };
@@ -45,7 +43,7 @@ const getOpInfo = (op: CircuitOp): OpInfo => {
 }
 
 type HistoryEntryProps = {
-    op: CircuitOp;
+    op: CircuitHistoryOp;
     isRedo: boolean;
 }
 const HistoryEntry = ({ op, isRedo }: HistoryEntryProps) => {
@@ -73,13 +71,11 @@ const HistoryEntry = ({ op, isRedo }: HistoryEntryProps) => {
 }
 
 type GroupActionEntryProps = {
-    a: LogEntry;
+    a: CircuitHistoryEntry;
     isRedo: boolean;
 }
 const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
-    // TODO[model_refactor_api]: Any extraInfo we would want to display on the log?
-    const [displayExtraInfo, setDisplayExtraInfo] = useState(false);
 
     if (a.ops.length === 1) {
         return <HistoryEntry op={a.ops[0]} isRedo={isRedo} />
@@ -95,25 +91,10 @@ const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
              }}>
             <div className="historybox__groupentry__header">
                 <div>
-                    {/* {g.getCustomInfo() && (
-                        <img src="img/icons/info.svg"
-                             alt="Display extra info"
-                             onClick={(e) => {
-                                 // Necessary to stop child entries from displaying
-                                 //  extra info about the parent history entry
-                                 e.stopPropagation();
-                                 setDisplayExtraInfo(!displayExtraInfo);
-                             }} />
-                    )} */}
-                    {/* TODO[model_refactor_api]: clientData isn't used/set now (except to mark as undo/redo in the log),
-                        should Circuit's commitTransaction take it in as a parameter like CircuitDocument? */}
                     <span>{a.clientData}</span>
                 </div>
                 <span className={`${isCollapsed ? "collapsed" : "" }`}>&rsaquo;</span>
             </div>
-            {/* {displayExtraInfo && g.getCustomInfo?.()?.map((obj, i) =>
-                <div key={`group-action-extrainfo-${i}`} className="historybox__groupentry__extrainfo">{obj}</div>
-            )} */}
             {!isCollapsed && a.ops.map((op, i) => (
                 <HistoryEntry key={`group-action-entry-${i}`}
                               op={op}
@@ -126,9 +107,11 @@ const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
 
 
 type Props = {
-    circuit: Circuit;
+    designer: CircuitDesigner;
 }
-export const HistoryBox = ({ circuit }: Props) => {
+export const HistoryBox = ({ designer }: Props) => {
+    const { circuit, viewport } = designer;
+
     const { isOpen, isHistoryBoxOpen, curItemID } = useSharedSelector(
         (state) => ({ ...state.itemNav }),
     );
@@ -137,7 +120,8 @@ export const HistoryBox = ({ circuit }: Props) => {
     const { undoHistory, redoHistory } = useHistory(circuit);
 
     const [isDragging, setIsDragging] = useState(false);
-    // useEvent("mousedrag", (_) => setIsDragging(true),  info.input, [setIsDragging]); // TODO
+    // Let mouse pass-through when dragging on canvas
+    useEvent("mousedrag", (_) => setIsDragging(true), viewport.canvasInfo?.input, [setIsDragging]);
     useDocEvent("mouseup", () => setIsDragging(false), [setIsDragging]);
 
     // Make history box passthrough if dragging on canvas or from ItemNav

@@ -1,10 +1,9 @@
-import {Circuit}             from "shared/api/circuit/public";
+import {Circuit, CircuitHistoryEntry} from "shared/api/circuit/public";
 import {useEffect, useState} from "react";
-import {LogEntry} from "shared/api/circuit/internal/impl/CircuitLog";
 
 
 export const useHistory = (circuit: Circuit) => {
-    const [state, setState] = useState<{ undoHistory: readonly LogEntry[], redoHistory: readonly LogEntry[] }>({
+    const [state, setState] = useState<{ undoHistory: readonly CircuitHistoryEntry[], redoHistory: readonly CircuitHistoryEntry[] }>({
         undoHistory: [],
         redoHistory: [],
     });

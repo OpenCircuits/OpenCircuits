@@ -1,6 +1,6 @@
 import {Vector} from "Vector";
 
-import {GUID, Schema} from "shared/api/circuit/schema";
+import {GUID} from "shared/api/circuit/schema";
 
 import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff";
 
@@ -11,9 +11,9 @@ import {ReadonlyWire, Wire}          from "./Wire";
 import {ReadonlySelections, Selections}    from "./Selections";
 import {Observable} from "../utils/Observable";
 import {ObjContainer, ReadonlyObjContainer} from "./ObjContainer";
-import {LogEntry} from "../internal/impl/CircuitLog";
 import {Rect} from "math/Rect";
 import {Camera, ReadonlyCamera} from "./Camera";
+import {CircuitOp} from "../internal/impl/CircuitOps";
 
 
 // TODO[master](leon) - make this more user friendly
@@ -27,9 +27,19 @@ export type CircuitEvent = {
 export interface CircuitHistoryEvent {
     type: "change";
 }
+export type CircuitHistoryOp = Readonly<CircuitOp>;
+export interface CircuitHistoryEntry {
+    readonly id: GUID;
+
+    // Operations
+    readonly ops: readonly CircuitHistoryOp[];
+
+    // Semantic info for the entry
+    readonly clientData: string;
+}
 export interface CircuitHistory extends Observable<CircuitHistoryEvent> {
-    getUndoStack(): readonly LogEntry[];
-    getRedoStack(): readonly LogEntry[];
+    getUndoStack(): readonly CircuitHistoryEntry[];
+    getRedoStack(): readonly CircuitHistoryEntry[];
 
     clear(): void;
 }
