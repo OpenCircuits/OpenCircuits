@@ -15,7 +15,7 @@ export class OscilloscopeAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
             "inputs": (comp, index, total) => ({
-                origin: V(-0.5, PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y,
+                origin: V(-0.5, -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y,
                                                                    { spacing: this.getDisplaySize(comp).y })),
                 dir: V(-1, 0),
             }),
