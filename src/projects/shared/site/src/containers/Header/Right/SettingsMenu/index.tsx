@@ -23,7 +23,7 @@ export const SettingsMenu = () => {
 
     // We need this to connect the Redux state to the CircuitInfo state
     // (keeps CircuitInfo in sync with the Redux state)
-    // TODO[model_refactor](leon) - figure out a better system for this
+    // TODO[master](leon) - figure out a better system for this
     //  maybe even put all the react-redux stuff into the CircuitDesigner
     //  especially the gross 'useAPIMethods' thing
     useEffect(() => {
