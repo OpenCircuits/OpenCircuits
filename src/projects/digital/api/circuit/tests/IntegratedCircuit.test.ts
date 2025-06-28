@@ -12,9 +12,9 @@ describe("IntegratedCircuit", () => {
 
         const [icCircuit] = CreateTestCircuit();
 
-        const i1 = icCircuit.placeComponentAt("Switch", V(-5, -5));
-        const i2 = icCircuit.placeComponentAt("Switch", V(-5, +5));
-        const o1 = icCircuit.placeComponentAt("LED", V(+5,  0));
+        const i1 = icCircuit.placeComponentAt("InputPin", V(-5, -5));
+        const i2 = icCircuit.placeComponentAt("InputPin", V(-5, +5));
+        const o1 = icCircuit.placeComponentAt("OutputPin", V(+5,  0));
         const g  = icCircuit.placeComponentAt("ANDGate", V(0, 0));
 
         i1.outputs[0].connectTo(g.inputs[0]);
@@ -58,9 +58,9 @@ describe("IntegratedCircuit", () => {
 
         const [innerIcCircuit] = CreateTestCircuit();
 
-        const i1Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, -5));
-        const i2Inner = innerIcCircuit.placeComponentAt("Switch", V(-5, +5));
-        const o1Inner = innerIcCircuit.placeComponentAt("LED", V(+5,  0));
+        const i1Inner = innerIcCircuit.placeComponentAt("InputPin", V(-5, -5));
+        const i2Inner = innerIcCircuit.placeComponentAt("InputPin", V(-5, +5));
+        const o1Inner = innerIcCircuit.placeComponentAt("OutputPin", V(+5,  0));
         const gInner  = innerIcCircuit.placeComponentAt("ANDGate", V(0, 0));
 
         i1Inner.outputs[0].connectTo(gInner.inputs[0]);
@@ -90,9 +90,9 @@ describe("IntegratedCircuit", () => {
         expect(outerIcCircuit.getICs()).toHaveLength(1);
         expect(outerIcCircuit.getICs()[0].id).toEqual(innerIc.id);
 
-        const i1Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, -5));
-        const i2Outer = outerIcCircuit.placeComponentAt("Switch", V(-5, +5));
-        const o1Outer = outerIcCircuit.placeComponentAt("LED", V(+5,  0));
+        const i1Outer = outerIcCircuit.placeComponentAt("InputPin", V(-5, -5));
+        const i2Outer = outerIcCircuit.placeComponentAt("InputPin", V(-5, +5));
+        const o1Outer = outerIcCircuit.placeComponentAt("OutputPin", V(+5,  0));
         const innerIcInstance = outerIcCircuit.placeComponentAt(innerIc.id, V(1, 1));
         expect(innerIcInstance.allPorts).toHaveLength(3);
         expect(innerIcInstance.ports["inputs"]).toHaveLength(2);
@@ -140,6 +140,11 @@ describe("IntegratedCircuit", () => {
         const [icCircuit] = CreateTestCircuit();
         icCircuit.import(circuit);
         icCircuit.name = "My IC";
+
+        icCircuit.getComponent(i1.id)!.replaceWith("InputPin");
+        icCircuit.getComponent(i2.id)!.replaceWith("InputPin");
+        icCircuit.getComponent(o1.id)!.replaceWith("OutputPin");
+
         const ic = circuit.createIC({
             circuit: icCircuit,
             display: {
@@ -155,10 +160,8 @@ describe("IntegratedCircuit", () => {
         expect(ic.name).toBe("My IC");
         expect(ic.display.size).toEqual(V(4, 2));
         expect(ic.display.pins).toHaveLength(3);
-        // TODO[model_refactor_api]: This tests when we have replace-kind working
-        // (after importing above, replace switches/leds with pins)
-        // expect(ic.components.map((c) => c.kind)).toContain("InputPin");
-        // expect(ic.components.map((c) => c.kind)).toContain("OutputPin");
+        expect(ic.components.map((c) => c.kind)).toContain("InputPin");
+        expect(ic.components.map((c) => c.kind)).toContain("OutputPin");
 
         const icInstance = circuit.placeComponentAt(ic.id, V(1, 1));
 

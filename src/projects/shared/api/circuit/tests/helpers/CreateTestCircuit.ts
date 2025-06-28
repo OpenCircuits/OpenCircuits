@@ -2,11 +2,11 @@ import "./Extensions";
 
 import {V, Vector} from "Vector";
 
-import {OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Circuit, Component, Node, Port, Wire, uuid} from "shared/api/circuit/public";
+import {Circuit, Component, Node, Port, ReadonlyICPin, Wire, uuid} from "shared/api/circuit/public";
 import {CircuitImpl, IntegratedCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
@@ -141,6 +141,14 @@ export class TestPortImpl extends PortImpl<CircuitTypes> {
     }
 }
 
+export class TestCircuitImpl extends CircuitImpl<CircuitTypes> {
+    protected override checkIfPinIsValid(_pin: ReadonlyICPin, port: Port): Result {
+        if (port.parent.kind !== "Pin")
+            return ErrE(`TestCircuit.checkIfPinIsValid: Pin must be apart of a 'Pin' component! Found: '${port.parent.kind}' instead!`);
+        return OkVoid();
+    }
+}
+
 export interface TestCircuitHelpers {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     PlaceAt(...positions: Vector[]): Component[];
@@ -190,7 +198,7 @@ export function CreateTestCircuit(
         },
     };
 
-    const circuit = new CircuitImpl(state);
+    const circuit = new TestCircuitImpl(state);
 
     return [circuit, state, {
         PlaceAt: (...positions) => positions.map((p) => circuit.placeComponentAt("TestComp", p)),

@@ -1,9 +1,23 @@
-import {V} from "Vector";
+import {V, Vector} from "Vector";
 
 import {Circuit} from "shared/api/circuit/public";
 
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
+
+export function DoPaste(circuit: Circuit, pastedCircuit: Circuit, offset?: Vector) {
+    circuit.beginTransaction();
+    circuit.selections.clear();
+    const newObjs = circuit.import(pastedCircuit, { refreshIds: true });
+    // Offset, Select, and shift the components
+    if (offset) {
+        newObjs.components.forEach((o) =>
+            (o.pos = o.pos.add(offset)));
+    }
+    newObjs.shift();
+    newObjs.select();
+    circuit.commitTransaction("Pasted from Clipboard");
+}
 
 export const PasteHandler = (deserialize: (str: string) => Circuit): ToolHandler => ({
     onEvent: (ev, { circuit }) => {
@@ -43,17 +57,7 @@ export const PasteHandler = (deserialize: (str: string) => Circuit): ToolHandler
             //     return ids1.symmetricDifference(ids2).size === 0;
             // })();
 
-            circuit.beginTransaction();
-            circuit.selections.clear();
-            const newObjs = circuit.import(pastedCircuit, { refreshIds: true });
-            // Select, shift, and offset the components
-            newObjs.shift();
-            newObjs.select();
-            if (offsetAmount) {
-                newObjs.components.forEach((o) =>
-                    (o.pos = o.pos.add(V(0.5, -0.5).scale(offsetAmount))));
-            }
-            circuit.commitTransaction("Pasted From Clipboard");
+            DoPaste(circuit, pastedCircuit, offsetAmount ? V(0.5, -0.5).scale(offsetAmount) : undefined);
 
             // This should be the only handler to execute
             return ToolHandlerResponse.HALT;

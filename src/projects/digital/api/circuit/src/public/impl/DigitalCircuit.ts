@@ -3,26 +3,68 @@ import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl
 import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSim, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
-import {GUID, ICInfo} from "shared/api/circuit/public";
+import {GUID, ICInfo, ReadonlyICPin} from "shared/api/circuit/public";
+import {DigitalPort} from "../DigitalPort";
+import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
+
+
+class DigitalSimImpl implements DigitalSim {
+    protected readonly circuitState: DigitalCircuitState;
+
+    public constructor(circuitState: DigitalCircuitState) {
+        this.circuitState = circuitState;
+    }
+
+    public set propagationTime(val: number) {
+        if (!this.circuitState.simRunner)
+            return;
+        this.circuitState.simRunner.propagationTime = val;
+    }
+    public get propagationTime(): number {
+        return this.circuitState.simRunner?.propagationTime ?? -1;
+    }
+
+    public get state() {
+        return this.circuitState.sim.getSimState().toSchema();
+    }
+
+    public resume() {
+        this.circuitState.simRunner?.resume();
+    }
+    public pause() {
+        this.circuitState.simRunner?.pause();
+    }
+
+    public step() {
+        this.circuitState.sim.step();
+    }
+
+    public sync(comps: GUID[]) {
+        comps
+            .filter((c) => this.circuitState.internal.hasComp(c))
+            .forEach((id) => this.circuitState.sim.resetQueueForComp(id));
+    }
+}
 
 
 export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements DigitalCircuit {
     protected override readonly state: DigitalCircuitState;
 
+    public readonly sim: DigitalSimImpl;
+
     public constructor(state: DigitalCircuitState) {
         super(state);
 
         this.state = state;
+        this.sim = new DigitalSimImpl(state);
     }
 
-    public set propagationTime(val: number) {
-        // TODO[model_refactor_api] - put this somewhere else?
-        if (!this.state.simRunner)
-            return;
-        this.state.simRunner.propagationTime = val;
-    }
-    public get propagationTime(): number {
-        return this.state.simRunner?.propagationTime ?? -1;
+    public override checkIfPinIsValid(_pin: ReadonlyICPin, port: DigitalPort): Result {
+        if (port.isOutputPort && port.parent.kind !== "InputPin")
+            return ErrE(`DigitalCircuit.checkIfPinIsValid: Pin with output-port must be apart of an 'InputPin'! Found: '${port.parent.kind}' instead!`);
+        if (port.isInputPort && port.parent.kind !== "OutputPin")
+            return ErrE(`DigitalCircuit.checkIfPinIsValid: Pin with input-port must be apart of an 'OutputPin'! Found: '${port.parent.kind}' instead!`);
+        return OkVoid();
     }
 
     public override importICs(ics: DigitalIntegratedCircuit[]): void {
@@ -40,23 +82,6 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         return ic;
     }
 
-    public get sim(): DigitalSim {
-        return {
-            state: this.state.sim.getSimState().toSchema(),
-
-            sync: (comps) => {
-                comps
-                    .filter((c) => this.state.internal.hasComp(c))
-                    .forEach((id) => this.state.sim.resetQueueForComp(id));
-            },
-        };
-    }
-
-    // TODO[model_refactor_api](leon) - revisit this
-    public step() {
-        this.state.sim.step();
-    }
-
     public override import(
         circuit: ReadonlyDigitalCircuit | ReadonlyDigitalObjContainer,
         opts?: { refreshIds?: boolean, loadMetadata?: boolean }
@@ -69,7 +94,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
             this.state.sim.loadICState(ic.id, ic.initialSimState);
 
         if (opts?.loadMetadata && isCircuit(circuit))
-            this.propagationTime = circuit.propagationTime;
+            this.sim.propagationTime = circuit.sim.propagationTime;
 
         const objs = super.import(circuit, opts);
 

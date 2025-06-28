@@ -13,7 +13,7 @@ interface BaseReadonlyWire<PortT, NodeT, WireT> {
     readonly p1: PortT;
     readonly p2: PortT;
 
-    // TODO[model_refactor_api](leon): Maybe make some Path API object? Could be 'walkable'
+    // TODO[master](leon): Maybe make some Path API object? Could be 'walkable'
     readonly path: Array<NodeT | WireT>;
 }
 

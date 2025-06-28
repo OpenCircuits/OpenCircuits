@@ -185,7 +185,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
             // then copy the component
             // Otherwise there is text selected, so do default copying
             // Necessary to fix #874
-            // TODO[model_refactor](leon) - Find a better way to do this (See if canvas is focused somehow?)
+            // TODO[master](leon) - Find a better way to do this (See if canvas is focused somehow?)
             const sel = document.getSelection();
             return !(sel?.anchorNode?.nodeName === "LABEL" && sel?.type !== "Caret");
         }

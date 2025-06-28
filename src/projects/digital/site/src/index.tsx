@@ -10,6 +10,9 @@ import {LoadingScreen} from "shared/site/utils/LoadingScreen";
 
 import {setCurDesigner} from "shared/site/utils/hooks/useDesigner";
 
+import {Circuit}      from "shared/api/circuit/public/Circuit";
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
+
 import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
 import {TranslateTool}    from "shared/api/circuitdesigner/tools/TranslateTool";
@@ -136,6 +139,15 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
+            const GetCircuitFromCircuitOrObjs = (circuitOrObjs: Circuit | ObjContainer) => {
+                if ("length" in circuitOrObjs) {
+                    const [circuit, _] = CreateCircuit();
+                    circuit.import(circuitOrObjs as DigitalObjContainer);
+                    return circuit;
+                }
+                return circuitOrObjs;
+            };
+
             SetCircuitHelpers({
                 CreateAndInitializeDesigner(tools) {
                     const [mainCircuit, mainCircuitState] = CreateCircuit();
@@ -147,11 +159,7 @@ async function Init(): Promise<void> {
                                 InteractionHandler,  // Needs to be before the selection and select path handlers
                                 SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
                                 CleanupHandler, ZoomHandler,
-                                CopyHandler((objs) => {
-                                    const [circuit, _] = CreateCircuit();
-                                    circuit.import(objs as DigitalObjContainer);
-                                    return JSON.stringify(DigitalCircuitToProto(circuit));
-                                }),
+                                CopyHandler((objs) => CircuitHelpers.SerializeAsString(objs)),
                                 PasteHandler((str) => CircuitHelpers.DeserializeCircuit(str)),
                                 SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
                             ),
@@ -171,7 +179,8 @@ async function Init(): Promise<void> {
 
                     return mainDesigner;
                 },
-                SerializeCircuit(circuit) {
+                Serialize(circuitOrObjs) {
+                    const circuit = GetCircuitFromCircuitOrObjs(circuitOrObjs);
                     const proto = DigitalCircuitToProto(circuit as DigitalCircuit);
 
                     // Log debug-stats
@@ -183,7 +192,8 @@ async function Init(): Promise<void> {
                         version: CUR_SAVE_VERSION,
                     };
                 },
-                SerializeCircuitAsString(circuit) {
+                SerializeAsString(circuitOrObjs) {
+                    const circuit = GetCircuitFromCircuitOrObjs(circuitOrObjs);
                     return JSON.stringify(DigitalCircuitToProto(circuit as DigitalCircuit));
                 },
                 DeserializeCircuit(data) {

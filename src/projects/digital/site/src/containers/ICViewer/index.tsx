@@ -128,11 +128,6 @@ export const ICViewer = () => {
             if (comp.kind === "OutputPin")
                 comp.replaceWith("LED");
         }
-        // TODO[model_refactor_api]
-        // Adjust the camera so it all fits in the viewer
-        // const [pos, zoom] = GetCameraFit(
-        //     info.camera, inside.toList() as CullableObject[], IC_VIEWER_ZOOM_PADDING_RATIO
-        // );
 
         // Clear the history so that the user can't accidentally undo the addition of the IC
         circuit.history.clear();
@@ -156,6 +151,9 @@ export const ICViewer = () => {
 
         // Attach canvas
         const cleanup = designer.viewport.attachCanvas(canvas.current);
+
+        // Adjust the camera so it all fits in the viewer
+        designer.viewport.zoomToFit(circuit.getObjs().all, IC_VIEWER_ZOOM_PADDING_RATIO);
 
         setICViewDesigner(designer);
 
