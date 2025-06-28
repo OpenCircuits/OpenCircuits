@@ -30,6 +30,15 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     protected abstract connectNode(node: T["Node"], p1: T["Port"], p2: T["Port"]):
         { wire1: T["Wire"] | undefined, wire2: T["Wire"] | undefined };
 
+    public set zIndex(val: number) {
+        if (this.icId)
+            throw new Error(`BaseObjImpl: Cannot set zIndex for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+        this.state.internal.setPropFor(this.id, "zIndex", val).unwrap();
+    }
+    public get zIndex(): number {
+        return this.getWire().props["zIndex"] ?? 0;
+    }
+
     public get shape(): Curve {
         if (this.icId)
             throw new Error(`WireImpl: Wire shape cannot be accessed inside an IC! Wire ID: '${this.id}', IC ID: '${this.icId}'`);
@@ -70,6 +79,10 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         }
 
         return path;
+    }
+
+    public shift(): void {
+        this.zIndex = this.state.assembler.highestWireZ + 1;
     }
 
     public split(): { node: T["Node"], wire1: T["Wire"], wire2: T["Wire"] } {

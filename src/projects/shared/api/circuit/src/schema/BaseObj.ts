@@ -7,7 +7,6 @@ export interface BaseObj {
     id: GUID;
     props: Record<string, Prop> & {
         name?: string;
-        zIndex?: number;
         isSelected?: boolean;
     };
 }

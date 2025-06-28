@@ -325,7 +325,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             const comp = this.circuit.getWireByID(wireId).unwrap();
             this.cache.wireOrder.set(wireId, (comp.props.zIndex ?? 0));
         }
-        this.dirtyComponentOrder.clear();
+        this.dirtyWireOrder.clear();
     }
 
     protected reassembleComp(compID: GUID) {

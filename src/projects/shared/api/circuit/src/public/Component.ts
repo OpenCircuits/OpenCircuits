@@ -17,6 +17,7 @@ interface BaseReadonlyComponent<PortT, NodeT> {
     readonly y: number;
     readonly pos: Vector;
     readonly angle: number;
+    readonly zIndex: number;
 
     isNode(): this is NodeT;
     isIC(): boolean;
@@ -37,6 +38,7 @@ export type Component = BaseObject & BaseReadonlyComponent<Port, Node> & {
     y: number;
     pos: Vector;
     angle: number;
+    zIndex: number;
 
     shift(): void;
 
