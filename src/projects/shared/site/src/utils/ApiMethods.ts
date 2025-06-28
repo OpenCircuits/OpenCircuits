@@ -83,6 +83,8 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         if (saving || loading)
             return;
 
+        const { data: rawContents, version } = CircuitHelpers.SerializeCircuit(mainCircuit);
+
         const metadata: BackendCircuitMetadata = {
             // Specifically use the redux-state-ID.
             // This ID will be distinct from mainCircuit.id to help avoid issues with local and remote saving.
@@ -90,11 +92,9 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             name:      mainCircuit.name,
             desc:      mainCircuit.desc,
             thumbnail: GenerateThumbnail(mainCircuit),
-            // TODO[model_refactor_api] -- version!!
-            version:   "",
+            version,
         };
 
-        const rawContents = CircuitHelpers.SerializeCircuit(mainCircuit);
         const contents = await new Promise<string>((resolve, reject) => {
             // TODO: gzip?
             const reader = new FileReader();

@@ -341,8 +341,6 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         return None();
     }
 
-    // TODO[model_refactor_api](leon): Think of a better way to allow access to Prim data and have it auto-update
-    //                                 if it is currently dirty
     public getPortPos(portID: GUID): Option<PortPos> {
         if (!this.circuit.hasPort(portID))
             return None();

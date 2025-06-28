@@ -6,3 +6,5 @@ export const AUTO_PLACE_SWITCH_SPACE = 2.5;
 export const AUTO_PLACE_LED_SPACE = 1;
 
 export const IMPORT_IC_CLOCK_MESSAGE = "The imported circuit contains clocks within ICs, which is no longer supported. The clocks have been replaced with switches.";
+
+export const CUR_SAVE_VERSION = "digital/4.0";

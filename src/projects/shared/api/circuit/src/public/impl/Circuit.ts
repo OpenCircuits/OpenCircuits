@@ -54,10 +54,9 @@ function ConvertPort(p: ReadonlyPort): Schema.Port {
 function ConvertIC(ic: IntegratedCircuit): Schema.IntegratedCircuit {
     return {
         metadata: {
-            id:      ic.id,
-            name:    ic.name,
-            desc:    ic.desc,
-            version: "/",
+            id:   ic.id,
+            name: ic.name,
+            desc: ic.desc,
 
             displayWidth:  ic.display.size.x,
             displayHeight: ic.display.size.y,
@@ -270,7 +269,7 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
     public placeComponentAt(kind: string, pt: Vector): T["Component"] {
         this.beginTransaction();
 
-        // Place raw component (TODO[model_refactor_api](leon) - don't use unwrap?)
+        // Place raw component
         const id = (() => {
             const props = { x: pt.x, y: pt.y, zIndex: this.state.assembler.highestZ + 1 };
             // If user is trying to make an IC, need to construct component differently
@@ -334,10 +333,9 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
 
         const metadata: Schema.IntegratedCircuitMetadata = {
             // TODO[model_refactor_api](leon): do we need to allow this? maybe just use the info.circuit.id?
-            id:      id,  // Make a new ID
-            name:    info.circuit.name,
-            desc:    info.circuit.desc,
-            version: "digital/v0",
+            id:   id,  // Make a new ID
+            name: info.circuit.name,
+            desc: info.circuit.desc,
 
             displayWidth:  info.display.size.x,
             displayHeight: info.display.size.y,
