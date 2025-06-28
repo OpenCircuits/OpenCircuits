@@ -22,7 +22,7 @@ import {DigitalPropInfo} from "digital/site/containers/SelectionPopup/propinfo";
 
 import {BusButtonModule}                from "digital/site/containers/SelectionPopup/modules/BusButtonModule";
 import {CreateICButtonModule}           from "digital/site/containers/SelectionPopup/modules/CreateICButtonModule";
-import {OscilloscopeModule}             from "digital/site/containers/SelectionPopup/modules/OscilloscopeModules";
+import {ClearButtonModule}              from "digital/site/containers/SelectionPopup/modules/ClearButtonModule";
 import {PauseButtonModule}              from "digital/site/containers/SelectionPopup/modules/PauseButtonModule";
 import {PortCountModule}                from "digital/site/containers/SelectionPopup/modules/PortCountModule";
 import {ReplaceComponentDropdownModule} from "digital/site/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
@@ -104,9 +104,9 @@ export const App = () => {
                             kinds={new Set(["Oscilloscope"])}
                             basisPortGroup="inputs"
                             label="Input" />
-                        <OscilloscopeModule circuit={designer.circuit} />
                         <PauseButtonModule circuit={designer.circuit} />
                         <SyncButtonModule circuit={designer.circuit} />
+                        <ClearButtonModule circuit={designer.circuit} />
                         <BusButtonModule circuit={designer.circuit} />
                         <ReplaceComponentDropdownModule circuit={designer.circuit} />
                         <CreateICButtonModule circuit={designer.circuit} />
