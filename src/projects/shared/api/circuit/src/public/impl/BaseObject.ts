@@ -67,14 +67,6 @@ export class BaseObjectImpl<T extends CircuitTypes> implements BaseObject {
     public get isSelected(): boolean {
         return this.getObj().props["isSelected"] ?? false;
     }
-    public set zIndex(val: number) {
-        if (this.icId)
-            throw new Error(`BaseObjImpl: Cannot set zIndex for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.internal.setPropFor(this.id, "zIndex", val).unwrap();
-    }
-    public get zIndex(): number {
-        return this.getObj().props["zIndex"] ?? 0;
-    }
 
     public select(): void {
         if (this.icId)

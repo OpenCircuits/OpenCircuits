@@ -8,6 +8,7 @@ import type {Port, ReadonlyPort} from "./Port";
 interface BaseReadonlyWire<PortT, NodeT, WireT> {
     readonly baseKind: "Wire";
 
+    readonly zIndex: number;
     readonly shape: Curve;
 
     readonly p1: PortT;
@@ -20,6 +21,10 @@ interface BaseReadonlyWire<PortT, NodeT, WireT> {
 export type ReadonlyWire = ReadonlyBaseObject & BaseReadonlyWire<ReadonlyPort, ReadonlyNode, ReadonlyWire>;
 
 export type Wire = BaseObject & BaseReadonlyWire<Port, Node, Wire> & {
+    zIndex: number;
+
+    shift(): void;
+
     split(): { node: Node, wire1: Wire, wire2: Wire };
 
     delete(): void;

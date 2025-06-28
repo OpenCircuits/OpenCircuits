@@ -78,6 +78,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
     // protected readonly dirtyPorts: DirtyMap<GUID>;
 
     protected readonly dirtyComponentOrder: Set<GUID>;
+    protected readonly dirtyWireOrder: Set<GUID>;
 
     protected readonly assemblers: Record<string, Assembler>;
 
@@ -93,8 +94,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         this.cache = {
             componentTransforms: new Map(),
             componentPrims:      new Map(),
-
-            componentOrder: new DepthList(),
+            componentOrder:      new DepthList(),
 
             localPortPositions: new Map(),
             portPositions:      new Map(),
@@ -103,6 +103,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
 
             wireCurves: new Map(),
             wirePrims:  new Map(),
+            wireOrder:  new DepthList(),
         };
         this.options = options;
 
@@ -113,7 +114,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         this.dirtyWires = new DirtyMap();
 
         this.dirtyComponentOrder = new Set();
-        // this.dirtyPorts = new DirtyMap();
+        this.dirtyWireOrder = new Set();
 
         this.circuit.subscribe((ev) => {
             const diff = ev.diff;
@@ -170,10 +171,14 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             }
 
             // Mark all added/removed wires dirty
-            for (const wireID of diff.addedWires)
+            for (const wireID of diff.addedWires) {
                 this.dirtyWires.add(wireID, AssemblyReason.Added);
-            for (const wireID of diff.removedWires)
+                this.dirtyWireOrder.add(wireID);
+            }
+            for (const wireID of diff.removedWires) {
                 this.dirtyWires.add(wireID, AssemblyReason.Removed);
+                this.dirtyWireOrder.add(wireID);
+            }
 
             // Mark all changed obj props dirty
             for (const [id, props] of diff.propsChanged) {
@@ -187,6 +192,10 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
                 if (obj.baseKind === "Component" && props.has("zIndex")) {
                     props.delete("zIndex");
                     this.dirtyComponentOrder.add(id);
+                }
+                if (obj.baseKind === "Wire" && props.has("zIndex")) {
+                    props.delete("zIndex");
+                    this.dirtyWireOrder.add(id);
                 }
 
                 if (props.size === 0)
@@ -278,12 +287,19 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
         this.dirtyWires.clear();
 
         this.updateCompOrdering();
+        this.updateWireOrdering();
     }
 
     public get highestZ(): number {
         this.updateCompOrdering();
 
         return this.cache.componentOrder.highestDepth;
+    }
+
+    public get highestWireZ(): number {
+        this.updateWireOrdering();
+
+        return this.cache.wireOrder.highestDepth;
     }
 
     protected updateCompOrdering() {
@@ -297,6 +313,19 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             this.cache.componentOrder.set(compId, (comp.props.zIndex ?? 0));
         }
         this.dirtyComponentOrder.clear();
+    }
+
+    protected updateWireOrdering() {
+        // Update ordering of wires
+        for (const wireId of this.dirtyWireOrder) {
+            if (!this.circuit.hasWire(wireId)) {
+                this.cache.wireOrder.delete(wireId);
+                continue;
+            }
+            const comp = this.circuit.getWireByID(wireId).unwrap();
+            this.cache.wireOrder.set(wireId, (comp.props.zIndex ?? 0));
+        }
+        this.dirtyWireOrder.clear();
     }
 
     protected reassembleComp(compID: GUID) {

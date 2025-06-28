@@ -9,6 +9,7 @@ export interface Wire extends BaseObj {
     p2: GUID;
 
     props: BaseObj["props"] & {
+        zIndex?: number;
         color?: string;
     };
 }

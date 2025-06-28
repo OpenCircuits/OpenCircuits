@@ -11,5 +11,6 @@ export interface Component extends BaseObj {
         x?: number;
         y?: number;
         angle?: number;
+        zIndex?: number;
     };
 }

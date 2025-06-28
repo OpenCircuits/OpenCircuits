@@ -74,6 +74,14 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     public get angle(): number {
         return (this.getComponent().props.angle ?? 0);
     }
+    public set zIndex(val: number) {
+        if (this.icId)
+            throw new Error(`BaseObjImpl: Cannot set zIndex for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+        this.state.internal.setPropFor(this.id, "zIndex", val).unwrap();
+    }
+    public get zIndex(): number {
+        return this.getComponent().props["zIndex"] ?? 0;
+    }
 
     public isNode(): this is T["Node"] {
         return this.getCircuitInfo()

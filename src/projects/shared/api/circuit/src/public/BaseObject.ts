@@ -11,7 +11,6 @@ interface BaseReadonlyBaseObject {
     readonly name: string | undefined;
 
     readonly isSelected: boolean;
-    readonly zIndex: number;
 
     exists(): boolean;
 
@@ -25,7 +24,6 @@ export type BaseObject = BaseReadonlyBaseObject & {
     name: string | undefined;
 
     isSelected: boolean;
-    zIndex: number;
 
     select(): void;
     deselect(): void;

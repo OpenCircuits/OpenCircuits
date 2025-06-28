@@ -53,7 +53,9 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
 
         circuit.beginTransaction();
 
-        circuit.createContainer(this.components.map((c) => c.id)).shift();
+        circuit.createContainer(this.components.map((c) => c.id))
+            .withWiresAndPorts()
+            .shift();
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit }: CircuitDesigner): void {

@@ -135,7 +135,6 @@ export class DepthList<K> {
 export interface AssemblyCache {
     componentTransforms: Map<GUID, Transform>;
     componentPrims: Map<GUID, Prim[]>;
-
     componentOrder: DepthList<GUID>;
 
     localPortPositions: Map<GUID, PortPos>;  // Key'd by port ID
@@ -145,11 +144,7 @@ export interface AssemblyCache {
 
     wireCurves: Map<GUID, Curve>;
     wirePrims: Map<GUID, Prim[]>;
-
-    // wireOrder: {
-    //     ids: GUID[];
-    //     map: Map<GUID, number>;
-    // };
+    wireOrder: DepthList<GUID>;
 }
 
 export type ReadonlyAssemblyCache = {
