@@ -3,7 +3,9 @@ import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl
 import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSim, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
-import {GUID, ICInfo} from "shared/api/circuit/public";
+import {GUID, ICInfo, ReadonlyICPin} from "shared/api/circuit/public";
+import {DigitalPort} from "../DigitalPort";
+import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 
 class DigitalSimImpl implements DigitalSim {
@@ -55,6 +57,14 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
 
         this.state = state;
         this.sim = new DigitalSimImpl(state);
+    }
+
+    public override checkIfPinIsValid(_pin: ReadonlyICPin, port: DigitalPort): Result {
+        if (port.isOutputPort && port.parent.kind !== "InputPin")
+            return ErrE(`DigitalCircuit.checkIfPinIsValid: Pin with output-port must be apart of an 'InputPin'! Found: '${port.parent.kind}' instead!`);
+        if (port.isInputPort && port.parent.kind !== "OutputPin")
+            return ErrE(`DigitalCircuit.checkIfPinIsValid: Pin with input-port must be apart of an 'OutputPin'! Found: '${port.parent.kind}' instead!`);
+        return OkVoid();
     }
 
     public override importICs(ics: DigitalIntegratedCircuit[]): void {
