@@ -15,7 +15,7 @@ import "./index.scss";
 
 export const HeaderLeft = () => {
     const designer = useCurDesigner(), circuit = designer.circuit;
-    const { id, name, isSaved, isLocked, isLoggedIn, isHistoryBoxOpen, saving, error } = useSharedSelector(
+    const { id, name, isSaved, isLocked, isLoggedIn, isHistoryBoxOpen, saving, loading, error } = useSharedSelector(
         (state) => ({
             ...state.circuit,
             isLoggedIn:       state.user.isLoggedIn,
@@ -74,7 +74,8 @@ export const HeaderLeft = () => {
 
             <img src="img/icons/error.svg" className={error ? "" : "hide"}
                  title={`Error occured while saving: ${error}`} alt="Icon when save failed" />
-            <span title="Saving..." className={`header__left__saving ${saving ? "" : "hide"}`}></span>
+            <span title="Saving..." className={`header__left__pending ${saving ? "" : "hide"}`}></span>
+            <span title="Loading..." className={`header__left__pending ${loading ? "" : "hide"}`}></span>
         </div>
     );
 }
