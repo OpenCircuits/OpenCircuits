@@ -181,7 +181,7 @@ export function CircuitToProto(circuit: Circuit, version: string, conversionInfo
 
     function ConvertIC(ic: IntegratedCircuit, ics: IntegratedCircuit[]): ProtoSchema.IntegratedCircuit {
         const comps = ic.components.sort((c1, c2) => (c1.zIndex - c2.zIndex));
-        const wires = ic.wires.sort((w1, w2) => (w1.zIndex, w2.zIndex));
+        const wires = ic.wires.sort((w1, w2) => (w1.zIndex - w2.zIndex));
 
         return {
             metadata:   ConvertICMetadata(ic, comps),
@@ -192,7 +192,7 @@ export function CircuitToProto(circuit: Circuit, version: string, conversionInfo
 
     // Sort by z-index
     const comps = circuit.getComponents().sort((c1, c2) => (c1.zIndex - c2.zIndex));
-    const wires = circuit.getWires().sort((w1, w2) => (w1.zIndex, w2.zIndex));
+    const wires = circuit.getWires().sort((w1, w2) => (w1.zIndex - w2.zIndex));
 
     const ics = circuit.getICs();
 
