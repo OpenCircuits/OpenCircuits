@@ -98,12 +98,15 @@
         border-radius: 3px;
         background-color: white;
 
-        &:hover {
+        &:hover:enabled {
             background-color: darken(white, 5%);
 
         }
-        &:active {
+        &:active:enabled {
             background-color: darken(white, 10%);
+        }
+        &:disabled {
+            background-color: darken(white, 5%);
         }
     }
 
@@ -119,5 +122,31 @@
         color: $secondary-color;
         border: solid 2px rgba($background-color, 0.5);
         background-color: rgba(white, 0.8);
+    }
+
+    & .tooltip {
+        position: absolute;
+
+        left: 50%;
+        transform: translate(-50%, 20px);
+        box-sizing: border-box;
+        width: 80%;
+        height: fit-content;
+        padding: 5px 10px;
+        border-radius: 3px;
+        color: #fff;
+        background-color: $danger-color;
+
+        text-align: center;
+        &::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent $danger-color transparent;
+        }
     }
 }

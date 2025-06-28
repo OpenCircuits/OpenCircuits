@@ -1,7 +1,7 @@
 import {SVGDrawing} from "svg2canvas";
 
 import {V, Vector} from "Vector";
-import {Margin}    from "math/Rect";
+import {Margin, Rect}    from "math/Rect";
 
 import {CleanupFunc} from "shared/api/circuit/utils/types";
 import {MultiObservable} from "shared/api/circuit/utils/Observable";
@@ -326,5 +326,34 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
     }
     public getCanvasInfo(): AttachedCanvasInfo | undefined {
         return this.canvasInfo;
+    }
+
+    public zoomToFit(objs: T["Obj[]"], padRatio?: number): void {
+        const canvasInfo = this.getCanvasInfo();
+        // If no objects or no canvas return to default zoom
+        if (objs.length === 0 || !canvasInfo) {
+            this.camera.pos = V();
+            this.camera.zoom = 0.02;
+            return;
+        }
+
+        const { left, right, bottom, top } = { ...{ left: 0, right: 0, bottom: 0, top: 0 }, ...this.margin };
+
+        const marginSize = V(left - right, bottom - top);
+        const bbox = Rect.Bounding(objs.map(({ bounds }) => bounds));
+
+        const screenSize = canvasInfo.screenSize.sub(V(left, bottom));
+        const worldSize = this.toWorldPos(screenSize).sub(this.toWorldPos(V(0, 0)));
+
+        // Determine which bbox dimension will limit zoom level
+        const ratio = V(bbox.width / worldSize.x, bbox.height / worldSize.y);
+        const finalZoom = this.camera.zoom * Math.max(ratio.x, ratio.y) * (padRatio ?? 1);
+
+        // Only subtract off 0.5 of the margin offset since currently it's centered on the margin'd
+        //  screen size so only half of the margin on the top/left need to be contributed
+        const finalPos = bbox.center.sub(marginSize.scale(0.5 * finalZoom));
+
+        this.camera.pos = finalPos;
+        this.camera.zoom = finalZoom;
     }
 }
