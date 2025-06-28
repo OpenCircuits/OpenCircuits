@@ -126,7 +126,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
         if (curID === "")
             return;
 
-        const { data: rawContents, version } = CircuitHelpers.SerializeCircuit(mainCircuit);
+        const { data: rawContents, version } = CircuitHelpers.Serialize(mainCircuit);
 
         const circuitCopy = CircuitHelpers.DeserializeCircuit(await rawContents.arrayBuffer());
         circuitCopy.name += " (Copy)";
@@ -140,7 +140,7 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             version,
         };
 
-        const contents = await blobToString(CircuitHelpers.SerializeCircuit(circuitCopy).data);
+        const contents = await blobToString(CircuitHelpers.Serialize(circuitCopy).data);
 
         // Create circuit copy
         const circuitCopyMetadata = await CreateUserCircuit(auth, { metadata, contents });
