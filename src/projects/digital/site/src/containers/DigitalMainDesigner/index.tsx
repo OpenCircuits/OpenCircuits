@@ -9,7 +9,7 @@ import {useCurDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner
 
 import "./index.scss";
 import {DigitalCircuit} from "digital/api/circuit/public";
-import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
+import {SmartPlaceOptions} from "digital/site/utils/SmartPlace";
 
 // import {useMainCircuit} from "shared/site/utils/hooks/useCircuit";
 

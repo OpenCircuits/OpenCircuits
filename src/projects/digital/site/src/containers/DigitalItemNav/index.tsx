@@ -5,7 +5,7 @@ import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 
 import {ItemNav, type ItemNavItem, type ItemNavSection} from "shared/site/containers/ItemNav";
 
-import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
+import {SmartPlaceOptions} from "digital/site/utils/SmartPlace";
 
 import {useCurDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
