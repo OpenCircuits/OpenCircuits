@@ -2,6 +2,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const SelectAllHandler: ToolHandler = {
+    name: "SelectAllHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing CTRL/CMD + A
         if (!(ev.type === "keydown" && ev.key === "a" && ev.input.isModifierKeyDown))

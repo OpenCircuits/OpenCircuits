@@ -3,6 +3,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const SelectionHandler: ToolHandler = {
+    name: "SelectionHandler",
+
     onEvent: (ev, { circuit, viewport }) => {
         if (!(ev.type === "click" && ev.button === LEFT_MOUSE_BUTTON))
             return ToolHandlerResponse.PASS;

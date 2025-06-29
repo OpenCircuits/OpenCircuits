@@ -34,6 +34,8 @@ export function CleanUp(circuit: Circuit): boolean {
 }
 
 export const CleanupHandler: ToolHandler = {
+    name: "CleanupHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing K key
         if (!(ev.type === "keydown" && ev.key === "k"))

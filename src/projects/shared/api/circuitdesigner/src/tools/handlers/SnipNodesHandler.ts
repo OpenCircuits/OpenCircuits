@@ -4,6 +4,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const SnipNodesHandler: ToolHandler = {
+    name: "SnipNodesHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing X key
         if (!(ev.type === "keydown" && ev.key === "x"))

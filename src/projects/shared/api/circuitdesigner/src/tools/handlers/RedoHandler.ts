@@ -2,6 +2,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const RedoHandler: ToolHandler = {
+    name: "RedoHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing CTRL/CMD + Shift + Z or CTRL/CMD + Y
         if (!(ev.type === "keydown" && (ev.key === "z" && ev.input.isModifierKeyDown && ev.input.isShiftKeyDown ||

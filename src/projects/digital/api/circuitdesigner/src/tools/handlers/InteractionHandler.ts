@@ -28,6 +28,8 @@ function isWithinInteractableBounds(obj: DigitalComponent, pos: Vector): boolean
 }
 
 export const InteractionHandler: ToolHandler<DigitalTypes> = {
+    name: "InteractionHandler",
+
     canActivateWhenLocked: true,
 
     onEvent: (ev, { circuit, viewport }) => {

@@ -6,10 +6,11 @@ import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}        from "shared/api/circuitdesigner/tools/Tool";
 
-import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
+import {CircuitDesigner, CircuitDesignerEv, CircuitDesignerOptions} from "../CircuitDesigner";
 import {Viewport}                                from "../Viewport";
 import {CircuitDesignerState}                    from "./CircuitDesignerState";
 import {ViewportImpl}                            from "./Viewport";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
 export interface ToolConfig<T extends CircuitTypes = CircuitTypes> {
@@ -17,7 +18,7 @@ export interface ToolConfig<T extends CircuitTypes = CircuitTypes> {
     tools: Tool[];
 }
 
-export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes> implements CircuitDesigner {
+export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes> extends ObservableImpl<CircuitDesignerEv> implements CircuitDesigner {
     public readonly circuit: CircuitT;
 
     public readonly viewport: Viewport;
@@ -30,10 +31,14 @@ export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitType
         svgMap: Map<string, SVGDrawing>,
         options: CircuitDesignerOptions,
     ) {
+        super();
+
         this.circuit = circuit;
         this.state = state;
 
         this.viewport = new ViewportImpl(state, this, svgMap, options);
+
+        this.state.toolManager.defaultTool.subscribe((ev) => this.publish(ev));
     }
 
     public set isLocked(locked: boolean) {

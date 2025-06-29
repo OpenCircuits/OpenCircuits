@@ -11,7 +11,9 @@ export enum ToolHandlerResponse {
     HALT = 1,
 }
 
-export interface ToolHandler<T extends CircuitTypes = CircuitTypes>  {
+export interface ToolHandler<T extends CircuitTypes = CircuitTypes> {
+    name: string;
+
     canActivateWhenLocked?: boolean;
 
     /**
