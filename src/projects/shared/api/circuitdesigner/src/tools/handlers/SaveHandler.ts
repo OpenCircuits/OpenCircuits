@@ -2,6 +2,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const SaveHandler = (save: () => void): ToolHandler => ({
+    name: "SaveHandler",
+
     canActivateWhenLocked: true,
 
     onEvent: (ev) => {

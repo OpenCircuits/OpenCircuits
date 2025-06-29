@@ -27,6 +27,7 @@ import type {DigitalWire, ReadonlyDigitalWire}                   from "./Digital
 import type {DigitalPort, ReadonlyDigitalPort}                   from "./DigitalPort";
 import type {DigitalSchema} from "digital/api/circuit/schema";
 import type {ObjContainer, ReadonlyObjContainer} from "shared/api/circuit/public/ObjContainer";
+import {Observable} from "shared/api/circuit/utils/Observable";
 
 
 export type ToDigital<T> = (
@@ -84,7 +85,7 @@ export interface ReadonlySimState {
     // ICInstance(Comp)ID -> DigitalSimState
     readonly icStates: Readonly<Record<GUID, ReadonlySimState>>;
 }
-export interface ReadonlyDigitalSim {
+export interface ReadonlyDigitalSim extends Observable<{ type: "step" }> {
     readonly propagationTime: number;
 
     readonly state: ReadonlySimState;

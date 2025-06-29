@@ -2,6 +2,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const DeleteHandler: ToolHandler = {
+    name: "DeleteHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing Delete or Backspace
         if (!(ev.type === "keydown" && (ev.key === "Delete" || ev.key === "Backspace")))

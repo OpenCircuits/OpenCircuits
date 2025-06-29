@@ -20,6 +20,8 @@ export function DoPaste(circuit: Circuit, pastedCircuit: Circuit, offset?: Vecto
 }
 
 export const PasteHandler = (deserialize: (str: string) => Circuit): ToolHandler => ({
+    name: "PasteHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when paste event is fired
         if (!(ev.type === "paste"))

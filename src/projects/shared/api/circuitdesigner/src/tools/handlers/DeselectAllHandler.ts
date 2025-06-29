@@ -2,6 +2,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const DeselectAllHandler: ToolHandler = {
+    name: "DeselectAllHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing Escape
         if (!(ev.type === "keydown" && ev.key === "Escape"))

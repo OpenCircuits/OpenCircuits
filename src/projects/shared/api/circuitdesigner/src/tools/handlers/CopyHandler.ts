@@ -4,6 +4,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const CopyHandler = (serialize: (objs: ObjContainer) => string): ToolHandler => ({
+    name: "CopyHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when copy or cut events are fired
         if (!(ev.type === "copy" || ev.type === "cut"))

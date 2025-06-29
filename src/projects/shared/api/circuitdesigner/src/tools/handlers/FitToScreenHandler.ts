@@ -19,6 +19,8 @@ export function FitToScreen(circuit: Circuit, viewport: Viewport): void {
 }
 
 export const FitToScreenHandler: ToolHandler = {
+    name: "FitToScreenHandler",
+
     onEvent: (ev, { circuit, viewport }) => {
         // Activate when releasing F key
         if (!(ev.type === "keyup" && ev.key === "f"))

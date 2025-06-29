@@ -2,6 +2,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const UndoHandler: ToolHandler = {
+    name: "UndoHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing CTRL/CMD + Z
         if (!(ev.type === "keydown" && ev.key === "z" && ev.input.isModifierKeyDown))

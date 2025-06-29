@@ -21,6 +21,8 @@ export function DuplicateSelections(circuit: Circuit): void {
 }
 
 export const DuplicateHandler: ToolHandler = {
+    name: "DuplicateHandler",
+
     onEvent: (ev, { circuit }) => {
         // Activate when pressing CTRL/CMD + D
         if (!(ev.type === "keydown" && ev.key === "d" && ev.input.isModifierKeyDown))

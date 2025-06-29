@@ -2,6 +2,8 @@ import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
 
 
 export const ZoomHandler: ToolHandler = {
+    name: "ZoomHandler",
+
     canActivateWhenLocked: true,
 
     onEvent: (ev, { viewport }) => {

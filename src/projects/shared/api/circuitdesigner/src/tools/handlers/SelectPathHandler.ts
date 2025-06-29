@@ -32,6 +32,8 @@ export function GetComponentPath(c: Component): Component[] {
 }
 
 export const SelectPathHandler: ToolHandler = {
+    name: "SelectPathHandler",
+
     onEvent: (ev, { circuit, viewport }) => {
         // Activate on double LMB click
         if (!(ev.type === "dblclick" && ev.button === LEFT_MOUSE_BUTTON))

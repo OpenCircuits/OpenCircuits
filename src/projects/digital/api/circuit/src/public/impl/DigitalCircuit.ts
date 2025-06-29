@@ -8,13 +8,20 @@ import {DigitalPort} from "../DigitalPort";
 import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {DigitalSelectionsImpl} from "./DigitalSelections";
 import {MapObjKeys} from "shared/api/circuit/utils/Functions";
+import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
-class DigitalSimImpl implements DigitalSim {
+class DigitalSimImpl extends ObservableImpl<{ type: "step" }> implements DigitalSim {
     protected readonly circuitState: DigitalCircuitState;
 
     public constructor(circuitState: DigitalCircuitState) {
+        super();
+
         this.circuitState = circuitState;
+        this.circuitState.sim.subscribe((ev) => {
+            if (ev.type === "step")
+                this.publish({ type: "step" });
+        });
     }
 
     public set propagationTime(val: number) {

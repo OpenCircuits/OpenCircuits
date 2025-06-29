@@ -25,7 +25,11 @@ const getOpInfo = (op: CircuitHistoryOp): OpInfo => {
         case "PlaceComponentOp":
             return { displayName: `${op.inverted ? "Removed" : "Placed"} ${op.c.kind}`, extraInfo: `ID: ${op.c.id}` };
         case "ConnectWireOp":
-            // TODO[model_refactor]: Do we want to bring circuit into here so we can see what types of components p1 and p2 belong to?
+            // TODO[master]: Would be nice to display what kind of components p1/p2 are, but this isn't trivial
+            // since the components could no longer exist, maybe we can have a global cache or do something really
+            // fancy with checking earlier in the history for when they were placed. Global cache could work since
+            // IDs should be UUIDs. I think this should be apart of a bigger change to history-box where all references
+            // to IDs are instead widgets with more info about the object.
             return { displayName: `${op.inverted ? "Removed Connection From" : "Connected"} ${op.w.p1} to ${op.w.p2}`, extraInfo: `ID: ${op.w.id}` };
         case "CreateICOp":
             return { displayName: `${op.inverted ? "Removed" : "Created"} IC ${op.ic.metadata.name}`, extraInfo: `ID: ${op.ic.metadata.id}` };
