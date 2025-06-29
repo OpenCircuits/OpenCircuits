@@ -80,6 +80,7 @@
     "eslint-plugin-unicorn": "^43.0.0",
     "eslint-webpack-plugin": "^3.2.0",
     "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^9.1.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-webpack-plugin": "^5.5.0",
     "interpolate-html-plugin": "^4.0.0",

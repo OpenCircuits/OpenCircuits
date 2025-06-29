@@ -1,4 +1,6 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+
 
 import getAliases from "../../utils/getAliases.js";
 
@@ -45,6 +47,16 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
     plugins: [
         // Setup hot-module refreshing
         ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+
+        new ForkTsCheckerWebpackPlugin({
+            typescript: {
+                diagnosticOptions: {
+                    semantic:  true,
+                    syntactic: true,
+                },
+                configFile: `${rootDir}/tsconfig.json`,
+            },
+        }),
     ],
 
     resolve: {
