@@ -83,12 +83,12 @@ export const SideNav = ({ exampleCircuits }: Props) => {
 
     return (<>
         <Overlay
-            isOpen={isOpen}
+            isOpen={loading || isOpen}
             close={() => {
                 if (!loading) // Don't let user close the SideNav until finished loading circuit
                     dispatch(ToggleSideNav())
             }}>
-            {loading && <div></div>}
+            {loading && <div className={isOpen ? "sidenav__offset" : ""}></div>}
         </Overlay>
 
         <div className={`sidenav ${isOpen ? "" : "sidenav__move"}`}>
