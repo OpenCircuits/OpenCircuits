@@ -223,7 +223,7 @@ function ConvertComponent(
         name:  comp.name.set ? comp.name.name : undefined,
         x:     comp.transform.pos.x / 50,
         y:     comp.transform.pos.y / -50,
-        angle: comp.transform.angle,
+        angle: -comp.transform.angle,
 
         otherProps: ConvertCompProps(comp),
         // Throw out any ports with names because it's hard to discern them
