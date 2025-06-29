@@ -75,30 +75,30 @@ When importing code from other files make sure the imports maintain the followin
 # EXAMPLE #
     import {createRef} from "react";
 
-    import {InteractionTool}    from "core/tools/InteractionTool";
-    import {PanTool}            from "core/tools/PanTool";
-    import {RotateTool}         from "core/tools/RotateTool";
-    import {TranslateTool}      from "core/tools/TranslateTool";
-    import {WiringTool}         from "core/tools/WiringTool";
-    import {SplitWireTool}      from "core/tools/SplitWireTool";
-    import {SelectionBoxTool}   from "core/tools/SelectionBoxTool";
+    import {InteractionTool}    from "shared/api/circuit/tools/InteractionTool";
+    import {PanTool}            from "shared/api/circuit/tools/PanTool";
+    import {RotateTool}         from "shared/api/circuit/tools/RotateTool";
+    import {TranslateTool}      from "shared/api/circuit/tools/TranslateTool";
+    import {WiringTool}         from "shared/api/circuit/tools/WiringTool";
+    import {SplitWireTool}      from "shared/api/circuit/tools/SplitWireTool";
+    import {SelectionBoxTool}   from "shared/api/circuit/tools/SelectionBoxTool";
 
-    import {SelectAllHandler}     from "core/tools/handlers/SelectAllHandler";
-    import {FitToScreenHandler}   from "core/tools/handlers/FitToScreenHandler";
-    import {DuplicateHandler}     from "core/tools/handlers/DuplicateHandler";
-    import {DeleteHandler}        from "core/tools/handlers/DeleteHandler";
-    import {SnipWirePortsHandler} from "core/tools/handlers/SnipWirePortsHandler";
-    import {DeselectAllHandler}   from "core/tools/handlers/DeselectAllHandler";
-    import {SelectionHandler}     from "core/tools/handlers/SelectionHandler";
-    import {SelectPathHandler}    from "core/tools/handlers/SelectPathHandler";
-    import {UndoHandler}          from "core/tools/handlers/UndoHandler";
-    import {RedoHandler}          from "core/tools/handlers/RedoHandler";
-    import {CopyHandler}          from "core/tools/handlers/CopyHandler";
-    import {PasteHandler}         from "core/tools/handlers/PasteHandler";
+    import {SelectAllHandler}     from "shared/api/circuit/tools/handlers/SelectAllHandler";
+    import {FitToScreenHandler}   from "shared/api/circuit/tools/handlers/FitToScreenHandler";
+    import {DuplicateHandler}     from "shared/api/circuit/tools/handlers/DuplicateHandler";
+    import {DeleteHandler}        from "shared/api/circuit/tools/handlers/DeleteHandler";
+    import {SnipWirePortsHandler} from "shared/api/circuit/tools/handlers/SnipWirePortsHandler";
+    import {DeselectAllHandler}   from "shared/api/circuit/tools/handlers/DeselectAllHandler";
+    import {SelectionHandler}     from "shared/api/circuit/tools/handlers/SelectionHandler";
+    import {SelectPathHandler}    from "shared/api/circuit/tools/handlers/SelectPathHandler";
+    import {UndoHandler}          from "shared/api/circuit/tools/handlers/UndoHandler";
+    import {RedoHandler}          from "shared/api/circuit/tools/handlers/RedoHandler";
+    import {CopyHandler}          from "shared/api/circuit/tools/handlers/CopyHandler";
+    import {PasteHandler}         from "shared/api/circuit/tools/handlers/PasteHandler";
 
-    import {CircuitMetadataBuilder} from "core/models/CircuitMetadata";
+    import {CircuitMetadataBuilder} from "shared/api/circuit/models/CircuitMetadata";
 
-    import {SetCircuitSaved} from "shared/state/CircuitInfo";
+    import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
 
     import {ContextMenu}     from "shared/containers/ContextMenu";
     import {Header}          from "shared/containers/Header";
@@ -108,28 +108,28 @@ When importing code from other files make sure the imports maintain the followin
     import {SelectionPopup}       from "shared/containers/SelectionPopup";
     import {PositionModule}       from "shared/containers/SelectionPopup/modules/PositionModule";
 
-    import {DigitalPaste} from "site/digital/utils/DigitalPaste";
-    import {Setup}        from "site/digital/utils/CircuitInfo/Setup";
+    import {DigitalPaste} from "digital/site/utils/DigitalPaste";
+    import {Setup}        from "digital/site/utils/CircuitInfo/Setup";
 
-    import {AppStore} from "site/digital/state";
+    import {AppStore} from "digital/site/state";
 
-    import {DigitalItemNav}         from "site/digital/containers/DigitalItemNav";
-    import {ICDesigner}             from "site/digital/containers/ICDesigner";
-    import {ICViewer}               from "site/digital/containers/ICViewer";
-    import {KeyboardShortcutsPopup} from "site/digital/containers/KeyboardShortcutsPopup";
-    import {MainDesigner}           from "site/digital/containers/MainDesigner";
-    import {QuickStartPopup}        from "site/digital/containers/QuickStartPopup";
+    import {DigitalItemNav}         from "digital/site/containers/DigitalItemNav";
+    import {ICDesigner}             from "digital/site/containers/ICDesigner";
+    import {ICViewer}               from "digital/site/containers/ICViewer";
+    import {KeyboardShortcutsPopup} from "digital/site/containers/KeyboardShortcutsPopup";
+    import {MainDesigner}           from "digital/site/containers/MainDesigner";
+    import {QuickStartPopup}        from "digital/site/containers/QuickStartPopup";
 
-    import {ViewICButtonModule}   from "site/digital/containers/SelectionPopup/modules/ViewICButtonModule";
-    import {InputCountModule}     from "site/digital/containers/SelectionPopup/modules/InputCountModule";
-    import {ColorModule}          from "site/digital/containers/SelectionPopup/modules/ColorModule";
-    import {ClockFrequencyModule} from "site/digital/containers/SelectionPopup/modules/ClockFrequencyModule";
-    import {OutputCountModule}    from "site/digital/containers/SelectionPopup/modules/OutputCountModule";
-    import {SegmentCountModule}   from "site/digital/containers/SelectionPopup/modules/SegmentCountModule";
-    import {TextColorModule}      from "site/digital/containers/SelectionPopup/modules/TextColorModule";
-    import {BusButtonModule}      from "site/digital/containers/SelectionPopup/modules/BusButtonModule";
-    import {CreateICButtonModule} from "site/digital/containers/SelectionPopup/modules/CreateICButtonModule";
+    import {ViewICButtonModule}   from "digital/site/containers/SelectionPopup/modules/ViewICButtonModule";
+    import {InputCountModule}     from "digital/site/containers/SelectionPopup/modules/InputCountModule";
+    import {ColorModule}          from "digital/site/containers/SelectionPopup/modules/ColorModule";
+    import {ClockFrequencyModule} from "digital/site/containers/SelectionPopup/modules/ClockFrequencyModule";
+    import {OutputCountModule}    from "digital/site/containers/SelectionPopup/modules/OutputCountModule";
+    import {SegmentCountModule}   from "digital/site/containers/SelectionPopup/modules/SegmentCountModule";
+    import {TextColorModule}      from "digital/site/containers/SelectionPopup/modules/TextColorModule";
+    import {BusButtonModule}      from "digital/site/containers/SelectionPopup/modules/BusButtonModule";
+    import {CreateICButtonModule} from "digital/site/containers/SelectionPopup/modules/CreateICButtonModule";
 
-    import exampleConfig from "site/digital/data/examples.json";
+    import exampleConfig from "digital/site/data/examples.json";
 
     import "./index.scss";

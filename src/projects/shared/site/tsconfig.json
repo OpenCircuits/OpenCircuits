@@ -1,0 +1,15 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+          "Vector":                        ["../api/circuit/src/utils/math/Vector"],
+          "math/*":                        ["../api/circuit/src/utils/math/*"],
+          "shared/api/circuit/*":          ["../api/circuit/src/*"],
+          "shared/api/circuitdesigner/*":  ["../api/circuitdesigner/src/*"],
+          "shared/site/*":                 ["./src/*"],
+          "shared/site/tests/*":           ["./tests/*"],
+      }
+  },
+  "include": ["."],
+}

@@ -5,7 +5,7 @@
  * objects (immutable) and merges arrays via concatenation.
  *
  * @param objects Objects to merge.
- * @returns         New object with merged key/values.
+ * @returns       New object with merged key/values.
  */
 export default function mergeDeep(...objects: Object[]): Object {
     const isObject = (

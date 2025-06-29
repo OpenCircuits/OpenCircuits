@@ -18,7 +18,7 @@ module.exports = deepMerge.all([{
     },
     require("./linting/.core.cjs"),
     require("./linting/.ts.cjs"),
-    require("./linting/.imports.cjs"),
+    // require("./linting/.imports.cjs"),
     require("./linting/.jsdoc.cjs"),
     require("./linting/.react.cjs"),
     require("./linting/.jestRules.cjs"),

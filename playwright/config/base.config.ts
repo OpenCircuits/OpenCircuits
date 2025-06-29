@@ -129,7 +129,7 @@ const devPages: Readonly<Record<DevPageNames, PageDetails>> = {
 const prodPages: Readonly<Record<ProdPageNames, PageDetails>> = {
     digital: {
         port:    8080,
-        command: "node ./build/scripts/build.js server digital " +
+        command: "node ./build/scripts/build.js src/server src/projects/digital/site " +
                  "&& node ./build/scripts/start.js --project=server",
     },
 }

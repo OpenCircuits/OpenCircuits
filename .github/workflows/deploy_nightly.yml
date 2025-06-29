@@ -31,10 +31,10 @@ jobs:
     - name: Setup GCloud
       uses: google-github-actions/setup-gcloud@v1
 
-    - name: Set Node.js 16.x
+    - name: Set Node.js 18.x
       uses: actions/setup-node@main
       with:
-        node-version: 16.x
+        node-version: 18.x
 
     - name: Install
       run: yarn
@@ -46,7 +46,7 @@ jobs:
         OC_AUTH_TYPES: google
         OC_GA_ID: UA-201145837-1
       run: |
-        yarn build --ci --prod server digital
+        yarn build --ci --prod src/server src/projects/digital/site
 
     - name: Create OAuth credentials and app.yaml
       run: |
@@ -57,15 +57,15 @@ jobs:
       working-directory: ./build
       run: gcloud app deploy --quiet
 
-    # Build docs site
-    - name: Build Docs
-      run: |
-        yarn build:jsdocs
-        yarn build:docs
+    # # Build docs site
+    # - name: Build Docs
+    #   run: |
+    #     yarn build:jsdocs
+    #     yarn build:docs
 
-    - name: Upload Docs to GCS
-      uses: google-github-actions/upload-cloud-storage@main
-      with:
-        path: src/site/pages/docs/build
-        destination: docs.opencircuits.io
-        parent: false
+    # - name: Upload Docs to GCS
+    #   uses: google-github-actions/upload-cloud-storage@main
+    #   with:
+    #     path: src/site/pages/docs/build
+    #     destination: docs.opencircuits.io
+    #     parent: false

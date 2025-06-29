@@ -1,0 +1,196 @@
+{
+    "imgRoot": "img/itemnav",
+    "sections": [
+      {
+        "kind": "inputs",
+        "label": "Inputs",
+        "items": [
+          {
+            "kind": "Button",
+            "label": "Button",
+            "icon": "button.svg"
+          },
+          {
+            "kind": "Switch",
+            "label": "Switch",
+            "icon": "switch.svg"
+          },
+          {
+            "kind": "ConstantLow",
+            "label": "Constant Low",
+            "icon": "constantlow.svg"
+          },
+          {
+            "kind": "ConstantHigh",
+            "label": "Constant High",
+            "icon": "constanthigh.svg"
+          },
+          {
+            "kind": "ConstantNumber",
+            "label": "Constant Number",
+            "icon": "constantnumber.svg"
+          },
+          {
+            "kind": "Clock",
+            "label": "Clock",
+            "icon": "clock.svg"
+          }
+        ]
+      },
+      {
+        "kind": "outputs",
+        "label": "Outputs",
+        "items": [
+          {
+            "kind": "LED",
+            "label": "LED",
+            "icon": "led.svg"
+          },
+          {
+            "kind": "SegmentDisplay",
+            "label": "Segment Display",
+            "icon": "sevensegmentdisplay.svg"
+          },
+          {
+            "kind": "BCDDisplay",
+            "label": "BCD Display",
+            "icon": "sevensegmentdisplay.svg"
+          },
+          {
+            "kind": "ASCIIDisplay",
+            "label": "ASCII Display",
+            "icon": "sevensegmentdisplay.svg"
+          },
+          {
+            "kind": "Oscilloscope",
+            "label": "Oscillo-scope",
+            "icon": "oscilloscope.svg"
+          }
+        ]
+      },
+      {
+        "kind": "gates",
+        "label": "Logic Gates",
+        "items": [
+          {
+            "kind": "BUFGate",
+            "label": "Buffer",
+            "icon": "bufgate.svg"
+          },
+          {
+            "kind": "NOTGate",
+            "label": "NOT",
+            "icon": "notgate.svg"
+          },
+          {
+            "kind": "ANDGate",
+            "label": "AND",
+            "icon": "andgate.svg"
+          },
+          {
+            "kind": "NANDGate",
+            "label": "NAND",
+            "icon": "nandgate.svg"
+          },
+          {
+            "kind": "ORGate",
+            "label": "OR",
+            "icon": "orgate.svg"
+          },
+          {
+            "kind": "NORGate",
+            "label": "NOR",
+            "icon": "norgate.svg"
+          },
+          {
+            "kind": "XORGate",
+            "label": "XOR",
+            "icon": "xorgate.svg"
+          },
+          {
+            "kind": "XNORGate",
+            "label": "XNOR",
+            "icon": "xnorgate.svg"
+          }
+        ]
+      },
+      {
+        "kind": "flipflops",
+        "label": "Flip Flops",
+        "items": [
+          {
+            "kind": "SRFlipFlop",
+            "label": "SR",
+            "icon": "srflipflop.svg"
+          },
+          {
+            "kind": "JKFlipFlop",
+            "label": "JK",
+            "icon": "jkflipflop.svg"
+          },
+          {
+            "kind": "DFlipFlop",
+            "label": "D",
+            "icon": "dflipflop.svg"
+          },
+          {
+            "kind": "TFlipFlop",
+            "label": "T",
+            "icon": "tflipflop.svg"
+          }
+        ]
+      },
+      {
+        "kind": "latches",
+        "label": "Latches",
+        "items": [
+          {
+            "kind": "DLatch",
+            "label": "D",
+            "icon": "dlatch.svg"
+          },
+          {
+            "kind": "SRLatch",
+            "label": "SR",
+            "icon": "srlatch.svg"
+          }
+        ]
+      },
+      {
+        "kind": "other",
+        "label": "Other",
+        "items": [
+          {
+            "kind": "Multiplexer",
+            "label": "Mux",
+            "icon": "multiplexer.svg"
+          },
+          {
+            "kind": "Demultiplexer",
+            "label": "Demux",
+            "icon": "demultiplexer.svg"
+          },
+          {
+            "kind": "Encoder",
+            "label": "Encoder",
+            "icon": "encoder.svg"
+          },
+          {
+            "kind": "Decoder",
+            "label": "Decoder",
+            "icon": "decoder.svg"
+          },
+          {
+            "kind": "Comparator",
+            "label": "Comparator",
+            "icon": "decoder.svg"
+          },
+          {
+            "kind": "Label",
+            "label": "Label",
+            "icon": "label.svg"
+          }
+        ]
+      }
+    ]
+  }

@@ -1,4 +1,5 @@
-/* eslint-disable jest/no-jest-import */
+import type {Arguments} from "yargs";
+
 import path from "node:path";
 
 import chalk   from "chalk";
@@ -9,9 +10,11 @@ import yargs   from "yargs/yargs";
 
 import getEnv     from "./utils/env.js";
 import getAliases from "./utils/getAliases.js";
-import getDirs    from "./utils/getDirs.js";
-
-import type {Arguments} from "yargs";
+import {getOtherPageDirs,
+        getProjectCircuitDesignerDirs,
+        getProjectCircuitDirs,
+        getProjectSiteDirs,
+        getServerDir} from "./utils/getDirs.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -19,21 +22,24 @@ process.env.BABEL_ENV = "test";
 process.env.NODE_ENV = "test";
 
 
-const DIRS = getDirs(true, true, true);
-const DIR_MAP = Object.fromEntries(DIRS.map((d) => [d.value, d]));
-
 async function LaunchTest(args: Arguments, dir: string, flags: Record<string, unknown>) {
     return await jest.runCLI({
         ...args,
         ...flags,
-        config: JSON.stringify({
+        silent:          false,
+        passWithNoTests: true,
+        config:          JSON.stringify({
             "preset":           "ts-jest",
             "testEnvironment":  "jsdom",
             "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
 
             "transform": {
                 "^.+\\.scss$": path.resolve("build/scripts/test/scssTransform.js"),
+                "^.+\\.svg$":  path.resolve("build/scripts/test/svgTransform.js"),
             },
+
+            "setupFiles": ["jest-canvas-mock"],
+            "setupFilesAfterEnv": [path.resolve("build/scripts/test/setupFileAfterEnv.js")],
         }),
     }, [dir]);
 }
@@ -41,6 +47,14 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
 
 // CLI
 (async () => {
+    const dirs = [
+        getServerDir(),
+        ...getProjectCircuitDirs(),
+        ...getProjectCircuitDesignerDirs(),
+        ...getProjectSiteDirs(),
+        ...getOtherPageDirs(),
+    ]
+
     const argv = await yargs(process.argv.slice(2))
         .boolean("ci")
         .boolean("coverage")
@@ -49,29 +63,38 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
     const ci = argv.ci;
     const coverage = argv.coverage;
 
-    let dirs = argv._;
-    if (ci && dirs.length === 0) {
-        // Run tests on all directories
-        dirs = Object.keys(DIR_MAP);
-    } else if (dirs.length === 0) {
-        // Prompt user for directory
+    const dirPaths = await (async () => {
+        // If specified dirs in argv, then just use those.
+        if (argv._.length > 0)
+            return argv._;
+
+        // If nothing specified, but using CI, use all directories.
+        if (ci)
+            return dirs.map((d) => d.path);
+
+        // Else prompt user for a directory
         const { value } = await prompts({
             type:    "select",
             name:    "value",
             message: "Pick a project",
-            choices: DIRS,
-            initial: 1,
+            choices: dirs.sort((a, b) => (a.title.localeCompare(b.title))).map((d) => ({
+                ...d,
+                value: d.path,
+            })),
+            initial: 0,
         });
         if (!value)
             return;
-        dirs = [value];
-    }
+        return [value as string];
+    })();
+    if (!dirPaths)
+        return;
 
     const flags = {
         ci,
         coverage,
 
-        watch: (dirs.length === 1 && !ci) && !coverage,
+        watch: (dirPaths.length === 1 && !ci) && !coverage,
 
         collectCoverageFrom: "**/*.{js,ts,tsx}",
         coverageDirectory:   undefined,
@@ -80,26 +103,23 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
     const results = [];
 
     // Launch test in each directory
-    for (const dir of dirs) {
-        const info = DIR_MAP[dir];
-
+    const dirsToUse = dirPaths.map((path) => dirs.find((d) => (d.path === path)));
+    for (const dir of dirsToUse) {
         // Ensure all environment variables are read
         getEnv(`${dir}`, "");
 
         console.log();
-        if (!info) {
+        if (!dir) {
             console.log(chalk.red("Could not find directory,", chalk.underline(dir) + "!"));
             continue;
         }
-        if (info.disabled) {
-            console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
-            continue;
-        }
-        const testDir = (dir === "app" || dir === "site/shared")
-                        ? `src/${dir}` : `src/site/pages/${dir}`;
-        flags.coverageDirectory = `${process.cwd()}/coverage/${testDir}`;
+        // if (dir.disabled) {
+        //     console.log(chalk.yellow("Skipping disabled directory,", chalk.underline(dir)));
+        //     continue;
+        // }
+        flags.coverageDirectory = `${process.cwd()}/coverage/${dir.path}`;
 
-        const { results: result } = await LaunchTest(argv, testDir, flags);
+        const { results: result } = await LaunchTest(argv, dir.path, flags);
         results.push(result);
         if (coverage)
             open(flags.coverageDirectory + "/lcov-report/index.html");

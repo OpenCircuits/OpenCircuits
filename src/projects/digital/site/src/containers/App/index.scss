@@ -1,0 +1,46 @@
+@use "~shared/site/utils/constants" as *;
+
+
+.App {
+    transition: 0.5s;
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+
+        & > main {
+            position: relative;
+            flex-grow: 1;
+        }
+    }
+}
+
+body {
+    color: #fff;
+    background-color: #ccc;
+    overscroll-behavior-x: none;
+}
+
+.white {
+    background-color: #fff !important;
+}
+.show {
+    display: block;
+}
+.hide {
+    display: none;
+}
+.invisible {
+    visibility: hidden;
+
+    opacity: 0;
+}
+.selected {
+    background-color: rgba(71, 129, 185, 0.15) !important;
+}

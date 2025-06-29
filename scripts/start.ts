@@ -7,7 +7,7 @@ import chalk   from "chalk";
 import prompts from "prompts";
 import yargs   from "yargs";
 
-import getDirs      from "./utils/getDirs.js";
+import {getOtherPageDirs, getProjectSiteDirs, getServerDir} from "./utils/getDirs.js";
 import startWebpack from "./webpack/index.js";
 
 
@@ -40,38 +40,48 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
 
 // CLI
 (async () => {
-    const dirs = getDirs(true, false, false);
+    const dirs = [
+        getServerDir(),
+        ...getProjectSiteDirs(),
+        ...getOtherPageDirs(),
+    ];
 
-    const { open, project, port } = await yargs(process.argv.slice(2))
+    const { open, targetDir, port } = await yargs(process.argv.slice(2))
         .boolean("open")
-        .choices("project", dirs.map((dir) => dir.value as string))
+        .choices("path", dirs.map((dir) => dir.path))
         .number("port")
         .argv;
 
-    let dir: string;
-    if (project) {
-        dir = project;
-    } else {
-        // Prompt for project type
+    const dirPath = await (async () => {
+        if (targetDir)
+            return targetDir;
         const { value } = await prompts({
             type:    "select",
             name:    "value",
             message: "Pick a project",
-            choices: dirs,
-            initial: dirs.findIndex((dir) => (dir.title === "Digital")),
+            choices: dirs.map((d) => ({
+                ...d,
+                value: d.path,
+            })),
+            initial: dirs.findIndex((d) => d.name === "digital"),
         });
-        dir = value;
-    }
-
-    if (!dir)
+        return value;
+    })();
+    if (!dirPath)
         return;
 
+    const dir = dirs.find((d) => (d.path === dirPath));
+    if (!dir) {
+        console.error(`Failed to find dir with path: ${dirPath}!`);
+        return;
+    }
+
     // Start server
-    if (dir === "server") {
+    if (dir.name === "server") {
         StartServer();
         return;
     }
 
     // Start digital/analog/landing page
-    StartClient(`src/site/pages/${dir}`, dir, open, port);
+    StartClient(dir.path, dir.name, open, port);
 })();
