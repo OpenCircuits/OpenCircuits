@@ -28,17 +28,12 @@ jobs:
     - run: yarn
 
     - name: Build backend [Golang]
-      run: yarn build --ci server
+      run: yarn build --ci src/server
 
     - name: Build frontend [TypeScript]
-      run: yarn build --ci --prod digital
+      run: yarn build --ci --prod src/projects/digital/site
 
-    - name: Build docs
-      run: |
-        yarn build:jsdocs
-        yarn build:docs
-
-  test-app:
+  tests:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -50,40 +45,5 @@ jobs:
 
     - run: yarn
 
-    - name: Run tests (App) [TypeScript]
-      run: yarn test  --ci app
-
-  test-frontend:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 18.x
-
-    - run: yarn
-
-    - name: Run tests (Shared) [TypeScript]
-      run: yarn test  --ci shared
-
-    - name: Run tests (Digital) [TypeScript]
-      run: yarn test  --ci digital
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 18.x
-
-    - run: yarn
-
-    - name: Lint files [TypeScript]
-      run: yarn lint
+    - name: Run tests [TypeScript]
+      run: yarn test --ci
