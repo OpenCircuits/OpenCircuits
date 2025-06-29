@@ -336,16 +336,16 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
             return;
         }
 
-        const { left, right, bottom, top } = { ...{ left: 0, right: 0, bottom: 0, top: 0 }, ...this.margin };
+        const { left, right, bottom, top } = { left: 0, right: 0, bottom: 0, top: 0, ...this.margin };
 
-        const marginSize = V(left - right, bottom - top);
+        const marginSize = V(left + right, bottom + top);
         const bbox = Rect.Bounding(objs.map(({ bounds }) => bounds));
 
         const screenSize = canvasInfo.screenSize.sub(V(left, bottom));
         const worldSize = this.toWorldPos(screenSize).sub(this.toWorldPos(V(0, 0)));
 
         // Determine which bbox dimension will limit zoom level
-        const ratio = V(bbox.width / worldSize.x, bbox.height / worldSize.y);
+        const ratio = V(bbox.width / worldSize.x, -bbox.height / worldSize.y);
         const finalZoom = this.camera.zoom * Math.max(ratio.x, ratio.y) * (padRatio ?? 1);
 
         // Only subtract off 0.5 of the margin offset since currently it's centered on the margin'd

@@ -46,6 +46,10 @@ export const MainDesigner = ({ otherPlace }: Props) => {
         dispatch(SetCircuitSaved(false))),
     [designer]);
 
+    useEffect(() => {
+        designer.viewport.margin = { top: HEADER_HEIGHT };
+    }, [designer]);
+
     // Sync circuit-lock
     useEffect(() => {
         if (isLocked) {
