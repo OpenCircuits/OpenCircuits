@@ -1,6 +1,4 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import ReactRefreshTypescript    from "react-refresh-typescript";
-import {reactCompilerLoader}     from "react-compiler-webpack";
 
 import getAliases from "../../utils/getAliases.js";
 
@@ -30,14 +28,14 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
             //  and then goes through the react compiler.
             use: [
                 {
-                    loader: reactCompilerLoader,
-                },
-                {
-                    loader:  "ts-loader",
+                    loader:  "babel-loader",
                     options: {
-                        getCustomTransformers: () => ({
-                            before: (isDev ? [ReactRefreshTypescript()] : []),
-                        }),
+                        presets: [
+                            "@babel/preset-env",
+                            ["@babel/preset-react", { "runtime": "automatic" }],
+                            "@babel/preset-typescript",
+                        ],
+                        plugins: ["babel-plugin-react-compiler"],
                     },
                 },
             ],

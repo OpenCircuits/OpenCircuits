@@ -23,7 +23,7 @@ export const SelectionHandler: ToolHandler = {
 
         const shouldSelect = (!ev.input.isShiftKeyDown || !obj.isSelected);
 
-        circuit.beginTransaction();
+        circuit.beginTransaction({ batch: true });
 
         if (deselectAll)
             circuit.selections.clear();
