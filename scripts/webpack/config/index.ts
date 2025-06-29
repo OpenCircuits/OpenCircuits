@@ -52,7 +52,7 @@ export default (config: Config): Configuration => {
                 level: "error",
             },
 
-            devtool: (isDev ? "source-map" : undefined),
+            devtool: (isDev ? "inline-source-map" : undefined),
         },
          IMGConfig(config),
          CSSConfig(config),

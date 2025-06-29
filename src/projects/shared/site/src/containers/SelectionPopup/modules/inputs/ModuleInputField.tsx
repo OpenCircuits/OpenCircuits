@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {Circuit, Prop} from "shared/api/circuit/public";
 
@@ -57,10 +57,7 @@ export const DefaultConfig = <V extends Primitive>({
 
     isValid: (_) => true,
 
-    // useCallback necessary since we use doChange in a useEffect and need it to be steady
-    doChange: useCallback(
-        (newVals: Array<[V]>) => doChange(newVals.map(([v]) => v)),
-        [doChange]),
+    doChange: (newVals: Array<[V]>) => doChange(newVals.map(([v]) => v)),
 
     onSubmit,
     getCustomDisplayVal: (getCustomDisplayVal

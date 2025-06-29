@@ -41,11 +41,11 @@ export const ICViewer = () => {
 
     // Happens when activated
     useLayoutEffect(() => {
-        if (!isActive || !icId || !canvas.current)
+        if (!isActive || !icId || !canvas.current || !mainDesigner.viewport.canvasInfo)
             return;
 
         // Block input for main designer
-        mainDesigner.viewport.canvasInfo!.input.setBlocked(true);
+        mainDesigner.viewport.canvasInfo.input.setBlocked(true);
 
         // Get the IC and load its contents into circuit
         const icInstance = mainDesigner.circuit.getComponent(icId);
@@ -139,6 +139,9 @@ export const ICViewer = () => {
     }, [pauseUpdates, mainDesigner, icId, icViewDesigner]);
 
     const close = () => {
+        if (!mainDesigner.viewport.canvasInfo)
+            return;
+
         // // Reset in case for next time
         // setPauseUpdates(false);
         setICViewDesigner(undefined);
