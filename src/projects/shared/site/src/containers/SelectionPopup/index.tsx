@@ -124,10 +124,12 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
                 //  Issues #521 and #863 respectively
                 pointerEvents: (clickThrough || !!itemNavCurItem ? "none" : "auto"),
              }}>
-            <InfoDisplay designer={designer} docsUrlConfig={docsUrlConfig} />
-            <TitleModule designer={designer}  />
-            <hr />
-            {children}
+            {isVisible && (<>
+                <InfoDisplay designer={designer} docsUrlConfig={docsUrlConfig} />
+                <TitleModule designer={designer}  />
+                <hr />
+                {children}
+            </>)}
         </div>
     );
 }

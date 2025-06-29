@@ -75,7 +75,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     // Convenience getters around CircuitDocument for this circuit
     //
     public hasIC(id: GUID) {
-        return this.doc.getICInfo(id).ok;
+        return this.doc.hasIC(id);
     }
     public hasComp(id: GUID) {
         return this.doc.getCircuitInfo().hasComp(id);
