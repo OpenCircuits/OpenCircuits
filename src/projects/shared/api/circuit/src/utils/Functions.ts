@@ -14,9 +14,29 @@ export function MapObj<Ks extends string|number, V1s, V2s>(
     return Object.fromEntries(
         Object.entries<V1s>(obj)
             .map(([key, val], i) =>
-                [key as Ks, func([key as Ks, val], i, obj)]
-            )
+                [key as Ks, func([key as Ks, val], i, obj)])
     ) as Record<Ks, V2s>;
+}
+
+export function FilterObj<Ks extends string, Vs>(
+    obj: Record<Ks, Vs>,
+    func: (entry: [Ks, Vs], i: number, obj: Record<Ks, Vs>) => boolean,
+): Record<Ks, Vs> {
+    return Object.fromEntries(
+        Object.entries<Vs>(obj)
+            .filter(([key, val], i) => func([key as Ks, val], i, obj))
+    ) as Record<Ks, Vs>;
+}
+
+export function MapObjKeys<Ks extends string, K2s extends string, Vs>(
+    obj: Record<Ks, Vs>,
+    func: (entry: [Ks, Vs], i: number, obj: Record<Ks, Vs>) => K2s,
+): Record<K2s, Vs> {
+    return Object.fromEntries(
+        Object.entries<Vs>(obj)
+            .map(([key, val], i) =>
+                [func([key as Ks, val], i, obj), val])
+    ) as Record<K2s, Vs>;
 }
 
 /**

@@ -1,6 +1,6 @@
 import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 
-import {DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalObjContainer, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
+import {DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSelections, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer, ReadonlyDigitalSelections} from "../DigitalCircuit";
 import {DigitalComponent, DigitalNode, ReadonlyDigitalComponent} from "../DigitalComponent";
 import {DigitalPort, ReadonlyDigitalPort}                   from "../DigitalPort";
 import {DigitalWire, ReadonlyDigitalWire}                   from "../DigitalWire";
@@ -22,7 +22,9 @@ export type DigitalTypes = CircuitTypes<
     DigitalIntegratedCircuit,
     DigitalICInfo,
     DigitalObjContainer,
-    ReadonlyDigitalObjContainer
+    ReadonlyDigitalObjContainer,
+    DigitalSelections,
+    ReadonlyDigitalSelections
 >;
 
 export interface DigitalCircuitState extends CircuitState<DigitalTypes> {

@@ -13,6 +13,7 @@ import type {
     ReadonlyComponent,
     ReadonlyNode,
     ReadonlyPort,
+    ReadonlySelections,
     ReadonlyWire,
     Selections,
     Wire,
@@ -43,8 +44,8 @@ export type ToDigital<T> = (
     T extends Port              ? DigitalPort :
     T extends ComponentInfo     ? DigitalComponentInfo :
     T extends ICInfo            ? DigitalICInfo :
-    T extends Selections        ? APIToDigital<Selections> :
     T extends ObjContainer      ? DigitalObjContainer :
+    T extends Selections        ? DigitalSelections :
     // Base-Readonly-type replacements
     T extends ReadonlyCircuit      ? ReadonlyDigitalCircuit :
     T extends ReadonlyNode         ? ReadonlyDigitalNode :
@@ -52,6 +53,7 @@ export type ToDigital<T> = (
     T extends ReadonlyWire         ? ReadonlyDigitalWire :
     T extends ReadonlyPort         ? ReadonlyDigitalPort :
     T extends ReadonlyObjContainer ? ReadonlyDigitalObjContainer :
+    T extends ReadonlySelections   ? ReadonlyDigitalSelections :
     // Replace all method args/return types
     T extends (...a: infer Args) => infer R ? (...a: ToDigital<Args>) => ToDigital<R> :
     // Recursively replace records
@@ -66,8 +68,13 @@ export type APIToDigital<T> = {
     [key in keyof T]: ToDigital<T[key]>;
 }
 
-export type ReadonlyDigitalObjContainer = APIToDigital<ReadonlyObjContainer>;
-export type DigitalObjContainer = APIToDigital<ObjContainer>;
+export type ReadonlyDigitalObjContainer = APIToDigital<ReadonlyObjContainer> & {
+    readonly simState: ReadonlySimState;
+}
+export type DigitalObjContainer = APIToDigital<ObjContainer> & ReadonlyDigitalObjContainer;
+
+export type ReadonlyDigitalSelections = APIToDigital<ReadonlySelections> & ReadonlyDigitalObjContainer;
+export type DigitalSelections = APIToDigital<Selections> & Omit<DigitalObjContainer, "select">;
 
 export interface ReadonlySimState {
     // PortID -> Signal

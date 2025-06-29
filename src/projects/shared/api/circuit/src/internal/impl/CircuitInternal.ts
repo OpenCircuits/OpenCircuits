@@ -242,7 +242,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         this.doc.setCamera(camera);
     }
 
-    public importObjs(objs: Schema.Obj[], refreshIds = false): Result<GUID[]> {
+    public importObjs(objs: Schema.Obj[], refreshIds = false): Result<Map<GUID, GUID>> {
         const newIds = new Map<GUID, GUID>();
         objs.forEach((obj) =>
             newIds.set(obj.id, (refreshIds ? uuid() : obj.id)));
@@ -297,7 +297,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                         },
                     })
             ))
-            .map((_) => [...newIds.values()])
+            .map((_) => newIds)
             .mapErr(AddErrE("CircuitInternal.importObjs: failed!"))
             .uponErr(() => this.cancelTransaction());
     }

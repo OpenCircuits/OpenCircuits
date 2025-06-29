@@ -93,5 +93,28 @@ describe("DigitalCircuit", () => {
             TurnOnNew(sw2);
             expect(led).toBeOn();
         });
+        test("Import objects in the circuit with state", () => {
+            const [circuit, _, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
+            const [sw, { outputs: [led] }] = PlaceAndConnect("Switch");
+
+            TurnOn(sw);
+
+            expect(led).toBeOn();
+
+            // Import the objects again with new IDs, switch and LED should still be on
+            const objs = circuit.import(
+                circuit.createContainer([sw.id, led.id]).withWiresAndPorts(), { refreshIds: true });
+
+            expect(objs.components).toHaveLength(2);
+            expect(objs.wires).toHaveLength(1);
+
+            const sw2 = objs.components.find((c) => (c.kind === "Switch"));
+            const led2 = objs.components.find((c) => (c.kind === "LED"));
+            expect(sw2).toBeDefined();
+            expect(led2).toBeDefined();
+
+            expect(circuit.sim.state.states[sw2!.id][0]).toBeOn();
+            expect(led).toBeOn();
+        });
     });
 });

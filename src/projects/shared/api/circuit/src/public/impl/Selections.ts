@@ -5,7 +5,6 @@ import {ObservableImpl} from "../../utils/Observable";
 import {Selections, SelectionsEvent} from "../Selections";
 
 import {CircuitState, CircuitTypes} from "./CircuitState";
-import {ObjContainerImpl} from "./ObjContainer";
 
 import "shared/api/circuit/utils/Array";
 
@@ -13,14 +12,14 @@ import "shared/api/circuit/utils/Array";
 export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<SelectionsEvent> implements Selections {
     protected readonly state: CircuitState<T>;
 
-    protected selections: ObjContainerImpl<T>;
+    protected selections: T["ObjContainerT"];
 
     public constructor(state: CircuitState<T>) {
         super();
 
         this.state = state;
 
-        this.selections = new ObjContainerImpl<T>(this.state, new Set());
+        this.selections = this.state.constructObjContainer(new Set());
         this.state.internal.subscribe((_) => {
             // Update selections
             const newSelections = new Set(
@@ -28,8 +27,8 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
                     .filter((o) => (o.props["isSelected"] === true))
                     .map((o) => o.id));
 
-            const diff = this.selections["objs"].symmetricDifference(newSelections);
-            this.selections = new ObjContainerImpl<T>(this.state, newSelections);
+            const diff = this.selections.ids.symmetricDifference(newSelections);
+            this.selections = this.state.constructObjContainer(newSelections);
 
             if (diff.size > 0) {
                 this.publish({
@@ -71,6 +70,10 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
         return this.selections.ics;
     }
 
+    public get ids(): ReadonlySet<string> {
+        return this.selections.ids;
+    }
+
     public withWiresAndPorts(): T["ObjContainerT"] {
         return this.selections.withWiresAndPorts();
     }
@@ -81,8 +84,8 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
 
     public clear(): void {
         this.state.internal.beginTransaction();
-        for (const id of this.selections["objs"])
-            this.state.internal.setPropFor(id, "isSelected", undefined);
+        for (const obj of this.selections.all)
+            this.state.internal.setPropFor(obj.id, "isSelected", undefined);
         this.state.internal.commitTransaction("Cleared Selections");
     }
 

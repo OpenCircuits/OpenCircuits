@@ -7,6 +7,7 @@ import {Port, ReadonlyPort}              from "../Port";
 import {ReadonlyWire, Wire}              from "../Wire";
 import {Circuit, ICInfo, IntegratedCircuit, ReadonlyCircuit} from "../Circuit";
 import {ObjContainer, ReadonlyObjContainer} from "../ObjContainer";
+import {ReadonlySelections, Selections} from "../Selections";
 
 
 // Utility interface to hold utility types for the templated Circuit API.
@@ -29,6 +30,9 @@ export type CircuitTypes<
 
     ObjContainerT extends ObjContainer = ObjContainer,
     RObjContainerT extends ReadonlyObjContainer = ReadonlyObjContainer,
+
+    SelectionsT extends Selections = Selections,
+    RSelectionsT extends ReadonlySelections = ReadonlySelections,
 > = {
     "Circuit": CircuitT;
     "ReadonlyCircuit": RCircuitT;
@@ -64,6 +68,9 @@ export type CircuitTypes<
     "ICInfo": ICInfoT;
     "ObjContainerT": ObjContainerT;
     "ReadonlyObjContainerT": RObjContainerT;
+
+    "SelectionsT": SelectionsT;
+    "ReadonlySelectionsT": RSelectionsT;
 }
 
 export interface CircuitState<T extends CircuitTypes> {
@@ -79,4 +86,5 @@ export interface CircuitState<T extends CircuitTypes> {
     constructPort(id: string, icId?: GUID): T["Port"];
     constructIC(id: string): T["IC"];
     constructComponentInfo(kind: string): T["ComponentInfo"];
+    constructObjContainer(objs: Set<GUID>, icId?: GUID): T["ObjContainerT"];
 }
