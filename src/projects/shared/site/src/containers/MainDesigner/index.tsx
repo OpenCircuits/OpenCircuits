@@ -60,6 +60,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
             return;
         window.Circuit = designer.circuit;
         window.CircuitDesigner = designer;
+        designer.viewport.margin = { top: HEADER_HEIGHT };
         return designer.viewport.attachCanvas(canvas.current);
     }, [designer, canvas]);
 

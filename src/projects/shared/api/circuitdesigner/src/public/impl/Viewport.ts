@@ -336,13 +336,14 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
             return;
         }
 
-        const { left, right, bottom, top } = { ...{ left: 0, right: 0, bottom: 0, top: 0 }, ...this.margin };
+        const { left, right, bottom, top } = { left: 0, right: 0, bottom: 0, top: 0, ...this.margin };
 
-        const marginSize = V(left - right, bottom - top);
+        const marginSize = V(left + right, bottom + top);
         const bbox = Rect.Bounding(objs.map(({ bounds }) => bounds));
 
-        const screenSize = canvasInfo.screenSize.sub(V(left, bottom));
-        const worldSize = this.toWorldPos(screenSize).sub(this.toWorldPos(V(0, 0)));
+        const screenSize = canvasInfo.screenSize.sub(V(marginSize.x, marginSize.y));
+        // this.toWorldPos(screenSize) gets a negative number for y which is why we scale by -1, see #1461
+        const worldSize = this.toWorldPos(screenSize).sub(this.toWorldPos(V(0, 0))).scale(V(1, -1));
 
         // Determine which bbox dimension will limit zoom level
         const ratio = V(bbox.width / worldSize.x, bbox.height / worldSize.y);
