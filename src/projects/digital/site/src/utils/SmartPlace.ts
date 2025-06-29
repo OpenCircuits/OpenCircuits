@@ -1,8 +1,14 @@
 import {V, Vector} from "Vector";
 import {Rect} from "math/Rect";
-import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
 import {DigitalCircuit} from "digital/api/circuit/public";
 
+
+export const enum SmartPlaceOptions {
+    Off     = 0,
+    Inputs  = 1 << 0,
+    Outputs = 1 << 1,
+    Full    = Inputs | Outputs,
+}
 
 const AUTO_PLACE_SWITCH_SPACE = 2.5;
 const AUTO_PLACE_LED_SPACE = 1;

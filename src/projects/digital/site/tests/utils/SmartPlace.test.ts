@@ -5,8 +5,7 @@ import {V} from "Vector";
 
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
-import {SmartPlace}         from "digital/site/utils/SmartPlace";
-import {SmartPlaceOptions} from "digital/site/utils/DigitalCreate";
+import {SmartPlace, SmartPlaceOptions} from "digital/site/utils/SmartPlace";
 
 
 describe("SmartPlace", () => {
