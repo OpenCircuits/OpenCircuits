@@ -55,7 +55,7 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
     for (const name of inputMap.keys()) {
         const clock = circuit.getComponents().find((comp) => comp.name === name);
         clock?.setProp("delay", 4 * (2 ** (inIndex)));
-        inIndex = Math.min(inIndex + 1, 7);
+        inIndex = Math.min(inIndex + 1, 11);
     }
     // Connect clocks to oscilloscope
     if (options.connectClocksToOscope) {
