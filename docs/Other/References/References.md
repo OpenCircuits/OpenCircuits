@@ -10,7 +10,7 @@ sidebar_position: 0
 
 Example app.yaml:
 ```
-runtime: go113
+runtime: go123
 env_variables:
   DATASTORE_PROJECT_ID: "PROJECT_ID"
 ```

@@ -529,6 +529,9 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     public getICInfo(icId: GUID): Result<ReadonlyCircuitStorage<Schema.IntegratedCircuitMetadata>> {
         return this.getMutableICInfo(icId);
     }
+    public hasIC(icId: GUID): boolean {
+        return this.icStorage.has(icId);
+    }
 
     //
     // Transaction interface

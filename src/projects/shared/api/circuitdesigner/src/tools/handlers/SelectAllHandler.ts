@@ -16,7 +16,7 @@ export const SelectAllHandler: ToolHandler = {
         if (comps.length === 0 || comps.length === circuit.selections.components.length)
             return ToolHandlerResponse.PASS;
 
-        circuit.beginTransaction();
+        circuit.beginTransaction({ batch: true });
         comps.forEach((comp) => comp.select());
         circuit.commitTransaction("Selected All");
 
