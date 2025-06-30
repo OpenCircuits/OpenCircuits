@@ -1,27 +1,33 @@
 {
-  "name": "docs",
-  "description": "Documentation site for OpenCircuits",
-  "version": "1.0.0",
+  "name": "src-other-pages-docs",
+  "version": "0.0.0",
   "private": true,
-  "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.21",
-    "@docusaurus/preset-classic": "^2.0.0-beta.21",
-    "@mdx-js/react": "^1.6.22",
-    "clsx": "^1.1.1",
-    "hast-util-is-element": "1.1.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "rehype-katex": "5",
-    "remark-math": "3"
-  },
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
     "serve": "docusaurus serve",
-    "clear": "docusaurus clear"
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.8.1",
+    "@docusaurus/preset-classic": "3.8.1",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.8.1",
+    "@docusaurus/tsconfig": "3.8.1",
+    "@docusaurus/types": "3.8.1",
+    "typescript": "~5.6.2"
   },
   "browserslist": {
     "production": [
@@ -30,9 +36,12 @@
       "not op_mini all"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
     ]
+  },
+  "engines": {
+    "node": ">=18.0"
   }
 }
