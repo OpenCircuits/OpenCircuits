@@ -17,6 +17,7 @@ export class TimedDigitalSimRunner extends InstantSimRunner {
 
         if (this.curTimeout) {
             window.clearTimeout(this.curTimeout);
+            this.curTimeout = undefined;
             this.queueStep();
         }
     }
