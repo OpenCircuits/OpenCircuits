@@ -341,7 +341,7 @@ export const DigitalPropagators: PropagatorsMap = {
     "Clock": MakeTimedPropagator((obj, _signals, [curSignal] = [Signal.Off], _tickInfo) => ({
         outputs:   { "outputs": [curSignal] },
         nextState: [Signal.invert(curSignal)],
-    }), 250, [Signal.Off]),
+    }), 20, [Signal.Off]),
 
     // Outputs
     "LED":            MakeNoOutputPropagator(),
@@ -358,7 +358,7 @@ export const DigitalPropagators: PropagatorsMap = {
             // Slice off first X samples to make sure that state.length + 8 <= maxSamples.
             nextState: [...state.slice(Math.max(state.length - (maxSamples - 1)*8, 0)), ...nextSignals],
         };
-    }, 50),
+    }, 2),
 
     // Gates
     BUFGate, NOTGate,

@@ -175,7 +175,7 @@ async function Init(): Promise<void> {
                         [mainCircuit, mainCircuitState],
                     );
                     // Setup propagator
-                    mainCircuitState.simRunner = new TimedDigitalSimRunner(mainCircuitState.sim, 1);
+                    mainCircuitState.simRunner = new TimedDigitalSimRunner(mainCircuitState.sim, 1000 / 20);
 
                     return mainDesigner;
                 },
