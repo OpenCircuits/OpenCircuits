@@ -1,16 +1,18 @@
 module.exports = {
     "plugins": [
         "react",
+        "react-compiler",
     ],
     "overrides": [
         {
-            "files": ["src/site/**/*.tsx"],
+            "files": ["src/**/*.tsx"],
             "extends": [
                 "plugin:react/recommended",
                 "plugin:react/jsx-runtime",
                 "plugin:react-hooks/recommended",
             ],
             "rules": {
+                "react-compiler/react-compiler": "error",
                 "react/button-has-type": "error",
                 "react/destructuring-assignment": ["error", "always"],
                 "react/forbid-elements": ["error", {

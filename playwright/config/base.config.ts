@@ -1,6 +1,7 @@
 import {devices} from "@playwright/test";
 
 import type {PlaywrightTestConfig, PlaywrightTestOptions, PlaywrightWorkerOptions, Project} from "@playwright/test";
+import path from "node:path";
 
 
 type DevPageNames = "digital" | "landing";
@@ -118,19 +119,20 @@ function getProjectDefinitions(pageName: string, port: number):
 const devPages: Readonly<Record<DevPageNames, PageDetails>> = {
     digital: {
         port:    3000,
-        command: "node ./build/scripts/start.js --project=digital",
+        command: `node ./build/scripts/start.js --targetDir=${path.join("src", "projects", "digital", "site")}`,
     },
     landing: {
         port:    3000,
-        command: "node ./build/scripts/start.js --project=landing",
+        command: `node ./build/scripts/start.js --targetDir=${path.join("src", "other", "pages", "landing")}`,
     },
 }
 
 const prodPages: Readonly<Record<ProdPageNames, PageDetails>> = {
     digital: {
         port:    8080,
-        command: "node ./build/scripts/build.js src/server src/projects/digital/site " +
-                 "&& node ./build/scripts/start.js --project=server",
+        // server path is hardcoded with forward slash
+        command: `node ./build/scripts/build.js src/server ${path.join("src", "projects", "digital", "site")} ` +
+                 "&& node ./build/scripts/start.js --targetDir=src/server",
     },
 }
 
