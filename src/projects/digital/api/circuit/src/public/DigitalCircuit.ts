@@ -85,16 +85,22 @@ export interface ReadonlySimState {
     // ICInstance(Comp)ID -> DigitalSimState
     readonly icStates: Readonly<Record<GUID, ReadonlySimState>>;
 }
-export interface ReadonlyDigitalSim extends Observable<{ type: "step" }> {
+export type DigitalSimEv = {
+    type: "step";
+} | {
+    type: "pause";
+} | {
+    type: "resume";
+} | {
+    type: "propagationTimeChanged";
+    newTime: number;
+}
+export interface ReadonlyDigitalSim extends Observable<DigitalSimEv> {
     readonly propagationTime: number;
+    readonly isPaused: boolean;
 
     readonly state: ReadonlySimState;
 }
-
-export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit> & {
-    readonly sim: ReadonlyDigitalSim;
-}
-
 export interface DigitalSim extends ReadonlyDigitalSim {
     propagationTime: number;
 
@@ -103,6 +109,10 @@ export interface DigitalSim extends ReadonlyDigitalSim {
     step(): void;
 
     sync(comps: GUID[]): void;
+}
+
+export type ReadonlyDigitalCircuit = APIToDigital<ReadonlyCircuit> & {
+    readonly sim: ReadonlyDigitalSim;
 }
 
 export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {

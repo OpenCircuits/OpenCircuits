@@ -3,6 +3,7 @@ import {DigitalSim} from "./DigitalSim";
 
 export interface DigitalSimRunner {
     propagationTime?: number;
+    isPaused: boolean;
 
     resume(): void;
     pause(): void;
@@ -13,9 +14,6 @@ export class InstantSimRunner implements DigitalSimRunner {
     protected readonly sim: DigitalSim;
 
     protected paused: boolean;
-
-    // Ignored here, but used in Timed runner
-    public propagationTime?: number | undefined;
 
     public constructor(sim: DigitalSim) {
         this.sim = sim;
@@ -33,6 +31,16 @@ export class InstantSimRunner implements DigitalSimRunner {
         });
 
         this.queueStep();
+    }
+
+    // Ignored here, but used in Timed runner
+    public set propagationTime(val: number) {}
+    public get propagationTime(): number | undefined {
+        return undefined;
+    }
+
+    public get isPaused(): boolean {
+        return this.paused;
     }
 
     // By default, steps instantly

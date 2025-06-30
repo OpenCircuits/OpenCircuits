@@ -40,6 +40,7 @@ import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/Int
 import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
 import {ToolHandler} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
 import {BackendCircuitMetadata} from "shared/site/api/Circuits";
+import {SimControls} from "../SimControls";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) => ({
@@ -66,6 +67,8 @@ export const App = () => {
 
                     <DigitalItemNav />
                     <HistoryBox designer={designer} />
+
+                    <SimControls circuit={designer.circuit} />
 
                     <SelectionPopup designer={designer} docsUrlConfig={docsConfig}>
                         <PropertyModule designer={designer} propInfo={DigitalPropInfo} />

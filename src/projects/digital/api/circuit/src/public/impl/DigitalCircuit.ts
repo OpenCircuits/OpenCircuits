@@ -1,6 +1,6 @@
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
-import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSim, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
+import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSim, DigitalSimEv, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
 import {DigitalSchema} from "digital/api/circuit/schema";
 import {GUID, ICInfo, ReadonlyICPin} from "shared/api/circuit/public";
@@ -11,7 +11,7 @@ import {MapObjKeys} from "shared/api/circuit/utils/Functions";
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
-class DigitalSimImpl extends ObservableImpl<{ type: "step" }> implements DigitalSim {
+class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements DigitalSim {
     protected readonly circuitState: DigitalCircuitState;
 
     public constructor(circuitState: DigitalCircuitState) {
@@ -28,9 +28,14 @@ class DigitalSimImpl extends ObservableImpl<{ type: "step" }> implements Digital
         if (!this.circuitState.simRunner)
             return;
         this.circuitState.simRunner.propagationTime = val;
+        this.publish({ type: "propagationTimeChanged", newTime: val });
     }
     public get propagationTime(): number {
         return this.circuitState.simRunner?.propagationTime ?? -1;
+    }
+
+    public get isPaused(): boolean {
+        return this.circuitState.simRunner?.isPaused ?? false;
     }
 
     public get state() {
@@ -38,10 +43,16 @@ class DigitalSimImpl extends ObservableImpl<{ type: "step" }> implements Digital
     }
 
     public resume() {
+        if (!this.isPaused)
+            return;
         this.circuitState.simRunner?.resume();
+        this.publish({ type: "resume" });
     }
     public pause() {
+        if (this.isPaused)
+            return;
         this.circuitState.simRunner?.pause();
+        this.publish({ type: "pause" });
     }
 
     public step() {
