@@ -20,10 +20,10 @@ jobs:
       with:
         go-version: 1.24
 
-    - name: Use Node.js 18.x
+    - name: Use Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version-file: 'package.json'
 
     - run: yarn
 
@@ -38,10 +38,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Use Node.js 18.x
+    - name: Use Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18.x
+        node-version-file: 'package.json'
 
     - run: yarn
 
