@@ -1,0 +1,31 @@
+// TODO[master] - .gitignore the generated .ts and generate it automatically via webpack?
+syntax = "proto3";
+
+import "src/projects/shared/site/src/proto/Circuit.proto";
+
+
+message DigitalSimState {
+    message State {
+        // States are arbitrary numbers (usually signals)
+        repeated int32 state = 1;
+    }
+
+    // Array of signals corresponding to the port in filter(flat(circuit.components.map(allPorts)), 'is output port')
+    // -> Compressed into 32bit ints storing 20 signals (ternaries) each
+    repeated uint32 signals = 1;
+
+    // Array of states corresponding to the component in filter(circuit.components, 'is stateful')
+    repeated State states = 3;
+    // Array of states corresponding to the IC component in filter(circuit.components, 'is IC')
+    repeated DigitalSimState icStates = 4;
+}
+
+message DigitalCircuit {
+    Circuit circuit = 1;
+
+    float propagationTime = 2;
+
+    // Array of IC states corresponding to circuit.ics
+    repeated DigitalSimState icInitialSimStates = 3;
+    DigitalSimState simState = 4;
+}

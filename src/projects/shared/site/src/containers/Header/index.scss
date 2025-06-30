@@ -1,0 +1,102 @@
+@use "sass:math";
+@use "constants" as *;
+@use "~shared/site/utils/constants" as *;
+@use "~shared/site/utils/theme" as *;
+
+
+header {
+    z-index: 3;
+
+    // Prevent using the header to drag/scroll offscreen on mobile (iOS Safari in particular)
+    & * {
+        touch-action: none;
+    }
+
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
+    height: $header-height;
+    padding: 6px 0;
+
+    box-sizing: border-box;
+
+    border: $header-border;
+    border-bottom-width: $header-border-width;
+    background-color: $primary-color;
+
+    & img {
+        display: block;
+    }
+
+    & > div {
+        display: flex;
+        flex: 0;
+        flex-direction: row;
+        align-items: center;
+
+        height: 100%;
+
+        &:first-of-type, &:last-of-type {
+            flex: 1;
+        }
+        &:first-of-type {
+            justify-content: flex-start;
+            margin-left: 12px;
+        }
+        &:last-of-type {
+            justify-content: flex-end;
+            margin-right: 12px;
+        }
+
+        & > * {
+            color: $secondary-color;
+        }
+    }
+}
+
+.header__center {
+    position: relative;
+
+    justify-content: center;
+
+    &__github {
+        margin-bottom: 2px;
+    }
+    &__logo {
+        margin-top: 4px;
+        margin-right: 10px;
+    }
+
+    @media (max-width: 1050px) {
+        & {
+            display: none;
+        }
+    }
+}
+
+#header-login-dropdown-content {
+    height: auto;
+    margin-top: 0;
+}
+div.header__login__option {
+    height: auto;
+}
+/*
+    TRIANGLE THINGY FOR 'POPOVER' MENU
+    https://ux.stackexchange.com/questions/117118/what-is-the-difference-between-popover-menu-drop-down-menu-fly-out-menu
+    https://codepen.io/mihaeltomic/pen/PqxVaq?editors=1100
+    might be useful for future
+ */
+/* .header__dropdown__content:before {
+    position: absolute;
+    content: "";
+    top: -8px;
+    border-style: solid;
+    border-width: 0 10px 10px 10px;
+    border-color: transparent transparent #fff transparent;
+} */

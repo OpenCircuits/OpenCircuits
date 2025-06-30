@@ -11,12 +11,12 @@ module.exports = {
         },
     ],
     "rules": {
-        "max-len": ["warn", {
-            "code": 120,
-            "ignoreUrls": true,
-            "ignoreTrailingComments": true,
-            "ignorePattern": "^import .*",
-        }],
+        // "max-len": ["warn", {
+        //     "code": 120,
+        //     "ignoreUrls": true,
+        //     "ignoreTrailingComments": true,
+        //     "ignorePattern": "^import .*",
+        // }],
         "quotes": ["error", "double"],
         "no-self-compare": "error",
         "default-case-last": "error",
@@ -59,5 +59,10 @@ module.exports = {
         "arrow-body-style": "error",
         "arrow-spacing": "error",
         "eol-last": "error",
+        "no-multiple-empty-lines": ["error", {
+            "max": 2,
+            "maxEOF": 0,
+            "maxBOF": 0,
+        }],
     },
 }

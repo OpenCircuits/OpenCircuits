@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+message Prop {
+    oneof prop {
+        int32 int_val = 1;
+        float float_val = 2;
+        string str_val = 3;
+        bool bool_val = 4;
+    }
+}
+
+message Port {
+    optional uint32 kind = 1;
+
+    string group = 2;
+    int32 index = 3;
+
+    optional string name = 4;
+
+    map<string, Prop> otherProps = 5;
+}
+
+message Component {
+    uint32 kind = 1;
+
+    // Index of the IC in circuit.ics
+    optional uint32 icIdx = 2;
+
+    optional uint32 portConfigIdx = 3;
+
+    optional string name = 4;
+    optional float x = 5;
+    optional float y = 6;
+    optional float angle = 7;
+
+    map<string, Prop> otherProps = 8;
+    repeated Port portOverrides = 9;
+}
+
+message Wire {
+    optional uint32 kind = 1;
+
+    // The index of the 1st port's parent component in circuit.components
+    uint32 p1ParentIdx = 2;
+    uint32 p1Group = 3;
+    uint32 p1Idx = 4;
+
+    // The index of the 2nd port's parent component in circuit.components
+    uint32 p2ParentIdx = 5;
+    uint32 p2Group = 6;
+    uint32 p2Idx = 7;
+
+    optional string name = 8;
+    optional uint32 color = 9;
+
+    map<string, Prop> otherProps = 10;
+}
+
+message Camera {
+    float x = 1;
+    float y = 2;
+    float zoom = 3;
+}
+
+message CircuitMetadata {
+    string id = 1;
+    string name = 2;
+    string desc = 3;
+    string version = 4;
+}
+
+message IntegratedCircuitMetadata {
+    CircuitMetadata metadata = 1;
+
+    float displayWidth = 2;
+    float displayHeight = 3;
+
+    map<string, uint32> portGroups = 4;
+
+    message Pin {
+        uint32 internalCompIdx = 1;
+        uint32 internalPortIdx = 2;
+
+        uint32 group = 3;
+        string name = 4;
+
+        float x = 5;
+        float y = 6;
+        float dx = 7;
+        float dy = 8;
+    }
+    repeated Pin pins = 5;
+}
+
+message IntegratedCircuit {
+    IntegratedCircuitMetadata metadata = 1;
+    
+    repeated Component components = 3;
+    repeated Wire wires = 4;
+}
+
+message Circuit {
+    CircuitMetadata metadata = 1;
+
+    Camera camera = 2;
+
+    repeated IntegratedCircuit ics = 3;
+
+    // Order of components will dictate the z-ordering for them.
+    repeated Component components = 4;
+    repeated Wire wires = 5;
+}

@@ -1,0 +1,91 @@
+@use "sass:math";
+@use "~shared/site/utils/constants" as *;
+@use "~shared/site/utils/theme" as *;
+@use "../constants" as *;
+
+
+.header__left {
+    padding: 5px 0;
+
+    & > * {
+        margin-right: 7px;
+    }
+
+    &__sidebar {
+        margin-bottom: 2px;
+        font-size: 24px;
+        vertical-align: middle;
+    }
+
+    & > input {
+        width: 175px; // @TODO: Auto-adjust to fit within a min/max width
+        font-size: 24px;
+        text-overflow: ellipsis;
+    }
+
+    &__save {
+        height: $header-button-height;
+
+        padding: 0 7px;
+
+        transition: 0.5s;
+
+        color: #ddd;
+        border-radius: 4px;
+        background-color: $success-color;
+
+        &:disabled {
+            color: #666;
+            background-color: transparent;
+            border: 1px solid black;
+        }
+        &:enabled:hover {
+            color: #ccc;
+            background-color: darken($success-color, 10%);
+            border-color: #aaa;
+        }
+    }
+
+    &__duplicate {
+        height: 40px;
+        padding: 5px;
+        color: #ccc;
+
+        transition: 0.5s;
+
+        &:hover {
+            background-color: lighten($primary-color, 10%);
+        }
+    }
+
+    &__saving {
+        position: relative;
+
+        width: 15px;
+        height: 15px;
+
+        // Pulse animation
+        @keyframes loadpulse {
+            0%   { transform: scale(0.3, 0.3); }
+            50%  { transform: scale(1.5, 1.5); }
+            100% { transform: scale(0.3, 0.3); }
+        }
+        &::after, &::before {
+            content: "";
+            position: absolute;
+
+            width: 100%;
+            height: 100%;
+
+            border-radius: 7.5px;
+            background-color: $secondary-color;
+
+            opacity: 0.5;
+
+            animation: loadpulse 2s infinite linear;
+        }
+        &::before {
+            animation-delay: 1s;
+        }
+    }
+}

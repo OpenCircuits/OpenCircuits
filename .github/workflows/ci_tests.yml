@@ -13,77 +13,37 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.13
+        go-version: 1.24
 
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
+    - name: Use Node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version-file: 'package.json'
 
     - run: yarn
 
     - name: Build backend [Golang]
-      run: yarn build --ci server
+      run: yarn build --ci src/server
 
     - name: Build frontend [TypeScript]
-      run: yarn build --ci --prod digital
+      run: yarn build --ci --prod src/projects/digital/site
 
-    - name: Build docs
-      run: |
-        yarn build:jsdocs
-        yarn build:docs
-
-  test-app:
+  tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
+    - name: Use Node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version-file: 'package.json'
 
     - run: yarn
 
-    - name: Run tests (App) [TypeScript]
-      run: yarn test  --ci app
-
-  test-frontend:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-
-    - run: yarn
-
-    - name: Run tests (Shared) [TypeScript]
-      run: yarn test  --ci shared
-
-    - name: Run tests (Digital) [TypeScript]
-      run: yarn test  --ci digital
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-
-    - run: yarn
-
-    - name: Lint files [TypeScript]
-      run: yarn lint
+    - name: Run tests [TypeScript]
+      run: yarn test --ci

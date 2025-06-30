@@ -35,6 +35,13 @@ And choose `server` and it should start!
 
 :::warning
 
+*If you run into* `Failed to load sqlite instance: Binary was compiled with 'CGO_ENABLED=0', go-sqlite3 requires cgo to
+work. This is a stub`, you might need to do `go env -w CGO_ENABLED=1`
+
+:::
+
+:::warning
+
 IF YOU RUN INTO `exec: "gcc": executable file not found in %PATH%` ON WINDOWS  
 [CLICK HERE](https://medium.com/@yaravind/go-sqlite-on-windows-f91ef2dacfe)
 

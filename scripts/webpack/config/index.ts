@@ -17,7 +17,7 @@ import type {Configuration} from "webpack";
  * Creates the webpack configuration.
  *
  * @param config The current configuration.
- * @returns        The webpack configuration.
+ * @returns      The webpack configuration.
  */
 export default (config: Config): Configuration => {
     const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;
@@ -52,7 +52,7 @@ export default (config: Config): Configuration => {
                 level: "error",
             },
 
-            devtool: (isDev ? "source-map" : undefined),
+            devtool: (isDev ? "inline-source-map" : undefined),
         },
          IMGConfig(config),
          CSSConfig(config),

@@ -1,5 +1,6 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import ReactRefreshTypescript    from "react-refresh-typescript";
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+
 
 import getAliases from "../../utils/getAliases.js";
 
@@ -13,7 +14,7 @@ import type {Configuration} from "webpack";
  * @param config         The current configuration.
  * @param config.rootDir The current root directory.
  * @param config.isDev   Whether or not this is running in a development environment.
- * @returns                The webpack configuration for the TypeScript-specific rules.
+ * @returns              The webpack configuration for the TypeScript-specific rules.
  */
 export default ({ rootDir, isDev }: Config): Configuration => ({
     module: {
@@ -26,31 +27,17 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
 
             // Loads from bottom to top:
             //  So it first goes through the ts-loader to become js
-            //  and then goes through babel-loader to transpile it
-            //
-            //  Babel: the defacto-standard for compiling JS to support older versions with newer syntax
+            //  and then goes through the react compiler.
             use: [
                 {
-                    loader: "babel-loader",
-
-                    // Configuration for babel
+                    loader:  "babel-loader",
                     options: {
                         presets: [
                             "@babel/preset-env",
-                            // runtime: automatic => makes it so you don't have to `import React` in every tsx file
-                            ["@babel/preset-react", { runtime: "automatic" }],
+                            ["@babel/preset-react", { "runtime": "automatic" }],
+                            "@babel/preset-typescript",
                         ],
-                        plugins: [
-                            ...(isDev ? ["react-refresh/babel"] : []),
-                        ],
-                    },
-                },
-                {
-                    loader:  "ts-loader",
-                    options: {
-                        getCustomTransformers: () => ({
-                            before: (isDev ? [ReactRefreshTypescript()] : []),
-                        }),
+                        plugins: ["babel-plugin-react-compiler"],
                     },
                 },
             ],
@@ -60,6 +47,16 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
     plugins: [
         // Setup hot-module refreshing
         ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+
+        new ForkTsCheckerWebpackPlugin({
+            typescript: {
+                diagnosticOptions: {
+                    semantic:  true,
+                    syntactic: true,
+                },
+                configFile: `${rootDir}/tsconfig.json`,
+            },
+        }),
     ],
 
     resolve: {

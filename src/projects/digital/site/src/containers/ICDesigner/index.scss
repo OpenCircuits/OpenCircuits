@@ -1,0 +1,124 @@
+@use "sass:math";
+@use "~shared/site/utils/theme" as *;
+
+.icdesigner {
+    $icdesigner-name-input-width: 15vw;
+    $icdesigner-name-input-height: 18.5px;
+    $icdesigner-name-input-vertical-padding: 32px;
+    $icdesigner-name-input-border-width: 1px;
+    $icdesigner-name-input-top: 12vh;
+
+    position: absolute;
+    z-index: 5;
+
+    width: 100vw;
+    height: 100vh;
+
+    top: 0;
+    left: 0;
+
+    background-color: rgba(200, 200, 200, 0.5);
+
+    & canvas {
+        position: absolute;
+
+        left: 50%;
+        top: 50%;
+
+        transform: translate(-50%, -50%);
+
+        color: $secondary-color;
+        border: 1px solid $secondary-color;
+        border-radius: 3px;
+        background-color: $ic-background-color;
+    }
+
+    // &__top {
+    //     position: absolute;
+    //     // z-index: 3;
+    //     top: $icdesigner-margin-top;
+
+    //     width: 100vw;
+
+    & > input {
+        position: absolute;
+
+        top: $icdesigner-name-input-top;
+        left: calc(50vw - #{math.div($icdesigner-name-input-width,2)} - 32px);
+
+        width: $icdesigner-name-input-width;
+        height: $icdesigner-name-input-height;
+        padding: 15px $icdesigner-name-input-vertical-padding;
+
+        font-size: 16px;
+        text-align: center;
+
+        color: $primary-color;
+        border: $icdesigner-name-input-border-width solid black;
+        background-color: $ic-background-color;
+    }
+
+    &__buttons {
+        position: absolute;
+        bottom: 12vh;
+
+        width: 100vw;
+
+        & button {
+            font-size: 16px;
+
+            position: absolute;
+
+            cursor: pointer;
+
+            width: 30vw;
+            padding: 15px 32px;
+
+            color: white;
+
+            &[name="confirm"] {
+                left: 8vw;
+                background-color: $success-color;
+                &:active {
+                    background-color: darken($success-color, 10%);
+                }
+            }
+            &[name="cancel"] {
+                right: 8vw;
+                background-color: $danger-color;
+                &:active {
+                    background-color: darken($danger-color, 10%);
+                }
+            }
+        }
+    }
+
+    & .tooltip {
+        position: absolute;
+
+        top: calc($icdesigner-name-input-top +
+                  $icdesigner-name-input-height +
+                  $icdesigner-name-input-vertical-padding +
+                  $icdesigner-name-input-border-width);
+        left: 0;
+        right: 0;
+        margin-inline: auto;
+        width: fit-content;
+        height: fit-content;
+        padding: 5px 10px;
+        border-radius: 3px;
+        background-color: $danger-color;
+
+        text-align: center;
+        &::after {
+            content: " ";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent $danger-color transparent;
+        }
+    }
+}
