@@ -53,7 +53,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
 
     return (
         <Dropdown open={(curMenu === "utilities")}
-                  btnInfo={{ title: "Utilities", src: "img/icons/utilities.svg" }}
+                  btnInfo={{ title: "Utilities", src: "img/icons/handyman.svg" }}
                   onClick={() => dispatch(OpenHeaderMenu("utilities"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
             {extraUtilities.map((utility) => (
