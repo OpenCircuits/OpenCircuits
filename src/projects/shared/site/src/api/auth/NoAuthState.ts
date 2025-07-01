@@ -26,9 +26,7 @@ export class NoAuthState implements AuthState {
         return this.userName;
     }
 
-    public logOut(): Promise<object | undefined> {
+    public logOut(): void {
         SetCookie(NO_AUTH_USERNAME_COOKIE, "");
-        return Promise.resolve(undefined);
     }
-
 }

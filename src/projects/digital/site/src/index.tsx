@@ -66,12 +66,9 @@ import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigit
 import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
 import {PrintDebugStats} from "./proto/debug";
 import {CUR_SAVE_VERSION} from "./utils/Constants";
-import {GoogleOAuthProvider} from "@react-oauth/google";
 import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
+import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
 
-
-// This library is very frustrating...
-const GoogleOAuthProvider2 = GoogleOAuthProvider as (...props: Parameters<typeof GoogleOAuthProvider>) => React.ReactElement;
 
 async function Init(): Promise<void> {
     const startPercent = 30;
@@ -89,7 +86,47 @@ async function Init(): Promise<void> {
                     if (username)
                         await store.dispatch(Login(new NoAuthState(username)));
                 },
-                "google": async () => {},
+                "google": async () => {
+                    // Load auth2 from GAPI and initialize w/ metadata
+                    const clientId = process.env.OC_OAUTH2_ID;
+                    if (!clientId)
+                        throw new Error("No client_id/OAUTH2_ID specificed for google auth!");
+
+                    // Wait for GAPI to load
+                    if (!("google" in window) || !google) {
+                        const loaded = await new Promise<boolean>((resolve) => {
+                            let numChecks = 0;
+                            const interval = setInterval(() => {
+                                // Check if GAPI loaded
+                                if ("google" in window && google) {
+                                    clearInterval(interval);
+                                    resolve(true);
+                                }
+                                // Stop trying to load GAPI after 100 iterations
+                                else if (numChecks > 100) {
+                                    clearInterval(interval);
+                                    resolve(false);
+                                }
+                                numChecks++;
+                            }, 50); // Poll every 1/20th of a second
+                        });
+
+                        if (!loaded)
+                            throw new Error("Failed to load GAPI!");
+                    }
+
+                    google.accounts.id.initialize({
+                        client_id: clientId,
+                        callback:  (resp) => {
+                            store.dispatch(Login(new GoogleAuthState(resp.credential)));
+                        },
+                    });
+
+                    // Check if we have login credentials
+                    const curLoginCredential = GetCookie("google_auth_credential");
+                    if (curLoginCredential)
+                        await store.dispatch(Login(new GoogleAuthState(curLoginCredential)));
+                },
             };
             try {
                 const authMethods = GetAuthMethods();
@@ -204,11 +241,7 @@ async function Init(): Promise<void> {
             root.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        {GetAuthMethods().includes("google") ? (
-                            <GoogleOAuthProvider2 clientId={process.env.OC_OAUTH2_ID!}>
-                                <App />
-                            </GoogleOAuthProvider2>
-                        ) : <App />}
+                        <App />
                     </Provider>
                 </React.StrictMode>
             );

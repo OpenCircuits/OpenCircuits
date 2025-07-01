@@ -1,9 +1,11 @@
-import {googleLogout} from "@react-oauth/google";
 import {jwtDecode} from "jwt-decode";
 
 import {AuthState} from "./AuthState";
 import {AuthType}  from "./AuthTypes";
+import {SetCookie} from "shared/site/utils/Cookies";
 
+
+const GOOGLE_AUTH_CREDENTIAL_COOKIE = "google_auth_credential";
 
 export class GoogleAuthState implements AuthState {
     private readonly id: string;
@@ -15,6 +17,8 @@ export class GoogleAuthState implements AuthState {
 
         const decoded = jwtDecode(credential);
         this.name = "name" in decoded ? (decoded.name as string ?? "") : "";
+
+        SetCookie(GOOGLE_AUTH_CREDENTIAL_COOKIE, credential);
     }
 
     public getType(): AuthType {
@@ -29,9 +33,7 @@ export class GoogleAuthState implements AuthState {
         return this.name;
     }
 
-    public async logOut(): Promise<object> {
-        googleLogout();
-        return {};
+    public logOut(): void {
+        SetCookie(GOOGLE_AUTH_CREDENTIAL_COOKIE, "");
     }
-
 }
