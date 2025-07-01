@@ -93,11 +93,11 @@ async function BuildDir(dir: string, project: string) {
         CopyDir("src/secrets", "build");
 
     // Launch build in each directory
-    const dirsToUse = dirPaths.map((p) => FindDir(dirs, p));
-    for (const dir of dirsToUse) {
+    const dirsToUse = dirPaths.map((p) => [p, FindDir(dirs, p)] as const);
+    for (const [path, dir] of dirsToUse) {
         console.log();
         if (!dir) {
-            console.log(chalk.red("Could not find directory,", chalk.underline(dir) + "!"));
+            console.log(chalk.red("Could not find directory,", chalk.underline(path) + "!"));
             continue;
         }
         // if (info.disabled) {

@@ -66,6 +66,8 @@ import {TimedDigitalSimRunner} from "digital/api/circuit/internal/sim/TimedDigit
 import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
 import {PrintDebugStats} from "./proto/debug";
 import {CUR_SAVE_VERSION} from "./utils/Constants";
+import {GoogleOAuthProvider} from "@react-oauth/google";
+import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
 
 
 async function Init(): Promise<void> {
@@ -73,62 +75,28 @@ async function Init(): Promise<void> {
     let store: AppStore;
 
     await LoadingScreen("loading-screen", startPercent, [
-        [80, "Loading Images", async (onProgress) => {
-            // await designer.circuit.loadImages(ImageFiles.images, onProgress);
-        }],
-
-        [85, "Initializing redux", async () => {
+        [40, "Initializing redux", async () => {
             store = configureStore({ reducer: reducers });
         }],
 
-        [95, "Initializing Authentication", async () => {
+        [80, "Initializing Authentication", async () => {
             const AuthMethods: Record<string, () => Promise<void>> = {
                 "no_auth": async () => {
                     const username = GetCookie("no_auth_username");
                     if (username)
                         await store.dispatch(Login(new NoAuthState(username)));
                 },
-                "google": async () => {
-                    // Load auth2 from GAPI and initialize w/ metadata
-                    const clientId = process.env.OC_OAUTH2_ID;
-                    if (!clientId)
-                        throw new Error("No client_id/OAUTH2_ID specificed for google auth!");
-
-                    // Wait for GAPI to load
-                    if (!gapi) {
-                        const loaded = await new Promise<boolean>((resolve) => {
-                            let numChecks = 0;
-                            const interval = setInterval(() => {
-                                // Check if GAPI loaded
-                                if (gapi) {
-                                    clearInterval(interval);
-                                    resolve(true);
-                                }
-                                // Stop trying to load GAPI after 100 iterations
-                                else if (numChecks > 100) {
-                                    clearInterval(interval);
-                                    resolve(false);
-                                }
-                                numChecks++;
-                            }, 50); // Poll every 1/20th of a second
-                        });
-
-                        if (!loaded)
-                            throw new Error("Failed to load GAPI!");
-                    }
-
-                    await new Promise((resolve) => gapi.load("auth2", resolve));
-                    await gapi.auth2.init({ "client_id": clientId }).then(async (_) => {}); // Have to explicitly call .then
-                },
+                "google": async () => {},
             };
             try {
-                if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
-                    await Promise.all(process.env.OC_AUTH_TYPES!.split(" ").map((a) => AuthMethods[a]()));
+                const authMethods = GetAuthMethods();
+                if (authMethods.length > 0)
+                    await Promise.all(authMethods.map((a) => AuthMethods[a]()));
             } catch (e) {
                 console.error(e);
             }
         }],
-        [99, "Google Analytics", async () => {
+        [90, "Google Analytics", async () => {
             try {
                 if (!process.env.OC_GA_ID)
                     throw new Error("Can't find Google Analytics ID");
@@ -233,7 +201,11 @@ async function Init(): Promise<void> {
             root.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        <App />
+                        {GetAuthMethods().includes("google") ? (
+                            <GoogleOAuthProvider clientId={process.env.OC_OAUTH2_ID!}>
+                                <App />
+                            </GoogleOAuthProvider>
+                        ) : <App />}
                     </Provider>
                 </React.StrictMode>
             );
