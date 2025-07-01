@@ -1,4 +1,3 @@
-import {spawn}                           from "node:child_process";
 import {existsSync, readdirSync, rmSync} from "node:fs";
 import os                                from "node:os";
 
@@ -8,9 +7,10 @@ import prompts from "prompts";
 import yargs   from "yargs/yargs";
 
 import CopyDir      from "./utils/copyDir.js";
+import {Spawn}      from "./utils/spawn.js";
 import startWebpack from "./webpack/index.js";
 
-import {getOtherPageDirs, getProjectSiteDirs, getServerDir} from "./utils/getDirs.js";
+import {FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir} from "./utils/getDirs.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -18,23 +18,18 @@ process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
 
 
-function BuildServer(prod: boolean) {
-    return new Promise<void>((resolve, _) => {
-        // GCP requires raw go files, so no need to build server
-        if (prod) {
-            CopyDir("src/server", "build")
-            resolve();
-            return;
-        }
+async function BuildServer(prod: boolean) {
+    // GCP requires raw go files, so no need to build server
+    if (prod) {
+        CopyDir("src/server", "build")
+        return;
+    }
 
-        CopyDir("src/server/data/sql/sqlite", "build/sql/sqlite");
+    CopyDir("src/server/data/sql/sqlite", "build/sql/sqlite");
 
-        const isWin = (os.platform() === "win32");
-        spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {
-            shell: true, stdio: "inherit",
-        }).on("exit", () => {
-            resolve();
-        });
+    const isWin = (os.platform() === "win32");
+    await Spawn(`cd src/server && go build -o ../../build/server${isWin ? ".exe" : ""}`, {
+        shell: true, stdio: "inherit",
     });
 }
 async function BuildDir(dir: string, project: string) {
@@ -61,7 +56,7 @@ async function BuildDir(dir: string, project: string) {
     const dirPaths = await (async () => {
         // If specified dirs in argv, then just use those.
         if (argv._.length > 0)
-            return argv._;
+            return argv._.map((s) => `${s}`);
 
         // If nothing specified, but using CI, use all directories.
         if (ci)
@@ -98,7 +93,7 @@ async function BuildDir(dir: string, project: string) {
         CopyDir("src/secrets", "build");
 
     // Launch build in each directory
-    const dirsToUse = dirPaths.map((path) => dirs.find((d) => (d.path === path)));
+    const dirsToUse = dirPaths.map((p) => FindDir(dirs, p));
     for (const dir of dirsToUse) {
         console.log();
         if (!dir) {
@@ -114,6 +109,8 @@ async function BuildDir(dir: string, project: string) {
             const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
             await BuildServer(prod);
             spinner.stop();
+        } else if (dir.name === "docs") {
+            await Spawn(`cd ${dir.path} && yarn build`, { shell: true, stdio: "inherit" });
         } else {
             await BuildDir(dir.path, dir.name);
         }
