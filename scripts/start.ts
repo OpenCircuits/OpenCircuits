@@ -82,6 +82,11 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
         return;
     }
 
+    if (dir.name === "docs") {
+        spawn(`cd ${dir.path} && yarn start`, { shell: true, stdio: "inherit" });
+        return;
+    }
+
     // Start digital/analog/landing page
     StartClient(dir.path, dir.name, open, port);
 })();
