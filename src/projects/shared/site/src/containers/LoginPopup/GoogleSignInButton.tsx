@@ -9,11 +9,14 @@ import {CloseHeaderPopups} from "shared/site/state/Header";
 import {Login} from "shared/site/state/thunks/User";
 
 
+// This library is very frustrating...
+const GoogleLogin2 = GoogleLogin as (...props: Parameters<typeof GoogleLogin>) => React.ReactElement;
+
 export const GoogleAuthButton = () => {
     const dispatch = useSharedDispatch();
 
     return (
-        <GoogleLogin
+        <GoogleLogin2
             auto_select
             onSuccess={(creds) => {
                 dispatch(Login(new GoogleAuthState(creds.credential!)));

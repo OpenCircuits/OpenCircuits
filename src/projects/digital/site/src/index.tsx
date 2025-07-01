@@ -70,6 +70,9 @@ import {GoogleOAuthProvider} from "@react-oauth/google";
 import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
 
 
+// This library is very frustrating...
+const GoogleOAuthProvider2 = GoogleOAuthProvider as (...props: Parameters<typeof GoogleOAuthProvider>) => React.ReactElement;
+
 async function Init(): Promise<void> {
     const startPercent = 30;
     let store: AppStore;
@@ -202,9 +205,9 @@ async function Init(): Promise<void> {
                 <React.StrictMode>
                     <Provider store={store}>
                         {GetAuthMethods().includes("google") ? (
-                            <GoogleOAuthProvider clientId={process.env.OC_OAUTH2_ID!}>
+                            <GoogleOAuthProvider2 clientId={process.env.OC_OAUTH2_ID!}>
                                 <App />
-                            </GoogleOAuthProvider>
+                            </GoogleOAuthProvider2>
                         ) : <App />}
                     </Provider>
                 </React.StrictMode>
