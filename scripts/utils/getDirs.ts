@@ -30,6 +30,10 @@ function getDirs(root: string, subpath: string, titleAppend = ""): DirInfo[] {
         }));
 }
 
+export function FindDir(dirs: DirInfo[], p: string): DirInfo | undefined {
+    return dirs.find((d) => (path.resolve(d.path) === path.resolve(p)));
+}
+
 export function getProjectSiteDirs(): DirInfo[] {
     return getDirs("src/projects", "site", " (Site)");
 }

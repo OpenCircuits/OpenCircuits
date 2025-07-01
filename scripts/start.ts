@@ -1,4 +1,3 @@
-import {spawn}      from "node:child_process";
 import {existsSync} from "node:fs";
 import os           from "node:os";
 import path         from "node:path";
@@ -7,8 +6,9 @@ import chalk   from "chalk";
 import prompts from "prompts";
 import yargs   from "yargs";
 
-import {getOtherPageDirs, getProjectSiteDirs, getServerDir} from "./utils/getDirs.js";
+import {FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir} from "./utils/getDirs.js";
 import startWebpack from "./webpack/index.js";
+import {Spawn}      from "./utils/spawn.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -16,7 +16,7 @@ process.env.BABEL_ENV = "development";
 process.env.NODE_ENV = "development";
 
 
-function StartServer() {
+async function StartServer() {
     const isWin = (os.platform() === "win32");
 
     // Check if server is built
@@ -28,7 +28,7 @@ function StartServer() {
         return;
     }
 
-    spawn(`cd build && ${isWin ? "server.exe" : "./server"} -no_auth`, {
+    await Spawn(`cd build && ${isWin ? "server.exe" : "./server"} -no_auth`, {
         shell: true, stdio: "inherit",
     });
 }
@@ -70,7 +70,7 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
     if (!dirPath)
         return;
 
-    const dir = dirs.find((d) => (d.path === dirPath));
+    const dir = FindDir(dirs, dirPath);
     if (!dir) {
         console.error(`Failed to find dir with path: ${dirPath}!`);
         return;
@@ -78,12 +78,12 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
 
     // Start server
     if (dir.name === "server") {
-        StartServer();
+        await StartServer();
         return;
     }
 
     if (dir.name === "docs") {
-        spawn(`cd ${dir.path} && yarn start`, { shell: true, stdio: "inherit" });
+        await Spawn(`cd ${dir.path} && yarn start`, { shell: true, stdio: "inherit" });
         return;
     }
 
