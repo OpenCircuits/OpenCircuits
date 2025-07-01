@@ -43,7 +43,7 @@
 
         <!-- Google Auth script -->
         <% if ((process.env.OC_AUTH_TYPES ?? "").includes("google")) { %>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
         <% } %>
     </head>
     <body>
