@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
@@ -48,6 +49,18 @@ func main() {
 	ipAddressConfig := flag.String("ip_address", "0.0.0.0", "IP address of server")
 	portConfig := flag.String("port", "8080", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
 	flag.Parse()
+
+	envVars := os.Environ()
+	for _, envVar := range envVars {
+		// You can optionally split the string to get key and value separately
+		parts := strings.SplitN(envVar, "=", 2)
+		if len(parts) == 2 {
+			log.Printf("%s = %s\n", parts[0], parts[1])
+		} else {
+			// Handle cases where there might not be an '=' (e.g., malformed entries)
+			log.Println(envVar)
+		}
+	}
 
 	log.Println("Parsed flags")
 
