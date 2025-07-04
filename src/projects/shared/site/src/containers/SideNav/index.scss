@@ -45,7 +45,10 @@ $sidenav-footer-margin-y: 10px;
     left: 0;
 
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
 
     width: $sidenav-width;
     height: 100%;
