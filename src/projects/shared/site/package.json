@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {},
   "dependencies": {
-    "@react-oauth/google": "0.12.2",
     "jwt-decode": "^4.0.0",
     "jspdf": "^2.5.1"
   },

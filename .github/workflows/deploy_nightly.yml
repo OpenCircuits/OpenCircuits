@@ -50,8 +50,8 @@ jobs:
 
     - name: Create OAuth credentials and app.yaml
       run: |
-        echo "${{ secrets.OAUTH_CREDENTIALS }}" >> ./build/credentials.json
-        echo "${{ secrets.APP_YAML }}" >> ./build/app.yaml
+        echo '${{ secrets.OAUTH_CREDENTIALS }}' >> ./build/credentials.json
+        echo '${{ secrets.APP_YAML }}' >> ./build/app.yaml
 
     - name: Deploy
       working-directory: ./build
