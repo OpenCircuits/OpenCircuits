@@ -166,7 +166,7 @@ export const DevWebServers: Readonly<Record<DevPageNames, WebServer>> = {
 
 export const ProdWebServers: Readonly<Record<ProdPageNames, WebServer>> = {
     digital: {
-        reuseExistingServer: !!process.env.CI,
+        reuseExistingServer: false,
         timeout:             250_000,
         command:             prodPages.digital.command,
         port:                prodPages.digital.port,
@@ -211,7 +211,7 @@ const config: PlaywrightTestConfig = {
         actionTimeout: 0,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-        trace: "on-first-retry",
+        trace: "on",
 
         launchOptions: {
             ignoreDefaultArgs: ["--hide-scrollbars"],
