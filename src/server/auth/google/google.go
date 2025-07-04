@@ -2,6 +2,7 @@ package google
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	firebase "firebase.google.com/go"
@@ -22,8 +23,7 @@ func (g authenticationMethod) RegisterHandlers(engine *gin.Engine) {
 func New() auth.AuthenticationMethod {
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
-		log.Printf("error initializing Firebase: %v\n", err)
-		panic(err)
+		log.Fatalf("error initializing Firebase: %v\n", err)
 	}
 
 	client, err := app.Auth(context.Background())
@@ -45,6 +45,7 @@ func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
 
 	if tokenInfo.Firebase.SignInProvider != "google.com" {
 		log.Printf("Error authenticating, sign-in provider is not google.com! Provider: '%s'\n", tokenInfo.Firebase.SignInProvider)
+		return "", errors.New("error authenticating, sign-in provider is not google.com")
 	}
 
 	// We must extract the google identity (rather than tokenInfo.UID) so that old users

@@ -42,7 +42,7 @@ jobs:
     # Build nightly site
     - name: Build
       env:
-        # OC_OAUTH2_ID: ${{ secrets.OAUTH_ID }}
+        OC_FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
         OC_AUTH_TYPES: google
         OC_GA_ID: UA-201145837-1
       run: |
