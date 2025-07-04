@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {},
   "dependencies": {
+    "firebase": "11.10.0",
     "jwt-decode": "^4.0.0",
     "jspdf": "^2.5.1"
   },
