@@ -211,7 +211,7 @@ const config: PlaywrightTestConfig = {
         actionTimeout: 0,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-        trace: "on-all-retries",
+        trace: "on-first-retry",
 
         launchOptions: {
             ignoreDefaultArgs: ["--hide-scrollbars"],
