@@ -1,5 +1,5 @@
-import {existsSync, readdirSync, rmSync} from "node:fs";
-import os                                from "node:os";
+import {existsSync} from "node:fs";
+import os           from "node:os";
 
 import chalk   from "chalk";
 import ora     from "ora";
@@ -79,14 +79,6 @@ async function BuildDir(dir: string, project: string) {
     })();
     if (!dirPaths)
         return;
-
-    // If prod, clear build directory first
-    if (prod) {
-        readdirSync("build")
-            // Don't clear scripts directory though
-            .filter((name) => (name !== "scripts"))
-            .forEach((name) => rmSync(`./build/${name}`, { recursive: true, force: true }));
-    }
 
     // If manual production build, copy secrets
     if (prod && !ci && existsSync("src/secrets"))

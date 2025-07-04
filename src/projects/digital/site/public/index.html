@@ -40,6 +40,11 @@
                     loadingText.innerHTML = "Loading Scripts (may take awhile on slow networks)...";
             }, 10000);
         </script>
+
+        <!-- Google Auth script -->
+        <% if ((process.env.OC_AUTH_TYPES ?? "").includes("google")) { %>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <% } %>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
