@@ -37,22 +37,28 @@ func New() auth.AuthenticationMethod {
 }
 
 func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
+	log.Printf("Extracting identity for token %s!\n", token)
+
 	tokenInfo, err := g.client.VerifyIDToken(context.Background(), token)
 	if err != nil {
 		log.Printf("Error verifying token '%s': %v\n", token, err)
 		return "", err
 	}
+	log.Printf("Verified\n")
 
 	if tokenInfo.Firebase.SignInProvider != "google.com" {
 		log.Printf("Error authenticating, sign-in provider is not google.com! Provider: '%s'\n", tokenInfo.Firebase.SignInProvider)
 		return "", errors.New("error authenticating, sign-in provider is not google.com")
 	}
+	log.Printf("Verified sign-in\n")
 
 	// We must extract the google identity (rather than tokenInfo.UID) so that old users
 	// don't lose access to all of their circuits.
 	// TODO: Migrate to tokenInfo.UID at some point
 	googleIdentities := tokenInfo.Firebase.Identities[tokenInfo.Firebase.SignInProvider].([]interface{})
+	log.Printf("Getting google identity\n")
 	googleId := googleIdentities[0].(string)
+	log.Printf("Found identity: %s\n", googleId)
 
 	return "google_" + googleId, nil
 }
