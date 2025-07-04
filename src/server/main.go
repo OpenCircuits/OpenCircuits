@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 	"net"
 	"os"
 	"strconv"
@@ -33,6 +34,8 @@ func getPort() string {
 }
 
 func main() {
+	log.Println("STARTING OPENCIRCUITS SERVER")
+
 	var err error
 
 	// Parse flags
@@ -46,20 +49,26 @@ func main() {
 	portConfig := flag.String("port", "8080", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
 	flag.Parse()
 
+	log.Println("Parsed flags")
+
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
 	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
 		*userCsifConfig = "gcp_datastore"
+		log.Println("Found datastore project!")
 	}
 	if os.Getenv("FIREBASE_CONFIG") != "" || os.Getenv("GOOGLE_APPLICATION_CREDENTIALS") != "" {
 		*useGoogleAuth = true
+		log.Println("Found firebase config!")
 	}
 
 	// Register authentication method
 	authManager := auth.AuthenticationManager{}
 	if *useGoogleAuth {
+		log.Printf("Running with google auth!\n")
 		authManager.RegisterAuthenticationMethod(google.New())
 	}
 	if *noAuthConfig {
+		log.Printf("Running with no auth!\n")
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())
 	}
 
