@@ -2,74 +2,58 @@ package google
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
-	"io/ioutil"
 	"log"
+
+	firebase "firebase.google.com/go"
+	firebaseAuth "firebase.google.com/go/auth"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/api/oauth2/v2"
-	"google.golang.org/api/option"
 )
 
 type authenticationMethod struct {
-	config  oauth2ConfigWrapper
-	service *oauth2.Service
-}
-
-// Credentials which stores google ids.
-type oauth2Config struct {
-	ClientID  string `json:"client_id"`
-	ProjectID string `json:"project_id"`
-}
-type oauth2ConfigWrapper struct {
-	Web oauth2Config `json:"web"`
+	client *firebaseAuth.Client
 }
 
 func (g authenticationMethod) RegisterHandlers(engine *gin.Engine) {
 }
 
 // New Creates a new instance of the google authentication method with the provided config path
-func New(configPath string) auth.AuthenticationMethod {
-	file, err := ioutil.ReadFile(configPath)
+func New() auth.AuthenticationMethod {
+	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
-		log.Printf("File error: %v\n", err)
+		log.Printf("error initializing Firebase: %v\n", err)
 		panic(err)
 	}
 
-	var cred oauth2ConfigWrapper
-	err = json.Unmarshal(file, &cred)
+	client, err := app.Auth(context.Background())
 	if err != nil {
-		log.Printf("Error unmarshalling credentials json: %v\n", err)
-		panic(err)
-	}
-
-	// The IdToken endpoint does not need authentication
-	oauth2Service, err := oauth2.NewService(context.Background(), option.WithoutAuthentication())
-	if err != nil {
-		panic(err)
+		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
 	return authenticationMethod{
-		service: oauth2Service,
-		config:  cred,
+		client: client,
 	}
 }
 
 func (g authenticationMethod) ExtractIdentity(token string) (string, error) {
-	// This is poorly documented, so the code for verifying a token is credit to
-	// https://stackoverflow.com/a/36717411/2972004
-	// NOTE: This should be replaced with manual JWT verification. This endpoint
-	//	is only designed for debugging and validation
-	tokenInfo, err := g.service.Tokeninfo().IdToken(token).Do()
+	tokenInfo, err := g.client.VerifyIDToken(context.Background(), token)
 	if err != nil {
+		log.Printf("Error verifying token '%s': %v\n", token, err)
 		return "", err
 	}
-	if tokenInfo.IssuedTo != g.config.Web.ClientID {
-		return "", errors.New("invalid audience")
+
+	if tokenInfo.Firebase.SignInProvider != "google.com" {
+		log.Printf("Error authenticating, sign-in provider is not google.com! Provider: '%s'\n", tokenInfo.Firebase.SignInProvider)
 	}
-	return "google_" + tokenInfo.UserId, nil
+
+	// We must extract the google identity (rather than tokenInfo.UID) so that old users
+	// don't lose access to all of their circuits.
+	// TODO: Migrate to tokenInfo.UID at some point
+	googleIdentities := tokenInfo.Firebase.Identities[tokenInfo.Firebase.SignInProvider].([]interface{})
+	googleId := googleIdentities[0].(string)
+
+	return "google_" + googleId, nil
 }
 
 func (g authenticationMethod) AuthHeaderPrefix() string {

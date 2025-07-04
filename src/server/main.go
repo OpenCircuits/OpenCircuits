@@ -36,7 +36,7 @@ func main() {
 	var err error
 
 	// Parse flags
-	googleAuthConfig := flag.String("google_auth", "", "<path-to-config>; Enables google sign-in API login")
+	useGoogleAuth := flag.Bool("google_auth", false, "Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
 	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
 	sqlitePathConfig := flag.String("sqlitePath", "sql/sqlite", "The path to the sqlite working directory")
@@ -48,14 +48,16 @@ func main() {
 
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
 	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
-		*googleAuthConfig = "credentials.json"
 		*userCsifConfig = "gcp_datastore"
+	}
+	if os.Getenv("FIREBASE_CONFIG") != "" || os.Getenv("GOOGLE_APPLICATION_CREDENTIALS") != "" {
+		*useGoogleAuth = true
 	}
 
 	// Register authentication method
 	authManager := auth.AuthenticationManager{}
-	if *googleAuthConfig != "" {
-		authManager.RegisterAuthenticationMethod(google.New(*googleAuthConfig))
+	if *useGoogleAuth {
+		authManager.RegisterAuthenticationMethod(google.New())
 	}
 	if *noAuthConfig {
 		authManager.RegisterAuthenticationMethod(auth.NewNoAuth())

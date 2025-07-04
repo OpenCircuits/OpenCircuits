@@ -1,23 +1,20 @@
-import {useSharedDispatch} from "shared/site/utils/hooks/useShared";
+import {useRef} from "react";
 
-import {useEffect, useRef} from "react";
+import {GoogleAuthProvider, getAuth, signInWithPopup} from "firebase/auth";
 
 
 export const GoogleAuthButton = () => {
-    const dispatch = useSharedDispatch();
-
     const signInBtn = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        google.accounts.id.renderButton(signInBtn.current!, {
-            type:  "standard",
-            theme: "outline",
-            size:  "large",
-            shape: "rectangular",
-        });
-    }, [signInBtn, dispatch]);
-
     return (
-        <div ref={signInBtn}></div>
+        <div ref={signInBtn}>
+            <button type="button" onClick={async () => {
+                const provider = new GoogleAuthProvider();
+                const auth = getAuth();
+                await signInWithPopup(auth, provider);
+            }}>
+                LOGIN
+            </button>
+        </div>
     );
 }

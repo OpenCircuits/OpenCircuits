@@ -40,9 +40,10 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
     const [enableReload, setEnableReload] = useState(false);
 
     useEffect(() => {
-        DevListFiles().then((result) => {
-            setEnableReload(result.includes(DEV_CACHED_CIRCUIT_FILE));
-        })
+        if (process.env.NODE_ENV === "development") {
+            DevListFiles().then((result) =>
+                setEnableReload(result.includes(DEV_CACHED_CIRCUIT_FILE)));
+        }
     }, [setEnableReload]);
 
     const load = () => {

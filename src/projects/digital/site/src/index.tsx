@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import {initializeApp} from "firebase/app";
+
 import React            from "react";
 import {createRoot}     from "react-dom/client";
 import ReactGA          from "react-ga";
@@ -68,6 +70,7 @@ import {PrintDebugStats} from "./proto/debug";
 import {CUR_SAVE_VERSION} from "./utils/Constants";
 import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
 import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
+import {browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence} from "firebase/auth";
 
 
 async function Init(): Promise<void> {
@@ -87,45 +90,19 @@ async function Init(): Promise<void> {
                         await store.dispatch(Login(new NoAuthState(username)));
                 },
                 "google": async () => {
-                    // Load auth2 from GAPI and initialize w/ metadata
-                    const clientId = process.env.OC_OAUTH2_ID;
-                    if (!clientId)
-                        throw new Error("No client_id/OAUTH2_ID specificed for google auth!");
+                    const firebaseConfig = process.env.OC_FIREBASE_CONFIG;
+                    if (!firebaseConfig)
+                        throw new Error("No firebase config specified!");
+                    const app = initializeApp(JSON.parse(firebaseConfig));
 
-                    // Wait for GAPI to load
-                    if (!("google" in window) || !google) {
-                        const loaded = await new Promise<boolean>((resolve) => {
-                            let numChecks = 0;
-                            const interval = setInterval(() => {
-                                // Check if GAPI loaded
-                                if ("google" in window && google) {
-                                    clearInterval(interval);
-                                    resolve(true);
-                                }
-                                // Stop trying to load GAPI after 100 iterations
-                                else if (numChecks > 100) {
-                                    clearInterval(interval);
-                                    resolve(false);
-                                }
-                                numChecks++;
-                            }, 50); // Poll every 1/20th of a second
-                        });
+                    const auth = getAuth(app);
+                    await setPersistence(auth, browserLocalPersistence);
 
-                        if (!loaded)
-                            throw new Error("Failed to load GAPI!");
-                    }
-
-                    google.accounts.id.initialize({
-                        client_id: clientId,
-                        callback:  (resp) => {
-                            store.dispatch(Login(new GoogleAuthState(resp.credential)));
-                        },
+                    onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            await store.dispatch(Login(new GoogleAuthState(await user.getIdToken(), user.displayName ?? "")));
+                        }
                     });
-
-                    // Check if we have login credentials
-                    const curLoginCredential = GetCookie("google_auth_credential");
-                    if (curLoginCredential)
-                        await store.dispatch(Login(new GoogleAuthState(curLoginCredential)));
                 },
             };
             try {
