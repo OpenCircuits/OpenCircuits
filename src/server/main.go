@@ -67,6 +67,7 @@ func main() {
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
 	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
 		*userCsifConfig = "gcp_datastore"
+		*useGoogleAuth = true
 		log.Println("Found datastore project!")
 	}
 	if os.Getenv("FIREBASE_CONFIG") != "" || os.Getenv("GOOGLE_APPLICATION_CREDENTIALS") != "" {
