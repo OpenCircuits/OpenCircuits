@@ -52,7 +52,8 @@ test("Basic Switch/LED Test", async ({ page }) => {
     await togglePropagationMenu();
     await togglePausePropagation();
 
-    expect(await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "LED").allPorts[0].signal)).toBe(0);
+    const ledId = await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "LED").id);
+    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(0);
     // Toggle on and off
     await main.click({
         position: {
@@ -60,16 +61,16 @@ test("Basic Switch/LED Test", async ({ page }) => {
             y: 200,
         },
     });
-    expect(await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "LED").allPorts[0].signal)).toBe(0);
+    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(0);
     await stepPropagation();
-    expect(await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "LED").allPorts[0].signal)).toBe(1);
+    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(1);
     await main.click({
         position: {
             x: 400,
             y: 200,
         },
     });
-    expect(await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "LED").allPorts[0].signal)).toBe(1);
+    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(1);
     await stepPropagation();
-    expect(await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "LED").allPorts[0].signal)).toBe(0);
+    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(0);
 });
