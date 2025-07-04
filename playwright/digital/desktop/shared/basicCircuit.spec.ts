@@ -29,10 +29,24 @@ test("Basic Switch/LED Test", async ({ page }) => {
     await closeItemnav();
 
     // Connect components
-    await main.dragTo(main, {
-        sourcePosition: { x: 465, y: 200 },
-        targetPosition: { x: 600, y: 300 },
-    });
+    await main.click({
+        position: {
+            x: 465,
+            y: 200,
+        },
+    })
+    await main.click({
+        position: {
+            x: 600,
+            y: 300,
+        },
+    })
+    // .dragTo seems flakey when connecting wires for some reason so use clicks instead
+    // await main.dragTo(main, {
+    //     sourcePosition: { x: 465, y: 200 },
+    //     targetPosition: { x: 600, y: 300 },
+    // });
+    expect(await page.evaluate(() => window.Circuit.getWires())).toHaveLength(1);
 
     // We will pause the simulation and manually advance it to test the state propagation
     await togglePropagationMenu();

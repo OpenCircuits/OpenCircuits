@@ -53,6 +53,7 @@ test("Basic Switch/LED Test", async ({ page }) => {
             y: 300,
         },
     });
+    expect(await page.evaluate(() => window.Circuit.getWires())).toHaveLength(1);
 
     // We will pause the simulation and manually advance it to test the state propagation
     await togglePropagationMenu();
