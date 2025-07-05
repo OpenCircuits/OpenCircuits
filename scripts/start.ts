@@ -48,7 +48,7 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
         ...getOtherPageDirs(),
     ];
 
-    const { open, targetDir, port, extraFlags } = await yargs(process.argv.slice(2))
+    const argv = await yargs(process.argv.slice(2))
         .boolean("open")
         .choices("path", dirs.map((dir) => dir.path))
         .number("port")
@@ -56,9 +56,16 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
             .usage("--extraFlags='-no_auth -firebase_auth=\"secrets/firebase.json\"'")
         .argv;
 
+    const { open, port, extraFlags } = argv;
+
     const dirPath = await (async () => {
-        if (targetDir)
-            return targetDir;
+        // If specified dirs in argv, then just use those.
+        if (argv._.length > 0){
+            if (argv._.length > 1)
+                throw new Error("Can only specify one directory to start at a time!");
+            return `${argv._[0]}`;
+        }
+
         const { value } = await prompts({
             type:    "select",
             name:    "value",

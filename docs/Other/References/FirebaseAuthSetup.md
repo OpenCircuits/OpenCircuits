@@ -25,6 +25,7 @@ You then need to generate and download your private keys following the instructi
 [here](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments).
 
 You can store it in `src/secrets`, but DO NOT COMMIT it to the repo. You then must add the command-line flag 
-`-firebase_config="<path-to-file>"` (Note the quotes).
+`-firebase_config="<path-to-file>"` (Note the quotes). If you're using `yarn start`, you can pass it like:
+`yarn start --extraFlags='-firebase_config="./secrets/firebase.json"'` (MUST USE DOUBLE QUOTES FOR `firebase_config`!)
 
 If this is working properly, clicking "sign in with google" in the "sign-in" pop up and you should be prompted without a window that asks you to sign in with your credentials.
