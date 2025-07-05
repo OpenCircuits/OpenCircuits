@@ -216,6 +216,8 @@ const config: PlaywrightTestConfig = {
         launchOptions: {
             ignoreDefaultArgs: ["--hide-scrollbars"],
         },
+
+        screenshot: "on-first-failure",
     },
 
     /* Folder for test artifacts such as screenshots, videos, traces, etc. */

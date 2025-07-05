@@ -21,9 +21,9 @@ npx playwright test
 ```
 to run the tests using whichever config is loaded into `playwright.config.ts`, which is the digital site by default. This approach is not recommended.
 
-Options such as `--debug` can be passed into those yarn wrapper commands, and the syntax would simply look like
+Options such as `--ui` can be passed into those yarn wrapper commands, and the syntax would simply look like
 ```bash
-yarn test-e2e:digital --debug
+yarn test-e2e:digital --ui
 ```
 
 ---
@@ -53,11 +53,7 @@ To run the tests under the version of the site compiled for prod, use
 ```bash
 yarn test-e2e:ci
 ```
-This is how the tests are run in the GitHub action on prs.
-
-This command is also used with the GitHub action for updating snapshots.
-If you want to run it in this way locally, set the `UPDATE_SNAPSHOTS_COMMAND` environment variable to the desired command.
-See the following section for more.
+This is how the tests are run in the GitHub action on pull requests.
 
 :::note
 
