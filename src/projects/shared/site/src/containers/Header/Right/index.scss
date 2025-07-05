@@ -127,25 +127,24 @@
                 color: $secondary-color;
                 vertical-align: middle;
             }
-            & img {
-                display: inline;
-                margin-top: 3px;
-                vertical-align: middle;
-            }
-            & div {
+            & > div, & > a {
+                display: flex;
                 float: left;
+
+                align-items: center;
 
                 width: 100%;
                 height: 40px;
                 margin-top: 5px;
 
                 white-space: nowrap;
-            }
-            & div:last-child {
-                padding-bottom: 0;
-            }
-            & div:hover {
-                background-color: #f1f1f1;
+
+                &:last-child {
+                    padding-bottom: 0;
+                }
+                &:hover {
+                    background-color: #f1f1f1;
+                }
             }
 
             .disabled {

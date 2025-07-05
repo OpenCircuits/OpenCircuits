@@ -7,6 +7,9 @@ import {SignInOutButtons}           from "./SignInOutButtons";
 import {TutorialDropdown}           from "./TutorialDropdown";
 import {UtilitiesDropdown, Utility} from "./UtilitiesDropdown";
 
+import expandIcon   from "./expand.svg";
+import collapseIcon from "./collapse.svg";
+
 import "./index.scss";
 
 
@@ -19,7 +22,7 @@ export const HeaderRight = ({ extraUtilities }: Props) => {
     return (<div className="header__right">
         <div className="header__right__wrapper">
             <button type="button" onClick={() => setHidden(!isHidden)}>
-                <img className="expand" src={isHidden ? "img/icons/expand.svg" : "img/icons/collapse.svg"}
+                <img className="expand" src={isHidden ? expandIcon : collapseIcon}
                      width="40px" height="40px" alt="" />
             </button>
 

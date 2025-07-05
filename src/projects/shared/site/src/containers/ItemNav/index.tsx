@@ -25,6 +25,10 @@ import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} 
 import {DragDropHandlers} from "shared/site/components/DragDroppable/DragDropHandlers";
 import {Draggable}        from "shared/site/components/DragDroppable/Draggable";
 
+import undoIcon    from "./undo.svg";
+import redoIcon    from "./redo.svg";
+import historyIcon from "./history.svg";
+
 // TODO: Should be able to derive desktop width off of the value in _constants.scss but it isn't working
 // import styles from "./index.scss";
 import "./index.scss";
@@ -246,7 +250,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
                         else
                             dispatch(OpenHistoryBox());
                     }}>
-                        <img src="img/icons/history.svg" alt="Toggle history box"></img>
+                        <img src={historyIcon} alt="Toggle history box"></img>
                     </button>
                 </div>
                 <div>
@@ -255,13 +259,13 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
                                 title="Undo"
                                 disabled={undoHistory.length === 0}
                                 onClick={() => circuit.undo()}>
-                            <img src="img/icons/undo.svg" alt="" />
+                            <img src={undoIcon} alt="" />
                         </button>
                         <button type="button"
                                 title="Redo"
                                 disabled={redoHistory.length === 0}
                                 onClick={() => circuit.redo()}>
-                            <img src="img/icons/redo.svg" alt="" />
+                            <img src={redoIcon} alt="" />
                         </button>
                     </div>
                 </div>

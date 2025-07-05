@@ -1,3 +1,6 @@
+import buttonDown from "./buttonDown.svg";
+import buttonUp   from "./buttonUp.svg";
+
 import "./index.scss";
 
 
@@ -18,10 +21,10 @@ export const ButtonToggle = ({ className, isOn, height, disabled, children, onCh
     <div className={`buttontoggle ${disabled ? "disabled" : ""} ${className ?? ""}`}
          role="switch" aria-checked={!disabled && isOn} tabIndex={0}
          style={{ height }} onClick={onChange} {...callbacks}>
-        <img src="img/items/buttonDown.svg"
+        <img src={buttonDown}
              style={{ display: (!disabled && isOn ? "" : "none") }}
              height="100%" alt="Button on" />
-        <img src="img/items/buttonUp.svg"
+        <img src={buttonUp}
              style={{ display: (!disabled && isOn ? "none" : "") }}
              height="100%" alt="Button off" />
         <span>

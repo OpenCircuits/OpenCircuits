@@ -1,5 +1,7 @@
 import {BackendCircuitMetadata} from "shared/site/api/Circuits";
 
+import close from "./close.svg";
+
 import "./index.scss";
 
 
@@ -21,7 +23,7 @@ export const CircuitPreview = ({ readonly, data, onClick, onDelete }: CircuitPre
         {/* Don't show 'x' if readonly */}
         {!readonly &&
         (<span className="circuit__preview__controls">
-            <img className="circuit_options" width="20px" src="img/icons/close.svg"
+            <img className="circuit_options" width="20px" src={close}
                  title="Delete Circuit" alt="X to delete"
                  onClick={(e) => { e.stopPropagation(); onDelete(); }} />
         </span>)}
