@@ -126,7 +126,7 @@ export const DigitalItemNav = () => {
         }
         circuit.deleteIC(id);
         return true;
-    }, [circuit, history]);
+    }, [circuit]);
 
     // Append regular ItemNav items with ICs
     return (
