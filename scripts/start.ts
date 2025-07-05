@@ -28,8 +28,6 @@ async function StartServer(extraFlags?: string) {
         return;
     }
 
-    console.log(`cd build && ${isWin ? "server.exe" : "./server"} ${extraFlags}`)
-
     await Spawn(`cd build && ${isWin ? "server.exe" : "./server"} ${extraFlags}`, {
         shell: true, stdio: "inherit",
     });
