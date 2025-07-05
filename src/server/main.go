@@ -7,11 +7,10 @@ import (
 	"net"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/OpenCircuits/OpenCircuits/site/go/api"
 	"github.com/OpenCircuits/OpenCircuits/site/go/auth"
-	"github.com/OpenCircuits/OpenCircuits/site/go/auth/google"
+	"github.com/OpenCircuits/OpenCircuits/site/go/auth/firebase"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/interfaces"
 	"github.com/OpenCircuits/OpenCircuits/site/go/core/utils"
@@ -35,13 +34,12 @@ func getPort() string {
 }
 
 func main() {
-	log.Println("STARTING OPENCIRCUITS SERVER")
-
 	var err error
 
 	// Parse flags
-	useGoogleAuth := flag.Bool("google_auth", false, "Enables google sign-in API login")
 	noAuthConfig := flag.Bool("no_auth", false, "Enables username-only authentication for testing and development")
+	useFirebaseAuth := flag.Bool("firebase_auth", false, "Enables google sign-in API login")
+	firebaseConfig := flag.String("firebase_config", "", "(Optional) The path to the firebase config file, used for authentication")
 	userCsifConfig := flag.String("interface", "sqlite", "The storage interface")
 	sqlitePathConfig := flag.String("sqlitePath", "sql/sqlite", "The path to the sqlite working directory")
 	dsEmulatorHost := flag.String("ds_emu_host", "", "The emulator host address for cloud datastore")
@@ -50,36 +48,24 @@ func main() {
 	portConfig := flag.String("port", "8080", "Port to serve application, use \"auto\" to select the first available port starting at 8080")
 	flag.Parse()
 
-	envVars := os.Environ()
-	for _, envVar := range envVars {
-		// You can optionally split the string to get key and value separately
-		parts := strings.SplitN(envVar, "=", 2)
-		if len(parts) == 2 {
-			log.Printf("%s = %s\n", parts[0], parts[1])
-		} else {
-			// Handle cases where there might not be an '=' (e.g., malformed entries)
-			log.Println(envVar)
-		}
-	}
-
-	log.Println("Parsed flags")
-
 	// Bad way of registering if we're in prod and using gcp datastore and OAuth credentials
 	if os.Getenv("DATASTORE_PROJECT_ID") != "" {
 		*userCsifConfig = "gcp_datastore"
-		*useGoogleAuth = true
+		*useFirebaseAuth = true
 		log.Println("Found datastore project!")
 	}
-	if os.Getenv("FIREBASE_CONFIG") != "" || os.Getenv("GOOGLE_APPLICATION_CREDENTIALS") != "" {
-		*useGoogleAuth = true
+	if *firebaseConfig != "" {
+		*useFirebaseAuth = true
+		// See https://cloud.google.com/docs/authentication/set-up-adc-local-dev-environment#local-key
+		os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", *firebaseConfig)
 		log.Println("Found firebase config!")
 	}
 
 	// Register authentication method
 	authManager := auth.AuthenticationManager{}
-	if *useGoogleAuth {
-		log.Printf("Running with google auth!\n")
-		authManager.RegisterAuthenticationMethod(google.New())
+	if *useFirebaseAuth {
+		log.Printf("Running with firebase auth!\n")
+		authManager.RegisterAuthenticationMethod(firebase.New())
 	}
 	if *noAuthConfig {
 		log.Printf("Running with no auth!\n")
@@ -88,15 +74,16 @@ func main() {
 
 	// Set up the storage interface
 	var userCsif interfaces.CircuitStorageInterfaceFactory
-	if *userCsifConfig == "mem" {
+	switch *userCsifConfig {
+	case "mem":
 		userCsif = storage.NewMemStorageInterfaceFactory()
-	} else if *userCsifConfig == "sqlite" {
+	case "sqlite":
 		userCsif, err = sqlite.NewInterfaceFactory(*sqlitePathConfig)
 		core.CheckErrorMessage(err, "Failed to load sqlite instance:")
-	} else if *userCsifConfig == "gcp_datastore_emu" {
+	case "gcp_datastore_emu":
 		userCsif, err = gcp_datastore.NewEmuInterfaceFactory(context.Background(), *dsProjectId, *dsEmulatorHost)
 		core.CheckErrorMessage(err, "Failed to load gcp datastore emulator instance:")
-	} else if *userCsifConfig == "gcp_datastore" {
+	case "gcp_datastore":
 		userCsif, err = gcp_datastore.NewInterfaceFactory(context.Background())
 		core.CheckErrorMessage(err, "Failed to load gcp datastore instance: ")
 	}

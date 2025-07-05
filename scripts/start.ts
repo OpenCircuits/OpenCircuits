@@ -16,7 +16,7 @@ process.env.BABEL_ENV = "development";
 process.env.NODE_ENV = "development";
 
 
-async function StartServer() {
+async function StartServer(extraFlags?: string) {
     const isWin = (os.platform() === "win32");
 
     // Check if server is built
@@ -28,7 +28,7 @@ async function StartServer() {
         return;
     }
 
-    await Spawn(`cd build && ${isWin ? "server.exe" : "./server"} -no_auth`, {
+    await Spawn(`cd build && ${isWin ? "server.exe" : "./server"} ${extraFlags}`, {
         shell: true, stdio: "inherit",
     });
 }
@@ -46,15 +46,24 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
         ...getOtherPageDirs(),
     ];
 
-    const { open, targetDir, port } = await yargs(process.argv.slice(2))
+    const argv = await yargs(process.argv.slice(2))
         .boolean("open")
         .choices("path", dirs.map((dir) => dir.path))
         .number("port")
+        .string("extraFlags")
+            .usage("--extraFlags='-no_auth -firebase_auth=\"secrets/firebase.json\"'")
         .argv;
 
+    const { open, port, extraFlags } = argv;
+
     const dirPath = await (async () => {
-        if (targetDir)
-            return targetDir;
+        // If specified dirs in argv, then just use those.
+        if (argv._.length > 0){
+            if (argv._.length > 1)
+                throw new Error("Can only specify one directory to start at a time!");
+            return `${argv._[0]}`;
+        }
+
         const { value } = await prompts({
             type:    "select",
             name:    "value",
@@ -78,7 +87,7 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
 
     // Start server
     if (dir.name === "server") {
-        await StartServer();
+        await StartServer(extraFlags);
         return;
     }
 
