@@ -16,7 +16,7 @@ process.env.BABEL_ENV = "development";
 process.env.NODE_ENV = "development";
 
 
-async function StartServer() {
+async function StartServer(extraFlags?: string) {
     const isWin = (os.platform() === "win32");
 
     // Check if server is built
@@ -28,7 +28,9 @@ async function StartServer() {
         return;
     }
 
-    await Spawn(`cd build && ${isWin ? "server.exe" : "./server"} -no_auth`, {
+    console.log(`cd build && ${isWin ? "server.exe" : "./server"} ${extraFlags}`)
+
+    await Spawn(`cd build && ${isWin ? "server.exe" : "./server"} ${extraFlags}`, {
         shell: true, stdio: "inherit",
     });
 }
@@ -46,10 +48,12 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
         ...getOtherPageDirs(),
     ];
 
-    const { open, targetDir, port } = await yargs(process.argv.slice(2))
+    const { open, targetDir, port, extraFlags } = await yargs(process.argv.slice(2))
         .boolean("open")
         .choices("path", dirs.map((dir) => dir.path))
         .number("port")
+        .string("extraFlags")
+            .usage("--extraFlags='-no_auth -firebase_auth=\"secrets/firebase.json\"'")
         .argv;
 
     const dirPath = await (async () => {
@@ -78,7 +82,7 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
 
     // Start server
     if (dir.name === "server") {
-        await StartServer();
+        await StartServer(extraFlags);
         return;
     }
 
