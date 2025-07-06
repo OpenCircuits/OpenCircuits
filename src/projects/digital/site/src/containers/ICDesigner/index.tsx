@@ -150,6 +150,10 @@ export const ICDesigner = ({ }: Props) => {
 
 
     const close = (cancelled = false) => {
+        // If not active, do nothing
+        if (!isActive)
+            return;
+
         if (!objIds)
             throw new Error("ICDesigner.close failed: objIds were undefined");
 
@@ -182,8 +186,8 @@ export const ICDesigner = ({ }: Props) => {
         dispatch(CloseICDesigner());
     }
 
-    useWindowKeyDownEvent("Escape", () => close(true), [objIds, mainDesigner]);
-    useWindowKeyDownEvent("Enter", () => close(false), [objIds, mainDesigner]);
+    useWindowKeyDownEvent("Escape", () => close(true), [isActive, objIds, mainDesigner]);
+    useWindowKeyDownEvent("Enter", () => close(false), [isActive, objIds, mainDesigner]);
 
     return (
         <div className="icdesigner" style={{ display: (isActive ? "initial" : "none"), height: h+"px" }}>
