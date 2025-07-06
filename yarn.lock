@@ -14768,10 +14768,10 @@ svg-pathdata@^6.0.3:
   resolved "https://registry.yarnpkg.com/svg-pathdata/-/svg-pathdata-6.0.3.tgz#80b0e0283b652ccbafb69ad4f8f73e8d3fbf2cac"
   integrity sha512-qsjeeq5YjBZ5eMdFuUa4ZosMLxgr5RZ+F+Y1OrDhuOCEInRMA3x74XdBtggJcj9kOeInz0WE+LgCPDkZFlBYJw==
 
-svg2canvas@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/svg2canvas/-/svg2canvas-0.0.11.tgz#aa05b14ce774d2fca8e65270ecf91f23fe4e20b0"
-  integrity sha512-5zVUkEUzsNGRGlMKGa2vwOsMDYeTPIFvsnFic7k9r6YXkXLSwQU9feqPcaxcIEHkWjtQAJjugaf+gdDFrLhkhw==
+svg2canvas@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/svg2canvas/-/svg2canvas-0.0.13.tgz#57b66c5f030fba4bb01d3d0a6cc640f97bb00cb6"
+  integrity sha512-y/b13F3mGq3T/wSS8VV+GABi4Nrn9sInhCCeoxmo4+kEI/kxRTDVjXF+NinO8veSPx1ZeIauCSDaYMvl6RxzPQ==
 
 svgo@^3.0.2, svgo@^3.2.0:
   version "3.3.2"
