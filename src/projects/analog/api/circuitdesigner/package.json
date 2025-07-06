@@ -5,7 +5,7 @@
   "dependencies": {
     "hammerjs": "^2.0.8",
     "serialeazy": "^2.0.8",
-    "svg2canvas": "^0.0.13",
+    "svg2canvas": "^0.0.14",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
