@@ -14,7 +14,7 @@ import {ButtonToggle} from "shared/site/components/ButtonToggle";
  */
 function GetToggles(id: Matcher): [HTMLImageElement, HTMLImageElement] {
     const buttons = screen.getByText(id).parentNode!.querySelectorAll("img");
-    return buttons[0].src.includes("Down")
+    return buttons[0].alt.includes("on")
         ? [buttons[0], buttons[1]]
         : [buttons[1], buttons[0]];
 }
