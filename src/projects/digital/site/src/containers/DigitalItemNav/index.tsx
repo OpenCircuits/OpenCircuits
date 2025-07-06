@@ -12,6 +12,7 @@ import {Config as itemNavConfig} from "./config";
 
 import switchIcon from "./icons/inputs/switch.svg";
 import ledIcon    from "./icons/outputs/led.svg";
+import muxIcon    from "./icons/other/multiplexer.svg";
 
 import "shared/api/circuit/utils/Array";
 
@@ -50,7 +51,7 @@ export const DigitalItemNav = () => {
             ics: circuit.getICs().map((d) => ({
                 kind:      d.id,
                 label:     d.name,
-                icon:      "multiplexer.svg",
+                icon:      muxIcon,
                 removable: true,
             })),
         });
