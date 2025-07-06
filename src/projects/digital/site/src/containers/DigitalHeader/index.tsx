@@ -1,13 +1,15 @@
 import {Header} from "shared/site/containers/Header";
 
+import logo from "./logo.svg";
+import boolExprInputIcon from "./bool_expr_input_icon.svg";
 
 
 export const DigitalHeader = () => (
-    <Header img="img/icons/logo.svg"
+    <Header img={logo}
             extraUtilities={[
                 {
                     popupName: "expr_to_circuit",
-                    img:       "img/icons/bool_expr_input_icon.svg",
+                    img:       boolExprInputIcon,
                     text:      "Boolean Expression to Circuit",
                 },
             ]} />

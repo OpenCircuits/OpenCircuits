@@ -25,6 +25,10 @@ import {CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem} 
 import {DragDropHandlers} from "shared/site/components/DragDroppable/DragDropHandlers";
 import {Draggable}        from "shared/site/components/DragDroppable/Draggable";
 
+import undoIcon    from "./undo.svg";
+import redoIcon    from "./redo.svg";
+import historyIcon from "./history.svg";
+
 // TODO: Should be able to derive desktop width off of the value in _constants.scss but it isn't working
 // import styles from "./index.scss";
 import "./index.scss";
@@ -43,7 +47,6 @@ export type ItemNavSection = {
     items: ItemNavItem[];
 }
 export type ItemNavConfig = {
-    imgRoot: string;
     sections: ItemNavSection[];
 }
 
@@ -52,13 +55,12 @@ type Props<D> = {
     designer: CircuitDesigner;
     config: ItemNavConfig;
     additionalData?: D;
-    getImgSrc: (id: GUID) => string;
     onStart?: () => void;
     onFinish?: (cancelled: boolean) => void;
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
     additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
-export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImgSrc,
+export const ItemNav = <D,>({ designer, config, additionalData, onDelete,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
     const circuit = designer.circuit;
     const { isOpen, isEnabled, isHistoryBoxOpen, curPressedObjID } = useSharedSelector(
@@ -220,8 +222,13 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
         const obj = circuit.getObj(curPressedObjID)!;
         if (obj.baseKind !== "Component")
             return;
-        return getImgSrc(curPressedObjID);
-    }, [circuit, curPressedObjID, hoveringNav, getImgSrc]);
+
+        // Get image icon
+        const section = config.sections.find((s) => s.items.find((i) => (i.kind === obj.kind)));
+        const item = section?.items.find((i) => (i.kind === obj.kind));
+
+        return item!.icon;
+    }, [circuit, curPressedObjID, hoveringNav]);
 
     return (<>
         {/* Item Nav Deletion Preview (PR #1047) */}
@@ -246,7 +253,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
                         else
                             dispatch(OpenHistoryBox());
                     }}>
-                        <img src="img/icons/history.svg" alt="Toggle history box"></img>
+                        <img src={historyIcon} alt="Toggle history box"></img>
                     </button>
                 </div>
                 <div>
@@ -255,13 +262,13 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
                                 title="Undo"
                                 disabled={undoHistory.length === 0}
                                 onClick={() => circuit.undo()}>
-                            <img src="img/icons/undo.svg" alt="" />
+                            <img src={undoIcon} alt="" />
                         </button>
                         <button type="button"
                                 title="Redo"
                                 disabled={redoHistory.length === 0}
                                 onClick={() => circuit.redo()}>
-                            <img src="img/icons/redo.svg" alt="" />
+                            <img src={redoIcon} alt="" />
                         </button>
                     </div>
                 </div>
@@ -290,7 +297,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete, getImg
                                     item={item}
                                     dragDir={(side === "left") ? "horizontal" : "vertical"}
                                     numClicks={curItemState.numClicks}
-                                    itemImgPath={`/${config.imgRoot}/${section.kind}/${item.icon}`}
+                                    icon={item.icon}
                                     setCurItemState={setCurItemState}
                                     onStart={onStart}
                                     onDelete={onDelete} />))}
@@ -375,7 +382,7 @@ const ItemNavItemPreview = <D,>({ curItemID, numClicks, curItemImg, additionalDa
 type ItemProps<D> = {
     section: ItemNavSection;
     item: ItemNavItem;
-    itemImgPath: string;
+    icon: string;
     numClicks: number;
     dragDir: "horizontal" | "vertical";
     additionalData?: D;
@@ -387,7 +394,7 @@ type ItemProps<D> = {
     onStart?: () => void;
     onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
 }
-const ItemNavButton = <D,>({ section, item, itemImgPath, numClicks, dragDir, additionalData,
+const ItemNavButton = <D,>({ section, item, icon, numClicks, dragDir, additionalData,
                               setCurItemState, onStart, onDelete }: ItemProps<D>) => {
     // Track whether mouse is over this item
     const [hovering, setHovering] = useState(false);
@@ -395,14 +402,14 @@ const ItemNavButton = <D,>({ section, item, itemImgPath, numClicks, dragDir, add
     const onClick = useCallback((ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setCurItemState((prevState) => ({
             curItemID:  item.kind,
-            curItemImg: itemImgPath,
+            curItemImg: icon,
             numClicks:  (prevState.curItemID === item.kind ? prevState.numClicks+1 : 1),
         }));
         onStart?.();
 
         // Prevents `onClick` listener of placing the component to fire
         ev.stopPropagation();
-    }, [item.kind, itemImgPath, setCurItemState, onStart]);
+    }, [item.kind, icon, setCurItemState, onStart]);
 
     const onDragChange = useCallback((d: "start" | "end") => {
         // Set image if user started dragging on this item
@@ -411,12 +418,12 @@ const ItemNavButton = <D,>({ section, item, itemImgPath, numClicks, dragDir, add
             //  Switch, we want to reset the numClicks to 1
             setCurItemState((prevState) => ({
                 curItemID:  item.kind,
-                curItemImg: itemImgPath,
+                curItemImg: icon,
                 numClicks:  (prevState.curItemID === item.kind ? prevState.numClicks : 0),
             }));
             onStart?.();
         }
-    }, [item.kind, itemImgPath, setCurItemState, onStart]);
+    }, [item.kind, icon, setCurItemState, onStart]);
 
     const onTouchEnd = useCallback((ev: React.TouchEvent<HTMLButtonElement>) => {
         // Prevents the `touchend` listener of placing the component to fire
@@ -452,7 +459,7 @@ const ItemNavButton = <D,>({ section, item, itemImgPath, numClicks, dragDir, add
                 onClick={onClick}
                 onDragChange={onDragChange}
                 onTouchEnd={onTouchEnd}>
-                <img src={itemImgPath} alt={item.label} />
+                <img src={icon} alt={item.label} />
             </Draggable>
             {
                 (item.removable && hovering) && (

@@ -23,6 +23,8 @@ import {InputField}   from "shared/site/components/InputField";
 import {Popup}        from "shared/site/components/Popup";
 import {SwitchToggle} from "shared/site/components/SwitchToggle";
 
+import fitScreenIcon from "./fitscreen.svg";
+
 import "./index.scss";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
 import {ToolHandler} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
@@ -227,7 +229,7 @@ const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, w
     // Keep render options in sync
     useLayoutEffect(() => designer.viewport.setRenderOptions({ showGrid: useGrid }), [designer, useGrid]);
     return (<>
-        <img src="img/icons/fitscreen.svg"
+        <img src={fitScreenIcon}
              className="image-exporter-preview__button"
              alt="Fit to screen"
              onClick={() => FitToScreen(designer.circuit, designer.viewport)} />

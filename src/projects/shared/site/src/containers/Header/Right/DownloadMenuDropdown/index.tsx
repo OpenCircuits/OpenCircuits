@@ -8,7 +8,10 @@ import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/sta
 import {useCurDesigner}   from "shared/site/utils/hooks/useDesigner";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
 
-import {Dropdown} from "./Dropdown";
+import {Dropdown} from "../Dropdown";
+
+import downloadIcon    from "./download.svg";
+import downloadPngIcon from "./png_download.svg";
 
 
 export const DownloadMenuDropdown = () => {
@@ -28,13 +31,13 @@ export const DownloadMenuDropdown = () => {
 
     return (
         <Dropdown open={(curMenu === "download")}
-                  btnInfo={{ title: "Download current scene", src: "img/icons/download.svg" }}
+                  btnInfo={{ title: "Download current scene", src: downloadIcon }}
                   onClick={() => dispatch(OpenHeaderMenu("download"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
             <div role="button" tabIndex={0}
                  title="Download circuit locally"
                  onClick={onDownloadClick}>
-                <img src="img/icons/download.svg" height="100%" alt="Download current scene" />
+                <img src={downloadIcon} height="100%" alt="Download current scene" />
                 <span>Download</span>
             </div>
             <div role="button" tabIndex={0}
@@ -43,7 +46,7 @@ export const DownloadMenuDropdown = () => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("image_exporter"));
                 }}>
-                <img src="img/icons/png_download.svg" height="100%" alt="Export current scene as an image" />
+                <img src={downloadPngIcon} height="100%" alt="Export current scene as an image" />
                 <span>Export Image</span>
             </div>
         </Dropdown>

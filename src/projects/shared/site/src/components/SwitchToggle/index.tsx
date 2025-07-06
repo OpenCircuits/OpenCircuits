@@ -1,3 +1,6 @@
+import switchDown from "./switchDown.svg";
+import switchUp   from "./switchUp.svg";
+
 import "./index.scss";
 
 
@@ -18,10 +21,10 @@ export const SwitchToggle = ({ className, isOn, height, disabled, children, onCh
     <div className={`switchtoggle ${disabled ? "disabled" : ""} ${className ?? ""}`}
          role="switch" aria-checked={!disabled && isOn} tabIndex={0}
          style={{ height }} onClick={onChange} {...callbacks}>
-        <img src="img/items/switchDown.svg"
+        <img src={switchDown}
              style={{ display: (!disabled && isOn ? "" : "none") }}
              height="100%" alt="Switch on" />
-        <img src="img/items/switchUp.svg"
+        <img src={switchUp}
              style={{ display: (!disabled && isOn ? "none" : "") }}
              height="100%" alt="Switch off" />
         <span>

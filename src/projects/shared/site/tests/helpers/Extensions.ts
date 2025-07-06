@@ -14,22 +14,36 @@ declare global {
 
 expect.extend({
     toBeToggledOn(received: Matcher) {
-        const buttons = screen.getByText(received).parentNode!.querySelectorAll("img");
-        const downButton = buttons[0].src.includes("Down") ? buttons[0] : buttons[1];
+        const button = screen.getByText(received).parentElement;
+        if (!(button instanceof HTMLDivElement)) {
+            return {
+                message: () => `expected "${received}"'s parent to be a div!`,
+                pass:    false,
+            };
+        }
+
+        const checked = button.getAttribute("aria-checked");
 
         return {
-            message: () => `expected toggle with label "${received}" to be toggled on`,
-            pass:    downButton.style.display !== "none",
+            message: () => `expected toggle with label "${received}" to be toggled on (${checked})`,
+            pass:    checked === "true",
         };
     },
 
     toBeToggledOff(received: Matcher) {
-        const buttons = screen.getByText(received).parentNode!.querySelectorAll("img");
-        const downButton = buttons[0].src.includes("Down") ? buttons[0] : buttons[1];
+        const button = screen.getByText(received).parentElement!;
+        if (!(button instanceof HTMLDivElement)) {
+            return {
+                message: () => `expected "${received}"'s parent to be a div!`,
+                pass:    false,
+            };
+        }
+
+        const checked = button.getAttribute("aria-checked");
 
         return {
-            message: () => `expected toggle with label "${received}" to be toggled on`,
-            pass:    downButton.style.display === "none",
+            message: () => `expected toggle with label "${received}" to be toggled off (${checked})`,
+            pass:    checked === "false",
         };
     },
 });

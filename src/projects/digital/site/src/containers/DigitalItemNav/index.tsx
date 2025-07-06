@@ -1,4 +1,3 @@
-import {GUID}                                      from "shared/api/circuit/public";
 import {useCallback, useEffect, useMemo, useState} from "react";
 
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
@@ -9,7 +8,10 @@ import {SmartPlaceOptions} from "digital/site/utils/SmartPlace";
 
 import {useCurDigitalDesigner} from "digital/site/utils/hooks/useDigitalDesigner";
 
-import itemNavConfig from "digital/site/data/itemNavConfig.json";
+import {Config as itemNavConfig} from "./config";
+
+import switchIcon from "./icons/inputs/switch.svg";
+import ledIcon    from "./icons/outputs/led.svg";
 
 import "shared/api/circuit/utils/Array";
 
@@ -66,7 +68,6 @@ export const DigitalItemNav = () => {
 
     // Generate ItemNavConfig with ICs included
     const config = useMemo(() => ({
-        imgRoot:  itemNavConfig.imgRoot,
         sections: [
             ...itemNavConfig.sections,
             ...(ics.length === 0 ? [] : [{
@@ -90,7 +91,7 @@ export const DigitalItemNav = () => {
                 new Array(numInputPorts).fill(0).map((_, i) => (
                     // Show the Switches
                     <img key={`digital-itemnav-inputs-${i}`}
-                         src={`/${itemNavConfig.imgRoot}/inputs/switch.svg`}
+                         src={switchIcon}
                          width="80px" height="80px"
                          alt="Switch"
                          style={{
@@ -103,7 +104,7 @@ export const DigitalItemNav = () => {
                 new Array(numOutputPorts).fill(0).map((_, i) => (
                     // Show the LEDs
                     <img key={`digital-itemnav-outputs-${i}`}
-                         src={`/${itemNavConfig.imgRoot}/outputs/led.svg`}
+                         src={ledIcon}
                          width="80px" height="80px"
                          alt="Switch"
                          style={{
@@ -115,19 +116,6 @@ export const DigitalItemNav = () => {
         </>)
     }, [circuit]);
 
-    // Callbacks
-    const getImgSrc = useCallback((id: GUID) => {
-        const obj = circuit.getObj(id);
-        if (!obj)
-            throw new Error(`DigitalItemNav: Failed to find object with ID ${id}!`);
-
-        // Get path within config of ItemNav icon
-        const section = config.sections.find((s) => s.items.find((i) => (i.kind === obj.kind)));
-        const item = section?.items.find((i) => (i.kind === obj.kind));
-
-        return `${config.imgRoot}/${section!.kind}/${item!.icon}`;
-    }, [circuit, config.imgRoot, config.sections]);
-
     const onSmartPlaceOff = useCallback(() => setSmartPlace(SmartPlaceOptions.Off), [setSmartPlace]);
 
     const onDelete = useCallback((sec: ItemNavSection, ic: ItemNavItem) => {
@@ -138,7 +126,7 @@ export const DigitalItemNav = () => {
         }
         circuit.deleteIC(id);
         return true;
-    }, [circuit, history]);
+    }, [circuit]);
 
     // Append regular ItemNav items with ICs
     return (
@@ -147,7 +135,6 @@ export const DigitalItemNav = () => {
             config={config}
             additionalData={smartPlace}
             additionalPreview={additionalPreview}
-            getImgSrc={getImgSrc}
             onStart={onSmartPlaceOff}
             onFinish={onSmartPlaceOff}
             onDelete={onDelete} />

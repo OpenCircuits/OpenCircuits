@@ -10,6 +10,8 @@ import {useSharedSelector} from "shared/site/utils/hooks/useShared";
 
 import {InputField} from "shared/site/components/InputField";
 
+import openIcon from "./open.svg";
+
 
 export const OpenFileButton = () => {
     const designer = useCurDesigner();
@@ -34,7 +36,7 @@ export const OpenFileButton = () => {
                         }
                     }} />
         <button type="button" title="Open file" onClick={() => fileInput.current?.click()}>
-            <img src="img/icons/open.svg" width="34px" height="34px" alt="Open a file" />
+            <img src={openIcon} width="34px" height="34px" alt="Open a file" />
         </button>
     </>);
 }

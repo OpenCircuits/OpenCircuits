@@ -63,7 +63,7 @@ button {
 
     border-radius: 50%;
     background-color: #999;
-    background-image: url("/img/icons/icon.svg");
+    background-image: url("/assets/icon.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50%;

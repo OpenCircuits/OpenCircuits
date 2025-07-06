@@ -10,6 +10,12 @@ import {ToggleSideNav}                       from "shared/site/state/SideNav";
 
 import {InputField} from "shared/site/components/InputField";
 
+import historyLightIcon from "./history-light.svg";
+import lockOpenIcon     from "./lock_open.svg";
+import lockIcon         from "./lock.svg";
+import contentCopyIcon  from "./content_copy.svg";
+import errorIcon        from "./error.svg";
+
 import "./index.scss";
 
 
@@ -43,15 +49,15 @@ export const HeaderLeft = () => {
             <button type="button" title="History"
                     className="header__left__history"
                     onClick={() => dispatch((isHistoryBoxOpen) ? (CloseHistoryBox()) : (OpenHistoryBox()))}>
-                <img src="img/icons/history-light.svg" alt="History box icon (light)"></img>
+                <img src={historyLightIcon} alt="History box icon (light)"></img>
             </button>
 
             <button type="button" title="Lock/Unlock Editing"
                     className="header__left__lock"
                     onClick={() => dispatch(ToggleCircuitLocked())}>
-                <img src="img/icons/lock_open.svg" className={isLocked ? "hide" : ""}
+                <img src={lockOpenIcon} className={isLocked ? "hide" : ""}
                      width="18px" height="18px" alt="Icon for unlocked lock" />
-                <img src="img/icons/lock.svg"      className={isLocked ? "" : "hide"}
+                <img src={lockIcon} className={isLocked ? "" : "hide"}
                      width="18px" height="18px" alt="Icon for lock" />
             </button>
 
@@ -69,10 +75,10 @@ export const HeaderLeft = () => {
             <button type="button" title="Duplicate the circuit"
                     className={`header__left__duplicate ${!isLoggedIn || id === "" ? "hide" : ""}`}
                     onClick={() => DuplicateCircuitRemote()}>
-                <img src="img/icons/content_copy.svg" height="100%" alt="Copy circuit" />
+                <img src={contentCopyIcon} height="100%" alt="Copy circuit" />
             </button>
 
-            <img src="img/icons/error.svg" className={error ? "" : "hide"}
+            <img src={errorIcon} className={error ? "" : "hide"}
                  title={`Error occured while saving: ${error}`} alt="Icon when save failed" />
             <span title="Saving..." className={`header__left__saving ${saving ? "" : "hide"}`}></span>
         </div>

@@ -13,6 +13,8 @@ import {CloseHistoryBox} from "shared/site/state/ItemNav";
 
 import {AdjustableElement} from "shared/site/components/AdjustableElement";
 
+import infoIcon from "./info.svg";
+
 import "./index.scss";
 
 
@@ -64,7 +66,7 @@ const HistoryEntry = ({ op, isRedo }: HistoryEntryProps) => {
                  setDisplayExtraInfo(!displayExtraInfo);
              }}>
             <div className="historybox__entry__header">
-                {opInfo.extraInfo && (<img src="img/icons/info.svg"
+                {opInfo.extraInfo && (<img src={infoIcon}
                                            height="24px"
                                            alt="Display extra info" />)}
                 <span>{opInfo.displayName}</span>

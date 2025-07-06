@@ -12,8 +12,11 @@ import {DevCreateFile, DevGetFile, DevListFiles} from "shared/site/api/Dev";
 
 import {CloseHeaderMenus, HeaderPopups, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
 
-import {Dropdown} from "./Dropdown";
+import {Dropdown} from "../Dropdown";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
+
+import handyManIcon from "./handyman.svg";
+import cacheIcon    from "./cache.svg";
 
 
 export type Utility = {
@@ -54,7 +57,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
 
     return (
         <Dropdown open={(curMenu === "utilities")}
-                  btnInfo={{ title: "Utilities", src: "img/icons/handyman.svg" }}
+                  btnInfo={{ title: "Utilities", src: handyManIcon }}
                   onClick={() => dispatch(OpenHeaderMenu("utilities"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
             {extraUtilities.map((utility) => (
@@ -80,13 +83,13 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
                         await DevCreateFile(CircuitHelpers.SerializeAsString(designer.circuit), DEV_CACHED_CIRCUIT_FILE);
                         setEnableReload(true);
                      }}>
-                    <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Cache Circuit Icon" />
+                    <img src={cacheIcon} height="100%" alt="Cache Circuit Icon" />
                     <span>Cache Circuit</span>
                 </div>
                 {enableReload && (
                     <div role="button" tabIndex={0}
                          onClick={load}>
-                        <img src="img/icons/bool_expr_input_icon.svg" height="100%" alt="Reload Circuit Icon" />
+                        <img src={cacheIcon} height="100%" alt="Reload Circuit Icon" />
                         <span>Reload Circuit</span>
                     </div>
                 )}

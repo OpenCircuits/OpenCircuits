@@ -13,6 +13,8 @@ import {Dropdown} from "../Dropdown";
 import {AutoSaveToggle} from "./AutoSaveToggle";
 import {DebugOptions} from "shared/api/circuitdesigner/public/impl/DebugOptions";
 
+import settingsIcon from "./settings.svg";
+
 
 export const SettingsMenu = () => {
     const designer = useCurDesigner();
@@ -32,7 +34,7 @@ export const SettingsMenu = () => {
 
     return (
         <Dropdown open={(curMenu === "settings")}
-                  btnInfo={{ title: "User Settings", src: "img/icons/settings.svg" }}
+                  btnInfo={{ title: "User Settings", src: settingsIcon }}
                   onClick={() => dispatch(OpenHeaderMenu("settings"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
             <AutoSaveToggle />

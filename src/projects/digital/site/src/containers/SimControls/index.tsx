@@ -2,6 +2,11 @@ import {useEffect, useState} from "react";
 
 import {DigitalCircuit} from "digital/api/circuit/public";
 
+import pause  from "./pause.svg";
+import resume from "./resume.svg";
+import step   from "./step.svg";
+import wrench from "./wrench.svg";
+
 import "./index.scss";
 import {InputField, NumberInputField} from "shared/site/components/InputField";
 import {Clamp} from "math/MathUtils";
@@ -40,15 +45,15 @@ export const SimControls = ({ circuit }: { circuit: DigitalCircuit }) => {
             <div className={`simcontrols__area ${isOpen ? "open" : "closed"}`}>
                 {isPaused ? (
                     <button type="button" title="Resume Simulation" onClick={() => circuit.sim.resume()}>
-                        <img src="img/icons/resume.svg" width="30px" height="30px" alt="Resume" />
+                        <img src={resume} width="30px" height="30px" alt="Resume" />
                     </button>
                 ) : (
                     <button type="button" title="Pause Simulation" onClick={() => circuit.sim.pause()}>
-                        <img src="img/icons/pause.svg" width="30px" height="30px" alt="Pause" />
+                        <img src={pause} width="30px" height="30px" alt="Pause" />
                     </button>
                 )}
                 <button type="button" title="Step Simulation" disabled={!isPaused} onClick={() => circuit.sim.step()}>
-                    <img src="img/icons/step.svg" width="30px" height="30px" alt="Step" />
+                    <img src={step} width="30px" height="30px" alt="Step" />
                 </button>
                 <div className="simcontrols__area-separator"></div>
                 <div className="simcontrols__area__slider">
@@ -58,7 +63,7 @@ export const SimControls = ({ circuit }: { circuit: DigitalCircuit }) => {
                 </div>
             </div>
             <button className="simcontrols__button" type="button" title="Step Simulation" onClick={() => setIsOpen(!isOpen)}>
-                <img src="img/icons/wrench.svg" width="30px" height="30px" alt="Step" />
+                <img src={wrench} width="30px" height="30px" alt="Step" />
             </button>
         </div>
     );
