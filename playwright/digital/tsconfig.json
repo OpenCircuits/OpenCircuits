@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "shared/helpers/*": ["./shared/helpers/*"],
+        },
+    },
+    "include": [
+        "desktop",
+        "mobile",
+        "../../src/projects/shared/site/src/**/*.d.ts",
+    ],
+}
