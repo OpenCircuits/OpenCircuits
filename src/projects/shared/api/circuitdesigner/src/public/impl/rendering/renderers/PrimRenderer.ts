@@ -155,7 +155,10 @@ export class PrimRenderer {
             ctx.transform(a,b,c,d,e,f);
 
             const svg = this.svgMap.get(prim.svg)!;
-            svg.draw(ctx, 0, 0, prim.transform.scale.x, -prim.transform.scale.y, prim.tint);
+            svg.draw(ctx, 0, 0, prim.transform.scale.x, -prim.transform.scale.y, {
+                tint: (prim.tint ? { color: prim.tint } : undefined),
+                fill: (debugOptions?.debugPrims ? "none" : undefined),
+            });
 
             ctx.restore();
 

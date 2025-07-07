@@ -15,8 +15,8 @@ import {CloseHeaderMenus, HeaderPopups, OpenHeaderMenu, OpenHeaderPopup} from "s
 import {Dropdown} from "../Dropdown";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
 
-import handyManIcon from "./handyman.svg";
-import cacheIcon    from "./cache.svg";
+import wrenchIcon from "./wrench.svg";
+import cacheIcon  from "./cache.svg";
 
 
 export type Utility = {
@@ -57,7 +57,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
 
     return (
         <Dropdown open={(curMenu === "utilities")}
-                  btnInfo={{ title: "Utilities", src: handyManIcon }}
+                  btnInfo={{ title: "Utilities", src: wrenchIcon }}
                   onClick={() => dispatch(OpenHeaderMenu("utilities"))}
                   onClose={() => dispatch(CloseHeaderMenus())}>
             {extraUtilities.map((utility) => (

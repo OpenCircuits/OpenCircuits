@@ -28,6 +28,7 @@ import fitScreenIcon from "./fitscreen.svg";
 import "./index.scss";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
 import {ToolHandler} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
+import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 
 
 const MIN_IMG_SIZE = 50;
@@ -83,6 +84,11 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
     }, [onResize]);
+
+    useWindowKeyDownEvent("Escape", () => {
+        if (isActive)
+            dispatch(CloseHeaderPopups());
+    }, [isActive]);
 
     return (
         <Popup title="Image Exporter"
@@ -228,6 +234,7 @@ const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, w
 
     // Keep render options in sync
     useLayoutEffect(() => designer.viewport.setRenderOptions({ showGrid: useGrid }), [designer, useGrid]);
+
     return (<>
         <img src={fitScreenIcon}
              className="image-exporter-preview__button"

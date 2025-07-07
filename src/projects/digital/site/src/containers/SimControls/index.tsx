@@ -1,15 +1,16 @@
 import {useEffect, useState} from "react";
 
+import {Clamp} from "math/MathUtils";
+import {InputField, NumberInputField} from "shared/site/components/InputField";
+
 import {DigitalCircuit} from "digital/api/circuit/public";
 
-import pause  from "./pause.svg";
-import resume from "./resume.svg";
-import step   from "./step.svg";
-import wrench from "./wrench.svg";
+import pauseIcon    from "./pause.svg";
+import resumeIcon   from "./resume.svg";
+import stepIcon     from "./step.svg";
+import controlsIcon from "./controls.svg";
 
 import "./index.scss";
-import {InputField, NumberInputField} from "shared/site/components/InputField";
-import {Clamp} from "math/MathUtils";
 
 
 const MIN_SPEED = 0.1, MAX_SPEED = 1000;
@@ -45,15 +46,15 @@ export const SimControls = ({ circuit }: { circuit: DigitalCircuit }) => {
             <div className={`simcontrols__area ${isOpen ? "open" : "closed"}`}>
                 {isPaused ? (
                     <button type="button" title="Resume Simulation" onClick={() => circuit.sim.resume()}>
-                        <img src={resume} width="30px" height="30px" alt="Resume" />
+                        <img src={resumeIcon} width="30px" height="30px" alt="Resume" />
                     </button>
                 ) : (
                     <button type="button" title="Pause Simulation" onClick={() => circuit.sim.pause()}>
-                        <img src={pause} width="30px" height="30px" alt="Pause" />
+                        <img src={pauseIcon} width="30px" height="30px" alt="Pause" />
                     </button>
                 )}
                 <button type="button" title="Step Simulation" disabled={!isPaused} onClick={() => circuit.sim.step()}>
-                    <img src={step} width="30px" height="30px" alt="Step" />
+                    <img src={stepIcon} width="30px" height="30px" alt="Step" />
                 </button>
                 <div className="simcontrols__area-separator"></div>
                 <div className="simcontrols__area__slider">
@@ -62,8 +63,8 @@ export const SimControls = ({ circuit }: { circuit: DigitalCircuit }) => {
                     <NumberInputField value={speed} min={MIN_SPEED} max={MAX_SPEED} onChange={(ev) => updateSpeed(ev.target.valueAsNumber)} />
                 </div>
             </div>
-            <button className="simcontrols__button" type="button" title="Step Simulation" onClick={() => setIsOpen(!isOpen)}>
-                <img src={wrench} width="30px" height="30px" alt="Step" />
+            <button className="simcontrols__button" type="button" title="Simulation Controls" onClick={() => setIsOpen(!isOpen)}>
+                <img src={controlsIcon} width="30px" height="30px" alt="Step" />
             </button>
         </div>
     );
