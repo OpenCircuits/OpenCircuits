@@ -4,7 +4,7 @@ import {CircuitDocument}       from "shared/api/circuit/internal/impl/CircuitDoc
 
 import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
 import {Circuit} from "shared/api/circuit/public";
-import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {AnalogObjInfoProvider} from "../internal/AnalogComponents";
 import {MakeAnalogCircuitAssembler} from "../internal/assembly/AnalogCircuitAssembler";
 import {AnalogComponentImpl} from "./impl/AnalogComponent";
@@ -17,7 +17,7 @@ import {AnalogCircuitImpl} from "./impl/AnalogCircuit";
 import {SelectionsImpl} from "shared/api/circuit/public/impl/Selections";
 
 
-export function CreateCircuit(mainCircuitID = uuid()): [Circuit, CircuitState<CircuitTypes>] {
+export function CreateCircuit(mainCircuitID = uuid()): [Circuit, CircuitContext<CircuitTypes>] {
     const log = new CircuitLog();
     const doc = new CircuitDocument(mainCircuitID, new AnalogObjInfoProvider(), log);
     const internal = new CircuitInternal(log, doc);
@@ -39,7 +39,7 @@ export function CreateCircuit(mainCircuitID = uuid()): [Circuit, CircuitState<Ci
     const icCaches = new Map<GUID, ReturnType<typeof newCache>>();
     const getCache = (icId?: GUID) => (icId ? icCaches.getOrInsert(icId, newCache) : mainCache);
 
-    const state: CircuitState<CircuitTypes> = {
+    const ctx: CircuitContext<CircuitTypes> = {
         internal, assembler, renderOptions,
 
         constructComponent(id, icId) {

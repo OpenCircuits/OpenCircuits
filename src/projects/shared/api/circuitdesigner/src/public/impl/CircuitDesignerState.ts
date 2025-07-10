@@ -1,11 +1,11 @@
-import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {Margin} from "math/Rect";
 import {DebugOptions} from "./DebugOptions";
 import {ToolManager} from "./ToolManager";
 
 
 export interface CircuitDesignerState<T extends CircuitTypes> {
-    circuitState: CircuitState<T>;
+    circuitState: CircuitContext<T>;
 
     isLocked: boolean;
     toolManager: ToolManager<T>;

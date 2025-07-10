@@ -1,6 +1,6 @@
 import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {Port, ReadonlyICPin} from "shared/api/circuit/public";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {CircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 
 

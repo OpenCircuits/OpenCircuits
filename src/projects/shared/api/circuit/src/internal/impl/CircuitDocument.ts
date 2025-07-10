@@ -392,7 +392,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
     private readonly icStorage: Map<GUID, CircuitStorage<Schema.IntegratedCircuitMetadata>>;
 
-    private readonly log: CircuitLog;
+    public readonly log: CircuitLog;
     private clock: number;
 
     // Keep track of multiple "begin"/"commit" pairs and only commit when counter reaches zero.

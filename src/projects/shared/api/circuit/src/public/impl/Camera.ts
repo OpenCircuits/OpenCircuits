@@ -2,7 +2,7 @@ import {V, Vector} from "Vector";
 import {Clamp}     from "math/MathUtils";
 
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 
 import {Camera, CameraEvent} from "../Camera";
@@ -12,16 +12,16 @@ export const MIN_ZOOM = 1e-6;
 export const MAX_ZOOM = 200;
 
 export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEvent> implements Camera {
-    protected readonly state: CircuitState<T>;
+    protected readonly ctx: CircuitContext<T>;
 
-    public constructor(state: CircuitState<T>) {
+    public constructor(ctx: CircuitContext<T>) {
         super();
 
-        this.state = state;
+        this.ctx = ctx;
     }
 
     protected get internal() {
-        return this.state.internal;
+        return this.ctx.internal;
     }
 
     public set cx(x: number) {

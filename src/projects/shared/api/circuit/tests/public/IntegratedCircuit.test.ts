@@ -10,9 +10,9 @@ import {Rect} from "math/Rect";
 
 describe("IntegratedCircuit", () => {
     test("Basic IC", () => {
-        const [mainCircuit, mainState, { }] = CreateTestCircuit();
+        const [mainCircuit, { }] = CreateTestCircuit();
 
-        const [icCircuit, icState, { GetPort, Connect }] = CreateTestCircuit();
+        const [icCircuit, { GetPort, Connect }] = CreateTestCircuit();
 
         const pin1 = icCircuit.placeComponentAt("Pin", V(-5, -5));
         const pin2 = icCircuit.placeComponentAt("Pin", V(-5, +5));
@@ -63,9 +63,9 @@ describe("IntegratedCircuit", () => {
     });
 
     test("Basic IC - with groups", () => {
-        const [mainCircuit, mainState, { }] = CreateTestCircuit();
+        const [mainCircuit, { }] = CreateTestCircuit();
 
-        const [icCircuit, icState, { GetPort, Connect }] = CreateTestCircuit();
+        const [icCircuit, { GetPort, Connect }] = CreateTestCircuit();
 
         const pin1 = icCircuit.placeComponentAt("Pin", V(-5, -5));
         const pin2 = icCircuit.placeComponentAt("Pin", V(-5, +5));
@@ -120,9 +120,9 @@ describe("IntegratedCircuit", () => {
     });
 
     test("Nested IC", () => {
-        const [mainCircuit, _, { }] = CreateTestCircuit();
+        const [mainCircuit, { }] = CreateTestCircuit();
 
-        const [innerIcCircuit, __, { Connect, GetPort }] = CreateTestCircuit();
+        const [innerIcCircuit, { Connect, GetPort }] = CreateTestCircuit();
 
         const pin1Inner = innerIcCircuit.placeComponentAt("Pin", V(-5, -5));
         const pin2Inner = innerIcCircuit.placeComponentAt("Pin", V(-5, +5));
@@ -147,7 +147,7 @@ describe("IntegratedCircuit", () => {
         expect(mainCircuit.getICs()).toHaveLength(1);
         expect(mainCircuit.getICs()[0].id).toEqual(innerIc.id);
 
-        const [outerIcCircuit, ___, { Connect: Connect2, GetPort: GetPort2 }] = CreateTestCircuit();
+        const [outerIcCircuit, { Connect: Connect2, GetPort: GetPort2 }] = CreateTestCircuit();
 
         expect(outerIcCircuit.getICs()).toHaveLength(0);
         outerIcCircuit.importICs(mainCircuit.getICs());
@@ -190,9 +190,9 @@ describe("IntegratedCircuit", () => {
     });
 
     test("Change IC display", () => {
-        const [mainCircuit, mainState, { }] = CreateTestCircuit();
+        const [mainCircuit] = CreateTestCircuit();
 
-        const [icCircuit, icState, { GetPort, Connect }] = CreateTestCircuit();
+        const [icCircuit, { GetPort, Connect }] = CreateTestCircuit();
 
         const pin1 = icCircuit.placeComponentAt("Pin", V(-5, -5));
         const pin2 = icCircuit.placeComponentAt("Pin", V(-5, +5));

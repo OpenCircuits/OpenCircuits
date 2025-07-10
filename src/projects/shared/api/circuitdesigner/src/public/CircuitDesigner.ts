@@ -1,4 +1,4 @@
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 import {Tool}         from "../tools/Tool";
 import {Viewport}     from "./Viewport";

@@ -1,5 +1,5 @@
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitTypes}   from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes}   from "shared/api/circuit/public/impl/CircuitContext";
 
 import {DefaultTool}       from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}              from "shared/api/circuitdesigner/tools/Tool";

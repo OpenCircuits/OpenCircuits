@@ -5,7 +5,7 @@ import {Margin, Rect}    from "math/Rect";
 
 import {CleanupFunc} from "shared/api/circuit/utils/types";
 import {MultiObservable} from "shared/api/circuit/utils/Observable";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {InputAdapter} from "shared/api/circuitdesigner/input/InputAdapter";
 import {Bounds, OrientedBounds} from "shared/api/circuit/internal/assembly/PrimBounds";
 
@@ -67,7 +67,7 @@ export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
 }
 
 export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<ViewportEvents> implements Viewport {
-    protected readonly state: CircuitDesignerState<T>;
+    protected readonly ctx: CircuitDesignerState<T>;
     protected readonly designer: CircuitDesigner<T>;
     // protected readonly svgMap: Map<string, SVGDrawing>;
     protected readonly options: CircuitDesignerOptions;
@@ -80,7 +80,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
     public canvasInfo?: AttachedCanvasInfoImpl;
 
     public constructor(
-        state: CircuitDesignerState<T>,
+        ctx: CircuitDesignerState<T>,
         designer: CircuitDesigner<T>,
         svgMap: Map<string, SVGDrawing>,
         options: CircuitDesignerOptions,

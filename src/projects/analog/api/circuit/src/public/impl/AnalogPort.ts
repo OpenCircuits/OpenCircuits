@@ -1,5 +1,5 @@
 import {GUID} from "shared/api/circuit/public";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {PortImpl} from "shared/api/circuit/public/impl/Port";
 
 

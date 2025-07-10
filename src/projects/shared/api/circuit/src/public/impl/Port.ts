@@ -6,14 +6,14 @@ import {GUID}    from "shared/api/circuit/internal";
 import {Port}    from "../Port";
 
 import {BaseObjectImpl}             from "./BaseObject";
-import {CircuitState, CircuitTypes} from "./CircuitState";
+import {CircuitContext, CircuitTypes} from "./CircuitContext";
 
 
 export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Port {
     public readonly baseKind = "Port";
 
-    public constructor(state: CircuitState<T>, id: GUID, icId?: GUID) {
-        super(state, id, icId);
+    public constructor(ctx: CircuitContext<T>, id: GUID, icId?: GUID) {
+        super(ctx, id, icId);
     }
 
     protected getPort() {
@@ -32,7 +32,7 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     }
 
     public get parent(): T["Component"] {
-        return this.state.constructComponent(this.getPort().parent, this.icId);
+        return this.ctx.factory.constructComponent(this.getPort().parent, this.icId);
     }
     public get group(): string {
         return this.getPort().group;
@@ -44,12 +44,12 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
     public get originPos(): Vector {
         if (this.icId)
             throw new Error(`PortImpl: Origin Pos cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`);
-        return this.state.assembler.getPortPos(this.id).unwrap().origin;
+        return this.ctx.assembler.getPortPos(this.id).unwrap().origin;
     }
     public get targetPos(): Vector {
         if (this.icId)
             throw new Error(`PortImpl: Target Pos cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`);
-        return this.state.assembler.getPortPos(this.id).unwrap().target;
+        return this.ctx.assembler.getPortPos(this.id).unwrap().target;
     }
     public get dir(): Vector {
         if (this.icId)
@@ -59,7 +59,7 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
 
     public get connections(): T["Wire[]"] {
         return [...this.getCircuitInfo().getWiresForPort(this.id).unwrap()]
-            .map((id) => this.state.constructWire(id, this.icId));
+            .map((id) => this.ctx.factory.constructWire(id, this.icId));
     }
     public get connectedPorts(): T["Port[]"] {
         return this.connections.map((w) => ((w.p1.id === this.id) ? w.p2 : w.p1));
@@ -102,13 +102,13 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
         if (this.icId)
             throw new Error(`PortImpl: Cannot create connections for port '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
 
-        this.state.internal.beginTransaction();
+        this.ctx.internal.beginTransaction();
 
-        const id = this.state.internal.connectWire(
-            this.getWireKind(this.id, other.id), this.id, other.id, { zIndex: this.state.assembler.highestWireZ + 1 }).unwrap();
+        const id = this.ctx.internal.connectWire(
+            this.getWireKind(this.id, other.id), this.id, other.id, { zIndex: this.ctx.assembler.highestWireZ + 1 }).unwrap();
 
-        this.state.internal.commitTransaction();
+        this.ctx.internal.commitTransaction();
 
-        return this.state.constructWire(id);
+        return this.ctx.factory.constructWire(id);
     }
 }

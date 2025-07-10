@@ -129,7 +129,7 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
 
         this.commitTransaction("Imported Circuit");
 
-        return this.state.constructObjContainer(new Set(objIdsMap.values()));
+        return this.ctx.factory.constructObjContainer(new Set(objIdsMap.values()));
     }
 }
 

@@ -1,4 +1,4 @@
-import {CircuitTypes}                     from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes}                     from "shared/api/circuit/public/impl/CircuitContext";
 
 import {CircuitDesigner}                  from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent}                from "shared/api/circuitdesigner/input/InputAdapterEvent";

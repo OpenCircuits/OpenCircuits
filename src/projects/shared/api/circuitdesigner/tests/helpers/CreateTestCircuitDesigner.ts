@@ -2,7 +2,7 @@ import "shared/api/circuit/tests/helpers/Extensions";
 
 import {setupJestCanvasMock} from "jest-canvas-mock";
 
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 import {CircuitDesignerImpl, ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
 import {CircuitDesignerState} from "shared/api/circuitdesigner/public/impl/CircuitDesignerState";

@@ -1,5 +1,5 @@
 import {Node, Port} from "shared/api/circuit/public";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {WireImpl} from "shared/api/circuit/public/impl/Wire";
 
 

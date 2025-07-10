@@ -1,4 +1,4 @@
-import {CircuitState, CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 import {DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSelections, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer, ReadonlyDigitalSelections} from "../DigitalCircuit";
 import {DigitalComponent, DigitalNode, ReadonlyDigitalComponent} from "../DigitalComponent";
@@ -27,7 +27,7 @@ export type DigitalTypes = CircuitTypes<
     ReadonlyDigitalSelections
 >;
 
-export interface DigitalCircuitState extends CircuitState<DigitalTypes> {
+export interface DigitalCircuitState extends CircuitContext<DigitalTypes> {
     sim: DigitalSim;
     simRunner?: DigitalSimRunner;
 }

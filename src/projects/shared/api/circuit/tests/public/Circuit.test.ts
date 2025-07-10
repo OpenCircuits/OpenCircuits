@@ -7,11 +7,12 @@ import {V} from "Vector";
 import {Circuit, Obj} from "shared/api/circuit/public";
 
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 
 describe("Circuit", () => {
     // test("begin/commit/cancelTransaction", () => {
-    //     const [circuit, _] = CreateTestCircuit();
+    //     const [circuit] = CreateTestCircuit();
 
     //     expect(circuit.beginTransaction()).not.toThrow();
     // });
@@ -50,7 +51,7 @@ describe("Circuit", () => {
     });
 
     test("selections", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         expect(circuit.selections).toBeDefined();
         expect(circuit.selections).toBe(circuit.selections);
@@ -59,7 +60,7 @@ describe("Circuit", () => {
     describe("Pick", () => {
         // TODO: testing overlapping components and zIndex
         test("pickObjAt", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2, c3] = PlaceAt(V(0, 0), V(10, 0), V(5, 0)),
                             w = Connect(c, c2);
@@ -83,7 +84,7 @@ describe("Circuit", () => {
             expect(circuit.pickObjAt(V(5, 0))).toBeObj(c3);
         });
         test("pickComponentAt", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c0, c, c2, c3, c4] = PlaceAt(V(1, 0), V(0, 0), V(10, 0), V(5, 0), V(6, 0)),
                                     w = Connect(c, c2);
@@ -107,14 +108,14 @@ describe("Circuit", () => {
             expect(circuit.pickComponentAt(V(5, 0))).toBeObj(c3);
         });
         test("pickComponentAt - overlapping", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c1, c2] = PlaceAt(V(0, 0), V(0, 0));
 
             expect(circuit.pickComponentAt(V(0,  0))).toBeObj(c2);
         });
         test("pickWireAt", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c0, c, c2, c3, c4] = PlaceAt(V(1, 0), V(0, 0), V(10, 0), V(5, 0), V(6, 0)),
                                     w = Connect(c, c2);
@@ -138,7 +139,7 @@ describe("Circuit", () => {
             expect(circuit.pickWireAt(V(5, 0))).toBeObj(w);
         });
         test("pickPortAt", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c0, c, c2, c3, c4] = PlaceAt(V(1, 0), V(0, 0), V(10, 0), V(5, 0), V(6, 0)),
                                     w = Connect(c, c2);
@@ -165,7 +166,7 @@ describe("Circuit", () => {
 
     describe("Get", () => {
         test("getObj", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -179,7 +180,7 @@ describe("Circuit", () => {
             expect(circuit.getObj(GetPort(c2).id)).toBeObj(GetPort(c2));
         });
         test("getComponent", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -193,7 +194,7 @@ describe("Circuit", () => {
             expect(circuit.getComponent(GetPort(c2).id)).toBeUndefined();
         });
         test("getWire", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -207,7 +208,7 @@ describe("Circuit", () => {
             expect(circuit.getWire(GetPort(c2).id)).toBeUndefined();
         });
         test("getPort", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -222,7 +223,7 @@ describe("Circuit", () => {
         });
 
         test("getObjs", () => {
-            const [circuit, _, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -231,7 +232,7 @@ describe("Circuit", () => {
             expect(circuit.getObjs()).toContainObjsExact([c, c2, w, GetPort(c), GetPort(c2)]);
         });
         test("getComponents", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -240,7 +241,7 @@ describe("Circuit", () => {
             expect(circuit.getComponents()).toContainObjsExact([c, c2]);
         });
         test("getWires", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(10, 0)),
                         w = Connect(c, c2);
@@ -250,7 +251,7 @@ describe("Circuit", () => {
         });
 
         test("getComponentInfo", () => {
-            const [circuit, _, {}] = CreateTestCircuit();
+            const [circuit, {}] = CreateTestCircuit();
 
             const info = circuit.getComponentInfo("TestComp");
 
@@ -265,17 +266,17 @@ describe("Circuit", () => {
 
     describe("Place", () => {
         test("0, 0", () => {
-            const [circuit, _, {}] = CreateTestCircuit();
+            const [circuit, {}] = CreateTestCircuit();
             const c1 = circuit.placeComponentAt("TestComp", V(0, 0));
             expect(c1.pos).toEqual(V(0, 0));
         });
         test("-5, 16", () => {
-            const [circuit, _, { }] = CreateTestCircuit();
+            const [circuit] = CreateTestCircuit();
             const c1 = circuit.placeComponentAt("TestComp", V(-5, 16));
             expect(c1.pos).toEqual(V(-5, 16));
         });
         test("zIndex increases", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestCircuit();
+            const [circuit, { PlaceAt }] = CreateTestCircuit();
             const [c1, c2, c3] = PlaceAt(V(0, 0), V(0, 0), V(0, 0));
             expect(c1.zIndex).toBe(1);
             expect(c2.zIndex).toBe(2);
@@ -285,7 +286,7 @@ describe("Circuit", () => {
 
     describe("Delete", () => {
         test("Basic Delete 1 Component", () => {
-            const [circuit, _, { PlaceAt }] = CreateTestCircuit();
+            const [circuit, { PlaceAt }] = CreateTestCircuit();
 
             const [c] = PlaceAt(V(0, 0));
 
@@ -298,7 +299,7 @@ describe("Circuit", () => {
             expect(() => c.setProp("name", "test")).toThrow();
         });
         test("Basic Delete 1 Wire", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
                         w = Connect(c, c2);
@@ -312,7 +313,7 @@ describe("Circuit", () => {
             expect(() => w.setProp("name", "test")).toThrow();
         });
         test("Delete 2 objs with a Wire", () => {
-            const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
             const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
                         w = Connect(c, c2);
@@ -328,20 +329,20 @@ describe("Circuit", () => {
             expect(() => w.setProp("name", "test")).toThrow();
         });
         test("Delete Wire path", () => {
-            const [circuit, _, {PlaceAt, Connect}] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
 
-            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             circuit.deleteObjs([sw1]);
 
             expect(circuit.getComponents()).toHaveLength(2);
             expect(circuit.getWires()).toHaveLength(0);
         });
         test("Delete Node path", () => {
-            const [circuit, _, {PlaceAt, Connect}] = CreateTestCircuit();
+            const [circuit, {PlaceAt, Connect}] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
 
-            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             circuit.deleteObjs([n1]);
 
             expect(circuit.getComponents()).toHaveLength(2);
@@ -352,23 +353,21 @@ describe("Circuit", () => {
     describe("Undo/Redo", () => {
         describe("Place Component", () => {
             test("Basic 1 Component", () => {
-                const [circuit, { internal }, { PlaceAt }] = CreateTestCircuit();
-                const log = internal["log"];
-
-                let logCount = 0;
-                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
+                const [circuit, { PlaceAt }] = CreateTestCircuit();
 
                 const [c] = PlaceAt(V(0, 0));
 
                 expect(circuit.getObjs()).toHaveLength(2);
                 expect(circuit.getObj(c.id)).toBeObj(c);
-                expect(logCount).toBe(1);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
 
                 circuit.undo();
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();
-                expect(logCount).toBe(2);
+                expect(circuit.history.getUndoStack()).toHaveLength(0);
+                expect(circuit.history.getRedoStack()).toHaveLength(1);
                 // Need to make sure that any errors that are thrown cancel transactions or something!
                 // expect(() => c.setProp("name", "test")).toThrow();
 
@@ -376,31 +375,31 @@ describe("Circuit", () => {
 
                 expect(circuit.getObjs()).toHaveLength(2);
                 expect(circuit.getObj(c.id)).toBeObj(c);
-                expect(logCount).toBe(3);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
             });
             test("Basic 2 Components in transaction", () => {
-                const [circuit, { internal }, { PlaceAt }] = CreateTestCircuit();
-                const log = internal["log"];
-
-                let logCount = 0;
-                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
+                const [circuit, { PlaceAt }] = CreateTestCircuit();
 
                 circuit.beginTransaction();
                 const [c, c2] = PlaceAt(V(0, 0), V(5, 0));
-                expect(logCount).toBe(0);
+                expect(circuit.history.getUndoStack()).toHaveLength(0);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
                 circuit.commitTransaction();
 
                 expect(circuit.getObjs()).toHaveLength(4);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
-                expect(logCount).toBe(1);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
 
                 circuit.undo()
 
                 expect(circuit.getObjs()).toHaveLength(0);
                 expect(circuit.getObj(c.id)).toBeUndefined();
                 expect(circuit.getObj(c2.id)).toBeUndefined();
-                expect(logCount).toBe(2);
+                expect(circuit.history.getUndoStack()).toHaveLength(0);
+                expect(circuit.history.getRedoStack()).toHaveLength(1);
                 // expect(() => c.setProp("name", "test")).toThrow();
                 // expect(() => c2.setProp("name", "test")).toThrow();
 
@@ -409,14 +408,11 @@ describe("Circuit", () => {
                 expect(circuit.getObjs()).toHaveLength(4);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
-                expect(logCount).toBe(3);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
             });
             test("Basic 2 Components in succession", () => {
-                const [circuit, { internal }, { PlaceAt }] = CreateTestCircuit();
-                const log = internal["log"];
-
-                let logCount = 0;
-                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
+                const [circuit, { PlaceAt }] = CreateTestCircuit();
 
                 const [c] = PlaceAt(V(0, 0));
                 const [c2] = PlaceAt(V(5, 0));
@@ -424,7 +420,8 @@ describe("Circuit", () => {
                 expect(circuit.getObjs()).toHaveLength(4);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
-                expect(logCount).toBe(2);
+                expect(circuit.history.getUndoStack()).toHaveLength(2);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
 
                 circuit.undo();
 
@@ -432,14 +429,16 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeUndefined();
                 expect(() => c2.setProp("name", "test")).toThrow();
-                expect(logCount).toBe(3);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(1);
 
                 circuit.redo();
 
                 expect(circuit.getObjs()).toHaveLength(4);
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
-                expect(logCount).toBe(4);
+                expect(circuit.history.getUndoStack()).toHaveLength(2);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
 
                 circuit.undo();
 
@@ -447,7 +446,8 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeUndefined();
                 expect(() => c2.setProp("name", "test")).toThrow();
-                expect(logCount).toBe(5);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(1);
 
                 circuit.undo();
 
@@ -456,17 +456,14 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c2.id)).toBeUndefined();
                 expect(() => c.setProp("name", "test")).toThrow();
                 expect(() => c2.setProp("name", "test")).toThrow();
-                expect(logCount).toBe(6);
+                expect(circuit.history.getUndoStack()).toHaveLength(0);
+                expect(circuit.history.getRedoStack()).toHaveLength(2);
             });
         });
 
         describe("Connect Wire", () => {
             test("Basic 1 Wire", () => {
-                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestCircuit();
-                const log = internal["log"];
-
-                let logCount = 0;
-                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
+                const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
                 const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
                             w = Connect(c, c2);
@@ -475,7 +472,8 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
-                expect(logCount).toBe(3);
+                expect(circuit.history.getUndoStack()).toHaveLength(3);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
 
                 circuit.undo()
 
@@ -484,7 +482,8 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeUndefined();
                 expect(() => w.setProp("name", "test")).toThrow();
-                expect(logCount).toBe(4);
+                expect(circuit.history.getUndoStack()).toHaveLength(2);
+                expect(circuit.history.getRedoStack()).toHaveLength(1);
 
                 circuit.redo();
 
@@ -492,14 +491,11 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
-                expect(logCount).toBe(5);
+                expect(circuit.history.getUndoStack()).toHaveLength(3);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
             });
             test("Components and Wire creation in transaction", () => {
-                const [circuit, { internal }, { PlaceAt, Connect }] = CreateTestCircuit();
-                const log = internal["log"];
-
-                let logCount = 0;
-                log.subscribe((ev) => (ev.accepted.length > 0 ? logCount++ : 0));
+                const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
 
                 circuit.beginTransaction();
                 const [c, c2] = PlaceAt(V(0, 0), V(5, 0)),
@@ -510,7 +506,8 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
-                expect(logCount).toBe(1);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
 
                 circuit.undo();
 
@@ -521,7 +518,8 @@ describe("Circuit", () => {
                 expect(() => c.setProp("name", "test")).toThrow();
                 expect(() => c2.setProp("name", "test")).toThrow();
                 expect(() => w.setProp("name", "test")).toThrow();
-                expect(logCount).toBe(2);
+                expect(circuit.history.getUndoStack()).toHaveLength(0);
+                expect(circuit.history.getRedoStack()).toHaveLength(1);
 
                 circuit.redo();
 
@@ -529,59 +527,11 @@ describe("Circuit", () => {
                 expect(circuit.getObj(c.id)).toBeObj(c);
                 expect(circuit.getObj(c2.id)).toBeObj(c2);
                 expect(circuit.getObj(w.id)).toBeObj(w);
-                expect(logCount).toBe(3);
+                expect(circuit.history.getUndoStack()).toHaveLength(1);
+                expect(circuit.history.getRedoStack()).toHaveLength(0);
             });
         });
 
         // TODO: All other operations
     });
-
-    // TODO: Is this just redundant with select all then copy selection?
-    // describe("Copy", () => {
-    //     function expectObjsToBeSame(o1: Obj, o2: Obj) {
-    //         expect(o1.baseKind).toEqual(o2.baseKind);
-    //         expect(o1.kind).toEqual(o2.kind);
-    //         expect(o1.getProps()).toEqual(o2.getProps());
-    //         if (o1.baseKind === "Port" && o2.baseKind === "Port") {
-    //             expect(o1.group).toEqual(o2.group);
-    //             expect(o1.index).toEqual(o2.index);
-    //         }
-    //     }
-
-    //     test("Basic Circuit Copy", () => {
-    //         const [circuit, _, { PlaceAt, Connect }] = CreateTestCircuit();
-
-    //         const [c1, c2, c3] = PlaceAt(V(0, -5), V(0, 5), V(5, 0));
-    //         const w1 = Connect(c1, c2),
-    //               w2 = Connect(c2, c3),
-    //               w3 = Connect(c3, c1);
-
-    //         c1.name = "Comp 1";
-    //         c2.name = "Comp 2";
-    //         c3.name = "Comp 3";
-    //         w1.name = "Wire 1";
-    //         w2.name = "Wire 2";
-    //         w3.name = "Wire 3";
-
-    //         const circuit2 = circuit.copy();
-
-    //         expect(circuit2.getObjs()).toHaveLength(circuit.getObjs().length);
-
-    //         const c1_2 = circuit2.pickComponentAt(V(0, -5))!,
-    //               c2_2 = circuit2.pickComponentAt(V(0,  5))!,
-    //               c3_2 = circuit2.pickComponentAt(V(5,  0))!;
-    //         expectObjsToBeSame(c1_2, c1);
-    //         expectObjsToBeSame(c2_2, c2);
-    //         expectObjsToBeSame(c3_2, c3);
-
-    //         const w1_2 = circuit2.pickWireAt(V(0,  0))!,
-    //               w2_2 = circuit2.pickWireAt(V(3,  2))!,
-    //               w3_2 = circuit2.pickWireAt(V(3, -2))!;
-    //         expectObjsToBeSame(w1_2, w1);
-    //         expectObjsToBeSame(w2_2, w2);
-    //         expectObjsToBeSame(w3_2, w3);
-    //     });
-    // });
-
-
 });

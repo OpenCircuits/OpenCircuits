@@ -1,7 +1,7 @@
 import {SVGDrawing} from "svg2canvas";
 
 import {Circuit}      from "shared/api/circuit/public";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}        from "shared/api/circuitdesigner/tools/Tool";
@@ -23,11 +23,11 @@ export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitType
 
     public readonly viewport: Viewport;
 
-    protected readonly state: CircuitDesignerState<T>;
+    protected readonly ctx: CircuitDesignerState<T>;
 
     public constructor(
         circuit: CircuitT,
-        state: CircuitDesignerState<T>,
+        ctx: CircuitDesignerState<T>,
         svgMap: Map<string, SVGDrawing>,
         options: CircuitDesignerOptions,
     ) {

@@ -4,7 +4,7 @@ import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 import {GUID, Schema} from "shared/api/circuit/schema";
 import {uuid}         from "shared/api/circuit/schema/GUID";
 
-import {CircuitLog, LogEntryType}      from "./CircuitLog";
+import {LogEntryType}      from "./CircuitLog";
 import {InvertCircuitOp, UpdateICMetadataOp} from "./CircuitOps";
 import {ComponentConfigurationInfo, PortConfig}      from "./ObjInfo";
 import {CircuitDocument} from "./CircuitDocument";
@@ -33,17 +33,14 @@ export type InternalEvent = {
 //  OTHERWISE: The "Result" and "Option" types are used to communicate success/failure.
 export class CircuitInternal extends ObservableImpl<InternalEvent> {
     private readonly doc: CircuitDocument;
-    private readonly log: CircuitLog;
 
     private undoStack: number[]; // Index in the `log` of the entry
     private redoStack: number[]; // Index in the `log` of the entry
 
-    public constructor(log: CircuitLog, doc: CircuitDocument) {
+    public constructor(doc: CircuitDocument) {
         super();
 
         this.doc = doc;
-
-        this.log = log;
 
         this.undoStack = [];
         this.redoStack = [];
@@ -69,6 +66,10 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             this.undoStack.push(ev.clock);
             this.redoStack = [];
         });
+    }
+
+    private get log() {
+        return this.doc.log;
     }
 
     //
