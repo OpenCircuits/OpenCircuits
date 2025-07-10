@@ -25,7 +25,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitType
         circuit: CircuitT,
         ctx: CircuitContext<T>,
         svgMap: Map<string, SVGDrawing>,
-        options: CircuitDesignerOptions,
+        options: CircuitDesignerOptions<T>,
     ) {
         super();
 

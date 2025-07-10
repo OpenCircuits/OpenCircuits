@@ -6,9 +6,9 @@ import {Observable} from "shared/api/circuit/utils/Observable";
 import {DefaultTool} from "../tools/DefaultTool";
 
 
-export interface CircuitDesignerOptions {
+export interface CircuitDesignerOptions<T extends CircuitTypes = CircuitTypes> {
     dragTime?: number;
-    toolConfig: ToolConfig;
+    toolConfig: ToolConfig<T>;
 }
 
 export interface ToolConfig<T extends CircuitTypes = CircuitTypes> {

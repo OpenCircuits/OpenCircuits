@@ -71,7 +71,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
     protected readonly designer: CircuitDesigner<T>;
     protected readonly toolManager: ToolManager<T>;
 
-    protected readonly options: CircuitDesignerOptions;
+    protected readonly options: CircuitDesignerOptions<T>;
 
     protected readonly primRenderer: PrimRenderer;
     protected readonly scheduler: RenderScheduler;
@@ -87,7 +87,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         designer: CircuitDesigner<T>,
         toolManager: ToolManager<T>,
         svgMap: Map<string, SVGDrawing>,
-        options: CircuitDesignerOptions,
+        options: CircuitDesignerOptions<T>,
     ) {
         super();
 

@@ -126,7 +126,7 @@ async function Init(): Promise<void> {
         [100, "Rendering", async () => {
             const GetCircuitFromCircuitOrObjs = (circuitOrObjs: Circuit | ObjContainer) => {
                 if ("length" in circuitOrObjs) {
-                    const [circuit, _] = CreateCircuit();
+                    const circuit = CreateCircuit();
                     circuit.import(circuitOrObjs as DigitalObjContainer);
                     return circuit;
                 }
@@ -135,8 +135,8 @@ async function Init(): Promise<void> {
 
             SetCircuitHelpers({
                 CreateAndInitializeDesigner(tools) {
-                    const [mainCircuit, mainCircuitState] = CreateCircuit();
-                    const mainDesigner = CreateDesigner(
+                    const circuit = CreateCircuit();
+                    const designer = CreateDesigner(
                         tools?.config ?? {
                             defaultTool: new DefaultTool(
                                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
@@ -157,12 +157,12 @@ async function Init(): Promise<void> {
                         },
                         tools?.renderers ?? [RotateToolRenderer, DigitalWiringToolRenderer, SelectionBoxToolRenderer],
                         DRAG_TIME,
-                        [mainCircuit, mainCircuitState],
+                        circuit,
                     );
                     // Setup propagator
-                    mainCircuitState.simRunner = new TimedDigitalSimRunner(mainCircuitState.sim, 1000 / 20);
+                    circuit["ctx"].simRunner = new TimedDigitalSimRunner(circuit["ctx"].sim, 1000 / 20);
 
-                    return mainDesigner;
+                    return designer;
                 },
                 Serialize(circuitOrObjs) {
                     const circuit = GetCircuitFromCircuitOrObjs(circuitOrObjs);

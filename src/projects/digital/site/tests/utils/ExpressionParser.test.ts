@@ -10,7 +10,6 @@ import {GenerateTokens}      from "digital/site/utils/ExpressionParser/GenerateT
 import {FORMATS}             from "digital/site/utils/ExpressionParser/Constants/Formats";
 import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
-import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 
@@ -38,7 +37,7 @@ import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunne
  * @param sim      The sim instance used to turn inputs on or off.
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  */
-function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[], sim: DigitalSim) {
+function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[]) {
     if (2**inputs.length !== expected.length)
         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
                         2**inputs.length + ")");
@@ -54,7 +53,7 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
         // The loop is repeated because the activation needs to happen within the test
         test(testTitle, () => {
             for (const [index, input] of inputs.entries())
-                sim.setState(input[1].id, [num & (2**index) ? Signal.On : Signal.Off]);
+                input[1].setSimState([num & (2**index) ? Signal.On : Signal.Off]);
             expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
         });
     }
@@ -71,7 +70,7 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  */
-function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[], sim: DigitalSim) {
+function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[]) {
     if (2 ** inputs.length !== expected.length)
         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
                         2 ** inputs.length + ")");
@@ -79,7 +78,7 @@ function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: Dig
     test("Test all states", () => {
         for (let num = 0; num < 2**inputs.length; num++) {
             for (const [index, input] of inputs.entries())
-                sim.setState(input[1].id, [num & (2**index) ? Signal.On : Signal.Off]);
+                input[1].setSimState([num & (2**index) ? Signal.On : Signal.Off]);
             expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
         }
     });
@@ -124,8 +123,8 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
         test("Expression To Circuit Generation didn't error", () => {
             expect(result).toBeOk();
         });
-        const { circuit, state } = result.unwrap();
-        state.simRunner = new InstantSimRunner(state.sim);
+        const circuit = result.unwrap();
+        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
 
         const inputComponents: Array<[string, DigitalComponent]> = [];
         for (let i = 0; i < numInputs; i++) {
@@ -143,9 +142,9 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
         }
 
         if (verbose === false || (verbose === undefined && numInputs > 3))
-            testInputsSimple(inputComponents, outputComp, expected, state.sim);
+            testInputsSimple(inputComponents, outputComp, expected);
         else
-            testInputs(inputComponents, outputComp, expected, state.sim);
+            testInputs(inputComponents, outputComp, expected);
     });
 }
 
@@ -415,8 +414,8 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(inputMap, "a", o);
             expect(result).toBeOk();
-            const { circuit, state } = result.unwrap();
-            state.simRunner = new InstantSimRunner(state.sim);
+            const circuit = result.unwrap();
+            circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
 
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
@@ -430,8 +429,8 @@ describe("Expression Parser", () => {
             ]);
 
             const result = ExpressionToCircuit(inputMap, "a", o);
-            const { circuit, state } = result.unwrap();
-            state.simRunner = new InstantSimRunner(state.sim);
+            const circuit = result.unwrap();
+            circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
 
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
@@ -445,8 +444,8 @@ describe("Expression Parser", () => {
             test("Result is ok", () => {
                 expect(result).toBeOk();
             });
-            const { circuit, state } = result.unwrap();
-            state.simRunner = new InstantSimRunner(state.sim);
+            const circuit = result.unwrap();
+            circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
 
             const inputComp = circuit.getComponents().find((o) => (o.name === "longName"));
             test("Input component found", () => {
@@ -458,7 +457,7 @@ describe("Expression Parser", () => {
                 expect(outputComp).toBeDefined();
             });
 
-            testInputs(inputComponents, outputComp!, [false, true], state.sim);
+            testInputs(inputComponents, outputComp!, [false, true]);
         });
     });
 
@@ -530,7 +529,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
             expect(result).toBeOk();
-            const { circuit } = result.unwrap();
+            const circuit = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(9);
         });
@@ -544,7 +543,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
             expect(result).toBeOk();
-            const { circuit } = result.unwrap();
+            const circuit = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(10);
         });
@@ -558,7 +557,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
             expect(result).toBeOk();
-            const { circuit } = result.unwrap();
+            const circuit = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(12);
         });
@@ -572,7 +571,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
             expect(result).toBeOk();
-            const { circuit } = result.unwrap();
+            const circuit = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(8);
         });
@@ -586,7 +585,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
             expect(result).toBeOk();
-            const { circuit } = result.unwrap();
+            const circuit = result.unwrap();
 
             expect(circuit.getComponents()).toHaveLength(5);
         });

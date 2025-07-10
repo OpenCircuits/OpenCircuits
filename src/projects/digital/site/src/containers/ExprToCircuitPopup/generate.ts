@@ -6,7 +6,7 @@ import {GenerateTokens} from "digital/site/utils/ExpressionParser/GenerateTokens
 import {OrganizeMinDepth} from "digital/site/utils/ExpressionParser/ComponentOrganizer"
 import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import {FORMATS} from "digital/site/utils/ExpressionParser/Constants/Formats";
-import {Circuit, ICPin} from "shared/api/circuit/public";
+import {Circuit} from "shared/api/circuit/public";
 import {Err, Ok, Result} from "shared/api/circuit/utils/Result";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
@@ -96,7 +96,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
         return Err(generatedCircuitRes.error);
     }
 
-    const { circuit: generatedCircuit } = generatedCircuitRes.value;
+    const generatedCircuit: DigitalCircuit = generatedCircuitRes.value;
     // Get the location of the top left corner of the screen, the 1.5 acts as a modifier
     //  so that the components are not literally in the uppermost leftmost corner
     // const startPos = info.camera.getPos().sub(info.camera.getCenter().scale(info.camera.getZoom()/1.5));

@@ -177,19 +177,19 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
     if (!proto.simState)
         throw new Error(`DigitalProtoToSchema: Failed to find simState! ${proto}`);
 
-    const [circuit, state] = CreateCircuit(proto.circuit!.metadata!.id);
+    const circuit = CreateCircuit(proto.circuit!.metadata!.id);
 
-    ProtoToCircuit(proto.circuit, circuit, (id) => CreateCircuit(id)[0], DigitalKindMaps[1]);
+    ProtoToCircuit(proto.circuit, circuit, (id) => CreateCircuit(id), DigitalKindMaps[1]);
 
     circuit.sim.propagationTime = proto.propagationTime;
 
     // Load simulation state
     for (const [ic, initialSimState] of proto.circuit.ics.zip(proto.icInitialSimStates)) {
         const id = ic.metadata!.metadata!.id;
-        state.sim.loadICState(id, ConvertSimState(circuit, initialSimState, id));
+        circuit["ctx"].sim.loadICState(id, ConvertSimState(circuit as DigitalCircuit, initialSimState, id));
     }
 
-    state.sim.loadState(ConvertSimState(circuit, proto.simState));
+    circuit["ctx"].sim.loadState(ConvertSimState(circuit as DigitalCircuit, proto.simState));
 
     return circuit;
 }

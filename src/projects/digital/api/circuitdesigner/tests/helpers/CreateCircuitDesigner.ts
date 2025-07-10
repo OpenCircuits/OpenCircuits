@@ -1,7 +1,5 @@
 import "shared/api/circuit/tests/helpers/Extensions";
 
-import {ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
-
 import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
 import {TranslateTool}    from "shared/api/circuitdesigner/tools/TranslateTool";
@@ -33,6 +31,7 @@ import {SetupMockCanvas} from "shared/api/circuitdesigner/tests/helpers/CreateTe
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+import {ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 
 export function GetDefaultTools(): ToolConfig<DigitalTypes> {
@@ -57,9 +56,9 @@ export function GetDefaultTools(): ToolConfig<DigitalTypes> {
 }
 
 export function CreateCircuitDesigner(toolConfig = GetDefaultTools()) {
-    const [circuit, state, helpers] = CreateTestCircuit();
+    const [circuit, helpers] = CreateTestCircuit();
 
-    const designer = CreateDesigner(toolConfig, [], -1, [circuit, state]);
+    const designer = CreateDesigner(toolConfig, [], -1, circuit);
 
     const [mockInput, canvas] = SetupMockCanvas(designer);
 
