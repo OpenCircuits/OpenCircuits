@@ -8,10 +8,10 @@ import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesign
 
 
 export type ToolManagerEvent = {
-    type: "toolactivate";
+    type: "toolActivated";
     tool: Tool;
 } | {
-    type: "tooldeactivate";
+    type: "toolDeactivated";
     tool: Tool;
 }
 
@@ -42,7 +42,7 @@ export class ToolManager<T extends CircuitTypes = CircuitTypes> extends Observab
                 tool.onDeactivate(ev, designer);
                 this.defaultTool.onEvent(ev, designer);
 
-                this.publish({ type: "tooldeactivate", tool });
+                this.publish({ type: "toolDeactivated", tool });
 
                 return;
             }
@@ -65,7 +65,7 @@ export class ToolManager<T extends CircuitTypes = CircuitTypes> extends Observab
             newTool.onActivate(ev, designer);
             newTool.onEvent(ev, designer); // TODO[.](leon) - see if this is okay
 
-            this.publish({ type: "toolactivate", tool: newTool });
+            this.publish({ type: "toolActivated", tool: newTool });
 
             return;
         }

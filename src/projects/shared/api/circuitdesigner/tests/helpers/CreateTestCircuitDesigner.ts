@@ -2,11 +2,9 @@ import "shared/api/circuit/tests/helpers/Extensions";
 
 import {setupJestCanvasMock} from "jest-canvas-mock";
 
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitDesigner, ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
 
-import {CircuitDesignerImpl, ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
-import {CircuitDesignerState} from "shared/api/circuitdesigner/public/impl/CircuitDesignerState";
-import {ToolManager}          from "shared/api/circuitdesigner/public/impl/ToolManager";
+import {CircuitDesignerImpl} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
 
 import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
@@ -32,9 +30,10 @@ import {SnipNodesHandler}   from "shared/api/circuitdesigner/tools/handlers/Snip
 import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
 
-import {CreateTestCircuit} from "shared/api/circuit/tests/helpers/CreateTestCircuit";
+import {CreateTestCircuitHelpers, TestCircuitImpl} from "shared/api/circuit/tests/helpers/CreateTestCircuit";
+
 import {MockInputFacade} from "./MockInputFacade";
-import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {uuid} from "shared/api/circuit/public";
 
 
 export function GetDefaultTools(): ToolConfig {
@@ -58,35 +57,11 @@ export function GetDefaultTools(): ToolConfig {
 }
 
 export function CreateTestCircuitDesigner(toolConfig: ToolConfig = GetDefaultTools()) {
-    const [circuit, state, helpers] = CreateTestCircuit();
+    const circuit = new TestCircuitImpl(uuid());
+    const designer = new CircuitDesignerImpl(circuit, circuit["ctx"], new Map(), { dragTime: -1, toolConfig });
 
-    // create view and attach toolConfig.renderers as post-process rendering
-
-    const designerState: CircuitDesignerState<CircuitTypes> = {
-        circuitState: state,
-
-        toolManager: new ToolManager(toolConfig.defaultTool, toolConfig.tools),
-
-        isLocked:      false,
-        curPressedObj: undefined,
-        margin:        { left: 0, right: 0, top: 0, bottom: 0 },
-        debugOptions:  {
-            debugPrims:              false,
-            debugPrimBounds:         false,
-            debugPrimOrientedBounds: false,
-
-            debugComponentBounds: false,
-            debugPortBounds:      false,
-            debugWireBounds:      false,
-
-            debugPressableBounds: false,
-        },
-    };
-
-    const designer = new CircuitDesignerImpl(circuit, designerState, new Map(), { dragTime: -1 });
     const [mockInput, canvas] = SetupMockCanvas(designer);
-
-    return [designer, mockInput, canvas, helpers] as const;
+    return [designer, mockInput, canvas, CreateTestCircuitHelpers(circuit)] as const;
 }
 
 export function SetupMockCanvas(designer: CircuitDesigner) {

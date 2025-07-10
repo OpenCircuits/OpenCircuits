@@ -144,10 +144,10 @@ export class TestPortImpl extends PortImpl<CircuitTypes> {
 }
 
 export class TestCircuitImpl extends CircuitImpl<CircuitTypes> {
-    public constructor(id: GUID, portConfigs: PortConfig[]) {
+    public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
         const ctx = new CircuitContext({
             id,
-            objInfoProvider: new TestObjInfoProvider(portConfigs),
+            objInfoProvider: new TestObjInfoProvider([{ "": 1 }, ...additionalPortConfigs]),
             makeAssembler:   (internal, options) => new CircuitAssembler(internal, options, (params) => ({
                 "IC":       new ICComponentAssembler(params),
                 "TestWire": new WireAssembler(params),
@@ -196,13 +196,17 @@ export interface TestCircuitHelpers {
     GetPort(c: Component): Port;
 }
 
-export function CreateTestCircuit(
-    additionalPortConfigs: PortConfig[] = []
-): [Circuit, TestCircuitHelpers] {
-    const circuit = new TestCircuitImpl(uuid(), [{ "": 1 }, ...additionalPortConfigs]);
-    return [circuit, {
+export function CreateTestCircuitHelpers(circuit: Circuit): TestCircuitHelpers {
+    return {
         PlaceAt: (...positions) => positions.map((p) => circuit.placeComponentAt("TestComp", p)),
         Connect: (c1, c2) => c1.ports[""][0].connectTo(c2.ports[""][0])!,
         GetPort: (c) => c.ports[""][0],
-    }];
+    };
+}
+
+export function CreateTestCircuit(
+    additionalPortConfigs: PortConfig[] = []
+): [Circuit, TestCircuitHelpers] {
+    const circuit = new TestCircuitImpl(uuid(), additionalPortConfigs);
+    return [circuit, CreateTestCircuitHelpers(circuit)];
 }

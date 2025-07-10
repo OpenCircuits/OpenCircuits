@@ -5,7 +5,7 @@ import {Margin, Rect}    from "math/Rect";
 
 import {CleanupFunc} from "shared/api/circuit/utils/types";
 import {MultiObservable} from "shared/api/circuit/utils/Observable";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {InputAdapter} from "shared/api/circuitdesigner/input/InputAdapter";
 import {Bounds, OrientedBounds} from "shared/api/circuit/internal/assembly/PrimBounds";
 
@@ -21,11 +21,11 @@ import {Cursor} from "../../input/Cursor";
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
 import {AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents}          from "../Viewport";
 
-import {CircuitDesignerState} from "./CircuitDesignerState";
 import {DebugOptions}                          from "./DebugOptions";
 import {IsDefined} from "shared/api/circuit/utils/Reducers";
 import {DirtyVar} from "shared/api/circuit/utils/DirtyVar";
 import {Matrix2x3} from "math/Matrix";
+import {ToolManager} from "./ToolManager";
 
 
 export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
@@ -67,9 +67,10 @@ export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
 }
 
 export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<ViewportEvents> implements Viewport {
-    protected readonly ctx: CircuitDesignerState<T>;
+    protected readonly ctx: CircuitContext<T>;
     protected readonly designer: CircuitDesigner<T>;
-    // protected readonly svgMap: Map<string, SVGDrawing>;
+    protected readonly toolManager: ToolManager<T>;
+
     protected readonly options: CircuitDesignerOptions;
 
     protected readonly primRenderer: PrimRenderer;
@@ -79,17 +80,35 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
     public canvasInfo?: AttachedCanvasInfoImpl;
 
+    protected state: { margin: Margin, debugOptions: DebugOptions };
+
     public constructor(
-        ctx: CircuitDesignerState<T>,
+        ctx: CircuitContext<T>,
         designer: CircuitDesigner<T>,
+        toolManager: ToolManager<T>,
         svgMap: Map<string, SVGDrawing>,
         options: CircuitDesignerOptions,
     ) {
         super();
 
-        this.state = state;
+        this.ctx = ctx;
         this.designer = designer;
-        // this.svgMap = svgMap;
+        this.toolManager = toolManager;
+        this.state = {
+            margin:       { left: 0, right: 0, top: 0, bottom: 0 },
+            debugOptions: {
+                debugPrims:              false,
+                debugPrimBounds:         false,
+                debugPrimOrientedBounds: false,
+
+                debugComponentBounds: false,
+                debugPortBounds:      false,
+                debugWireBounds:      false,
+
+                debugPressableBounds: false,
+            },
+        };
+
         this.options = options;
 
         this.primRenderer = new PrimRenderer(svgMap);
@@ -122,7 +141,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         });
 
         // Re-render when assembler changes
-        this.state.circuitState.assembler.subscribe((data) => {
+        this.ctx.assembler.subscribe((data) => {
             // No canvas attached -> no need to render
             if (!this.canvasInfo)
                 return;
@@ -133,8 +152,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
         // Re-render when current tool changes state (For tool-renderers)
         let curToolCallbackCleanup: (() => void) | undefined;
-        this.state.toolManager.subscribe(({ type, tool }) => {
-            if (type === "toolactivate") {
+        toolManager.subscribe(({ type, tool }) => {
+            if (type === "toolActivated") {
                 // TODO: Render in another canvas
                 curToolCallbackCleanup = tool.subscribe((_) => {
                     // No canvas attached -> no need to render
@@ -143,10 +162,11 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
                     this.scheduler.requestRender();
                 });
-            } else if (type === "tooldeactivate") {
+                this.scheduler.requestRender();
+            } else if (type === "toolDeactivated") {
                 curToolCallbackCleanup!();
+                this.scheduler.requestRender();
             }
-            this.scheduler.requestRender();
         });
     }
 
@@ -156,8 +176,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
         const { renderer } = this.canvasInfo;
         const renderState: RenderState = {
-            options: this.state.circuitState.renderOptions,
-            circuit: this.state.circuitState.internal,
+            options: this.ctx.renderOptions,
+            circuit: this.ctx.internal,
             renderer,
         };
         const renderPrim = (prim: Prim) => {
@@ -167,8 +187,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
         }
 
         // Reassemble and get the cache
-        this.state.circuitState.assembler.reassemble();
-        const assembly = this.state.circuitState.assembler.getCache();
+        this.ctx.assembler.reassemble();
+        const assembly = this.ctx.assembler.getCache();
 
         renderer.clear();
         renderer.save();
@@ -200,7 +220,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
             });
 
             // Debug rendering
-            if (this.state.debugOptions.debugPrimBounds) {
+            if (this.debugOptions.debugPrimBounds) {
                 const wireBounds = [...assembly.wirePrims.values()].flat().map(Bounds).filter(IsDefined);
                 const compBounds = [...assembly.componentPrims.values()].flat().map(Bounds).filter(IsDefined);
                 const portBounds = [...([...assembly.portPrims.values()]
@@ -213,7 +233,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
                 compBounds.forEach((b) =>
                     DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#00ff00"));
             }
-            if (this.state.debugOptions.debugPrimOrientedBounds) {
+            if (this.debugOptions.debugPrimOrientedBounds) {
                 const wireBounds = [...assembly.wirePrims.values()].flat().map(OrientedBounds).filter(IsDefined);
                 const compBounds = [...assembly.componentPrims.values()].flat().map(OrientedBounds).filter(IsDefined);
                 const portBounds = [...([...assembly.portPrims.values()]
@@ -227,17 +247,17 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
                     DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#9803fc"));
             }
 
-            if (this.state.debugOptions.debugComponentBounds) {
+            if (this.debugOptions.debugComponentBounds) {
                 this.designer.circuit.getComponents().forEach((comp) =>
                     DebugRenderBounds(this.primRenderer, renderer.ctx, comp.bounds, "#00ff00"));
             }
 
-            if (this.state.debugOptions.debugWireBounds) {
+            if (this.debugOptions.debugWireBounds) {
                 this.designer.circuit.getWires().forEach((wire) =>
                     DebugRenderBounds(this.primRenderer, renderer.ctx, wire.bounds, "#00ff00"));
             }
 
-            if (this.state.debugOptions.debugPortBounds) {
+            if (this.debugOptions.debugPortBounds) {
                 this.designer.circuit.getComponents().forEach((comp) => {
                     comp.allPorts.forEach((port) =>
                         DebugRenderBounds(this.primRenderer, renderer.ctx, port.bounds, "#00ff00"));
@@ -281,7 +301,7 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
     }
     public setRenderOptions(options: Partial<Pick<RenderOptions, "showGrid">>): void {
         if (options.showGrid !== undefined)
-            this.state.circuitState.renderOptions.showGrid = options.showGrid;
+            this.ctx.renderOptions.showGrid = options.showGrid;
         this.scheduler.requestRender();
     }
 
@@ -307,7 +327,8 @@ export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<Viewpo
 
         this.canvasInfo = new AttachedCanvasInfoImpl(canvas, this.options.dragTime, (input: InputAdapter) => {
             // Forward inputs to ToolManager
-            const u1 = input.subscribe((ev) => this.state.toolManager.onEvent(ev, this.designer));
+            // TODO: See if we can remove this dependence on the CircuitDesigner
+            const u1 = input.subscribe((ev) => this.toolManager.onEvent(ev, this.designer));
 
             // Unblock scheduler once a canvas is set
             this.scheduler.unblock();

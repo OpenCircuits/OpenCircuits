@@ -43,7 +43,7 @@ export function CreateDesigner(
         },
     };
 
-    const designer = new CircuitDesignerImpl(circuit, designerState, SVGs, { dragTime });
+    const designer = new CircuitDesignerImpl(circuit, designerState, SVGs, { dragTime, toolConfig });
 
     designer.viewport.subscribe("onrender", (ev) => {
         renderers.forEach((toolRenderer) => toolRenderer.render({
