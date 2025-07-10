@@ -3,7 +3,7 @@ import {InputTree} from "./Constants/DataStructures";
 import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
-import {DigitalCircuitState} from "digital/api/circuit/public/impl/DigitalCircuitState";
+import {DigitalCircuitContext} from "digital/api/circuit/public/impl/DigitalCircuitContext";
 import {V} from "Vector";
 
 
@@ -110,7 +110,7 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
 export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
                               output: string, expression: string): {
                                 circuit: DigitalCircuit;
-                                state: DigitalCircuitState;
+                                ctx: DigitalCircuitContext;
                             } {
     const [circuit, state] = CreateCircuit();
 

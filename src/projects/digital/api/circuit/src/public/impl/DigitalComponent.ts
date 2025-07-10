@@ -4,16 +4,16 @@ import {GUID}          from "shared/api/circuit/public";
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort}      from "../DigitalPort";
 
-import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
+import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
 
 
 export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements DigitalComponent {
-    protected override readonly state: DigitalCircuitState;
+    protected override readonly ctx: DigitalCircuitContext;
 
-    public constructor(state: DigitalCircuitState, id: GUID, icId?: GUID) {
-        super(state, id, icId);
+    public constructor(ctx: DigitalCircuitContext, id: GUID, icId?: GUID) {
+        super(ctx, id, icId);
 
-        this.state = state;
+        this.ctx = ctx;
     }
 
     public get inputs(): DigitalPort[] {
@@ -26,6 +26,6 @@ export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements
     public setSimState(state: number[]): void {
         if (this.icId)
             throw new Error(`DigitalComponentImpl: Cannot set sim state for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.sim.setState(this.id, state);
+        this.ctx.sim.setState(this.id, state);
     }
 }

@@ -8,7 +8,7 @@ import {Schema} from "shared/api/circuit/schema";
 
 import {Circuit, Component, Node, Port, ReadonlyICPin, Wire, uuid} from "shared/api/circuit/public";
 import {CircuitImpl, IntegratedCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
-import {CircuitContext, CircuitTypes}             from "shared/api/circuit/public/impl/CircuitContext";
+import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes}             from "shared/api/circuit/public/impl/CircuitContext";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
 import {PortImpl}                                    from "shared/api/circuit/public/impl/Port";
@@ -143,40 +143,38 @@ export class TestPortImpl extends PortImpl<CircuitTypes> {
     }
 }
 
+export class TestCircuitContext extends CircuitContext<CircuitTypes> {
+    public readonly assembler: CircuitAssembler;
+    public readonly factory: CircuitAPIFactory<CircuitTypes>;
+
+    public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
+        super(id, new TestObjInfoProvider([{ "": 1 }, ...additionalPortConfigs]));
+
+        this.assembler = new CircuitAssembler(this.internal, this.renderOptions, (params) => ({
+            "IC":       new ICComponentAssembler(params),
+            "TestWire": new WireAssembler(params),
+            "TestComp": new TestComponentAssembler(params),
+            "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+
+            "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+        }));
+        this.factory = new CachedCircuitAPIFactoryImpl({
+            constructComponent: (id, icId) => new TestComponentImpl(this, id, icId),
+            constructWire:      (id, icId) => new TestWireImpl(this, id, icId),
+            constructPort:      (id, icId) => new TestPortImpl(this, id, icId),
+
+            constructIC: (id) => new IntegratedCircuitImpl(this, id),
+
+            constructComponentInfo: (kind) => new ComponentInfoImpl(this, kind),
+
+            constructObjContainer: (objs, icId) => new ObjContainerImpl(this, objs, icId),
+        });
+    }
+}
+
 export class TestCircuitImpl extends CircuitImpl<CircuitTypes> {
     public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
-        const ctx = new CircuitContext({
-            id,
-            objInfoProvider: new TestObjInfoProvider([{ "": 1 }, ...additionalPortConfigs]),
-            makeAssembler:   (internal, options) => new CircuitAssembler(internal, options, (params) => ({
-                "IC":       new ICComponentAssembler(params),
-                "TestWire": new WireAssembler(params),
-                "TestComp": new TestComponentAssembler(params),
-                "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
-
-                "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
-            })),
-            makeFactory: (ctx) => ({
-                constructComponent(id, icId) {
-                    return new TestComponentImpl(ctx, id, icId);
-                },
-                constructWire(id, icId) {
-                    return new TestWireImpl(ctx, id, icId);
-                },
-                constructPort(id, icId) {
-                    return new TestPortImpl(ctx, id, icId);
-                },
-                constructIC(id) {
-                    return new IntegratedCircuitImpl(ctx, id);
-                },
-                constructComponentInfo(kind) {
-                    return new ComponentInfoImpl(ctx, kind);
-                },
-                constructObjContainer(objs, icId) {
-                    return new ObjContainerImpl(ctx, objs, icId);
-                },
-            }),
-        });
+        const ctx = new TestCircuitContext(id, additionalPortConfigs);
         super(ctx, new SelectionsImpl(ctx));
     }
 

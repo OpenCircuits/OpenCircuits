@@ -8,8 +8,8 @@ describe("Flip Flops", () => {
     const ON = Signal.On, OFF = Signal.Off;
 
     describe("DFlipFlop", () => {
-        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_,
+        const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_d,
             { pre: [PRE], clr: [CLR], D: [D], clk: [CLK], Q: [Q], Qinv: [Q2] },
         ] = PlaceAndConnect("DFlipFlop");
 
@@ -94,8 +94,8 @@ describe("Flip Flops", () => {
     });
 
     describe("JKFlipFlop", () => {
-        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_,
+        const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_jk,
             { pre: [PRE], clr: [CLR], J: [J], K: [K], clk: [CLK], Q: [Q], Qinv: [Q2] },
         ] = PlaceAndConnect("JKFlipFlop");
 
@@ -175,8 +175,8 @@ describe("Flip Flops", () => {
     });
 
     describe("SRFlipFlop", () => {
-        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_,
+        const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_sr,
             { pre: [PRE], clr: [CLR], S: [S], R: [R], clk: [CLK], Q: [Q], Qinv: [Q2] },
         ] = PlaceAndConnect("SRFlipFlop");
 
@@ -251,8 +251,8 @@ describe("Flip Flops", () => {
     });
 
     describe("TFlipFlop", () => {
-        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_,
+        const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_t,
             { pre: [PRE], clr: [CLR], T: [T], clk: [CLK], Q: [Q], Qinv: [Q2] },
         ] = PlaceAndConnect("TFlipFlop");
 

@@ -7,7 +7,7 @@ import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 describe("FirstAvailable", () => {
     test("All ports available", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         const c = circuit.placeComponentAt("Multiplexer", V(0, 0));
 
@@ -18,7 +18,7 @@ describe("FirstAvailable", () => {
         expect(c.firstAvailable("selects")?.id).toEqual(c.ports["selects"][0].id);
     });
     test("Only some/no ports are available", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
         const c1 = circuit.placeComponentAt("ANDGate", V(0, 0));

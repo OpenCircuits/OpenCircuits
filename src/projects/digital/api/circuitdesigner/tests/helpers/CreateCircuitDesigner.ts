@@ -31,7 +31,7 @@ import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/Int
 import {SetupMockCanvas} from "shared/api/circuitdesigner/tests/helpers/CreateTestCircuitDesigner";
 
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitState";
+import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
 import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
 

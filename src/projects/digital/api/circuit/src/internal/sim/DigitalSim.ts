@@ -314,7 +314,7 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
             // Keep states in-case of undos, they can be forgotten when history is cleared
             // for (const compId of ev.diff.removedComponents)
-            //     this.states.delete(compId);
+            //     this.ctxs.delete(compId);
 
             for (const [compId] of [...ev.diff.addedPorts, ...ev.diff.removedPorts]) {
                 // Removal of ports + component *can* happen at once (batching)

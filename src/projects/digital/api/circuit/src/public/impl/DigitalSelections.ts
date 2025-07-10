@@ -1,15 +1,15 @@
-import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
+import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
 import {DigitalSelections, ReadonlySimState} from "../DigitalCircuit";
 import {SelectionsImpl} from "shared/api/circuit/public/impl/Selections";
 
 
 export class DigitalSelectionsImpl extends SelectionsImpl<DigitalTypes> implements DigitalSelections {
-    protected override readonly state: DigitalCircuitState;
+    protected override readonly ctx: DigitalCircuitContext;
 
-    public constructor(state: DigitalCircuitState) {
-        super(state);
+    public constructor(ctx: DigitalCircuitContext) {
+        super(ctx);
 
-        this.state = state;
+        this.ctx = ctx;
     }
 
     public get simState(): ReadonlySimState {

@@ -3,7 +3,7 @@ import {WireImpl} from "shared/api/circuit/public/impl/Wire";
 import {DigitalNode}  from "../DigitalComponent";
 import {DigitalPort}  from "../DigitalPort";
 import {DigitalWire}  from "../DigitalWire";
-import {DigitalTypes} from "./DigitalCircuitState";
+import {DigitalTypes} from "./DigitalCircuitContext";
 
 
 export class DigitalWireImpl extends WireImpl<DigitalTypes> implements DigitalWire {

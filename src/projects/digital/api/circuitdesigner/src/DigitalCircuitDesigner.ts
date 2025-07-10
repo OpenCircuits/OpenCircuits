@@ -1,5 +1,5 @@
 import {CreateCircuit} from "digital/api/circuit/public";
-import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitState";
+import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
 
 import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {CircuitDesignerImpl, ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";

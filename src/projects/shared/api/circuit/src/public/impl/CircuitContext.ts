@@ -141,33 +141,24 @@ export class CachedCircuitAPIFactoryImpl<T extends CircuitTypes> implements Circ
     }
 }
 
-
-export interface CircuitContextParams<T extends CircuitTypes> {
-    id: GUID;
-    objInfoProvider: ObjInfoProvider;
-    makeAssembler: (internal: CircuitInternal, options: RenderOptions) => CircuitAssembler;
-    makeFactory: (ctx: CircuitContext<T>) => CircuitAPIFactory<T>;
-}
 // CircuitContext is an object used to hold the underlying internal Circuit implementation
 // along with utility methods for all the API object types. This object is meant to be passed
 // between API objects so they all have access to the internal circuit and can construct eachother.
 // It should be owned by the main CircuitImpl.
-export class CircuitContext<T extends CircuitTypes> {
+export abstract class CircuitContext<T extends CircuitTypes> {
     public readonly internal: CircuitInternal;
-    public readonly assembler: CircuitAssembler;
 
     // TODO: Remove this, only Viewport references it
     // -> find options that can be extracted and put in separately that relate to rendering rather than assembly
     public readonly renderOptions: RenderOptions;
 
-    public readonly factory: CircuitAPIFactory<T>;
+    // Sub-class must provide these properties, since they are project-specific.
+    public abstract readonly assembler: CircuitAssembler;
+    public abstract readonly factory: CircuitAPIFactory<T>;
 
-    public constructor({ id, objInfoProvider, makeAssembler, makeFactory }: CircuitContextParams<T>) {
+    public constructor(id: GUID, objInfoProvider: ObjInfoProvider) {
         this.internal = new CircuitInternal(
             new CircuitDocument(id, objInfoProvider, new CircuitLog()));
-
         this.renderOptions = new DefaultRenderOptions();
-        this.assembler = makeAssembler(this.internal, this.renderOptions);
-        this.factory = new CachedCircuitAPIFactoryImpl(makeFactory(this));
     }
 }

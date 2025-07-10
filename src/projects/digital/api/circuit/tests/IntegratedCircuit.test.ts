@@ -8,7 +8,7 @@ import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 describe("IntegratedCircuit", () => {
     test("Basic IC", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         const [icCircuit] = CreateTestCircuit();
 
@@ -54,7 +54,7 @@ describe("IntegratedCircuit", () => {
     });
 
     test("Nested IC", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         const [innerIcCircuit] = CreateTestCircuit();
 
@@ -125,7 +125,7 @@ describe("IntegratedCircuit", () => {
     });
 
     test("Basic IC from components in main circuit", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         const i1 = circuit.placeComponentAt("Switch", V(-5, -5));
         const i2 = circuit.placeComponentAt("Switch", V(-5, +5));
