@@ -9,7 +9,7 @@ import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitContext, CircuitTypes} from "./CircuitContext";
 
 
-export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Wire {
+export class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Wire {
     public readonly baseKind = "Wire";
 
     public constructor(ctx: CircuitContext<T>, id: GUID, icId?: GUID) {
@@ -22,13 +22,6 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
             .mapErr(AddErrE(`API Wire: Attempted to get wire with ID '${this.id}' that doesn't exist!`))
             .unwrap();
     }
-
-    protected abstract getNodeKind(): string;
-
-    // This method is necessary since how the nodes are configured is project-dependent, so wiring them
-    //  needs to be handled on a per-project-basis
-    protected abstract connectNode(node: T["Node"], p1: T["Port"], p2: T["Port"]):
-        { wire1: T["Wire"] | undefined, wire2: T["Wire"] | undefined };
 
     public set zIndex(val: number) {
         if (this.icId)
@@ -94,21 +87,32 @@ export abstract class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
 
         this.ctx.internal.beginTransaction();
 
-        // Need to get these properties before deleting this wire
-        const { p1, p2 } = this;
+        const wireInfo = this.ctx.internal.getWireInfo(this.kind).unwrap();
+
+        // Find what type of Node and which ports to connect to (since it's project-dependent)
+        const p1Port = this.getCircuitInfo().getPortByID(this.p1.id).unwrap();
+        const p2Port = this.getCircuitInfo().getPortByID(this.p2.id).unwrap();
+        const { nodeKind, p1Group, p1Idx, p2Group, p2Idx } = wireInfo.getSplitConnections(p1Port, p2Port, this.getWire()).unwrap();
 
         // Create node
-        const kind = this.getNodeKind();
-        const info = this.ctx.internal.getComponentInfo(kind).unwrap();
-        const nodeId = this.ctx.internal.placeComponent(kind, { x: pos.x, y: pos.y }).unwrap();
+        const info = this.ctx.internal.getComponentInfo(nodeKind).unwrap();        const nodeId = this.ctx.internal.placeComponent(nodeKind, { x: pos.x, y: pos.y }).unwrap();
         this.ctx.internal.setPortConfig(nodeId, info!.defaultPortConfig).unwrap();
         const node = this.ctx.factory.constructComponent(nodeId);
         if (!node.isNode())
             throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);
 
+        // Need to get the ports before deleting this wire
+        const { p1, p2 } = this;
+
         this.ctx.internal.deleteWire(this.id).unwrap();
 
-        const { wire1, wire2 } = this.connectNode(node, p1, p2);
+        const nodeP1 = node.ports[p1Group][p1Idx], nodeP2 = node.ports[p2Group][p2Idx];
+
+        // TODO: Would be nice to use `info` to guarantee that p1 can connect to nodeP1 (and with p2)
+        // But this check is necessary since, in digital, order isn't guaranteed and this makes sure
+        // input port connects to the output port.
+        const wire1 = p1.canConnectTo(nodeP1) ? p1.connectTo(nodeP1) : p1.connectTo(nodeP2);
+        const wire2 = p2.canConnectTo(nodeP2) ? p2.connectTo(nodeP2) : p2.connectTo(nodeP1);
         if (!wire1)
             throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
         if (!wire2)

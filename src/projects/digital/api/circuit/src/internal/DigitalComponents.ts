@@ -1,8 +1,9 @@
-import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {BaseComponentConfigurationInfo,
-        BaseObjInfo,
         BaseObjInfoProvider,
+        BasePortConfigurationInfo,
+        BaseWireConfigurationInfo,
         DefaultPortNameGenerator,
         PortConfig,
         PropTypeMap} from "shared/api/circuit/internal/impl/ObjInfo";
@@ -94,6 +95,24 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
     //         return OkVoid();
     //     });
     // }
+}
+
+export class DigitalWireConfigurationInfo extends BaseWireConfigurationInfo {
+    public override getSplitConnections(_p1: Schema.Port, _p2: Schema.Port, _wire: Schema.Wire): Result<{
+        nodeKind: string;
+        p1Group: string;
+        p1Idx: number;
+        p2Group: string;
+        p2Idx: number;
+    }> {
+        return Ok({
+            nodeKind: "DigitalNode",
+            p1Group:  "inputs",
+            p1Idx:    0,
+            p2Group:  "outputs",
+            p2Idx:    0,
+        });
+    }
 }
 
 
@@ -214,55 +233,55 @@ const SRLatchInfo = DigitalLatchComponentInfo("SRLatch", ["S", "R"]);
 
 // Other
 const MultiplexerInfo = new DigitalComponentConfigurationInfo({
-    kind: "Multiplexer",
+    kind:          "Multiplexer",
     portGroupInfo: { "inputs": "input", "selects": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((selects) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": Math.pow(2, selects), "selects": selects, "outputs": 1 })),
-    defaultConfig: 1, // Default is 2-select-port mux
+    defaultConfig:    1, // Default is 2-select-port mux
     defaultPortNames: {
         "inputs":  (index) => `I${index}`,
         "selects": (index) => `S${index}`,
     },
 });
 const DemultiplexerInfo = new DigitalComponentConfigurationInfo({
-    kind: "Demultiplexer",
+    kind:          "Demultiplexer",
     portGroupInfo: { "inputs": "input", "selects": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((selects) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((selects) =>
         ({ "inputs": 1, "selects": selects, "outputs": Math.pow(2, selects) })),
-    defaultConfig: 1, // Default is 2-select-port demux
+    defaultConfig:    1, // Default is 2-select-port demux
     defaultPortNames: {
         "selects": (index) => `S${index}`,
         "outputs": (index) => `O${index}`,
     },
 });
 const EncoderInfo = new DigitalComponentConfigurationInfo({
-    kind: "Encoder",
+    kind:          "Encoder",
     portGroupInfo: { "inputs": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((outputs) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((outputs) =>
         ({ "inputs": Math.pow(2, outputs), "outputs": outputs })),
-    defaultConfig: 1, // Default is 2-output-port Encoder
+    defaultConfig:    1, // Default is 2-output-port Encoder
     defaultPortNames: {
         "inputs":  (index) => `I${index}`,
         "outputs": (index) => `O${index}`,
     },
 });
 const DecoderInfo = new DigitalComponentConfigurationInfo({
-    kind: "Decoder",
+    kind:          "Decoder",
     portGroupInfo: { "inputs": "input", "outputs": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((inputs) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((inputs) =>
         ({ "inputs": inputs, "outputs": Math.pow(2, inputs) })),
-    defaultConfig: 1, // Default is 2-input-port Decoder
+    defaultConfig:    1, // Default is 2-input-port Decoder
     defaultPortNames: {
         "inputs":  (index) => `I${index}`,
         "outputs": (index) => `O${index}`,
     },
 });
 const Comparator = new DigitalComponentConfigurationInfo({
-    kind: "Comparator",
+    kind:          "Comparator",
     portGroupInfo: { "inputsA": "input", "inputsB": "input", "lt": "output", "eq": "output", "gt": "output" },
-    portConfigs: [1,2,3,4,5,6,7,8].map((inputSize) =>
+    portConfigs:   [1,2,3,4,5,6,7,8].map((inputSize) =>
         ({ "inputsA": inputSize, "inputsB": inputSize, "lt": 1, "eq": 1, "gt": 1 })),
-    defaultConfig: 1, // Default is 2-bit-input-group Comparator
+    defaultConfig:    1, // Default is 2-bit-input-group Comparator
     defaultPortNames: {
         "inputsA": (index) => `a${index}`,
         "inputsB": (index) => `b${index}`,
@@ -283,27 +302,27 @@ const Label = new DigitalComponentConfigurationInfo({
 });
 
 const NodeInfo = new DigitalComponentConfigurationInfo({
-    kind: "DigitalNode",
-    isNode: true,
+    kind:          "DigitalNode",
+    isNode:        true,
     portGroupInfo: { "inputs": "input", "outputs": "output" },
     portConfigs:   [{ "inputs": 1, "outputs": 1 }],
 });
 
 
 // Wires
-const WireInfo = new BaseObjInfo("Wire", "DigitalWire", { "color": "string" });
+const WireInfo = new DigitalWireConfigurationInfo("DigitalWire", {});
 
 // Ports
-const PortInfo = new BaseObjInfo("Port", "DigitalPort", {});
+const PortInfo = new BasePortConfigurationInfo("DigitalPort", {}, "DigitalWire");
 
 // IC Pins
 const InputPinInfo = new DigitalComponentConfigurationInfo({
-    kind: "InputPin",
+    kind:          "InputPin",
     portGroupInfo: { "outputs": "output" },
     portConfigs:   [{ "outputs": 1 }],
 });
 const OutputPinInfo = new DigitalComponentConfigurationInfo({
-    kind: "OutputPin",
+    kind:          "OutputPin",
     portGroupInfo: { "inputs": "input" },
     portConfigs:   [{ "inputs": 1 }],
 });
@@ -365,9 +384,9 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
         this.ics.set(ic.metadata.id, new DigitalComponentConfigurationInfo({
-            kind: ic.metadata.id,
+            kind:             ic.metadata.id,
             portGroupInfo,
-            portConfigs: [portConfig],
+            portConfigs:      [portConfig],
             defaultPortNames: MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
         }));
     }

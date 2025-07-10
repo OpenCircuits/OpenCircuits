@@ -6,7 +6,7 @@ import {uuid}         from "shared/api/circuit/schema/GUID";
 
 import {LogEntryType}      from "./CircuitLog";
 import {InvertCircuitOp, UpdateICMetadataOp} from "./CircuitOps";
-import {ComponentConfigurationInfo, PortConfig}      from "./ObjInfo";
+import {ComponentConfigurationInfo, PortConfig, PortConfigurationInfo, WireConfigurationInfo}      from "./ObjInfo";
 import {CircuitDocument} from "./CircuitDocument";
 import {FastCircuitDiff} from "./FastCircuitDiff";
 import {AddErrE} from "../../utils/MultiError";
@@ -150,6 +150,12 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         if (kind === "IC" && icId)
             return this.doc.getCircuitInfo().getComponentInfo(kind, icId);
         return this.doc.getCircuitInfo().getComponentInfo(kind);
+    }
+    public getWireInfo(kind: string): Result<WireConfigurationInfo> {
+        return this.doc.getCircuitInfo().getWireInfo(kind);
+    }
+    public getPortInfo(kind: string): Result<PortConfigurationInfo> {
+        return this.doc.getCircuitInfo().getPortInfo(kind);
     }
     public getComponentAndInfoById(id: string) {
         return this.doc.getCircuitInfo().getComponentAndInfoByID(id);

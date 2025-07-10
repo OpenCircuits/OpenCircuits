@@ -9,7 +9,7 @@ import {BaseObjectImpl}             from "./BaseObject";
 import {CircuitContext, CircuitTypes} from "./CircuitContext";
 
 
-export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Port {
+export class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Port {
     public readonly baseKind = "Port";
 
     public constructor(ctx: CircuitContext<T>, id: GUID, icId?: GUID) {
@@ -22,9 +22,6 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
             .mapErr(AddErrE(`PortImpl: Attempted to get port with ID '${this.id}' that doesn't exist!`))
             .unwrap();
     }
-
-    protected abstract getWireKind(p1: GUID, p2: GUID): string;
-
     public get defaultName(): string | undefined {
         const port = this.getPort();
         const [_parent, info] = this.getCircuitInfo().getComponentAndInfoByID(port.parent).unwrap();
@@ -104,8 +101,15 @@ export abstract class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T>
 
         this.ctx.internal.beginTransaction();
 
+        // Get type of wire to make between this and the other port
+        const p1 = this.getPort();
+        const p2 = this.getCircuitInfo().getPortByID(other.id).unwrap();
+
+        const info = this.getCircuitInfo().getPortInfo(this.kind).unwrap();
+        const wireKind = info.getWireKind(p1, p2).unwrap();
+
         const id = this.ctx.internal.connectWire(
-            this.getWireKind(this.id, other.id), this.id, other.id, { zIndex: this.ctx.assembler.highestWireZ + 1 }).unwrap();
+            wireKind, this.id, other.id, { zIndex: this.ctx.assembler.highestWireZ + 1 }).unwrap();
 
         this.ctx.internal.commitTransaction();
 

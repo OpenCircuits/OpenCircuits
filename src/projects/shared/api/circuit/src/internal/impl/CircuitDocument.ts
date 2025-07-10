@@ -4,7 +4,7 @@ import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "shared/api/circu
 import {GUID, Schema} from "shared/api/circuit/schema";
 
 import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, ReplaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps, UpdateICMetadataOp} from "./CircuitOps";
-import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortListToConfig} from "./ObjInfo";
+import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortConfigurationInfo, PortListToConfig, WireConfigurationInfo} from "./ObjInfo";
 import {CircuitLog, LogEntry, LogEntryType} from "./CircuitLog";
 import {ObservableImpl} from "../../utils/Observable";
 import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
@@ -17,8 +17,8 @@ export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schem
 
     getComponentInfo(kind: "IC", icId: GUID): Result<ComponentConfigurationInfo>;
     getComponentInfo(kind: string): Result<ComponentConfigurationInfo>;
-    getWireInfo(kind: string): Result<ObjInfo>;
-    getPortInfo(kind: string): Result<ObjInfo>;
+    getWireInfo(kind: string): Result<WireConfigurationInfo>;
+    getPortInfo(kind: string): Result<PortConfigurationInfo>;
 
     getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]>;
 
@@ -207,10 +207,10 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
         return WrapResOrE(this.objInfo.getComponent(kind, icId), `Failed to get component info for kind: '${kind}'!`);
     }
-    public getWireInfo(kind: string): Result<ObjInfo> {
+    public getWireInfo(kind: string): Result<WireConfigurationInfo> {
         return WrapResOrE(this.objInfo.getWire(kind), `Failed to get wire info for kind '${kind}`!);
     }
-    public getPortInfo(kind: string): Result<ObjInfo> {
+    public getPortInfo(kind: string): Result<PortConfigurationInfo> {
         return WrapResOrE(this.objInfo.getPort(kind), `Failed to get port info for kind '${kind}`!);
     }
 

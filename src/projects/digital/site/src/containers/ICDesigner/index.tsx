@@ -16,7 +16,7 @@ import {useWindowSize}         from "shared/site/utils/hooks/useWindowSize";
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 import {TextModuleInputField}  from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
 
-import {CreateCircuit} from "digital/api/circuit/public";
+import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
 
 import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {ICResizeTool}   from "digital/api/circuitdesigner/tools/ICResizeTool";
@@ -78,7 +78,7 @@ export const ICDesigner = ({ }: Props) => {
 
         // Create the IC from the objIds in the main designer's circuit
         // and replace all input/output components with input/output pins.
-        const icCircuit = CreateCircuit();
+        const icCircuit: DigitalCircuit = CreateCircuit();
         icCircuit.importICs(mainDesigner.circuit.getICs());
         icCircuit.import(mainDesigner.circuit.createContainer(objIds).withWiresAndPorts());
 

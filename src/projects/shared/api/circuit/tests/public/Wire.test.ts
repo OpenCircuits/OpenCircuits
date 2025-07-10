@@ -203,9 +203,9 @@ describe("Wire", () => {
             expect(p1.connections[0]).toBeObj(sw1);
             expect(p2.connections[0]).toBeObj(sw2);
             expect(sw1.p1).toBeObj(p1);
-            expect(sw2.p2).toBeObj(p2);
+            expect(sw2.p1).toBeObj(p2);
             expect(sw1.p2.parent).toBeObj(n1);
-            expect(sw2.p1.parent).toBeObj(n1);
+            expect(sw2.p2.parent).toBeObj(n1);
 
             circuit.undo();
             expect(w1.exists()).toBeTruthy();
@@ -225,9 +225,9 @@ describe("Wire", () => {
             expect(p1.connections[0]).toBeObj(sw1);
             expect(p2.connections[0]).toBeObj(sw2);
             expect(sw1.p1).toBeObj(p1);
-            expect(sw2.p2).toBeObj(p2);
+            expect(sw2.p1).toBeObj(p2);
             expect(sw1.p2.parent).toBeObj(n1);
-            expect(sw2.p1.parent).toBeObj(n1);
+            expect(sw2.p2.parent).toBeObj(n1);
 
             expect(n1.isNode()).toBeTruthy();
         });
@@ -238,7 +238,7 @@ describe("Wire", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
 
-            const {node: n1, wire1: sw1, wire2: sw2 } = w1.split();
+            const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             sw1.delete();
 
             expect(sw1.exists()).toBeFalsy();

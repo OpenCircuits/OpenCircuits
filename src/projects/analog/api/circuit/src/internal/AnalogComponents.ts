@@ -1,10 +1,11 @@
-import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {MapObj}               from "shared/api/circuit/utils/Functions";
 
 import {
     BaseComponentConfigurationInfo,
-    BaseObjInfo,
     BaseObjInfoProvider,
+    BasePortConfigurationInfo,
+    BaseWireConfigurationInfo,
     PortConfig,
 } from "shared/api/circuit/internal/impl/ObjInfo";
 
@@ -34,14 +35,32 @@ export class AnalogComponentInfo extends BaseComponentConfigurationInfo {
     }
 }
 
+export class AnalogWireInfo extends BaseWireConfigurationInfo {
+    public override getSplitConnections(_p1: Schema.Port, _p2: Schema.Port, _wire: Schema.Wire): Result<{
+        nodeKind: string;
+        p1Group: string;
+        p1Idx: number;
+        p2Group: string;
+        p2Idx: number;
+    }> {
+        return Ok({
+            nodeKind: "AnalogNode",
+            p1Group:  "",
+            p1Idx:    0,
+            p2Group:  "",
+            p2Idx:    0,
+        });
+    }
+}
+
 // Node
 const NodeInfo = new AnalogComponentInfo("AnalogNode", {}, [""], [{ "": 1 }], true);
 
 // Wires
-const WireInfo = new BaseObjInfo("Wire", "AnalogWire", { "color": "string" });
+const WireInfo = new AnalogWireInfo("AnalogWire", {});
 
 // Ports
-const PortInfo = new BaseObjInfo("Port", "AnalogPort", {});
+const PortInfo = new BasePortConfigurationInfo("AnalogPort", {}, "AnalogWire");
 
 // IC Pin
 const PinInfo = new AnalogComponentInfo("AnalogPin", {}, [""], [{ "": 1 }], false);

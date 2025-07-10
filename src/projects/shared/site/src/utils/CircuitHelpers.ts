@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {CircuitDesigner, ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {setCurDesigner} from "./hooks/useDesigner";
-import {ToolConfig} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
 import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 import {Circuit} from "shared/api/circuit/public";
 import {ObjContainer} from "shared/api/circuit/public/ObjContainer";

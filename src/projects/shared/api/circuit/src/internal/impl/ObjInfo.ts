@@ -36,7 +36,7 @@ export interface ComponentConfigurationInfo extends ObjInfo {
     makePortsForConfig(id: Schema.GUID, p: PortConfig): Result<Schema.Port[]>;
 
     // i.e. Prevents fan-in on digital ports, could prevent illegal self-connectivity
-    // checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result;
+    // TODO: Maybe move these to `PortConfigurationInfo`
     isPortAvailable(port: Schema.Port, curConnections: Schema.Port[]): boolean;
     checkPortConnectivity(port: Schema.Port, newConnection: Schema.Port, curConnections: Schema.Port[]): Result;
 
@@ -46,31 +46,46 @@ export interface ComponentConfigurationInfo extends ObjInfo {
     // Also i.e. thumbnail, display name, description, etc.
 }
 
+export interface WireConfigurationInfo extends ObjInfo {
+    readonly baseKind: "Wire";
+
+    getSplitConnections(p1: Schema.Port, p2: Schema.Port, wire: Schema.Wire): Result<{
+        nodeKind: string;
+        p1Group: string;
+        p1Idx: number;
+        p2Group: string;
+        p2Idx: number;
+    }>;
+}
+
+export interface PortConfigurationInfo extends ObjInfo {
+    readonly baseKind: "Port";
+
+    getWireKind(p1: Schema.Port, p2: Schema.Port): Result<string>;
+}
+
 export interface ObjInfoProvider {
     // TODO: Maybe use i.e. Option<ObjInfo>=
     getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined;
-    getWire(kind: string): ObjInfo | undefined;
-    getPort(kind: string): ObjInfo | undefined;
+    getWire(kind: string): WireConfigurationInfo | undefined;
+    getPort(kind: string): PortConfigurationInfo | undefined;
 
     createIC(ic: Schema.IntegratedCircuit): void;
     deleteIC(ic: Schema.IntegratedCircuit): void;
 
     isIC(c: Schema.Component): boolean;
-    // TODO: potentially:
-    // getWire(kind: string): WireInfo | undefined;
-    // getPort(kind: string): PortInfo | undefined;
 }
 
 export abstract class BaseObjInfoProvider implements ObjInfoProvider {
     protected readonly ics: Map<string, ComponentConfigurationInfo>;
     protected readonly components: Map<string, ComponentConfigurationInfo>;
-    protected readonly wires: Map<string, ObjInfo>;
-    protected readonly ports: Map<string, ObjInfo>;
+    protected readonly wires: Map<string, WireConfigurationInfo>;
+    protected readonly ports: Map<string, PortConfigurationInfo>;
 
     public constructor(
         components: ComponentConfigurationInfo[],
-        wires: ObjInfo[],
-        ports: ObjInfo[],
+        wires: WireConfigurationInfo[],
+        ports: PortConfigurationInfo[],
     ) {
         this.components = new Map(components.map((info) => [info.kind, info]));
         this.wires      = new Map(wires     .map((info) => [info.kind, info]));
@@ -86,11 +101,11 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
         return this.components.get(kind);
     }
 
-    public getWire(kind: string): ObjInfo | undefined {
+    public getWire(kind: string): WireConfigurationInfo | undefined {
         return this.wires.get(kind);
     }
 
-    public getPort(kind: string): ObjInfo | undefined {
+    public getPort(kind: string): PortConfigurationInfo | undefined {
         return this.ports.get(kind);
     }
 
@@ -219,4 +234,40 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
         newConnection: Schema.Port,
         curConnections: Schema.Port[],
     ): Result;
+}
+
+export abstract class BaseWireConfigurationInfo extends BaseObjInfo<"Wire"> implements WireConfigurationInfo {
+    public constructor(
+        kind: string,
+        props: PropTypeMap
+    ) {
+        super("Wire", kind, { ...props, "color": "string" });
+    }
+
+    public abstract getSplitConnections(p1: Schema.Port, p2: Schema.Port, wire: Schema.Wire): Result<{
+        nodeKind: string;
+        p1Group: string;
+        p1Idx: number;
+        p2Group: string;
+        p2Idx: number;
+    }>;
+}
+
+export class BasePortConfigurationInfo extends BaseObjInfo<"Port"> implements PortConfigurationInfo {
+    protected readonly wireKind: string;
+
+    public constructor(
+        kind: string,
+        props: PropTypeMap,
+        wireKind: string,
+    ) {
+        super("Port", kind, props);
+
+        this.wireKind = wireKind;
+    }
+
+    public getWireKind(_p1: Schema.Port, _p2: Schema.Port): Result<string> {
+        // TODO: Expand this support wires based on the ports it's connecting
+        return Ok(this.wireKind);
+    }
 }

@@ -17,10 +17,6 @@ export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPo
         this.ctx = ctx;
     }
 
-    protected override getWireKind(_p1: GUID, _p2: GUID): string {
-        return "DigitalWire";
-    }
-
     public get isInputPort(): boolean {
         return this.parent.info.inputPortGroups.includes(this.group);
     }
