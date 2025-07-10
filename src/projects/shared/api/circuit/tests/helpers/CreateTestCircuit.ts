@@ -86,11 +86,14 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
         }), {});
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
-        this.ics.set(ic.metadata.id, new TestComponentInfo(ic.metadata.id, {}, [""], [portConfig], false));
-    }
-
-    public override deleteIC(ic: Schema.IntegratedCircuit): void {
-        this.ics.delete(ic.metadata.id);
+        this.ics.set(ic.metadata.id, new TestComponentInfo(
+            ic.metadata.id,
+            {},
+            Object.keys(ports),
+            [portConfig],
+            false,
+            MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
+        ));
     }
 }
 

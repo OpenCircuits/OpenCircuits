@@ -46,6 +46,13 @@ describe("IntegratedCircuit", () => {
         expect(icInstance.ports[""]).toHaveLength(3);
         expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
 
+        expect(icInstance.ports[""][0].name).toBeUndefined();
+        expect(icInstance.ports[""][1].name).toBeUndefined();
+        expect(icInstance.ports[""][2].name).toBeUndefined();
+        expect(icInstance.ports[""][0].defaultName).toBe("In 1");
+        expect(icInstance.ports[""][1].defaultName).toBe("In 2");
+        expect(icInstance.ports[""][2].defaultName).toBe("Out");
+
         expect(icInstance.ports[""][0].originPos).toApproximatelyEqual(V(-2, -0.5).add(icInstance.pos));
         expect(icInstance.ports[""][1].originPos).toApproximatelyEqual(V(-2, +0.5).add(icInstance.pos));
         expect(icInstance.ports[""][2].originPos).toApproximatelyEqual(V(+2, 0).add(icInstance.pos));
@@ -53,6 +60,63 @@ describe("IntegratedCircuit", () => {
         expect(icInstance.ports[""][0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(icInstance.pos));
         expect(icInstance.ports[""][1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(icInstance.pos));
         expect(icInstance.ports[""][2].targetPos).toApproximatelyEqual(V(+2.7, 0).add(icInstance.pos));
+    });
+
+    test("Basic IC - with groups", () => {
+        const [mainCircuit, mainState, { }] = CreateTestCircuit();
+
+        const [icCircuit, icState, { GetPort, Connect }] = CreateTestCircuit();
+
+        const pin1 = icCircuit.placeComponentAt("Pin", V(-5, -5));
+        const pin2 = icCircuit.placeComponentAt("Pin", V(-5, +5));
+        const pin3 = icCircuit.placeComponentAt("Pin", V(+5, 0));
+        const g = icCircuit.placeComponentAt("TestComp", V(0, 0));
+
+        icCircuit.name = "My IC";
+
+        Connect(pin1, g), Connect(pin2, g), Connect(g, pin3);
+
+        const ic = mainCircuit.createIC({
+            circuit: icCircuit,
+            display: {
+                size: V(4, 2),
+                pins: [
+                    { id: GetPort(pin1).id, group: "ins",  name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin2).id, group: "ins",  name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
+                    { id: GetPort(pin3).id, group: "outs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                ],
+            },
+        });
+        expect(mainCircuit.getICs()).toHaveLength(1);
+        expect(mainCircuit.getICs()[0].id).toEqual(ic.id);
+
+        expect(ic.name).toBe("My IC");
+        expect(ic.display.size).toEqual(V(4, 2));
+        expect(ic.display.pins).toHaveLength(3);
+
+        const icInstance = mainCircuit.placeComponentAt(ic.id, V(1, 1));
+
+        expect(icInstance.ports["ins"]).toHaveLength(2);
+        expect(icInstance.ports["outs"]).toHaveLength(1);
+        expect(icInstance.bounds).toEqual(new Rect(V(1, 1), V(4, 2)));
+
+        expect(icInstance.ports["ins"][0].name).toBeUndefined();
+        expect(icInstance.ports["ins"][1].name).toBeUndefined();
+        expect(icInstance.ports["outs"][0].name).toBeUndefined();
+        expect(icInstance.ports["ins"][0].defaultName).toBe("In 1");
+        expect(icInstance.ports["ins"][1].defaultName).toBe("In 2");
+        expect(icInstance.ports["outs"][0].defaultName).toBe("Out");
+
+        expect(icInstance.ports["ins"][0].originPos).toApproximatelyEqual(V(-2, -0.5).add(icInstance.pos));
+        expect(icInstance.ports["ins"][1].originPos).toApproximatelyEqual(V(-2, +0.5).add(icInstance.pos));
+        expect(icInstance.ports["outs"][0].originPos).toApproximatelyEqual(V(+2, 0).add(icInstance.pos));
+
+        expect(icInstance.ports["ins"][0].targetPos).toApproximatelyEqual(V(-2.7, -0.5).add(icInstance.pos));
+        expect(icInstance.ports["ins"][1].targetPos).toApproximatelyEqual(V(-2.7, +0.5).add(icInstance.pos));
+        expect(icInstance.ports["outs"][0].targetPos).toApproximatelyEqual(V(+2.7, 0).add(icInstance.pos));
+
+        expect(() => (icInstance.setPortConfig({ "": 3 }))).toThrow();
+        expect(() => (icInstance.setPortConfig({ "ins": 2, "outs": 1 }))).not.toThrow();
     });
 
     test("Nested IC", () => {

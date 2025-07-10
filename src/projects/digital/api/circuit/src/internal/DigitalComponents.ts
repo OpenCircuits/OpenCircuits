@@ -371,8 +371,4 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
             defaultPortNames: MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
         }));
     }
-
-    public override deleteIC(ic: Schema.IntegratedCircuit): void {
-        this.ics.delete(ic.metadata.id);
-    }
 }

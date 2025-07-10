@@ -95,7 +95,10 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
     }
 
     public abstract createIC(ic: Schema.IntegratedCircuit): void;
-    public abstract deleteIC(ic: Schema.IntegratedCircuit): void;
+
+    public deleteIC(ic: Schema.IntegratedCircuit): void {
+        this.ics.delete(ic.metadata.id);
+    }
 
     public isIC(c: Schema.Component): boolean {
         return c.kind === "IC";
