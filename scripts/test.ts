@@ -10,7 +10,7 @@ import yargs   from "yargs/yargs";
 
 import getEnv     from "./utils/env.js";
 import getAliases from "./utils/getAliases.js";
-import {getOtherPageDirs,
+import {FindDir, getOtherPageDirs,
         getProjectCircuitDesignerDirs,
         getProjectCircuitDirs,
         getProjectSiteDirs,
@@ -66,7 +66,7 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
     const dirPaths = await (async () => {
         // If specified dirs in argv, then just use those.
         if (argv._.length > 0)
-            return argv._;
+            return argv._.map((s) => `${s}`);
 
         // If nothing specified, but using CI, use all directories.
         if (ci)
@@ -103,8 +103,8 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
     const results = [];
 
     // Launch test in each directory
-    const dirsToUse = dirPaths.map((path) => dirs.find((d) => (d.path === path)));
-    for (const dir of dirsToUse) {
+    const dirsToUse = dirPaths.map((p) => [p, FindDir(dirs, p)] as const);
+    for (const [_, dir] of dirsToUse) {
         // Ensure all environment variables are read
         getEnv(`${dir}`, "");
 
