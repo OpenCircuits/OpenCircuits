@@ -72,6 +72,7 @@ export interface ObjInfoProvider {
 
     createIC(ic: Schema.IntegratedCircuit): void;
     deleteIC(ic: Schema.IntegratedCircuit): void;
+    checkIfICValid(ic: Schema.IntegratedCircuit): Result;
 
     isIC(c: Schema.Component): boolean;
 }
@@ -82,17 +83,21 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
     protected readonly wires: Map<string, WireConfigurationInfo>;
     protected readonly ports: Map<string, PortConfigurationInfo>;
 
+    protected readonly validPinKinds: string[];
+
     public constructor(
         components: ComponentConfigurationInfo[],
         wires: WireConfigurationInfo[],
         ports: PortConfigurationInfo[],
+        validPinKinds: string[] = [],
     ) {
         this.components = new Map(components.map((info) => [info.kind, info]));
         this.wires      = new Map(wires     .map((info) => [info.kind, info]));
         this.ports      = new Map(ports     .map((info) => [info.kind, info]));
         this.ics        = new Map();
-    }
 
+        this.validPinKinds = validPinKinds;
+    }
     public getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined {
         if (kind === "IC" && !icId)
             throw new Error("BaseObjInfoProver: Must provide icId when getting info for an IC!");
@@ -113,6 +118,21 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
 
     public deleteIC(ic: Schema.IntegratedCircuit): void {
         this.ics.delete(ic.metadata.id);
+    }
+
+    public checkIfICValid(ic: Schema.IntegratedCircuit): Result {
+        // Check that all pins correspond to allow objects internally
+        for (const pin of ic.metadata.pins) {
+            const port = ic.ports.find((p) => p.id === pin.id);
+            if (!port)
+                return ErrE(`Failed to find port with ${pin.id} corresponding to pin ${pin.name} [${pin.group}]!`);
+            const parent = ic.comps.find((c) => (c.id === port.parent));
+            if (!parent)
+                return ErrE(`Failed to find parent component ${port.parent} corresponding to pin ${pin.name} [${pin.group}]!`);
+            if (this.validPinKinds.length > 0 && !this.validPinKinds.includes(parent.kind))
+                return ErrE(`Failed to find valid pin kind ${parent.kind} corresponding to pin ${pin.name} [${pin.group}]!`);
+        }
+        return OkVoid();
     }
 
     public isIC(c: Schema.Component): boolean {

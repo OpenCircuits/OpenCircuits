@@ -80,7 +80,7 @@ export class AnalogObjInfoProvider extends BaseObjInfoProvider {
 
             // Other
 
-        ], [WireInfo], [PortInfo]);
+        ], [WireInfo], [PortInfo], ["AnalogPin"]);
     }
 
     public override createIC(ic: Schema.IntegratedCircuit): void {

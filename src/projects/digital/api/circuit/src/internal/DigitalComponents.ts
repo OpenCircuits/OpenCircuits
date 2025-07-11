@@ -347,7 +347,7 @@ export class DigitalObjInfoProvider extends BaseObjInfoProvider {
             DLatchInfo, SRLatchInfo,
             // Other
             MultiplexerInfo, DemultiplexerInfo, EncoderInfo, DecoderInfo, Comparator, Label,
-        ], [WireInfo], [PortInfo])
+        ], [WireInfo], [PortInfo], ["InputPin", "OutputPin"]);
     }
 
     public override getComponent(kind: string, icId?: GUID): DigitalComponentConfigurationInfo | undefined {

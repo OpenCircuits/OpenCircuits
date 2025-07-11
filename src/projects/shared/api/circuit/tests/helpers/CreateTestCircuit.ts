@@ -91,6 +91,7 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
             ],
             [new TestWireInfo("TestWire", {})],
             [new BasePortConfigurationInfo("TestPort", {}, "TestWire")],
+            ["Pin"],
         );
     }
 
@@ -171,12 +172,6 @@ export class TestCircuitImpl extends CircuitImpl<CircuitTypes> {
     public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
         const ctx = new TestCircuitContext(id, additionalPortConfigs);
         super(ctx, new SelectionsImpl(ctx));
-    }
-
-    protected override checkIfPinIsValid(_pin: ReadonlyICPin, port: Port): Result {
-        if (port.parent.kind !== "Pin")
-            return ErrE(`TestCircuit.checkIfPinIsValid: Pin must be apart of a 'Pin' component! Found: '${port.parent.kind}' instead!`);
-        return OkVoid();
     }
 }
 

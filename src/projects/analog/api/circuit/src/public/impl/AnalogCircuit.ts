@@ -40,10 +40,4 @@ export class AnalogCircuitImpl extends CircuitImpl<CircuitTypes> {
         const ctx = new AnalogCircuitContext(id);
         super(ctx, new SelectionsImpl(ctx));
     }
-
-    protected override checkIfPinIsValid(_pin: ReadonlyICPin, port: Port): Result {
-        if (port.parent.kind !== "AnalogPin")
-            return ErrE(`TestCircuit.checkIfPinIsValid: Pin must be apart of an 'AnalogPin' component! Found: '${port.parent.kind}' instead!`);
-        return OkVoid();
-    }
 }

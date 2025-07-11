@@ -171,6 +171,10 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
             .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`));
     }
 
+    public checkICValidity(ic: Schema.IntegratedCircuit): Result {
+        return this.objInfo.checkIfICValid(ic);
+    }
+
     public getPortPortMapChecked(id: GUID): Set<GUID> {
         const p = this.portPortMap.get(id);
         if (!p)
@@ -604,8 +608,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     private applyCircuitOp(op: CircuitOp): Result {
         switch (op.kind) {
             case "PlaceComponentOp":
-                this.placeComponent(op);
-                return OkVoid();
+                return this.placeComponent(op);
             case "ReplaceComponentOp":
                 return this.replaceComponent(op);
             case "SetComponentPortsOp":
@@ -619,15 +622,15 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
             case "SetPropertyOp":
                 return this.setProperty(op);
             case "CreateICOp":
-                this.createIC(op);
-                return OkVoid();
+                return this.createIC(op);
         }
     }
 
-    private placeComponent(op: PlaceComponentOp) {
+    private placeComponent(op: PlaceComponentOp): Result {
         const storage = this.storage;
 
         if (op.inverted) {
+            // These are invariant violations so we throw instead of returning an Err.
             if (!storage.componentPortsMap.has(op.c.id))
                 throw new Error(`Deleted component ${op.c.id} should have componentPortsMap initialized!`);
             if (storage.componentPortsMap.get(op.c.id)!.size > 0)
@@ -635,11 +638,14 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
             storage.deleteComponent(op.c);
         } else {
+            // These are invariant violations so we throw instead of returning an Err.
             if (storage.componentPortsMap.has(op.c.id))
                 throw new Error(`Placed component ${op.c.id} should not have any ports`);
 
             storage.addComponent(op.c);
         }
+
+        return OkVoid();
     }
 
     private replaceComponent(op: ReplaceComponentOp) {
@@ -706,21 +712,29 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     }
 
     // NOTE: This operation does NOT check or remove existing IC instances. This should be done beforehand.
-    private createIC(op: CreateICOp) {
+    private createIC(op: CreateICOp): Result {
         if (op.inverted) {
+            // These are invariant violations so we error instead of returning an Err.
             if (!this.icStorage.has(op.ic.metadata.id))
                 throw new Error(`Deleted IC ${op.ic.metadata.id} should have an entry in icStorage!`);
 
             this.icStorage.delete(op.ic.metadata.id);
             this.objInfo.deleteIC(op.ic);
-        } else {
-            if (this.icStorage.has(op.ic.metadata.id))
-                throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);
 
-            const storage = new CircuitStorage<Schema.IntegratedCircuitMetadata>(this.objInfo, op.ic.metadata);
-            storage.addObjs([...op.ic.comps, ...op.ic.ports, ...op.ic.wires]);
-            this.icStorage.set(op.ic.metadata.id, storage);
-            this.objInfo.createIC(op.ic);
+            return OkVoid();
         }
+
+        // These are invariant violations so we error instead of returning an Err.
+        if (this.icStorage.has(op.ic.metadata.id))
+            throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);
+
+        // Check validity of IC, which we can return as an Err if it fails.
+        return this.storage.checkICValidity(op.ic)
+            .uponOk(() => {
+                const storage = new CircuitStorage<Schema.IntegratedCircuitMetadata>(this.objInfo, op.ic.metadata);
+                storage.addObjs([...op.ic.comps, ...op.ic.ports, ...op.ic.wires]);
+                this.icStorage.set(op.ic.metadata.id, storage);
+                this.objInfo.createIC(op.ic);
+            });
     }
 }

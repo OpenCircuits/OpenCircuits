@@ -80,14 +80,6 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalTypes> implements Dig
         this.sim = new DigitalSimImpl(ctx);
     }
 
-    public override checkIfPinIsValid(_pin: ReadonlyICPin, port: DigitalPort): Result {
-        if (port.isOutputPort && port.parent.kind !== "InputPin")
-            return ErrE(`DigitalCircuit.checkIfPinIsValid: Pin with output-port must be apart of an 'InputPin'! Found: '${port.parent.kind}' instead!`);
-        if (port.isInputPort && port.parent.kind !== "OutputPin")
-            return ErrE(`DigitalCircuit.checkIfPinIsValid: Pin with input-port must be apart of an 'OutputPin'! Found: '${port.parent.kind}' instead!`);
-        return OkVoid();
-    }
-
     public override importICs(ics: DigitalIntegratedCircuit[]): void {
         super.importICs(ics);
 
