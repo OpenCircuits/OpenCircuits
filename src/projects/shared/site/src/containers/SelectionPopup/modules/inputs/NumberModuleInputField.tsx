@@ -43,7 +43,7 @@ export const NumberModuleInputField = ({
 
         getCustomDisplayVal: (([v]) =>
             // Default to rounding to two digits
-            (getCustomDisplayVal ?? ((v) => parseFloat(v.toFixed(2))))(v)
+            (getCustomDisplayVal ?? ((v) => `${parseFloat(v.toFixed(2))}`))(v)
         ),
     });
 

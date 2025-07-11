@@ -16,14 +16,14 @@ import {WireImpl}                                    from "shared/api/circuit/pu
 
 import {GUID}             from "shared/api/circuit/internal";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
+import {NodeAssembler}    from "shared/api/circuit/internal/assembly/common/NodeAssembler";
 import {WireAssembler}    from "shared/api/circuit/internal/assembly/WireAssembler";
 import {BaseComponentConfigurationInfo,
         BaseObjInfoProvider, BasePortConfigurationInfo, BaseWireConfigurationInfo, PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {MapObj} from "shared/api/circuit/utils/Functions";
-import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
+import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
 import {SelectionsImpl} from "shared/api/circuit/public/impl/Selections";
 import {ObjContainerImpl} from "shared/api/circuit/public/impl/ObjContainer";
 

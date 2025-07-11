@@ -1,6 +1,8 @@
 import "shared/api/circuitdesigner/types/declarations";
 
-import {CreateDrawingFromSVG, SVGDrawing} from "svg2canvas";
+import {SVGDrawing} from "svg2canvas";
+
+import {ToSVGDrawing} from "shared/api/circuitdesigner/utils/ToSVGDrawing";
 
 import bufSVG from "./buf.svg";
 import andSVG from "./and.svg";
@@ -15,19 +17,6 @@ import clockOnSVG from "./clockOn.svg";
 import constHighSVG from "./constHigh.svg";
 import constLowSVG from "./constLow.svg";
 
-
-function ToSVGDrawing(name: string, svgStr: string): SVGDrawing {
-    try {
-        const svgS = window.atob(svgStr.replace("data:image/svg+xml;base64,", ""));
-        const svg = new DOMParser().parseFromString(svgS, "text/xml");
-        const drawing = CreateDrawingFromSVG(svg);
-        if (!drawing)
-            throw new Error("Failed to create drawing from SVG!");
-        return drawing;
-    } catch (e) {
-        throw new Error(`Failed to turn svg ${name}.svg (${JSON.stringify(svgStr)}) into SVG! ${e}`);
-    }
-}
 
 export const SVGs: Map<string, SVGDrawing> = new Map([
     ["buf.svg", ToSVGDrawing("buf", bufSVG)],

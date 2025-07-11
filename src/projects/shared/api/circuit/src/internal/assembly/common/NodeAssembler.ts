@@ -1,9 +1,9 @@
 import {V, Vector} from "Vector";
 
-import {AssemblerParams, AssemblyReason}  from "./Assembler";
-import {ComponentAssembler} from "./ComponentAssembler";
-import {PortFactory} from "./PortAssembler";
-import {Schema} from "../../schema";
+import {AssemblerParams, AssemblyReason}  from "../Assembler";
+import {ComponentAssembler} from "../ComponentAssembler";
+import {PortFactory} from "../PortAssembler";
+import {Schema} from "../../../schema";
 
 
 export class NodeAssembler extends ComponentAssembler {

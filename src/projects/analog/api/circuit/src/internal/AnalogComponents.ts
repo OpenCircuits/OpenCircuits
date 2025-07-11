@@ -1,3 +1,4 @@
+/* eslint-disable key-spacing */
 import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {MapObj}               from "shared/api/circuit/utils/Functions";
 
@@ -7,6 +8,7 @@ import {
     BasePortConfigurationInfo,
     BaseWireConfigurationInfo,
     PortConfig,
+    PropTypeMap,
 } from "shared/api/circuit/internal/impl/ObjInfo";
 
 import {Schema} from "shared/api/circuit/schema";
@@ -53,6 +55,42 @@ export class AnalogWireInfo extends BaseWireConfigurationInfo {
     }
 }
 
+const DefaultAnalogComponentInfo = (kind: string, portConfig: PortConfig, props: PropTypeMap = {}) =>
+    new AnalogComponentInfo(kind, props, Object.keys(portConfig), [portConfig], false);
+
+// Sources
+const VoltageSourceInfo = DefaultAnalogComponentInfo("VoltageSource", { "+": 1, "-": 1 }, {
+    "waveform": "string",
+
+    "v1": "number", "v1Unit": "string",
+    "V":  "number", "VUnit":  "string",
+    "td": "number", "tdUnit": "string",
+    "tr": "number", "trUnit": "string",
+    "tf": "number", "tfUnit": "string",
+    "pw": "number", "pwUnit": "string",
+    "p":  "number", "pUnit":  "string",
+    "ph": "number",
+    "f":  "number", "fUnit":  "string",
+    "d":  "number",
+});
+const CurrentSourceInfo = DefaultAnalogComponentInfo("CurrentSource", { "+": 1, "-": 1 }, {
+    "c":     "number",
+    "cUnit": "string",
+});
+
+// Essentials
+const GroundInfo    = DefaultAnalogComponentInfo("Ground",    { "": 1 }, {});
+const ResistorInfo  = DefaultAnalogComponentInfo("Resistor",  { "": 2 }, { "R": "number",  "unit": "string" });
+const CapacitorInfo = DefaultAnalogComponentInfo("Capacitor", { "": 2 }, { "C": "number",  "unit": "string" });
+const InductorInfo  = DefaultAnalogComponentInfo("Inductor",  { "": 2 }, { "L": "number",  "unit": "string" });
+
+// Measurements
+const OscilloscopeInfo = DefaultAnalogComponentInfo("Oscilloscope", { "": 1 }, {});
+
+// Other
+const LabelInfo = new AnalogComponentInfo("Label", { "textColor": "string", "bgColor": "string" }, [], [{}], false);
+
+
 // Node
 const NodeInfo = new AnalogComponentInfo("AnalogNode", {}, [""], [{ "": 1 }], true);
 
@@ -73,13 +111,13 @@ export class AnalogObjInfoProvider extends BaseObjInfoProvider {
             // Node
             NodeInfo,
             // Sources
-
-            // Measurement
-
+            VoltageSourceInfo, CurrentSourceInfo,
             // Essentials
-
+            GroundInfo, ResistorInfo, CapacitorInfo, InductorInfo,
+            // Measurement
+            OscilloscopeInfo,
             // Other
-
+            LabelInfo,
         ], [WireInfo], [PortInfo], ["AnalogPin"]);
     }
 

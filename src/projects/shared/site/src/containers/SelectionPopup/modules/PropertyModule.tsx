@@ -94,6 +94,7 @@ const PropInfoEntryInputField = ({
     const key = (entry.type === "group" ? "" : entry.key);
 
     // Create doChange callback
+    // TODO: Do we still need this is a callback since we have React Compiler?
     const doChange = useCallback(
         (newVals: Prop[]) => objs.forEach((o, i) => (o.setProp(key, newVals[i]))),
         [key, objs.map((o) => o.id).join("")]);
@@ -116,15 +117,45 @@ const PropInfoEntryInputField = ({
     switch (entry.type) {
         case "float":
         case "int":
-            return (
-                <NumberModuleInputField
-                    circuit={circuit}
-                    kind={entry.type}
-                    props={(vals as number[])}
-                    step={entry.step} min={entry.min} max={entry.max}
-                    transform={entry.transform}
-                    doChange={doChange} />
-            );
+            const unit = entry.unit;
+            if (!unit) {
+                return (
+                    <NumberModuleInputField
+                        circuit={circuit}
+                        kind={entry.type}
+                        props={(vals as number[])}
+                        step={entry.step} min={entry.min} max={entry.max}
+                        transform={entry.transform}
+                        doChange={doChange} />
+                );
+            }
+
+            const unitVals = props[unit.key] as string[];
+
+            return (<div>
+                <span style={{ display: "inline-block", width: "70%" }}>
+                    <NumberModuleInputField
+                        circuit={circuit}
+                        kind={entry.type}
+                        props={(vals as number[])}
+                        step={entry.step} min={entry.min} max={entry.max}
+                        transform={entry.transform}
+                        doChange={doChange}
+                        getCustomDisplayVal={(v) => (`${v}`.length > 4 ? v.toExponential(2) : `${v}`)} />
+                </span>
+                <span style={{ display: "inline-block", width: "30%" }}>
+                    <SelectModuleInputField
+                        circuit={circuit}
+                        kind="string[]"
+                        props={unitVals}
+                        options={Object.entries(unit.entries).map(([key, u]) => [u.display, key])}
+                        doChange={(newUnits: string[]) => objs.forEach((o, i) => {
+                            o.setProp(unit.key, newUnits[i]);
+                            // Need to transform prop to new unit
+                            o.setProp(key, (vals as number[])[i] * unit.entries[unitVals[i]].scale / unit.entries[newUnits[i]].scale);
+                        })} />
+                </span>
+            </div>)
         case "number[]":
             return (
                 <SelectModuleInputField
