@@ -1,6 +1,14 @@
-import {SimDataMappings} from "analog/models/sim/NetlistGenerator";
+// import {SimDataMappings} from "analog/models/sim/NetlistGenerator";
+import {GUID} from "shared/api/circuit/schema";
 
 import {CreateState} from "shared/site/utils/CreateState";
+
+// TMP:
+type SimDataMappings = {
+    elementUIDs: Map<GUID, number>;
+    elements: GUID[];
+    paths: Array<Set<GUID>>;
+}
 
 
 const [initialState, actions, reducer] = CreateState()(

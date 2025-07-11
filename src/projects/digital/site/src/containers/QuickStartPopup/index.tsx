@@ -4,7 +4,6 @@ import {CloseHeaderPopups} from "shared/site/state/Header";
 
 import {Popup}       from "shared/site/components/Popup";
 import {ShortcutKey} from "shared/site/components/ShortcutKey";
-import React from "react";
 
 
 export const QuickStartPopup = () => {

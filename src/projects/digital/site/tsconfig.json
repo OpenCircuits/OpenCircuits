@@ -3,19 +3,17 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "Vector":                        ["../../shared/api/circuit/src/utils/math/Vector"],
-            "math/*":                        ["../../shared/api/circuit/src/utils/math/*"],
-            "shared/api/circuit/*":          ["../../shared/api/circuit/src/*"],
-            "shared/api/circuitdesigner/*":  ["../../shared/api/circuitdesigner/src/*"],
-            "shared/tests/helpers/*":        ["../../shared/api/circuit/tests/helpers/*"],
-            "shared/site/tests/*":           ["../../shared/site/tests/*"],
-            "shared/site/*":                 ["../../shared/site/src/*"],
-            "digital/api/circuit/tests/helpers/*": [
-                "../api/circuit/tests/helpers/*"
-            ],
-            "digital/api/circuit/*":         ["../api/circuit/src/*"],
-            "digital/api/circuitdesigner/*": ["../api/circuitdesigner/src/*"],
-            "digital/site/*":                ["./src/*"],
+            "Vector":                              ["../../shared/api/circuit/src/utils/math/Vector"],
+            "math/*":                              ["../../shared/api/circuit/src/utils/math/*"],
+            "shared/api/circuit/*":                ["../../shared/api/circuit/src/*"],
+            "shared/api/circuitdesigner/*":        ["../../shared/api/circuitdesigner/src/*"],
+            "shared/tests/helpers/*":              ["../../shared/api/circuit/tests/helpers/*"],
+            "shared/site/tests/*":                 ["../../shared/site/tests/*"],
+            "shared/site/*":                       ["../../shared/site/src/*"],
+            "digital/api/circuit/tests/helpers/*": ["../api/circuit/tests/helpers/*"],
+            "digital/api/circuit/*":               ["../api/circuit/src/*"],
+            "digital/api/circuitdesigner/*":       ["../api/circuitdesigner/src/*"],
+            "digital/site/*":                      ["./src/*"],
         }
     },
     "include": ["src", "../../shared/site/src/**/*.d.ts", "tests"],

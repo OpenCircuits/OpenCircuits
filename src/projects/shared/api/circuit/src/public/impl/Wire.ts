@@ -95,7 +95,8 @@ export class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implemen
         const { nodeKind, p1Group, p1Idx, p2Group, p2Idx } = wireInfo.getSplitConnections(p1Port, p2Port, this.getWire()).unwrap();
 
         // Create node
-        const info = this.ctx.internal.getComponentInfo(nodeKind).unwrap();        const nodeId = this.ctx.internal.placeComponent(nodeKind, { x: pos.x, y: pos.y }).unwrap();
+        const info = this.ctx.internal.getComponentInfo(nodeKind).unwrap();
+        const nodeId = this.ctx.internal.placeComponent(nodeKind, { x: pos.x, y: pos.y }).unwrap();
         this.ctx.internal.setPortConfig(nodeId, info!.defaultPortConfig).unwrap();
         const node = this.ctx.factory.constructComponent(nodeId);
         if (!node.isNode())

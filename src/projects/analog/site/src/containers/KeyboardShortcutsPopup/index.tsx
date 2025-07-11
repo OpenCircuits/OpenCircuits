@@ -6,7 +6,8 @@ import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useS
 
 import {CloseHeaderPopups} from "shared/site/state/Header";
 
-import {Popup} from "shared/components/Popup";
+import {Popup}       from "shared/site/components/Popup";
+import {ShortcutKey} from "shared/site/components/ShortcutKey";
 
 import "./index.scss";
 
@@ -23,11 +24,11 @@ const Shortcut = ({ os, label, pre, keys, mod }: ShortcutProps) => (
         <td>{label}</td>
         <td>
             {pre}
-            {mod && <span id="key">{os === "mac" ? "CMD" : "CTRL"}</span>}
+            {mod && <ShortcutKey>{os === "mac" ? "CMD" : "CTRL"}</ShortcutKey>}
             {keys.map((key, i) => (
                 <React.Fragment key={`keyboardshortcuts__popup__${label}-${key}-${i}`}>
                     {(i > 0 || mod) && <span>+ </span>}
-                    <span id="key">{key}</span>
+                    <ShortcutKey>{key}</ShortcutKey>
                 </React.Fragment>
             ))}
         </td>

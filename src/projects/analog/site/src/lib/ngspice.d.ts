@@ -1,6 +1,6 @@
 
 declare module "*ngspice.wasm" {
-    import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
+    import {NGSpiceLib} from "./NGSpiceLib";
 
     export default function(): Promise<NGSpiceLib>;
 }

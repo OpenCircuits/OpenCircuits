@@ -3,13 +3,18 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "Vector":        ["../../../app/core/utils/math/Vector"],
-            "math/*":        ["../../../app/core/utils/math/*"],
-            "core/*":        ["../../../app/core/*"],
-            "analog/*":      ["../../../app/analog/*"],
-            "shared/*":      ["../../shared/*"],
-            "site/analog/*": ["./src/*"],
+            "Vector":                              ["../../shared/api/circuit/src/utils/math/Vector"],
+            "math/*":                              ["../../shared/api/circuit/src/utils/math/*"],
+            "shared/api/circuit/*":                ["../../shared/api/circuit/src/*"],
+            "shared/api/circuitdesigner/*":        ["../../shared/api/circuitdesigner/src/*"],
+            "shared/tests/helpers/*":              ["../../shared/api/circuit/tests/helpers/*"],
+            "shared/site/tests/*":                 ["../../shared/site/tests/*"],
+            "shared/site/*":                       ["../../shared/site/src/*"],
+            "analog/api/circuit/tests/helpers/*":  ["../api/circuit/tests/helpers/*"],
+            "analog/api/circuit/*":                ["../api/circuit/src/*"],
+            "analog/api/circuitdesigner/*":        ["../api/circuitdesigner/src/*"],
+            "analog/site/*":                       ["./src/*"],
         }
     },
-    "include": ["src", "../../shared/utils/types"],
+    "include": ["src", "../../shared/site/src/**/*.d.ts", "./src/lib/ngspice.d.ts", "tests"],
 }

@@ -1,14 +1,19 @@
 {
-    "extends": "../../tsconfig.base.json",
+    "extends": "../../../../../tsconfig.base.json",
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "Vector":         ["./core/utils/math/Vector"],
-            "math/*":         ["./core/utils/math/*"],
-            "core/*":         ["./core/*"],
-            "digital/*":      ["./digital/*"],
-            "test/helpers/*": ["./tests/helpers/*"],
+            "Vector":                             ["../../../shared/api/circuit/src/utils/math/Vector"],
+            "math/*":                             ["../../../shared/api/circuit/src/utils/math/*"],
+            "shared/api/circuit/tests/*":         ["../../../shared/api/circuit/tests/*"],
+            "shared/api/circuit/*":               ["../../../shared/api/circuit/src/*"],
+            "shared/api/circuitdesigner/tests/*": ["../../../shared/api/circuitdesigner/tests/*"],
+            "shared/api/circuitdesigner/*":       ["../../../shared/api/circuitdesigner/src/*"],
+            "analog/api/circuit/tests/*":         ["../circuit/tests/*"],
+            "analog/api/circuit/*":               ["../circuit/src/*"],
+            "analog/api/circuitdesigner/*":       ["./src/*"],
+            "tests/helpers/*":                    ["./tests/helpers/*"],
         },
     },
-    "include": [".", "./core/utils/types"],
+    "include": ["."],
 }
