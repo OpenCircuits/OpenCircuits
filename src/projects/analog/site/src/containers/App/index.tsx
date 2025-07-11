@@ -1,40 +1,30 @@
-import {AnalogPropInfo} from "analog/views/info";
-import {useCallback}    from "react";
-
-import {SAVE_VERSION} from "shared/api/circuit/utils/Constants";
-
-import {CircuitMetadata} from "shared/api/circuit/models/Circuit";
-
-import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo";
-
-import {CircuitInfoHelpers} from "shared/site/utils/CircuitInfoHelpers";
-
 import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 
-import {ContextMenu}               from "shared/containers/ContextMenu";
-import {HistoryBox}                from "shared/containers/HistoryBox";
-import {ImageExporterPopup,
-        ImageExporterPreviewProps} from "shared/containers/ImageExporterPopup";
-import {LoginPopup}     from "shared/containers/LoginPopup";
-import {MainDesigner}   from "shared/containers/MainDesigner";
-import {SelectionPopup} from "shared/containers/SelectionPopup";
-import {SideNav}        from "shared/containers/SideNav";
+import {BackendCircuitMetadata} from "shared/site/api/Circuits";
 
-import {PropertyModule} from "shared/containers/SelectionPopup/modules/PropertyModule";
+import {Header}             from "shared/site/containers/Header";
+import {ContextMenu}        from "shared/site/containers/ContextMenu";
+import {HistoryBox}         from "shared/site/containers/HistoryBox";
+import {ImageExporterPopup} from "shared/site/containers/ImageExporterPopup";
+import {LoginPopup}         from "shared/site/containers/LoginPopup";
+import {SelectionPopup}     from "shared/site/containers/SelectionPopup";
+import {SideNav}            from "shared/site/containers/SideNav";
+import {PropertyModule}     from "shared/site/containers/SelectionPopup/modules/PropertyModule";
+import {MainDesigner}       from "shared/site/containers/MainDesigner";
+import {ItemNav}            from "shared/site/containers/ItemNav";
 
-import {AnalogPaste} from "site/analog/utils/AnalogPaste";
+import {useCurAnalogDesigner} from "analog/site/utils/hooks/useAnalogDesigner";
 
-import {AnalogHeader}           from "site/analog/containers/AnalogHeader";
-import {AnalogItemNav}          from "site/analog/containers/AnalogItemNav";
-import {ImageExporterPreview}   from "site/analog/containers/ImageExporterPreview";
-import {KeyboardShortcutsPopup} from "site/analog/containers/KeyboardShortcutsPopup";
-import {QuickStartPopup}        from "site/analog/containers/QuickStartPopup";
-import {SimButtons}             from "site/analog/containers/SimButtons";
+import {SimButtons} from "analog/site/containers/SimButtons";
 
-import docsConfig    from "site/analog/data/docsUrlConfig.json";
-import exampleConfig from "site/analog/data/examples.json";
+import {KeyboardShortcutsPopup} from "analog/site/containers/KeyboardShortcutsPopup";
+import {QuickStartPopup}        from "analog/site/containers/QuickStartPopup";
 
-import {OscilloscopePlotsModule} from "../SelectionPopup/modules/OscilloscopePlotsModule";
+import {AnalogPropInfo} from "analog/site/containers/SelectionPopup/propinfo";
+
+import docsConfig    from "analog/site/data/docsUrlConfig.json";
+import exampleConfig from "analog/site/data/examples.json";
+import itemNavConfig from "analog/site/data/ItemNavConfig";
 
 import "./index.scss";
 
@@ -44,55 +34,45 @@ const exampleCircuits = exampleConfig.examples.map((example) => ({
     name:      example.name,
     desc:      "Example Circuit",
     thumbnail: example.thumbnail,
-    version:   SAVE_VERSION,
-} as CircuitMetadata));
+    version:   "/",
+} satisfies BackendCircuitMetadata));
 
-type Props = {
-    info: AnalogCircuitInfo;
-    helpers: CircuitInfoHelpers;
-}
-export const App = ({ info, helpers }: Props) => {
+export const App = () => {
+    const designer = useCurAnalogDesigner();
     const { h } = useWindowSize();
-
-    // Memoize for eslint(react/no-unstable-nested-components)
-    const imageExporterPreview = useCallback((props: ImageExporterPreviewProps) => (
-        <ImageExporterPreview mainInfo={info} {...props} />
-    ), [info]);
 
     return (
         <div className="App">
-            <SideNav
-                helpers={helpers}
-                exampleCircuits={exampleCircuits} />
+            <SideNav exampleCircuits={exampleCircuits} />
 
             <div className="App__container" style={{ height: h+"px" }}>
-                <AnalogHeader
-                    img="img/icons/logo.svg"
-                    helpers={helpers}
-                    info={info} />
+                <Header img="/assets/logo.svg" extraUtilities={[]} />
 
                 <main>
-                    <MainDesigner info={info} />
+                    <MainDesigner />
 
-                    <AnalogItemNav info={info} />
-                    <HistoryBox info={info} />
+                    <ItemNav
+                        designer={designer}
+                        config={itemNavConfig} />
+                    <HistoryBox designer={designer} />
 
-                    <SimButtons info={info} />
+                    <SimButtons />
 
-                    <SelectionPopup info={info}
-                                    docsUrlConfig={docsConfig}>
-                        <PropertyModule info={info} propInfo={AnalogPropInfo} />
-                        <OscilloscopePlotsModule info={info} />
+                    <SelectionPopup designer={designer} docsUrlConfig={docsConfig}>
+                        <PropertyModule designer={designer} propInfo={AnalogPropInfo} />
+                        {/* <OscilloscopePlotsModule designer={designer} /> */}
                     </SelectionPopup>
 
-                    <ContextMenu info={info}
-                                 paste={(data, menuPos) => AnalogPaste(data, info, menuPos)} />
+                    <ContextMenu designer={designer} />
                 </main>
             </div>
 
+            {/* <ICDesigner />
+            <ICViewer /> */}
+
             <QuickStartPopup />
             <KeyboardShortcutsPopup />
-            <ImageExporterPopup preview={imageExporterPreview} />
+            <ImageExporterPopup designer={designer} />
 
             <LoginPopup />
         </div>

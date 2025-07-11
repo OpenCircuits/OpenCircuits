@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import {initializeApp} from "firebase/app";
+import {browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence} from "firebase/auth";
 
 import React            from "react";
 import {createRoot}     from "react-dom/client";
@@ -70,7 +71,6 @@ import {PrintDebugStats} from "./proto/debug";
 import {CUR_SAVE_VERSION} from "./utils/Constants";
 import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
 import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
-import {browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence} from "firebase/auth";
 
 
 async function Init(): Promise<void> {

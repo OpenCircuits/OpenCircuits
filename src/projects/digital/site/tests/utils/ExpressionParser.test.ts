@@ -34,7 +34,6 @@ import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunne
  *                 those same Switch objects must be present in circuit.
  * @param output   The component whose state will be evaluated in the test, must be present in circuit.
  * @param expected The expected states of the output LED for all the different switch combinations.
- * @param sim      The sim instance used to turn inputs on or off.
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  */
 function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[]) {
@@ -66,7 +65,6 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
  *                 those same Switch objects must be present in circuit.
  * @param output   The component whose state will be evaluated in the test, must be present in circuit.
  * @param expected The expected states of the output LED for all the different switch combinations.
- * @param sim      The sim instance used to turn inputs on or off.
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  * @see testInputs
  */

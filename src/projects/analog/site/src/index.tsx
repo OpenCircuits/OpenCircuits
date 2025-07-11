@@ -1,63 +1,74 @@
-import React                          from "react";
-import ReactDOM                       from "react-dom";
-import ReactGA                        from "react-ga";
-import {Provider}                     from "react-redux";
-import {applyMiddleware, createStore} from "redux";
-import thunk, {ThunkMiddleware}       from "redux-thunk";
+import {initializeApp} from "firebase/app";
+import {browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence} from "firebase/auth";
 
-import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
-
-import {Images} from "shared/api/circuit/utils/Images";
-
-import {DefaultTool}      from "shared/api/circuit/tools/DefaultTool";
-import {PanTool}          from "shared/api/circuit/tools/PanTool";
-import {RotateTool}       from "shared/api/circuit/tools/RotateTool";
-import {SelectionBoxTool} from "shared/api/circuit/tools/SelectionBoxTool";
-import {SplitWireTool}    from "shared/api/circuit/tools/SplitWireTool";
-import {TranslateTool}    from "shared/api/circuit/tools/TranslateTool";
-import {WiringTool}       from "shared/api/circuit/tools/WiringTool";
-
-import {CleanUpHandler}       from "shared/api/circuit/tools/handlers/CleanUpHandler";
-import {CopyHandler}          from "shared/api/circuit/tools/handlers/CopyHandler";
-import {DeleteHandler}        from "shared/api/circuit/tools/handlers/DeleteHandler";
-import {DeselectAllHandler}   from "shared/api/circuit/tools/handlers/DeselectAllHandler";
-import {DuplicateHandler}     from "shared/api/circuit/tools/handlers/DuplicateHandler";
-import {FitToScreenHandler}   from "shared/api/circuit/tools/handlers/FitToScreenHandler";
-import {PasteHandler}         from "shared/api/circuit/tools/handlers/PasteHandler";
-import {RedoHandler}          from "shared/api/circuit/tools/handlers/RedoHandler";
-import {SaveHandler}          from "shared/api/circuit/tools/handlers/SaveHandler";
-import {SelectAllHandler}     from "shared/api/circuit/tools/handlers/SelectAllHandler";
-import {SelectionHandler}     from "shared/api/circuit/tools/handlers/SelectionHandler";
-import {SelectPathHandler}    from "shared/api/circuit/tools/handlers/SelectPathHandler";
-import {SnipWirePortsHandler} from "shared/api/circuit/tools/handlers/SnipWirePortsHandler";
-import {UndoHandler}          from "shared/api/circuit/tools/handlers/UndoHandler";
-
-import {ResizeTool} from "analog/tools/ResizeTool";
-
-import {CursorHandler} from "analog/tools/handlers/CursorHandler";
-
-import {NGSpiceLib} from "analog/models/sim/lib/NGSpiceLib";
+import React            from "react";
+import {createRoot}     from "react-dom/client";
+import ReactGA          from "react-ga";
+import {Provider}       from "react-redux";
+import {configureStore} from "@reduxjs/toolkit";
 
 import {GetCookie}     from "shared/site/utils/Cookies";
 import {LoadingScreen} from "shared/site/utils/LoadingScreen";
 
-import {DevGetFile, DevListFiles} from "shared/api/Dev";
+import {setCurDesigner} from "shared/site/utils/hooks/useDesigner";
 
-import {NoAuthState} from "shared/api/auth/NoAuthState";
+import {Circuit}      from "shared/api/circuit/public/Circuit";
+import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
 
-import {SetCircuitSaved} from "shared/site/state/CircuitInfo";
+import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
+import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
+import {TranslateTool}    from "shared/api/circuitdesigner/tools/TranslateTool";
+import {SelectionBoxTool} from "shared/api/circuitdesigner/tools/SelectionBoxTool";
+import {RotateTool}       from "shared/api/circuitdesigner/tools/RotateTool";
+import {WiringTool}       from "shared/api/circuitdesigner/tools/WiringTool";
+import {SplitWireTool}    from "shared/api/circuitdesigner/tools/SplitWireTool";
+
+import {CleanupHandler}     from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
+import {CopyHandler}        from "shared/api/circuitdesigner/tools/handlers/CopyHandler";
+import {DeleteHandler}      from "shared/api/circuitdesigner/tools/handlers/DeleteHandler";
+import {DeselectAllHandler} from "shared/api/circuitdesigner/tools/handlers/DeselectAllHandler";
+import {DuplicateHandler}   from "shared/api/circuitdesigner/tools/handlers/DuplicateHandler";
+import {FitToScreenHandler} from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
+import {PasteHandler}       from "shared/api/circuitdesigner/tools/handlers/PasteHandler";
+import {RedoHandler}        from "shared/api/circuitdesigner/tools/handlers/RedoHandler";
+import {SaveHandler}        from "shared/api/circuitdesigner/tools/handlers/SaveHandler";
+import {SelectAllHandler}   from "shared/api/circuitdesigner/tools/handlers/SelectAllHandler";
+import {SelectionHandler}   from "shared/api/circuitdesigner/tools/handlers/SelectionHandler";
+import {SelectPathHandler}  from "shared/api/circuitdesigner/tools/handlers/SelectPathHandler";
+import {SnipNodesHandler}   from "shared/api/circuitdesigner/tools/handlers/SnipNodesHandler";
+import {UndoHandler}        from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
+import {ZoomHandler}        from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
+
+import {SelectionBoxToolRenderer} from "shared/api/circuitdesigner/tools/renderers/SelectionBoxToolRenderer";
+import {RotateToolRenderer}       from "shared/api/circuitdesigner/tools/renderers/RotateToolRenderer";
+import {WiringToolRenderer}       from "shared/api/circuitdesigner/tools/renderers/WiringToolRenderer";
+
+import {CreateDesigner} from "analog/api/circuitdesigner/AnalogCircuitDesigner";
+
+import {DevGetFile, DevListFiles} from "shared/site/api/Dev";
+
+import {NoAuthState} from "shared/site/api/auth/NoAuthState";
 
 import {Login} from "shared/site/state/thunks/User";
 
-import {App}                from "./containers/App";
-import NGSpice              from "./lib/ngspice.wasm";
-import {AppState, AppStore} from "./state";
-import {AllActions}         from "./state/actions";
-import {reducers}           from "./state/reducers";
-import {AnalogPaste}        from "./utils/AnalogPaste";
-import {Setup}              from "./utils/CircuitInfo/Setup";
+import {AppStore} from "./state";
+import {reducers} from "./state/reducers";
 
-import ImageFiles from "./data/images.json";
+import {App} from "./containers/App";
+import {DEV_CACHED_CIRCUIT_FILE} from "shared/site/utils/Constants";
+import {CircuitHelpers, SetCircuitHelpers} from "shared/site/utils/CircuitHelpers";
+
+// import {DigitalProtoSchema} from "digital/site/proto";
+import {CreateCircuit} from "analog/api/circuit/public";
+import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
+// import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
+// import {PrintDebugStats} from "./proto/debug";
+// import {CUR_SAVE_VERSION} from "./utils/Constants";
+import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
+import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
+
+// import NGSpice from "./lib/ngspice.wasm";
+import {NGSpiceLib} from "./lib/NGSpiceLib";
 
 
 async function Init(): Promise<void> {
@@ -66,19 +77,15 @@ async function Init(): Promise<void> {
     let ngSpiceLib: NGSpiceLib;
 
     await LoadingScreen("loading-screen", startPercent, [
-        [40, "Loading Images", async (onProgress) => {
-            await Images.Load(ImageFiles.images, onProgress);
-        }],
-
         [80, "Loading NGSpice Library", async () => {
-            ngSpiceLib = await NGSpice();
-            if (!ngSpiceLib)
-                throw new Error("Failed to load NGSpice WASM binary!");
-            ngSpiceLib.OC_init();
+            // ngSpiceLib = await NGSpice();
+            // if (!ngSpiceLib)
+            console.error("Failed to load NGSpice WASM binary!");
+            // ngSpiceLib.OC_init();
         }],
 
         [85, "Initializing redux", async () => {
-            store = createStore(reducers, applyMiddleware(thunk as ThunkMiddleware<AppState, AllActions>));
+            store = configureStore({ reducer: reducers });
         }],
 
         [95, "Initializing Authentication", async () => {
@@ -89,41 +96,25 @@ async function Init(): Promise<void> {
                         await store.dispatch(Login(new NoAuthState(username)));
                 },
                 "google": async () => {
-                    // Load auth2 from GAPI and initialize w/ metadata
-                    const clientId = process.env.OC_OAUTH2_ID;
-                    if (!clientId)
-                        throw new Error("No client_id/OAUTH2_ID specificed for google auth!");
+                    const firebaseConfig = process.env.OC_FIREBASE_CONFIG;
+                    if (!firebaseConfig)
+                        throw new Error("No firebase config specified!");
+                    const app = initializeApp(JSON.parse(firebaseConfig));
 
-                    // Wait for GAPI to load
-                    if (!gapi) {
-                        const loaded = await new Promise<boolean>((resolve) => {
-                            let numChecks = 0;
-                            const interval = setInterval(() => {
-                                // Check if GAPI loaded
-                                if (gapi) {
-                                    clearInterval(interval);
-                                    resolve(true);
-                                }
-                                // Stop trying to load GAPI after 100 iterations
-                                else if (numChecks > 100) {
-                                    clearInterval(interval);
-                                    resolve(false);
-                                }
-                                numChecks++;
-                            }, 50); // Poll every 1/20th of a second
-                        });
+                    const auth = getAuth(app);
+                    await setPersistence(auth, browserLocalPersistence);
 
-                        if (!loaded)
-                            throw new Error("Failed to load GAPI!");
-                    }
-
-                    await new Promise((resolve) => gapi.load("auth2", resolve));
-                    await gapi.auth2.init({ "client_id": clientId }).then(async (_) => {}); // Have to explicitly call .then
+                    onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            await store.dispatch(Login(new GoogleAuthState(await user.getIdToken(), user.displayName ?? "")));
+                        }
+                    });
                 },
             };
             try {
-                if ((process.env.OC_AUTH_TYPES ?? "").trim().length > 0)
-                    await Promise.all(process.env.OC_AUTH_TYPES!.split(" ").map((a) => AuthMethods[a]()));
+                const authMethods = GetAuthMethods();
+                if (authMethods.length > 0)
+                    await Promise.all(authMethods.map((a) => AuthMethods[a]()));
             } catch (e) {
                 console.error(e);
             }
@@ -139,40 +130,60 @@ async function Init(): Promise<void> {
             }
         }],
         [100, "Rendering", async () => {
-            // Setup circuit and get the CircuitInfo and helpers
-            const [info, helpers] = Setup(
-                store, ngSpiceLib,
-                new DefaultTool(
-                    SelectAllHandler, FitToScreenHandler, DuplicateHandler,
-                    DeleteHandler, SnipWirePortsHandler, DeselectAllHandler,
-                    SelectionHandler, SelectPathHandler,
-                    RedoHandler, UndoHandler, CleanUpHandler, CopyHandler, CursorHandler,
-                    PasteHandler((data) => AnalogPaste(data, info, undefined)),
-                    SaveHandler(() => store.getState().user.isLoggedIn && helpers.SaveCircuitRemote()),
-                ),
-                PanTool, RotateTool, ResizeTool,
-                TranslateTool, WiringTool,
-                SplitWireTool, SelectionBoxTool
-            );
-
-            info.history.addCallback(() => {
-                store.dispatch(SetCircuitSaved(false));
+            SetCircuitHelpers({
+                CreateAndInitializeDesigner(tools) {
+                    return CreateDesigner(
+                        tools?.config ?? {
+                            defaultTool: new DefaultTool(
+                                SelectAllHandler, FitToScreenHandler, DuplicateHandler,
+                                DeleteHandler, SnipNodesHandler, DeselectAllHandler,
+                                SelectionHandler, SelectPathHandler, RedoHandler, UndoHandler,
+                                CleanupHandler, ZoomHandler,
+                                CopyHandler((objs) => CircuitHelpers.SerializeAsString(objs)),
+                                PasteHandler((str) => CircuitHelpers.DeserializeCircuit(str)),
+                                SaveHandler(() => store.getState().user.isLoggedIn /* && helpers.SaveCircuitRemote() */)
+                            ),
+                            tools: [
+                                new PanTool(),
+                                new RotateTool(), new TranslateTool(),
+                                new WiringTool(), new SplitWireTool(),
+                                new SelectionBoxTool(),
+                            ],
+                        },
+                        tools?.renderers ?? [RotateToolRenderer, WiringToolRenderer(({ renderer }) => renderer.options.defaultWireColor), SelectionBoxToolRenderer],
+                        DRAG_TIME,
+                        CreateCircuit(),
+                    );
+                },
+                Serialize(circuitOrObjs) {
+                    throw new Error("Unimplemented!");
+                },
+                SerializeAsString(circuitOrObjs) {
+                    throw new Error("Unimplemented!");
+                },
+                DeserializeCircuit(data) {
+                    throw new Error("Unimplemented!");
+                },
             });
 
+            const mainDesigner = CircuitHelpers.CreateAndInitializeDesigner();
+
+            setCurDesigner(mainDesigner);
+
+            // Load cached circuit (dev-mode only)
             if (process.env.NODE_ENV === "development") {
-                // Load dev state
                 const files = await DevListFiles();
                 if (files.includes(DEV_CACHED_CIRCUIT_FILE))
-                    await helpers.LoadCircuit(() => DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+                    CircuitHelpers.LoadNewCircuit(await DevGetFile(DEV_CACHED_CIRCUIT_FILE));
             }
 
-            ReactDOM.render(
+            const root = createRoot(document.getElementById("root")!);
+            root.render(
                 <React.StrictMode>
                     <Provider store={store}>
-                        <App info={info} helpers={helpers} />
+                        <App />
                     </Provider>
-                </React.StrictMode>,
-                document.getElementById("root")
+                </React.StrictMode>
             );
         }],
     ]);

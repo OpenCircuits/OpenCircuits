@@ -1,12 +1,8 @@
-import {AnalogCircuitInfo} from "analog/utils/AnalogCircuitInfo"
 
 
 type Props = {
-    info: AnalogCircuitInfo;
 }
-export const OscilloscopePlotsModule = ({ info }: Props) => {
-    const { renderer } = info;
-
+export const OscilloscopePlotsModule = ({ }: Props) => {
     return null;
 
     // TODO[model_refactor_api]
