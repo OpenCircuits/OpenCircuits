@@ -7,7 +7,7 @@ import {ToolHandler, ToolHandlerResponse} from "shared/api/circuitdesigner/tools
 
 import {Signal}           from "digital/api/circuit/schema/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
-import {DigitalTypes}     from "digital/api/circuit/public/impl/DigitalCircuitState";
+import {DigitalTypes}     from "digital/api/circuit/public/impl/DigitalCircuitContext";
 
 
 function isPressableComponent(obj: DigitalTypes["Obj"] | undefined): obj is DigitalComponent {

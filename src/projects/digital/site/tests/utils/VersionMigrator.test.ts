@@ -600,7 +600,7 @@ describe("DigitalVersionMigrator", () => {
             expect(inputPortA.originPos.y).toBeGreaterThan(inputPortB.originPos.y);
         });
         test("Nested IC", () => {
-            const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
+            const [circuit, { Place, Connect, TurnOn }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(nestedICCircuit));
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
@@ -624,7 +624,7 @@ describe("DigitalVersionMigrator", () => {
             expect(led).toBeOn();
         });
         test("Z Index", () => {
-            const [circuit, _, { }] = CreateTestCircuit();
+            const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(zIndexCircuit));
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
@@ -645,14 +645,14 @@ describe("DigitalVersionMigrator", () => {
             expect(middle.getProp("zIndex")).toBeLessThan(top.getProp("zIndex") as number);
         });
         test("Clock in IC (off)", () => {
-            const [circuit, state] = CreateTestCircuit();
+            const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(clockInICOffCircuit));
             expect(warnings).toBeDefined();
             expect(warnings).toHaveLength(1);
             expect(warnings).toContain(IMPORT_IC_CLOCK_MESSAGE);
-            state.simRunner?.pause();
+            circuit.sim.pause();
             circuit.import(DigitalProtoToCircuit(schema));
-            state.simRunner?.resume();
+            circuit.sim.resume();
 
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
@@ -695,7 +695,7 @@ describe("DigitalVersionMigrator", () => {
             expect(led).toBeOn();
         });
         test("Port heights", () => {
-            const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
+            const [circuit, { TurnOn, TurnOff }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(threeInputICCircuit));
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
@@ -732,7 +732,7 @@ describe("DigitalVersionMigrator", () => {
             expect(out).toBeOff();
         });
         test("(a|b)&c IC", () => {
-            const [circuit, _, { TurnOn, TurnOff }] = CreateTestCircuit();
+            const [circuit, { TurnOn, TurnOff }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(inputOrderICCircuit));
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
@@ -788,7 +788,7 @@ describe("DigitalVersionMigrator", () => {
             expect(out).toBeOff();
         });
         test("All Sides IC", () => {
-            const [circuit, _] = CreateTestCircuit();
+            const [circuit] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(allSidesICCircuit));
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
@@ -831,7 +831,7 @@ describe("DigitalVersionMigrator", () => {
         });
         test("Flip Flop in IC", () => {
             // Need to make sure that FlipFlop state transfers over as initial IC state
-            const [circuit, _, { Place, Connect, TurnOn, TurnOff }] = CreateTestCircuit();
+            const [circuit, { Place, Connect, TurnOn, TurnOff }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(flipFlopInICCircuit));
             expect(warnings).toHaveLength(0);
 
@@ -861,7 +861,7 @@ describe("DigitalVersionMigrator", () => {
 
     describe("From version 2.1", () => {
         test("Nested IC Not in Designer", () => {
-            const [circuit, _, { Place, Connect, TurnOn }] = CreateTestCircuit();
+            const [circuit, { Place, Connect, TurnOn }] = CreateTestCircuit();
             const { schema, warnings } = VersionMigrator(JSON.stringify(nestedICNotInDesignerCircuit));
             expect(warnings).toHaveLength(0);
 

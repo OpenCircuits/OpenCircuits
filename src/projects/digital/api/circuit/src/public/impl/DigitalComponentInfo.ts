@@ -4,7 +4,7 @@ import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/Di
 
 import {DigitalComponentInfo} from "../DigitalComponentInfo";
 
-import {DigitalTypes} from "./DigitalCircuitState";
+import {DigitalTypes} from "./DigitalCircuitContext";
 
 
 export class DigitalComponentInfoImpl extends ComponentInfoImpl<DigitalTypes> implements DigitalComponentInfo {

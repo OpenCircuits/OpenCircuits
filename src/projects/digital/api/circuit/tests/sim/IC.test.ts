@@ -8,9 +8,9 @@ import {V} from "Vector";
 describe("IC", () => {
     describe("Basic ANDGate IC", () => {
         test("Basic", () => {
-            const [circuit, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
 
-            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
+            const [icCircuit, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
                 // const [_, { inputs: [sw1, sw2], outputs: [out] }] = ICPlaceAndConnect("ANDGate");
                 const [i1, i2, g, o1] = ICPlace("InputPin", "InputPin", "ANDGate", "OutputPin");
@@ -50,9 +50,9 @@ describe("IC", () => {
 
     describe("Basic Nested ANDGate IC", () => {
         test("Basic", () => {
-            const [circuit, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
 
-            const [innerICCircuit, {}, { Place: InnerICPlace, Connect: InnerICConnect }] = CreateTestCircuit();
+            const [innerICCircuit, { Place: InnerICPlace, Connect: InnerICConnect }] = CreateTestCircuit();
             const innerIC = (() => {
                 const [i1, i2, g, o1] = InnerICPlace("InputPin", "InputPin", "ANDGate", "OutputPin");
                 InnerICConnect(i1, g.inputs[0]), InnerICConnect(i2, g.inputs[1]), InnerICConnect(g, o1);
@@ -72,7 +72,7 @@ describe("IC", () => {
                 });
             })();
 
-            const [outerICCircuit, {}, { Place: OuterICPlace, Connect: OuterICConnect }] = CreateTestCircuit();
+            const [outerICCircuit, { Place: OuterICPlace, Connect: OuterICConnect }] = CreateTestCircuit();
             outerICCircuit.importICs([innerIC]);
             const outerIC = (() => {
                 const [i1, i2, g, o1] = OuterICPlace("InputPin", "InputPin", innerIC.id, "OutputPin");
@@ -112,9 +112,9 @@ describe("IC", () => {
 
     describe("IC with Switch keeps state", () => {
         test("Basic", () => {
-            const [circuit, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
 
-            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
+            const [icCircuit, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
                 // const [_, { inputs: [sw1, sw2], outputs: [out] }] = ICPlaceAndConnect("ANDGate");
                 const [i1, i2, g, o1] = ICPlace("Switch", "InputPin", "ANDGate", "OutputPin");
@@ -151,9 +151,9 @@ describe("IC", () => {
 
     describe("IC with constant inputs", () => {
         test("Constant Low", () => {
-            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { PlaceAndConnect }] = CreateTestCircuit();
 
-            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
+            const [icCircuit, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
                 // const [_, { inputs: [sw1, sw2], outputs: [out] }] = ICPlaceAndConnect("ANDGate");
                 const [i1, o1] = ICPlace("ConstantLow", "OutputPin");
@@ -177,10 +177,10 @@ describe("IC", () => {
             expect(out).toBeOff();
         });
         test("Constant High", () => {
-            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { PlaceAndConnect }] = CreateTestCircuit();
 
             const ic = (() => {
-                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [icCircuit, { Place, Connect }] = CreateTestCircuit();
                 const [i1, o1] = Place("ConstantHigh", "OutputPin");
                 Connect(i1, o1);
 
@@ -200,10 +200,10 @@ describe("IC", () => {
             expect(out).toBeOn();
         });
         test("Nested Constant High", () => {
-            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { PlaceAndConnect }] = CreateTestCircuit();
 
             const innerIC = (() => {
-                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [icCircuit, { Place, Connect }] = CreateTestCircuit();
                 const [i1, o1] = Place("ConstantHigh", "OutputPin");
                 Connect(i1, o1);
 
@@ -219,7 +219,7 @@ describe("IC", () => {
             // ANDGate with the innerIC (ConstantHigh) and another ConstantHigh connected to output
             // (should always be on)
             const outerIC = (() => {
-                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [icCircuit, { Place, Connect }] = CreateTestCircuit();
                 icCircuit.importICs([innerIC]);
                 const [i1, i2, g, o1] = Place("ConstantHigh", innerIC.id, "ANDGate", "OutputPin");
                 Connect(i1, g.inputs[0]); Connect(i2, g.inputs[1]); Connect(g, o1);
@@ -238,10 +238,10 @@ describe("IC", () => {
             expect(out).toBeOn();
         });
         test("Constant Number (0)", () => {
-            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { PlaceAndConnect }] = CreateTestCircuit();
 
             const ic = (() => {
-                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [icCircuit, { Place, Connect }] = CreateTestCircuit();
                 const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
                 Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
 
@@ -269,10 +269,10 @@ describe("IC", () => {
             expect(out4).toBeOff();
         });
         test("Constant Number (F)", () => {
-            const [circuit, {}, { PlaceAndConnect }] = CreateTestCircuit();
+            const [circuit, { PlaceAndConnect }] = CreateTestCircuit();
 
             const ic = (() => {
-                const [icCircuit, {}, { Place, Connect }] = CreateTestCircuit();
+                const [icCircuit, { Place, Connect }] = CreateTestCircuit();
                 const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
                 Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
 

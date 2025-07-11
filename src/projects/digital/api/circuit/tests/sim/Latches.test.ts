@@ -8,8 +8,8 @@ describe("Latches", () => {
     const ON = Signal.On, OFF = Signal.Off;
 
     describe("DLatch", () => {
-        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_, { D: [D], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("DLatch");
+        const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_d, { D: [D], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("DLatch");
 
         function expectState(signal: Signal): void {
             expect(Q.inputs[0].signal).toBe(signal);
@@ -67,8 +67,8 @@ describe("Latches", () => {
     });
 
     describe("SRLatch", () => {
-        const [{}, {}, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_, { S: [S], R: [R], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("SRLatch");
+        const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
+        const [_sr, { S: [S], R: [R], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("SRLatch");
 
         function expectState(signal: Signal): void {
             expect(Q.inputs[0].signal).toBe(signal);

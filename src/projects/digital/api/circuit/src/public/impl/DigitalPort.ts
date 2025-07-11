@@ -5,20 +5,16 @@ import {Signal} from "digital/api/circuit/schema/Signal";
 
 import {DigitalPort} from "../DigitalPort";
 
-import {DigitalCircuitState, DigitalTypes} from "./DigitalCircuitState";
+import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
 
 
 export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPort {
-    protected override readonly state: DigitalCircuitState;
+    protected override readonly ctx: DigitalCircuitContext;
 
-    public constructor(state: DigitalCircuitState, id: GUID, icId?: GUID) {
-        super(state, id, icId);
+    public constructor(ctx: DigitalCircuitContext, id: GUID, icId?: GUID) {
+        super(ctx, id, icId);
 
-        this.state = state;
-    }
-
-    protected override getWireKind(_p1: GUID, _p2: GUID): string {
-        return "DigitalWire";
+        this.ctx = ctx;
     }
 
     public get isInputPort(): boolean {
@@ -31,6 +27,6 @@ export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPo
     public get signal(): Signal {
         if (this.icId)
             throw new Error(`DigitalPortImpl: Signal cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`);
-        return this.state.sim.getSignal(this.id);
+        return this.ctx.sim.getSignal(this.id);
     }
 }

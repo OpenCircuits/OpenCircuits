@@ -8,15 +8,15 @@ import {Schema}  from "shared/api/circuit/schema";
 import {Component, Node, PortConfig} from "../Component";
 
 import {BaseObjectImpl}             from "./BaseObject";
-import {CircuitState, CircuitTypes} from "./CircuitState";
+import {CircuitContext, CircuitTypes} from "./CircuitContext";
 import {Wire} from "../Wire";
 
 
 export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Component, Node {
     public readonly baseKind = "Component";
 
-    public constructor(state: CircuitState<T>, id: GUID, icId?: GUID) {
-        super(state, id, icId);
+    public constructor(ctx: CircuitContext<T>, id: GUID, icId?: GUID) {
+        super(ctx, id, icId);
     }
 
     protected getComponent() {
@@ -27,7 +27,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     }
 
     public get info(): T["ComponentInfo"] {
-        return this.state.constructComponentInfo(this.kind);
+        return this.ctx.factory.constructComponentInfo(this.kind);
     }
 
     public override get kind(): string {
@@ -41,7 +41,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     public set x(val: number) {
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot set 'x' for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.internal.setPropFor<Schema.Component, "x">(this.id, "x", val);
+        this.ctx.internal.setPropFor<Schema.Component, "x">(this.id, "x", val);
     }
     public get x(): number {
         return (this.getComponent().props.x ?? 0);
@@ -49,7 +49,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     public set y(val: number) {
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot set 'y' for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.internal.setPropFor(this.id, "y", val);
+        this.ctx.internal.setPropFor(this.id, "y", val);
     }
     public get y(): number {
         return (this.getComponent().props.y ?? 0);
@@ -57,10 +57,10 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     public set pos(val: Vector) {
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot set position for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.internal.beginTransaction();
-        this.state.internal.setPropFor<Schema.Component, "x">(this.id, "x", val.x).unwrap();
-        this.state.internal.setPropFor<Schema.Component, "y">(this.id, "y", val.y).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.beginTransaction();
+        this.ctx.internal.setPropFor<Schema.Component, "x">(this.id, "x", val.x).unwrap();
+        this.ctx.internal.setPropFor<Schema.Component, "y">(this.id, "y", val.y).unwrap();
+        this.ctx.internal.commitTransaction();
     }
     public get pos(): Vector {
         const obj = this.getComponent();
@@ -69,7 +69,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     public set angle(val: number) {
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot set 'angle' for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.internal.setPropFor<Schema.Component, "angle">(this.id, "angle", val);
+        this.ctx.internal.setPropFor<Schema.Component, "angle">(this.id, "angle", val);
     }
     public get angle(): number {
         return (this.getComponent().props.angle ?? 0);
@@ -77,7 +77,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     public set zIndex(val: number) {
         if (this.icId)
             throw new Error(`BaseObjImpl: Cannot set zIndex for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.internal.setPropFor(this.id, "zIndex", val).unwrap();
+        this.ctx.internal.setPropFor(this.id, "zIndex", val).unwrap();
     }
     public get zIndex(): number {
         return this.getComponent().props["zIndex"] ?? 0;
@@ -91,7 +91,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
             .unwrap();
     }
     public isIC(): boolean {
-        return this.state.internal.hasIC(this.kind);
+        return this.ctx.internal.hasIC(this.kind);
     }
 
     public get ports(): Record<string, T["Port[]"]> {
@@ -99,7 +99,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         return MapObj(
             this.getCircuitInfo().getPortConfig(this.id).unwrap(),
             ([group, _]) => [...this.getCircuitInfo().getPortsForGroup(this.id, group).unwrap()]
-                .map((id) => this.state.constructPort(id, this.icId))
+                .map((id) => this.ctx.factory.constructPort(id, this.icId))
                 .sort((p1, p2) => (p1.index - p2.index)));
     }
     public get allPorts(): T["Port[]"] {
@@ -111,26 +111,26 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
     // },
 
     public shift(): void {
-        this.zIndex = this.state.assembler.highestZ + 1;
+        this.zIndex = this.ctx.assembler.highestZ + 1;
     }
 
     public setPortConfig(cfg: PortConfig): boolean {
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot set port config for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
 
-        const curConfig = this.state.internal.getPortConfig(this.id).unwrap();
+        const curConfig = this.ctx.internal.getPortConfig(this.id).unwrap();
 
         const config = {
             ...curConfig,
             ...cfg,
         };
-        const [_, info] = this.state.internal.getComponentAndInfoById(this.id).unwrap();
+        const [_, info] = this.ctx.internal.getComponentAndInfoById(this.id).unwrap();
 
         info.checkPortConfig(config).unwrap();
 
-        this.state.internal.beginTransaction();
-        this.state.internal.setPortConfig(this.id, config).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.beginTransaction();
+        this.ctx.internal.setPortConfig(this.id, config).unwrap();
+        this.ctx.internal.commitTransaction();
         return true;
     }
     public firstAvailable(group: string): T["Port"] | undefined {
@@ -139,7 +139,7 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
             return undefined;
 
         for (const portId of ports[group]) {
-            const port = this.state.constructPort(portId, this.icId);
+            const port = this.ctx.factory.constructPort(portId, this.icId);
             if (port.isAvailable)
                 return port;
         }
@@ -149,23 +149,23 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot replace component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
 
-        this.state.internal.beginTransaction();
-        this.state.internal.replaceComponent(this.id, newKind).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.beginTransaction();
+        this.ctx.internal.replaceComponent(this.id, newKind).unwrap();
+        this.ctx.internal.commitTransaction();
     }
     public delete(): void {
         if (this.icId)
             throw new Error(`ComponentImpl: Cannot delete component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
-        this.state.internal.beginTransaction();
+        this.ctx.internal.beginTransaction();
         if (this.isNode() as boolean) {
             // Wire deletion will delete the whole path, including the node
             this.allPorts[0].connections[0].delete();
         }
         else {
-            this.state.internal.removePortsFor(this.id).unwrap();
-            this.state.internal.deleteComponent(this.id).unwrap();
+            this.ctx.internal.removePortsFor(this.id).unwrap();
+            this.ctx.internal.deleteComponent(this.id).unwrap();
         }
-        this.state.internal.commitTransaction();
+        this.ctx.internal.commitTransaction();
     }
 
     // Node methods
@@ -180,22 +180,22 @@ export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> imp
 
         const wires = this.allPorts.flatMap((p) => p.connections);
         if (wires.length !== 2) {
-            this.state.internal.cancelTransaction();
+            this.ctx.internal.cancelTransaction();
             throw new Error(`ComponentImpl.snip: Cannot snip a Node with not exactly 2 wires! Node: ${this.id}`);
         }
 
-        this.state.internal.beginTransaction();
+        this.ctx.internal.beginTransaction();
         // Get the other ports that the wires are connecting to that aren't this Node's ports.
         const [p1, p2] = wires.flatMap((w) => [w.p1, w.p2]).filter((p) => (p.parent.id !== this.id));
-        wires.forEach((w) => this.state.internal.deleteWire(w.id));
+        wires.forEach((w) => this.ctx.internal.deleteWire(w.id));
         const wire = p1.connectTo(p2);
         if (!wire) {
-            this.state.internal.cancelTransaction();
+            this.ctx.internal.cancelTransaction();
             throw new Error(`ComponentImpl.snip: Failed to snip node! Connections failed! Node: ${this.id}`);
         }
-        this.state.internal.removePortsFor(this.id).unwrap();
-        this.state.internal.deleteComponent(this.id).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.removePortsFor(this.id).unwrap();
+        this.ctx.internal.deleteComponent(this.id).unwrap();
+        this.ctx.internal.commitTransaction();
 
 
         return wire;

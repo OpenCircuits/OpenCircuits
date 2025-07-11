@@ -8,7 +8,7 @@ import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 describe("DigitalComponent", () => {
     describe("Exists", () => {
         test("Add/delete and undo/redo", () => {
-            const [circuit, _, { Place, Connect }] = CreateTestCircuit();
+            const [circuit, { Place, Connect }] = CreateTestCircuit();
             const [sw, led] = Place("Switch", "LED");
             const w = Connect(sw, led)!;
 
@@ -26,7 +26,7 @@ describe("DigitalComponent", () => {
             expect(w.exists()).toBeFalsy();
         });
         test("Circuit.deleteObjs", () => {
-            const [circuit, _, { Place, Connect }] = CreateTestCircuit();
+            const [circuit, { Place, Connect }] = CreateTestCircuit();
             const [sw, led] = Place("Switch", "LED");
             const w = Connect(sw, led)!;
 
@@ -39,7 +39,7 @@ describe("DigitalComponent", () => {
             expect(w.exists()).toBeFalsy();
         });
         test("Deleting connected component deletes wire", () => {
-            const [circuit, _, { Place, Connect }] = CreateTestCircuit();
+            const [circuit, { Place, Connect }] = CreateTestCircuit();
             const [sw, led] = Place("Switch", "LED");
             const w = Connect(sw, led)!;
 

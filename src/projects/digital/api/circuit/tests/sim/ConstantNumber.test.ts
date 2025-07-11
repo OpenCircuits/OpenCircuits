@@ -6,7 +6,7 @@ import {V} from "Vector";
 
 describe("ConstantNumber", () => {
     test("Default outputs 0", () => {
-        const [{}, {}, { PlaceAndConnect }] = CreateTestCircuit();
+        const [_, { PlaceAndConnect }] = CreateTestCircuit();
         const [_comp, { outputs: [out1, out2, out3, out4] }] = PlaceAndConnect("ConstantNumber");
 
         expect(out1).toBeOff();
@@ -15,7 +15,7 @@ describe("ConstantNumber", () => {
         expect(out4).toBeOff();
     });
     test("Changing inputNum changes outputs", () => {
-        const [{}, {}, { PlaceAndConnect }] = CreateTestCircuit();
+        const [_, { PlaceAndConnect }] = CreateTestCircuit();
         const [comp, { outputs: [out1, out2, out3, out4] }] = PlaceAndConnect("ConstantNumber");
 
         comp.setProp("inputNum", 1);
@@ -26,7 +26,7 @@ describe("ConstantNumber", () => {
         expect(out4).toBeOff();
     });
     test("Output order", () => {
-        const [{}, {}, { PlaceAndConnect }] = CreateTestCircuit();
+        const [_, { PlaceAndConnect }] = CreateTestCircuit();
         const [comp] = PlaceAndConnect("ConstantNumber");
         expect(comp.outputs[0].targetPos.y).toBeGreaterThan(comp.outputs[1].targetPos.y);
     });

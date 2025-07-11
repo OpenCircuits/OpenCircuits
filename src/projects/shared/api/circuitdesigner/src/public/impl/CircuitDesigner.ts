@@ -1,44 +1,47 @@
 import {SVGDrawing} from "svg2canvas";
 
 import {Circuit}      from "shared/api/circuit/public";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitState";
+import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
-import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}        from "shared/api/circuitdesigner/tools/Tool";
 
 import {CircuitDesigner, CircuitDesignerEv, CircuitDesignerOptions} from "../CircuitDesigner";
 import {Viewport}                                from "../Viewport";
-import {CircuitDesignerState}                    from "./CircuitDesignerState";
 import {ViewportImpl}                            from "./Viewport";
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
+import {ToolManager} from "./ToolManager";
 
-
-export interface ToolConfig<T extends CircuitTypes = CircuitTypes> {
-    defaultTool: DefaultTool<T>;
-    tools: Tool[];
-}
 
 export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes> extends ObservableImpl<CircuitDesignerEv> implements CircuitDesigner {
     public readonly circuit: CircuitT;
+    protected readonly ctx: CircuitContext<T>;
 
     public readonly viewport: Viewport;
 
-    protected readonly state: CircuitDesignerState<T>;
+    protected readonly toolManager: ToolManager<T>;
+    protected readonly state: { isLocked: boolean, curPressedObj?: T["Obj"] };
 
     public constructor(
         circuit: CircuitT,
-        state: CircuitDesignerState<T>,
+        ctx: CircuitContext<T>,
         svgMap: Map<string, SVGDrawing>,
-        options: CircuitDesignerOptions,
+        options: CircuitDesignerOptions<T>,
     ) {
         super();
 
         this.circuit = circuit;
-        this.state = state;
+        this.ctx = ctx;
 
-        this.viewport = new ViewportImpl(state, this, svgMap, options);
+        this.toolManager = new ToolManager(options.toolConfig.defaultTool, options.toolConfig.tools);
+        this.state = {
+            isLocked:      false,
+            curPressedObj: undefined,
+        };
 
-        this.state.toolManager.defaultTool.subscribe((ev) => this.publish(ev));
+        this.viewport = new ViewportImpl(ctx, this, this.toolManager, svgMap, options);
+
+        this.toolManager.defaultTool.subscribe((ev) => this.publish(ev));
+        this.toolManager.subscribe((ev) => this.publish(ev));
     }
 
     public set isLocked(locked: boolean) {
@@ -49,7 +52,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitType
     }
 
     public get curTool(): Tool | undefined {
-        return this.state.toolManager.curTool;
+        return this.toolManager.curTool;
     }
 
     public set curPressedObj(obj: T["Obj"] | undefined) {

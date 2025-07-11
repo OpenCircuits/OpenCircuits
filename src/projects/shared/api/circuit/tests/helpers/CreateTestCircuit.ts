@@ -2,27 +2,24 @@ import "./Extensions";
 
 import {V, Vector} from "Vector";
 
-import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Circuit, Component, Node, Port, ReadonlyICPin, Wire, uuid} from "shared/api/circuit/public";
+import {Circuit, Component, Port, ReadonlyICPin, Wire, uuid} from "shared/api/circuit/public";
 import {CircuitImpl, IntegratedCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
-import {CircuitState, CircuitTypes}                  from "shared/api/circuit/public/impl/CircuitState";
+import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes}             from "shared/api/circuit/public/impl/CircuitContext";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
 import {PortImpl}                                    from "shared/api/circuit/public/impl/Port";
 import {WireImpl}                                    from "shared/api/circuit/public/impl/Wire";
 
-import {CircuitInternal, GUID}           from "shared/api/circuit/internal";
-import {CircuitAssembler}                from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import {DefaultRenderOptions}            from "shared/api/circuit/internal/assembly/RenderOptions";
-import {NodeAssembler}                   from "shared/api/circuit/internal/assembly/NodeAssembler";
-import {WireAssembler}                   from "shared/api/circuit/internal/assembly/WireAssembler";
-import {CircuitLog}                      from "shared/api/circuit/internal/impl/CircuitLog";
-import {CircuitDocument}                 from "shared/api/circuit/internal/impl/CircuitDocument";
-import {BaseComponentConfigurationInfo, BaseObjInfo,
-        BaseObjInfoProvider, PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
+import {GUID}             from "shared/api/circuit/internal";
+import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
+import {WireAssembler}    from "shared/api/circuit/internal/assembly/WireAssembler";
+import {BaseComponentConfigurationInfo,
+        BaseObjInfoProvider, BasePortConfigurationInfo, BaseWireConfigurationInfo, PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {MapObj} from "shared/api/circuit/utils/Functions";
@@ -65,6 +62,24 @@ export class TestComponentInfo extends BaseComponentConfigurationInfo {
     }
 }
 
+export class TestWireInfo extends BaseWireConfigurationInfo {
+    public override getSplitConnections(_p1: Schema.Port, _p2: Schema.Port, _wire: Schema.Wire): Result<{
+        nodeKind: string;
+        p1Group: string;
+        p1Idx: number;
+        p2Group: string;
+        p2Idx: number;
+    }> {
+        return Ok({
+            nodeKind: "TestNode",
+            p1Group:  "",
+            p1Idx:    0,
+            p2Group:  "",
+            p2Idx:    0,
+        });
+    }
+}
+
 export class TestObjInfoProvider extends BaseObjInfoProvider {
     public constructor(portConfigs: PortConfig[]) {
         super(
@@ -74,8 +89,9 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
 
                 new TestComponentInfo("Pin", {}, [""], portConfigs, false),
             ],
-            [new BaseObjInfo("Wire", "TestWire", { "color": "string" })],
-            [new BaseObjInfo("Port", "TestPort", {})],
+            [new TestWireInfo("TestWire", {})],
+            [new BasePortConfigurationInfo("TestPort", {}, "TestWire")],
+            ["Pin"],
         );
     }
 
@@ -86,11 +102,14 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
         }), {});
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
-        this.ics.set(ic.metadata.id, new TestComponentInfo(ic.metadata.id, {}, [""], [portConfig], false));
-    }
-
-    public override deleteIC(ic: Schema.IntegratedCircuit): void {
-        this.ics.delete(ic.metadata.id);
+        this.ics.set(ic.metadata.id, new TestComponentInfo(
+            ic.metadata.id,
+            {},
+            Object.keys(ports),
+            [portConfig],
+            false,
+            MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
+        ));
     }
 }
 
@@ -120,34 +139,39 @@ export class TestComponentAssembler extends ComponentAssembler {
     }
 }
 
-export class TestComponentImpl extends ComponentImpl<CircuitTypes> {}
+export class TestCircuitContext extends CircuitContext<CircuitTypes> {
+    public readonly assembler: CircuitAssembler;
+    public readonly factory: CircuitAPIFactory<CircuitTypes>;
 
-export class TestWireImpl extends WireImpl<CircuitTypes> {
-    protected override getNodeKind(): string {
-        return "TestNode";
-    }
+    public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
+        super(id, new TestObjInfoProvider([{ "": 1 }, ...additionalPortConfigs]));
 
-    protected override connectNode(node: Node, p1: Port, p2: Port) {
-        const port = node.ports[""][0];
-        return {
-            wire1: p1.connectTo(port),
-            wire2: port.connectTo(p2),
-        };
-    }
-}
+        this.assembler = new CircuitAssembler(this.internal, this.renderOptions, (params) => ({
+            "IC":       new ICComponentAssembler(params),
+            "TestWire": new WireAssembler(params),
+            "TestComp": new TestComponentAssembler(params),
+            "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
 
+            "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
+        }));
+        this.factory = new CachedCircuitAPIFactoryImpl({
+            constructComponent: (id, icId) => new ComponentImpl(this, id, icId),
+            constructWire:      (id, icId) => new WireImpl(this, id, icId),
+            constructPort:      (id, icId) => new PortImpl(this, id, icId),
 
-export class TestPortImpl extends PortImpl<CircuitTypes> {
-    protected override getWireKind(_p1: GUID, _p2: GUID): string {
-        return "TestWire";
+            constructIC: (id) => new IntegratedCircuitImpl(this, id),
+
+            constructComponentInfo: (kind) => new ComponentInfoImpl(this, kind),
+
+            constructObjContainer: (objs, icId) => new ObjContainerImpl(this, objs, icId),
+        });
     }
 }
 
 export class TestCircuitImpl extends CircuitImpl<CircuitTypes> {
-    protected override checkIfPinIsValid(_pin: ReadonlyICPin, port: Port): Result {
-        if (port.parent.kind !== "Pin")
-            return ErrE(`TestCircuit.checkIfPinIsValid: Pin must be apart of a 'Pin' component! Found: '${port.parent.kind}' instead!`);
-        return OkVoid();
+    public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
+        const ctx = new TestCircuitContext(id, additionalPortConfigs);
+        super(ctx, new SelectionsImpl(ctx));
     }
 }
 
@@ -160,54 +184,17 @@ export interface TestCircuitHelpers {
     GetPort(c: Component): Port;
 }
 
-export function CreateTestCircuit(
-    additionalPortConfigs: PortConfig[] = []
-): [Circuit, CircuitState<CircuitTypes>, TestCircuitHelpers] {
-    const portConfigs = [{ "": 1 }, ...additionalPortConfigs];
-
-    const mainCircuitID = uuid();
-    const log = new CircuitLog();
-    const doc = new CircuitDocument(mainCircuitID, new TestObjInfoProvider(portConfigs), log);
-    const internal = new CircuitInternal(log, doc);
-
-    const renderOptions = new DefaultRenderOptions();
-    const assembler = new CircuitAssembler(internal, renderOptions, (params) => ({
-        "IC":       new ICComponentAssembler(params),
-        "TestWire": new WireAssembler(params),
-        "TestComp": new TestComponentAssembler(params),
-        "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
-
-        "Pin": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
-    }));
-
-    const state: CircuitState<CircuitTypes> = {
-        internal, assembler, renderOptions,
-
-        constructComponent(id, icId) {
-            return new TestComponentImpl(state, id, icId);
-        },
-        constructWire(id, icId) {
-            return new TestWireImpl(state, id, icId);
-        },
-        constructPort(id, icId) {
-            return new TestPortImpl(state, id, icId);
-        },
-        constructIC(id) {
-            return new IntegratedCircuitImpl(state, id);
-        },
-        constructComponentInfo(kind) {
-            return new ComponentInfoImpl(state, kind);
-        },
-        constructObjContainer(objs, icId) {
-            return new ObjContainerImpl(state, objs, icId);
-        },
-    };
-
-    const circuit = new TestCircuitImpl(state, new SelectionsImpl<CircuitTypes>(state));
-
-    return [circuit, state, {
+export function CreateTestCircuitHelpers(circuit: Circuit): TestCircuitHelpers {
+    return {
         PlaceAt: (...positions) => positions.map((p) => circuit.placeComponentAt("TestComp", p)),
         Connect: (c1, c2) => c1.ports[""][0].connectTo(c2.ports[""][0])!,
         GetPort: (c) => c.ports[""][0],
-    }];
+    };
+}
+
+export function CreateTestCircuit(
+    additionalPortConfigs: PortConfig[] = []
+): [Circuit, TestCircuitHelpers] {
+    const circuit = new TestCircuitImpl(uuid(), additionalPortConfigs);
+    return [circuit, CreateTestCircuitHelpers(circuit)];
 }

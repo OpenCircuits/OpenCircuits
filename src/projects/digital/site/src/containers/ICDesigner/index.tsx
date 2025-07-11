@@ -16,7 +16,7 @@ import {useWindowSize}         from "shared/site/utils/hooks/useWindowSize";
 import {useWindowKeyDownEvent} from "shared/site/utils/hooks/useKeyDownEvent";
 import {TextModuleInputField}  from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
 
-import {CreateCircuit} from "digital/api/circuit/public";
+import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
 
 import {CreateDesigner, DigitalCircuitDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {ICResizeTool}   from "digital/api/circuitdesigner/tools/ICResizeTool";
@@ -74,11 +74,11 @@ export const ICDesigner = ({ }: Props) => {
         mainDesigner.viewport.canvasInfo!.input.setBlocked(true);
 
         // Create main circuit
-        const [circuit, state] = CreateCircuit();
+        const circuit = CreateCircuit();
 
         // Create the IC from the objIds in the main designer's circuit
         // and replace all input/output components with input/output pins.
-        const [icCircuit] = CreateCircuit();
+        const icCircuit: DigitalCircuit = CreateCircuit();
         icCircuit.importICs(mainDesigner.circuit.getICs());
         icCircuit.import(mainDesigner.circuit.createContainer(objIds).withWiresAndPorts());
 
@@ -112,7 +112,7 @@ export const ICDesigner = ({ }: Props) => {
             },
             [],
             DRAG_TIME,
-            [circuit, state],
+            circuit,
         );
 
         // Synchronize current debug info from mainInfo
@@ -196,19 +196,19 @@ export const ICDesigner = ({ }: Props) => {
                     height={h*IC_DESIGNER_VH} />
 
             {icViewDesigner &&
-                <TextModuleInputField
+                (<TextModuleInputField
                     circuit={icViewDesigner.circuit}
                     props={[icName ?? ""]}
                     placeholder="Name of IC"
                     alt="Name of IC"
-                    doChange={doICNameChange} />}
+                    doChange={doICNameChange} />)}
             {showError !== NameErrorStates.None &&
                 // TODO[]: Create a more generic error tooltip component
-                <span className="tooltip">{
+                (<span className="tooltip">{
                     showError === NameErrorStates.NoName ?
                         "Please enter a name for this IC" :
                         "This name is already used by another IC"
-                }</span>}
+                }</span>)}
 
             <div className="icdesigner__buttons">
                 <button type="button" name="confirm" onClick={() => {

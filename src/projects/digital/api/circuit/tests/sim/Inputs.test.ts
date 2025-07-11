@@ -6,7 +6,7 @@ import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 describe("Inputs", () => {
     describe("Constant Number", () => {
         test("0", () => {
-            const [{}, {}, { Place, Connect }] = CreateTestCircuit();
+            const [_, { Place, Connect }] = CreateTestCircuit();
             const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
             Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
 
@@ -16,7 +16,7 @@ describe("Inputs", () => {
             expect(o4).toBeOff();
         });
         test("F", () => {
-            const [{}, {}, { Place, Connect }] = CreateTestCircuit();
+            const [_, { Place, Connect }] = CreateTestCircuit();
             const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
             Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
 

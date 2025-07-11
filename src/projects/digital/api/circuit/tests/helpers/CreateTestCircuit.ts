@@ -1,6 +1,6 @@
 import "./Extensions";
 
-import {CreateCircuit} from "digital/api/circuit/public"
+import {DigitalCircuit} from "digital/api/circuit/public"
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent"
 import {Signal} from "digital/api/circuit/schema/Signal";
 import {V, Vector} from "Vector"
@@ -8,20 +8,17 @@ import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
 import {DigitalWire} from "digital/api/circuit/public/DigitalWire";
 import {MapObj} from "shared/api/circuit/utils/Functions";
 import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
+import {DigitalCircuitImpl} from "digital/api/circuit/public/impl/DigitalCircuit";
+import {uuid} from "shared/api/circuit/public";
 
 
-export const CreateTestCircuit = (sim = true) => {
-    const [circuit, state] = CreateCircuit();
-
-    if (sim)
-        state.simRunner = new InstantSimRunner(state.sim);
-
+export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
     const helpers = {
         Place:          (...comps: string[]) => comps.map((c) => circuit.placeComponentAt(c, V(0, 0))),
         PlaceAt:        (...comps: Array<[string, Vector]>) => comps.map(([c, pos]) => circuit.placeComponentAt(c, pos)),
-        TurnOn:         (component: DigitalComponent) => state.sim.setState(component.id, [Signal.On]),
-        TurnOff:        (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Off]),
-        TurnMetastable: (component: DigitalComponent) => state.sim.setState(component.id, [Signal.Metastable]),
+        TurnOn:         (c: DigitalComponent) => c.setSimState([Signal.On]),
+        TurnOff:        (c: DigitalComponent) => c.setSimState([Signal.Off]),
+        TurnMetastable: (c: DigitalComponent) => c.setSimState([Signal.Metastable]),
         Connect:        (o1: DigitalComponent | DigitalPort | DigitalPort[],
                          o2: DigitalComponent | DigitalPort | DigitalPort[]): DigitalWire | undefined => {
             if (Array.isArray(o1) || Array.isArray(o2)) {
@@ -63,11 +60,18 @@ export const CreateTestCircuit = (sim = true) => {
 
             return [component, objs] as const;
         },
-    };
+    } as const;
+    return helpers;
+}
+
+export function CreateTestCircuit(sim = true) {
+    const circuit = new DigitalCircuitImpl(uuid());
+
+    if (sim)
+        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
 
     return [
         circuit,
-        state,
-        helpers,
+        CreateTestCircuitHelpers(circuit),
      ] as const
 }

@@ -28,7 +28,7 @@ import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunne
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro
 describe("Main Popup", () => {
-    const [circuit, state] = CreateCircuit();
+    const circuit = CreateCircuit();
     const designer = CreateDesigner(
         {
             defaultTool: new DefaultTool(),
@@ -36,9 +36,9 @@ describe("Main Popup", () => {
         },
         [],
         undefined,
-        [circuit, state],
+        circuit,
     );
-    state.simRunner = new InstantSimRunner(state.sim);
+    circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
     const store = configureStore({ reducer: reducers });
     const user = userEvent.setup();
 
@@ -113,10 +113,10 @@ describe("Main Popup", () => {
         expect(orGate).toBeDefined();
         expect(led).toBeDefined();
         expect(led).toBeOff();
-        state.sim.setState(inputA.id, [Signal.On]);
+        inputA.setSimState([Signal.On]);
         expect(led).toBeOn();
-        state.sim.setState(inputA.id, [Signal.Off]);
-        state.sim.setState(inputB.id, [Signal.On]);
+        inputA.setSimState([Signal.Off]);
+        inputB.setSimState([Signal.On]);
         expect(led).toBeOn();
 
         // Reopen and requery in case reference changed

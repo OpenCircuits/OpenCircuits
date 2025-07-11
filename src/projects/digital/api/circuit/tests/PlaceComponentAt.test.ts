@@ -7,7 +7,7 @@ import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 
 describe("PlaceComponentAt", () => {
     test("Basic Placement", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         const c = circuit.placeComponentAt("ANDGate", V(0, 0));
 
@@ -15,7 +15,7 @@ describe("PlaceComponentAt", () => {
         expect(c.pos).toEqual(V(0, 0));
     });
     test("Multiple Placements", () => {
-        const [circuit, _] = CreateTestCircuit();
+        const [circuit] = CreateTestCircuit();
 
         const s1 = circuit.placeComponentAt("Switch", V(-5, 5));
         const s2 = circuit.placeComponentAt("Switch", V(-5, -5));

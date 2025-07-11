@@ -3,7 +3,6 @@ import {InputTree} from "./Constants/DataStructures";
 import {CreateCircuit, DigitalCircuit} from "digital/api/circuit/public";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
 import {DigitalPort} from "digital/api/circuit/public/DigitalPort";
-import {DigitalCircuitState} from "digital/api/circuit/public/impl/DigitalCircuitState";
 import {V} from "Vector";
 
 
@@ -107,12 +106,13 @@ function treeToCircuitCore(node: InputTree, inputs: Map<string, DigitalComponent
  * @throws When one of the leaf nodes of the InputTree references an input that is not inputs.
  * @throws If any connections fail.
  */
-export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, string>,
-                              output: string, expression: string): {
-                                circuit: DigitalCircuit;
-                                state: DigitalCircuitState;
-                            } {
-    const [circuit, state] = CreateCircuit();
+export function TreeToCircuit(
+    tree: InputTree,
+    inputs: ReadonlyMap<string, string>,
+    output: string,
+    expression: string,
+) {
+    const circuit = CreateCircuit();
 
     circuit.name = expression;
     const outputComp = circuit.placeComponentAt(output, V(0, 0));
@@ -131,5 +131,5 @@ export function TreeToCircuit(tree: InputTree, inputs: ReadonlyMap<string, strin
     const prevComp = treeToCircuitCore(tree, inputMap, circuit);
     connect(prevComp, outputNode, outputComp);
 
-    return { circuit, state };
+    return circuit;
 }

@@ -7,7 +7,7 @@ import {V} from "Vector";
 describe("DigitalCircuit", () => {
     describe("Simulation State", () => {
         test("Deleted off Switch should not be in simState", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
             const [sw] = Place("Switch");
 
             sw.delete();
@@ -17,7 +17,7 @@ describe("DigitalCircuit", () => {
             expect(Object.keys(simState.icStates)).toHaveLength(0);
         });
         test("Deleted on Switch should not be in simState", () => {
-            const [circuit, _, { Place, TurnOn }] = CreateTestCircuit();
+            const [circuit, { Place, TurnOn }] = CreateTestCircuit();
             const [sw] = Place("Switch");
             TurnOn(sw);
 
@@ -28,8 +28,8 @@ describe("DigitalCircuit", () => {
             expect(Object.keys(simState.icStates)).toHaveLength(0);
         });
         test("Deleted IC should not be in simState", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
-            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
+            const [icCircuit, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
                 const [i1, o1] = ICPlace("InputPin", "OutputPin");
                 ICConnect(i1, o1);
@@ -57,8 +57,8 @@ describe("DigitalCircuit", () => {
 
     describe("Import", () => {
         test("Convert IC to schema and load back in", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
-            const [icCircuit, {}, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
+            const [icCircuit, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
                 const [i1, i2, g, o1] = ICPlace("InputPin", "InputPin", "ANDGate", "OutputPin");
                 ICConnect(i1, g.inputs[0]), ICConnect(i2, g.inputs[1]), ICConnect(g, o1);
@@ -78,7 +78,7 @@ describe("DigitalCircuit", () => {
             })();
             Place(ic.id);
 
-            const [newCircuit, _state, { Place: PlaceNew, Connect: ConnectNew, TurnOn: TurnOnNew }] = CreateTestCircuit();
+            const [newCircuit, { Place: PlaceNew, Connect: ConnectNew, TurnOn: TurnOnNew }] = CreateTestCircuit();
             newCircuit.import(circuit);
             const newComps = newCircuit.getComponents();
             expect(newComps).toHaveLength(1);
@@ -94,7 +94,7 @@ describe("DigitalCircuit", () => {
             expect(led).toBeOn();
         });
         test("Import objects in the circuit with state", () => {
-            const [circuit, _, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
+            const [circuit, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
             const [sw, { outputs: [led] }] = PlaceAndConnect("Switch");
 
             TurnOn(sw);

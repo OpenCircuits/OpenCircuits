@@ -8,7 +8,7 @@ import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
 describe("DigitalComponent", () => {
     describe("Exists", () => {
         test("add/delete and undo/redo", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
             const [g] = Place("ANDGate");
 
             expect(g.exists()).toBeTruthy();
@@ -25,7 +25,7 @@ describe("DigitalComponent", () => {
             expect(g.exists()).toBeFalsy();
         });
         test("circuit.deleteObjs", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
             const [g] = Place("ANDGate");
 
             circuit.deleteObjs([g]);
@@ -39,7 +39,7 @@ describe("DigitalComponent", () => {
 
     describe("Delete", () => {
         test("add/delete and undo/redo expect state to remain same", () => {
-            const [circuit, _, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
+            const [circuit, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
             const [sw, { outputs: [led] }] = PlaceAndConnect("Switch");
 
             expect(led).toBeOff();
@@ -66,7 +66,7 @@ describe("DigitalComponent", () => {
 
     describe("Ports", () => {
         test(".ports", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
             const [g] = Place("ANDGate");
 
             expect(g.ports["inputs"]).toHaveLength(2);
@@ -77,7 +77,7 @@ describe("DigitalComponent", () => {
 
     describe(".inputs and .outputs", () => {
         test("Basic", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
             const [g] = Place("ANDGate");
 
             expect(g.inputs).toContainObjsExact(g.ports["inputs"]);
@@ -85,14 +85,14 @@ describe("DigitalComponent", () => {
         });
 
         test(".inputs on component with no inputs", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
             const [sw] = Place("Switch");
 
             expect(sw.inputs).toBeDefined();
             expect(sw.inputs).toHaveLength(0);
         });
         test(".outputs on component with no outputs", () => {
-            const [circuit, _, { Place }] = CreateTestCircuit();
+            const [circuit, { Place }] = CreateTestCircuit();
             const [led] = Place("LED");
 
             expect(led.outputs).toBeDefined();
@@ -103,7 +103,7 @@ describe("DigitalComponent", () => {
     describe("Node", () => {
         describe("Snip", () => {
             test("Basic snip", () => {
-                const [circuit, _, { Place, Connect }] = CreateTestCircuit();
+                const [circuit, { Place, Connect }] = CreateTestCircuit();
                 const [sw, led] = Place("Switch", "LED");
                 const w = Connect(sw, led)!;
 
@@ -125,7 +125,7 @@ describe("DigitalComponent", () => {
                 expect(node).toExist();
             });
             test("Attempt to snip with more connections to node", () => {
-                const [circuit, _, { Place, Connect }] = CreateTestCircuit();
+                const [circuit, { Place, Connect }] = CreateTestCircuit();
                 const [sw, led, led2] = Place("Switch", "LED", "LED");
                 const w = Connect(sw, led)!;
 

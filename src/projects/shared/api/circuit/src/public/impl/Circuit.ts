@@ -7,11 +7,9 @@ import {Schema} from "shared/api/circuit/schema";
 import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent, CircuitHistory, CircuitHistoryEvent, ICPin, IntegratedCircuit,
-        IntegratedCircuitDisplay,
-        ReadonlyICPin} from "../Circuit";
+        IntegratedCircuitDisplay} from "../Circuit";
 
-import {CircuitState, CircuitTypes} from "./CircuitState";
-import {SelectionsImpl}             from "./Selections";
+import {CircuitContext, CircuitTypes} from "./CircuitContext";
 import {ObservableImpl} from "../../utils/Observable";
 import {LogEntry} from "../../internal/impl/CircuitLog";
 import {ReadonlyComponent} from "../Component";
@@ -19,8 +17,6 @@ import {ReadonlyWire} from "../Wire";
 import {ReadonlyPort} from "../Port";
 import {Camera} from "../Camera";
 import {CameraImpl} from "./Camera";
-import {Result} from "../../utils/Result";
-import {AddErrE} from "../../utils/MultiError";
 
 
 function ConvertComp(c: ReadonlyComponent): Schema.Component {
@@ -107,27 +103,27 @@ export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements 
     }
 }
 
-export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
-    protected readonly state: CircuitState<T>;
+export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
+    protected readonly ctx: CircuitContext<T>;
 
     public readonly camera: Camera;
 
     public readonly selections: T["SelectionsT"];
     public readonly history: CircuitHistory;
 
-    public constructor(state: CircuitState<T>, selections: T["SelectionsT"]) {
+    public constructor(ctx: CircuitContext<T>, selections: T["SelectionsT"]) {
         super();
 
-        this.state = state;
+        this.ctx = ctx;
 
         this.selections = selections;
-        this.history = new HistoryImpl(state.internal);
+        this.history = new HistoryImpl(ctx.internal);
 
-        this.camera = new CameraImpl(state);
+        this.camera = new CameraImpl(ctx);
 
         // This ordering is important, because it means that all previous circuit subscription calls will happen
         // before any public/outside subscriptions. (i.e. selections are updated before circuit subscribers are called).
-        state.internal.subscribe((ev) => {
+        ctx.internal.subscribe((ev) => {
             if (ev.type !== "CircuitOp")
                 return;
             this.publish({ type: "contents", diff: ev.diff });
@@ -135,16 +131,14 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
     }
 
     private get internal(): CircuitInternal {
-        return this.state.internal;
+        return this.ctx.internal;
     }
-
-    protected abstract checkIfPinIsValid(pin: ReadonlyICPin, port: T["Port"]): Result;
 
     private pickObjAtHelper(pt: Vector, filter?: (id: string) => boolean) {
-        return this.state.assembler.findNearestObj(pt, filter);
+        return this.ctx.assembler.findNearestObj(pt, filter);
     }
     private pickObjsWithinHelper(bounds: Rect, filter?: (id: string) => boolean) {
-        return this.state.assembler.findObjsWithin(bounds, filter);
+        return this.ctx.assembler.findObjsWithin(bounds, filter);
     }
 
     public beginTransaction(options?: { batch?: boolean }): void {
@@ -211,17 +205,17 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
     public getComponent(id: GUID): T["Component"] | undefined {
         if (!this.internal.getCompByID(id).ok)
             return undefined;
-        return this.state.constructComponent(id);
+        return this.ctx.factory.constructComponent(id);
     }
     public getWire(id: GUID): T["Wire"] | undefined {
         if (!this.internal.getWireByID(id).ok)
             return undefined;
-        return this.state.constructWire(id);
+        return this.ctx.factory.constructWire(id);
     }
     public getPort(id: GUID): T["Port"] | undefined {
         if (!this.internal.getPortByID(id).ok)
             return undefined;
-        return this.state.constructPort(id);
+        return this.ctx.factory.constructPort(id);
     }
     public getObj(id: GUID): T["Obj"] | undefined {
         if (this.internal.hasComp(id))
@@ -233,25 +227,25 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
         return undefined;
     }
     public getObjs(): T["ObjContainerT"] {
-        return this.state.constructObjContainer(new Set(this.internal.getObjs()));
+        return this.ctx.factory.constructObjContainer(new Set(this.internal.getObjs()));
     }
     public getComponents(): T["Component[]"] {
         return [...this.internal.getComps()]
-            .map((id) => this.state.constructComponent(id));
+            .map((id) => this.ctx.factory.constructComponent(id));
     }
     public getWires(): T["Wire[]"] {
         return [...this.internal.getWires()]
-            .map((id) => this.state.constructWire(id));
+            .map((id) => this.ctx.factory.constructWire(id));
     }
     public getComponentInfo(kind: string): T["ComponentInfo"] | undefined {
         // API-wise, clients specify IC-instance-kinds with as the IC ID,
         // but internally IC-kinds are just "IC", and the icId is stored separately.
-        const info = this.state.internal.getICs().has(kind)
-                ? this.state.internal.getComponentInfo("IC", kind)
-                : this.state.internal.getComponentInfo(kind);
+        const info = this.ctx.internal.getICs().has(kind)
+                ? this.ctx.internal.getComponentInfo("IC", kind)
+                : this.ctx.internal.getComponentInfo(kind);
         if (!info.ok)
             return undefined;
-        return this.state.constructComponentInfo(kind);
+        return this.ctx.factory.constructComponentInfo(kind);
     }
 
     public createContainer(objs: GUID[]): T["ObjContainerT"] {
@@ -266,7 +260,7 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
             }
         }
 
-        return this.state.constructObjContainer(objSet);
+        return this.ctx.factory.constructObjContainer(objSet);
     }
 
     // Object manipulation
@@ -275,7 +269,7 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
 
         // Place raw component
         const id = (() => {
-            const props = { x: pt.x, y: pt.y, zIndex: this.state.assembler.highestZ + 1 };
+            const props = { x: pt.x, y: pt.y, zIndex: this.ctx.assembler.highestZ + 1 };
             // If user is trying to make an IC, need to construct component differently
             if (this.internal.getICs().has(kind))
                 return this.internal.placeComponent("IC", props, kind);
@@ -288,7 +282,7 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
 
         this.commitTransaction("Placed Component");
 
-        return this.state.constructComponent(id);
+        return this.ctx.factory.constructComponent(id);
     }
     public deleteObjs(objs: Array<T["Component"] | T["Wire"]>): void {
         this.beginTransaction();
@@ -335,16 +329,6 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
         if (missingICIDs.size > 0)
             throw new Error(`Circuit.createIC: Found sub-ICs when trying to create a new IC that haven't been imported yet: [${[...missingICIDs].join(", ")}]. Please import them first!`);
 
-        // Check that all pins correspond to allowed objects internally
-        for (const pin of info.display.pins) {
-            const port = info.circuit.getPort(pin.id);
-            if (!port)
-                throw new Error(`Circuit.createIC: Failed to find port with id ${pin.id} corresponding to pin ${pin.name}!`);
-            this.checkIfPinIsValid(pin, port as T["Port"])
-                .mapErr(AddErrE(`Circuit.createIC: Pin '${pin.name}' corresponding to port '${port.id}' is invalid!`))
-                .unwrap();
-        }
-
         const metadata: Schema.IntegratedCircuitMetadata = {
             id,
             name: info.circuit.name,
@@ -366,7 +350,7 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
         }).unwrap();
         this.internal.commitTransaction();
 
-        return this.state.constructIC(id);
+        return this.ctx.factory.constructIC(id);
     }
     public deleteIC(id: GUID): void {
         // If there's a component referencing the IC, fail
@@ -380,11 +364,11 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
     public getIC(id: GUID): T["IC"] | undefined {
         if (!this.internal.hasIC(id))
             return undefined;
-        return this.state.constructIC(id);
+        return this.ctx.factory.constructIC(id);
     }
     public getICs(): T["IC[]"] {
         return [...this.internal.getICs()]
-            .map((id) => this.state.constructIC(id));
+            .map((id) => this.ctx.factory.constructIC(id));
     }
 
     public undo(): void {
@@ -429,7 +413,7 @@ export abstract class CircuitImpl<T extends CircuitTypes> extends ObservableImpl
         const objs = this.doImport(circuit, opts);
         this.commitTransaction("Imported Circuit");
 
-        return this.state.constructObjContainer(new Set(objs.values()));
+        return this.ctx.factory.constructObjContainer(new Set(objs.values()));
     }
 }
 
@@ -437,16 +421,16 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
     protected readonly icId: GUID;
     protected readonly pinIndex: number;
 
-    protected readonly state: CircuitState<T>;
+    protected readonly ctx: CircuitContext<T>;
 
-    public constructor(state: CircuitState<T>, icId: GUID, pinIndex: number) {
-        this.state = state;
+    public constructor(ctx: CircuitContext<T>, icId: GUID, pinIndex: number) {
+        this.ctx = ctx;
         this.icId = icId;
         this.pinIndex = pinIndex;
     }
 
     protected get ic() {
-        return this.state.internal.getICInfo(this.icId).unwrap();
+        return this.ctx.internal.getICInfo(this.icId).unwrap();
     }
 
     public get id(): GUID {
@@ -461,9 +445,9 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
     }
 
     public set pos(p: Vector) {
-        this.state.internal.beginTransaction();
-        this.state.internal.updateICPinMetadata(this.icId, this.pinIndex, { x: p.x, y: p.y }).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.beginTransaction();
+        this.ctx.internal.updateICPinMetadata(this.icId, this.pinIndex, { x: p.x, y: p.y }).unwrap();
+        this.ctx.internal.commitTransaction();
     }
     public get pos(): Vector {
         return V(
@@ -473,9 +457,9 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
     }
 
     public set dir(d: Vector) {
-        this.state.internal.beginTransaction();
-        this.state.internal.updateICPinMetadata(this.icId, this.pinIndex, { dx: d.x, dy: d.y }).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.beginTransaction();
+        this.ctx.internal.updateICPinMetadata(this.icId, this.pinIndex, { dx: d.x, dy: d.y }).unwrap();
+        this.ctx.internal.commitTransaction();
     }
     public get dir(): Vector {
         return V(
@@ -488,71 +472,71 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
 class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements IntegratedCircuitDisplay {
     protected readonly id: GUID;
 
-    protected readonly state: CircuitState<T>;
+    protected readonly ctx: CircuitContext<T>;
 
-    public constructor(state: CircuitState<T>, id: GUID) {
-        this.state = state;
+    public constructor(ctx: CircuitContext<T>, id: GUID) {
+        this.ctx = ctx;
         this.id = id;
     }
 
     protected get ic() {
-        return this.state.internal.getICInfo(this.id).unwrap();
+        return this.ctx.internal.getICInfo(this.id).unwrap();
     }
 
     public set size(p: Vector) {
-        this.state.internal.beginTransaction();
-        this.state.internal.updateICMetadata(this.id, { displayWidth: p.x, displayHeight: p.y }).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.beginTransaction();
+        this.ctx.internal.updateICMetadata(this.id, { displayWidth: p.x, displayHeight: p.y }).unwrap();
+        this.ctx.internal.commitTransaction();
     }
     public get size(): Vector {
         return V(this.ic.metadata.displayWidth, this.ic.metadata.displayHeight);
     }
     public get pins(): ICPin[] {
-        return this.ic.metadata.pins.map((_, i) => new IntegratedCircuitPinImpl(this.state, this.id, i));
+        return this.ic.metadata.pins.map((_, i) => new IntegratedCircuitPinImpl(this.ctx, this.id, i));
     }
 }
 
 export class IntegratedCircuitImpl<T extends CircuitTypes> implements IntegratedCircuit {
     public readonly id: GUID;
 
-    protected readonly state: CircuitState<T>;
+    protected readonly ctx: CircuitContext<T>;
 
     public readonly display: IntegratedCircuitDisplay;
 
-    public constructor(state: CircuitState<T>, id: GUID) {
-        this.state = state;
+    public constructor(ctx: CircuitContext<T>, id: GUID) {
+        this.ctx = ctx;
         this.id = id;
 
-        this.display = new IntegratedCircuitDisplayImpl(state, id);
+        this.display = new IntegratedCircuitDisplayImpl(ctx, id);
     }
 
     // Metadata
     public set name(name: string) {
-        this.state.internal.beginTransaction();
-        this.state.internal.updateICMetadata(this.id, { name }).unwrap();
-        this.state.internal.commitTransaction();
+        this.ctx.internal.beginTransaction();
+        this.ctx.internal.updateICMetadata(this.id, { name }).unwrap();
+        this.ctx.internal.commitTransaction();
     }
     public get name(): string {
-        return this.state.internal.getICInfo(this.id).unwrap().metadata.name;
+        return this.ctx.internal.getICInfo(this.id).unwrap().metadata.name;
     }
 
     public get desc(): string {
-        return this.state.internal.getICInfo(this.id).unwrap().metadata.desc;
+        return this.ctx.internal.getICInfo(this.id).unwrap().metadata.desc;
     }
 
     public get all(): T["ObjContainerT"] {
-        return this.state.constructObjContainer(
-            new Set(this.state.internal.getICInfo(this.id).unwrap().getObjs()),
+        return this.ctx.factory.constructObjContainer(
+            new Set(this.ctx.internal.getICInfo(this.id).unwrap().getObjs()),
             this.id
         );
     }
 
     public get components(): T["ReadonlyComponent[]"] {
-        return [...this.state.internal.getICInfo(this.id).unwrap().getComponents()]
-            .map((id) => this.state.constructComponent(id, this.id));
+        return [...this.ctx.internal.getICInfo(this.id).unwrap().getComponents()]
+            .map((id) => this.ctx.factory.constructComponent(id, this.id));
     }
     public get wires(): T["ReadonlyWire[]"] {
-        return [...this.state.internal.getICInfo(this.id).unwrap().getWires()]
-            .map((id) => this.state.constructWire(id, this.id));
+        return [...this.ctx.internal.getICInfo(this.id).unwrap().getWires()]
+            .map((id) => this.ctx.factory.constructWire(id, this.id));
     }
 }

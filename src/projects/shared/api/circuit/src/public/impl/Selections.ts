@@ -4,31 +4,31 @@ import {Rect}   from "math/Rect";
 import {ObservableImpl} from "../../utils/Observable";
 import {Selections, SelectionsEvent} from "../Selections";
 
-import {CircuitState, CircuitTypes} from "./CircuitState";
+import {CircuitContext, CircuitTypes} from "./CircuitContext";
 
 import "shared/api/circuit/utils/Array";
 
 
 export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<SelectionsEvent> implements Selections {
-    protected readonly state: CircuitState<T>;
+    protected readonly ctx: CircuitContext<T>;
 
     protected selections: T["ObjContainerT"];
 
-    public constructor(state: CircuitState<T>) {
+    public constructor(ctx: CircuitContext<T>) {
         super();
 
-        this.state = state;
+        this.ctx = ctx;
 
-        this.selections = this.state.constructObjContainer(new Set());
-        this.state.internal.subscribe((_) => {
+        this.selections = this.ctx.factory.constructObjContainer(new Set());
+        this.ctx.internal.subscribe((_) => {
             // Update selections
             const newSelections = new Set(
-                [...this.state.internal.getAllObjs()]
+                [...this.ctx.internal.getAllObjs()]
                     .filter((o) => (o.props["isSelected"] === true))
                     .map((o) => o.id));
 
             const diff = this.selections.ids.symmetricDifference(newSelections);
-            this.selections = this.state.constructObjContainer(newSelections);
+            this.selections = this.ctx.factory.constructObjContainer(newSelections);
 
             if (diff.size > 0) {
                 this.publish({
@@ -83,10 +83,10 @@ export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<Selec
     }
 
     public clear(): void {
-        this.state.internal.beginTransaction();
+        this.ctx.internal.beginTransaction();
         for (const obj of this.selections.all)
-            this.state.internal.setPropFor(obj.id, "isSelected", undefined);
-        this.state.internal.commitTransaction("Cleared Selections");
+            this.ctx.internal.setPropFor(obj.id, "isSelected", undefined);
+        this.ctx.internal.commitTransaction("Cleared Selections");
     }
 
     public forEach(f: (obj: T["Obj"], i: number, arr: T["Obj[]"]) => void): void {

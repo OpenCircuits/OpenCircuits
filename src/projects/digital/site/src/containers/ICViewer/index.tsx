@@ -56,7 +56,7 @@ export const ICViewer = () => {
             throw new Error(`ICViewer: Failed to find ic with id ${icInstance.kind}!`);
 
         // Create main circuit
-        const [circuit, state] = CreateCircuit();
+        const circuit = CreateCircuit();
         circuit.import(ic.all);
         const inputIDs: GUID[] = [];
         for (const comp of circuit.getComponents()) {
@@ -80,11 +80,12 @@ export const ICViewer = () => {
             },
             [],
             DRAG_TIME,
-            [circuit, state],
+            circuit,
         );
 
         // Setup propagator
-        state.simRunner = new TimedDigitalSimRunner(state.sim, 1);
+        // TODO: We need a way to choose between sim-runners through the API
+        circuit["ctx"].simRunner = new TimedDigitalSimRunner(circuit["ctx"].sim, 1);
 
         // Synchronize current debug info from mainInfo
         designer.viewport.debugOptions = mainDesigner.viewport.debugOptions;

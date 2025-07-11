@@ -13,10 +13,9 @@ describe("CircuitAssembler", () => {
     }
 
     test("Single Selection", () => {
-        // Create and place new component
-        const [circuit, state] = CreateTestCircuit();
-
-        const { assembler } = state;
+        const [circuit] = CreateTestCircuit();
+        // Need to manually access the internal assembler
+        const assembler = circuit["ctx"]["assembler"];
 
         expectNoDirty(assembler);
 
