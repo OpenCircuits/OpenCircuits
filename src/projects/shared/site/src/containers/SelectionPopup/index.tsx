@@ -114,6 +114,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
 
     return (
         <div ref={popup}
+             data-testid="selection-popup"
              className="selection-popup"
              tabIndex={-1}
              style={{

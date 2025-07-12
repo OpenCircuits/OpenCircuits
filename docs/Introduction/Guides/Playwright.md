@@ -26,6 +26,8 @@ Options such as `--ui` can be passed into those yarn wrapper commands, and the s
 yarn test-e2e:digital --ui
 ```
 
+The test will automatically start up the dev server on port 3000. If you are already running the site locally on that port, it will reuse that instance instead.
+
 ---
 
 ## Project and Test Folder Structure
@@ -62,3 +64,27 @@ Currently only digital has a "prod" version, so landing still uses the dev versi
 :::
 
 ---
+
+## Helpful Commands
+
+### Codegen
+```bash
+npx playwright codegen
+```
+For usage instructions, see the [official docs](https://playwright.dev/docs/codegen).
+
+### Test Runner UI
+```bash
+yarn test-e2e:digital --ui
+```
+You can replace `test-e2e:digital` with any of the other test-e2e commands (including `test-e2e:ci`) to run with the UI enabled. To see canvas contents in the UI, open the settings dropdown in the bottom left of the UI and check the "Display canvas content" option:
+![settings menu of Playwright UI with the Display canvas content option checked](playwright-ui-settings.png)
+
+For more UI usage explanation, see the [official docs](https://playwright.dev/docs/test-ui-mode).
+
+## Viewing a Failed Test from GitHub Actions
+
+If the Playwright tests fail in GitHub Actions, you can download and view the logs locally. In the run's "Summary" section there will be an Artifacts section:
+![artifacts section of the failed Playwright GitHub Actions job](playwright-artifacts.png)
+
+Click "playwright-report-ubuntu-latest" to download the report. Unzip that and move the contents (`index.html` and the `data` and `trace` folders) into the `playwright-report` folder of this repo, replacing what is already there. Then run `npx playwright show-report` to view the report.
