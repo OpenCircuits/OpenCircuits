@@ -4,7 +4,7 @@ import {Rect}   from "math/Rect";
 import {Component, ReadonlyComponent} from "./Component";
 import {ReadonlyWire, Wire}           from "./Wire";
 import {Port, ReadonlyPort}           from "./Port";
-import {IntegratedCircuit}            from "./Circuit";
+import {IntegratedCircuit}            from "./IntegratedCircuit";
 import {GUID} from "../schema";
 
 

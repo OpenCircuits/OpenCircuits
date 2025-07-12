@@ -79,7 +79,7 @@ type GetArrayReturn<T> =
     ? string :
     T extends { type: "string" }
     ? string[] :
-    T extends { type: "int"| "double" | "string*" }
+    T extends { type: "int" | "double" | "string*" }
     ? number[] : never;
 function GetArray<T extends GetArrayParams>(
     module: WASMModule,

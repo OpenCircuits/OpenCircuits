@@ -1,11 +1,10 @@
-import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
+import {CircuitImpl} from "shared/api/circuit/public/impl/Circuit";
+import {IntegratedCircuitImpl} from "shared/api/circuit/public/impl/IntegratedCircuit";
 
 import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSim, DigitalSimEv, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
 import {DigitalSchema} from "digital/api/circuit/schema";
-import {GUID, ICInfo, ReadonlyICPin, uuid} from "shared/api/circuit/public";
-import {DigitalPort} from "../DigitalPort";
-import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {GUID, ICInfo, uuid} from "shared/api/circuit/public";
 import {DigitalSelectionsImpl} from "./DigitalSelections";
 import {MapObjKeys} from "shared/api/circuit/utils/Functions";
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";

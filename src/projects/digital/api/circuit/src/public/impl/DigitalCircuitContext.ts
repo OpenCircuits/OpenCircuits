@@ -1,7 +1,7 @@
 import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
-import {DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSelections, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer, ReadonlyDigitalSelections} from "../DigitalCircuit";
-import {DigitalComponent, DigitalNode, ReadonlyDigitalComponent} from "../DigitalComponent";
+import {DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSelections, ReadonlyDigitalCircuit, ReadonlyDigitalIntegratedCircuit, ReadonlyDigitalObjContainer, ReadonlyDigitalSelections} from "../DigitalCircuit";
+import {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode} from "../DigitalComponent";
 import {DigitalPort, ReadonlyDigitalPort}                   from "../DigitalPort";
 import {DigitalWire, ReadonlyDigitalWire}                   from "../DigitalWire";
 
@@ -18,24 +18,20 @@ import {DigitalComponentInfoImpl} from "./DigitalComponentInfo";
 import {DigitalObjContainerImpl} from "./DigitalObjContainer";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {DigitalPropagators} from "../../internal/sim/DigitalPropagators";
+import {DigitalComponentInfo} from "../DigitalComponentInfo";
 
 
 export type DigitalTypes = CircuitTypes<
-    DigitalCircuit,
-    ReadonlyDigitalCircuit,
-    DigitalComponent,
-    DigitalWire,
-    DigitalPort,
-    ReadonlyDigitalComponent,
-    ReadonlyDigitalWire,
-    ReadonlyDigitalPort,
-    DigitalNode,
-    DigitalIntegratedCircuit,
+    DigitalCircuit, ReadonlyDigitalCircuit,
+    DigitalComponent, ReadonlyDigitalComponent,
+    DigitalWire, ReadonlyDigitalWire,
+    DigitalPort, ReadonlyDigitalPort,
+    DigitalNode, ReadonlyDigitalNode,
+    DigitalIntegratedCircuit, ReadonlyDigitalIntegratedCircuit,
+    DigitalObjContainer, ReadonlyDigitalObjContainer,
+    DigitalSelections, ReadonlyDigitalSelections,
     DigitalICInfo,
-    DigitalObjContainer,
-    ReadonlyDigitalObjContainer,
-    DigitalSelections,
-    ReadonlyDigitalSelections
+    DigitalComponentInfo
 >;
 
 export class DigitalCircuitContext extends CircuitContext<DigitalTypes> {

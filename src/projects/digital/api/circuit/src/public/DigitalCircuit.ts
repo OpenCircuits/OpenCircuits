@@ -11,6 +11,7 @@ import type {
     Port,
     ReadonlyCircuit,
     ReadonlyComponent,
+    ReadonlyIntegratedCircuit,
     ReadonlyNode,
     ReadonlyPort,
     ReadonlySelections,
@@ -43,18 +44,19 @@ export type ToDigital<T> = (
     T extends Component         ? DigitalComponent :
     T extends Wire              ? DigitalWire :
     T extends Port              ? DigitalPort :
-    T extends ComponentInfo     ? DigitalComponentInfo :
-    T extends ICInfo            ? DigitalICInfo :
     T extends ObjContainer      ? DigitalObjContainer :
     T extends Selections        ? DigitalSelections :
+    T extends ComponentInfo     ? DigitalComponentInfo :
+    T extends ICInfo            ? DigitalICInfo :
     // Base-Readonly-type replacements
-    T extends ReadonlyCircuit      ? ReadonlyDigitalCircuit :
-    T extends ReadonlyNode         ? ReadonlyDigitalNode :
-    T extends ReadonlyComponent    ? ReadonlyDigitalComponent :
-    T extends ReadonlyWire         ? ReadonlyDigitalWire :
-    T extends ReadonlyPort         ? ReadonlyDigitalPort :
-    T extends ReadonlyObjContainer ? ReadonlyDigitalObjContainer :
-    T extends ReadonlySelections   ? ReadonlyDigitalSelections :
+    T extends ReadonlyIntegratedCircuit ? ReadonlyDigitalIntegratedCircuit :
+    T extends ReadonlyCircuit           ? ReadonlyDigitalCircuit :
+    T extends ReadonlyNode              ? ReadonlyDigitalNode :
+    T extends ReadonlyComponent         ? ReadonlyDigitalComponent :
+    T extends ReadonlyWire              ? ReadonlyDigitalWire :
+    T extends ReadonlyPort              ? ReadonlyDigitalPort :
+    T extends ReadonlyObjContainer      ? ReadonlyDigitalObjContainer :
+    T extends ReadonlySelections        ? ReadonlyDigitalSelections :
     // Replace all method args/return types
     T extends (...a: infer Args) => infer R ? (...a: ToDigital<Args>) => ToDigital<R> :
     // Recursively replace records
@@ -119,6 +121,9 @@ export type DigitalCircuit = APIToDigital<Circuit> & ReadonlyDigitalCircuit & {
     readonly sim: DigitalSim;
 };
 
+export type ReadonlyDigitalIntegratedCircuit = APIToDigital<ReadonlyIntegratedCircuit> & {
+    readonly initialSimState: Readonly<DigitalSchema.DigitalSimState>;
+}
 export type DigitalIntegratedCircuit = APIToDigital<IntegratedCircuit> & {
     readonly initialSimState: DigitalSchema.DigitalSimState;
 }
