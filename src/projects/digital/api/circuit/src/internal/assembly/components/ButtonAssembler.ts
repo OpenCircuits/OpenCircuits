@@ -19,7 +19,7 @@ export class ButtonAssembler extends ComponentAssembler {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
-                assemble: (comp) => ({
+                assemble:     (comp) => ({
                     kind:      "Rectangle",
                     transform: this.getTransform(comp),
                 }),
@@ -30,13 +30,13 @@ export class ButtonAssembler extends ComponentAssembler {
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
-                assemble: (comp) => ({
+                assemble:     (comp) => ({
                     kind:      "SVG",
                     svg:       this.isOn(comp) ? "buttonDown.svg" : "buttonUp.svg",
                     transform: this.getTransform(comp),
                 }),
                 tintChangesWhenSelected: true,
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
+                getTint:                 (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;

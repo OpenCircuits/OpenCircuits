@@ -26,7 +26,7 @@ export class SwitchAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                getStyle:                 (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
             {
                 kind: "SVG",
@@ -38,7 +38,7 @@ export class SwitchAssembler extends ComponentAssembler {
                     transform: this.getTransform(comp).withScale(V(0.96, 1.2)),
                 }),
                 tintChangesWhenSelected: true,
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
+                getTint:                 (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;

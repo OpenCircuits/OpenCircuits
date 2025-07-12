@@ -7,7 +7,7 @@ import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim"
 import {Signal} from "digital/api/circuit/schema/Signal";
 import {Schema} from "shared/api/circuit/schema";
 import {Style} from "shared/api/circuit/internal/assembly/Style";
-import {SegmentType, SEGMENT_POINTS, SEGMENT_SIZE, Segments} from "./SegmentDisplayConstants";
+import {SEGMENT_POINTS, SEGMENT_SIZE, SegmentType, Segments} from "./SegmentDisplayConstants";
 import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
 
 

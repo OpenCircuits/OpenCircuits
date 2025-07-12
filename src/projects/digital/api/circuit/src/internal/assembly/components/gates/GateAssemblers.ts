@@ -36,7 +36,7 @@ export class GateAssembler extends ComponentAssembler {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble: (gate) => ({
+                assemble:     (gate) => ({
                     kind: "Circle",
 
                     pos:    this.getPos(gate).add(this.size.x / 2 + this.options.notPortCircleRadius, 0),
@@ -44,7 +44,7 @@ export class GateAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (gate) => ({
+                getStyle:                 (gate) => ({
                     fill: (this.isSelected(gate.id)
                         ? this.options.selectedFillColor
                         : this.options.defaultFillColor),
@@ -62,17 +62,17 @@ export class GateAssembler extends ComponentAssembler {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
-                assemble: (gate) => o.assemble(gate),
+                assemble:     (gate) => o.assemble(gate),
 
                 styleChangesWhenSelected: true,
-                getStyle: (gate) => o.getStyle(gate),
+                getStyle:                 (gate) => o.getStyle(gate),
             } satisfies ComponentBaseShapePrimAssembly)) ?? []),
 
             { // SVG
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble: (gate) => ({
+                assemble:     (gate) => ({
                     kind: "SVG",
 
                     svg:       svg,
@@ -80,7 +80,7 @@ export class GateAssembler extends ComponentAssembler {
                 }),
 
                 tintChangesWhenSelected: true,
-                getTint: (comp) =>
+                getTint:                 (comp) =>
                     (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ], otherParams);

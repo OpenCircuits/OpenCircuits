@@ -31,7 +31,7 @@ export class EncoderAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                getStyle:                 (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
         ], { sizeChangesWhenPortsChange: true });
         this.sim = sim;

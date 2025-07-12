@@ -23,16 +23,16 @@ export class LEDAssembler extends ComponentAssembler {
                 kind: "SVG",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
-                assemble: (comp) => ({ kind: "SVG", svg: "led.svg", transform: this.getTransform(comp) }),
+                assemble:     (comp) => ({ kind: "SVG", svg: "led.svg", transform: this.getTransform(comp) }),
 
                 tintChangesWhenSelected: true,
-                getTint: (led) => this.getColor(led),
+                getTint:                 (led) => this.getColor(led),
             },
             {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged, AssemblyReason.SignalsChanged]),
-                assemble: (led) => ({
+                assemble:     (led) => ({
                     kind: "Group",
 
                     prims: (!this.isOn(led) ? [] : [{
@@ -47,7 +47,7 @@ export class LEDAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (led) => this.assembleLightStyle(led),
+                getStyle:                 (led) => this.assembleLightStyle(led),
             },
         ]);
 
