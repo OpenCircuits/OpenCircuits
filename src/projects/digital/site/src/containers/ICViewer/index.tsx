@@ -113,7 +113,7 @@ export const ICViewer = () => {
         if (!icViewDesigner)
             return;
         icViewDesigner.viewport.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH);
-    }, [isActive, w, h]);
+    }, [isActive, w, h, icViewDesigner]);
 
     // Synchronize the inputs in the original designer and this IC viewer (issue #754)
     useEffect(() => {
@@ -137,7 +137,7 @@ export const ICViewer = () => {
                 comp.setSimState([icInstance.ports[pin.group][pinIndex].signal]);
             });
         });
-    }, [pauseUpdates, mainDesigner, icId, icViewDesigner]);
+    }, [pauseUpdates, mainDesigner, icId, icViewDesigner, icInputCompIds]);
 
     const close = () => {
         if (!mainDesigner.viewport.canvasInfo)

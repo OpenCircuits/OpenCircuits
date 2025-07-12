@@ -15,7 +15,7 @@ export interface FlipFlopAssemblerParams {
 export abstract class FlipFlopAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
-    public constructor(params: AssemblerParams, sim: DigitalSim, { kind, otherInputs, clkPortYValue }: FlipFlopAssemblerParams) {
+    public constructor(params: AssemblerParams, sim: DigitalSim, { otherInputs, clkPortYValue }: FlipFlopAssemblerParams) {
         super(params, {
             "pre":  () => ({ origin: V(0,    0.5),  dir: V(0,  1) }),
             "clr":  () => ({ origin: V(0,   -0.5),  dir: V(0, -1) }),

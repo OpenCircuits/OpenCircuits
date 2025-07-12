@@ -28,7 +28,7 @@ export class GateAssembler extends ComponentAssembler {
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
-        { kind, size, svg, not, portFactory, otherPrims, ...otherParams }: GateAssemblerParams
+        { size, svg, not, portFactory, otherPrims, ...otherParams }: GateAssemblerParams
     ) {
         super(params, portFactory, [
             // NOT symbol

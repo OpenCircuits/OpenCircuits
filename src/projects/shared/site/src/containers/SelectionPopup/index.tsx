@@ -71,7 +71,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
 
     useEffect(() => viewport.camera.subscribe(() =>
         setPos(viewport.toScreenPos(circuit.selections.midpoint))
-    ), [circuit, setPos]);
+    ), [circuit, setPos, viewport]);
     // TODO[master] - Right now, the selection popup won't move when you edit
     //                the position values in the popup, this is kinda nice since
     //                it lets you easily edit multiple values in one-go, but it
@@ -150,12 +150,12 @@ const InfoDisplay = ({ designer, docsUrlConfig }: InfoDisplayProps) => {
     );
 
     if (!props)
-        return null;
+        return;
 
     // Make sure all components have same kind, otherwise don't display
     const allSame = props.kind.every((kind) => (kind === props.kind[0]));
     if (!allSame)
-        return null;
+        return;
 
     // Check if the kind is an IC, if so, use the user-set IC name
     const ic = circuit.getIC(props.kind[0]);

@@ -1,6 +1,4 @@
-import {CreateCircuit} from "digital/api/circuit/public";
 import {OpenICDesigner} from "digital/site/state/ICDesigner";
-import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
 import {ICValidationStatus, IsValidIC} from "digital/site/utils/ICValidation";
 import {useDigitalDispatch} from "digital/site/utils/hooks/useDigital";
 import {useState} from "react";

@@ -23,7 +23,7 @@ export class BaseDisplayAssembler extends ComponentAssembler {
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
-        { kind, spacing, font, ...otherParams }: BaseDisplayAssemblerParams
+        { spacing, font, ...otherParams }: BaseDisplayAssemblerParams
     ) {
         super(params, {
                 "inputs": (comp, index, total) => ({

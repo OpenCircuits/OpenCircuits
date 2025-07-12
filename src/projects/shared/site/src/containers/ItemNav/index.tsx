@@ -1,4 +1,3 @@
-import {GUID}                                                       from "shared/api/circuit/public";
 import {useCallback, useEffect, useLayoutEffect, useMemo, useState} from "react";
 
 import {ITEMNAV_HEIGHT, ITEMNAV_WIDTH} from "shared/site/utils/Constants";
@@ -228,7 +227,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete,
         const item = section?.items.find((i) => (i.kind === obj.kind));
 
         return item!.icon;
-    }, [circuit, curPressedObjID, hoveringNav]);
+    }, [circuit, config.sections, curPressedObjID, hoveringNav]);
 
     return (<>
         {/* Item Nav Deletion Preview (PR #1047) */}
@@ -317,7 +316,7 @@ const ItemNavDeletionPreview = ({ deleteImg }: ItemNavDeletionPreviewProps) => {
     const pos = useMousePos();
 
     if (!deleteImg)
-        return null;
+        return;
 
     // Item Nav Deletion Preview (PR #1047)
     return (

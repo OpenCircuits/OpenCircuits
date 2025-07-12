@@ -18,7 +18,7 @@ export const ViewICButtonModule = ({ circuit }: Props) => {
 
     // Only active when a single IC is selected
     if (!(props && ics.length === 1))
-        return null;
+        return;
 
     return (
         <button type="button"
