@@ -35,7 +35,7 @@ test("Basic Selection Popup", async ({ page }) => {
     const compId: string = await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "ConstantLow").id);
     expect(compId).toBeDefined();
     expect(typeof compId).toBe("string");
-    const initProps: { x: number, y: number } = await (page.evaluate((switchId) => window.Circuit.getComponent(switchId).getProps(), compId));
+    const initProps: { x: number, y: number } = await (page.evaluate((compId) => window.Circuit.getComponent(compId).getProps(), compId));
     expect(initProps.x).toBeDefined();
     expect(initProps.y).toBeDefined();
     // TODO: Make this locator nicer when the selection popup uses labels better
