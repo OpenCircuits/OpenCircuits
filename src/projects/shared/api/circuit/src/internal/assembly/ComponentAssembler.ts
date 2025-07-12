@@ -28,7 +28,7 @@ export interface ComponentSVGPrimAssembly {
     kind: "SVG";
 
     dependencies: Set<AssemblyReason>;
-    assemble: (comp: Schema.Component) => Omit<SVGPrim, "tint">;
+    assemble: (comp: Schema.Component) => Omit<SVGPrim, "tint" | "transform"> & { transform?: Transform };
 
     tintChangesWhenSelected?: boolean;
     getTint:  (comp: Schema.Component) => string | undefined;
@@ -128,7 +128,10 @@ export abstract class ComponentAssembler extends Assembler<Schema.Component> {
         } else if (assembly.kind === "SVG") {
             const tint = assembly.getTint(comp);
             return {
+                // Transform defaults to this transform
+                transform: this.getTransform(comp),
                 ...assembly.assemble(comp),
+
                 tint: (tint ? parseColor(tint) : undefined),
             } as const;
         } else if (assembly.kind === "Text") {

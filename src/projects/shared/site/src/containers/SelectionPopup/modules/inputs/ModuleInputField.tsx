@@ -42,7 +42,7 @@ export type SharedModuleInputFieldProps<V extends Prop> = {
 
     doChange: (newVals: V[]) => void;
     onSubmit?: () => void;
-    getCustomDisplayVal?: (val: V) => V;
+    getCustomDisplayVal?: (val: V) => string;
 
     placeholder?: string;
     alt?: string;
@@ -85,7 +85,7 @@ type Props<V extends Primitive[]> = {
     doChange: (newVals: V[]) => void;
     onSubmit?: () => void;
 
-    getCustomDisplayVal?: (val: V, i: number) => V[number];
+    getCustomDisplayVal?: (val: V, i: number) => string;
 }
 export const useBaseModule = <V extends Primitive[]>({
     circuit, props, parseVal, isValid, fixVal, applyModifier, reverseModifier,

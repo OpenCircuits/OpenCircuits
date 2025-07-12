@@ -7,13 +7,9 @@ import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assem
 import {ComponentAssembler}              from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import {FontStyle}                       from "shared/api/circuit/internal/assembly/Style";
 
-import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
-
 
 export class LabelAssembler extends ComponentAssembler {
-    protected readonly sim: DigitalSim;
-
-    public constructor(params: AssemblerParams, sim: DigitalSim) {
+    public constructor(params: AssemblerParams) {
         super(params, {}, [
             {
                 kind: "BaseShape",
@@ -40,7 +36,6 @@ export class LabelAssembler extends ComponentAssembler {
                 "name": AssemblyReason.TransformChanged,
             },
         });
-        this.sim = sim;
     }
 
     protected override getSize(comp: Schema.Component): Vector {

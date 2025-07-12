@@ -1,20 +1,22 @@
 import "shared/api/circuitdesigner/types/declarations";
 
-import {CreateDrawingFromSVG, SVGDrawing} from "svg2canvas";
+import {SVGDrawing} from "svg2canvas";
 
+import {ToSVGDrawing} from "shared/api/circuitdesigner/utils/ToSVGDrawing";
 
-function ToSVGDrawing(name: string, svgStr: string): SVGDrawing {
-    try {
-        const svgS = window.atob(svgStr.replace("data:image/svg+xml;base64,", ""));
-        const svg = new DOMParser().parseFromString(svgS, "text/xml");
-        const drawing = CreateDrawingFromSVG(svg);
-        if (!drawing)
-            throw new Error("Failed to create drawing from SVG!");
-        return drawing;
-    } catch (e) {
-        throw new Error(`Failed to turn svg ${name}.svg (${JSON.stringify(svgStr)}) into SVG! ${e}`);
-    }
-}
+import capacitorSVG from "./capacitor.svg";
+import currentSourceSVG from "./currentsource.svg";
+import groundSVG from "./ground.svg";
+import inductorSVG from "./inductor.svg";
+import resistorSVG from "./resistor.svg";
+import voltageSourceSVG from "./voltagesource.svg";
+
 
 export const SVGs: Map<string, SVGDrawing> = new Map([
+    ["capacitor.svg", ToSVGDrawing("capacitor", capacitorSVG)],
+    ["currentsource.svg", ToSVGDrawing("currentsource", currentSourceSVG)],
+    ["ground.svg", ToSVGDrawing("ground", groundSVG)],
+    ["inductor.svg", ToSVGDrawing("inductor", inductorSVG)],
+    ["resistor.svg", ToSVGDrawing("resistor", resistorSVG)],
+    ["voltagesource.svg", ToSVGDrawing("voltagesource", voltageSourceSVG)],
 ]);

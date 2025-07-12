@@ -1,12 +1,13 @@
 import {V} from "Vector";
 
-import {CircuitInternal, GUID} from "shared/api/circuit/internal";
+import {CircuitInternal} from "shared/api/circuit/internal";
 
 import {Assembler, AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import {NodeAssembler}    from "shared/api/circuit/internal/assembly/NodeAssembler";
-import {RenderOptions}    from "shared/api/circuit/internal/assembly/RenderOptions";
-import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/ICComponentAssembler";
+import {CircuitAssembler}     from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import {RenderOptions}        from "shared/api/circuit/internal/assembly/RenderOptions";
+import {NodeAssembler}        from "shared/api/circuit/internal/assembly/common/NodeAssembler";
+import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
+import {LabelAssembler}       from "shared/api/circuit/internal/assembly/common/LabelAssembler";
 
 import {ContextPath, DigitalSim}           from "../sim/DigitalSim";
 import {DigitalWireAssembler} from "./DigitalWireAssembler";
@@ -29,7 +30,6 @@ import {OscilloscopeAssembler} from "./components/OscilloscopeAssembler";
 import {MultiplexerAssembler} from "./components/MultiplexerAssembler";
 import {EncoderAssembler} from "./components/EncoderAssembler";
 import {ComparatorAssembler} from "./components/ComparatorAssembler";
-import {LabelAssembler} from "./components/LabelAssembler";
 import {BaseDisplayAssembler} from "./components/displays/BaseDisplayAssembler";
 import {ASCIIFont, BCDFont} from "./components/displays/SegmentDisplayConstants";
 
@@ -127,6 +127,6 @@ export function MakeDigitalCircuitAssembler(
 
         "Comparator": new ComparatorAssembler(params, sim),
 
-        "Label": new LabelAssembler(params, sim),
+        "Label": new LabelAssembler(params),
     }));
 }

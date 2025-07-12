@@ -1,10 +1,10 @@
 import {V, Vector} from "Vector";
-import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";
-import {Schema} from "../../schema";
-import {MapObj} from "../../utils/Functions";
+import {Assembler, AssemblerParams, AssemblyReason} from "../Assembler";
+import {Schema} from "../../../schema";
+import {MapObj} from "../../../utils/Functions";
 import {Rect} from "math/Rect";
 import {Transform} from "math/Transform";
-import {PortAssembler} from "./PortAssembler";
+import {PortAssembler} from "../PortAssembler";
 
 
 export class ICComponentAssembler extends Assembler<Schema.Component> {

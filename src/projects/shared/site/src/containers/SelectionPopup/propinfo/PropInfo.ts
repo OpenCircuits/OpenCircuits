@@ -6,14 +6,22 @@ import {DEFAULT_COMPONENT_PROP_INFO, DEFAULT_PORT_PROP_INFO, DEFAULT_WIRE_PROP_I
 export type Props = Record<string, Prop>;
 
 export type BasePropInfo = {
-    id: string;
+    id: string; // a unique ID for the prop or group, doesn't need to correspond to anything
     label?: string;
     isActive?: (props: Record<string, Prop[]>) => boolean;
 }
 export type BaseFieldPropInfo = BasePropInfo & {
-    key: string;
+    key: string; // the key of the actual prop on the component
 }
 
+export type UnitInfo = {
+    key: string;
+    default: string;
+    entries: Record<string, {
+        display: string;
+        scale: number;
+    }>;
+};
 export type NumberPropInfo = BaseFieldPropInfo & {
     type: "int" | "float";
     min?: number;
@@ -24,6 +32,7 @@ export type NumberPropInfo = BaseFieldPropInfo & {
         (v: number) => number, // Forward transform
         (v: number) => number, // Inverse transform
     ];
+    unit?: UnitInfo;
 }
 export type NumberSelectPropInfo = BaseFieldPropInfo & {
     type: "number[]";

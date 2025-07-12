@@ -28,17 +28,31 @@ export function GetPropsWithInfoFor(o: Obj, propInfo: PropInfoGetter): Record<st
         });
     }
 
+    function getProps(field: PropInfoEntryField): Array<readonly [string, Prop]> {
+        const mainProp = [
+            field.key,
+            (o.getProp(field.key)
+                ?? field.default
+                ?? DefaultEntryFieldDefaults[field.type]),
+        ] as const;
+
+        // Get the unit prop as well if there is one.
+        if ((field.type === "int" || field.type === "float") && field.unit) {
+            return [
+                mainProp,
+                [
+                    field.unit.key,
+                    (o.getProp(field.unit.key) ?? field.unit.default),
+                ],
+            ]
+        }
+        return [mainProp];
+    }
+
     const info = propInfo(o);
     if (!info) {
         console.warn(`Failed to find prop info for ${o.kind}!`);
         return {};
     }
-    const fields = getPropFields(info);
-    return Object.fromEntries(
-        fields.map((field) => [
-            field.key,
-            (o.getProp(field.key)
-                ?? field.default
-                ?? DefaultEntryFieldDefaults[field.type]),
-        ]));
+    return Object.fromEntries(getPropFields(info).flatMap(getProps));
 }
