@@ -1,5 +1,3 @@
-import React from "react";
-
 import {Circuit, Component} from "shared/api/circuit/public";
 
 import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
@@ -27,7 +25,7 @@ export const PortCountModule = ({ circuit, kinds, basisPortGroup, label }: Props
     );
 
     if (!props || comps.length === 0)
-        return null;
+        return;
 
     const cfgIndices = props["configIndex"];
 

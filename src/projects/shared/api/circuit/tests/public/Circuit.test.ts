@@ -339,7 +339,7 @@ describe("Circuit", () => {
             expect(circuit.getWires()).toHaveLength(0);
         });
         test("Delete Node path", () => {
-            const [circuit, {PlaceAt, Connect}] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
 
             const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();

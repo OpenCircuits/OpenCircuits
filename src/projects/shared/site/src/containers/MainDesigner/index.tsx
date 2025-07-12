@@ -44,7 +44,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
     const dispatch = useSharedDispatch();
     useEffect(() => designer.circuit.subscribe((_ev) =>
         dispatch(SetCircuitSaved(false))),
-    [designer]);
+    [designer, dispatch]);
 
     // Sync circuit-lock
     useEffect(() => {

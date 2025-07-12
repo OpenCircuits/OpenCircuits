@@ -33,6 +33,7 @@ import "./index.scss";
 type Props = {
     // info: AnalogCircuitInfo;
 }
+// eslint-disable-next-line arrow-body-style
 export const SimButtons = () => {
     // TODO:
 
@@ -90,7 +91,6 @@ export const SimButtons = () => {
     // // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, []);
     // // --------------
-
 
 
     // // TODO:

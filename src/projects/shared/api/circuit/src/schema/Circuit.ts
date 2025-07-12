@@ -2,7 +2,6 @@ import {Camera}          from "./Camera";
 import {CircuitMetadata} from "./CircuitMetadata";
 import {Component} from "./Component";
 import {GUID}      from "./GUID";
-import {Obj}             from "./Obj";
 import {Port} from "./Port";
 import {Wire} from "./Wire";
 

@@ -1,4 +1,3 @@
-
 /**
  * Utility to function to check if the given variable is an Error.
  *

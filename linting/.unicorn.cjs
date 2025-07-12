@@ -26,8 +26,8 @@ module.exports = {
                 "pascalCase": true,
             },
             "ignore": [
-                // Ignore things with words like IC, ID, etc. (i.e. ICViewer)
-                /(.*?)(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII|OS|NG)(.*)/,
+                // Ignore things with words like IC, ID, SVG, etc. (i.e. ICViewer)
+                /(.*?)(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII|OS|NG|SVG)(.*)/,
             ],
         }],
         "unicorn/no-array-reduce": "off",

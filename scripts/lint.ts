@@ -28,7 +28,7 @@ import yargs       from "yargs";
         return [
             ...new Set([
                 ...diff.split("\n"),
-                ...status.files.map(f => f.path),
+                ...status.files.map((f) => f.path),
             ].filter((file) => (file.endsWith(".ts") || file.endsWith(".tsx")))
         )];
     })();

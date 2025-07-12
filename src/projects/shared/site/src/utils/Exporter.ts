@@ -1,5 +1,3 @@
-
-
 /**
  * Utility function to save a file through the browser to the user's disk.
  *  This opens the default-OS file-browser to allow the user to save to a specific location.

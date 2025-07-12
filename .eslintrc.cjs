@@ -6,7 +6,7 @@ module.exports = deepMerge.all([{
             "browser": true,
             "es6": true,
         },
-        "ignorePatterns": ["*.js", "*.cjs", "*.d.ts"],
+        "ignorePatterns": ["*.js", "*.cjs", "*.d.ts", "**/proto/*.ts"],
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
             "tsconfigRootDir": __dirname,

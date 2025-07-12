@@ -1,4 +1,4 @@
-import {getAuth, signOut, User} from "firebase/auth";
+import {getAuth, signOut} from "firebase/auth";
 
 import {AuthState} from "./AuthState";
 import {AuthType}  from "./AuthTypes";

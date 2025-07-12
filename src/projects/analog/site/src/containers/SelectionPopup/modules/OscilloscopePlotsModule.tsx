@@ -1,7 +1,6 @@
-
-
 type Props = {
 }
+// eslint-disable-next-line arrow-body-style
 export const OscilloscopePlotsModule = ({ }: Props) => {
     return null;
 

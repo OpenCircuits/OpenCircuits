@@ -1,9 +1,8 @@
 import {V, Vector} from "Vector";
 import {Rect} from "math/Rect";
-import {Transform} from "math/Transform";
 
 import {Schema} from "shared/api/circuit/schema";
-import {FontStyle, Style} from "shared/api/circuit/internal/assembly/Style";
+import {FontStyle} from "shared/api/circuit/internal/assembly/Style";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
 

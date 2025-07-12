@@ -2,11 +2,11 @@ import "./Extensions";
 
 import {V, Vector} from "Vector";
 
-import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import {Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 
 import {Schema} from "shared/api/circuit/schema";
 
-import {Circuit, Component, Port, ReadonlyICPin, Wire, uuid} from "shared/api/circuit/public";
+import {Circuit, Component, Port, Wire, uuid} from "shared/api/circuit/public";
 import {CircuitImpl, IntegratedCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes}             from "shared/api/circuit/public/impl/CircuitContext";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";

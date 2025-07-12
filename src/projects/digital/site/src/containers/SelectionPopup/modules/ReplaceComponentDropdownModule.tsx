@@ -6,22 +6,22 @@ import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/u
 
 const swappableComponents = [
     {
-        "Button": "Button",
-        "Switch": "Switch",
-        "ConstantLow": "Constant Low",
+        "Button":       "Button",
+        "Switch":       "Switch",
+        "ConstantLow":  "Constant Low",
         "ConstantHigh": "Constant High",
-        "Clock": "Clock",
+        "Clock":        "Clock",
     },
     {
         "BUFGate": "Buffer",
         "NOTGate": "NOT Gate",
     },
     {
-        "ANDGate": "AND Gate",
+        "ANDGate":  "AND Gate",
         "NANDGate": "NAND Gate",
-        "ORGate": "OR Gate",
-        "NORGate": "NOR Gate",
-        "XORGate": "XOR Gate",
+        "ORGate":   "OR Gate",
+        "NORGate":  "NOR Gate",
+        "XORGate":  "XOR Gate",
         "XNORGate": "XNOR Gate",
     },
 ] as const;

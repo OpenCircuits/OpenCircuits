@@ -24,7 +24,7 @@ export const NumberModuleInputField = ({
 
     const doTransformedChange = useCallback(
         (newVals: number[]) => doChange(newVals.map(inverseTransform)),
-        [doChange]);
+        [doChange, inverseTransform]);
 
     const [state, setState] = useBaseModule<[number]>({
         ...DefaultConfig({

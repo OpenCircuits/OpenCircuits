@@ -10,7 +10,7 @@ import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssem
 export class EncoderAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
-    public constructor(params: AssemblerParams, sim: DigitalSim, kind: "Encoder" | "Decoder") {
+    public constructor(params: AssemblerParams, sim: DigitalSim) {
         super(params, {
             "inputs": (comp, index, total) => ({
                 origin: V(-0.5, -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y, { spacing: 0.5 })),
@@ -31,7 +31,7 @@ export class EncoderAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                getStyle:                 (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
         ], { sizeChangesWhenPortsChange: true });
         this.sim = sim;

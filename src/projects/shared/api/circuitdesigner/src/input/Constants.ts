@@ -1,4 +1,3 @@
-
 export const DRAG_TIME = 50;
 
 export const LEFT_MOUSE_BUTTON  = 0;

@@ -1,7 +1,5 @@
 import {SVGDrawing} from "svg2canvas";
 
-import {Matrix2x3} from "math/Matrix";
-
 import {BaseShapePrimWithoutStyle, Prim} from "shared/api/circuit/internal/assembly/Prim";
 import {DebugOptions} from "shared/api/circuitdesigner/public/impl/DebugOptions";
 

@@ -1,4 +1,3 @@
-
 type Props = {
     method: "GET" | "POST" | "PUT";
     url: string;

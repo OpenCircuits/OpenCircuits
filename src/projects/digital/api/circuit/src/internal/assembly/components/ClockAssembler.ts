@@ -20,14 +20,14 @@ export class ClockAssembler extends ComponentAssembler {
 
                 // TODO: Add dependency handling for state change (may or may not be part of PropChanged)
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.StateUpdated]),
-                assemble: (comp) => ({
+                assemble:     (comp) => ({
                     kind:      "SVG",
                     svg:       this.isOn(comp) ? "clockOn.svg" : "clock.svg",
                     transform: this.getTransform(comp),
                 }),
 
                 tintChangesWhenSelected: true,
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
+                getTint:                 (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;

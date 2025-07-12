@@ -12,7 +12,7 @@ export class NodeAssembler extends ComponentAssembler {
             kind: "BaseShape",
 
             dependencies: new Set([AssemblyReason.TransformChanged]),
-            assemble: (node) => ({
+            assemble:     (node) => ({
                 kind: "Circle",
 
                 pos:    this.getPos(node),
@@ -20,7 +20,7 @@ export class NodeAssembler extends ComponentAssembler {
             }),
 
             styleChangesWhenSelected: true,
-            getStyle: (node) => this.options.portStyle(this.isSelected(node.id), false).circleStyle,
+            getStyle:                 (node) => this.options.portStyle(this.isSelected(node.id), false).circleStyle,
         }]);
     }
 

@@ -6,7 +6,6 @@ import {Signal} from "digital/api/circuit/schema/Signal";
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
 import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {Transform} from "math/Transform";
 
 
 export class SwitchAssembler extends ComponentAssembler {
@@ -26,7 +25,7 @@ export class SwitchAssembler extends ComponentAssembler {
                 }),
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                getStyle:                 (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
             {
                 kind: "SVG",
@@ -38,7 +37,7 @@ export class SwitchAssembler extends ComponentAssembler {
                     transform: this.getTransform(comp).withScale(V(0.96, 1.2)),
                 }),
                 tintChangesWhenSelected: true,
-                getTint: (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
+                getTint:                 (comp) => (this.isSelected(comp.id) ? this.options.selectedFillColor : undefined),
             },
         ]);
         this.sim = sim;

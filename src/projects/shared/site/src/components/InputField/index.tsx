@@ -8,7 +8,7 @@ type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>
 }
 export const InputField = React.forwardRef<HTMLInputElement, Props>(({ onEnter, ...props }, forwardedRef) => {
     const defaultRef = useRef<HTMLInputElement>(null);
-    const ref = (forwardedRef ?? defaultRef) as React.MutableRefObject<HTMLInputElement>;
+    const ref = (forwardedRef ?? defaultRef) as React.RefObject<HTMLInputElement>;
 
     useEffect(() => {
         const cur = ref.current;
@@ -52,7 +52,7 @@ type NumberProps = Props & {
 export const NumberInputField = React.forwardRef<HTMLInputElement, NumberProps>(({ onIncrement, step, ...props },
                                                                                    forwardedRef) => {
     const defaultRef = useRef<HTMLInputElement>(null);
-    const ref = (forwardedRef ?? defaultRef) as React.MutableRefObject<HTMLInputElement>;
+    const ref = (forwardedRef ?? defaultRef) as React.RefObject<HTMLInputElement>;
 
     const onIncrementClick = (step: number) => {
         if (document.activeElement !== ref.current) {

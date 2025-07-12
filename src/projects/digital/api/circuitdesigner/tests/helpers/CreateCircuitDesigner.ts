@@ -9,12 +9,10 @@ import {WiringTool}       from "shared/api/circuitdesigner/tools/WiringTool";
 import {SplitWireTool}    from "shared/api/circuitdesigner/tools/SplitWireTool";
 
 import {CleanupHandler}     from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
-import {CopyHandler}        from "shared/api/circuitdesigner/tools/handlers/CopyHandler";
 import {DeleteHandler}      from "shared/api/circuitdesigner/tools/handlers/DeleteHandler";
 import {DeselectAllHandler} from "shared/api/circuitdesigner/tools/handlers/DeselectAllHandler";
 import {DuplicateHandler}   from "shared/api/circuitdesigner/tools/handlers/DuplicateHandler";
 import {FitToScreenHandler} from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
-import {PasteHandler}       from "shared/api/circuitdesigner/tools/handlers/PasteHandler";
 import {RedoHandler}        from "shared/api/circuitdesigner/tools/handlers/RedoHandler";
 import {SaveHandler}        from "shared/api/circuitdesigner/tools/handlers/SaveHandler";
 import {SelectAllHandler}   from "shared/api/circuitdesigner/tools/handlers/SelectAllHandler";

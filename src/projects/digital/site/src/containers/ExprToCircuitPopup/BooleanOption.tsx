@@ -12,9 +12,9 @@ type Props = {
     text: string;
 }
 export const BooleanOption = ({ isDisplayed, option, setOption, text }: Props) => (
-    isDisplayed ? (<>
+    isDisplayed && (<>
         <SwitchToggle isOn={option} height="40px"
                       onChange={() => setOption(!option)}>{text}</SwitchToggle>
         <br />
-    </>) : null
+    </>)
 );

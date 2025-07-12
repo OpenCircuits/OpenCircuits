@@ -95,7 +95,7 @@ describe("Component", () => {
 
     describe("Exists", () => {
         test("add/delete and undo/redo", () => {
-            const [circuit, {PlaceAt}] = CreateTestCircuit();
+            const [circuit, { PlaceAt }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.exists()).toBeTruthy();
             circuit.undo();
@@ -336,10 +336,10 @@ describe("Component", () => {
 
     describe("Delete Node's full path", () => {
         test("Delete full path with 1 node", () => {
-            const [circuit, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
 
-            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
+            const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             n1.delete();
 
             expect(sw1.exists()).toBeFalsy();
@@ -363,11 +363,11 @@ describe("Component", () => {
             expect(circuit.getWires()).toHaveLength(0);
         });
         test("Delete full path with 2 nodes", () => {
-            const [circuit, {PlaceAt, Connect, GetPort}] = CreateTestCircuit();
+            const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
 
-            const {node: n1, wire1: sw1, wire2: sw2} = w1.split();
-            const {node: n2, wire1: sw21, wire2: sw22} = sw2.split();
+            const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
+            const { node: n2, wire1: sw21, wire2: sw22 } = sw2.split();
             n1.delete();
 
             expect(sw1.exists()).toBeFalsy();
