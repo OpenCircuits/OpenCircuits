@@ -21,5 +21,5 @@ execSync(`docker run --rm -v ${pwd}:/mnt ngspice:make`, {
 // Copy files to analog site
 CopyDir(
     path.resolve(process.cwd(), "scripts/ngspice/build"),
-    path.resolve(process.cwd(), "src/site/pages/analog/src/lib"),
+    path.resolve(process.cwd(), "src/projects/analog/site/src/lib"),
 );
