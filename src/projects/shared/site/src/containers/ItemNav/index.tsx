@@ -227,7 +227,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete,
         const item = section?.items.find((i) => (i.kind === obj.kind));
 
         return item!.icon;
-    }, [circuit, config.sections, curPressedObjID, hoveringNav]);
+    }, [circuit, curPressedObjID, hoveringNav]);
 
     return (<>
         {/* Item Nav Deletion Preview (PR #1047) */}
