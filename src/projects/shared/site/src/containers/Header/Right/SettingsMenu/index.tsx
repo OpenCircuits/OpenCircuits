@@ -30,7 +30,7 @@ export const SettingsMenu = () => {
     //  especially the gross 'useAPIMethods' thing
     useEffect(() => {
         designer.viewport.debugOptions = debugInfo;
-    }, [debugInfo, ...Object.values(debugInfo)]); // Updates when any of the debugInfo values change
+    }, [designer, ...Object.values(debugInfo)]); // Updates when any of the debugInfo values change
 
     return (
         <Dropdown open={(curMenu === "settings")}
