@@ -1,9 +1,6 @@
 import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
-import {DigitalCircuit, DigitalICInfo, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSelections, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer, ReadonlyDigitalSelections} from "../DigitalCircuit";
-import {DigitalComponent, DigitalNode, ReadonlyDigitalComponent} from "../DigitalComponent";
-import {DigitalPort, ReadonlyDigitalPort}                   from "../DigitalPort";
-import {DigitalWire, ReadonlyDigitalWire}                   from "../DigitalWire";
+import {DigitalAPITypes} from "../DigitalCircuit";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {DigitalSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
@@ -20,23 +17,7 @@ import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAsse
 import {DigitalPropagators} from "../../internal/sim/DigitalPropagators";
 
 
-export type DigitalTypes = CircuitTypes<
-    DigitalCircuit,
-    ReadonlyDigitalCircuit,
-    DigitalComponent,
-    DigitalWire,
-    DigitalPort,
-    ReadonlyDigitalComponent,
-    ReadonlyDigitalWire,
-    ReadonlyDigitalPort,
-    DigitalNode,
-    DigitalIntegratedCircuit,
-    DigitalICInfo,
-    DigitalObjContainer,
-    ReadonlyDigitalObjContainer,
-    DigitalSelections,
-    ReadonlyDigitalSelections
->;
+export type DigitalTypes = CircuitTypes<DigitalAPITypes>;
 
 export class DigitalCircuitContext extends CircuitContext<DigitalTypes> {
     public readonly assembler: CircuitAssembler;

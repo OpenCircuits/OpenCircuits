@@ -220,7 +220,7 @@ const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, w
         });
         designer.circuit.import(mainDesigner.circuit);
         return designer;
-    }, [extraHandlers, mainDesigner.circuit]);
+    }, [mainDesigner.circuit]);
 
     useLayoutEffect(() => {
         if (!canvas.current)

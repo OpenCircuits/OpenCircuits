@@ -17,8 +17,8 @@ node_modules
 coverage
 build
 site/data/config.txt
-src/site/pages/analog/src/lib/ngspice.js
-src/site/pages/analog/src/lib/ngspice.wasm
+src/projects/analog/site/src/lib/ngspice.js
+src/projects/analog/site/src/lib/ngspice.wasm
 tests/index.js
 app.yaml
 yarn-error.log

@@ -2,78 +2,90 @@ import {CircuitInternal, GUID}   from "shared/api/circuit/internal";
 import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {DefaultRenderOptions, RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {Component, Node, ReadonlyComponent}   from "../Component";
+import {Component, Node, ReadonlyComponent, ReadonlyNode}   from "../Component";
 import {Port, ReadonlyPort}              from "../Port";
 import {ReadonlyWire, Wire}              from "../Wire";
-import {Circuit, ICInfo, IntegratedCircuit, ReadonlyCircuit} from "../Circuit";
+import {Circuit, ReadonlyCircuit} from "../Circuit";
 import {ObjContainer, ReadonlyObjContainer} from "../ObjContainer";
 import {ReadonlySelections, Selections} from "../Selections";
 import {ObjInfoProvider} from "../../internal/impl/ObjInfo";
 import {CircuitLog} from "../../internal/impl/CircuitLog";
 import {CircuitDocument} from "../../internal/impl/CircuitDocument";
+import {ComponentInfo} from "../ComponentInfo";
+import {ICInfo, IntegratedCircuit, ReadonlyIntegratedCircuit} from "../IntegratedCircuit";
 
+
+export type CircuitAPITypes = {
+    CircuitT: Circuit;
+    ReadonlyCircuitT: ReadonlyCircuit;
+
+    IntegratedCircuitT: IntegratedCircuit;
+    ReadonlyIntegratedCircuitT: ReadonlyIntegratedCircuit;
+
+    NodeT: Node;
+    ReadonlyNodeT: ReadonlyNode;
+
+    ComponentT: Component;
+    ReadonlyComponentT: ReadonlyComponent;
+
+    WireT: Wire;
+    ReadonlyWireT: ReadonlyWire;
+
+    PortT: Port;
+    ReadonlyPortT: ReadonlyPort;
+
+    ObjContainerT: ObjContainer;
+    ReadonlyObjContainerT: ReadonlyObjContainer;
+
+    SelectionsT: Selections;
+    ReadonlySelectionsT: ReadonlySelections;
+
+    ComponentInfoT: ComponentInfo;
+    ICInfoT: ICInfo;
+}
 
 // Utility interface to hold utility types for the templated Circuit API.
-export type CircuitTypes<
-    CircuitT extends Circuit = Circuit,
-    RCircuitT extends ReadonlyCircuit = ReadonlyCircuit,
+export type CircuitTypes<Types extends CircuitAPITypes = CircuitAPITypes> = {
+    "Circuit": Types["CircuitT"];
+    "ReadonlyCircuit": Types["ReadonlyCircuitT"];
 
-    ComponentT extends Component = Component,
-    WireT extends Wire = Wire,
-    PortT extends Port = Port,
+    "Component": Types["ComponentT"];
+    "Node": Types["NodeT"];
+    "Wire": Types["WireT"];
+    "Port": Types["PortT"];
+    "Obj": Types["ComponentT"] | Types["WireT"] | Types["PortT"];
 
-    RComponentT extends ReadonlyComponent = ReadonlyComponent,
-    RWireT extends ReadonlyWire = ReadonlyWire,
-    RPortT extends ReadonlyPort = ReadonlyPort,
+    "ReadonlyComponent": Types["ReadonlyComponentT"];
+    "ReadonlyNode": Types["ReadonlyNodeT"];
+    "ReadonlyWire": Types["ReadonlyWireT"];
+    "ReadonlyPort": Types["ReadonlyPortT"];
+    "ReadonlyObj": Types["ReadonlyComponentT"] | Types["ReadonlyWireT"] | Types["ReadonlyPortT"];
 
-    NodeT extends Node = Node,
+    "Component[]": Array<Types["ComponentT"]>;
+    "Wire[]": Array<Types["WireT"]>;
+    "Port[]": Array<Types["PortT"]>;
+    "Obj[]": Array<Types["ComponentT"] | Types["WireT"] | Types["PortT"]>;
 
-    ICT extends IntegratedCircuit = IntegratedCircuit,
-    ICInfoT extends ICInfo = ICInfo,
+    "ReadonlyComponent[]": Array<Types["ReadonlyComponentT"]>;
+    "ReadonlyWire[]": Array<Types["ReadonlyWireT"]>;
+    "ReadonlyPort[]": Array<Types["ReadonlyPortT"]>;
+    "ReadonlyObj[]": Array<Types["ReadonlyComponentT"] | Types["ReadonlyWireT"] | Types["ReadonlyPortT"]>;
 
-    ObjContainerT extends ObjContainer = ObjContainer,
-    RObjContainerT extends ReadonlyObjContainer = ReadonlyObjContainer,
+    "IC": Types["IntegratedCircuitT"];
+    "ReadonlyIC": Types["ReadonlyIntegratedCircuitT"];
+    "IC[]": Array<Types["IntegratedCircuitT"]>;
+    "ReadonlyIC[]": Array<Types["ReadonlyIntegratedCircuitT"]>;
 
-    SelectionsT extends Selections = Selections,
-    RSelectionsT extends ReadonlySelections = ReadonlySelections,
-> = {
-    "Circuit": CircuitT;
-    "ReadonlyCircuit": RCircuitT;
+    "Path": Array<Types["NodeT"] | Types["WireT"]>;
 
-    "Component": ComponentT;
-    "Wire": WireT;
-    "Port": PortT;
-    "Obj": ComponentT | WireT | PortT;
+    "ICInfo": Types["ICInfoT"];
+    "ComponentInfo": Types["ComponentInfoT"];
 
-    "ReadonlyComponent": RComponentT;
-    "ReadonlyWire": RWireT;
-    "ReadonlyPort": RPortT;
-    "ReadonlyObj": RComponentT | RWireT | RPortT;
+    "ObjContainerT": Types["ObjContainerT"];
+    "ReadonlyObjContainerT": Types["ReadonlyObjContainerT"];
 
-    "Component[]": ComponentT[];
-    "Wire[]": WireT[];
-    "Port[]": PortT[];
-    "Obj[]": Array<ComponentT | WireT | PortT>;
-
-    "ReadonlyComponent[]": RComponentT[];
-    "ReadonlyWire[]": RWireT[];
-    "ReadonlyPort[]": RPortT[];
-    "ReadonlyObj[]": Array<RComponentT | RWireT | RPortT>;
-
-    "IC": ICT;
-
-    "ComponentInfo": ComponentT["info"];
-
-    "Node": NodeT;
-    "Path": Array<NodeT | WireT>;
-    "IC[]": ICT[];
-
-    "ICInfo": ICInfoT;
-    "ObjContainerT": ObjContainerT;
-    "ReadonlyObjContainerT": RObjContainerT;
-
-    "SelectionsT": SelectionsT;
-    "ReadonlySelectionsT": RSelectionsT;
+    "SelectionsT": Types["SelectionsT"];
+    "ReadonlySelectionsT": Types["ReadonlySelectionsT"];
 }
 
 

@@ -71,7 +71,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
 
     useEffect(() => viewport.camera.subscribe(() =>
         setPos(viewport.toScreenPos(circuit.selections.midpoint))
-    ), [circuit, setPos, viewport]);
+    ), [circuit, setPos]);
     // TODO[master] - Right now, the selection popup won't move when you edit
     //                the position values in the popup, this is kinda nice since
     //                it lets you easily edit multiple values in one-go, but it
