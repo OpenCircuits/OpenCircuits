@@ -79,8 +79,11 @@ async function Init(): Promise<void> {
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading NGSpice Library", async () => {
             ngSpiceLib = await NGSpice();
-            if (!ngSpiceLib)
+            if (!ngSpiceLib) {
+                // TODO: Display this to user but still run the app(?)
                 console.error("Failed to load NGSpice WASM binary!");
+                return;
+            }
             ngSpiceLib.OC_init();
         }],
 

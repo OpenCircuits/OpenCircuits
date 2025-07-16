@@ -20,7 +20,7 @@ import type {
     Wire,
 } from "shared/api/circuit/public";
 
-import type {GUID, Schema} from "shared/api/circuit/schema";
+import type {GUID} from "shared/api/circuit/schema";
 
 import type {DigitalComponentInfo}          from "./DigitalComponentInfo";
 import type {DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode} from "./DigitalComponent";
@@ -29,43 +29,73 @@ import type {DigitalPort, ReadonlyDigitalPort}                   from "./Digital
 import type {DigitalSchema} from "digital/api/circuit/schema";
 import type {ObjContainer, ReadonlyObjContainer} from "shared/api/circuit/public/ObjContainer";
 import {Observable} from "shared/api/circuit/utils/Observable";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 
-export type ToDigital<T> = (
+export type ReplaceAPITypes<T, Types extends CircuitAPITypes> = (
     // Core types to keep the same and return early on (and prevent infinite recursion)
     T extends Vector ? Vector :
     T extends Rect   ? Rect   :
-    // Schema-type
-    T extends Schema.Circuit ? DigitalSchema.DigitalCircuit :
     // Base-type replacements
-    T extends IntegratedCircuit ? DigitalIntegratedCircuit :
-    T extends Circuit           ? DigitalCircuit :
-    T extends Node              ? DigitalNode :
-    T extends Component         ? DigitalComponent :
-    T extends Wire              ? DigitalWire :
-    T extends Port              ? DigitalPort :
-    T extends ObjContainer      ? DigitalObjContainer :
-    T extends Selections        ? DigitalSelections :
-    T extends ComponentInfo     ? DigitalComponentInfo :
-    T extends ICInfo            ? DigitalICInfo :
+    T extends IntegratedCircuit ? Types["IntegratedCircuitT"] :
+    T extends Circuit           ? Types["CircuitT"]           :
+    T extends Node              ? Types["NodeT"]              :
+    T extends Component         ? Types["ComponentT"]         :
+    T extends Wire              ? Types["WireT"]              :
+    T extends Port              ? Types["PortT"]              :
+    T extends ObjContainer      ? Types["ObjContainerT"]      :
+    T extends Selections        ? Types["SelectionsT"]        :
+    T extends ComponentInfo     ? Types["ComponentInfoT"]     :
+    T extends ICInfo            ? Types["ICInfoT"]            :
     // Base-Readonly-type replacements
-    T extends ReadonlyIntegratedCircuit ? ReadonlyDigitalIntegratedCircuit :
-    T extends ReadonlyCircuit           ? ReadonlyDigitalCircuit :
-    T extends ReadonlyNode              ? ReadonlyDigitalNode :
-    T extends ReadonlyComponent         ? ReadonlyDigitalComponent :
-    T extends ReadonlyWire              ? ReadonlyDigitalWire :
-    T extends ReadonlyPort              ? ReadonlyDigitalPort :
-    T extends ReadonlyObjContainer      ? ReadonlyDigitalObjContainer :
-    T extends ReadonlySelections        ? ReadonlyDigitalSelections :
+    T extends ReadonlyIntegratedCircuit ? Types["ReadonlyIntegratedCircuitT"] :
+    T extends ReadonlyCircuit           ? Types["ReadonlyCircuitT"]           :
+    T extends ReadonlyNode              ? Types["ReadonlyNodeT"]              :
+    T extends ReadonlyComponent         ? Types["ReadonlyComponentT"]         :
+    T extends ReadonlyWire              ? Types["ReadonlyWireT"]              :
+    T extends ReadonlyPort              ? Types["ReadonlyPortT"]              :
+    T extends ReadonlyObjContainer      ? Types["ReadonlyObjContainerT"]      :
+    T extends ReadonlySelections        ? Types["ReadonlySelectionsT"]        :
     // Replace all method args/return types
-    T extends (...a: infer Args) => infer R ? (...a: ToDigital<Args>) => ToDigital<R> :
+    T extends (...a: infer Args) => infer R ? (...a: ReplaceAPITypes<Args, Types>) => ReplaceAPITypes<R, Types> :
     // Recursively replace records
-    T extends Record<string | number, unknown> ? { [key in keyof T]: ToDigital<T[key]>; } :
+    T extends Record<string | number, unknown> ? { [key in keyof T]: ReplaceAPITypes<T[key], Types>; } :
     // Replace arrays
-    T extends unknown[] ? { [Index in keyof T]: ToDigital<T[Index]>; } :
+    T extends unknown[] ? { [Index in keyof T]: ReplaceAPITypes<T[Index], Types>; } :
     // Else just keep the type as it is
     T
 );
+
+export type DigitalAPITypes = {
+    CircuitT: DigitalCircuit;
+    ReadonlyCircuitT: ReadonlyDigitalCircuit;
+
+    IntegratedCircuitT: DigitalIntegratedCircuit;
+    ReadonlyIntegratedCircuitT: ReadonlyDigitalIntegratedCircuit;
+
+    NodeT: DigitalNode;
+    ReadonlyNodeT: ReadonlyDigitalNode;
+
+    ComponentT: DigitalComponent;
+    ReadonlyComponentT: ReadonlyDigitalComponent;
+
+    WireT: DigitalWire;
+    ReadonlyWireT: ReadonlyDigitalWire;
+
+    PortT: DigitalPort;
+    ReadonlyPortT: ReadonlyDigitalPort;
+
+    ObjContainerT: DigitalObjContainer;
+    ReadonlyObjContainerT: ReadonlyDigitalObjContainer;
+
+    SelectionsT: DigitalSelections;
+    ReadonlySelectionsT: ReadonlyDigitalSelections;
+
+    ComponentInfoT: DigitalComponentInfo;
+    ICInfoT: DigitalICInfo;
+}
+
+export type ToDigital<T> = ReplaceAPITypes<T, DigitalAPITypes>;
 
 export type APIToDigital<T> = {
     [key in keyof T]: ToDigital<T[key]>;
@@ -77,7 +107,7 @@ export type ReadonlyDigitalObjContainer = APIToDigital<ReadonlyObjContainer> & {
 export type DigitalObjContainer = APIToDigital<ObjContainer> & ReadonlyDigitalObjContainer;
 
 export type ReadonlyDigitalSelections = APIToDigital<ReadonlySelections> & ReadonlyDigitalObjContainer;
-export type DigitalSelections = APIToDigital<Selections> & Omit<DigitalObjContainer, "select">;
+export type DigitalSelections = APIToDigital<Selections> &  APIToDigital<Omit<ObjContainer, "select">> & ReadonlyDigitalObjContainer;
 
 export interface ReadonlySimState {
     // PortID -> Signal
