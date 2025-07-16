@@ -94,12 +94,10 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
             }
             circuit.commitTransaction("Snapped Components");
         }
-        else if (ev.type === "keyup") {
-            if (ev.key === " ") {
+        else if (ev.type === "keyup" && ev.key === " ") {
                 circuit.beginTransaction();
-                circuit.import(circuit.selections.withWiresAndPorts(), {refreshIds: true}).forEach((obj) => obj.deselect());
+                circuit.import(circuit.selections.withWiresAndPorts(), { refreshIds: true }).forEach((obj) => obj.deselect());
                 circuit.commitTransaction("Copy");
             }
-        }
     }
 }

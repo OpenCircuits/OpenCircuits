@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useDocEvent}         from "./useDocEvent";
 import {CalculateMidpoint} from "math/MathUtils";
-import {Vector, V} from "Vector";
+import {V, Vector} from "Vector";
 
 
 export const useMousePos = () => {
@@ -11,9 +11,7 @@ export const useMousePos = () => {
     });
 
     useEffect(() => {
-        const getTouchPositions = (touches: TouchList): Vector[] => {
-            return Array.from(touches).map((t) => V(t.pageX, t.pageY));
-        };
+        const getTouchPositions = (touches: TouchList): Vector[] => [...touches].map((t) => V(t.pageX, t.pageY));
 
         const mouseListener = (ev: MouseEvent) => {
             setPos({ x: ev.pageX, y: ev.pageY });
