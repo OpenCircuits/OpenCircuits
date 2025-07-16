@@ -6,8 +6,7 @@ import {Schema} from "shared/api/circuit/schema";
 
 import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 
-import {Circuit, CircuitEvent, CircuitHistory, CircuitHistoryEvent, ICPin, IntegratedCircuit,
-        IntegratedCircuitDisplay} from "../Circuit";
+import {Circuit, CircuitEvent} from "../Circuit";
 
 import {CircuitContext, CircuitTypes} from "./CircuitContext";
 import {ObservableImpl} from "../../utils/Observable";
@@ -17,6 +16,9 @@ import {ReadonlyWire} from "../Wire";
 import {ReadonlyPort} from "../Port";
 import {Camera} from "../Camera";
 import {CameraImpl} from "./Camera";
+import {HistoryImpl} from "./History";
+import {CircuitHistory} from "../History";
+import {IntegratedCircuit} from "../IntegratedCircuit";
 
 
 function ConvertComp(c: ReadonlyComponent): Schema.Component {
@@ -76,32 +78,6 @@ function ConvertIC(ic: IntegratedCircuit): Schema.IntegratedCircuit {
 }
 
 export type RemoveICCallback = (id: GUID) => void;
-
-export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements CircuitHistory {
-    protected readonly internal: CircuitInternal;
-
-    public constructor(internal: CircuitInternal) {
-        super();
-
-        this.internal = internal;
-
-        this.internal["log"].subscribe((ev) => {
-            if (ev.accepted.length === 0)
-                return;
-            this.publish({ type: "change" });
-        })
-    }
-
-    public getUndoStack(): readonly LogEntry[] {
-        return this.internal.getUndoHistory();
-    }
-    public getRedoStack(): readonly LogEntry[] {
-        return this.internal.getRedoHistory();
-    }
-    public clear(): void {
-        return this.internal.clearHistory();
-    }
-}
 
 export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly ctx: CircuitContext<T>;
@@ -310,7 +286,6 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.commitTransaction("Deleted Object");
     }
 
-
     public importICs(ics: IntegratedCircuit[]): void {
         this.internal.beginTransaction();
         for (const ic of ics) {
@@ -414,129 +389,5 @@ export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitE
         this.commitTransaction("Imported Circuit");
 
         return this.ctx.factory.constructObjContainer(new Set(objs.values()));
-    }
-}
-
-class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
-    protected readonly icId: GUID;
-    protected readonly pinIndex: number;
-
-    protected readonly ctx: CircuitContext<T>;
-
-    public constructor(ctx: CircuitContext<T>, icId: GUID, pinIndex: number) {
-        this.ctx = ctx;
-        this.icId = icId;
-        this.pinIndex = pinIndex;
-    }
-
-    protected get ic() {
-        return this.ctx.internal.getICInfo(this.icId).unwrap();
-    }
-
-    public get id(): GUID {
-        return this.ic.metadata.pins[this.pinIndex].id;
-    }
-    public get group(): GUID {
-        return this.ic.metadata.pins[this.pinIndex].group;
-    }
-
-    public get name(): string {
-        return this.ic.metadata.pins[this.pinIndex].name;
-    }
-
-    public set pos(p: Vector) {
-        this.ctx.internal.beginTransaction();
-        this.ctx.internal.updateICPinMetadata(this.icId, this.pinIndex, { x: p.x, y: p.y }).unwrap();
-        this.ctx.internal.commitTransaction();
-    }
-    public get pos(): Vector {
-        return V(
-            this.ic.metadata.pins[this.pinIndex].x,
-            this.ic.metadata.pins[this.pinIndex].y,
-        );
-    }
-
-    public set dir(d: Vector) {
-        this.ctx.internal.beginTransaction();
-        this.ctx.internal.updateICPinMetadata(this.icId, this.pinIndex, { dx: d.x, dy: d.y }).unwrap();
-        this.ctx.internal.commitTransaction();
-    }
-    public get dir(): Vector {
-        return V(
-            this.ic.metadata.pins[this.pinIndex].dx,
-            this.ic.metadata.pins[this.pinIndex].dy,
-        );
-    }
-}
-
-class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements IntegratedCircuitDisplay {
-    protected readonly id: GUID;
-
-    protected readonly ctx: CircuitContext<T>;
-
-    public constructor(ctx: CircuitContext<T>, id: GUID) {
-        this.ctx = ctx;
-        this.id = id;
-    }
-
-    protected get ic() {
-        return this.ctx.internal.getICInfo(this.id).unwrap();
-    }
-
-    public set size(p: Vector) {
-        this.ctx.internal.beginTransaction();
-        this.ctx.internal.updateICMetadata(this.id, { displayWidth: p.x, displayHeight: p.y }).unwrap();
-        this.ctx.internal.commitTransaction();
-    }
-    public get size(): Vector {
-        return V(this.ic.metadata.displayWidth, this.ic.metadata.displayHeight);
-    }
-    public get pins(): ICPin[] {
-        return this.ic.metadata.pins.map((_, i) => new IntegratedCircuitPinImpl(this.ctx, this.id, i));
-    }
-}
-
-export class IntegratedCircuitImpl<T extends CircuitTypes> implements IntegratedCircuit {
-    public readonly id: GUID;
-
-    protected readonly ctx: CircuitContext<T>;
-
-    public readonly display: IntegratedCircuitDisplay;
-
-    public constructor(ctx: CircuitContext<T>, id: GUID) {
-        this.ctx = ctx;
-        this.id = id;
-
-        this.display = new IntegratedCircuitDisplayImpl(ctx, id);
-    }
-
-    // Metadata
-    public set name(name: string) {
-        this.ctx.internal.beginTransaction();
-        this.ctx.internal.updateICMetadata(this.id, { name }).unwrap();
-        this.ctx.internal.commitTransaction();
-    }
-    public get name(): string {
-        return this.ctx.internal.getICInfo(this.id).unwrap().metadata.name;
-    }
-
-    public get desc(): string {
-        return this.ctx.internal.getICInfo(this.id).unwrap().metadata.desc;
-    }
-
-    public get all(): T["ObjContainerT"] {
-        return this.ctx.factory.constructObjContainer(
-            new Set(this.ctx.internal.getICInfo(this.id).unwrap().getObjs()),
-            this.id
-        );
-    }
-
-    public get components(): T["ReadonlyComponent[]"] {
-        return [...this.ctx.internal.getICInfo(this.id).unwrap().getComponents()]
-            .map((id) => this.ctx.factory.constructComponent(id, this.id));
-    }
-    public get wires(): T["ReadonlyWire[]"] {
-        return [...this.ctx.internal.getICInfo(this.id).unwrap().getWires()]
-            .map((id) => this.ctx.factory.constructWire(id, this.id));
     }
 }

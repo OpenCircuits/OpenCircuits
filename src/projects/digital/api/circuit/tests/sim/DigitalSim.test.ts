@@ -1,3 +1,4 @@
+import {DigitalCircuitImpl} from "digital/api/circuit/public/impl/DigitalCircuit";
 import {GroupPrim} from "shared/api/circuit/internal/assembly/Prim";
 import "shared/tests/helpers/Extensions";
 
@@ -31,7 +32,7 @@ describe("DigitalSim", () => {
 
             const [circuit, { TurnOn, PlaceAndConnect }] = CreateTestCircuit();
             // Need to manually access the internal assembler
-            const assembler = circuit["ctx"]["assembler"];
+            const assembler = (circuit as DigitalCircuitImpl)["ctx"]["assembler"];
 
             const [sw, { outputs: [out] }] = PlaceAndConnect("Switch");
 

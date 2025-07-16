@@ -3,6 +3,7 @@ import "shared/tests/helpers/Extensions";
 import {V}             from "Vector";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
+import {DigitalCircuitImpl} from "../src/public/impl/DigitalCircuit";
 
 
 describe("CircuitAssembler", () => {
@@ -15,7 +16,7 @@ describe("CircuitAssembler", () => {
     test("Single Selection", () => {
         const [circuit] = CreateTestCircuit();
         // Need to manually access the internal assembler
-        const assembler = circuit["ctx"]["assembler"];
+        const assembler = (circuit as DigitalCircuitImpl)["ctx"]["assembler"];
 
         expectNoDirty(assembler);
 

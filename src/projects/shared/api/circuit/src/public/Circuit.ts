@@ -13,7 +13,8 @@ import {Observable} from "../utils/Observable";
 import {ObjContainer, ReadonlyObjContainer} from "./ObjContainer";
 import {Rect} from "math/Rect";
 import {Camera, ReadonlyCamera} from "./Camera";
-import {CircuitOp} from "../internal/impl/CircuitOps";
+import {CircuitHistory} from "./History";
+import {ICInfo, IntegratedCircuit} from "./IntegratedCircuit";
 
 
 // TODO[master](leon) - make this more user friendly
@@ -23,29 +24,6 @@ export type CircuitEvent = {
 } | {
     type: "metadata";
     change: "name" | "desc";
-}
-export interface CircuitHistoryEvent {
-    type: "change";
-}
-export type CircuitHistoryOp = Readonly<CircuitOp>;
-export interface CircuitHistoryEntry {
-    readonly id: GUID;
-
-    // Operations
-    readonly ops: readonly CircuitHistoryOp[];
-
-    // Semantic info for the entry
-    readonly clientData: string;
-}
-export interface CircuitHistory extends Observable<CircuitHistoryEvent> {
-    getUndoStack(): readonly CircuitHistoryEntry[];
-    getRedoStack(): readonly CircuitHistoryEntry[];
-
-    clear(): void;
-}
-export interface ICInfo {
-    circuit: ReadonlyCircuit;
-    display: ReadonlyIntegratedCircuitDisplay;
 }
 
 interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
@@ -111,43 +89,4 @@ export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircu
     redo(): void;
 
     import(circuit: ReadonlyCircuit | ReadonlyObjContainer, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): ObjContainer;
-}
-
-export interface ReadonlyICPin {
-    readonly id: GUID;  // ID of corresponding PORT
-    readonly group: string;
-
-    readonly name: string;
-
-    readonly pos: Vector;
-    readonly dir: Vector;
-}
-export interface ICPin extends ReadonlyICPin {
-    readonly id: GUID;  // ID of corresponding PORT
-    readonly group: string;
-
-    pos: Vector;
-    dir: Vector;
-}
-
-export interface ReadonlyIntegratedCircuitDisplay {
-    readonly size: Vector;
-    readonly pins: ReadonlyICPin[];
-}
-export interface IntegratedCircuitDisplay extends ReadonlyIntegratedCircuitDisplay {
-    size: Vector;
-    readonly pins: ICPin[];
-}
-
-export interface IntegratedCircuit {
-    readonly id: GUID;
-
-    name: string;
-    readonly desc: string;
-
-    readonly display: IntegratedCircuitDisplay;
-
-    readonly all: ReadonlyObjContainer;
-    readonly components: ReadonlyComponent[];
-    readonly wires: ReadonlyWire[];
 }

@@ -64,7 +64,7 @@ export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
     return helpers;
 }
 
-export function CreateTestCircuit(sim = true) {
+export function CreateTestCircuit(sim = true): [DigitalCircuit, ReturnType<typeof CreateTestCircuitHelpers>] {
     const circuit = new DigitalCircuitImpl(uuid());
 
     if (sim)
@@ -73,5 +73,5 @@ export function CreateTestCircuit(sim = true) {
     return [
         circuit,
         CreateTestCircuitHelpers(circuit),
-     ] as const
+    ];
 }

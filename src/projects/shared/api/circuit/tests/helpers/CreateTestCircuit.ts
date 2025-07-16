@@ -7,7 +7,7 @@ import {Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
 import {Schema} from "shared/api/circuit/schema";
 
 import {Circuit, Component, Port, Wire, uuid} from "shared/api/circuit/public";
-import {CircuitImpl, IntegratedCircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
+import {CircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
 import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes}             from "shared/api/circuit/public/impl/CircuitContext";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
@@ -26,6 +26,7 @@ import {MapObj} from "shared/api/circuit/utils/Functions";
 import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
 import {SelectionsImpl} from "shared/api/circuit/public/impl/Selections";
 import {ObjContainerImpl} from "shared/api/circuit/public/impl/ObjContainer";
+import {IntegratedCircuitImpl} from "shared/api/circuit/public/impl/IntegratedCircuit";
 
 
 // TestCircuit is a circuit with the following specifications:

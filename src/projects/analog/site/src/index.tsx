@@ -67,7 +67,7 @@ import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
 import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
 
-// import NGSpice from "./lib/ngspice.wasm";
+import NGSpice from "./lib/ngspice.wasm";
 import {NGSpiceLib} from "./lib/NGSpiceLib";
 
 
@@ -78,10 +78,13 @@ async function Init(): Promise<void> {
 
     await LoadingScreen("loading-screen", startPercent, [
         [80, "Loading NGSpice Library", async () => {
-            // ngSpiceLib = await NGSpice();
-            // if (!ngSpiceLib)
-            console.error("Failed to load NGSpice WASM binary!");
-            // ngSpiceLib.OC_init();
+            ngSpiceLib = await NGSpice();
+            if (!ngSpiceLib) {
+                // TODO: Display this to user but still run the app(?)
+                console.error("Failed to load NGSpice WASM binary!");
+                return;
+            }
+            ngSpiceLib.OC_init();
         }],
 
         [85, "Initializing redux", async () => {

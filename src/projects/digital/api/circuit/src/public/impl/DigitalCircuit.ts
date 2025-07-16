@@ -1,4 +1,5 @@
-import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
+import {CircuitImpl} from "shared/api/circuit/public/impl/Circuit";
+import {IntegratedCircuitImpl} from "shared/api/circuit/public/impl/IntegratedCircuit";
 
 import {APIToDigital, DigitalCircuit, DigitalIntegratedCircuit, DigitalObjContainer, DigitalSim, DigitalSimEv, ReadonlyDigitalCircuit, ReadonlyDigitalObjContainer} from "../DigitalCircuit";
 import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
