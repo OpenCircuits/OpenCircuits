@@ -19,7 +19,7 @@ describe("SelectionsBounds", () => {
         expect(s1.isSelected).toBe(true);
 
         const bounds = circuit.selections.bounds;
-        expect(bounds).toEqual(Rect.From({cx: 0, cy: 0, width: 1, height: 1}));
+        expect(bounds).toEqual(Rect.From({ cx: 0, cy: 0, width: 1, height: 1 }));
     });
     test("Multiple Selections", () => {
         // Create and place new components

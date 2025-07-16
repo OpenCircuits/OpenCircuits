@@ -78,7 +78,7 @@ export abstract class ComponentAssembler extends Assembler<Schema.Component> {
                 kind: "BaseShape",
 
                 dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
-                assemble: (comp) => {
+                assemble:     (comp) => {
                     const ports = this.circuit.getPortsByGroup(comp.id).unwrap();
                     if (!(group in ports))
                         throw new Error(`ComponentAssembler.drawPortLineForGroups: No group found '${group}'!`);
@@ -92,7 +92,7 @@ export abstract class ComponentAssembler extends Assembler<Schema.Component> {
                 },
 
                 styleChangesWhenSelected: true,
-                getStyle: (comp) => ({
+                getStyle:                 (comp) => ({
                     stroke: {
                         ...this.options.strokeStyle(this.isSelected(comp.id)),
                         lineCap: "square",

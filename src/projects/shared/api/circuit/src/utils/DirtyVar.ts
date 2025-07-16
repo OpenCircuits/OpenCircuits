@@ -1,5 +1,3 @@
-
-
 export class DirtyVar<T> {
     private isDirty: boolean;
     private variable?: T;

@@ -33,7 +33,7 @@ export const TitleModule = ({ designer }: Props) => {
     , [s]);
 
     if (!props)
-        return null;
+        return;
 
     return (<div>
         <label>

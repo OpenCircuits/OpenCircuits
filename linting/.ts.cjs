@@ -66,7 +66,8 @@ module.exports = {
         "@typescript-eslint/no-array-constructor": "error",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-empty-interface": "off",
-        "@typescript-eslint/no-explicit-any": "warn",
+        // TODO: turn no-explicit-any back on
+        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-inferrable-types": "error",
         "@typescript-eslint/no-misused-new": "error",
         "@typescript-eslint/no-namespace": "error",

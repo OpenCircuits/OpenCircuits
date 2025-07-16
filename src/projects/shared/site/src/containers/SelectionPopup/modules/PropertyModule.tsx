@@ -1,5 +1,4 @@
 import {Circuit, Obj, Prop} from "shared/api/circuit/public";
-import {useCallback}        from "react";
 
 import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
@@ -95,9 +94,7 @@ const PropInfoEntryInputField = ({
 
     // Create doChange callback
     // TODO: Do we still need this is a callback since we have React Compiler?
-    const doChange = useCallback(
-        (newVals: Prop[]) => objs.forEach((o, i) => (o.setProp(key, newVals[i]))),
-        [key, objs.map((o) => o.id).join("")]);
+    const doChange = (newVals: Prop[]) => objs.forEach((o, i) => (o.setProp(key, newVals[i])));
 
     // If group entry, then return the sub-entries
     if (entry.type === "group") {

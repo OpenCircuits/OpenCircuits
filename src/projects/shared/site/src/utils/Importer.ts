@@ -1,4 +1,3 @@
-
 export function LoadFile(file: File, type: "string" | "binary"): Promise<string | ArrayBuffer> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
