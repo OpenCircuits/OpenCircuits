@@ -30,8 +30,11 @@ import {SetupMockCanvas} from "shared/api/circuitdesigner/tests/helpers/CreateTe
 
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
-import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+import {CreateTestCircuitHelpers} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 import {ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
+import {DigitalCircuitImpl} from "digital/api/circuit/public/impl/DigitalCircuit";
+import {uuid} from "shared/api/circuit/public";
+import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 
 export function GetDefaultTools(): ToolConfig<DigitalTypes> {
@@ -55,12 +58,15 @@ export function GetDefaultTools(): ToolConfig<DigitalTypes> {
     };
 }
 
-export function CreateCircuitDesigner(toolConfig = GetDefaultTools()) {
-    const [circuit, helpers] = CreateTestCircuit();
+export function CreateCircuitDesigner(toolConfig = GetDefaultTools(), sim = true) {
+    const circuit = new DigitalCircuitImpl(uuid());
+
+    if (sim)
+        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
 
     const designer = CreateDesigner(toolConfig, [], -1, circuit);
 
     const [mockInput, canvas] = SetupMockCanvas(designer);
 
-    return [designer, mockInput, canvas, helpers] as const;
+    return [designer, mockInput, canvas, CreateTestCircuitHelpers(circuit)] as const;
 }
