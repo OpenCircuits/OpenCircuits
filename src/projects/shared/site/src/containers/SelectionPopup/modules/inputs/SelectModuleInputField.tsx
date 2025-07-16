@@ -21,8 +21,8 @@ export const SelectModuleInputField = <T extends number|string>({
         <select
             ref={ref}
             value={state.values[0]}
-            onFocus={() => setState.onFocus() }
-            onBlur={() => setState.onBlur() }
+            onFocus={() => setState.onFocus()}
+            onBlur={() => setState.onBlur()}
             onChange={(ev) => {
                 setState.onChange(ev.target.value);
                 // Unfortunately, we need to immediately blur when selecting a value in

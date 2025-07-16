@@ -1,7 +1,5 @@
 import {Vector} from "Vector";
-import {Obj} from "shared/api/circuit/public";
 import {Observable} from "shared/api/circuit/utils/Observable";
-import {Margin} from "math/Rect";
 
 
 export type CameraEvent = {

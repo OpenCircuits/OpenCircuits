@@ -24,7 +24,7 @@ export class WireAssembler extends Assembler<Schema.Wire> {
             return [
                 new LineCurve(p1, p2),
                 {
-                    kind: "Line",
+                    kind:  "Line",
                     p1, p2,
                     style: this.getWireStyle(wire),
                 },

@@ -1,5 +1,3 @@
-import {Margin} from "math/Rect";
-
 import {Circuit} from "shared/api/circuit/public";
 
 import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";

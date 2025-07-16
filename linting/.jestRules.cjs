@@ -16,6 +16,7 @@ module.exports = {
                 "plugin:jest-formatting/recommended",
             ],
             "rules": {
+                "jest/no-commented-out-tests": "off",
                 "jest/prefer-comparison-matcher": "error",
                 "jest/prefer-equality-matcher": "error",
                 "jest/expect-expect": ["warn", {

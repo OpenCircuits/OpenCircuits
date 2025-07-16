@@ -150,12 +150,12 @@ const InfoDisplay = ({ designer, docsUrlConfig }: InfoDisplayProps) => {
     );
 
     if (!props)
-        return null;
+        return;
 
     // Make sure all components have same kind, otherwise don't display
     const allSame = props.kind.every((kind) => (kind === props.kind[0]));
     if (!allSame)
-        return null;
+        return;
 
     // Check if the kind is an IC, if so, use the user-set IC name
     const ic = circuit.getIC(props.kind[0]);

@@ -122,8 +122,8 @@ export function MakeDigitalCircuitAssembler(
         "Multiplexer":   new MultiplexerAssembler(params, sim, "Multiplexer"),
         "Demultiplexer": new MultiplexerAssembler(params, sim, "Demultiplexer"),
 
-        "Encoder": new EncoderAssembler(params, sim, "Encoder"),
-        "Decoder": new EncoderAssembler(params, sim, "Decoder"),
+        "Encoder": new EncoderAssembler(params, sim),
+        "Decoder": new EncoderAssembler(params, sim),
 
         "Comparator": new ComparatorAssembler(params, sim),
 
