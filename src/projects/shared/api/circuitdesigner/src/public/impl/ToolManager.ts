@@ -1,5 +1,5 @@
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitTypes}   from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 
 import {DefaultTool}       from "shared/api/circuitdesigner/tools/DefaultTool";
 import {Tool}              from "shared/api/circuitdesigner/tools/Tool";
@@ -15,7 +15,7 @@ export type ToolManagerEvent = {
     tool: Tool;
 }
 
-export class ToolManager<T extends CircuitTypes = CircuitTypes> extends ObservableImpl<ToolManagerEvent> {
+export class ToolManager<T extends CircuitAPITypes = CircuitAPITypes> extends ObservableImpl<ToolManagerEvent> {
     public readonly defaultTool: DefaultTool<T>;
     public readonly tools: Tool[];
 

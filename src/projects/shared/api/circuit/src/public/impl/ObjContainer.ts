@@ -6,12 +6,13 @@ import {GUID} from "../../internal";
 import {ObjContainer} from "../ObjContainer";
 import {AddErrE} from "../../utils/MultiError";
 
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {CircuitContext} from "./CircuitContext";
+import {CircuitAPITypes} from "./Types";
 
 import "shared/api/circuit/utils/Array";
 
 
-export class ObjContainerImpl<T extends CircuitTypes> implements ObjContainer {
+export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer {
     protected readonly ctx: CircuitContext<T>;
 
     protected readonly objs: Set<GUID>;

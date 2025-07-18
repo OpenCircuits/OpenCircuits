@@ -1,9 +1,12 @@
-import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
-import {DigitalSelections, ReadonlySimState} from "../DigitalCircuit";
 import {SelectionsImpl} from "shared/api/circuit/public/impl/Selections";
 
+import {DigitalSelections} from "../DigitalCircuit";
+import {ReadonlySimState}  from "../DigitalSim";
 
-export class DigitalSelectionsImpl extends SelectionsImpl<DigitalTypes> implements DigitalSelections {
+import {DigitalAPITypes, DigitalCircuitContext} from "./DigitalCircuitContext";
+
+
+export class DigitalSelectionsImpl extends SelectionsImpl<DigitalAPITypes> implements DigitalSelections {
     protected override readonly ctx: DigitalCircuitContext;
 
     public constructor(ctx: DigitalCircuitContext) {

@@ -2,94 +2,13 @@ import {CircuitInternal, GUID}   from "shared/api/circuit/internal";
 import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {DefaultRenderOptions, RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {Component, Node, ReadonlyComponent, ReadonlyNode}   from "../Component";
-import {Port, ReadonlyPort}              from "../Port";
-import {ReadonlyWire, Wire}              from "../Wire";
-import {Circuit, ReadonlyCircuit} from "../Circuit";
-import {ObjContainer, ReadonlyObjContainer} from "../ObjContainer";
-import {ReadonlySelections, Selections} from "../Selections";
 import {ObjInfoProvider} from "../../internal/impl/ObjInfo";
 import {CircuitLog} from "../../internal/impl/CircuitLog";
 import {CircuitDocument} from "../../internal/impl/CircuitDocument";
-import {ComponentInfo} from "../ComponentInfo";
-import {ICInfo, IntegratedCircuit, ReadonlyIntegratedCircuit} from "../IntegratedCircuit";
+import {CircuitAPITypes} from "./Types";
 
 
-export type CircuitAPITypes = {
-    CircuitT: Circuit;
-    ReadonlyCircuitT: ReadonlyCircuit;
-
-    IntegratedCircuitT: IntegratedCircuit;
-    ReadonlyIntegratedCircuitT: ReadonlyIntegratedCircuit;
-
-    NodeT: Node;
-    ReadonlyNodeT: ReadonlyNode;
-
-    ComponentT: Component;
-    ReadonlyComponentT: ReadonlyComponent;
-
-    WireT: Wire;
-    ReadonlyWireT: ReadonlyWire;
-
-    PortT: Port;
-    ReadonlyPortT: ReadonlyPort;
-
-    ObjContainerT: ObjContainer;
-    ReadonlyObjContainerT: ReadonlyObjContainer;
-
-    SelectionsT: Selections;
-    ReadonlySelectionsT: ReadonlySelections;
-
-    ComponentInfoT: ComponentInfo;
-    ICInfoT: ICInfo;
-}
-
-// Utility interface to hold utility types for the templated Circuit API.
-export type CircuitTypes<Types extends CircuitAPITypes = CircuitAPITypes> = {
-    "Circuit": Types["CircuitT"];
-    "ReadonlyCircuit": Types["ReadonlyCircuitT"];
-
-    "Component": Types["ComponentT"];
-    "Node": Types["NodeT"];
-    "Wire": Types["WireT"];
-    "Port": Types["PortT"];
-    "Obj": Types["ComponentT"] | Types["WireT"] | Types["PortT"];
-
-    "ReadonlyComponent": Types["ReadonlyComponentT"];
-    "ReadonlyNode": Types["ReadonlyNodeT"];
-    "ReadonlyWire": Types["ReadonlyWireT"];
-    "ReadonlyPort": Types["ReadonlyPortT"];
-    "ReadonlyObj": Types["ReadonlyComponentT"] | Types["ReadonlyWireT"] | Types["ReadonlyPortT"];
-
-    "Component[]": Array<Types["ComponentT"]>;
-    "Wire[]": Array<Types["WireT"]>;
-    "Port[]": Array<Types["PortT"]>;
-    "Obj[]": Array<Types["ComponentT"] | Types["WireT"] | Types["PortT"]>;
-
-    "ReadonlyComponent[]": Array<Types["ReadonlyComponentT"]>;
-    "ReadonlyWire[]": Array<Types["ReadonlyWireT"]>;
-    "ReadonlyPort[]": Array<Types["ReadonlyPortT"]>;
-    "ReadonlyObj[]": Array<Types["ReadonlyComponentT"] | Types["ReadonlyWireT"] | Types["ReadonlyPortT"]>;
-
-    "IC": Types["IntegratedCircuitT"];
-    "ReadonlyIC": Types["ReadonlyIntegratedCircuitT"];
-    "IC[]": Array<Types["IntegratedCircuitT"]>;
-    "ReadonlyIC[]": Array<Types["ReadonlyIntegratedCircuitT"]>;
-
-    "Path": Array<Types["NodeT"] | Types["WireT"]>;
-
-    "ICInfo": Types["ICInfoT"];
-    "ComponentInfo": Types["ComponentInfoT"];
-
-    "ObjContainerT": Types["ObjContainerT"];
-    "ReadonlyObjContainerT": Types["ReadonlyObjContainerT"];
-
-    "SelectionsT": Types["SelectionsT"];
-    "ReadonlySelectionsT": Types["ReadonlySelectionsT"];
-}
-
-
-export interface CircuitAPIFactory<T extends CircuitTypes> {
+export interface CircuitAPIFactory<T extends CircuitAPITypes> {
     constructComponent(id: string, icId?: GUID): T["Component"];
     constructWire(id: string, icId?: GUID): T["Wire"];
     constructPort(id: string, icId?: GUID): T["Port"];
@@ -98,12 +17,12 @@ export interface CircuitAPIFactory<T extends CircuitTypes> {
     constructObjContainer(objs: Set<GUID>, icId?: GUID): T["ObjContainerT"];
 }
 
-interface ObjsCache<T extends CircuitTypes> {
+interface ObjsCache<T extends CircuitAPITypes> {
     comps: Map<GUID, T["Component"]>;
     wires: Map<GUID, T["Wire"]>;
     ports: Map<GUID, T["Port"]>;
 }
-export class CachedCircuitAPIFactoryImpl<T extends CircuitTypes> implements CircuitAPIFactory<T> {
+export class CachedCircuitAPIFactoryImpl<T extends CircuitAPITypes> implements CircuitAPIFactory<T> {
     private readonly cache: ObjsCache<T> & {
         ics: Map<GUID, T["IC"]>;
         compInfos: Map<GUID, T["ComponentInfo"]>;
@@ -157,7 +76,7 @@ export class CachedCircuitAPIFactoryImpl<T extends CircuitTypes> implements Circ
 // along with utility methods for all the API object types. This object is meant to be passed
 // between API objects so they all have access to the internal circuit and can construct eachother.
 // It should be owned by the main CircuitImpl.
-export abstract class CircuitContext<T extends CircuitTypes> {
+export abstract class CircuitContext<T extends CircuitAPITypes> {
     public readonly internal: CircuitInternal;
 
     // TODO: Remove this, only Viewport references it

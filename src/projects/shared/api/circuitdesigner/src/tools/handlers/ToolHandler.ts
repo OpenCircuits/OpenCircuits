@@ -1,7 +1,6 @@
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
-
 import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 
 
 export enum ToolHandlerResponse {
@@ -11,7 +10,7 @@ export enum ToolHandlerResponse {
     HALT = 1,
 }
 
-export interface ToolHandler<T extends CircuitTypes = CircuitTypes> {
+export interface ToolHandler<T extends CircuitAPITypes = CircuitAPITypes> {
     name: string;
 
     canActivateWhenLocked?: boolean;

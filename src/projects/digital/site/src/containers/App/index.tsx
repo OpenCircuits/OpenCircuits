@@ -37,10 +37,10 @@ import {ICDesigner} from "digital/site/containers/ICDesigner";
 import {ICViewer} from "digital/site/containers/ICViewer";
 import {ExprToCircuitPopup} from "digital/site/containers/ExprToCircuitPopup";
 import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {ToolHandler} from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
 import {BackendCircuitMetadata} from "shared/site/api/Circuits";
 import {SimControls} from "../SimControls";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 
 
 const exampleCircuits = exampleConfig.examples.map((example) => ({
@@ -125,7 +125,7 @@ export const App = () => {
 
             <QuickStartPopup />
             <KeyboardShortcutsPopup />
-            <ImageExporterPopup extraHandlers={[InteractionHandler as ToolHandler<CircuitTypes>]} designer={designer} />
+            <ImageExporterPopup extraHandlers={[InteractionHandler as ToolHandler<CircuitAPITypes>]} designer={designer} />
 
             <ExprToCircuitPopup {...designer} />
 

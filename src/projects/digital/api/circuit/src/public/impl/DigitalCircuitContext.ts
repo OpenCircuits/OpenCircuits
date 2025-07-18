@@ -1,6 +1,4 @@
-import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
-
-import {DigitalAPITypes} from "../DigitalCircuit";
+import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext} from "shared/api/circuit/public/impl/CircuitContext";
 
 import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
 import {DigitalSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
@@ -15,13 +13,15 @@ import {DigitalComponentInfoImpl} from "./DigitalComponentInfo";
 import {DigitalObjContainerImpl} from "./DigitalObjContainer";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {DigitalPropagators} from "../../internal/sim/DigitalPropagators";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
+import {DigitalTypes} from "../DigitalCircuit";
 
 
-export type DigitalTypes = CircuitTypes<DigitalAPITypes>;
+export type DigitalAPITypes = CircuitAPITypes<DigitalTypes>;
 
-export class DigitalCircuitContext extends CircuitContext<DigitalTypes> {
+export class DigitalCircuitContext extends CircuitContext<DigitalAPITypes> {
     public readonly assembler: CircuitAssembler;
-    public readonly factory: CircuitAPIFactory<DigitalTypes>;
+    public readonly factory: CircuitAPIFactory<DigitalAPITypes>;
 
     public readonly sim: DigitalSim;
     public simRunner?: DigitalSimRunner;
@@ -31,7 +31,7 @@ export class DigitalCircuitContext extends CircuitContext<DigitalTypes> {
 
         this.sim = new DigitalSim(this.internal, DigitalPropagators);
         this.assembler = MakeDigitalCircuitAssembler(this.internal, this.sim, this.renderOptions);
-        this.factory = new CachedCircuitAPIFactoryImpl<DigitalTypes>({
+        this.factory = new CachedCircuitAPIFactoryImpl<DigitalAPITypes>({
             constructComponent: (id, icId) => new DigitalComponentImpl(this, id, icId),
             constructWire:      (id, icId) => new DigitalWireImpl(this, id, icId),
             constructPort:      (id, icId) => new DigitalPortImpl(this, id, icId),

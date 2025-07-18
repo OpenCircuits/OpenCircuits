@@ -4,10 +4,10 @@ import {GUID}          from "shared/api/circuit/public";
 import {DigitalComponent} from "../DigitalComponent";
 import {DigitalPort}      from "../DigitalPort";
 
-import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
+import {DigitalAPITypes, DigitalCircuitContext} from "./DigitalCircuitContext";
 
 
-export class DigitalComponentImpl extends ComponentImpl<DigitalTypes> implements DigitalComponent {
+export class DigitalComponentImpl extends ComponentImpl<DigitalAPITypes> implements DigitalComponent {
     protected override readonly ctx: DigitalCircuitContext;
 
     public constructor(ctx: DigitalCircuitContext, id: GUID, icId?: GUID) {

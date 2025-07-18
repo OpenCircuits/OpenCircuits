@@ -1,10 +1,11 @@
 import {AddErrE} from "../../utils/MultiError";
 import {ComponentInfo} from "../ComponentInfo";
 
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {CircuitContext} from "./CircuitContext";
+import {CircuitAPITypes} from "./Types";
 
 
-export class ComponentInfoImpl<T extends CircuitTypes> implements ComponentInfo {
+export class ComponentInfoImpl<T extends CircuitAPITypes> implements ComponentInfo {
     protected readonly ctx: CircuitContext<T>;
 
     public readonly kind: string;

@@ -1,7 +1,8 @@
 import {SVGDrawing} from "svg2canvas";
 
 import {Circuit}      from "shared/api/circuit/public";
-import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitContext} from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 
 import {Tool}        from "shared/api/circuitdesigner/tools/Tool";
 
@@ -12,7 +13,7 @@ import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 import {ToolManager} from "./ToolManager";
 
 
-export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitTypes> extends ObservableImpl<CircuitDesignerEv> implements CircuitDesigner {
+export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitAPITypes> extends ObservableImpl<CircuitDesignerEv> implements CircuitDesigner {
     public readonly circuit: CircuitT;
     protected readonly ctx: CircuitContext<T>;
 

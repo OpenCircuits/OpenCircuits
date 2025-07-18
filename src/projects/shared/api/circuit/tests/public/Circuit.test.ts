@@ -7,7 +7,6 @@ import {V} from "Vector";
 import {Circuit, Obj} from "shared/api/circuit/public";
 
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 
 describe("Circuit", () => {

@@ -4,12 +4,13 @@ import {Rect}   from "math/Rect";
 import {ObservableImpl} from "../../utils/Observable";
 import {Selections, SelectionsEvent} from "../Selections";
 
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {CircuitContext} from "./CircuitContext";
+import {CircuitAPITypes} from "./Types";
 
 import "shared/api/circuit/utils/Array";
 
 
-export class SelectionsImpl<T extends CircuitTypes> extends ObservableImpl<SelectionsEvent> implements Selections {
+export class SelectionsImpl<T extends CircuitAPITypes> extends ObservableImpl<SelectionsEvent> implements Selections {
     protected readonly ctx: CircuitContext<T>;
 
     protected selections: T["ObjContainerT"];
