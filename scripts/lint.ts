@@ -14,7 +14,6 @@ import yargs       from "yargs";
     const eslint = new ESLint({
         fix, cache,
         errorOnUnmatchedPattern: false, // disable because deleted files
-        extensions:              [".ts", ".tsx"],
     });
 
     const files = await (async () => {
