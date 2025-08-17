@@ -4,7 +4,7 @@ import "./index.scss";
 
 
 type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & {
-    onEnter?: (e: KeyboardEvent) => void;
+    readonly onEnter?: (e: KeyboardEvent) => void;
 }
 export const InputField = React.forwardRef<HTMLInputElement, Props>(({ onEnter, ...props }, forwardedRef) => {
     const defaultRef = useRef<HTMLInputElement>(null);
@@ -45,9 +45,9 @@ InputField.displayName = "InputField";
 
 
 type NumberProps = Props & {
-    step?: number;
+    readonly step?: number;
 
-    onIncrement?: (step: number) => void;
+    readonly onIncrement?: (step: number) => void;
 }
 export const NumberInputField = React.forwardRef<HTMLInputElement, NumberProps>(({ onIncrement, step, ...props },
                                                                                    forwardedRef) => {

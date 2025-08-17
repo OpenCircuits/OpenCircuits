@@ -35,13 +35,13 @@ export class LEDAssembler extends ComponentAssembler {
                 assemble:     (led) => ({
                     kind: "Group",
 
-                    prims: (!this.isOn(led) ? [] : [{
+                    prims: (this.isOn(led) ? [{
                         kind:   "Circle",
                         pos:    this.getPos(led),
                         radius: this.options.ledLightRadius,
 
                         ignoreHit: true,
-                    }]),
+                    }] : []),
 
                     ignoreHit: true,
                 }),

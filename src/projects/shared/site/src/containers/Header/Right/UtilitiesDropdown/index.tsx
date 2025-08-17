@@ -2,8 +2,6 @@ import {useEffect, useState} from "react";
 
 import {DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE} from "shared/site/utils/Constants";
 
-// import {useAPIMethods} from "shared/site/utils/ApiMethods";
-
 import {useAPIMethods} from "shared/site/utils/ApiMethods";
 import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
 import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
@@ -26,7 +24,7 @@ export type Utility = {
 }
 
 type Props = {
-    extraUtilities: Utility[];
+    readonly extraUtilities: Utility[];
 }
 export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
     const designer = useCurDesigner();

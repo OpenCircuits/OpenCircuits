@@ -37,9 +37,7 @@ const enum NameErrorStates {
     DuplicateName,
 }
 // TODO[master] - move this to shared
-interface Props {
-}
-export const ICDesigner = ({ }: Props) => {
+export const ICDesigner = () => {
     const mainDesigner = useCurDigitalDesigner();
     const [icViewDesigner, setICViewDesigner] = useState<DigitalCircuitDesigner | undefined>();
     const [showError, setShowError] = useState(NameErrorStates.None);

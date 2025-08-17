@@ -5,8 +5,6 @@ import "tests/helpers/Extensions";
 import {V} from "Vector";
 import {Rect} from "math/Rect";
 
-import {Circuit, Obj} from "shared/api/circuit/public";
-
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 
 
@@ -251,7 +249,7 @@ describe("Component", () => {
     });
 
     describe("isNode", () => {
-        test("Test component is not a node", () => {
+        test("Component test component is not a node", () => {
             const [circuit, { PlaceAt }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.isNode()).toBeFalsy();

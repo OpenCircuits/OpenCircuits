@@ -177,11 +177,8 @@ export class TestCircuitImpl extends CircuitImpl<CircuitTypes> {
 }
 
 export interface TestCircuitHelpers {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     PlaceAt(...positions: Vector[]): Component[];
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     Connect(c1: Component, c2: Component): Wire;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     GetPort(c: Component): Port;
 }
 

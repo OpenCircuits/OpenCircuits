@@ -2,6 +2,7 @@ import {serializable} from "serialeazy";
 
 import {Clamp} from "./MathUtils";
 
+
 /**
  * A class containing a number, functions to change the value of the number and
  * variables and functions that restrict the range of values the number can hold (aka clamping).

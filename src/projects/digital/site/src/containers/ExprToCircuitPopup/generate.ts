@@ -74,7 +74,7 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
 export function Generate(circuit: DigitalCircuit, camera: Camera, expression: string,
     userOptions: Partial<ExprToCirGeneratorOptions>): Result {
     const options = { ...defaultOptions, ...userOptions };
-    options.isIC = (options.output !== "Oscilloscope") ? options.isIC : false;
+    options.isIC = (options.output === "Oscilloscope") ? false : options.isIC;
     const ops = (options.format === "custom")
         ? (options.ops)
         : (FORMATS.find((form) => form.icon === options.format) ?? FORMATS[0]);

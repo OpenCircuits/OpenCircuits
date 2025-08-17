@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
 
 import {V} from "Vector";
 
-import {Circuit, Obj} from "shared/api/circuit/public";
+import {Circuit} from "shared/api/circuit/public";
 
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 
 
 describe("Circuit", () => {

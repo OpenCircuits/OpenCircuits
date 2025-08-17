@@ -4,9 +4,9 @@ import "./index.scss";
 
 
 type Props = {
-    isOpen: boolean;
-    close: () => void;
-    children?: React.ReactNode;
+    readonly isOpen: boolean;
+    readonly close: () => void;
+    readonly children?: React.ReactNode;
 }
 export const Overlay = ({ isOpen, close, children }: Props) => {
     // Needed because Safari sucks: https://medium.com/rbi-tech/safaris-100vh-problem-3412e6f13716

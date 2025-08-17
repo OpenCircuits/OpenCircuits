@@ -6,13 +6,13 @@ import {ModuleSubmitInfo} from "./ModuleInputField";
 
 
 type Props = {
-    props: Prop[];
+    readonly props: Prop[];
 
-    getText: (states: Prop[]) => string;
-    getNewState: (states: Prop[]) => Prop;
+    readonly getText: (states: Prop[]) => string;
+    readonly getNewState: (states: Prop[]) => Prop;
 
-    getAction: (newVals: Prop[]) => Action;
-    onSubmit: (info: ModuleSubmitInfo) => void;
+    readonly getAction: (newVals: Prop[]) => Action;
+    readonly onSubmit: (info: ModuleSubmitInfo) => void;
 }
 export const ButtonModuleInputField = ({ props, getText, getNewState, getAction, onSubmit }: Props) => {
     const text = getText(props);

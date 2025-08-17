@@ -6,10 +6,10 @@ import "./index.scss";
 
 
 type CircuitPreviewProps = {
-    readonly?: boolean;
-    data: BackendCircuitMetadata;
-    onClick: () => void;
-    onDelete: () => void;
+    readonly readonly?: boolean;
+    readonly data: BackendCircuitMetadata;
+    readonly onClick: () => void;
+    readonly onDelete: () => void;
 }
 export const CircuitPreview = ({ readonly, data, onClick, onDelete }: CircuitPreviewProps) => (
     <div role="button" tabIndex={0} className="circuit__preview" title="Load circuit" onClick={onClick}>

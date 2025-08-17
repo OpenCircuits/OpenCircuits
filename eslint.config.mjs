@@ -43,6 +43,6 @@ export default tseslint.config(
     },
     {
         // Note: there should be no other properties in this object
-        "ignores": ["*.js", "*.cjs", "*.mjs", "*.d.ts", "**/proto/*.ts"],
+        "ignores": ["./**/*.js", "./**/*.cjs", "./**/*.mjs", "./**/*.d.ts", "**/proto/*.ts"],
     },
 );

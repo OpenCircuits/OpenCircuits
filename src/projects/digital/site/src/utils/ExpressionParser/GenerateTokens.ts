@@ -26,7 +26,7 @@ function getInput(expression: string, index: number, ops: OperatorFormat): Input
                           );
     if (endIndex)
         return { type: "input", name: expression.slice(index, endIndex) };
-    return { type: "input", name: expression.slice(index, expression.length) };
+    return { type: "input", name: expression.slice(index) };
 }
 
 /**

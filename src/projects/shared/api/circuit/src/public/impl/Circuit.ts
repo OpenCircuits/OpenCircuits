@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-parameter-properties */
-import {V, Vector} from "Vector";
+import {Vector} from "Vector";
 import {Rect} from "math/Rect";
 
 import {Schema} from "shared/api/circuit/schema";
@@ -10,7 +9,6 @@ import {Circuit, CircuitEvent} from "../Circuit";
 
 import {CircuitContext, CircuitTypes} from "./CircuitContext";
 import {ObservableImpl} from "../../utils/Observable";
-import {LogEntry} from "../../internal/impl/CircuitLog";
 import {ReadonlyComponent} from "../Component";
 import {ReadonlyWire} from "../Wire";
 import {ReadonlyPort} from "../Port";

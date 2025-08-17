@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable sonarjs/prefer-single-boolean-return */
-/* eslint-disable sonarjs/no-small-switch */
 /* eslint-disable key-spacing */
 
 // Migration logic for old circuit files, version <= 3.0

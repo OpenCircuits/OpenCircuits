@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-parameter-properties */
 import {V, Vector} from "Vector";
 
 import {GUID} from "shared/api/circuit/internal";

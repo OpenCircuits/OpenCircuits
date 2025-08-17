@@ -126,7 +126,7 @@ export class CircuitDiffBuilder {
         // this.portDiff.delete(c.id);
 
         this.updatePropsForRemove(c.id, c.props);
-        this.changeComponentKind(c.id, c.kind, undefined);
+        this.changeComponentKind(c.id, c.kind);
     }
 
     private updatePorts(

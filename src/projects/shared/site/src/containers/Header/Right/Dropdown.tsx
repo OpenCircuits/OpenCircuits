@@ -6,7 +6,6 @@ import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 const DOCUMENT_NODE_TYPE = 9;
 
 function parentOf(elem: Element, target: string) {
-    // eslint-disable-next-line @typescript-eslint/ban-types
     let el = elem as Element | null;
 
     // Loop through each parent element and see if it matches the target
@@ -20,14 +19,14 @@ function parentOf(elem: Element, target: string) {
 
 
 type Props = {
-    children: React.ReactNode;
-    open: boolean;
-    btnInfo: {
+    readonly children: React.ReactNode;
+    readonly open: boolean;
+    readonly btnInfo: {
         title: string;
         src: string;
     };
-    onClick?: () => void;
-    onClose?: () => void;
+    readonly onClick?: () => void;
+    readonly onClose?: () => void;
 }
 export const Dropdown = ({ open, btnInfo, onClick, onClose, children }: Props) => {
     // Check for clicking outside of the menu as to call onClose

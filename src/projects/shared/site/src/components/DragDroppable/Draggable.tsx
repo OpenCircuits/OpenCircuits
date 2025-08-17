@@ -12,10 +12,10 @@ import {DragDropHandlers} from "./DragDropHandlers";
 
 type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 type Props<D extends unknown[]> = ButtonProps & {
-    children: React.ReactNode;
-    data: D;
-    dragDir: "horizontal" | "vertical";
-    onDragChange?: (type: "start" | "end") => void;
+    readonly children: React.ReactNode;
+    readonly data: D;
+    readonly dragDir: "horizontal" | "vertical";
+    readonly onDragChange?: (type: "start" | "end") => void;
 };
 export const Draggable = <D extends unknown[]>({ children, data, dragDir, onDragChange, ...other }: Props<D>) => {
     const [isDragging, setIsDragging] = useState(false);

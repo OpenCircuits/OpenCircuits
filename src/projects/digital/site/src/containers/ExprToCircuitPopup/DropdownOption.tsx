@@ -4,11 +4,11 @@ import "./index.scss";
 
 
 type Props<T> = {
-    id: string;
-    option: T;
-    options: T[];
-    setOption: React.Dispatch<React.SetStateAction<T>>;
-    text: string;
+    readonly id: string;
+    readonly option: T;
+    readonly options: T[];
+    readonly setOption: React.Dispatch<React.SetStateAction<T>>;
+    readonly text: string;
 }
 export const DropdownOption = <T extends string>({ id, option, options, setOption, text }: Props<T>) => (<>
     <br />

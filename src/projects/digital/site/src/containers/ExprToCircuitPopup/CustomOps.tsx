@@ -6,8 +6,8 @@ import {InputField} from "shared/site/components/InputField";
 
 
 type Props = {
-    customOps: OperatorFormat;
-    setCustomOps: React.Dispatch<React.SetStateAction<OperatorFormat>>;
+    readonly customOps: OperatorFormat;
+    readonly setCustomOps: React.Dispatch<React.SetStateAction<OperatorFormat>>;
 }
 export const CustomOps = (({ customOps, setCustomOps }: Props) => {
     // Contains string represenation and internal representation for operations

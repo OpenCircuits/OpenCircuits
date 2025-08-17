@@ -5,8 +5,8 @@ import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./Modul
 
 
 type Props = SharedModuleInputFieldProps<boolean> & {
-    type?: "button" | "switch";
-    text?: string;
+    readonly type?: "button" | "switch";
+    readonly text?: string;
 }
 export const BooleanModuleInputField = ({ text, type, ...props }: Props) => {
     const [state, setState] = useBaseModule<[boolean]>({

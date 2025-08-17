@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {initializeApp} from "firebase/app";
 import {browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence} from "firebase/auth";
 

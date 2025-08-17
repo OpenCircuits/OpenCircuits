@@ -28,9 +28,12 @@ import undoIcon    from "./undo.svg";
 import redoIcon    from "./redo.svg";
 import historyIcon from "./history.svg";
 
+
 // TODO: Should be able to derive desktop width off of the value in _constants.scss but it isn't working
 // import styles from "./index.scss";
 import "./index.scss";
+
+
 const DESKTOP_WIDTH = 768;
 
 
@@ -51,13 +54,13 @@ export type ItemNavConfig = {
 
 
 type Props<D> = {
-    designer: CircuitDesigner;
-    config: ItemNavConfig;
-    additionalData?: D;
-    onStart?: () => void;
-    onFinish?: (cancelled: boolean) => void;
-    onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
-    additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
+    readonly designer: CircuitDesigner;
+    readonly config: ItemNavConfig;
+    readonly additionalData?: D;
+    readonly onStart?: () => void;
+    readonly onFinish?: (cancelled: boolean) => void;
+    readonly onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
+    readonly additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
 export const ItemNav = <D,>({ designer, config, additionalData, onDelete,
                               onStart, onFinish, additionalPreview }: Props<D>) => {
@@ -310,7 +313,7 @@ export const ItemNav = <D,>({ designer, config, additionalData, onDelete,
 
 
 type ItemNavDeletionPreviewProps = {
-    deleteImg?: string;
+    readonly deleteImg?: string;
 }
 const ItemNavDeletionPreview = ({ deleteImg }: ItemNavDeletionPreviewProps) => {
     const pos = useMousePos();
@@ -334,11 +337,11 @@ const ItemNavDeletionPreview = ({ deleteImg }: ItemNavDeletionPreviewProps) => {
 
 
 type ItemNavItemPreviewProps<D> = {
-    curItemID: string;
-    numClicks: number;
-    curItemImg: string | undefined;
-    additionalData?: D;
-    additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
+    readonly curItemID: string;
+    readonly numClicks: number;
+    readonly curItemImg: string | undefined;
+    readonly additionalData?: D;
+    readonly additionalPreview?: (data: D, curItemID: string) => React.ReactNode;
 }
 const ItemNavItemPreview = <D,>({ curItemID, numClicks, curItemImg, additionalData,
                                    additionalPreview }: ItemNavItemPreviewProps<D>) => {
@@ -379,19 +382,19 @@ const ItemNavItemPreview = <D,>({ curItemID, numClicks, curItemImg, additionalDa
 
 
 type ItemProps<D> = {
-    section: ItemNavSection;
-    item: ItemNavItem;
-    icon: string;
-    numClicks: number;
-    dragDir: "horizontal" | "vertical";
-    additionalData?: D;
-    setCurItemState: React.Dispatch<React.SetStateAction<{
+    readonly section: ItemNavSection;
+    readonly item: ItemNavItem;
+    readonly icon: string;
+    readonly numClicks: number;
+    readonly dragDir: "horizontal" | "vertical";
+    readonly additionalData?: D;
+    readonly setCurItemState: React.Dispatch<React.SetStateAction<{
         numClicks: number;
         curItemID: string;
         curItemImg: string | undefined;
     }>>;
-    onStart?: () => void;
-    onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
+    readonly onStart?: () => void;
+    readonly onDelete?: (section: ItemNavSection, item: ItemNavItem) => boolean;
 }
 const ItemNavButton = <D,>({ section, item, icon, numClicks, dragDir, additionalData,
                               setCurItemState, onStart, onDelete }: ItemProps<D>) => {

@@ -6,7 +6,7 @@ export default tseslint.config([
     pluginJest.configs["flat/recommended"],
     pluginJest.configs["flat/style"],
     {
-        "files": ["**.test.ts?(x)"],
+        "files": ["src/**/*.test.ts"],
         "plugins": {"jest": pluginJest},
         "languageOptions": {
             "globals": pluginJest.environments.globals.globals,
@@ -27,11 +27,11 @@ export default tseslint.config([
             "jest/unbound-method": "error", // Typescript version disabled in .ts.js
 
             // Previously part of jest-formatting recommended, now brought over to jest, see https://github.com/jest-community/eslint-plugin-jest/pull/1563
-            'jest/padding-around-after-all-blocks': "error",
-            'jest/padding-around-after-each-blocks': "error",
-            'jest/padding-around-before-all-blocks': "error",
-            'jest/padding-around-before-each-blocks': "error",
-            'jest/padding-around-describe-blocks': "error",
+            "jest/padding-around-after-all-blocks": "error",
+            "jest/padding-around-after-each-blocks": "error",
+            "jest/padding-around-before-all-blocks": "error",
+            "jest/padding-around-before-each-blocks": "error",
+            "jest/padding-around-describe-blocks": "error",
         },
     },
 ]);

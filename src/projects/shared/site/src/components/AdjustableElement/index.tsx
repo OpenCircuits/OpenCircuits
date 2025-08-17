@@ -11,16 +11,16 @@ import {useAdjustableElement} from "./useAdjustableElement";
 
 
 type Props = {
-    initialWidth: number;
-    initialHeight: number;
+    readonly initialWidth: number;
+    readonly initialHeight: number;
 
-    className?: string;
-    style?: React.CSSProperties;
+    readonly className?: string;
+    readonly style?: React.CSSProperties;
 
-    minWidth?: number;
-    minHeight?: number;
+    readonly minWidth?: number;
+    readonly minHeight?: number;
 
-    children: React.ReactNode;
+    readonly children: React.ReactNode;
 }
 
 export const AdjustableElement = ({ className, style, initialWidth, initialHeight,

@@ -15,8 +15,8 @@ import {TextModuleInputField} from "./inputs/TextModuleInputField";
 
 
 type Props = {
-    designer: CircuitDesigner;
-    propInfo: PropInfoGetter;
+    readonly designer: CircuitDesigner;
+    readonly propInfo: PropInfoGetter;
 }
 export const PropertyModule = ({ designer, propInfo }: Props) => {
     const circuit = designer.circuit;
@@ -82,10 +82,10 @@ const PropInfoEntryWrapper = (allProps: PropInputFieldProps) => {
 
 
 type PropInputFieldProps = {
-    circuit: Circuit;
-    entry: PropInfoEntry;
-    props: Record<string, Prop[]>;
-    objs: Obj[];
+    readonly circuit: Circuit;
+    readonly entry: PropInfoEntry;
+    readonly props: Record<string, Prop[]>;
+    readonly objs: Obj[];
 }
 const PropInfoEntryInputField = ({
     circuit, entry, props, objs,

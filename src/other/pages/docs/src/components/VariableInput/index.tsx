@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 
+
 /* eslint-disable react/forbid-elements */
 const VARIABLES = (() => {
     const vals: Record<string, string> = {};
@@ -36,8 +37,8 @@ export const useVariable = (id: string) => {
 
 
 export interface InputFieldProps {
-    id: string;
-    defaultValue?: string;
+    readonly id: string;
+    readonly defaultValue?: string;
 }
 export const InputField = ({ id, defaultValue }: InputFieldProps) => {
     const [val, setVal] = useState(defaultValue);
@@ -60,11 +61,11 @@ function toProperCase(s: string): string {
 }
 
 export interface VariableProps {
-    id: string;
-    proper?: boolean;
-    upper?: boolean;
-    lower?: boolean;
-    combined?: boolean;
+    readonly id: string;
+    readonly proper?: boolean;
+    readonly upper?: boolean;
+    readonly lower?: boolean;
+    readonly combined?: boolean;
 }
 export const Variable = ({ id, proper, upper, lower, combined }: VariableProps) => {
     const val = useVariable(id);

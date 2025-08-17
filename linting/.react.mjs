@@ -124,6 +124,9 @@ export default tseslint.config([
             //      </div>
             //  );
             //  (this would require custom plugin)
+            "react/no-unknown-property": ["error", {
+                "ignore": ["unselectable"],
+            }],
             "react/jsx-wrap-multilines": ["error", {
                 "declaration": "parens",
                 "assignment": "parens",

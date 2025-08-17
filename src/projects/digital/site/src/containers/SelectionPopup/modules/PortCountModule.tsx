@@ -6,10 +6,10 @@ import {SelectModuleInputField} from "shared/site/containers/SelectionPopup/modu
 
 
 type Props = {
-    circuit: Circuit;
-    kinds: Set<string>;
-    basisPortGroup: string;
-    label: string;
+    readonly circuit: Circuit;
+    readonly kinds: Set<string>;
+    readonly basisPortGroup: string;
+    readonly label: string;
 }
 export const PortCountModule = ({ circuit, kinds, basisPortGroup, label }: Props) => {
     const [props, comps] = useSelectionProps(
