@@ -12,9 +12,6 @@ import {LoadingScreen} from "shared/site/utils/LoadingScreen";
 
 import {setCurDesigner} from "shared/site/utils/hooks/useDesigner";
 
-import {Circuit}      from "shared/api/circuit/public/Circuit";
-import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
-
 import {DefaultTool}      from "shared/api/circuitdesigner/tools/DefaultTool";
 import {PanTool}          from "shared/api/circuitdesigner/tools/PanTool";
 import {TranslateTool}    from "shared/api/circuitdesigner/tools/TranslateTool";
@@ -158,13 +155,13 @@ async function Init(): Promise<void> {
                         CreateCircuit(),
                     );
                 },
-                Serialize(circuitOrObjs) {
+                Serialize(_circuitOrObjs) {
                     throw new Error("Unimplemented!");
                 },
-                SerializeAsString(circuitOrObjs) {
+                SerializeAsString(_circuitOrObjs) {
                     throw new Error("Unimplemented!");
                 },
-                DeserializeCircuit(data) {
+                DeserializeCircuit(_data) {
                     throw new Error("Unimplemented!");
                 },
             });

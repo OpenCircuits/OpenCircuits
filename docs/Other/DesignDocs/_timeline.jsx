@@ -82,7 +82,7 @@ export default function Timeline({start, milestones, end}) {
                 const y = ((i % 2 === 0) ? (TICK_H + 5) : (-(TICK_H + 5) - BOX_H));
 
                 return (
-                    <a href={`#milestone-${i+1}`} style={{ color: "inherit" }}>
+                    <a href={`#milestone-${i+1}`} style={{ color: "inherit" }} key={i}>
                         <div style={{ position: "absolute",
                                     display: "flex", flexDirection: "column",
                                     left: `${x - BOX_W/2}%`, top: `calc(50% + ${y}px)`,

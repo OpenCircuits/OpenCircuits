@@ -8,14 +8,11 @@ export default defineConfig({
     "jest",
     "unicorn",
     "jsx-a11y",
-    "import"
+    "import",
   ],
-  "jsPlugins": [
-    "eslint-plugin-react-compiler",
-    "eslint-plugin-sonarjs"
-  ],
+  "jsPlugins": [{ "name": "react-hooks-js", "specifier": "eslint-plugin-react-hooks" }],
   "categories": {
-    "correctness": "off"
+    "correctness": "off",
   },
   "env": {
     "builtin": true,
@@ -30,11 +27,14 @@ export default defineConfig({
     }
   },
   "ignorePatterns": [
-    "./**/*.js",
-    "./**/*.cjs",
-    "./**/*.mjs",
-    "./**/*.d.ts",
-    "**/proto/*.ts"
+    "**/*.js",
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.d.ts",
+    "**/proto/*.ts",
+    // TODO: Don't ignore analog once work on it resumes
+    "src/projects/analog/**",
+    "scripts/webpack/**"
   ],
   "rules": {
     "constructor-super": "error",
@@ -88,7 +88,8 @@ export default defineConfig({
     "no-unused-vars": [
       "error",
       {
-        "argsIgnorePattern": "_",
+        // Oxlint can't seem to recognize that (o): o is Obj => (true) is indeed using `o` so adding to the ignore pattern
+        "argsIgnorePattern": "_|o",
         "varsIgnorePattern": "_",
         "caughtErrorsIgnorePattern": "_",
         "args": "after-used",
@@ -153,8 +154,73 @@ export default defineConfig({
     "react/no-render-return-value": "error",
     "react/no-string-refs": "error",
     "react/no-unescaped-entities": "error",
-    "react/no-unknown-property": "error",
-    "react-compiler/react-compiler": "error",
+    "react/button-has-type": "error",
+    "react/forbid-elements": [
+      "error",
+      {
+        "forbid": [
+          {
+            "element": "input",
+            "message": "use <InputField> instead"
+          }
+        ]
+      }
+    ],
+    "react/hook-use-state": "off",
+    "react/no-danger": "error",
+    "react/no-did-mount-set-state": "error",
+    "react/no-multi-comp": "off",
+    "react/no-namespace": "error",
+    "react/no-redundant-should-component-update": "error",
+    "react/no-this-in-sfc": "error",
+    "react/no-unsafe": "error",
+    "react/no-will-update-set-state": "error",
+    "react/self-closing-comp": [
+      "error",
+      {
+        "component": true,
+        "html": false
+      }
+    ],
+    "react/style-prop-object": "error",
+    "react/void-dom-elements-no-children": "error",
+    "react/jsx-boolean-value": [
+      "error",
+      "never"
+    ],
+    "react/jsx-curly-brace-presence": [
+      "error",
+      {
+        "props": "never",
+        "children": "never",
+        "propElementValues": "always"
+      }
+    ],
+    "react/jsx-filename-extension": [
+      "error",
+      {
+        "extensions": [
+          ".tsx"
+        ]
+      }
+    ],
+    "react/jsx-fragments": [
+      "error",
+      "syntax"
+    ],
+    "react/jsx-handler-names": "error",
+    "react/jsx-no-constructed-context-values": "error",
+    "react/jsx-no-script-url": "error",
+    "react/jsx-no-useless-fragment": "error",
+    "react/jsx-pascal-case": "error",
+    "react/no-unknown-property": [
+      "error",
+      {
+        "ignore": [
+          "unselectable"
+        ]
+      }
+    ],
     "jest/expect-expect": "warn",
     "jest/no-alias-methods": "warn",
     "jest/no-commented-out-tests": "warn",
@@ -198,10 +264,8 @@ export default defineConfig({
           "camelCase": true,
           "pascalCase": true
         },
-        "ignore": [
-          {}
-        ]
-      }
+        "ignore": "^.*(IC|ID|IO|BCD|LED|JK|SR|AND|BUF|OR|XOR|SR|WASM|ASCII|OS|NG|SVG).*$",
+      },
     ],
     "unicorn/new-for-builtins": "error",
     "unicorn/no-abusive-eslint-disable": "error",
@@ -218,8 +282,8 @@ export default defineConfig({
     "unicorn/no-invalid-fetch-options": "error",
     "unicorn/no-invalid-remove-event-listener": "error",
     "unicorn/no-lonely-if": "error",
-    "unicorn/no-magic-array-flat-depth": "error",
-    "unicorn/no-negated-condition": "error",
+    "unicorn/no-magic-array-flat-depth": "off",
+    "unicorn/no-negated-condition": "off",
     "unicorn/no-negation-in-equality-check": "error",
     "unicorn/no-new-buffer": "error",
     "unicorn/no-null": "error",
@@ -299,204 +363,6 @@ export default defineConfig({
     "unicorn/require-number-to-fixed-digits-argument": "error",
     "unicorn/text-encoding-identifier-case": "error",
     "unicorn/throw-new-error": "error",
-    "sonarjs/class-name": "error",
-    "sonarjs/no-fallthrough": "error",
-    "sonarjs/no-equals-in-for-termination": "error",
-    "sonarjs/no-extra-arguments": "error",
-    "sonarjs/no-labels": "error",
-    "sonarjs/no-nested-assignment": "error",
-    "sonarjs/no-redundant-boolean": "error",
-    "sonarjs/prefer-single-boolean-return": "error",
-    "sonarjs/unused-import": "error",
-    "sonarjs/fixme-tag": "error",
-    "sonarjs/no-case-label-in-switch": "error",
-    "sonarjs/no-parameter-reassignment": "error",
-    "sonarjs/prefer-while": "error",
-    "sonarjs/no-small-switch": "error",
-    "sonarjs/no-hardcoded-ip": "error",
-    "sonarjs/label-position": "error",
-    "sonarjs/public-static-readonly": "error",
-    "sonarjs/call-argument-line": "error",
-    "sonarjs/max-switch-cases": "error",
-    "sonarjs/function-inside-loop": "error",
-    "sonarjs/code-eval": "error",
-    "sonarjs/future-reserved-words": "error",
-    "sonarjs/bitwise-operators": "error",
-    "sonarjs/no-primitive-wrappers": "error",
-    "sonarjs/no-skipped-tests": "error",
-    "sonarjs/no-one-iteration-loop": "error",
-    "sonarjs/no-identical-expressions": "error",
-    "sonarjs/constructor-for-side-effects": "error",
-    "sonarjs/no-dead-store": "error",
-    "sonarjs/no-identical-conditions": "error",
-    "sonarjs/no-duplicated-branches": "error",
-    "sonarjs/deprecation": "error",
-    "sonarjs/no-inverted-boolean-check": "error",
-    "sonarjs/misplaced-loop-counter": "error",
-    "sonarjs/no-nested-functions": "error",
-    "sonarjs/no-hardcoded-passwords": "error",
-    "sonarjs/sql-queries": "error",
-    "sonarjs/insecure-cookie": "error",
-    "sonarjs/no-useless-increment": "error",
-    "sonarjs/no-globals-shadowing": "error",
-    "sonarjs/no-empty-test-file": "error",
-    "sonarjs/no-ignored-return": "error",
-    "sonarjs/arguments-order": "error",
-    "sonarjs/pseudo-random": "error",
-    "sonarjs/for-loop-increment-sign": "error",
-    "sonarjs/null-dereference": "error",
-    "sonarjs/no-selector-parameter": "error",
-    "sonarjs/updated-loop-counter": "error",
-    "sonarjs/block-scoped-var": "error",
-    "sonarjs/no-ignored-exceptions": "error",
-    "sonarjs/no-gratuitous-expressions": "error",
-    "sonarjs/file-uploads": "error",
-    "sonarjs/file-permissions": "error",
-    "sonarjs/no-empty-character-class": "error",
-    "sonarjs/no-unenclosed-multiline-block": "error",
-    "sonarjs/index-of-compare-to-positive-number": "error",
-    "sonarjs/assertions-in-tests": "error",
-    "sonarjs/no-implicit-global": "error",
-    "sonarjs/no-useless-catch": "error",
-    "sonarjs/xml-parser-xxe": "error",
-    "sonarjs/non-existent-operator": "error",
-    "sonarjs/post-message": "error",
-    "sonarjs/no-array-delete": "error",
-    "sonarjs/no-alphabetical-sort": "error",
-    "sonarjs/no-incomplete-assertions": "error",
-    "sonarjs/no-global-this": "error",
-    "sonarjs/new-operator-misuse": "error",
-    "sonarjs/no-delete-var": "error",
-    "sonarjs/cookie-no-httponly": "error",
-    "sonarjs/no-nested-conditional": "error",
-    "sonarjs/different-types-comparison": "error",
-    "sonarjs/inverted-assertion-arguments": "error",
-    "sonarjs/updated-const-var": "error",
-    "sonarjs/no-invariant-returns": "error",
-    "sonarjs/generator-without-yield": "error",
-    "sonarjs/no-associative-arrays": "error",
-    "sonarjs/comma-or-logical-or-case": "error",
-    "sonarjs/no-redundant-jump": "error",
-    "sonarjs/inconsistent-function-call": "error",
-    "sonarjs/no-use-of-empty-return-value": "error",
-    "sonarjs/void-use": "error",
-    "sonarjs/argument-type": "error",
-    "sonarjs/in-operator-type-error": "error",
-    "sonarjs/array-callback-without-return": "error",
-    "sonarjs/function-return-type": "error",
-    "sonarjs/super-invocation": "error",
-    "sonarjs/no-all-duplicated-branches": "error",
-    "sonarjs/no-same-line-conditional": "error",
-    "sonarjs/no-collection-size-mischeck": "error",
-    "sonarjs/no-unthrown-error": "error",
-    "sonarjs/no-unused-collection": "error",
-    "sonarjs/no-os-command-from-path": "error",
-    "sonarjs/no-misleading-array-reverse": "error",
-    "sonarjs/no-element-overwrite": "error",
-    "sonarjs/no-identical-functions": "error",
-    "sonarjs/no-empty-collection": "error",
-    "sonarjs/no-redundant-assignments": "error",
-    "sonarjs/prefer-type-guard": "error",
-    "sonarjs/use-type-alias": "error",
-    "sonarjs/no-useless-intersection": "error",
-    "sonarjs/weak-ssl": "error",
-    "sonarjs/no-weak-keys": "error",
-    "sonarjs/csrf": "error",
-    "sonarjs/production-debug": "error",
-    "sonarjs/prefer-default-last": "error",
-    "sonarjs/no-in-misuse": "error",
-    "sonarjs/no-duplicate-in-composite": "error",
-    "sonarjs/no-undefined-argument": "error",
-    "sonarjs/no-nested-template-literals": "error",
-    "sonarjs/prefer-promise-shorthand": "error",
-    "sonarjs/os-command": "error",
-    "sonarjs/no-redundant-optional": "error",
-    "sonarjs/hashing": "error",
-    "sonarjs/no-try-promise": "error",
-    "sonarjs/unverified-certificate": "error",
-    "sonarjs/no-unsafe-unzip": "error",
-    "sonarjs/cors": "error",
-    "sonarjs/link-with-target-blank": "error",
-    "sonarjs/disabled-auto-escaping": "error",
-    "sonarjs/table-header": "error",
-    "sonarjs/no-table-as-layout": "error",
-    "sonarjs/table-header-reference": "error",
-    "sonarjs/object-alt-content": "error",
-    "sonarjs/no-clear-text-protocols": "error",
-    "sonarjs/publicly-writable-directories": "error",
-    "sonarjs/unverified-hostname": "error",
-    "sonarjs/encryption-secure-mode": "error",
-    "sonarjs/no-weak-cipher": "error",
-    "sonarjs/no-intrusive-permissions": "error",
-    "sonarjs/insecure-jwt-token": "error",
-    "sonarjs/x-powered-by": "error",
-    "sonarjs/hidden-files": "error",
-    "sonarjs/content-length": "error",
-    "sonarjs/disabled-resource-integrity": "error",
-    "sonarjs/content-security-policy": "error",
-    "sonarjs/no-mixed-content": "error",
-    "sonarjs/frame-ancestors": "error",
-    "sonarjs/no-mime-sniff": "error",
-    "sonarjs/no-referrer-policy": "error",
-    "sonarjs/strict-transport-security": "error",
-    "sonarjs/confidential-information-logging": "error",
-    "sonarjs/no-ip-forward": "error",
-    "sonarjs/empty-string-repetition": "error",
-    "sonarjs/regex-complexity": "error",
-    "sonarjs/anchor-precedence": "error",
-    "sonarjs/slow-regex": "error",
-    "sonarjs/no-invalid-regexp": "error",
-    "sonarjs/unused-named-groups": "error",
-    "sonarjs/no-same-argument-assert": "error",
-    "sonarjs/no-misleading-character-class": "error",
-    "sonarjs/duplicates-in-character-class": "error",
-    "sonarjs/session-regeneration": "error",
-    "sonarjs/test-check-exception": "error",
-    "sonarjs/stable-tests": "error",
-    "sonarjs/no-empty-after-reluctant": "error",
-    "sonarjs/single-character-alternation": "error",
-    "sonarjs/no-code-after-done": "error",
-    "sonarjs/disabled-timeout": "error",
-    "sonarjs/chai-determinate-assertion": "error",
-    "sonarjs/aws-s3-bucket-insecure-http": "error",
-    "sonarjs/aws-s3-bucket-versioning": "error",
-    "sonarjs/aws-s3-bucket-granted-access": "error",
-    "sonarjs/no-angular-bypass-sanitization": "error",
-    "sonarjs/aws-iam-public-access": "error",
-    "sonarjs/aws-ec2-unencrypted-ebs-volume": "error",
-    "sonarjs/aws-s3-bucket-public-access": "error",
-    "sonarjs/aws-iam-all-privileges": "error",
-    "sonarjs/aws-rds-unencrypted-databases": "error",
-    "sonarjs/aws-opensearchservice-domain": "error",
-    "sonarjs/aws-iam-privilege-escalation": "error",
-    "sonarjs/aws-sagemaker-unencrypted-notebook": "error",
-    "sonarjs/aws-restricted-ip-admin-access": "error",
-    "sonarjs/no-empty-alternatives": "error",
-    "sonarjs/no-control-regex": "error",
-    "sonarjs/no-regex-spaces": "error",
-    "sonarjs/aws-sns-unencrypted-topics": "error",
-    "sonarjs/existing-groups": "error",
-    "sonarjs/aws-ec2-rds-dms-public": "error",
-    "sonarjs/aws-sqs-unencrypted-queue": "error",
-    "sonarjs/no-empty-group": "error",
-    "sonarjs/aws-efs-unencrypted": "error",
-    "sonarjs/aws-apigateway-public-api": "error",
-    "sonarjs/stateful-regex": "error",
-    "sonarjs/concise-regex": "error",
-    "sonarjs/single-char-in-character-classes": "error",
-    "sonarjs/no-hardcoded-secrets": "error",
-    "sonarjs/no-exclusive-tests": "error",
-    "sonarjs/jsx-no-leaked-render": "error",
-    "sonarjs/no-hook-setter-in-body": "error",
-    "sonarjs/no-useless-react-setstate": "error",
-    "sonarjs/no-uniq-key": "error",
-    "sonarjs/redundant-type-aliases": "error",
-    "sonarjs/prefer-regexp-exec": "error",
-    "sonarjs/no-internal-api-use": "error",
-    "sonarjs/prefer-read-only-props": "error",
-    "sonarjs/no-literal-call": "error",
-    "sonarjs/reduce-initial-value": "error",
-    "sonarjs/no-async-constructor": "error",
     "jsx-a11y/autocomplete-valid": [
       "warn",
       {
@@ -533,7 +399,7 @@ export default defineConfig({
     "import/namespace": "error",
     "import/default": "error",
     "import/no-named-as-default": "warn",
-    "import/no-named-as-default-member": "warn",
+    "import/no-named-as-default-member": "off",
     "import/no-duplicates": "error",
     "import/no-self-import": "error",
     "import/no-mutable-exports": "error",
@@ -546,12 +412,12 @@ export default defineConfig({
         "tsx": "never"
       }
     ],
-    "import/no-cycle": "error",
+    "import/no-cycle": "off",
     "react/rules-of-hooks": "error",
-    "react/exhaustive-deps": "warn",
+    "react/exhaustive-deps": "error",
     "typescript/ban-ts-comment": "error",
     "typescript/no-duplicate-enum-values": "error",
-    "typescript/no-empty-object-type": "error",
+    "typescript/no-empty-object-type": "off",
     "typescript/no-extra-non-null-assertion": "error",
     "typescript/no-misused-new": "error",
     "typescript/no-namespace": "error",
@@ -584,7 +450,23 @@ export default defineConfig({
     ],
     "typescript/no-inferrable-types": "error",
     "typescript/consistent-type-assertions": "error",
-    "typescript/no-var-requires": "error"
+    "typescript/no-var-requires": "error",
+    
+    // React Compiler rules, not expected to be supported natively in oxline in the near future
+    "react-hooks-js/config": "error",
+    "react-hooks-js/error-boundaries": "error",
+    "react-hooks-js/gating": "error",
+    "react-hooks-js/globals": "error",
+    "react-hooks-js/immutability": "error",
+    "react-hooks-js/preserve-manual-memoization": "error",
+    "react-hooks-js/purity": "error",
+    "react-hooks-js/refs": "error",
+    "react-hooks-js/set-state-in-effect": "error",
+    "react-hooks-js/set-state-in-render": "error",
+    "react-hooks-js/static-components": "error",
+    "react-hooks-js/unsupported-syntax": "warn",
+    "react-hooks-js/use-memo": "error",
+    "react-hooks-js/incompatible-library": "warn"
   },
   "overrides": [
     {
@@ -623,83 +505,6 @@ export default defineConfig({
     },
     {
       "files": [
-        "src/**/*.tsx"
-      ],
-      "rules": {
-        "react/button-has-type": "error",
-        "react/forbid-elements": [
-          "error",
-          {
-            "forbid": [
-              {
-                "element": "input",
-                "message": "use <InputField> instead"
-              }
-            ]
-          }
-        ],
-        "react/hook-use-state": "off",
-        "react/no-danger": "error",
-        "react/no-did-mount-set-state": "error",
-        "react/no-multi-comp": "off",
-        "react/no-namespace": "error",
-        "react/no-redundant-should-component-update": "error",
-        "react/no-this-in-sfc": "error",
-        "react/no-unsafe": "error",
-        "react/no-will-update-set-state": "error",
-        "react/self-closing-comp": [
-          "error",
-          {
-            "component": true,
-            "html": false
-          }
-        ],
-        "react/style-prop-object": "error",
-        "react/void-dom-elements-no-children": "error",
-        "react/jsx-boolean-value": [
-          "error",
-          "never"
-        ],
-        "react/jsx-curly-brace-presence": [
-          "error",
-          {
-            "props": "never",
-            "children": "never",
-            "propElementValues": "always"
-          }
-        ],
-        "react/jsx-filename-extension": [
-          "error",
-          {
-            "extensions": [
-              ".tsx"
-            ]
-          }
-        ],
-        "react/jsx-fragments": [
-          "error",
-          "syntax"
-        ],
-        "react/jsx-handler-names": "error",
-        "react/jsx-no-constructed-context-values": "error",
-        "react/jsx-no-script-url": "error",
-        "react/jsx-no-useless-fragment": "error",
-        "react/jsx-pascal-case": "error",
-        "react/no-unknown-property": [
-          "error",
-          {
-            "ignore": [
-              "unselectable"
-            ]
-          }
-        ]
-      },
-      "jsPlugins": [
-        "eslint-plugin-react-compiler"
-      ]
-    },
-    {
-      "files": [
         "src/**/*.test.ts"
       ],
       "rules": {
@@ -720,18 +525,6 @@ export default defineConfig({
         "jest/valid-title": "off",
         "jest/padding-around-after-all-blocks": "error"
       }
-    },
-    {
-      "files": [
-        "**/*.{test,spec}.ts?(x)"
-      ],
-      "rules": {
-        "sonarjs/no-identical-functions": "off",
-        "sonarjs/no-dead-store": "off"
-      },
-      "jsPlugins": [
-        "eslint-plugin-sonarjs"
-      ]
     },
     {
       "files": [

@@ -1,5 +1,4 @@
-import {ErrE, OkVoid, Result} from "shared/api/circuit/utils/Result";
-import {GUID, Port, ReadonlyICPin} from "shared/api/circuit/public";
+import {GUID} from "shared/api/circuit/public";
 import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
 import {CircuitImpl, IntegratedCircuitImpl} from "shared/api/circuit/public/impl/Circuit";
 import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
