@@ -21,6 +21,7 @@
     "test-e2e:landing": "npx playwright test --config ./playwright/config/landing.config.ts",
     "test-e2e:ci": "npx playwright test --config ./playwright/config/ci.config.ts",
     "oxlint": "oxlint",
+    "oxlint:fix": "oxlint --fix",
     "lint": "node ./build/scripts/lint.js --cache",
     "lint:all": "node ./build/scripts/lint.js --cache --all",
     "lint:fix": "node ./build/scripts/lint.js --cache --fix",

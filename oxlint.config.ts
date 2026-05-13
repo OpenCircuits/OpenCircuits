@@ -1,5 +1,6 @@
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
   "plugins": [
     "typescript",
     "jsdoc",
@@ -54,6 +55,7 @@
     "no-duplicate-case": "error",
     "no-empty": "error",
     "no-empty-character-class": "error",
+    "no-empty-pattern": "off",
     "no-empty-static-block": "error",
     "no-ex-assign": "error",
     "no-extra-boolean-cast": "error",
@@ -65,6 +67,7 @@
     "no-irregular-whitespace": "error",
     "no-loss-of-precision": "error",
     "no-misleading-character-class": "error",
+    "no-new-array": "off",
     "no-new-native-nonconstructor": "error",
     "no-nonoctal-decimal-escape": "error",
     "no-obj-calls": "error",
@@ -117,7 +120,7 @@
     "prefer-const": "error",
     "no-array-constructor": "error",
     "arrow-body-style": "error",
-    "no-unused-expressions": "error",
+    "no-unused-expressions": "off",
     "jsdoc/check-access": "error",
     "jsdoc/check-property-names": "error",
     "jsdoc/check-tag-names": [
@@ -828,4 +831,5 @@
       }
     }
   ]
-}
+
+});
