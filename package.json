@@ -120,9 +120,8 @@
       "last 1 safari version"
     ]
   },
-  "volta": {
-    "node": "18.20.0",
-    "yarn": "1.22.21"
+  "engines": {
+    "node": "^26"
   },
   "dependencies": {
     "benchmark": "^2.1.4"
