@@ -10,7 +10,7 @@ export function GetCookie(cname: string): string {
         while (c.charAt(0) === " ")
             c = c.slice(1);
         if (c.indexOf(name) === 0)
-            return c.slice(name.length, c.length);
+            return c.slice(name.length);
     }
     return "";
 }

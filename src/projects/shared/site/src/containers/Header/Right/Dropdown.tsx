@@ -6,7 +6,7 @@ import {useWindowSize} from "shared/site/utils/hooks/useWindowSize";
 const DOCUMENT_NODE_TYPE = 9;
 
 function parentOf(elem: Element, target: string) {
-    let el = elem as Element | null;
+    let el = elem as Element | undefined;
 
     // Loop through each parent element and see if it matches the target
     //  also stop if the nodeType == document
