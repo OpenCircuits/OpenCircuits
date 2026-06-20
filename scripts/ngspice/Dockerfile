@@ -3,7 +3,7 @@ FROM fedora:latest
 # Install Dependencies
 RUN dnf -y update
 RUN dnf -y install autoconf automake make cmake bzip2 gcc-c++
-RUN dnf -y install libtool bison xz which
+RUN dnf -y install libtool libatomic bison xz which
 RUN dnf -y install git wget curl
 RUN dnf clean all
 
@@ -46,7 +46,9 @@ COPY ./src/* /src/
 RUN mkdir /build/
 RUN source /emsdk/emsdk_env.sh && \
     em++ -lpthread -o /build/ngspice.js /src/*.cpp /ngspice/release/src/.libs/libngspice.so.0.0.* \
-         -s ENVIRONMENT='web' -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1
+         -s ENVIRONMENT='web' -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 \
+         -s EXPORTED_RUNTIME_METHODS=HEAP8,HEAPU8,HEAP16,HEAPU16,HEAP32,HEAPU32,HEAP64,HEAPU64,HEAPF32,HEAPF64 \
+         -s EXPORTED_FUNCTIONS=_malloc,_free
 
 # Default command will copy the build files into /mnt/build/
 CMD mkdir -p /mnt/build/ && cp /build/* /mnt/build/

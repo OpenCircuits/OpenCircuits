@@ -1,6 +1,30 @@
-import {AnalysisInfo} from "analog/api/circuit/internal/sim/Netlist";
 
-export type {AnalysisInfo} from "analog/api/circuit/internal/sim/Netlist";
+export interface OPAnalysis {
+    kind: "op";
+}
+export interface TranAnalysis {
+    kind: "tran";
+
+    tstep: string;
+    tstop: string;
+
+    tstart?: string;
+    tmax?: string;
+}
+// TODO:
+// export type DCSweepAnalysis = {
+//     kind: "dc";
+
+//     src: string;
+
+//     start: string;
+//     end: string;
+//     step: string;
+// }
+
+export type AnalysisInfo =
+    | OPAnalysis
+    | TranAnalysis;
 
 
 export interface AnalogSim {

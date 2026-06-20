@@ -15,10 +15,13 @@ export const SimButtons = ({ circuit }: Props) => {
         kind: "tran", tstep: "1ms", tstop: "0.45s", tstart: "0", tmax: "0ms",
     });
 
+    if (!circuit.sim)
+        return;
+
     const Simulate = () => {
         // eslint-disable-next-line react-compiler/react-compiler
-        circuit.sim.analysis = analysis;
-        circuit.sim.run();
+        circuit.sim!.analysis = analysis;
+        circuit.sim!.run();
     };
 
 
