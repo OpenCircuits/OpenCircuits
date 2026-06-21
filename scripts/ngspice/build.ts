@@ -18,8 +18,13 @@ execSync(`docker run --rm -v ${pwd}:/mnt ngspice:make`, {
     stdio: "inherit",
 });
 
-// Copy files to analog site
+// Copy files to analog site and analog api tests
 CopyDir(
-    path.resolve(process.cwd(), "scripts/ngspice/build"),
-    path.resolve(process.cwd(), "src/projects/analog/site/src/lib"),
+    path.resolve(process.cwd(), "scripts/ngspice/build/web"),
+    path.resolve(process.cwd(), "src/projects/analog/site/src/sim/lib"),
+);
+
+CopyDir(
+    path.resolve(process.cwd(), "scripts/ngspice/build/node"),
+    path.resolve(process.cwd(), "src/projects/analog/api/circuit/tests/sim/lib"),
 );

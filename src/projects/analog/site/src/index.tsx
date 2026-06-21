@@ -86,7 +86,7 @@ async function Init(): Promise<void> {
                 console.error("Failed to load NGSpice WASM binary!");
                 return;
             }
-            ngSpiceLib.OC_init();
+            ngSpiceLib._OC_init();
         }],
 
         [85, "Initializing redux", async () => {

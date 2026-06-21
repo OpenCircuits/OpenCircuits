@@ -42,13 +42,34 @@ RUN mkdir /src/
 RUN cp /ngspice/src/include/ngspice/sharedspice.h /src/
 COPY ./src/* /src/
 
-# Build the final WASM binary
-RUN mkdir /build/
+# Build the final WASM binaries (Web and Node)
+RUN mkdir -p /build/web/ && mkdir -p /build/node/
+
+# Emscripten no longer statically links .so files by default (they are now treated as dynamic WASM side-modules). 
+# If we try to compile with the .so directly, Emscripten outputs a tiny 30KB WASM stub that fails at runtime 
+# because it tries to dynamically load the .so file over the network.
+# To fix this without requiring explicit MAIN_MODULE dynamic linking setups, we manually gather 
+# all of the compiled object files (.o) and bundle them into a single static library archive (.a) using emar.
 RUN source /emsdk/emsdk_env.sh && \
-    em++ -lpthread -o /build/ngspice.js /src/*.cpp /ngspice/release/src/.libs/libngspice.so.0.0.* \
+    find /ngspice/release/src -name "*.o" \
+    | grep '\.libs/' \
+    | xargs emar rcs /ngspice/release/src/libngspice_static.a
+
+# Compile the Web build
+RUN source /emsdk/emsdk_env.sh && \
+    em++ -lpthread -o /build/web/ngspice.js /src/*.cpp /ngspice/release/src/libngspice_static.a \
          -s ENVIRONMENT='web' -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 \
          -s EXPORTED_RUNTIME_METHODS=HEAP8,HEAPU8,HEAP16,HEAPU16,HEAP32,HEAPU32,HEAP64,HEAPU64,HEAPF32,HEAPF64 \
-         -s EXPORTED_FUNCTIONS=_malloc,_free
+         -s EXPORTED_FUNCTIONS=_malloc,_free \
+         -s TOTAL_STACK=33554432
+
+# Compile the Node build
+RUN source /emsdk/emsdk_env.sh && \
+    em++ -lpthread -o /build/node/ngspice_node.js /src/*.cpp /ngspice/release/src/libngspice_static.a \
+         -s ENVIRONMENT='node' -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 \
+         -s EXPORTED_RUNTIME_METHODS=HEAP8,HEAPU8,HEAP16,HEAPU16,HEAP32,HEAPU32,HEAP64,HEAPU64,HEAPF32,HEAPF64 \
+         -s EXPORTED_FUNCTIONS=_malloc,_free \
+         -s TOTAL_STACK=33554432
 
 # Default command will copy the build files into /mnt/build/
-CMD mkdir -p /mnt/build/ && cp /build/* /mnt/build/
+CMD mkdir -p /mnt/build/ && cp -r /build/* /mnt/build/

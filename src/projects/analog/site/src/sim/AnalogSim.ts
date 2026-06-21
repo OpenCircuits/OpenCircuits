@@ -1,9 +1,9 @@
 import {AnalogSim, AnalysisInfo} from "analog/api/circuit/public";
 import {NGSpiceLib} from "./lib/NGSpiceLib";
 import {CreateWASMInstance} from "./lib/WASM";
-import {Netlist} from "./Netlist";
+import {Netlist} from "analog/api/circuit/sim/Netlist";
 import {CircuitInternal} from "shared/api/circuit/internal";
-import {CircuitToNetlist} from "./NetlistGenerator";
+import {CircuitToNetlist} from "analog/api/circuit/sim/NetlistGenerator";
 
 type RawLetter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N"
                         | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
@@ -63,14 +63,22 @@ interface SimData {
 class NGSpiceLibImpl {
     private netlistPtrs?: [number, ...number[]];
     private lib: WASMLib;
+    private initialized = false;
 
     public constructor(lib: WASMLib) {
         this.lib = lib;
     }
 
+    public init() {
+        if (!this.initialized) {
+            this.lib._OC_init();
+            this.initialized = true;
+        }
+    }
+
     private convertNetlist(netlist: Netlist): NGNetlist {
         return [
-            [".title", netlist.title],
+            [".title", netlist.title || "Untitled"],
             ...netlist.elements.map((e) => [
                 `${e.symbol}${e.uid}`,
                 e.node1, e.node2,
@@ -94,29 +102,37 @@ class NGSpiceLibImpl {
 
         // Upload data to NGSpice
         this.netlistPtrs = this.lib.create_str_array(ngNetList.map((line) => line.join(" ")));
-        this.lib.OC_set_data(this.netlistPtrs[0]);
+        this.lib._OC_set_data(this.netlistPtrs[0]);
     }
 
     public run(): SimData {
-        this.lib.OC_run();
+        this.lib._OC_run();
+
+        const plotIdsPtr = this.lib._OC_get_plot_ids();
+        if (!plotIdsPtr) {
+            return { plotIDs: [], curPlotID: "", vecIDs: {}, vecs: {} };
+        }
 
         // Gather data (slice off end which has "const" plot/data)
-        const plotIDPtrs = this.lib.get_array(this.lib.OC_get_plot_ids(), { type: "string*" }).slice(0, -1);
+        const plotIDPtrs = this.lib.get_array(plotIdsPtr, { type: "string*" }).slice(0, -1);
         const plotIDs = plotIDPtrs.map((ptr) => this.lib.get_array(ptr, { type: "char" }));
-        const curPlotID = this.lib.get_array(this.lib.OC_get_cur_plot(), { type: "char" });
+        
+        const curPlotPtr = this.lib._OC_get_cur_plot();
+        const curPlotID = curPlotPtr ? this.lib.get_array(curPlotPtr, { type: "char" }) : "";
     
         // Get vec IDs
-        const vecIDs = Object.fromEntries(plotIDPtrs.map((plotIDPtr, i) =>
-            [plotIDs[i], this.lib.get_array(this.lib.OC_get_vector_ids(plotIDPtr), { type: "string" })]
-        ));
+        const vecIDs = Object.fromEntries(plotIDPtrs.map((plotIDPtr, i) => {
+            const vecIdsPtr = this.lib._OC_get_vector_ids(plotIDPtr);
+            return [plotIDs[i], vecIdsPtr ? this.lib.get_array(vecIdsPtr, { type: "string" }) : []];
+        }));
 
         // Get vec data
         const allIDs = plotIDs.flatMap((plotID) => vecIDs[plotID].map((id) => `${plotID}.${id}`));
         const vecs = allIDs.reduce((prev, id) => {
             const idPtr = this.lib.create_array("string", id);
 
-            const len = this.lib.OC_get_vector_len(idPtr);
-            const data = this.lib.get_array(this.lib.OC_get_vector_data(idPtr), { type: "double", len });
+            const len = this.lib._OC_get_vector_len(idPtr);
+            const data = this.lib.get_array(this.lib._OC_get_vector_data(idPtr), { type: "double", len });
 
             // TODO: free `idPtr`
 
@@ -127,7 +143,7 @@ class NGSpiceLibImpl {
     }
 
     public printData() {
-        this.lib.OC_print_data();
+        this.lib._OC_print_data();
     }
 }
 
