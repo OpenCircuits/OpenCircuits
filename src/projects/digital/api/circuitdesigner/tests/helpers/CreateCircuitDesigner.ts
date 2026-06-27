@@ -27,7 +27,7 @@ import {InteractionHandler} from "digital/api/circuitdesigner/tools/handlers/Int
 import {SetupMockCanvas} from "shared/api/circuitdesigner/tests/helpers/CreateTestCircuitDesigner";
 
 import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
+import {DigitalAPITypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
 import {CreateTestCircuitHelpers} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 import {ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {DigitalCircuitImpl} from "digital/api/circuit/public/impl/DigitalCircuit";
@@ -35,7 +35,7 @@ import {uuid} from "shared/api/circuit/public";
 import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 
-export function GetDefaultTools(): ToolConfig<DigitalTypes> {
+export function GetDefaultTools(): ToolConfig<DigitalAPITypes> {
     return {
         defaultTool: new DefaultTool(
             SelectAllHandler, FitToScreenHandler, DuplicateHandler,

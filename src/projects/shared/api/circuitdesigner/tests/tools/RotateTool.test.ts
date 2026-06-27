@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/api/circuit/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import {V, Vector} from "Vector";
+import {Component} from "shared/api/circuit/public";
 
 import {ROTATION_CIRCLE_RADIUS} from "shared/api/circuitdesigner/tools/RotateTool";
 
@@ -236,8 +237,8 @@ describe("RotateTool", () => {
                 .releaseKey("Control")
                 .releaseKey("y");
 
-            newMidpoints = circuit.selections.components.map((o) => o.pos);
-            initialMidpoints.forEach((c, i) => expect(initialMidpoints[i]).toStrictEqual(newMidpoints[i]));  // Make sure midpoints stayed in the same place
+            newMidpoints = circuit.selections.components.map((o: Component) => o.pos);
+            initialMidpoints.forEach((c: Vector, i: number) => expect(initialMidpoints[i]).toStrictEqual(newMidpoints[i]));  // Make sure midpoints stayed in the same place
             expect(obj1.angle).toBeCloseTo(-Math.PI/4);
             expect(obj2.angle).toBeCloseTo(-Math.PI/4);
         });
