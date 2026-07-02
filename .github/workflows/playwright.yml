@@ -5,7 +5,20 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: 'package.json'
+    - run: yarn
+    - name: Build NGSpice [WASM]
+      uses: ./.github/actions/build-ngspice
+
   playwright-test:
+    needs: prepare
     timeout-minutes: 60
     runs-on: ${{ matrix.os }}
 
@@ -23,7 +36,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Build NGSpice [WASM]
-      run: yarn build:ngspice
+      uses: ./.github/actions/build-ngspice
     - name: Run Playwright tests
       run: yarn test-e2e:ci
     - uses: actions/upload-artifact@v4

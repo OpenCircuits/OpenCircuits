@@ -10,7 +10,20 @@ on:
     branches: [ master ]
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: 'package.json'
+    - run: yarn
+    - name: Build NGSpice [WASM]
+      uses: ./.github/actions/build-ngspice
+
   build:
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -28,7 +41,7 @@ jobs:
     - run: yarn
 
     - name: Build NGSpice [WASM]
-      run: yarn build:ngspice
+      uses: ./.github/actions/build-ngspice
 
     - name: Build backend [Golang]
       run: yarn build --ci src/server
@@ -40,6 +53,7 @@ jobs:
       run: yarn build --ci src/other/pages/docs
 
   tests:
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -52,7 +66,7 @@ jobs:
     - run: yarn
 
     - name: Build NGSpice [WASM]
-      run: yarn build:ngspice
+      uses: ./.github/actions/build-ngspice
 
     - name: Run tests [TypeScript]
       run: yarn test --ci
