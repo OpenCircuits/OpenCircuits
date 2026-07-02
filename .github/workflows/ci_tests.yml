@@ -27,6 +27,9 @@ jobs:
 
     - run: yarn
 
+    - name: Build NGSpice [WASM]
+      run: yarn build:ngspice
+
     - name: Build backend [Golang]
       run: yarn build --ci src/server
 
@@ -47,6 +50,9 @@ jobs:
         node-version-file: 'package.json'
 
     - run: yarn
+
+    - name: Build NGSpice [WASM]
+      run: yarn build:ngspice
 
     - name: Run tests [TypeScript]
       run: yarn test --ci
