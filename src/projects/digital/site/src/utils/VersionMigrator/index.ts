@@ -9,7 +9,9 @@ interface VersionMigratorResult {
 export function VersionMigrator(fileContents: string): VersionMigratorResult {
     const json = JSON.parse(fileContents);
 
-    if (IsV3_0(json)) return V3_0Migrator(json);
+    if (IsV3_0(json)) {
+        return V3_0Migrator(json);
+    }
 
     return {
         schema: json as DigitalProtoSchema.DigitalCircuit,

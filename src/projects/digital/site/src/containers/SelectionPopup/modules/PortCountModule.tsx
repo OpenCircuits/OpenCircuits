@@ -21,7 +21,9 @@ export const PortCountModule = ({ circuit, kinds, basisPortGroup, label }: Props
         }),
     );
 
-    if (!props || comps.length === 0) return;
+    if (!props || comps.length === 0) {
+        return;
+    }
 
     const cfgIndices = props["configIndex"];
 

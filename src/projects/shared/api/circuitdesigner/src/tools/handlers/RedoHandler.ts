@@ -11,8 +11,9 @@ export const RedoHandler: ToolHandler = {
                 ((ev.key === "z" && ev.input.isModifierKeyDown && ev.input.isShiftKeyDown) ||
                     (ev.key === "y" && ev.input.isModifierKeyDown))
             )
-        )
+        ) {
             return ToolHandlerResponse.PASS;
+        }
 
         circuit.redo();
 

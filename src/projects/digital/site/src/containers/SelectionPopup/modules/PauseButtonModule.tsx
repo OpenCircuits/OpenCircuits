@@ -12,7 +12,9 @@ export const PauseButtonModule = ({ circuit }: Props) => {
     );
 
     // Show if valid and if there are multiple clocks
-    if (!props || cs.length === 0) return;
+    if (!props || cs.length === 0) {
+        return;
+    }
 
     // If everything is paused, then we want the button to be a "Resume" button
     // Otherwise, it will be "Pause" and pause all the components.

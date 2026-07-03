@@ -42,7 +42,9 @@ export class ClockAssembler extends ComponentAssembler {
 
     private isOn(sw: Schema.Component) {
         const state = this.sim.getState(sw.id);
-        if (!state || state.length === 0) return false;
+        if (!state || state.length === 0) {
+            return false;
+        }
         return Signal.toBool(Signal.invert(state[2]));
     }
 }

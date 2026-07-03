@@ -45,7 +45,9 @@ function SavePDF(canvas: HTMLCanvasElement, projectName: string, options: ImageE
     const pdf = new jsPDF("l", "px", [width, height]);
 
     // Get name
-    if (projectName.replaceAll(/\s+/g, "") === "") projectName = "Untitled Circuit";
+    if (projectName.replaceAll(/\s+/g, "") === "") {
+        projectName = "Untitled Circuit";
+    }
 
     // Fill background
     if (options.useBg) {

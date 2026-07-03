@@ -35,9 +35,13 @@ export const NegatedTypeToGate = {
  */
 function connect(prevComp: DigitalComponent, newNode: DigitalPort, newComp: DigitalComponent) {
     const prevNode = prevComp.firstAvailable("outputs");
-    if (!prevNode) throw new Error(`Port not found on returned ${prevComp.kind}`);
+    if (!prevNode) {
+        throw new Error(`Port not found on returned ${prevComp.kind}`);
+    }
     const wire = prevNode.connectTo(newNode);
-    if (!wire) throw new Error(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
+    if (!wire) {
+        throw new Error(`Connection between ${prevComp.kind} and ${newComp.kind} failed`);
+    }
 }
 
 /**
@@ -62,7 +66,9 @@ function treeToCircuitCore(
 ): DigitalComponent {
     if (node.kind === "leaf") {
         const input = inputs.get(node.ident);
-        if (!input) throw new Error('Input Not Found: "' + node.ident + '"');
+        if (!input) {
+            throw new Error('Input Not Found: "' + node.ident + '"');
+        }
         return input;
     }
 
@@ -72,15 +78,21 @@ function treeToCircuitCore(
     if (node.kind === "unop") {
         const prevComp = treeToCircuitCore(node.child, inputs, ret);
         const newNode = newComp.firstAvailable("inputs");
-        if (!newNode) throw new Error(`Port not found on newly created ${newComp.kind}`);
+        if (!newNode) {
+            throw new Error(`Port not found on newly created ${newComp.kind}`);
+        }
         connect(prevComp, newNode, newComp);
     } else if (node.kind === "binop") {
         newComp.setPortConfig({ inputs: node.children.length });
         node.children.forEach((child) => {
-            if (!child) throw new Error("treeToCircuitCore failed: child was undefined");
+            if (!child) {
+                throw new Error("treeToCircuitCore failed: child was undefined");
+            }
             const prevComp = treeToCircuitCore(child, inputs, ret);
             const newNode = newComp.firstAvailable("inputs");
-            if (!newNode) throw new Error(`Port not found on newly created ${newComp.kind}`);
+            if (!newNode) {
+                throw new Error(`Port not found on newly created ${newComp.kind}`);
+            }
             connect(prevComp, newNode, newComp);
         });
     }
@@ -112,7 +124,9 @@ export function TreeToCircuit(
     const outputComp = circuit.placeComponentAt(output, V(0, 0));
     outputComp.name = "Output";
     const outputNode = outputComp.firstAvailable("inputs");
-    if (!outputNode) throw new Error(`Input port not found on output ${outputComp.kind}`);
+    if (!outputNode) {
+        throw new Error(`Input port not found on output ${outputComp.kind}`);
+    }
 
     const inputMap = new Map<string, DigitalComponent>();
     inputs.forEach((type, input) => {

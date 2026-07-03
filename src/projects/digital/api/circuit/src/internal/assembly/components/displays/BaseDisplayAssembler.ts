@@ -96,7 +96,9 @@ export class BaseDisplayAssembler extends ComponentAssembler {
     }
 
     protected getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]> {
-        if (!this.font) throw new Error("BaseDisplayAssembler: No font set!");
+        if (!this.font) {
+            throw new Error("BaseDisplayAssembler: No font set!");
+        }
 
         // Get on glyphs for font
         const dec = this.getInputValues(comp).reduce(
@@ -109,7 +111,9 @@ export class BaseDisplayAssembler extends ComponentAssembler {
 
         return Segments[segmentCount]
             .map((segment, index) => {
-                if (glyph.includes(index) === segmentsOn) return segment;
+                if (glyph.includes(index) === segmentsOn) {
+                    return segment;
+                }
             })
             .filter((prim) => prim !== undefined);
     }

@@ -60,9 +60,13 @@ export const ContextMenu = ({ designer }: Props) => {
     useDocEvent(
         "mousedown",
         (ev) => {
-            if (!menu.current) throw new Error("ContextMenu failed: menu.current is null");
+            if (!menu.current) {
+                throw new Error("ContextMenu failed: menu.current is null");
+            }
 
-            if (!menu.current.contains(ev.target as Node)) dispatch(CloseContextMenu());
+            if (!menu.current.contains(ev.target as Node)) {
+                dispatch(CloseContextMenu());
+            }
         },
         [dispatch, menu],
     );
@@ -145,7 +149,9 @@ export const ContextMenu = ({ designer }: Props) => {
 
     // Adjusts position of menu to keep it on screen
     const menuPos = (() => {
-        if (!menu.current) return V(posX, posY);
+        if (!menu.current) {
+            return V(posX, posY);
+        }
 
         const { width, height } = menu.current.getBoundingClientRect();
 

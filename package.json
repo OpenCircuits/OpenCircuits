@@ -68,7 +68,6 @@
         "eslint-plugin-jest": "^28.14.0",
         "eslint-plugin-jsdoc": "^50.8.0",
         "eslint-plugin-jsx-a11y": "^6.10.2",
-        "eslint-plugin-opencircuits": "file:./scripts/linting",
         "eslint-plugin-playwright": "^2.2.0",
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.1.1",

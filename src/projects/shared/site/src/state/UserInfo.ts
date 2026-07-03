@@ -29,16 +29,22 @@ const [initialState, actions, reducer] = CreateState()(
             return { ...state, autoSave: action.autoSave };
         },
         LOGOUT_ACTION_ID: (state) => {
-            if (state.auth) state.auth.logOut();
+            if (state.auth) {
+                state.auth.logOut();
+            }
             return { ...state, auth: undefined, isLoggedIn: false, circuits: [] };
         },
         LOGIN_ACTION_ID: (state, action) => ({ ...state, auth: action.auth, isLoggedIn: true }),
         LOAD_CIRCUITS_START_ID: (state) => {
-            if (!state.auth) return { ...state, circuits: [], error: "MNot logged in!" };
+            if (!state.auth) {
+                return { ...state, circuits: [], error: "MNot logged in!" };
+            }
             return { ...state, loading: true };
         },
         LOAD_CIRCUITS_FINISH_ID: (state, action) => {
-            if (!state.auth) return { ...state, circuits: [], loading: false, error: "Not logged in!" };
+            if (!state.auth) {
+                return { ...state, circuits: [], loading: false, error: "Not logged in!" };
+            }
             return { ...state, circuits: action.circuits ?? [], error: action.err ?? "", loading: false };
         },
     },

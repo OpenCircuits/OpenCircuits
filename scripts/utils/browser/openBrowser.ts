@@ -96,10 +96,14 @@ function startBrowserProcess(browser: string | undefined, url: string, args: str
         // In this case, instead of passing `open` to `opn` (which won"t work),
         // just ignore it (thus ensuring the intended behavior, i.e. opening the system browser):
         // https://github.com/facebook/create-react-app/pull/1690#issuecomment-283518768
-        if (process.platform === "darwin" && browser === "open") return;
+        if (process.platform === "darwin" && browser === "open") {
+            return;
+        }
 
         // If there are arguments, they must be passed as array with the browser
-        if (typeof browser === "string" && args.length > 0) return { name: browser, arguments: args };
+        if (typeof browser === "string" && args.length > 0) {
+            return { name: browser, arguments: args };
+        }
 
         return browser === undefined ? undefined : { name: browser };
     })();

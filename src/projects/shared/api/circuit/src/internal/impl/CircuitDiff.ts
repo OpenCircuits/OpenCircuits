@@ -84,15 +84,21 @@ export class CircuitDiffBuilder {
 
         // Remove no-op component kind changes
         this.diff.changedComponents.forEach(({ oldKind, newKind }, id) => {
-            if (oldKind === newKind) this.diff.changedComponents.delete(id);
+            if (oldKind === newKind) {
+                this.diff.changedComponents.delete(id);
+            }
         });
 
         // Remove props where old === new
         this.diff.propsDiff.forEach((props, id) => {
             props.forEach(({ oldVal, newVal }, key) => {
-                if (oldVal === newVal) props.delete(key);
+                if (oldVal === newVal) {
+                    props.delete(key);
+                }
             });
-            if (props.size === 0) this.diff.propsDiff.delete(id);
+            if (props.size === 0) {
+                this.diff.propsDiff.delete(id);
+            }
         });
 
         return { ...this.diff };
@@ -114,7 +120,9 @@ export class CircuitDiffBuilder {
         this.diff.addedComponents.delete(c.id);
 
         // Keep the oldest "remove"
-        if (!this.diff.removedComponents.has(c.id)) this.diff.removedComponents.set(c.id, { ...c, props: {} });
+        if (!this.diff.removedComponents.has(c.id)) {
+            this.diff.removedComponents.set(c.id, { ...c, props: {} });
+        }
 
         // Ports are handled separately because they are a separate op
         // this.portDiff.delete(c.id);
@@ -126,8 +134,12 @@ export class CircuitDiffBuilder {
     private updatePorts(id: GUID, addedPorts?: Schema.Port[], removedPorts?: Schema.Port[]) {
         const currDiff = this.diff.portDiff.getOrInsert(id, () => ({ added: new Map(), removed: new Map() }));
 
-        if (removedPorts) removedPorts.forEach((p) => currDiff.removed.delete(p.id));
-        if (addedPorts) addedPorts.forEach((p) => currDiff.added.set(id, p));
+        if (removedPorts) {
+            removedPorts.forEach((p) => currDiff.removed.delete(p.id));
+        }
+        if (addedPorts) {
+            addedPorts.forEach((p) => currDiff.added.set(id, p));
+        }
     }
 
     // Parallels logic of "addComponent"
@@ -142,7 +154,9 @@ export class CircuitDiffBuilder {
         this.diff.addedWires.delete(w.id);
 
         // Keep the oldest "remove"
-        if (!this.diff.removedWires.has(w.id)) this.diff.removedWires.set(w.id, w);
+        if (!this.diff.removedWires.has(w.id)) {
+            this.diff.removedWires.set(w.id, w);
+        }
 
         this.updatePropsForRemove(w.id, w.props);
     }
@@ -158,14 +172,18 @@ export class CircuitDiffBuilder {
     private updatePropsForAdd(id: GUID, props: Record<string, Schema.Prop>) {
         // If an object is added, all of its props are added.
         const propDiff = new Map();
-        for (const key in props) propDiff.set(key, { newVal: props[key] });
+        for (const key in props) {
+            propDiff.set(key, { newVal: props[key] });
+        }
         this.updateProps(id, propDiff);
     }
 
     private updatePropsForRemove(id: GUID, props: Record<string, Schema.Prop>) {
         // If an object is deleted, all of its props are removed.
         const propDiffs = new Map();
-        for (const key in props) propDiffs.set(key, { oldVal: props[key] });
+        for (const key in props) {
+            propDiffs.set(key, { oldVal: props[key] });
+        }
         this.updateProps(id, propDiffs);
     }
 
@@ -185,8 +203,11 @@ export class CircuitDiffBuilder {
     public applyOp(op: CircuitOp): void {
         switch (op.kind) {
             case "PlaceComponentOp": {
-                if (op.inverted) this.removeComponent(op.c);
-                else this.addComponent(op.c);
+                if (op.inverted) {
+                    this.removeComponent(op.c);
+                } else {
+                    this.addComponent(op.c);
+                }
                 break;
             }
             case "ReplaceComponentOp": {
@@ -204,8 +225,11 @@ export class CircuitDiffBuilder {
                 break;
             }
             case "ConnectWireOp": {
-                if (op.inverted) this.removeWire(op.w);
-                else this.addWire(op.w);
+                if (op.inverted) {
+                    this.removeWire(op.w);
+                } else {
+                    this.addWire(op.w);
+                }
                 break;
             }
             case "SplitWireOp": {

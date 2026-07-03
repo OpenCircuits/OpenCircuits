@@ -20,7 +20,9 @@ export const OpenFileButton = () => {
     const fileInput = React.useRef<HTMLInputElement>(null);
 
     const load = (file: File) => {
-        if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE)) LoadCircuit(LoadFile(file, "binary"));
+        if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE)) {
+            LoadCircuit(LoadFile(file, "binary"));
+        }
     };
 
     return (

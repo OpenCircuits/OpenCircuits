@@ -60,14 +60,18 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
             //  can connect to `otherPort`
             .filter((port) => (!otherPort ? true : port.canConnectTo(otherPort)));
 
-        if (validPorts.length === 0) return undefined;
+        if (validPorts.length === 0) {
+            return undefined;
+        }
 
         // Find closest port to the cursor
         return validPorts.map((port) => ({ port, dist: pos.distanceTo(port.targetPos) })).reduce(MinDist).port;
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        if (this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit) !== undefined) return "pointer";
+        if (this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit) !== undefined) {
+            return "pointer";
+        }
     }
     public shouldActivate(ev: InputAdapterEvent, { circuit, viewport, curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user drags or clicks on a port
@@ -101,9 +105,10 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
 
     public onDeactivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
         const port2 = this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit, this.curPort);
-        if (port2 && this.curPort!.canConnectTo(port2))
-            // Connect the ports if we found a second port
+        if (port2 && this.curPort!.canConnectTo(port2)) // Connect the ports if we found a second port
+        {
             this.curPort!.connectTo(port2);
+        }
 
         this.curPort = undefined;
         this.curTarget = undefined;

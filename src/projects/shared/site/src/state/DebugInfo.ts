@@ -21,7 +21,9 @@ const initialDebugVals: DebugOptions = (() => {
 
     // If there's an option that isn't in the loaded result, it was probably a new option
     // so reset the cookies to include it.
-    if (Object.keys(defaultDebugVals).some((key) => !(key in result))) return defaultDebugVals;
+    if (Object.keys(defaultDebugVals).some((key) => !(key in result))) {
+        return defaultDebugVals;
+    }
     return result;
 })();
 

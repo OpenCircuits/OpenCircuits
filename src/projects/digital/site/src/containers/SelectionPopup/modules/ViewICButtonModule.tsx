@@ -16,7 +16,9 @@ export const ViewICButtonModule = ({ circuit }: Props) => {
     const dispatch = useDigitalDispatch();
 
     // Only active when a single IC is selected
-    if (!(props && ics.length === 1)) return;
+    if (!(props && ics.length === 1)) {
+        return;
+    }
 
     return (
         <button type="button" title="View the inside of this IC" onClick={() => dispatch(OpenICViewer(props.id[0]))}>

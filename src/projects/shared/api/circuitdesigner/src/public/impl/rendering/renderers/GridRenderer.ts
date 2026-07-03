@@ -18,8 +18,12 @@ export function RenderGrid({ circuit, renderer, options }: RenderState) {
     renderer.save();
     renderer.setStyle(options.gridStyle);
     renderer.beginPath();
-    for (let x = bounds.left; x <= bounds.right; x += step) renderer.pathLine(V(x, bounds.bottom), V(x, bounds.top));
-    for (let y = bounds.bottom; y <= bounds.top; y += step) renderer.pathLine(V(bounds.left, y), V(bounds.right, y));
+    for (let x = bounds.left; x <= bounds.right; x += step) {
+        renderer.pathLine(V(x, bounds.bottom), V(x, bounds.top));
+    }
+    for (let y = bounds.bottom; y <= bounds.top; y += step) {
+        renderer.pathLine(V(bounds.left, y), V(bounds.right, y));
+    }
     renderer.closePath();
     renderer.stroke();
     renderer.restore();

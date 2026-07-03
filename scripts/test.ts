@@ -65,10 +65,14 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
 
     const dirPaths = await (async () => {
         // If specified dirs in argv, then just use those.
-        if (argv._.length > 0) return argv._.map((s) => `${s}`);
+        if (argv._.length > 0) {
+            return argv._.map((s) => `${s}`);
+        }
 
         // If nothing specified, but using CI, use all directories.
-        if (ci) return dirs.map((d) => d.path);
+        if (ci) {
+            return dirs.map((d) => d.path);
+        }
 
         // Else prompt user for a directory
         const { value } = await prompts({
@@ -83,10 +87,14 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
                 })),
             initial: 0,
         });
-        if (!value) return;
+        if (!value) {
+            return;
+        }
         return [value as string];
     })();
-    if (!dirPaths) return;
+    if (!dirPaths) {
+        return;
+    }
 
     const flags = {
         ci,
@@ -119,11 +127,14 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
 
         const { results: result } = await LaunchTest(argv, dir.path, flags);
         results.push(result);
-        if (coverage) open(flags.coverageDirectory + "/lcov-report/index.html");
+        if (coverage) {
+            open(flags.coverageDirectory + "/lcov-report/index.html");
+        }
     }
 
     const pass = results.every((r) => r.success);
-    if (!pass && ci)
-        // Exit with failure
+    if (!pass && ci) // Exit with failure
+    {
         throw new Error("Not all tests passed!");
+    }
 })();

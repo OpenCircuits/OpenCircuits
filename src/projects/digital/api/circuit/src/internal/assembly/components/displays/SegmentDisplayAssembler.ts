@@ -16,7 +16,9 @@ export class SegmentDisplayAssembler extends BaseDisplayAssembler {
 
         return inputValues
             .map((inputIsOn, index) => {
-                if (segmentsOn === inputIsOn) return segments[index];
+                if (segmentsOn === inputIsOn) {
+                    return segments[index];
+                }
             })
             .filter((prim) => prim !== undefined);
     }

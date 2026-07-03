@@ -41,7 +41,7 @@ import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRun
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  */
 function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[]) {
-    if (2 ** inputs.length !== expected.length)
+    if (2 ** inputs.length !== expected.length) {
         throw new Error(
             "The number of expected states (" +
                 expected.length +
@@ -49,17 +49,23 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
                 2 ** inputs.length +
                 ")",
         );
+    }
 
     for (let num = 0; num < 2 ** inputs.length; num++) {
         let testTitle = "Inputs on:";
-        for (let index = 0; index < inputs.length; index++) if (num & (2 ** index)) testTitle += " " + inputs[index][0];
-        if (testTitle === "Inputs on:") testTitle += " [none]";
+        for (let index = 0; index < inputs.length; index++) {
+            if (num & (2 ** index)) testTitle += " " + inputs[index][0];
+        }
+        if (testTitle === "Inputs on:") {
+            testTitle += " [none]";
+        }
 
         // The loop is repeated because the activation needs to happen within the test
         // eslint-disable-next-line jest/valid-title -- testTitle is a string but the rule doesn't recognize it
         test(testTitle, () => {
-            for (const [index, input] of inputs.entries())
+            for (const [index, input] of inputs.entries()) {
                 input[1].setSimState([num & (2 ** index) ? Signal.On : Signal.Off]);
+            }
             expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
         });
     }
@@ -76,7 +82,7 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
  * @see testInputs
  */
 function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[]) {
-    if (2 ** inputs.length !== expected.length)
+    if (2 ** inputs.length !== expected.length) {
         throw new Error(
             "The number of expected states (" +
                 expected.length +
@@ -84,11 +90,13 @@ function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: Dig
                 2 ** inputs.length +
                 ")",
         );
+    }
 
     test("All states", () => {
         for (let num = 0; num < 2 ** inputs.length; num++) {
-            for (const [index, input] of inputs.entries())
+            for (const [index, input] of inputs.entries()) {
                 input[1].setSimState([num & (2 ** index) ? Signal.On : Signal.Off]);
+            }
             expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
         }
     });
@@ -118,12 +126,16 @@ function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: Dig
  */
 function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat, verbose?: boolean) {
     describe("Parse: '" + expression + "'", () => {
-        if (numInputs > 8) throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
+        if (numInputs > 8) {
+            throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
+        }
 
         const o = "LED";
         const inputs: Array<[string, "Switch"]> = [];
         const charCodeStart = "a".codePointAt(0)!;
-        for (let i = 0; i < numInputs; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+        for (let i = 0; i < numInputs; i++) {
+            inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+        }
 
         const result = ExpressionToCircuit(new Map(inputs), expression, o, ops);
         // If I understand Jest correctly, this test will run after the non-test-blocked code after it,
@@ -149,9 +161,11 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
             throw new Error("Output with name Output not found in generated circuit");
         }
 
-        if (verbose === false || (verbose === undefined && numInputs > 3))
+        if (verbose === false || (verbose === undefined && numInputs > 3)) {
             testInputsSimple(inputComponents, outputComp, expected);
-        else testInputs(inputComponents, outputComp, expected);
+        } else {
+            testInputs(inputComponents, outputComp, expected);
+        }
     });
 }
 
@@ -524,7 +538,9 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 7; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 7; i++) {
+                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            }
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
             expect(result).toBeOk();
@@ -537,7 +553,9 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 8; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 8; i++) {
+                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            }
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
             expect(result).toBeOk();
@@ -550,7 +568,9 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 9; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 9; i++) {
+                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            }
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
             expect(result).toBeOk();
@@ -563,7 +583,9 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 4; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 4; i++) {
+                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            }
 
             const result = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
             expect(result).toBeOk();
@@ -576,7 +598,9 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 3; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 3; i++) {
+                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            }
 
             const result = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
             expect(result).toBeOk();

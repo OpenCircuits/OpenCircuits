@@ -9,7 +9,9 @@ export function CleanUp(circuit: Circuit): boolean {
     // Get selected components if we have selections, or get all components to cleanup
     const comps = circuit.selections.isEmpty ? circuit.getComponents() : circuit.selections.components;
 
-    if (comps.length === 0) return false;
+    if (comps.length === 0) {
+        return false;
+    }
 
     // For now, this cleanup will:
     //  1. Reset all of the components' angles to the nearest 90 degrees (and normalized to be in [0, 2PI))
@@ -34,9 +36,13 @@ export const CleanupHandler: ToolHandler = {
 
     onEvent: (ev, { circuit }) => {
         // Activate when pressing K key
-        if (!(ev.type === "keydown" && ev.key === "k")) return ToolHandlerResponse.PASS;
+        if (!(ev.type === "keydown" && ev.key === "k")) {
+            return ToolHandlerResponse.PASS;
+        }
 
-        if (!CleanUp(circuit)) return ToolHandlerResponse.PASS; // Nothing to clean-up so pass
+        if (!CleanUp(circuit)) {
+            return ToolHandlerResponse.PASS;
+        } // Nothing to clean-up so pass
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;

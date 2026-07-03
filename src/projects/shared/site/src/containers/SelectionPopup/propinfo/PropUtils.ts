@@ -21,7 +21,9 @@ export function GetPropsWithInfoFor(o: Obj, propInfo: PropInfoGetter): Record<st
     // A field is an entry that isn't a group
     function getPropFields(info: PropInfo): PropInfoEntryField[] {
         return info.flatMap((entry) => {
-            if (entry.type === "group") return getPropFields(entry.info);
+            if (entry.type === "group") {
+                return getPropFields(entry.info);
+            }
             return entry;
         });
     }

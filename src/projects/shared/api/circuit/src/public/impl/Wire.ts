@@ -24,10 +24,11 @@ export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
     }
 
     public set zIndex(val: number) {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `BaseObjImpl: Cannot set zIndex for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
             );
+        }
         this.ctx.internal.setPropFor(this.id, "zIndex", val).unwrap();
     }
     public get zIndex(): number {
@@ -35,10 +36,11 @@ export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
     }
 
     public get shape(): Curve {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `WireImpl: Wire shape cannot be accessed inside an IC! Wire ID: '${this.id}', IC ID: '${this.icId}'`,
             );
+        }
         return this.ctx.assembler.getWireShape(this.id).unwrap();
     }
 
@@ -63,10 +65,14 @@ export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
             path.push(q);
             if (q.baseKind === "Wire") {
                 const p1 = q.p1.parent;
-                if (p1.isNode() && !visited.has(p1.id)) queue.push(p1);
+                if (p1.isNode() && !visited.has(p1.id)) {
+                    queue.push(p1);
+                }
 
                 const p2 = q.p2.parent;
-                if (p2.isNode() && !visited.has(p2.id)) queue.push(p2);
+                if (p2.isNode() && !visited.has(p2.id)) {
+                    queue.push(p2);
+                }
             } else {
                 // Push all of the Node's connecting wires, filtered by if they've been visited
                 queue.push(...q.allPorts.flatMap((p) => p.connections).filter((w) => !visited.has(w.id)));
@@ -81,10 +87,11 @@ export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
     }
 
     public split(): { node: T["Node"]; wire1: T["Wire"]; wire2: T["Wire"] } {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `WireImpl: Cannot split wire with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
             );
+        }
 
         // Default to making the node in the middle of the wire
         const pos = this.shape.getPos(0.5);
@@ -105,7 +112,9 @@ export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
         const nodeId = this.ctx.internal.placeComponent(nodeKind, { x: pos.x, y: pos.y }).unwrap();
         this.ctx.internal.setPortConfig(nodeId, info!.defaultPortConfig).unwrap();
         const node = this.ctx.factory.constructComponent(nodeId);
-        if (!node.isNode()) throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);
+        if (!node.isNode()) {
+            throw new Error(`Failed to construct node when splitting! Id: ${nodeId}`);
+        }
 
         // Need to get the ports before deleting this wire
         const { p1, p2 } = this;
@@ -120,8 +129,12 @@ export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
         // input port connects to the output port.
         const wire1 = p1.canConnectTo(nodeP1) ? p1.connectTo(nodeP1) : p1.connectTo(nodeP2);
         const wire2 = p2.canConnectTo(nodeP2) ? p2.connectTo(nodeP2) : p2.connectTo(nodeP1);
-        if (!wire1) throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
-        if (!wire2) throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
+        if (!wire1) {
+            throw new Error(`Failed to connect p1 to node! ${p1} -> ${node}`);
+        }
+        if (!wire2) {
+            throw new Error(`Failed to connect p2 to node! ${p2} -> ${node}`);
+        }
 
         this.ctx.internal.commitTransaction();
 
@@ -129,10 +142,11 @@ export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
     }
 
     public delete(): void {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `WireImpl: Cannot delete wire with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
             );
+        }
 
         this.ctx.internal.beginTransaction();
         const path = this.path;

@@ -15,8 +15,12 @@ export const enum ICValidationStatus {
 }
 export const IsValidIC = (cs: Component[]): ICValidationStatus => {
     // Timed components and segment displays are not allowed
-    if (cs.some((c) => timedComponents.has(c.kind))) return ICValidationStatus.ContainsTimedComponents;
-    if (cs.some((c) => segmentDisplays.has(c.kind))) return ICValidationStatus.ContainsSegmentDisplays;
+    if (cs.some((c) => timedComponents.has(c.kind))) {
+        return ICValidationStatus.ContainsTimedComponents;
+    }
+    if (cs.some((c) => segmentDisplays.has(c.kind))) {
+        return ICValidationStatus.ContainsSegmentDisplays;
+    }
 
     // Split the provided components into which circuit group they are a part of,
     // then we will check that each one is valid
@@ -24,8 +28,12 @@ export const IsValidIC = (cs: Component[]): ICValidationStatus => {
     const visited = new Set<string>();
     for (const c of cs) {
         // Labels are allowed, have no connections, and an IC can't exclusively contain Labels, so skip
-        if (c.kind === "Label") continue;
-        if (visited.has(c.id)) continue;
+        if (c.kind === "Label") {
+            continue;
+        }
+        if (visited.has(c.id)) {
+            continue;
+        }
         visited.add(c.id);
         // TODO[]: Add something to the api to get all components connected.
         // bfs search connected components
@@ -33,7 +41,9 @@ export const IsValidIC = (cs: Component[]): ICValidationStatus => {
         const queue = c.allPorts.flatMap((p1) => p1.connectedPorts.flatMap((p2) => p2.parent));
         while (queue.length > 0) {
             const curr = queue.pop()!;
-            if (visited.has(curr.id)) continue;
+            if (visited.has(curr.id)) {
+                continue;
+            }
             visited.add(curr.id);
             circuit.push(curr);
             queue.push(...curr.allPorts.flatMap((p1) => p1.connectedPorts.flatMap((p2) => p2.parent)));
@@ -42,17 +52,23 @@ export const IsValidIC = (cs: Component[]): ICValidationStatus => {
     }
 
     // Should only happen with an empty selection or a selection of only Labels
-    if (circuits.length === 0) return ICValidationStatus.Empty;
+    if (circuits.length === 0) {
+        return ICValidationStatus.Empty;
+    }
 
     const selectedComponents = new Set(cs.map(({ id }) => id));
     return (
         circuits
             .map((circuit) => {
                 // Must have an output, all non-LED outputs are banned
-                if (!circuit.some((c) => c.kind === "LED")) return ICValidationStatus.NoOutput;
+                if (!circuit.some((c) => c.kind === "LED")) {
+                    return ICValidationStatus.NoOutput;
+                }
 
                 // Must have a valid input
-                if (!circuit.some((c) => requiredInputComponents.has(c.kind))) return ICValidationStatus.NoInput;
+                if (!circuit.some((c) => requiredInputComponents.has(c.kind))) {
+                    return ICValidationStatus.NoInput;
+                }
 
                 // All the components that make up this circuit must be in the selection
                 return circuit.every((c) => selectedComponents.has(c.id))

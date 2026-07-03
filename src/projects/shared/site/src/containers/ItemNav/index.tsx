@@ -102,9 +102,13 @@ export const ItemNav = <D,>({
     useDocEvent("mouseleave", () => dispatch(SetCurPressedObjID(undefined)));
     function handleItemNavDrag() {
         // Issue #478
-        if (!curPressedObjID) return;
+        if (!curPressedObjID) {
+            return;
+        }
         const curPressedObj = circuit.getObj(curPressedObjID)!;
-        if (curPressedObj.baseKind !== "Component") return;
+        if (curPressedObj.baseKind !== "Component") {
+            return;
+        }
         // If pressed object is part of selections, do a default deselect and delete of all selections
         if (curPressedObj.isSelected) {
             circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
@@ -152,7 +156,9 @@ export const ItemNav = <D,>({
         "touchend",
         (ev) => {
             const touch = ev.changedTouches.item(0);
-            if (!touch) throw new Error("ItemNav.useDocEvent failed: touch is null");
+            if (!touch) {
+                throw new Error("ItemNav.useDocEvent failed: touch is null");
+            }
             const { clientX: x, clientY: y } = touch;
             DragDropHandlers.drop(V(x, y), curItemState.curItemID, curItemState.numClicks, additionalData);
             reset();
@@ -162,12 +168,15 @@ export const ItemNav = <D,>({
 
     // Reset `numClicks` and `curItemID` when something is dropped
     useEffect(() => {
-        if (isShiftDown)
-            // Don't reset on click if shift is down
+        if (isShiftDown) // Don't reset on click if shift is down
+        {
             return;
+        }
 
         const resetListener = (_: Vector, hit: boolean) => {
-            if (hit) reset(false);
+            if (hit) {
+                reset(false);
+            }
         };
 
         DragDropHandlers.addListener(resetListener);
@@ -243,9 +252,13 @@ export const ItemNav = <D,>({
     // Get image for deletion preview (PR #1047)
     const deleteImg = useMemo(() => {
         // If not pressing a Component or not hovering the ItemNav, then returned undefined
-        if (!hoveringNav || !curPressedObjID) return;
+        if (!hoveringNav || !curPressedObjID) {
+            return;
+        }
         const obj = circuit.getObj(curPressedObjID)!;
-        if (obj.baseKind !== "Component") return;
+        if (obj.baseKind !== "Component") {
+            return;
+        }
 
         // Get image icon
         const section = config.sections.find((s) => s.items.find((i) => i.kind === obj.kind));
@@ -282,8 +295,11 @@ export const ItemNav = <D,>({
                             type="button"
                             title="History"
                             onClick={() => {
-                                if (isHistoryBoxOpen) dispatch(CloseHistoryBox());
-                                else dispatch(OpenHistoryBox());
+                                if (isHistoryBoxOpen) {
+                                    dispatch(CloseHistoryBox());
+                                } else {
+                                    dispatch(OpenHistoryBox());
+                                }
                             }}
                         >
                             <img src={historyIcon} alt="Toggle history box"></img>
@@ -360,7 +376,9 @@ type ItemNavDeletionPreviewProps = {
 const ItemNavDeletionPreview = ({ deleteImg }: ItemNavDeletionPreviewProps) => {
     const pos = useMousePos();
 
-    if (!deleteImg) return;
+    if (!deleteImg) {
+        return;
+    }
 
     // Item Nav Deletion Preview (PR #1047)
     return (

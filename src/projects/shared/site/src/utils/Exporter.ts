@@ -8,7 +8,9 @@
  */
 export function SaveFile(dataURL: string, name: string, type: string): void {
     // Get name
-    if (name.replaceAll(/\s+/g, "") === "") name = "Untitled Circuit";
+    if (name.replaceAll(/\s+/g, "") === "") {
+        name = "Untitled Circuit";
+    }
     const filename = `${name}.${type}`;
 
     const a = document.createElement("a");

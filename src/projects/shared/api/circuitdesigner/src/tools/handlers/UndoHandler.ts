@@ -5,7 +5,9 @@ export const UndoHandler: ToolHandler = {
 
     onEvent: (ev, { circuit }) => {
         // Activate when pressing CTRL/CMD + Z
-        if (!(ev.type === "keydown" && ev.key === "z" && ev.input.isModifierKeyDown)) return ToolHandlerResponse.PASS;
+        if (!(ev.type === "keydown" && ev.key === "z" && ev.input.isModifierKeyDown)) {
+            return ToolHandlerResponse.PASS;
+        }
 
         circuit.undo();
 

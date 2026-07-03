@@ -18,8 +18,12 @@ export class DigitalWireAssembler extends WireAssembler {
 
     protected getColorForWire(wire: Schema.Wire): string | undefined {
         const signal = this.sim.getSignal(wire.p1);
-        if (signal === Signal.On) return this.options.defaultOnColor;
-        if (signal === Signal.Metastable) return this.options.defaultMetastableColor;
+        if (signal === Signal.On) {
+            return this.options.defaultOnColor;
+        }
+        if (signal === Signal.Metastable) {
+            return this.options.defaultMetastableColor;
+        }
         return wire.props.color;
     }
 

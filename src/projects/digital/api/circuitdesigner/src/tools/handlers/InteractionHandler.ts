@@ -62,7 +62,9 @@ export const InteractionHandler: ToolHandler<DigitalAPITypes> = {
             const obj = circuit.pickObjAt(pos);
 
             // Halt select path handler
-            if (obj?.baseKind === "Component" && isWithinInteractableBounds(obj, pos)) return ToolHandlerResponse.HALT;
+            if (obj?.baseKind === "Component" && isWithinInteractableBounds(obj, pos)) {
+                return ToolHandlerResponse.HALT;
+            }
         }
 
         return ToolHandlerResponse.PASS;

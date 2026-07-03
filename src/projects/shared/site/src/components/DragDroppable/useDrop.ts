@@ -10,7 +10,9 @@ export const useDrop = (
     deps: React.DependencyList = [],
 ) => {
     useEffect(() => {
-        if (!ref.current) return;
+        if (!ref.current) {
+            return;
+        }
         const current = ref.current;
 
         const l1 = (ev: DragEvent) => {

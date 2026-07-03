@@ -37,7 +37,9 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
         if (comps.length > 0) {
             // If there are components, just select those
             circuit.beginTransaction();
-            if (deselectAll) circuit.selections.clear();
+            if (deselectAll) {
+                circuit.selections.clear();
+            }
             comps.forEach((c) => c.select());
             circuit.commitTransaction("Selected Components");
             return;
@@ -47,14 +49,18 @@ export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool 
         const ports = circuit.pickPortsWithin(this.rect);
         if (ports.length > 0) {
             circuit.beginTransaction();
-            if (deselectAll) circuit.selections.clear();
+            if (deselectAll) {
+                circuit.selections.clear();
+            }
             ports.forEach((c) => c.select());
             circuit.commitTransaction("Selected Ports");
             return;
         }
 
         // Else just deselect if not holding shift
-        if (deselectAll) circuit.selections.clear();
+        if (deselectAll) {
+            circuit.selections.clear();
+        }
     }
 
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {

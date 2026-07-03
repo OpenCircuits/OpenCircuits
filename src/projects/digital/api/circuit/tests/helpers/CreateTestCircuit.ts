@@ -66,7 +66,9 @@ export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
 export function CreateTestCircuit(sim = true): [DigitalCircuit, ReturnType<typeof CreateTestCircuitHelpers>] {
     const circuit = new DigitalCircuitImpl(uuid());
 
-    if (sim) circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+    if (sim) {
+        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+    }
 
     return [circuit, CreateTestCircuitHelpers(circuit)];
 }

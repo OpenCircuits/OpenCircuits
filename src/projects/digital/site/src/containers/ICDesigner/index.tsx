@@ -50,7 +50,9 @@ export const ICDesigner = () => {
     const [icName, setICName] = useState<string | undefined>(undefined);
 
     const measureTextWidth = (text: string): number => {
-        if (!canvas.current) return 0;
+        if (!canvas.current) {
+            return 0;
+        }
         const ctx = canvas.current.getContext("2d")!;
         ctx.save();
         ctx.font = "lighter 300px arial";
@@ -61,7 +63,9 @@ export const ICDesigner = () => {
 
     // Happens when activated
     useLayoutEffect(() => {
-        if (!isActive || !objIds || !canvas.current) return;
+        if (!isActive || !objIds || !canvas.current) {
+            return;
+        }
 
         // Block input for main designer
         mainDesigner.viewport.canvasInfo!.input.setBlocked(true);
@@ -76,8 +80,12 @@ export const ICDesigner = () => {
         icCircuit.import(mainDesigner.circuit.createContainer(objIds).withWiresAndPorts());
 
         for (const comp of icCircuit.getComponents()) {
-            if (comp.kind === "Switch" || comp.kind === "Button" || comp.kind === "Clock") comp.replaceWith("InputPin");
-            if (comp.kind === "LED") comp.replaceWith("OutputPin");
+            if (comp.kind === "Switch" || comp.kind === "Button" || comp.kind === "Clock") {
+                comp.replaceWith("InputPin");
+            }
+            if (comp.kind === "LED") {
+                comp.replaceWith("OutputPin");
+            }
             comp.deselect();
         }
 
@@ -119,12 +127,16 @@ export const ICDesigner = () => {
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
-        if (!icViewDesigner) return;
+        if (!icViewDesigner) {
+            return;
+        }
         icViewDesigner.viewport.resize(w * IC_DESIGNER_VW, h * IC_DESIGNER_VH);
     }, [icViewDesigner, w, h]);
 
     const doICNameChange = ([name]: string[]) => {
-        if (!icViewDesigner) return;
+        if (!icViewDesigner) {
+            return;
+        }
         setShowError(NameErrorStates.None);
         const ic = icViewDesigner.circuit.getICs().at(-1)!;
         ic.name = name;
@@ -133,9 +145,13 @@ export const ICDesigner = () => {
 
     const close = (cancelled = false) => {
         // If not active, do nothing
-        if (!isActive) return;
+        if (!isActive) {
+            return;
+        }
 
-        if (!objIds) throw new Error("ICDesigner.close failed: objIds were undefined");
+        if (!objIds) {
+            throw new Error("ICDesigner.close failed: objIds were undefined");
+        }
 
         // Block input while closed
         setICViewDesigner(undefined);

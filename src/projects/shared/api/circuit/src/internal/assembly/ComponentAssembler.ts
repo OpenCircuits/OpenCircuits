@@ -78,8 +78,9 @@ export abstract class ComponentAssembler extends Assembler<Schema.Component> {
                     dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
                     assemble: (comp) => {
                         const ports = this.circuit.getPortsByGroup(comp.id).unwrap();
-                        if (!(group in ports))
+                        if (!(group in ports)) {
                             throw new Error(`ComponentAssembler.drawPortLineForGroups: No group found '${group}'!`);
+                        }
                         const groupPorts = ports[group];
                         return {
                             kind: "Line",
@@ -176,7 +177,9 @@ export abstract class ComponentAssembler extends Assembler<Schema.Component> {
             // If no dependencies are met, return the previous prim
             if (assembly.dependencies.intersection(reasons).size === 0) {
                 // Check if selection changed causes style to need updating though
-                if (!selectionChanged) return prim;
+                if (!selectionChanged) {
+                    return prim;
+                }
 
                 if (assembly.kind === "BaseShape" && assembly.styleChangesWhenSelected) {
                     return {

@@ -10,7 +10,9 @@ function parentOf(elem: Element, target: string) {
     // Loop through each parent element and see if it matches the target
     //  also stop if the nodeType == document
     while ((el = el!.parentElement) && el.nodeType !== DOCUMENT_NODE_TYPE) {
-        if (el.matches(target)) return true;
+        if (el.matches(target)) {
+            return true;
+        }
     }
     return false;
 }
@@ -29,10 +31,14 @@ export const Dropdown = ({ open, btnInfo, onClick, onClose, children }: Props) =
     // Check for clicking outside of the menu as to call onClose
     useEffect(() => {
         function onWindowClick(ev: MouseEvent | TouchEvent) {
-            if (!open || onClose === undefined) return;
+            if (!open || onClose === undefined) {
+                return;
+            }
 
             const target = ev.target as Element;
-            if (!parentOf(target, ".header__right__dropdown")) onClose();
+            if (!parentOf(target, ".header__right__dropdown")) {
+                onClose();
+            }
         }
 
         // listener for mobile and desktop (see Issue #597)

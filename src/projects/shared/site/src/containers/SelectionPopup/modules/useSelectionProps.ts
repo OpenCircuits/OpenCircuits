@@ -5,7 +5,8 @@ import React, { useCallback, useEffect, useState } from "react";
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type RecordOfArrays<Props extends Record<string, Prop>> = {
     // Get every key from all records (if it's a union of records)
-    [Key in KeysOfUnion<Props>]: Array< // And map it to an array of non-nullable props
+    [Key in KeysOfUnion<Props>]: Array<
+        // And map it to an array of non-nullable props
         NonNullable<
             // Get each prop that is associated with the current Key
             Props extends { [k in Key]?: unknown }
@@ -18,9 +19,13 @@ export type RecordOfArrays<Props extends Record<string, Prop>> = {
 };
 
 const propsEquals = (oldProps: Record<string, Prop[]> | undefined, newProps: Record<string, Prop[]>): boolean => {
-    if (!oldProps) return false;
+    if (!oldProps) {
+        return false;
+    }
     // Check if every key is the same
-    if (!Object.keys(newProps).every((key) => key in oldProps)) return false;
+    if (!Object.keys(newProps).every((key) => key in oldProps)) {
+        return false;
+    }
     // Make sure every entry has equal values
     return Object.entries(newProps).every(
         ([key, arr]) => arr.length === oldProps[key].length && arr.every((val, i) => val === oldProps[key][i]),

@@ -101,9 +101,12 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
         this.validPinKinds = validPinKinds;
     }
     public getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined {
-        if (kind === "IC" && !icId)
+        if (kind === "IC" && !icId) {
             throw new Error("BaseObjInfoProver: Must provide icId when getting info for an IC!");
-        if (icId) return this.ics.get(icId);
+        }
+        if (icId) {
+            return this.ics.get(icId);
+        }
         return this.components.get(kind);
     }
 
@@ -125,17 +128,20 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
         // Check that all pins correspond to allow objects internally
         for (const pin of ic.metadata.pins) {
             const port = ic.ports.find((p) => p.id === pin.id);
-            if (!port)
+            if (!port) {
                 return ErrE(`Failed to find port with ${pin.id} corresponding to pin ${pin.name} [${pin.group}]!`);
+            }
             const parent = ic.comps.find((c) => c.id === port.parent);
-            if (!parent)
+            if (!parent) {
                 return ErrE(
                     `Failed to find parent component ${port.parent} corresponding to pin ${pin.name} [${pin.group}]!`,
                 );
-            if (this.validPinKinds.length > 0 && !this.validPinKinds.includes(parent.kind))
+            }
+            if (this.validPinKinds.length > 0 && !this.validPinKinds.includes(parent.kind)) {
                 return ErrE(
                     `Failed to find valid pin kind ${parent.kind} corresponding to pin ${pin.name} [${pin.group}]!`,
                 );
+            }
         }
         return OkVoid();
     }
@@ -159,10 +165,12 @@ export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
     }
 
     public checkPropValue(key: string, value?: Schema.Prop): Result {
-        if (!(key in this.props))
+        if (!(key in this.props)) {
             return ErrE(`BaseObjInfo: ${key} not a valid prop, valid props: [${Object.keys(this.props).join(",")}]`);
-        if (value && this.props[key] !== typeof value)
+        }
+        if (value && this.props[key] !== typeof value) {
             return ErrE(`BaseObjInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
+        }
         return OkVoid();
     }
 }
@@ -255,7 +263,9 @@ export abstract class BaseComponentConfigurationInfo
     }
     public getDefaultPortName(port: Schema.Port): string | undefined {
         const generator = this.defaultPortNames?.[port.group];
-        if (!generator) return;
+        if (!generator) {
+            return;
+        }
         return typeof generator === "function" ? generator(port.index) : generator[port.index];
     }
 

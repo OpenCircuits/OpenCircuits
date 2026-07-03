@@ -60,9 +60,10 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
         const o = circuit.getComponents().find(({ kind }) => kind === "Oscilloscope")!;
         o.setPortConfig({ inputs: Math.min(inputMap.size + 1, 8) });
         [...inputMap.keys()].forEach((name, inIndex) => {
-            if (inIndex >= 7)
-                // max 8 inputs and the first is reserved for circuit output
+            if (inIndex >= 7) // max 8 inputs and the first is reserved for circuit output
+            {
                 return;
+            }
             const clock = circuit.getComponents().find((comp) => comp.name === name)!;
             clock.outputs[0].connectTo(o.inputs[inIndex + 1]);
         });
@@ -89,7 +90,9 @@ export function Generate(
     // Maps input name as key, input component type as value
     const inputMap = new Map<string, InputTypes>();
     for (const token of tokenList.value) {
-        if (token.type !== "input" || inputMap.has(token.name)) continue;
+        if (token.type !== "input" || inputMap.has(token.name)) {
+            continue;
+        }
         inputMap.set(token.name, options.input);
     }
 
@@ -105,9 +108,13 @@ export function Generate(
     // TODO: Replace with a better way of organizing a circuit
     OrganizeMinDepth(generatedCircuit, camera.pos);
 
-    if (options.label) addLabels(inputMap, generatedCircuit);
+    if (options.label) {
+        addLabels(inputMap, generatedCircuit);
+    }
 
-    if (options.input === "Clock") setClocks(inputMap, options, generatedCircuit);
+    if (options.input === "Clock") {
+        setClocks(inputMap, options, generatedCircuit);
+    }
 
     circuit.beginTransaction();
     circuit.selections.clear();

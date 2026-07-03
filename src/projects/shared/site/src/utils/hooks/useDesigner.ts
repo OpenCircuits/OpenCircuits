@@ -12,7 +12,9 @@ const { setCurDesigner, useCurDesigner } = (() => {
             callbacks.forEach((c) => c(designer));
         },
         useCurDesigner: () => {
-            if (!curDesigner) throw new Error("useCurDesigner: No designer set!");
+            if (!curDesigner) {
+                throw new Error("useCurDesigner: No designer set!");
+            }
 
             const [curDesignerState, setCurDesigner] = useState<CircuitDesigner>(curDesigner);
             useEffect(() => {

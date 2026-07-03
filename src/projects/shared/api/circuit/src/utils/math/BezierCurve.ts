@@ -73,9 +73,13 @@ export class BezierCurve extends Curve {
      * @returns   The value of t, where t represents how far along the bezier curve the given point is.
      */
     private getT(a: number, b: number, c: number, mod: -1 | 1, end: number): number {
-        if (a === 0) return end;
+        if (a === 0) {
+            return end;
+        }
         const d = b * b - 4 * a * c;
-        if (d < 0) return end;
+        if (d < 0) {
+            return end;
+        }
         return Clamp((-b + mod * Math.sqrt(d)) / (2 * a), 0, 1);
     }
 
@@ -101,9 +105,10 @@ export class BezierCurve extends Curve {
     }
 
     public override get bounds(): Rect {
-        if (!this.boundingBox)
-            // Calculate when requested
+        if (!this.boundingBox) // Calculate when requested
+        {
             this.boundingBox = this.calcBoundingBox();
+        }
         return this.boundingBox;
     }
 

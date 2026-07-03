@@ -3,7 +3,9 @@ import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 export function DuplicateSelections(circuit: Circuit): void {
     const objs = circuit.selections.withWiresAndPorts();
-    if (objs.components.length === 0) return;
+    if (objs.components.length === 0) {
+        return;
+    }
 
     circuit.beginTransaction();
 
@@ -23,10 +25,14 @@ export const DuplicateHandler: ToolHandler = {
 
     onEvent: (ev, { circuit }) => {
         // Activate when pressing CTRL/CMD + D
-        if (!(ev.type === "keydown" && ev.key === "d" && ev.input.isModifierKeyDown)) return ToolHandlerResponse.PASS;
+        if (!(ev.type === "keydown" && ev.key === "d" && ev.input.isModifierKeyDown)) {
+            return ToolHandlerResponse.PASS;
+        }
 
         // Nothing to duplicate
-        if (circuit.selections.isEmpty) return ToolHandlerResponse.PASS;
+        if (circuit.selections.isEmpty) {
+            return ToolHandlerResponse.PASS;
+        }
 
         DuplicateSelections(circuit);
 

@@ -93,8 +93,9 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
 
     public getComponentAndInfoByID(id: GUID) {
         return this.storage.getComponentAndInfoByID(id).map(([comp, info]) => {
-            if (!(info instanceof DigitalComponentConfigurationInfo))
+            if (!(info instanceof DigitalComponentConfigurationInfo)) {
                 throw new Error(`DigitalSim: Received non-digital component info for ${comp.kind}!`);
+            }
             return [comp, info] as const;
         });
     }
@@ -172,8 +173,9 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
     public getPinCompFromPort(portId: GUID): ContextPath {
         const port = this.storage.getPortByID(portId).unwrap();
         const icState = this.icStates.get(port.parent);
-        if (!icState)
+        if (!icState) {
             throw new Error(`DigitalSim.getPinCompFromPort: Failed to find IC ${port.parent} from port ${portId}`);
+        }
         const pin = icState.storage.metadata.pins.filter((pin) => pin.group === port.group)[port.index];
         const icPort = icState.storage.getPortByID(pin.id).unwrap();
         return icState.getPath(icPort.parent);
@@ -185,11 +187,14 @@ class DigitalSimState<M extends Schema.CircuitMetadata = Schema.CircuitMetadata>
 
     public findState(path: ContextPath): [DigitalSimState, GUID] {
         const [id, ...rest] = path;
-        if (rest.length === 0) return [this, id];
+        if (rest.length === 0) {
+            return [this, id];
+        }
 
         const icInstance = this.storage.getCompByID(id).unwrap();
-        if (!this.icStates.has(icInstance.id))
+        if (!this.icStates.has(icInstance.id)) {
             throw new Error(`DigitalSim: Failed to find ic state for ${icInstance.id} in path ${path.join(".")}`);
+        }
         return this.icStates.get(icInstance.id)!.findState(rest);
     }
 
@@ -311,7 +316,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 if (this.circuit.isIC(comp)) {
                     // If we already have state for it, it might've been loaded externally
                     // So don't override with default.
-                    if (this.rootState.icStates.has(compId)) continue;
+                    if (this.rootState.icStates.has(compId)) {
+                        continue;
+                    }
 
                     const icId = comp.icId;
                     if (!this.initialICStates.has(icId)) {
@@ -337,7 +344,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             for (const [compId] of [...ev.diff.addedPorts, ...ev.diff.removedPorts]) {
                 // Removal of ports + component *can* happen at once (batching)
                 // So don't add the comp in that case.
-                if (ev.diff.removedComponents.has(compId)) continue;
+                if (ev.diff.removedComponents.has(compId)) {
+                    continue;
+                }
 
                 comps.add([compId]);
 
@@ -357,7 +366,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 const wire = circuit.getWireByID(wireId).unwrap();
 
                 // Skip if signals are the same already
-                if (this.getSignal(wire.p1) === this.getSignal(wire.p2)) continue;
+                if (this.getSignal(wire.p1) === this.getSignal(wire.p2)) {
+                    continue;
+                }
 
                 const p1 = circuit.getPortByID(wire.p1).unwrap(),
                     p2 = circuit.getPortByID(wire.p2).unwrap();
@@ -378,14 +389,22 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             for (const [objId, props] of ev.diff.propsChanged) {
                 if (circuit.hasComp(objId)) {
                     const comp = circuit.getCompByID(objId);
-                    if (!comp.ok) continue;
+                    if (!comp.ok) {
+                        continue;
+                    }
                     const propagatorInfo = propagators[comp.value.kind];
-                    if (!propagatorInfo || !propagatorInfo.stateProps) continue;
+                    if (!propagatorInfo || !propagatorInfo.stateProps) {
+                        continue;
+                    }
                     const changedProps = props.intersection(propagatorInfo.stateProps);
-                    if (changedProps.size === 0) continue;
+                    if (changedProps.size === 0) {
+                        continue;
+                    }
                     // Clear any forward queues (used i.e. for clock delay changes)
                     for (const set of this.queue) {
-                        if (set?.has([objId])) set.delete([objId]);
+                        if (set?.has([objId])) {
+                            set.delete([objId]);
+                        }
                     }
 
                     // Reset state
@@ -408,10 +427,14 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
             const updateInputPort = (portId: GUID) => {
                 const result = circuit.getPortByID(portId);
-                if (!result.ok) return;
+                if (!result.ok) {
+                    return;
+                }
                 const port = result.value;
                 if (this.rootState.isInputPort(port.id)) {
-                    if (this.getSignal(port.id) === Signal.Off) return;
+                    if (this.getSignal(port.id) === Signal.Off) {
+                        return;
+                    }
                     this.rootState.signals.set(port.id, Signal.Off);
 
                     updatedInputPorts.add([port.id]);
@@ -435,9 +458,13 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     }
 
     public loadState(state: DigitalSchema.DigitalSimState) {
-        for (const [key, signal] of Object.entries(state.signals)) this.rootState.signals.set(key, signal);
+        for (const [key, signal] of Object.entries(state.signals)) {
+            this.rootState.signals.set(key, signal);
+        }
 
-        for (const [key, s] of Object.entries(state.states)) this.rootState.states.set(key, s);
+        for (const [key, s] of Object.entries(state.states)) {
+            this.rootState.states.set(key, s);
+        }
 
         for (const [key, s] of Object.entries(state.icStates)) {
             const comp = this.rootState.storage.getCompByID(key).unwrap();
@@ -452,9 +479,10 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
     private queueComp(path: ContextPath, next?: ContextPathSet, ports?: GUID[]) {
         const [state, id] = this.rootState.findState(path);
 
-        if (!state.compExistsAndHasPorts(id))
-            // Ignore deleted objects
+        if (!state.compExistsAndHasPorts(id)) // Ignore deleted objects
+        {
             return;
+        }
 
         next = next ?? this.queue[0] ?? (this.queue[0] = new ContextPathSet());
 
@@ -479,9 +507,13 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         const ic = this.circuit.getICInfo(icId).unwrap();
         const newState = new DigitalSimState(ic, cur, cur.getPath(compId));
 
-        for (const [key, signal] of Object.entries(initialState.signals)) newState.signals.set(key, signal);
+        for (const [key, signal] of Object.entries(initialState.signals)) {
+            newState.signals.set(key, signal);
+        }
 
-        for (const [key, s] of Object.entries(initialState.states)) newState.states.set(key, s);
+        for (const [key, s] of Object.entries(initialState.states)) {
+            newState.states.set(key, s);
+        }
 
         for (const [key, s] of Object.entries(initialState.icStates)) {
             const [comp, _] = newState.getComponentAndInfoByID(key).unwrap();
@@ -498,8 +530,11 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
      * @param state Component's state.
      */
     public setState(id: GUID, state: number[] | undefined): void {
-        if (state) this.rootState.states.set(id, state);
-        else this.rootState.states.delete(id);
+        if (state) {
+            this.rootState.states.set(id, state);
+        } else {
+            this.rootState.states.delete(id);
+        }
 
         this.queueComp([id]);
 
@@ -522,13 +557,16 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
         for (const path of cur) {
             const [state, id] = this.rootState.findState(path);
 
-            if (!state.compExistsAndHasPorts(id))
-                // Ignore deleted objects
+            if (!state.compExistsAndHasPorts(id)) // Ignore deleted objects
+            {
                 continue;
+            }
 
             const [comp, info] = state.getComponentAndInfoByID(id).unwrap();
             const propagatorInfo = this.propagators[comp.kind];
-            if (!propagatorInfo) throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
+            if (!propagatorInfo) {
+                throw new Error(`DigitalSim.step: Failed to find propagator for kind: '${comp.kind}'`);
+            }
 
             const { outputs, nextState, nextCycle } = propagatorInfo.propagator(comp, info, state, {
                 curTick: this.curTick,
@@ -538,7 +576,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
                 const [portState, portId] = this.rootState.findState(portPath);
 
                 // No need to update if the signal is the same
-                if (portState.signals.get(portId) === signal) continue;
+                if (portState.signals.get(portId) === signal) {
+                    continue;
+                }
 
                 portState.signals.set(portId, signal);
                 updatedOutputPorts.add(portPath);
@@ -570,7 +610,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
             }
         }
 
-        if (next.size > 0) this.queue[0] = this.queue[0] ? this.queue[0].union(next) : next;
+        if (next.size > 0) {
+            this.queue[0] = this.queue[0] ? this.queue[0].union(next) : next;
+        }
 
         this.curTick++;
 
@@ -585,7 +627,9 @@ export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
 
     public resetQueueForComp(id: GUID) {
         for (const set of this.queue) {
-            if (set?.has([id])) set.delete([id]);
+            if (set?.has([id])) {
+                set.delete([id]);
+            }
         }
 
         this.setState(id, undefined);

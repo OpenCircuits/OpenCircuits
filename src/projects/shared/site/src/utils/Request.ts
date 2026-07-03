@@ -16,8 +16,11 @@ export function Request({ method, url, headers, data, async }: Props): Promise<s
         Object.entries(headers).forEach(([name, value]) => xhr.setRequestHeader(name, value));
 
         xhr.addEventListener("load", function () {
-            if (this.status >= 200 && this.status < 400) resolve(this.response);
-            else reject(this.response);
+            if (this.status >= 200 && this.status < 400) {
+                resolve(this.response);
+            } else {
+                reject(this.response);
+            }
         });
         xhr.addEventListener("abort", (ev) => reject(ev));
         xhr.addEventListener("error", (ev) => reject(ev));

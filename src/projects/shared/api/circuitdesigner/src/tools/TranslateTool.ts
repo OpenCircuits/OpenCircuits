@@ -22,7 +22,9 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        if (circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos))?.baseKind === "Component") return "pointer";
+        if (circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos))?.baseKind === "Component") {
+            return "pointer";
+        }
     }
     public shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user is pressing down on a component
@@ -78,8 +80,12 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
             circuit.beginTransaction({ batch: true });
             {
                 this.components.forEach((c) => {
-                    if (snapToGrid) c.pos = SnapToGrid(c.pos);
-                    if (snapToConnections) c.pos = SnapToConnections(c.pos, c.allPorts);
+                    if (snapToGrid) {
+                        c.pos = SnapToGrid(c.pos);
+                    }
+                    if (snapToConnections) {
+                        c.pos = SnapToConnections(c.pos, c.allPorts);
+                    }
                 });
             }
             circuit.commitTransaction("Snapped Components");

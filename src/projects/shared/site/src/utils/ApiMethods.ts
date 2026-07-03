@@ -81,13 +81,17 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
     };
 
     const LoadCircuitRemote = async (id: string) => {
-        if (!auth) throw new Error("LoadCircuitRemote: auth is undefined");
+        if (!auth) {
+            throw new Error("LoadCircuitRemote: auth is undefined");
+        }
         return LoadCircuit(LoadUserCircuit(auth, id));
     };
 
     const DeleteCircuitRemote = async (id: string) => {
         // Can't delete if not logged in
-        if (!auth) return;
+        if (!auth) {
+            return;
+        }
 
         await DeleteUserCircuit(auth, id);
         dispatch(SetCircuitId("")); // Reset id
@@ -96,7 +100,9 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
     const SaveCircuitRemote = async () => {
         // Don't save while loading
-        if (saving || loading) return;
+        if (saving || loading) {
+            return;
+        }
 
         const { data: rawContents, version } = CircuitHelpers.Serialize(mainCircuit);
 
@@ -118,10 +124,14 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
     const DuplicateCircuitRemote = async () => {
         // Can't duplicate if not logged in
-        if (!auth) return;
+        if (!auth) {
+            return;
+        }
 
         // Shouldn't be able to duplicate if circuit has never been saved
-        if (curID === "") return;
+        if (curID === "") {
+            return;
+        }
 
         const { data: rawContents, version } = CircuitHelpers.Serialize(mainCircuit);
 
@@ -139,7 +149,9 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
 
         // Create circuit copy
         const circuitCopyMetadata = await CreateUserCircuit(auth, { metadata, contents });
-        if (!circuitCopyMetadata) throw new Error("DuplicateCircuitRemote: circuitCopyMetadata is undefined!");
+        if (!circuitCopyMetadata) {
+            throw new Error("DuplicateCircuitRemote: circuitCopyMetadata is undefined!");
+        }
 
         // Load circuit copy onto canvas
         await LoadCircuitRemote(circuitCopyMetadata.id);

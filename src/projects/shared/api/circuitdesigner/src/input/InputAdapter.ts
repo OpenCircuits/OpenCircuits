@@ -137,12 +137,16 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
      * @throws If canvas is undefined.
      */
     private hookupKeyboardEvents(): () => void {
-        if (!this.canvas) throw new Error("Input: Attempted to hookup keyboard events before a canvas was set!");
+        if (!this.canvas) {
+            throw new Error("Input: Attempted to hookup keyboard events before a canvas was set!");
+        }
 
         const parseKey = (key: string): Key => {
             // Assume it's alphanumeric if it's a single-character keycode
             //  and make it lowercase for consistency
-            if (key.length === 1) return key.toLowerCase() as Key;
+            if (key.length === 1) {
+                return key.toLowerCase() as Key;
+            }
             return key as Key; // Otherwise just leave it alone and explicitly cast
         };
 
@@ -154,18 +158,24 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
                 //  in Key.ts and pressing Shift will make it uppercase.
                 this.onKeyDown(key);
 
-                if (this.isPreventedCombination(key)) e.preventDefault();
+                if (this.isPreventedCombination(key)) {
+                    e.preventDefault();
+                }
             }
         };
         const onKeyUp = (e: KeyboardEvent) => {
             const key = parseKey(e.key);
 
             // Check for "Alt" to fix issue #943
-            if (key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) this.onKeyUp(key);
+            if (key === "Alt" || !(document.activeElement instanceof HTMLInputElement)) {
+                this.onKeyUp(key);
+            }
 
             // Check for Meta key and release all other keys on up
             //  See https://stackoverflow.com/q/27380018/5911675
-            if (key === "Meta") this.state.keysDown.forEach((key) => this.onKeyUp(key));
+            if (key === "Meta") {
+                this.state.keysDown.forEach((key) => this.onKeyUp(key));
+            }
         };
         const onBlur = () => this.onBlur();
 
@@ -181,13 +191,19 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
         };
 
         const onPaste = (ev: ClipboardEvent) => {
-            if (hasFocus()) this.publish({ input: this.state, type: "paste", ev });
+            if (hasFocus()) {
+                this.publish({ input: this.state, type: "paste", ev });
+            }
         };
         const onCopy = (ev: ClipboardEvent) => {
-            if (hasFocus()) this.publish({ input: this.state, type: "copy", ev });
+            if (hasFocus()) {
+                this.publish({ input: this.state, type: "copy", ev });
+            }
         };
         const onCut = (ev: ClipboardEvent) => {
-            if (hasFocus()) this.publish({ input: this.state, type: "cut", ev });
+            if (hasFocus()) {
+                this.publish({ input: this.state, type: "cut", ev });
+            }
         };
 
         window.addEventListener("keydown", onKeyDown, false);
@@ -218,7 +234,9 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
             this.onMouseDown(V(e.clientX, e.clientY), e.button);
 
             // Fixes issue #777, stops Firefox from scrolling and allows panning
-            if (e.button === MIDDLE_MOUSE_BUTTON) e.preventDefault();
+            if (e.button === MIDDLE_MOUSE_BUTTON) {
+                e.preventDefault();
+            }
         };
 
         const onClick = (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button);
@@ -317,14 +335,18 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
 
         const tap = new Hammer.Tap();
         const onTap = (e: HammerInput) => {
-            if (e.pointerType === "mouse") return;
+            if (e.pointerType === "mouse") {
+                return;
+            }
 
             this.onClick(V(e.center.x, e.center.y));
         };
 
         // Used to prevent default zoom in gesture for all browsers. Fixes #745.
         const onWheel = (e: WheelEvent) => {
-            if (e.ctrlKey) e.preventDefault();
+            if (e.ctrlKey) {
+                e.preventDefault();
+            }
         };
 
         const touchManager = new Hammer.Manager(canvas, { recognizers: [], domEvents: true });
@@ -404,7 +426,9 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
     protected onScroll(delta: number): void {
         // calculate zoom factor
         let zoomFactor = 0.95;
-        if (delta >= 0) zoomFactor = 1 / zoomFactor;
+        if (delta >= 0) {
+            zoomFactor = 1 / zoomFactor;
+        }
 
         this.publish({
             input: this.state,
@@ -423,7 +447,9 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
      * @throws If canvas is undefined.
      */
     protected onMouseDown(pos: Vector, button = 0): void {
-        if (!this.canvas) throw new Error("Input: Attempted to call onMouseDown before a canvas was set!");
+        if (!this.canvas) {
+            throw new Error("Input: Attempted to call onMouseDown before a canvas was set!");
+        }
 
         const rect = this.canvas.getBoundingClientRect();
 
@@ -453,7 +479,9 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
      * @throws If canvas is undefined.
      */
     protected onMouseMove(pos: Vector): void {
-        if (!this.canvas) throw new Error("Input: Attempted to call onMouseMove before a canvas was set!");
+        if (!this.canvas) {
+            throw new Error("Input: Attempted to call onMouseMove before a canvas was set!");
+        }
 
         const rect = this.canvas.getBoundingClientRect();
 
@@ -545,7 +573,9 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
      */
     protected onBlur(): void {
         this.state.keysDown.forEach((down, key) => {
-            if (down) this.onKeyUp(key);
+            if (down) {
+                this.onKeyUp(key);
+            }
         });
     }
 }

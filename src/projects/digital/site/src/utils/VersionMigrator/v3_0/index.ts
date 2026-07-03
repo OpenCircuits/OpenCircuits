@@ -28,31 +28,47 @@ function ConvertCompProps(comp: Entry<V3_0Schema.DigitalComponent>): ProtoSchema
     // Component-specific properties
     switch (comp.type) {
         case "ConstantNumber":
-            if (comp["inputNum"]) props["inputNum"] = { intVal: comp["inputNum"] as number };
+            if (comp["inputNum"]) {
+                props["inputNum"] = { intVal: comp["inputNum"] as number };
+            }
             break;
         case "Clock":
-            if (comp["paused"]) props["paused"] = { boolVal: comp["paused"] as boolean };
-            if (comp["frequency"]) props["delay"] = { intVal: comp["frequency"] as number };
+            if (comp["paused"]) {
+                props["paused"] = { boolVal: comp["paused"] as boolean };
+            }
+            if (comp["frequency"]) {
+                props["delay"] = { intVal: comp["frequency"] as number };
+            }
             break;
         case "LED":
-            if (comp["color"] && comp["color"] !== "#ffffff") props["color"] = { strVal: comp["color"] as string };
+            if (comp["color"] && comp["color"] !== "#ffffff") {
+                props["color"] = { strVal: comp["color"] as string };
+            }
             break;
         case "ASCIIDisplay":
         case "BCDDisplay":
-            if (comp["segmentCount"] && comp["segmentCount"] !== 7)
+            if (comp["segmentCount"] && comp["segmentCount"] !== 7) {
                 props["segmentCount"] = { intVal: comp["segmentCount"] as number };
+            }
             break;
         case "Oscilloscope":
-            if (comp["paused"]) props["paused"] = { boolVal: comp["paused"] as boolean };
-            if (comp["frequency"]) props["delay"] = { intVal: comp["frequency"] as number };
+            if (comp["paused"]) {
+                props["paused"] = { boolVal: comp["paused"] as boolean };
+            }
+            if (comp["frequency"]) {
+                props["delay"] = { intVal: comp["frequency"] as number };
+            }
             props["w"] = { floatVal: (comp["displaySize"] as V3_0Schema.Vector).x / 50 };
             props["h"] = { floatVal: (comp["displaySize"] as V3_0Schema.Vector).y / 50 };
             props["samples"] = { intVal: comp["numSamples"] as number };
             break;
         case "Label":
-            if (comp["color"] && comp["color"] !== "#ffffff") props["bgColor"] = { strVal: comp["color"] as string };
-            if (comp["textColor"] && comp["textColor"] !== "#000000")
+            if (comp["color"] && comp["color"] !== "#ffffff") {
+                props["bgColor"] = { strVal: comp["color"] as string };
+            }
+            if (comp["textColor"] && comp["textColor"] !== "#000000") {
                 props["textColor"] = { strVal: comp["textColor"] as string };
+            }
             break;
     }
 
@@ -179,24 +195,30 @@ function FindPorts(comp: Entry<V3_0Schema.DigitalComponent>): {
 }
 
 function ConvertCompKind(str: string): number {
-    if (!DigitalKindMaps[0].kinds.comps.has(str))
+    if (!DigitalKindMaps[0].kinds.comps.has(str)) {
         throw new Error(`VersionMigratorv3_0.ConvertCompKind: Unknown kind, ${str}!`);
+    }
     return DigitalKindMaps[0].kinds.comps.get(str)!;
 }
 
 function GetCompKind(num: number): string {
-    if (!DigitalKindMaps[1].kinds.comps.has(num))
+    if (!DigitalKindMaps[1].kinds.comps.has(num)) {
         throw new Error(`VersionMigratorv3_0.GetCompKind: Unknown kind num, ${num}!`);
+    }
     return DigitalKindMaps[1].kinds.comps.get(num)!;
 }
 
 function ConvertPortGroup(parentKind: string, group: string): number {
-    if (parentKind === "IC") return { inputs: 0, outputs: 1 }[group]!;
+    if (parentKind === "IC") {
+        return { inputs: 0, outputs: 1 }[group]!;
+    }
 
-    if (!DigitalKindMaps[0].portGroups.has(parentKind))
+    if (!DigitalKindMaps[0].portGroups.has(parentKind)) {
         throw new Error(`VersionMigratorv3_0.ConvertPortGroup: Unknown parentKind, ${parentKind}!`);
-    if (!DigitalKindMaps[0].portGroups.get(parentKind)!.has(group))
+    }
+    if (!DigitalKindMaps[0].portGroups.get(parentKind)!.has(group)) {
         throw new Error(`VersionMigratorv3_0.ConvertPortGroup: Unknown group ${group} for parentKind ${parentKind}!`);
+    }
     return DigitalKindMaps[0].portGroups.get(parentKind)!.get(group)!;
 }
 
@@ -288,14 +310,30 @@ function ConvertObjects(
 }
 
 function AreICDataEqual(i1: V3_0Schema.ICData, i2: V3_0Schema.ICData) {
-    if (i1.name !== i2.name) return false;
-    if (i1.inputPorts.length !== i2.inputPorts.length) return false;
-    if (i1.outputPorts.length !== i2.outputPorts.length) return false;
-    if (i1.collection.components.length !== i2.collection.components.length) return false;
-    if (i1.collection.wires.length !== i2.collection.wires.length) return false;
-    if (i1.collection.others.length !== i2.collection.others.length) return false;
-    if (i1.collection.inputs.length !== i2.collection.inputs.length) return false;
-    if (i1.collection.outputs.length !== i2.collection.outputs.length) return false;
+    if (i1.name !== i2.name) {
+        return false;
+    }
+    if (i1.inputPorts.length !== i2.inputPorts.length) {
+        return false;
+    }
+    if (i1.outputPorts.length !== i2.outputPorts.length) {
+        return false;
+    }
+    if (i1.collection.components.length !== i2.collection.components.length) {
+        return false;
+    }
+    if (i1.collection.wires.length !== i2.collection.wires.length) {
+        return false;
+    }
+    if (i1.collection.others.length !== i2.collection.others.length) {
+        return false;
+    }
+    if (i1.collection.inputs.length !== i2.collection.inputs.length) {
+        return false;
+    }
+    if (i1.collection.outputs.length !== i2.collection.outputs.length) {
+        return false;
+    }
     return true;
 }
 
@@ -348,7 +386,9 @@ function ConvertIC(
 
     for (const [c, entry] of componentsAndPorts) {
         // Replace all Switch/Buttons with InputPins and LEDs with OutputPins
-        if (entry.type === "Switch" || entry.type === "Button") c.kind = ConvertCompKind("InputPin");
+        if (entry.type === "Switch" || entry.type === "Button") {
+            c.kind = ConvertCompKind("InputPin");
+        }
         if (entry.type === "LED") {
             c.kind = ConvertCompKind("OutputPin");
             delete c.otherProps["color"];
@@ -499,7 +539,9 @@ export function V3_0Migrator(circuit: V3_0Schema.Circuit) {
         const result = Object.entries(arr)
             .slice(0, i)
             .find(([_ref2, entry2]) => AreICDataEqual(entry, entry2));
-        if (!result) return ref;
+        if (!result) {
+            return ref;
+        }
         return result[0];
     });
     const allICIDsMap = MapObj(allICEntriesMap, (_) => uuid.v4());

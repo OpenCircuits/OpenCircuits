@@ -12,7 +12,9 @@ export const SyncButtonModule = ({ circuit }: Props) => {
     );
 
     // Show if valid and if there are multiple components
-    if (!props || props.id.length < 2) return;
+    if (!props || props.id.length < 2) {
+        return;
+    }
 
     return (
         <button

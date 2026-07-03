@@ -32,14 +32,17 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
 
     private getIC(circuit: Circuit) {
         const ic = circuit.getComponent(this.icInstanceId);
-        if (!ic)
+        if (!ic) {
             throw new Error(`ICResizeTool.findEdge: failed could not find IC instance with id ${this.icInstanceId}`);
+        }
         return ic;
     }
 
     private getICData(circuit: Circuit) {
         const icData = circuit.getIC(this.icId);
-        if (!icData) throw new Error(`ICResizeTool.findEdge: failed to find IC data for id ${this.icId}`);
+        if (!icData) {
+            throw new Error(`ICResizeTool.findEdge: failed to find IC data for id ${this.icId}`);
+        }
         return icData;
     }
 
@@ -55,7 +58,9 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
         const t2 = new Transform(ic.pos, 0, icData.display.size.sub(EDGE_BUFFER));
 
         const worldMousePos = viewport.toWorldPos(pos);
-        if (!(RectContains(t1, worldMousePos) && !RectContains(t2, worldMousePos))) return "none";
+        if (!(RectContains(t1, worldMousePos) && !RectContains(t2, worldMousePos))) {
+            return "none";
+        }
 
         // Determine if mouse is over horizontal or vertical edge
         return worldMousePos.y < ic.pos.y + icData.display.size.y / 2 - EDGE_BUFFER / 2 &&
@@ -66,7 +71,9 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
         const edge = this.findEdge(ev.input.mousePos, circuit, viewport);
-        if (edge === "none") return undefined;
+        if (edge === "none") {
+            return undefined;
+        }
         return edge === "horizontal" ? "ew-resize" : "ns-resize";
     }
 
@@ -97,7 +104,9 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public onEvent(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
-        if (ev.type !== "mousedrag") return;
+        if (ev.type !== "mousedrag") {
+            return;
+        }
 
         const ic = this.getIC(circuit),
             icData = this.getICData(circuit);
@@ -106,7 +115,10 @@ export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
 
         const newSize = worldMousePos.sub(ic.pos).scale(2).abs();
 
-        if (this.edge === "horizontal") icData.display.size = V(newSize.x, this.initialSize.y);
-        else if (this.edge === "vertical") icData.display.size = V(this.initialSize.x, newSize.y);
+        if (this.edge === "horizontal") {
+            icData.display.size = V(newSize.x, this.initialSize.y);
+        } else if (this.edge === "vertical") {
+            icData.display.size = V(this.initialSize.x, newSize.y);
+        }
     }
 }

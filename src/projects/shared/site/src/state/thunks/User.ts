@@ -13,13 +13,17 @@ type ThunkResult<R> = ThunkAction<R, SharedAppState, undefined, AllSharedActions
 export function LoadUserCircuits(): ThunkResult<Promise<boolean>> {
     return async (dispatch, getState) => {
         const auth = getState().user.auth;
-        if (!auth) dispatch(_LoadCircuitsFinish([], "Not logged in!"));
+        if (!auth) {
+            dispatch(_LoadCircuitsFinish([], "Not logged in!"));
+        }
 
         dispatch(_LoadCircuitsStart());
         try {
             // Attempt to load circuits from backend
             const circuits = await QueryUserCircuits(auth!);
-            if (!circuits) throw new Error("LoadUserCircuits failed: circuits is undefined");
+            if (!circuits) {
+                throw new Error("LoadUserCircuits failed: circuits is undefined");
+            }
             dispatch(_LoadCircuitsFinish(circuits));
 
             return true; // success

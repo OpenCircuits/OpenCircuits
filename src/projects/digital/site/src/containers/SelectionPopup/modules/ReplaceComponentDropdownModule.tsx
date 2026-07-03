@@ -36,11 +36,15 @@ export const ReplaceComponentDropdownModule = ({ circuit }: Props) => {
     );
 
     // Show if only one component is selected
-    if (!props || props.kind.length !== 1) return;
+    if (!props || props.kind.length !== 1) {
+        return;
+    }
 
     const [kind] = props.kind;
     const swapGroup = swappableComponents.find((group) => kind in group);
-    if (!swapGroup) return;
+    if (!swapGroup) {
+        return;
+    }
 
     const comp = circuit.getComponent(props.id[0])!;
     const options = Object.entries(swapGroup).map(([kind, display]) => [display, kind] as const);

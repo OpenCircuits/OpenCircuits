@@ -254,7 +254,9 @@ class VectorImpl implements Vector {
     public add(x: number, y: number): Vector;
     public add(other: Vector): Vector;
     public add(x: Vector | number, y?: number): Vector {
-        if (typeof x === "number") return new VectorImpl(this.x + x, this.y + (y ?? x));
+        if (typeof x === "number") {
+            return new VectorImpl(this.x + x, this.y + (y ?? x));
+        }
         return new VectorImpl(this.x + x.x, this.y + x.y);
     }
 
@@ -262,14 +264,18 @@ class VectorImpl implements Vector {
     public sub(x: number, y: number): Vector;
     public sub(other: Vector): Vector;
     public sub(x: Vector | number, y?: number): Vector {
-        if (typeof x === "number") return new VectorImpl(this.x - x, this.y - (y ?? x));
+        if (typeof x === "number") {
+            return new VectorImpl(this.x - x, this.y - (y ?? x));
+        }
         return new VectorImpl(this.x - x.x, this.y - x.y);
     }
 
     public scale(amt: number): Vector;
     public scale(other: Vector): Vector;
     public scale(a: Vector | number): Vector {
-        if (typeof a === "number") return new VectorImpl(this.x * a, this.y * a);
+        if (typeof a === "number") {
+            return new VectorImpl(this.x * a, this.y * a);
+        }
         return new VectorImpl(this.x * a.x, this.y * a.y);
     }
 
@@ -278,7 +284,9 @@ class VectorImpl implements Vector {
     }
     public normalize(): Vector {
         const len = this.len();
-        if (len === 0) return new VectorImpl(0, 0);
+        if (len === 0) {
+            return new VectorImpl(0, 0);
+        }
         return this.scale(1 / len);
     }
     public len(): number {
@@ -327,10 +335,14 @@ export function V(v: Vector): Vector;
 export function V(x: number): Vector;
 export function V(x: number, y: number): Vector;
 export function V(a?: Vector.Spaces | Vector | number, b?: number): Vector {
-    if (a === undefined) return new VectorImpl(0, 0);
+    if (a === undefined) {
+        return new VectorImpl(0, 0);
+    }
 
     if (typeof a === "number") {
-        if (typeof b === "number") return new VectorImpl(a, b);
+        if (typeof b === "number") {
+            return new VectorImpl(a, b);
+        }
         return new VectorImpl(a, a);
     }
     if (typeof a === "object") {

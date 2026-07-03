@@ -13,7 +13,9 @@ import yargs from "yargs";
     });
 
     const files = await (async () => {
-        if (all) return ["scripts/", "src/"];
+        if (all) {
+            return ["scripts/", "src/"];
+        }
         const git = simpleGit();
         // Get diff for all files that are staged (or something)
         const diff = await git.diff(["--name-only", "origin/master...", "--"]);
@@ -29,7 +31,9 @@ import yargs from "yargs";
     })();
 
     const results = await eslint.lintFiles(files);
-    if (fix) await ESLint.outputFixes(results);
+    if (fix) {
+        await ESLint.outputFixes(results);
+    }
     const formatter = await eslint.loadFormatter("stylish");
     const resultText = formatter.format(results);
     console.log(resultText);

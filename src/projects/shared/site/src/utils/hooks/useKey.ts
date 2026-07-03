@@ -10,14 +10,18 @@ export const useKey = (key: Key) => {
     useDocEvent(
         "keydown",
         (ev) => {
-            if (ev.key === key) setIsKeyDown(true);
+            if (ev.key === key) {
+                setIsKeyDown(true);
+            }
         },
         [setIsKeyDown, key],
     );
     useDocEvent(
         "keyup",
         (ev) => {
-            if (ev.key === key) setIsKeyDown(false);
+            if (ev.key === key) {
+                setIsKeyDown(false);
+            }
         },
         [setIsKeyDown, key],
     );

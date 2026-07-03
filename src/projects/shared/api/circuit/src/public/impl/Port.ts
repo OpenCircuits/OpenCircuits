@@ -39,24 +39,27 @@ export class PortImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
     }
 
     public get originPos(): Vector {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `PortImpl: Origin Pos cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`,
             );
+        }
         return this.ctx.assembler.getPortPos(this.id).unwrap().origin;
     }
     public get targetPos(): Vector {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `PortImpl: Target Pos cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`,
             );
+        }
         return this.ctx.assembler.getPortPos(this.id).unwrap().target;
     }
     public get dir(): Vector {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `PortImpl: Direction cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`,
             );
+        }
         return this.targetPos.sub(this.originPos).normalize();
     }
 
@@ -107,10 +110,11 @@ export class PortImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> imple
     }
 
     public connectTo(other: T["Port"]): T["Wire"] | undefined {
-        if (this.icId)
+        if (this.icId) {
             throw new Error(
                 `PortImpl: Cannot create connections for port '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
             );
+        }
 
         this.ctx.internal.beginTransaction();
 

@@ -14,11 +14,15 @@ export interface SerializationArrayEntry {
 }
 
 export function isRef(o: unknown): o is Ref {
-    if (!o || typeof o !== "object") return false;
+    if (!o || typeof o !== "object") {
+        return false;
+    }
     return "ref" in o;
 }
 export function isEntry(o: unknown): o is SerializationEntry {
-    if (!o || typeof o !== "object") return false;
+    if (!o || typeof o !== "object") {
+        return false;
+    }
     return "type" in o && "data" in o;
 }
 export function isArrayEntry(o: unknown): o is SerializationArrayEntry {
@@ -36,7 +40,9 @@ export function MakeEntry<T>(contents: Record<string, SerializationEntry>, curRe
     const curEntry = contents[curRef];
     if (isArrayEntry(curEntry)) {
         const obj = curEntry.data.map((val) => {
-            if (isRef(val)) return MakeEntry(contents, val.ref);
+            if (isRef(val)) {
+                return MakeEntry(contents, val.ref);
+            }
             return val;
         });
         Object.defineProperty(obj, "type", { value: curEntry.type });
@@ -46,12 +52,16 @@ export function MakeEntry<T>(contents: Record<string, SerializationEntry>, curRe
 
     const obj = {};
     for (const [key, val] of Object.entries(curEntry.data)) {
-        if (key === "type")
-            // PortSet has a type property we can skip since we're setting `type` below.
+        if (key === "type") // PortSet has a type property we can skip since we're setting `type` below.
+        {
             continue;
+        }
 
-        if (isRef(val)) Object.defineProperty(obj, key, { get: () => MakeEntry(contents, val.ref) });
-        else Object.defineProperty(obj, key, { value: val });
+        if (isRef(val)) {
+            Object.defineProperty(obj, key, { get: () => MakeEntry(contents, val.ref) });
+        } else {
+            Object.defineProperty(obj, key, { value: val });
+        }
     }
     Object.defineProperty(obj, "type", { value: curEntry.type });
     Object.defineProperty(obj, "ref", { value: curRef });

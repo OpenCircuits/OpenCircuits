@@ -29,7 +29,9 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
         const dx = cam.x - x;
 
         // No change, do nothing
-        if (dx === 0) return;
+        if (dx === 0) {
+            return;
+        }
 
         this.internal.setCamera({ x });
         this.publish({ type: "change", dx, dy: 0, dz: 0 });
@@ -42,7 +44,9 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
         const dy = cam.y - y;
 
         // No change, do nothing
-        if (dy === 0) return;
+        if (dy === 0) {
+            return;
+        }
 
         this.internal.setCamera({ y });
         this.publish({ type: "change", dx: 0, dy, dz: 0 });
@@ -56,7 +60,9 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
             dy = cam.y - y;
 
         // No change, do nothing
-        if (dx === 0 && dy === 0) return;
+        if (dx === 0 && dy === 0) {
+            return;
+        }
 
         this.internal.setCamera({ x, y });
         this.publish({ type: "change", dx, dy, dz: 0 });
@@ -74,7 +80,9 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
         const dz = cam.zoom - zoom;
 
         // No change, do nothing
-        if (dz === 0) return;
+        if (dz === 0) {
+            return;
+        }
 
         this.internal.setCamera({ zoom });
         this.publish({ type: "change", dx: 0, dy: 0, dz: dz });

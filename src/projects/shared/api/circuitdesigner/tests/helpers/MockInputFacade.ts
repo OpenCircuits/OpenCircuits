@@ -72,7 +72,9 @@ export class MockInputFacade {
             .toScreenPos(amt)
             .sub(this.viewport.toScreenPos(V()))
             .scale(1 / steps);
-        for (let i = 1; i <= steps; i++) this.onMouseEv("mousemove", this.mousePos.add(step), button);
+        for (let i = 1; i <= steps; i++) {
+            this.onMouseEv("mousemove", this.mousePos.add(step), button);
+        }
         return this;
     }
     public moveTo(target: Vector, steps = 5, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
@@ -81,7 +83,9 @@ export class MockInputFacade {
         const step = target.sub(this.viewport.toWorldPos(this.mousePos)).scale(1 / steps);
 
         // Move a bit for each step
-        for (let i = 1; i <= steps; i++) this.move(step, 1, button);
+        for (let i = 1; i <= steps; i++) {
+            this.move(step, 1, button);
+        }
 
         return this;
     }
@@ -124,7 +128,9 @@ export class MockInputFacade {
     }
     public moveTouches(amt: Vector, steps = 1): MockInputFacade {
         const step = amt.scale(1 / steps);
-        for (let i = 1; i <= steps; i++) this.touches.forEach((_, i) => this.moveTouch(i, step));
+        for (let i = 1; i <= steps; i++) {
+            this.touches.forEach((_, i) => this.moveTouch(i, step));
+        }
         return this;
     }
     public releaseTouch(i = 0): MockInputFacade {

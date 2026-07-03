@@ -14,7 +14,9 @@ export class RenderHelper {
     }
 
     public get ctx(): CanvasRenderingContext2D {
-        if (!this.context) throw new Error(`RenderHelper: Uninitialized context! ${this.canvas} | ${this.context}`);
+        if (!this.context) {
+            throw new Error(`RenderHelper: Uninitialized context! ${this.canvas} | ${this.context}`);
+        }
         return this.context;
     }
 

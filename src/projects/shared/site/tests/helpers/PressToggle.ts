@@ -12,6 +12,8 @@ export async function PressToggle(id: Matcher, user: UserEvent) {
     const button = [...screen.getByText(id).parentNode!.querySelectorAll("img")].find(
         (button) => button.style.display !== "none",
     );
-    if (!button) throw new Error("Neither image state of the toggle is visible");
+    if (!button) {
+        throw new Error("Neither image state of the toggle is visible");
+    }
     await user.click(button);
 }

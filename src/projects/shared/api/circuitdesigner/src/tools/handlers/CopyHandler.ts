@@ -7,16 +7,24 @@ export const CopyHandler = (serialize: (objs: ObjContainer) => string): ToolHand
 
     onEvent: (ev, { circuit }) => {
         // Activate when copy or cut events are fired
-        if (!(ev.type === "copy" || ev.type === "cut")) return ToolHandlerResponse.PASS;
+        if (!(ev.type === "copy" || ev.type === "cut")) {
+            return ToolHandlerResponse.PASS;
+        }
 
         // Nothing to copy
-        if (circuit.selections.isEmpty) return ToolHandlerResponse.PASS;
+        if (circuit.selections.isEmpty) {
+            return ToolHandlerResponse.PASS;
+        }
 
         const clipboardData = ev.ev.clipboardData;
-        if (!clipboardData) throw new Error("CopyHandler failed: ev.clipboardData is null!");
+        if (!clipboardData) {
+            throw new Error("CopyHandler failed: ev.clipboardData is null!");
+        }
 
         const objs = circuit.selections.withWiresAndPorts();
-        if (objs.components.length === 0) return ToolHandlerResponse.PASS;
+        if (objs.components.length === 0) {
+            return ToolHandlerResponse.PASS;
+        }
 
         const str = serialize(objs);
 
@@ -26,7 +34,9 @@ export const CopyHandler = (serialize: (objs: ObjContainer) => string): ToolHand
         ev.ev.preventDefault(); // Necessary to copy correctly
 
         // Delete selections if cutting
-        if (ev.type === "cut") circuit.deleteObjs([...objs.wires, ...objs.components]);
+        if (ev.type === "cut") {
+            circuit.deleteObjs([...objs.wires, ...objs.components]);
+        }
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;

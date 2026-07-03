@@ -129,17 +129,25 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             this.cameraMat.setDirty();
 
             // No canvas attached -> no need to render
-            if (!this.canvasInfo) return;
+            if (!this.canvasInfo) {
+                return;
+            }
 
-            if (ev.type === "change") this.scheduler.requestRender();
+            if (ev.type === "change") {
+                this.scheduler.requestRender();
+            }
         });
 
         // Re-render when assembler changes
         this.ctx.assembler.subscribe((data) => {
             // No canvas attached -> no need to render
-            if (!this.canvasInfo) return;
+            if (!this.canvasInfo) {
+                return;
+            }
 
-            if (data.type === "onchange") this.scheduler.requestRender();
+            if (data.type === "onchange") {
+                this.scheduler.requestRender();
+            }
         });
 
         // Re-render when current tool changes state (For tool-renderers)
@@ -149,7 +157,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
                 // TODO: Render in another canvas
                 curToolCallbackCleanup = tool.subscribe((_) => {
                     // No canvas attached -> no need to render
-                    if (!this.canvasInfo) return;
+                    if (!this.canvasInfo) {
+                        return;
+                    }
 
                     this.scheduler.requestRender();
                 });
@@ -162,7 +172,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
     }
 
     protected render() {
-        if (!this.canvasInfo) throw new Error("Viewport: Attempted Circuit render before a canvas was set!");
+        if (!this.canvasInfo) {
+            throw new Error("Viewport: Attempted Circuit render before a canvas was set!");
+        }
 
         const { renderer } = this.canvasInfo;
         const renderState: RenderState = {
@@ -187,7 +199,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             renderer.transform(this.cameraMat.get().inverse());
 
             // Render grid
-            if (renderState.options.showGrid) RenderGrid(renderState);
+            if (renderState.options.showGrid) {
+                RenderGrid(renderState);
+            }
 
             // Render wires (by depth)
             assembly.wireOrder.forEach((wireId) => assembly.wirePrims.get(wireId)!.forEach(renderPrim));
@@ -261,7 +275,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             renderer: {
                 draw: (prim: Prim, space = "world") => {
                     renderer.save();
-                    if (space === "world") renderer.transform(this.cameraMat.get().inverse());
+                    if (space === "world") {
+                        renderer.transform(this.cameraMat.get().inverse());
+                    }
                     this.primRenderer.render(renderer.ctx, prim);
                     renderer.restore();
                 },
@@ -289,7 +305,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
         return this.state.debugOptions;
     }
     public setRenderOptions(options: Partial<Pick<RenderOptions, "showGrid">>): void {
-        if (options.showGrid !== undefined) this.ctx.renderOptions.showGrid = options.showGrid;
+        if (options.showGrid !== undefined) {
+            this.ctx.renderOptions.showGrid = options.showGrid;
+        }
         this.scheduler.requestRender();
     }
 
@@ -310,7 +328,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
-        if (this.canvasInfo) throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");
+        if (this.canvasInfo) {
+            throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");
+        }
 
         this.canvasInfo = new AttachedCanvasInfoImpl(canvas, this.options.dragTime, (input: InputAdapter) => {
             // Forward inputs to ToolManager

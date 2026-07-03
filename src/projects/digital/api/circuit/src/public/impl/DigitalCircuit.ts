@@ -32,7 +32,9 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalAPITypes> implements 
     public override importICs(ics: DigitalIntegratedCircuit[]): void {
         super.importICs(ics);
 
-        for (const ic of ics) this.ctx.sim.loadICState(ic.id, ic.initialSimState);
+        for (const ic of ics) {
+            this.ctx.sim.loadICState(ic.id, ic.initialSimState);
+        }
     }
 
     public override createIC(info: APIToDigital<ICInfo>, id?: string): DigitalIntegratedCircuit {
@@ -52,10 +54,13 @@ export class DigitalCircuitImpl extends CircuitImpl<DigitalAPITypes> implements 
 
         this.beginTransaction({ batch: true });
 
-        for (const ic of isCircuit(circuit) ? circuit.getICs() : circuit.ics)
+        for (const ic of isCircuit(circuit) ? circuit.getICs() : circuit.ics) {
             this.ctx.sim.loadICState(ic.id, ic.initialSimState);
+        }
 
-        if (opts?.loadMetadata && isCircuit(circuit)) this.sim.propagationTime = circuit.sim.propagationTime;
+        if (opts?.loadMetadata && isCircuit(circuit)) {
+            this.sim.propagationTime = circuit.sim.propagationTime;
+        }
 
         const objIdsMap = super.doImport(circuit, opts);
 

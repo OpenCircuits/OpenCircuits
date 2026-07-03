@@ -28,7 +28,9 @@ export const AutoSaveToggle = () => {
         // Don't start autosave if user doesn't have it enabled
         //  or if the circuit is already currently saved
         // or if the user is not logged in
-        if (!autoSave || isSaved || !isLoggedIn) return;
+        if (!autoSave || isSaved || !isLoggedIn) {
+            return;
+        }
 
         let attempts = 1; // Track attempted saves
         let timeout: number;
@@ -36,9 +38,10 @@ export const AutoSaveToggle = () => {
         async function Save() {
             const success = await SaveCircuitRemote();
             attempts++;
-            if (!success)
-                // Wait longer each successsive, failed save
+            if (!success) // Wait longer each successsive, failed save
+            {
                 timeout = window.setTimeout(Save, SAVE_TIME * attempts);
+            }
         }
 
         timeout = window.setTimeout(Save, SAVE_TIME);

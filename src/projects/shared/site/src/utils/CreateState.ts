@@ -45,9 +45,10 @@ export function CreateState<X extends ActionCreatorType = never>() {
             actions,
             (state: S = initialState, action: GetActions<A, X>) => {
                 const type = action.type;
-                if (type in reducers)
-                    /* i cannot figure out the correct cast here  vvvv  for the life of me */
+                if (type in reducers) /* i cannot figure out the correct cast here  vvvv  for the life of me */
+                {
                     return reducers[type as GetTypes<A, X>]!(state, action as any);
+                }
                 return state;
             },
         ] as const;

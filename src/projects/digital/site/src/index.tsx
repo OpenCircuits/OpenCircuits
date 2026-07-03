@@ -91,11 +91,15 @@ async function Init(): Promise<void> {
                 const AuthMethods: Record<string, () => Promise<void>> = {
                     no_auth: async () => {
                         const username = GetCookie("no_auth_username");
-                        if (username) await store.dispatch(Login(new NoAuthState(username)));
+                        if (username) {
+                            await store.dispatch(Login(new NoAuthState(username)));
+                        }
                     },
                     google: async () => {
                         const firebaseConfig = process.env.OC_FIREBASE_CONFIG;
-                        if (!firebaseConfig) throw new Error("No firebase config specified!");
+                        if (!firebaseConfig) {
+                            throw new Error("No firebase config specified!");
+                        }
                         const app = initializeApp(JSON.parse(firebaseConfig));
 
                         const auth = getAuth(app);
@@ -112,7 +116,9 @@ async function Init(): Promise<void> {
                 };
                 try {
                     const authMethods = GetAuthMethods();
-                    if (authMethods.length > 0) await Promise.all(authMethods.map((a) => AuthMethods[a]()));
+                    if (authMethods.length > 0) {
+                        await Promise.all(authMethods.map((a) => AuthMethods[a]()));
+                    }
                 } catch (e) {
                     console.error(e);
                 }
@@ -123,7 +129,9 @@ async function Init(): Promise<void> {
             "Google Analytics",
             async () => {
                 try {
-                    if (!process.env.OC_GA_ID) throw new Error("Can't find Google Analytics ID");
+                    if (!process.env.OC_GA_ID) {
+                        throw new Error("Can't find Google Analytics ID");
+                    }
                     ReactGA.initialize(process.env.OC_GA_ID, {});
                     ReactGA.pageview("/");
                 } catch (e) {
@@ -196,7 +204,9 @@ async function Init(): Promise<void> {
                         const proto = DigitalCircuitToProto(circuit as DigitalCircuit);
 
                         // Log debug-stats
-                        if (process.env.NODE_ENV === "development") PrintDebugStats(proto);
+                        if (process.env.NODE_ENV === "development") {
+                            PrintDebugStats(proto);
+                        }
 
                         return {
                             data: new Blob([DigitalProtoSchema.DigitalCircuit.encode(proto).finish()]),
@@ -209,12 +219,16 @@ async function Init(): Promise<void> {
                     },
                     DeserializeCircuit(data) {
                         const schema = (() => {
-                            if (typeof data === "string") return VersionMigrator(data).schema;
+                            if (typeof data === "string") {
+                                return VersionMigrator(data).schema;
+                            }
 
                             try {
                                 const proto = DigitalProtoSchema.DigitalCircuit.decode(new Uint8Array(data));
                                 // TODO[] -- switch protobuf libraries cause this thing sucks
-                                if (!proto.circuit) throw new Error("Failed to parse!");
+                                if (!proto.circuit) {
+                                    throw new Error("Failed to parse!");
+                                }
                                 return proto;
                             } catch {
                                 // If we failed to decode it, it could be an old version of the circuit format
@@ -234,8 +248,9 @@ async function Init(): Promise<void> {
                 // Load cached circuit (dev-mode only)
                 if (process.env.NODE_ENV === "development") {
                     const files = await DevListFiles();
-                    if (files.includes(DEV_CACHED_CIRCUIT_FILE))
+                    if (files.includes(DEV_CACHED_CIRCUIT_FILE)) {
                         CircuitHelpers.LoadNewCircuit(await DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+                    }
                 }
 
                 const root = createRoot(document.getElementById("root")!);

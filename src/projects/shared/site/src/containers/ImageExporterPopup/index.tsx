@@ -59,9 +59,15 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
     const canvas = useRef<HTMLCanvasElement>(null);
 
     const onResize = useCallback(() => {
-        if (!isActive) return;
-        if (!wrapper.current) throw new Error("ImageExporterPopup.onResize failed: wrapper.current is null");
-        if (!canvas.current) throw new Error("ImageExporterPopup.onResize failed: canvas.current is null");
+        if (!isActive) {
+            return;
+        }
+        if (!wrapper.current) {
+            throw new Error("ImageExporterPopup.onResize failed: wrapper.current is null");
+        }
+        if (!canvas.current) {
+            throw new Error("ImageExporterPopup.onResize failed: canvas.current is null");
+        }
 
         // Fit the canvas within the wrapper using the same ratio as the actual canvas
         const sw = Clamp(state.width, MIN_IMG_SIZE, MAX_IMG_SIZE);
@@ -86,7 +92,9 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
     useWindowKeyDownEvent(
         "Escape",
         () => {
-            if (isActive) dispatch(CloseHeaderPopups());
+            if (isActive) {
+                dispatch(CloseHeaderPopups());
+            }
         },
         [isActive],
     );
@@ -206,8 +214,9 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
                             type="button"
                             name="confirm"
                             onClick={() => {
-                                if (!canvas.current)
+                                if (!canvas.current) {
                                     throw new Error("ImageExporterPopup.button.onClick failed: canvas.current is null");
+                                }
                                 SaveImage(canvas.current, circuitName, state);
                             }}
                         >
@@ -256,7 +265,9 @@ const ImageExporterPreview = ({
     }, [mainDesigner.circuit]);
 
     useLayoutEffect(() => {
-        if (!canvas.current) return;
+        if (!canvas.current) {
+            return;
+        }
         return designer.viewport.attachCanvas(canvas.current);
     }, [designer, canvas]);
 

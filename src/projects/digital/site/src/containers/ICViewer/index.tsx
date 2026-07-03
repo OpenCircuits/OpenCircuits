@@ -38,16 +38,22 @@ export const ICViewer = () => {
 
     // Happens when activated
     useLayoutEffect(() => {
-        if (!isActive || !icId || !canvas.current || !mainDesigner.viewport.canvasInfo) return;
+        if (!isActive || !icId || !canvas.current || !mainDesigner.viewport.canvasInfo) {
+            return;
+        }
 
         // Block input for main designer
         mainDesigner.viewport.canvasInfo.input.setBlocked(true);
 
         // Get the IC and load its contents into circuit
         const icInstance = mainDesigner.circuit.getComponent(icId);
-        if (!icInstance) throw new Error(`ICViewer: Failed to find ic instance with id ${icId}!`);
+        if (!icInstance) {
+            throw new Error(`ICViewer: Failed to find ic instance with id ${icId}!`);
+        }
         const ic = mainDesigner.circuit.getIC(icInstance.kind);
-        if (!ic) throw new Error(`ICViewer: Failed to find ic with id ${icInstance.kind}!`);
+        if (!ic) {
+            throw new Error(`ICViewer: Failed to find ic with id ${icInstance.kind}!`);
+        }
 
         // Create main circuit
         const circuit = CreateCircuit();
@@ -58,7 +64,9 @@ export const ICViewer = () => {
                 comp.replaceWith("Switch");
                 inputIDs.push(comp.id);
             }
-            if (comp.kind === "OutputPin") comp.replaceWith("LED");
+            if (comp.kind === "OutputPin") {
+                comp.replaceWith("LED");
+            }
         }
         setICInputCompIds(inputIDs);
 
@@ -91,7 +99,9 @@ export const ICViewer = () => {
 
         // When user interacts with a Switch, pause the syncing (issue #754)
         const cleanup2 = designer.subscribe((ev) => {
-            if (ev.type === "handlerFired" && ev.handler === "InteractionHandler") setPauseUpdates(true);
+            if (ev.type === "handlerFired" && ev.handler === "InteractionHandler") {
+                setPauseUpdates(true);
+            }
         });
 
         setICViewDesigner(designer);
@@ -102,13 +112,17 @@ export const ICViewer = () => {
     // On resize (useLayoutEffect happens sychronously so
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
-        if (!icViewDesigner) return;
+        if (!icViewDesigner) {
+            return;
+        }
         icViewDesigner.viewport.resize(w * IC_DESIGNER_VW, h * IC_DESIGNER_VH);
     }, [isActive, w, h]);
 
     // Synchronize the inputs in the original designer and this IC viewer (issue #754)
     useEffect(() => {
-        if (!icViewDesigner || !icId || pauseUpdates) return;
+        if (!icViewDesigner || !icId || pauseUpdates) {
+            return;
+        }
 
         return mainDesigner.circuit.sim.subscribe(() => {
             const icInstance = mainDesigner.circuit.getComponent(icId)!;
@@ -130,7 +144,9 @@ export const ICViewer = () => {
     }, [pauseUpdates, mainDesigner, icId, icViewDesigner]);
 
     const close = () => {
-        if (!mainDesigner.viewport.canvasInfo) return;
+        if (!mainDesigner.viewport.canvasInfo) {
+            return;
+        }
 
         // // Reset in case for next time
         // setPauseUpdates(false);

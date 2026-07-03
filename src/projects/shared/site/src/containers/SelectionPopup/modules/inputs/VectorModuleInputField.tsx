@@ -70,7 +70,9 @@ export const VectorModuleInputField = ({
                 onFocus={() => setState.onFocus()}
                 onBlur={(e) => {
                     // Allows the action to only be submitted once both fields have blurred
-                    if (e.relatedTarget !== yRef.current) setState.onBlur();
+                    if (e.relatedTarget !== yRef.current) {
+                        setState.onBlur();
+                    }
                 }}
             />
             <NumberInputField
@@ -87,7 +89,9 @@ export const VectorModuleInputField = ({
                 onFocus={() => setState.onFocus()}
                 onBlur={(e) => {
                     // Allows the action to only be submitted once both fields have blurred
-                    if (e.relatedTarget !== xRef.current) setState.onBlur();
+                    if (e.relatedTarget !== xRef.current) {
+                        setState.onBlur();
+                    }
                 }}
             />
         </>

@@ -18,7 +18,9 @@ export const TitleModule = ({ designer }: Props) => {
         (o): o is Obj => true,
         (o) => {
             // If a name is manually set, then use that.
-            if (o.name) return { name: o.name };
+            if (o.name) {
+                return { name: o.name };
+            }
             // Check if the obj is an IC, if so, use the user-set IC name
             const ic = circuit.getIC(o.kind);
             return { name: ic?.name ?? o.kind };
@@ -28,7 +30,9 @@ export const TitleModule = ({ designer }: Props) => {
     const s = circuit.selections;
     const doChange = useCallback((newNames: string[]) => s.forEach((o, i) => (o.name = newNames[i])), [s]);
 
-    if (!props) return;
+    if (!props) {
+        return;
+    }
 
     return (
         <div>

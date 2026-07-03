@@ -29,11 +29,16 @@ export const CreateICButtonModule = ({ circuit }: Props) => {
 
     const icValidationStatus = IsValidIC(cs);
 
-    if (!props) return;
+    if (!props) {
+        return;
+    }
 
     const open = () => {
-        if (icValidationStatus === ICValidationStatus.Valid) dispatch(OpenICDesigner(props["ids"]));
-        else setShowError(true);
+        if (icValidationStatus === ICValidationStatus.Valid) {
+            dispatch(OpenICDesigner(props["ids"]));
+        } else {
+            setShowError(true);
+        }
     };
 
     return (
