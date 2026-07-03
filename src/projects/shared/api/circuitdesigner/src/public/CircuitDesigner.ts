@@ -1,17 +1,17 @@
-import {CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
+import {Observable} from "shared/api/circuit/utils/Observable";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 
 import {Tool}         from "../tools/Tool";
 import {Viewport}     from "./Viewport";
-import {Observable} from "shared/api/circuit/utils/Observable";
 import {DefaultTool} from "../tools/DefaultTool";
 
 
-export interface CircuitDesignerOptions<T extends CircuitTypes = CircuitTypes> {
+export interface CircuitDesignerOptions<T extends CircuitAPITypes = CircuitAPITypes> {
     dragTime?: number;
     toolConfig: ToolConfig<T>;
 }
 
-export interface ToolConfig<T extends CircuitTypes = CircuitTypes> {
+export interface ToolConfig<T extends CircuitAPITypes = CircuitAPITypes> {
     defaultTool: DefaultTool<T>;
     tools: Tool[];
 }
@@ -30,7 +30,7 @@ export type CircuitDesignerEv = {
 // All state variables within the CircuitDesigner will/should NOT be serialized
 // and shouldn't persist through user sessions. I.e. they will reset on page refresh
 // and represent temporary state for the user in the current session.
-export interface CircuitDesigner<T extends CircuitTypes = CircuitTypes> extends Observable<CircuitDesignerEv> {
+export interface CircuitDesigner<T extends CircuitAPITypes = CircuitAPITypes> extends Observable<CircuitDesignerEv> {
     readonly circuit: T["Circuit"];
 
     // When the circuit is 'locked', only specific actions can be performed.

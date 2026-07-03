@@ -8,7 +8,8 @@ import {Schema} from "shared/api/circuit/schema";
 
 import {Circuit, Component, Port, Wire, uuid} from "shared/api/circuit/public";
 import {CircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
-import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext, CircuitTypes}             from "shared/api/circuit/public/impl/CircuitContext";
+import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext}             from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
 import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
 import {PortImpl}                                    from "shared/api/circuit/public/impl/Port";
@@ -140,9 +141,9 @@ export class TestComponentAssembler extends ComponentAssembler {
     }
 }
 
-export class TestCircuitContext extends CircuitContext<CircuitTypes> {
+export class TestCircuitContext extends CircuitContext<CircuitAPITypes> {
     public readonly assembler: CircuitAssembler;
-    public readonly factory: CircuitAPIFactory<CircuitTypes>;
+    public readonly factory: CircuitAPIFactory<CircuitAPITypes>;
 
     public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
         super(id, new TestObjInfoProvider([{ "": 1 }, ...additionalPortConfigs]));
@@ -169,7 +170,7 @@ export class TestCircuitContext extends CircuitContext<CircuitTypes> {
     }
 }
 
-export class TestCircuitImpl extends CircuitImpl<CircuitTypes> {
+export class TestCircuitImpl extends CircuitImpl<CircuitAPITypes> {
     public constructor(id: GUID, additionalPortConfigs: PortConfig[] = []) {
         const ctx = new TestCircuitContext(id, additionalPortConfigs);
         super(ctx, new SelectionsImpl(ctx));

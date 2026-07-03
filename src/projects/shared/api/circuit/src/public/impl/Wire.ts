@@ -5,11 +5,12 @@ import {GUID}    from "shared/api/circuit/internal";
 
 import {Wire}    from "../Wire";
 
-import {BaseObjectImpl}             from "./BaseObject";
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {BaseObjectImpl} from "./BaseObject";
+import {CircuitContext} from "./CircuitContext";
+import {CircuitAPITypes} from "./Types";
 
 
-export class WireImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Wire {
+export class WireImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> implements Wire {
     public readonly baseKind = "Wire";
 
     public constructor(ctx: CircuitContext<T>, id: GUID, icId?: GUID) {

@@ -3,11 +3,12 @@ import {V, Vector} from "Vector";
 
 import {GUID} from "shared/api/circuit/internal";
 
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {CircuitContext} from "./CircuitContext";
 import {ICPin, IntegratedCircuit, IntegratedCircuitDisplay} from "../IntegratedCircuit";
+import {CircuitAPITypes} from "./Types";
 
 
-class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
+class IntegratedCircuitPinImpl<T extends CircuitAPITypes> implements ICPin {
     protected readonly icId: GUID;
     protected readonly pinIndex: number;
 
@@ -59,7 +60,7 @@ class IntegratedCircuitPinImpl<T extends CircuitTypes> implements ICPin {
     }
 }
 
-class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements IntegratedCircuitDisplay {
+class IntegratedCircuitDisplayImpl<T extends CircuitAPITypes> implements IntegratedCircuitDisplay {
     protected readonly id: GUID;
 
     protected readonly ctx: CircuitContext<T>;
@@ -86,7 +87,7 @@ class IntegratedCircuitDisplayImpl<T extends CircuitTypes> implements Integrated
     }
 }
 
-export class IntegratedCircuitImpl<T extends CircuitTypes> implements IntegratedCircuit {
+export class IntegratedCircuitImpl<T extends CircuitAPITypes> implements IntegratedCircuit {
     public readonly id: GUID;
 
     protected readonly ctx: CircuitContext<T>;

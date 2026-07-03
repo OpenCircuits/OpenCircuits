@@ -4,10 +4,10 @@ import {DigitalComponentConfigurationInfo} from "digital/api/circuit/internal/Di
 
 import {DigitalComponentInfo} from "../DigitalComponentInfo";
 
-import {DigitalTypes} from "./DigitalCircuitContext";
+import {DigitalAPITypes} from "./DigitalCircuitContext";
 
 
-export class DigitalComponentInfoImpl extends ComponentInfoImpl<DigitalTypes> implements DigitalComponentInfo {
+export class DigitalComponentInfoImpl extends ComponentInfoImpl<DigitalAPITypes> implements DigitalComponentInfo {
     protected override getInfo() {
         const info = super.getInfo();
         if (!(info instanceof DigitalComponentConfigurationInfo))

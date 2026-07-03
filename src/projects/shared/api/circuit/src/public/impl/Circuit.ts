@@ -8,9 +8,8 @@ import {CircuitInternal, GUID, uuid} from "shared/api/circuit/internal";
 
 import {Circuit, CircuitEvent} from "../Circuit";
 
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {CircuitContext} from "./CircuitContext";
 import {ObservableImpl} from "../../utils/Observable";
-import {LogEntry} from "../../internal/impl/CircuitLog";
 import {ReadonlyComponent} from "../Component";
 import {ReadonlyWire} from "../Wire";
 import {ReadonlyPort} from "../Port";
@@ -19,6 +18,7 @@ import {CameraImpl} from "./Camera";
 import {HistoryImpl} from "./History";
 import {CircuitHistory} from "../History";
 import {IntegratedCircuit} from "../IntegratedCircuit";
+import {CircuitAPITypes} from "./Types";
 
 
 function ConvertComp(c: ReadonlyComponent): Schema.Component {
@@ -79,7 +79,7 @@ function ConvertIC(ic: IntegratedCircuit): Schema.IntegratedCircuit {
 
 export type RemoveICCallback = (id: GUID) => void;
 
-export class CircuitImpl<T extends CircuitTypes> extends ObservableImpl<CircuitEvent> implements Circuit {
+export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<CircuitEvent> implements Circuit {
     protected readonly ctx: CircuitContext<T>;
 
     public readonly camera: Camera;

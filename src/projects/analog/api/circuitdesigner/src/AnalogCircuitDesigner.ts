@@ -6,9 +6,10 @@ import {CanvasTextMeasurer} from "shared/api/circuitdesigner/public/impl/renderi
 import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 
 import {SVGs} from "./rendering/svgs";
+import {AnalogAPITypes} from "analog/api/circuit/public/impl/AnalogCircuit";
 
 
-export interface AnalogCircuitDesigner extends CircuitDesigner {}
+export interface AnalogCircuitDesigner extends CircuitDesigner<AnalogAPITypes> {}
 
 export function CreateDesigner(
     toolConfig: ToolConfig,

@@ -1,4 +1,4 @@
-import {CircuitTypes}                     from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 
 import {CircuitDesigner}                  from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {InputAdapterEvent}                from "shared/api/circuitdesigner/input/InputAdapterEvent";
@@ -7,7 +7,7 @@ import {ToolHandler, ToolHandlerResponse} from "./handlers/ToolHandler";
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
 
 
-export class DefaultTool<T extends CircuitTypes = CircuitTypes> extends ObservableImpl<{ type: "handlerFired", handler: string }> {
+export class DefaultTool<T extends CircuitAPITypes = CircuitAPITypes> extends ObservableImpl<{ type: "handlerFired", handler: string }> {
     protected handlers: Array<ToolHandler<T>>;
 
     public constructor(...handlers: Array<ToolHandler<T>>) {
