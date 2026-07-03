@@ -13,8 +13,7 @@ import getAliases from "./utils/getAliases.js";
 import {FindDir, getOtherPageDirs,
         getProjectCircuitDesignerDirs,
         getProjectCircuitDirs,
-        getProjectSiteDirs,
-        getServerDir} from "./utils/getDirs.js";
+        getProjectSiteDirs} from "./utils/getDirs.js";
 
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -48,7 +47,6 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
 // CLI
 (async () => {
     const dirs = [
-        getServerDir(),
         ...getProjectCircuitDirs(),
         ...getProjectCircuitDesignerDirs(),
         ...getProjectSiteDirs(),
@@ -104,9 +102,9 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
 
     // Launch test in each directory
     const dirsToUse = dirPaths.map((p) => [p, FindDir(dirs, p)] as const);
-    for (const [_, dir] of dirsToUse) {
+    for (const [p, dir] of dirsToUse) {
         // Ensure all environment variables are read
-        getEnv(`${dir}`, "");
+        getEnv(p, "");
 
         console.log();
         if (!dir) {
