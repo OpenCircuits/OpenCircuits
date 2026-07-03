@@ -20,10 +20,8 @@
     "test-e2e:digital": "npx playwright test --config ./playwright/config/digital.config.ts",
     "test-e2e:landing": "npx playwright test --config ./playwright/config/landing.config.ts",
     "test-e2e:ci": "npx playwright test --config ./playwright/config/ci.config.ts",
-    "lint": "node ./build/scripts/lint.js --cache",
-    "lint:all": "node ./build/scripts/lint.js --cache --all",
-    "lint:fix": "node ./build/scripts/lint.js --cache --fix",
-    "lint:fix:all": "node ./build/scripts/lint.js --cache --fix --all",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build",
     "protoc": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=. ./src/projects/shared/site/src/proto/Circuit.proto",
     "protoc-digital": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=. ./src/projects/shared/site/src/proto/Circuit.proto ./src/projects/digital/site/src/proto/DigitalCircuit.proto"
@@ -68,8 +66,7 @@
     "eslint-plugin-opencircuits": "file:./scripts/linting",
     "eslint-plugin-playwright": "^2.2.0",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-compiler": "^19.1.0-rc.2",
-    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-sonarjs": "^3.0.4",
     "eslint-plugin-unicorn": "^59.0.1",
     "eslint-webpack-plugin": "^5.0.2",
@@ -87,6 +84,8 @@
     "mini-css-extract-plugin": "^2.6.1",
     "open": "^8.4.0",
     "ora": "^6.1.2",
+    "oxlint": "^1.64.0",
+    "oxlint-tsgolint": "^0.22.1",
     "postcss": "^8.4.14",
     "postcss-loader": "^7.0.0",
     "postcss-preset-env": "^7.7.2",
@@ -120,9 +119,8 @@
       "last 1 safari version"
     ]
   },
-  "volta": {
-    "node": "18.20.0",
-    "yarn": "1.22.21"
+  "engines": {
+    "node": "^24"
   },
   "dependencies": {
     "benchmark": "^2.1.4"
