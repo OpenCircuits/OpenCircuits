@@ -1,9 +1,24 @@
-import {existsSync} from "node:fs";
+import {existsSync, readFileSync} from "node:fs";
 import path         from "node:path";
+import childProcess from "node:child_process";
 
 import dotEnv       from "dotenv";
 import dotEnvExpand from "dotenv-expand";
 
+
+function getGitCommit() {
+    return childProcess.execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
+}
+
+function getVersion(dir: string) {
+    const pkgPath = path.join(dir, "package.json");
+    if (!existsSync(pkgPath))
+        throw new Error(`No package.json found at ${pkgPath}`);
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
+    if (!pkg.version)
+        throw new Error(`No version found in ${pkgPath}`);
+    return "v" + pkg.version;
+}
 
 /**
  * Gets the current environment.
@@ -32,6 +47,8 @@ export default function getEnv(dir: string, publicRoot: string) {
                      {
                          // eslint-disable-next-line @typescript-eslint/naming-convention
                          NODE_ENV, PUBLIC_URL: publicRoot.slice(0, -1),
+                         OC_GIT_COMMIT: getGitCommit(),
+                         OC_VERSION: getVersion(dir),
                      }
                  );
 }
