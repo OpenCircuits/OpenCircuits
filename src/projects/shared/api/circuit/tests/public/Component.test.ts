@@ -249,7 +249,7 @@ describe("Component", () => {
     });
 
     describe("isNode", () => {
-        test("Component test component is not a node", () => {
+        test("Check component is not a node", () => {
             const [circuit, { PlaceAt }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0));
             expect(c.isNode()).toBeFalsy();
