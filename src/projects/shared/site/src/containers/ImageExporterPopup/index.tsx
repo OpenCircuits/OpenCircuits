@@ -197,7 +197,7 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
 type ImageExporterPreviewProps = {
     readonly extraHandlers?: ToolHandler[];
     readonly designer: CircuitDesigner;
-    readonly canvas: React.RefObject<HTMLCanvasElement | undefined>;
+    readonly canvas: React.RefObject<HTMLCanvasElement | null>;
     readonly width: number;
     readonly height: number;
     readonly useGrid: boolean;
