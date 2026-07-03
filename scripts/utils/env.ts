@@ -30,7 +30,6 @@ export default function getEnv(dir: string, publicRoot: string) {
                  .reduce(
                      (env, key) => ({ ...env, [key]: process.env[key] }),
                      {
-                         // eslint-disable-next-line @typescript-eslint/naming-convention
                          NODE_ENV, PUBLIC_URL: publicRoot.slice(0, -1),
                      }
                  );

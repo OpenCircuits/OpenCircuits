@@ -256,7 +256,7 @@ class ContextPathSet {
 }
 
 export class DigitalSim extends ObservableImpl<DigitalSimEvent> {
-    public static MAX_QUEUE_AHEAD = 10_000;
+    public static readonly MAX_QUEUE_AHEAD = 10_000;
 
     private readonly circuit: CircuitInternal;
     private readonly propagators: PropagatorsMap;

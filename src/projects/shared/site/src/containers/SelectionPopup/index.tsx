@@ -19,9 +19,9 @@ import {useEvent} from "shared/site/utils/hooks/useEvent";
 
 
 type Props = {
-    designer: CircuitDesigner;
-    docsUrlConfig: Record<string, string>;
-    children: React.ReactNode;
+    readonly designer: CircuitDesigner;
+    readonly docsUrlConfig: Record<string, string>;
+    readonly children: React.ReactNode;
 }
 export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => {
     const circuit = designer.circuit, viewport = designer.viewport;
@@ -137,8 +137,8 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
 
 
 type InfoDisplayProps = {
-    designer: CircuitDesigner;
-    docsUrlConfig: Record<string, string>;
+    readonly designer: CircuitDesigner;
+    readonly docsUrlConfig: Record<string, string>;
 }
 const InfoDisplay = ({ designer, docsUrlConfig }: InfoDisplayProps) => {
     const circuit = designer.circuit;

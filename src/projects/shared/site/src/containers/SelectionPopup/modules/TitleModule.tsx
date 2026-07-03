@@ -9,7 +9,7 @@ import {useSelectionProps}    from "./useSelectionProps";
 
 
 type Props = {
-    designer: CircuitDesigner;
+    readonly designer: CircuitDesigner;
 }
 export const TitleModule = ({ designer }: Props) => {
     const circuit = designer.circuit;

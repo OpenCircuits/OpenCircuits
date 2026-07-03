@@ -4,13 +4,13 @@ import "./index.scss";
 
 
 type Props = {
-    title: string;
-    isOpen: boolean;
-    close: () => void;
-    className?: string;
-    width?: number;
-    height?: number;
-    children: React.ReactNode;
+    readonly title: string;
+    readonly isOpen: boolean;
+    readonly close: () => void;
+    readonly className?: string;
+    readonly width?: number;
+    readonly height?: number;
+    readonly children: React.ReactNode;
 }
 export const Popup = ({ title, isOpen, close, className, width, height, children }: Props) => (
     <>

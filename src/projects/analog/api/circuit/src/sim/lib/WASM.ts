@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export type WASMModule = {
     _malloc: (length: number) => number;
     _free: (array: number) => void;

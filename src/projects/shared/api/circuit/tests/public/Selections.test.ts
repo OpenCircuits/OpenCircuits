@@ -4,8 +4,6 @@ import "tests/helpers/Extensions";
 
 import {V} from "Vector";
 
-import {Circuit, Component, Obj, Wire} from "shared/api/circuit/public";
-
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 import {Rect} from "math/Rect";
 

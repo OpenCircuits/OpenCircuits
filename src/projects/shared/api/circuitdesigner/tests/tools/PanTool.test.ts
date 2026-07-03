@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/api/circuit/tests/helpers/Extensions";
 
 import {V} from "Vector";

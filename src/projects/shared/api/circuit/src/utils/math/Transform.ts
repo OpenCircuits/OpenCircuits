@@ -82,7 +82,7 @@ export class Transform {
 
     public getRadius(): number {
         if (!this.radius)
-            this.radius = Math.sqrt(this.scale.x*this.scale.x + this.scale.y*this.scale.y) / 2;
+            this.radius = Math.hypot(this.scale.x, this.scale.y) / 2;
         return this.radius;
     }
 

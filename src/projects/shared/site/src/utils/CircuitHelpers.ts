@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import {CircuitDesigner, ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {setCurDesigner} from "./hooks/useDesigner";
 import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
@@ -31,7 +30,6 @@ const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
     // Helper factory function that returns a version of the CircuitHelpers method
     // except it throws if the current set of circuit helpers is undefined.
     function errIfUndefined<K extends keyof OverrideCircuitHelpers>(k: K) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         function callSafely<F extends (...args: any[]) => any>(func: F, ...args: Parameters<F>): ReturnType<F> {
             return func(...args);
         }

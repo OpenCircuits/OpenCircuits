@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from "react";
 
 import {HEADER_HEIGHT} from "shared/site/utils/Constants";
@@ -35,8 +34,8 @@ const MIN_IMG_SIZE = 50;
 const MAX_IMG_SIZE = 10_000;
 
 type Props = {
-    designer: CircuitDesigner;
-    extraHandlers?: ToolHandler[];
+    readonly designer: CircuitDesigner;
+    readonly extraHandlers?: ToolHandler[];
 }
 export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
     const { curPopup, circuitName } = useSharedSelector(
@@ -196,13 +195,13 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
 
 
 type ImageExporterPreviewProps = {
-    extraHandlers?: ToolHandler[];
-    designer: CircuitDesigner;
-    canvas: React.RefObject<HTMLCanvasElement | null>;
-    width: number;
-    height: number;
-    useGrid: boolean;
-    style: React.CSSProperties;
+    readonly extraHandlers?: ToolHandler[];
+    readonly designer: CircuitDesigner;
+    readonly canvas: React.RefObject<HTMLCanvasElement | null>;
+    readonly width: number;
+    readonly height: number;
+    readonly useGrid: boolean;
+    readonly style: React.CSSProperties;
 }
 const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, width, height,
                                        style, ...renderingOptions }: ImageExporterPreviewProps) => {

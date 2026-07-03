@@ -5,6 +5,7 @@ import {uuid} from "shared/api/circuit/schema/GUID";
 
 import {CircuitOp} from "./CircuitOps";
 
+
 // TODO: vet which arrays are useful here.  Potentially implement this as a class.
 // The undo/redo system will drop "oldProposed" entries, then add "local" entries.
 export interface LogEvent {

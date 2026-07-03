@@ -29,8 +29,8 @@ export async function LoadingScreen(
     const setProgress = (amount: number) => loadingBar.style.width = amount + "%";
 
     let errored = false;
-    let curPercent: number;
-    setProgress((curPercent = initialPercent));
+    let curPercent = initialPercent;
+    setProgress(curPercent);
 
     for (const [endPercent, label, fn] of segments) {
         setText(label);
@@ -76,7 +76,8 @@ export async function LoadingScreen(
             return;
         }
 
-        setProgress((curPercent = endPercent));
+        curPercent = endPercent;
+        setProgress(curPercent);
     }
 
     document.getElementById(id)!.style.display = "none";

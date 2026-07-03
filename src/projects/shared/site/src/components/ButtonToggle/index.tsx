@@ -5,17 +5,17 @@ import "./index.scss";
 
 
 type Props = {
-    className?: string;
+    readonly className?: string;
 
-    isOn: boolean;
-    height?: string;
-    disabled?: boolean;
+    readonly isOn: boolean;
+    readonly height?: string;
+    readonly disabled?: boolean;
 
-    children?: React.ReactNode;
+    readonly children?: React.ReactNode;
 
-    onChange?: () => void;
-    onFocus?: () => void;
-    onBlur?: () => void;
+    readonly onChange?: () => void;
+    readonly onFocus?: () => void;
+    readonly onBlur?: () => void;
 }
 export const ButtonToggle = ({ className, isOn, height, disabled, children, onChange, ...callbacks }: Props) => (
     <div className={`buttontoggle ${disabled ? "disabled" : ""} ${className ?? ""}`}

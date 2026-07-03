@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 /**
  * Performs a deep merge of objects and returns new object. Does not modify
  * objects (immutable) and merges arrays via concatenation.
@@ -7,9 +5,9 @@
  * @param objects Objects to merge.
  * @returns       New object with merged key/values.
  */
-export default function mergeDeep(...objects: Object[]): Object {
+export default function mergeDeep(...objects: object[]): object {
     const isObject = (
-        (obj: unknown): obj is Object =>
+        (obj: unknown): obj is object =>
             (obj && typeof obj === "object")
     );
 

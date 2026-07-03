@@ -3,9 +3,8 @@ import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/u
 
 
 type Props = {
-    circuit: DigitalCircuit;
+    readonly circuit: DigitalCircuit;
 }
-// eslint-disable-next-line arrow-body-style
 export const PauseButtonModule = ({ circuit }: Props) => {
     const [props, cs] = useSelectionProps(
         circuit,

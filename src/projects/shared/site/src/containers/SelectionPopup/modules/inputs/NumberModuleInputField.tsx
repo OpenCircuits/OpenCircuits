@@ -7,11 +7,11 @@ import {useCallback} from "react";
 
 
 type Props = SharedModuleInputFieldProps<number> & {
-    kind: "float" | "int";
-    step?: number;
-    min?: number;
-    max?: number;
-    transform?: [(v: number) => number, (v: number) => number];
+    readonly kind: "float" | "int";
+    readonly step?: number;
+    readonly min?: number;
+    readonly max?: number;
+    readonly transform?: [(v: number) => number, (v: number) => number];
 }
 export const NumberModuleInputField = ({
     kind, step, min, max, transform, placeholder, alt, props,

@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 
 import {SaveFile} from "./Exporter";
 
@@ -48,7 +48,7 @@ function SavePDF(canvas: HTMLCanvasElement, projectName: string, options: ImageE
     const pdf = new jsPDF("l", "px", [width, height]);
 
     // Get name
-    if (projectName.replace(/\s+/g, "") === "")
+    if (projectName.replaceAll(/\s+/g, "") === "")
         projectName = "Untitled Circuit";
 
     // Fill background

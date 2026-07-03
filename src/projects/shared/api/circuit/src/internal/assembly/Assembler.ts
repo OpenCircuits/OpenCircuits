@@ -5,6 +5,7 @@ import {CircuitInternal}   from "../impl/CircuitInternal";
 import {AssemblyCache} from "./AssemblyCache";
 import {RenderOptions} from "./RenderOptions";
 
+
 export interface AssemblerParams {
     circuit: CircuitInternal;
     cache: AssemblyCache;

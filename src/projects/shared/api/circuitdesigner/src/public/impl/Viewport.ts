@@ -224,8 +224,8 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             if (this.debugOptions.debugPrimBounds) {
                 const wireBounds = [...assembly.wirePrims.values()].flat().map(Bounds).filter(IsDefined);
                 const compBounds = [...assembly.componentPrims.values()].flat().map(Bounds).filter(IsDefined);
-                const portBounds = [...([...assembly.portPrims.values()]
-                    .map((m) => [...m.values()]))].flat(2).map(Bounds).filter(IsDefined);
+                const portBounds = ([...assembly.portPrims.values()]
+                    .map((m) => [...m.values()])).flat(2).map(Bounds).filter(IsDefined);
 
                 wireBounds.forEach((b) =>
                     DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#ff5555"));
@@ -237,8 +237,8 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             if (this.debugOptions.debugPrimOrientedBounds) {
                 const wireBounds = [...assembly.wirePrims.values()].flat().map(OrientedBounds).filter(IsDefined);
                 const compBounds = [...assembly.componentPrims.values()].flat().map(OrientedBounds).filter(IsDefined);
-                const portBounds = [...([...assembly.portPrims.values()]
-                    .map((m) => [...m.values()]))].flat(2).map(OrientedBounds).filter(IsDefined);
+                const portBounds = ([...assembly.portPrims.values()]
+                    .map((m) => [...m.values()])).flat(2).map(OrientedBounds).filter(IsDefined);
 
                 wireBounds.forEach((b) =>
                     DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#55ff55"));

@@ -9,8 +9,8 @@ import "./index.scss";
 
 
 type Props = {
-    img: string;
-    extraUtilities: Utility[];
+    readonly img: string;
+    readonly extraUtilities: Utility[];
 }
 export const Header = ({ img, extraUtilities }: Props) => (
     <header id="header">

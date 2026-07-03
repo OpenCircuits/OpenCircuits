@@ -1,6 +1,7 @@
 import {Graph}   from "math/Graph";
 import {Circuit} from "../public/Circuit";
 
+
 /**
  * This function converts the provided circuit to a graph where the nodes are components and edges are wires.
  * Both are represented by guids rather than object references.

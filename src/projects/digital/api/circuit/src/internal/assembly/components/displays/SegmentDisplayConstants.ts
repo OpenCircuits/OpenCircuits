@@ -1,6 +1,7 @@
 /* eslint-disable space-in-parens */
 import {V, Vector} from "Vector";
 
+
 export type SegmentType = "vertical" | "verticalft" | "verticalfb" |
                           "horizontal" | "horizontal0.5" |
                           "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" |

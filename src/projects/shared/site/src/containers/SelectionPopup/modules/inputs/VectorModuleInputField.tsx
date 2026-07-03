@@ -10,10 +10,10 @@ import {SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
 
 
 type Props = SharedModuleInputFieldProps<Vector> & {
-    kind: "float" | "int";
-    step?: Vector;
-    min?: Vector;
-    max?: Vector;
+    readonly kind: "float" | "int";
+    readonly step?: Vector;
+    readonly min?: Vector;
+    readonly max?: Vector;
 }
 export const VectorModuleInputField = ({
     kind, step, min, max, placeholder, alt, props, getAction, onSubmit, getCustomDisplayVal,

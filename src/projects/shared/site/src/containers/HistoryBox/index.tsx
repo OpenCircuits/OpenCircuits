@@ -49,8 +49,8 @@ const getOpInfo = (op: CircuitHistoryOp): OpInfo => {
 }
 
 type HistoryEntryProps = {
-    op: CircuitHistoryOp;
-    isRedo: boolean;
+    readonly op: CircuitHistoryOp;
+    readonly isRedo: boolean;
 }
 const HistoryEntry = ({ op, isRedo }: HistoryEntryProps) => {
     const [displayExtraInfo, setDisplayExtraInfo] = useState(true);
@@ -77,8 +77,8 @@ const HistoryEntry = ({ op, isRedo }: HistoryEntryProps) => {
 }
 
 type GroupActionEntryProps = {
-    a: CircuitHistoryEntry;
-    isRedo: boolean;
+    readonly a: CircuitHistoryEntry;
+    readonly isRedo: boolean;
 }
 const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
@@ -113,7 +113,7 @@ const GroupActionEntry = ({ a, isRedo }: GroupActionEntryProps) => {
 
 
 type Props = {
-    designer: CircuitDesigner;
+    readonly designer: CircuitDesigner;
 }
 export const HistoryBox = ({ designer }: Props) => {
     const { circuit, viewport } = designer;

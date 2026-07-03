@@ -27,7 +27,7 @@ const swappableComponents = [
 ] as const;
 
 type Props = {
-    circuit: Circuit;
+    readonly circuit: Circuit;
 }
 export const ReplaceComponentDropdownModule = ({ circuit }: Props) => {
     const [props] = useSelectionProps(

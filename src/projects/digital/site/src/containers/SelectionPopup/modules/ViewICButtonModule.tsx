@@ -5,7 +5,7 @@ import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/u
 
 
 type Props = {
-    circuit: Circuit;
+    readonly circuit: Circuit;
 }
 export const ViewICButtonModule = ({ circuit }: Props) => {
     const [props, ics] = useSelectionProps(
