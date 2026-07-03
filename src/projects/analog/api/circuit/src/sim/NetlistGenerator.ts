@@ -6,60 +6,49 @@ import {Netlist} from "./Netlist";
 type PathPart = Schema.Wire | Schema.Component | Schema.Port;
 type Path = Set<PathPart>;
 
-function GetAllPaths(start: Schema.Wire, circuit: CircuitInternal): Path[] {
+function GetAllPaths(circuit: CircuitInternal): Path[] {
     const paths = [] as Path[];
+    const visited = new Set<string>();
 
-    const outgoingQueue = [start] as PathPart[];
-    const visited = new Set<PathPart>();
+    // We must visit every wire and port to ensure all isolated nets are found
+    const allParts = [
+        ...circuit.getWires(),
+        ...[...circuit.getComps()].flatMap(id => [...circuit.getPortsForComponent(id).unwrap()])
+    ];
 
-    while (outgoingQueue.length > 0) {
-        const q = outgoingQueue.shift()!;
-        if (visited.has(q))
-            continue;
-
+    for (const startId of allParts) {
+        if (visited.has(startId)) continue;
+        
         const path = new Set<PathPart>();
-        const queue = [q] as PathPart[];
+        const queue = [startId];
 
         while (queue.length > 0) {
-            const current = queue.shift()!;
+            const id = queue.shift()!;
+            if (visited.has(id))
+                continue;
 
-            visited.add(current);
-            path.add(current);
+            visited.add(id);
 
-            // Get outgoing connections
-            let outgoingConnected: PathPart[] = [];
-            let outgoingDisconnected: PathPart[] = [];
-            
-            if (current.baseKind === "Port") {
-                outgoingConnected = [...circuit.getWiresForPort(current.id).unwrap()].map(id => circuit.getWireByID(id).unwrap());
-                // Get all other ports on the same component (this logic connects disjoint ports for paths)
-                outgoingDisconnected = [...circuit.getPortsForComponent(current.parent).unwrap()]
-                    .filter(pid => pid !== current.id)
-                    .map(pid => circuit.getPortByID(pid).unwrap());
-            } else if (current.baseKind === "Wire") {
-                const p1 = circuit.getPortByID(current.p1).unwrap();
-                const p2 = circuit.getPortByID(current.p2).unwrap();
-
-                const comp1 = circuit.getCompByID(p1.parent).unwrap();
-                if (comp1.kind === "AnalogNode")
-                    outgoingConnected.push(comp1);
-                else
-                    outgoingConnected.push(p1);
-
-                const comp2 = circuit.getCompByID(p2.parent).unwrap();
-                if (comp2.kind === "AnalogNode")
-                    outgoingConnected.push(comp2);
-                else
-                    outgoingConnected.push(p2);
-            } else if (current.baseKind === "Component" && current.kind === "AnalogNode") {
-                const ports = [...circuit.getPortsForComponent(current.id).unwrap()].map(id => circuit.getPortByID(id).unwrap());
-                outgoingConnected = ports.flatMap(p => [...circuit.getWiresForPort(p.id).unwrap()].map(id => circuit.getWireByID(id).unwrap()));
+            if (circuit.hasWire(id)) {
+                const wire = circuit.getWireByID(id).unwrap();
+                path.add(wire);
+                queue.push(wire.p1, wire.p2);
+            } else if (circuit.hasPort(id)) {
+                const port = circuit.getPortByID(id).unwrap();
+                path.add(port);
+                queue.push(...circuit.getWiresForPort(id).unwrap());
+                
+                const [comp, info] = circuit.getComponentAndInfoById(port.parent).unwrap();
+                if (info.isNode)
+                    queue.push(comp.id);
+            } else if (circuit.hasComp(id)) {
+                const [comp, info] = circuit.getComponentAndInfoById(id).unwrap();
+                if (info.isNode) {
+                    path.add(comp);
+                    queue.push(...circuit.getPortsForComponent(id).unwrap());
+                }
             }
-
-            outgoingQueue.push(...outgoingDisconnected.filter((w) => !visited.has(w)));
-            queue.push(...outgoingConnected.filter((w) => !visited.has(w)));
         }
-
         paths.push(path);
     }
 
@@ -108,7 +97,7 @@ export function CircuitToNetlist(title: string, analysis: AnalysisInfo,
     if (wires.length === 0)
         throw new Error("Cannot convert empty circuit to a Netlist!");
 
-    const paths = GetAllPaths(wires[0], circuit);
+    const paths = GetAllPaths(circuit);
 
     const fullPathIDs = paths.map((_, i) => i+1);
     paths.forEach((path, i) => {
@@ -136,13 +125,13 @@ export function CircuitToNetlist(title: string, analysis: AnalysisInfo,
     const netlist: Netlist = {
         title,
         elements: elements.map((e) => ({
-            symbol: KindToNetlistSymbol[e.kind] as any,
+            symbol: KindToNetlistSymbol[e.kind],
             uid: elementUIDs.get(e)!.toString(),
             node1: elementConnections.get(e)![0].toString(),
             node2: elementConnections.get(e)![1].toString(),
             values: GetNetlistValues(e),
         })),
-        analyses: [analysis as any],
+        analyses: [analysis],
     };
 
     return [
