@@ -6,7 +6,7 @@ import {DragDropHandlers} from "./DragDropHandlers";
 
 
 export const useDrop = (
-    ref: React.RefObject<HTMLElement | undefined>,
+    ref: React.RefObject<HTMLElement | null>,
     onDrop: (pos: Vector, ...data: unknown[]) => void,
     deps: React.DependencyList = [],
 ) => {

@@ -437,17 +437,6 @@ export default defineConfig({
         "default": "array-simple"
       }
     ],
-    "typescript/no-restricted-types": [
-      "error",
-      {
-        "types": {
-          "null": {
-            "message": "Use undefined instead",
-            "fixWith": "undefined"
-          }
-        }
-      }
-    ],
     "typescript/no-inferrable-types": "error",
     "typescript/consistent-type-assertions": "error",
     "typescript/no-var-requires": "error",
