@@ -1,10 +1,10 @@
 /**
  * @jest-environment node
  */
-import { CreateWASMInstance } from "../../../../site/src/sim/lib/WASM";
-import { NGSpiceLib } from "../../../../site/src/sim/lib/NGSpiceLib";
+import { CreateWASMInstance } from "analog/api/circuit/sim/lib/WASM";
+import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
 
-const initNGSpice = require("./lib/ngspice_node.js");
+import initNGSpice from "./lib/ngspice_node.js";
 
 describe("NGSpice Node WASM", () => {
     it("should load, initialize, and run a simple netlist", async () => {

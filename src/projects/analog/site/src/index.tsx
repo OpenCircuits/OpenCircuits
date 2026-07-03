@@ -68,9 +68,9 @@ import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
 import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
 
 import NGSpice from "./sim/lib/ngspice.wasm";
-import {NGSpiceLib} from "./sim/lib/NGSpiceLib";
+import {NGSpiceLib} from "analog/api/circuit/sim/lib/NGSpiceLib";
 import {AnalogSimImpl, MakeAnalogSim} from "./sim/AnalogSim";
-import {CreateWASMInstance} from "./sim/lib/WASM";
+import {CreateWASMInstance} from "analog/api/circuit/sim/lib/WASM";
 
 
 async function Init(): Promise<void> {

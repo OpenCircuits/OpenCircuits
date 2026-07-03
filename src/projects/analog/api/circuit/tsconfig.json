@@ -11,5 +11,5 @@
             "tests/helpers/*":        ["./tests/helpers/*"],
         },
     },
-    "include": [".", "../../site/src/sim/AnalogSim.ts", "../../site/src/sim/Netlist.ts"],
+    "include": ["."],
 }
