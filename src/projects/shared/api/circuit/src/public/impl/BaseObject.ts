@@ -5,10 +5,11 @@ import {GUID, Prop} from "shared/api/circuit/internal";
 
 import {BaseObject} from "../BaseObject";
 
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {CircuitContext} from "./CircuitContext";
+import {CircuitAPITypes} from "./Types";
 
 
-export class BaseObjectImpl<T extends CircuitTypes> implements BaseObject {
+export class BaseObjectImpl<T extends CircuitAPITypes> implements BaseObject {
     protected readonly ctx: CircuitContext<T>;
 
     public readonly id: GUID;

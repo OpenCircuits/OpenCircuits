@@ -5,10 +5,10 @@ import {Signal} from "digital/api/circuit/schema/Signal";
 
 import {DigitalPort} from "../DigitalPort";
 
-import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
+import {DigitalCircuitContext, DigitalAPITypes} from "./DigitalCircuitContext";
 
 
-export class DigitalPortImpl extends PortImpl<DigitalTypes> implements DigitalPort {
+export class DigitalPortImpl extends PortImpl<DigitalAPITypes> implements DigitalPort {
     protected override readonly ctx: DigitalCircuitContext;
 
     public constructor(ctx: DigitalCircuitContext, id: GUID, icId?: GUID) {

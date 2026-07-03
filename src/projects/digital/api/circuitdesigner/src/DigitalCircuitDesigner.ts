@@ -1,5 +1,5 @@
 import {CreateCircuit} from "digital/api/circuit/public";
-import {DigitalTypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
+import {DigitalAPITypes} from "digital/api/circuit/public/impl/DigitalCircuitContext";
 
 import {CircuitDesigner, ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
 import {CircuitDesignerImpl} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
@@ -9,10 +9,10 @@ import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRende
 import {SVGs} from "./rendering/svgs";
 
 
-export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalTypes> {}
+export interface DigitalCircuitDesigner extends CircuitDesigner<DigitalAPITypes> {}
 
 export function CreateDesigner(
-    toolConfig: ToolConfig<DigitalTypes>,
+    toolConfig: ToolConfig<DigitalAPITypes>,
     renderers: ToolRenderer[],
     dragTime?: number,
     circuit = CreateCircuit(),

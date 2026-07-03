@@ -16,6 +16,7 @@ import {Tool, ToolEvent}   from "shared/api/circuitdesigner/tools/Tool";
 
 export type ICEdge = "horizontal" | "vertical" | "none";
 
+// TODO: This should be moved to the `shared` layer at some point since ICs are a generic concept.
 export class ICResizeTool extends ObservableImpl<ToolEvent> implements Tool {
     private readonly icId: GUID;
     private readonly icInstanceId: GUID;

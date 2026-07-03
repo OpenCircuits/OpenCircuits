@@ -1,12 +1,14 @@
 import {GUID} from "shared/api/circuit/public";
-
-import {DigitalCircuitContext, DigitalTypes} from "./DigitalCircuitContext";
-import {ObjContainerImpl} from "shared/api/circuit/public/impl/ObjContainer";
-import {DigitalObjContainer, ReadonlySimState} from "../DigitalCircuit";
 import {FilterObj} from "shared/api/circuit/utils/Functions";
+import {ObjContainerImpl} from "shared/api/circuit/public/impl/ObjContainer";
+
+import {DigitalObjContainer} from "../DigitalCircuit";
+import {ReadonlySimState}    from "../DigitalSim";
+
+import {DigitalAPITypes, DigitalCircuitContext} from "./DigitalCircuitContext";
 
 
-export class DigitalObjContainerImpl extends ObjContainerImpl<DigitalTypes> implements DigitalObjContainer {
+export class DigitalObjContainerImpl extends ObjContainerImpl<DigitalAPITypes> implements DigitalObjContainer {
     protected override readonly ctx: DigitalCircuitContext;
 
     public constructor(ctx: DigitalCircuitContext, objs: Set<GUID>, icId?: GUID) {

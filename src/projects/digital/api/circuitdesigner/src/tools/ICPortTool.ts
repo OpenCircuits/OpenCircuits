@@ -14,6 +14,7 @@ import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEv
 import {Tool, ToolEvent}   from "shared/api/circuitdesigner/tools/Tool";
 
 
+// TODO: This should be moved to the `shared` layer at some point since ICs are a generic concept.
 export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
     private readonly icId: GUID;
     private readonly icInstanceId: GUID;

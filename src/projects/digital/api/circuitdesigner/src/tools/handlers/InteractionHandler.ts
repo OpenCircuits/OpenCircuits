@@ -7,13 +7,13 @@ import {ToolHandler, ToolHandlerResponse} from "shared/api/circuitdesigner/tools
 
 import {Signal}           from "digital/api/circuit/schema/Signal";
 import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
-import {DigitalTypes}     from "digital/api/circuit/public/impl/DigitalCircuitContext";
+import {DigitalAPITypes}     from "digital/api/circuit/public/impl/DigitalCircuitContext";
 
 
-function isPressableComponent(obj: DigitalTypes["Obj"] | undefined): obj is DigitalComponent {
+function isPressableComponent(obj: DigitalAPITypes["Obj"] | undefined): obj is DigitalComponent {
     return (!!obj && obj.kind === "Button");
 }
-function isClickableComponent(obj: DigitalTypes["Obj"] | undefined): obj is DigitalComponent {
+function isClickableComponent(obj: DigitalAPITypes["Obj"] | undefined): obj is DigitalComponent {
     return (!!obj && obj.kind === "Switch");
 }
 function isWithinInteractableBounds(obj: DigitalComponent, pos: Vector): boolean {
@@ -27,7 +27,7 @@ function isWithinInteractableBounds(obj: DigitalComponent, pos: Vector): boolean
     }
 }
 
-export const InteractionHandler: ToolHandler<DigitalTypes> = {
+export const InteractionHandler: ToolHandler<DigitalAPITypes> = {
     name: "InteractionHandler",
 
     canActivateWhenLocked: true,

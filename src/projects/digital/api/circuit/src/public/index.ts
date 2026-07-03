@@ -7,6 +7,7 @@ export * from "./DigitalComponent";
 export * from "./DigitalComponentInfo";
 export * from "./DigitalPort";
 export * from "./DigitalWire";
+export * from "./DigitalSim";
 export * from "./Utilities";
 
 export function CreateCircuit(id = uuid()) {

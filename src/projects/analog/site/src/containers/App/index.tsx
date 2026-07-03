@@ -56,7 +56,7 @@ export const App = () => {
                         config={itemNavConfig} />
                     <HistoryBox designer={designer} />
 
-                    <SimButtons />
+                    <SimButtons circuit={designer.circuit} />
 
                     <SelectionPopup designer={designer} docsUrlConfig={docsConfig}>
                         <PropertyModule designer={designer} propInfo={AnalogPropInfo} />
