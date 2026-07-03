@@ -73,11 +73,50 @@
     }
 }
 
-#login-popup-google-signin {
+.login-popup-google-signin {
     display: flex;
     flex-direction: column;
     align-items: center;
 
     margin-top: 20px;
     margin-bottom: 20px;
+
+    .google-sign-in-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        width: 100%;
+        max-width: 240px;
+        padding: 8px 16px;
+        margin: 0 auto;
+
+        background-color: #fff;
+        color: #757575;
+        font-family: Roboto, arial, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+        cursor: pointer;
+        transition: background-color 0.2s, box-shadow 0.2s;
+
+        &:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+        }
+
+        &:active {
+            background-color: #e8eaed;
+        }
+
+        .google-icon {
+            width: 18px;
+            height: 18px;
+        }
+    }
 }

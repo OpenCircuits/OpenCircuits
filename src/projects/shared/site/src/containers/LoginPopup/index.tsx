@@ -27,6 +27,7 @@ export const LoginPopup = () => {
     return (
         <Popup title="Login"
                className="login__popup"
+               width={40}
                isOpen={(curPopup === "login")}
                close={() => dispatch(CloseHeaderPopups())}>
             {GetAuthMethods().map((s) => (
