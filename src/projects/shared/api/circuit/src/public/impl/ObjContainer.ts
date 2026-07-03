@@ -49,7 +49,7 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
         ];
         // If there aren't any components or wires, use port positions instead
         const pts = (compAndWirePts.length === 0
-            ? [...this.ports.map((p) => p.targetPos)]
+            ? this.ports.map((p) => p.targetPos)
             : compAndWirePts);
 
         return CalculateMidpoint(pts);

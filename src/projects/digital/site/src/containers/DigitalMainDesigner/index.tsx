@@ -7,7 +7,7 @@ import {SmartPlace, SmartPlaceOptions} from "digital/site/utils/SmartPlace";
 import "./index.scss";
 
 
-export const DigitalMainDesigner = ({ circuit }: {circuit: DigitalCircuit}) => (
+export const DigitalMainDesigner = ({ circuit }: {readonly circuit: DigitalCircuit}) => (
     <MainDesigner
         otherPlace={(pos, itemKind, num, smartPlaceOptions) => {
             const smartPlaceOption = Array.isArray(smartPlaceOptions) ? smartPlaceOptions.at(0) : undefined;

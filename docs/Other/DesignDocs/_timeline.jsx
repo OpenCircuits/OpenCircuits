@@ -2,26 +2,25 @@ import React from 'react';
 
 
 
-function hash(str, digits) {
-    digits = digits || 8;
+function hash(str, digits = 8) {
     const m = Math.pow(10, digits+1) - 1;
     const phi = Math.pow(10, digits) / 2 - 1;
     let n = 0;
-    for (var i = 0; i < str.length; i++) {
-        n = (n + phi * str.charCodeAt(i)) % m;
+    for (let i = 0; i < str.length; i++) {
+        n = (n + phi * str.codePointAt(i)) % m;
     }
     return n;
 }
 
 const randomColor = (() => {
     const Rand = (seed) => {
-        let _seed = seed % 2147483647;
-        if (_seed <= 0) _seed += 2147483646;
+        let _seed = seed % 2_147_483_647;
+        if (_seed <= 0) _seed += 2_147_483_646;
 
         const nextFloat = () => {
-            const next = _seed * 16807 % 2147483647;
+            const next = _seed * 16_807 % 2_147_483_647;
             _seed = next;
-            return (next - 1) / 2147483646
+            return (next - 1) / 2_147_483_646
         };
 
         return {
@@ -32,10 +31,10 @@ const randomColor = (() => {
     };
 
     return (hash) => {
-        const r = Rand(hash ?? Math.floor(Math.random() * 2147483647));
-        var h = r.randInt(0, 360);
-        var s = r.randInt(42, 98);
-        var l = r.randInt(40, 90);
+        const r = Rand(hash ?? Math.floor(Math.random() * 2_147_483_647));
+        const h = r.randInt(0, 360);
+        const s = r.randInt(42, 98);
+        const l = r.randInt(40, 90);
         return `hsl(${h},${s}%,${l}%)`;
     };
 })();
@@ -83,7 +82,7 @@ export default function Timeline({start, milestones, end}) {
                 const y = ((i % 2 === 0) ? (TICK_H + 5) : (-(TICK_H + 5) - BOX_H));
 
                 return (
-                    <a href={`#milestone-${i+1}`} style={{ color: "inherit" }}>
+                    <a href={`#milestone-${i+1}`} style={{ color: "inherit" }} key={i}>
                         <div style={{ position: "absolute",
                                     display: "flex", flexDirection: "column",
                                     left: `${x - BOX_W/2}%`, top: `calc(50% + ${y}px)`,

@@ -3,7 +3,7 @@ import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/u
 
 
 type Props = {
-    circuit: DigitalCircuit;
+    readonly circuit: DigitalCircuit;
 }
 export const ClearButtonModule = ({ circuit }: Props) => {
     const [props, cs] = useSelectionProps(

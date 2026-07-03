@@ -27,8 +27,8 @@ import "./index.scss";
 
 
 type Props = {
-    circuit: DigitalCircuit;
-    viewport: {camera: Camera};
+    readonly circuit: DigitalCircuit;
+    readonly viewport: {camera: Camera};
 }
 export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) => {
     const { curPopup } = useSharedSelector(
@@ -123,11 +123,11 @@ export const ExprToCircuitPopup = (({ circuit, viewport: { camera } }: Props) =>
                                 ops:                   customOps,
                                 label, format, isIC,
                             });
-                            if (!result.ok) {
+                            if (result.ok) {
+                                reset();
+                            } else {
                                 setErrorMessage(result.error.errors.map((err) => err.message).join("\n"));
                                 console.error(result.error);
-                            } else {
-                                reset();
                             }
                         }}>
                     Generate

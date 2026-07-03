@@ -1,12 +1,8 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
 import {Rect} from "math/Rect";
 
 import {V} from "Vector";
-import {DefaultRenderOptions} from "shared/api/circuit/internal/assembly/RenderOptions";
-
-import {Circuit, Obj} from "shared/api/circuit/public";
 
 import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
 

@@ -6,6 +6,7 @@ import type {Port, ReadonlyPort} from "./Port";
 import type {ReadonlyWire, Wire} from "./Wire";
 import type {PortConfig} from "../internal/impl/ObjInfo";
 
+
 export type {PortConfig} from "../internal/impl/ObjInfo";
 
 

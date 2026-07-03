@@ -83,7 +83,7 @@ export const useAdjustableElement = (initialRect: RectProps, bounds: Rect,
     newRect.clamp(bounds);
 
     const area = GetArea(V(mousePos.x, h - mousePos.y));
-    const cursor = (!area) ? (undefined) : ((area === "center") ? ("grab") : (`${area}-resize`));
+    const cursor = (area) ? ((area === "center") ? ("grab") : (`${area}-resize`)) : (undefined);
 
     return {
         cursor,

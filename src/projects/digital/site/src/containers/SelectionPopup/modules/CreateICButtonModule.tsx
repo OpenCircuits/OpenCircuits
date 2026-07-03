@@ -5,6 +5,7 @@ import {useState} from "react";
 import {Circuit, Component} from "shared/api/circuit/public";
 import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
+
 // No error message for Valid (which is set to 0)
 const errorMessages: Record<Exclude<ICValidationStatus, 0>, string> = {
     [ICValidationStatus.NoOutput]:                "Selection must contain an output",
@@ -15,7 +16,7 @@ const errorMessages: Record<Exclude<ICValidationStatus, 0>, string> = {
     [ICValidationStatus.Empty]:                   "Selection must contain functional components",
 }
 type Props = {
-    circuit: Circuit;
+    readonly circuit: Circuit;
 }
 export const CreateICButtonModule = ({ circuit }: Props) => {
     const dispatch = useDigitalDispatch();
@@ -33,10 +34,10 @@ export const CreateICButtonModule = ({ circuit }: Props) => {
         return;
 
     const open = () => {
-        if (icValidationStatus !== ICValidationStatus.Valid)
-            setShowError(true);
-        else
+        if (icValidationStatus === ICValidationStatus.Valid)
             dispatch(OpenICDesigner(props["ids"]));
+        else
+            setShowError(true);
     }
 
     return (

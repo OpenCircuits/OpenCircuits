@@ -32,7 +32,7 @@ function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPo
 
 
 type Props = {
-    otherPlace?: (pos: Vector, itemKind: string, num: number, ...otherData: unknown[]) => boolean;
+    readonly otherPlace?: (pos: Vector, itemKind: string, num: number, ...otherData: unknown[]) => boolean;
 }
 export const MainDesigner = ({ otherPlace }: Props) => {
     const designer = useCurDesigner();

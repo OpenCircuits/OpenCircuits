@@ -1,8 +1,5 @@
 import {MultiError} from "./MultiError";
 
-//
-// Result
-//
 
 export type Result<T = void, E = MultiError> = ResultVariants<T, E> & RInterface<T, E>;
 

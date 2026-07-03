@@ -24,7 +24,7 @@ export const PasteHandler = (deserialize: (str: string) => Circuit): ToolHandler
 
     onEvent: (ev, { circuit }) => {
         // Activate when paste event is fired
-        if (!(ev.type === "paste"))
+        if (ev.type !== "paste")
             return ToolHandlerResponse.PASS;
 
         const clipboardData = ev.ev.clipboardData;

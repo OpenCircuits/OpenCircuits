@@ -13,11 +13,11 @@ import "./index.scss";
 
 
 type ShortcutProps = {
-    os: ReturnType<typeof GetOS>;
-    label: string;
-    pre?: string;
-    keys: string[];
-    mod?: boolean;
+    readonly os: ReturnType<typeof GetOS>;
+    readonly label: string;
+    readonly pre?: string;
+    readonly keys: string[];
+    readonly mod?: boolean;
 }
 const Shortcut = ({ os, label, pre, keys, mod }: ShortcutProps) => (
     <tr>
@@ -50,7 +50,7 @@ export const KeyboardShortcutsPopup = () => {
                close={() => dispatch(CloseHeaderPopups())}>
             <div className="keyboardshortcuts__popup__toggle__container">
                 <button type="button" name="win"
-                        className={os !== "mac" ? "selected" : ""}
+                        className={os === "mac" ? "" : "selected"}
                         onClick={() => setState({ os: "win" })}>Windows / ChromeOS Shortcuts</button>
 
                 <button type="button" name="mac"

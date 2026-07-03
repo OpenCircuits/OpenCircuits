@@ -50,6 +50,7 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
             testTitle += " [none]";
 
         // The loop is repeated because the activation needs to happen within the test
+        // eslint-disable-next-line jest/valid-title -- testTitle is a string but the rule doesn't recognize it
         test(testTitle, () => {
             for (const [index, input] of inputs.entries())
                 input[1].setSimState([num & (2**index) ? Signal.On : Signal.Off]);
@@ -73,7 +74,7 @@ function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: Dig
         throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
                         2 ** inputs.length + ")");
 
-    test("Test all states", () => {
+    test("All states", () => {
         for (let num = 0; num < 2**inputs.length; num++) {
             for (const [index, input] of inputs.entries())
                 input[1].setSimState([num & (2**index) ? Signal.On : Signal.Off]);

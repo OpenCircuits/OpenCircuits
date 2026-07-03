@@ -18,7 +18,6 @@ import {CloseContextMenu, OpenContextMenu} from "shared/site/state/ContextMenu";
 import "./index.scss";
 import {CircuitHelpers} from "shared/site/utils/CircuitHelpers";
 import {CalculateMidpoint, Clamp} from "math/MathUtils";
-import {HEADER_HEIGHT} from "shared/site/utils/Constants";
 
 
 function isClipboardSupported(type: "read" | "write"): boolean {
@@ -28,7 +27,7 @@ function isClipboardSupported(type: "read" | "write"): boolean {
 }
 
 type Props = {
-    designer: CircuitDesigner;
+    readonly designer: CircuitDesigner;
 }
 export const ContextMenu = ({ designer }: Props) => {
     const circuit = designer.circuit;

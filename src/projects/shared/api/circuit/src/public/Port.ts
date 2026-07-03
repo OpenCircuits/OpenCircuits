@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 import type {Vector} from "Vector";
 
 import type {BaseObject, ReadonlyBaseObject}      from "./BaseObject";

@@ -15,7 +15,7 @@ import "./index.scss";
 
 const MIN_SPEED = 0.1, MAX_SPEED = 1000;
 
-export const SimControls = ({ circuit }: { circuit: DigitalCircuit }) => {
+export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isPaused, setIsPaused] = useState(circuit.sim.isPaused);
     const [curSpeed, setCurSpeed] = useState(1000 / circuit.sim.propagationTime);

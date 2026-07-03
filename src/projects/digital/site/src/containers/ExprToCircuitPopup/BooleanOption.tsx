@@ -6,10 +6,10 @@ import "./index.scss";
 
 
 type Props = {
-    isDisplayed: boolean;
-    option: boolean;
-    setOption: React.Dispatch<React.SetStateAction<boolean>>;
-    text: string;
+    readonly isDisplayed: boolean;
+    readonly option: boolean;
+    readonly setOption: React.Dispatch<React.SetStateAction<boolean>>;
+    readonly text: string;
 }
 export const BooleanOption = ({ isDisplayed, option, setOption, text }: Props) => (
     isDisplayed && (<>

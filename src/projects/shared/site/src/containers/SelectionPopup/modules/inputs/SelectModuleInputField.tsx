@@ -4,8 +4,8 @@ import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./Modul
 
 
 type Props<T extends string|number> = SharedModuleInputFieldProps<T> & {
-    kind: (T extends string ? "string[]" : "number[]");
-    options: Array<readonly [string, T]>;
+    readonly kind: (T extends string ? "string[]" : "number[]");
+    readonly options: Array<readonly [string, T]>;
 }
 export const SelectModuleInputField = <T extends number|string>({
     kind, options, placeholder, ...props

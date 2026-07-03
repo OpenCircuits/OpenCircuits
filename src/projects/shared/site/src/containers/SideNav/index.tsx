@@ -26,7 +26,7 @@ function LoadExampleCircuit(data: BackendCircuitMetadata): Promise<string> {
 }
 
 type Props = {
-    exampleCircuits: BackendCircuitMetadata[];
+    readonly exampleCircuits: BackendCircuitMetadata[];
 }
 export const SideNav = ({ exampleCircuits }: Props) => {
     const designer = useCurDesigner();
@@ -129,7 +129,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
                 )}
                 </div>
                 <div className="sidenav__content__footer">
-                    A program made with love by <a href="http://leonmontealeg.re/" target="_blank"
+                    A program made with love by <a href="https://leonmontealeg.re/" target="_blank"
                                                    rel="noopener noreferrer">Leon Montealegre </a>
                     and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md"
                                      target="_blank" rel="noopener noreferrer">team</a>

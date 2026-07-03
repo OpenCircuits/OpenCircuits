@@ -14,7 +14,7 @@ import "./index.scss";
 
 
 type Props = {
-    extraUtilities: Utility[];
+    readonly extraUtilities: Utility[];
 }
 export const HeaderRight = ({ extraUtilities }: Props) => {
     const [isHidden, setHidden] = useState(true);
