@@ -53,10 +53,6 @@ export const TutorialDropdown = () => {
                 <img src={userGuideIcon} height="100%" alt="Read our User Guide" />
                 <span>OpenCircuits User Guide</span>
             </div>
-            <div className="disabled">
-                <img src={helpCenterIcon} height="100%" alt="Check out our Help Center" />
-                <span>Help Center</span>
-            </div>
             <div role="button" tabIndex={0}
                  onClick={() => {
                     dispatch(CloseHeaderMenus());
@@ -64,6 +60,14 @@ export const TutorialDropdown = () => {
                 }}>
                 <img src={keyboardIcon} height="100%" alt="See our Keyboard Shortcuts" />
                 <span>Keyboard Shortcuts</span>
+            </div>
+            <div role="button" tabIndex={0}
+                 onClick={() => {
+                    dispatch(CloseHeaderMenus());
+                    dispatch(OpenHeaderPopup("changelog"));
+                }}>
+                <img src={helpCenterIcon} height="100%" alt="View Changelog" />
+                <span>Changelog</span>
             </div>
         </Dropdown>
     );
