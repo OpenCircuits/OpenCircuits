@@ -1,7 +1,6 @@
-import {Overlay} from "../Overlay";
+import { Overlay } from "../Overlay";
 
 import "./index.scss";
-
 
 type Props = {
     readonly title: string;
@@ -11,17 +10,19 @@ type Props = {
     readonly width?: number;
     readonly height?: number;
     readonly children: React.ReactNode;
-}
+};
 export const Popup = ({ title, isOpen, close, className, width, height, children }: Props) => (
     <>
         <Overlay isOpen={isOpen} close={close} />
 
-        <div className={"popup " + (className ?? "")}
-             style={{
-                display: (isOpen ? "initial" : "none"),
-                width:   `${width}%`,
-                height:  `${height}%`,
-             }}>
+        <div
+            className={"popup " + (className ?? "")}
+            style={{
+                display: isOpen ? "initial" : "none",
+                width: `${width}%`,
+                height: `${height}%`,
+            }}
+        >
             <h1>{title}</h1>
             <hr />
             {children}

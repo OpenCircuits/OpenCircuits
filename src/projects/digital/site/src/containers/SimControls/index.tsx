@@ -1,44 +1,44 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
-import {Clamp} from "math/MathUtils";
-import {InputField, NumberInputField} from "shared/site/components/InputField";
+import { Clamp } from "math/MathUtils";
+import { InputField, NumberInputField } from "shared/site/components/InputField";
 
-import {DigitalCircuit} from "digital/api/circuit/public";
+import { DigitalCircuit } from "digital/api/circuit/public";
 
-import pauseIcon    from "./pause.svg";
-import resumeIcon   from "./resume.svg";
-import stepIcon     from "./step.svg";
+import pauseIcon from "./pause.svg";
+import resumeIcon from "./resume.svg";
+import stepIcon from "./step.svg";
 import controlsIcon from "./controls.svg";
 
 import "./index.scss";
 
-
-const MIN_SPEED = 0.1, MAX_SPEED = 1000;
+const MIN_SPEED = 0.1,
+    MAX_SPEED = 1000;
 
 export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isPaused, setIsPaused] = useState(circuit.sim.isPaused);
     const [curSpeed, setCurSpeed] = useState(1000 / circuit.sim.propagationTime);
 
-    useEffect(() =>
-        circuit.sim.subscribe((ev) => {
-            if (ev.type === "pause")
-                setIsPaused(true);
-            if (ev.type === "resume")
-                setIsPaused(false);
-            if (ev.type === "propagationTimeChanged")
-                setCurSpeed(1000 / ev.newTime);
-        }), [circuit, setIsPaused, setCurSpeed]);
+    useEffect(
+        () =>
+            circuit.sim.subscribe((ev) => {
+                if (ev.type === "pause") setIsPaused(true);
+                if (ev.type === "resume") setIsPaused(false);
+                if (ev.type === "propagationTimeChanged") setCurSpeed(1000 / ev.newTime);
+            }),
+        [circuit, setIsPaused, setCurSpeed],
+    );
 
     const updateSpeed = (newSpeed: number) => {
         circuit.sim.propagationTime = 1000 / Clamp(newSpeed, 0.1, 1000);
-    }
+    };
     // Slider is in log-space so that it's easier to control lower values.
     const updateSliderSpeed = (val: number) => {
         updateSpeed(Math.exp(Math.log(MIN_SPEED) + (Math.log(MAX_SPEED) - Math.log(MIN_SPEED)) * val));
-    }
+    };
 
-    const speed = (curSpeed > 10 ? Math.round(curSpeed) : curSpeed.toFixed(1));
+    const speed = curSpeed > 10 ? Math.round(curSpeed) : curSpeed.toFixed(1);
     const sliderVal = (Math.log(curSpeed) - Math.log(MIN_SPEED)) / (Math.log(MAX_SPEED) - Math.log(MIN_SPEED));
 
     return (
@@ -59,13 +59,30 @@ export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) =
                 <div className="simcontrols__area-separator"></div>
                 <div className="simcontrols__area__slider">
                     <span>SPEED</span>
-                    <InputField type="range" min={0} max={1} step={0.01} value={sliderVal} onChange={(ev) => updateSliderSpeed(ev.target.valueAsNumber)} />
-                    <NumberInputField value={speed} min={MIN_SPEED} max={MAX_SPEED} onChange={(ev) => updateSpeed(ev.target.valueAsNumber)} />
+                    <InputField
+                        type="range"
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        value={sliderVal}
+                        onChange={(ev) => updateSliderSpeed(ev.target.valueAsNumber)}
+                    />
+                    <NumberInputField
+                        value={speed}
+                        min={MIN_SPEED}
+                        max={MAX_SPEED}
+                        onChange={(ev) => updateSpeed(ev.target.valueAsNumber)}
+                    />
                 </div>
             </div>
-            <button className="simcontrols__button" type="button" title="Simulation Controls" onClick={() => setIsOpen(!isOpen)}>
+            <button
+                className="simcontrols__button"
+                type="button"
+                title="Simulation Controls"
+                onClick={() => setIsOpen(!isOpen)}
+            >
                 <img src={controlsIcon} width="30px" height="30px" alt="Step" />
             </button>
         </div>
     );
-}
+};

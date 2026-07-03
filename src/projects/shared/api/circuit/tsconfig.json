@@ -3,11 +3,11 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "Vector":               ["./src/utils/math/Vector"],
-            "math/*":               ["./src/utils/math/*"],
+            "Vector": ["./src/utils/math/Vector"],
+            "math/*": ["./src/utils/math/*"],
             "shared/api/circuit/*": ["./src/*"],
-            "tests/helpers/*":      ["./tests/helpers/*"],
-        },
+            "tests/helpers/*": ["./tests/helpers/*"]
+        }
     },
-    "include": ["."],
+    "include": ["."]
 }

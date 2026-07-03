@@ -4,10 +4,6 @@ export default defineConfig({
     // This endOfLine behavior matches the auto behavior we have in .gitignore
     endOfLine: process.platform === "win32" ? "crlf" : "lf",
     ignorePatterns: ["*.md"],
-    overrides: [{
-        files: ["*.json", "*.yml"],
-        tabWidth: 2,
-    }],
     printWidth: 120,
     tabWidth: 4,
 });

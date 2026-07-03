@@ -3,7 +3,6 @@
 @use "~shared/site/utils/theme" as *;
 @use "../constants" as *;
 
-
 .header__left {
     padding: 5px 0;
 
@@ -66,11 +65,18 @@
 
         // Pulse animation
         @keyframes loadpulse {
-            0%   { transform: scale(0.3, 0.3); }
-            50%  { transform: scale(1.5, 1.5); }
-            100% { transform: scale(0.3, 0.3); }
+            0% {
+                transform: scale(0.3, 0.3);
+            }
+            50% {
+                transform: scale(1.5, 1.5);
+            }
+            100% {
+                transform: scale(0.3, 0.3);
+            }
         }
-        &::after, &::before {
+        &::after,
+        &::before {
             content: "";
             position: absolute;
 

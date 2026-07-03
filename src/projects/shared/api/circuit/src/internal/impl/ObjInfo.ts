@@ -1,8 +1,7 @@
-import {ErrE, Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import { ErrE, Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
 
-import {GUID, Schema} from "shared/api/circuit/schema";
-import {uuid} from "../../public";
-
+import { GUID, Schema } from "shared/api/circuit/schema";
+import { uuid } from "../../public";
 
 export type PortConfig = Record<string, number>;
 
@@ -14,8 +13,7 @@ export interface ObjInfo {
 
 export function PortListToConfig(ports: Schema.Port[]): PortConfig {
     const counts: Record<string, number> = {};
-    ports.forEach(({ group }) =>
-        counts[group] = (counts[group] ?? 0) + 1);
+    ports.forEach(({ group }) => (counts[group] = (counts[group] ?? 0) + 1));
     return counts;
 }
 
@@ -49,7 +47,11 @@ export interface ComponentConfigurationInfo extends ObjInfo {
 export interface WireConfigurationInfo extends ObjInfo {
     readonly baseKind: "Wire";
 
-    getSplitConnections(p1: Schema.Port, p2: Schema.Port, wire: Schema.Wire): Result<{
+    getSplitConnections(
+        p1: Schema.Port,
+        p2: Schema.Port,
+        wire: Schema.Wire,
+    ): Result<{
         nodeKind: string;
         p1Group: string;
         p1Idx: number;
@@ -92,17 +94,16 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
         validPinKinds: string[] = [],
     ) {
         this.components = new Map(components.map((info) => [info.kind, info]));
-        this.wires      = new Map(wires     .map((info) => [info.kind, info]));
-        this.ports      = new Map(ports     .map((info) => [info.kind, info]));
-        this.ics        = new Map();
+        this.wires = new Map(wires.map((info) => [info.kind, info]));
+        this.ports = new Map(ports.map((info) => [info.kind, info]));
+        this.ics = new Map();
 
         this.validPinKinds = validPinKinds;
     }
     public getComponent(kind: string, icId?: GUID): ComponentConfigurationInfo | undefined {
         if (kind === "IC" && !icId)
             throw new Error("BaseObjInfoProver: Must provide icId when getting info for an IC!");
-        if (icId)
-            return this.ics.get(icId);
+        if (icId) return this.ics.get(icId);
         return this.components.get(kind);
     }
 
@@ -126,11 +127,15 @@ export abstract class BaseObjInfoProvider implements ObjInfoProvider {
             const port = ic.ports.find((p) => p.id === pin.id);
             if (!port)
                 return ErrE(`Failed to find port with ${pin.id} corresponding to pin ${pin.name} [${pin.group}]!`);
-            const parent = ic.comps.find((c) => (c.id === port.parent));
+            const parent = ic.comps.find((c) => c.id === port.parent);
             if (!parent)
-                return ErrE(`Failed to find parent component ${port.parent} corresponding to pin ${pin.name} [${pin.group}]!`);
+                return ErrE(
+                    `Failed to find parent component ${port.parent} corresponding to pin ${pin.name} [${pin.group}]!`,
+                );
             if (this.validPinKinds.length > 0 && !this.validPinKinds.includes(parent.kind))
-                return ErrE(`Failed to find valid pin kind ${parent.kind} corresponding to pin ${pin.name} [${pin.group}]!`);
+                return ErrE(
+                    `Failed to find valid pin kind ${parent.kind} corresponding to pin ${pin.name} [${pin.group}]!`,
+                );
         }
         return OkVoid();
     }
@@ -147,27 +152,25 @@ export class BaseObjInfo<K extends Schema.Obj["baseKind"]> implements ObjInfo {
 
     protected readonly props: PropTypeMap;
 
-    public constructor(
-        baseKind: K,
-        kind: string,
-        props: PropTypeMap,
-    ) {
+    public constructor(baseKind: K, kind: string, props: PropTypeMap) {
         this.baseKind = baseKind;
         this.kind = kind;
-        this.props = { ...props, "name": "string", "zIndex": "number", "isSelected": "boolean" };
+        this.props = { ...props, name: "string", zIndex: "number", isSelected: "boolean" };
     }
 
     public checkPropValue(key: string, value?: Schema.Prop): Result {
         if (!(key in this.props))
             return ErrE(`BaseObjInfo: ${key} not a valid prop, valid props: [${Object.keys(this.props).join(",")}]`);
-        if (value && (this.props[key] !== typeof value))
+        if (value && this.props[key] !== typeof value)
             return ErrE(`BaseObjInfo: ${key} expected type ${this.props[key]}, got ${typeof value}`);
         return OkVoid();
     }
 }
 export type DefaultPortNameGenerator = Record<string, string[] | ((index: number) => string)>;
-export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Component">
-                                                     implements ComponentConfigurationInfo {
+export abstract class BaseComponentConfigurationInfo
+    extends BaseObjInfo<"Component">
+    implements ComponentConfigurationInfo
+{
     public readonly defaultPortConfig: PortConfig;
     public readonly portGroups: string[];
 
@@ -184,9 +187,9 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
         portConfigs: PortConfig[],
         isNode: boolean,
         defaultPortNames?: DefaultPortNameGenerator,
-        defaultConfig = 0
+        defaultConfig = 0,
     ) {
-        super("Component", kind, { ...props, "x": "number", "y": "number", "angle": "number" });
+        super("Component", kind, { ...props, x: "number", y: "number", angle: "number" });
 
         this.defaultPortConfig = portConfigs[defaultConfig];
         this.portGroups = portGroups;
@@ -200,40 +203,49 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
     protected abstract getPortInfo(p: PortConfig, group: string, index: number): Pick<Schema.Port, "kind" | "props">;
 
     public makePortsForConfig(componentID: string, p: PortConfig): Result<Schema.Port[]> {
-        return Ok(Object.entries(p)
-            .flatMap(([group, count]) =>
-                new Array(count)
-                    .fill(0)
-                    .map((_, index) => ({
-                        baseKind: "Port",
-                        id:       uuid(),
-                        parent:   componentID,
-                        group,
-                        index,
-                        ...this.getPortInfo(p, group, index),
-                    }))));
+        return Ok(
+            Object.entries(p).flatMap(([group, count]) =>
+                new Array(count).fill(0).map((_, index) => ({
+                    baseKind: "Port",
+                    id: uuid(),
+                    parent: componentID,
+                    group,
+                    index,
+                    ...this.getPortInfo(p, group, index),
+                })),
+            ),
+        );
     }
 
     public checkPortConfig(p: PortConfig): Result {
         const invalidGroups = Object.keys(p).filter((group) => !this.portGroups.includes(group));
         if (invalidGroups.length > 0) {
-            return ErrE("BaseComponentInfo: Port config {"
-                + Object.entries(p).map(([k, v]) => `${k}: ${v}`).join(", ")
-                + `} has invalid groups: [${invalidGroups.join(", ")}]`);
+            return ErrE(
+                "BaseComponentInfo: Port config {" +
+                    Object.entries(p)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join(", ") +
+                    `} has invalid groups: [${invalidGroups.join(", ")}]`,
+            );
         }
 
         // Doesn't have all the port groups
         if (this.portGroups.some((group) => !(group in p))) {
-            return ErrE("BaseComponentInfo: Port config {"
-                + Object.entries(p).map(([k, v]) => `${k}: ${v}`).join(", ")
-                + `} did not contain all groups [${this.portGroups.join(", ")}]`);
+            return ErrE(
+                "BaseComponentInfo: Port config {" +
+                    Object.entries(p)
+                        .map(([k, v]) => `${k}: ${v}`)
+                        .join(", ") +
+                    `} did not contain all groups [${this.portGroups.join(", ")}]`,
+            );
         }
 
         // Return if some valid config matches the given config
         const hasValidConfig = this.validPortConfigs.some((counts) =>
             // Check each port group in the valid config and the given config to see
             //  if the counts all match
-            this.portGroups.every((group) => (counts[group] === p[group])));
+            this.portGroups.every((group) => counts[group] === p[group]),
+        );
 
         return hasValidConfig ? OkVoid() : ErrE(`BaseComponentInfo: Failed to find matching config for ${p}`);
     }
@@ -243,9 +255,8 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
     }
     public getDefaultPortName(port: Schema.Port): string | undefined {
         const generator = this.defaultPortNames?.[port.group];
-        if (!generator)
-            return;
-        return (typeof generator === "function" ? generator(port.index) : generator[port.index]);
+        if (!generator) return;
+        return typeof generator === "function" ? generator(port.index) : generator[port.index];
     }
 
     public abstract isPortAvailable(port: Schema.Port, curConnections: Schema.Port[]): boolean;
@@ -257,14 +268,15 @@ export abstract class BaseComponentConfigurationInfo extends BaseObjInfo<"Compon
 }
 
 export abstract class BaseWireConfigurationInfo extends BaseObjInfo<"Wire"> implements WireConfigurationInfo {
-    public constructor(
-        kind: string,
-        props: PropTypeMap
-    ) {
-        super("Wire", kind, { ...props, "color": "string" });
+    public constructor(kind: string, props: PropTypeMap) {
+        super("Wire", kind, { ...props, color: "string" });
     }
 
-    public abstract getSplitConnections(p1: Schema.Port, p2: Schema.Port, wire: Schema.Wire): Result<{
+    public abstract getSplitConnections(
+        p1: Schema.Port,
+        p2: Schema.Port,
+        wire: Schema.Wire,
+    ): Result<{
         nodeKind: string;
         p1Group: string;
         p1Idx: number;
@@ -276,11 +288,7 @@ export abstract class BaseWireConfigurationInfo extends BaseObjInfo<"Wire"> impl
 export class BasePortConfigurationInfo extends BaseObjInfo<"Port"> implements PortConfigurationInfo {
     protected readonly wireKind: string;
 
-    public constructor(
-        kind: string,
-        props: PropTypeMap,
-        wireKind: string,
-    ) {
+    public constructor(kind: string, props: PropTypeMap, wireKind: string) {
         super("Port", kind, props);
 
         this.wireKind = wireKind;

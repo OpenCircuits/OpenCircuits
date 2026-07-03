@@ -1,7 +1,6 @@
-import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
-
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 
 export enum ToolHandlerResponse {
     /** This response represents that the handler is okay with subsequent handlers executing in this event cycle. */

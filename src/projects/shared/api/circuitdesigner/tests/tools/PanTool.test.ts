@@ -1,11 +1,10 @@
 import "shared/api/circuit/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {MIDDLE_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
+import { MIDDLE_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 
-import {CreateTestCircuitDesigner} from "tests/helpers/CreateTestCircuitDesigner";
-
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 
 describe("PanTool", () => {
     test("Drag without alt key", () => {
@@ -20,9 +19,7 @@ describe("PanTool", () => {
         const [designer, input, _] = CreateTestCircuitDesigner();
         const camera = designer.viewport.camera;
 
-        input.pressKey("Alt")
-                .drag(V(0, 0), V(1, 0))
-                .releaseKey("Alt");
+        input.pressKey("Alt").drag(V(0, 0), V(1, 0)).releaseKey("Alt");
         expect(camera.pos).toEqual(V(-1, 0));
     });
 
@@ -30,10 +27,7 @@ describe("PanTool", () => {
         const [designer, input, _] = CreateTestCircuitDesigner();
         const camera = designer.viewport.camera;
 
-        input.pressKey("Alt")
-                .press(V(0, 0))
-                .releaseKey("Alt")
-                .release();
+        input.pressKey("Alt").press(V(0, 0)).releaseKey("Alt").release();
         expect(camera.pos).toEqual(V(0, 0));
     });
 
@@ -41,12 +35,7 @@ describe("PanTool", () => {
         const [designer, input, _] = CreateTestCircuitDesigner();
         const camera = designer.viewport.camera;
 
-        input.pressKey("Alt")
-            .press(V(0,0))
-            .move(V(2, 0))
-            .releaseKey("Alt")
-            .move(V(4, 0))
-            .release()
+        input.pressKey("Alt").press(V(0, 0)).move(V(2, 0)).releaseKey("Alt").move(V(4, 0)).release();
         expect(camera.pos).toEqual(V(-6, 0));
     });
 
@@ -54,14 +43,15 @@ describe("PanTool", () => {
         const [designer, input, _] = CreateTestCircuitDesigner();
         const camera = designer.viewport.camera;
 
-        input.pressKey("Alt")
+        input
+            .pressKey("Alt")
             .press(V(0, 0))
             .move(V(2, 0))
             .release()
             .move(V(0, 2))
             .press()
             .move(V(4, 0))
-            .releaseKey("Alt")
+            .releaseKey("Alt");
         expect(camera.pos).toEqual(V(-6, 0));
     });
 
@@ -77,11 +67,7 @@ describe("PanTool", () => {
         const [designer, input, _] = CreateTestCircuitDesigner();
         const camera = designer.viewport.camera;
 
-        input.touch(V(-1, 0))
-                .touch(V(1, 0))
-                .moveTouches(V(1, 0))
-                .releaseTouch()
-                .releaseTouch();
+        input.touch(V(-1, 0)).touch(V(1, 0)).moveTouches(V(1, 0)).releaseTouch().releaseTouch();
         expect(camera.pos).toEqual(V(-1, 0));
     });
 
@@ -91,17 +77,11 @@ describe("PanTool", () => {
 
         // Checking up/right and down/left at the same time
         //  since they don't affect each other
-        input.pressKey("ArrowUp")
-                .releaseKey("ArrowUp")
-                .pressKey("ArrowRight")
-                .releaseKey("ArrowRight");
+        input.pressKey("ArrowUp").releaseKey("ArrowUp").pressKey("ArrowRight").releaseKey("ArrowRight");
         expect(camera.pos).toEqual(V(1.5, 1.5));
         camera.pos = V(0, 0);
 
-        input.pressKey("ArrowDown")
-                .releaseKey("ArrowDown")
-                .pressKey("ArrowLeft")
-                .releaseKey("ArrowLeft");
+        input.pressKey("ArrowDown").releaseKey("ArrowDown").pressKey("ArrowLeft").releaseKey("ArrowLeft");
         expect(camera.pos).toEqual(V(-1.5, -1.5));
         camera.pos = V(0, 0);
     });
@@ -113,21 +93,23 @@ describe("PanTool", () => {
         // Checking up/right and down/left at the same time
         //  since they don't affect each other
 
-        input.pressKey("Shift")
-                .pressKey("ArrowUp")
-                .releaseKey("ArrowUp")
-                .pressKey("ArrowRight")
-                .releaseKey("ArrowRight")
-                .releaseKey("Shift");
+        input
+            .pressKey("Shift")
+            .pressKey("ArrowUp")
+            .releaseKey("ArrowUp")
+            .pressKey("ArrowRight")
+            .releaseKey("ArrowRight")
+            .releaseKey("Shift");
         expect(camera.pos).toEqual(V(0.1, 0.1));
         camera.pos = V(0, 0);
 
-        input.pressKey("Shift")
-                .pressKey("ArrowDown")
-                .releaseKey("ArrowDown")
-                .pressKey("ArrowLeft")
-                .releaseKey("ArrowLeft")
-                .releaseKey("Shift");
+        input
+            .pressKey("Shift")
+            .pressKey("ArrowDown")
+            .releaseKey("ArrowDown")
+            .pressKey("ArrowLeft")
+            .releaseKey("ArrowLeft")
+            .releaseKey("Shift");
         expect(camera.pos).toEqual(V(-0.1, -0.1));
         camera.pos = V(0, 0);
     });

@@ -1,9 +1,8 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 
-import {Vector} from "Vector";
+import { Vector } from "Vector";
 
-import {DragDropHandlers} from "./DragDropHandlers";
-
+import { DragDropHandlers } from "./DragDropHandlers";
 
 export const useDrop = (
     ref: React.RefObject<HTMLElement | null>,
@@ -11,8 +10,7 @@ export const useDrop = (
     deps: React.DependencyList = [],
 ) => {
     useEffect(() => {
-        if (!ref.current)
-            return;
+        if (!ref.current) return;
         const current = ref.current;
 
         const l1 = (ev: DragEvent) => {
@@ -25,4 +23,4 @@ export const useDrop = (
             DragDropHandlers.remove(current);
         };
     }, [ref, onDrop, ...deps]);
-}
+};

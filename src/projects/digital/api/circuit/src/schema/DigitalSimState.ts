@@ -1,6 +1,5 @@
-import {GUID} from "shared/api/circuit/schema";
-import {Signal} from "./Signal";
-
+import { GUID } from "shared/api/circuit/schema";
+import { Signal } from "./Signal";
 
 export interface DigitalSimState {
     // PortID -> Signal

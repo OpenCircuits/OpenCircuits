@@ -1,13 +1,12 @@
-import {Rect} from "math/Rect";
+import { Rect } from "math/Rect";
 
-import {AddErrE}    from "shared/api/circuit/utils/MultiError";
-import {GUID, Prop} from "shared/api/circuit/internal";
+import { AddErrE } from "shared/api/circuit/utils/MultiError";
+import { GUID, Prop } from "shared/api/circuit/internal";
 
-import {BaseObject} from "../BaseObject";
+import { BaseObject } from "../BaseObject";
 
-import {CircuitContext} from "./CircuitContext";
-import {CircuitAPITypes} from "./Types";
-
+import { CircuitContext } from "./CircuitContext";
+import { CircuitAPITypes } from "./Types";
 
 export class BaseObjectImpl<T extends CircuitAPITypes> implements BaseObject {
     protected readonly ctx: CircuitContext<T>;
@@ -26,8 +25,13 @@ export class BaseObjectImpl<T extends CircuitAPITypes> implements BaseObject {
 
     protected getCircuitInfo() {
         if (this.icId) {
-            return this.ctx.internal.getICInfo(this.icId)
-                .mapErr(AddErrE(`ComponentImpl: Attempted to get IC info for component with ID '${this.id}' that doesn't exist in IC ${this.icId}!`))
+            return this.ctx.internal
+                .getICInfo(this.icId)
+                .mapErr(
+                    AddErrE(
+                        `ComponentImpl: Attempted to get IC info for component with ID '${this.id}' that doesn't exist in IC ${this.icId}!`,
+                    ),
+                )
                 .unwrap();
         }
         return this.ctx.internal.getInfo();
@@ -45,14 +49,17 @@ export class BaseObjectImpl<T extends CircuitAPITypes> implements BaseObject {
     }
     public get bounds(): Rect {
         if (this.icId)
-            throw new Error(`BaseObjImpl: Bounds cannot be accessed for object inside an IC! Object ID: '${this.id}', IC ID: '${this.icId}'`);
-        return this.ctx.assembler.getBoundsFor(this.id)
-                                   .unwrapOr(Rect.Bounding([]));
+            throw new Error(
+                `BaseObjImpl: Bounds cannot be accessed for object inside an IC! Object ID: '${this.id}', IC ID: '${this.icId}'`,
+            );
+        return this.ctx.assembler.getBoundsFor(this.id).unwrapOr(Rect.Bounding([]));
     }
 
     public set name(name: string | undefined) {
         if (this.icId)
-            throw new Error(`BaseObjImpl: Cannot set name for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+            throw new Error(
+                `BaseObjImpl: Cannot set name for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
+            );
         this.ctx.internal.setPropFor(this.id, "name", name).unwrap();
     }
     public get name(): string | undefined {
@@ -60,10 +67,8 @@ export class BaseObjectImpl<T extends CircuitAPITypes> implements BaseObject {
     }
 
     public set isSelected(val: boolean) {
-        if (val)
-            this.select();
-        else
-            this.deselect();
+        if (val) this.select();
+        else this.deselect();
     }
     public get isSelected(): boolean {
         return this.getObj().props["isSelected"] ?? false;
@@ -71,26 +76,31 @@ export class BaseObjectImpl<T extends CircuitAPITypes> implements BaseObject {
 
     public select(): void {
         if (this.icId)
-            throw new Error(`BaseObjImpl: Cannot select object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+            throw new Error(
+                `BaseObjImpl: Cannot select object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
+            );
         this.ctx.internal.setPropFor(this.id, "isSelected", true).unwrap();
     }
     public deselect(): void {
         if (this.icId)
-            throw new Error(`BaseObjImpl: Cannot deselect object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+            throw new Error(
+                `BaseObjImpl: Cannot deselect object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
+            );
         this.ctx.internal.setPropFor(this.id, "isSelected", false).unwrap();
     }
 
     public exists(): boolean {
         if (this.icId) {
-            return this.ctx.internal.getICInfo(this.icId)
-                .andThen((icInfo) => icInfo.getObjByID(this.id)).ok;
+            return this.ctx.internal.getICInfo(this.icId).andThen((icInfo) => icInfo.getObjByID(this.id)).ok;
         }
         return this.ctx.internal.getObjByID(this.id).ok;
     }
 
     public setProp(key: string, val: Prop): void {
         if (this.icId)
-            throw new Error(`BaseObjImpl: Cannot set prop for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+            throw new Error(
+                `BaseObjImpl: Cannot set prop for object with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`,
+            );
         this.ctx.internal.setPropFor(this.id, key, val).unwrap();
     }
     public getProp(key: string): Prop | undefined {

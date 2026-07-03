@@ -1,5 +1,4 @@
-import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
-
+import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 export const DeleteHandler: ToolHandler = {
     name: "DeleteHandler",
@@ -10,12 +9,11 @@ export const DeleteHandler: ToolHandler = {
             return ToolHandlerResponse.PASS;
 
         // Nothing to delete
-        if (circuit.selections.isEmpty)
-            return ToolHandlerResponse.PASS;
+        if (circuit.selections.isEmpty) return ToolHandlerResponse.PASS;
 
         circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
 
         // This should be the only handler to execute
         return ToolHandlerResponse.HALT;
     },
-}
+};

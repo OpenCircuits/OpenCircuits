@@ -1,23 +1,23 @@
-import {useEffect} from "react";
+import { useEffect } from "react";
 
-import {SAVE_TIME} from "shared/site/utils/Constants";
+import { SAVE_TIME } from "shared/site/utils/Constants";
 
-import {useAPIMethods} from "shared/site/utils/ApiMethods";
+import { useAPIMethods } from "shared/site/utils/ApiMethods";
 
-import {useCurDesigner}                       from "shared/site/utils/hooks/useDesigner";
-import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
+import { useCurDesigner } from "shared/site/utils/hooks/useDesigner";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
-import {SetAutoSave} from "shared/site/state/UserInfo";
+import { SetAutoSave } from "shared/site/state/UserInfo";
 
-import {SwitchToggle} from "shared/site/components/SwitchToggle";
-
+import { SwitchToggle } from "shared/site/components/SwitchToggle";
 
 export const AutoSaveToggle = () => {
     const designer = useCurDesigner();
     const { SaveCircuitRemote } = useAPIMethods(designer.circuit);
-    const { isLoggedIn, isSaved, autoSave } = useSharedSelector(
-        (state) => ({ ...state.user, isSaved: state.circuit.isSaved })
-    );
+    const { isLoggedIn, isSaved, autoSave } = useSharedSelector((state) => ({
+        ...state.user,
+        isSaved: state.circuit.isSaved,
+    }));
     const dispatch = useSharedDispatch();
 
     useEffect(() => {
@@ -28,8 +28,7 @@ export const AutoSaveToggle = () => {
         // Don't start autosave if user doesn't have it enabled
         //  or if the circuit is already currently saved
         // or if the user is not logged in
-        if (!autoSave || isSaved || !isLoggedIn)
-            return;
+        if (!autoSave || isSaved || !isLoggedIn) return;
 
         let attempts = 1; // Track attempted saves
         let timeout: number;
@@ -45,13 +44,11 @@ export const AutoSaveToggle = () => {
         timeout = window.setTimeout(Save, SAVE_TIME);
 
         return () => clearTimeout(timeout);
-     }, [isSaved, autoSave, isLoggedIn, SaveCircuitRemote]);
+    }, [isSaved, autoSave, isLoggedIn, SaveCircuitRemote]);
 
     return (
-        <SwitchToggle
-            isOn={autoSave} disabled={!isLoggedIn}
-            onChange={() => dispatch(SetAutoSave(!autoSave))}>
+        <SwitchToggle isOn={autoSave} disabled={!isLoggedIn} onChange={() => dispatch(SetAutoSave(!autoSave))}>
             Auto Save : {isLoggedIn && autoSave ? "On" : "Off"}
         </SwitchToggle>
     );
-}
+};

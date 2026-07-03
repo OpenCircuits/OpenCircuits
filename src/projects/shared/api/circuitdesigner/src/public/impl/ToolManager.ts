@@ -1,19 +1,20 @@
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 
-import {DefaultTool}       from "shared/api/circuitdesigner/tools/DefaultTool";
-import {Tool}              from "shared/api/circuitdesigner/tools/Tool";
-import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
+import { Tool } from "shared/api/circuitdesigner/tools/Tool";
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 
-
-export type ToolManagerEvent = {
-    type: "toolActivated";
-    tool: Tool;
-} | {
-    type: "toolDeactivated";
-    tool: Tool;
-}
+export type ToolManagerEvent =
+    | {
+          type: "toolActivated";
+          tool: Tool;
+      }
+    | {
+          type: "toolDeactivated";
+          tool: Tool;
+      };
 
 export class ToolManager<T extends CircuitAPITypes = CircuitAPITypes> extends ObservableImpl<ToolManagerEvent> {
     public readonly defaultTool: DefaultTool<T>;
@@ -50,9 +51,7 @@ export class ToolManager<T extends CircuitAPITypes = CircuitAPITypes> extends Ob
         }
 
         // If circuit is locked, only use tools that can be used when locked
-        const tools = designer.isLocked
-            ? this.tools.filter((tool) => (tool.canActivateWhenLocked))
-            : this.tools;
+        const tools = designer.isLocked ? this.tools.filter((tool) => tool.canActivateWhenLocked) : this.tools;
 
         // Find first tool indicating it could be activated
         const cursor = tools.map((t) => t.indicateCouldActivate?.(ev, designer)).find((c) => !!c);

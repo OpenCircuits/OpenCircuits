@@ -1,5 +1,4 @@
-import {AuthType} from "./AuthTypes";
-
+import { AuthType } from "./AuthTypes";
 
 export interface AuthState {
     // Gets auth type

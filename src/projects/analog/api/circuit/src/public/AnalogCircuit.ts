@@ -1,6 +1,24 @@
-import type {Circuit, Component, ComponentInfo, ICInfo, IntegratedCircuit, Node, ObjContainer, Port, ReadonlyComponent, ReadonlyIntegratedCircuit, ReadonlyNode, ReadonlyObjContainer, ReadonlyPort, ReadonlySelections, ReadonlyWire, Selections, Wire} from "shared/api/circuit/public";
-import type {AnalogSim} from "./AnalogSim";
-import {CircuitInternal} from "shared/api/circuit/internal";
+import type {
+    Circuit,
+    Component,
+    ComponentInfo,
+    ICInfo,
+    IntegratedCircuit,
+    Node,
+    ObjContainer,
+    Port,
+    ReadonlyComponent,
+    ReadonlyIntegratedCircuit,
+    ReadonlyNode,
+    ReadonlyObjContainer,
+    ReadonlyPort,
+    ReadonlySelections,
+    ReadonlyWire,
+    Selections,
+    Wire,
+} from "shared/api/circuit/public";
+import type { AnalogSim } from "./AnalogSim";
+import { CircuitInternal } from "shared/api/circuit/internal";
 
 export type AnalogTypes = {
     CircuitT: AnalogCircuit;
@@ -29,7 +47,7 @@ export type AnalogTypes = {
 
     ComponentInfoT: ComponentInfo;
     ICInfoT: ICInfo;
-}
+};
 
 export type AnalogCircuit = Circuit & {
     readonly sim?: AnalogSim;
@@ -39,4 +57,4 @@ export type AnalogCircuit = Circuit & {
     // I.e. instead of sim being Circuit -> Analysis
     // it becomes Netlist -> Analysis and we have an AnalogSim impl here that converts to a netlist and feeds it.
     attachSim(makeSim: (circuit: CircuitInternal) => AnalogSim): void;
-}
+};

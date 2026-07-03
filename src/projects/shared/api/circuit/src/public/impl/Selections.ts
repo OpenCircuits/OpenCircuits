@@ -1,14 +1,13 @@
-import {Vector} from "Vector";
-import {Rect}   from "math/Rect";
+import { Vector } from "Vector";
+import { Rect } from "math/Rect";
 
-import {ObservableImpl} from "../../utils/Observable";
-import {Selections, SelectionsEvent} from "../Selections";
+import { ObservableImpl } from "../../utils/Observable";
+import { Selections, SelectionsEvent } from "../Selections";
 
-import {CircuitContext} from "./CircuitContext";
-import {CircuitAPITypes} from "./Types";
+import { CircuitContext } from "./CircuitContext";
+import { CircuitAPITypes } from "./Types";
 
 import "shared/api/circuit/utils/Array";
-
 
 export class SelectionsImpl<T extends CircuitAPITypes> extends ObservableImpl<SelectionsEvent> implements Selections {
     protected readonly ctx: CircuitContext<T>;
@@ -24,20 +23,19 @@ export class SelectionsImpl<T extends CircuitAPITypes> extends ObservableImpl<Se
         this.ctx.internal.subscribe((_) => {
             // Update selections
             const newSelections = new Set(
-                [...this.ctx.internal.getAllObjs()]
-                    .filter((o) => (o.props["isSelected"] === true))
-                    .map((o) => o.id));
+                [...this.ctx.internal.getAllObjs()].filter((o) => o.props["isSelected"] === true).map((o) => o.id),
+            );
 
             const diff = this.selections.ids.symmetricDifference(newSelections);
             this.selections = this.ctx.factory.constructObjContainer(newSelections);
 
             if (diff.size > 0) {
                 this.publish({
-                    type:   "numSelectionsChanged",
+                    type: "numSelectionsChanged",
                     newAmt: diff.size,
                 });
             }
-        })
+        });
     }
 
     public get bounds(): Rect {
@@ -85,8 +83,7 @@ export class SelectionsImpl<T extends CircuitAPITypes> extends ObservableImpl<Se
 
     public clear(): void {
         this.ctx.internal.beginTransaction();
-        for (const obj of this.selections.all)
-            this.ctx.internal.setPropFor(obj.id, "isSelected", undefined);
+        for (const obj of this.selections.all) this.ctx.internal.setPropFor(obj.id, "isSelected", undefined);
         this.ctx.internal.commitTransaction("Cleared Selections");
     }
 

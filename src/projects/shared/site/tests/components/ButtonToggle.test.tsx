@@ -1,9 +1,8 @@
 import "@testing-library/jest-dom";
-import {Matcher, render, screen} from "@testing-library/react";
-import userEvent                 from "@testing-library/user-event";
+import { Matcher, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-import {ButtonToggle} from "shared/site/components/ButtonToggle";
-
+import { ButtonToggle } from "shared/site/components/ButtonToggle";
 
 /**
  * Gets the ButtonToggle or SwitchToggle image elements associated with the provided text.
@@ -14,9 +13,7 @@ import {ButtonToggle} from "shared/site/components/ButtonToggle";
  */
 function GetToggles(id: Matcher): [HTMLImageElement, HTMLImageElement] {
     const buttons = screen.getByText(id).parentNode!.querySelectorAll("img");
-    return buttons[0].alt.includes("on")
-        ? [buttons[0], buttons[1]]
-        : [buttons[1], buttons[0]];
+    return buttons[0].alt.includes("on") ? [buttons[0], buttons[1]] : [buttons[1], buttons[0]];
 }
 
 describe("Button Toggle", () => {
@@ -35,7 +32,11 @@ describe("Button Toggle", () => {
     test("onChange", async () => {
         let testBoolean = false;
         const user = userEvent.setup();
-        render(<ButtonToggle isOn={testBoolean} onChange={() => testBoolean = !testBoolean}>test</ButtonToggle>);
+        render(
+            <ButtonToggle isOn={testBoolean} onChange={() => (testBoolean = !testBoolean)}>
+                test
+            </ButtonToggle>,
+        );
         const [buttonOn, buttonOff] = GetToggles("test");
         expect(buttonOn).not.toBeVisible();
         expect(buttonOff).toBeVisible();

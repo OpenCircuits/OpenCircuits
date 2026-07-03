@@ -1,19 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/api/circuit/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuitDesigner} from "tests/helpers/CreateTestCircuitDesigner";
-
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 
 describe("TranslateTool", () => {
-     describe("Single Object", () => {
+    describe("Single Object", () => {
         test("Move mouse without dragging", () => {
             const [designer, input, _, { PlaceAt }] = CreateTestCircuitDesigner();
             const [obj] = PlaceAt(V(0, 0));
 
-            input.moveTo(V(0, 0))
-                .move(V(20, 0));
+            input.moveTo(V(0, 0)).move(V(20, 0));
 
             expect(obj.pos).toEqual(V(0, 0));
         });
@@ -22,10 +20,7 @@ describe("TranslateTool", () => {
             const [designer, input, _, { PlaceAt }] = CreateTestCircuitDesigner();
             const [obj] = PlaceAt(V(0, 0));
 
-            input.moveTo(V(0, 50))
-                    .press()
-                    .move(V(0, -100))
-                    .release();
+            input.moveTo(V(0, 50)).press().move(V(0, -100)).release();
 
             expect(obj.pos).toEqual(V(0, 0));
         });

@@ -4,69 +4,69 @@
 name: Build, Test, Lint
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: 'package.json'
-    - run: yarn
-    - name: Build NGSpice [WASM]
-      uses: ./.github/actions/build-ngspice
+    prepare:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: "package.json"
+            - run: yarn
+            - name: Build NGSpice [WASM]
+              uses: ./.github/actions/build-ngspice
 
-  build:
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+    build:
+        needs: prepare
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.24
+            - name: Set up Go
+              uses: actions/setup-go@v2
+              with:
+                  go-version: 1.24
 
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: 'package.json'
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: "package.json"
 
-    - run: yarn
+            - run: yarn
 
-    - name: Build NGSpice [WASM]
-      uses: ./.github/actions/build-ngspice
+            - name: Build NGSpice [WASM]
+              uses: ./.github/actions/build-ngspice
 
-    - name: Build backend [Golang]
-      run: yarn build --ci src/server
+            - name: Build backend [Golang]
+              run: yarn build --ci src/server
 
-    - name: Build frontend [TypeScript]
-      run: yarn build --ci --prod src/projects/digital/site
+            - name: Build frontend [TypeScript]
+              run: yarn build --ci --prod src/projects/digital/site
 
-    - name: Build docs [Docusaurus]
-      run: yarn build --ci src/other/pages/docs
+            - name: Build docs [Docusaurus]
+              run: yarn build --ci src/other/pages/docs
 
-  tests:
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+    tests:
+        needs: prepare
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: 'package.json'
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: "package.json"
 
-    - run: yarn
+            - run: yarn
 
-    - name: Build NGSpice [WASM]
-      uses: ./.github/actions/build-ngspice
+            - name: Build NGSpice [WASM]
+              uses: ./.github/actions/build-ngspice
 
-    - name: Run tests [TypeScript]
-      run: yarn test --ci
+            - name: Run tests [TypeScript]
+              run: yarn test --ci

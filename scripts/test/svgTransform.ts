@@ -1,6 +1,5 @@
 import path from "node:path";
 
-
 export default {
     process(sourceText: string, _sourcePath: string, _options: object) {
         return {

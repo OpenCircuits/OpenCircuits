@@ -1,10 +1,9 @@
-import {Observable} from "shared/api/circuit/utils/Observable";
-import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
+import { Observable } from "shared/api/circuit/utils/Observable";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 
-import {Tool}         from "../tools/Tool";
-import {Viewport}     from "./Viewport";
-import {DefaultTool} from "../tools/DefaultTool";
-
+import { Tool } from "../tools/Tool";
+import { Viewport } from "./Viewport";
+import { DefaultTool } from "../tools/DefaultTool";
 
 export interface CircuitDesignerOptions<T extends CircuitAPITypes = CircuitAPITypes> {
     dragTime?: number;
@@ -16,16 +15,19 @@ export interface ToolConfig<T extends CircuitAPITypes = CircuitAPITypes> {
     tools: Tool[];
 }
 
-export type CircuitDesignerEv = {
-    type: "handlerFired";
-    handler: string;
-} | {
-    type: "toolActivated";
-    tool: Tool;
-} | {
-    type: "toolDeactivated";
-    tool: Tool;
-}
+export type CircuitDesignerEv =
+    | {
+          type: "handlerFired";
+          handler: string;
+      }
+    | {
+          type: "toolActivated";
+          tool: Tool;
+      }
+    | {
+          type: "toolDeactivated";
+          tool: Tool;
+      };
 
 // All state variables within the CircuitDesigner will/should NOT be serialized
 // and shouldn't persist through user sessions. I.e. they will reset on page refresh

@@ -4,7 +4,6 @@
 $tab-width: 18px;
 $tab-padding: 8px;
 
-
 .itemnav {
     $top-margin: 10px;
     $top-height: 35px;
@@ -30,12 +29,12 @@ $tab-padding: 8px;
     // Prevent using the itemnav to drag/scroll offscreen on mobile (iOS Safari in particular)
     & * {
         touch-action: pan-y;
-        @media (max-width: $desktop-width) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation: portrait) {
             touch-action: pan-x;
         }
     }
 
-    @media (max-width: $desktop-width) and (orientation:portrait) {
+    @media (max-width: $desktop-width) and (orientation: portrait) {
         top: unset;
         right: 0;
         width: unset;
@@ -46,11 +45,11 @@ $tab-padding: 8px;
     }
 
     &__move {
-        @media (min-width: $desktop-width), (orientation:landscape) {
+        @media (min-width: $desktop-width), (orientation: landscape) {
             left: -$itemnav-width - $header-border-width;
         }
 
-        @media (max-width: $desktop-width) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation: portrait) {
             bottom: -$itemnav-height - $header-border-width;
         }
     }
@@ -168,13 +167,13 @@ $tab-padding: 8px;
 
             transition: 0.5s;
 
-            @media (min-width: $desktop-width), (orientation:landscape) {
+            @media (min-width: $desktop-width), (orientation: landscape) {
                 border-bottom-right-radius: 15px;
             }
 
-            @media (max-width: $desktop-width) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation: portrait) {
                 left: -$size - $header-border-width;
-                top: -$size - 3*$header-border-width - $top-margin;
+                top: -$size - 3 * $header-border-width - $top-margin;
                 border-top-left-radius: 15px;
             }
 
@@ -192,11 +191,10 @@ $tab-padding: 8px;
 
                 transform: translate(-50%, -50%);
 
-                @media (max-width: $desktop-width) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation: portrait) {
                     left: 50%;
                     top: calc(50% + #{$size + $header-border-width + 5px});
                 }
-
             }
         }
 
@@ -210,7 +208,7 @@ $tab-padding: 8px;
                 top: 50%;
                 transform: translate(-50%, -50%) rotate(-45deg);
 
-                @media (max-width: $desktop-width) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation: portrait) {
                     top: 50%;
                 }
             }
@@ -218,7 +216,6 @@ $tab-padding: 8px;
     }
 
     &__sections {
-
         display: flex;
         flex-direction: column;
 
@@ -228,11 +225,11 @@ $tab-padding: 8px;
         scrollbar-width: thin;
         scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
 
-        @media (min-width: $desktop-width), (orientation:landscape) {
+        @media (min-width: $desktop-width), (orientation: landscape) {
             border-top: 3px solid #888;
         }
 
-        @media (max-width: $desktop-width) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation: portrait) {
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             flex-wrap: wrap;
@@ -241,7 +238,7 @@ $tab-padding: 8px;
         }
 
         &::-webkit-scrollbar {
-            width: 7px;  // vertical scrollbars
+            width: 7px; // vertical scrollbars
             height: 7px; // horizontal scrollbar
         }
 
@@ -262,7 +259,7 @@ $tab-padding: 8px;
         & > div {
             scroll-snap-align: center;
 
-            @media (max-width: $desktop-width) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation: portrait) {
                 width: 100%;
             }
 
@@ -282,7 +279,7 @@ $tab-padding: 8px;
                 color: #fff;
                 text-shadow: -1px 1px 3px darken(#fff, 40%);
 
-                @media (max-width: $desktop-width) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation: portrait) {
                     margin: 0;
                 }
             }
@@ -294,14 +291,14 @@ $tab-padding: 8px;
                 justify-content: center;
                 width: 100%;
 
-                @media (max-width: $desktop-width) and (orientation:portrait) {
+                @media (max-width: $desktop-width) and (orientation: portrait) {
                     margin: 0;
                 }
 
                 & > div {
                     $item-container-width: 100px;
                     $item-container-padding: 10px;
-                    $item-width: $item-container-width - 2*$item-container-padding;
+                    $item-width: $item-container-width - 2 * $item-container-padding;
 
                     position: relative;
                     display: inline-block;
@@ -336,9 +333,8 @@ $tab-padding: 8px;
                         color: red;
                         display: unset;
                     }
-                 }
+                }
             }
         }
     }
-
 }

@@ -1,13 +1,12 @@
-import {Color} from "svg2canvas";
+import { Color } from "svg2canvas";
 
-import {Vector} from "Vector";
+import { Vector } from "Vector";
 
-import {BezierCurve} from "math/BezierCurve";
-import {Transform} from "math/Transform";
-import {QuadCurve} from "math/QuadCurve";
+import { BezierCurve } from "math/BezierCurve";
+import { Transform } from "math/Transform";
+import { QuadCurve } from "math/QuadCurve";
 
-import {FontStyle, Style} from "./Style";
-
+import { FontStyle, Style } from "./Style";
 
 export interface BezierCurvePrim {
     kind: "BezierCurve";
@@ -49,18 +48,21 @@ export type PolygonPrim = {
     kind: "Polygon";
 
     points: Vector[];
-    closed?: boolean;  // If should close the polygon or not
+    closed?: boolean; // If should close the polygon or not
 
     style: Style;
-} & ({
-    ignoreHit: true;
-} | {
-    ignoreHit?: false;
+} & (
+    | {
+          ignoreHit: true;
+      }
+    | {
+          ignoreHit?: false;
 
-    // Arbitrarily calculating the best-fit bounds for a polygon
-    // is expensive, force user to provide them if it needs hit-detection.
-    bounds: Transform;
-})
+          // Arbitrarily calculating the best-fit bounds for a polygon
+          // is expensive, force user to provide them if it needs hit-detection.
+          bounds: Transform;
+      }
+);
 export interface QuadCurvePrim {
     kind: "QuadCurve";
 
@@ -121,8 +123,4 @@ export interface TextPrim {
     ignoreHit?: true;
 }
 
-export type Prim =
-    | BaseShapePrim
-    | SVGPrim
-    | GroupPrim
-    | TextPrim;
+export type Prim = BaseShapePrim | SVGPrim | GroupPrim | TextPrim;

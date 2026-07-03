@@ -2,10 +2,9 @@
 title: Creating New Projects
 ---
 
-import CodeBlock from '@theme/CodeBlock';
+import CodeBlock from "@theme/CodeBlock";
 
-
-# Creating New Projects 
+# Creating New Projects
 
 Creating new projects is a large undertaking, but this guide should help advise how to start.
 
@@ -16,17 +15,11 @@ When refering to a 'project', I mean an instance of the OpenCircuits API (curren
 First you must create the project directories, you'll need:
 
 <pre>
-src/
-&nbsp;projects/
-&nbsp;&nbsp;myproject/
-&nbsp;&nbsp;&nbsp;api/
-&nbsp;&nbsp;&nbsp;&nbsp;circuit/
-&nbsp;&nbsp;&nbsp;&nbsp;circuitdesigner/
-&nbsp;&nbsp;&nbsp;site/
+    src/ &nbsp;projects/ &nbsp;&nbsp;myproject/ &nbsp;&nbsp;&nbsp;api/ &nbsp;&nbsp;&nbsp;&nbsp;circuit/
+    &nbsp;&nbsp;&nbsp;&nbsp;circuitdesigner/ &nbsp;&nbsp;&nbsp;site/
 </pre>
 
 and add `src/projects/myproject/api/*` and `src/projects/myproject/site` to package.json "workspaces".
-
 
 ## Circuit API Setup
 
@@ -39,8 +32,8 @@ This file will define all the components, wires, and ports available in your new
 
 There are a few main classes you'll need to create:
 
--   **Configuration Info Classes**: You'll create classes that extend `BaseComponentConfigurationInfo`, `BaseWireConfigurationInfo`, and `BasePortConfigurationInfo`. These define the properties and connection logic for your project's objects.
--   An **Object Info Provider** class (e.g., `MyProjectObjInfoProvider`) that extends `BaseObjInfoProvider`. This class acts as a registry for all of your configuration info classes.
+- **Configuration Info Classes**: You'll create classes that extend `BaseComponentConfigurationInfo`, `BaseWireConfigurationInfo`, and `BasePortConfigurationInfo`. These define the properties and connection logic for your project's objects.
+- An **Object Info Provider** class (e.g., `MyProjectObjInfoProvider`) that extends `BaseObjInfoProvider`. This class acts as a registry for all of your configuration info classes.
 
 Let's look at each in detail.
 
@@ -54,7 +47,7 @@ A simple implementation, similar to the one used in the 'analog' project, allows
 export class MyProjectComponentInfo extends BaseComponentConfigurationInfo {
     protected override getPortInfo(_p: PortConfig, _group: string, _i: number): Pick<Schema.Port, "kind" | "props"> {
         return {
-            kind:  "MyProjectPort",
+            kind: "MyProjectPort",
             props: {},
         };
     }
@@ -81,9 +74,9 @@ For more complex projects, like the 'digital' one, you might need more specific 
 
 Here are the key methods you'll typically override:
 
--   `getPortInfo(portConfig, group, index)`: Returns the `kind` and `props` for a specific port. This is how you specify that your components should have `MyProjectPort`s.
--   `isPortAvailable(port, currentConnections)`: Determines if a new connection can be made to a port. Return `false` to prevent a connection. For example, digital input ports only allow one connection.
--   `checkPortConnectivity(port, newConnection, currentConnections)`: Validates if `newConnection` is a valid connection for `port`. Return an `ErrE` to prevent the connection and provide an error message. For example, digital circuits prevent connecting two output ports together.
+- `getPortInfo(portConfig, group, index)`: Returns the `kind` and `props` for a specific port. This is how you specify that your components should have `MyProjectPort`s.
+- `isPortAvailable(port, currentConnections)`: Determines if a new connection can be made to a port. Return `false` to prevent a connection. For example, digital input ports only allow one connection.
+- `checkPortConnectivity(port, newConnection, currentConnections)`: Validates if `newConnection` is a valid connection for `port`. Return an `ErrE` to prevent the connection and provide an error message. For example, digital circuits prevent connecting two output ports together.
 
 #### 2. Wire and Port Configuration Info
 
@@ -134,8 +127,7 @@ const WireInfo = new MyProjectWireInfo("MyProjectWire", {});
 const PortInfo = new MyProjectPortInfo("MyProjectPort", {}, "MyProjectWire");
 
 // Example custom component (e.g., a Resistor with 2 ports)
-const ResistorInfo = new MyProjectComponentInfo("Resistor", { "resistance": "number" }, [""], [{ "": 2 }], false);
-
+const ResistorInfo = new MyProjectComponentInfo("Resistor", { resistance: "number" }, [""], [{ "": 2 }], false);
 
 // --- Object Info Provider ---
 
@@ -149,26 +141,32 @@ export class MyProjectObjInfoProvider extends BaseObjInfoProvider {
                 // ... add all your component infos here
             ],
             [WireInfo], // Wires
-            [PortInfo]  // Ports
+            [PortInfo], // Ports
         );
     }
 
     public override createIC(ic: Schema.IntegratedCircuit): void {
-        const ports = ic.metadata.pins.reduce<Record<string, Schema.IntegratedCircuitPin[]>>((prev, pin) => ({
-            ...prev,
-            [pin.group]: [...(prev[pin.group] ?? []), pin],
-        }), {});
+        const ports = ic.metadata.pins.reduce<Record<string, Schema.IntegratedCircuitPin[]>>(
+            (prev, pin) => ({
+                ...prev,
+                [pin.group]: [...(prev[pin.group] ?? []), pin],
+            }),
+            {},
+        );
 
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
-        this.ics.set(ic.metadata.id, new MyProjectComponentInfo(
+        this.ics.set(
             ic.metadata.id,
-            {},
-            Object.keys(ports),
-            [portConfig],
-            false,
-            MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
-        ));
+            new MyProjectComponentInfo(
+                ic.metadata.id,
+                {},
+                Object.keys(ports),
+                [portConfig],
+                false,
+                MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
+            ),
+        );
     }
 }
 ```
@@ -177,7 +175,7 @@ The `createIC` method is used to dynamically generate component information for 
 
 ### Component Assemblers
 
-Once you've defined the *data* and *behavior* of your components, you need to define how they *look*. This is the job of **Component Assemblers**.
+Once you've defined the _data_ and _behavior_ of your components, you need to define how they _look_. This is the job of **Component Assemblers**.
 
 Each component `kind` in your project needs a corresponding `ComponentAssembler`. This class is responsible for:
 
@@ -194,23 +192,23 @@ First, you need a factory function that creates a `CircuitAssembler` for your pr
 export function MakeMyProjectCircuitAssembler(
     circuit: CircuitInternal,
     // If your project has a simulation, you'll pass it here and to your assemblers
-    // sim: MyProjectSim, 
+    // sim: MyProjectSim,
     options: RenderOptions,
 ): CircuitAssembler {
     // The CircuitAssembler takes a function that returns a map of assemblers.
-    // This allows the \`params\` object (containing circuit, options, etc.) 
+    // This allows the \`params\` object (containing circuit, options, etc.)
     // to be passed to each assembler's constructor.
     return new CircuitAssembler(circuit, options, (params: AssemblerParams) => ({
         // Every project needs these basic assemblers for built-in types
-        "IC": new ICComponentAssembler(params),
-        "MyProjectWire": new WireAssembler(params),
-        "MyProjectNode": new NodeAssembler(params, { 
+        IC: new ICComponentAssembler(params),
+        MyProjectWire: new WireAssembler(params),
+        MyProjectNode: new NodeAssembler(params, {
             // Port placement for the node (a single port in the center)
-            "": () => ({ origin: V(0, 0), target: V(0, 0) }) 
+            "": () => ({ origin: V(0, 0), target: V(0, 0) }),
         }),
 
         // Your custom component assemblers go here
-        "Resistor": new ResistorAssembler(params),
+        Resistor: new ResistorAssembler(params),
         // ... other assemblers
     }));
 }
@@ -228,33 +226,37 @@ export class ResistorAssembler extends ComponentAssembler {
         // 2. portPlacements: A map of functions to position ports.
         // 3. assemblyParts: An array of objects that define the visual parts.
         // 4. options (optional): Extra configuration.
-        super(params, {
-            // The "Resistor" component has one port group ("") with two ports.
-            // We can access them by index.
-            "": (_comp, index, _total) => ({
-                // Port 0 is on the left, Port 1 is on the right.
-                // The origin is at the center-left/right edge of the component.
-                origin: V(index === 0 ? -1 : 1, 0),
-                dir: V(index === 0 ? -1 : 1, 0),
-            }),
-        }, [
+        super(
+            params,
             {
-                kind: "BaseShape",
-
-                // This part should be re-assembled when the component moves/rotates.
-                dependencies: new Set([AssemblyReason.TransformChanged]),
-                
-                // This function returns the actual visual primitive.
-                assemble: (comp) => ({
-                    kind: "Rectangle",
-                    transform: this.getTransform(comp),
+                // The "Resistor" component has one port group ("") with two ports.
+                // We can access them by index.
+                "": (_comp, index, _total) => ({
+                    // Port 0 is on the left, Port 1 is on the right.
+                    // The origin is at the center-left/right edge of the component.
+                    origin: V(index === 0 ? -1 : 1, 0),
+                    dir: V(index === 0 ? -1 : 1, 0),
                 }),
-
-                // These two properties handle selection highlighting.
-                styleChangesWhenSelected: true,
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
-        ]);
+            [
+                {
+                    kind: "BaseShape",
+
+                    // This part should be re-assembled when the component moves/rotates.
+                    dependencies: new Set([AssemblyReason.TransformChanged]),
+
+                    // This function returns the actual visual primitive.
+                    assemble: (comp) => ({
+                        kind: "Rectangle",
+                        transform: this.getTransform(comp),
+                    }),
+
+                    // These two properties handle selection highlighting.
+                    styleChangesWhenSelected: true,
+                    getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                },
+            ],
+        );
     }
 
     // Override getSize to define the component's bounding box.
@@ -271,9 +273,9 @@ With these two files, you have a complete, albeit simple, visual representation 
 
 The `digital` project contains many examples of more complex assemblers:
 
-*   **Dynamic Sizing**: `ComparatorAssembler` and `MultiplexerAssembler` change their size based on the number of ports. This is done by overriding `getSize` and reading the component's port count from `this.circuit`.
-*   **SVG Shapes**: `ConstantLowAssembler` uses an SVG file for its visual, which is great for complex, static icons.
-*   **State-Dependent Visuals**: `OscilloscopeAssembler` reads the component's state from the `DigitalSim` and draws a waveform. This uses the `AssemblyReason.StateUpdated` dependency to trigger re-assembly when the simulation state changes.
+- **Dynamic Sizing**: `ComparatorAssembler` and `MultiplexerAssembler` change their size based on the number of ports. This is done by overriding `getSize` and reading the component's port count from `this.circuit`.
+- **SVG Shapes**: `ConstantLowAssembler` uses an SVG file for its visual, which is great for complex, static icons.
+- **State-Dependent Visuals**: `OscilloscopeAssembler` reads the component's state from the `DigitalSim` and draws a waveform. This uses the `AssemblyReason.StateUpdated` dependency to trigger re-assembly when the simulation state changes.
 
 ### Defining Your API
 
@@ -286,6 +288,7 @@ The setup is centered around a `CircuitContext` class, which acts as the central
 First, create a `MyProjectCircuitContext.ts` file. This class extends the abstract `CircuitContext` and is responsible for wiring together all the major parts of your circuit's backend.
 
 In its constructor, it will:
+
 1.  Call `super()` to initialize the core internal state, passing in your project's `ObjInfoProvider`.
 2.  Initialize the `assembler` property by calling your `MakeMyProjectCircuitAssembler` function.
 3.  Initialize the `factory` property. This factory is responsible for creating the public-facing API objects (like `Component`, `Wire`, etc.). For a simple project, you can use the base implementation classes from `shared`.
@@ -301,8 +304,8 @@ export class MyProjectCircuitContext extends CircuitContext<CircuitAPITypes> {
         this.assembler = MakeMyProjectCircuitAssembler(this.internal, this.renderOptions);
         this.factory = new CachedCircuitAPIFactoryImpl({
             constructComponent: (id, icId) => new ComponentImpl(this, id, icId),
-            constructWire:      (id, icId) => new WireImpl(this, id, icId),
-            constructPort:      (id, icId) => new PortImpl(this, id, icId),
+            constructWire: (id, icId) => new WireImpl(this, id, icId),
+            constructPort: (id, icId) => new PortImpl(this, id, icId),
             constructIC: (id) => new IntegratedCircuitImpl(this, id),
             constructComponentInfo: (kind) => new ComponentInfoImpl(this, kind),
             constructObjContainer: (objs, icId) => new ObjContainerImpl(this, objs, icId),
@@ -329,8 +332,8 @@ export class MyProjectCircuitImpl extends CircuitImpl<CircuitAPITypes> {
 Finally, create the public entry point for your API in an `index.ts` file. This function is now just a one-liner that instantiates your `MyProjectCircuitImpl` and is a bridge so that you can safely revoke access from importing into `src/projects/myproject/api/circuit/public/impl`.
 
 ```ts
-import {uuid} from "shared/api/circuit/public";
-import {MyProjectCircuitImpl} from "./impl/MyProjectCircuit";
+import { uuid } from "shared/api/circuit/public";
+import { MyProjectCircuitImpl } from "./impl/MyProjectCircuit";
 
 export function CreateCircuit(id = uuid()) {
     return new MyProjectCircuitImpl(id);
@@ -351,7 +354,6 @@ This ensures that when you use the `DigitalCircuit` API, every method returns th
 
 This approach is powerful but significantly more complex to set up. It's recommended only for projects that need to fundamentally extend the core API surface. For most new projects, the **simple API is the recommended starting point**.
 
-
 ## CircuitDesigner API Setup
 
 With your `Circuit` API defined, the next step is to make it interactive. This is the role of the **`CircuitDesigner`**.
@@ -371,17 +373,16 @@ In your `src/projects/myproject/api/circuitdesigner` directory, create a `MyProj
 This function takes a `ToolConfig` (which defines the set of available tools and handlers) and wires everything together.
 
 ```ts
-import {CreateCircuit} from "myproject/api/circuit/public";
+import { CreateCircuit } from "myproject/api/circuit/public";
 
-import {CircuitDesigner, ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {CircuitDesignerImpl} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
-import {CanvasTextMeasurer} from "shared/api/circuitdesigner/public/impl/rendering/CanvasTextMeasurer";
-import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
+import { CircuitDesigner, ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { CircuitDesignerImpl } from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
+import { CanvasTextMeasurer } from "shared/api/circuitdesigner/public/impl/rendering/CanvasTextMeasurer";
+import { ToolRenderer } from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 
 // This file will contain any SVGs your project uses for component rendering.
 // For a new project, it can be an empty map.
 import { SVGs } from "./rendering/svgs";
-
 
 export interface MyProjectCircuitDesigner extends CircuitDesigner {}
 
@@ -398,10 +399,13 @@ export function CreateDesigner(
 
     // This connects any custom tool renderers to the viewport's render loop.
     designer.viewport.subscribe("onrender", (ev) => {
-        renderers.forEach((toolRenderer) => toolRenderer.render({
-            designer, renderer: ev.renderer,
-        }));
-    })
+        renderers.forEach((toolRenderer) =>
+            toolRenderer.render({
+                designer,
+                renderer: ev.renderer,
+            }),
+        );
+    });
 
     return designer;
 }
@@ -422,9 +426,9 @@ With these two files, your `CircuitDesigner` API is ready to be used in your fro
 
 The real power of the `CircuitDesigner` comes from its extensible tool system. While the `shared` package provides a rich set of default tools (for selecting, moving, wiring, etc.), you can create custom tools and handlers to add project-specific interactions.
 
-*   **Tool Handlers**: These are simple objects that respond to specific events (like `click`, `keydown`, `dblclick`). They are perfect for stateless actions. For example, the `digital` project uses an `InteractionHandler` to toggle switches and press buttons. It checks the `kind` of the clicked component and calls its `setSimState` method.
+- **Tool Handlers**: These are simple objects that respond to specific events (like `click`, `keydown`, `dblclick`). They are perfect for stateless actions. For example, the `digital` project uses an `InteractionHandler` to toggle switches and press buttons. It checks the `kind` of the clicked component and calls its `setSimState` method.
 
-*   **Tools**: These are stateful classes that manage more complex, multi-step interactions, like dragging or resizing. A `Tool` has methods like `shouldActivate`, `onActivate`, `onEvent`, and `onDeactivate` to control its lifecycle. For example, the `digital` project has an `ICResizeTool` that activates when the user starts dragging the edge of an IC, updates the IC's size during the drag, and commits the change on mouse up.
+- **Tools**: These are stateful classes that manage more complex, multi-step interactions, like dragging or resizing. A `Tool` has methods like `shouldActivate`, `onActivate`, `onEvent`, and `onDeactivate` to control its lifecycle. For example, the `digital` project has an `ICResizeTool` that activates when the user starts dragging the edge of an IC, updates the IC's size during the drag, and commits the change on mouse up.
 
 To add a custom handler or tool, you would create it in your `circuitdesigner`'s `tools` directory and then add it to the `ToolConfig` when you call `CreateDesigner` from your frontend application. This allows each site or application using your project's API to customize the set of available interactions.
 
@@ -529,7 +533,7 @@ This setup gives you a functional application with a header, a main canvas area 
 
 From here, you can continue to build out your application's UI by:
 
-*   **Creating an `ItemNavConfig`**: Define the components that appear in the `ItemNav` sidebar, complete with labels and icons.
-*   **Configuring the `SelectionPopup`**: Add custom property modules to the selection popup to display project-specific information or actions.
-*   **Adding more `ToolHandler`s**: Enhance interactivity by adding handlers for features like copy/paste, undo/redo, and saving.
-*   **Implementing Serialization**: Fill in the `TODO` in `CircuitHelpers` to enable saving and loading circuits, likely using Protobuf as seen in the `digital` project.
+- **Creating an `ItemNavConfig`**: Define the components that appear in the `ItemNav` sidebar, complete with labels and icons.
+- **Configuring the `SelectionPopup`**: Add custom property modules to the selection popup to display project-specific information or actions.
+- **Adding more `ToolHandler`s**: Enhance interactivity by adding handlers for features like copy/paste, undo/redo, and saving.
+- **Implementing Serialization**: Fill in the `TODO` in `CircuitHelpers` to enable saving and loading circuits, likely using Protobuf as seen in the `digital` project.

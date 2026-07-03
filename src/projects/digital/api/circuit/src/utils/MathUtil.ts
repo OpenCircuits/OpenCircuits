@@ -18,12 +18,11 @@ export function BCDtoDecimal(bcd: boolean[]): number {
  * @returns          The BCD representation of the input.
  */
 export function DecimalToBCD(decimal: number, outputSize?: number): boolean[] {
-    if (!Number.isInteger(decimal) || decimal < 0)
-        throw "input must be a nonnegative integer";
+    if (!Number.isInteger(decimal) || decimal < 0) throw "input must be a nonnegative integer";
     // Minimum number of digits for BCD
-    const minSize = (decimal === 0 ? 1 : Math.floor(Math.log2(decimal)+1));
+    const minSize = decimal === 0 ? 1 : Math.floor(Math.log2(decimal) + 1);
     return new Array<boolean>(outputSize ?? minSize)
         .fill(false)
-        .map((_, i) => ((decimal & (1 << i)) >> i))
-        .map((bit) => (bit === 1));
+        .map((_, i) => (decimal & (1 << i)) >> i)
+        .map((bit) => bit === 1);
 }

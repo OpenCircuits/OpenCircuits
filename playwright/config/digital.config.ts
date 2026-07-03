@@ -1,7 +1,6 @@
-import baseConfig, {DevProjects, DevWebServers} from "./base.config.js";
+import baseConfig, { DevProjects, DevWebServers } from "./base.config.js";
 
-import type {PlaywrightTestConfig} from "@playwright/test";
-
+import type { PlaywrightTestConfig } from "@playwright/test";
 
 const overrides: PlaywrightTestConfig = {
     testDir: "../digital",
@@ -9,7 +8,7 @@ const overrides: PlaywrightTestConfig = {
     webServer: DevWebServers.digital,
 
     projects: DevProjects.digital,
-}
+};
 
 const config: PlaywrightTestConfig = { ...baseConfig, ...overrides };
 

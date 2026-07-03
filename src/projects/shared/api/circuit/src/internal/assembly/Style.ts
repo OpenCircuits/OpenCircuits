@@ -1,5 +1,4 @@
-import {Vector} from "Vector";
-
+import { Vector } from "Vector";
 
 export interface RadialGradientInfo {
     pos1: Vector;

@@ -1,10 +1,9 @@
 import "shared/tests/helpers/Extensions";
 
-import {V} from "Vector";
-import {Rect} from "math/Rect";
+import { V } from "Vector";
+import { Rect } from "math/Rect";
 
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("IntegratedCircuit", () => {
     test("Basic IC", () => {
@@ -14,8 +13,8 @@ describe("IntegratedCircuit", () => {
 
         const i1 = icCircuit.placeComponentAt("InputPin", V(-5, -5));
         const i2 = icCircuit.placeComponentAt("InputPin", V(-5, +5));
-        const o1 = icCircuit.placeComponentAt("OutputPin", V(+5,  0));
-        const g  = icCircuit.placeComponentAt("ANDGate", V(0, 0));
+        const o1 = icCircuit.placeComponentAt("OutputPin", V(+5, 0));
+        const g = icCircuit.placeComponentAt("ANDGate", V(0, 0));
 
         i1.outputs[0].connectTo(g.inputs[0]);
         i2.outputs[0].connectTo(g.inputs[1]);
@@ -29,10 +28,10 @@ describe("IntegratedCircuit", () => {
                 pins: [
                     { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
                     { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
                 ],
             },
-        })
+        });
 
         expect(ic.name).toBe("My IC");
         expect(ic.display.size).toEqual(V(4, 2));
@@ -60,8 +59,8 @@ describe("IntegratedCircuit", () => {
 
         const i1Inner = innerIcCircuit.placeComponentAt("InputPin", V(-5, -5));
         const i2Inner = innerIcCircuit.placeComponentAt("InputPin", V(-5, +5));
-        const o1Inner = innerIcCircuit.placeComponentAt("OutputPin", V(+5,  0));
-        const gInner  = innerIcCircuit.placeComponentAt("ANDGate", V(0, 0));
+        const o1Inner = innerIcCircuit.placeComponentAt("OutputPin", V(+5, 0));
+        const gInner = innerIcCircuit.placeComponentAt("ANDGate", V(0, 0));
 
         i1Inner.outputs[0].connectTo(gInner.inputs[0]);
         i2Inner.outputs[0].connectTo(gInner.inputs[1]);
@@ -76,7 +75,7 @@ describe("IntegratedCircuit", () => {
                 pins: [
                     { id: i1Inner.outputs[0].id, group: "inputs", name: "Inner In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
                     { id: i2Inner.outputs[0].id, group: "inputs", name: "Inner In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Inner.inputs[0].id, group: "outputs", name: "Inner Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: o1Inner.inputs[0].id, group: "outputs", name: "Inner Out", pos: V(+1, 0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -92,7 +91,7 @@ describe("IntegratedCircuit", () => {
 
         const i1Outer = outerIcCircuit.placeComponentAt("InputPin", V(-5, -5));
         const i2Outer = outerIcCircuit.placeComponentAt("InputPin", V(-5, +5));
-        const o1Outer = outerIcCircuit.placeComponentAt("OutputPin", V(+5,  0));
+        const o1Outer = outerIcCircuit.placeComponentAt("OutputPin", V(+5, 0));
         const innerIcInstance = outerIcCircuit.placeComponentAt(innerIc.id, V(1, 1));
         expect(innerIcInstance.allPorts).toHaveLength(3);
         expect(innerIcInstance.ports["inputs"]).toHaveLength(2);
@@ -111,7 +110,7 @@ describe("IntegratedCircuit", () => {
                 pins: [
                     { id: i1Outer.outputs[0].id, group: "inputs", name: "Outer In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
                     { id: i2Outer.outputs[0].id, group: "inputs", name: "Outer In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1Outer.inputs[0].id, group: "outputs", name: "Outer Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: o1Outer.inputs[0].id, group: "outputs", name: "Outer Out", pos: V(+1, 0), dir: V(+1, 0) },
                 ],
             },
         });
@@ -129,8 +128,8 @@ describe("IntegratedCircuit", () => {
 
         const i1 = circuit.placeComponentAt("Switch", V(-5, -5));
         const i2 = circuit.placeComponentAt("Switch", V(-5, +5));
-        const o1 = circuit.placeComponentAt("LED", V(+5,  0));
-        const g  = circuit.placeComponentAt("ANDGate", V(0, 0));
+        const o1 = circuit.placeComponentAt("LED", V(+5, 0));
+        const g = circuit.placeComponentAt("ANDGate", V(0, 0));
 
         i1.outputs[0].connectTo(g.inputs[0]);
         i2.outputs[0].connectTo(g.inputs[1]);
@@ -152,7 +151,7 @@ describe("IntegratedCircuit", () => {
                 pins: [
                     { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
                     { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
-                    { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                    { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
                 ],
             },
         });

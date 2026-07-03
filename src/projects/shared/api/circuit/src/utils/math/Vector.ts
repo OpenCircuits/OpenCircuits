@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
-
 /**
  * A representation of a vector in 2D space. Commonly used to represent points,
  *  but also sizes, rays, and any other collection of 2-numbers.
@@ -18,7 +17,6 @@ export interface Vector {
      * The y-component of this Vector in the given space.
      */
     readonly y: number;
-
 
     /**
      * Returns a new Vector with `this` Vector's x and y
@@ -48,7 +46,6 @@ export interface Vector {
      */
     add(other: Vector): Vector;
 
-
     /**
      * Return a new vector with 'this' Vector's x and y
      *  components substracted by 'amt' to each component.
@@ -77,7 +74,6 @@ export interface Vector {
      */
     sub(other: Vector): Vector;
 
-
     /**
      * Return a new vector with 'this' vector's 'x' and 'y'
      * scalar multiplied by 'amt'.
@@ -94,7 +90,6 @@ export interface Vector {
      * @param other The vector to scalar multiply to 'this'.
      */
     scale(other: Vector): Vector;
-
 
     /**
      * Return a Vector with 'this' Vector's absolute value of 'x' and 'y'.
@@ -206,9 +201,7 @@ export namespace Vector {
      *             from vector(s) in the array.
      */
     export function Min(...vecs: Vector[]): Vector {
-        return new VectorImpl(
-            Math.min(...vecs.map((v) => v.x)),
-            Math.min(...vecs.map((v) => v.y)));
+        return new VectorImpl(Math.min(...vecs.map((v) => v.x)), Math.min(...vecs.map((v) => v.y)));
     }
 
     /**
@@ -220,10 +213,7 @@ export namespace Vector {
      *             from vector(s) in the array.
      */
     export function Max(...vecs: Vector[]): Vector {
-        return new VectorImpl(
-            Math.max(...vecs.map((v) => v.x)),
-            Math.max(...vecs.map((v) => v.y))
-        );
+        return new VectorImpl(Math.max(...vecs.map((v) => v.x)), Math.max(...vecs.map((v) => v.y)));
     }
 
     /**
@@ -243,17 +233,11 @@ export namespace Vector {
     }
 
     export function Ceil(vec: Vector): Vector {
-        return new VectorImpl(
-            Math.ceil(vec.x),
-            Math.ceil(vec.y),
-        );
+        return new VectorImpl(Math.ceil(vec.x), Math.ceil(vec.y));
     }
 
     export function Floor(vec: Vector): Vector {
-        return new VectorImpl(
-            Math.floor(vec.x),
-            Math.floor(vec.y),
-        );
+        return new VectorImpl(Math.floor(vec.x), Math.floor(vec.y));
     }
 }
 
@@ -270,8 +254,7 @@ class VectorImpl implements Vector {
     public add(x: number, y: number): Vector;
     public add(other: Vector): Vector;
     public add(x: Vector | number, y?: number): Vector {
-        if (typeof x === "number")
-            return new VectorImpl(this.x + x, this.y + (y ?? x));
+        if (typeof x === "number") return new VectorImpl(this.x + x, this.y + (y ?? x));
         return new VectorImpl(this.x + x.x, this.y + x.y);
     }
 
@@ -279,16 +262,14 @@ class VectorImpl implements Vector {
     public sub(x: number, y: number): Vector;
     public sub(other: Vector): Vector;
     public sub(x: Vector | number, y?: number): Vector {
-        if (typeof x === "number")
-            return new VectorImpl(this.x - x, this.y - (y ?? x));
+        if (typeof x === "number") return new VectorImpl(this.x - x, this.y - (y ?? x));
         return new VectorImpl(this.x - x.x, this.y - x.y);
     }
 
     public scale(amt: number): Vector;
     public scale(other: Vector): Vector;
     public scale(a: Vector | number): Vector {
-        if (typeof a === "number")
-            return new VectorImpl(this.x * a, this.y  * a);
+        if (typeof a === "number") return new VectorImpl(this.x * a, this.y * a);
         return new VectorImpl(this.x * a.x, this.y * a.y);
     }
 
@@ -297,8 +278,7 @@ class VectorImpl implements Vector {
     }
     public normalize(): Vector {
         const len = this.len();
-        if (len === 0)
-            return new VectorImpl(0, 0);
+        if (len === 0) return new VectorImpl(0, 0);
         return this.scale(1 / len);
     }
     public len(): number {
@@ -317,10 +297,11 @@ class VectorImpl implements Vector {
         return this.x * v.x + this.y * v.y;
     }
     public rotate(a: number, o = new VectorImpl(0, 0)): Vector {
-        const cos = Math.cos(a), sin = Math.sin(a);
+        const cos = Math.cos(a),
+            sin = Math.sin(a);
         return new VectorImpl(
-            ((this.x - o.x) * cos - (this.y - o.y) * sin) + o.x,
-            ((this.x - o.x) * sin + (this.y - o.y) * cos) + o.y,
+            (this.x - o.x) * cos - (this.y - o.y) * sin + o.x,
+            (this.x - o.x) * sin + (this.y - o.y) * cos + o.y,
         );
     }
     public withRotation(a: number, o = new VectorImpl(0, 0)): Vector {
@@ -333,7 +314,7 @@ class VectorImpl implements Vector {
         return new VectorImpl(this.y, -this.x);
     }
     public reciprocal(): Vector {
-        return new VectorImpl(1/this.x, 1/this.y);
+        return new VectorImpl(1 / this.x, 1 / this.y);
     }
 
     public toString(): string {
@@ -346,12 +327,10 @@ export function V(v: Vector): Vector;
 export function V(x: number): Vector;
 export function V(x: number, y: number): Vector;
 export function V(a?: Vector.Spaces | Vector | number, b?: number): Vector {
-    if (a === undefined)
-        return new VectorImpl(0, 0);
+    if (a === undefined) return new VectorImpl(0, 0);
 
     if (typeof a === "number") {
-        if (typeof b === "number")
-            return new VectorImpl(a, b);
+        if (typeof b === "number") return new VectorImpl(a, b);
         return new VectorImpl(a, a);
     }
     if (typeof a === "object") {

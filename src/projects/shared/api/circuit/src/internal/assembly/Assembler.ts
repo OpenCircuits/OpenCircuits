@@ -1,10 +1,9 @@
-import {GUID, Schema} from "shared/api/circuit/schema";
+import { GUID, Schema } from "shared/api/circuit/schema";
 
-import {CircuitInternal}   from "../impl/CircuitInternal";
+import { CircuitInternal } from "../impl/CircuitInternal";
 
-import {AssemblyCache} from "./AssemblyCache";
-import {RenderOptions} from "./RenderOptions";
-
+import { AssemblyCache } from "./AssemblyCache";
+import { RenderOptions } from "./RenderOptions";
 
 export interface AssemblerParams {
     circuit: CircuitInternal;
@@ -36,14 +35,15 @@ export abstract class Assembler<Obj extends Schema.Obj = Schema.Obj> {
         this.cache = cache;
         this.options = options;
         this.propMapping = {
-            "isSelected": AssemblyReason.SelectionChanged,
+            isSelected: AssemblyReason.SelectionChanged,
             ...propMapping,
         };
     }
 
     protected isSelected(id: GUID): boolean {
-        return this.circuit.getObjByID(id)
-            .map((o) => (o.props["isSelected"] ?? false))
+        return this.circuit
+            .getObjByID(id)
+            .map((o) => o.props["isSelected"] ?? false)
             .unwrapOr(false);
     }
 

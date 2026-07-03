@@ -1,12 +1,16 @@
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("ConstantNumber", () => {
     test("Default outputs 0", () => {
         const [_, { PlaceAndConnect }] = CreateTestCircuit();
-        const [_comp, { outputs: [out1, out2, out3, out4] }] = PlaceAndConnect("ConstantNumber");
+        const [
+            _comp,
+            {
+                outputs: [out1, out2, out3, out4],
+            },
+        ] = PlaceAndConnect("ConstantNumber");
 
         expect(out1).toBeOff();
         expect(out2).toBeOff();
@@ -15,7 +19,12 @@ describe("ConstantNumber", () => {
     });
     test("Changing inputNum changes outputs", () => {
         const [_, { PlaceAndConnect }] = CreateTestCircuit();
-        const [comp, { outputs: [out1, out2, out3, out4] }] = PlaceAndConnect("ConstantNumber");
+        const [
+            comp,
+            {
+                outputs: [out1, out2, out3, out4],
+            },
+        ] = PlaceAndConnect("ConstantNumber");
 
         comp.setProp("inputNum", 1);
 

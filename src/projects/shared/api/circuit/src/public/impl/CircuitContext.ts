@@ -1,12 +1,11 @@
-import {CircuitInternal, GUID}   from "shared/api/circuit/internal";
-import {CircuitAssembler}  from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import {DefaultRenderOptions, RenderOptions}     from "shared/api/circuit/internal/assembly/RenderOptions";
+import { CircuitInternal, GUID } from "shared/api/circuit/internal";
+import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import { DefaultRenderOptions, RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {ObjInfoProvider} from "../../internal/impl/ObjInfo";
-import {CircuitLog} from "../../internal/impl/CircuitLog";
-import {CircuitDocument} from "../../internal/impl/CircuitDocument";
-import {CircuitAPITypes} from "./Types";
-
+import { ObjInfoProvider } from "../../internal/impl/ObjInfo";
+import { CircuitLog } from "../../internal/impl/CircuitLog";
+import { CircuitDocument } from "../../internal/impl/CircuitDocument";
+import { CircuitAPITypes } from "./Types";
 
 export interface CircuitAPIFactory<T extends CircuitAPITypes> {
     constructComponent(id: string, icId?: GUID): T["Component"];
@@ -34,37 +33,41 @@ export class CachedCircuitAPIFactoryImpl<T extends CircuitAPITypes> implements C
 
     public constructor(factory: CircuitAPIFactory<T>) {
         this.cache = {
-            comps:     new Map(),
-            wires:     new Map(),
-            ports:     new Map(),
-            ics:       new Map(),
+            comps: new Map(),
+            wires: new Map(),
+            ports: new Map(),
+            ics: new Map(),
             compInfos: new Map(),
-            icObjs:    new Map(),
+            icObjs: new Map(),
         };
         this.factory = factory;
     }
 
     protected getCache(icId?: GUID): ObjsCache<T> {
         if (icId)
-            return this.cache.icObjs.getOrInsert(icId, () => ({ comps: new Map(), wires: new Map(), ports: new Map() }));
+            return this.cache.icObjs.getOrInsert(icId, () => ({
+                comps: new Map(),
+                wires: new Map(),
+                ports: new Map(),
+            }));
         return this.cache;
     }
 
     public constructComponent(id: string, icId?: GUID): T["Component"] {
-        return this.getCache(icId).comps.getOrInsert(id, (id) => this.factory.constructComponent(id, icId))
+        return this.getCache(icId).comps.getOrInsert(id, (id) => this.factory.constructComponent(id, icId));
     }
     public constructWire(id: string, icId?: GUID): T["Wire"] {
-        return this.getCache(icId).wires.getOrInsert(id, (id) => this.factory.constructWire(id, icId))
+        return this.getCache(icId).wires.getOrInsert(id, (id) => this.factory.constructWire(id, icId));
     }
     public constructPort(id: string, icId?: GUID): T["Port"] {
-        return this.getCache(icId).ports.getOrInsert(id, (id) => this.factory.constructPort(id, icId))
+        return this.getCache(icId).ports.getOrInsert(id, (id) => this.factory.constructPort(id, icId));
     }
 
     public constructIC(id: string): T["IC"] {
-        return this.cache.ics.getOrInsert(id, (id) => this.factory.constructIC(id))
+        return this.cache.ics.getOrInsert(id, (id) => this.factory.constructIC(id));
     }
     public constructComponentInfo(kind: string): T["ComponentInfo"] {
-        return this.cache.compInfos.getOrInsert(kind, (kind) => this.factory.constructComponentInfo(kind))
+        return this.cache.compInfos.getOrInsert(kind, (kind) => this.factory.constructComponentInfo(kind));
     }
 
     public constructObjContainer(objs: Set<GUID>, icId?: GUID): T["ObjContainerT"] {
@@ -88,8 +91,7 @@ export abstract class CircuitContext<T extends CircuitAPITypes> {
     public abstract readonly factory: CircuitAPIFactory<T>;
 
     public constructor(id: GUID, objInfoProvider: ObjInfoProvider) {
-        this.internal = new CircuitInternal(
-            new CircuitDocument(id, objInfoProvider, new CircuitLog()));
+        this.internal = new CircuitInternal(new CircuitDocument(id, objInfoProvider, new CircuitLog()));
         this.renderOptions = new DefaultRenderOptions();
     }
 }

@@ -1,45 +1,52 @@
-import {V, Vector} from "Vector";
-import {Rect} from "math/Rect";
+import { V, Vector } from "Vector";
+import { Rect } from "math/Rect";
 
-import {Schema} from "shared/api/circuit/schema";
-import {FontStyle} from "shared/api/circuit/internal/assembly/Style";
-import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import { Schema } from "shared/api/circuit/schema";
+import { FontStyle } from "shared/api/circuit/internal/assembly/Style";
+import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
+import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";
 
-import {DigitalSim} from "digital/api/circuit/internal/sim/DigitalSim";
-import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
-
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
+import { PositioningHelpers } from "shared/api/circuit/internal/assembly/PortAssembler";
 
 export class ConstantNumberAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;
 
     public constructor(params: AssemblerParams, sim: DigitalSim) {
-        super(params, {
-            "outputs": (comp, index, total) => ({
-                origin: V(0.5, -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y, { spacing: 0.5 })),
-                dir:    V(1, 0),
-            }),
-        }, [
+        super(
+            params,
             {
-                kind: "BaseShape",
-
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
-                assemble:     (comp) => ({
-                    kind:      "Rectangle",
-                    transform: this.getTransform(comp),
+                outputs: (comp, index, total) => ({
+                    origin: V(
+                        0.5,
+                        -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y, { spacing: 0.5 }),
+                    ),
+                    dir: V(1, 0),
                 }),
-
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
             },
-            {
-                kind: "Text",
+            [
+                {
+                    kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
-                assemble:     (comp) => this.assembleText(comp),
+                    dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SelectionChanged]),
+                    assemble: (comp) => ({
+                        kind: "Rectangle",
+                        transform: this.getTransform(comp),
+                    }),
 
-                getFontStyle: () => this.getFontStyle(),
-            },
-        ], { drawPortLineForGroups: ["outputs"] });
+                    getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                },
+                {
+                    kind: "Text",
+
+                    dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PropChanged]),
+                    assemble: (comp) => this.assembleText(comp),
+
+                    getFontStyle: () => this.getFontStyle(),
+                },
+            ],
+            { drawPortLineForGroups: ["outputs"] },
+        );
         this.sim = sim;
     }
 
@@ -52,10 +59,10 @@ export class ConstantNumberAssembler extends ComponentAssembler {
         const text = value < 10 ? value.toString() : "ABCDEF".charAt(value - 10);
         const bounds = this.options.textMeasurer?.getBounds(this.getFontStyle(), text) ?? new Rect(V(), V());
         return {
-            kind:     "Text",
-            pos:      this.getPos(comp),
-            angle:    this.getAngle(comp),
-            offset:   bounds.center,
+            kind: "Text",
+            pos: this.getPos(comp),
+            angle: this.getAngle(comp),
+            offset: bounds.center,
             contents: text,
         } as const;
     }
@@ -63,9 +70,9 @@ export class ConstantNumberAssembler extends ComponentAssembler {
     private getFontStyle(): FontStyle {
         return {
             ...this.options.fontStyle(),
-            font:  "lighter 800px arial",
+            font: "lighter 800px arial",
             color: this.options.defaultOnColor,
             scale: 1000,
-        }
+        };
     }
 }

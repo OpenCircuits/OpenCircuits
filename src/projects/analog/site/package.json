@@ -1,20 +1,20 @@
 {
-  "name": "analog-site",
-  "description": "The analog version of OpenCircuits",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.5.0",
-    "firebase": "11.10.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-ga": "^3.3.1",
-    "react-redux": "^9.2.0",
-    "redux": "^4.2.0",
-    "redux-thunk": "^2.4.1",
-    "serialeazy": "^2.0.8"
-  },
-  "devDependencies": {
-    "@types/google.accounts": "^0.0.17"
-  }
+    "name": "analog-site",
+    "version": "1.0.0",
+    "private": true,
+    "description": "The analog version of OpenCircuits",
+    "dependencies": {
+        "@reduxjs/toolkit": "^2.5.0",
+        "firebase": "11.10.0",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+        "react-ga": "^3.3.1",
+        "react-redux": "^9.2.0",
+        "redux": "^4.2.0",
+        "redux-thunk": "^2.4.1",
+        "serialeazy": "^2.0.8"
+    },
+    "devDependencies": {
+        "@types/google.accounts": "^0.0.17"
+    }
 }

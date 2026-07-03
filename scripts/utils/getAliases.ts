@@ -2,7 +2,6 @@ import path from "node:path";
 
 import ts from "typescript";
 
-
 /**
  * Gets the file aliases.
  *
@@ -14,11 +13,7 @@ export default function getAliases(cwd = process.cwd(), format: "webpack" | "jes
     const file = path.join(cwd, "tsconfig.json");
 
     const rawConfig = ts.readConfigFile(file, ts.sys.readFile).config;
-    const config = ts.parseJsonConfigFileContent(
-        rawConfig,
-        ts.sys,
-        cwd
-    );
+    const config = ts.parseJsonConfigFileContent(rawConfig, ts.sys, cwd);
 
     const aliases: Record<string, string> = {};
     if (config.options.paths) {

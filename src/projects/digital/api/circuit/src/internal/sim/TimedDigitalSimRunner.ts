@@ -1,6 +1,5 @@
-import {DigitalSim} from "./DigitalSim";
-import {InstantSimRunner} from "./DigitalSimRunner";
-
+import { DigitalSim } from "./DigitalSim";
+import { InstantSimRunner } from "./DigitalSimRunner";
 
 export class TimedDigitalSimRunner extends InstantSimRunner {
     protected curTimeout?: number;
@@ -26,12 +25,10 @@ export class TimedDigitalSimRunner extends InstantSimRunner {
     }
 
     protected override queueStep(): void {
-        if (this.paused)
-            return;
+        if (this.paused) return;
 
         // Already working on requests
-        if (this.curTimeout)
-            return;
+        if (this.curTimeout) return;
 
         // Already waiting on a timeout
         this.curTimeout = window.setTimeout(() => {

@@ -6,15 +6,13 @@ export class DirtyVar<T> {
 
     private readonly children: Set<DirtyVar<unknown>>;
 
-
     public constructor(update: () => T, parent?: DirtyVar<unknown>) {
         this.isDirty = true;
         this.update = update;
         this.children = new Set();
 
         // Add oursevles to the parent set
-        if (parent)
-            parent.children.add(this);
+        if (parent) parent.children.add(this);
     }
 
     public setDirty(): void {

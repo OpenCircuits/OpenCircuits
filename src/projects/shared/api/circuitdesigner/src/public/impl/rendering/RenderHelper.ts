@@ -1,9 +1,8 @@
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {Matrix2x3} from "math/Matrix";
+import { Matrix2x3 } from "math/Matrix";
 
-import {Style} from "shared/api/circuit/internal/assembly/Style";
-
+import { Style } from "shared/api/circuit/internal/assembly/Style";
 
 export class RenderHelper {
     public canvas: HTMLCanvasElement;
@@ -15,8 +14,7 @@ export class RenderHelper {
     }
 
     public get ctx(): CanvasRenderingContext2D {
-        if (!this.context)
-            throw new Error(`RenderHelper: Uninitialized context! ${this.canvas} | ${this.context}`);
+        if (!this.context) throw new Error(`RenderHelper: Uninitialized context! ${this.canvas} | ${this.context}`);
         return this.context;
     }
 
@@ -25,11 +23,7 @@ export class RenderHelper {
     }
 
     public transform(m: Matrix2x3) {
-        this.ctx.transform(
-            m.get(0), m.get(1),
-            m.get(2), m.get(3),
-            m.get(4), m.get(5),
-        );
+        this.ctx.transform(m.get(0), m.get(1), m.get(2), m.get(3), m.get(4), m.get(5));
     }
 
     public beginPath() {
@@ -63,8 +57,7 @@ export class RenderHelper {
                 // TODO - evaluate performance of this and if it's too much, find a way to cache the gradient
                 const { pos1, radius1, pos2, radius2, colorStops } = style.fill;
                 const gradient = this.ctx.createRadialGradient(pos1.x, pos1.y, radius1, pos2.x, pos2.y, radius2);
-                colorStops.forEach(([offset, color]) =>
-                    gradient.addColorStop(offset, color));
+                colorStops.forEach(([offset, color]) => gradient.addColorStop(offset, color));
                 this.ctx.fillStyle = gradient;
             }
         }

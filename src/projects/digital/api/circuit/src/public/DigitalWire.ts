@@ -1,7 +1,6 @@
-import type {ReadonlyWire, Wire} from "shared/api/circuit/public";
+import type { ReadonlyWire, Wire } from "shared/api/circuit/public";
 
-import type {APIToDigital} from "./DigitalCircuit";
-
+import type { APIToDigital } from "./DigitalCircuit";
 
 interface BaseDigitalWire {}
 

@@ -1,9 +1,8 @@
-import {existsSync} from "node:fs";
-import path         from "node:path";
+import { existsSync } from "node:fs";
+import path from "node:path";
 
-import dotEnv       from "dotenv";
+import dotEnv from "dotenv";
 import dotEnvExpand from "dotenv-expand";
-
 
 /**
  * Gets the current environment.
@@ -17,20 +16,15 @@ export default function getEnv(dir: string, publicRoot: string) {
     const dotenv = path.resolve(dir, ".env");
 
     // Load dotenv files
-    [
-        `${dotenv}.${NODE_ENV}.local`,
-        `${dotenv}.${NODE_ENV}`,
-        `${dotenv}`,
-    ].filter(existsSync)
-     .map((path) => ({ path }))
-     .forEach((cfg) => dotEnvExpand.expand(dotEnv.config(cfg)));
+    [`${dotenv}.${NODE_ENV}.local`, `${dotenv}.${NODE_ENV}`, `${dotenv}`]
+        .filter(existsSync)
+        .map((path) => ({ path }))
+        .forEach((cfg) => dotEnvExpand.expand(dotEnv.config(cfg)));
 
     return Object.keys(process.env)
-                 .filter((k) => k.startsWith("OC"))
-                 .reduce(
-                     (env, key) => ({ ...env, [key]: process.env[key] }),
-                     {
-                         NODE_ENV, PUBLIC_URL: publicRoot.slice(0, -1),
-                     }
-                 );
+        .filter((k) => k.startsWith("OC"))
+        .reduce((env, key) => ({ ...env, [key]: process.env[key] }), {
+            NODE_ENV,
+            PUBLIC_URL: publicRoot.slice(0, -1),
+        });
 }

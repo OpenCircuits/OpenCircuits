@@ -1,20 +1,19 @@
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {Circuit, Component, isComponent} from "shared/api/circuit/public";
+import { Circuit, Component, isComponent } from "shared/api/circuit/public";
 
-import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
-import {Tool, ToolEvent} from "./Tool";
-import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {Cursor} from "../input/Cursor";
-
+import { Tool, ToolEvent } from "./Tool";
+import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { Cursor } from "../input/Cursor";
 
 export const ROTATION_CIRCLE_RADIUS = 1.5;
 export const ROTATION_CIRCLE_THICKNESS = 0.1;
 
-const ROTATION_SNAP_AMT = Math.PI/4;
+const ROTATION_SNAP_AMT = Math.PI / 4;
 const ROTATION_CIRCLE_THRESHOLD = ROTATION_CIRCLE_THICKNESS + 0.06;
 const ROTATION_CIRCLE_R1 = (ROTATION_CIRCLE_RADIUS - ROTATION_CIRCLE_THRESHOLD) ** 2;
 const ROTATION_CIRCLE_R2 = (ROTATION_CIRCLE_RADIUS + ROTATION_CIRCLE_THRESHOLD) ** 2;
@@ -49,13 +48,15 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         const worldPos = viewport.toWorldPos(pos);
         const d = worldPos.sub(circuit.selections.midpoint).len2();
 
-        return (ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2);
+        return ROTATION_CIRCLE_R1 <= d && d <= ROTATION_CIRCLE_R2;
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        if (!circuit.selections.isEmpty &&
+        if (
+            !circuit.selections.isEmpty &&
             circuit.selections.every(isComponent) &&
-            this.isOnCircle(ev.input.mousePos, circuit, viewport)) {
+            this.isOnCircle(ev.input.mousePos, circuit, viewport)
+        ) {
             return "grab";
         }
     }
@@ -73,7 +74,7 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
         );
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
-        return (ev.type === "mouseup");
+        return ev.type === "mouseup";
     }
 
     public onActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
@@ -114,34 +115,24 @@ export class RotateTool extends ObservableImpl<ToolEvent> implements Tool {
             const dAngle = viewport.toWorldPos(ev.input.mousePos).sub(midpoint).angle() - this.prevAngle;
 
             // Calculate new and snapped angles
-            const newAngles = this.curAngles.map((a) => (a + dAngle));
-            const snappedAngles = newAngles
-                .map((a) => (
-                    ev.input.isShiftKeyDown
-                    ? (Math.floor(a/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT)
-                    : a
-                ));
+            const newAngles = this.curAngles.map((a) => a + dAngle);
+            const snappedAngles = newAngles.map((a) =>
+                ev.input.isShiftKeyDown ? Math.floor(a / ROTATION_SNAP_AMT) * ROTATION_SNAP_AMT : a,
+            );
 
             // Calculate new angle the rotation about the midpoint
-            const newAroundAngle = (
-                isIndependent
-                ? this.curAroundAngle
-                : this.curAroundAngle + dAngle
-            );
-            const snappedAroundAngle = (
-                ev.input.isShiftKeyDown
-                ? Math.floor(newAroundAngle/ROTATION_SNAP_AMT)*ROTATION_SNAP_AMT
-                : newAroundAngle
-            );
+            const newAroundAngle = isIndependent ? this.curAroundAngle : this.curAroundAngle + dAngle;
+            const snappedAroundAngle = ev.input.isShiftKeyDown
+                ? Math.floor(newAroundAngle / ROTATION_SNAP_AMT) * ROTATION_SNAP_AMT
+                : newAroundAngle;
 
             // Calculate new, snapped positions
-            const snappedPositions = this.initialPositions
-                .map((c) => c.rotate(snappedAroundAngle, midpoint));
+            const snappedPositions = this.initialPositions.map((c) => c.rotate(snappedAroundAngle, midpoint));
 
             this.components.forEach((c, i) => {
                 c.pos = snappedPositions[i];
                 c.angle = snappedAngles[i];
-            })
+            });
 
             this.curAngles = newAngles;
             this.curAroundAngle = newAroundAngle;

@@ -2,11 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
 
-import {V} from "Vector";
-import {Rect} from "math/Rect";
+import { V } from "Vector";
+import { Rect } from "math/Rect";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("Component", () => {
     describe("Bounds", () => {
@@ -163,7 +162,9 @@ describe("Component", () => {
         test("Set invalid prop", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0));
-            expect(() => {c.setProp("fakeProp", true)}).toThrow();
+            expect(() => {
+                c.setProp("fakeProp", true);
+            }).toThrow();
         });
     });
 
@@ -299,7 +300,7 @@ describe("Component", () => {
         test(".setPortConfig on invalid port group", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
             const [c] = PlaceAt(V(0, 0));
-            expect(() => c.setPortConfig({ "invalidGroup": 6 })).toThrow();
+            expect(() => c.setPortConfig({ invalidGroup: 6 })).toThrow();
         });
 
         test("firstAvailable", () => {
@@ -307,7 +308,7 @@ describe("Component", () => {
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             expect(c1.firstAvailable("")).toBeDefined();
             c1.setPortConfig({ "": 2 });
-            c1.firstAvailable("")!.connectTo(c2.firstAvailable("")!)
+            c1.firstAvailable("")!.connectTo(c2.firstAvailable("")!);
             expect(c1.firstAvailable("")).toBeDefined();
             expect(c2.firstAvailable("")).toBeDefined();
             expect(c1.ports[""][0].connections).toHaveLength(1);
@@ -319,8 +320,8 @@ describe("Component", () => {
             const [c1, c2, c3] = PlaceAt(V(0, 0), V(1, 1), V(2, 2));
             expect(c1.firstAvailable("")).toBeDefined();
             c1.setPortConfig({ "": 2 });
-            c1.ports[""][0].connectTo(c2.ports[""][0])
-            c1.ports[""][1].connectTo(c3.ports[""][0])
+            c1.ports[""][0].connectTo(c2.ports[""][0]);
+            c1.ports[""][1].connectTo(c3.ports[""][0]);
             c1.setPortConfig({ "": 1 });
             expect(c1.ports[""]).toHaveLength(1);
             expect(c1.ports[""][0].connections).toHaveLength(1);
@@ -329,13 +330,13 @@ describe("Component", () => {
             expect(c3.ports[""]).toHaveLength(1);
             expect(c3.ports[""][0].connections).toHaveLength(0);
         });
-
     });
 
     describe("Delete Node's full path", () => {
         test("Delete full path with 1 node", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             n1.delete();
@@ -362,7 +363,8 @@ describe("Component", () => {
         });
         test("Delete full path with 2 nodes", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             const { node: n2, wire1: sw21, wire2: sw22 } = sw2.split();

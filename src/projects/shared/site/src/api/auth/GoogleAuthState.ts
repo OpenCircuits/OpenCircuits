@@ -1,8 +1,7 @@
-import {getAuth, signOut} from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 
-import {AuthState} from "./AuthState";
-import {AuthType}  from "./AuthTypes";
-
+import { AuthState } from "./AuthState";
+import { AuthType } from "./AuthTypes";
 
 const GOOGLE_AUTH_CREDENTIAL_COOKIE = "google_auth_credential";
 

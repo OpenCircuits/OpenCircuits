@@ -1,17 +1,21 @@
 import "shared/tests/helpers/Extensions";
-import {InputToken, InputTreeBinOpNode, InputTreeIdent,
-        InputTreeUnOpNode, OperatorFormat,
-        Token} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
+import {
+    InputToken,
+    InputTreeBinOpNode,
+    InputTreeIdent,
+    InputTreeUnOpNode,
+    OperatorFormat,
+    Token,
+} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 
-import {GenerateInputTree} from "digital/site/utils/ExpressionParser/GenerateInputTree";
+import { GenerateInputTree } from "digital/site/utils/ExpressionParser/GenerateInputTree";
 
-import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser";
-import {GenerateTokens}      from "digital/site/utils/ExpressionParser/GenerateTokens";
-import {FORMATS}             from "digital/site/utils/ExpressionParser/Constants/Formats";
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
-import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
-
+import { ExpressionToCircuit } from "digital/site/utils/ExpressionParser";
+import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateTokens";
+import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
+import { Signal } from "digital/api/circuit/schema/Signal";
+import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
+import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 /**
  * This function is used to create and run a separate test for every combination of switch states.
@@ -37,23 +41,25 @@ import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunne
  * @throws If the length of expected is not equal to 2 to the power of the length of inputs.
  */
 function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[]) {
-    if (2**inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
-                        2**inputs.length + ")");
+    if (2 ** inputs.length !== expected.length)
+        throw new Error(
+            "The number of expected states (" +
+                expected.length +
+                ") does not match the expected amount (" +
+                2 ** inputs.length +
+                ")",
+        );
 
-    for (let num = 0; num < 2**inputs.length; num++) {
+    for (let num = 0; num < 2 ** inputs.length; num++) {
         let testTitle = "Inputs on:";
-        for (let index = 0; index < inputs.length; index++)
-            if (num & (2**index))
-                testTitle += " " + inputs[index][0];
-        if (testTitle === "Inputs on:")
-            testTitle += " [none]";
+        for (let index = 0; index < inputs.length; index++) if (num & (2 ** index)) testTitle += " " + inputs[index][0];
+        if (testTitle === "Inputs on:") testTitle += " [none]";
 
         // The loop is repeated because the activation needs to happen within the test
         // eslint-disable-next-line jest/valid-title -- testTitle is a string but the rule doesn't recognize it
         test(testTitle, () => {
             for (const [index, input] of inputs.entries())
-                input[1].setSimState([num & (2**index) ? Signal.On : Signal.Off]);
+                input[1].setSimState([num & (2 ** index) ? Signal.On : Signal.Off]);
             expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
         });
     }
@@ -71,13 +77,18 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
  */
 function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: DigitalComponent, expected: boolean[]) {
     if (2 ** inputs.length !== expected.length)
-        throw new Error("The number of expected states (" + expected.length + ") does not match the expected amount (" +
-                        2 ** inputs.length + ")");
+        throw new Error(
+            "The number of expected states (" +
+                expected.length +
+                ") does not match the expected amount (" +
+                2 ** inputs.length +
+                ")",
+        );
 
     test("All states", () => {
-        for (let num = 0; num < 2**inputs.length; num++) {
+        for (let num = 0; num < 2 ** inputs.length; num++) {
             for (const [index, input] of inputs.entries())
-                input[1].setSimState([num & (2**index) ? Signal.On : Signal.Off]);
+                input[1].setSimState([num & (2 ** index) ? Signal.On : Signal.Off]);
             expect(output.inputs[0].signal).toBe(expected[num] ? Signal.On : Signal.Off);
         }
     });
@@ -107,14 +118,12 @@ function testInputsSimple(inputs: Array<[string, DigitalComponent]>, output: Dig
  */
 function runTests(numInputs: number, expression: string, expected: boolean[], ops?: OperatorFormat, verbose?: boolean) {
     describe("Parse: '" + expression + "'", () => {
-        if (numInputs > 8)
-            throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
+        if (numInputs > 8) throw new Error("Maximum supported number of inputs is 8, you tried to use " + numInputs);
 
         const o = "LED";
         const inputs: Array<[string, "Switch"]> = [];
         const charCodeStart = "a".codePointAt(0)!;
-        for (let i = 0; i < numInputs; i++)
-            inputs.push([String.fromCodePoint(charCodeStart+i), "Switch"]);
+        for (let i = 0; i < numInputs; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
         const result = ExpressionToCircuit(new Map(inputs), expression, o, ops);
         // If I understand Jest correctly, this test will run after the non-test-blocked code after it,
@@ -127,112 +136,98 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
 
         const inputComponents: Array<[string, DigitalComponent]> = [];
         for (let i = 0; i < numInputs; i++) {
-            const code = String.fromCodePoint(charCodeStart+i);
+            const code = String.fromCodePoint(charCodeStart + i);
             // TODO[.](trevor) Improve this when API is improved
-            const comp = circuit.getComponents().find((o) => (o.name === code));
+            const comp = circuit.getComponents().find((o) => o.name === code);
             if (!comp) {
                 throw new Error(`Input with name ${code} not found in generated circuit`);
             }
             inputComponents.push([code, comp]);
         }
-        const outputComp = circuit.getComponents().find((o) => (o.name === "Output"));
+        const outputComp = circuit.getComponents().find((o) => o.name === "Output");
         if (!outputComp) {
             throw new Error("Output with name Output not found in generated circuit");
         }
 
         if (verbose === false || (verbose === undefined && numInputs > 3))
             testInputsSimple(inputComponents, outputComp, expected);
-        else
-            testInputs(inputComponents, outputComp, expected);
+        else testInputs(inputComponents, outputComp, expected);
     });
 }
 
 describe("Expression Parser", () => {
     describe("Invalid Inputs", () => {
         test("Unmatched '(' and ')'", () => {
-            const a = "Switch", b = "Switch", o = "LED";
+            const a = "Switch",
+                b = "Switch",
+                o = "LED";
             const inputMap = new Map([
                 ["a", a],
                 ["b", b],
             ]);
             const inputMap2 = new Map();
 
-            expect(ExpressionToCircuit(inputMap, "(", o)).toIncludeError("Encountered Unmatched \"(\"");
-            expect(ExpressionToCircuit(inputMap,"!(",o)).toIncludeError("Encountered Unmatched \"(\"");
-            expect(ExpressionToCircuit(inputMap,"(a|b",o)).toIncludeError("Encountered Unmatched \"(\"");
-            expect(ExpressionToCircuit(inputMap,"((a|b)",o)).toIncludeError("Encountered Unmatched \"(\"");
-            expect(ExpressionToCircuit(inputMap,")",o)).toIncludeError("Encountered Unmatched \")\"");
-            expect(ExpressionToCircuit(inputMap,"a|b)",o)).toIncludeError("Encountered Unmatched \")\"");
-            expect(ExpressionToCircuit(inputMap,"(a|b))",o)).toIncludeError("Encountered Unmatched \")\"");
-            expect(ExpressionToCircuit(inputMap,")a|b(",o)).toIncludeError("Encountered Unmatched \")\"");
-            expect(ExpressionToCircuit(inputMap,")(",o)).toIncludeError("Encountered Unmatched \")\"");
-            expect(ExpressionToCircuit(inputMap2,"(",o)).toIncludeError("Encountered Unmatched \"(\"");
+            expect(ExpressionToCircuit(inputMap, "(", o)).toIncludeError('Encountered Unmatched "("');
+            expect(ExpressionToCircuit(inputMap, "!(", o)).toIncludeError('Encountered Unmatched "("');
+            expect(ExpressionToCircuit(inputMap, "(a|b", o)).toIncludeError('Encountered Unmatched "("');
+            expect(ExpressionToCircuit(inputMap, "((a|b)", o)).toIncludeError('Encountered Unmatched "("');
+            expect(ExpressionToCircuit(inputMap, ")", o)).toIncludeError('Encountered Unmatched ")"');
+            expect(ExpressionToCircuit(inputMap, "a|b)", o)).toIncludeError('Encountered Unmatched ")"');
+            expect(ExpressionToCircuit(inputMap, "(a|b))", o)).toIncludeError('Encountered Unmatched ")"');
+            expect(ExpressionToCircuit(inputMap, ")a|b(", o)).toIncludeError('Encountered Unmatched ")"');
+            expect(ExpressionToCircuit(inputMap, ")(", o)).toIncludeError('Encountered Unmatched ")"');
+            expect(ExpressionToCircuit(inputMap2, "(", o)).toIncludeError('Encountered Unmatched "("');
         });
 
         test("Missing Operands", () => {
-            const a = "Switch", b = "Switch", o = "LED";
+            const a = "Switch",
+                b = "Switch",
+                o = "LED";
             const inputMap = new Map([
                 ["a", a],
                 ["b", b],
             ]);
 
-            expect(ExpressionToCircuit(inputMap, "!", o))
-                .toIncludeError("Missing Right Operand: \"!\"");
-            expect(ExpressionToCircuit(inputMap,"!!",o))
-                .toIncludeError("Missing Right Operand: \"!\"");
-            expect(ExpressionToCircuit(inputMap,"(!)",o))
-                .toIncludeError("Invalid token \")\" following \"!\"");
-            expect(ExpressionToCircuit(inputMap,"(!)a",o))
-                .toIncludeError("Invalid token \")\" following \"!\"");
-            expect(ExpressionToCircuit(inputMap,"&a",o))
-                .toIncludeError("Missing Left Operand: \"&\"");
-            expect(ExpressionToCircuit(inputMap,"a&",o))
-                .toIncludeError("Missing Right Operand: \"&\"");
-            expect(ExpressionToCircuit(inputMap,"(&a)",o))
-                .toIncludeError("Missing Left Operand: \"&\"");
-            expect(ExpressionToCircuit(inputMap,"(a&)",o))
-                .toIncludeError("Missing Right Operand: \"&\"");
-            expect(ExpressionToCircuit(inputMap,"^a",o))
-                .toIncludeError("Missing Left Operand: \"^\"");
-            expect(ExpressionToCircuit(inputMap,"a^",o))
-                .toIncludeError("Missing Right Operand: \"^\"");
-            expect(ExpressionToCircuit(inputMap,"|a",o))
-                .toIncludeError("Missing Left Operand: \"|\"");
-            expect(ExpressionToCircuit(inputMap,"a|",o))
-                .toIncludeError("Missing Right Operand: \"|\"");
+            expect(ExpressionToCircuit(inputMap, "!", o)).toIncludeError('Missing Right Operand: "!"');
+            expect(ExpressionToCircuit(inputMap, "!!", o)).toIncludeError('Missing Right Operand: "!"');
+            expect(ExpressionToCircuit(inputMap, "(!)", o)).toIncludeError('Invalid token ")" following "!"');
+            expect(ExpressionToCircuit(inputMap, "(!)a", o)).toIncludeError('Invalid token ")" following "!"');
+            expect(ExpressionToCircuit(inputMap, "&a", o)).toIncludeError('Missing Left Operand: "&"');
+            expect(ExpressionToCircuit(inputMap, "a&", o)).toIncludeError('Missing Right Operand: "&"');
+            expect(ExpressionToCircuit(inputMap, "(&a)", o)).toIncludeError('Missing Left Operand: "&"');
+            expect(ExpressionToCircuit(inputMap, "(a&)", o)).toIncludeError('Missing Right Operand: "&"');
+            expect(ExpressionToCircuit(inputMap, "^a", o)).toIncludeError('Missing Left Operand: "^"');
+            expect(ExpressionToCircuit(inputMap, "a^", o)).toIncludeError('Missing Right Operand: "^"');
+            expect(ExpressionToCircuit(inputMap, "|a", o)).toIncludeError('Missing Left Operand: "|"');
+            expect(ExpressionToCircuit(inputMap, "a|", o)).toIncludeError('Missing Right Operand: "|"');
         });
 
         test("No Operator", () => {
-            const a = "Switch", b = "Switch", o = "LED";
+            const a = "Switch",
+                b = "Switch",
+                o = "LED";
             const inputMap = new Map([
                 ["a", a],
                 ["b", b],
             ]);
 
-            expect(ExpressionToCircuit(inputMap,"a b",o))
-                .toIncludeError("No valid operator between \"a\" and \"b\"");
-            expect(ExpressionToCircuit(inputMap,"a (b)",o))
-                .toIncludeError("No valid operator between \"a\" and \"b\"");
-            expect(ExpressionToCircuit(inputMap,"(a) b",o))
-                .toIncludeError("No valid operator between \"a\" and \"b\"");
-            expect(ExpressionToCircuit(inputMap,"a !b",o))
-                .toIncludeError("No valid operator between \"a\" and \"b\"");
-            expect(ExpressionToCircuit(inputMap,"a()b",o))
-                .toIncludeError("No valid operator between \"a\" and \"b\"");
-            expect(ExpressionToCircuit(inputMap,"(a)(b)",o))
-                .toIncludeError("No valid operator between \"a\" and \"b\"");
-            expect(ExpressionToCircuit(inputMap,"(a|b)a",o))
-                .toIncludeError("No valid operator between \"b\" and \"a\"");
+            expect(ExpressionToCircuit(inputMap, "a b", o)).toIncludeError('No valid operator between "a" and "b"');
+            expect(ExpressionToCircuit(inputMap, "a (b)", o)).toIncludeError('No valid operator between "a" and "b"');
+            expect(ExpressionToCircuit(inputMap, "(a) b", o)).toIncludeError('No valid operator between "a" and "b"');
+            expect(ExpressionToCircuit(inputMap, "a !b", o)).toIncludeError('No valid operator between "a" and "b"');
+            expect(ExpressionToCircuit(inputMap, "a()b", o)).toIncludeError('No valid operator between "a" and "b"');
+            expect(ExpressionToCircuit(inputMap, "(a)(b)", o)).toIncludeError('No valid operator between "a" and "b"');
+            expect(ExpressionToCircuit(inputMap, "(a|b)a", o)).toIncludeError('No valid operator between "b" and "a"');
         });
 
         test("Empty Parenthesis", () => {
             const o = "LED";
             const inputMap = new Map();
 
-            expect(ExpressionToCircuit(inputMap,"()",o)).toIncludeError("Empty Parenthesis");
-            expect(ExpressionToCircuit(inputMap,"( )",o)).toIncludeError("Empty Parenthesis");
-            expect(ExpressionToCircuit(inputMap,"(())",o)).toIncludeError("Empty Parenthesis");
-            expect(ExpressionToCircuit(inputMap,"()a|b",o)).toIncludeError("Empty Parenthesis");
+            expect(ExpressionToCircuit(inputMap, "()", o)).toIncludeError("Empty Parenthesis");
+            expect(ExpressionToCircuit(inputMap, "( )", o)).toIncludeError("Empty Parenthesis");
+            expect(ExpressionToCircuit(inputMap, "(())", o)).toIncludeError("Empty Parenthesis");
+            expect(ExpressionToCircuit(inputMap, "()a|b", o)).toIncludeError("Empty Parenthesis");
         });
 
         describe("Invalid ops", () => {
@@ -240,9 +235,9 @@ describe("Expression Parser", () => {
 
             test("Invalid |", () => {
                 const testOps: OperatorFormat = {
-                    label:     "Programming 1 (&, |, ^, !)",
+                    label: "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon:      "|",
+                    icon: "|",
 
                     ops: {
                         "|": "",
@@ -252,15 +247,16 @@ describe("Expression Parser", () => {
                         "(": "(",
                         ")": ")",
                     },
-                }
-                expect(GenerateTokens(expression, testOps))
-                    .toIncludeError("Length zero | in supplied operation symbols");
+                };
+                expect(GenerateTokens(expression, testOps)).toIncludeError(
+                    "Length zero | in supplied operation symbols",
+                );
             });
             test("Invalid ^", () => {
                 const testOps: OperatorFormat = {
-                    label:     "Programming 1 (&, |, ^, !)",
+                    label: "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon:      "|",
+                    icon: "|",
 
                     ops: {
                         "|": "|",
@@ -270,15 +266,16 @@ describe("Expression Parser", () => {
                         "(": "(",
                         ")": ")",
                     },
-                }
-                expect(GenerateTokens(expression, testOps))
-                    .toIncludeError("Length zero ^ in supplied operation symbols");
+                };
+                expect(GenerateTokens(expression, testOps)).toIncludeError(
+                    "Length zero ^ in supplied operation symbols",
+                );
             });
             test("Invalid &", () => {
                 const testOps: OperatorFormat = {
-                    label:     "Programming 1 (&, |, ^, !)",
+                    label: "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon:      "|",
+                    icon: "|",
 
                     ops: {
                         "|": "|",
@@ -288,15 +285,16 @@ describe("Expression Parser", () => {
                         "(": "(",
                         ")": ")",
                     },
-                }
-                expect(GenerateTokens(expression, testOps))
-                    .toIncludeError("Length zero & in supplied operation symbols");
+                };
+                expect(GenerateTokens(expression, testOps)).toIncludeError(
+                    "Length zero & in supplied operation symbols",
+                );
             });
             test("Invalid !", () => {
                 const testOps: OperatorFormat = {
-                    label:     "Programming 1 (&, |, ^, !)",
+                    label: "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon:      "|",
+                    icon: "|",
 
                     ops: {
                         "|": "|",
@@ -306,15 +304,16 @@ describe("Expression Parser", () => {
                         "(": "(",
                         ")": ")",
                     },
-                }
-                expect(GenerateTokens(expression, testOps))
-                    .toIncludeError("Length zero ! in supplied operation symbols");
+                };
+                expect(GenerateTokens(expression, testOps)).toIncludeError(
+                    "Length zero ! in supplied operation symbols",
+                );
             });
             test("Invalid (", () => {
                 const testOps: OperatorFormat = {
-                    label:     "Programming 1 (&, |, ^, !)",
+                    label: "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon:      "|",
+                    icon: "|",
 
                     ops: {
                         "|": "|",
@@ -324,15 +323,16 @@ describe("Expression Parser", () => {
                         "(": "",
                         ")": ")",
                     },
-                }
-                expect(GenerateTokens(expression, testOps))
-                    .toIncludeError("Length zero ( in supplied operation symbols");
+                };
+                expect(GenerateTokens(expression, testOps)).toIncludeError(
+                    "Length zero ( in supplied operation symbols",
+                );
             });
             test("Invalid )", () => {
                 const testOps: OperatorFormat = {
-                    label:     "Programming 1 (&, |, ^, !)",
+                    label: "Programming 1 (&, |, ^, !)",
                     separator: " ",
-                    icon:      "|",
+                    icon: "|",
 
                     ops: {
                         "|": "|",
@@ -342,15 +342,16 @@ describe("Expression Parser", () => {
                         "(": "(",
                         ")": "",
                     },
-                }
-                expect(GenerateTokens(expression, testOps))
-                    .toIncludeError("Length zero ) in supplied operation symbols");
+                };
+                expect(GenerateTokens(expression, testOps)).toIncludeError(
+                    "Length zero ) in supplied operation symbols",
+                );
             });
             test("Invalid separator", () => {
                 const testOps: OperatorFormat = {
-                    label:     "Programming 1 (&, |, ^, !)",
+                    label: "Programming 1 (&, |, ^, !)",
                     separator: "",
-                    icon:      "|",
+                    icon: "|",
 
                     ops: {
                         "|": "|",
@@ -360,9 +361,10 @@ describe("Expression Parser", () => {
                         "(": "(",
                         ")": ")",
                     },
-                }
-                expect(GenerateTokens(expression, testOps))
-                    .toIncludeError("Length zero separator in supplied operation symbols");
+                };
+                expect(GenerateTokens(expression, testOps)).toIncludeError(
+                    "Length zero separator in supplied operation symbols",
+                );
             });
         });
 
@@ -406,10 +408,9 @@ describe("Expression Parser", () => {
         runTests(1, "a^!a", [true, true]);
 
         test("Parse: 'a' (ConstantHigh)", () => {
-            const a = "ConstantHigh", o = "LED";
-            const inputMap = new Map([
-                ["a", a],
-            ]);
+            const a = "ConstantHigh",
+                o = "LED";
+            const inputMap = new Map([["a", a]]);
 
             const result = ExpressionToCircuit(inputMap, "a", o);
             expect(result).toBeOk();
@@ -422,10 +423,9 @@ describe("Expression Parser", () => {
         });
 
         test("Parse: 'a' (ConstantLow)", () => {
-            const a = "ConstantLow", o = "LED";
-            const inputMap = new Map([
-                ["a", a],
-            ]);
+            const a = "ConstantLow",
+                o = "LED";
+            const inputMap = new Map([["a", a]]);
 
             const result = ExpressionToCircuit(inputMap, "a", o);
             const circuit = result.unwrap();
@@ -437,7 +437,8 @@ describe("Expression Parser", () => {
         });
 
         describe("Parse: 'longName'", () => {
-            const a = "Switch", o = "LED";
+            const a = "Switch",
+                o = "LED";
             const inputs: ReadonlyArray<[string, string]> = [["longName", a]];
             const result = ExpressionToCircuit(new Map(inputs), "longName", o);
             test("Result is ok", () => {
@@ -446,12 +447,12 @@ describe("Expression Parser", () => {
             const circuit = result.unwrap();
             circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
 
-            const inputComp = circuit.getComponents().find((o) => (o.name === "longName"));
+            const inputComp = circuit.getComponents().find((o) => o.name === "longName");
             test("Input component found", () => {
                 expect(inputComp).toBeDefined();
             });
             const inputComponents: Array<[string, DigitalComponent]> = [["longName", inputComp!]];
-            const outputComp = circuit.getComponents().find((o) => (o.name === "Output"));
+            const outputComp = circuit.getComponents().find((o) => o.name === "Output");
             test("Output component found", () => {
                 expect(outputComp).toBeDefined();
             });
@@ -503,7 +504,7 @@ describe("Expression Parser", () => {
     });
 
     describe("8 Inputs", () => {
-        runTests(8, "a|b|c|d|e|f|g|h", [false, ...new Array(2**8 - 1).fill(true)]);
+        runTests(8, "a|b|c|d|e|f|g|h", [false, ...new Array(2 ** 8 - 1).fill(true)]);
     });
 
     describe("Alternate Formats", () => {
@@ -523,8 +524,7 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 7; i++)
-                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 7; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g", o);
             expect(result).toBeOk();
@@ -537,8 +537,7 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 8; i++)
-                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 8; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h", o);
             expect(result).toBeOk();
@@ -551,8 +550,7 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 9; i++)
-                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 9; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
             const result = ExpressionToCircuit(new Map(inputs), "a|b|c|d|e|f|g|h|i", o);
             expect(result).toBeOk();
@@ -565,8 +563,7 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 4; i++)
-                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 4; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
             const result = ExpressionToCircuit(new Map(inputs), "(a|b)|(c|d)", o);
             expect(result).toBeOk();
@@ -579,8 +576,7 @@ describe("Expression Parser", () => {
             const o = "LED";
             const inputs: Array<[string, string]> = [];
             const charCodeStart = "a".codePointAt(0)!;
-            for (let i = 0; i < 3; i++)
-                inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
+            for (let i = 0; i < 3; i++) inputs.push([String.fromCodePoint(charCodeStart + i), "Switch"]);
 
             const result = ExpressionToCircuit(new Map(inputs), "!(a|b|c)", o);
             expect(result).toBeOk();

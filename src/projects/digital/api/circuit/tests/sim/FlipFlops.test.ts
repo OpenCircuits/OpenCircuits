@@ -1,16 +1,24 @@
 import "shared/tests/helpers/Extensions";
 
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { Signal } from "digital/api/circuit/schema/Signal";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("Flip Flops", () => {
-    const ON = Signal.On, OFF = Signal.Off;
+    const ON = Signal.On,
+        OFF = Signal.Off;
 
     describe("DFlipFlop", () => {
         const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_d,
-            { pre: [PRE], clr: [CLR], D: [D], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        const [
+            _d,
+            {
+                pre: [PRE],
+                clr: [CLR],
+                D: [D],
+                clk: [CLK],
+                Q: [Q],
+                Qinv: [Q2],
+            },
         ] = PlaceAndConnect("DFlipFlop");
 
         function expectState(signal: Signal): void {
@@ -95,8 +103,17 @@ describe("Flip Flops", () => {
 
     describe("JKFlipFlop", () => {
         const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_jk,
-            { pre: [PRE], clr: [CLR], J: [J], K: [K], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        const [
+            _jk,
+            {
+                pre: [PRE],
+                clr: [CLR],
+                J: [J],
+                K: [K],
+                clk: [CLK],
+                Q: [Q],
+                Qinv: [Q2],
+            },
         ] = PlaceAndConnect("JKFlipFlop");
 
         function expectState(signal: Signal): void {
@@ -176,8 +193,17 @@ describe("Flip Flops", () => {
 
     describe("SRFlipFlop", () => {
         const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_sr,
-            { pre: [PRE], clr: [CLR], S: [S], R: [R], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        const [
+            _sr,
+            {
+                pre: [PRE],
+                clr: [CLR],
+                S: [S],
+                R: [R],
+                clk: [CLK],
+                Q: [Q],
+                Qinv: [Q2],
+            },
         ] = PlaceAndConnect("SRFlipFlop");
 
         function expectState(signal: Signal): void {
@@ -230,7 +256,7 @@ describe("Flip Flops", () => {
         });
         test("Set and Reset, undefined behavior", () => {
             TurnOn(R);
-            TurnOn(S)
+            TurnOn(S);
 
             TurnOn(CLK);
             TurnOff(CLK);
@@ -252,8 +278,16 @@ describe("Flip Flops", () => {
 
     describe("TFlipFlop", () => {
         const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_t,
-            { pre: [PRE], clr: [CLR], T: [T], clk: [CLK], Q: [Q], Qinv: [Q2] },
+        const [
+            _t,
+            {
+                pre: [PRE],
+                clr: [CLR],
+                T: [T],
+                clk: [CLK],
+                Q: [Q],
+                Qinv: [Q2],
+            },
         ] = PlaceAndConnect("TFlipFlop");
 
         function expectState(signal: Signal): void {
@@ -267,7 +301,7 @@ describe("Flip Flops", () => {
         test("Toggle the Data without the Clock", () => {
             TurnOff(T);
             expectState(OFF);
-            TurnOff(T)
+            TurnOff(T);
             expectState(OFF);
         });
         test("Clock on and off w/o data on", () => {

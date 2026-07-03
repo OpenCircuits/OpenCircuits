@@ -2,24 +2,22 @@
 title: Installation
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 ## Requirements
 
-* **Make sure you have [`Git`](https://git-scm.com/downloads) installed**
+- **Make sure you have [`Git`](https://git-scm.com/downloads) installed**
 
-* **Note: before installing new packages, make sure your current packages are up-to-date to avoid conflicts.**
-___
+- **Note: before installing new packages, make sure your current packages are up-to-date to avoid conflicts.**
 
+---
 
 OpenCircuits uses **yarn** to manage building and testing with dependencies.
 Yarn is a superset of NPM and is the recommended manager.
 
 Additionally, we use **Golang** as our backend language.
 Choose your system below for instructions on installing these.
-
 
 <Tabs groupId="system"
       defaultValue="win"
@@ -47,6 +45,7 @@ We have yet to find a working solution with WSL, but please feel free to let us 
 (Note: after installing it make sure to restart command prompt so that the command gets recognized)
 
 Then, to install Yarn, run
+
 ```bash
 npm install -g yarn
 ```
@@ -54,7 +53,7 @@ npm install -g yarn
 And again, make sure it works by typing `yarn --version`.
 
 :::warning
-*If you run into* `ERR: cb.apply is not a function:` [*click here*](https://github.com/nodejs/help/issues/2874#issuecomment-663661148)
+_If you run into_ `ERR: cb.apply is not a function:` [_click here_](https://github.com/nodejs/help/issues/2874#issuecomment-663661148)
 :::
 
 #### Go
@@ -64,7 +63,6 @@ Download and run the MSI installer [here](https://golang.org/dl/)
 Restart command prompt and verify that it worked by typing `go version`.
 
 </TabItem>
-
 
 <TabItem value="mac">
 {/*       */}
@@ -83,6 +81,7 @@ And we will assume you have it installed for the rest of these instructions.
 #### NPM / Yarn
 
 To install NPM, simply run
+
 ```bash
 brew install npm
 ```
@@ -90,6 +89,7 @@ brew install npm
 Make sure it works by typing `npm --version` in the terminal.
 
 Then, to install Yarn, run
+
 ```bash
 npm install -g yarn
 ```
@@ -106,7 +106,6 @@ Verify that it works by typing `go version`
 
 </TabItem>
 
-
 <TabItem value="linux">
 {/*       */}
 {/* LINUX */}
@@ -116,28 +115,30 @@ Verify that it works by typing `go version`
 
 :::note
 If you're using Ubuntu you may need to uninstall the built-in "yarn" from `cmdtest`, by doing
+
 ```bash
 sudo apt-get remove cmdtest
 ```
+
 :::
 
-* For Ubuntu, type `sudo apt-get install nodejs`
+- For Ubuntu, type `sudo apt-get install nodejs`
 
-* For Arch-based distributions, install the `npm` package from the `community` repository.
+- For Arch-based distributions, install the `npm` package from the `community` repository.
 
-* For gLinux, you must first install NVM (Node Version Manager) via `curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash`
-    Make sure this works by doing `nvm --version`
-    Then do `nvm install node` and you should be all set up!
+- For gLinux, you must first install NVM (Node Version Manager) via `curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash`
+  Make sure this works by doing `nvm --version`
+  Then do `nvm install node` and you should be all set up!
 
 After installing, verify that it works by typing `npm --version`
 
 Then, to install Yarn, run
+
 ```bash
 npm install -g yarn
 ```
 
 And again, make sure it works by typing `yarn --version`.
-
 
 #### Go
 
@@ -146,7 +147,6 @@ To install, follow the instructions [here](https://golang.org/doc/install#tarbal
 After installing, verify that it works by typing `go version`
 
 </TabItem>
-
 
 <TabItem value="docker">
 {/*        */}
@@ -177,23 +177,24 @@ Builds of Docker images are available on the [Docker Hub](https://hub.docker.com
 
 ---
 
-
-
 ## Installation
 
 After sucessfully installing the required dependencies for the project, you can now install OpenCircuits locally!
 
 First, you have to clone the repository to your system
+
 ```bash
 git clone https://github.com/OpenCircuits/OpenCircuits
 ```
 
 Then, you can navigate to it
+
 ```bash
 cd ./OpenCircuits
 ```
 
 And finally, run the following to install the project dependencies!
+
 ```bash
 yarn
 ```

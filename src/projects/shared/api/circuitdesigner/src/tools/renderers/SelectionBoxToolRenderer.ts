@@ -1,15 +1,13 @@
-import {Transform}     from "math/Transform";
+import { Transform } from "math/Transform";
 
-import {SelectionBoxTool} from "../SelectionBoxTool";
+import { SelectionBoxTool } from "../SelectionBoxTool";
 
-import {ToolRenderer} from "./ToolRenderer";
-
+import { ToolRenderer } from "./ToolRenderer";
 
 export const SelectionBoxToolRenderer: ToolRenderer = {
     render: ({ designer: { curTool }, renderer }) => {
         // If a non-selection-box-tool active, then do nothing
-        if (!(curTool instanceof SelectionBoxTool))
-            return;
+        if (!(curTool instanceof SelectionBoxTool)) return;
 
         const rect = curTool.getBounds();
 
@@ -21,11 +19,11 @@ export const SelectionBoxToolRenderer: ToolRenderer = {
             style: {
                 stroke: {
                     color: "#6666ff",
-                    size:  0.04,
+                    size: 0.04,
                 },
-                fill:  "#ffffff",
+                fill: "#ffffff",
                 alpha: 0.4,
             },
         });
     },
-}
+};

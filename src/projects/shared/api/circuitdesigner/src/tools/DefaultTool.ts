@@ -1,13 +1,15 @@
-import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 
-import {CircuitDesigner}                  from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {InputAdapterEvent}                from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
-import {ToolHandler, ToolHandlerResponse} from "./handlers/ToolHandler";
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
+import { ToolHandler, ToolHandlerResponse } from "./handlers/ToolHandler";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-
-export class DefaultTool<T extends CircuitAPITypes = CircuitAPITypes> extends ObservableImpl<{ type: "handlerFired", handler: string }> {
+export class DefaultTool<T extends CircuitAPITypes = CircuitAPITypes> extends ObservableImpl<{
+    type: "handlerFired";
+    handler: string;
+}> {
     protected handlers: Array<ToolHandler<T>>;
 
     public constructor(...handlers: Array<ToolHandler<T>>) {
@@ -24,8 +26,7 @@ export class DefaultTool<T extends CircuitAPITypes = CircuitAPITypes> extends Ob
     public onEvent(ev: InputAdapterEvent, designer: CircuitDesigner<T>): void {
         if (ev.type === "mousedown") {
             // Find object if we pressed on one
-            designer.curPressedObj = designer.circuit.pickObjAt(
-                designer.viewport.toWorldPos(ev.input.mousePos));
+            designer.curPressedObj = designer.circuit.pickObjAt(designer.viewport.toWorldPos(ev.input.mousePos));
         } else if (ev.type === "mouseup") {
             designer.curPressedObj = undefined;
         }

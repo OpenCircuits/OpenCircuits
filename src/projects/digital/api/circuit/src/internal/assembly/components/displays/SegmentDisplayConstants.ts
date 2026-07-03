@@ -1,147 +1,186 @@
 /* eslint-disable space-in-parens */
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-
-export type SegmentType = "vertical" | "verticalft" | "verticalfb" |
-                          "horizontal" | "horizontal0.5" |
-                          "diagonaltr" | "diagonaltl" | "diagonalbr" | "diagonalbl" |
-                          "diagonaltri" | "diagonaltli" | "diagonalbri" | "diagonalbli";
-
+export type SegmentType =
+    | "vertical"
+    | "verticalft"
+    | "verticalfb"
+    | "horizontal"
+    | "horizontal0.5"
+    | "diagonaltr"
+    | "diagonaltl"
+    | "diagonalbr"
+    | "diagonalbl"
+    | "diagonaltri"
+    | "diagonaltli"
+    | "diagonalbri"
+    | "diagonalbli";
 
 export const SEGMENT_SIZE = 0.7;
 
-const TOTAL_WIDTH = SEGMENT_SIZE, HEIGHT = 0.125, INNER_WIDTH = TOTAL_WIDTH - HEIGHT;
-const HALF_INNER_WIDTH = TOTAL_WIDTH/2 - (TOTAL_WIDTH - INNER_WIDTH);
+const TOTAL_WIDTH = SEGMENT_SIZE,
+    HEIGHT = 0.125,
+    INNER_WIDTH = TOTAL_WIDTH - HEIGHT;
+const HALF_INNER_WIDTH = TOTAL_WIDTH / 2 - (TOTAL_WIDTH - INNER_WIDTH);
 const DIAG_OFFSET = HEIGHT * Math.SQRT1_2;
 
 const HORIZONTAL_PTS = [
-    V(-INNER_WIDTH/2, HEIGHT/2),
-    V( INNER_WIDTH/2, HEIGHT/2),
-    V( TOTAL_WIDTH/2, 0),
-    V( INNER_WIDTH/2, -HEIGHT/2),
-    V(-INNER_WIDTH/2, -HEIGHT/2),
-    V(-TOTAL_WIDTH/2, 0),
+    V(-INNER_WIDTH / 2, HEIGHT / 2),
+    V(INNER_WIDTH / 2, HEIGHT / 2),
+    V(TOTAL_WIDTH / 2, 0),
+    V(INNER_WIDTH / 2, -HEIGHT / 2),
+    V(-INNER_WIDTH / 2, -HEIGHT / 2),
+    V(-TOTAL_WIDTH / 2, 0),
 ];
 const VERTICAL_PTS = HORIZONTAL_PTS.map((v) => v.negativeReciprocal());
 const VERTICAL_PTS_FLAT_TOP = [
-    V(-HEIGHT/2,  INNER_WIDTH/2),
-    V(-HEIGHT/2, -INNER_WIDTH/2),
-    V(0,         -TOTAL_WIDTH/2),
-    V( HEIGHT/2, -INNER_WIDTH/2),
-    V( HEIGHT/2,  INNER_WIDTH/2),
+    V(-HEIGHT / 2, INNER_WIDTH / 2),
+    V(-HEIGHT / 2, -INNER_WIDTH / 2),
+    V(0, -TOTAL_WIDTH / 2),
+    V(HEIGHT / 2, -INNER_WIDTH / 2),
+    V(HEIGHT / 2, INNER_WIDTH / 2),
 ];
 const VERTICAL_PTS_FLAT_BOTTOM = VERTICAL_PTS_FLAT_TOP.map((v) => v.scale(V(1, -1)));
 const HORIZONTAL_HALF_PTS = [
-    V(-HALF_INNER_WIDTH/2, HEIGHT/2),
-    V( HALF_INNER_WIDTH/2, HEIGHT/2),
-    V( TOTAL_WIDTH/4, 0),
-    V( HALF_INNER_WIDTH/2, -HEIGHT/2),
-    V(-HALF_INNER_WIDTH/2, -HEIGHT/2),
-    V(-TOTAL_WIDTH/4, 0),
+    V(-HALF_INNER_WIDTH / 2, HEIGHT / 2),
+    V(HALF_INNER_WIDTH / 2, HEIGHT / 2),
+    V(TOTAL_WIDTH / 4, 0),
+    V(HALF_INNER_WIDTH / 2, -HEIGHT / 2),
+    V(-HALF_INNER_WIDTH / 2, -HEIGHT / 2),
+    V(-TOTAL_WIDTH / 4, 0),
 ];
 const UP_LEFT_DIAGONAL_PTS = [
-    V(-HALF_INNER_WIDTH/2,                INNER_WIDTH/2              ),
-    V(-HALF_INNER_WIDTH/2 + DIAG_OFFSET,  INNER_WIDTH/2              ),
-    V( HALF_INNER_WIDTH/2,               -INNER_WIDTH/2 + DIAG_OFFSET),
-    V( HALF_INNER_WIDTH/2,               -INNER_WIDTH/2              ),
-    V( HALF_INNER_WIDTH/2 - DIAG_OFFSET, -INNER_WIDTH/2              ),
-    V(-HALF_INNER_WIDTH/2,                INNER_WIDTH/2 - DIAG_OFFSET),
+    V(-HALF_INNER_WIDTH / 2, INNER_WIDTH / 2),
+    V(-HALF_INNER_WIDTH / 2 + DIAG_OFFSET, INNER_WIDTH / 2),
+    V(HALF_INNER_WIDTH / 2, -INNER_WIDTH / 2 + DIAG_OFFSET),
+    V(HALF_INNER_WIDTH / 2, -INNER_WIDTH / 2),
+    V(HALF_INNER_WIDTH / 2 - DIAG_OFFSET, -INNER_WIDTH / 2),
+    V(-HALF_INNER_WIDTH / 2, INNER_WIDTH / 2 - DIAG_OFFSET),
 ];
 const UP_RIGHT_DIAGONAL_PTS = UP_LEFT_DIAGONAL_PTS.map((v) => v.scale(V(-1, 1)));
 const DOWN_LEFT_DIAGONAL_PTS = UP_LEFT_DIAGONAL_PTS.map((v) => v.scale(V(1, -1)));
 const DOWN_RIGHT_DIAGONAL_PTS = UP_LEFT_DIAGONAL_PTS.map((v) => v.scale(V(-1, -1)));
 // The following are for when there is no center vertical segment so the corner should extend to the horizontal
 const SLOPE = -(INNER_WIDTH - DIAG_OFFSET) / (HALF_INNER_WIDTH - DIAG_OFFSET);
-const INTERCEPT = -(INNER_WIDTH / SLOPE) - (HALF_INNER_WIDTH / 2) + DIAG_OFFSET;
+const INTERCEPT = -(INNER_WIDTH / SLOPE) - HALF_INNER_WIDTH / 2 + DIAG_OFFSET;
 const UP_LEFT_DIAGONAL_INTERCEPT_PTS = [
-    V(-HALF_INNER_WIDTH/2,                INNER_WIDTH/2              ),
-    V(-HALF_INNER_WIDTH/2 + DIAG_OFFSET,  INNER_WIDTH/2              ),
-    V( INTERCEPT,                        -INNER_WIDTH/2              ),
-    V( HALF_INNER_WIDTH/2 - DIAG_OFFSET, -INNER_WIDTH/2              ),
-    V(-HALF_INNER_WIDTH/2,                INNER_WIDTH/2 - DIAG_OFFSET),
+    V(-HALF_INNER_WIDTH / 2, INNER_WIDTH / 2),
+    V(-HALF_INNER_WIDTH / 2 + DIAG_OFFSET, INNER_WIDTH / 2),
+    V(INTERCEPT, -INNER_WIDTH / 2),
+    V(HALF_INNER_WIDTH / 2 - DIAG_OFFSET, -INNER_WIDTH / 2),
+    V(-HALF_INNER_WIDTH / 2, INNER_WIDTH / 2 - DIAG_OFFSET),
 ];
 const UP_RIGHT_DIAGONAL_INTERCEPT_PTS = UP_LEFT_DIAGONAL_INTERCEPT_PTS.map((v) => v.scale(V(-1, 1)));
 const DOWN_LEFT_DIAGONAL_INTERCEPT_PTS = UP_LEFT_DIAGONAL_INTERCEPT_PTS.map((v) => v.scale(V(1, -1)));
 const DOWN_RIGHT_DIAGONAL_INTERCEPT_PTS = UP_LEFT_DIAGONAL_INTERCEPT_PTS.map((v) => v.scale(V(-1, -1)));
 
-
 export const SEGMENT_POINTS: Record<SegmentType, Vector[]> = {
-    "vertical":      VERTICAL_PTS,
-    "verticalft":    VERTICAL_PTS_FLAT_TOP,
-    "verticalfb":    VERTICAL_PTS_FLAT_BOTTOM,
-    "horizontal":    HORIZONTAL_PTS,
-    "diagonaltr":    UP_RIGHT_DIAGONAL_PTS,
-    "diagonaltl":    UP_LEFT_DIAGONAL_PTS,
-    "diagonalbr":    DOWN_RIGHT_DIAGONAL_PTS,
-    "diagonalbl":    DOWN_LEFT_DIAGONAL_PTS,
-    "diagonaltri":   UP_RIGHT_DIAGONAL_INTERCEPT_PTS,
-    "diagonaltli":   UP_LEFT_DIAGONAL_INTERCEPT_PTS,
-    "diagonalbri":   DOWN_RIGHT_DIAGONAL_INTERCEPT_PTS,
-    "diagonalbli":   DOWN_LEFT_DIAGONAL_INTERCEPT_PTS,
+    vertical: VERTICAL_PTS,
+    verticalft: VERTICAL_PTS_FLAT_TOP,
+    verticalfb: VERTICAL_PTS_FLAT_BOTTOM,
+    horizontal: HORIZONTAL_PTS,
+    diagonaltr: UP_RIGHT_DIAGONAL_PTS,
+    diagonaltl: UP_LEFT_DIAGONAL_PTS,
+    diagonalbr: DOWN_RIGHT_DIAGONAL_PTS,
+    diagonalbl: DOWN_LEFT_DIAGONAL_PTS,
+    diagonaltri: UP_RIGHT_DIAGONAL_INTERCEPT_PTS,
+    diagonaltli: UP_LEFT_DIAGONAL_INTERCEPT_PTS,
+    diagonalbri: DOWN_RIGHT_DIAGONAL_INTERCEPT_PTS,
+    diagonalbli: DOWN_LEFT_DIAGONAL_INTERCEPT_PTS,
     "horizontal0.5": HORIZONTAL_HALF_PTS,
-}
+};
 
 export const Segments: Record<number, Array<[Vector, SegmentType]>> = {
     7: [
-        [V( 0,       1), "horizontal"],
-        [V( 0.5,   0.5),   "vertical"],
-        [V( 0.5,  -0.5),   "vertical"],
-        [V( 0,      -1), "horizontal"],
-        [V(-0.5,  -0.5),   "vertical"],
-        [V(-0.5,   0.5),   "vertical"],
-        [V( 0,       0), "horizontal"],
+        [V(0, 1), "horizontal"],
+        [V(0.5, 0.5), "vertical"],
+        [V(0.5, -0.5), "vertical"],
+        [V(0, -1), "horizontal"],
+        [V(-0.5, -0.5), "vertical"],
+        [V(-0.5, 0.5), "vertical"],
+        [V(0, 0), "horizontal"],
     ],
     9: [
-        [V( 0,       1),   "horizontal"],
-        [V( 0.5,   0.5),     "vertical"],
-        [V( 0.5,  -0.5),     "vertical"],
-        [V( 0,      -1),   "horizontal"],
-        [V(-0.5,  -0.5),     "vertical"],
-        [V(-0.5,   0.5),     "vertical"],
-        [V( 0,       0),   "horizontal"],
-        [V( 0.25,  0.5),  "diagonaltri"],
-        [V(-0.25,  -0.5), "diagonalbli"],
+        [V(0, 1), "horizontal"],
+        [V(0.5, 0.5), "vertical"],
+        [V(0.5, -0.5), "vertical"],
+        [V(0, -1), "horizontal"],
+        [V(-0.5, -0.5), "vertical"],
+        [V(-0.5, 0.5), "vertical"],
+        [V(0, 0), "horizontal"],
+        [V(0.25, 0.5), "diagonaltri"],
+        [V(-0.25, -0.5), "diagonalbli"],
     ],
     14: [
-        [V( 0,        1),     "horizontal"],
-        [V( 0.5,    0.5),       "vertical"],
-        [V( 0.5,   -0.5),       "vertical"],
-        [V( 0,       -1),     "horizontal"],
-        [V(-0.5,   -0.5),       "vertical"],
-        [V(-0.5,    0.5),       "vertical"],
-        [V(-0.25,     0),  "horizontal0.5"],
-        [V( 0.25,     0),  "horizontal0.5"],
-        [V( 0,      0.5),     "verticalft"],
-        [V( 0,     -0.5),     "verticalfb"],
-        [V( 0.25,   0.5),     "diagonaltr"],
-        [V(-0.25,   0.5),     "diagonaltl"],
-        [V(-0.25,  -0.5),     "diagonalbl"],
-        [V( 0.25,  -0.5),     "diagonalbr"],
+        [V(0, 1), "horizontal"],
+        [V(0.5, 0.5), "vertical"],
+        [V(0.5, -0.5), "vertical"],
+        [V(0, -1), "horizontal"],
+        [V(-0.5, -0.5), "vertical"],
+        [V(-0.5, 0.5), "vertical"],
+        [V(-0.25, 0), "horizontal0.5"],
+        [V(0.25, 0), "horizontal0.5"],
+        [V(0, 0.5), "verticalft"],
+        [V(0, -0.5), "verticalfb"],
+        [V(0.25, 0.5), "diagonaltr"],
+        [V(-0.25, 0.5), "diagonaltl"],
+        [V(-0.25, -0.5), "diagonalbl"],
+        [V(0.25, -0.5), "diagonalbr"],
     ],
     16: [
-        [V(-0.25,     1),  "horizontal0.5"],
-        [V( 0.25,     1),  "horizontal0.5"],
-        [V( 0.5,    0.5),       "vertical"],
-        [V( 0.5,   -0.5),       "vertical"],
-        [V( 0.25,    -1),  "horizontal0.5"],
-        [V(-0.25,    -1),  "horizontal0.5"],
-        [V(-0.5,   -0.5),       "vertical"],
-        [V(-0.5,    0.5),       "vertical"],
-        [V(-0.25,     0),  "horizontal0.5"],
-        [V( 0.25,     0),  "horizontal0.5"],
-        [V( 0,      0.5),       "vertical"],
-        [V( 0,     -0.5),       "vertical"],
-        [V( 0.25,   0.5),     "diagonaltr"],
-        [V(-0.25,   0.5),     "diagonaltl"],
-        [V(-0.25,  -0.5),     "diagonalbl"],
-        [V( 0.25,  -0.5),     "diagonalbr"],
+        [V(-0.25, 1), "horizontal0.5"],
+        [V(0.25, 1), "horizontal0.5"],
+        [V(0.5, 0.5), "vertical"],
+        [V(0.5, -0.5), "vertical"],
+        [V(0.25, -1), "horizontal0.5"],
+        [V(-0.25, -1), "horizontal0.5"],
+        [V(-0.5, -0.5), "vertical"],
+        [V(-0.5, 0.5), "vertical"],
+        [V(-0.25, 0), "horizontal0.5"],
+        [V(0.25, 0), "horizontal0.5"],
+        [V(0, 0.5), "vertical"],
+        [V(0, -0.5), "vertical"],
+        [V(0.25, 0.5), "diagonaltr"],
+        [V(-0.25, 0.5), "diagonaltl"],
+        [V(-0.25, -0.5), "diagonalbl"],
+        [V(0.25, -0.5), "diagonalbr"],
     ],
-} as const
+} as const;
 
 export const ASCIIFont: Record<string, number[][]> = {
     7: [
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
 
         // space - /
         [],
@@ -254,10 +293,39 @@ export const ASCIIFont: Record<string, number[][]> = {
         [0],
     ],
 
-
     9: [
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
 
         [],
         [3, 7],
@@ -363,10 +431,39 @@ export const ASCIIFont: Record<string, number[][]> = {
         [1, 5, 7],
     ],
 
-
     14: [
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
 
         [],
         [1, 2],
@@ -472,10 +569,39 @@ export const ASCIIFont: Record<string, number[][]> = {
         [6, 7, 10, 12],
     ],
 
-
     16: [
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
-        [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
 
         [],
         [3, 2],
@@ -583,10 +709,9 @@ export const ASCIIFont: Record<string, number[][]> = {
     ],
 };
 
-export const BCDFont: Record<string, number[][]> =
-    Object.fromEntries(
-        Object.entries(ASCIIFont).map(
-                                    // Get values 0-9   and vals  A-F
-            ([key, val]) => [key, [...val.slice(48, 58), ...val.slice(65, 71)]]
-        )
-    );
+export const BCDFont: Record<string, number[][]> = Object.fromEntries(
+    Object.entries(ASCIIFont).map(
+        // Get values 0-9   and vals  A-F
+        ([key, val]) => [key, [...val.slice(48, 58), ...val.slice(65, 71)]],
+    ),
+);

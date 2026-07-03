@@ -1,8 +1,7 @@
-import {Curve}     from "./Curve";
-import {Rect}      from "./Rect";
-import {Transform} from "./Transform";
-import {V, Vector} from "./Vector";
-
+import { Curve } from "./Curve";
+import { Rect } from "./Rect";
+import { Transform } from "./Transform";
+import { V, Vector } from "./Vector";
 
 /**
  * Clamps a number between a given min and max.
@@ -37,21 +36,22 @@ export function FMod(x: number, q: number): number {
  *             the rectangle from 'pos'.
  */
 export function GetNearestPointOnRect(rect: Rect, pos: Vector): Vector {
-    const bl = rect.bottomLeft, tr = rect.topRight;
+    const bl = rect.bottomLeft,
+        tr = rect.topRight;
 
     // First clamp point to within the rectangle
     pos = Vector.Clamp(pos, bl, tr);
 
     // Then find corresponding edge when point is inside the rectangle
     // (see https://www.desmos.com/calculator/edhaqiwgf1)
-    const DR = Math.abs(tr.x - pos.x), DL = Math.abs(bl.x - pos.x);
-    const DT = Math.abs(tr.y - pos.y), DB = Math.abs(bl.y - pos.y);
-    const DX = Math.min(DR, DL), DY = Math.min(DT, DB);
+    const DR = Math.abs(tr.x - pos.x),
+        DL = Math.abs(bl.x - pos.x);
+    const DT = Math.abs(tr.y - pos.y),
+        DB = Math.abs(bl.y - pos.y);
+    const DX = Math.min(DR, DL),
+        DY = Math.min(DT, DB);
 
-    return V(
-        (DY > DX) ? (DR < DL ? tr.x : bl.x) : pos.x,
-        (DX > DY) ? (DT < DB ? tr.y : bl.y) : pos.y
-    );
+    return V(DY > DX ? (DR < DL ? tr.x : bl.x) : pos.x, DX > DY ? (DT < DB ? tr.y : bl.y) : pos.y);
 }
 
 /**
@@ -67,13 +67,10 @@ export function GetNearestPointOnRect(rect: Rect, pos: Vector): Vector {
  *                  false otherwise.
  */
 export function RectContains(transform: Transform, pos: Vector): boolean {
-    const p  = transform.toLocalSpace(pos);
+    const p = transform.toLocalSpace(pos);
 
     // Check if point is within bounds
-    return (p.x > -0.5 &&
-            p.y > -0.5 &&
-            p.x < 0.5 &&
-            p.y < 0.5);
+    return p.x > -0.5 && p.y > -0.5 && p.x < 0.5 && p.y < 0.5;
 }
 
 /**
@@ -92,7 +89,7 @@ export function RectContains(transform: Transform, pos: Vector): boolean {
  *             false otherwise.
  */
 export function CircleContains(pos1: Vector, r: number, pos2: Vector): boolean {
-    return (pos2.sub(pos1).len2() <= r*r);
+    return pos2.sub(pos1).len2() <= r * r;
 }
 
 export function TransformContainsRect(a: Transform, rect: Rect): boolean {
@@ -119,16 +116,18 @@ export function TransformContainsRect(a: Transform, rect: Rect): boolean {
 export function TransformContains(A: Transform, B: Transform): boolean {
     // If both transforms are non-rotated (modulu 180 degrees), do simple check
     if (Math.abs(A.angle) % Math.PI <= 1e-5 && Math.abs(B.angle) % Math.PI <= 1e-5) {
-        return (Math.abs(A.pos.x - B.pos.x) * 2 < (A.scale.x + B.scale.x)) &&
-               (Math.abs(A.pos.y - B.pos.y) * 2 < (A.scale.y + B.scale.y));
+        return (
+            Math.abs(A.pos.x - B.pos.x) * 2 < A.scale.x + B.scale.x &&
+            Math.abs(A.pos.y - B.pos.y) * 2 < A.scale.y + B.scale.y
+        );
     }
 
     // Quick check circle-circle intersection
-    const r1 = A.getRadius(), r2 = B.getRadius();
-    const sr = r1 + r2;             // Sum of radius
-    const dpos = A.pos.sub(B.pos);  // Delta position
-    if (dpos.dot(dpos) > sr*sr)
-        return false;
+    const r1 = A.getRadius(),
+        r2 = B.getRadius();
+    const sr = r1 + r2; // Sum of radius
+    const dpos = A.pos.sub(B.pos); // Delta position
+    if (dpos.dot(dpos) > sr * sr) return false;
 
     /* Perform SAT */
 
@@ -141,8 +140,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
     // Turn to local-space
     // and Offset x and y to fix perfect lines
     //  where b[0] = b[1] & b[2] = b[3]
-    const b = bworld.map((v) => A.toLocalSpace(v))
-        .map((v, i) => v.add(0.0001*i));
+    const b = bworld.map((v) => A.toLocalSpace(v)).map((v, i) => v.add(0.0001 * i));
 
     const corners = [...a, ...b];
 
@@ -156,11 +154,10 @@ export function TransformContains(A: Transform, B: Transform): boolean {
     for (let j = 1; j < 4; j++) {
         minA = Math.min(corners[j].x, minA);
         maxA = Math.max(corners[j].x, maxA);
-        minB = Math.min(corners[j+4].x, minB);
-        maxB = Math.max(corners[j+4].x, maxB);
+        minB = Math.min(corners[j + 4].x, minB);
+        maxB = Math.max(corners[j + 4].x, maxB);
     }
-    if (maxA < minB || maxB < minA)
-        return false;
+    if (maxA < minB || maxB < minA) return false;
 
     // SAT w/ y-axis
     // Axis is <1, 0>
@@ -170,27 +167,25 @@ export function TransformContains(A: Transform, B: Transform): boolean {
     for (let j = 1; j < 4; j++) {
         minA = Math.min(corners[j].y, minA);
         maxA = Math.max(corners[j].y, maxA);
-        minB = Math.min(corners[j+4].y, minB);
-        maxB = Math.max(corners[j+4].y, maxB);
+        minB = Math.min(corners[j + 4].y, minB);
+        maxB = Math.max(corners[j + 4].y, maxB);
     }
-    if (maxA < minB || maxB < minA)
-        return false;
+    if (maxA < minB || maxB < minA) return false;
 
     // SAT w/ other two axes
     const normals = [b[3].sub(b[0]), b[3].sub(b[2])];
     for (const normal of normals) {
-        minA = Infinity, maxA = -Infinity;
-        minB = Infinity, maxB = -Infinity;
+        ((minA = Infinity), (maxA = -Infinity));
+        ((minB = Infinity), (maxB = -Infinity));
         for (let j = 0; j < 4; j++) {
             const s = corners[j].dot(normal);
             minA = Math.min(s, minA);
             maxA = Math.max(s, maxA);
-            const s2 = corners[j+4].dot(normal);
+            const s2 = corners[j + 4].dot(normal);
             minB = Math.min(s2, minB);
             maxB = Math.max(s2, maxB);
         }
-        if (maxA < minB || maxB < minA)
-            return false;
+        if (maxA < minB || maxB < minA) return false;
     }
 
     return true;
@@ -213,23 +208,26 @@ export function TransformContains(A: Transform, B: Transform): boolean {
  * @returns          The parameter 't' that results in
  *                   `f(t, x, y) = 0`.
  */
-export function FindRoots(iterations: number, t0: number, x: number, y: number,
-                          f:  (t: number, x: number, y: number) => number,
-                          df: (t: number, x: number, y: number) => number): number {
+export function FindRoots(
+    iterations: number,
+    t0: number,
+    x: number,
+    y: number,
+    f: (t: number, x: number, y: number) => number,
+    df: (t: number, x: number, y: number) => number,
+): number {
     let t = t0;
     do {
-        const v  = f(t, x, y);
+        const v = f(t, x, y);
         const dv = df(t, x, y);
-        if (dv === 0)
-            break;
+        if (dv === 0) break;
         t = t - v / dv;
         t = Clamp(t, 0.01, 0.99);
-    } while ((iterations--) > 0);
+    } while (iterations-- > 0);
     return t;
 }
 
-
-const WIRE_DIST_THRESHOLD  = 0.1;
+const WIRE_DIST_THRESHOLD = 0.1;
 const WIRE_DIST_THRESHOLD2 = WIRE_DIST_THRESHOLD ** 2;
 const WIRE_DIST_ITERATIONS = 10;
 const WIRE_NEWTON_ITERATIONS = 5;
@@ -262,23 +260,22 @@ export function CurveContains(curve: Curve, pos: Vector): boolean {
         }
     }
 
-    const f1  = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).len2();
-    const df1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).scale(2)
-                                                                  .dot(curve.getDerivative(t));
+    const f1 = (t: number, x: number, y: number): number => curve.getPos(t).sub(x, y).len2();
+    const df1 = (t: number, x: number, y: number): number =>
+        curve.getPos(t).sub(x, y).scale(2).dot(curve.getDerivative(t));
 
     // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
     const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
-    if (curve.getPos(t1).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
-        return true;
+    if (curve.getPos(t1).sub(pos).len2() < WIRE_DIST_THRESHOLD2) return true;
 
-    const f2  = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
-    const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t))
-                                                             + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
+    const f2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
+    const df2 = (t: number, x: number, y: number): number =>
+        curve.getDerivative(t).dot(curve.getDerivative(t)) + curve.getPos(t).sub(x, y).dot(curve.get2ndDerivative(t));
 
     // Newton's method to find parameter for when slope is 0 AKA numerator function = 0
     const t2 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f2, df2);
 
-    return (curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2);
+    return curve.getPos(t2).sub(pos).len2() < WIRE_DIST_THRESHOLD2;
 }
 
 /**
@@ -288,8 +285,7 @@ export function CurveContains(curve: Curve, pos: Vector): boolean {
  * @returns         The midpoint of all the given positions.
  */
 export function CalculateMidpoint(positions: Vector[]): Vector {
-    if (positions.length === 0)
-        return V();
+    if (positions.length === 0) return V();
     return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1 / positions.length);
 }
 
@@ -311,10 +307,9 @@ export function CalculateMidpoint(positions: Vector[]): Vector {
  * @returns                An array of `num` uniform points on the domain [start, stop].
  */
 export function linspace(start: number, stop: number, num: number, options = { endpoint: true, centered: false }) {
-    const div = (options.endpoint ? num - 1 : num);
-    const offset = (options.centered ? (((stop - start) / 2) / div) : 0);
-    return new Array(num).fill(0).map((_, i) =>
-        (start + (stop - start) * i/div + offset));
+    const div = options.endpoint ? num - 1 : num;
+    const offset = options.centered ? (stop - start) / 2 / div : 0;
+    return new Array(num).fill(0).map((_, i) => start + ((stop - start) * i) / div + offset);
 }
 
 /**

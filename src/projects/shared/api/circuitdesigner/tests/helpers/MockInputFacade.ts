@@ -1,8 +1,7 @@
-import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
-import {Key} from "shared/api/circuitdesigner/input/Key";
-import {V, Vector} from "Vector";
-import {Viewport} from "shared/api/circuitdesigner/public/Viewport";
-
+import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+import { Key } from "shared/api/circuitdesigner/input/Key";
+import { V, Vector } from "Vector";
+import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
 
 export class MockInputFacade {
     private readonly viewport: Viewport;
@@ -22,16 +21,18 @@ export class MockInputFacade {
     // NOTE: WHEN CREATING THE DOM EVENTS TO DISPATCH, CLIENTX/CLIENTY ARE __INTEGERS__ SO THERE
     //       WILL BE SLIGHT NUMERICAL DIFFERENCES IF THE PASSED POSITION IS A FLOAT!!
     private onMouseEv(type: string, pos: Vector, button: number) {
-        this.mousePos = pos;  // Update mouse pos
+        this.mousePos = pos; // Update mouse pos
         this.canvas.dispatchEvent(new MouseEvent(type, { clientX: pos.x, clientY: pos.y, button }));
     }
     private onScrollEv(deltaY: number) {
         this.canvas.dispatchEvent(new WheelEvent("wheel", { deltaY }));
     }
     private onTouchEv(type: string, touchPositions: Vector[]) {
-        this.canvas.dispatchEvent(new TouchEvent(type, {
-            touches: touchPositions.map((t) => ({ clientX: t.x, clientY: t.y } as Touch)),
-        }));
+        this.canvas.dispatchEvent(
+            new TouchEvent(type, {
+                touches: touchPositions.map((t) => ({ clientX: t.x, clientY: t.y }) as Touch),
+            }),
+        );
     }
 
     public pressKey(code: Key): MockInputFacade {
@@ -44,7 +45,7 @@ export class MockInputFacade {
     }
 
     public click(worldPos?: Vector, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
-        const pos = (worldPos === undefined ? this.mousePos : this.viewport.toScreenPos(worldPos));
+        const pos = worldPos === undefined ? this.mousePos : this.viewport.toScreenPos(worldPos);
         this.onMouseEv("mousedown", pos, button);
         this.onMouseEv("mouseup", pos, button);
         this.onMouseEv("click", pos, button);
@@ -62,14 +63,16 @@ export class MockInputFacade {
 
     // Note that `pos` is in WORLD COORDINATES for testing purposes
     public press(worldPos?: Vector, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
-        const pos = (worldPos === undefined ? this.mousePos : this.viewport.toScreenPos(worldPos));
+        const pos = worldPos === undefined ? this.mousePos : this.viewport.toScreenPos(worldPos);
         this.onMouseEv("mousedown", pos, button);
         return this;
     }
     public move(amt: Vector, steps = 1, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
-        const step = this.viewport.toScreenPos(amt).sub(this.viewport.toScreenPos(V())).scale(1 / steps);
-        for (let i = 1; i <= steps; i++)
-            this.onMouseEv("mousemove", this.mousePos.add(step), button);
+        const step = this.viewport
+            .toScreenPos(amt)
+            .sub(this.viewport.toScreenPos(V()))
+            .scale(1 / steps);
+        for (let i = 1; i <= steps; i++) this.onMouseEv("mousemove", this.mousePos.add(step), button);
         return this;
     }
     public moveTo(target: Vector, steps = 5, button: number = LEFT_MOUSE_BUTTON): MockInputFacade {
@@ -78,8 +81,7 @@ export class MockInputFacade {
         const step = target.sub(this.viewport.toWorldPos(this.mousePos)).scale(1 / steps);
 
         // Move a bit for each step
-        for (let i = 1; i <= steps; i++)
-            this.move(step, 1, button);
+        for (let i = 1; i <= steps; i++) this.move(step, 1, button);
 
         return this;
     }
@@ -110,7 +112,10 @@ export class MockInputFacade {
         return this;
     }
     public moveTouch(i: number, amt: Vector, steps = 1): MockInputFacade {
-        const step = this.viewport.toScreenPos(amt).sub(this.viewport.toScreenPos(V())).scale(1 / steps);
+        const step = this.viewport
+            .toScreenPos(amt)
+            .sub(this.viewport.toScreenPos(V()))
+            .scale(1 / steps);
         for (let s = 1; s <= steps; s++) {
             this.touches[i] = this.touches[i].add(step);
             this.onTouchEv("touchmove", this.touches);
@@ -119,8 +124,7 @@ export class MockInputFacade {
     }
     public moveTouches(amt: Vector, steps = 1): MockInputFacade {
         const step = amt.scale(1 / steps);
-        for (let i = 1; i <= steps; i++)
-            this.touches.forEach((_, i) => this.moveTouch(i, step));
+        for (let i = 1; i <= steps; i++) this.touches.forEach((_, i) => this.moveTouch(i, step));
         return this;
     }
     public releaseTouch(i = 0): MockInputFacade {

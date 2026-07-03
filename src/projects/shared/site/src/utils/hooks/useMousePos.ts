@@ -1,8 +1,7 @@
-import {useEffect, useState} from "react";
-import {useDocEvent}         from "./useDocEvent";
-import {CalculateMidpoint} from "math/MathUtils";
-import {V, Vector} from "Vector";
-
+import { useEffect, useState } from "react";
+import { useDocEvent } from "./useDocEvent";
+import { CalculateMidpoint } from "math/MathUtils";
+import { V, Vector } from "Vector";
 
 export const useMousePos = () => {
     const [pos, setPos] = useState({
@@ -15,10 +14,10 @@ export const useMousePos = () => {
 
         const mouseListener = (ev: MouseEvent) => {
             setPos({ x: ev.pageX, y: ev.pageY });
-        }
+        };
         const touchListener = (ev: TouchEvent) => {
             setPos(CalculateMidpoint(getTouchPositions(ev.touches)));
-        }
+        };
 
         // For some reason, webkit has issues with pointermove so we need to use separate mousemove and touchmove, see #1443
         window.addEventListener("mousemove", mouseListener);
@@ -26,11 +25,11 @@ export const useMousePos = () => {
         return () => {
             window.removeEventListener("mousemove", mouseListener);
             window.removeEventListener("touchmove", touchListener);
-        }
+        };
     }, [setPos]);
 
     return pos;
-}
+};
 
 export const useMouseDownPos = () => {
     const [pos, setPos] = useState({
@@ -38,12 +37,16 @@ export const useMouseDownPos = () => {
         y: 0,
     });
 
-    useDocEvent("mousedown", (ev) => {
-        setPos({ x: ev.pageX, y: ev.pageY });
-    }, [setPos]);
+    useDocEvent(
+        "mousedown",
+        (ev) => {
+            setPos({ x: ev.pageX, y: ev.pageY });
+        },
+        [setPos],
+    );
 
     return pos;
-}
+};
 
 export const useDeltaMousePos = () => {
     const [{ x, y, px, py, isMouseDown }, setState] = useState({
@@ -67,8 +70,8 @@ export const useDeltaMousePos = () => {
 
                 isMouseDown: prevState.isMouseDown,
             }));
-        }
-        const mouseUpListener   = () => setState((prevState) => ({ ...prevState, isMouseDown: false }));
+        };
+        const mouseUpListener = () => setState((prevState) => ({ ...prevState, isMouseDown: false }));
         const mouseDownListener = () => setState((prevState) => ({ ...prevState, isMouseDown: true }));
 
         window.addEventListener("pointerup", mouseUpListener);
@@ -78,7 +81,7 @@ export const useDeltaMousePos = () => {
             window.removeEventListener("pointerup", mouseUpListener);
             window.removeEventListener("pointerdown", mouseDownListener);
             window.removeEventListener("pointermove", mouseListener);
-        }
+        };
     }, [setState]);
 
     return {
@@ -86,4 +89,4 @@ export const useDeltaMousePos = () => {
         dy: y - py,
         isMouseDown,
     };
-}
+};

@@ -31,14 +31,14 @@
         }
         & a {
             text-decoration: none;
-            color:rgb(119, 111, 111);
+            color: rgb(119, 111, 111);
             display: inline-block;
             font-weight: normal;
             float: right;
 
             border: 1.5px solid rgb(119, 111, 111);
-            border-radius:50%;
-            font-size:12px;
+            border-radius: 50%;
+            font-size: 12px;
             width: 14px;
             height: 14px;
 
@@ -68,7 +68,8 @@
             }
         }
     }
-    & div > div, input {
+    & div > div,
+    input {
         width: calc(100% - 2*2px - 2*2px);
     }
     & input {
@@ -79,8 +80,8 @@
         border: solid 2px rgba($background-color, 0.5);
         background-color: rgba(white, 0.8);
     }
-    & input[type='text'],
-      input[type='color'] {
+    & input[type="text"],
+    input[type="color"] {
         border: 0;
         background-color: transparent;
     }
@@ -100,7 +101,6 @@
 
         &:hover:enabled {
             background-color: darken(white, 5%);
-
         }
         &:active:enabled {
             background-color: darken(white, 10%);

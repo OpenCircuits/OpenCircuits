@@ -1,7 +1,6 @@
-type Props = {
-}
+type Props = {};
 // eslint-disable-next-line arrow-body-style
-export const OscilloscopePlotsModule = ({ }: Props) => {
+export const OscilloscopePlotsModule = ({}: Props) => {
     return null;
 
     // TODO[model_refactor_api]
@@ -101,4 +100,4 @@ export const OscilloscopePlotsModule = ({ }: Props) => {
     //         </div>
     //     </div>
     // </>)
-}
+};

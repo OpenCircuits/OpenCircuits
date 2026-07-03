@@ -1,14 +1,16 @@
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("Inputs", () => {
     describe("Constant Number", () => {
         test("0", () => {
             const [_, { Place, Connect }] = CreateTestCircuit();
             const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
-            Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
+            (Connect(i1.outputs[0], o1),
+                Connect(i1.outputs[1], o2),
+                Connect(i1.outputs[2], o3),
+                Connect(i1.outputs[3], o4));
 
             expect(o1).toBeOff();
             expect(o2).toBeOff();
@@ -18,7 +20,10 @@ describe("Inputs", () => {
         test("F", () => {
             const [_, { Place, Connect }] = CreateTestCircuit();
             const [i1, o1, o2, o3, o4] = Place("ConstantNumber", "OutputPin", "OutputPin", "OutputPin", "OutputPin");
-            Connect(i1.outputs[0], o1), Connect(i1.outputs[1], o2), Connect(i1.outputs[2], o3), Connect(i1.outputs[3], o4);
+            (Connect(i1.outputs[0], o1),
+                Connect(i1.outputs[1], o2),
+                Connect(i1.outputs[2], o3),
+                Connect(i1.outputs[3], o4));
 
             i1.setProp("inputNum", 15);
 

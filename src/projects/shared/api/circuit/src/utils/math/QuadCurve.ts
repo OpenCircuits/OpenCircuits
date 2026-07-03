@@ -1,8 +1,7 @@
-import {Curve}     from "./Curve";
-import {Clamp}     from "./MathUtils";
-import {Rect}      from "./Rect";
-import {V, Vector} from "./Vector";
-
+import { Curve } from "./Curve";
+import { Clamp } from "./MathUtils";
+import { Rect } from "./Rect";
+import { V, Vector } from "./Vector";
 
 /**
  * Quadratic Bezier Curve class.
@@ -17,7 +16,6 @@ import {V, Vector} from "./Vector";
  * https://www.desmos.com/calculator/mr7deqgp7e.
  */
 export class QuadCurve extends Curve {
-
     /**
      * The x, y coordinates of the start point.
      */
@@ -76,33 +74,34 @@ export class QuadCurve extends Curve {
     }
 
     public override get bounds(): Rect {
-        if (!this.boundingBox) // Calculate when requested
+        if (!this.boundingBox)
+            // Calculate when requested
             this.boundingBox = this.calcBoundingBox();
         return this.boundingBox;
     }
 
     public override getX(t: number): number {
         const it = 1 - t;
-        return this.p1.x*it*it + 2*this.c.x*t*it + this.p2.x*t*t;
+        return this.p1.x * it * it + 2 * this.c.x * t * it + this.p2.x * t * t;
     }
     public override getY(t: number): number {
         const it = 1 - t;
-        return this.p1.y*it*it + 2*this.c.y*t*it + this.p2.y*t*t;
+        return this.p1.y * it * it + 2 * this.c.y * t * it + this.p2.y * t * t;
     }
 
     public override getDX(t: number): number {
         const it = 1 - t;
-        return -2*this.p1.x*it + 2*this.c.x*(1-2*t) + 2*this.p2.x*t;
+        return -2 * this.p1.x * it + 2 * this.c.x * (1 - 2 * t) + 2 * this.p2.x * t;
     }
     public override getDY(t: number): number {
         const it = 1 - t;
-        return -2*this.p1.y*it + 2*this.c.y*(1-2*t) + 2*this.p2.y*t;
+        return -2 * this.p1.y * it + 2 * this.c.y * (1 - 2 * t) + 2 * this.p2.y * t;
     }
 
     public override getDDX(_: number): number {
-        return 2*(this.p1.x - 2*this.c.x + this.p2.x);
+        return 2 * (this.p1.x - 2 * this.c.x + this.p2.x);
     }
     public override getDDY(_: number): number {
-        return 2*(this.p1.y - 2*this.c.y + this.p2.y);
+        return 2 * (this.p1.y - 2 * this.c.y + this.p2.y);
     }
 }

@@ -1,13 +1,12 @@
-import {CreateCircuit} from "analog/api/circuit/public";
+import { CreateCircuit } from "analog/api/circuit/public";
 
-import {CircuitDesigner, ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {CircuitDesignerImpl} from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
-import {CanvasTextMeasurer} from "shared/api/circuitdesigner/public/impl/rendering/CanvasTextMeasurer";
-import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
+import { CircuitDesigner, ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { CircuitDesignerImpl } from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
+import { CanvasTextMeasurer } from "shared/api/circuitdesigner/public/impl/rendering/CanvasTextMeasurer";
+import { ToolRenderer } from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 
-import {SVGs} from "./rendering/svgs";
-import {AnalogAPITypes} from "analog/api/circuit/public/impl/AnalogCircuit";
-
+import { SVGs } from "./rendering/svgs";
+import { AnalogAPITypes } from "analog/api/circuit/public/impl/AnalogCircuit";
 
 export interface AnalogCircuitDesigner extends CircuitDesigner<AnalogAPITypes> {}
 
@@ -25,10 +24,13 @@ export function CreateDesigner(
 
     // TODO: Maybe move this logic into the CircuitDesignerImpl?
     designer.viewport.subscribe("onrender", (ev) => {
-        renderers.forEach((toolRenderer) => toolRenderer.render({
-            designer, renderer: ev.renderer,
-        }));
-    })
+        renderers.forEach((toolRenderer) =>
+            toolRenderer.render({
+                designer,
+                renderer: ev.renderer,
+            }),
+        );
+    });
 
     return designer;
 }

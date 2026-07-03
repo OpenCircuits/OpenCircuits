@@ -1,7 +1,6 @@
-import {Curve}  from "./Curve";
-import {Rect}   from "./Rect";
-import {Vector} from "./Vector";
-
+import { Curve } from "./Curve";
+import { Rect } from "./Rect";
+import { Vector } from "./Vector";
 
 /**
  * Line Curve class.
@@ -11,7 +10,6 @@ import {Vector} from "./Vector";
  * Note that curves are immutable.
  */
 export class LineCurve extends Curve {
-
     /**
      * The x, y coordinates of the start point.
      */
@@ -47,16 +45,17 @@ export class LineCurve extends Curve {
     }
 
     public override get bounds(): Rect {
-        if (!this.boundingBox) // Calculate when requested
+        if (!this.boundingBox)
+            // Calculate when requested
             this.boundingBox = this.calcBoundingBox();
         return this.boundingBox;
     }
 
     public override getX(t: number): number {
-        return this.p1.x*(1 - t) + this.p2.x*t;
+        return this.p1.x * (1 - t) + this.p2.x * t;
     }
     public override getY(t: number): number {
-        return this.p1.y*(1 - t) + this.p2.y*t;
+        return this.p1.y * (1 - t) + this.p2.y * t;
     }
 
     public override getDX(_: number): number {

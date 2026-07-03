@@ -1,10 +1,9 @@
-import {Request} from "shared/site/utils/Request";
-
+import { Request } from "shared/site/utils/Request";
 
 export async function DevCreateFile(data: string, fileId: string): Promise<void> {
     await Request({
-        method:  "POST",
-        url:     `dev/file/${fileId}`,
+        method: "POST",
+        url: `dev/file/${fileId}`,
         headers: {
             "Content-Type": "text/plain",
         },
@@ -14,8 +13,8 @@ export async function DevCreateFile(data: string, fileId: string): Promise<void>
 
 export async function DevListFiles(): Promise<string[]> {
     const result = await Request({
-        method:  "GET",
-        url:     "dev/filelist",
+        method: "GET",
+        url: "dev/filelist",
         headers: {},
     });
     return JSON.parse(result)["files"];
@@ -23,8 +22,8 @@ export async function DevListFiles(): Promise<string[]> {
 
 export async function DevGetFile(fileId: string): Promise<string> {
     return await Request({
-        method:  "GET",
-        url:     `dev/file/${fileId}`,
+        method: "GET",
+        url: `dev/file/${fileId}`,
         headers: {},
     });
 }

@@ -1,8 +1,7 @@
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-import {V} from "Vector";
-
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
+import { V } from "Vector";
 
 describe("DigitalCircuit", () => {
     describe("Simulation State", () => {
@@ -41,7 +40,7 @@ describe("DigitalCircuit", () => {
                         size: V(4, 2),
                         pins: [
                             { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
-                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
                         ],
                     },
                 });
@@ -61,7 +60,7 @@ describe("DigitalCircuit", () => {
             const [icCircuit, { Place: ICPlace, Connect: ICConnect }] = CreateTestCircuit();
             const ic = (() => {
                 const [i1, i2, g, o1] = ICPlace("InputPin", "InputPin", "ANDGate", "OutputPin");
-                ICConnect(i1, g.inputs[0]), ICConnect(i2, g.inputs[1]), ICConnect(g, o1);
+                (ICConnect(i1, g.inputs[0]), ICConnect(i2, g.inputs[1]), ICConnect(g, o1));
                 icCircuit.name = "To be serialized IC";
 
                 return circuit.createIC({
@@ -71,7 +70,7 @@ describe("DigitalCircuit", () => {
                         pins: [
                             { id: i1.outputs[0].id, group: "inputs", name: "In 1", pos: V(-1, -0.5), dir: V(-1, 0) },
                             { id: i2.outputs[0].id, group: "inputs", name: "In 2", pos: V(-1, +0.5), dir: V(-1, 0) },
-                            { id: o1.inputs[0].id, group: "outputs", name: "Out",  pos: V(+1,    0), dir: V(+1, 0) },
+                            { id: o1.inputs[0].id, group: "outputs", name: "Out", pos: V(+1, 0), dir: V(+1, 0) },
                         ],
                     },
                 });
@@ -95,21 +94,27 @@ describe("DigitalCircuit", () => {
         });
         test("Import objects in the circuit with state", () => {
             const [circuit, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
-            const [sw, { outputs: [led] }] = PlaceAndConnect("Switch");
+            const [
+                sw,
+                {
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("Switch");
 
             TurnOn(sw);
 
             expect(led).toBeOn();
 
             // Import the objects again with new IDs, switch and LED should still be on
-            const objs = circuit.import(
-                circuit.createContainer([sw.id, led.id]).withWiresAndPorts(), { refreshIds: true });
+            const objs = circuit.import(circuit.createContainer([sw.id, led.id]).withWiresAndPorts(), {
+                refreshIds: true,
+            });
 
             expect(objs.components).toHaveLength(2);
             expect(objs.wires).toHaveLength(1);
 
-            const sw2 = objs.components.find((c) => (c.kind === "Switch"));
-            const led2 = objs.components.find((c) => (c.kind === "LED"));
+            const sw2 = objs.components.find((c) => c.kind === "Switch");
+            const led2 = objs.components.find((c) => c.kind === "LED");
             expect(sw2).toBeDefined();
             expect(led2).toBeDefined();
 

@@ -1,14 +1,12 @@
-import {V, Vector} from "Vector";
-import {Clamp}     from "math/MathUtils";
+import { V, Vector } from "Vector";
+import { Clamp } from "math/MathUtils";
 
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitContext} from "shared/api/circuit/public/impl/CircuitContext";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";
 
+import { Camera, CameraEvent } from "../Camera";
 
-import {Camera, CameraEvent} from "../Camera";
-
-import {CircuitAPITypes} from "./Types";
-
+import { CircuitAPITypes } from "./Types";
 
 export const MIN_ZOOM = 1e-6;
 export const MAX_ZOOM = 200;
@@ -28,11 +26,10 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
 
     public set cx(x: number) {
         const cam = this.internal.getCamera();
-        const dx = (cam.x - x);
+        const dx = cam.x - x;
 
         // No change, do nothing
-        if (dx === 0)
-            return;
+        if (dx === 0) return;
 
         this.internal.setCamera({ x });
         this.publish({ type: "change", dx, dy: 0, dz: 0 });
@@ -42,11 +39,10 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
     }
     public set cy(y: number) {
         const cam = this.internal.getCamera();
-        const dy = (cam.y - y);
+        const dy = cam.y - y;
 
         // No change, do nothing
-        if (dy === 0)
-            return;
+        if (dy === 0) return;
 
         this.internal.setCamera({ y });
         this.publish({ type: "change", dx: 0, dy, dz: 0 });
@@ -56,11 +52,11 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
     }
     public set pos({ x, y }: Vector) {
         const cam = this.internal.getCamera();
-        const dx = (cam.x - x), dy = (cam.y - y);
+        const dx = cam.x - x,
+            dy = cam.y - y;
 
         // No change, do nothing
-        if (dx === 0 && dy === 0)
-            return;
+        if (dx === 0 && dy === 0) return;
 
         this.internal.setCamera({ x, y });
         this.publish({ type: "change", dx, dy, dz: 0 });
@@ -75,11 +71,10 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
         const zoom = Clamp(z, MIN_ZOOM, MAX_ZOOM);
 
         const cam = this.internal.getCamera();
-        const dz = (cam.zoom - zoom);
+        const dz = cam.zoom - zoom;
 
         // No change, do nothing
-        if (dz === 0)
-            return;
+        if (dz === 0) return;
 
         this.internal.setCamera({ zoom });
         this.publish({ type: "change", dx: 0, dy: 0, dz: dz });

@@ -1,5 +1,4 @@
-import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
-
+import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 export const SaveHandler = (save: () => void): ToolHandler => ({
     name: "SaveHandler",
@@ -8,8 +7,7 @@ export const SaveHandler = (save: () => void): ToolHandler => ({
 
     onEvent: (ev) => {
         // Activate when pressing CTRL/CMD + S
-        if (!(ev.type === "keydown" && ev.key === "s" && ev.input.isModifierKeyDown))
-            return ToolHandlerResponse.PASS;
+        if (!(ev.type === "keydown" && ev.key === "s" && ev.input.isModifierKeyDown)) return ToolHandlerResponse.PASS;
 
         save();
 

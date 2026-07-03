@@ -1,5 +1,4 @@
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 /**
  * Utility class to help cut down on render times by
@@ -34,20 +33,16 @@ export class RenderScheduler extends ObservableImpl {
      */
     public requestRender(): void {
         // Do nothing when blocked
-        if (this.blocked)
-            return;
+        if (this.blocked) return;
 
-        if (this.queued === 0)
-            this.lastFrameId = requestAnimationFrame(() => this.actualRender());
+        if (this.queued === 0) this.lastFrameId = requestAnimationFrame(() => this.actualRender());
         this.queued++;
     }
 
     public cancel(): void {
         // Do nothing when blocked
-        if (this.blocked)
-            return;
+        if (this.blocked) return;
 
         cancelAnimationFrame(this.lastFrameId);
     }
-
 }

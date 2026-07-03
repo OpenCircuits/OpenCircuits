@@ -1,15 +1,17 @@
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {ComponentAssembler, ComponentExtraAssemblerParams} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
+import {
+    ComponentAssembler,
+    ComponentExtraAssemblerParams,
+} from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 
-import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {Schema} from "shared/api/circuit/schema";
-import {Style} from "shared/api/circuit/internal/assembly/Style";
-import {SEGMENT_POINTS, SEGMENT_SIZE, SegmentType, Segments} from "./SegmentDisplayConstants";
-import {PositioningHelpers} from "shared/api/circuit/internal/assembly/PortAssembler";
-
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
+import { Signal } from "digital/api/circuit/schema/Signal";
+import { Schema } from "shared/api/circuit/schema";
+import { Style } from "shared/api/circuit/internal/assembly/Style";
+import { SEGMENT_POINTS, SEGMENT_SIZE, SegmentType, Segments } from "./SegmentDisplayConstants";
+import { PositioningHelpers } from "shared/api/circuit/internal/assembly/PortAssembler";
 
 export interface BaseDisplayAssemblerParams extends ComponentExtraAssemblerParams {
     kind: string;
@@ -23,50 +25,67 @@ export class BaseDisplayAssembler extends ComponentAssembler {
     public constructor(
         params: AssemblerParams,
         sim: DigitalSim,
-        { spacing, font, ...otherParams }: BaseDisplayAssemblerParams
+        { spacing, font, ...otherParams }: BaseDisplayAssemblerParams,
     ) {
-        super(params, {
-                "inputs": (comp, index, total) => ({
-                    origin: V(-0.5, -PositioningHelpers.ConstantSpacing(
-                                        index, total, this.getSize(comp).y,
-                                        { spacing: spacing ?? (this.options.defaultPortRadius*2 + 0.02) })),
+        super(
+            params,
+            {
+                inputs: (comp, index, total) => ({
+                    origin: V(
+                        -0.5,
+                        -PositioningHelpers.ConstantSpacing(index, total, this.getSize(comp).y, {
+                            spacing: spacing ?? this.options.defaultPortRadius * 2 + 0.02,
+                        }),
+                    ),
                     dir: V(-1, 0),
                 }),
             },
-        [
-            {
-                kind: "BaseShape",
+            [
+                {
+                    kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged]),
-                assemble:     (comp) => ({
-                    kind:      "Rectangle",
-                    transform: this.getTransform(comp),
-                }),
+                    dependencies: new Set([AssemblyReason.TransformChanged]),
+                    assemble: (comp) => ({
+                        kind: "Rectangle",
+                        transform: this.getTransform(comp),
+                    }),
 
-                styleChangesWhenSelected: true,
+                    styleChangesWhenSelected: true,
 
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
-            },
-            // Render off segments then on segments
-            {
-                kind: "BaseShape",
+                    getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                },
+                // Render off segments then on segments
+                {
+                    kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged, AssemblyReason.PropChanged]),
-                assemble:     (comp) => this.assembleSegments(comp, false),
+                    dependencies: new Set([
+                        AssemblyReason.TransformChanged,
+                        AssemblyReason.SignalsChanged,
+                        AssemblyReason.PortsChanged,
+                        AssemblyReason.PropChanged,
+                    ]),
+                    assemble: (comp) => this.assembleSegments(comp, false),
 
-                styleChangesWhenSelected: true,
-                getStyle:                 (comp) => this.getSegmentStyle(comp, false),
-            },
-            {
-                kind: "BaseShape",
+                    styleChangesWhenSelected: true,
+                    getStyle: (comp) => this.getSegmentStyle(comp, false),
+                },
+                {
+                    kind: "BaseShape",
 
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.SignalsChanged, AssemblyReason.PortsChanged, AssemblyReason.PropChanged]),
-                assemble:     (comp) => this.assembleSegments(comp, true),
+                    dependencies: new Set([
+                        AssemblyReason.TransformChanged,
+                        AssemblyReason.SignalsChanged,
+                        AssemblyReason.PortsChanged,
+                        AssemblyReason.PropChanged,
+                    ]),
+                    assemble: (comp) => this.assembleSegments(comp, true),
 
-                styleChangesWhenSelected: true,
-                getStyle:                 (comp) => this.getSegmentStyle(comp, true),
-            },
-        ], otherParams);
+                    styleChangesWhenSelected: true,
+                    getStyle: (comp) => this.getSegmentStyle(comp, true),
+                },
+            ],
+            otherParams,
+        );
 
         this.sim = sim;
         this.font = font;
@@ -77,35 +96,41 @@ export class BaseDisplayAssembler extends ComponentAssembler {
     }
 
     protected getSegments(comp: Schema.Component, segmentsOn: boolean): Array<[Vector, SegmentType]> {
-        if (!this.font)
-            throw new Error("BaseDisplayAssembler: No font set!");
+        if (!this.font) throw new Error("BaseDisplayAssembler: No font set!");
 
         // Get on glyphs for font
-        const dec = this.getInputValues(comp)
-            .reduce((accumulator, isOn, index) => accumulator + (isOn ? 2 ** index : 0), 0);
+        const dec = this.getInputValues(comp).reduce(
+            (accumulator, isOn, index) => accumulator + (isOn ? 2 ** index : 0),
+            0,
+        );
 
         const segmentCount = this.getSegmentCount(comp);
         const glyph = this.font[segmentCount.toString()][dec];
 
-        return Segments[segmentCount].map((segment, index) => {
-            if (glyph.includes(index) === segmentsOn)
-                return segment;
-        }).filter((prim) => prim !== undefined);
+        return Segments[segmentCount]
+            .map((segment, index) => {
+                if (glyph.includes(index) === segmentsOn) return segment;
+            })
+            .filter((prim) => prim !== undefined);
     }
 
     private assembleSegments(comp: Schema.Component, segmentsOn: boolean) {
         const segments = this.getSegments(comp, segmentsOn);
         const transform = this.getTransform(comp).withoutScale();
         return {
-            kind:  "Group",
-            prims: segments.map(([pos, segmentType]) => ({
-                kind:   "Polygon",
-                points: SEGMENT_POINTS[segmentType].map((vector) =>
-                            transform.toWorldSpace(vector.add(pos.scale(SEGMENT_SIZE)))),
-                ignoreHit: true,
-            } as const)),
+            kind: "Group",
+            prims: segments.map(
+                ([pos, segmentType]) =>
+                    ({
+                        kind: "Polygon",
+                        points: SEGMENT_POINTS[segmentType].map((vector) =>
+                            transform.toWorldSpace(vector.add(pos.scale(SEGMENT_SIZE))),
+                        ),
+                        ignoreHit: true,
+                    }) as const,
+            ),
             ignoreHit: true,
-        } as const
+        } as const;
     }
 
     private getSegmentStyle(comp: Schema.Component, segmentsOn: boolean): Style {
@@ -115,7 +140,7 @@ export class BaseDisplayAssembler extends ComponentAssembler {
         return {
             stroke: { color, size: 0.01, lineCap: "round", lineJoin: "round" },
             fill,
-        }
+        };
     }
 
     protected getInputValues(comp: Schema.Component) {
@@ -124,6 +149,6 @@ export class BaseDisplayAssembler extends ComponentAssembler {
     }
 
     protected getSegmentCount(comp: Schema.Component) {
-        return this.circuit.getCompByID(comp.id).unwrap().props["segmentCount"] as number | undefined ?? 7;
+        return (this.circuit.getCompByID(comp.id).unwrap().props["segmentCount"] as number | undefined) ?? 7;
     }
 }

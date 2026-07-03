@@ -1,9 +1,8 @@
-import fs   from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 
-import bodyParser           from "body-parser";
-import Server, {Middleware} from "webpack-dev-server";
-
+import bodyParser from "body-parser";
+import Server, { Middleware } from "webpack-dev-server";
 
 /**
  * HOC for dev-server, created by-project so there can be different directories
@@ -26,15 +25,13 @@ export default (project: string) => {
      * @throws If one of the underlying functions throws an error.
      */
     return (middlewares: Middleware[], devServer: Server) => {
-        if (!devServer.app)
-            throw new Error("webpack-dev-server app is not defined");
+        if (!devServer.app) throw new Error("webpack-dev-server app is not defined");
 
         // Create new file
         devServer.app.post("/dev/file/:id", bodyParser.text(), (req, res) => {
             try {
                 // Make cached directory if it doesn't already exist
-                if (!fs.existsSync(CACHE_PATH))
-                    fs.mkdirSync(CACHE_PATH, { recursive: true });
+                if (!fs.existsSync(CACHE_PATH)) fs.mkdirSync(CACHE_PATH, { recursive: true });
 
                 const fileId = req.params.id;
                 const file = req.body;
@@ -55,8 +52,7 @@ export default (project: string) => {
                 const fileId = req.params.id;
 
                 const filePath = path.resolve(CACHE_PATH, fileId);
-                if (!fs.existsSync(filePath))
-                    return res.status(404);
+                if (!fs.existsSync(filePath)) return res.status(404);
 
                 const data = fs.readFileSync(filePath).toString("utf8");
 
@@ -69,8 +65,7 @@ export default (project: string) => {
         // List saved files
         devServer.app.get("/dev/filelist", (req, res) => {
             try {
-                if (!fs.existsSync(CACHE_PATH))
-                    return res.status(200).json({ files: [] });
+                if (!fs.existsSync(CACHE_PATH)) return res.status(200).json({ files: [] });
 
                 const files = fs.readdirSync(CACHE_PATH).filter((f) => f.endsWith(".circuit"));
 
@@ -81,5 +76,5 @@ export default (project: string) => {
         });
 
         return middlewares;
-    }
-}
+    };
+};

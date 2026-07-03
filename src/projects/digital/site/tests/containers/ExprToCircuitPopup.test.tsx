@@ -3,27 +3,26 @@ import "shared/tests/helpers/Extensions";
 import "digital/api/circuit/tests/helpers/Extensions";
 
 import "@testing-library/jest-dom";
-import {act, render, screen}          from "@testing-library/react";
-import userEvent                      from "@testing-library/user-event";
-import {Provider}                     from "react-redux";
+import { act, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Provider } from "react-redux";
 
-import {OpenHeaderPopup} from "shared/site/state/Header";
+import { OpenHeaderPopup } from "shared/site/state/Header";
 
-import {PressToggle} from "shared/site/tests/helpers/PressToggle";
+import { PressToggle } from "shared/site/tests/helpers/PressToggle";
 
-import {reducers}   from "digital/site/state/reducers";
+import { reducers } from "digital/site/state/reducers";
 
-import {ExprToCircuitPopup} from "digital/site/containers/ExprToCircuitPopup";
+import { ExprToCircuitPopup } from "digital/site/containers/ExprToCircuitPopup";
 
-import {CreateCircuit} from "digital/api/circuit/public";
+import { CreateCircuit } from "digital/api/circuit/public";
 
-import {CreateDesigner} from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import {DefaultTool} from "shared/api/circuitdesigner/tools/DefaultTool";
-import {V} from "Vector";
-import {configureStore} from "@reduxjs/toolkit";
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {InstantSimRunner} from "digital/api/circuit/internal/sim/DigitalSimRunner";
-
+import { CreateDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
+import { V } from "Vector";
+import { configureStore } from "@reduxjs/toolkit";
+import { Signal } from "digital/api/circuit/schema/Signal";
+import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro
@@ -32,7 +31,7 @@ describe("Main Popup", () => {
     const designer = CreateDesigner(
         {
             defaultTool: new DefaultTool(),
-            tools:       [],
+            tools: [],
         },
         [],
         undefined,
@@ -43,13 +42,19 @@ describe("Main Popup", () => {
     const user = userEvent.setup();
 
     beforeEach(() => {
-        render(<Provider store={store}><ExprToCircuitPopup {...designer}  /></Provider>);
-        act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
+        render(
+            <Provider store={store}>
+                <ExprToCircuitPopup {...designer} />
+            </Provider>,
+        );
+        act(() => {
+            store.dispatch(OpenHeaderPopup("expr_to_circuit"));
+        });
     });
 
     afterEach(() => {
-        designer.circuit.deleteObjs([...circuit.getWires() , ...circuit.getComponents()]);
-        designer.viewport.camera.pos = V(0,0);
+        designer.circuit.deleteObjs([...circuit.getWires(), ...circuit.getComponents()]);
+        designer.viewport.camera.pos = V(0, 0);
     });
 
     test("Popup Created with default states", () => {
@@ -90,8 +95,10 @@ describe("Main Popup", () => {
         expect(screen.getByText("Digital Expression To Circuit Generator")).not.toBeVisible();
 
         // Reopen and requery in case reference changed
-        act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
-        expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
+        act(() => {
+            store.dispatch(OpenHeaderPopup("expr_to_circuit"));
+        });
+        expect(screen.getByRole<HTMLInputElement>("textbox").value).toBe("");
     });
 
     test("Generate Button", async () => {
@@ -120,8 +127,10 @@ describe("Main Popup", () => {
         expect(led).toBeOn();
 
         // Reopen and requery in case reference changed
-        act(() => { store.dispatch(OpenHeaderPopup("expr_to_circuit")) });
-        expect((screen.getByRole<HTMLInputElement>("textbox")).value).toBe("");
+        act(() => {
+            store.dispatch(OpenHeaderPopup("expr_to_circuit"));
+        });
+        expect(screen.getByRole<HTMLInputElement>("textbox").value).toBe("");
     });
 
     test("Generate Button (IC)", async () => {

@@ -1,5 +1,4 @@
-import {DigitalSim} from "./DigitalSim";
-
+import { DigitalSim } from "./DigitalSim";
 
 export interface DigitalSimRunner {
     propagationTime?: number;
@@ -24,8 +23,7 @@ export class InstantSimRunner implements DigitalSimRunner {
             if (ev.type === "queue") {
                 this.queueStep();
             } else if (ev.type === "step") {
-                if (ev.queueEmpty)
-                    return;
+                if (ev.queueEmpty) return;
                 this.queueStep();
             }
         });
@@ -45,8 +43,7 @@ export class InstantSimRunner implements DigitalSimRunner {
 
     // By default, steps instantly
     protected queueStep(): void {
-        if (this.paused)
-            return;
+        if (this.paused) return;
 
         this.sim.step();
     }

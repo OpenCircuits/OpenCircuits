@@ -9,14 +9,14 @@ import initNGSpice from "./lib/ngspice_node.js";
 describe("NGSpice Node WASM", () => {
     it("should load, initialize, and run a simple netlist", async () => {
         // Init NGSpice WASM module
-        const module = await initNGSpice() as NGSpiceLib;
+        const module = (await initNGSpice()) as NGSpiceLib;
         const lib = CreateWASMInstance(module);
         expect(lib).toBeDefined();
         expect(typeof lib._OC_init).toBe("function");
 
         // Initialize NGSpice
         lib._OC_init();
-        
+
         // Let's create a simple netlist to test
         const netlist = [
             ".title TestCircuit",
@@ -24,9 +24,9 @@ describe("NGSpice Node WASM", () => {
             "R1 1 0 1000",
             ".op",
             ".end",
-            "\0" // null terminator
+            "\0", // null terminator
         ];
-        
+
         // Upload data to NGSpice
         const netlistPtrs = lib.create_str_array(netlist);
         lib._OC_set_data(netlistPtrs[0]);
@@ -41,15 +41,15 @@ describe("NGSpice Node WASM", () => {
         if (plotIdsPtr) {
             const plotIDPtrs = lib.get_array(plotIdsPtr, { type: "string*" }).slice(0, -1);
             const plotIDs = plotIDPtrs.map((ptr) => lib.get_array(ptr, { type: "char" }));
-            
+
             // Should contain our op1 plot or similar
             expect(plotIDs.length).toBeGreaterThan(0);
-            
+
             // Let's find the 'op1' or current plot
             const curPlotPtr = lib._OC_get_cur_plot();
             expect(curPlotPtr).toBeTruthy();
             const curPlotID = curPlotPtr ? lib.get_array(curPlotPtr, { type: "char" }) : "";
-            
+
             expect(curPlotID).toBeTruthy();
         }
 
