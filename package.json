@@ -22,6 +22,8 @@
     "test-e2e:ci": "npx playwright test --config ./playwright/config/ci.config.ts",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build",
     "protoc": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=. ./src/projects/shared/site/src/proto/Circuit.proto",
     "protoc-digital": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=. ./src/projects/shared/site/src/proto/Circuit.proto ./src/projects/digital/site/src/proto/DigitalCircuit.proto"
@@ -84,6 +86,7 @@
     "mini-css-extract-plugin": "^2.6.1",
     "open": "^8.4.0",
     "ora": "^6.1.2",
+    "oxfmt": "^0.57.0",
     "oxlint": "^1.64.0",
     "oxlint-tsgolint": "^0.22.1",
     "postcss": "^8.4.14",
