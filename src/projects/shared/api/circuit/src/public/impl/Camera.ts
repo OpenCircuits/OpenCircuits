@@ -2,16 +2,18 @@ import {V, Vector} from "Vector";
 import {Clamp}     from "math/MathUtils";
 
 import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitContext} from "shared/api/circuit/public/impl/CircuitContext";
 
 
 import {Camera, CameraEvent} from "../Camera";
+
+import {CircuitAPITypes} from "./Types";
 
 
 export const MIN_ZOOM = 1e-6;
 export const MAX_ZOOM = 200;
 
-export class CameraImpl<T extends CircuitTypes> extends ObservableImpl<CameraEvent> implements Camera {
+export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<CameraEvent> implements Camera {
     protected readonly ctx: CircuitContext<T>;
 
     public constructor(ctx: CircuitContext<T>) {

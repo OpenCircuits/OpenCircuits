@@ -5,7 +5,8 @@ import {Margin, Rect}    from "math/Rect";
 
 import {CleanupFunc} from "shared/api/circuit/utils/types";
 import {MultiObservable} from "shared/api/circuit/utils/Observable";
-import {CircuitContext, CircuitTypes} from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitContext} from "shared/api/circuit/public/impl/CircuitContext";
+import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
 import {InputAdapter} from "shared/api/circuitdesigner/input/InputAdapter";
 import {Bounds, OrientedBounds} from "shared/api/circuit/internal/assembly/PrimBounds";
 
@@ -19,7 +20,7 @@ import {DebugRenderBounds} from "./rendering/renderers/DebugRenderer";
 import {Cursor} from "../../input/Cursor";
 
 import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
-import {AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents}          from "../Viewport";
+import {AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents} from "../Viewport";
 
 import {DebugOptions}                          from "./DebugOptions";
 import {IsDefined} from "shared/api/circuit/utils/Reducers";
@@ -66,7 +67,7 @@ export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
     }
 }
 
-export class ViewportImpl<T extends CircuitTypes> extends MultiObservable<ViewportEvents> implements Viewport {
+export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<ViewportEvents> implements Viewport {
     protected readonly ctx: CircuitContext<T>;
     protected readonly designer: CircuitDesigner<T>;
     protected readonly toolManager: ToolManager<T>;

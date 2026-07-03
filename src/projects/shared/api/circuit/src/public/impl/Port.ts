@@ -5,11 +5,12 @@ import {GUID}    from "shared/api/circuit/internal";
 
 import {Port}    from "../Port";
 
-import {BaseObjectImpl}             from "./BaseObject";
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {BaseObjectImpl} from "./BaseObject";
+import {CircuitContext} from "./CircuitContext";
+import {CircuitAPITypes} from "./Types";
 
 
-export class PortImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Port {
+export class PortImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> implements Port {
     public readonly baseKind = "Port";
 
     public constructor(ctx: CircuitContext<T>, id: GUID, icId?: GUID) {

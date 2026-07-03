@@ -8,11 +8,12 @@ import {Schema}  from "shared/api/circuit/schema";
 import {Component, Node, PortConfig} from "../Component";
 
 import {BaseObjectImpl}             from "./BaseObject";
-import {CircuitContext, CircuitTypes} from "./CircuitContext";
+import {CircuitContext} from "./CircuitContext";
 import {Wire} from "../Wire";
+import {CircuitAPITypes} from "./Types";
 
 
-export class ComponentImpl<T extends CircuitTypes> extends BaseObjectImpl<T> implements Component, Node {
+export class ComponentImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> implements Component, Node {
     public readonly baseKind = "Component";
 
     public constructor(ctx: CircuitContext<T>, id: GUID, icId?: GUID) {

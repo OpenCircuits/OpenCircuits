@@ -67,8 +67,10 @@ import {DRAG_TIME} from "shared/api/circuitdesigner/input/Constants";
 import {GetAuthMethods} from "shared/site/containers/LoginPopup/GetAuthMethods";
 import {GoogleAuthState} from "shared/site/api/auth/GoogleAuthState";
 
-import NGSpice from "./lib/ngspice.wasm";
-import {NGSpiceLib} from "./lib/NGSpiceLib";
+import NGSpice from "./sim/lib/ngspice.wasm";
+import {NGSpiceLib} from "analog/api/circuit/sim/lib/NGSpiceLib";
+import {AnalogSimImpl, MakeAnalogSim} from "./sim/AnalogSim";
+import {CreateWASMInstance} from "analog/api/circuit/sim/lib/WASM";
 
 
 async function Init(): Promise<void> {
@@ -84,7 +86,7 @@ async function Init(): Promise<void> {
                 console.error("Failed to load NGSpice WASM binary!");
                 return;
             }
-            ngSpiceLib.OC_init();
+            ngSpiceLib._OC_init();
         }],
 
         [85, "Initializing redux", async () => {
@@ -135,7 +137,8 @@ async function Init(): Promise<void> {
         [100, "Rendering", async () => {
             SetCircuitHelpers({
                 CreateAndInitializeDesigner(tools) {
-                    return CreateDesigner(
+                    const circuit = CreateCircuit();
+                    const designer = CreateDesigner(
                         tools?.config ?? {
                             defaultTool: new DefaultTool(
                                 SelectAllHandler, FitToScreenHandler, DuplicateHandler,
@@ -155,8 +158,13 @@ async function Init(): Promise<void> {
                         },
                         tools?.renderers ?? [RotateToolRenderer, WiringToolRenderer(({ renderer }) => renderer.options.defaultWireColor), SelectionBoxToolRenderer],
                         DRAG_TIME,
-                        CreateCircuit(),
+                        circuit,
                     );
+
+                    console.log(ngSpiceLib);
+                    circuit.attachSim(MakeAnalogSim(CreateWASMInstance(ngSpiceLib)));
+
+                    return designer;
                 },
                 Serialize(circuitOrObjs) {
                     throw new Error("Unimplemented!");
@@ -170,6 +178,8 @@ async function Init(): Promise<void> {
             });
 
             const mainDesigner = CircuitHelpers.CreateAndInitializeDesigner();
+
+            // mainDesigner.circuit
 
             setCurDesigner(mainDesigner);
 
