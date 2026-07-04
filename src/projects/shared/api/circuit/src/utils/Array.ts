@@ -48,14 +48,14 @@ Array.prototype.chunk = function<T>(this: T[], chunkSize: number): T[][] {
 
 Array.prototype.padEnd = function<T>(this: T[], targetLen: number, val: T): T[] {
     if (this.length >= targetLen)
-        return this;
+        {return this;}
     return [...this, ...new Array(targetLen - this.length).fill(val)];
 }
 
 Set.prototype.union = function<T, U>(this: Set<T>, other: Set<U>): Set<T | U> {
     const result = new Set<T|U>(this);
     for (const elem of other)
-        result.add(elem);
+        {result.add(elem);}
     return result;
 }
 Set.prototype.intersection = function<T, U>(this: Set<T>, other: Set<U>): Set<T & U> {
@@ -89,11 +89,11 @@ Set.prototype.symmetricDifference = function<T>(this: Set<T>, other: Set<T>): Se
     const result = new Set<T>();
     for (const item of this) {
         if (!other.has(item))
-            result.add(item);
+            {result.add(item);}
     }
     for (const item of other) {
         if (!this.has(item))
-            result.add(item);
+            {result.add(item);}
     }
     return result;
 }

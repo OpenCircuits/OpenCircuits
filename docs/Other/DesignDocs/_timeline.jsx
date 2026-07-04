@@ -15,7 +15,7 @@ function hash(str, digits = 8) {
 const randomColor = (() => {
     const Rand = (seed) => {
         let _seed = seed % 2_147_483_647;
-        if (_seed <= 0) _seed += 2_147_483_646;
+        if (_seed <= 0) {_seed += 2_147_483_646;}
 
         const nextFloat = () => {
             const next = _seed * 16_807 % 2_147_483_647;
@@ -71,7 +71,7 @@ export default function Timeline({start, milestones, end}) {
                               alignmentBaseline={(i % 2 === 0) ? "baseline" : "hanging"}>{milestones[i].date}</text>
                     </>)
             }
-            <rect width="100%" height="1px" fill="gray"></rect>
+            <rect width="100%" height="1px" fill="gray" />
         </g>
         </svg>
 

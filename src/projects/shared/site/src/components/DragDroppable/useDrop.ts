@@ -12,7 +12,7 @@ export const useDrop = (
 ) => {
     useEffect(() => {
         if (!ref.current)
-            return;
+            {return;}
         const current = ref.current;
 
         const l1 = (ev: DragEvent) => {

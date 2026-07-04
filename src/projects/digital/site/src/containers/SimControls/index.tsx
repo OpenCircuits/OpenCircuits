@@ -23,11 +23,11 @@ export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) =
     useEffect(() =>
         circuit.sim.subscribe((ev) => {
             if (ev.type === "pause")
-                setIsPaused(true);
+                {setIsPaused(true);}
             if (ev.type === "resume")
-                setIsPaused(false);
+                {setIsPaused(false);}
             if (ev.type === "propagationTimeChanged")
-                setCurSpeed(1000 / ev.newTime);
+                {setCurSpeed(1000 / ev.newTime);}
         }), [circuit, setIsPaused, setCurSpeed]);
 
     const updateSpeed = (newSpeed: number) => {

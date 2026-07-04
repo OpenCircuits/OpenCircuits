@@ -9,7 +9,7 @@ import {Bounds, OrientedBounds} from "./PrimBounds";
 
 export function HitTest(prim: Prim, pt: Vector): boolean {
     if (prim.ignoreHit)
-        return false;
+        {return false;}
 
     switch (prim.kind) {
     case "BezierCurve":
@@ -37,7 +37,7 @@ export function HitTest(prim: Prim, pt: Vector): boolean {
 
 export function IntersectionTest(prim: Prim, rect: Rect): boolean {
     if (prim.ignoreHit)
-        return false;
+        {return false;}
 
     return (OrientedBounds(prim) ?? Bounds(prim))?.intersects(rect) ?? false;
 }

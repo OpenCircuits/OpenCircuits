@@ -16,7 +16,7 @@ export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements 
 
         this.internal["log"].subscribe((ev) => {
             if (ev.accepted.length === 0)
-                return;
+                {return;}
             this.publish({ type: "change" });
         })
     }

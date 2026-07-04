@@ -9,7 +9,7 @@ export const SelectionBoxToolRenderer: ToolRenderer = {
     render: ({ designer: { curTool }, renderer }) => {
         // If a non-selection-box-tool active, then do nothing
         if (!(curTool instanceof SelectionBoxTool))
-            return;
+            {return;}
 
         const rect = curTool.getBounds();
 

@@ -135,20 +135,20 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
 
             // No canvas attached -> no need to render
             if (!this.canvasInfo)
-                return;
+                {return;}
 
             if (ev.type === "change")
-                this.scheduler.requestRender();
+                {this.scheduler.requestRender();}
         });
 
         // Re-render when assembler changes
         this.ctx.assembler.subscribe((data) => {
             // No canvas attached -> no need to render
             if (!this.canvasInfo)
-                return;
+                {return;}
 
             if (data.type === "onchange")
-                this.scheduler.requestRender();
+                {this.scheduler.requestRender();}
         });
 
         // Re-render when current tool changes state (For tool-renderers)
@@ -159,7 +159,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
                 curToolCallbackCleanup = tool.subscribe((_) => {
                     // No canvas attached -> no need to render
                     if (!this.canvasInfo)
-                        return;
+                        {return;}
 
                     this.scheduler.requestRender();
                 });
@@ -173,7 +173,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
 
     protected render() {
         if (!this.canvasInfo)
-            throw new Error("Viewport: Attempted Circuit render before a canvas was set!");
+            {throw new Error("Viewport: Attempted Circuit render before a canvas was set!");}
 
         const { renderer } = this.canvasInfo;
         const renderState: RenderState = {
@@ -199,7 +199,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
 
             // Render grid
             if (renderState.options.showGrid)
-                RenderGrid(renderState);
+                {RenderGrid(renderState);}
 
             // Render wires (by depth)
             assembly.wireOrder.forEach((wireId) =>
@@ -273,7 +273,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
                 draw: (prim: Prim, space = "world") => {
                     renderer.save();
                     if (space === "world")
-                        renderer.transform(this.cameraMat.get().inverse());
+                        {renderer.transform(this.cameraMat.get().inverse());}
                     this.primRenderer.render(renderer.ctx, prim);
                     renderer.restore();
                 },
@@ -302,7 +302,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
     }
     public setRenderOptions(options: Partial<Pick<RenderOptions, "showGrid">>): void {
         if (options.showGrid !== undefined)
-            this.ctx.renderOptions.showGrid = options.showGrid;
+            {this.ctx.renderOptions.showGrid = options.showGrid;}
         this.scheduler.requestRender();
     }
 
@@ -324,7 +324,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
 
     public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
         if (this.canvasInfo)
-            throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");
+            {throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");}
 
         this.canvasInfo = new AttachedCanvasInfoImpl(canvas, this.options.dragTime, (input: InputAdapter) => {
             // Forward inputs to ToolManager

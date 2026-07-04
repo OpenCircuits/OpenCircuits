@@ -56,11 +56,11 @@ async function BuildDir(dir: string, project: string) {
     const dirPaths = await (async () => {
         // If specified dirs in argv, then just use those.
         if (argv._.length > 0)
-            return argv._.map((s) => `${s}`);
+            {return argv._.map((s) => `${s}`);}
 
         // If nothing specified, but using CI, use all directories.
         if (ci)
-            return dirs.map((d) => d.path);
+            {return dirs.map((d) => d.path);}
 
         // Else prompt user for a directory
         const { value } = await prompts({
@@ -74,15 +74,15 @@ async function BuildDir(dir: string, project: string) {
             initial: 0,
         });
         if (!value)
-            return;
+            {return;}
         return [value as string];
     })();
     if (!dirPaths)
-        return;
+        {return;}
 
     // If manual production build, copy secrets
     if (prod && !ci && existsSync("src/secrets"))
-        CopyDir("src/secrets", "build");
+        {CopyDir("src/secrets", "build");}
 
     // Launch build in each directory
     const dirsToUse = dirPaths.map((p) => [p, FindDir(dirs, p)] as const);

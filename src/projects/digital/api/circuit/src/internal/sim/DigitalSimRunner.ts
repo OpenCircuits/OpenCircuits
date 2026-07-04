@@ -25,7 +25,7 @@ export class InstantSimRunner implements DigitalSimRunner {
                 this.queueStep();
             } else if (ev.type === "step") {
                 if (ev.queueEmpty)
-                    return;
+                    {return;}
                 this.queueStep();
             }
         });
@@ -46,7 +46,7 @@ export class InstantSimRunner implements DigitalSimRunner {
     // By default, steps instantly
     protected queueStep(): void {
         if (this.paused)
-            return;
+            {return;}
 
         this.sim.step();
     }

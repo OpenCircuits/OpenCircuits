@@ -46,11 +46,11 @@ export class Matrix2x3 {
             // This is kinda a hack, might want to in-line all the operations or something in the future
             let mat: Matrix2x3 = this;
             if (other)
-                mat = mat.translate(other);
+                {mat = mat.translate(other);}
             if (angle)
-                mat = mat.rotate(angle);
+                {mat = mat.rotate(angle);}
             if (scale)
-                mat = mat.scale(scale);
+                {mat = mat.scale(scale);}
             this.mat = mat.mat;
         }
     }
@@ -172,12 +172,12 @@ export class Matrix2x3 {
      */
     public inverse(): Matrix2x3 {
         if (this.inv) // If already computed inverse, then return it
-            return this.inv;
+            {return this.inv;}
 
         // Calculate determinant
         const det = this.mat[0]*this.mat[3] - this.mat[1]*this.mat[2];
         if (det === 0) // undefined
-            return new Matrix2x3();
+            {return new Matrix2x3();}
 
         // Flip determinant since multiplication is typically faster than division
         const detI = 1 / det;
@@ -222,7 +222,7 @@ export class Matrix2x3 {
     public equals(other: Matrix2x3): boolean {
         for (let i = 0; i < 2*3; i++) {
             if (this.mat[i] !== other.mat[i])
-                return false;
+                {return false;}
         }
         return true;
     }

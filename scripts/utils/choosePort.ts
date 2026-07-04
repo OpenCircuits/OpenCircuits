@@ -16,7 +16,7 @@ export default async function choosePort(host: string, defaultPort: number) {
 
         // All good to use
         if (port === defaultPort)
-            return port;
+            {return port;}
 
         // Prompt to see if they want to change the port
         const { changePort } = await prompts({

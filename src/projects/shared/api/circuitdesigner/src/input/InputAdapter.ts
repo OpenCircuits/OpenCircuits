@@ -142,13 +142,13 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
      */
     private hookupKeyboardEvents(): () => void {
         if (!this.canvas)
-            throw new Error("Input: Attempted to hookup keyboard events before a canvas was set!");
+            {throw new Error("Input: Attempted to hookup keyboard events before a canvas was set!");}
 
         const parseKey = (key: string): Key => {
             // Assume it's alphanumeric if it's a single-character keycode
             //  and make it lowercase for consistency
             if (key.length === 1)
-                return key.toLowerCase() as Key;
+                {return key.toLowerCase() as Key;}
             return key as Key; // Otherwise just leave it alone and explicitly cast
         }
 
@@ -161,7 +161,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
                 this.onKeyDown(key);
 
                 if (this.isPreventedCombination(key))
-                    e.preventDefault();
+                    {e.preventDefault();}
             }
         }
         const onKeyUp = (e: KeyboardEvent) => {
@@ -169,12 +169,12 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
 
             // Check for "Alt" to fix issue #943
             if (key === "Alt" || !(document.activeElement instanceof HTMLInputElement))
-                this.onKeyUp(key);
+                {this.onKeyUp(key);}
 
             // Check for Meta key and release all other keys on up
             //  See https://stackoverflow.com/q/27380018/5911675
             if (key === "Meta")
-                this.state.keysDown.forEach((key) => this.onKeyUp(key));
+                {this.state.keysDown.forEach((key) => this.onKeyUp(key));}
 
         }
         const onBlur = () => this.onBlur();
@@ -192,15 +192,15 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
 
         const onPaste = (ev: ClipboardEvent) => {
             if (hasFocus())
-                this.publish({ input: this.state, type: "paste", ev });
+                {this.publish({ input: this.state, type: "paste", ev });}
         }
         const onCopy  = (ev: ClipboardEvent) => {
             if (hasFocus())
-                this.publish({ input: this.state, type: "copy",  ev });
+                {this.publish({ input: this.state, type: "copy",  ev });}
         }
         const onCut   = (ev: ClipboardEvent) => {
             if (hasFocus())
-                this.publish({ input: this.state, type: "cut",   ev });
+                {this.publish({ input: this.state, type: "cut",   ev });}
         }
 
 
@@ -233,7 +233,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
 
             // Fixes issue #777, stops Firefox from scrolling and allows panning
             if (e.button === MIDDLE_MOUSE_BUTTON)
-                e.preventDefault();
+                {e.preventDefault();}
         };
 
         const onClick      = (e: MouseEvent) => this.onClick(V(e.clientX, e.clientY), e.button);
@@ -333,7 +333,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
         const tap = new Hammer.Tap();
         const onTap = (e: HammerInput) => {
             if (e.pointerType === "mouse")
-                return;
+                {return;}
 
             this.onClick(V(e.center.x, e.center.y));
         }
@@ -341,7 +341,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
         // Used to prevent default zoom in gesture for all browsers. Fixes #745.
         const onWheel = (e: WheelEvent) => {
             if (e.ctrlKey)
-                e.preventDefault();
+                {e.preventDefault();}
         }
 
 
@@ -424,7 +424,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
         // calculate zoom factor
         let zoomFactor = 0.95;
         if (delta >= 0)
-            zoomFactor = 1 / zoomFactor;
+            {zoomFactor = 1 / zoomFactor;}
 
         this.publish({
             input:  this.state,
@@ -444,7 +444,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
      */
     protected onMouseDown(pos: Vector, button = 0): void {
         if (!this.canvas)
-            throw new Error("Input: Attempted to call onMouseDown before a canvas was set!");
+            {throw new Error("Input: Attempted to call onMouseDown before a canvas was set!");}
 
         const rect = this.canvas.getBoundingClientRect();
 
@@ -474,7 +474,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
      */
     protected onMouseMove(pos: Vector): void {
         if (!this.canvas)
-            throw new Error("Input: Attempted to call onMouseMove before a canvas was set!");
+            {throw new Error("Input: Attempted to call onMouseMove before a canvas was set!");}
 
         const rect = this.canvas.getBoundingClientRect();
 
@@ -567,7 +567,7 @@ export class InputAdapter extends ObservableImpl<InputAdapterEvent> {
     protected onBlur(): void {
         this.state.keysDown.forEach((down, key) => {
             if (down)
-                this.onKeyUp(key);
+                {this.onKeyUp(key);}
         });
     }
 }

@@ -76,10 +76,10 @@ export class BezierCurve extends Curve {
      */
     private getT(a: number, b: number, c: number, mod: -1 | 1, end: number): number {
         if (a === 0)
-            return end;
+            {return end;}
         const d = b*b - 4*a*c;
         if (d < 0)
-            return end;
+            {return end;}
         return Clamp((-b + mod*Math.sqrt(d)) / (2*a), 0, 1);
     }
 
@@ -106,7 +106,7 @@ export class BezierCurve extends Curve {
 
     public override get bounds(): Rect {
         if (!this.boundingBox) // Calculate when requested
-            this.boundingBox = this.calcBoundingBox();
+            {this.boundingBox = this.calcBoundingBox();}
         return this.boundingBox;
     }
 

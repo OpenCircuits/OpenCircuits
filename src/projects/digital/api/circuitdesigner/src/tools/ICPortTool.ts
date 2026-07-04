@@ -31,14 +31,14 @@ export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
     private getIC(circuit: Circuit) {
         const ic = circuit.getComponent(this.icInstanceId);
         if (!ic)
-            throw new Error(`ICResizeTool.findEdge: failed could not find IC instance with id ${this.icInstanceId}`);
+            {throw new Error(`ICResizeTool.findEdge: failed could not find IC instance with id ${this.icInstanceId}`);}
         return ic;
     }
 
     private getICData(circuit: Circuit) {
         const icData = circuit.getIC(this.icId);
         if (!icData)
-            throw new Error(`ICResizeTool.findEdge: failed to find IC data for id ${this.icId}`);
+            {throw new Error(`ICResizeTool.findEdge: failed to find IC data for id ${this.icId}`);}
         return icData;
     }
 
@@ -47,7 +47,7 @@ export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
 
         const port = circuit.pickPortAt(viewport.toWorldPos(pos));
         if (!port || port.parent.id !== ic.id)
-            return undefined;
+            {return undefined;}
 
         return icData.display.pins.filter((pin) => (pin.group === port.group))[port.index];
     }
@@ -55,7 +55,7 @@ export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
         const pin = this.findPin(ev.input.mousePos, circuit, viewport);
         if (!pin)
-            return undefined;
+            {return undefined;}
         return "move";
     }
 
@@ -85,7 +85,7 @@ export class ICPortTool extends ObservableImpl<ToolEvent> implements Tool {
 
     public onEvent(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
         if (ev.type !== "mousedrag")
-            return;
+            {return;}
 
         const ic = this.getIC(circuit), icData = this.getICData(circuit);
         const size = icData.display.size;

@@ -7,11 +7,11 @@ export const DeleteHandler: ToolHandler = {
     onEvent: (ev, { circuit }) => {
         // Activate when pressing Delete or Backspace
         if (!(ev.type === "keydown" && (ev.key === "Delete" || ev.key === "Backspace")))
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         // Nothing to delete
         if (circuit.selections.isEmpty)
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         circuit.deleteObjs([...circuit.selections.components, ...circuit.selections.wires]);
 

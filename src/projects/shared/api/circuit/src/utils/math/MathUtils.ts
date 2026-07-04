@@ -128,7 +128,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
     const sr = r1 + r2;             // Sum of radius
     const dpos = A.pos.sub(B.pos);  // Delta position
     if (dpos.dot(dpos) > sr*sr)
-        return false;
+        {return false;}
 
     /* Perform SAT */
 
@@ -160,7 +160,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
         maxB = Math.max(corners[j+4].x, maxB);
     }
     if (maxA < minB || maxB < minA)
-        return false;
+        {return false;}
 
     // SAT w/ y-axis
     // Axis is <1, 0>
@@ -174,7 +174,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
         maxB = Math.max(corners[j+4].y, maxB);
     }
     if (maxA < minB || maxB < minA)
-        return false;
+        {return false;}
 
     // SAT w/ other two axes
     const normals = [b[3].sub(b[0]), b[3].sub(b[2])];
@@ -190,7 +190,7 @@ export function TransformContains(A: Transform, B: Transform): boolean {
             maxB = Math.max(s2, maxB);
         }
         if (maxA < minB || maxB < minA)
-            return false;
+            {return false;}
     }
 
     return true;
@@ -221,7 +221,7 @@ export function FindRoots(iterations: number, t0: number, x: number, y: number,
         const v  = f(t, x, y);
         const dv = df(t, x, y);
         if (dv === 0)
-            break;
+            {break;}
         t = t - v / dv;
         t = Clamp(t, 0.01, 0.99);
     } while ((iterations--) > 0);
@@ -269,7 +269,7 @@ export function CurveContains(curve: Curve, pos: Vector): boolean {
     // Newton's method to find parameter for when slope is undefined AKA denominator function = 0
     const t1 = FindRoots(WIRE_NEWTON_ITERATIONS, t0, pos.x, pos.y, f1, df1);
     if (curve.getPos(t1).sub(pos).len2() < WIRE_DIST_THRESHOLD2)
-        return true;
+        {return true;}
 
     const f2  = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getPos(t).sub(x, y));
     const df2 = (t: number, x: number, y: number): number => curve.getDerivative(t).dot(curve.getDerivative(t))
@@ -289,7 +289,7 @@ export function CurveContains(curve: Curve, pos: Vector): boolean {
  */
 export function CalculateMidpoint(positions: Vector[]): Vector {
     if (positions.length === 0)
-        return V();
+        {return V();}
     return positions.reduce((sum, pos) => sum.add(pos), V()).scale(1 / positions.length);
 }
 

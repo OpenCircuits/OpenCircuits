@@ -22,7 +22,7 @@ export const OpenFileButton = () => {
 
     const load = (file: File) => {
         if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
-            LoadCircuit(LoadFile(file, "binary"));
+            {LoadCircuit(LoadFile(file, "binary"));}
     }
 
     return (<>

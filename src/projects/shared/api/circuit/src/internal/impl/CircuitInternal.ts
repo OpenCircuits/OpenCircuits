@@ -53,7 +53,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         // When they, track in undo stack
         this.log.subscribe((ev) => {
             if (ev.accepted.length === 0)
-                return;
+                {return;}
 
             // TODO: What if multiple entries? (only matters for multi-edit)
             const [entry] = ev.accepted;
@@ -148,7 +148,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
 
     public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
         if (kind === "IC" && icId)
-            return this.doc.getCircuitInfo().getComponentInfo(kind, icId);
+            {return this.doc.getCircuitInfo().getComponentInfo(kind, icId);}
         return this.doc.getCircuitInfo().getComponentInfo(kind);
     }
     public getWireInfo(kind: string): Result<WireConfigurationInfo> {
@@ -194,9 +194,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
 
     public undo(): Result {
         if (this.doc.isTransaction())
-            return ErrE("Cannot undo while currently within a transaction!");
+            {return ErrE("Cannot undo while currently within a transaction!");}
         if (this.undoStack.length === 0)
-            return OkVoid();
+            {return OkVoid();}
 
         const lastEntryIndex = this.undoStack.pop()!;
         this.redoStack.push(lastEntryIndex);
@@ -213,9 +213,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
 
     public redo(): Result {
         if (this.doc.isTransaction())
-            return ErrE("Cannot redo while currently within a transaction!");
+            {return ErrE("Cannot redo while currently within a transaction!");}
         if (this.redoStack.length === 0)
-            return OkVoid();
+            {return OkVoid();}
 
         const lastEntryIndex = this.redoStack.pop()!;
         this.undoStack.push(lastEntryIndex);

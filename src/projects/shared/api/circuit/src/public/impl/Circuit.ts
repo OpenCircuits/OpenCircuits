@@ -100,7 +100,7 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
         // before any public/outside subscriptions. (i.e. selections are updated before circuit subscribers are called).
         ctx.internal.subscribe((ev) => {
             if (ev.type !== "CircuitOp")
-                return;
+                {return;}
             this.publish({ type: "contents", diff: ev.diff });
         });
     }
@@ -179,26 +179,26 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
 
     public getComponent(id: GUID): T["Component"] | undefined {
         if (!this.internal.getCompByID(id).ok)
-            return undefined;
+            {return undefined;}
         return this.ctx.factory.constructComponent(id);
     }
     public getWire(id: GUID): T["Wire"] | undefined {
         if (!this.internal.getWireByID(id).ok)
-            return undefined;
+            {return undefined;}
         return this.ctx.factory.constructWire(id);
     }
     public getPort(id: GUID): T["Port"] | undefined {
         if (!this.internal.getPortByID(id).ok)
-            return undefined;
+            {return undefined;}
         return this.ctx.factory.constructPort(id);
     }
     public getObj(id: GUID): T["Obj"] | undefined {
         if (this.internal.hasComp(id))
-            return this.getComponent(id);
+            {return this.getComponent(id);}
         if (this.internal.hasWire(id))
-            return this.getWire(id);
+            {return this.getWire(id);}
         if (this.internal.hasPort(id))
-            return this.getPort(id);
+            {return this.getPort(id);}
         return undefined;
     }
     public getObjs(): T["ObjContainerT"] {
@@ -219,7 +219,7 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
                 ? this.ctx.internal.getComponentInfo("IC", kind)
                 : this.ctx.internal.getComponentInfo(kind);
         if (!info.ok)
-            return undefined;
+            {return undefined;}
         return this.ctx.factory.constructComponentInfo(kind);
     }
 
@@ -247,7 +247,7 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
             const props = { x: pt.x, y: pt.y, zIndex: this.ctx.assembler.highestZ + 1 };
             // If user is trying to make an IC, need to construct component differently
             if (this.internal.getICs().has(kind))
-                return this.internal.placeComponent("IC", props, kind);
+                {return this.internal.placeComponent("IC", props, kind);}
             return this.internal.placeComponent(kind, props)
         })().unwrap();
 
@@ -274,13 +274,13 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
             .map((c) => c.id)).union(nodeIds);
         // Delete wires first
         for (const wireId of wireIds)
-            this.internal.deleteWire(wireId).unwrap();
+            {this.internal.deleteWire(wireId).unwrap();}
 
         // Then remove all ports for each component, then delete them
         for (const compId of compIds)
-            this.internal.removePortsFor(compId).unwrap();
+            {this.internal.removePortsFor(compId).unwrap();}
         for (const compId of compIds)
-            this.internal.deleteComponent(compId).unwrap();
+            {this.internal.deleteComponent(compId).unwrap();}
 
         this.commitTransaction("Deleted Object");
     }
@@ -289,19 +289,19 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
         this.internal.beginTransaction();
         for (const ic of ics) {
             if (this.internal.hasIC(ic.id))
-                continue;
+                {continue;}
             this.internal.createIC(ConvertIC(ic)).unwrap();
         }
         this.internal.commitTransaction();
     }
     public createIC(info: T["ICInfo"], id = uuid()): T["IC"] {
         if (this.internal.hasIC(id))
-            throw new Error(`Circuit.createIC: IC with ID ${id} already exists!`);
+            {throw new Error(`Circuit.createIC: IC with ID ${id} already exists!`);}
 
         const dependentICIDs = new Set(info.circuit.getComponents().filter((c) => c.isIC()).map((c) => c.kind));
         const missingICIDs = dependentICIDs.difference(this.internal.getICs());
         if (missingICIDs.size > 0)
-            throw new Error(`Circuit.createIC: Found sub-ICs when trying to create a new IC that haven't been imported yet: [${[...missingICIDs].join(", ")}]. Please import them first!`);
+            {throw new Error(`Circuit.createIC: Found sub-ICs when trying to create a new IC that haven't been imported yet: [${[...missingICIDs].join(", ")}]. Please import them first!`);}
 
         const metadata: Schema.IntegratedCircuitMetadata = {
             id,
@@ -329,7 +329,7 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
     public deleteIC(id: GUID): void {
         // If there's a component referencing the IC, fail
         if (this.getComponents().some((c) => (c.kind === id)))
-            throw new Error(`Circuit.deleteIC: Failed to delete IC(${id})! Found component referencing it!`);
+            {throw new Error(`Circuit.deleteIC: Failed to delete IC(${id})! Found component referencing it!`);}
 
         this.internal.beginTransaction();
         this.internal.deleteIC(id).unwrap();
@@ -337,7 +337,7 @@ export class CircuitImpl<T extends CircuitAPITypes> extends ObservableImpl<Circu
     }
     public getIC(id: GUID): T["IC"] | undefined {
         if (!this.internal.hasIC(id))
-            return undefined;
+            {return undefined;}
         return this.ctx.factory.constructIC(id);
     }
     public getICs(): T["IC[]"] {

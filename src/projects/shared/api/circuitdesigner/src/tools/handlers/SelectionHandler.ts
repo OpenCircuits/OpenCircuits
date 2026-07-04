@@ -7,7 +7,7 @@ export const SelectionHandler: ToolHandler = {
 
     onEvent: (ev, { circuit, viewport }) => {
         if (!(ev.type === "click" && ev.button === LEFT_MOUSE_BUTTON))
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         const deselectAll = (!ev.input.isShiftKeyDown && circuit.selections.length > 0);
 
@@ -26,10 +26,10 @@ export const SelectionHandler: ToolHandler = {
         circuit.beginTransaction({ batch: true });
 
         if (deselectAll)
-            circuit.selections.clear();
+            {circuit.selections.clear();}
         obj.isSelected = shouldSelect;
         if (obj.baseKind === "Component" || obj.baseKind === "Wire")
-            obj.shift();
+            {obj.shift();}
 
         circuit.commitTransaction("Selected Object");
 

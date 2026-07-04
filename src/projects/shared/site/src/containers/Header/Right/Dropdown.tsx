@@ -12,7 +12,7 @@ function parentOf(elem: Element, target: string) {
     //  also stop if the nodeType == document
     while ((el = el!.parentElement) && el.nodeType !== DOCUMENT_NODE_TYPE) {
         if (el.matches(target))
-            return true;
+            {return true;}
     }
     return false;
 }
@@ -33,11 +33,11 @@ export const Dropdown = ({ open, btnInfo, onClick, onClose, children }: Props) =
     useEffect(() => {
         function onWindowClick(ev: MouseEvent | TouchEvent) {
             if (!open || onClose === undefined)
-                return;
+                {return;}
 
             const target = ev.target as Element;
             if (!parentOf(target, ".header__right__dropdown"))
-                onClose();
+                {onClose();}
         }
 
         // listener for mobile and desktop (see Issue #597)

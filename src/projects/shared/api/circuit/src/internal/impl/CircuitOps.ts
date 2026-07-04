@@ -93,10 +93,10 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
 export function CanCommuteOps(targetOp: CircuitOp, withOp: CircuitOp): boolean {
     if (withOp.kind === "SetPropertyOp") {
         if (targetOp.kind !== "SetPropertyOp")
-            return false;
+            {return false;}
         // Can't swap the order of ops affecting the same thing (but can merge)
         if (withOp.id === targetOp.id && withOp.key === targetOp.key)
-            return false;
+            {return false;}
         return true;
     }
     return false;
@@ -105,7 +105,7 @@ export function CanCommuteOps(targetOp: CircuitOp, withOp: CircuitOp): boolean {
 export function MergeOps(targetOp: CircuitOp, withOp: CircuitOp): Option<CircuitOp> {
     if (withOp.kind === "SetPropertyOp") {
         if (targetOp.kind !== "SetPropertyOp")
-            return None();
+            {return None();}
         if (withOp.id === targetOp.id && withOp.key === targetOp.key) {
             return Some({
                 ...withOp,
@@ -127,7 +127,7 @@ export function TransformCircuitOp(targetOp: CircuitOp, withOp: CircuitOp): Resu
 
 export function TransformCircuitOps(targetOps: CircuitOp[], withOps: readonly CircuitOp[]): Result<CircuitOp[]> {
     if (withOps.length === 0)
-        return Ok(targetOps);
+        {return Ok(targetOps);}
     return ResultUtil.mapIter(targetOps.values(), (op) =>
         ResultUtil.reduceIter(op, withOps.values(), (tgtOp, withOp) => TransformCircuitOp(tgtOp, withOp)));
 }
