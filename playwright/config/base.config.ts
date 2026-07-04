@@ -208,7 +208,24 @@ const config: PlaywrightTestConfig = {
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-        actionTimeout: 0,
+        actionTimeout: 10_000,
+
+        /* TODO: Remove this after we stop showing the popup on initial load. */
+        storageState: {
+            cookies: [
+                {
+                    name: 'DIGITAL_VERSION',
+                    value: '4.0.0',
+                    domain: 'localhost',
+                    path: '/',
+                    expires: -1,
+                    httpOnly: false,
+                    secure: false,
+                    sameSite: 'Lax',
+                }
+            ],
+            origins: []
+        },
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: "on-first-retry",

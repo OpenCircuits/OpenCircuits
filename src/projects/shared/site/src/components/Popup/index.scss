@@ -1,8 +1,6 @@
-@use "sass:math";
 @use "~shared/site/utils/theme" as *;
 
 .popup {
-    $width: 80%;
     $h-padding: 40px;
 
     position: absolute;
@@ -10,12 +8,12 @@
     top: 5vh;
     bottom: 5vh;
     left: 50%;
+    transform: translateX(-50%);
 
     overflow: auto;
 
-    width: $width;
+    width: 80%;
     max-height: 85vh;
-    margin-left: calc(-#{math.div($width,2)} - #{$h-padding});
     padding: 15px $h-padding 25px;
 
     border-radius: 10px;
