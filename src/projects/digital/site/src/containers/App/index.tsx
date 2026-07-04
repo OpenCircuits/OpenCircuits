@@ -4,6 +4,7 @@ import {ContextMenu}        from "shared/site/containers/ContextMenu";
 import {HistoryBox}  from "shared/site/containers/HistoryBox";
 import {ImageExporterPopup} from "shared/site/containers/ImageExporterPopup";
 import {LoginPopup}         from "shared/site/containers/LoginPopup";
+import {DigitalChangelogPopup} from "digital/site/containers/DigitalChangelogPopup";
 import {SelectionPopup}     from "shared/site/containers/SelectionPopup";
 import {SideNav}            from "shared/site/containers/SideNav";
 
@@ -130,6 +131,7 @@ export const App = () => {
             <ExprToCircuitPopup {...designer} />
 
             <LoginPopup />
+            <DigitalChangelogPopup />
         </div>
     );
 };

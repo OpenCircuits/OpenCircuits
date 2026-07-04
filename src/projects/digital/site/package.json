@@ -1,7 +1,7 @@
 {
   "name": "digital-site",
   "description": "The digital version of OpenCircuits",
-  "version": "1.0.0",
+  "version": "4.0.0",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
