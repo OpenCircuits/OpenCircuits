@@ -13,6 +13,8 @@ export default function mergeDeep(...objects: object[]): object {
 
     return objects.reduce((prev, obj) => {
         Object.keys(obj).forEach((key) => {
+            if (key === "__proto__" || key === "constructor" || key === "prototype")
+                return;
             const pVal = prev[key];
             const oVal = obj[key];
 
