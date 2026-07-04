@@ -73,11 +73,45 @@
     }
 }
 
-#login-popup-google-signin {
+.login-popup-google-signin {
     display: flex;
     flex-direction: column;
     align-items: center;
 
     margin-top: 20px;
     margin-bottom: 20px;
+
+    .google-sign-in-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 100%;
+        max-width: 240px;
+        margin: 0 auto;
+        padding: 0;
+
+        background: none;
+        border: none;
+        box-shadow: none;
+        
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 0.9;
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        &:active {
+            opacity: 0.8;
+            background-color: transparent;
+        }
+
+        .google-icon {
+            width: 100%;
+            height: auto;
+        }
+    }
 }
