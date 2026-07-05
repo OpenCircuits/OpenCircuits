@@ -1,48 +1,47 @@
 import "digital/api/circuit/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {Signal}            from "digital/api/circuit/schema/Signal";
-import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+import { Signal } from "digital/api/circuit/schema/Signal";
+import { CreateTestCircuit } from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
-import {DigitalProtoToCircuit} from "digital/site/proto/bridge";
+import { DigitalProtoToCircuit } from "digital/site/proto/bridge";
 
-import {IMPORT_IC_CLOCK_MESSAGE} from "digital/site/utils/Constants";
-import {VersionMigrator}         from "digital/site/utils/VersionMigrator";
+import { IMPORT_IC_CLOCK_MESSAGE } from "digital/site/utils/Constants";
+import { VersionMigrator } from "digital/site/utils/VersionMigrator";
 
-import switchCircuit                from "./TestCircuitData/3_0/Switch.json";
-import orCircuit                    from "./TestCircuitData/3_0/OR.json";
-import poweredOrCircuit             from "./TestCircuitData/3_0/PoweredOR.json";
-import threeInputAndCircuit         from "./TestCircuitData/3_0/ThreeInputAND.json";
-import allInputsCircuit             from "./TestCircuitData/3_0/Inputs.json";
-import ledCiruit                    from "./TestCircuitData/3_0/LED.json";
-import segmentDisplayCircuit        from "./TestCircuitData/3_0/SegmentDisplays.json";
-import oscilloscopeCircuit          from "./TestCircuitData/3_0/Oscilloscope.json";
-import srFlipFlopCircuit            from "./TestCircuitData/3_0/SRFlipFlop.json";
-import jkFlipFlopCircuit            from "./TestCircuitData/3_0/JKFlipFlop.json";
-import dFlipFlopCircuit             from "./TestCircuitData/3_0/DFlipFlop.json";
-import tFlipFlopCircuit             from "./TestCircuitData/3_0/TFlipFlop.json";
-import dLatchCircuit                from "./TestCircuitData/3_0/DLatch.json";
-import srLatchCircuit               from "./TestCircuitData/3_0/SRLatch.json";
-import multiplexerCircuit           from "./TestCircuitData/3_0/Multiplexer.json";
-import demultiplexerCircuit         from "./TestCircuitData/3_0/Demultiplexer.json";
-import encoderDecoderCircuit        from "./TestCircuitData/3_0/EncoderDecoder.json";
-import comparatorCircuit            from "./TestCircuitData/3_0/Comparator.json";
-import labelCircuit                 from "./TestCircuitData/3_0/Label.json";
-import nodesCircuit                 from "./TestCircuitData/3_0/Nodes.json";
-import icDataOnlyCircuit            from "./TestCircuitData/3_0/ICDataOnly.json";
-import basicICCircuit               from "./TestCircuitData/3_0/BasicIC.json";
-import nestedICCircuit              from "./TestCircuitData/3_0/NestedIC.json";
-import zIndexCircuit                from "./TestCircuitData/3_0/ZIndex.json";
-import clockInICOffCircuit          from "./TestCircuitData/3_0/ClockInICOff.json";
-import clockInICOnCircuit           from "./TestCircuitData/3_0/ClockInICOn.json";
-import threeInputICCircuit          from "./TestCircuitData/3_0/ThreeInputIC.json";
-import inputOrderICCircuit          from "./TestCircuitData/3_0/InputOrderIC.json";
-import allSidesICCircuit            from "./TestCircuitData/3_0/AllSidesIC.json";
-import flipFlopInICCircuit          from "./TestCircuitData/3_0/FlipFlopInIC.json";
+import switchCircuit from "./TestCircuitData/3_0/Switch.json";
+import orCircuit from "./TestCircuitData/3_0/OR.json";
+import poweredOrCircuit from "./TestCircuitData/3_0/PoweredOR.json";
+import threeInputAndCircuit from "./TestCircuitData/3_0/ThreeInputAND.json";
+import allInputsCircuit from "./TestCircuitData/3_0/Inputs.json";
+import ledCiruit from "./TestCircuitData/3_0/LED.json";
+import segmentDisplayCircuit from "./TestCircuitData/3_0/SegmentDisplays.json";
+import oscilloscopeCircuit from "./TestCircuitData/3_0/Oscilloscope.json";
+import srFlipFlopCircuit from "./TestCircuitData/3_0/SRFlipFlop.json";
+import jkFlipFlopCircuit from "./TestCircuitData/3_0/JKFlipFlop.json";
+import dFlipFlopCircuit from "./TestCircuitData/3_0/DFlipFlop.json";
+import tFlipFlopCircuit from "./TestCircuitData/3_0/TFlipFlop.json";
+import dLatchCircuit from "./TestCircuitData/3_0/DLatch.json";
+import srLatchCircuit from "./TestCircuitData/3_0/SRLatch.json";
+import multiplexerCircuit from "./TestCircuitData/3_0/Multiplexer.json";
+import demultiplexerCircuit from "./TestCircuitData/3_0/Demultiplexer.json";
+import encoderDecoderCircuit from "./TestCircuitData/3_0/EncoderDecoder.json";
+import comparatorCircuit from "./TestCircuitData/3_0/Comparator.json";
+import labelCircuit from "./TestCircuitData/3_0/Label.json";
+import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
+import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
+import basicICCircuit from "./TestCircuitData/3_0/BasicIC.json";
+import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
+import zIndexCircuit from "./TestCircuitData/3_0/ZIndex.json";
+import clockInICOffCircuit from "./TestCircuitData/3_0/ClockInICOff.json";
+import clockInICOnCircuit from "./TestCircuitData/3_0/ClockInICOn.json";
+import threeInputICCircuit from "./TestCircuitData/3_0/ThreeInputIC.json";
+import inputOrderICCircuit from "./TestCircuitData/3_0/InputOrderIC.json";
+import allSidesICCircuit from "./TestCircuitData/3_0/AllSidesIC.json";
+import flipFlopInICCircuit from "./TestCircuitData/3_0/FlipFlopInIC.json";
 import nestedICNotInDesignerCircuit from "./TestCircuitData/2_1/NestedICNotInDesigner.json";
-
 
 describe("DigitalVersionMigrator", () => {
     describe("From version 3.0", () => {
@@ -123,7 +122,7 @@ describe("DigitalVersionMigrator", () => {
             expect(led).toBeOn();
         });
         test("All inputs", () => {
-            const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
+            const [circuit] = CreateTestCircuit(/* sim= */ false); // Disable sim since it will queue infinitely
             const { schema, warnings } = VersionMigrator(JSON.stringify(allInputsCircuit));
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
@@ -153,7 +152,9 @@ describe("DigitalVersionMigrator", () => {
 
             const constantNumber0 = comps.find((c) => c.name === "Constant Number 0")!;
             expect(constantNumber0).toBeDefined();
-            expect(constantNumber0.getProp("inputNum") === undefined || constantNumber0.getProp("inputNum") === 0).toBeTruthy();
+            expect(
+                constantNumber0.getProp("inputNum") === undefined || constantNumber0.getProp("inputNum") === 0,
+            ).toBeTruthy();
             const constantNumber15 = comps.find((c) => c.name === "Constant Number 15")!;
             expect(constantNumber15).toBeDefined();
             expect(constantNumber15.getProp("inputNum")).toBe(15);
@@ -185,20 +186,20 @@ describe("DigitalVersionMigrator", () => {
 
             const bcdDisplay7 = comps.find((c) => c.name === "7 BCD Display")!;
             expect(bcdDisplay7).toBeDefined();
-            expect(bcdDisplay7.getProp("segmentCount")).toBeUndefined();  // default value -> unset
+            expect(bcdDisplay7.getProp("segmentCount")).toBeUndefined(); // default value -> unset
             const bcdDisplay16 = comps.find((c) => c.name === "16 BCD Display")!;
             expect(bcdDisplay16).toBeDefined();
             expect(bcdDisplay16.getProp("segmentCount")).toBe(16);
 
             const asciiDisplay7 = comps.find((c) => c.name === "7 ASCII Display")!;
             expect(asciiDisplay7).toBeDefined();
-            expect(asciiDisplay7.getProp("segmentCount")).toBeUndefined();  // default value -> unset
+            expect(asciiDisplay7.getProp("segmentCount")).toBeUndefined(); // default value -> unset
             const asciiDisplay16 = comps.find((c) => c.name === "16 ASCII Display")!;
             expect(asciiDisplay16).toBeDefined();
             expect(asciiDisplay16.getProp("segmentCount")).toBe(16);
         });
         test("Oscilloscope", () => {
-            const [circuit] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
+            const [circuit] = CreateTestCircuit(/* sim= */ false); // Disable sim since it will queue infinitely
             const { schema, warnings } = VersionMigrator(JSON.stringify(oscilloscopeCircuit));
             expect(warnings).toHaveLength(0);
             circuit.import(DigitalProtoToCircuit(schema));
@@ -632,7 +633,7 @@ describe("DigitalVersionMigrator", () => {
             expect(comps).toHaveLength(3);
             const bottom = comps.find((c) => c.name === "Bottom")!;
             const middle = comps.find((c) => c.name === "Middle")!;
-            const top    = comps.find((c) => c.name === "Top")!;
+            const top = comps.find((c) => c.name === "Top")!;
             expect(bottom).toBeDefined();
             expect(middle).toBeDefined();
             expect(top).toBeDefined();
@@ -657,7 +658,7 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
             const icInstance = comps.find((c) => c.kind !== "LED")!;
-            const led        = comps.find((c) => c.kind === "LED")!;
+            const led = comps.find((c) => c.kind === "LED")!;
             expect(icInstance).toBeDefined();
             expect(led).toBeDefined();
 
@@ -681,7 +682,7 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(2);
             const icInstance = comps.find((c) => c.kind !== "LED")!;
-            const led        = comps.find((c) => c.kind === "LED")!;
+            const led = comps.find((c) => c.kind === "LED")!;
             expect(icInstance).toBeDefined();
             expect(led).toBeDefined();
 
@@ -795,10 +796,10 @@ describe("DigitalVersionMigrator", () => {
             const comps = circuit.getComponents();
             expect(comps).toHaveLength(5);
 
-            const top    = comps.find((c) => c.name === "top")!;
+            const top = comps.find((c) => c.name === "top")!;
             const bottom = comps.find((c) => c.name === "bottom")!;
-            const left   = comps.find((c) => c.name === "left")!;
-            const right  = comps.find((c) => c.name === "right")!;
+            const left = comps.find((c) => c.name === "left")!;
+            const right = comps.find((c) => c.name === "right")!;
             const icInstance = comps.find(({ kind }) => kind === circuit.getICs()[0].id)!;
             expect(top).toBeDefined();
             expect(bottom).toBeDefined();
@@ -808,11 +809,11 @@ describe("DigitalVersionMigrator", () => {
 
             const icInputs = icInstance.inputs;
             expect(icInputs).toHaveLength(2);
-            const icInputTop  = icInputs.find((p) => (p.name ?? p.defaultName) === "top")!;
+            const icInputTop = icInputs.find((p) => (p.name ?? p.defaultName) === "top")!;
             const icInputLeft = icInputs.find((p) => (p.name ?? p.defaultName) === "left")!;
             const icOutputs = icInstance.outputs;
             expect(icOutputs).toHaveLength(2);
-            const icOutputRight  = icOutputs.find((p) => (p.name ?? p.defaultName) === "right")!;
+            const icOutputRight = icOutputs.find((p) => (p.name ?? p.defaultName) === "right")!;
             const icOutputBottom = icOutputs.find((p) => (p.name ?? p.defaultName) === "bottom")!;
             expect(icInputTop).toBeDefined();
             expect(icInputLeft).toBeDefined();

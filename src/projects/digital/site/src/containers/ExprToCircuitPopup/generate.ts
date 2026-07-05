@@ -1,16 +1,15 @@
-import {V} from "Vector";
-import {Camera} from "shared/api/circuit/public/Camera";
-import {DigitalCircuit} from "digital/api/circuit/public";
-import {ExpressionToCircuit} from "digital/site/utils/ExpressionParser"
-import {GenerateTokens} from "digital/site/utils/ExpressionParser/GenerateTokens"
-import {OrganizeMinDepth} from "digital/site/utils/ExpressionParser/ComponentOrganizer"
-import {OperatorFormat, OperatorFormatLabel} from "digital/site/utils/ExpressionParser/Constants/DataStructures";
-import {FORMATS} from "digital/site/utils/ExpressionParser/Constants/Formats";
-import {Circuit} from "shared/api/circuit/public";
-import {Err, Ok, Result} from "shared/api/circuit/utils/Result";
-import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
-import {CalculateICDisplay} from "digital/site/utils/CircuitUtils";
-
+import { V } from "Vector";
+import { Camera } from "shared/api/circuit/public/Camera";
+import { DigitalCircuit } from "digital/api/circuit/public";
+import { ExpressionToCircuit } from "digital/site/utils/ExpressionParser";
+import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateTokens";
+import { OrganizeMinDepth } from "digital/site/utils/ExpressionParser/ComponentOrganizer";
+import { OperatorFormat, OperatorFormatLabel } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
+import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
+import { Circuit } from "shared/api/circuit/public";
+import { Err, Ok, Result } from "shared/api/circuit/utils/Result";
+import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
+import { CalculateICDisplay } from "digital/site/utils/CircuitUtils";
 
 export type ExprToCirGeneratorOptions = {
     input: InputTypes;
@@ -20,21 +19,20 @@ export type ExprToCirGeneratorOptions = {
     label: boolean;
     format: OperatorFormatLabel;
     ops: OperatorFormat;
-}
+};
 
 export type InputTypes = "Button" | "Clock" | "Switch" | "InputPin";
 export type OutputTypes = "Oscilloscope" | "LED" | "OutputPin";
 
 const defaultOptions: ExprToCirGeneratorOptions = {
-    input:                 "Switch",
-    output:                "LED",
-    isIC:                  false,
+    input: "Switch",
+    output: "LED",
+    isIC: false,
     connectClocksToOscope: false,
-    label:                 false,
-    format:                "|",
-    ops:                   FORMATS[0],
-}
-
+    label: false,
+    format: "|",
+    ops: FORMATS[0],
+};
 
 function addLabels(inputMap: Map<string, string>, circuit: Circuit) {
     // Add labels next to inputs
@@ -48,13 +46,12 @@ function addLabels(inputMap: Map<string, string>, circuit: Circuit) {
     }
 }
 
-function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOptions,
-    circuit: DigitalCircuit) {
+function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOptions, circuit: DigitalCircuit) {
     let inIndex = 0;
     // Set clock frequencies
     for (const name of inputMap.keys()) {
         const clock = circuit.getComponents().find((comp) => comp.name === name);
-        clock?.setProp("delay", 4 * (2 ** (inIndex)));
+        clock?.setProp("delay", 4 * 2 ** inIndex);
         // 4 * 2 ** 11 = 8192 and 10,000 is the max delay we can set, so any clocks past that will also have a delay of 8192
         inIndex = Math.min(inIndex + 1, 11);
     }
@@ -64,20 +61,27 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
         o.setPortConfig({ "inputs": Math.min(inputMap.size + 1, 8) });
         [...inputMap.keys()].forEach((name, inIndex) => {
             if (inIndex >= 7) // max 8 inputs and the first is reserved for circuit output
-                {return;}
+            {
+                return;
+            }
             const clock = circuit.getComponents().find((comp) => comp.name === name)!;
             clock.outputs[0].connectTo(o.inputs[inIndex + 1]);
         });
     }
 }
 
-export function Generate(circuit: DigitalCircuit, camera: Camera, expression: string,
-    userOptions: Partial<ExprToCirGeneratorOptions>): Result {
+export function Generate(
+    circuit: DigitalCircuit,
+    camera: Camera,
+    expression: string,
+    userOptions: Partial<ExprToCirGeneratorOptions>,
+): Result {
     const options = { ...defaultOptions, ...userOptions };
-    options.isIC = (options.output === "Oscilloscope") ? false : options.isIC;
-    const ops = (options.format === "custom")
-        ? (options.ops)
-        : (FORMATS.find((form) => form.icon === options.format) ?? FORMATS[0]);
+    options.isIC = options.output === "Oscilloscope" ? false : options.isIC;
+    const ops =
+        options.format === "custom"
+            ? options.ops
+            : (FORMATS.find((form) => form.icon === options.format) ?? FORMATS[0]);
 
     const tokenList = GenerateTokens(expression, ops);
     if (!tokenList.ok) {
@@ -86,8 +90,9 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     // Maps input name as key, input component type as value
     const inputMap = new Map<string, InputTypes>();
     for (const token of tokenList.value) {
-        if (token.type !== "input" || inputMap.has(token.name))
-            {continue;}
+        if (token.type !== "input" || inputMap.has(token.name)) {
+            continue;
+        }
         inputMap.set(token.name, options.input);
     }
 
@@ -103,11 +108,13 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     // TODO: Replace with a better way of organizing a circuit
     OrganizeMinDepth(generatedCircuit, camera.pos);
 
-    if (options.label)
-        {addLabels(inputMap, generatedCircuit);}
+    if (options.label) {
+        addLabels(inputMap, generatedCircuit);
+    }
 
-    if (options.input === "Clock")
-        {setClocks(inputMap, options, generatedCircuit);}
+    if (options.input === "Clock") {
+        setClocks(inputMap, options, generatedCircuit);
+    }
 
     circuit.beginTransaction();
     circuit.selections.clear();
@@ -115,7 +122,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
         const ic = circuit.createIC({
             circuit: generatedCircuit,
             display: CalculateICDisplay(generatedCircuit),
-        })
+        });
         circuit.placeComponentAt(ic.id, camera.pos).select();
     } else {
         const generatedToReal = new Map<string, DigitalComponent>();

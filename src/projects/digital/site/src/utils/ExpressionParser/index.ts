@@ -1,11 +1,10 @@
-import {Result}         from "shared/api/circuit/utils/Result";
-import {OperatorFormat} from "./Constants/DataStructures";
-import {FORMATS}        from "./Constants/Formats";
+import { Result } from "shared/api/circuit/utils/Result";
+import { OperatorFormat } from "./Constants/DataStructures";
+import { FORMATS } from "./Constants/Formats";
 
-import {GenerateInputTree} from "./GenerateInputTree";
-import {GenerateTokens}    from "./GenerateTokens";
-import {TreeToCircuit}     from "./TreeToCircuit";
-
+import { GenerateInputTree } from "./GenerateInputTree";
+import { GenerateTokens } from "./GenerateTokens";
+import { TreeToCircuit } from "./TreeToCircuit";
 
 /**
  * Main driver function for parsing an expression into a circuit.
@@ -26,13 +25,15 @@ import {TreeToCircuit}     from "./TreeToCircuit";
  *                   - If ops is missing the keys "|", "^", "&", "(", ")", or "separator".
  *                   - If the value in ops for keys "|", "^", "&", "(", ")", or "separator" is "".
  */
-export function ExpressionToCircuit(inputs: ReadonlyMap<string, string>,
-                                    expression: string,
-                                    output: string,
-                                    ops: OperatorFormat = FORMATS[0]): Result<ReturnType<typeof TreeToCircuit>> {
+export function ExpressionToCircuit(
+    inputs: ReadonlyMap<string, string>,
+    expression: string,
+    output: string,
+    ops: OperatorFormat = FORMATS[0],
+): Result<ReturnType<typeof TreeToCircuit>> {
     return GenerateTokens(expression, ops).andThen((tokenList) =>
         GenerateInputTree(tokenList, ops.ops).map((connectedTree) =>
-            TreeToCircuit(connectedTree, inputs, output, expression)
-        )
+            TreeToCircuit(connectedTree, inputs, output, expression),
+        ),
     );
 }

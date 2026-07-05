@@ -1,12 +1,11 @@
 import "digital/api/circuit/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+import { CreateTestCircuit } from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
-import {SmartPlace, SmartPlaceOptions} from "digital/site/utils/SmartPlace";
-
+import { SmartPlace, SmartPlaceOptions } from "digital/site/utils/SmartPlace";
 
 describe("SmartPlace", () => {
     describe("Input/Output order", () => {

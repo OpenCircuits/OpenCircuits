@@ -1,22 +1,24 @@
-import {MainDesigner} from "shared/site/containers/MainDesigner";
+import { MainDesigner } from "shared/site/containers/MainDesigner";
 
-import {DigitalCircuit} from "digital/api/circuit/public";
+import { DigitalCircuit } from "digital/api/circuit/public";
 
-import {SmartPlace, SmartPlaceOptions} from "digital/site/utils/SmartPlace";
+import { SmartPlace, SmartPlaceOptions } from "digital/site/utils/SmartPlace";
 
 import "./index.scss";
 
-
-export const DigitalMainDesigner = ({ circuit }: {readonly circuit: DigitalCircuit}) => (
+export const DigitalMainDesigner = ({ circuit }: { readonly circuit: DigitalCircuit }) => (
     <MainDesigner
         otherPlace={(pos, itemKind, num, smartPlaceOptions) => {
             const smartPlaceOption = Array.isArray(smartPlaceOptions) ? smartPlaceOptions.at(0) : undefined;
-            if (smartPlaceOption === SmartPlaceOptions.Full ||
+            if (
+                smartPlaceOption === SmartPlaceOptions.Full ||
                 smartPlaceOption === SmartPlaceOptions.Inputs ||
-                smartPlaceOption === SmartPlaceOptions.Outputs) {
+                smartPlaceOption === SmartPlaceOptions.Outputs
+            ) {
                 SmartPlace(pos, itemKind, circuit, num, smartPlaceOption);
                 return true;
             }
             return false;
-        }} />
+        }}
+    />
 );

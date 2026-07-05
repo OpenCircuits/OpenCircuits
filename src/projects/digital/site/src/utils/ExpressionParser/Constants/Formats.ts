@@ -1,10 +1,9 @@
-import {OperatorFormat} from "./DataStructures";
-
+import { OperatorFormat } from "./DataStructures";
 
 const programming1: Readonly<OperatorFormat> = {
-    label:     "Programming 1 (&, |, ^, !)",
+    label: "Programming 1 (&, |, ^, !)",
     separator: " ",
-    icon:      "|",
+    icon: "|",
 
     ops: {
         "|": "|",
@@ -16,9 +15,9 @@ const programming1: Readonly<OperatorFormat> = {
     },
 };
 const programming2: Readonly<OperatorFormat> = {
-    label:     "Programming 2 (&&, ||, ^, !)",
+    label: "Programming 2 (&&, ||, ^, !)",
     separator: " ",
-    icon:      "||",
+    icon: "||",
 
     ops: {
         "|": "||",
@@ -30,9 +29,9 @@ const programming2: Readonly<OperatorFormat> = {
     },
 };
 const algebraic1: Readonly<OperatorFormat> = {
-    label:     "Algebraic 1 (*, +, ^, !)",
+    label: "Algebraic 1 (*, +, ^, !)",
     separator: " ",
-    icon:      "+",
+    icon: "+",
 
     ops: {
         "|": "+",
@@ -44,9 +43,9 @@ const algebraic1: Readonly<OperatorFormat> = {
     },
 };
 const algebraic2: Readonly<OperatorFormat> = {
-    label:     "Algebraic 2 (*, +, ^, _)",
+    label: "Algebraic 2 (*, +, ^, _)",
     separator: " ",
-    icon:      "+_",
+    icon: "+_",
 
     ops: {
         "|": "+",
@@ -58,9 +57,9 @@ const algebraic2: Readonly<OperatorFormat> = {
     },
 };
 const literal1: Readonly<OperatorFormat> = {
-    label:     "Literal 1 (AND, OR, XOR, NOT)",
+    label: "Literal 1 (AND, OR, XOR, NOT)",
     separator: " ",
-    icon:      "OR",
+    icon: "OR",
 
     ops: {
         "|": "OR",
@@ -72,9 +71,9 @@ const literal1: Readonly<OperatorFormat> = {
     },
 };
 const literal2: Readonly<OperatorFormat> = {
-    label:     "Literal 2 (and, or, xor, not)",
+    label: "Literal 2 (and, or, xor, not)",
     separator: " ",
-    icon:      "or",
+    icon: "or",
 
     ops: {
         "|": "or",
@@ -90,11 +89,4 @@ const literal2: Readonly<OperatorFormat> = {
  * Stores the different types of preset formats.
  * If any new formats are added, they must be added to the end of the array.
  */
-export const FORMATS = [
-    programming1,
-    programming2,
-    algebraic1,
-    algebraic2,
-    literal1,
-    literal2,
-];
+export const FORMATS = [programming1, programming2, algebraic1, algebraic2, literal1, literal2];
