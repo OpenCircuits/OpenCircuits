@@ -1,21 +1,21 @@
-name: 'Build NGSpice WASM'
-description: 'Caches and builds the NGSpice WASM library.'
+name: "Build NGSpice WASM"
+description: "Caches and builds the NGSpice WASM library."
 runs:
-  using: "composite"
-  steps:
-    - name: Cache NGSpice WASM
-      id: cache-ngspice
-      uses: actions/cache@v4
-      with:
-        path: |
-          scripts/ngspice/build
-          src/projects/analog/site/src/sim/lib/ngspice.js
-          src/projects/analog/site/src/sim/lib/ngspice.wasm
-          src/projects/analog/api/circuit/tests/sim/lib/ngspice_node.js
-          src/projects/analog/api/circuit/tests/sim/lib/ngspice_node.wasm
-        key: ${{ runner.os }}-ngspice-${{ hashFiles('scripts/ngspice/**') }}
+    using: "composite"
+    steps:
+        - name: Cache NGSpice WASM
+          id: cache-ngspice
+          uses: actions/cache@v4
+          with:
+              path: |
+                  scripts/ngspice/build
+                  src/projects/analog/site/src/sim/lib/ngspice.js
+                  src/projects/analog/site/src/sim/lib/ngspice.wasm
+                  src/projects/analog/api/circuit/tests/sim/lib/ngspice_node.js
+                  src/projects/analog/api/circuit/tests/sim/lib/ngspice_node.wasm
+              key: ${{ runner.os }}-ngspice-${{ hashFiles('scripts/ngspice/**') }}
 
-    - name: Build NGSpice [WASM]
-      if: steps.cache-ngspice.outputs.cache-hit != 'true'
-      run: yarn build:ngspice
-      shell: bash
+        - name: Build NGSpice [WASM]
+          if: steps.cache-ngspice.outputs.cache-hit != 'true'
+          run: yarn build:ngspice
+          shell: bash

@@ -1,8 +1,6 @@
 {
     "compilerOptions": {
-        "lib": [
-            "es2021"
-        ],
+        "lib": ["es2021"],
         "allowJs": true,
         "module": "esnext",
         "target": "es2021",
@@ -11,13 +9,11 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "moduleResolution": "node",
-        "types": [
-            "node"
-        ],
+        "types": ["node"],
         "sourceMap": true,
         "inlineSourceMap": false,
         "inlineSources": true,
         "declaration": false,
         "outDir": "../build/scripts"
-    },
+    }
 }

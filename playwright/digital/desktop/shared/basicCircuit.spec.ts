@@ -1,10 +1,12 @@
-import {expect, test} from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-import {pageActions} from "shared/helpers/actions";
-
+import { pageActions } from "shared/helpers/actions";
 
 test("Basic Switch/LED Test", async ({ page }) => {
-    const { openItemnav, closeItemnav, togglePropagationMenu, togglePausePropagation, stepPropagation } = pageActions(page, false);
+    const { openItemnav, closeItemnav, togglePropagationMenu, togglePausePropagation, stepPropagation } = pageActions(
+        page,
+        false,
+    );
 
     await page.goto("/");
 
@@ -34,13 +36,13 @@ test("Basic Switch/LED Test", async ({ page }) => {
             x: 465,
             y: 200,
         },
-    })
+    });
     await main.click({
         position: {
             x: 600,
             y: 300,
         },
-    })
+    });
     // .dragTo seems flakey when connecting wires for some reason so use clicks instead
     // await main.dragTo(main, {
     //     sourcePosition: { x: 465, y: 200 },
@@ -53,7 +55,7 @@ test("Basic Switch/LED Test", async ({ page }) => {
     await togglePausePropagation();
 
     const ledId = await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "LED").id);
-    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(0);
+    expect(await page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId)).toBe(0);
     // Toggle on and off
     await main.click({
         position: {
@@ -61,16 +63,16 @@ test("Basic Switch/LED Test", async ({ page }) => {
             y: 200,
         },
     });
-    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(0);
+    expect(await page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId)).toBe(0);
     await stepPropagation();
-    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(1);
+    expect(await page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId)).toBe(1);
     await main.click({
         position: {
             x: 400,
             y: 200,
         },
     });
-    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(1);
+    expect(await page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId)).toBe(1);
     await stepPropagation();
-    expect(await (page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId))).toBe(0);
+    expect(await page.evaluate((ledId) => window.Circuit.getComponent(ledId).allPorts[0].signal, ledId)).toBe(0);
 });
