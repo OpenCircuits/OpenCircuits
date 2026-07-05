@@ -1,6 +1,6 @@
-import {uuid} from "shared/api/circuit/internal";
+import { uuid } from "shared/api/circuit/internal";
 
-import {DigitalCircuitImpl} from "./impl/DigitalCircuit";
+import { DigitalCircuitImpl } from "./impl/DigitalCircuit";
 
 export * from "./DigitalCircuit";
 export * from "./DigitalComponent";

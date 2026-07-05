@@ -1,12 +1,11 @@
-import {GUID}     from "shared/api/circuit/internal";
-import {PortImpl} from "shared/api/circuit/public/impl/Port";
+import { GUID } from "shared/api/circuit/internal";
+import { PortImpl } from "shared/api/circuit/public/impl/Port";
 
-import {Signal} from "digital/api/circuit/schema/Signal";
+import { Signal } from "digital/api/circuit/schema/Signal";
 
-import {DigitalPort} from "../DigitalPort";
+import { DigitalPort } from "../DigitalPort";
 
-import {DigitalCircuitContext, DigitalAPITypes} from "./DigitalCircuitContext";
-
+import { DigitalCircuitContext, DigitalAPITypes } from "./DigitalCircuitContext";
 
 export class DigitalPortImpl extends PortImpl<DigitalAPITypes> implements DigitalPort {
     protected override readonly ctx: DigitalCircuitContext;
@@ -25,8 +24,11 @@ export class DigitalPortImpl extends PortImpl<DigitalAPITypes> implements Digita
     }
 
     public get signal(): Signal {
-        if (this.icId)
-            {throw new Error(`DigitalPortImpl: Signal cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`);}
+        if (this.icId) {
+            throw new Error(
+                `DigitalPortImpl: Signal cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`,
+            );
+        }
         return this.ctx.sim.getSignal(this.id);
     }
 }

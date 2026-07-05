@@ -1,7 +1,6 @@
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {DigitalComponent} from "digital/api/circuit/public/DigitalComponent";
-import {DigitalPort} from "digital/api/circuit/public";
-
+import { Signal } from "digital/api/circuit/schema/Signal";
+import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
+import { DigitalPort } from "digital/api/circuit/public";
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -21,31 +20,35 @@ expect.extend({
         function check(signal: Signal) {
             return {
                 message: () => `expected Signal (${signal}) to be On`,
-                pass:    (Signal.isOn(signal)),
+                pass: Signal.isOn(signal),
             };
         }
 
-        return typeof received === "number" ? check(received) :
-               received.baseKind === "Component" ? check(received.allPorts[0].signal) :
-               check(received.signal);
+        return typeof received === "number"
+            ? check(received)
+            : received.baseKind === "Component"
+              ? check(received.allPorts[0].signal)
+              : check(received.signal);
     },
     toBeOff(received: Signal | DigitalComponent | DigitalPort) {
         function check(signal: Signal) {
             return {
                 message: () => `expected Signal (${signal}) to be Off`,
-                pass:    (Signal.isOff(signal)),
+                pass: Signal.isOff(signal),
             };
         }
 
-        return typeof received === "number" ? check(received) :
-               received.baseKind === "Component" ? check(received.allPorts[0].signal) :
-               check(received.signal);
+        return typeof received === "number"
+            ? check(received)
+            : received.baseKind === "Component"
+              ? check(received.allPorts[0].signal)
+              : check(received.signal);
     },
     toBeStable(received: Signal | DigitalComponent) {
         function check(signal: Signal) {
             return {
                 message: () => `expected Signal (${signal}) to be Stable (On | Off)`,
-                pass:    (Signal.isStable(signal)),
+                pass: Signal.isStable(signal),
             };
         }
 
@@ -55,7 +58,7 @@ expect.extend({
         function check(signal: Signal) {
             return {
                 message: () => `expected Signal (${signal}) to be Metastable`,
-                pass:    (Signal.isMetastable(signal)),
+                pass: Signal.isMetastable(signal),
             };
         }
 

@@ -1,15 +1,20 @@
-import {DigitalCircuitImpl} from "digital/api/circuit/public/impl/DigitalCircuit";
-import {GroupPrim} from "shared/api/circuit/internal/assembly/Prim";
+import { DigitalCircuitImpl } from "digital/api/circuit/public/impl/DigitalCircuit";
+import { GroupPrim } from "shared/api/circuit/internal/assembly/Prim";
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("DigitalSim", () => {
     describe("Deletion", () => {
         test("Deleting Switch with State and Undoing keeps state", () => {
             const [circuit, { TurnOn, PlaceAndConnect }] = CreateTestCircuit();
-            const [_, { inputs: [sw], outputs: [out] }] = PlaceAndConnect("BUFGate");
+            const [
+                _,
+                {
+                    inputs: [sw],
+                    outputs: [out],
+                },
+            ] = PlaceAndConnect("BUFGate");
 
             expect(out).toBeOff();
             TurnOn(sw);
@@ -27,14 +32,19 @@ describe("DigitalSim", () => {
             function ledHasLightAssembled() {
                 assembler.reassemble();
                 const prim = assembler.getCache().componentPrims.get(out.id)![1] as GroupPrim;
-                return (prim.prims.length === 1);
+                return prim.prims.length === 1;
             }
 
             const [circuit, { TurnOn, PlaceAndConnect }] = CreateTestCircuit();
             // Need to manually access the internal assembler
             const assembler = (circuit as DigitalCircuitImpl)["ctx"]["assembler"];
 
-            const [sw, { outputs: [out] }] = PlaceAndConnect("Switch");
+            const [
+                sw,
+                {
+                    outputs: [out],
+                },
+            ] = PlaceAndConnect("Switch");
 
             expect(ledHasLightAssembled()).toBeFalsy();
             TurnOn(sw);

@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("DigitalComponent", () => {
     describe("Exists", () => {
@@ -40,7 +39,12 @@ describe("DigitalComponent", () => {
     describe("Delete", () => {
         test("add/delete and undo/redo expect state to remain same", () => {
             const [circuit, { PlaceAndConnect, TurnOn }] = CreateTestCircuit();
-            const [sw, { outputs: [led] }] = PlaceAndConnect("Switch");
+            const [
+                sw,
+                {
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("Switch");
 
             expect(led).toBeOff();
             sw.delete();

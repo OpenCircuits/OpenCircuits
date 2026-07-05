@@ -1,8 +1,7 @@
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-import {V} from "Vector";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import { V } from "Vector";
 
 describe("Clock", () => {
     test("Turns off/on expectedly", () => {
@@ -55,7 +54,7 @@ describe("Clock", () => {
         expect(clock).toBeOn();
         circuit.sim.step();
         expect(clock).toBeOff();
-        circuit.sim.step();  // This is where the original value of 10 would activate and flip it to on
+        circuit.sim.step(); // This is where the original value of 10 would activate and flip it to on
         expect(clock).toBeOff();
     });
     test("Sync clocks", () => {
