@@ -1,6 +1,5 @@
 @use "~shared/site/utils/constants" as *;
 
-
 .numberinputfield {
     display: inline-flex;
 
@@ -15,7 +14,8 @@
 
         appearance: textfield;
         -moz-appearance: textfield;
-        &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }

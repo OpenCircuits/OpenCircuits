@@ -1,5 +1,4 @@
-import {CreateState} from "shared/site/utils/CreateState";
-
+import { CreateState } from "shared/site/utils/CreateState";
 
 const [initialState, actions, reducer] = CreateState()(
     {
@@ -10,7 +9,7 @@ const [initialState, actions, reducer] = CreateState()(
     },
     {
         "TOGGLE_SIDENAV_ID": (state) => ({ isOpen: !state.isOpen }),
-    }
+    },
 );
 
 export type SideNavState = typeof initialState;

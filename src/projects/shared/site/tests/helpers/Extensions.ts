@@ -1,5 +1,4 @@
-import {Matcher, screen} from "@testing-library/react";
-
+import { Matcher, screen } from "@testing-library/react";
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -18,7 +17,7 @@ expect.extend({
         if (!(button instanceof HTMLDivElement)) {
             return {
                 message: () => `expected "${received}"'s parent to be a div!`,
-                pass:    false,
+                pass: false,
             };
         }
 
@@ -26,7 +25,7 @@ expect.extend({
 
         return {
             message: () => `expected toggle with label "${received}" to be toggled on (${checked})`,
-            pass:    checked === "true",
+            pass: checked === "true",
         };
     },
 
@@ -35,7 +34,7 @@ expect.extend({
         if (!(button instanceof HTMLDivElement)) {
             return {
                 message: () => `expected "${received}"'s parent to be a div!`,
-                pass:    false,
+                pass: false,
             };
         }
 
@@ -43,7 +42,7 @@ expect.extend({
 
         return {
             message: () => `expected toggle with label "${received}" to be toggled off (${checked})`,
-            pass:    checked === "false",
+            pass: checked === "false",
         };
     },
 });

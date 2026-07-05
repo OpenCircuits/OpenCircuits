@@ -9,7 +9,6 @@ $sidenav-message-margin: 25px;
 $sidenav-footer-height: 50px;
 $sidenav-footer-margin-y: 10px;
 
-
 // For status indicator when loading a circuit
 .overlay > div {
     position: absolute;
@@ -32,12 +31,17 @@ $sidenav-footer-margin-y: 10px;
     animation: spin 1s linear infinite;
 
     @keyframes spin {
-        0%   { transform: translate(-50%, -50%) scale(1)   rotate(0deg); }
-        50%  { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
-        100% { transform: translate(-50%, -50%) scale(1)   rotate(360deg); }
+        0% {
+            transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(1) rotate(360deg);
+        }
     }
 }
-
 
 .sidenav {
     position: fixed;
@@ -103,7 +107,7 @@ $sidenav-footer-margin-y: 10px;
         text-align: left;
 
         color: lighten($secondary-color, 10%);
-        border-bottom: solid math.div($sidenav-border-width,3) $secondary-color;
+        border-bottom: solid math.div($sidenav-border-width, 3) $secondary-color;
 
         & > span {
             padding: 5px 12px;
@@ -156,9 +160,15 @@ $sidenav-footer-margin-y: 10px;
             animation: spin2 1s linear infinite;
 
             @keyframes spin2 {
-                0%   { transform: scale(1)   rotate(0deg); }
-                50%  { transform: scale(1.2) rotate(180deg); }
-                100% { transform: scale(1)   rotate(360deg); }
+                0% {
+                    transform: scale(1) rotate(0deg);
+                }
+                50% {
+                    transform: scale(1.2) rotate(180deg);
+                }
+                100% {
+                    transform: scale(1) rotate(360deg);
+                }
             }
         }
 
@@ -204,7 +214,7 @@ $sidenav-footer-margin-y: 10px;
 
         cursor: pointer;
 
-        border-bottom: solid math.div($sidenav-border-width,3) $secondary-color;
+        border-bottom: solid math.div($sidenav-border-width, 3) $secondary-color;
         background-color: lighten($primary-color, 5%);
 
         cursor: pointer;

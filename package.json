@@ -22,7 +22,7 @@
     "test-e2e:ci": "npx playwright test --config ./playwright/config/ci.config.ts",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt src/projects/shared/api",
+    "fmt": "oxfmt src/projects/shared",
     "fmt:check": "oxfmt --check",
     "postinstall": "tsc --project ./scripts/tsconfig.json && copyfiles ./scripts/utils/browser/openChrome.applescript ./build",
     "protoc": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=. ./src/projects/shared/site/src/proto/Circuit.proto",

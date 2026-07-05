@@ -5,7 +5,6 @@ $historybox-height: 400px;
 $historybox-header-height: 30px;
 $historybox-width: 250px;
 
-
 .historybox {
     // width: $historybox-width;
     border: 5px solid $secondary-color;
@@ -50,7 +49,7 @@ $historybox-width: 250px;
         }
     }
     & > div:last-child {
-        height: calc(100% - #{$historybox-header-height + 2*10px - 2*5px});
+        height: calc(100% - #{$historybox-header-height + 2 * 10px - 2 * 5px});
 
         overflow-y: scroll;
 
@@ -58,7 +57,7 @@ $historybox-width: 250px;
         scrollbar-color: hsl(0, 0%, 30%) hsl(0, 0%, 65%);
 
         &::-webkit-scrollbar {
-            width: 7px;  // vertical scrollbars
+            width: 7px; // vertical scrollbars
             height: 7px; // horizontal scrollbar
         }
 
@@ -67,7 +66,7 @@ $historybox-width: 250px;
             border-radius: 15px;
         }
 
-        @media (max-width: $desktop-width) and (orientation:portrait) {
+        @media (max-width: $desktop-width) and (orientation: portrait) {
             max-height: 40vh;
         }
     }
@@ -76,7 +75,7 @@ $historybox-width: 250px;
         & > div:last-child {
             left: 0px;
 
-            @media (max-width: $desktop-width) and (orientation:portrait) {
+            @media (max-width: $desktop-width) and (orientation: portrait) {
                 margin-bottom: 0px;
             }
         }
@@ -89,7 +88,8 @@ $historybox-width: 250px;
         border-bottom: 2px solid $secondary-color;
     }
 
-    &__entry, &__groupentry {
+    &__entry,
+    &__groupentry {
         margin: 5px;
         padding: 5px;
 

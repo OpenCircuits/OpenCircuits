@@ -1,30 +1,29 @@
-import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
-import {CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup} from "shared/site/state/Header";
+import { CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup } from "shared/site/state/Header";
 
-import {Dropdown} from "../Dropdown";
+import { Dropdown } from "../Dropdown";
 
-import githubIcon         from "shared/site/img/github.svg";
-import helpIcon           from "./help.svg";
-import tourIcon           from "./tour_general.svg";
-import quickStartIcon     from "./quick_start.svg";
+import githubIcon from "shared/site/img/github.svg";
+import helpIcon from "./help.svg";
+import tourIcon from "./tour_general.svg";
+import quickStartIcon from "./quick_start.svg";
 import videoTutorialsIcon from "./video_tutorials.svg";
-import userGuideIcon      from "./user_guide.svg";
-import helpCenterIcon     from "./help_center.svg";
-import keyboardIcon       from "./keyboard.svg";
-
+import userGuideIcon from "./user_guide.svg";
+import helpCenterIcon from "./help_center.svg";
+import keyboardIcon from "./keyboard.svg";
 
 export const TutorialDropdown = () => {
-    const { curMenu } = useSharedSelector(
-        (state) => ({ curMenu: state.header.curMenu })
-    );
+    const { curMenu } = useSharedSelector((state) => ({ curMenu: state.header.curMenu }));
     const dispatch = useSharedDispatch();
 
     return (
-        <Dropdown open={(curMenu === "tutorial")}
-                  btnInfo={{ title: "Help", src: helpIcon }}
-                  onClick={() => dispatch(OpenHeaderMenu("tutorial"))}
-                  onClose={() => dispatch(CloseHeaderMenus())}>
+        <Dropdown
+            open={curMenu === "tutorial"}
+            btnInfo={{ title: "Help", src: helpIcon }}
+            onClick={() => dispatch(OpenHeaderMenu("tutorial"))}
+            onClose={() => dispatch(CloseHeaderMenus())}
+        >
             <h1>Tours</h1>
             <hr />
             <div className="disabled">
@@ -33,11 +32,14 @@ export const TutorialDropdown = () => {
             </div>
             <h1>Resources</h1>
             <hr />
-            <div role="button" tabIndex={0}
-                 onClick={() => {
+            <div
+                role="button"
+                tabIndex={0}
+                onClick={() => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("quick_start"));
-                }}>
+                }}
+            >
                 <img src={quickStartIcon} height="100%" alt="Check out our Quick Start guide" />
                 <span>Quick Start</span>
             </div>
@@ -57,14 +59,17 @@ export const TutorialDropdown = () => {
                 <img src={helpCenterIcon} height="100%" alt="Check out our Help Center" />
                 <span>Help Center</span>
             </div>
-            <div role="button" tabIndex={0}
-                 onClick={() => {
+            <div
+                role="button"
+                tabIndex={0}
+                onClick={() => {
                     dispatch(CloseHeaderMenus());
                     dispatch(OpenHeaderPopup("keyboard_shortcuts"));
-                }}>
+                }}
+            >
                 <img src={keyboardIcon} height="100%" alt="See our Keyboard Shortcuts" />
                 <span>Keyboard Shortcuts</span>
             </div>
         </Dropdown>
     );
-}
+};
