@@ -1,6 +1,5 @@
-import {GUID} from "./GUID";
-import {BaseObj} from "./BaseObj";
-
+import { GUID } from "./GUID";
+import { BaseObj } from "./BaseObj";
 
 export interface Wire extends BaseObj {
     baseKind: "Wire";

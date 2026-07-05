@@ -1,5 +1,4 @@
-import {PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
-
+import { PortConfig } from "shared/api/circuit/internal/impl/ObjInfo";
 
 export interface ComponentInfo {
     readonly kind: string;

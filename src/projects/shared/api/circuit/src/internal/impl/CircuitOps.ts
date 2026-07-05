@@ -1,8 +1,7 @@
 /* eslint-disable sonarjs/prefer-single-boolean-return */
-import {None, Ok, Option, Result, ResultUtil, Some} from "shared/api/circuit/utils/Result";
+import { None, Ok, Option, Result, ResultUtil, Some } from "shared/api/circuit/utils/Result";
 
-import {Schema} from "shared/api/circuit/schema"
-
+import { Schema } from "shared/api/circuit/schema";
 
 export interface PlaceComponentOp {
     kind: "PlaceComponentOp";
@@ -64,14 +63,15 @@ export interface CreateICOp {
     ic: Schema.IntegratedCircuit;
 }
 
-export type CircuitOp = PlaceComponentOp
-                      | ReplaceComponentOp
-                      | ConnectWireOp
-                      | SplitWireOp
-                      | UpdateICMetadataOp
-                      | SetPropertyOp
-                      | SetComponentPortsOp
-                      | CreateICOp;
+export type CircuitOp =
+    | PlaceComponentOp
+    | ReplaceComponentOp
+    | ConnectWireOp
+    | SplitWireOp
+    | UpdateICMetadataOp
+    | SetPropertyOp
+    | SetComponentPortsOp
+    | CreateICOp;
 
 export function InvertCircuitOp(op: CircuitOp): CircuitOp {
     switch (op.kind) {
@@ -92,11 +92,13 @@ export function InvertCircuitOp(op: CircuitOp): CircuitOp {
 
 export function CanCommuteOps(targetOp: CircuitOp, withOp: CircuitOp): boolean {
     if (withOp.kind === "SetPropertyOp") {
-        if (targetOp.kind !== "SetPropertyOp")
-            {return false;}
+        if (targetOp.kind !== "SetPropertyOp") {
+            return false;
+        }
         // Can't swap the order of ops affecting the same thing (but can merge)
-        if (withOp.id === targetOp.id && withOp.key === targetOp.key)
-            {return false;}
+        if (withOp.id === targetOp.id && withOp.key === targetOp.key) {
+            return false;
+        }
         return true;
     }
     return false;
@@ -104,8 +106,9 @@ export function CanCommuteOps(targetOp: CircuitOp, withOp: CircuitOp): boolean {
 
 export function MergeOps(targetOp: CircuitOp, withOp: CircuitOp): Option<CircuitOp> {
     if (withOp.kind === "SetPropertyOp") {
-        if (targetOp.kind !== "SetPropertyOp")
-            {return None();}
+        if (targetOp.kind !== "SetPropertyOp") {
+            return None();
+        }
         if (withOp.id === targetOp.id && withOp.key === targetOp.key) {
             return Some({
                 ...withOp,
@@ -126,8 +129,10 @@ export function TransformCircuitOp(targetOp: CircuitOp, withOp: CircuitOp): Resu
 }
 
 export function TransformCircuitOps(targetOps: CircuitOp[], withOps: readonly CircuitOp[]): Result<CircuitOp[]> {
-    if (withOps.length === 0)
-        {return Ok(targetOps);}
+    if (withOps.length === 0) {
+        return Ok(targetOps);
+    }
     return ResultUtil.mapIter(targetOps.values(), (op) =>
-        ResultUtil.reduceIter(op, withOps.values(), (tgtOp, withOp) => TransformCircuitOp(tgtOp, withOp)));
+        ResultUtil.reduceIter(op, withOps.values(), (tgtOp, withOp) => TransformCircuitOp(tgtOp, withOp)),
+    );
 }

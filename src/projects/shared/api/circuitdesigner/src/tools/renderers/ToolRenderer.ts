@@ -1,6 +1,5 @@
-import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {RenderHelper}    from "shared/api/circuitdesigner/public/Viewport";
-
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { RenderHelper } from "shared/api/circuitdesigner/public/Viewport";
 
 export interface ToolRendererArgs {
     designer: CircuitDesigner;

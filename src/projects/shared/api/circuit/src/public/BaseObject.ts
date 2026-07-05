@@ -1,7 +1,6 @@
-import {Rect} from "math/Rect";
+import { Rect } from "math/Rect";
 
-import {Prop} from "shared/api/circuit/schema";
-
+import { Prop } from "shared/api/circuit/schema";
 
 interface BaseReadonlyBaseObject {
     readonly kind: string;
@@ -29,4 +28,4 @@ export type BaseObject = BaseReadonlyBaseObject & {
     deselect(): void;
 
     setProp(key: string, val: Prop): void;
-}
+};

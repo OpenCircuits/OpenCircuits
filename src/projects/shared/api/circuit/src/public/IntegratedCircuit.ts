@@ -1,12 +1,11 @@
-import {Vector} from "Vector";
+import { Vector } from "Vector";
 
-import {GUID} from "shared/api/circuit/schema";
+import { GUID } from "shared/api/circuit/schema";
 
-import {ReadonlyComponent}    from "./Component";
-import {ReadonlyWire}         from "./Wire";
-import {ReadonlyObjContainer} from "./ObjContainer";
-import {ReadonlyCircuit}      from "./Circuit";
-
+import { ReadonlyComponent } from "./Component";
+import { ReadonlyWire } from "./Wire";
+import { ReadonlyObjContainer } from "./ObjContainer";
+import { ReadonlyCircuit } from "./Circuit";
 
 export interface ICInfo {
     circuit: ReadonlyCircuit;
@@ -14,7 +13,7 @@ export interface ICInfo {
 }
 
 export interface ReadonlyICPin {
-    readonly id: GUID;  // ID of corresponding PORT
+    readonly id: GUID; // ID of corresponding PORT
     readonly group: string;
 
     readonly name: string;
@@ -23,7 +22,7 @@ export interface ReadonlyICPin {
     readonly dir: Vector;
 }
 export interface ICPin extends ReadonlyICPin {
-    readonly id: GUID;  // ID of corresponding PORT
+    readonly id: GUID; // ID of corresponding PORT
     readonly group: string;
 
     pos: Vector;
@@ -56,4 +55,4 @@ export type ReadonlyIntegratedCircuit = BaseReadonlyIntegratedCircuit<ReadonlyIn
 
 export type IntegratedCircuit = BaseReadonlyIntegratedCircuit<IntegratedCircuitDisplay> & {
     name: string;
-}
+};

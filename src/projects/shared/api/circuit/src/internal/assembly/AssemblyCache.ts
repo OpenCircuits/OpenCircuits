@@ -1,11 +1,10 @@
-import {Vector} from "Vector";
+import { Vector } from "Vector";
 
-import {Curve} from "math/Curve";
-import {Transform}   from "math/Transform";
+import { Curve } from "math/Curve";
+import { Transform } from "math/Transform";
 
-import {GUID}  from "..";
-import {Prim} from "./Prim";
-
+import { GUID } from "..";
+import { Prim } from "./Prim";
 
 export interface PortPos {
     origin: Vector;
@@ -32,11 +31,13 @@ export class DepthList<K> {
     }
 
     private sort() {
-        if (!this.isDirty)
-            {return;}
+        if (!this.isDirty) {
+            return;
+        }
 
         for (let i = 1; i < this.depths.length; i++) {
-            const cur = this.depths[i], curVal = this.values[i];
+            const cur = this.depths[i],
+                curVal = this.values[i];
             let j = i - 1;
             while (j >= 0 && this.depths[j] > cur) {
                 this.depths[j + 1] = this.depths[j];
@@ -88,8 +89,9 @@ export class DepthList<K> {
     }
 
     public delete(val: K): boolean {
-        if (!this.map.has(val))
-            {return false;}
+        if (!this.map.has(val)) {
+            return false;
+        }
         const idx = this.map.get(val)!;
 
         this.curLen--;
@@ -106,7 +108,7 @@ export class DepthList<K> {
     }
 
     public at(i: number): K | undefined {
-        this.sort();  // (if dirty)
+        this.sort(); // (if dirty)
         return this.values.at(i);
     }
 
@@ -120,15 +122,17 @@ export class DepthList<K> {
     }
 
     public forEach(fn: (val: K, depth: number, i: number) => void) {
-        this.sort();  // (if dirty)
-        for (let i = 0; i < this.length; i++)
-            {fn(this.values[i], this.depths[i], i);}
+        this.sort(); // (if dirty)
+        for (let i = 0; i < this.length; i++) {
+            fn(this.values[i], this.depths[i], i);
+        }
     }
 
     public *[Symbol.iterator]() {
-        this.sort();  // (if dirty)
-        for (let i = 0; i < this.length; i++)
-            {yield this.values[i];}
+        this.sort(); // (if dirty)
+        for (let i = 0; i < this.length; i++) {
+            yield this.values[i];
+        }
     }
 }
 
@@ -137,10 +141,10 @@ export interface AssemblyCache {
     componentPrims: Map<GUID, Prim[]>;
     componentOrder: DepthList<GUID>;
 
-    localPortPositions: Map<GUID, PortPos>;  // Key'd by port ID
-    portPositions: Map<GUID, PortPos>;       // Key'd by port ID
+    localPortPositions: Map<GUID, PortPos>; // Key'd by port ID
+    portPositions: Map<GUID, PortPos>; // Key'd by port ID
     portPrims: Map<GUID, Map<GUID, Prim[]>>; // Key'd by component parent, then by port ID
-    portLabelPrims: Map<GUID, Prim[]>;       // Key'd by component parent
+    portLabelPrims: Map<GUID, Prim[]>; // Key'd by component parent
 
     wireCurves: Map<GUID, Curve>;
     wirePrims: Map<GUID, Prim[]>;
@@ -151,4 +155,4 @@ export type ReadonlyAssemblyCache = {
     [T in keyof AssemblyCache]: AssemblyCache[T] extends Map<infer K, infer V>
         ? ReadonlyMap<K, Readonly<V>>
         : Readonly<AssemblyCache[T]>;
-}
+};

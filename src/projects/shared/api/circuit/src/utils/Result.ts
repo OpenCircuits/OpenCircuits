@@ -1,15 +1,14 @@
-import {MultiError} from "./MultiError";
-
+import { MultiError } from "./MultiError";
 
 export type Result<T = void, E = MultiError> = ResultVariants<T, E> & RInterface<T, E>;
 
-type ResultRepOk<T> = { ok: true, value: T };
-type ResultRepErr<E> = { ok: false, error: E };
+type ResultRepOk<T> = { ok: true; value: T };
+type ResultRepErr<E> = { ok: false; error: E };
 type ResultRep<T, E> = ResultRepOk<T> | ResultRepErr<E>;
 
 type ResultVariants<T, E> =
-    | (ResultRepOk<T> & { cast<F>(): Result<T, F>})
-    | (ResultRepErr<E> & { cast<U>(): Result<U, E>});
+    | (ResultRepOk<T> & { cast<F>(): Result<T, F> })
+    | (ResultRepErr<E> & { cast<U>(): Result<U, E> });
 
 interface RInterface<T, E> {
     // Extracting values
@@ -72,26 +71,29 @@ class ResultBase<T, E> implements RInterface<T, E> {
 
     // Extracting values
     public expect(errMsg: string): T {
-        if (!this.r.ok)
-            {throw new Error(errMsg);}
+        if (!this.r.ok) {
+            throw new Error(errMsg);
+        }
         return this.r.value;
     }
     public unwrap(): T {
-        if (!this.r.ok)
-            {throw this.r.error;}
+        if (!this.r.ok) {
+            throw this.r.error;
+        }
         return this.r.value;
     }
     public unwrapOr(d: T): T {
-        if (!this.r.ok)
-            {return d;}
+        if (!this.r.ok) {
+            return d;
+        }
         return this.r.value;
     }
     public unwrapOrElse(f: (e: E) => T): T {
-        if (!this.r.ok)
-            {return f(this.r.error);}
+        if (!this.r.ok) {
+            return f(this.r.error);
+        }
         return this.r.value;
     }
-
 
     // Transformations (omisssions: "transpose")
     public errToOption(): Option<E> {
@@ -136,10 +138,11 @@ class ResultBase<T, E> implements RInterface<T, E> {
         return this.match(f, () => {});
     }
     public match(f: (t: T) => unknown, g: (e: E) => unknown): Result<T, E> {
-        if (this.r.ok)
-            {f(this.r.value);}
-        else
-            {g(this.r.error);}
+        if (this.r.ok) {
+            f(this.r.value);
+        } else {
+            g(this.r.error);
+        }
         return this.asResult();
     }
     public asUnion(): T | E {
@@ -202,14 +205,12 @@ export function ErrE<T>(e: string): ResultErr<T, MultiError> {
 
 export type Option<T> = OptionVariants<T> & OInterface<T>;
 
-type OptionRepSome<T> = { some: true, value: T };
+type OptionRepSome<T> = { some: true; value: T };
 type OptionRepNone = { some: false };
 type OptionRep<T> = OptionRepSome<T> | OptionRepNone;
 
 // See ResultVariants def for using "any" here.
-type OptionVariants<T> =
-    | OptionRepSome<T>
-    | (OptionRepNone & { cast<U>(): Option<U> });
+type OptionVariants<T> = OptionRepSome<T> | (OptionRepNone & { cast<U>(): Option<U> });
 
 interface OInterface<T> {
     // Queries
@@ -229,7 +230,7 @@ interface OInterface<T> {
     map<U>(f: (t: T) => U): Option<U>;
     mapOr<U>(f: (t: T) => U, u: U): U;
     mapOrElse<U>(f: (t: T) => U, g: () => U): U;
-    zip<U>(o: Option<U>): Option<[T,U]>;
+    zip<U>(o: Option<U>): Option<[T, U]>;
     zipWith<U, R>(o: Option<U>, f: (t: T, u: U) => R): Option<R>;
 
     // Boolean operators
@@ -270,23 +271,27 @@ class OptionBase<T> {
 
     // Extracting values
     public expect(errMsg: string): T {
-        if (!this.r.some)
-            {throw new Error(errMsg);}
+        if (!this.r.some) {
+            throw new Error(errMsg);
+        }
         return this.r.value;
     }
     public unwrap(): T {
-        if (!this.r.some)
-            {throw new Error("Attempted to unwrap \"None\" Option");}
+        if (!this.r.some) {
+            throw new Error('Attempted to unwrap "None" Option');
+        }
         return this.r.value;
     }
     public unwrapOr(d: T): T {
-        if (!this.r.some)
-            {return d;}
+        if (!this.r.some) {
+            return d;
+        }
         return this.r.value;
     }
     public unwrapOrElse(f: () => T): T {
-        if (!this.r.some)
-            {return f();}
+        if (!this.r.some) {
+            return f();
+        }
         return this.r.value;
     }
 
@@ -309,7 +314,7 @@ class OptionBase<T> {
     public mapOrElse<U>(f: (t: T) => U, g: () => U): U {
         return this.r.some ? f(this.r.value) : g();
     }
-    public zip<U>(o: Option<U>): Option<[T,U]> {
+    public zip<U>(o: Option<U>): Option<[T, U]> {
         return this.r.some && o.some ? Some([this.r.value, o.value]) : None();
     }
     public zipWith<U, R>(o: Option<U>, f: (t: T, u: U) => R): Option<R> {
@@ -332,7 +337,7 @@ class OptionBase<T> {
     }
 
     public xor(o: Option<T>): Option<T> {
-        return this.r.some ? (o.some ? None() : this.asOption()) : (o.some ? o : None());
+        return this.r.some ? (o.some ? None() : this.asOption()) : o.some ? o : None();
     }
 
     // Extensions
@@ -343,10 +348,11 @@ class OptionBase<T> {
         return this.match(f, () => {});
     }
     public match(f: (t: T) => unknown, g: () => unknown): Option<T> {
-        if (this.r.some)
-            {f(this.r.value);}
-        else
-            {g();}
+        if (this.r.some) {
+            f(this.r.value);
+        } else {
+            g();
+        }
         return this.asOption();
     }
     public asUnion(): T | undefined {
@@ -392,8 +398,9 @@ export const ResultUtil = {
         const res: U[] = [];
         for (const v of it) {
             const a = f(v);
-            if (!a.ok)
-                {return a.cast();}
+            if (!a.ok) {
+                return a.cast();
+            }
             res.push(a.value);
         }
         return Ok(res);
@@ -403,8 +410,9 @@ export const ResultUtil = {
     reduceIter: <T, U, E>(u: U, it: Iterable<T>, f: (u: U, t: T) => Result<U, E>): Result<U, E> => {
         for (const v of it) {
             const a = f(u, v);
-            if (!a.ok)
-                {return a;}
+            if (!a.ok) {
+                return a;
+            }
             u = a.value;
         }
         return Ok(u);
@@ -412,7 +420,7 @@ export const ResultUtil = {
 
     reduceIterU: <T, E>(it: Iterable<T>, f: (t: T) => Result<void, E>): Result<void, E> =>
         ResultUtil.reduceIter<T, void, E>(undefined, it, (_, t) => f(t)),
-}
+};
 
 export const OptionUtil = {
     mapIter: <T, U>(it: Iterable<T>, f: (t: T) => Option<U>): Option<U[]> =>
@@ -420,4 +428,4 @@ export const OptionUtil = {
 
     reduceIter: <T, U>(u: U, it: Iterable<T>, f: (u: U, t: T) => Option<U>): Option<U> =>
         ResultUtil.reduceIter(u, it, (u, t) => f(u, t).okOr(undefined)).okToOption(),
-}
+};

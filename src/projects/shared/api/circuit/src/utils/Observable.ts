@@ -20,8 +20,9 @@ export abstract class ObservableImpl<Event = unknown> implements Observable<Even
 
     public publish(data: Event) {
         // Blocked so don't trigger callbacks
-        if (this.blocked)
-            {return;}
+        if (this.blocked) {
+            return;
+        }
 
         // Shallow copy in case the callbacks try to sub/unsub while iterating
         [...this.callbacks].forEach((c) => {
@@ -68,7 +69,6 @@ export abstract class ObservableImpl<Event = unknown> implements Observable<Even
     }
 }
 
-
 export abstract class MultiObservable<Events extends Record<string, unknown>> {
     protected blocked: boolean;
     protected callbacks: { [K in keyof Events]?: Set<(data: Events[K]) => void> };
@@ -80,8 +80,9 @@ export abstract class MultiObservable<Events extends Record<string, unknown>> {
 
     protected publish<K extends keyof Events>(ev: K, data: Events[K]) {
         // Blocked so don't trigger callbacks
-        if (this.blocked)
-            {return;}
+        if (this.blocked) {
+            return;
+        }
 
         // Shallow copy in case the callbacks try to sub/unsub while iterating
         [...(this.callbacks[ev] ?? [])].forEach((c) => c(data));
@@ -110,8 +111,9 @@ export abstract class MultiObservable<Events extends Record<string, unknown>> {
     }
 
     public subscribe<K extends keyof Events>(ev: K, callbackFn: (data: Events[K]) => void) {
-        if (!(ev in this.callbacks))
-            {this.callbacks[ev] = new Set();}
+        if (!(ev in this.callbacks)) {
+            this.callbacks[ev] = new Set();
+        }
         this.callbacks[ev]!.add(callbackFn);
 
         // Return a callback to unsubscribe
@@ -119,8 +121,9 @@ export abstract class MultiObservable<Events extends Record<string, unknown>> {
     }
 
     public unsubscribe<K extends keyof Events>(ev: K, callbackFn: (data: Events[K]) => void) {
-        if (!(ev in this.callbacks))
-            {return;}
+        if (!(ev in this.callbacks)) {
+            return;
+        }
         this.callbacks[ev]!.delete(callbackFn);
     }
 }

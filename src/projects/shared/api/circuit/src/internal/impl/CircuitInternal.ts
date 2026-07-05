@@ -1,21 +1,20 @@
-import {ErrE, OkVoid, Result, ResultUtil} from "shared/api/circuit/utils/Result";
+import { ErrE, OkVoid, Result, ResultUtil } from "shared/api/circuit/utils/Result";
 
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {GUID, Schema} from "shared/api/circuit/schema";
-import {uuid}         from "shared/api/circuit/schema/GUID";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { GUID, Schema } from "shared/api/circuit/schema";
+import { uuid } from "shared/api/circuit/schema/GUID";
 
-import {LogEntryType}      from "./CircuitLog";
-import {InvertCircuitOp, UpdateICMetadataOp} from "./CircuitOps";
-import {ComponentConfigurationInfo, PortConfig, PortConfigurationInfo, WireConfigurationInfo}      from "./ObjInfo";
-import {CircuitDocument} from "./CircuitDocument";
-import {FastCircuitDiff} from "./FastCircuitDiff";
-import {AddErrE} from "../../utils/MultiError";
-
+import { LogEntryType } from "./CircuitLog";
+import { InvertCircuitOp, UpdateICMetadataOp } from "./CircuitOps";
+import { ComponentConfigurationInfo, PortConfig, PortConfigurationInfo, WireConfigurationInfo } from "./ObjInfo";
+import { CircuitDocument } from "./CircuitDocument";
+import { FastCircuitDiff } from "./FastCircuitDiff";
+import { AddErrE } from "../../utils/MultiError";
 
 export type InternalEvent = {
     type: "CircuitOp";
     diff: FastCircuitDiff;
-}
+};
 
 // CircuitInternal is a low-level session for editing a circuit.  It encapsulates the CircuitDocument and the CircuitLog
 // to provide a transaction mechanism for building LogEntries.  It also provides a higher-level interface for producing
@@ -52,8 +51,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         // Subscribe to log to track events that change this circuit
         // When they, track in undo stack
         this.log.subscribe((ev) => {
-            if (ev.accepted.length === 0)
-                {return;}
+            if (ev.accepted.length === 0) {
+                return;
+            }
 
             // TODO: What if multiple entries? (only matters for multi-edit)
             const [entry] = ev.accepted;
@@ -118,14 +118,17 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     }
 
     public getAllWiresForComponent(id: GUID) {
-        return this.doc.getCircuitInfo().getPortsForComponent(id)
+        return this.doc
+            .getCircuitInfo()
+            .getPortsForComponent(id)
             .andThen((ports) =>
-                ResultUtil.reduceIter(
-                    new Set<GUID>(),
-                    ports,
-                    (prev, portId) =>
-                        this.doc.getCircuitInfo().getWiresForPort(portId)
-                            .map((set) => prev.union(set))));
+                ResultUtil.reduceIter(new Set<GUID>(), ports, (prev, portId) =>
+                    this.doc
+                        .getCircuitInfo()
+                        .getWiresForPort(portId)
+                        .map((set) => prev.union(set)),
+                ),
+            );
     }
     public getPortsForComponent(id: GUID) {
         return this.doc.getCircuitInfo().getPortsForComponent(id);
@@ -147,8 +150,9 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     }
 
     public getComponentInfo(kind: "IC" | string, icId?: GUID): Result<ComponentConfigurationInfo> {
-        if (kind === "IC" && icId)
-            {return this.doc.getCircuitInfo().getComponentInfo(kind, icId);}
+        if (kind === "IC" && icId) {
+            return this.doc.getCircuitInfo().getComponentInfo(kind, icId);
+        }
         return this.doc.getCircuitInfo().getComponentInfo(kind);
     }
     public getWireInfo(kind: string): Result<WireConfigurationInfo> {
@@ -177,7 +181,6 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         return this.doc.getCircuitInfo().getAllObjs();
     }
 
-
     //
     // Convenience functions around CircuitOps
     //
@@ -193,15 +196,17 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     }
 
     public undo(): Result {
-        if (this.doc.isTransaction())
-            {return ErrE("Cannot undo while currently within a transaction!");}
-        if (this.undoStack.length === 0)
-            {return OkVoid();}
+        if (this.doc.isTransaction()) {
+            return ErrE("Cannot undo while currently within a transaction!");
+        }
+        if (this.undoStack.length === 0) {
+            return OkVoid();
+        }
 
         const lastEntryIndex = this.undoStack.pop()!;
         this.redoStack.push(lastEntryIndex);
 
-        this.doc.beginTransaction({ batch: true });  // Batch the undo for efficiency reasons
+        this.doc.beginTransaction({ batch: true }); // Batch the undo for efficiency reasons
         this.log.entries[lastEntryIndex].ops
             .map(InvertCircuitOp)
             .reverse()
@@ -212,17 +217,18 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     }
 
     public redo(): Result {
-        if (this.doc.isTransaction())
-            {return ErrE("Cannot redo while currently within a transaction!");}
-        if (this.redoStack.length === 0)
-            {return OkVoid();}
+        if (this.doc.isTransaction()) {
+            return ErrE("Cannot redo while currently within a transaction!");
+        }
+        if (this.redoStack.length === 0) {
+            return OkVoid();
+        }
 
         const lastEntryIndex = this.redoStack.pop()!;
         this.undoStack.push(lastEntryIndex);
 
-        this.doc.beginTransaction({ batch: true });  // Batch the redo for efficiency reasons
-        this.log.entries[lastEntryIndex].ops
-            .forEach((op) => this.doc.addTransactionOp(op));
+        this.doc.beginTransaction({ batch: true }); // Batch the redo for efficiency reasons
+        this.log.entries[lastEntryIndex].ops.forEach((op) => this.doc.addTransactionOp(op));
         this.doc.commitTransaction(LogEntryType.REDO);
 
         return OkVoid();
@@ -251,59 +257,59 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
 
     public importObjs(objs: Schema.Obj[], refreshIds = false): Result<Map<GUID, GUID>> {
         const newIds = new Map<GUID, GUID>();
-        objs.forEach((obj) =>
-            newIds.set(obj.id, (refreshIds ? uuid() : obj.id)));
+        objs.forEach((obj) => newIds.set(obj.id, refreshIds ? uuid() : obj.id));
 
         // Build component : ports[] map
         const portsForComp = new Map<GUID, Schema.Port[]>();
-        objs.filter((obj) => (obj.baseKind === "Port"))
-            .forEach((port) => {
-                const parentPorts = portsForComp.getOrInsert(port.parent, () => []);
-                parentPorts.push(port);
-            });
+        objs.filter((obj) => obj.baseKind === "Port").forEach((port) => {
+            const parentPorts = portsForComp.getOrInsert(port.parent, () => []);
+            parentPorts.push(port);
+        });
 
         return ResultUtil.mapIter(
-                objs.filter((obj) => (obj.baseKind === "Component")),
-                (comp) =>
+            objs.filter((obj) => obj.baseKind === "Component"),
+            (comp) =>
+                this.doc.addTransactionOp({
+                    kind: "PlaceComponentOp",
+                    inverted: false,
+                    c: {
+                        ...comp,
+                        id: newIds.get(comp.id)!,
+                    },
+                }),
+        )
+            .andThen(() =>
+                ResultUtil.mapIter(portsForComp.entries(), ([compId, ports]) =>
                     this.doc.addTransactionOp({
-                        kind:     "PlaceComponentOp",
+                        kind: "SetComponentPortsOp",
                         inverted: false,
-                        c:        {
-                            ...comp,
-                            id: newIds.get(comp.id)!,
-                        },
-                    })
-            )
-            .andThen(() => ResultUtil.mapIter(
-                portsForComp.entries(),
-                ([compId, ports]) =>
-                    this.doc.addTransactionOp({
-                        kind:       "SetComponentPortsOp",
-                        inverted:   false,
-                        component:  newIds.get(compId)!,
+                        component: newIds.get(compId)!,
                         addedPorts: ports.map((p) => ({
                             ...p,
                             parent: newIds.get(compId)!,
-                            id:     newIds.get(p.id)!,
+                            id: newIds.get(p.id)!,
                         })),
-                        deadWires:    [],
+                        deadWires: [],
                         removedPorts: [],
-                    })
-            ))
-            .andThen(() => ResultUtil.mapIter(
-                objs.filter((obj) => (obj.baseKind === "Wire")),
-                (wire) =>
-                    this.doc.addTransactionOp({
-                        kind:     "ConnectWireOp",
-                        inverted: false,
-                        w:        {
-                            ...wire,
-                            id: newIds.get(wire.id)!,
-                            p1: newIds.get(wire.p1)!,
-                            p2: newIds.get(wire.p2)!,
-                        },
-                    })
-            ))
+                    }),
+                ),
+            )
+            .andThen(() =>
+                ResultUtil.mapIter(
+                    objs.filter((obj) => obj.baseKind === "Wire"),
+                    (wire) =>
+                        this.doc.addTransactionOp({
+                            kind: "ConnectWireOp",
+                            inverted: false,
+                            w: {
+                                ...wire,
+                                id: newIds.get(wire.id)!,
+                                p1: newIds.get(wire.p1)!,
+                                p2: newIds.get(wire.p2)!,
+                            },
+                        }),
+                ),
+            )
             .map((_) => newIds)
             .mapErr(AddErrE("CircuitInternal.importObjs: failed!"))
             .uponErr(() => this.cancelTransaction());
@@ -311,17 +317,19 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
 
     public placeComponent(kind: string, props: Schema.Component["props"], icId?: GUID): Result<GUID> {
         const id = Schema.uuid();
-        return this.doc.addTransactionOp({
-                kind:     "PlaceComponentOp",
+        return this.doc
+            .addTransactionOp({
+                kind: "PlaceComponentOp",
                 inverted: false,
-                c:        {
+                c: {
                     baseKind: "Component",
-                    kind:     kind,
-                    id:       id,
+                    kind: kind,
+                    id: id,
                     icId,
-                    props:    { ...props }, // Copy non-trivial object
+                    props: { ...props }, // Copy non-trivial object
                 },
-            }).map(() => id)
+            })
+            .map(() => id)
             .mapErr(AddErrE(`CircuitInternal.placeComponent: failed for ${kind}`))
             .uponErr(() => this.cancelTransaction());
     }
@@ -331,12 +339,13 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .getCircuitInfo()
             .getCompByID(id)
             .andThen((c) =>
-                 this.doc.addTransactionOp({
-                    kind:    "ReplaceComponentOp",
+                this.doc.addTransactionOp({
+                    kind: "ReplaceComponentOp",
                     id,
                     oldKind: c.kind,
                     newKind,
-                }))
+                }),
+            )
             .mapErr(AddErrE(`CircuitInternal.replaceComponent: failed for ${id}, newKind: ${newKind}`))
             .uponErr(() => this.cancelTransaction());
     }
@@ -347,10 +356,11 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .getCompByID(id)
             .andThen((c) =>
                 this.doc.addTransactionOp({
-                    kind:     "PlaceComponentOp",
+                    kind: "PlaceComponentOp",
                     inverted: true,
                     c, // No copy needed
-                }))
+                }),
+            )
             .mapErr(AddErrE(`CircuitInternal.deleteComponent: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
@@ -359,14 +369,18 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         const id = Schema.uuid();
         return this.doc
             .addTransactionOp({
-                kind:     "ConnectWireOp",
+                kind: "ConnectWireOp",
                 inverted: false,
-                w:        {
+                w: {
                     baseKind: "Wire",
-                    props:    { ...props }, // Copy non-trivial object
-                    kind, id, p1, p2,
+                    props: { ...props }, // Copy non-trivial object
+                    kind,
+                    id,
+                    p1,
+                    p2,
                 },
-            }).map(() => id)
+            })
+            .map(() => id)
             .mapErr(AddErrE(`CircuitInternal.connectWire: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
@@ -377,10 +391,11 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .getWireByID(id)
             .andThen((w) =>
                 this.doc.addTransactionOp({
-                    kind:     "ConnectWireOp",
+                    kind: "ConnectWireOp",
                     inverted: true,
                     w, // No copy needed
-                }))
+                }),
+            )
             .mapErr(AddErrE(`CircuitInternal.deleteWire: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
@@ -390,39 +405,40 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         pinIndex: number,
         newMetadata: Partial<Omit<Schema.IntegratedCircuitPin, "id" | "group" | "name">>,
     ): Result {
-        return this.doc
-            .getICInfo(icId)
-            .andThen((ic) =>
-                this.doc.addTransactionOp({
-                    kind:   "UpdateICMetadataOp",
-                    icId,
-                    newVal: { pins: [
+        return this.doc.getICInfo(icId).andThen((ic) =>
+            this.doc.addTransactionOp({
+                kind: "UpdateICMetadataOp",
+                icId,
+                newVal: {
+                    pins: [
                         ...ic.metadata.pins.slice(0, pinIndex),
                         {
                             ...ic.metadata.pins[pinIndex],
                             ...newMetadata,
                         },
                         ...ic.metadata.pins.slice(pinIndex + 1),
-                    ] },
-                    oldVal: { ...ic.metadata },
-                }));
+                    ],
+                },
+                oldVal: { ...ic.metadata },
+            }),
+        );
     }
     public updateICMetadata(icId: GUID, newMetadata: UpdateICMetadataOp["newVal"]): Result {
-        return this.doc
-            .getICInfo(icId)
-            .andThen((ic) =>
-                this.doc.addTransactionOp({
-                    kind:   "UpdateICMetadataOp",
-                    icId,
-                    newVal: newMetadata,
-                    oldVal: { ...ic.metadata },
-                }));
+        return this.doc.getICInfo(icId).andThen((ic) =>
+            this.doc.addTransactionOp({
+                kind: "UpdateICMetadataOp",
+                icId,
+                newVal: newMetadata,
+                oldVal: { ...ic.metadata },
+            }),
+        );
     }
 
-    public setPropFor<
-        O extends Schema.Obj,
-        K extends keyof O["props"] & string
-    >(id: GUID, key: K, newVal?: O["props"][K]): Result {
+    public setPropFor<O extends Schema.Obj, K extends keyof O["props"] & string>(
+        id: GUID,
+        key: K,
+        newVal?: O["props"][K],
+    ): Result {
         // NOTE: applyOp will check the ComponentInfo that it is the correct type
         return this.doc
             .getCircuitInfo()
@@ -430,11 +446,12 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .andThen((obj) =>
                 this.doc.addTransactionOp({
                     id,
-                    kind:   "SetPropertyOp",
+                    kind: "SetPropertyOp",
                     key,
                     oldVal: obj.props[key],
                     newVal,
-                }))
+                }),
+            )
             .mapErr(AddErrE(`CircuitInternal.setPropFor: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
@@ -444,11 +461,10 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
         return circuit
             .getComponentAndInfoByID(id)
             .andThen(([comp, info]) => info.makePortsForConfig(comp.id, portConfig))
-            .andThen((newPorts) => circuit.getPortsForComponent(id)
-                .andThen((oldPortIds) => {
+            .andThen((newPorts) =>
+                circuit.getPortsForComponent(id).andThen((oldPortIds) => {
                     const oldPorts = [...oldPortIds].map((portId) => circuit.getPortByID(portId).unwrap());
-                    const removedPorts = oldPorts.filter(
-                        (port: Schema.Port) => (port.index >= portConfig[port.group]));
+                    const removedPorts = oldPorts.filter((port: Schema.Port) => port.index >= portConfig[port.group]);
 
                     // Deleted wires are all wires attached to ports with indices
                     // at least as high as the new config's "count" for respective groups.
@@ -463,14 +479,15 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     oldPorts.forEach((oldPort) => addedPortsMap.delete(s(oldPort)));
 
                     return this.doc.addTransactionOp({
-                        kind:       "SetComponentPortsOp",
-                        inverted:   false,
-                        component:  id,
+                        kind: "SetComponentPortsOp",
+                        inverted: false,
+                        component: id,
                         addedPorts: [...addedPortsMap.values()],
                         removedPorts,
                         deadWires,
                     });
-                }))
+                }),
+            )
             .mapErr(AddErrE(`CircuitInternal.setPortConfig: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }
@@ -489,10 +506,10 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
                     .map((removedWire) => circuit.getWireByID(removedWire).unwrap());
 
                 return this.doc.addTransactionOp({
-                    kind:         "SetComponentPortsOp",
-                    inverted:     false,
-                    component:    compId,
-                    addedPorts:   [],
+                    kind: "SetComponentPortsOp",
+                    inverted: false,
+                    component: compId,
+                    addedPorts: [],
                     removedPorts: oldPorts,
                     deadWires,
                 });
@@ -504,7 +521,7 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
     public createIC(ic: Schema.IntegratedCircuit): Result {
         return this.doc
             .addTransactionOp({
-                kind:     "CreateICOp",
+                kind: "CreateICOp",
                 inverted: false,
                 ic, // TODO: Maybe copy?
             })
@@ -517,15 +534,16 @@ export class CircuitInternal extends ObservableImpl<InternalEvent> {
             .getICInfo(id)
             .andThen((ic) =>
                 this.doc.addTransactionOp({
-                    kind:     "CreateICOp",
+                    kind: "CreateICOp",
                     inverted: true,
-                    ic:       {
+                    ic: {
                         metadata: ic.metadata,
-                        comps:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Component")),
-                        wires:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Wire")),
-                        ports:    [...ic.getAllObjs()].filter((o) => (o.baseKind === "Port")),
+                        comps: [...ic.getAllObjs()].filter((o) => o.baseKind === "Component"),
+                        wires: [...ic.getAllObjs()].filter((o) => o.baseKind === "Wire"),
+                        ports: [...ic.getAllObjs()].filter((o) => o.baseKind === "Port"),
                     },
-                }))
+                }),
+            )
             .mapErr(AddErrE(`CircuitInternal.deleteIC: failed for ${id}`))
             .uponErr(() => this.cancelTransaction());
     }

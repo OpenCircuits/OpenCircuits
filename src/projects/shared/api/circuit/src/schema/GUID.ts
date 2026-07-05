@@ -1,6 +1,5 @@
-import {v4} from "uuid";
-
+import { v4 } from "uuid";
 
 export type GUID = string;
 
-export const uuid = (): GUID => (v4());
+export const uuid = (): GUID => v4();

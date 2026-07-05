@@ -1,11 +1,10 @@
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {GUID} from "shared/api/circuit/internal";
+import { GUID } from "shared/api/circuit/internal";
 
-import {CircuitContext} from "./CircuitContext";
-import {ICPin, IntegratedCircuit, IntegratedCircuitDisplay} from "../IntegratedCircuit";
-import {CircuitAPITypes} from "./Types";
-
+import { CircuitContext } from "./CircuitContext";
+import { ICPin, IntegratedCircuit, IntegratedCircuitDisplay } from "../IntegratedCircuit";
+import { CircuitAPITypes } from "./Types";
 
 class IntegratedCircuitPinImpl<T extends CircuitAPITypes> implements ICPin {
     protected readonly icId: GUID;
@@ -40,10 +39,7 @@ class IntegratedCircuitPinImpl<T extends CircuitAPITypes> implements ICPin {
         this.ctx.internal.commitTransaction();
     }
     public get pos(): Vector {
-        return V(
-            this.ic.metadata.pins[this.pinIndex].x,
-            this.ic.metadata.pins[this.pinIndex].y,
-        );
+        return V(this.ic.metadata.pins[this.pinIndex].x, this.ic.metadata.pins[this.pinIndex].y);
     }
 
     public set dir(d: Vector) {
@@ -52,10 +48,7 @@ class IntegratedCircuitPinImpl<T extends CircuitAPITypes> implements ICPin {
         this.ctx.internal.commitTransaction();
     }
     public get dir(): Vector {
-        return V(
-            this.ic.metadata.pins[this.pinIndex].dx,
-            this.ic.metadata.pins[this.pinIndex].dy,
-        );
+        return V(this.ic.metadata.pins[this.pinIndex].dx, this.ic.metadata.pins[this.pinIndex].dy);
     }
 }
 
@@ -117,16 +110,18 @@ export class IntegratedCircuitImpl<T extends CircuitAPITypes> implements Integra
     public get all(): T["ObjContainerT"] {
         return this.ctx.factory.constructObjContainer(
             new Set(this.ctx.internal.getICInfo(this.id).unwrap().getObjs()),
-            this.id
+            this.id,
         );
     }
 
     public get components(): T["ReadonlyComponent[]"] {
-        return [...this.ctx.internal.getICInfo(this.id).unwrap().getComponents()]
-            .map((id) => this.ctx.factory.constructComponent(id, this.id));
+        return [...this.ctx.internal.getICInfo(this.id).unwrap().getComponents()].map((id) =>
+            this.ctx.factory.constructComponent(id, this.id),
+        );
     }
     public get wires(): T["ReadonlyWire[]"] {
-        return [...this.ctx.internal.getICInfo(this.id).unwrap().getWires()]
-            .map((id) => this.ctx.factory.constructWire(id, this.id));
+        return [...this.ctx.internal.getICInfo(this.id).unwrap().getWires()].map((id) =>
+            this.ctx.factory.constructWire(id, this.id),
+        );
     }
 }

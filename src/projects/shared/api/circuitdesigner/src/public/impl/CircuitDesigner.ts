@@ -1,26 +1,28 @@
-import {SVGDrawing} from "svg2canvas";
+import { SVGDrawing } from "svg2canvas";
 
-import {Circuit}      from "shared/api/circuit/public";
-import {CircuitContext} from "shared/api/circuit/public/impl/CircuitContext";
-import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
+import { Circuit } from "shared/api/circuit/public";
+import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 
-import {Tool}        from "shared/api/circuitdesigner/tools/Tool";
+import { Tool } from "shared/api/circuitdesigner/tools/Tool";
 
-import {CircuitDesigner, CircuitDesignerEv, CircuitDesignerOptions} from "../CircuitDesigner";
-import {Viewport}                                from "../Viewport";
-import {ViewportImpl}                            from "./Viewport";
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {ToolManager} from "./ToolManager";
+import { CircuitDesigner, CircuitDesignerEv, CircuitDesignerOptions } from "../CircuitDesigner";
+import { Viewport } from "../Viewport";
+import { ViewportImpl } from "./Viewport";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { ToolManager } from "./ToolManager";
 
-
-export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitAPITypes> extends ObservableImpl<CircuitDesignerEv> implements CircuitDesigner {
+export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitAPITypes>
+    extends ObservableImpl<CircuitDesignerEv>
+    implements CircuitDesigner
+{
     public readonly circuit: CircuitT;
     protected readonly ctx: CircuitContext<T>;
 
     public readonly viewport: Viewport;
 
     protected readonly toolManager: ToolManager<T>;
-    protected readonly state: { isLocked: boolean, curPressedObj?: T["Obj"] };
+    protected readonly state: { isLocked: boolean; curPressedObj?: T["Obj"] };
 
     public constructor(
         circuit: CircuitT,
@@ -35,7 +37,7 @@ export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitAPIT
 
         this.toolManager = new ToolManager(options.toolConfig.defaultTool, options.toolConfig.tools);
         this.state = {
-            isLocked:      false,
+            isLocked: false,
             curPressedObj: undefined,
         };
 

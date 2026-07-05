@@ -1,7 +1,6 @@
-import {Rect} from "math/Rect";
-import {TextMeasurer} from "shared/api/circuit/internal/assembly/RenderOptions";
-import {FontStyle} from "shared/api/circuit/internal/assembly/Style";
-
+import { Rect } from "math/Rect";
+import { TextMeasurer } from "shared/api/circuit/internal/assembly/RenderOptions";
+import { FontStyle } from "shared/api/circuit/internal/assembly/Style";
 
 export class CanvasTextMeasurer implements TextMeasurer {
     private readonly canvas: HTMLCanvasElement;
@@ -18,10 +17,10 @@ export class CanvasTextMeasurer implements TextMeasurer {
         this.ctx.textAlign = fontStyle.textAlign;
         const result = this.ctx.measureText(text);
         return Rect.From({
-            left:   -result.width / 2 / fontStyle.scale,
-            right:  result.width / 2 / fontStyle.scale,
+            left: -result.width / 2 / fontStyle.scale,
+            right: result.width / 2 / fontStyle.scale,
             bottom: -result.fontBoundingBoxDescent / fontStyle.scale,
-            top:    result.fontBoundingBoxAscent / fontStyle.scale,
+            top: result.fontBoundingBoxAscent / fontStyle.scale,
         });
     }
 }

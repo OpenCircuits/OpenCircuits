@@ -1,6 +1,5 @@
-import {Vector} from "Vector";
-import {Key}    from "./Key";
-
+import { Vector } from "Vector";
+import { Key } from "./Key";
 
 /**
  * This interface represents the current state of user-input-related data.

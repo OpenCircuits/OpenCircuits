@@ -1,7 +1,6 @@
-import {serializable} from "serialeazy";
+import { serializable } from "serialeazy";
 
-import {Clamp} from "./MathUtils";
-
+import { Clamp } from "./MathUtils";
 
 /**
  * A class containing a number, functions to change the value of the number and
@@ -118,7 +117,7 @@ export class ClampedValue {
      * @returns     True if value is between the minimum and maximum allowed values.
      */
     public contains(value: number): boolean {
-        return (this.minValue <= value && this.maxValue >= value);
+        return this.minValue <= value && this.maxValue >= value;
     }
 
     /**
@@ -129,5 +128,4 @@ export class ClampedValue {
     public copy(): ClampedValue {
         return new ClampedValue(this.value!, this.minValue!, this.maxValue!);
     }
-
 }

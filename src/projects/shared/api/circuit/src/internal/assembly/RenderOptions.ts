@@ -1,9 +1,8 @@
-import {ColorToHex, blend, parseColor} from "svg2canvas";
+import { ColorToHex, blend, parseColor } from "svg2canvas";
 
-import {Rect} from "math/Rect";
+import { Rect } from "math/Rect";
 
-import {FontStyle, Style, TextAlign, TextBaseline} from "./Style";
-
+import { FontStyle, Style, TextAlign, TextBaseline } from "./Style";
 
 export interface TextMeasurer {
     getBounds(font: FontStyle, text: string): Rect;
@@ -59,7 +58,7 @@ export interface RenderOptions {
 
     fontStyle(): FontStyle;
 
-    portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style };
+    portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style; circleStyle: Style };
     wireStyle(selected: boolean, color?: string): Style;
 }
 
@@ -72,11 +71,11 @@ export class DefaultRenderOptions implements RenderOptions {
     public defaultPortLength = 0.7;
     public defaultPortRadius = 0.14;
 
-    public defaultFillColor =  "#ffffff";
+    public defaultFillColor = "#ffffff";
     public selectedFillColor = "#1cff3e";
 
     public defaultBorderWidth = 0.04;
-    public defaultBorderColor =  "#000000";
+    public defaultBorderColor = "#000000";
     public selectedBorderColor = "#0d7f1f";
 
     public curveBorderWidth = 0.042;
@@ -97,7 +96,7 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public defaultInvalidColor = "#ff1c1c";
 
-    public defaultFont = "lighter 300px arial";  // Gets scaled down later (fuck Firefox)
+    public defaultFont = "lighter 300px arial"; // Gets scaled down later (fuck Firefox)
     public defaultFontColor = "#000000";
     public defaultTextBaseline: TextBaseline = "middle";
     public defaultTextAlign: TextAlign = "center";
@@ -106,8 +105,8 @@ export class DefaultRenderOptions implements RenderOptions {
 
     public strokeStyle(selected: boolean): NonNullable<Style["stroke"]> {
         return {
-            color: (selected ? this.selectedBorderColor : this.defaultBorderColor),
-            size:  this.defaultBorderWidth,
+            color: selected ? this.selectedBorderColor : this.defaultBorderColor,
+            size: this.defaultBorderWidth,
         };
     }
 
@@ -117,42 +116,42 @@ export class DefaultRenderOptions implements RenderOptions {
     public curveStyle(selected: boolean) {
         return {
             stroke: {
-                color:   (selected ? this.selectedBorderColor : this.defaultBorderColor),
-                size:    this.curveBorderWidth,
+                color: selected ? this.selectedBorderColor : this.defaultBorderColor,
+                size: this.curveBorderWidth,
                 lineCap: "round",
             },
         } as const;
     }
     public fillStyle(selected: boolean): Style {
         return {
-            fill:   (selected ? this.selectedFillColor : this.defaultFillColor),
+            fill: selected ? this.selectedFillColor : this.defaultFillColor,
             stroke: this.strokeStyle(selected),
         };
     }
 
     public fontStyle(): FontStyle {
         return {
-            font:         this.defaultFont,
+            font: this.defaultFont,
             textBaseline: this.defaultTextBaseline,
-            textAlign:    this.defaultTextAlign,
-            color:        this.defaultFontColor,
-            scale:        1000,
-        }
+            textAlign: this.defaultTextAlign,
+            color: this.defaultFontColor,
+            scale: 1000,
+        };
     }
 
-    public portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style, circleStyle: Style } {
+    public portStyle(selected: boolean, parentSelected: boolean): { lineStyle: Style; circleStyle: Style } {
         return {
             lineStyle: {
                 stroke: {
-                    color: ((parentSelected && !selected) ? this.selectedBorderColor : this.defaultBorderColor),
-                    size:  this.portLineWidth,
+                    color: parentSelected && !selected ? this.selectedBorderColor : this.defaultBorderColor,
+                    size: this.portLineWidth,
                 },
             },
             circleStyle: {
-                fill:   ((parentSelected || selected) ? this.selectedFillColor : this.defaultFillColor),
+                fill: parentSelected || selected ? this.selectedFillColor : this.defaultFillColor,
                 stroke: {
-                    color: ((parentSelected || selected) ? this.selectedBorderColor : this.defaultBorderColor),
-                    size:  this.portBorderWidth,
+                    color: parentSelected || selected ? this.selectedBorderColor : this.defaultBorderColor,
+                    size: this.portBorderWidth,
                 },
             },
         };
@@ -161,16 +160,12 @@ export class DefaultRenderOptions implements RenderOptions {
     public wireStyle(selected: boolean, color = this.defaultWireColor): Style {
         // Changes color of wires: when wire is selected it changes to the color
         //  selected blended with constant color SELECTED_FILL_COLOR
-        const selectedColor = ColorToHex(blend(
-            parseColor(color),
-            parseColor(this.selectedFillColor),
-            0.2
-        ));
+        const selectedColor = ColorToHex(blend(parseColor(color), parseColor(this.selectedFillColor), 0.2));
 
         return {
             stroke: {
-                color: (selected ? selectedColor : color),
-                size:  this.wireThickness,
+                color: selected ? selectedColor : color,
+                size: this.wireThickness,
             },
         };
     }

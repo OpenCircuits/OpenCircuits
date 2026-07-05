@@ -1,6 +1,5 @@
-import {BaseObj} from "./BaseObj";
-import {GUID} from "./GUID";
-
+import { BaseObj } from "./BaseObj";
+import { GUID } from "./GUID";
 
 export interface Component extends BaseObj {
     baseKind: "Component";

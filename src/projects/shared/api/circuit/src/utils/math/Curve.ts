@@ -1,6 +1,5 @@
-import {V, Vector} from "Vector";
-import {Rect} from "./Rect";
-
+import { V, Vector } from "Vector";
+import { Rect } from "./Rect";
 
 /**
  * Represents a generic parametric curve.

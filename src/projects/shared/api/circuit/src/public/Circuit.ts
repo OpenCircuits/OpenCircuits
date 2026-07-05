@@ -1,30 +1,31 @@
-import {Vector} from "Vector";
+import { Vector } from "Vector";
 
-import {GUID} from "shared/api/circuit/schema";
+import { GUID } from "shared/api/circuit/schema";
 
-import {FastCircuitDiff} from "shared/api/circuit/internal/impl/FastCircuitDiff";
+import { FastCircuitDiff } from "shared/api/circuit/internal/impl/FastCircuitDiff";
 
-import {Component, ReadonlyComponent}     from "./Component";
-import {ComponentInfo} from "./ComponentInfo";
-import {Port, ReadonlyPort}          from "./Port";
-import {ReadonlyWire, Wire}          from "./Wire";
-import {ReadonlySelections, Selections}    from "./Selections";
-import {Observable} from "../utils/Observable";
-import {ObjContainer, ReadonlyObjContainer} from "./ObjContainer";
-import {Rect} from "math/Rect";
-import {Camera, ReadonlyCamera} from "./Camera";
-import {CircuitHistory} from "./History";
-import {ICInfo, IntegratedCircuit} from "./IntegratedCircuit";
-
+import { Component, ReadonlyComponent } from "./Component";
+import { ComponentInfo } from "./ComponentInfo";
+import { Port, ReadonlyPort } from "./Port";
+import { ReadonlyWire, Wire } from "./Wire";
+import { ReadonlySelections, Selections } from "./Selections";
+import { Observable } from "../utils/Observable";
+import { ObjContainer, ReadonlyObjContainer } from "./ObjContainer";
+import { Rect } from "math/Rect";
+import { Camera, ReadonlyCamera } from "./Camera";
+import { CircuitHistory } from "./History";
+import { ICInfo, IntegratedCircuit } from "./IntegratedCircuit";
 
 // TODO[master](leon) - make this more user friendly
-export type CircuitEvent = {
-    type: "contents";
-    diff: FastCircuitDiff;
-} | {
-    type: "metadata";
-    change: "name" | "desc";
-}
+export type CircuitEvent =
+    | {
+          type: "contents";
+          diff: FastCircuitDiff;
+      }
+    | {
+          type: "metadata";
+          change: "name" | "desc";
+      };
 
 interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
     readonly id: GUID;
@@ -63,30 +64,42 @@ interface BaseReadonlyCircuit<PortT, CompT, WireT, ICT, ObjCT, SelectionsT> {
     getICs(): ICT[];
 }
 
-export type ReadonlyCircuit = BaseReadonlyCircuit<ReadonlyPort, ReadonlyComponent, ReadonlyWire, IntegratedCircuit, ReadonlyObjContainer, ReadonlySelections> & Observable<CircuitEvent>;
+export type ReadonlyCircuit = BaseReadonlyCircuit<
+    ReadonlyPort,
+    ReadonlyComponent,
+    ReadonlyWire,
+    IntegratedCircuit,
+    ReadonlyObjContainer,
+    ReadonlySelections
+> &
+    Observable<CircuitEvent>;
 
-export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircuit, ObjContainer, Selections> & Observable<CircuitEvent> & {
-    beginTransaction(options?: { batch?: boolean }): void;
-    commitTransaction(clientData?: string): void;
-    cancelTransaction(): void;
+export type Circuit = BaseReadonlyCircuit<Port, Component, Wire, IntegratedCircuit, ObjContainer, Selections> &
+    Observable<CircuitEvent> & {
+        beginTransaction(options?: { batch?: boolean }): void;
+        commitTransaction(clientData?: string): void;
+        cancelTransaction(): void;
 
-    // Metadata
-    name: string;
-    desc: string;
-    readonly camera: Camera;
+        // Metadata
+        name: string;
+        desc: string;
+        readonly camera: Camera;
 
-    // Object manipulation
-    placeComponentAt(kind: string, pt: Vector): Component;
-    // Cannot delete ports
-    deleteObjs(objs: Array<Wire | Component>): void;
+        // Object manipulation
+        placeComponentAt(kind: string, pt: Vector): Component;
+        // Cannot delete ports
+        deleteObjs(objs: Array<Wire | Component>): void;
 
-    importICs(ics: IntegratedCircuit[]): void;
-    // The ID of the IC will be randomly generated unelss `id` is specified, in which case, it will use that instead.
-    createIC(info: ICInfo, id?: GUID): IntegratedCircuit;
-    deleteIC(id: GUID): void;
+        importICs(ics: IntegratedCircuit[]): void;
+        // The ID of the IC will be randomly generated unelss `id` is specified, in which case, it will use that instead.
+        createIC(info: ICInfo, id?: GUID): IntegratedCircuit;
+        deleteIC(id: GUID): void;
 
-    undo(): void;
-    redo(): void;
+        undo(): void;
+        redo(): void;
 
-    import(circuit: ReadonlyCircuit | ReadonlyObjContainer, opts?: { refreshIds?: boolean, loadMetadata?: boolean }): ObjContainer;
-}
+        import(
+            circuit: ReadonlyCircuit | ReadonlyObjContainer,
+            opts?: { refreshIds?: boolean; loadMetadata?: boolean },
+        ): ObjContainer;
+    };

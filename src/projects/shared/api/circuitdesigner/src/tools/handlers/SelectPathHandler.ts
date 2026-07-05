@@ -1,7 +1,6 @@
-import {LEFT_MOUSE_BUTTON}                from "shared/api/circuitdesigner/input/Constants";
-import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
-import {Component} from "shared/api/circuit/public";
-
+import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
+import { Component } from "shared/api/circuit/public";
 
 /**
  * Gets all the components connected to this component
@@ -23,8 +22,9 @@ export function GetComponentPath(c: Component): Component[] {
         visited.add(q.id);
         path.push(q);
         for (const c of q.allPorts.flatMap((port) => port.connectedPorts).map((port) => port.parent)) {
-            if (!visited.has(c.id))
-                {queue.push(c);}
+            if (!visited.has(c.id)) {
+                queue.push(c);
+            }
         }
     }
 
@@ -36,20 +36,23 @@ export const SelectPathHandler: ToolHandler = {
 
     onEvent: (ev, { circuit, viewport }) => {
         // Activate on double LMB click
-        if (!(ev.type === "dblclick" && ev.button === LEFT_MOUSE_BUTTON))
-            {return ToolHandlerResponse.PASS;}
+        if (!(ev.type === "dblclick" && ev.button === LEFT_MOUSE_BUTTON)) {
+            return ToolHandlerResponse.PASS;
+        }
 
         // Make sure we double clicked on something
         const obj = circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos));
-        if (!obj)
-            {return ToolHandlerResponse.PASS;}
+        if (!obj) {
+            return ToolHandlerResponse.PASS;
+        }
 
         const path = (() => {
             switch (obj.baseKind) {
                 case "Component":
                     // For nodes, return the path of one of the ports (they are all on the same path by definition)
-                    if (obj.isNode())
-                        {return obj.path;}
+                    if (obj.isNode()) {
+                        return obj.path;
+                    }
                     // For other components, return all of the components that are connected
                     // TODO: Get connected components
                     return GetComponentPath(obj);
@@ -69,4 +72,4 @@ export const SelectPathHandler: ToolHandler = {
         // This should be the only handler to handle the click event if we did something
         return ToolHandlerResponse.HALT;
     },
-}
+};
