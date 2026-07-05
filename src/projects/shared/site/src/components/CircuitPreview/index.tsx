@@ -12,7 +12,7 @@ type CircuitPreviewProps = {
     readonly onDelete: () => void;
 }
 export const CircuitPreview = ({ readonly, data, onClick, onDelete }: CircuitPreviewProps) => (
-    <div role="button" tabIndex={0} className="circuit__preview" title="Load circuit" onClick={onClick}>
+    <div role="button" tabIndex={0} className="circuit__preview" title="Load circuit" onClick={onClick} aria-label={`Example: ${data.name}`}>
         <span className="circuit__preview__icon">
             <img src={data.thumbnail} alt={`Thumbnail for example circuit, ${data.name}`} />
         </span>
