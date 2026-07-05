@@ -1,5 +1,4 @@
-import {useEffect, useState} from "react";
-
+import { useEffect, useState } from "react";
 
 /* eslint-disable react/forbid-elements */
 const VARIABLES = (() => {
@@ -14,8 +13,9 @@ const VARIABLES = (() => {
         get: (id: string): string | undefined => vals[id],
 
         subscribe: (id: string, f: (newVal: string) => void) => {
-            if (!(id in listeners))
-                {listeners[id] = [];}
+            if (!(id in listeners)) {
+                listeners[id] = [];
+            }
             listeners[id].push(f);
             return () => {
                 listeners[id].splice(listeners[id].indexOf(f), 1);
@@ -33,8 +33,7 @@ export const useVariable = (id: string) => {
     }, [id, setVal]);
 
     return val;
-}
-
+};
 
 export interface InputFieldProps {
     readonly id: string;
@@ -47,17 +46,17 @@ export const InputField = ({ id, defaultValue }: InputFieldProps) => {
         VARIABLES.set(id, val);
     }, [id, val]);
 
-    return (
-        <input type="text"
-               value={val}
-               onChange={(ev) => setVal(ev.target.value)} />
-    );
-}
+    return <input type="text" value={val} onChange={(ev) => setVal(ev.target.value)} />;
+};
 
 function toProperCase(s: string): string {
-    if (s.length === 0)
-        {return s;}
-    return s.split(" ").map((v) => v[0].toUpperCase() + v.slice(1)).join(" ");
+    if (s.length === 0) {
+        return s;
+    }
+    return s
+        .split(" ")
+        .map((v) => v[0].toUpperCase() + v.slice(1))
+        .join(" ");
 }
 
 export interface VariableProps {
@@ -70,8 +69,9 @@ export interface VariableProps {
 export const Variable = ({ id, proper, upper, lower, combined }: VariableProps) => {
     const val = useVariable(id);
 
-    if (!val)
-        {return <code>{}</code>;}
+    if (!val) {
+        return <code>{}</code>;
+    }
 
     const val2 = proper ? toProperCase(val) : val;
     const val3 = upper ? val2.toUpperCase() : val2;
@@ -79,4 +79,4 @@ export const Variable = ({ id, proper, upper, lower, combined }: VariableProps) 
     const val5 = combined ? val4.split(" ").join("") : val4;
 
     return <code>{val5}</code>;
-}
+};

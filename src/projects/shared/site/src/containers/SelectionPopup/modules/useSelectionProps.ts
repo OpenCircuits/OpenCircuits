@@ -5,8 +5,7 @@ import React, { useCallback, useEffect, useState } from "react";
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 export type RecordOfArrays<Props extends Record<string, Prop>> = {
     // Get every key from all records (if it's a union of records)
-    [Key in KeysOfUnion<Props>]: // And map it to an array of non-nullable props
-    Array<
+    [Key in KeysOfUnion<Props>]: Array< // And map it to an array of non-nullable props
         NonNullable<
             // Get each prop that is associated with the current Key
             Props extends { [k in Key]?: unknown }
