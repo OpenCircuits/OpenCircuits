@@ -8,7 +8,7 @@ This directory contains a collection of generic utility data structures, polyfil
 
 ## Files
 
-- **`Array.ts`**: Provides global polyfills and extension methods for JavaScript's `Array` (e.g. `sum`, `zip`, `chunk`) and `Set` (e.g. `union`, `intersection`).
+- **`Array.ts`**: Provides global polyfills and extension methods for JavaScript's `Array` (e.g. `sum`, `zip`, `chunk`).
 - **`CircuitUtils.ts`**: Contains `CreateGraph` which converts a `Circuit` into a topological `Graph` where nodes are components and edges are wires.
 - **`DirtyVar.ts`**: A wrapper for a lazily-evaluated cached variable that can be manually marked as dirty, forcing it to recalculate upon the next fetch.
 - **`Functions.ts`**: Provides generic functions for mapping and manipulating standard JavaScript objects/records (e.g. `MapObj`, `FilterObj`).
