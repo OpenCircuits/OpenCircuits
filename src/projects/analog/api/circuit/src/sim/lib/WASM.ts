@@ -2,27 +2,27 @@ export type WASMModule = {
     _malloc: (length: number) => number;
     _free: (array: number) => void;
 
-    HEAP8:   Int8Array;
-    HEAPU8:  Uint8Array;
-    HEAP16:  Int16Array;
+    HEAP8: Int8Array;
+    HEAPU8: Uint8Array;
+    HEAP16: Int16Array;
     HEAPU16: Uint16Array;
-    HEAP32:  Int32Array;
+    HEAP32: Int32Array;
     HEAPU32: Uint32Array;
 
     HEAPF32: Float32Array;
     HEAPF64: Float64Array;
-}
-export type TypedArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array
-                        | Uint32Array | Float32Array | Float64Array;
+};
+export type TypedArray =
+    | Int8Array
+    | Uint8Array
+    | Int16Array
+    | Uint16Array
+    | Int32Array
+    | Uint32Array
+    | Float32Array
+    | Float64Array;
 
-
-type CreateArrayParams = ([
-    "float64",
-    number[],
-]) | ([
-    "string",
-    string,
-]);
+type CreateArrayParams = ["float64", number[]] | ["string", string];
 
 function CreateArray(module: WASMModule, ...params: CreateArrayParams) {
     let res: TypedArray;
@@ -55,36 +55,36 @@ function CreateStringArray(module: WASMModule, strs: string[]): [number, ...numb
     return [arrPointer, ...ptrs];
 }
 
-
 // I've never hated TypeScript more in my entire fucking existence fucking jesus christ fuck off
-type GetArrayParams = {
-    type: "char";
-    len?: number;
-} | {
-    type: "string";
-    len?: number;
-} | {
-    type: "string*";
-    len?: number;
-} | {
-    type: "int";
-    len: number;
-} | {
-    type: "double";
-    len: number;
-};
-type GetArrayReturn<T> =
-    T extends { type: "char" }
-    ? string :
-    T extends { type: "string" }
-    ? string[] :
-    T extends { type: "int" | "double" | "string*" }
-    ? number[] : never;
-function GetArray<T extends GetArrayParams>(
-    module: WASMModule,
-    ptr: number,
-    o: GetArrayParams,
-): GetArrayReturn<T> {
+type GetArrayParams =
+    | {
+          type: "char";
+          len?: number;
+      }
+    | {
+          type: "string";
+          len?: number;
+      }
+    | {
+          type: "string*";
+          len?: number;
+      }
+    | {
+          type: "int";
+          len: number;
+      }
+    | {
+          type: "double";
+          len: number;
+      };
+type GetArrayReturn<T> = T extends { type: "char" }
+    ? string
+    : T extends { type: "string" }
+      ? string[]
+      : T extends { type: "int" | "double" | "string*" }
+        ? number[]
+        : never;
+function GetArray<T extends GetArrayParams>(module: WASMModule, ptr: number, o: GetArrayParams): GetArrayReturn<T> {
     if (o.type === "char") {
         ptr = ptr / module.HEAPU8.BYTES_PER_ELEMENT;
         let len = o.len;
@@ -105,8 +105,7 @@ function GetArray<T extends GetArrayParams>(
             len = pos - ptr - 1;
         }
         const arr = module.HEAPU32.subarray(ptr, ptr + len);
-        if (o.type === "string*")
-            return [...arr] as GetArrayReturn<T>;
+        if (o.type === "string*") return [...arr] as GetArrayReturn<T>;
         return [...arr].map((ptr) => GetArray(module, ptr, { type: "char" })) as GetArrayReturn<T>;
     }
     if (o.type === "int") {
@@ -125,9 +124,9 @@ function assertNever(x: never): never {
 }
 
 export const CreateWASMInstance = <T extends WASMModule>(module: T) => ({
-    create_array:     (...params: CreateArrayParams) => CreateArray(module, ...params),
+    create_array: (...params: CreateArrayParams) => CreateArray(module, ...params),
     create_str_array: (strs: string[]) => CreateStringArray(module, strs),
-    free_array:       (arr: number) => module._free(arr),
-    get_array:        <T extends GetArrayParams>(arr: number, o: T) => GetArray<T>(module, arr,  o),
+    free_array: (arr: number) => module._free(arr),
+    get_array: <T extends GetArrayParams>(arr: number, o: T) => GetArray<T>(module, arr, o),
     ...module,
 });

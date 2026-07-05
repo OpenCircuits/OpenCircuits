@@ -1,5 +1,3 @@
-
-
 .sim-analysis-panel {
     position: absolute;
 
@@ -49,7 +47,8 @@
 
     border-radius: 5px;
 
-    & > button, select {
+    & > button,
+    select {
         flex: 1 1 auto;
 
         height: 30px;

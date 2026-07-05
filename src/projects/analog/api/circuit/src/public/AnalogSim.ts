@@ -1,4 +1,3 @@
-
 export interface OPAnalysis {
     kind: "op";
 }
@@ -22,10 +21,7 @@ export interface TranAnalysis {
 //     step: string;
 // }
 
-export type AnalysisInfo =
-    | OPAnalysis
-    | TranAnalysis;
-
+export type AnalysisInfo = OPAnalysis | TranAnalysis;
 
 export interface AnalogSim {
     analysis: AnalysisInfo;

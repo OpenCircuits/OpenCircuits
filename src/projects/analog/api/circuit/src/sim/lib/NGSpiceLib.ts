@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {WASMModule} from "./WASM";
-
+import { WASMModule } from "./WASM";
 
 export type NGSpiceLib = WASMModule & {
     _OC_init(): void;
@@ -16,4 +15,4 @@ export type NGSpiceLib = WASMModule & {
     _OC_get_vector_data_im(id: number): number; // id: string ptr => ngcomplex_t[] ptr
 
     _OC_print_data(): void;
-}
+};
