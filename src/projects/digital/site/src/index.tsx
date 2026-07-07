@@ -3,7 +3,7 @@ import {browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence} fr
 
 import React            from "react";
 import {createRoot}     from "react-dom/client";
-import ReactGA          from "react-ga";
+import ReactGA          from "react-ga4";
 import {Provider}       from "react-redux";
 import {configureStore} from "@reduxjs/toolkit";
 
@@ -117,7 +117,7 @@ async function Init(): Promise<void> {
                 if (!process.env.OC_GA_ID)
                     throw new Error("Can't find Google Analytics ID");
                 ReactGA.initialize(process.env.OC_GA_ID, {});
-                ReactGA.pageview("/");
+                ReactGA.send({ hitType: "pageview", page: "/" });
             } catch (e) {
                 console.error("Failed to connect with Google Analytics:", e);
             }
