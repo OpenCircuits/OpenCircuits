@@ -12,6 +12,8 @@
   "type": "module",
   "scripts": {
     "start": "node ./build/scripts/start.js",
+    "start:server": "node ./build/scripts/start.js src/server",
+    "start:server:no_auth": "yarn start src/server --extraFlags='--no_auth'",
     "build": "node ./build/scripts/build.js",
     "build:prod": "node ./build/scripts/build.js --prod server digital",
     "test": "node ./build/scripts/test.js",

@@ -3,7 +3,10 @@ title: Firebase Auth Setup
 ---
 
 In order to test with [Firebase Auth](https://firebase.google.com/docs/auth), you'll need to create and setup a Firebase
-project following the instructions [here](https://firebase.google.com/docs/web/setup#create-project). Then register 
+project following the instructions [here](https://firebase.google.com/docs/web/setup#create-project).
+Then, add "Google" as a Sign-in method under Firebase Auth, and add your domain to the "Authorized Domains" tab within the Firebase Auth Settings.
+
+Then register 
 OpenCircuits as a web app in the console (see [here](https://firebase.google.com/docs/web/setup#register-app)).
 From there, you should be able to get your Firebase Config which will have the following format:
 ```json
