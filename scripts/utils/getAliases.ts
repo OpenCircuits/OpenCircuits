@@ -1,5 +1,5 @@
 import path from "node:path";
-import fs from "node:fs";
+import { getTsconfig } from "get-tsconfig";
 
 /**
  * Gets the file aliases.
@@ -9,10 +9,7 @@ import fs from "node:fs";
  * @returns      A record of the alias configuration from the TypeScript aliases.
  */
 export default function getAliases(cwd = process.cwd(), format: "bundler" | "jest" = "bundler") {
-    const file = path.join(cwd, "tsconfig.json");
-
-    const content = fs.readFileSync(file, "utf-8");
-    const rawConfig = new Function("return " + content)();
+    const rawConfig = getTsconfig(cwd, "tsconfig.json")?.config;
 
     const aliases: Record<string, string> = {};
     if (rawConfig?.compilerOptions?.paths) {

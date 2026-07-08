@@ -11209,6 +11209,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-tsconfig@npm:^4.14.0":
+  version: 4.14.0
+  resolution: "get-tsconfig@npm:4.14.0"
+  dependencies:
+    resolve-pkg-maps: "npm:^1.0.0"
+  checksum: 10c0/abc2b9275468eb589079a0b7a95eb5107c14fdd0ca6dda1bff116fe774ea1f79975421dcb22a0c86b4f820fcc69a7655dddf9b6d6a8a2c06fcb59e19794c0724
+  languageName: node
+  linkType: hard
+
 "github-slugger@npm:^1.5.0":
   version: 1.5.0
   resolution: "github-slugger@npm:1.5.0"
@@ -17783,6 +17792,7 @@ __metadata:
     eslint-plugin-import: "npm:^2.32.0"
     eslint-plugin-playwright: "npm:^2.2.0"
     eslint-plugin-react-hooks: "npm:^7.1.1"
+    get-tsconfig: "npm:^4.14.0"
     globals: "npm:^16.3.0"
     jest: "npm:^29.5.0"
     jest-canvas-mock: "npm:^2.5.2"
