@@ -1,6 +1,5 @@
 import path from "node:path";
-
-import ts from "typescript";
+import fs from "node:fs";
 
 /**
  * Gets the file aliases.
@@ -12,13 +11,14 @@ import ts from "typescript";
 export default function getAliases(cwd = process.cwd(), format: "bundler" | "jest" = "bundler") {
     const file = path.join(cwd, "tsconfig.json");
 
-    const rawConfig = ts.readConfigFile(file, ts.sys.readFile).config;
-    const config = ts.parseJsonConfigFileContent(rawConfig, ts.sys, cwd);
+    const content = fs.readFileSync(file, "utf-8");
+    const rawConfig = new Function("return " + content)();
 
     const aliases: Record<string, string> = {};
-    if (config.options.paths) {
-        const paths = config.options.paths;
-        Object.entries(paths).forEach(([n, [p]]) => {
+    if (rawConfig?.compilerOptions?.paths) {
+        const paths = rawConfig.compilerOptions.paths;
+        Object.entries(paths).forEach(([n, pArr]) => {
+            const p = (pArr as string[])[0];
             if (format === "bundler") {
                 const name = n.replace("/*", "");
                 const url = path.resolve(cwd, p.replace("/*", ""));
