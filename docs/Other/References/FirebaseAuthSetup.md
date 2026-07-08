@@ -3,8 +3,12 @@ title: Firebase Auth Setup
 ---
 
 In order to test with [Firebase Auth](https://firebase.google.com/docs/auth), you'll need to create and setup a Firebase
-project following the instructions [here](https://firebase.google.com/docs/web/setup#create-project). Then register 
-OpenCircuits as a web app in the console (see [here](https://firebase.google.com/docs/web/setup#register-app)).
+project following the instructions [here](https://firebase.google.com/docs/web/setup#create-project).
+Then, add "Google" as a Sign-in method under Firebase Auth, and add your domain to the "Authorized Domains" tab within
+the Firebase Auth Settings.
+
+Then register OpenCircuits as a web app in the console
+(see [here](https://firebase.google.com/docs/web/setup#register-app)).
 From there, you should be able to get your Firebase Config which will have the following format:
 ```json
 {
@@ -28,4 +32,5 @@ You can store it in `src/secrets`, but DO NOT COMMIT it to the repo. You then mu
 `-firebase_config="<path-to-file>"` (Note the quotes). If you're using `yarn start`, you can pass it like:
 `yarn start --extraFlags='-firebase_config="./secrets/firebase.json"'` (MUST USE DOUBLE QUOTES FOR `firebase_config`!)
 
-If this is working properly, clicking "sign in with google" in the "sign-in" pop up and you should be prompted without a window that asks you to sign in with your credentials.
+If this is working properly, clicking "sign in with google" in the "sign-in" pop up and you should be prompted without
+a window that asks you to sign in with your credentials.

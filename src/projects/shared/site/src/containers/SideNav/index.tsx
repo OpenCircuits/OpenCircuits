@@ -134,6 +134,20 @@ export const SideNav = ({ exampleCircuits }: Props) => {
                     and our great <a href="https://www.github.com/OpenCircuits/OpenCircuits/blob/master/AUTHORS.md"
                                      target="_blank" rel="noopener noreferrer">team</a>
                 </div>
+                {process.env.OC_VERSION && (
+                    <div className="sidenav__content__version">
+                        {process.env.OC_GIT_COMMIT ? (
+                            <a href={`https://github.com/OpenCircuits/OpenCircuits/commit/${process.env.OC_GIT_COMMIT}`}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               title={`Commit ${process.env.OC_GIT_COMMIT.substring(0, 7)}`}>
+                                {process.env.OC_VERSION || process.env.OC_GIT_COMMIT.substring(0, 7)}
+                            </a>
+                        ) : (
+                            <span>{process.env.OC_VERSION}</span>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     </>);

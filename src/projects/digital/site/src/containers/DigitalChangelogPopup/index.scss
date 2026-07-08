@@ -1,0 +1,135 @@
+@use "~shared/site/utils/theme" as *;
+
+.digital-changelog {
+    font-family: 'Inter', 'Roboto', sans-serif;
+    color: #333;
+    padding: 10px;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+
+        .digital-changelog__icon {
+            font-size: 2.5rem;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(135deg, $primary-color, $secondary-color);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .digital-changelog__subtitle {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #888;
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-left: auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    }
+
+    &__intro {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #555;
+        margin-bottom: 25px;
+        background: rgba(0, 0, 0, 0.02);
+        padding: 15px 20px;
+        border-left: 4px solid $primary-color;
+        border-radius: 4px;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    &__card {
+        background: #ffffff;
+        border: 1px solid #eaeaea;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        gap: 15px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        cursor: default;
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+            border-color: rgba($primary-color, 0.3);
+
+            .digital-changelog__card-icon {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+
+        &-icon {
+            font-size: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        &-content {
+            h3 {
+                margin: 0 0 8px 0;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #222;
+            }
+
+            p {
+                margin: 0;
+                font-size: 0.95rem;
+                line-height: 1.4;
+                color: #666;
+            }
+        }
+    }
+
+    &__footer {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+
+        p {
+            font-size: 0.95rem;
+            color: #777;
+            margin: 0;
+            
+            a {
+                color: $primary-color;
+                font-weight: 600;
+                text-decoration: none;
+                transition: color 0.2s ease;
+
+                &:hover {
+                    color: $secondary-color;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
