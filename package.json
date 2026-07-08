@@ -33,14 +33,13 @@
     "benchmark": "^2.1.4"
   },
   "devDependencies": {
-    "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1",
     "@babel/core": "^7.27.7",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
     "@playwright/test": "^1.53.1",
     "@pmmmwh/react-refresh-webpack-plugin": "0.5.7",
+    "@soda/friendly-errors-webpack-plugin": "^1.8.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^16.3.0",
@@ -55,6 +54,8 @@
     "@types/react-redux": "^7.1.34",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
     "babel-loader": "^10.0.0",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "chalk": "^5.0.1",
@@ -71,7 +72,6 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^9.1.0",
-    "@soda/friendly-errors-webpack-plugin": "^1.8.1",
     "globals": "^16.3.0",
     "html-webpack-plugin": "^5.5.0",
     "interpolate-html-plugin": "^4.0.0",
@@ -90,6 +90,8 @@
     "postcss-loader": "^7.0.0",
     "postcss-preset-env": "^7.7.2",
     "prompts": "^2.4.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-refresh": "0.14.0",
     "react-refresh-typescript": "^2.0.9",
     "sass": "^1.53.0",
@@ -105,6 +107,23 @@
     "webpack-dev-server": "^4.9.3",
     "yargs": "^17.5.1"
   },
+  "dependenciesMeta": {
+    "@firebase/util": {
+      "built": false
+    },
+    "core-js": {
+      "built": false
+    },
+    "core-js-pure": {
+      "built": false
+    },
+    "protobufjs": {
+      "built": false
+    },
+    "unrs-resolver": {
+      "built": false
+    }
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -119,5 +138,6 @@
   },
   "engines": {
     "node": "^24"
-  }
+  },
+  "packageManager": "yarn@4.17.0"
 }

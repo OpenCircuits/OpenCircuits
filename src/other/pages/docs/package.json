@@ -18,18 +18,20 @@
     "@algolia/client-search": "^4.9.1",
     "@docusaurus/core": "3.8.1",
     "@docusaurus/preset-classic": "3.8.1",
-    "react-loadable": "npm:@docusaurus/react-loadable@6.0.0",
-    "search-insights": "^2.13.0",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-loadable": "npm:@docusaurus/react-loadable@6.0.0",
+    "search-insights": "^2.13.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.8.1",
     "@docusaurus/tsconfig": "3.8.1",
     "@docusaurus/types": "3.8.1",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
     "typescript": "^5.8.2"
   },
   "browserslist": {
