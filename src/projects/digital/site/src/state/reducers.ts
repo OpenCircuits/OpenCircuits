@@ -13,7 +13,7 @@ import { icViewerReducer } from "./ICViewer";
 
 import { AppState } from ".";
 
-export const reducers = combineReducers<AppState>({
+export const reducers = combineReducers({
     user: userInfoReducer,
     circuit: circuitInfoReducer,
     header: headerReducer,

@@ -13,13 +13,15 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+      - name: Enable Corepack
+        run: corepack enable
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: "package.json"
           cache: "yarn"
-      - run: yarn
+      - run: yarn --immutable
       - name: Build NGSpice [WASM]
         uses: ./.github/actions/build-ngspice
 
@@ -27,20 +29,25 @@ jobs:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v6
         with:
-          go-version: 1.26
+          go-version-file: src/server/go.mod
+          cache: true
+          cache-dependency-path: src/server/go.sum
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: "package.json"
           cache: "yarn"
 
-      - run: yarn
+      - run: yarn --immutable
 
       - name: Build NGSpice [WASM]
         uses: ./.github/actions/build-ngspice
@@ -58,15 +65,18 @@ jobs:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: "package.json"
           cache: "yarn"
 
-      - run: yarn
+      - run: yarn --immutable
 
       - name: Build NGSpice [WASM]
         uses: ./.github/actions/build-ngspice

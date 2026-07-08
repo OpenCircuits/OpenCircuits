@@ -10,16 +10,18 @@ jobs:
     name: Build Docusaurus
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - name: Enable Corepack
+        run: corepack enable
+      - uses: actions/setup-node@v6
         with:
           node-version-file: "package.json"
           cache: yarn
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Build website
         run: yarn build src/other/pages/docs
 
