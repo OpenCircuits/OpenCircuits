@@ -6,10 +6,10 @@ import ts from "typescript";
  * Gets the file aliases.
  *
  * @param cwd    The directory that contains `tsconfig.json`.
- * @param format The format for the aliases: webpack or jest.
+ * @param format The format for the aliases: bundler or jest.
  * @returns      A record of the alias configuration from the TypeScript aliases.
  */
-export default function getAliases(cwd = process.cwd(), format: "webpack" | "jest" = "webpack") {
+export default function getAliases(cwd = process.cwd(), format: "bundler" | "jest" = "bundler") {
     const file = path.join(cwd, "tsconfig.json");
 
     const rawConfig = ts.readConfigFile(file, ts.sys.readFile).config;
@@ -19,7 +19,7 @@ export default function getAliases(cwd = process.cwd(), format: "webpack" | "jes
     if (config.options.paths) {
         const paths = config.options.paths;
         Object.entries(paths).forEach(([n, [p]]) => {
-            if (format === "webpack") {
+            if (format === "bundler") {
                 const name = n.replace("/*", "");
                 const url = path.resolve(cwd, p.replace("/*", ""));
                 aliases[name] = url;

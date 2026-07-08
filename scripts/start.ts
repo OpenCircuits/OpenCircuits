@@ -7,7 +7,7 @@ import prompts from "prompts";
 import yargs from "yargs";
 
 import { FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir } from "./utils/getDirs.ts";
-import startWebpack from "./webpack/index.ts";
+import startBundler from "./bundler/index.ts";
 import { Spawn } from "./utils/spawn.ts";
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -33,7 +33,7 @@ async function StartServer(extraFlags?: string) {
 }
 
 function StartClient(dir: string, project: string, open: boolean, forcePort?: number) {
-    startWebpack(dir, project, "development", open, forcePort);
+    startBundler(dir, project, "development", open, forcePort);
 }
 
 // CLI

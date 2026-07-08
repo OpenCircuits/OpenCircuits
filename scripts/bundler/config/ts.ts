@@ -1,5 +1,5 @@
-import ReactRefreshWebpackPlugin from "@rspack/plugin-react-refresh";
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
+import { TsCheckerRspackPlugin } from "ts-checker-rspack-plugin";
 
 import getAliases from "../../utils/getAliases.ts";
 
@@ -7,12 +7,12 @@ import type { Config } from "./types.ts";
 import type { Configuration } from "@rspack/core";
 
 /**
- * Returns the typescript webpack configuration.
+ * Returns the typescript bundler configuration.
  *
  * @param config         The current configuration.
  * @param config.rootDir The current root directory.
  * @param config.isDev   Whether or not this is running in a development environment.
- * @returns              The webpack configuration for the TypeScript-specific rules.
+ * @returns              The bundler configuration for the TypeScript-specific rules.
  */
 export default ({ rootDir, isDev }: Config): Configuration => ({
     module: {
@@ -60,9 +60,9 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
 
     plugins: [
         // Setup hot-module refreshing
-        ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+        ...(isDev ? [new ReactRefreshPlugin()] : []),
 
-        new ForkTsCheckerWebpackPlugin({
+        new TsCheckerRspackPlugin({
             typescript: {
                 diagnosticOptions: {
                     semantic: true,

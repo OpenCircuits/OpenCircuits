@@ -14,11 +14,11 @@ import config from "./config/index.ts";
 import customDevServer from "./customDevServer.ts";
 
 /**
- * Basic webpack creation.
+ * Basic bundler creation.
  *
- * @param dir       The directory to launch the webpack instance in.
+ * @param dir       The directory to launch the bundler instance in.
  * @param project   The project that is being started, i.e. "digital" or "analog".
- * @param mode      The webpack-mode: development or production.
+ * @param mode      The bundler-mode: development or production.
  * @param open      Boolean indicating whether or not we should auto-open the browser on start.
  * @param forcePort The port that must be used.
  */

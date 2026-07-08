@@ -1,4 +1,4 @@
-import type { Configuration } from "webpack";
+
 
 export type Config = {
     isProd: boolean;

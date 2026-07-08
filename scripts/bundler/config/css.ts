@@ -4,12 +4,12 @@ import type { Config } from "./types";
 import type { Configuration } from "@rspack/core";
 
 /**
- * Creates the webpack configuration for CSS.
+ * Creates the bundler configuration for CSS.
  *
  * @param config            The current configuration.
  * @param config.isProd     Indicates whether or not this config is for prod.
  * @param config.publicPath The public path.
- * @returns                 The webpack configuration for the CSS-specific rules.
+ * @returns                 The bundler configuration for the CSS-specific rules.
  */
 export default ({ isProd, publicPath }: Config): Configuration => ({
     module: {

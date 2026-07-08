@@ -2,10 +2,10 @@ import type { Config } from "./types.ts";
 import type { Configuration } from "@rspack/core";
 
 /**
- * Returns the wasm webpack configuration.
+ * Returns the wasm bundler configuration.
  *
  * @param config The current configuration.
- * @returns      The webpack configuration for the WASM-specific rules.
+ * @returns      The bundler configuration for the WASM-specific rules.
  */
 export default ({}: Config): Configuration => ({
     module: {

@@ -2,10 +2,10 @@ import type { Config } from "./types";
 import type { Configuration } from "@rspack/core";
 
 /**
- * Creates the webpack configuration for Images.
+ * Creates the bundler configuration for Images.
  *
  * @param config The current configuration.
- * @returns      The webpack configuration for the Image-specific rules.
+ * @returns      The bundler configuration for the Image-specific rules.
  */
 export default ({}: Config): Configuration => ({
     output: {
@@ -18,7 +18,7 @@ export default ({}: Config): Configuration => ({
                 // Test for: .png, .jpg, .jpeg, .gif, and .svg
                 test: /\.(png|jpe?g|gif|svg)$/i,
 
-                // Webpack 5 has builtin image loading support that auto inlines based off of image size
+                // Rspack has builtin image loading support that auto inlines based off of image size
                 type: "asset",
                 // type: "asset/resource", // this extracts all images as separate files
                 // type: "asset/inline", // this inlines all images

@@ -26,7 +26,7 @@ export default defineConfig({
         "**/proto/*.ts",
         // TODO: Don't ignore analog once work on it resumes
         "src/projects/analog/**",
-        "scripts/webpack/**",
+        "scripts/bundler/**",
     ],
     "rules": {
         "curly": "error",
