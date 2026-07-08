@@ -1,4 +1,4 @@
-name: Deploy PR to App Engine
+name: Deploy PR Preview
 
 env:
   CLOUDSDK_CORE_PROJECT: opencircuits-nightly
@@ -9,11 +9,10 @@ concurrency:
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
 
 jobs:
   deploy-preview:
-    if: github.event.action != 'closed'
     name: Setup, Build, and Deploy PR Preview
     runs-on: ubuntu-latest
     permissions:
@@ -67,23 +66,3 @@ jobs:
           PR_URL="https://pr-${{ github.event.pull_request.number }}-dot-$BASE_URL"
 
           gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "PR Preview Deployed at: $PR_URL"
-
-  cleanup-preview:
-    if: github.event.action == 'closed'
-    name: Teardown PR Preview
-    runs-on: ubuntu-latest
-    permissions:
-      contents: "read"
-      id-token: "write"
-    steps:
-      - name: GCloud Auth
-        uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: "projects/995513074839/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
-          service_account: "github-actions@opencircuits-nightly.iam.gserviceaccount.com"
-
-      - name: Setup GCloud
-        uses: google-github-actions/setup-gcloud@v1
-
-      - name: Delete App Engine Version
-        run: gcloud app versions delete pr-${{ github.event.pull_request.number }} --quiet || echo "Version already deleted or not found"

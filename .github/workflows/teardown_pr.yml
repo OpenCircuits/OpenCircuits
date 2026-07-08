@@ -1,0 +1,28 @@
+name: Teardown PR Preview
+
+env:
+  CLOUDSDK_CORE_PROJECT: opencircuits-nightly
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup-preview:
+    name: Teardown PR Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+    steps:
+      - name: GCloud Auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: "projects/995513074839/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "github-actions@opencircuits-nightly.iam.gserviceaccount.com"
+
+      - name: Setup GCloud
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Delete App Engine Version
+        run: gcloud app versions delete pr-${{ github.event.pull_request.number }} --quiet || echo "Version already deleted or not found"
