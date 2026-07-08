@@ -4,6 +4,7 @@ declare global {
             insert?(key: K, map: Map<K, V>): V;
             update?(existing: V, key: K, map: Map<K, V>): V;
         }): V;
+        // TODO: Remove getOrInsert polyfill after moving to Node 26
         getOrInsert(key: K, insertFn: (k: K) => V): V;
     }
 }
