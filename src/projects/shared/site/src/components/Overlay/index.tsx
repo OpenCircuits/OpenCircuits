@@ -14,7 +14,7 @@ export const Overlay = ({ isOpen, close, children }: Props) => {
 
     return (
         <div className={`overlay ${isOpen ? "" : "invisible"}`}
-             role="document"
+             role="progressbar"
              style={{ height: h+"px" }}
              onClick={() => close()}>
             {children}

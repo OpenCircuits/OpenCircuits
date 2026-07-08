@@ -17,11 +17,12 @@ import {SignInOutButtons} from "shared/site/containers/Header/Right/SignInOutBut
 import "./index.scss";
 
 
-function LoadExampleCircuit(data: BackendCircuitMetadata): Promise<string> {
+async function LoadExampleCircuit(data: BackendCircuitMetadata): Promise<ArrayBuffer> {
     return Request({
-        method:  "GET",
-        url:     `/examples/${data.id}`,
+        method: "GET",
+        url: `/examples/${data.id}`,
         headers: {},
+        responseType: "arraybuffer",
     });
 }
 

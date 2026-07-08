@@ -31,6 +31,10 @@ export const pageActions = (page: Page, isMobile?: boolean) => {
         await (isMobile ? main.tap({ position: MOBILE_ITEMNAV_CLOSE_BUTTON }) : main.click({ position: DESKTOP_ITEMNAV_CLOSE_BUTTON }));
     }
 
+    const openSidenav = async () => {
+        await interact(page.getByRole('button', { name: '☰' }));
+    }
+
     const togglePropagationMenu = async () => {
         await interact(page.getByRole("button", { name: "Step" }).nth(1));
     }
@@ -41,5 +45,5 @@ export const pageActions = (page: Page, isMobile?: boolean) => {
         await interact(page.getByRole("button", { name: "Step" }).first());
     }
 
-    return { openItemnav, closeItemnav, togglePropagationMenu, togglePausePropagation, stepPropagation }
+    return { openItemnav, closeItemnav, openSidenav, togglePropagationMenu, togglePausePropagation, stepPropagation }
 }
