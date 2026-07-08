@@ -34,6 +34,10 @@ export default (config: Config): Configuration => {
                 // Extract the JS to /static/js/
                 filename: isProd ? "static/js/[name].[contenthash:8].js" : undefined,
                 chunkFilename: isProd ? "static/js/[name].[contenthash:8].chunk.js" : undefined,
+                
+                // Extract the CSS to /static/css/
+                cssFilename: isProd ? "static/css/[name].[contenthash:8].css" : undefined,
+                cssChunkFilename: isProd ? "static/css/[name].[contenthash:8].chunk.css" : undefined,
             },
 
             plugins: [

@@ -24,9 +24,7 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
                 // Do not want to process anything from node_modules
                 exclude: /node_modules/,
 
-                // Loads from bottom to top:
-                //  So it first goes through the ts-loader to become js
-                //  and then goes through the react compiler.
+                // Process typescript and run the react compiler via Rspack's native SWC loader.
                 use: [
                     {
                         loader: "builtin:swc-loader",
@@ -42,15 +40,9 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
                                         development: isDev,
                                         refresh: isDev,
                                     },
+                                    reactCompiler: true,
                                 },
                             },
-                        },
-                    },
-                    {
-                        loader: "babel-loader",
-                        options: {
-                            presets: ["@babel/preset-typescript"],
-                            plugins: ["babel-plugin-react-compiler"],
                         },
                     },
                 ],
