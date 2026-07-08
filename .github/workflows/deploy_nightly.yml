@@ -35,6 +35,7 @@ jobs:
         uses: actions/setup-node@main
         with:
           node-version-file: "package.json"
+          cache: "yarn"
 
       - name: Install
         run: yarn

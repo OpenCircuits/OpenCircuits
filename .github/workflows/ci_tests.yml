@@ -18,6 +18,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: "package.json"
+          cache: "yarn"
       - run: yarn
       - name: Build NGSpice [WASM]
         uses: ./.github/actions/build-ngspice
@@ -37,6 +38,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: "package.json"
+          cache: "yarn"
 
       - run: yarn
 
@@ -62,6 +64,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: "package.json"
+          cache: "yarn"
 
       - run: yarn
 
