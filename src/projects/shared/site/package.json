@@ -1,18 +1,18 @@
 {
-    "name": "shared-site",
-    "version": "0.0.2",
-    "private": true,
-    "scripts": {},
-    "dependencies": {
-        "firebase": "11.10.0",
-        "jspdf": "^2.5.1",
-        "jwt-decode": "^4.0.0"
-    },
-    "peerDependencies": {
-        "react": "^19.1.0",
-        "react-dom": "^19.1.0",
-        "react-redux": "^9.2.0",
-        "redux": "^4.2.0",
-        "redux-thunk": "^2.4.1"
-    }
+  "name": "shared-site",
+  "version": "0.0.2",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "firebase": "11.10.0",
+    "jspdf": "^2.5.1",
+    "jwt-decode": "^4.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-redux": "^9.2.0",
+    "redux": "^4.2.0",
+    "redux-thunk": "^2.4.1"
+  }
 }

@@ -22,9 +22,8 @@ function GetComponentBusPorts(components: DigitalComponent[]): [DigitalPort[], D
     //  these are "ambiguous" components since we might need to bus to their inputs or outputs
     const ambiComps = components
         .filter(
-            (s) =>
-                s.allPorts.some(EmptyInputPorts) === s.allPorts.some(EmptyOutputPorts),
-                // Then filter out ones that have no available ports
+            (s) => s.allPorts.some(EmptyInputPorts) === s.allPorts.some(EmptyOutputPorts),
+            // Then filter out ones that have no available ports
         )
         .filter((c) => !c.allPorts.every((p) => p.connections.length > 0));
 

@@ -1,22 +1,22 @@
 {
-    "name": "shared-api-circuitdesigner",
-    "version": "0.0.2",
-    "private": true,
-    "dependencies": {
-        "hammerjs": "^2.0.8",
-        "serialeazy": "^2.0.8",
-        "svg2canvas": "^0.0.14",
-        "uuid": "^9.0.0"
-    },
-    "devDependencies": {
-        "@types/hammerjs": "^2.0.39",
-        "@types/uuid": "^8.3.4",
-        "jest-canvas-mock": "^2.5.2"
-    },
-    "jest": {
-        "setupFiles": [
-            "jest-canvas-mock"
-        ],
-        "testEnvironment": "jsdom"
-    }
+  "name": "shared-api-circuitdesigner",
+  "version": "0.0.2",
+  "private": true,
+  "dependencies": {
+    "hammerjs": "^2.0.8",
+    "serialeazy": "^2.0.8",
+    "svg2canvas": "^0.0.14",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/hammerjs": "^2.0.39",
+    "@types/uuid": "^8.3.4",
+    "jest-canvas-mock": "^2.5.2"
+  },
+  "jest": {
+    "setupFiles": [
+      "jest-canvas-mock"
+    ],
+    "testEnvironment": "jsdom"
+  }
 }

@@ -7,4 +7,12 @@ export default defineConfig({
     printWidth: 120,
     quoteProps: "preserve",
     tabWidth: 4,
+    overrides: [
+        {
+            files: ["*.yml", "*.yaml", "*.json"],
+            options: {
+                tabWidth: 2,
+            },
+        },
+    ],
 });
