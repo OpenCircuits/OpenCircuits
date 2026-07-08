@@ -1,15 +1,23 @@
 import "shared/tests/helpers/Extensions";
 
-import {Signal} from "digital/api/circuit/schema/Signal";
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { Signal } from "digital/api/circuit/schema/Signal";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("Latches", () => {
-    const ON = Signal.On, OFF = Signal.Off;
+    const ON = Signal.On,
+        OFF = Signal.Off;
 
     describe("DLatch", () => {
         const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_d, { D: [D], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("DLatch");
+        const [
+            _d,
+            {
+                D: [D],
+                E: [E],
+                Q: [Q],
+                Qinv: [Q2],
+            },
+        ] = PlaceAndConnect("DLatch");
 
         function expectState(signal: Signal): void {
             expect(Q.inputs[0].signal).toBe(signal);
@@ -68,7 +76,16 @@ describe("Latches", () => {
 
     describe("SRLatch", () => {
         const [_, { TurnOn, TurnOff, PlaceAndConnect }] = CreateTestCircuit();
-        const [_sr, { S: [S], R: [R], E: [E], Q: [Q], Qinv: [Q2] }] = PlaceAndConnect("SRLatch");
+        const [
+            _sr,
+            {
+                S: [S],
+                R: [R],
+                E: [E],
+                Q: [Q],
+                Qinv: [Q2],
+            },
+        ] = PlaceAndConnect("SRLatch");
 
         function expectState(signal: Signal): void {
             expect(Q.inputs[0].signal).toBe(signal);

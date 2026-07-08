@@ -1,9 +1,8 @@
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {Circuit} from "shared/api/circuit/public";
+import { Circuit } from "shared/api/circuit/public";
 
-import {ToolHandler, ToolHandlerResponse} from "./ToolHandler";
-
+import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 export function DoPaste(circuit: Circuit, pastedCircuit: Circuit, offset?: Vector) {
     circuit.beginTransaction();
@@ -11,8 +10,7 @@ export function DoPaste(circuit: Circuit, pastedCircuit: Circuit, offset?: Vecto
     const newObjs = circuit.import(pastedCircuit, { refreshIds: true });
     // Offset, Select, and shift the components
     if (offset) {
-        newObjs.components.forEach((o) =>
-            (o.pos = o.pos.add(offset)));
+        newObjs.components.forEach((o) => (o.pos = o.pos.add(offset)));
     }
     newObjs.shift();
     newObjs.select();
@@ -24,16 +22,20 @@ export const PasteHandler = (deserialize: (str: string) => Circuit): ToolHandler
 
     onEvent: (ev, { circuit }) => {
         // Activate when paste event is fired
-        if (ev.type !== "paste")
-            {return ToolHandlerResponse.PASS;}
+        if (ev.type !== "paste") {
+            return ToolHandlerResponse.PASS;
+        }
 
         const clipboardData = ev.ev.clipboardData;
-        if (!clipboardData)
-            {throw new Error("PasteHandler failed: ev.clipboardData is null!");}
+        if (!clipboardData) {
+            throw new Error("PasteHandler failed: ev.clipboardData is null!");
+        }
 
         const data = clipboardData.getData("text/plain");
         if (data.length === 0) // Nothing in clipboard
-            {return ToolHandlerResponse.PASS;}
+        {
+            return ToolHandlerResponse.PASS;
+        }
 
         try {
             const pastedCircuit = deserialize(data);

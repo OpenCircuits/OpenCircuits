@@ -1,30 +1,49 @@
 import "digital/api/circuit/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "digital/api/circuit/tests/helpers/CreateTestCircuit";
-import {ICValidationStatus, IsValidIC} from "digital/site/utils/ICValidation";
-
+import { CreateTestCircuit } from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+import { ICValidationStatus, IsValidIC } from "digital/site/utils/ICValidation";
 
 describe("ICValidation", () => {
     describe("Valid cases", () => {
         test("Basic Switch and LED", () => {
             const [_circuit, { PlaceAndConnect }] = CreateTestCircuit();
-            const [sw, { outputs: [led] }] = PlaceAndConnect("Switch");
+            const [
+                sw,
+                {
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("Switch");
             expect(IsValidIC([sw, led])).toBe(ICValidationStatus.Valid);
         });
         test("Basic Button and LED", () => {
             const [_circuit, { PlaceAndConnect }] = CreateTestCircuit();
-            const [sw, { outputs: [led] }] = PlaceAndConnect("Button");
+            const [
+                sw,
+                {
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("Button");
             expect(IsValidIC([sw, led])).toBe(ICValidationStatus.Valid);
         });
         test("Basic Constant Low and LED", () => {
             const [_circuit, { PlaceAndConnect }] = CreateTestCircuit();
-            const [sw, { outputs: [led] }] = PlaceAndConnect("ConstantLow");
+            const [
+                sw,
+                {
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("ConstantLow");
             expect(IsValidIC([sw, led])).toBe(ICValidationStatus.Valid);
         });
         test("Basic Constant High and LED", () => {
             const [_circuit, { PlaceAndConnect }] = CreateTestCircuit();
-            const [sw, { outputs: [led] }] = PlaceAndConnect("ConstantHigh");
+            const [
+                sw,
+                {
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("ConstantHigh");
             expect(IsValidIC([sw, led])).toBe(ICValidationStatus.Valid);
         });
         test("Basic Constant Number and LEDs", () => {
@@ -34,13 +53,31 @@ describe("ICValidation", () => {
         });
         test("Basic Gate", () => {
             const [_circuit, { PlaceAndConnect }] = CreateTestCircuit();
-            const [gate, { inputs: [sw1, sw2], outputs: [led] }] = PlaceAndConnect("ANDGate");
+            const [
+                gate,
+                {
+                    inputs: [sw1, sw2],
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("ANDGate");
             expect(IsValidIC([sw1, sw2, gate, led])).toBe(ICValidationStatus.Valid);
         });
         test("Two separate circuits", () => {
             const [_circuit, { PlaceAndConnect }] = CreateTestCircuit();
-            const [gate1, { inputs: [sw11, sw12], outputs: [led1] }] = PlaceAndConnect("ANDGate");
-            const [gate2, { inputs: [sw21, sw22], outputs: [led2] }] = PlaceAndConnect("ANDGate");
+            const [
+                gate1,
+                {
+                    inputs: [sw11, sw12],
+                    outputs: [led1],
+                },
+            ] = PlaceAndConnect("ANDGate");
+            const [
+                gate2,
+                {
+                    inputs: [sw21, sw22],
+                    outputs: [led2],
+                },
+            ] = PlaceAndConnect("ANDGate");
             expect(IsValidIC([sw11, sw12, gate1, led1, sw21, sw22, gate2, led2])).toBe(ICValidationStatus.Valid);
         });
         test("Gate with only one input", () => {
@@ -52,7 +89,13 @@ describe("ICValidation", () => {
         });
         test("With Label", () => {
             const [_circuit, { PlaceAndConnect, Place }] = CreateTestCircuit();
-            const [gate, { inputs: [sw1, sw2], outputs: [led] }] = PlaceAndConnect("ANDGate");
+            const [
+                gate,
+                {
+                    inputs: [sw1, sw2],
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("ANDGate");
             const [label] = Place("Label");
             expect(IsValidIC([sw1, sw2, gate, led, label])).toBe(ICValidationStatus.Valid);
         });
@@ -78,9 +121,17 @@ describe("ICValidation", () => {
         });
         test("Completed circuit and extra component", () => {
             const [_circuit, { PlaceAndConnect, Place }] = CreateTestCircuit();
-            const [gate, { inputs: [sw1, sw2], outputs: [led] }] = PlaceAndConnect("ANDGate");
+            const [
+                gate,
+                {
+                    inputs: [sw1, sw2],
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("ANDGate");
             const [gate2] = Place("ORGate");
-            expect([ICValidationStatus.NoInput, ICValidationStatus.NoOutput]).toContain(IsValidIC([sw1, sw2, gate, led, gate2]));
+            expect([ICValidationStatus.NoInput, ICValidationStatus.NoOutput]).toContain(
+                IsValidIC([sw1, sw2, gate, led, gate2]),
+            );
         });
         test("Only Label", () => {
             const [_circuit, { Place }] = CreateTestCircuit();
@@ -88,13 +139,23 @@ describe("ICValidation", () => {
             expect(IsValidIC([label])).toBe(ICValidationStatus.Empty);
         });
         test("Oscilloscope", () => {
-            const [_circuit, { PlaceAndConnect }] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
-            const [scope, { inputs: [sw] }] = PlaceAndConnect("Oscilloscope");
+            const [_circuit, { PlaceAndConnect }] = CreateTestCircuit(/* sim= */ false); // Disable sim since it will queue infinitely
+            const [
+                scope,
+                {
+                    inputs: [sw],
+                },
+            ] = PlaceAndConnect("Oscilloscope");
             expect(IsValidIC([sw, scope])).toBe(ICValidationStatus.ContainsTimedComponents);
         });
         test("Clock", () => {
-            const [_circuit, { PlaceAndConnect }] = CreateTestCircuit(/* sim= */false);  // Disable sim since it will queue infinitely
-            const [clock, { outputs: [led] }] = PlaceAndConnect("Clock");
+            const [_circuit, { PlaceAndConnect }] = CreateTestCircuit(/* sim= */ false); // Disable sim since it will queue infinitely
+            const [
+                clock,
+                {
+                    outputs: [led],
+                },
+            ] = PlaceAndConnect("Clock");
             expect(IsValidIC([clock, led])).toBe(ICValidationStatus.ContainsTimedComponents);
         });
         test("SegmentDisplay", () => {

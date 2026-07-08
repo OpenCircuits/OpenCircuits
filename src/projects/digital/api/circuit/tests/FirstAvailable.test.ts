@@ -1,9 +1,8 @@
 import "shared/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("FirstAvailable", () => {
     test("All ports available", () => {

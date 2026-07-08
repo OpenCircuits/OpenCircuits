@@ -1,21 +1,30 @@
-import {useState} from "react";
+import { useState } from "react";
 
-import {Key} from "shared/api/circuitdesigner/input/Key";
+import { Key } from "shared/api/circuitdesigner/input/Key";
 
-import {useDocEvent} from "./useDocEvent";
-
+import { useDocEvent } from "./useDocEvent";
 
 export const useKey = (key: Key) => {
     const [isKeyDown, setIsKeyDown] = useState(false);
 
-    useDocEvent("keydown", (ev) => {
-        if (ev.key === key)
-            {setIsKeyDown(true);}
-    }, [setIsKeyDown, key]);
-    useDocEvent("keyup", (ev) => {
-        if (ev.key === key)
-            {setIsKeyDown(false);}
-    }, [setIsKeyDown, key]);
+    useDocEvent(
+        "keydown",
+        (ev) => {
+            if (ev.key === key) {
+                setIsKeyDown(true);
+            }
+        },
+        [setIsKeyDown, key],
+    );
+    useDocEvent(
+        "keyup",
+        (ev) => {
+            if (ev.key === key) {
+                setIsKeyDown(false);
+            }
+        },
+        [setIsKeyDown, key],
+    );
 
     return isKeyDown;
-}
+};

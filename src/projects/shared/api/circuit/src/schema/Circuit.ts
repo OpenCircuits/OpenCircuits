@@ -1,13 +1,12 @@
-import {Camera}          from "./Camera";
-import {CircuitMetadata} from "./CircuitMetadata";
-import {Component} from "./Component";
-import {GUID}      from "./GUID";
-import {Port} from "./Port";
-import {Wire} from "./Wire";
-
+import { Camera } from "./Camera";
+import { CircuitMetadata } from "./CircuitMetadata";
+import { Component } from "./Component";
+import { GUID } from "./GUID";
+import { Port } from "./Port";
+import { Wire } from "./Wire";
 
 export interface IntegratedCircuitPin {
-    id: GUID;  // ID of the internal PORT that this pin corresponds to.
+    id: GUID; // ID of the internal PORT that this pin corresponds to.
     group: string;
     name: string;
 

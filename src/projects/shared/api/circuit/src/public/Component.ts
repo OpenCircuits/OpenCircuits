@@ -1,14 +1,12 @@
-import type {Vector} from "Vector";
+import type { Vector } from "Vector";
 
-import type {BaseObject, ReadonlyBaseObject} from "./BaseObject";
-import type {ComponentInfo} from "./ComponentInfo";
-import type {Port, ReadonlyPort} from "./Port";
-import type {ReadonlyWire, Wire} from "./Wire";
-import type {PortConfig} from "../internal/impl/ObjInfo";
+import type { BaseObject, ReadonlyBaseObject } from "./BaseObject";
+import type { ComponentInfo } from "./ComponentInfo";
+import type { Port, ReadonlyPort } from "./Port";
+import type { ReadonlyWire, Wire } from "./Wire";
+import type { PortConfig } from "../internal/impl/ObjInfo";
 
-
-export type {PortConfig} from "../internal/impl/ObjInfo";
-
+export type { PortConfig } from "../internal/impl/ObjInfo";
 
 interface BaseReadonlyComponent<PortT, NodeT> {
     readonly baseKind: "Component";
@@ -34,29 +32,30 @@ interface BaseReadonlyComponent<PortT, NodeT> {
 
 export type ReadonlyComponent = ReadonlyBaseObject & BaseReadonlyComponent<ReadonlyPort, ReadonlyNode>;
 
-export type Component = BaseObject & BaseReadonlyComponent<Port, Node> & {
-    x: number;
-    y: number;
-    pos: Vector;
-    angle: number;
-    zIndex: number;
+export type Component = BaseObject &
+    BaseReadonlyComponent<Port, Node> & {
+        x: number;
+        y: number;
+        pos: Vector;
+        angle: number;
+        zIndex: number;
 
-    shift(): void;
+        shift(): void;
 
-    setPortConfig(config: PortConfig): boolean;
-    firstAvailable(group: string): Port | undefined;
+        setPortConfig(config: PortConfig): boolean;
+        firstAvailable(group: string): Port | undefined;
 
-    replaceWith(newKind: string): void;
+        replaceWith(newKind: string): void;
 
-    delete(): void;
-}
-
+        delete(): void;
+    };
 
 interface BaseNode<NodeT, WireT> {
     readonly path: Array<NodeT | WireT>;
 }
 
 export type ReadonlyNode = ReadonlyComponent & BaseNode<ReadonlyNode, ReadonlyWire>;
-export type Node = Component & BaseNode<Node, Wire> & {
-    snip(): Wire;
-}
+export type Node = Component &
+    BaseNode<Node, Wire> & {
+        snip(): Wire;
+    };

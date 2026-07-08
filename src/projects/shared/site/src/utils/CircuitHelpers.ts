@@ -1,17 +1,16 @@
-import {CircuitDesigner, ToolConfig} from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {setCurDesigner} from "./hooks/useDesigner";
-import {ToolRenderer} from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
-import {Circuit} from "shared/api/circuit/public";
-import {ObjContainer} from "shared/api/circuit/public/ObjContainer";
-
+import { CircuitDesigner, ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { setCurDesigner } from "./hooks/useDesigner";
+import { ToolRenderer } from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
+import { Circuit } from "shared/api/circuit/public";
+import { ObjContainer } from "shared/api/circuit/public/ObjContainer";
 
 // These are helpers that need to be overridden per-circuit-type (digital, analog, etc.)
 // But are used more broadly by the shared site.
 // Mostly relating to I/O and initializations.
 export interface OverrideCircuitHelpers {
-    CreateAndInitializeDesigner: (tools?: {config: ToolConfig, renderers?: ToolRenderer[]}) => CircuitDesigner;
+    CreateAndInitializeDesigner: (tools?: { config: ToolConfig; renderers?: ToolRenderer[] }) => CircuitDesigner;
 
-    Serialize: (circuitOrObjs: Circuit | ObjContainer) => { data: Blob, version: string };
+    Serialize: (circuitOrObjs: Circuit | ObjContainer) => { data: Blob; version: string };
     SerializeAsString: (circuitOrObjs: Circuit | ObjContainer) => string;
     DeserializeCircuit: (data: string | ArrayBuffer) => Circuit;
 }
@@ -22,7 +21,6 @@ export interface SharedCircuitHelpers {
 }
 
 export type CircuitHelpers = OverrideCircuitHelpers & SharedCircuitHelpers;
-
 
 const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
     let curCircuitHelpers: OverrideCircuitHelpers | undefined;
@@ -35,8 +33,11 @@ const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
         }
 
         return (...args: Parameters<OverrideCircuitHelpers[K]>): ReturnType<OverrideCircuitHelpers[K]> => {
-            if (!curCircuitHelpers)
-                {throw new Error(`CircuitHelpers.${k}: CircuitHelpers not initialized, please call 'SetCircuitHelpers' on site initialization!`);}
+            if (!curCircuitHelpers) {
+                throw new Error(
+                    `CircuitHelpers.${k}: CircuitHelpers not initialized, please call 'SetCircuitHelpers' on site initialization!`,
+                );
+            }
             const method = curCircuitHelpers[k];
             return callSafely(method, ...args);
         };
@@ -45,9 +46,9 @@ const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
     return {
         OverrideCircuitHelpers: {
             CreateAndInitializeDesigner: errIfUndefined("CreateAndInitializeDesigner"),
-            Serialize:                   errIfUndefined("Serialize"),
-            SerializeAsString:           errIfUndefined("SerializeAsString"),
-            DeserializeCircuit:          errIfUndefined("DeserializeCircuit"),
+            Serialize: errIfUndefined("Serialize"),
+            SerializeAsString: errIfUndefined("SerializeAsString"),
+            DeserializeCircuit: errIfUndefined("DeserializeCircuit"),
         } satisfies OverrideCircuitHelpers,
         SetCircuitHelpers: (helpers: OverrideCircuitHelpers) => {
             curCircuitHelpers = helpers;
@@ -55,7 +56,7 @@ const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
     };
 })();
 
-export {SetCircuitHelpers};
+export { SetCircuitHelpers };
 
 export const CircuitHelpers: CircuitHelpers = {
     ...OverrideCircuitHelpers,
@@ -70,4 +71,4 @@ export const CircuitHelpers: CircuitHelpers = {
 
         return newDesigner;
     },
-}
+};

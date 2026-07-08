@@ -1,5 +1,4 @@
-import {Vector} from "Vector";
-
+import { Vector } from "Vector";
 
 type DropHandler = (pos: Vector, ...data: unknown[]) => void;
 type DropListener = (pos: Vector, hit: boolean, ...data: unknown[]) => void;
@@ -18,8 +17,9 @@ export const DragDropHandlers = (() => {
         drop: (pos: Vector, ...data: unknown[]) => {
             const el = document.elementFromPoint(pos.x, pos.y) as HTMLElement;
             const hit = handlers.get(el);
-            if (hit)
-                {hit(pos, ...data);}
+            if (hit) {
+                hit(pos, ...data);
+            }
             listeners.forEach((l) => l(pos, !!hit, ...data));
         },
         addListener: (listener: DropListener) => {

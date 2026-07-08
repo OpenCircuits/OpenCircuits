@@ -1,9 +1,8 @@
 import "shared/api/circuit/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuitDesigner} from "tests/helpers/CreateTestCircuitDesigner";
-
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 
 describe("SelectHandler", () => {
     test("Simple click", () => {
@@ -11,9 +10,7 @@ describe("SelectHandler", () => {
         const selections = designer.circuit.selections;
         const [obj1] = PlaceAt(V(0, 0));
 
-        input.moveTo(V(0, 0))
-            .move(V(0, 0))
-            .click();
+        input.moveTo(V(0, 0)).move(V(0, 0)).click();
 
         expect(selections.components).toHaveLength(1);
         expect(selections.components).toContainObjs([obj1]);

@@ -44,7 +44,7 @@
         position: absolute;
 
         top: $icdesigner-name-input-top;
-        left: calc(50vw - #{math.div($icdesigner-name-input-width,2)} - 32px);
+        left: calc(50vw - #{math.div($icdesigner-name-input-width, 2)} - 32px);
 
         width: $icdesigner-name-input-width;
         height: $icdesigner-name-input-height;
@@ -96,10 +96,10 @@
     & .tooltip {
         position: absolute;
 
-        top: calc($icdesigner-name-input-top +
-                  $icdesigner-name-input-height +
-                  $icdesigner-name-input-vertical-padding +
-                  $icdesigner-name-input-border-width);
+        top: calc(
+            $icdesigner-name-input-top + $icdesigner-name-input-height + $icdesigner-name-input-vertical-padding +
+                $icdesigner-name-input-border-width
+        );
         left: 0;
         right: 0;
         margin-inline: auto;

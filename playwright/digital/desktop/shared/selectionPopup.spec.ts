@@ -1,6 +1,6 @@
-import {expect, test} from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-import {pageActions} from "shared/helpers/actions";
+import { pageActions } from "shared/helpers/actions";
 
 test("Basic Selection Popup", async ({ page }) => {
     const { openItemnav } = pageActions(page, false);
@@ -32,10 +32,15 @@ test("Basic Selection Popup", async ({ page }) => {
     await expect(selectionPopup.getByText("Angle")).toBeVisible();
     await expect(selectionPopup.getByText("Replace Component")).toBeVisible();
 
-    const compId: string = await page.evaluate(() => window.Circuit.getComponents().find(({ kind }) => kind === "ConstantLow").id);
+    const compId: string = await page.evaluate(
+        () => window.Circuit.getComponents().find(({ kind }) => kind === "ConstantLow").id,
+    );
     expect(compId).toBeDefined();
     expect(typeof compId).toBe("string");
-    const initProps: { x: number, y: number } = await (page.evaluate((compId) => window.Circuit.getComponent(compId).getProps(), compId));
+    const initProps: { x: number; y: number } = await page.evaluate(
+        (compId) => window.Circuit.getComponent(compId).getProps(),
+        compId,
+    );
     expect(initProps.x).toBeDefined();
     expect(initProps.y).toBeDefined();
     // TODO: Make this locator nicer when the selection popup uses labels better
@@ -44,5 +49,4 @@ test("Basic Selection Popup", async ({ page }) => {
     const roundNumber = (v: number) => `${parseFloat(v.toFixed(2))}`;
     expect(posInputsLocator.locator("nth=0")).toHaveValue(roundNumber(initProps.x));
     expect(posInputsLocator.locator("nth=1")).toHaveValue(roundNumber(initProps.y));
-
 });

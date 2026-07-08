@@ -1,8 +1,8 @@
 import "shared/api/circuitdesigner/types/declarations";
 
-import {SVGDrawing} from "svg2canvas";
+import { SVGDrawing } from "svg2canvas";
 
-import {ToSVGDrawing} from "shared/api/circuitdesigner/utils/ToSVGDrawing";
+import { ToSVGDrawing } from "shared/api/circuitdesigner/utils/ToSVGDrawing";
 
 import bufSVG from "./buf.svg";
 import andSVG from "./and.svg";
@@ -16,7 +16,6 @@ import clockSVG from "./clock.svg";
 import clockOnSVG from "./clockOn.svg";
 import constHighSVG from "./constHigh.svg";
 import constLowSVG from "./constLow.svg";
-
 
 export const SVGs: Map<string, SVGDrawing> = new Map([
     ["buf.svg", ToSVGDrawing("buf", bufSVG)],

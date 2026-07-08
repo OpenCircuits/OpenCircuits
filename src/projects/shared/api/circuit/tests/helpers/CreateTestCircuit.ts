@@ -1,34 +1,42 @@
 import "./Extensions";
 
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {Ok, OkVoid, Result} from "shared/api/circuit/utils/Result";
+import { Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
 
-import {Schema} from "shared/api/circuit/schema";
+import { Schema } from "shared/api/circuit/schema";
 
-import {Circuit, Component, Port, Wire, uuid} from "shared/api/circuit/public";
-import {CircuitImpl}      from "shared/api/circuit/public/impl/Circuit";
-import {CachedCircuitAPIFactoryImpl, CircuitAPIFactory, CircuitContext}             from "shared/api/circuit/public/impl/CircuitContext";
-import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
-import {ComponentImpl}                               from "shared/api/circuit/public/impl/Component";
-import {ComponentInfoImpl}                           from "shared/api/circuit/public/impl/ComponentInfo";
-import {PortImpl}                                    from "shared/api/circuit/public/impl/Port";
-import {WireImpl}                                    from "shared/api/circuit/public/impl/Wire";
+import { Circuit, Component, Port, Wire, uuid } from "shared/api/circuit/public";
+import { CircuitImpl } from "shared/api/circuit/public/impl/Circuit";
+import {
+    CachedCircuitAPIFactoryImpl,
+    CircuitAPIFactory,
+    CircuitContext,
+} from "shared/api/circuit/public/impl/CircuitContext";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { ComponentImpl } from "shared/api/circuit/public/impl/Component";
+import { ComponentInfoImpl } from "shared/api/circuit/public/impl/ComponentInfo";
+import { PortImpl } from "shared/api/circuit/public/impl/Port";
+import { WireImpl } from "shared/api/circuit/public/impl/Wire";
 
-import {GUID}             from "shared/api/circuit/internal";
-import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import {NodeAssembler}    from "shared/api/circuit/internal/assembly/common/NodeAssembler";
-import {WireAssembler}    from "shared/api/circuit/internal/assembly/WireAssembler";
-import {BaseComponentConfigurationInfo,
-        BaseObjInfoProvider, BasePortConfigurationInfo, BaseWireConfigurationInfo, PortConfig} from "shared/api/circuit/internal/impl/ObjInfo";
-import {ComponentAssembler} from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import {AssemblerParams, AssemblyReason} from "shared/api/circuit/internal/assembly/Assembler";
-import {MapObj} from "shared/api/circuit/utils/Functions";
-import {ICComponentAssembler} from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
-import {SelectionsImpl} from "shared/api/circuit/public/impl/Selections";
-import {ObjContainerImpl} from "shared/api/circuit/public/impl/ObjContainer";
-import {IntegratedCircuitImpl} from "shared/api/circuit/public/impl/IntegratedCircuit";
-
+import { GUID } from "shared/api/circuit/internal";
+import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import { NodeAssembler } from "shared/api/circuit/internal/assembly/common/NodeAssembler";
+import { WireAssembler } from "shared/api/circuit/internal/assembly/WireAssembler";
+import {
+    BaseComponentConfigurationInfo,
+    BaseObjInfoProvider,
+    BasePortConfigurationInfo,
+    BaseWireConfigurationInfo,
+    PortConfig,
+} from "shared/api/circuit/internal/impl/ObjInfo";
+import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
+import { MapObj } from "shared/api/circuit/utils/Functions";
+import { ICComponentAssembler } from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
+import { SelectionsImpl } from "shared/api/circuit/public/impl/Selections";
+import { ObjContainerImpl } from "shared/api/circuit/public/impl/ObjContainer";
+import { IntegratedCircuitImpl } from "shared/api/circuit/public/impl/IntegratedCircuit";
 
 // TestCircuit is a circuit with the following specifications:
 // Components:
@@ -48,7 +56,7 @@ import {IntegratedCircuitImpl} from "shared/api/circuit/public/impl/IntegratedCi
 export class TestComponentInfo extends BaseComponentConfigurationInfo {
     protected override getPortInfo(_p: PortConfig, _group: string, _i: number): Pick<Schema.Port, "kind" | "props"> {
         return {
-            kind:  "TestPort",
+            kind: "TestPort",
             props: {},
         };
     }
@@ -65,7 +73,11 @@ export class TestComponentInfo extends BaseComponentConfigurationInfo {
 }
 
 export class TestWireInfo extends BaseWireConfigurationInfo {
-    public override getSplitConnections(_p1: Schema.Port, _p2: Schema.Port, _wire: Schema.Wire): Result<{
+    public override getSplitConnections(
+        _p1: Schema.Port,
+        _p2: Schema.Port,
+        _wire: Schema.Wire,
+    ): Result<{
         nodeKind: string;
         p1Group: string;
         p1Idx: number;
@@ -74,10 +86,10 @@ export class TestWireInfo extends BaseWireConfigurationInfo {
     }> {
         return Ok({
             nodeKind: "TestNode",
-            p1Group:  "",
-            p1Idx:    0,
-            p2Group:  "",
-            p2Idx:    0,
+            p1Group: "",
+            p1Idx: 0,
+            p2Group: "",
+            p2Idx: 0,
         });
     }
 }
@@ -98,42 +110,53 @@ export class TestObjInfoProvider extends BaseObjInfoProvider {
     }
 
     public override createIC(ic: Schema.IntegratedCircuit): void {
-        const ports = ic.metadata.pins.reduce<Record<string, Schema.IntegratedCircuitPin[]>>((prev, pin) => ({
-            ...prev,
-            [pin.group]: [...(prev[pin.group] ?? []), pin],
-        }), {});
+        const ports = ic.metadata.pins.reduce<Record<string, Schema.IntegratedCircuitPin[]>>(
+            (prev, pin) => ({
+                ...prev,
+                [pin.group]: [...(prev[pin.group] ?? []), pin],
+            }),
+            {},
+        );
         const portConfig: PortConfig = MapObj(ports, ([_, pins]) => pins.length);
 
-        this.ics.set(ic.metadata.id, new TestComponentInfo(
+        this.ics.set(
             ic.metadata.id,
-            {},
-            Object.keys(ports),
-            [portConfig],
-            false,
-            MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
-        ));
+            new TestComponentInfo(
+                ic.metadata.id,
+                {},
+                Object.keys(ports),
+                [portConfig],
+                false,
+                MapObj(ports, ([_, pins]) => pins.map((p) => p.name)),
+            ),
+        );
     }
 }
 
 export class TestComponentAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams) {
-        super(params,  {
-            "": () => ({ origin: V(0, 0), target: V(1, 0) }),
-        }, [
-            { // Line
-                kind: "BaseShape",
-
-                dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
-                assemble:     (comp) => ({
-                    kind:      "Rectangle",
-                    transform: this.getTransform(comp),
-                }),
-
-                styleChangesWhenSelected: true,
-
-                getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+        super(
+            params,
+            {
+                "": () => ({ origin: V(0, 0), target: V(1, 0) }),
             },
-        ]);
+            [
+                {
+                    // Line
+                    kind: "BaseShape",
+
+                    dependencies: new Set([AssemblyReason.TransformChanged, AssemblyReason.PortsChanged]),
+                    assemble: (comp) => ({
+                        kind: "Rectangle",
+                        transform: this.getTransform(comp),
+                    }),
+
+                    styleChangesWhenSelected: true,
+
+                    getStyle: (comp) => this.options.fillStyle(this.isSelected(comp.id)),
+                },
+            ],
+        );
     }
 
     protected override getSize(_comp: Schema.Component): Vector {
@@ -149,7 +172,7 @@ export class TestCircuitContext extends CircuitContext<CircuitAPITypes> {
         super(id, new TestObjInfoProvider([{ "": 1 }, ...additionalPortConfigs]));
 
         this.assembler = new CircuitAssembler(this.internal, this.renderOptions, (params) => ({
-            "IC":       new ICComponentAssembler(params),
+            "IC": new ICComponentAssembler(params),
             "TestWire": new WireAssembler(params),
             "TestComp": new TestComponentAssembler(params),
             "TestNode": new NodeAssembler(params, { "": () => ({ origin: V(0, 0), target: V(0, 0) }) }),
@@ -158,8 +181,8 @@ export class TestCircuitContext extends CircuitContext<CircuitAPITypes> {
         }));
         this.factory = new CachedCircuitAPIFactoryImpl({
             constructComponent: (id, icId) => new ComponentImpl(this, id, icId),
-            constructWire:      (id, icId) => new WireImpl(this, id, icId),
-            constructPort:      (id, icId) => new PortImpl(this, id, icId),
+            constructWire: (id, icId) => new WireImpl(this, id, icId),
+            constructPort: (id, icId) => new PortImpl(this, id, icId),
 
             constructIC: (id) => new IntegratedCircuitImpl(this, id),
 
@@ -191,9 +214,7 @@ export function CreateTestCircuitHelpers(circuit: Circuit): TestCircuitHelpers {
     };
 }
 
-export function CreateTestCircuit(
-    additionalPortConfigs: PortConfig[] = []
-): [Circuit, TestCircuitHelpers] {
+export function CreateTestCircuit(additionalPortConfigs: PortConfig[] = []): [Circuit, TestCircuitHelpers] {
     const circuit = new TestCircuitImpl(uuid(), additionalPortConfigs);
     return [circuit, CreateTestCircuitHelpers(circuit)];
 }

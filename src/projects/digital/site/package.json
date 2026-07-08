@@ -1,8 +1,8 @@
 {
   "name": "digital-site",
-  "description": "The digital version of OpenCircuits",
   "version": "4.0.0",
   "private": true,
+  "description": "The digital version of OpenCircuits",
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
     "firebase": "11.10.0",

@@ -1,8 +1,7 @@
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
-import type {Config}        from "./types";
-import type {Configuration} from "webpack";
-
+import type { Config } from "./types";
+import type { Configuration } from "webpack";
 
 /**
  * Creates the webpack configuration for CSS.
@@ -26,25 +25,23 @@ export default ({ isProd, publicPath }: Config): Configuration => ({
                 //  then shoots it into mini-css-extract-plugin to extract it out of the bundle and into a separate file
                 use: [
                     {
-                        loader:  MiniCssExtractPlugin.loader,
+                        loader: MiniCssExtractPlugin.loader,
                         options: { publicPath },
                     },
                     {
-                        loader:  "css-loader",
+                        loader: "css-loader",
                         options: {
                             importLoaders: 2,
-                            modules:       {
+                            modules: {
                                 mode: "icss",
                             },
                         },
                     },
                     {
-                        loader:  "postcss-loader",
+                        loader: "postcss-loader",
                         options: {
                             postcssOptions: {
-                                plugins: [
-                                    "postcss-preset-env",
-                                ],
+                                plugins: ["postcss-preset-env"],
                             },
                         },
                     },
@@ -55,10 +52,14 @@ export default ({ isProd, publicPath }: Config): Configuration => ({
     },
 
     plugins: [
-        new MiniCssExtractPlugin(isProd ? {
-            // Extract the css to /static/css/
-            filename:      "static/css/[name].[contenthash:8].css",
-            chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
-        } : undefined),
+        new MiniCssExtractPlugin(
+            isProd
+                ? {
+                      // Extract the css to /static/css/
+                      filename: "static/css/[name].[contenthash:8].css",
+                      chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+                  }
+                : undefined,
+        ),
     ],
 });

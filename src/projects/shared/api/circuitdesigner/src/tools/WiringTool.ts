@@ -1,18 +1,17 @@
-import {Vector} from "Vector";
+import { Vector } from "Vector";
 
-import {CircleContains} from "math/MathUtils";
+import { CircleContains } from "math/MathUtils";
 
-import {MinDist} from "shared/api/circuit/utils/Reducers";
+import { MinDist } from "shared/api/circuit/utils/Reducers";
 
-import {Circuit, Port} from "shared/api/circuit/public";
+import { Circuit, Port } from "shared/api/circuit/public";
 
-import {CircuitDesigner}                       from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
-import {InputAdapterEvent}                     from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {Tool, ToolEvent}                       from "./Tool";
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {Cursor} from "../input/Cursor";
-
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { Tool, ToolEvent } from "./Tool";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { Cursor } from "../input/Cursor";
 
 // The distance away from the port in selection for wiring.
 export const WIRING_PORT_SELECT_RADIUS = 0.34;
@@ -61,27 +60,25 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
             //  can connect to `otherPort`
             .filter((port) => (!otherPort ? true : port.canConnectTo(otherPort)));
 
-        if (validPorts.length === 0)
-            {return undefined;}
+        if (validPorts.length === 0) {
+            return undefined;
+        }
 
         // Find closest port to the cursor
-        return validPorts
-            .map((port) => ({ port, dist: pos.distanceTo(port.targetPos) }))
-            .reduce(MinDist).port;
+        return validPorts.map((port) => ({ port, dist: pos.distanceTo(port.targetPos) })).reduce(MinDist).port;
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        if (this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit) !== undefined)
-            {return "pointer";}
+        if (this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit) !== undefined) {
+            return "pointer";
+        }
     }
     public shouldActivate(ev: InputAdapterEvent, { circuit, viewport, curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user drags or clicks on a port
         return (
-            (
-                (ev.type === "mousedrag" && ev.button === LEFT_MOUSE_BUTTON && ev.input.touchCount === 1) ||
-                (ev.type === "click")
-            )
-            && (curPressedObj?.baseKind === "Port" ||
+            ((ev.type === "mousedrag" && ev.button === LEFT_MOUSE_BUTTON && ev.input.touchCount === 1) ||
+                ev.type === "click") &&
+            (curPressedObj?.baseKind === "Port" ||
                 this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit) !== undefined)
         );
     }
@@ -97,24 +94,24 @@ export class WiringTool extends ObservableImpl<ToolEvent> implements Tool {
 
     public onActivate(ev: InputAdapterEvent, { circuit, curPressedObj, viewport }: CircuitDesigner): void {
         const targetPos = viewport.toWorldPos(ev.input.mousePos);
-        this.curPort = curPressedObj?.baseKind === "Port"
-            ? curPressedObj
-            : this.findPort(targetPos, circuit);
+        this.curPort = curPressedObj?.baseKind === "Port" ? curPressedObj : this.findPort(targetPos, circuit);
         this.curTarget = targetPos;
 
-        this.stateType = (ev.type === "click" ? "clicked" : "dragged");
+        this.stateType = ev.type === "click" ? "clicked" : "dragged";
 
         // Set cursor
-        viewport.canvasInfo!.cursor = (this.stateType === "clicked" ? "pointer" : "grabbing");
+        viewport.canvasInfo!.cursor = this.stateType === "clicked" ? "pointer" : "grabbing";
     }
 
     public onDeactivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): void {
         const port2 = this.findPort(viewport.toWorldPos(ev.input.mousePos), circuit, this.curPort);
         if (port2 && this.curPort!.canConnectTo(port2)) // Connect the ports if we found a second port
-            {this.curPort!.connectTo(port2);}
+        {
+            this.curPort!.connectTo(port2);
+        }
 
         this.curPort = undefined;
-        this.curTarget = undefined
+        this.curTarget = undefined;
     }
 
     public onEvent(ev: InputAdapterEvent, { viewport }: CircuitDesigner): void {

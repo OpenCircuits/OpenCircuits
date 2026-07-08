@@ -1,38 +1,35 @@
-import {Circuit, Component} from "shared/api/circuit/public";
+import { Circuit, Component } from "shared/api/circuit/public";
 
-import {useSelectionProps} from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
+import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
-import {SelectModuleInputField} from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
-
+import { SelectModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 
 type Props = {
     readonly circuit: Circuit;
     readonly kinds: Set<string>;
     readonly basisPortGroup: string;
     readonly label: string;
-}
+};
 export const PortCountModule = ({ circuit, kinds, basisPortGroup, label }: Props) => {
     const [props, comps] = useSelectionProps(
         circuit,
-        (c): c is Component => (
-            (c.baseKind === "Component")
-            && (kinds.has(c.kind))
-        ),
+        (c): c is Component => c.baseKind === "Component" && kinds.has(c.kind),
         (c) => ({
-            "configIndex": c.info.portConfigs.findIndex((config) =>
-                config[basisPortGroup] === c.ports[basisPortGroup]?.length),
+            "configIndex": c.info.portConfigs.findIndex(
+                (config) => config[basisPortGroup] === c.ports[basisPortGroup]?.length,
+            ),
         }),
     );
 
-    if (!props || comps.length === 0)
-        {return;}
+    if (!props || comps.length === 0) {
+        return;
+    }
 
     const cfgIndices = props["configIndex"];
 
     // ASSUMES ALL PORT CONFIGS ARE THE SAME FOR NOW
     // Get all possible values for this group (from component 0)
-    const options = comps[0].info.portConfigs.map((config, i) =>
-        [`${config[basisPortGroup]}`, i] as const);
+    const options = comps[0].info.portConfigs.map((config, i) => [`${config[basisPortGroup]}`, i] as const);
 
     return (
         <div>
@@ -44,10 +41,10 @@ export const PortCountModule = ({ circuit, kinds, basisPortGroup, label }: Props
                     options={options}
                     props={cfgIndices}
                     doChange={(newVals) => {
-                        comps.forEach((comp, i) =>
-                            comp.setPortConfig(comp.info.portConfigs[newVals[i]]));
-                    }} />
+                        comps.forEach((comp, i) => comp.setPortConfig(comp.info.portConfigs[newVals[i]]));
+                    }}
+                />
             </label>
         </div>
     );
-}
+};

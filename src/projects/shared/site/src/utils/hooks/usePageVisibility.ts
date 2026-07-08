@@ -1,5 +1,4 @@
-import {useEffect, useState} from "react";
-
+import { useEffect, useState } from "react";
 
 export const usePageVisibility = () => {
     const [isVisible, setIsVisible] = useState(true);
@@ -7,7 +6,7 @@ export const usePageVisibility = () => {
     useEffect(() => {
         const listener = () => {
             setIsVisible(!document.hidden);
-        }
+        };
 
         document.addEventListener("visibilitychange", listener);
 
@@ -15,4 +14,4 @@ export const usePageVisibility = () => {
     }, [setIsVisible]);
 
     return isVisible;
-}
+};

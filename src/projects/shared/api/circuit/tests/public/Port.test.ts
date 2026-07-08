@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
-import {Rect} from "math/Rect";
+import { Rect } from "math/Rect";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("Port", () => {
     describe("Bounds", () => {
@@ -14,33 +13,40 @@ describe("Port", () => {
 
         test("Default bounds", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
-            expect(port.bounds).toApproximatelyEqual(Rect.From({
-                bottom: -defaultPortRadius,
-                top:    defaultPortRadius,
-                left:   0,
-                right:  defaultPortLength + defaultPortRadius,
-            }));
+            expect(port.bounds).toApproximatelyEqual(
+                Rect.From({
+                    bottom: -defaultPortRadius,
+                    top: defaultPortRadius,
+                    left: 0,
+                    right: defaultPortLength + defaultPortRadius,
+                }),
+            );
         });
         test("Rotation", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             c.angle = Math.PI / 2;
-            expect(port.bounds).toApproximatelyEqual(Rect.From({
-                left:   -defaultPortRadius,
-                right:  defaultPortRadius,
-                bottom: 0,
-                top:    defaultPortLength + defaultPortRadius,
-            }));
+            expect(port.bounds).toApproximatelyEqual(
+                Rect.From({
+                    left: -defaultPortRadius,
+                    right: defaultPortRadius,
+                    bottom: 0,
+                    top: defaultPortLength + defaultPortRadius,
+                }),
+            );
         });
     });
 
     describe("Name", () => {
         test("set and undo/redo", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.name).toBeUndefined();
             GetPort(c).name = "Test Component";
@@ -55,7 +61,8 @@ describe("Port", () => {
     describe("isSelected", () => {
         test("Set/Get isSelected", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.isSelected).toBeFalsy();
 
@@ -76,7 +83,8 @@ describe("Port", () => {
 
         test("Select/Deselect", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.isSelected).toBeFalsy();
 
@@ -104,7 +112,8 @@ describe("Port", () => {
     describe("Exists", () => {
         test("Add/delete and undo/redo", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit([{ "": 2 }]);
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.exists()).toBeTruthy();
             circuit.undo();
@@ -132,7 +141,8 @@ describe("Port", () => {
         });
         test("circuit.deleteObjs", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             circuit.deleteObjs([c]);
             expect(port.exists()).toBeFalsy();
@@ -146,7 +156,8 @@ describe("Port", () => {
     describe("Props", () => {
         test("getProps", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             port.name = "Test Port";
             port.select();
@@ -160,7 +171,8 @@ describe("Port", () => {
 
         test("setProp", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             port.setProp("name", "Test Component");
             expect(port.name).toBe("Test Component");
@@ -168,7 +180,8 @@ describe("Port", () => {
 
         test("getProp", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.getProp("name")).toBeUndefined();
             port.name = "Test Component";
@@ -177,23 +190,28 @@ describe("Port", () => {
 
         test("getProp with invalid prop", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.getProp("fakeProp")).toBeUndefined();
         });
 
         test("Set invalid prop", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
-            expect(() => { port.setProp("fakeProp", true) }).toThrow();
+            expect(() => {
+                port.setProp("fakeProp", true);
+            }).toThrow();
         });
     });
 
     describe("Info", () => {
         test("parent", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.parent).toBeObj(c);
         });
@@ -218,7 +236,8 @@ describe("Port", () => {
     describe("Position", () => {
         test("Origin/Target", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             expect(port.originPos.x).toApproximatelyEqual(0);
             expect(port.originPos.y).toApproximatelyEqual(0);
@@ -229,7 +248,8 @@ describe("Port", () => {
         });
         test("Rotation", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c] = PlaceAt(V(0, 0)), port = GetPort(c);
+            const [c] = PlaceAt(V(0, 0)),
+                port = GetPort(c);
 
             c.angle = Math.PI / 2;
 
@@ -324,7 +344,8 @@ describe("Port", () => {
     describe("Get Legal Wires", () => {
         test("can connect to self", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c1] = PlaceAt(V(0, 0)), port = GetPort(c1);
+            const [c1] = PlaceAt(V(0, 0)),
+                port = GetPort(c1);
 
             expect(port.canConnectTo(port)).toBeTruthy();
             port.connectTo(port);

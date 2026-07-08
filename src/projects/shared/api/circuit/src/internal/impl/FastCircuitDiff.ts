@@ -1,10 +1,9 @@
-import {GUID, Schema} from "shared/api/circuit/schema";
-import {assertNever} from "../utils/TypeEnforcement";
+import { GUID, Schema } from "shared/api/circuit/schema";
+import { assertNever } from "../utils/TypeEnforcement";
 
-import {CircuitOp} from "./CircuitOps";
+import { CircuitOp } from "./CircuitOps";
 
 import "shared/api/circuit/utils/Map";
-
 
 // FastCircuitDiff is a simple, coarse description of how a circuit changed, primarily for invalidating objects computed
 // from circuit objects, namely the view.  This avoids the potentially complex logic of CircuitDiff for high-throughput
@@ -20,13 +19,13 @@ export interface FastCircuitDiff {
     removedComponents: ReadonlySet<GUID>;
 
     // Ports
-    addedPorts: ReadonlyMap<GUID, ReadonlySet<GUID>>;    // parentComp.id : addedPort.id[]
-    removedPorts: ReadonlyMap<GUID, ReadonlySet<GUID>>;  // parentComp.id : removePort.id[]
+    addedPorts: ReadonlyMap<GUID, ReadonlySet<GUID>>; // parentComp.id : addedPort.id[]
+    removedPorts: ReadonlyMap<GUID, ReadonlySet<GUID>>; // parentComp.id : removePort.id[]
 
     // Wires
     addedWires: ReadonlySet<GUID>;
     removedWires: ReadonlySet<GUID>;
-    removedWiresPorts: ReadonlyMap<GUID, [GUID, GUID]>;  // removedWire.id : [removedWire.p1, removedWire.p2]
+    removedWiresPorts: ReadonlyMap<GUID, [GUID, GUID]>; // removedWire.id : [removedWire.p1, removedWire.p2]
 
     // All props on all objects that may have changed
     propsChanged: ReadonlyMap<GUID, Set<string>>;
@@ -59,33 +58,33 @@ export class FastCircuitDiffBuilder {
     }
 
     public constructor() {
-        this.addedICs          = new Set();
-        this.removedICs        = new Set();
-        this.changedPropICs    = new Set();
-        this.addedComponents   = new Set();
+        this.addedICs = new Set();
+        this.removedICs = new Set();
+        this.changedPropICs = new Set();
+        this.addedComponents = new Set();
         this.removedComponents = new Set();
-        this.addedPorts        = new Map();
-        this.removedPorts      = new Map();
-        this.addedWires        = new Set();
-        this.removedWires      = new Set();
+        this.addedPorts = new Map();
+        this.removedPorts = new Map();
+        this.addedWires = new Set();
+        this.removedWires = new Set();
         this.removedWiresPorts = new Map();
-        this.propsChanged      = new Map();
+        this.propsChanged = new Map();
     }
 
     // Discard this after calling
     public build(): FastCircuitDiff {
         return {
-            addedICs:          this.addedICs,
-            removedICs:        this.removedICs,
-            changedPropICs:    this.changedPropICs,
-            addedComponents:   this.addedComponents,
+            addedICs: this.addedICs,
+            removedICs: this.removedICs,
+            changedPropICs: this.changedPropICs,
+            addedComponents: this.addedComponents,
             removedComponents: this.removedComponents,
-            addedPorts:        this.addedPorts,
-            removedPorts:      this.removedPorts,
-            addedWires:        this.addedWires,
-            removedWires:      this.removedWires,
+            addedPorts: this.addedPorts,
+            removedPorts: this.removedPorts,
+            addedWires: this.addedWires,
+            removedWires: this.removedWires,
             removedWiresPorts: this.removedWiresPorts,
-            propsChanged:      this.propsChanged,
+            propsChanged: this.propsChanged,
         };
     }
 
@@ -132,7 +131,7 @@ export class FastCircuitDiffBuilder {
                         removedPorts.add(p.id);
                     });
                     op.deadWires.forEach((w) => {
-                        this.addedWires.delete(w.id)
+                        this.addedWires.delete(w.id);
                         this.removedWires.add(w.id);
                         this.removedWiresPorts.set(w.id, [w.p1, w.p2]);
                     });
@@ -173,27 +172,36 @@ export class FastCircuitDiffBuilder {
 
     public applyDiff(diff: FastCircuitDiff) {
         const merge = <T>(from: ReadonlySet<T>, into: Set<T>) => from.forEach((v) => into.add(v));
-        merge(diff.addedICs,          this.addedICs);
-        merge(diff.removedICs,        this.removedICs);
-        merge(diff.changedPropICs,    this.changedPropICs);
-        merge(diff.addedComponents,   this.addedComponents);
+        merge(diff.addedICs, this.addedICs);
+        merge(diff.removedICs, this.removedICs);
+        merge(diff.changedPropICs, this.changedPropICs);
+        merge(diff.addedComponents, this.addedComponents);
         merge(diff.removedComponents, this.removedComponents);
-        diff.addedPorts.forEach((ports, comp) => merge(ports, this.addedPorts.getOrInsert(comp, () => new Set())));
-        diff.removedPorts.forEach((ports, comp) => merge(ports, this.removedPorts.getOrInsert(comp, () => new Set())));
-        merge(diff.addedWires,        this.addedWires);
-        merge(diff.removedWires,      this.removedWires);
+        diff.addedPorts.forEach((ports, comp) =>
+            merge(
+                ports,
+                this.addedPorts.getOrInsert(comp, () => new Set()),
+            ),
+        );
+        diff.removedPorts.forEach((ports, comp) =>
+            merge(
+                ports,
+                this.removedPorts.getOrInsert(comp, () => new Set()),
+            ),
+        );
+        merge(diff.addedWires, this.addedWires);
+        merge(diff.removedWires, this.removedWires);
         diff.removedWiresPorts.forEach((ports, wire) => this.removedWiresPorts.set(wire, ports));
         diff.propsChanged.forEach((v, k) => merge(v, this.getOrCreatePropSet(k)));
     }
 }
-
 
 export interface ComponentPortDiff {
     added: Map<GUID, Schema.Port>;
     removed: Map<GUID, Schema.Port>;
 }
 
-type PropDiff = {oldVal?: Schema.Prop, newVal?: Schema.Prop};
+type PropDiff = { oldVal?: Schema.Prop; newVal?: Schema.Prop };
 export type PropsDiff = Map<string, PropDiff>;
 
 // CircuitDiff accumulates the net difference from a known-legal sequence of CircuitOps.  This is useful when a minimal
@@ -225,6 +233,6 @@ export interface CircuitDiff {
     //
     // Property changes.  Includes objects that were added/removed.
     //
-    changedComponents: ReadonlyMap<GUID, { oldKind?: string, newKind?: string }>;
+    changedComponents: ReadonlyMap<GUID, { oldKind?: string; newKind?: string }>;
     propsDiff: ReadonlyMap<GUID, PropsDiff>;
 }

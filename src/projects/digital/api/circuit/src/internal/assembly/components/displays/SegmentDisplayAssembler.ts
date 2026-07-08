@@ -1,10 +1,9 @@
-import {AssemblerParams} from "shared/api/circuit/internal/assembly/Assembler";
-import {DigitalSim}           from "digital/api/circuit/internal/sim/DigitalSim";
-import {BaseDisplayAssembler} from "./BaseDisplayAssembler";
-import {Vector} from "Vector";
-import {Schema} from "shared/api/circuit/schema";
-import {SegmentType, Segments} from "./SegmentDisplayConstants";
-
+import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
+import { BaseDisplayAssembler } from "./BaseDisplayAssembler";
+import { Vector } from "Vector";
+import { Schema } from "shared/api/circuit/schema";
+import { SegmentType, Segments } from "./SegmentDisplayConstants";
 
 export class SegmentDisplayAssembler extends BaseDisplayAssembler {
     public constructor(params: AssemblerParams, sim: DigitalSim) {
@@ -15,9 +14,12 @@ export class SegmentDisplayAssembler extends BaseDisplayAssembler {
         const inputValues = this.getInputValues(comp);
         const segments = Segments[inputValues.length];
 
-        return inputValues.map((inputIsOn, index) => {
-            if (segmentsOn === inputIsOn)
-                {return segments[index];}
-        }).filter((prim) => prim !== undefined);
+        return inputValues
+            .map((inputIsOn, index) => {
+                if (segmentsOn === inputIsOn) {
+                    return segments[index];
+                }
+            })
+            .filter((prim) => prim !== undefined);
     }
 }

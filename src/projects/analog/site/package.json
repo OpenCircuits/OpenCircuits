@@ -1,8 +1,8 @@
 {
   "name": "analog-site",
-  "description": "The analog version of OpenCircuits",
   "version": "1.0.0",
   "private": true,
+  "description": "The analog version of OpenCircuits",
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
     "firebase": "11.10.0",

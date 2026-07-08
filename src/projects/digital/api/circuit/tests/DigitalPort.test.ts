@@ -1,8 +1,7 @@
 import "shared/tests/helpers/Extensions";
 
-import {V}             from "Vector";
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-
+import { V } from "Vector";
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("DigitalPort", () => {
     test("Connected Ports", () => {
@@ -30,9 +29,9 @@ describe("DigitalPort", () => {
         test("Use input port twice should Error", () => {
             const [circuit] = CreateTestCircuit();
 
-            const i1 = circuit.placeComponentAt("Switch", V(0,  5));
+            const i1 = circuit.placeComponentAt("Switch", V(0, 5));
             const i2 = circuit.placeComponentAt("Switch", V(0, -5));
-            const o1 = circuit.placeComponentAt("LED",    V(5,  0));
+            const o1 = circuit.placeComponentAt("LED", V(5, 0));
 
             i1.outputs[0].connectTo(o1.inputs[0]);
             expect(i1.outputs[0].connections).toHaveLength(1);
@@ -47,7 +46,7 @@ describe("DigitalPort", () => {
         test("Output port -> Output port should Error", () => {
             const [circuit] = CreateTestCircuit();
 
-            const i1 = circuit.placeComponentAt("Switch", V(0,  5));
+            const i1 = circuit.placeComponentAt("Switch", V(0, 5));
             const i2 = circuit.placeComponentAt("Switch", V(0, -5));
 
             expect(() => i2.outputs[0].connectTo(i2.outputs[0])).toThrow();
@@ -58,7 +57,7 @@ describe("DigitalPort", () => {
         test("Input port -> Input port should Error", () => {
             const [circuit] = CreateTestCircuit();
 
-            const o1 = circuit.placeComponentAt("LED", V(0,  5));
+            const o1 = circuit.placeComponentAt("LED", V(0, 5));
             const o2 = circuit.placeComponentAt("LED", V(0, -5));
 
             expect(() => o1.inputs[0].connectTo(o2.inputs[0])).toThrow();

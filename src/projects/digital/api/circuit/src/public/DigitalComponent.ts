@@ -1,8 +1,7 @@
-import {Component, Node, ReadonlyComponent, ReadonlyNode} from "shared/api/circuit/public";
+import { Component, Node, ReadonlyComponent, ReadonlyNode } from "shared/api/circuit/public";
 
-import {DigitalPort, ReadonlyDigitalPort}  from "./DigitalPort";
-import {APIToDigital} from "./DigitalCircuit";
-
+import { DigitalPort, ReadonlyDigitalPort } from "./DigitalPort";
+import { APIToDigital } from "./DigitalCircuit";
 
 interface BaseReadonlyDigitalComponent<P, N> {
     readonly inputs: P[];
@@ -14,15 +13,12 @@ interface BaseReadonlyDigitalComponent<P, N> {
 export type ReadonlyDigitalComponent = APIToDigital<ReadonlyComponent> &
     BaseReadonlyDigitalComponent<ReadonlyDigitalPort, ReadonlyDigitalNode>;
 
-
 export type DigitalComponent = APIToDigital<Component> &
     BaseReadonlyDigitalComponent<DigitalPort, DigitalNode> & {
+        setSimState(state?: number[]): void;
+    };
 
-    setSimState(state?: number[]): void;
-}
-
-
-type ReadonlyDigitalNodeBase = (APIToDigital<ReadonlyNode> & ReadonlyDigitalComponent);
+type ReadonlyDigitalNodeBase = APIToDigital<ReadonlyNode> & ReadonlyDigitalComponent;
 export interface ReadonlyDigitalNode extends ReadonlyDigitalNodeBase {}
-type DigitalNodeBase = (APIToDigital<Node> & DigitalComponent & ReadonlyDigitalNode);
+type DigitalNodeBase = APIToDigital<Node> & DigitalComponent & ReadonlyDigitalNode;
 export interface DigitalNode extends DigitalNodeBase {}

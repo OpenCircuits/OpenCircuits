@@ -14,7 +14,9 @@
     "jest-canvas-mock": "^2.5.2"
   },
   "jest": {
-    "testEnvironment": "jsdom",
-    "setupFiles": ["jest-canvas-mock"]
+    "setupFiles": [
+      "jest-canvas-mock"
+    ],
+    "testEnvironment": "jsdom"
   }
 }

@@ -1,5 +1,5 @@
-name: 'Build NGSpice WASM'
-description: 'Caches and builds the NGSpice WASM library.'
+name: "Build NGSpice WASM"
+description: "Caches and builds the NGSpice WASM library."
 runs:
   using: "composite"
   steps:

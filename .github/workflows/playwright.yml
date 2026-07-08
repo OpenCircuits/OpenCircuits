@@ -1,21 +1,21 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 jobs:
   prepare:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version-file: 'package.json'
-    - run: yarn
-    - name: Build NGSpice [WASM]
-      uses: ./.github/actions/build-ngspice
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+      - run: yarn
+      - name: Build NGSpice [WASM]
+        uses: ./.github/actions/build-ngspice
 
   playwright-test:
     needs: prepare
@@ -27,21 +27,21 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version-file: 'package.json'
-    - name: Install dependencies
-      run: yarn
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Build NGSpice [WASM]
-      uses: ./.github/actions/build-ngspice
-    - name: Run Playwright tests
-      run: yarn test-e2e:ci
-    - uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: playwright-report-${{ matrix.os }}
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+      - name: Install dependencies
+        run: yarn
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Build NGSpice [WASM]
+        uses: ./.github/actions/build-ngspice
+      - name: Run Playwright tests
+        run: yarn test-e2e:ci
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-${{ matrix.os }}
+          path: playwright-report/
+          retention-days: 30

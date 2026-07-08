@@ -1,8 +1,7 @@
-import {Vector}         from "Vector";
-import {UserInputState} from "./UserInputState";
+import { Vector } from "Vector";
+import { UserInputState } from "./UserInputState";
 
-import {Key} from "./Key";
-
+import { Key } from "./Key";
 
 export interface BaseInputEvent {
     input: UserInputState;
@@ -29,5 +28,9 @@ export interface OtherInputEvent extends BaseInputEvent {
 }
 
 export type InputAdapterEvent =
-    MouseInputEvent | KeyboardInputEvent | ZoomInputEvent | CopyPasteInputEvent | OtherInputEvent;
+    | MouseInputEvent
+    | KeyboardInputEvent
+    | ZoomInputEvent
+    | CopyPasteInputEvent
+    | OtherInputEvent;
 export type InputAdapterEventType = InputAdapterEvent["type"];

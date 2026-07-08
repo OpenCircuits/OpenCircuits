@@ -1,10 +1,9 @@
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-import {GUID} from "shared/api/circuit/schema";
-import {uuid} from "shared/api/circuit/schema/GUID";
+import { GUID } from "shared/api/circuit/schema";
+import { uuid } from "shared/api/circuit/schema/GUID";
 
-import {CircuitOp} from "./CircuitOps";
-
+import { CircuitOp } from "./CircuitOps";
 
 // TODO: vet which arrays are useful here.  Potentially implement this as a class.
 // The undo/redo system will drop "oldProposed" entries, then add "local" entries.
@@ -85,7 +84,6 @@ export class CircuitLog extends ObservableImpl<LogEvent> {
 
     private proposedEntries: ProposedLogEntry[];
 
-
     public constructor() {
         super();
         this.log = [];
@@ -112,13 +110,13 @@ export class CircuitLog extends ObservableImpl<LogEvent> {
         this.proposedEntries.push(entry);
 
         const evt: LogEvent = {
-            clock:       this.clock,
+            clock: this.clock,
             oldProposed: this.proposedEntries.slice(0, -1),
-            accepted:    [],
-            proposed:    this.proposedEntries,
-            ops:         ops,
-            remote:      [],
-            local:       this.proposedEntries,
+            accepted: [],
+            proposed: this.proposedEntries,
+            ops: ops,
+            remote: [],
+            local: this.proposedEntries,
         };
         this.publish(evt);
 
@@ -129,8 +127,9 @@ export class CircuitLog extends ObservableImpl<LogEvent> {
     }
 
     private acceptLocal(entry: LogEntry): void {
-        if (entry.id !== this.proposedEntries[0].id)
-            {throw new Error("acceptLocal called in unexpected order!");}
+        if (entry.id !== this.proposedEntries[0].id) {
+            throw new Error("acceptLocal called in unexpected order!");
+        }
 
         entry.clock = this.clock + 1;
         this.log.push(entry);
@@ -139,13 +138,13 @@ export class CircuitLog extends ObservableImpl<LogEvent> {
 
         // TODO: This would happen in "acceptRemote" normally
         const evt: LogEvent = {
-            clock:    this.clock,
+            clock: this.clock,
             oldProposed,
             accepted: [entry],
             proposed: this.proposedEntries,
-            ops:      [], // TODO: this would unwind "oldProposed", apply "accepted", apply "proposed".
-            remote:   [],
-            local:    oldProposed,
+            ops: [], // TODO: this would unwind "oldProposed", apply "accepted", apply "proposed".
+            remote: [],
+            local: oldProposed,
         };
         this.publish(evt);
     }
@@ -159,14 +158,17 @@ export class CircuitLog extends ObservableImpl<LogEvent> {
         accepted.forEach((e) => {
             if (this.proposedEntries.length > 0 && e.id === this.proposedEntries[0].id) {
                 // TODO: Local update was accepted
-                ((a) => {a})(undefined);
+                ((a) => {
+                    a;
+                })(undefined);
             } else {
                 // TODO: Remote update
-                ((b) => {b})(undefined);
+                ((b) => {
+                    b;
+                })(undefined);
             }
         });
 
         this.publish(evt);
     }
-
 }

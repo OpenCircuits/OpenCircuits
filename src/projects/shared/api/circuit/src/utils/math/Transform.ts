@@ -1,8 +1,7 @@
-import {TransformContains, TransformContainsRect} from "./MathUtils";
-import {Matrix2x3} from "./Matrix";
-import {Rect}      from "./Rect";
-import {V, Vector} from "./Vector";
-
+import { TransformContains, TransformContainsRect } from "./MathUtils";
+import { Matrix2x3 } from "./Matrix";
+import { Rect } from "./Rect";
+import { V, Vector } from "./Vector";
 
 /**
  * Class representing a 2D Transform.
@@ -54,7 +53,7 @@ export class Transform {
     public calcRotationAbout(a: number, c: Vector) {
         return [
             this.pos.sub(c).rotate(a).add(c), // new position
-            this.angle + a,              // new rotation
+            this.angle + a, // new rotation
         ] as const;
     }
 
@@ -65,7 +64,8 @@ export class Transform {
      * @param v The vector to transform, must be in world coordinates.
      * @returns The local space vector.
      */
-    public toLocalSpace(v: Vector): Vector { // v must be in world coords
+    public toLocalSpace(v: Vector): Vector {
+        // v must be in world coords
         return this.matrix.inverse().mul(v);
     }
 
@@ -81,14 +81,16 @@ export class Transform {
     }
 
     public getRadius(): number {
-        if (!this.radius)
-            {this.radius = Math.hypot(this.scale.x, this.scale.y) / 2;}
+        if (!this.radius) {
+            this.radius = Math.hypot(this.scale.x, this.scale.y) / 2;
+        }
         return this.radius;
     }
 
     public getCorners(): readonly Vector[] {
-        if (!this.corners)
-            {this.corners = Transform.LOCAL_CORNERS.map((v) => this.toWorldSpace(v));}
+        if (!this.corners) {
+            this.corners = Transform.LOCAL_CORNERS.map((v) => this.toWorldSpace(v));
+        }
         return this.corners;
     }
     public getLocalCorners(): readonly Vector[] {
@@ -96,19 +98,17 @@ export class Transform {
     }
 
     public asRect(): Rect {
-        return Rect.FromPoints(
-            Vector.Min(...this.getCorners()),
-            Vector.Max(...this.getCorners()),
-        );
+        return Rect.FromPoints(Vector.Min(...this.getCorners()), Vector.Max(...this.getCorners()));
     }
 
     public intersects(other: Rect | Transform): boolean {
-        if (other instanceof Rect)
-            {return TransformContainsRect(this, other);}
+        if (other instanceof Rect) {
+            return TransformContainsRect(this, other);
+        }
         return TransformContains(this, other);
     }
 
-    public withScale(newScale: Vector): Transform{
+    public withScale(newScale: Vector): Transform {
         return new Transform(this.pos, this.angle, newScale);
     }
     public withoutScale(): Transform {

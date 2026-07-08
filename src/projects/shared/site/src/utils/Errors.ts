@@ -5,9 +5,8 @@
  * @returns Whether or not `e` is an Error.
  */
 export function isError(e: unknown): e is Error {
-    return (!!e) && (typeof e === "object") && ("name" in e) && ("stack" in e);
+    return !!e && typeof e === "object" && "name" in e && "stack" in e;
 }
-
 
 /**
  * Utility function to get the stack trace from an Error.

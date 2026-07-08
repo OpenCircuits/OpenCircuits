@@ -1,15 +1,14 @@
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {Component} from "shared/api/circuit/public";
+import { Component } from "shared/api/circuit/public";
 
-import {CircuitDesigner}               from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {LEFT_MOUSE_BUTTON}             from "shared/api/circuitdesigner/input/Constants";
-import {InputAdapterEvent}             from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import {SnapToConnections, SnapToGrid} from "shared/api/circuitdesigner/utils/SnapUtils";
-import {Tool, ToolEvent}               from "./Tool";
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {Cursor} from "../input/Cursor";
-
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { SnapToConnections, SnapToGrid } from "shared/api/circuitdesigner/utils/SnapUtils";
+import { Tool, ToolEvent } from "./Tool";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { Cursor } from "../input/Cursor";
 
 export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
     private components: Component[];
@@ -23,28 +22,24 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
     }
 
     public indicateCouldActivate(ev: InputAdapterEvent, { circuit, viewport }: CircuitDesigner): Cursor | undefined {
-        if (circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos))?.baseKind === "Component")
-            {return "pointer";}
+        if (circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos))?.baseKind === "Component") {
+            return "pointer";
+        }
     }
     public shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {
         // Activate if the user is pressing down on a component
-        return (
-            ev.type === "mousedrag"
-                && ev.button === LEFT_MOUSE_BUTTON
-                && curPressedObj?.baseKind === "Component"
-        );
+        return ev.type === "mousedrag" && ev.button === LEFT_MOUSE_BUTTON && curPressedObj?.baseKind === "Component";
     }
     public shouldDeactivate(ev: InputAdapterEvent): boolean {
-        return (ev.type === "mouseup" && ev.button === LEFT_MOUSE_BUTTON);
+        return ev.type === "mouseup" && ev.button === LEFT_MOUSE_BUTTON;
     }
 
     public onActivate(ev: InputAdapterEvent, { circuit, curPressedObj, viewport }: CircuitDesigner): void {
         // If the pressed component is part of the selected objects,
         //  then translate all of the selected objects
         //  otherwise, just translate the pressed object
-        this.components = (!curPressedObj || curPressedObj.isSelected)
-            ? circuit.selections.components
-            : [curPressedObj as Component];
+        this.components =
+            !curPressedObj || curPressedObj.isSelected ? circuit.selections.components : [curPressedObj as Component];
 
         this.initialPositions = this.components.map((c) => V(c.x, c.y));
 
@@ -53,7 +48,8 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
 
         circuit.beginTransaction();
 
-        circuit.createContainer(this.components.map((c) => c.id))
+        circuit
+            .createContainer(this.components.map((c) => c.id))
             .withWiresAndPorts()
             .shift();
     }
@@ -71,14 +67,12 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
             const snapToGrid = ev.input.isShiftKeyDown;
             const snapToConnections = !ev.input.isShiftKeyDown;
 
-            const dPos = viewport.toWorldPos(ev.input.mousePos)
-                .sub(viewport.toWorldPos(ev.input.mouseDownPos));
+            const dPos = viewport.toWorldPos(ev.input.mousePos).sub(viewport.toWorldPos(ev.input.mouseDownPos));
 
             // Translate all selected components
             circuit.beginTransaction({ batch: true });
             {
-                this.components.forEach((c, i) =>
-                    c.pos = this.initialPositions[i].add(dPos));
+                this.components.forEach((c, i) => (c.pos = this.initialPositions[i].add(dPos)));
             }
             circuit.commitTransaction("Moved Components");
 
@@ -86,18 +80,21 @@ export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
             circuit.beginTransaction({ batch: true });
             {
                 this.components.forEach((c) => {
-                    if (snapToGrid)
-                        {c.pos = SnapToGrid(c.pos);}
-                    if (snapToConnections)
-                        {c.pos = SnapToConnections(c.pos, c.allPorts);}
+                    if (snapToGrid) {
+                        c.pos = SnapToGrid(c.pos);
+                    }
+                    if (snapToConnections) {
+                        c.pos = SnapToConnections(c.pos, c.allPorts);
+                    }
                 });
             }
             circuit.commitTransaction("Snapped Components");
+        } else if (ev.type === "keyup" && ev.key === " ") {
+            circuit.beginTransaction();
+            circuit
+                .import(circuit.selections.withWiresAndPorts(), { refreshIds: true })
+                .forEach((obj) => obj.deselect());
+            circuit.commitTransaction("Copy");
         }
-        else if (ev.type === "keyup" && ev.key === " ") {
-                circuit.beginTransaction();
-                circuit.import(circuit.selections.withWiresAndPorts(), { refreshIds: true }).forEach((obj) => obj.deselect());
-                circuit.commitTransaction("Copy");
-            }
     }
 }

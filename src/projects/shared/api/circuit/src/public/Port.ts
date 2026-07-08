@@ -1,9 +1,8 @@
-import type {Vector} from "Vector";
+import type { Vector } from "Vector";
 
-import type {BaseObject, ReadonlyBaseObject}      from "./BaseObject";
-import type {Component, Node, ReadonlyComponent, ReadonlyNode} from "./Component";
-import type {ReadonlyWire, Wire}            from "./Wire";
-
+import type { BaseObject, ReadonlyBaseObject } from "./BaseObject";
+import type { Component, Node, ReadonlyComponent, ReadonlyNode } from "./Component";
+import type { ReadonlyWire, Wire } from "./Wire";
 
 interface BaseReadonlyPort<PortT, CompT, NodeT, WireT> {
     readonly baseKind: "Port";
@@ -32,8 +31,10 @@ interface BaseReadonlyPort<PortT, CompT, NodeT, WireT> {
     canConnectTo(port: PortT): boolean;
 }
 
-export type ReadonlyPort = ReadonlyBaseObject & BaseReadonlyPort<ReadonlyPort, ReadonlyComponent, ReadonlyNode, ReadonlyWire>;
+export type ReadonlyPort = ReadonlyBaseObject &
+    BaseReadonlyPort<ReadonlyPort, ReadonlyComponent, ReadonlyNode, ReadonlyWire>;
 
-export type Port = BaseObject & BaseReadonlyPort<Port, Component, Node, Wire> & {
-    connectTo(other: Port): Wire | undefined;
-}
+export type Port = BaseObject &
+    BaseReadonlyPort<Port, Component, Node, Wire> & {
+        connectTo(other: Port): Wire | undefined;
+    };

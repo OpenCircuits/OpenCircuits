@@ -1,12 +1,11 @@
-import {Vector} from "Vector";
-import {Rect}   from "math/Rect";
+import { Vector } from "Vector";
+import { Rect } from "math/Rect";
 
-import {Component, ReadonlyComponent} from "./Component";
-import {ReadonlyWire, Wire}           from "./Wire";
-import {Port, ReadonlyPort}           from "./Port";
-import {IntegratedCircuit}            from "./IntegratedCircuit";
-import {GUID} from "../schema";
-
+import { Component, ReadonlyComponent } from "./Component";
+import { ReadonlyWire, Wire } from "./Wire";
+import { Port, ReadonlyPort } from "./Port";
+import { IntegratedCircuit } from "./IntegratedCircuit";
+import { GUID } from "../schema";
 
 interface BaseReadonlyObjContainer<PortT, CompT, WireT, ICT, ObjCT> {
     // Returns the bounding box of all the objects in the container.
@@ -34,14 +33,24 @@ interface BaseReadonlyObjContainer<PortT, CompT, WireT, ICT, ObjCT> {
     withWiresAndPorts(): ObjCT;
 
     forEach(f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => void): void;
-    filter(f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => boolean): Array<PortT | CompT | WireT>;
-    filter<O extends PortT | CompT | WireT>(f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => obj is O): O[];
+    filter(
+        f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => boolean,
+    ): Array<PortT | CompT | WireT>;
+    filter<O extends PortT | CompT | WireT>(
+        f: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => obj is O,
+    ): O[];
     every(condition: (obj: PortT | CompT | WireT, i: number, arr: Array<PortT | CompT | WireT>) => boolean): boolean;
 }
 
-export type ReadonlyObjContainer = BaseReadonlyObjContainer<ReadonlyPort, ReadonlyComponent, ReadonlyWire, IntegratedCircuit, ReadonlyObjContainer>;
+export type ReadonlyObjContainer = BaseReadonlyObjContainer<
+    ReadonlyPort,
+    ReadonlyComponent,
+    ReadonlyWire,
+    IntegratedCircuit,
+    ReadonlyObjContainer
+>;
 
 export type ObjContainer = BaseReadonlyObjContainer<Port, Component, Wire, IntegratedCircuit, ObjContainer> & {
     select(): void;
     shift(): void;
-}
+};

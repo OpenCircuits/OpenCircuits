@@ -1,7 +1,6 @@
-import {expect, test} from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-import {pageActions} from "shared/helpers/actions";
-
+import { pageActions } from "shared/helpers/actions";
 
 test("Load first example circuit", async ({ page }) => {
     const { openSidenav } = pageActions(page, false);

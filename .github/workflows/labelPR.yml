@@ -20,7 +20,7 @@ jobs:
           labels: |
             Status: Ready to Merge
           github_token: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Remove Changes Requested Label for Ready to Merge 
+      - name: Remove Changes Requested Label for Ready to Merge
         if: |
           github.event.review.state == 'approved' &&
           (github.event.comment.user.login == 'LeonMontealegre' ||
@@ -29,7 +29,7 @@ jobs:
         with:
           labels: |
             Status: Changes Requested
-      - name: Remove Awaiting Review Label for Ready to Merge 
+      - name: Remove Awaiting Review Label for Ready to Merge
         if: |
           github.event.review.state == 'approved' &&
           (github.event.comment.user.login == 'LeonMontealegre' ||
