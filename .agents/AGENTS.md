@@ -12,8 +12,8 @@
 ## Core Commands
 - **Building**: `yarn build` (interactive) or `yarn build:prod src/projects/digital/site` etc.
 - **Testing**: `yarn test --ci <path>` (e.g., `yarn test --ci src/projects/analog/api/circuit`). Always use the `--ci` flag for agent environments.
+- **Formatting**: `yarn fmt:check` to check and `yarn fmt` to execute the formatting.
 - **Linting**: `yarn lint`.
-- **Scripts**: If you edit any files in the `scripts/` directory, you must re-run `yarn postinstall` to compile them, otherwise the changes won't be picked up.
 
 ## Coding Standards
 - **Strict Typing**: The use of `any` is strictly forbidden across the TypeScript codebase.
