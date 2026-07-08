@@ -1,18 +1,18 @@
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
+import { TsCheckerRspackPlugin } from "ts-checker-rspack-plugin";
 
 import getAliases from "../../utils/getAliases.ts";
 
 import type { Config } from "./types.ts";
-import type { Configuration } from "webpack";
+import type { Configuration } from "@rspack/core";
 
 /**
- * Returns the typescript webpack configuration.
+ * Returns the typescript bundler configuration.
  *
  * @param config         The current configuration.
  * @param config.rootDir The current root directory.
  * @param config.isDev   Whether or not this is running in a development environment.
- * @returns              The webpack configuration for the TypeScript-specific rules.
+ * @returns              The bundler configuration for the TypeScript-specific rules.
  */
 export default ({ rootDir, isDev }: Config): Configuration => ({
     module: {
@@ -24,19 +24,25 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
                 // Do not want to process anything from node_modules
                 exclude: /node_modules/,
 
-                // Loads from bottom to top:
-                //  So it first goes through the ts-loader to become js
-                //  and then goes through the react compiler.
+                // Process typescript and run the react compiler via Rspack's native SWC loader.
                 use: [
                     {
-                        loader: "babel-loader",
+                        loader: "builtin:swc-loader",
                         options: {
-                            presets: [
-                                "@babel/preset-env",
-                                ["@babel/preset-react", { "runtime": "automatic" }],
-                                "@babel/preset-typescript",
-                            ],
-                            plugins: ["babel-plugin-react-compiler"],
+                            jsc: {
+                                parser: {
+                                    syntax: "typescript",
+                                    tsx: true,
+                                },
+                                transform: {
+                                    react: {
+                                        runtime: "automatic",
+                                        development: isDev,
+                                        refresh: isDev,
+                                    },
+                                    reactCompiler: true,
+                                },
+                            },
                         },
                     },
                 ],
@@ -46,9 +52,9 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
 
     plugins: [
         // Setup hot-module refreshing
-        ...(isDev ? [new ReactRefreshWebpackPlugin()] : []),
+        ...(isDev ? [new ReactRefreshPlugin()] : []),
 
-        new ForkTsCheckerWebpackPlugin({
+        new TsCheckerRspackPlugin({
             typescript: {
                 diagnosticOptions: {
                     semantic: true,

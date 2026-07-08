@@ -2,8 +2,8 @@ import path from "node:path";
 
 import address from "address";
 import chalk from "chalk";
-import webpack from "webpack";
-import WebpackDevServer from "webpack-dev-server";
+import { rspack } from "@rspack/core";
+import { RspackDevServer } from "@rspack/dev-server";
 
 import openBrowser from "../utils/browser/openBrowser.ts";
 import choosePort from "../utils/choosePort.ts";
@@ -14,11 +14,11 @@ import config from "./config/index.ts";
 import customDevServer from "./customDevServer.ts";
 
 /**
- * Basic webpack creation.
+ * Basic bundler creation.
  *
- * @param dir       The directory to launch the webpack instance in.
+ * @param dir       The directory to launch the bundler instance in.
  * @param project   The project that is being started, i.e. "digital" or "analog".
- * @param mode      The webpack-mode: development or production.
+ * @param mode      The bundler-mode: development or production.
  * @param open      Boolean indicating whether or not we should auto-open the browser on start.
  * @param forcePort The port that must be used.
  */
@@ -34,7 +34,7 @@ export default async (
     const dirPath = path.resolve(rootPath, dir);
     const buildDir = path.resolve(rootPath, "build/site");
 
-    const compiler = webpack(
+    const compiler = rspack(
         config({
             mode,
             isProd: mode === "production",
@@ -103,7 +103,7 @@ export default async (
             console.log(`To create a production build, use ${chalk.cyan("yarn build")}\n`);
         });
 
-        const server = new WebpackDevServer(
+        const server = new RspackDevServer(
             {
                 // Explanations: https://stackoverflow.com/a/62992178
                 static: {
@@ -113,13 +113,14 @@ export default async (
                 hot: true,
                 host: "0.0.0.0",
                 port,
-                proxy: {
-                    "/api/**": {
+                proxy: [
+                    {
+                        context: ["/api/**"],
                         target: `http://${hostname}:8080`,
                         secure: false,
                         changeOrigin: true,
                     },
-                },
+                ],
                 devMiddleware: {
                     publicPath: pathname,
                 },

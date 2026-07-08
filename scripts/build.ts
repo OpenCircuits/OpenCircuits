@@ -8,7 +8,7 @@ import yargs from "yargs/yargs";
 
 import CopyDir from "./utils/copyDir.ts";
 import { Spawn } from "./utils/spawn.ts";
-import startWebpack from "./webpack/index.ts";
+import startBundler from "./bundler/index.ts";
 
 import { FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir } from "./utils/getDirs.ts";
 
@@ -32,7 +32,7 @@ async function BuildServer(prod: boolean) {
     });
 }
 async function BuildDir(dir: string, project: string) {
-    return await startWebpack(dir, project, "production", false);
+    return await startBundler(dir, project, "production", false);
 }
 
 // CLI

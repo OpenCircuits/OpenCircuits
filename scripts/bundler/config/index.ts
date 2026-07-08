@@ -1,5 +1,4 @@
-import FriendlyErrorsWebpackPlugin from "@soda/friendly-errors-webpack-plugin";
-import webpack from "webpack";
+import { rspack } from "@rspack/core";
 
 import mergeDeep from "../../utils/merge.ts";
 
@@ -10,13 +9,13 @@ import TSConfig from "./ts.ts";
 import WASMConfig from "./wasm.ts";
 
 import type { Config } from "./types";
-import type { Configuration } from "webpack";
+import type { Configuration } from "@rspack/core";
 
 /**
- * Creates the webpack configuration.
+ * Creates the bundler configuration.
  *
  * @param config The current configuration.
- * @returns      The webpack configuration.
+ * @returns      The bundler configuration.
  */
 export default (config: Config): Configuration => {
     const { entry, isDev, isProd, mode, target, buildDir, stats, env } = config;
@@ -35,13 +34,15 @@ export default (config: Config): Configuration => {
                 // Extract the JS to /static/js/
                 filename: isProd ? "static/js/[name].[contenthash:8].js" : undefined,
                 chunkFilename: isProd ? "static/js/[name].[contenthash:8].chunk.js" : undefined,
+
+                // Extract the CSS to /static/css/
+                cssFilename: isProd ? "static/css/[name].[contenthash:8].css" : undefined,
+                cssChunkFilename: isProd ? "static/css/[name].[contenthash:8].chunk.css" : undefined,
             },
 
             plugins: [
-                new FriendlyErrorsWebpackPlugin(),
-
                 // Stringify environment variables
-                new webpack.DefinePlugin({
+                new rspack.DefinePlugin({
                     "process.env": Object.fromEntries(
                         Object.entries(env).map(([key, val]) => [key, JSON.stringify(val)]),
                     ),
