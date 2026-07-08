@@ -1,4 +1,4 @@
-import type { Config } from "./types.js";
+import type { Config } from "./types.ts";
 import type { Configuration } from "webpack";
 
 /**
