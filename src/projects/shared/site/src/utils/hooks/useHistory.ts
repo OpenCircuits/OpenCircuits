@@ -10,16 +10,21 @@ export const useHistory = (circuit: Circuit) => {
         redoHistory: [],
     });
 
-    useEffect(
-        () =>
-            circuit.history.subscribe(() => {
-                setState({
-                    undoHistory: circuit.history.getUndoStack(),
-                    redoHistory: circuit.history.getRedoStack(),
-                });
-            }),
-        [circuit, setState],
-    );
+    useEffect(() => {
+        // Immediately sync the state with the new circuit's history
+        setState({
+            undoHistory: circuit.history.getUndoStack(),
+            redoHistory: circuit.history.getRedoStack(),
+        });
+
+        // Subscribe to future history changes
+        return circuit.history.subscribe(() => {
+            setState({
+                undoHistory: circuit.history.getUndoStack(),
+                redoHistory: circuit.history.getRedoStack(),
+            });
+        });
+    }, [circuit, setState]);
 
     return state;
 };
