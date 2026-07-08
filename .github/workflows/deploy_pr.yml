@@ -1,0 +1,68 @@
+name: Deploy PR Preview
+
+env:
+  CLOUDSDK_CORE_PROJECT: opencircuits-nightly
+
+concurrency:
+  group: deploy-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy-preview:
+    name: Setup, Build, and Deploy PR Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+      pull-requests: "write"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: GCloud Auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: "projects/995513074839/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          service_account: "github-actions@opencircuits-nightly.iam.gserviceaccount.com"
+
+      - name: Setup GCloud
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Set Node.js
+        uses: actions/setup-node@main
+        with:
+          node-version-file: "package.json"
+          cache: "yarn"
+
+      - name: Install
+        run: yarn
+
+      - name: Build
+        env:
+          OC_FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
+          OC_AUTH_TYPES: google
+          OC_GA_ID: G-RSLJ419YXL
+        run: |
+          yarn build --ci --prod src/server src/projects/digital/site
+
+      - name: Create OAuth credentials and app.yaml
+        run: |
+          echo '${{ secrets.APP_YAML }}' >> ./build/app.yaml
+
+      - name: Deploy
+        working-directory: ./build
+        run: gcloud app deploy --version=pr-${{ github.event.pull_request.number }} --no-promote --quiet
+
+      - name: Post Comment
+        if: github.event.action == 'opened' || github.event.action == 'reopened'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BASE_URL=$(gcloud app describe --format='value(defaultHostname)')
+          PR_URL="https://pr-${{ github.event.pull_request.number }}-dot-$BASE_URL"
+
+          gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "PR Preview Deployed at: $PR_URL"
