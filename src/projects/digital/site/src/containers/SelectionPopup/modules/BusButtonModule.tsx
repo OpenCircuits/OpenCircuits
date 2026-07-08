@@ -33,19 +33,19 @@ function GetComponentBusPorts(components: DigitalComponent[]): [DigitalPort[], D
 
     // There cannot be input, output, and ambiguous components as this would be an ambigious case
     if (inputComps.length > 0 && outputComps.length > 0 && ambiComps.length > 0)
-        return [[], []];
+        {return [[], []];}
 
     const [finalInputComps, finalOutputComps] = (() => {
         // So, then there are only 3 cases:
         //  Only input and output components are selected (no ambiguous components)
         if (ambiComps.length === 0)
-            return [inputComps, outputComps];
+            {return [inputComps, outputComps];}
         //  Only input and ambiguous components are selected (no output components)
         if (outputComps.length === 0)
-            return [inputComps, ambiComps];
+            {return [inputComps, ambiComps];}
         //  Only output and ambiguous components are selected (no input components)
         if (inputComps.length === 0)
-            return [ambiComps, outputComps];
+            {return [ambiComps, outputComps];}
         return [[], []];
     })();
 
@@ -57,10 +57,10 @@ function GetComponentBusPorts(components: DigitalComponent[]): [DigitalPort[], D
 
 export function Bus(circuit: DigitalCircuit, outputPorts: DigitalPort[], inputPorts: DigitalPort[]) {
     if (inputPorts.length !== outputPorts.length)
-        throw new Error("Expected equal size input and output ports to bus!");
+        {throw new Error("Expected equal size input and output ports to bus!");}
 
     if (inputPorts.length === 0)
-        return;
+        {return;}
 
     // Basic idea is to take each input component and output component from each
     //  port and assemble them into a sort-of single giant average input component and output component
@@ -137,14 +137,14 @@ export const BusButtonModule = ({ circuit }: Props) => {
 
     // No valid selections
     if (!props)
-        return null;
+        {return null;}
 
     const components = objs.filter(isComponent);
 
     // If there are components selected, but not ONLY components selected, this is invalid
     // so we will not handle it.
     if (components.length > 0 && components.length !== objs.length)
-        return null;
+        {return null;}
 
     const [inputPorts, outputPorts] = (components.length === 0)
         // If no components selected, just get the selected input/output ports
@@ -154,7 +154,7 @@ export const BusButtonModule = ({ circuit }: Props) => {
 
     // Port counts mismatch or no ports selected
     if (inputPorts.length !== outputPorts.length || inputPorts.length === 0 || outputPorts.length === 0)
-        return null;
+        {return null;}
 
     return (
         <button type="button"

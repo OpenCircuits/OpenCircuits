@@ -49,7 +49,7 @@ function SavePDF(canvas: HTMLCanvasElement, projectName: string, options: ImageE
 
     // Get name
     if (projectName.replaceAll(/\s+/g, "") === "")
-        projectName = "Untitled Circuit";
+        {projectName = "Untitled Circuit";}
 
     // Fill background
     if (options.useBg) {

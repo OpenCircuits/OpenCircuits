@@ -60,9 +60,9 @@ export const DigitalItemNav = () => {
         updateICs();
         return circuit.subscribe((ev) => {
             if (ev.type !== "contents")
-                return;
+                {return;}
             if (ev.diff.addedICs.size === 0 && ev.diff.removedICs.size === 0)
-                return;
+                {return;}
             updateICs();
         })
     }, [circuit]);
@@ -81,7 +81,7 @@ export const DigitalItemNav = () => {
 
     const additionalPreview = useCallback((smartPlace: SmartPlaceOptions, curItemKind: string) => {
         if (!curItemKind || (smartPlace === SmartPlaceOptions.Off))
-            return;
+            {return;}
 
         // This function shows the display for 'Smart Place' (issue #689)
         const { defaultPortConfig: config, inputPortGroups, outputPortGroups } = circuit.getComponentInfo(curItemKind)!;

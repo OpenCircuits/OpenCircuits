@@ -30,7 +30,7 @@ export const PropertyModule = ({ designer, propInfo }: Props) => {
     );
 
     if (!props || objs.length === 0)
-        return;
+        {return;}
 
     // Just get first entry's propInfo since the only actual props that will show
     //  are the ones that every object's info has.
@@ -69,10 +69,10 @@ const PropInfoEntryWrapper = (allProps: PropInputFieldProps) => {
     // Check if this module is active
     const isActive = entry.isActive?.(props) ?? true;
     if (!isActive)
-        return;
+        {return;}
 
     if (!entry.label)
-        return (<PropInfoEntryInputField {...allProps} />);
+        {return (<PropInfoEntryInputField {...allProps} />);}
 
     return (<div>
         <label>{entry.label}</label>

@@ -19,7 +19,7 @@ export const DragDropHandlers = (() => {
             const el = document.elementFromPoint(pos.x, pos.y) as HTMLElement;
             const hit = handlers.get(el);
             if (hit)
-                hit(pos, ...data);
+                {hit(pos, ...data);}
             listeners.forEach((l) => l(pos, !!hit, ...data));
         },
         addListener: (listener: DropListener) => {

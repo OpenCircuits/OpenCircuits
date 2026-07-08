@@ -9,15 +9,15 @@ export const SnipNodesHandler: ToolHandler = {
     onEvent: (ev, { circuit }) => {
         // Activate when pressing X key
         if (!(ev.type === "keydown" && ev.key === "x"))
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         // Nothing to snip
         if (circuit.selections.isEmpty)
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         // Selecting any non-nodes
         if (!circuit.selections.every((o) => (o.baseKind === "Component" && o.isNode())))
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         const nodes = circuit.selections.components as Node[];
 

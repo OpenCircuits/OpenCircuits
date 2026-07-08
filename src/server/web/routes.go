@@ -13,6 +13,7 @@ func RegisterPages(router *gin.Engine, authManager auth.AuthenticationManager) {
 	router.Static("/img", "./site/img")
 	router.Static("/static", "./site/static")
 	router.Static("/examples", "./site/examples")
+	router.Static("/images", "./site/images")
 
 	router.GET("/ngspice.wasm", func(c *gin.Context) {
 		c.Writer.Header().Set("Content-Type", "application/wasm")

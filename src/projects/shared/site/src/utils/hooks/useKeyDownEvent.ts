@@ -8,11 +8,11 @@ import {Key}               from "shared/api/circuitdesigner/input/Key";
 export const useKeyDownEvent = (input: InputAdapter, key: Key, f: () => void, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
-            return;
+            {return;}
 
         const LookForKey = (ev: InputAdapterEvent) => {
             if (ev.type === "keydown" && ev.key === key)
-                f();
+                {f();}
         }
 
         input.subscribe(LookForKey);
@@ -25,7 +25,7 @@ export const useWindowKeyDownEvent = (key: Key, f: () => void, deps?: React.Depe
     useEffect(() => {
         const LookForKey = (ev: KeyboardEvent) => {
             if (!(document.activeElement instanceof HTMLInputElement) && ev.key === key)
-                f();
+                {f();}
         }
 
         window.addEventListener("keydown", LookForKey);

@@ -43,7 +43,7 @@ export const useAdjustableElement = (initialRect: RectProps, bounds: Rect,
     const onMouseDown = ({ button, pageX: x, pageY: y }: React.PointerEvent) => {
         // Ignore non-LMB for mouse events
         if (button !== 0)
-            return;
+            {return;}
         // If undefined, lag probably happened, so just ignore this case
         setState(GetArea(V(x, h - y)) ?? "none");
         setMouseDownPos({ x, y });
@@ -61,13 +61,13 @@ export const useAdjustableElement = (initialRect: RectProps, bounds: Rect,
     //  currently resizing/moving the container
     const newRect = (() => {
         if (state === "none")
-            return curRect;
+            {return curRect;}
 
         const dMousePos = V(mousePos.x - mouseDownPos.x, -(mousePos.y - mouseDownPos.y));
 
         // Simply move the box if we're in the center area
         if (state === "center")
-            return new Rect(curRect.center.add(dMousePos), curRect.size);
+            {return new Rect(curRect.center.add(dMousePos), curRect.size);}
 
         // Get direction to shift in based on n/w/e/s directions
         const dir = V(

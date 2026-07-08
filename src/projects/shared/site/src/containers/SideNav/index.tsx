@@ -47,37 +47,37 @@ export const SideNav = ({ exampleCircuits }: Props) => {
     const onReset = () => {
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
-            return;
+            {return;}
         // Create a new designer
         setCurDesigner(CircuitHelpers.CreateAndInitializeDesigner());
         dispatch(ToggleSideNav());
     }
     const onUserCircuitClick = async (metadata: BackendCircuitMetadata) => {
         if (loading) // Don't load another circuit if already loading
-            return;
+            {return;}
         if (!auth)
-            throw new Error("Sidenav failed: auth is undefined");
+            {throw new Error("Sidenav failed: auth is undefined");}
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
-            return;
+            {return;}
         await LoadCircuitRemote(metadata.id);
         dispatch(ToggleSideNav());
     }
     const onUserCircuitDeleteClick = async (metadata: BackendCircuitMetadata) => {
         if (loading) // Don't let user delete circuit while loading
-            return;
+            {return;}
         const shouldDelete = window.confirm(
             `Are you sure you want to delete circuit "${metadata.name}"?`);
         if (!shouldDelete)
-            return;
+            {return;}
         DeleteCircuitRemote(metadata.id);
     }
     const onExampleCircuitClick = async (metadata: BackendCircuitMetadata) => {
         if (loading) // Don't load another circuit if already loading
-            return;
+            {return;}
         const open = isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE);
         if (!open)
-            return;
+            {return;}
         await LoadCircuit(LoadExampleCircuit(metadata));
         dispatch(ToggleSideNav());
     }
@@ -87,7 +87,7 @@ export const SideNav = ({ exampleCircuits }: Props) => {
             isOpen={loading || isOpen}
             close={() => {
                 if (!loading) // Don't let user close the SideNav until finished loading circuit
-                    dispatch(ToggleSideNav())
+                    {dispatch(ToggleSideNav())}
             }}>
             {loading && <div className={isOpen ? "sidenav__offset" : ""}></div>}
         </Overlay>

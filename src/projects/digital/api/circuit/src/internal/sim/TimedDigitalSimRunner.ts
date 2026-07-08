@@ -27,11 +27,11 @@ export class TimedDigitalSimRunner extends InstantSimRunner {
 
     protected override queueStep(): void {
         if (this.paused)
-            return;
+            {return;}
 
         // Already working on requests
         if (this.curTimeout)
-            return;
+            {return;}
 
         // Already waiting on a timeout
         this.curTimeout = window.setTimeout(() => {

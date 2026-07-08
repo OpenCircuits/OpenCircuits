@@ -15,7 +15,7 @@ const VARIABLES = (() => {
 
         subscribe: (id: string, f: (newVal: string) => void) => {
             if (!(id in listeners))
-                listeners[id] = [];
+                {listeners[id] = [];}
             listeners[id].push(f);
             return () => {
                 listeners[id].splice(listeners[id].indexOf(f), 1);
@@ -56,7 +56,7 @@ export const InputField = ({ id, defaultValue }: InputFieldProps) => {
 
 function toProperCase(s: string): string {
     if (s.length === 0)
-        return s;
+        {return s;}
     return s.split(" ").map((v) => v[0].toUpperCase() + v.slice(1)).join(" ");
 }
 
@@ -71,7 +71,7 @@ export const Variable = ({ id, proper, upper, lower, combined }: VariableProps) 
     const val = useVariable(id);
 
     if (!val)
-        return <code>{}</code>;
+        {return <code>{}</code>;}
 
     const val2 = proper ? toProperCase(val) : val;
     const val3 = upper ? val2.toUpperCase() : val2;

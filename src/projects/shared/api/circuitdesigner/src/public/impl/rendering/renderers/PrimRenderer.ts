@@ -25,7 +25,7 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
         ctx.moveTo(x, y);
         let da = (a1 - a0) % (2*Math.PI);
         if (da < 0)
-            da += 2*Math.PI;
+            {da += 2*Math.PI;}
         ctx.arc(x, y, radius, a0, a1, da > Math.PI);
 
         return;
@@ -42,13 +42,13 @@ function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWit
         const { points, closed } = prim;
 
         if (points.length === 0)
-            return;
+            {return;}
 
         ctx.moveTo(points[0].x, points[0].y);
         for (let i = 1; i < points.length; i++)
-            ctx.lineTo(points[i].x, points[i].y);
+            {ctx.lineTo(points[i].x, points[i].y);}
         if (closed ?? true)
-            ctx.lineTo(points[0].x, points[0].y);
+            {ctx.lineTo(points[0].x, points[0].y);}
 
         return;
     }
@@ -102,12 +102,12 @@ export class PrimRenderer {
                 ctx.strokeStyle = prim.style.stroke.color;
                 ctx.lineWidth = prim.style.stroke.size;
                 if (prim.style.stroke.lineCap !== undefined)
-                    ctx.lineCap = prim.style.stroke.lineCap;
+                    {ctx.lineCap = prim.style.stroke.lineCap;}
                 if (prim.style.stroke.lineJoin !== undefined)
-                    ctx.lineJoin = prim.style.stroke.lineJoin;
+                    {ctx.lineJoin = prim.style.stroke.lineJoin;}
             }
             if (prim.style.alpha !== undefined)
-                ctx.globalAlpha = prim.style.alpha;
+                {ctx.globalAlpha = prim.style.alpha;}
 
             ctx.save();
 
@@ -128,9 +128,9 @@ export class PrimRenderer {
             }
 
             if (prim.style.fill && !debugOptions?.debugPrims)
-                ctx.fill();
+                {ctx.fill();}
             if (prim.style.stroke && prim.style.stroke.size > 0)
-                ctx.stroke();
+                {ctx.stroke();}
 
             ctx.closePath();
 
@@ -138,13 +138,13 @@ export class PrimRenderer {
 
             // Reset alpha if we set it
             if (prim.style.alpha !== undefined)
-                ctx.globalAlpha = 1;
+                {ctx.globalAlpha = 1;}
 
             return;
         }
         case "SVG": {
             if (!prim.svg || !this.svgMap.has(prim.svg)) // Don't draw if the image isn't loaded
-                return;
+                {return;}
 
             ctx.save();
 

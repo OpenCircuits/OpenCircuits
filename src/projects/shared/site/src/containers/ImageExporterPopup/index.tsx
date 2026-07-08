@@ -58,11 +58,11 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
 
     const onResize = useCallback(() => {
         if (!isActive)
-            return;
+            {return;}
         if (!wrapper.current)
-            throw new Error("ImageExporterPopup.onResize failed: wrapper.current is null");
+            {throw new Error("ImageExporterPopup.onResize failed: wrapper.current is null");}
         if (!canvas.current)
-            throw new Error("ImageExporterPopup.onResize failed: canvas.current is null");
+            {throw new Error("ImageExporterPopup.onResize failed: canvas.current is null");}
 
         // Fit the canvas within the wrapper using the same ratio as the actual canvas
         const sw = Clamp(state.width, MIN_IMG_SIZE, MAX_IMG_SIZE);
@@ -86,7 +86,7 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
 
     useWindowKeyDownEvent("Escape", () => {
         if (isActive)
-            dispatch(CloseHeaderPopups());
+            {dispatch(CloseHeaderPopups());}
     }, [isActive]);
 
     return (
@@ -178,7 +178,7 @@ export const ImageExporterPopup = ({ designer, extraHandlers }: Props) => {
                     <div>
                         <button type="button" name="confirm" onClick={() => {
                             if (!canvas.current)
-                                throw new Error("ImageExporterPopup.button.onClick failed: canvas.current is null");
+                                {throw new Error("ImageExporterPopup.button.onClick failed: canvas.current is null");}
                             SaveImage(canvas.current, circuitName, state);
                         }}>
                             Export as {state.type.toUpperCase()}
@@ -223,7 +223,7 @@ const ImageExporterPreview = ({ extraHandlers, designer: mainDesigner, canvas, w
 
     useLayoutEffect(() => {
         if (!canvas.current)
-            return;
+            {return;}
         return designer.viewport.attachCanvas(canvas.current);
     }, [designer, canvas]);
 

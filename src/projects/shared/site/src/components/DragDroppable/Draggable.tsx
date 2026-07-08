@@ -30,7 +30,7 @@ export const Draggable = <D extends unknown[]>({ children, data, dragDir, onDrag
 
     const onDragEnd = useCallback((pos: Vector) => {
         if (!isDragging)
-            return;
+            {return;}
         DragDropHandlers.drop(pos, ...data);
         setIsDragging(false);
     }, [isDragging, data, setIsDragging]);
@@ -67,7 +67,7 @@ export const Draggable = <D extends unknown[]>({ children, data, dragDir, onDrag
             onDragStart={(ev: React.DragEvent<HTMLElement>) => ev.preventDefault()}
             onMouseDown={(_) => {
                 if (!state.touchDown)
-                    setIsDragging(true);
+                    {setIsDragging(true);}
             }}
             // This is necessary for mobile such that when the user is trying to
             //  swipe to scroll, it doesn't drag too quickly

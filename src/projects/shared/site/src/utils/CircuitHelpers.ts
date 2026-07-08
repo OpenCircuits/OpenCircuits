@@ -36,7 +36,7 @@ const { OverrideCircuitHelpers, SetCircuitHelpers } = (() => {
 
         return (...args: Parameters<OverrideCircuitHelpers[K]>): ReturnType<OverrideCircuitHelpers[K]> => {
             if (!curCircuitHelpers)
-                throw new Error(`CircuitHelpers.${k}: CircuitHelpers not initialized, please call 'SetCircuitHelpers' on site initialization!`);
+                {throw new Error(`CircuitHelpers.${k}: CircuitHelpers not initialized, please call 'SetCircuitHelpers' on site initialization!`);}
             const method = curCircuitHelpers[k];
             return callSafely(method, ...args);
         };

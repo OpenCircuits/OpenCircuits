@@ -82,13 +82,13 @@ export class Transform {
 
     public getRadius(): number {
         if (!this.radius)
-            this.radius = Math.hypot(this.scale.x, this.scale.y) / 2;
+            {this.radius = Math.hypot(this.scale.x, this.scale.y) / 2;}
         return this.radius;
     }
 
     public getCorners(): readonly Vector[] {
         if (!this.corners)
-            this.corners = Transform.LOCAL_CORNERS.map((v) => this.toWorldSpace(v));
+            {this.corners = Transform.LOCAL_CORNERS.map((v) => this.toWorldSpace(v));}
         return this.corners;
     }
     public getLocalCorners(): readonly Vector[] {
@@ -104,7 +104,7 @@ export class Transform {
 
     public intersects(other: Rect | Transform): boolean {
         if (other instanceof Rect)
-            return TransformContainsRect(this, other);
+            {return TransformContainsRect(this, other);}
         return TransformContains(this, other);
     }
 

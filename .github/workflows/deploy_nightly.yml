@@ -44,7 +44,7 @@ jobs:
       env:
         OC_FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
         OC_AUTH_TYPES: google
-        OC_GA_ID: UA-201145837-1
+        OC_GA_ID: G-RSLJ419YXL
       run: |
         yarn build --ci --prod src/server src/projects/digital/site
 

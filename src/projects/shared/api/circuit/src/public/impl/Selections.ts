@@ -86,7 +86,7 @@ export class SelectionsImpl<T extends CircuitAPITypes> extends ObservableImpl<Se
     public clear(): void {
         this.ctx.internal.beginTransaction();
         for (const obj of this.selections.all)
-            this.ctx.internal.setPropFor(obj.id, "isSelected", undefined);
+            {this.ctx.internal.setPropFor(obj.id, "isSelected", undefined);}
         this.ctx.internal.commitTransaction("Cleared Selections");
     }
 

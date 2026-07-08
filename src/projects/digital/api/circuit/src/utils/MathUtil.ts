@@ -19,7 +19,7 @@ export function BCDtoDecimal(bcd: boolean[]): number {
  */
 export function DecimalToBCD(decimal: number, outputSize?: number): boolean[] {
     if (!Number.isInteger(decimal) || decimal < 0)
-        throw "input must be a nonnegative integer";
+        {throw "input must be a nonnegative integer";}
     // Minimum number of digits for BCD
     const minSize = (decimal === 0 ? 1 : Math.floor(Math.log2(decimal)+1));
     return new Array<boolean>(outputSize ?? minSize)

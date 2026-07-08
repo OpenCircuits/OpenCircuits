@@ -65,7 +65,7 @@ export const AdjustableElement = ({ className, style, initialWidth, initialHeigh
              onPointerDown={(ev) => {
                 // Only drag on "adjustable" parts of the element
                 if (ev.target instanceof HTMLElement && "adjustable" in ev.target.dataset)
-                    onMouseDown(ev);
+                    {onMouseDown(ev);}
              }}>
             {children}
         </div>

@@ -25,7 +25,7 @@ function getInput(expression: string, index: number, ops: OperatorFormat): Input
                                || SubStrEquals(expression, endIndex, ops.separator)
                           );
     if (endIndex)
-        return { type: "input", name: expression.slice(index, endIndex) };
+        {return { type: "input", name: expression.slice(index, endIndex) };}
     return { type: "input", name: expression.slice(index) };
 }
 
@@ -41,9 +41,9 @@ function getInput(expression: string, index: number, ops: OperatorFormat): Input
 function getToken(expression: string, index: number, ops: OperatorFormat): Token | undefined {
     const tokenType = TokenTypesArray.find((tokenType) => SubStrEquals(expression, index, ops.ops[tokenType]));
     if (tokenType)
-        return { type: tokenType };
+        {return { type: tokenType };}
     if (SubStrEquals(expression, index, ops.separator))
-        return;
+        {return;}
     return getInput(expression, index, ops);
 }
 
@@ -60,10 +60,10 @@ function getToken(expression: string, index: number, ops: OperatorFormat): Token
 export function GenerateTokens(expression: string, ops: OperatorFormat): Result<readonly Token[]> {
     for (const tokenType of TokenTypesArray) {
         if (ops.ops[tokenType] === "")
-            return ErrE(`Length zero ${tokenType} in supplied operation symbols`);
+            {return ErrE(`Length zero ${tokenType} in supplied operation symbols`);}
     }
     if (ops.separator === "")
-        return ErrE("Length zero separator in supplied operation symbols");
+        {return ErrE("Length zero separator in supplied operation symbols");}
 
     const tokenList = new Array<Token>();
     let token: Token | undefined;
