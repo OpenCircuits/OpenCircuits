@@ -21,6 +21,27 @@
 
     color: #000;
 
+    .popup-close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+
+        padding: 0;
+        border: none;
+
+        font-size: 24px;
+        line-height: 1;
+
+        color: #666;
+        background: transparent;
+
+        cursor: pointer;
+
+        &:hover {
+            color: #000;
+        }
+    }
+
     & > h1 {
         font-weight: normal;
 
