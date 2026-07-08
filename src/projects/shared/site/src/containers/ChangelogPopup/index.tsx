@@ -36,7 +36,7 @@ export const ChangelogPopup = ({ version, cookieKey, children }: Props) => {
         <Popup
             title={`What's New in v${version}`}
             isOpen={curPopup === "changelog"}
-            width={40}
+            style={{ width: "80%", maxWidth: "800px" }}
             close={() => dispatch(CloseHeaderPopups())}
         >
             {children}
