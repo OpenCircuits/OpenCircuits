@@ -4,8 +4,6 @@ title: Overview
 sidebar_position: 0
 ---
 
-[Google Auth Setup](/Other/References/GAuthSetup)
-
 [GCP Datastore Setup](/Other/References/GCPDatastoreSetup)  
 
 Example app.yaml:

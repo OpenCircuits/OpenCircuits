@@ -96,7 +96,7 @@ async function BuildDir(dir: string, project: string) {
         // }
 
         if (dir.name === "server") {
-            const spinner = ora(`Building ${chalk.blue(dir)}...`).start();
+            const spinner = ora(`Building ${chalk.blue(dir.name)}...`).start();
             await BuildServer(prod);
             spinner.stop();
         } else if (dir.name === "docs") {

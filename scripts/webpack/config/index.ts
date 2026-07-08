@@ -1,4 +1,4 @@
-import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
+import FriendlyErrorsWebpackPlugin from "@soda/friendly-errors-webpack-plugin";
 import webpack from "webpack";
 
 import mergeDeep from "../../utils/merge.ts";
