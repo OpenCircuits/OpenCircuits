@@ -40,10 +40,6 @@ export const useAPIMethods = (mainCircuit: Circuit) => {
             throw new Error("APIMethods LoadCircuit: data is undefined");
         }
 
-        if (typeof data !== "string"  && !("metadata" in data)) {
-            console.log("ArrayBuffer", data);
-        }
-
         try {
             const [newDesigner, id] = await (async () => {
                 // If loaded from backend, we need to override the metadata with the backend-metadata.
