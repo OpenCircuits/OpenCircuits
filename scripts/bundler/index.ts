@@ -149,8 +149,17 @@ export default async (
 
         return new Promise((resolve, reject) => {
             compiler.run((err, result) => {
-                if (err || result!.compilation.errors.length > 0) reject({ err, errors: result!.compilation.errors });
-                else resolve(result);
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+                if (result!.hasErrors()) {
+                    console.error(result!.toString({ colors: true, errors: true, warnings: false }));
+                    reject(new Error("Build failed with errors."));
+                    return;
+                }
+                resolve(result);
             });
         });
     }

@@ -54,15 +54,15 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
         // Setup hot-module refreshing
         ...(isDev ? [new ReactRefreshPlugin()] : []),
 
-        // new TsCheckerRspackPlugin({
-        //     typescript: {
-        //         diagnosticOptions: {
-        //             semantic: true,
-        //             syntactic: true,
-        //         },
-        //         configFile: `${rootDir}/tsconfig.json`,
-        //     },
-        // }),
+        new TsCheckerRspackPlugin({
+            typescript: {
+                diagnosticOptions: {
+                    semantic: true,
+                    syntactic: true,
+                },
+                configFile: `${rootDir}/tsconfig.json`,
+            },
+        }),
     ],
 
     resolve: {
