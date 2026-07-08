@@ -15,5 +15,5 @@
       "analog/site/*": ["./src/*"]
     }
   },
-  "include": ["src", "../../shared/site/src/**/*.d.ts", "../api/circuit/src/sim/lib/ngspice.d.ts", "tests"]
+  "include": ["src", "../../shared/site/src/**/*.d.ts", "tests"]
 }

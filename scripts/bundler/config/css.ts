@@ -1,5 +1,3 @@
-
-
 import type { Config } from "./types";
 import type { Configuration } from "@rspack/core";
 
@@ -22,9 +20,7 @@ export default ({ isProd, publicPath }: Config): Configuration => ({
                 type: "css/auto",
 
                 // Reads right to left
-                use: [
-                    "sass-loader",
-                ],
+                use: ["sass-loader"],
             },
         ],
     },

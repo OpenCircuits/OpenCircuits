@@ -16,12 +16,7 @@ export default ({}: Config): Configuration => ({
 
                 // Do not want to process anything from node_modules
                 exclude: /node_modules/,
-                type: "javascript/auto",
-
-                use: {
-                    loader: "emscript-loader",
-                    options: {},
-                },
+                type: "asset/resource",
             },
         ],
     },

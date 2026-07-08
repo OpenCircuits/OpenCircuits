@@ -64,7 +64,9 @@ import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
 import { GetAuthMethods } from "shared/site/containers/LoginPopup/GetAuthMethods";
 import { GoogleAuthState } from "shared/site/api/auth/GoogleAuthState";
 
-import NGSpice from "./sim/lib/ngspice.wasm";
+import NGSpiceFactory from "./sim/lib/ngspice.js";
+import NGSpiceWasmUrl from "./sim/lib/ngspice.wasm";
+
 import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
 import { AnalogSimImpl, MakeAnalogSim } from "./sim/AnalogSim";
 import { CreateWASMInstance } from "analog/api/circuit/sim/lib/WASM";
@@ -79,7 +81,12 @@ async function Init(): Promise<void> {
             80,
             "Loading NGSpice Library",
             async () => {
-                ngSpiceLib = await NGSpice();
+                ngSpiceLib = await NGSpiceFactory({
+                    locateFile: (path: string) => {
+                        if (path.endsWith(".wasm")) return NGSpiceWasmUrl;
+                        return path;
+                    },
+                });
                 if (!ngSpiceLib) {
                     // TODO: Display this to user but still run the app(?)
                     console.error("Failed to load NGSpice WASM binary!");

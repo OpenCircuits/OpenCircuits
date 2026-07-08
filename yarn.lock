@@ -9722,15 +9722,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"emscript-loader@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "emscript-loader@npm:1.0.6"
-  dependencies:
-    tmp-promise: "npm:^3.0.2"
-  checksum: 10c0/84ecf8d5c203619d2250d90ec611528b8b85a7737ceda7c6d9e9b7355fa0252ea3f1f204414e917dcc0f416866154a572c9f6cac1e076a9a0f01a648b8a3a154
-  languageName: node
-  linkType: hard
-
 "encodeurl@npm:~2.0.0":
   version: 2.0.0
   resolution: "encodeurl@npm:2.0.0"
@@ -17515,7 +17506,6 @@ __metadata:
     detect-port-alt: "npm:^1.1.6"
     dotenv: "npm:^16.0.1"
     dotenv-expand: "npm:^8.0.3"
-    emscript-loader: "npm:^1.0.6"
     eslint: "npm:^9.31.0"
     eslint-import-resolver-typescript: "npm:^4.4.4"
     eslint-plugin-import: "npm:^2.32.0"
@@ -18785,22 +18775,6 @@ __metadata:
   version: 1.1.1
   resolution: "tinypool@npm:1.1.1"
   checksum: 10c0/bf26727d01443061b04fa863f571016950888ea994ba0cd8cba3a1c51e2458d84574341ab8dbc3664f1c3ab20885c8cf9ff1cc4b18201f04c2cde7d317fff69b
-  languageName: node
-  linkType: hard
-
-"tmp-promise@npm:^3.0.2":
-  version: 3.0.3
-  resolution: "tmp-promise@npm:3.0.3"
-  dependencies:
-    tmp: "npm:^0.2.0"
-  checksum: 10c0/23b47dcb2e82b14bbd8f61ed7a9d9353cdb6a6f09d7716616cfd27d0087040cd40152965a518e598d7aabe1489b9569bf1eebde0c5fadeaf3ec8098adcebea4e
-  languageName: node
-  linkType: hard
-
-"tmp@npm:^0.2.0":
-  version: 0.2.7
-  resolution: "tmp@npm:0.2.7"
-  checksum: 10c0/59eb55584f2f07210d3231b6a1f6b5c2b9794d8a7b509c8ee867ed2acad6d2245ee2448b7937b676ffbff3155a70077edde8a69f9d7cf0f90c86a62e8910c357
   languageName: node
   linkType: hard
 
