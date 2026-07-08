@@ -54,7 +54,7 @@ export const ICDesigner = () => {
 
     const measureTextWidth = (text: string): number => {
         if (!canvas.current)
-            return 0;
+            {return 0;}
         const ctx = canvas.current.getContext("2d")!;
         ctx.save();
         ctx.font = "lighter 300px arial";
@@ -66,7 +66,7 @@ export const ICDesigner = () => {
     // Happens when activated
     useLayoutEffect(() => {
         if (!isActive || !objIds || !canvas.current)
-            return;
+            {return;}
 
         // Block input for main designer
         mainDesigner.viewport.canvasInfo!.input.setBlocked(true);
@@ -82,9 +82,9 @@ export const ICDesigner = () => {
 
         for (const comp of icCircuit.getComponents()) {
             if (comp.kind === "Switch" || comp.kind === "Button" || comp.kind === "Clock")
-                comp.replaceWith("InputPin");
+                {comp.replaceWith("InputPin");}
             if (comp.kind === "LED")
-                comp.replaceWith("OutputPin");
+                {comp.replaceWith("OutputPin");}
             comp.deselect();
         }
 
@@ -132,14 +132,14 @@ export const ICDesigner = () => {
     //  there's no pause/glitch when resizing the screen)
     useLayoutEffect(() => {
         if (!icViewDesigner)
-            return;
+            {return;}
         icViewDesigner.viewport.resize(w*IC_DESIGNER_VW, h*IC_DESIGNER_VH);
     }, [icViewDesigner, w, h]);
 
 
     const doICNameChange = ([name]: string[]) => {
         if (!icViewDesigner)
-            return;
+            {return;}
         setShowError(NameErrorStates.None);
         const ic = icViewDesigner.circuit.getICs().at(-1)!;
         ic.name = name;
@@ -150,10 +150,10 @@ export const ICDesigner = () => {
     const close = (cancelled = false) => {
         // If not active, do nothing
         if (!isActive)
-            return;
+            {return;}
 
         if (!objIds)
-            throw new Error("ICDesigner.close failed: objIds were undefined");
+            {throw new Error("ICDesigner.close failed: objIds were undefined");}
 
         // Block input while closed
         setICViewDesigner(undefined);

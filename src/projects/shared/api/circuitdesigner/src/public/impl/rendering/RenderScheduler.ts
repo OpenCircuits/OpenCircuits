@@ -35,17 +35,17 @@ export class RenderScheduler extends ObservableImpl {
     public requestRender(): void {
         // Do nothing when blocked
         if (this.blocked)
-            return;
+            {return;}
 
         if (this.queued === 0)
-            this.lastFrameId = requestAnimationFrame(() => this.actualRender());
+            {this.lastFrameId = requestAnimationFrame(() => this.actualRender());}
         this.queued++;
     }
 
     public cancel(): void {
         // Do nothing when blocked
         if (this.blocked)
-            return;
+            {return;}
 
         cancelAnimationFrame(this.lastFrameId);
     }

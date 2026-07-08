@@ -8,7 +8,7 @@ export const RedoHandler: ToolHandler = {
         // Activate when pressing CTRL/CMD + Shift + Z or CTRL/CMD + Y
         if (!(ev.type === "keydown" && (ev.key === "z" && ev.input.isModifierKeyDown && ev.input.isShiftKeyDown ||
                                         ev.key === "y" && ev.input.isModifierKeyDown)))
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         circuit.redo();
 

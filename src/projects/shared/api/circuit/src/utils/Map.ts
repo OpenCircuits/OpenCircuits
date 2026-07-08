@@ -18,7 +18,7 @@ Map.prototype.emplace = function<K, V>(key: K, op: {
     if (this.has(key)) {
         const value = this.get(key)!;
         if (!op.update)
-            return value;
+            {return value;}
 
         const newValue = op.update(value, key, this);
         this.set(key, newValue);

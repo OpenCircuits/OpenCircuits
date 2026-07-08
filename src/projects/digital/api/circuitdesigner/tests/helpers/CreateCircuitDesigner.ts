@@ -60,7 +60,7 @@ export function CreateCircuitDesigner(toolConfig = GetDefaultTools(), sim = true
     const circuit = new DigitalCircuitImpl(uuid());
 
     if (sim)
-        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+        {circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);}
 
     const designer = CreateDesigner(toolConfig, [], -1, circuit);
 

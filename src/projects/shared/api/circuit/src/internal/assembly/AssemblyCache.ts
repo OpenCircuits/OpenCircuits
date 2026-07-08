@@ -33,7 +33,7 @@ export class DepthList<K> {
 
     private sort() {
         if (!this.isDirty)
-            return;
+            {return;}
 
         for (let i = 1; i < this.depths.length; i++) {
             const cur = this.depths[i], curVal = this.values[i];
@@ -89,7 +89,7 @@ export class DepthList<K> {
 
     public delete(val: K): boolean {
         if (!this.map.has(val))
-            return false;
+            {return false;}
         const idx = this.map.get(val)!;
 
         this.curLen--;
@@ -122,13 +122,13 @@ export class DepthList<K> {
     public forEach(fn: (val: K, depth: number, i: number) => void) {
         this.sort();  // (if dirty)
         for (let i = 0; i < this.length; i++)
-            fn(this.values[i], this.depths[i], i);
+            {fn(this.values[i], this.depths[i], i);}
     }
 
     public *[Symbol.iterator]() {
         this.sort();  // (if dirty)
         for (let i = 0; i < this.length; i++)
-            yield this.values[i];
+            {yield this.values[i];}
     }
 }
 

@@ -64,7 +64,7 @@ export const InteractionHandler: ToolHandler<DigitalAPITypes> = {
 
             // Halt select path handler
             if (obj?.baseKind === "Component" && isWithinInteractableBounds(obj, pos))
-                return ToolHandlerResponse.HALT;
+                {return ToolHandlerResponse.HALT;}
         }
 
         return ToolHandlerResponse.PASS;

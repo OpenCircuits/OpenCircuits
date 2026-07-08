@@ -100,7 +100,7 @@ export class OscilloscopeAssembler extends ComponentAssembler {
                 // Draws a vertical line so that the jump looks better
                 //  from 0 -> 1 or 1 -> 0
                 if (j > 0 && allSignals[j-1][i] !== allSignals[j][i])
-                    return [pos, pos.add(dx, 0)];
+                    {return [pos, pos.add(dx, 0)];}
                 return pos.add(dx, 0);
             })].map((p) => transform.toWorldSpace(p)),
             closed:    false,

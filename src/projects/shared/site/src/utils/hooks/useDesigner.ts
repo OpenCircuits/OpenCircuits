@@ -14,7 +14,7 @@ const { setCurDesigner, useCurDesigner } = (() => {
         },
         useCurDesigner: () => {
             if (!curDesigner)
-                throw new Error("useCurDesigner: No designer set!");
+                {throw new Error("useCurDesigner: No designer set!");}
 
             const [curDesignerState, setCurDesigner] = useState<CircuitDesigner>(curDesigner);
             useEffect(() => {

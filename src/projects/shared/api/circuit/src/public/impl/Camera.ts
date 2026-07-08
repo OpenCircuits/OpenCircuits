@@ -32,7 +32,7 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
 
         // No change, do nothing
         if (dx === 0)
-            return;
+            {return;}
 
         this.internal.setCamera({ x });
         this.publish({ type: "change", dx, dy: 0, dz: 0 });
@@ -46,7 +46,7 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
 
         // No change, do nothing
         if (dy === 0)
-            return;
+            {return;}
 
         this.internal.setCamera({ y });
         this.publish({ type: "change", dx: 0, dy, dz: 0 });
@@ -60,7 +60,7 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
 
         // No change, do nothing
         if (dx === 0 && dy === 0)
-            return;
+            {return;}
 
         this.internal.setCamera({ x, y });
         this.publish({ type: "change", dx, dy, dz: 0 });
@@ -79,7 +79,7 @@ export class CameraImpl<T extends CircuitAPITypes> extends ObservableImpl<Camera
 
         // No change, do nothing
         if (dz === 0)
-            return;
+            {return;}
 
         this.internal.setCamera({ zoom });
         this.publish({ type: "change", dx: 0, dy: 0, dz: dz });

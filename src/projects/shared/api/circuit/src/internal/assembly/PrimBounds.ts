@@ -20,7 +20,7 @@ export function Bounds(prim: Prim): Rect | undefined {
         return Rect.FromPoints(prim.p1, prim.p2);
     case "Polygon":
         if (prim.points.length === 0)
-            return undefined;
+            {return undefined;}
         return Rect.FromPoints(...prim.points);
     case "QuadCurve":
         return prim.curve.bounds;
@@ -35,7 +35,7 @@ export function Bounds(prim: Prim): Rect | undefined {
     case "Group":
         const prims = prim.prims.map((p) => Bounds({ ...p, style: prim.style })).filter(IsDefined);
         if (prims.length === 0)
-            return undefined;
+            {return undefined;}
         return Rect.Bounding(prims);
     }
 }

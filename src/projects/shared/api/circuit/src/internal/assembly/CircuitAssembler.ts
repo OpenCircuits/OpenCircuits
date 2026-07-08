@@ -184,7 +184,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             for (const [id, props] of diff.propsChanged) {
                 const result = circuit.getObjByID(id);
                 if (!result.ok) // Object was deleted
-                    continue;
+                    {continue;}
                 const obj = result.value;
 
                 // If z-index was set, dirty the component separately since it doesn't
@@ -199,21 +199,21 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
                 }
 
                 if (props.size === 0)
-                    continue;
+                    {continue;}
 
                 // Ports are weird since they depend almost entirely on their parent component for assembly
                 // For now just manual check them for being selected
                 if (obj.baseKind === "Port") {
                     const existing = this.dirtyComponentPorts.getOrInsert(obj.parent, () => new DirtyMap());
                     if (props.has("isSelected"))
-                        existing.add(id, AssemblyReason.SelectionChanged);
+                        {existing.add(id, AssemblyReason.SelectionChanged);}
                     existing.add(id, AssemblyReason.PropChanged);
                     continue;
                 }
 
                 // Ignore non-assemblable objects
                 if (!(obj.kind in this.assemblers))
-                    continue;
+                    {continue;}
 
                 const assembler = this.getAssemblerFor(obj.kind);
                 const mapping = assembler.getPropMappings();
@@ -265,7 +265,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             }
 
             if (!this.circuit.hasComp(compId) || reasons.size === 0)
-                continue;
+                {continue;}
 
             const comp = this.circuit.getCompByID(compId).unwrap();
             this.getAssemblerFor(comp.kind).assemble(comp, reasons);
@@ -372,7 +372,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
 
     public getPortPos(portID: GUID): Option<PortPos> {
         if (!this.circuit.hasPort(portID))
-            return None();
+            {return None();}
 
         const port = this.circuit.getPortByID(portID).unwrap();
 
@@ -384,7 +384,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
 
     public getWireShape(wireID: GUID): Option<Curve> {
         if (!this.circuit.hasWire(wireID))
-            return None();
+            {return None();}
 
         // Reassemble wire if it's dirty
         this.reassembleWire(wireID);
@@ -412,17 +412,17 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             // Hit test component's ports
             for (const [portId, portPrims] of this.cache.portPrims.get(compId) ?? []) {
                 if (!filter(portId))
-                    continue;
+                    {continue;}
                 if (portPrims.some((prim) => IntersectionTest(prim, bounds)))
-                    ids.push(portId);
+                    {ids.push(portId);}
             }
         }
 
         for (const [id, prims] of this.cache.wirePrims) {
             if (!filter(id)) // Skip things not in the filter
-                continue;
+                {continue;}
             if (prims.some((prim) => IntersectionTest(prim, bounds)))
-                ids.push(id);
+                {ids.push(id);}
         }
 
         return ids;
@@ -438,21 +438,21 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
             const prims = this.cache.componentPrims.get(compId)!;
             // Skip components not in the filter
             if (filter(compId) && prims.some((prim) => HitTest(prim, pos)))
-                return Some(compId);
+                {return Some(compId);}
 
             // Hit test component's ports
             for (const [portId, portPrims] of this.cache.portPrims.get(compId) ?? []) {
                 if (!filter(portId))
-                    continue;
+                    {continue;}
                 if (portPrims.some((prim) => HitTest(prim, pos)))
-                    return Some(portId);
+                    {return Some(portId);}
             }
         }
         for (const [id, prims] of this.cache.wirePrims) {
             if (!filter(id)) // Skip things not in the filter
-                continue;
+                {continue;}
             if (prims.some((prim) => HitTest(prim, pos)))
-                return Some(id);
+                {return Some(id);}
         }
         return None();
     }
@@ -463,7 +463,7 @@ export class CircuitAssembler extends ObservableImpl<CircuitAssemblerEvent> {
 
     protected getAssemblerFor(kind: string): Assembler {
         if (!(kind in this.assemblers))
-            throw new Error(`CircuitAssembler: Failed to get assembler for kind ${kind}! Unmapped!`);
+            {throw new Error(`CircuitAssembler: Failed to get assembler for kind ${kind}! Unmapped!`);}
         return this.assemblers[kind];
     }
 }

@@ -14,7 +14,7 @@ export class DirtyVar<T> {
 
         // Add oursevles to the parent set
         if (parent)
-            parent.children.add(this);
+            {parent.children.add(this);}
     }
 
     public setDirty(): void {

@@ -127,21 +127,21 @@ export const useBaseModule = <V extends Primitive[]>({
     useEffect(() => {
         // Submit in an effect since it's a callback that has the potential to call other states
         if (!state.submission)
-            return;
+            {return;}
         const { isFinal, newProps } = state.submission;
 
         circuit.beginTransaction();
         doChange(newProps);
         if (isFinal) // Commit the transaction when finalized
-            circuit.commitTransaction();
+            {circuit.commitTransaction();}
         onSubmit?.();
 
         if (isFinal) // Reset submission if final
-            setState((prevState) => ({ ...prevState, submission: undefined }));
+            {setState((prevState) => ({ ...prevState, submission: undefined }));}
 
         return () => {
             if (!isFinal) // Only undo on change if NOT the final submission
-                circuit.cancelTransaction();
+                {circuit.cancelTransaction();}
         }
     }, [circuit, state.submission, doChange, onSubmit]);
 
@@ -149,10 +149,10 @@ export const useBaseModule = <V extends Primitive[]>({
     //  i.e. arrow-buttons to step a value
     const onModify = (mod: V[number], i = 0) => {
         if (!applyModifier || !reverseModifier)
-            return;
+            {return;}
 
         if (!focused)
-            onFocus();
+            {onFocus();}
 
         // Wrap in `setState` in-case we aren't currently focused, and need the state from focusing
         setState(({ textVals, modifiers, setProps, ...prevState }) => {
@@ -198,7 +198,7 @@ export const useBaseModule = <V extends Primitive[]>({
     // onChange gets called when the user directly sets the value of the property's value
     const onChange = (newVal: string, i = 0) => {
         if (!focused)
-            onFocus();
+            {onFocus();}
 
         // Wrap in `setState` in-case we aren't currently focused, and need the state from focusing
         setState(({ textVals, modifiers, setProps, ...prevState }) => {
@@ -209,7 +209,7 @@ export const useBaseModule = <V extends Primitive[]>({
             // If invalid input, assume it's temporary and just update the text value
             //  that they are typing
             if (!isValid(val, i))
-                return { ...prevState, modifiers, setProps, textVals: newTextVals };
+                {return { ...prevState, modifiers, setProps, textVals: newTextVals };}
 
             // Reset modifier at `i` since value is being set exactly
             const newMods = new Array(props.length).fill(undefined);
@@ -251,7 +251,7 @@ export const useBaseModule = <V extends Primitive[]>({
     //    and is why this is all necessary.
     const onFocus = () => {
         if (focused) // Skip if already focused
-            return;
+            {return;}
 
         // Wrap in `setState` so that serial calls to onFocus/onChange/onBlur work correctly (ButtonModule)
         setState((prevState) => ({
@@ -274,7 +274,7 @@ export const useBaseModule = <V extends Primitive[]>({
             // If submission doesn't exist, it means that the user didn't change anything
             //  so we should just do nothing and go back to normal
             if (!submission)
-                return initialState;
+                {return initialState;}
 
             // Calculate final props
             const finalProps = setProps.map((prop, j) => (

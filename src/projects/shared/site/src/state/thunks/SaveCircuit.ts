@@ -21,7 +21,7 @@ export function SaveCircuit(metadata: BackendCircuitMetadata, data: string): Thu
         const id = state.circuit.id;
 
         if (!auth)
-            dispatch(_SetCircuitSavingFinish("Not logged in!"));
+            {dispatch(_SetCircuitSavingFinish("Not logged in!"));}
 
         dispatch(_SetCircuitSavingStart());
 
@@ -29,7 +29,7 @@ export function SaveCircuit(metadata: BackendCircuitMetadata, data: string): Thu
             const newData = await (id ? UpdateUserCircuit(auth!, { metadata, contents: data }) :
                                         CreateUserCircuit(auth!, { metadata, contents: data }));
             if (!newData)
-                throw new Error("SaveCircuit failed: newData is undefined");
+                {throw new Error("SaveCircuit failed: newData is undefined");}
             dispatch(SetCircuitId(newData.id));
             dispatch(_SetCircuitSavingFinish());
 

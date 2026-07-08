@@ -73,22 +73,22 @@ class ResultBase<T, E> implements RInterface<T, E> {
     // Extracting values
     public expect(errMsg: string): T {
         if (!this.r.ok)
-            throw new Error(errMsg);
+            {throw new Error(errMsg);}
         return this.r.value;
     }
     public unwrap(): T {
         if (!this.r.ok)
-            throw this.r.error;
+            {throw this.r.error;}
         return this.r.value;
     }
     public unwrapOr(d: T): T {
         if (!this.r.ok)
-            return d;
+            {return d;}
         return this.r.value;
     }
     public unwrapOrElse(f: (e: E) => T): T {
         if (!this.r.ok)
-            return f(this.r.error);
+            {return f(this.r.error);}
         return this.r.value;
     }
 
@@ -137,9 +137,9 @@ class ResultBase<T, E> implements RInterface<T, E> {
     }
     public match(f: (t: T) => unknown, g: (e: E) => unknown): Result<T, E> {
         if (this.r.ok)
-            f(this.r.value);
+            {f(this.r.value);}
         else
-            g(this.r.error);
+            {g(this.r.error);}
         return this.asResult();
     }
     public asUnion(): T | E {
@@ -271,22 +271,22 @@ class OptionBase<T> {
     // Extracting values
     public expect(errMsg: string): T {
         if (!this.r.some)
-            throw new Error(errMsg);
+            {throw new Error(errMsg);}
         return this.r.value;
     }
     public unwrap(): T {
         if (!this.r.some)
-            throw new Error("Attempted to unwrap \"None\" Option");
+            {throw new Error("Attempted to unwrap \"None\" Option");}
         return this.r.value;
     }
     public unwrapOr(d: T): T {
         if (!this.r.some)
-            return d;
+            {return d;}
         return this.r.value;
     }
     public unwrapOrElse(f: () => T): T {
         if (!this.r.some)
-            return f();
+            {return f();}
         return this.r.value;
     }
 
@@ -344,9 +344,9 @@ class OptionBase<T> {
     }
     public match(f: (t: T) => unknown, g: () => unknown): Option<T> {
         if (this.r.some)
-            f(this.r.value);
+            {f(this.r.value);}
         else
-            g();
+            {g();}
         return this.asOption();
     }
     public asUnion(): T | undefined {
@@ -393,7 +393,7 @@ export const ResultUtil = {
         for (const v of it) {
             const a = f(v);
             if (!a.ok)
-                return a.cast();
+                {return a.cast();}
             res.push(a.value);
         }
         return Ok(res);
@@ -404,7 +404,7 @@ export const ResultUtil = {
         for (const v of it) {
             const a = f(u, v);
             if (!a.ok)
-                return a;
+                {return a;}
             u = a.value;
         }
         return Ok(u);

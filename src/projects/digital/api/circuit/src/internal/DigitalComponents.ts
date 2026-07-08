@@ -72,13 +72,13 @@ export class DigitalComponentConfigurationInfo extends BaseComponentConfiguratio
     ): Result {
         // Prevent multiple ports connecting to a single input port
         if (!this.isPortAvailable(port, curConnections))
-            return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${port.id}`);
+            {return ErrE(`DigitalComponentInfo: Illegal fan-in on input port ${port.id}`);}
         // Prevent input->input port connections
         if (this.isInputPort(port) && this.isInputPort(newConnection))
-            return ErrE(`DigitalComponentInfo: Illegal input-to-input connection on port ${port.id}`);
+            {return ErrE(`DigitalComponentInfo: Illegal input-to-input connection on port ${port.id}`);}
         // Prevent output->output port connections
         if (this.isOutputPort(port) && this.isOutputPort(newConnection))
-            return ErrE(`DigitalComponentInfo: Illegal output-to-output connection on port ${port.id}`);
+            {return ErrE(`DigitalComponentInfo: Illegal output-to-output connection on port ${port.id}`);}
         return OkVoid();
     }
     // public override checkPortConnectivity(wires: Map<Schema.Port, Schema.Port[]>): Result {

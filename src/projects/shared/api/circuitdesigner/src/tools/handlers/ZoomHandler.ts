@@ -8,7 +8,7 @@ export const ZoomHandler: ToolHandler = {
 
     onEvent: (ev, { viewport }) => {
         if (ev.type !== "zoom")
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         viewport.camera.zoomTo(ev.factor, viewport.toWorldPos(ev.pos));
 

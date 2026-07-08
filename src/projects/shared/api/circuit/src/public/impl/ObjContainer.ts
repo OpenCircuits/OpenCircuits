@@ -135,7 +135,7 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
 
     public select(): void {
         if (this.icId)
-            throw new Error(`ObjContainerImpl: Cannot select objects in IC ${this.icId}! IC objects are immutable!`);
+            {throw new Error(`ObjContainerImpl: Cannot select objects in IC ${this.icId}! IC objects are immutable!`);}
 
         this.ctx.internal.beginTransaction();
         this.components.forEach((c) => c.select());
@@ -144,7 +144,7 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
 
     public shift(): void {
         if (this.icId)
-            throw new Error(`ObjContainerImpl: Cannot shift objects in IC ${this.icId}! IC objects are immutable!`);
+            {throw new Error(`ObjContainerImpl: Cannot shift objects in IC ${this.icId}! IC objects are immutable!`);}
 
         this.ctx.internal.beginTransaction();
         // Need to keep the zIndices the same relative to eachother

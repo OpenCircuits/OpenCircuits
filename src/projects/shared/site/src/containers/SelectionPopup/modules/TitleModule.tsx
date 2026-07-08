@@ -20,7 +20,7 @@ export const TitleModule = ({ designer }: Props) => {
         (o) => {
             // If a name is manually set, then use that.
             if (o.name)
-                return { name: o.name };
+                {return { name: o.name };}
             // Check if the obj is an IC, if so, use the user-set IC name
             const ic = circuit.getIC(o.kind);
             return { name: (ic?.name ?? o.kind) };
@@ -33,7 +33,7 @@ export const TitleModule = ({ designer }: Props) => {
     , [s]);
 
     if (!props)
-        return;
+        {return;}
 
     return (<div>
         <label>

@@ -68,7 +68,7 @@ export function CreateTestCircuit(sim = true): [DigitalCircuit, ReturnType<typeo
     const circuit = new DigitalCircuitImpl(uuid());
 
     if (sim)
-        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+        {circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);}
 
     return [
         circuit,

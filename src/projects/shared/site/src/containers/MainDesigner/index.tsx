@@ -57,7 +57,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
 
     useLayoutEffect(() => {
         if (!canvas.current)
-            return;
+            {return;}
         window.Circuit = designer.circuit;
         window.CircuitDesigner = designer;
         designer.viewport.margin = { top: HEADER_HEIGHT };
@@ -70,12 +70,12 @@ export const MainDesigner = ({ otherPlace }: Props) => {
 
     useDrop(canvas, (screenPos, itemKind: unknown, num?: unknown, ...otherData: unknown[]) => {
         if (!itemKind)
-            return;
+            {return;}
 
         if (!canvas.current)
-            throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
+            {throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");}
         if (typeof itemKind !== "string")
-            throw new Error(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);
+            {throw new Error(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);}
 
         const amt = (typeof num === "number" ? num : 1);
         const pos = designer.viewport.toWorldPos(
@@ -84,7 +84,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
         // If other place options are specified then do those
         //  otherwise default to CreateNComponents
         if (!otherPlace?.(pos, itemKind, amt, otherData))
-            PlaceNComponents(designer.circuit, itemKind, amt, pos);
+            {PlaceNComponents(designer.circuit, itemKind, amt, pos);}
     }, [designer]);
 
     return (

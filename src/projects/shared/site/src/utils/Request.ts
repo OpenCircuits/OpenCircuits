@@ -17,9 +17,9 @@ export function Request({ method, url, headers, data, async }: Props): Promise<s
 
         xhr.addEventListener("load", function() {
             if (this.status >= 200 && this.status < 400)
-                resolve(this.response);
+                {resolve(this.response);}
             else
-                reject(this.response);
+                {reject(this.response);}
         });
         xhr.addEventListener("abort", (ev) => reject(ev));
         xhr.addEventListener("error", (ev) => reject(ev));
