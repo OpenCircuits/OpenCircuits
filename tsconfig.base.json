@@ -19,6 +19,7 @@
     "isolatedModules": true,
     "strict": true,
     "sourceMap": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["node"]
   }
 }

@@ -42,7 +42,7 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.2.1",
+    "@testing-library/user-event": "14.6.1",
     "@types/benchmark": "^2.1.5",
     "@types/jest": "^29.5.1",
     "@types/minimatch": "^5.1.2",

@@ -209,7 +209,7 @@ async function Init(): Promise<void> {
                         }
 
                         return {
-                            data: new Blob([DigitalProtoSchema.DigitalCircuit.encode(proto).finish()]),
+                            data: new Blob([DigitalProtoSchema.DigitalCircuit.encode(proto).finish() as BlobPart]),
                             version: CUR_SAVE_VERSION,
                         };
                     },

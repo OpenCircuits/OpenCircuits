@@ -107,7 +107,7 @@ async function BuildDir(dir: string, project: string) {
 
         console.log(`${chalk.greenBright("Done!")}`);
     }
-})().catch(err => {
+})().catch((err) => {
     if (err.message !== "Build failed with errors.") {
         console.error(err);
     }

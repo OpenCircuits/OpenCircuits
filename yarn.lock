@@ -6003,12 +6003,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.2.1":
-  version: 14.2.1
-  resolution: "@testing-library/user-event@npm:14.2.1"
+"@testing-library/user-event@npm:14.6.1":
+  version: 14.6.1
+  resolution: "@testing-library/user-event@npm:14.6.1"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 10c0/0212ae021599ddc4ab4b6db84efb028ddab45999b4254717dbfb0416fe901c06095bd900ab3ed45f7fb8dae6348f0e936e14ac7c0f2b4239e1f9e96617cc8984
+  checksum: 10c0/75fea130a52bf320d35d46ed54f3eec77e71a56911b8b69a3fe29497b0b9947b2dc80d30f04054ad4ce7f577856ae3e5397ea7dff0ef14944d3909784c7a93fe
   languageName: node
   linkType: hard
 
@@ -17759,7 +17759,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^5.16.5"
     "@testing-library/react": "npm:^16.3.0"
-    "@testing-library/user-event": "npm:^14.2.1"
+    "@testing-library/user-event": "npm:14.6.1"
     "@types/benchmark": "npm:^2.1.5"
     "@types/jest": "npm:^29.5.1"
     "@types/minimatch": "npm:^5.1.2"
