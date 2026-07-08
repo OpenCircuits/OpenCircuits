@@ -20,10 +20,10 @@ export type RecordOfArrays<Props extends Record<string, Prop>> = {
 
 const propsEquals = (oldProps: Record<string, Prop[]> | undefined, newProps: Record<string, Prop[]>): boolean => {
     if (!oldProps)
-        return false;
+        {return false;}
     // Check if every key is the same
     if (!Object.keys(newProps).every((key) => (key in oldProps)))
-        return false;
+        {return false;}
     // Make sure every entry has equal values
     return Object.entries(newProps).every(([key, arr]) => (
         (arr.length === oldProps[key].length) &&

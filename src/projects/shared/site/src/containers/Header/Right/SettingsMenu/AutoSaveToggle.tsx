@@ -29,7 +29,7 @@ export const AutoSaveToggle = () => {
         //  or if the circuit is already currently saved
         // or if the user is not logged in
         if (!autoSave || isSaved || !isLoggedIn)
-            return;
+            {return;}
 
         let attempts = 1; // Track attempted saves
         let timeout: number;
@@ -39,7 +39,7 @@ export const AutoSaveToggle = () => {
             attempts++;
             if (!success)
                 // Wait longer each successsive, failed save
-                timeout = window.setTimeout(Save, SAVE_TIME * attempts);
+                {timeout = window.setTimeout(Save, SAVE_TIME * attempts);}
         }
 
         timeout = window.setTimeout(Save, SAVE_TIME);

@@ -37,6 +37,7 @@ export default defineConfig({
     "scripts/webpack/**"
   ],
   "rules": {
+    "curly": "error",
     "constructor-super": "error",
     "for-direction": "error",
     "no-async-promise-executor": "error",

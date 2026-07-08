@@ -23,7 +23,7 @@ export function GetPropsWithInfoFor(o: Obj, propInfo: PropInfoGetter): Record<st
     function getPropFields(info: PropInfo): PropInfoEntryField[] {
         return info.flatMap((entry) => {
             if (entry.type === "group")
-                return getPropFields(entry.info);
+                {return getPropFields(entry.info);}
             return entry;
         });
     }

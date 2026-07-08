@@ -46,7 +46,7 @@ export class CachedCircuitAPIFactoryImpl<T extends CircuitAPITypes> implements C
 
     protected getCache(icId?: GUID): ObjsCache<T> {
         if (icId)
-            return this.cache.icObjs.getOrInsert(icId, () => ({ comps: new Map(), wires: new Map(), ports: new Map() }));
+            {return this.cache.icObjs.getOrInsert(icId, () => ({ comps: new Map(), wires: new Map(), ports: new Map() }));}
         return this.cache;
     }
 

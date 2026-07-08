@@ -11,7 +11,7 @@ export class DigitalComponentInfoImpl extends ComponentInfoImpl<DigitalAPITypes>
     protected override getInfo() {
         const info = super.getInfo();
         if (!(info instanceof DigitalComponentConfigurationInfo))
-            throw new Error(`Received non-digital component info for ${this.kind}!`);
+            {throw new Error(`Received non-digital component info for ${this.kind}!`);}
         return info;
     }
 

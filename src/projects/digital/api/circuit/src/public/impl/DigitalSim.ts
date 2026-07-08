@@ -13,13 +13,13 @@ export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements Digi
         this.ctx = ctx;
         this.ctx.sim.subscribe((ev) => {
             if (ev.type === "step")
-                this.publish({ type: "step" });
+                {this.publish({ type: "step" });}
         });
     }
 
     public set propagationTime(val: number) {
         if (!this.ctx.simRunner)
-            return;
+            {return;}
         this.ctx.simRunner.propagationTime = val;
         this.publish({ type: "propagationTimeChanged", newTime: val });
     }
@@ -37,13 +37,13 @@ export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements Digi
 
     public resume() {
         if (!this.isPaused)
-            return;
+            {return;}
         this.ctx.simRunner?.resume();
         this.publish({ type: "resume" });
     }
     public pause() {
         if (this.isPaused)
-            return;
+            {return;}
         this.ctx.simRunner?.pause();
         this.publish({ type: "pause" });
     }

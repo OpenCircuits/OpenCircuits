@@ -64,7 +64,7 @@ function setClocks(inputMap: Map<string, string>, options: ExprToCirGeneratorOpt
         o.setPortConfig({ "inputs": Math.min(inputMap.size + 1, 8) });
         [...inputMap.keys()].forEach((name, inIndex) => {
             if (inIndex >= 7) // max 8 inputs and the first is reserved for circuit output
-                return;
+                {return;}
             const clock = circuit.getComponents().find((comp) => comp.name === name)!;
             clock.outputs[0].connectTo(o.inputs[inIndex + 1]);
         });
@@ -87,7 +87,7 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     const inputMap = new Map<string, InputTypes>();
     for (const token of tokenList.value) {
         if (token.type !== "input" || inputMap.has(token.name))
-            continue;
+            {continue;}
         inputMap.set(token.name, options.input);
     }
 
@@ -104,10 +104,10 @@ export function Generate(circuit: DigitalCircuit, camera: Camera, expression: st
     OrganizeMinDepth(generatedCircuit, camera.pos);
 
     if (options.label)
-        addLabels(inputMap, generatedCircuit);
+        {addLabels(inputMap, generatedCircuit);}
 
     if (options.input === "Clock")
-        setClocks(inputMap, options, generatedCircuit);
+        {setClocks(inputMap, options, generatedCircuit);}
 
     circuit.beginTransaction();
     circuit.selections.clear();

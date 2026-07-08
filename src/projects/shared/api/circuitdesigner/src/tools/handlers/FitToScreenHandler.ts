@@ -22,7 +22,7 @@ export const FitToScreenHandler: ToolHandler = {
     onEvent: (ev, { circuit, viewport }) => {
         // Activate when releasing F key
         if (!(ev.type === "keyup" && ev.key === "f"))
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         FitToScreen(circuit, viewport);
 

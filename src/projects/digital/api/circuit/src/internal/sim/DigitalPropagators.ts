@@ -122,7 +122,7 @@ function MakeLatchPropagator(getState: (signals: Record<string, Signal[]>, state
 
         const nextState = (() => {
             if (Signal.isOff(E))
-                return curState;
+                {return curState;}
             return getState(signals, curState);
         })();
         return {
@@ -183,11 +183,11 @@ const JKFlipFlop = MakeFlipFlopPropagator((signals, state, up) => {
     const [J] = signals["J"], [K] = signals["K"];
     if (up) {
         if (!Signal.isOff(J) && !Signal.isOff(K))
-            return Signal.invert(state);
+            {return Signal.invert(state);}
         else if (!Signal.isOff(J))
-            return Signal.On;
+            {return Signal.On;}
         else if (!Signal.isOff(K))
-            return Signal.Off;
+            {return Signal.Off;}
     }
     return state;
 });
@@ -195,11 +195,11 @@ const SRFlipFlop = MakeFlipFlopPropagator((signals, state, up) => {
     const [S] = signals["S"], [R] = signals["R"];
     if (up) {
         if (!Signal.isOff(S) && !Signal.isOff(R))
-            return Signal.Metastable; // undefined
+            {return Signal.Metastable;} // undefined
         else if (!Signal.isOff(S))
-            return Signal.On;
+            {return Signal.On;}
         else if (!Signal.isOff(R))
-            return Signal.Off;
+            {return Signal.Off;}
     }
     return state;
 });
@@ -214,13 +214,13 @@ function MakeTimedPropagator(onTick: LocalPropagatorFunc, defaultDelay: number, 
 
         // If paused, do nothing
         if (paused)
-            return { outputs: { "outputs": [] } };
+            {return { outputs: { "outputs": [] } };}
 
         // Just resumed, queue next cycle
         if (!paused && pausedTick !== -1) {
             // If we're resuming before hitting the next tick, just wait for that next tick.
             if (curTick < lastStateTick + delay)
-                return { outputs: { "outputs": [] } };
+                {return { outputs: { "outputs": [] } };}
             // If we're right on the tick, then do the tick
             if ((curTick - ((lastStateTick === -1 ? curTick - delay : lastStateTick))) === delay) {
                 const { outputs, nextState } = onTick(obj, signals, [...rest], tickInfo);
@@ -268,13 +268,13 @@ export const DigitalPropagators: PropagatorsMap = {
         propagator: (comp, _info, state) => {
             // No propagation when not in an IC
             if (!state.isIC())
-                return { outputs: new Map() };
+                {return { outputs: new Map() };}
 
             const outputPort = state.getPortsByGroup(comp.id)["outputs"][0];
 
             const pin = state.storage.metadata.pins.find((pin) => (pin.id === outputPort));
             if (!pin)
-                throw new Error(`DigitalSim.InputPin.propagate: Failed to find pin for input pin ${comp.id}!`);
+                {throw new Error(`DigitalSim.InputPin.propagate: Failed to find pin for input pin ${comp.id}!`);}
             const pinIndex = state.storage.metadata.pins.filter((p) => p.group === pin.group).indexOf(pin);
 
             const icInstanceId = state["prePath"].at(-1)!, superState = state.superState!;
@@ -295,13 +295,13 @@ export const DigitalPropagators: PropagatorsMap = {
         propagator: (comp, _info, state) => {
             // No propagation when not in an IC
             if (!state.isIC())
-                return { outputs: new Map() };
+                {return { outputs: new Map() };}
 
             const inputPort = state.getPortsByGroup(comp.id)["inputs"][0];
 
             const pin = state.storage.metadata.pins.find((pin) => (pin.id === inputPort));
             if (!pin)
-                throw new Error(`DigitalSim.InputPin.propagate: Failed to find pin for input pin ${comp.id}!`);
+                {throw new Error(`DigitalSim.InputPin.propagate: Failed to find pin for input pin ${comp.id}!`);}
             const pinIndex = state.storage.metadata.pins.filter((p) => p.group === pin.group).indexOf(pin);
 
             const icInstanceId = state["prePath"].at(-1)!, superState = state.superState!;

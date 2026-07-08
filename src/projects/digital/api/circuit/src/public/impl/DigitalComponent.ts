@@ -25,7 +25,7 @@ export class DigitalComponentImpl extends ComponentImpl<DigitalAPITypes> impleme
 
     public setSimState(state: number[]): void {
         if (this.icId)
-            throw new Error(`DigitalComponentImpl: Cannot set sim state for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);
+            {throw new Error(`DigitalComponentImpl: Cannot set sim state for component with ID '${this.id}' in IC ${this.icId}! IC objects are immutable!`);}
         this.ctx.sim.setState(this.id, state);
     }
 }

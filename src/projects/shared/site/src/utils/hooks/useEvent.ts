@@ -8,11 +8,11 @@ export const useEvent = <T extends InputAdapterEventType>(type: T, f: (ev: Input
                                               input?: InputAdapter, deps?: React.DependencyList) => {
     useEffect(() => {
         if (!input)
-            return;
+            {return;}
 
         const update = (ev: InputAdapterEvent) => {
             if (ev.type === type)
-                f(ev as (InputAdapterEvent & {type: T}));
+                {f(ev as (InputAdapterEvent & {type: T}));}
         }
         input.subscribe(update);
         return () => input.unsubscribe(update);

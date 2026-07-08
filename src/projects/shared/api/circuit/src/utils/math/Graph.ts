@@ -36,7 +36,7 @@ export class Graph<V, E> {
 
     private dfs(visited: Map<V, boolean>, v: V): void {
         if (visited.get(v))
-            return;
+            {return;}
 
         visited.set(v, true);
         this.list.get(v)?.forEach((e) => this.dfs(visited, e.getTarget()));
@@ -45,7 +45,7 @@ export class Graph<V, E> {
 
     public createNode(value: V): void {
         if (this.list.has(value))
-            throw new Error("Graph already has value: " + value);
+            {throw new Error("Graph already has value: " + value);}
 
         this.list.set(value, []);
         this.reverseList.set(value, []);
@@ -55,9 +55,9 @@ export class Graph<V, E> {
         const sourceNode = this.list.get(source);
         const targetNode = this.reverseList.get(target);
         if (!sourceNode)
-            throw new Error("Graph doesn't have node of value: " + source);
+            {throw new Error("Graph doesn't have node of value: " + source);}
         if (!targetNode)
-            throw new Error("Graph doesn't have node of value: " + target);
+            {throw new Error("Graph doesn't have node of value: " + target);}
 
         sourceNode.push(new Edge<V, E>(target, weight));
         targetNode.push(new Edge<V, E>(source, weight));
@@ -65,7 +65,7 @@ export class Graph<V, E> {
 
     public isConnected(): boolean {
         if (this.list.size <= 1)
-            return true;
+            {return true;}
 
         const v = this.list.keys().next().value;
 
@@ -94,20 +94,20 @@ export class Graph<V, E> {
 
     public getDegree(node: V): number {
         if (!this.list.has(node))
-            throw new Error("getDegree() failed: node not found");
+            {throw new Error("getDegree() failed: node not found");}
         return this.list.get(node)!.length + this.reverseList.get(node)!.length;
     }
 
     public getConnections(value: V): Array<Edge<V, E>> {
         if (!this.list.has(value))
-            throw new Error("getConnections() failed: value not found");
+            {throw new Error("getConnections() failed: value not found");}
         return this.list.get(value)!;
     }
 
     public getNodes(): V[] {
         const nodes = [];
         for (const val of this.list.keys())
-            nodes.push(val);
+            {nodes.push(val);}
         return nodes;
     }
 

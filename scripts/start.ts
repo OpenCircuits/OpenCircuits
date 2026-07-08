@@ -60,7 +60,7 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
         // If specified dirs in argv, then just use those.
         if (argv._.length > 0){
             if (argv._.length > 1)
-                throw new Error("Can only specify one directory to start at a time!");
+                {throw new Error("Can only specify one directory to start at a time!");}
             return `${argv._[0]}`;
         }
 
@@ -77,7 +77,7 @@ function StartClient(dir: string, project: string, open: boolean, forcePort?: nu
         return value;
     })();
     if (!dirPath)
-        return;
+        {return;}
 
     const dir = FindDir(dirs, dirPath);
     if (!dir) {

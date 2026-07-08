@@ -28,7 +28,7 @@ export function Margin(left: number, right: number, bottom: number, top: number)
 export function Margin(h: number, v: number): Margin;
 export function Margin(left: number, right: number, bottom?: number, top?: number) {
     if (bottom !== undefined)
-        return { left, right, bottom, top };
+        {return { left, right, bottom, top };}
 
     const h = left, v = right;
     return { left: h, right: h, bottom: v, top: v };
@@ -122,19 +122,19 @@ export class Rect {
     public clamp(bounds: Rect) {
         // Clamp to be as big as bounds if too big
         if (this.width > bounds.width)
-            this.width = bounds.width;
+            {this.width = bounds.width;}
         if (this.height > bounds.height)
-            this.height = bounds.height;
+            {this.height = bounds.height;}
 
         if (this.left < bounds.left)
-            this.x += (bounds.left - this.left);
+            {this.x += (bounds.left - this.left);}
         if (this.right > bounds.right)
-            this.x += (bounds.right - this.right);
+            {this.x += (bounds.right - this.right);}
 
         if (this.bottom < bounds.bottom)
-            this.y += (bounds.bottom - this.bottom);
+            {this.y += (bounds.bottom - this.bottom);}
         if (this.top > bounds.top)
-            this.y += (bounds.top - this.top);
+            {this.y += (bounds.top - this.top);}
     }
 
     /**
@@ -148,7 +148,7 @@ export class Rect {
      */
     public sub(rect: Rect): Rect[] {
         if (!this.contains(rect))
-            return [];
+            {return [];}
 
         return [
             Rect.From({ left: this.left,  right: rect.left,  top: this.top,    bottom: rect.top    }),

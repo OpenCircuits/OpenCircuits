@@ -165,7 +165,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         return this.getComponentAndInfoByID(p1.parent)
             .andThen(([_, info]) => {
                 if (!info.isPortAvailable(p1, curPorts))
-                    return ErrE(`Port ${p1.id} is not available for connection!`);
+                    {return ErrE(`Port ${p1.id} is not available for connection!`);}
                 return info.checkPortConnectivity(p1, p2, curPorts);
             })
             .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`));
@@ -178,7 +178,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     public getPortPortMapChecked(id: GUID): Set<GUID> {
         const p = this.portPortMap.get(id);
         if (!p)
-            throw new Error(`Invariant Violation: getPortPortMapChecked(${id}) unexpectedly returned undefined`);
+            {throw new Error(`Invariant Violation: getPortPortMapChecked(${id}) unexpectedly returned undefined`);}
         return p;
     }
 
@@ -188,7 +188,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
 
     public getMutObjectAndInfoByID(id: GUID): Result<[Schema.Obj, ObjInfo]> {
         if (this.hasComp(id))
-            return this.getComponentAndInfoByID(id);
+            {return this.getComponentAndInfoByID(id);}
 
         return this.getMutableObjByID(id)
             .andThen((obj) => (
@@ -227,7 +227,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {
         const obj = this.objStorage.get(id);
         if (!obj)
-            return false;
+            {return false;}
         return (obj.baseKind === kind);
 
     }
@@ -259,7 +259,7 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         return this.getObjByID(id)
             .andThen((obj): Result<O> => {
                 if (obj.baseKind !== kind)
-                    return ErrE(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${obj.baseKind}!`);
+                    {return ErrE(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${obj.baseKind}!`);}
                 return Ok(obj as O);
             });
     }
@@ -347,7 +347,7 @@ class TransactionList {
         // See if we can commute the op downwards and then potentially merge it
         let i = this.length - 1;
         while (i >= 0 && CanCommuteOps(this.ops[i], op))
-            i--;
+            {i--;}
 
         // Nothing to merge with found, just push and move on.
         if (i < 0) {
@@ -426,13 +426,13 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
             this.clock = evt.clock;
             // Optimization: If there are no remote entries then the ops are already applied.
             if (evt.remote.length === 0)
-                return;
+                {return;}
 
             // Apply remote updates mid-transaction so this state is up-to-date.
             if (this.isTransaction())
-                this.transformTransaction(evt.ops);
+                {this.transformTransaction(evt.ops);}
             else
-                this.applyOpsChecked(evt.ops);
+                {this.applyOpsChecked(evt.ops);}
 
             // Emit event on remote updates
             this.publishDiffEvent();
@@ -513,7 +513,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
                 // Emit event per-transaction-op only if we're not in a "batch", otherwise, wait till batch is done.
                 if (this.curBatchIndex === -1)
-                    this.publishDiffEvent();
+                    {this.publishDiffEvent();}
 
                 this.commitTransaction(LogEntryType.NORMAL);
             });
@@ -552,7 +552,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         this.transactionCounter++;
         if (options?.batch) {
             if (this.curBatchIndex > -1)
-                throw new Error("Can't start a new transaction batch while already in one!");
+                {throw new Error("Can't start a new transaction batch while already in one!");}
             this.curBatchIndex = this.transactionCounter;
         }
     }
@@ -560,7 +560,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     // "clientData" is arbitrary data the client can store in the Log for higher-level semantics than CircuitOps.
     public commitTransaction(type: LogEntryType, clientData = ""): LogEntry | undefined {
         if (!this.isTransaction())
-            throw new Error("Unexpected commitTransaction!");
+            {throw new Error("Unexpected commitTransaction!");}
 
         this.transactionCounter--;
 
@@ -572,12 +572,12 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
         // Early return if this isn't the last "commit"
         if (this.transactionCounter > 0)
-            return;
+            {return;}
 
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
         this.transactionCounter = 0;
         if (this.transactionList.length === 0)
-            return;
+            {return;}
 
         const txList = this.transactionList.reset();
         // Sanity check: Clock should be kept updated by the event handler.
@@ -594,7 +594,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         this.transactionCounter = 0;
         this.curBatchIndex = -1;
         if (this.transactionList.length === 0)
-            return;
+            {return;}
 
         const txList = this.transactionList.reset();
         this.applyOpsChecked(txList.inverted());
@@ -632,15 +632,15 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         if (op.inverted) {
             // These are invariant violations so we throw instead of returning an Err.
             if (!storage.componentPortsMap.has(op.c.id))
-                throw new Error(`Deleted component ${op.c.id} should have componentPortsMap initialized!`);
+                {throw new Error(`Deleted component ${op.c.id} should have componentPortsMap initialized!`);}
             if (storage.componentPortsMap.get(op.c.id)!.size > 0)
-                throw new Error(`Deleted component ${op.c.id} should not have ports`);
+                {throw new Error(`Deleted component ${op.c.id} should not have ports`);}
 
             storage.deleteComponent(op.c);
         } else {
             // These are invariant violations so we throw instead of returning an Err.
             if (storage.componentPortsMap.has(op.c.id))
-                throw new Error(`Placed component ${op.c.id} should not have any ports`);
+                {throw new Error(`Placed component ${op.c.id} should not have any ports`);}
 
             storage.addComponent(op.c);
         }
@@ -670,11 +670,11 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         return storage.getCompByID(op.component)
             .map((_) => {
                 if (!op.inverted)
-                    op.deadWires.forEach((w) => storage.deleteWire(w));
+                    {op.deadWires.forEach((w) => storage.deleteWire(w));}
                 removedPorts.forEach((p) => storage.deletePort(p));
                 addedPorts.forEach((p) => storage.addPort(p));
                 if (op.inverted)
-                    op.deadWires.forEach((w) => storage.addWire(w));
+                    {op.deadWires.forEach((w) => storage.addWire(w));}
             });
     }
 
@@ -705,9 +705,9 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                     // Copy-on-write
                     obj.props = { ...obj.props };
                     if (op.newVal !== undefined)
-                        obj.props[op.key] = op.newVal;
+                        {obj.props[op.key] = op.newVal;}
                     else
-                        delete obj.props[op.key];
+                        {delete obj.props[op.key];}
                 }));
     }
 
@@ -716,7 +716,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         if (op.inverted) {
             // These are invariant violations so we error instead of returning an Err.
             if (!this.icStorage.has(op.ic.metadata.id))
-                throw new Error(`Deleted IC ${op.ic.metadata.id} should have an entry in icStorage!`);
+                {throw new Error(`Deleted IC ${op.ic.metadata.id} should have an entry in icStorage!`);}
 
             this.icStorage.delete(op.ic.metadata.id);
             this.objInfo.deleteIC(op.ic);
@@ -726,7 +726,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
         // These are invariant violations so we error instead of returning an Err.
         if (this.icStorage.has(op.ic.metadata.id))
-            throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);
+            {throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);}
 
         // Check validity of IC, which we can return as an Err if it fails.
         return this.storage.checkICValidity(op.ic)

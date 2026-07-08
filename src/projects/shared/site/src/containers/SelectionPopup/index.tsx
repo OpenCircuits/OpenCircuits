@@ -59,7 +59,7 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
             // let user click through box so it doesn't block a double click
             setClickThrough((prevState) => {
                 if (prevState) // If already have a timeout then just ignore
-                    return prevState;
+                    {return prevState;}
                 setTimeout(() =>
                     setClickThrough(false),
                     DOUBLE_CLICK_DURATION
@@ -99,9 +99,9 @@ export const SelectionPopup = ({ designer, docsUrlConfig, children }: Props) => 
     // Clamp position to screen if visible
     const finalPos = (() => {
         if (!isVisible)
-            return pos;
+            {return pos;}
         if (!popup.current)
-            throw new Error("SelectionPopup failed: popup.current is null");
+            {throw new Error("SelectionPopup failed: popup.current is null");}
         const { width, height } = popup.current.getBoundingClientRect();
 
         return V(
@@ -150,12 +150,12 @@ const InfoDisplay = ({ designer, docsUrlConfig }: InfoDisplayProps) => {
     );
 
     if (!props)
-        return;
+        {return;}
 
     // Make sure all components have same kind, otherwise don't display
     const allSame = props.kind.every((kind) => (kind === props.kind[0]));
     if (!allSame)
-        return;
+        {return;}
 
     // Check if the kind is an IC, if so, use the user-set IC name
     const ic = circuit.getIC(props.kind[0]);

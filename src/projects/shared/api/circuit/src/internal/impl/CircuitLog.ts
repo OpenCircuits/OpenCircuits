@@ -130,7 +130,7 @@ export class CircuitLog extends ObservableImpl<LogEvent> {
 
     private acceptLocal(entry: LogEntry): void {
         if (entry.id !== this.proposedEntries[0].id)
-            throw new Error("acceptLocal called in unexpected order!");
+            {throw new Error("acceptLocal called in unexpected order!");}
 
         entry.clock = this.clock + 1;
         this.log.push(entry);

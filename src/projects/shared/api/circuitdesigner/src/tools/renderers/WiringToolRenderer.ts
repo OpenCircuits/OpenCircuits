@@ -45,12 +45,12 @@ export const WiringToolRenderer = (getColor: (params: ToolRendererArgs) => strin
 
         // If a non-selection-box-tool active, then do nothing
         if (!(curTool instanceof WiringTool))
-            return;
+            {return;}
 
         const port = curTool.getCurPort();
         const target = curTool.getTargetPos();
         if (!port || !target)
-            return;
+            {return;}
 
         const curve = new BezierCurve(port.targetPos, target, port.targetPos.add(port.dir.scale(1)), target);
         renderer.draw({
@@ -63,7 +63,7 @@ export const WiringToolRenderer = (getColor: (params: ToolRendererArgs) => strin
         // Draw indication that we're hovering on a target port
         const targetPotentialPort = curTool.findPort(target, circuit) ?? circuit.pickPortAt(target);
         if (!targetPotentialPort)
-            return;
+            {return;}
         const targetCanConnectPort = curTool.findPort(target, circuit, port);
 
         const EXTRA_RADIUS = 0.025;

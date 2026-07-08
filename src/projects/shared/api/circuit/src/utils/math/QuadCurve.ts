@@ -77,7 +77,7 @@ export class QuadCurve extends Curve {
 
     public override get bounds(): Rect {
         if (!this.boundingBox) // Calculate when requested
-            this.boundingBox = this.calcBoundingBox();
+            {this.boundingBox = this.calcBoundingBox();}
         return this.boundingBox;
     }
 

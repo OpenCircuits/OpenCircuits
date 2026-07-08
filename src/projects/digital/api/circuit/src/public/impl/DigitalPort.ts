@@ -26,7 +26,7 @@ export class DigitalPortImpl extends PortImpl<DigitalAPITypes> implements Digita
 
     public get signal(): Signal {
         if (this.icId)
-            throw new Error(`DigitalPortImpl: Signal cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`);
+            {throw new Error(`DigitalPortImpl: Signal cannot be accessed for ports inside an IC! Port ID: '${this.id}', IC ID: '${this.icId}'`);}
         return this.ctx.sim.getSignal(this.id);
     }
 }

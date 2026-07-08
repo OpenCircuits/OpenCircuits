@@ -24,7 +24,7 @@ export function GetComponentPath(c: Component): Component[] {
         path.push(q);
         for (const c of q.allPorts.flatMap((port) => port.connectedPorts).map((port) => port.parent)) {
             if (!visited.has(c.id))
-                queue.push(c);
+                {queue.push(c);}
         }
     }
 
@@ -37,19 +37,19 @@ export const SelectPathHandler: ToolHandler = {
     onEvent: (ev, { circuit, viewport }) => {
         // Activate on double LMB click
         if (!(ev.type === "dblclick" && ev.button === LEFT_MOUSE_BUTTON))
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         // Make sure we double clicked on something
         const obj = circuit.pickObjAt(viewport.toWorldPos(ev.input.mousePos));
         if (!obj)
-            return ToolHandlerResponse.PASS;
+            {return ToolHandlerResponse.PASS;}
 
         const path = (() => {
             switch (obj.baseKind) {
                 case "Component":
                     // For nodes, return the path of one of the ports (they are all on the same path by definition)
                     if (obj.isNode())
-                        return obj.path;
+                        {return obj.path;}
                     // For other components, return all of the components that are connected
                     // TODO: Get connected components
                     return GetComponentPath(obj);

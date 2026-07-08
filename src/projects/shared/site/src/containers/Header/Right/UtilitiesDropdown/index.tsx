@@ -50,7 +50,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
     const load = () => {
         dispatch(CloseHeaderMenus());
         if (isSaved || window.confirm(OVERWRITE_CIRCUIT_MESSAGE))
-            LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE));
+            {LoadCircuit(DevGetFile(DEV_CACHED_CIRCUIT_FILE));}
     }
 
     return (
@@ -64,7 +64,7 @@ export const UtilitiesDropdown = ({ extraUtilities }: Props) => {
                      className={`${isLocked ? "disabled" : ""}`}
                      onClick={() => {
                         if (isLocked)
-                            return;
+                            {return;}
                         dispatch(CloseHeaderMenus());
                         dispatch(OpenHeaderPopup(utility.popupName));
                      }}>

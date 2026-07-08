@@ -34,7 +34,7 @@ export const HeaderLeft = () => {
     // Sync circuit's name with the redux state name
     useEffect(() => circuit.subscribe((ev) => {
         if (ev.type !== "metadata" || ev.change !== "name")
-            return;
+            {return;}
         dispatch(SetCircuitName(circuit.name));
     }));
 

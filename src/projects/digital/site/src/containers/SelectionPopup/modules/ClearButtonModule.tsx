@@ -14,7 +14,7 @@ export const ClearButtonModule = ({ circuit }: Props) => {
 
     // Show if valid and if there are multiple components
     if (!props)
-        return;
+        {return;}
 
     return (
         <button type="button"
