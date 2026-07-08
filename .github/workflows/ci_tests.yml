@@ -32,7 +32,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.24
+          go-version: 1.26
 
       - name: Use Node.js
         uses: actions/setup-node@v4
