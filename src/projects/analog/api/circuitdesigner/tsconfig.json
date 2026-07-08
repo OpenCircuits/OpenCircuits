@@ -1,7 +1,6 @@
 {
   "extends": "../../../../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "Vector": ["../../../shared/api/circuit/src/utils/math/Vector"],
       "math/*": ["../../../shared/api/circuit/src/utils/math/*"],

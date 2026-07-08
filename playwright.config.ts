@@ -1,4 +1,4 @@
-import baseConfig from "./playwright/config/digital.config.js";
+import baseConfig from "./playwright/config/digital.config.ts";
 
 import type { PlaywrightTestConfig } from "@playwright/test";
 

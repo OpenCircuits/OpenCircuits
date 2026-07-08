@@ -8,15 +8,15 @@ import open from "open";
 import prompts from "prompts";
 import yargs from "yargs/yargs";
 
-import getEnv from "./utils/env.js";
-import getAliases from "./utils/getAliases.js";
+import getEnv from "./utils/env.ts";
+import getAliases from "./utils/getAliases.ts";
 import {
     FindDir,
     getOtherPageDirs,
     getProjectCircuitDesignerDirs,
     getProjectCircuitDirs,
     getProjectSiteDirs,
-} from "./utils/getDirs.js";
+} from "./utils/getDirs.ts";
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "test";
@@ -35,12 +35,12 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
                 "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
 
                 "transform": {
-                    "^.+\\.scss$": path.resolve("build/scripts/test/scssTransform.js"),
-                    "^.+\\.svg$": path.resolve("build/scripts/test/svgTransform.js"),
+                    "^.+\\.scss$": path.resolve("scripts/test/scssTransform.ts"),
+                    "^.+\\.svg$": path.resolve("scripts/test/svgTransform.ts"),
                 },
 
                 "setupFiles": ["jest-canvas-mock"],
-                "setupFilesAfterEnv": [path.resolve("build/scripts/test/setupFileAfterEnv.js")],
+                "setupFilesAfterEnv": [path.resolve("scripts/test/setupFileAfterEnv.ts")],
             }),
         },
         [dir],

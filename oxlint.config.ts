@@ -437,6 +437,7 @@ export default defineConfig({
             "files": ["scripts/**"],
             "rules": {
                 "no-console": "off",
+                "import/extensions": "off",
             },
         },
         {

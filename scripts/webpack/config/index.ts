@@ -1,13 +1,13 @@
 import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
 import webpack from "webpack";
 
-import mergeDeep from "../../utils/merge.js";
+import mergeDeep from "../../utils/merge.ts";
 
-import CSSConfig from "./css.js";
-import HTMLConfig from "./html.js";
-import IMGConfig from "./img.js";
-import TSConfig from "./ts.js";
-import WASMConfig from "./wasm.js";
+import CSSConfig from "./css.ts";
+import HTMLConfig from "./html.ts";
+import IMGConfig from "./img.ts";
+import TSConfig from "./ts.ts";
+import WASMConfig from "./wasm.ts";
 
 import type { Config } from "./types";
 import type { Configuration } from "webpack";

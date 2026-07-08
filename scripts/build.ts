@@ -6,11 +6,11 @@ import ora from "ora";
 import prompts from "prompts";
 import yargs from "yargs/yargs";
 
-import CopyDir from "./utils/copyDir.js";
-import { Spawn } from "./utils/spawn.js";
-import startWebpack from "./webpack/index.js";
+import CopyDir from "./utils/copyDir.ts";
+import { Spawn } from "./utils/spawn.ts";
+import startWebpack from "./webpack/index.ts";
 
-import { FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir } from "./utils/getDirs.js";
+import { FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir } from "./utils/getDirs.ts";
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "production";
