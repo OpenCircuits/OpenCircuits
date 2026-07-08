@@ -1,10 +1,10 @@
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import ReactRefreshWebpackPlugin from "@rspack/plugin-react-refresh";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 
 import getAliases from "../../utils/getAliases.ts";
 
 import type { Config } from "./types.ts";
-import type { Configuration } from "webpack";
+import type { Configuration } from "@rspack/core";
 
 /**
  * Returns the typescript webpack configuration.
@@ -29,13 +29,27 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
                 //  and then goes through the react compiler.
                 use: [
                     {
+                        loader: "builtin:swc-loader",
+                        options: {
+                            jsc: {
+                                parser: {
+                                    syntax: "typescript",
+                                    tsx: true,
+                                },
+                                transform: {
+                                    react: {
+                                        runtime: "automatic",
+                                        development: isDev,
+                                        refresh: isDev,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    {
                         loader: "babel-loader",
                         options: {
-                            presets: [
-                                "@babel/preset-env",
-                                ["@babel/preset-react", { "runtime": "automatic" }],
-                                "@babel/preset-typescript",
-                            ],
+                            presets: ["@babel/preset-typescript"],
                             plugins: ["babel-plugin-react-compiler"],
                         },
                     },

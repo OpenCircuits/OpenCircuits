@@ -1,7 +1,7 @@
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import { rspack } from "@rspack/core";
 
 import type { Config } from "./types";
-import type { Configuration } from "webpack";
+import type { Configuration } from "@rspack/core";
 
 /**
  * Creates the webpack configuration for CSS.
@@ -25,7 +25,7 @@ export default ({ isProd, publicPath }: Config): Configuration => ({
                 //  then shoots it into mini-css-extract-plugin to extract it out of the bundle and into a separate file
                 use: [
                     {
-                        loader: MiniCssExtractPlugin.loader,
+                        loader: rspack.CssExtractRspackPlugin.loader,
                         options: { publicPath },
                     },
                     {
@@ -52,7 +52,7 @@ export default ({ isProd, publicPath }: Config): Configuration => ({
     },
 
     plugins: [
-        new MiniCssExtractPlugin(
+        new rspack.CssExtractRspackPlugin(
             isProd
                 ? {
                       // Extract the css to /static/css/

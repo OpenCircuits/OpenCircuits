@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 import bodyParser from "body-parser";
-import Server, { type Middleware } from "webpack-dev-server";
+import type { DevServer, DevServerMiddleware } from "@rspack/core";
+import type { Application, Request, Response } from "express";
 
 /**
  * HOC for dev-server, created by-project so there can be different directories
@@ -24,17 +25,20 @@ export default (project: string) => {
      * @returns           The passed in middlewares.
      * @throws If one of the underlying functions throws an error.
      */
-    return (middlewares: Middleware[], devServer: Server) => {
+    return (middlewares: DevServerMiddleware[], devServer: DevServer) => {
         if (!devServer.app) throw new Error("webpack-dev-server app is not defined");
 
+        // devServer.app in @rspack/dev-server is an Express instance at runtime
+        const app = devServer.app as unknown as Application;
+
         // Create new file
-        devServer.app.post("/dev/file/:id", bodyParser.text(), (req, res) => {
+        app.post("/dev/file/:id", bodyParser.text(), (req: Request, res: Response) => {
             try {
                 // Make cached directory if it doesn't already exist
                 if (!fs.existsSync(CACHE_PATH)) fs.mkdirSync(CACHE_PATH, { recursive: true });
 
                 const fileId = req.params.id;
-                const file = req.body;
+                const file = req.body as string;
 
                 // Well aware of how unsafe this is, but since it's a DEV only feature
                 //  and only runs on the dev's computer, it should be fine
@@ -47,12 +51,15 @@ export default (project: string) => {
         });
 
         // Get file by ID
-        devServer.app.get("/dev/file/:id", (req, res) => {
+        app.get("/dev/file/:id", (req: Request, res: Response) => {
             try {
                 const fileId = req.params.id;
 
                 const filePath = path.resolve(CACHE_PATH, fileId);
-                if (!fs.existsSync(filePath)) return res.status(404);
+                if (!fs.existsSync(filePath)) {
+                    res.status(404).send();
+                    return;
+                }
 
                 const data = fs.readFileSync(filePath).toString("utf8");
 
@@ -63,9 +70,12 @@ export default (project: string) => {
         });
 
         // List saved files
-        devServer.app.get("/dev/filelist", (req, res) => {
+        app.get("/dev/filelist", (req: Request, res: Response) => {
             try {
-                if (!fs.existsSync(CACHE_PATH)) return res.status(200).json({ files: [] });
+                if (!fs.existsSync(CACHE_PATH)) {
+                    res.status(200).json({ files: [] });
+                    return;
+                }
 
                 const files = fs.readdirSync(CACHE_PATH).filter((f) => f.endsWith(".circuit"));
 

@@ -1,10 +1,9 @@
 import path from "node:path";
 
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import InterpolateHtmlPlugin from "interpolate-html-plugin";
+import { rspack } from "@rspack/core";
 
 import type { Config } from "./types";
-import type { Configuration } from "webpack";
+import type { Configuration } from "@rspack/core";
 
 /**
  * Creates the webpack configuration for HTML.
@@ -16,10 +15,9 @@ import type { Configuration } from "webpack";
  */
 export default ({ env, publicPath }: Config): Configuration => ({
     plugins: [
-        new HtmlWebpackPlugin({
+        new rspack.HtmlRspackPlugin({
             template: path.resolve(publicPath, "index.html"),
+            templateParameters: env,
         }),
-
-        new InterpolateHtmlPlugin(env),
     ],
 });

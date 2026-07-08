@@ -66,10 +66,10 @@ jobs:
         run: |
           BASE_URL=$(gcloud app describe --format='value(defaultHostname)')
           PR_URL="https://pr-${{ github.event.pull_request.number }}-dot-$BASE_URL"
-          
+
           # Check if the bot has already commented
           COMMENT_COUNT=$(gh pr view ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --json comments --jq '[.comments[] | select(.body | contains("PR Preview Deployed at:"))] | length')
-          
+
           if [ "$COMMENT_COUNT" -eq 0 ]; then
             gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "PR Preview Deployed at: $PR_URL"
           else

@@ -1,5 +1,5 @@
 import type { Config } from "./types.ts";
-import type { Configuration } from "webpack";
+import type { Configuration } from "@rspack/core";
 
 /**
  * Returns the wasm webpack configuration.

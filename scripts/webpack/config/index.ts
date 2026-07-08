@@ -1,5 +1,4 @@
-import FriendlyErrorsWebpackPlugin from "@soda/friendly-errors-webpack-plugin";
-import webpack from "webpack";
+import { rspack } from "@rspack/core";
 
 import mergeDeep from "../../utils/merge.ts";
 
@@ -10,7 +9,7 @@ import TSConfig from "./ts.ts";
 import WASMConfig from "./wasm.ts";
 
 import type { Config } from "./types";
-import type { Configuration } from "webpack";
+import type { Configuration } from "@rspack/core";
 
 /**
  * Creates the webpack configuration.
@@ -38,10 +37,8 @@ export default (config: Config): Configuration => {
             },
 
             plugins: [
-                new FriendlyErrorsWebpackPlugin(),
-
                 // Stringify environment variables
-                new webpack.DefinePlugin({
+                new rspack.DefinePlugin({
                     "process.env": Object.fromEntries(
                         Object.entries(env).map(([key, val]) => [key, JSON.stringify(val)]),
                     ),
