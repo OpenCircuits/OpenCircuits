@@ -19,3 +19,7 @@
 - **Strict Typing**: The use of `any` is strictly forbidden across the TypeScript codebase.
 - **Reference Existing Patterns**: Never write code without first checking the rest of the codebase for examples or similar scenarios. Always emulate established patterns (this applies especially strongly to tests).
 - **Update Documentation**: Any updates to code, including the addition or removal of files, must always be reflected in the nearest `README.md` file to keep the architecture documentation accurate.
+
+### Testing Guidelines
+- **Integration over Isolation**: When testing UI behavior or bugs tied to application state (e.g., Redux, global hooks), strongly prefer integration tests that simulate real user interactions (rendering connected components with providers and using `userEvent.click`) rather than testing hooks or state in artificial isolation.
+- **Avoid Mocks for Core Logic**: Do not mock internal APIs or complex structures (like the `Circuit` class or `CircuitHistory`). Use the real implementations and canonical test helpers (e.g., `CreateTestCircuit()`, `CircuitHelpers`) to ensure the tests interact with the genuine architecture of the system.
