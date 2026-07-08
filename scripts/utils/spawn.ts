@@ -1,4 +1,4 @@
-import { SpawnOptions, spawn } from "node:child_process";
+import { type SpawnOptions, spawn } from "node:child_process";
 
 export function Spawn(cmd: string, opts?: SpawnOptions) {
     return new Promise<void>((resolve, reject) => {

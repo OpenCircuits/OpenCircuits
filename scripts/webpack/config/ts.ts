@@ -1,9 +1,9 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 
-import getAliases from "../../utils/getAliases.js";
+import getAliases from "../../utils/getAliases.ts";
 
-import type { Config } from "./types.js";
+import type { Config } from "./types.ts";
 import type { Configuration } from "webpack";
 
 /**

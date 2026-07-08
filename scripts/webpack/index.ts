@@ -5,13 +5,13 @@ import chalk from "chalk";
 import webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 
-import openBrowser from "../utils/browser/openBrowser.js";
-import choosePort from "../utils/choosePort.js";
-import copyDir from "../utils/copyDir.js";
-import getEnv from "../utils/env.js";
+import openBrowser from "../utils/browser/openBrowser.ts";
+import choosePort from "../utils/choosePort.ts";
+import copyDir from "../utils/copyDir.ts";
+import getEnv from "../utils/env.ts";
 
-import config from "./config/index.js";
-import customDevServer from "./customDevServer.js";
+import config from "./config/index.ts";
+import customDevServer from "./customDevServer.ts";
 
 /**
  * Basic webpack creation.

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import bodyParser from "body-parser";
-import Server, { Middleware } from "webpack-dev-server";
+import Server, { type Middleware } from "webpack-dev-server";
 
 /**
  * HOC for dev-server, created by-project so there can be different directories
