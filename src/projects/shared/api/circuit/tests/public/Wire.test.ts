@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
 
-import {V} from "Vector";
-import {Rect} from "math/Rect";
+import { V } from "Vector";
+import { Rect } from "math/Rect";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("Wire", () => {
     describe("Bounds", () => {
@@ -124,7 +123,8 @@ describe("Wire", () => {
     describe("Props", () => {
         test("getProps", () => {
             const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             w1.name = "Test Wire";
             w1.zIndex = 1;
@@ -138,7 +138,8 @@ describe("Wire", () => {
 
         test("setProp", () => {
             const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             w1.setProp("name", "Test Wire");
 
@@ -147,7 +148,8 @@ describe("Wire", () => {
 
         test("getProp", () => {
             const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             expect(w1.getProp("name")).toBeUndefined();
             w1.name = "Test Wire";
@@ -156,23 +158,29 @@ describe("Wire", () => {
 
         test("getProp with invalid prop", () => {
             const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             expect(w1.getProp("fakeProp")).toBeUndefined();
         });
 
         test("Set invalid prop", () => {
             const [circuit, { PlaceAt, Connect }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
-            expect(() => { w1.setProp("fakeProp", true) }).toThrow();
+            expect(() => {
+                w1.setProp("fakeProp", true);
+            }).toThrow();
         });
     });
 
     describe("Ports", () => {
         test("Wire is connected to ports", () => {
             const [circuit, { PlaceAt, GetPort }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), p1 = GetPort(c1), p2 = GetPort(c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                p1 = GetPort(c1),
+                p2 = GetPort(c2);
 
             const w1 = p1.connectTo(p2)!;
             expect(w1).toBeDefined();
@@ -189,7 +197,10 @@ describe("Wire", () => {
     describe("Split", () => {
         test("split", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), p1 = GetPort(c1), p2 = GetPort(c2), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                p1 = GetPort(c1),
+                p2 = GetPort(c2),
+                w1 = Connect(c1, c2);
 
             const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
 
@@ -233,7 +244,8 @@ describe("Wire", () => {
     describe("Delete full path", () => {
         test("Delete full path with 1 node", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             sw1.delete();
@@ -260,7 +272,8 @@ describe("Wire", () => {
         });
         test("Delete full path with 2 nodes", () => {
             const [circuit, { PlaceAt, Connect, GetPort }] = CreateTestCircuit();
-            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)), w1 = Connect(c1, c2);
+            const [c1, c2] = PlaceAt(V(0, 0), V(1, 1)),
+                w1 = Connect(c1, c2);
 
             const { node: n1, wire1: sw1, wire2: sw2 } = w1.split();
             const { node: n2, wire1: sw21, wire2: sw22 } = sw2.split();

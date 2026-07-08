@@ -1,8 +1,7 @@
-import {Vector} from "Vector";
-import {Circuit} from "shared/api/circuit/public";
+import { Vector } from "Vector";
+import { Circuit } from "shared/api/circuit/public";
 
-import {CreateGraph} from "shared/api/circuit/utils/CircuitUtils";
-
+import { CreateGraph } from "shared/api/circuit/utils/CircuitUtils";
 
 const ORGANIZE_SEP_X = 4;
 const ORGANIZE_SEP_Y = 3;
@@ -10,12 +9,15 @@ const ORGANIZE_SEP_Y = 3;
 function OrganizeCore(circuit: Circuit, start: Vector, depths: string[][]): void {
     // Depths is a 2d array where the index of the inner array indicates the depth of all of the nodes inside that array
     depths.forEach((nodes, depth) =>
-        nodes.forEach((id, index) =>
-            circuit.getComponent(id)!.pos = (                              // VVV extra space for labels
-                start.add(ORGANIZE_SEP_X * (depth - (depths.length - 1) / 2) + ORGANIZE_SEP_X / 2,
-                    -ORGANIZE_SEP_Y * (index - (nodes.length - 1) / 2))
-            )
-        )
+        nodes.forEach(
+            (id, index) =>
+                (circuit.getComponent(id)!.pos =
+                    // VVV extra space for labels
+                    start.add(
+                        ORGANIZE_SEP_X * (depth - (depths.length - 1) / 2) + ORGANIZE_SEP_X / 2,
+                        -ORGANIZE_SEP_Y * (index - (nodes.length - 1) / 2),
+                    )),
+        ),
     );
 }
 

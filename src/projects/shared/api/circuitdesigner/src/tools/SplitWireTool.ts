@@ -1,11 +1,10 @@
-import {Wire} from "shared/api/circuit/public";
+import { Wire } from "shared/api/circuit/public";
 
-import {CircuitDesigner}   from "shared/api/circuitdesigner/public/CircuitDesigner";
-import {LEFT_MOUSE_BUTTON} from "shared/api/circuitdesigner/input/Constants";
-import {InputAdapterEvent} from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
 
-import {TranslateTool} from "./TranslateTool";
-
+import { TranslateTool } from "./TranslateTool";
 
 export class SplitWireTool extends TranslateTool {
     public override shouldActivate(ev: InputAdapterEvent, { curPressedObj }: CircuitDesigner): boolean {

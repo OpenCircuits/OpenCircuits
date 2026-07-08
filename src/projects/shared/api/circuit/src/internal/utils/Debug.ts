@@ -1,5 +1,4 @@
-import {GUID, Schema} from "shared/api/circuit/schema";
-
+import { GUID, Schema } from "shared/api/circuit/schema";
 
 export function GetShortenedID(id: GUID): string {
     return id.slice(0, 8);

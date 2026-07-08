@@ -1,9 +1,8 @@
-import type {Curve} from "math/Curve";
+import type { Curve } from "math/Curve";
 
-import type {BaseObject, ReadonlyBaseObject} from "./BaseObject";
-import type {Node, ReadonlyNode} from "./Component";
-import type {Port, ReadonlyPort} from "./Port";
-
+import type { BaseObject, ReadonlyBaseObject } from "./BaseObject";
+import type { Node, ReadonlyNode } from "./Component";
+import type { Port, ReadonlyPort } from "./Port";
 
 interface BaseReadonlyWire<PortT, NodeT, WireT> {
     readonly baseKind: "Wire";
@@ -20,12 +19,13 @@ interface BaseReadonlyWire<PortT, NodeT, WireT> {
 
 export type ReadonlyWire = ReadonlyBaseObject & BaseReadonlyWire<ReadonlyPort, ReadonlyNode, ReadonlyWire>;
 
-export type Wire = BaseObject & BaseReadonlyWire<Port, Node, Wire> & {
-    zIndex: number;
+export type Wire = BaseObject &
+    BaseReadonlyWire<Port, Node, Wire> & {
+        zIndex: number;
 
-    shift(): void;
+        shift(): void;
 
-    split(): { node: Node, wire1: Wire, wire2: Wire };
+        split(): { node: Node; wire1: Wire; wire2: Wire };
 
-    delete(): void;
-}
+        delete(): void;
+    };

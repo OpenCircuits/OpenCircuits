@@ -1,5 +1,4 @@
-import {GUID} from "./GUID";
-
+import { GUID } from "./GUID";
 
 export interface CircuitMetadata {
     id: GUID;

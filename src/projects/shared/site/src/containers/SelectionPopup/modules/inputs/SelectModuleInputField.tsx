@@ -1,14 +1,16 @@
-import {useRef} from "react";
+import { useRef } from "react";
 
-import {DefaultConfig, SharedModuleInputFieldProps, useBaseModule} from "./ModuleInputField";
+import { DefaultConfig, SharedModuleInputFieldProps, useBaseModule } from "./ModuleInputField";
 
-
-type Props<T extends string|number> = SharedModuleInputFieldProps<T> & {
-    readonly kind: (T extends string ? "string[]" : "number[]");
+type Props<T extends string | number> = SharedModuleInputFieldProps<T> & {
+    readonly kind: T extends string ? "string[]" : "number[]";
     readonly options: Array<readonly [string, T]>;
-}
-export const SelectModuleInputField = <T extends number|string>({
-    kind, options, placeholder, ...props
+};
+export const SelectModuleInputField = <T extends number | string>({
+    kind,
+    options,
+    placeholder,
+    ...props
 }: Props<T>) => {
     const ref = useRef<HTMLSelectElement>(null);
 
@@ -35,11 +37,16 @@ export const SelectModuleInputField = <T extends number|string>({
                 // compromise since selecting from a dropdown is a pretty direct action.
                 // Issue #1381.
                 ref.current?.blur();
-            }}>
-            <option value="" disabled hidden>{placeholder ?? "-"}</option>
+            }}
+        >
+            <option value="" disabled hidden>
+                {placeholder ?? "-"}
+            </option>
             {options.map((o) => (
-                <option key={`select-module-${o}`} value={o[1]}>{o[0]}</option>
-        ))}
+                <option key={`select-module-${o}`} value={o[1]}>
+                    {o[0]}
+                </option>
+            ))}
         </select>
     );
-}
+};

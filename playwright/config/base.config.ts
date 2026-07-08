@@ -1,15 +1,14 @@
-import {devices} from "@playwright/test";
+import { devices } from "@playwright/test";
 
-import type {PlaywrightTestConfig, PlaywrightTestOptions, PlaywrightWorkerOptions, Project} from "@playwright/test";
+import type { PlaywrightTestConfig, PlaywrightTestOptions, PlaywrightWorkerOptions, Project } from "@playwright/test";
 import path from "node:path";
-
 
 type DevPageNames = "digital" | "landing";
 type ProdPageNames = "digital";
 type PageDetails = {
     port: number;
     command: string;
-}
+};
 // TODO: How do I just import the interface TestConfigWebServer from "@playwright/test"?
 export type WebServer = {
     reuseExistingServer: boolean;
@@ -17,13 +16,13 @@ export type WebServer = {
     command: string;
     port: number;
     cwd: string;
-}
+};
 
 /* Configure projects for major browsers */
 const baseProjects: Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>> = [
     {
         name: "chromium",
-        use:  {
+        use: {
             ...devices["Desktop Chrome"],
             viewport: { width: 1280, height: 720 },
         },
@@ -32,7 +31,7 @@ const baseProjects: Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions
 
     {
         name: "firefox",
-        use:  {
+        use: {
             ...devices["Desktop Firefox"],
             viewport: { width: 1280, height: 720 },
         },
@@ -41,7 +40,7 @@ const baseProjects: Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions
 
     {
         name: "webkit",
-        use:  {
+        use: {
             ...devices["Desktop Safari"],
             viewport: { width: 1280, height: 720 },
         },
@@ -51,14 +50,14 @@ const baseProjects: Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions
     /* Test against mobile viewports. */
     {
         name: "Mobile Chrome",
-        use:  {
+        use: {
             ...devices["Pixel 5"],
         },
         testMatch: ["*/mobile/{shared,android}/*.spec.ts", "*/shared/*.spec.ts"],
     },
     {
         name: "Mobile Safari",
-        use:  {
+        use: {
             ...devices["iPhone 12"],
         },
         testMatch: ["*/mobile/{shared,iphone}/*.spec.ts", "*/shared/*.spec.ts"],
@@ -87,9 +86,11 @@ function modifiyTestMatchRegExp(match: RegExp, _page: string): RegExp {
     return match;
 }
 
-function generateProjectDefinition(pageName: string, port: number,
-    project: Project<PlaywrightTestOptions, PlaywrightWorkerOptions>):
-    Project<PlaywrightTestOptions, PlaywrightWorkerOptions> {
+function generateProjectDefinition(
+    pageName: string,
+    port: number,
+    project: Project<PlaywrightTestOptions, PlaywrightWorkerOptions>,
+): Project<PlaywrightTestOptions, PlaywrightWorkerOptions> {
     const name = project.name + "-" + pageName;
     let testMatch: string | RegExp | Array<string | RegExp> | undefined;
     if (project.testMatch === undefined) {
@@ -102,77 +103,83 @@ function generateProjectDefinition(pageName: string, port: number,
         testMatch = project.testMatch.map((matcher) =>
             typeof matcher === "string"
                 ? modifiyTestMatchString(matcher, pageName)
-                : modifiyTestMatchRegExp(matcher, pageName))
+                : modifiyTestMatchRegExp(matcher, pageName),
+        );
     }
     return {
         name,
         testMatch,
         use: { ...project.use, baseURL: `http://localhost:${port}` },
-    }
+    };
 }
 
-function getProjectDefinitions(pageName: string, port: number):
-    Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>> {
+function getProjectDefinitions(
+    pageName: string,
+    port: number,
+): Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>> {
     return baseProjects.map((project) => generateProjectDefinition(pageName, port, project));
 }
 
 const devPages: Readonly<Record<DevPageNames, PageDetails>> = {
     digital: {
-        port:    3000,
+        port: 3000,
         command: `node ./build/scripts/start.js ${path.join("src", "projects", "digital", "site")}`,
     },
     landing: {
-        port:    3000,
+        port: 3000,
         command: `node ./build/scripts/start.js ${path.join("src", "other", "pages", "landing")}`,
     },
-}
+};
 
 const prodPages: Readonly<Record<ProdPageNames, PageDetails>> = {
     digital: {
-        port:    8080,
+        port: 8080,
         // server path is hardcoded with forward slash
-        command: `node ./build/scripts/build.js src/server ${path.join("src", "projects", "digital", "site")} ` +
-                 "&& node ./build/scripts/start.js src/server",
+        command:
+            `node ./build/scripts/build.js src/server ${path.join("src", "projects", "digital", "site")} ` +
+            "&& node ./build/scripts/start.js src/server",
     },
-}
+};
 
-export const DevProjects: Readonly<Record<DevPageNames,
-    Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>>>> = {
+export const DevProjects: Readonly<
+    Record<DevPageNames, Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>>>
+> = {
     digital: getProjectDefinitions("digital", devPages.digital.port),
     landing: getProjectDefinitions("landing", devPages.landing.port),
-}
+};
 
-export const ProdProjects: Readonly<Record<ProdPageNames,
-    Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>>>> = {
+export const ProdProjects: Readonly<
+    Record<ProdPageNames, Array<Project<PlaywrightTestOptions, PlaywrightWorkerOptions>>>
+> = {
     digital: getProjectDefinitions("digital", prodPages.digital.port),
-}
+};
 
 export const DevWebServers: Readonly<Record<DevPageNames, WebServer>> = {
     digital: {
         reuseExistingServer: true,
-        timeout:             150_000,
-        command:             devPages.digital.command,
-        port:                devPages.digital.port,
-        cwd:                 "../../",
+        timeout: 150_000,
+        command: devPages.digital.command,
+        port: devPages.digital.port,
+        cwd: "../../",
     },
     landing: {
         reuseExistingServer: true,
-        timeout:             150_000,
-        command:             devPages.landing.command,
-        port:                devPages.landing.port,
-        cwd:                 "../../",
+        timeout: 150_000,
+        command: devPages.landing.command,
+        port: devPages.landing.port,
+        cwd: "../../",
     },
-}
+};
 
 export const ProdWebServers: Readonly<Record<ProdPageNames, WebServer>> = {
     digital: {
         reuseExistingServer: !!process.env.CI,
-        timeout:             250_000,
-        command:             prodPages.digital.command,
-        port:                prodPages.digital.port,
-        cwd:                 "../../",
+        timeout: 250_000,
+        command: prodPages.digital.command,
+        port: prodPages.digital.port,
+        cwd: "../../",
     },
-}
+};
 
 /**
  * Read environment variables from file.
@@ -187,7 +194,7 @@ const config: PlaywrightTestConfig = {
     testDir: "../",
     /* Maximum time one test can run for. */
     timeout: 30 * 10_000,
-    expect:  {
+    expect: {
         /**
          * Maximum time expect() should wait for the condition to be met.
          * For example in `await expect(locator).toHaveText();`.
@@ -197,13 +204,13 @@ const config: PlaywrightTestConfig = {
     /* Run tests in files in parallel */
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
-    forbidOnly:    !!process.env.CI,
+    forbidOnly: !!process.env.CI,
     /* Retry on CI only */
-    retries:       process.env.CI ? 2 : 0,
+    retries: process.env.CI ? 2 : 0,
     /* Opt out of parallel tests on CI. */
-    workers:       process.env.CI ? 1 : undefined,
+    workers: process.env.CI ? 1 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-    reporter:      "html",
+    reporter: "html",
 
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
@@ -214,17 +221,17 @@ const config: PlaywrightTestConfig = {
         storageState: {
             cookies: [
                 {
-                    name: 'DIGITAL_VERSION',
-                    value: '4.0.0',
-                    domain: 'localhost',
-                    path: '/',
+                    name: "DIGITAL_VERSION",
+                    value: "4.0.0",
+                    domain: "localhost",
+                    path: "/",
                     expires: -1,
                     httpOnly: false,
                     secure: false,
-                    sameSite: 'Lax',
-                }
+                    sameSite: "Lax",
+                },
             ],
-            origins: []
+            origins: [],
         },
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */

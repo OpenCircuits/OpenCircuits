@@ -1,14 +1,34 @@
-import {AddErrE}                              from "shared/api/circuit/utils/MultiError";
-import {ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE} from "shared/api/circuit/utils/Result";
+import { AddErrE } from "shared/api/circuit/utils/MultiError";
+import { ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE } from "shared/api/circuit/utils/Result";
 
-import {GUID, Schema} from "shared/api/circuit/schema";
+import { GUID, Schema } from "shared/api/circuit/schema";
 
-import {CanCommuteOps, CircuitOp, ConnectWireOp, CreateICOp, InvertCircuitOp, MergeOps, PlaceComponentOp, ReplaceComponentOp, SetComponentPortsOp, SetPropertyOp, TransformCircuitOps, UpdateICMetadataOp} from "./CircuitOps";
-import {ComponentConfigurationInfo, ObjInfo, ObjInfoProvider, PortConfig, PortConfigurationInfo, PortListToConfig, WireConfigurationInfo} from "./ObjInfo";
-import {CircuitLog, LogEntry, LogEntryType} from "./CircuitLog";
-import {ObservableImpl} from "../../utils/Observable";
-import {FastCircuitDiff, FastCircuitDiffBuilder} from "./FastCircuitDiff";
-
+import {
+    CanCommuteOps,
+    CircuitOp,
+    ConnectWireOp,
+    CreateICOp,
+    InvertCircuitOp,
+    MergeOps,
+    PlaceComponentOp,
+    ReplaceComponentOp,
+    SetComponentPortsOp,
+    SetPropertyOp,
+    TransformCircuitOps,
+    UpdateICMetadataOp,
+} from "./CircuitOps";
+import {
+    ComponentConfigurationInfo,
+    ObjInfo,
+    ObjInfoProvider,
+    PortConfig,
+    PortConfigurationInfo,
+    PortListToConfig,
+    WireConfigurationInfo,
+} from "./ObjInfo";
+import { CircuitLog, LogEntry, LogEntryType } from "./CircuitLog";
+import { ObservableImpl } from "../../utils/Observable";
+import { FastCircuitDiff, FastCircuitDiffBuilder } from "./FastCircuitDiff";
 
 export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> {
     readonly id: GUID;
@@ -69,8 +89,8 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         this.objInfo = objInfo;
         this.metadata = initialMetadata;
         this.camera = {
-            x:    0,
-            y:    0,
+            x: 0,
+            y: 0,
             zoom: 0.02,
         };
 
@@ -88,12 +108,9 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     // TODO: add helper that checks all invariants of the internal rep.
     //
     public addObjs(objs: Schema.Obj[]) {
-        objs.filter((o) => (o.baseKind === "Component"))
-            .forEach((c) => this.addComponent(c));
-        objs.filter((o) => (o.baseKind === "Port"))
-            .forEach((p) => this.addPort(p));
-        objs.filter((o) => (o.baseKind === "Wire"))
-            .forEach((w) => this.addWire(w));
+        objs.filter((o) => o.baseKind === "Component").forEach((c) => this.addComponent(c));
+        objs.filter((o) => o.baseKind === "Port").forEach((p) => this.addPort(p));
+        objs.filter((o) => o.baseKind === "Wire").forEach((w) => this.addWire(w));
     }
 
     public deleteComponent(c: Schema.Component) {
@@ -164,8 +181,9 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         const curPorts = [...this.getPortPortMapChecked(p1.id)].map((id) => this.getPortByID(id).unwrap());
         return this.getComponentAndInfoByID(p1.parent)
             .andThen(([_, info]) => {
-                if (!info.isPortAvailable(p1, curPorts))
-                    {return ErrE(`Port ${p1.id} is not available for connection!`);}
+                if (!info.isPortAvailable(p1, curPorts)) {
+                    return ErrE(`Port ${p1.id} is not available for connection!`);
+                }
                 return info.checkPortConnectivity(p1, p2, curPorts);
             })
             .mapErr(AddErrE(`Adding wire from port ${p1} to ${p2} is creates an illegal configuration.`));
@@ -177,8 +195,9 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
 
     public getPortPortMapChecked(id: GUID): Set<GUID> {
         const p = this.portPortMap.get(id);
-        if (!p)
-            {throw new Error(`Invariant Violation: getPortPortMapChecked(${id}) unexpectedly returned undefined`);}
+        if (!p) {
+            throw new Error(`Invariant Violation: getPortPortMapChecked(${id}) unexpectedly returned undefined`);
+        }
         return p;
     }
 
@@ -187,18 +206,18 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public getMutObjectAndInfoByID(id: GUID): Result<[Schema.Obj, ObjInfo]> {
-        if (this.hasComp(id))
-            {return this.getComponentAndInfoByID(id);}
+        if (this.hasComp(id)) {
+            return this.getComponentAndInfoByID(id);
+        }
 
-        return this.getMutableObjByID(id)
-            .andThen((obj) => (
-                // Can only be wire or port
-                obj.baseKind === "Wire"
-                ? this.getWireInfo(obj.kind)
-                : this.getPortInfo(obj.kind)
-            ).map((info) => [obj, info]));
+        return this.getMutableObjByID(id).andThen((obj) =>
+            // Can only be wire or port
+            (obj.baseKind === "Wire" ? this.getWireInfo(obj.kind) : this.getPortInfo(obj.kind)).map((info) => [
+                obj,
+                info,
+            ]),
+        );
     }
-
 
     //
     // Getters.  Returned objects should not be modified directly.
@@ -219,17 +238,17 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public getComponentAndInfoByID(id: GUID): Result<[Readonly<Schema.Component>, ComponentConfigurationInfo]> {
-        return this.getCompByID(id)
-            .andThen((comp) => this.getComponentInfo(comp.kind, comp.icId)
-                .map((info) => [comp, info]));
+        return this.getCompByID(id).andThen((comp) =>
+            this.getComponentInfo(comp.kind, comp.icId).map((info) => [comp, info]),
+        );
     }
 
     private hasType(id: GUID, kind: Schema.Obj["baseKind"]): boolean {
         const obj = this.objStorage.get(id);
-        if (!obj)
-            {return false;}
-        return (obj.baseKind === kind);
-
+        if (!obj) {
+            return false;
+        }
+        return obj.baseKind === kind;
     }
     public hasComp(id: GUID): boolean {
         return this.hasType(id, "Component");
@@ -254,14 +273,13 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
         return this.wireSet.values();
     }
 
-
     private getBaseKindByID<O extends Schema.Obj>(id: GUID, kind: O["baseKind"]): Result<O> {
-        return this.getObjByID(id)
-            .andThen((obj): Result<O> => {
-                if (obj.baseKind !== kind)
-                    {return ErrE(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${obj.baseKind}!`);}
-                return Ok(obj as O);
-            });
+        return this.getObjByID(id).andThen((obj): Result<O> => {
+            if (obj.baseKind !== kind) {
+                return ErrE(`CircuitInternal: Attempted to get ${kind} by ID ${id} but received ${obj.baseKind}!`);
+            }
+            return Ok(obj as O);
+        });
     }
     public getObjByID(id: GUID): Result<Readonly<Schema.Obj>> {
         return this.getMutableObjByID(id);
@@ -277,45 +295,47 @@ class CircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> 
     }
 
     public getPortsByGroup(componentID: GUID): Result<Readonly<Record<string, GUID[]>>> {
-        return this.getPortsForComponent(componentID)
-            .map((portIDs) =>
-                [...portIDs].reduce<Record<string, GUID[]>>((record, portID) => {
-                    const port = this.getPortByID(portID).unwrap();
-                    // return (port.group === group);÷
-                    return {
-                        ...record,
-                        [port.group]: [
-                            ...(record[port.group] ?? []),
-                            port.id,
-                        ],
-                    };
-                }, {}));
+        return this.getPortsForComponent(componentID).map((portIDs) =>
+            [...portIDs].reduce<Record<string, GUID[]>>((record, portID) => {
+                const port = this.getPortByID(portID).unwrap();
+                // return (port.group === group);÷
+                return {
+                    ...record,
+                    [port.group]: [...(record[port.group] ?? []), port.id],
+                };
+            }, {}),
+        );
     }
 
     public getPortsForGroup(componentID: GUID, group: string): Result<ReadonlySet<GUID>> {
-        return this.getPortsByGroup(componentID)
-            .map((record) => new Set(record[group]));
+        return this.getPortsByGroup(componentID).map((record) => new Set(record[group]));
     }
 
     public getPortsForComponent(id: GUID): Result<ReadonlySet<GUID>> {
-        return WrapResOrE(this.componentPortsMap.get(id),
-            `CircuitInternal: Attempted to get ports for component ${id}, but failed to find an entry!`);
+        return WrapResOrE(
+            this.componentPortsMap.get(id),
+            `CircuitInternal: Attempted to get ports for component ${id}, but failed to find an entry!`,
+        );
     }
 
     public getPortsForWire(id: GUID): Result<Readonly<[GUID, GUID]>> {
         return this.getWireByID(id)
-            .map((wire) => [ wire.p1, wire.p2 ] as const)
+            .map((wire) => [wire.p1, wire.p2] as const)
             .mapErr(AddErrE(`CircuitInternal: Attempted to get ports for wire ${id}, but failed to find an entry!`));
     }
 
     public getWiresForPort(id: GUID): Result<ReadonlySet<GUID>> {
-        return WrapResOrE(this.portWireMap.get(id),
-            `CircuitInternal: Attempted to get wires for port ${id}, but failed to find an entry!`);
+        return WrapResOrE(
+            this.portWireMap.get(id),
+            `CircuitInternal: Attempted to get wires for port ${id}, but failed to find an entry!`,
+        );
     }
 
     public getPortsForPort(id: GUID): Result<ReadonlySet<GUID>> {
-        return WrapResOrE(this.portPortMap.get(id),
-            `CircuitInternal: Attempted to get ports for port ${id}, but failed to find an entry!`);
+        return WrapResOrE(
+            this.portPortMap.get(id),
+            `CircuitInternal: Attempted to get ports for port ${id}, but failed to find an entry!`,
+        );
     }
 
     public getPortConfig(id: GUID): Result<PortConfig> {
@@ -346,8 +366,9 @@ class TransactionList {
     public push(op: CircuitOp): void {
         // See if we can commute the op downwards and then potentially merge it
         let i = this.length - 1;
-        while (i >= 0 && CanCommuteOps(this.ops[i], op))
-            {i--;}
+        while (i >= 0 && CanCommuteOps(this.ops[i], op)) {
+            i--;
+        }
 
         // Nothing to merge with found, just push and move on.
         if (i < 0) {
@@ -380,7 +401,7 @@ class TransactionList {
 export type CircuitDocEvent = {
     type: "CircuitOp";
     diff: FastCircuitDiff;
-}
+};
 
 // The authoritative accumulated Circuit document type.  Contains all logic to validate and apply CircuitOps.  The
 // internal representation is optimized for graph traversal.
@@ -425,14 +446,16 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         this.log.subscribe((evt) => {
             this.clock = evt.clock;
             // Optimization: If there are no remote entries then the ops are already applied.
-            if (evt.remote.length === 0)
-                {return;}
+            if (evt.remote.length === 0) {
+                return;
+            }
 
             // Apply remote updates mid-transaction so this state is up-to-date.
-            if (this.isTransaction())
-                {this.transformTransaction(evt.ops);}
-            else
-                {this.applyOpsChecked(evt.ops);}
+            if (this.isTransaction()) {
+                this.transformTransaction(evt.ops);
+            } else {
+                this.applyOpsChecked(evt.ops);
+            }
 
             // Emit event on remote updates
             this.publishDiffEvent();
@@ -471,8 +494,7 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     }
 
     private applyOp(op: CircuitOp): Result {
-        return this.applyCircuitOp(op)
-            .map(() => this.diffBuilder.applyOp(op));
+        return this.applyCircuitOp(op).map(() => this.diffBuilder.applyOp(op));
     }
 
     private applyOpsChecked(ops: readonly CircuitOp[]): void {
@@ -512,8 +534,9 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
                 this.transactionList.push(op);
 
                 // Emit event per-transaction-op only if we're not in a "batch", otherwise, wait till batch is done.
-                if (this.curBatchIndex === -1)
-                    {this.publishDiffEvent();}
+                if (this.curBatchIndex === -1) {
+                    this.publishDiffEvent();
+                }
 
                 this.commitTransaction(LogEntryType.NORMAL);
             });
@@ -551,16 +574,18 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     public beginTransaction(options?: { batch?: boolean }): void {
         this.transactionCounter++;
         if (options?.batch) {
-            if (this.curBatchIndex > -1)
-                {throw new Error("Can't start a new transaction batch while already in one!");}
+            if (this.curBatchIndex > -1) {
+                throw new Error("Can't start a new transaction batch while already in one!");
+            }
             this.curBatchIndex = this.transactionCounter;
         }
     }
 
     // "clientData" is arbitrary data the client can store in the Log for higher-level semantics than CircuitOps.
     public commitTransaction(type: LogEntryType, clientData = ""): LogEntry | undefined {
-        if (!this.isTransaction())
-            {throw new Error("Unexpected commitTransaction!");}
+        if (!this.isTransaction()) {
+            throw new Error("Unexpected commitTransaction!");
+        }
 
         this.transactionCounter--;
 
@@ -571,19 +596,22 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         }
 
         // Early return if this isn't the last "commit"
-        if (this.transactionCounter > 0)
-            {return;}
+        if (this.transactionCounter > 0) {
+            return;
+        }
 
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
         this.transactionCounter = 0;
-        if (this.transactionList.length === 0)
-            {return;}
+        if (this.transactionList.length === 0) {
+            return;
+        }
 
         const txList = this.transactionList.reset();
         // Sanity check: Clock should be kept updated by the event handler.
         if (this.clock !== this.log.clock) {
-            throw new Error(`Unexpected clock difference (${this.clock} vs ${this.log.clock})`
-                            + ". Maybe a missed event?");
+            throw new Error(
+                `Unexpected clock difference (${this.clock} vs ${this.log.clock})` + ". Maybe a missed event?",
+            );
         }
 
         return this.log.propose(txList.ops, type, clientData);
@@ -593,13 +621,13 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         // To be safe for re-entrant calls, make sure the tx state is reset before proposing.
         this.transactionCounter = 0;
         this.curBatchIndex = -1;
-        if (this.transactionList.length === 0)
-            {return;}
+        if (this.transactionList.length === 0) {
+            return;
+        }
 
         const txList = this.transactionList.reset();
         this.applyOpsChecked(txList.inverted());
     }
-
 
     //
     // Mutations.  CircuitDocument is mutated exclusively through CircuitOps.
@@ -631,16 +659,19 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
 
         if (op.inverted) {
             // These are invariant violations so we throw instead of returning an Err.
-            if (!storage.componentPortsMap.has(op.c.id))
-                {throw new Error(`Deleted component ${op.c.id} should have componentPortsMap initialized!`);}
-            if (storage.componentPortsMap.get(op.c.id)!.size > 0)
-                {throw new Error(`Deleted component ${op.c.id} should not have ports`);}
+            if (!storage.componentPortsMap.has(op.c.id)) {
+                throw new Error(`Deleted component ${op.c.id} should have componentPortsMap initialized!`);
+            }
+            if (storage.componentPortsMap.get(op.c.id)!.size > 0) {
+                throw new Error(`Deleted component ${op.c.id} should not have ports`);
+            }
 
             storage.deleteComponent(op.c);
         } else {
             // These are invariant violations so we throw instead of returning an Err.
-            if (storage.componentPortsMap.has(op.c.id))
-                {throw new Error(`Placed component ${op.c.id} should not have any ports`);}
+            if (storage.componentPortsMap.has(op.c.id)) {
+                throw new Error(`Placed component ${op.c.id} should not have any ports`);
+            }
 
             storage.addComponent(op.c);
         }
@@ -649,13 +680,16 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
     }
 
     private replaceComponent(op: ReplaceComponentOp) {
-        return this.storage.getMutableObjByID(op.id)
-            .andThen((obj) => this.storage.getPortConfig(op.id)
-                .andThen((config) => this.storage.getComponentInfo(op.newKind)
+        return this.storage.getMutableObjByID(op.id).andThen((obj) =>
+            this.storage.getPortConfig(op.id).andThen((config) =>
+                this.storage
+                    .getComponentInfo(op.newKind)
                     .andThen((otherInfo) => otherInfo.checkPortConfig(config))
-                        .uponOk(() => {
-                            obj.kind = op.newKind;
-                        })));
+                    .uponOk(() => {
+                        obj.kind = op.newKind;
+                    }),
+            ),
+        );
     }
 
     // NOTE: This operation does NOT check the given port configuration for correctness.
@@ -667,56 +701,61 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         const addedPorts = op.inverted ? op.removedPorts : op.addedPorts;
         const removedPorts = op.inverted ? op.addedPorts : op.removedPorts;
 
-        return storage.getCompByID(op.component)
-            .map((_) => {
-                if (!op.inverted)
-                    {op.deadWires.forEach((w) => storage.deleteWire(w));}
-                removedPorts.forEach((p) => storage.deletePort(p));
-                addedPorts.forEach((p) => storage.addPort(p));
-                if (op.inverted)
-                    {op.deadWires.forEach((w) => storage.addWire(w));}
-            });
+        return storage.getCompByID(op.component).map((_) => {
+            if (!op.inverted) {
+                op.deadWires.forEach((w) => storage.deleteWire(w));
+            }
+            removedPorts.forEach((p) => storage.deletePort(p));
+            addedPorts.forEach((p) => storage.addPort(p));
+            if (op.inverted) {
+                op.deadWires.forEach((w) => storage.addWire(w));
+            }
+        });
     }
 
     private connectWire(op: ConnectWireOp): Result {
         const storage = this.storage;
 
-        return storage.getPortByID(op.w.p1)
-            .andThen((p1) => storage.getPortByID(op.w.p2)
+        return storage.getPortByID(op.w.p1).andThen((p1) =>
+            storage
+                .getPortByID(op.w.p2)
                 .andThen((p2) =>
-                    (op.inverted
+                    op.inverted
                         ? OkVoid()
-                        // Check connectivity when adding wire only
-                        : storage.checkWireConnectivity(p1, p2).and(storage.checkWireConnectivity(p2, p1))))
-                .map((_) => (op.inverted ? storage.deleteWire(op.w) : storage.addWire(op.w))));
+                        : // Check connectivity when adding wire only
+                          storage.checkWireConnectivity(p1, p2).and(storage.checkWireConnectivity(p2, p1)),
+                )
+                .map((_) => (op.inverted ? storage.deleteWire(op.w) : storage.addWire(op.w))),
+        );
     }
 
     private updateICMetadata(op: UpdateICMetadataOp): Result {
-        return this.getMutableICInfo(op.icId)
-            .map((ic) => {
-                ic.metadata = { ...ic.metadata, ...op.newVal };
-            });
+        return this.getMutableICInfo(op.icId).map((ic) => {
+            ic.metadata = { ...ic.metadata, ...op.newVal };
+        });
     }
 
     private setProperty(op: SetPropertyOp): Result {
-        return this.storage.getMutObjectAndInfoByID(op.id)
-            .andThen(([obj, info]) => info.checkPropValue(op.key, op.newVal)
-                .uponOk(() => {
-                    // Copy-on-write
-                    obj.props = { ...obj.props };
-                    if (op.newVal !== undefined)
-                        {obj.props[op.key] = op.newVal;}
-                    else
-                        {delete obj.props[op.key];}
-                }));
+        return this.storage.getMutObjectAndInfoByID(op.id).andThen(([obj, info]) =>
+            info.checkPropValue(op.key, op.newVal).uponOk(() => {
+                // Copy-on-write
+                obj.props = { ...obj.props };
+                if (op.newVal !== undefined) {
+                    obj.props[op.key] = op.newVal;
+                } else {
+                    delete obj.props[op.key];
+                }
+            }),
+        );
     }
 
     // NOTE: This operation does NOT check or remove existing IC instances. This should be done beforehand.
     private createIC(op: CreateICOp): Result {
         if (op.inverted) {
             // These are invariant violations so we error instead of returning an Err.
-            if (!this.icStorage.has(op.ic.metadata.id))
-                {throw new Error(`Deleted IC ${op.ic.metadata.id} should have an entry in icStorage!`);}
+            if (!this.icStorage.has(op.ic.metadata.id)) {
+                throw new Error(`Deleted IC ${op.ic.metadata.id} should have an entry in icStorage!`);
+            }
 
             this.icStorage.delete(op.ic.metadata.id);
             this.objInfo.deleteIC(op.ic);
@@ -725,16 +764,16 @@ export class CircuitDocument extends ObservableImpl<CircuitDocEvent> implements 
         }
 
         // These are invariant violations so we error instead of returning an Err.
-        if (this.icStorage.has(op.ic.metadata.id))
-            {throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);}
+        if (this.icStorage.has(op.ic.metadata.id)) {
+            throw new Error(`Created IC ${op.ic.metadata.id} should not already exist!`);
+        }
 
         // Check validity of IC, which we can return as an Err if it fails.
-        return this.storage.checkICValidity(op.ic)
-            .uponOk(() => {
-                const storage = new CircuitStorage<Schema.IntegratedCircuitMetadata>(this.objInfo, op.ic.metadata);
-                storage.addObjs([...op.ic.comps, ...op.ic.ports, ...op.ic.wires]);
-                this.icStorage.set(op.ic.metadata.id, storage);
-                this.objInfo.createIC(op.ic);
-            });
+        return this.storage.checkICValidity(op.ic).uponOk(() => {
+            const storage = new CircuitStorage<Schema.IntegratedCircuitMetadata>(this.objInfo, op.ic.metadata);
+            storage.addObjs([...op.ic.comps, ...op.ic.ports, ...op.ic.wires]);
+            this.icStorage.set(op.ic.metadata.id, storage);
+            this.objInfo.createIC(op.ic);
+        });
     }
 }

@@ -7,12 +7,11 @@
  * @param cur  The current object in the reduction to compare against the previous.
  * @returns    The object that has the minimal `dist`.
  */
-export const MinDist = <O extends { dist: number }>(
-    prev: O,
-    cur: O
-) => ((prev.dist <= cur.dist) ? prev : cur);
+export const MinDist = <O extends { dist: number }>(prev: O, cur: O) => (prev.dist <= cur.dist ? prev : cur);
 
+export const IsDefined = <T>(val: T | undefined): val is T => !!val;
 
-export const IsDefined = <T>(val: T | undefined): val is T  => (!!val);
-
-export const Get = <I extends number>(i: I) => <T extends any[]>(val: T): T[I] => (val[i]);
+export const Get =
+    <I extends number>(i: I) =>
+    <T extends any[]>(val: T): T[I] =>
+        val[i];

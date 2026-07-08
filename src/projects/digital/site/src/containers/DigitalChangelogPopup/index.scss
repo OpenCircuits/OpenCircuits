@@ -1,7 +1,7 @@
 @use "~shared/site/utils/theme" as *;
 
 .digital-changelog {
-    font-family: 'Inter', 'Roboto', sans-serif;
+    font-family: "Inter", "Roboto", sans-serif;
     color: #333;
     padding: 10px;
 
@@ -65,12 +65,12 @@
         display: flex;
         gap: 15px;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
         cursor: default;
 
         &:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
             border-color: rgba($primary-color, 0.3);
 
             .digital-changelog__card-icon {
@@ -109,7 +109,7 @@
             font-size: 0.95rem;
             color: #777;
             margin: 0;
-            
+
             a {
                 color: $primary-color;
                 font-weight: 600;
@@ -126,7 +126,8 @@
 }
 
 @keyframes bounce {
-    0%, 100% {
+    0%,
+    100% {
         transform: translateY(0);
     }
     50% {

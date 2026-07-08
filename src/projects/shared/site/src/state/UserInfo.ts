@@ -1,29 +1,27 @@
-import {AUTO_SAVE_COOKIE_KEY} from "shared/site/utils/Constants";
+import { AUTO_SAVE_COOKIE_KEY } from "shared/site/utils/Constants";
 
-import {GetCookie, SetCookie} from "shared/site/utils/Cookies";
-import {CreateState}          from "shared/site/utils/CreateState";
+import { GetCookie, SetCookie } from "shared/site/utils/Cookies";
+import { CreateState } from "shared/site/utils/CreateState";
 
-import {BackendCircuitMetadata} from "shared/site/api/Circuits";
-import {AuthState}              from "shared/site/api/auth/AuthState";
-
+import { BackendCircuitMetadata } from "shared/site/api/Circuits";
+import { AuthState } from "shared/site/api/auth/AuthState";
 
 const [initialState, actions, reducer] = CreateState()(
     {
-        auth:       undefined as AuthState | undefined,
+        auth: undefined as AuthState | undefined,
         isLoggedIn: false,
-        circuits:   [] as BackendCircuitMetadata[],
-        loading:    false,
-        error:      "",
-        autoSave:   (JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false")) as boolean,
+        circuits: [] as BackendCircuitMetadata[],
+        loading: false,
+        error: "",
+        autoSave: JSON.parse(GetCookie(AUTO_SAVE_COOKIE_KEY) || "false") as boolean,
     },
     {
-        SetAutoSave:         (autoSave: boolean) => ({ type: "SET_AUTOSAVE_ID",       autoSave }) as const,
-        Logout:              ()                  => ({ type: "LOGOUT_ACTION_ID"                }) as const,
-        _Login:              (auth: AuthState)   => ({ type: "LOGIN_ACTION_ID",       auth     }) as const,
-        _LoadCircuitsStart:  ()                  => ({ type: "LOAD_CIRCUITS_START_ID"          }) as const,
-        _LoadCircuitsFinish: (circuits: BackendCircuitMetadata[], err?: string) => (
-            { type: "LOAD_CIRCUITS_FINISH_ID", circuits, err }
-        ) as const,
+        SetAutoSave: (autoSave: boolean) => ({ type: "SET_AUTOSAVE_ID", autoSave }) as const,
+        Logout: () => ({ type: "LOGOUT_ACTION_ID" }) as const,
+        _Login: (auth: AuthState) => ({ type: "LOGIN_ACTION_ID", auth }) as const,
+        _LoadCircuitsStart: () => ({ type: "LOAD_CIRCUITS_START_ID" }) as const,
+        _LoadCircuitsFinish: (circuits: BackendCircuitMetadata[], err?: string) =>
+            ({ type: "LOAD_CIRCUITS_FINISH_ID", circuits, err }) as const,
     },
     {
         "SET_AUTOSAVE_ID": (state, action) => {
@@ -31,22 +29,25 @@ const [initialState, actions, reducer] = CreateState()(
             return { ...state, autoSave: action.autoSave };
         },
         "LOGOUT_ACTION_ID": (state) => {
-            if (state.auth)
-                {state.auth.logOut();}
+            if (state.auth) {
+                state.auth.logOut();
+            }
             return { ...state, auth: undefined, isLoggedIn: false, circuits: [] };
         },
-        "LOGIN_ACTION_ID":        (state, action) => ({ ...state, auth: action.auth, isLoggedIn: true }),
+        "LOGIN_ACTION_ID": (state, action) => ({ ...state, auth: action.auth, isLoggedIn: true }),
         "LOAD_CIRCUITS_START_ID": (state) => {
-            if (!state.auth)
-                {return { ...state, circuits: [], error: "MNot logged in!" };}
+            if (!state.auth) {
+                return { ...state, circuits: [], error: "MNot logged in!" };
+            }
             return { ...state, loading: true };
         },
         "LOAD_CIRCUITS_FINISH_ID": (state, action) => {
-            if (!state.auth)
-                {return { ...state, circuits: [], loading: false, error: "Not logged in!" };}
-            return { ...state, circuits: (action.circuits ?? []), error: action.err ?? "", loading: false };
+            if (!state.auth) {
+                return { ...state, circuits: [], loading: false, error: "Not logged in!" };
+            }
+            return { ...state, circuits: action.circuits ?? [], error: action.err ?? "", loading: false };
         },
-    }
+    },
 );
 
 export type UserInfoState = typeof initialState;

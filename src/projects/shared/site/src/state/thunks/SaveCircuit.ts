@@ -1,16 +1,13 @@
 // HOA = Higher-Order Action (creator)
 
-import {ThunkAction} from "redux-thunk";
+import { ThunkAction } from "redux-thunk";
 
-import {BackendCircuitMetadata, CreateUserCircuit, UpdateUserCircuit} from "shared/site/api/Circuits";
+import { BackendCircuitMetadata, CreateUserCircuit, UpdateUserCircuit } from "shared/site/api/Circuits";
 
-import {SharedAppState} from "shared/site/state";
+import { SharedAppState } from "shared/site/state";
 
-import {AllSharedActions}       from "shared/site/state/actions";
-import {SetCircuitId,
-        _SetCircuitSavingFinish,
-        _SetCircuitSavingStart} from "shared/site/state/CircuitInfo";
-
+import { AllSharedActions } from "shared/site/state/actions";
+import { SetCircuitId, _SetCircuitSavingFinish, _SetCircuitSavingStart } from "shared/site/state/CircuitInfo";
 
 type ThunkResult<R> = ThunkAction<R, SharedAppState, undefined, AllSharedActions>;
 
@@ -20,16 +17,19 @@ export function SaveCircuit(metadata: BackendCircuitMetadata, data: string): Thu
         const auth = state.user.auth;
         const id = state.circuit.id;
 
-        if (!auth)
-            {dispatch(_SetCircuitSavingFinish("Not logged in!"));}
+        if (!auth) {
+            dispatch(_SetCircuitSavingFinish("Not logged in!"));
+        }
 
         dispatch(_SetCircuitSavingStart());
 
         try {
-            const newData = await (id ? UpdateUserCircuit(auth!, { metadata, contents: data }) :
-                                        CreateUserCircuit(auth!, { metadata, contents: data }));
-            if (!newData)
-                {throw new Error("SaveCircuit failed: newData is undefined");}
+            const newData = await (id
+                ? UpdateUserCircuit(auth!, { metadata, contents: data })
+                : CreateUserCircuit(auth!, { metadata, contents: data }));
+            if (!newData) {
+                throw new Error("SaveCircuit failed: newData is undefined");
+            }
             dispatch(SetCircuitId(newData.id));
             dispatch(_SetCircuitSavingFinish());
 
@@ -39,5 +39,5 @@ export function SaveCircuit(metadata: BackendCircuitMetadata, data: string): Thu
 
             return false; // Failure
         }
-    }
+    };
 }

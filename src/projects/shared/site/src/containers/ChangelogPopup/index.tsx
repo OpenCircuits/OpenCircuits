@@ -1,20 +1,17 @@
-import {useEffect} from "react";
-import {useSharedDispatch, useSharedSelector} from "shared/site/utils/hooks/useShared";
-import {CloseHeaderPopups, OpenHeaderPopup} from "shared/site/state/Header";
-import {Popup} from "shared/site/components/Popup";
-import {GetCookie, SetCookie} from "shared/site/utils/Cookies";
-
+import { useEffect } from "react";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
+import { CloseHeaderPopups, OpenHeaderPopup } from "shared/site/state/Header";
+import { Popup } from "shared/site/components/Popup";
+import { GetCookie, SetCookie } from "shared/site/utils/Cookies";
 
 type Props = {
     version: string;
     cookieKey: string;
     children?: React.ReactNode;
-}
+};
 
 export const ChangelogPopup = ({ version, cookieKey, children }: Props) => {
-    const { curPopup } = useSharedSelector(
-        (state) => ({ curPopup: state.header.curPopup })
-    );
+    const { curPopup } = useSharedSelector((state) => ({ curPopup: state.header.curPopup }));
     const dispatch = useSharedDispatch();
 
     useEffect(() => {
@@ -36,11 +33,13 @@ export const ChangelogPopup = ({ version, cookieKey, children }: Props) => {
     }, [dispatch, cookieKey, version]);
 
     return (
-        <Popup title={`What's New in v${version}`}
-               isOpen={(curPopup === "changelog")}
-               width={40}
-               close={() => dispatch(CloseHeaderPopups())}>
+        <Popup
+            title={`What's New in v${version}`}
+            isOpen={curPopup === "changelog"}
+            width={40}
+            close={() => dispatch(CloseHeaderPopups())}
+        >
             {children}
         </Popup>
     );
-}
+};

@@ -1,17 +1,16 @@
-import {Vector} from "Vector";
-import {Margin} from "math/Rect";
+import { Vector } from "Vector";
+import { Margin } from "math/Rect";
 
-import {MultiObservable} from "shared/api/circuit/utils/Observable";
-import {Prim}            from "shared/api/circuit/internal/assembly/Prim";
-import {RenderOptions}   from "shared/api/circuit/internal/assembly/RenderOptions";
+import { MultiObservable } from "shared/api/circuit/utils/Observable";
+import { Prim } from "shared/api/circuit/internal/assembly/Prim";
+import { RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import {Camera} from "../../../circuit/src/public/Camera";
-import {Cursor} from "../input/Cursor";
-import {DebugOptions} from "./impl/DebugOptions";
-import {InputAdapter} from "../input/InputAdapter";
-import {CleanupFunc} from "shared/api/circuit/utils/types";
-import {Obj} from "shared/api/circuit/public";
-
+import { Camera } from "../../../circuit/src/public/Camera";
+import { Cursor } from "../input/Cursor";
+import { DebugOptions } from "./impl/DebugOptions";
+import { InputAdapter } from "../input/InputAdapter";
+import { CleanupFunc } from "shared/api/circuit/utils/types";
+import { Obj } from "shared/api/circuit/public";
 
 // Re-export prim types
 export type * from "shared/api/circuit/internal/assembly/Prim";
@@ -36,7 +35,7 @@ export type ViewportEvents = {
     //     dy: number;
     //     dz: number;
     // };
-}
+};
 
 export interface AttachedCanvasInfo {
     readonly screenSize: Vector;

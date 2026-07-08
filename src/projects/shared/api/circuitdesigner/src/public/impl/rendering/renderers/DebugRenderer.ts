@@ -1,8 +1,7 @@
-import {Rect}      from "math/Rect";
-import {Transform} from "math/Transform";
+import { Rect } from "math/Rect";
+import { Transform } from "math/Transform";
 
-import {PrimRenderer} from "./PrimRenderer";
-
+import { PrimRenderer } from "./PrimRenderer";
 
 export function DebugRenderBounds(
     primRenderer: PrimRenderer,
@@ -11,13 +10,13 @@ export function DebugRenderBounds(
     color: string,
 ) {
     primRenderer.render(ctx, {
-        kind:      "Rectangle",
-        transform: (bounds instanceof Transform ? bounds : Transform.FromRect(bounds)),
-        style:     {
-            fill:   color,
+        kind: "Rectangle",
+        transform: bounds instanceof Transform ? bounds : Transform.FromRect(bounds),
+        style: {
+            fill: color,
             stroke: {
                 color: "#000000",
-                size:  0.02,
+                size: 0.02,
             },
             alpha: 0.5,
         },

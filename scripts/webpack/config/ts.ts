@@ -1,12 +1,10 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 
-
 import getAliases from "../../utils/getAliases.js";
 
-import type {Config}        from "./types.js";
-import type {Configuration} from "webpack";
-
+import type { Config } from "./types.js";
+import type { Configuration } from "webpack";
 
 /**
  * Returns the typescript webpack configuration.
@@ -18,30 +16,32 @@ import type {Configuration} from "webpack";
  */
 export default ({ rootDir, isDev }: Config): Configuration => ({
     module: {
-        rules: [{
-            // Test for: .ts, .tsx, .js, .jsx
-            test: /\.[jt]sx?$/,
+        rules: [
+            {
+                // Test for: .ts, .tsx, .js, .jsx
+                test: /\.[jt]sx?$/,
 
-            // Do not want to process anything from node_modules
-            exclude: /node_modules/,
+                // Do not want to process anything from node_modules
+                exclude: /node_modules/,
 
-            // Loads from bottom to top:
-            //  So it first goes through the ts-loader to become js
-            //  and then goes through the react compiler.
-            use: [
-                {
-                    loader:  "babel-loader",
-                    options: {
-                        presets: [
-                            "@babel/preset-env",
-                            ["@babel/preset-react", { "runtime": "automatic" }],
-                            "@babel/preset-typescript",
-                        ],
-                        plugins: ["babel-plugin-react-compiler"],
+                // Loads from bottom to top:
+                //  So it first goes through the ts-loader to become js
+                //  and then goes through the react compiler.
+                use: [
+                    {
+                        loader: "babel-loader",
+                        options: {
+                            presets: [
+                                "@babel/preset-env",
+                                ["@babel/preset-react", { "runtime": "automatic" }],
+                                "@babel/preset-typescript",
+                            ],
+                            plugins: ["babel-plugin-react-compiler"],
+                        },
                     },
-                },
-            ],
-        }],
+                ],
+            },
+        ],
     },
 
     plugins: [
@@ -51,7 +51,7 @@ export default ({ rootDir, isDev }: Config): Configuration => ({
         new ForkTsCheckerWebpackPlugin({
             typescript: {
                 diagnosticOptions: {
-                    semantic:  true,
+                    semantic: true,
                     syntactic: true,
                 },
                 configFile: `${rootDir}/tsconfig.json`,

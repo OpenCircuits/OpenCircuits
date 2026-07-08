@@ -2,11 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuit} from "tests/helpers/CreateTestCircuit";
-import {Rect} from "math/Rect";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import { Rect } from "math/Rect";
 
 // NOTE: For (most) of these, make sure the `SelectionsEvent` fires correctly
 describe("Selections", () => {
@@ -64,7 +63,9 @@ describe("Selections", () => {
             const selections = circuit.selections;
             const [c1, c2] = PlaceAt(V(0, 0), V(1, 1));
             let observedCount = 0;
-            selections.subscribe(() => {observedCount++});
+            selections.subscribe(() => {
+                observedCount++;
+            });
             c1.select();
             expect(observedCount).toBe(1);
             c2.select();
@@ -229,7 +230,9 @@ describe("Selections", () => {
             c1.select();
             c2.select();
             let observedCount = 0;
-            circuit.selections.subscribe(() => {observedCount++});
+            circuit.selections.subscribe(() => {
+                observedCount++;
+            });
             circuit.deleteObjs([c1]);
             expect(observedCount).toBe(1);
             circuit.undo();

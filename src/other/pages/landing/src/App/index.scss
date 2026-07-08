@@ -2,7 +2,6 @@
 
 @use "~bootstrap/scss/bootstrap";
 
-
 $primary-color: #222;
 $secondary-color: #888;
 $background-color: #ccc;
@@ -11,11 +10,8 @@ $ic-background-color: rgba(#eee, 0.9);
 $success-color: #4caf50;
 $danger-color: #f44336;
 
-
-
 $min-width-md: 1200px;
 $min-width-sm: 768px;
-
 
 html {
     font-size: 16px;
@@ -109,7 +105,6 @@ nav {
 
     $output-width-sm: 25vw;
 
-
     position: relative;
     height: $height;
 
@@ -122,18 +117,19 @@ nav {
 
     &-gate {
         position: absolute;
-        left: calc(52% - #{math.div($height,2)});
+        left: calc(52% - #{math.div($height, 2)});
 
         height: 100%;
 
         @media (max-width: $min-width-md) {
-            left: calc(52% - #{math.div($height-md,2)});
+            left: calc(52% - #{math.div($height-md, 2)});
         }
         @media (max-width: $min-width-sm) {
-            left: calc(52% - #{math.div($height-sm,2)});
+            left: calc(52% - #{math.div($height-sm, 2)});
         }
     }
-    &-btn-1, &-btn-2 {
+    &-btn-1,
+    &-btn-2 {
         position: absolute;
         right: calc(50% + #{$wire-width});
 
@@ -209,7 +205,8 @@ nav {
             bottom: 20%;
         }
     }
-    &-btn-selected, button:focus {
+    &-btn-selected,
+    button:focus {
         box-shadow: -1px 1px 2px gray;
 
         @media (max-width: $min-width-sm) {
@@ -217,7 +214,9 @@ nav {
         }
     }
 
-    &-wire1, &-wire2, &-wire3 {
+    &-wire1,
+    &-wire2,
+    &-wire3 {
         position: absolute;
 
         width: $wire-width;
@@ -236,36 +235,36 @@ nav {
         }
     }
     &-wire1 {
-        top: calc(#{$btn-1-top} + #{math.div($btn-height,2)} - #{math.div($wire-height,2)});
+        top: calc(#{$btn-1-top} + #{math.div($btn-height, 2)} - #{math.div($wire-height, 2)});
         right: 50%;
 
         @media (max-width: $min-width-md) {
-            top: calc(#{$btn-1-top} + #{math.div($btn-height-md,2)} - #{math.div($wire-height-md,2)});
+            top: calc(#{$btn-1-top} + #{math.div($btn-height-md, 2)} - #{math.div($wire-height-md, 2)});
         }
         @media (max-width: $min-width-sm) {
-            top: calc(#{$btn-1-top} + #{math.div($btn-height-sm,2)} - #{math.div($wire-height-sm,2)});
+            top: calc(#{$btn-1-top} + #{math.div($btn-height-sm, 2)} - #{math.div($wire-height-sm, 2)});
         }
     }
     &-wire2 {
         right: 50%;
-        bottom: calc(#{$btn-2-bot} + #{math.div($btn-height,2)} - #{math.div($wire-height,2)});
+        bottom: calc(#{$btn-2-bot} + #{math.div($btn-height, 2)} - #{math.div($wire-height, 2)});
 
         @media (max-width: $min-width-md) {
-            bottom: calc(#{$btn-2-bot} + #{math.div($btn-height-md,2)} - #{math.div($wire-height-md,2)});
+            bottom: calc(#{$btn-2-bot} + #{math.div($btn-height-md, 2)} - #{math.div($wire-height-md, 2)});
         }
         @media (max-width: $min-width-sm) {
-            bottom: calc(#{$btn-2-bot} + #{math.div($btn-height-sm,2)} - #{math.div($wire-height-sm,2)});
+            bottom: calc(#{$btn-2-bot} + #{math.div($btn-height-sm, 2)} - #{math.div($wire-height-sm, 2)});
         }
     }
     &-wire3 {
-        top: calc(50% - #{math.div($wire-height,2)});
+        top: calc(50% - #{math.div($wire-height, 2)});
         left: 50%;
 
         @media (max-width: $min-width-md) {
-            top: calc(50% - #{math.div($wire-height-md,2)});
+            top: calc(50% - #{math.div($wire-height-md, 2)});
         }
         @media (max-width: $min-width-sm) {
-            top: calc(50% - #{math.div($wire-height-sm,2)});
+            top: calc(50% - #{math.div($wire-height-sm, 2)});
         }
     }
 
@@ -303,7 +302,6 @@ nav {
                 }
 
                 .extra-info {
-
                     img {
                         width: 100%;
                         height: 120px;

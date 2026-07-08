@@ -1,8 +1,7 @@
-import {DigitalCircuitContext} from "./DigitalCircuitContext";
-import {GUID} from "shared/api/circuit/public";
-import {ObservableImpl} from "shared/api/circuit/utils/Observable";
-import {DigitalSim, DigitalSimEv} from "../DigitalSim";
-
+import { DigitalCircuitContext } from "./DigitalCircuitContext";
+import { GUID } from "shared/api/circuit/public";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { DigitalSim, DigitalSimEv } from "../DigitalSim";
 
 export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements DigitalSim {
     protected readonly ctx: DigitalCircuitContext;
@@ -12,14 +11,16 @@ export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements Digi
 
         this.ctx = ctx;
         this.ctx.sim.subscribe((ev) => {
-            if (ev.type === "step")
-                {this.publish({ type: "step" });}
+            if (ev.type === "step") {
+                this.publish({ type: "step" });
+            }
         });
     }
 
     public set propagationTime(val: number) {
-        if (!this.ctx.simRunner)
-            {return;}
+        if (!this.ctx.simRunner) {
+            return;
+        }
         this.ctx.simRunner.propagationTime = val;
         this.publish({ type: "propagationTimeChanged", newTime: val });
     }
@@ -36,14 +37,16 @@ export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements Digi
     }
 
     public resume() {
-        if (!this.isPaused)
-            {return;}
+        if (!this.isPaused) {
+            return;
+        }
         this.ctx.simRunner?.resume();
         this.publish({ type: "resume" });
     }
     public pause() {
-        if (this.isPaused)
-            {return;}
+        if (this.isPaused) {
+            return;
+        }
         this.ctx.simRunner?.pause();
         this.publish({ type: "pause" });
     }
@@ -53,8 +56,6 @@ export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements Digi
     }
 
     public sync(comps: GUID[]) {
-        comps
-            .filter((c) => this.ctx.internal.hasComp(c))
-            .forEach((id) => this.ctx.sim.resetQueueForComp(id));
+        comps.filter((c) => this.ctx.internal.hasComp(c)).forEach((id) => this.ctx.sim.resetQueueForComp(id));
     }
 }

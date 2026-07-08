@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/tests/helpers/Extensions";
 
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("DigitalComponent", () => {
     describe("Exists", () => {

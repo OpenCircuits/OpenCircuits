@@ -1,16 +1,15 @@
-import {Vector} from "Vector";
-import {Rect}   from "math/Rect";
-import {CalculateMidpoint} from "math/MathUtils";
+import { Vector } from "Vector";
+import { Rect } from "math/Rect";
+import { CalculateMidpoint } from "math/MathUtils";
 
-import {GUID} from "../../internal";
-import {ObjContainer} from "../ObjContainer";
-import {AddErrE} from "../../utils/MultiError";
+import { GUID } from "../../internal";
+import { ObjContainer } from "../ObjContainer";
+import { AddErrE } from "../../utils/MultiError";
 
-import {CircuitContext} from "./CircuitContext";
-import {CircuitAPITypes} from "./Types";
+import { CircuitContext } from "./CircuitContext";
+import { CircuitAPITypes } from "./Types";
 
 import "shared/api/circuit/utils/Array";
-
 
 export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer {
     protected readonly ctx: CircuitContext<T>;
@@ -31,7 +30,8 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
 
     protected getCircuitInfo() {
         if (this.icId) {
-            return this.ctx.internal.getICInfo(this.icId)
+            return this.ctx.internal
+                .getICInfo(this.icId)
                 .mapErr(AddErrE(`ObjContainerImpl: Attempted to get IC info that doesn't exist in IC ${this.icId}!`))
                 .unwrap();
         }
@@ -43,14 +43,9 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
     }
 
     public get midpoint(): Vector {
-        const compAndWirePts = [
-            ...this.components.map((c) => c.pos),
-            ...this.wires.map((w) => w.shape.getPos(0.5)),
-        ];
+        const compAndWirePts = [...this.components.map((c) => c.pos), ...this.wires.map((w) => w.shape.getPos(0.5))];
         // If there aren't any components or wires, use port positions instead
-        const pts = (compAndWirePts.length === 0
-            ? this.ports.map((p) => p.targetPos)
-            : compAndWirePts);
+        const pts = compAndWirePts.length === 0 ? this.ports.map((p) => p.targetPos) : compAndWirePts;
 
         return CalculateMidpoint(pts);
 
@@ -75,7 +70,7 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
         return this.objs.size;
     }
     public get isEmpty(): boolean {
-        return (this.length === 0);
+        return this.length === 0;
     }
 
     public get all(): T["Obj[]"] {
@@ -83,27 +78,21 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
     }
     public get components(): T["Component[]"] {
         if (!this.componentIds) {
-            this.componentIds = new Set([...this.objs]
-                .filter((id) => this.getCircuitInfo().hasComp(id)));
+            this.componentIds = new Set([...this.objs].filter((id) => this.getCircuitInfo().hasComp(id)));
         }
-        return [...this.componentIds]
-            .map((id) => this.ctx.factory.constructComponent(id, this.icId));
+        return [...this.componentIds].map((id) => this.ctx.factory.constructComponent(id, this.icId));
     }
     public get wires(): T["Wire[]"] {
         if (!this.wireIds) {
-            this.wireIds = new Set([...this.objs]
-                .filter((id) => this.getCircuitInfo().hasWire(id)));
+            this.wireIds = new Set([...this.objs].filter((id) => this.getCircuitInfo().hasWire(id)));
         }
-        return [...this.wireIds]
-            .map((id) => this.ctx.factory.constructWire(id, this.icId));
+        return [...this.wireIds].map((id) => this.ctx.factory.constructWire(id, this.icId));
     }
     public get ports(): T["Port[]"] {
         if (!this.portIds) {
-            this.portIds = new Set([...this.objs]
-                .filter((id) => this.getCircuitInfo().hasPort(id)));
+            this.portIds = new Set([...this.objs].filter((id) => this.getCircuitInfo().hasPort(id)));
         }
-        return [...this.portIds]
-            .map((id) => this.ctx.factory.constructPort(id, this.icId));
+        return [...this.portIds].map((id) => this.ctx.factory.constructPort(id, this.icId));
     }
     public get ics(): T["IC[]"] {
         const componentKinds = new Set(this.components.map((c) => c.info.kind));
@@ -118,24 +107,24 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
 
     public withWiresAndPorts(): T["ObjContainerT"] {
         const comps = this.components;
-        const ports = [
-            ...this.ports,
-            ...comps.flatMap((comp) => comp.allPorts),
-        ];
+        const ports = [...this.ports, ...comps.flatMap((comp) => comp.allPorts)];
 
         const portIds = new Set(ports.map((p) => p.id));
         // Only get connections that are connected to components that are BOTH in this set.
-        const wires = [
-            ...this.wires,
-            ...ports.flatMap((p) => p.connections),
-        ].filter((w) => portIds.has(w.p1.id) && portIds.has(w.p2.id));
+        const wires = [...this.wires, ...ports.flatMap((p) => p.connections)].filter(
+            (w) => portIds.has(w.p1.id) && portIds.has(w.p2.id),
+        );
 
-        return this.ctx.factory.constructObjContainer(new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)), this.icId);
+        return this.ctx.factory.constructObjContainer(
+            new Set<GUID>([...comps, ...wires, ...ports].map((o) => o.id)),
+            this.icId,
+        );
     }
 
     public select(): void {
-        if (this.icId)
-            {throw new Error(`ObjContainerImpl: Cannot select objects in IC ${this.icId}! IC objects are immutable!`);}
+        if (this.icId) {
+            throw new Error(`ObjContainerImpl: Cannot select objects in IC ${this.icId}! IC objects are immutable!`);
+        }
 
         this.ctx.internal.beginTransaction();
         this.components.forEach((c) => c.select());
@@ -143,8 +132,9 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
     }
 
     public shift(): void {
-        if (this.icId)
-            {throw new Error(`ObjContainerImpl: Cannot shift objects in IC ${this.icId}! IC objects are immutable!`);}
+        if (this.icId) {
+            throw new Error(`ObjContainerImpl: Cannot shift objects in IC ${this.icId}! IC objects are immutable!`);
+        }
 
         this.ctx.internal.beginTransaction();
         // Need to keep the zIndices the same relative to eachother
@@ -152,16 +142,14 @@ export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer
         // and then set their new zIndex to be the new highest z + the relative index.
         {
             const highestZ = this.ctx.assembler.highestZ;
-            const cs = this.components.sort((a, b) => (a.zIndex - b.zIndex));
-            cs.forEach((c, i) =>
-                c.zIndex = highestZ + i + 1);
+            const cs = this.components.sort((a, b) => a.zIndex - b.zIndex);
+            cs.forEach((c, i) => (c.zIndex = highestZ + i + 1));
         }
         // Do the same for wires
         {
             const highestZ = this.ctx.assembler.highestWireZ;
-            const ws = this.wires.sort((a, b) => (a.zIndex - b.zIndex));
-            ws.forEach((w, i) =>
-                w.zIndex = highestZ + i + 1);
+            const ws = this.wires.sort((a, b) => a.zIndex - b.zIndex);
+            ws.forEach((w, i) => (w.zIndex = highestZ + i + 1));
         }
         this.ctx.internal.commitTransaction();
     }

@@ -1,17 +1,16 @@
 import "shared/tests/helpers/Extensions";
 
-import {V}             from "Vector";
-import {CircuitAssembler} from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-import {DigitalCircuitImpl} from "../src/public/impl/DigitalCircuit";
-
+import { V } from "Vector";
+import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
+import { DigitalCircuitImpl } from "../src/public/impl/DigitalCircuit";
 
 describe("CircuitAssembler", () => {
     const expectNoDirty = (assembler: CircuitAssembler) => {
         expect(assembler["dirtyComponents"]).toHaveLength(0);
         expect(assembler["dirtyWires"]).toHaveLength(0);
         expect(assembler["dirtyComponentPorts"].size).toBe(0);
-    }
+    };
 
     test("Single Selection", () => {
         const [circuit] = CreateTestCircuit();

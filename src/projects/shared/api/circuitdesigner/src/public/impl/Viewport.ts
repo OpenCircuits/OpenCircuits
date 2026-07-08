@@ -1,33 +1,32 @@
-import {SVGDrawing} from "svg2canvas";
+import { SVGDrawing } from "svg2canvas";
 
-import {V, Vector} from "Vector";
-import {Margin, Rect}    from "math/Rect";
+import { V, Vector } from "Vector";
+import { Margin, Rect } from "math/Rect";
 
-import {CleanupFunc} from "shared/api/circuit/utils/types";
-import {MultiObservable} from "shared/api/circuit/utils/Observable";
-import {CircuitContext} from "shared/api/circuit/public/impl/CircuitContext";
-import {CircuitAPITypes} from "shared/api/circuit/public/impl/Types";
-import {InputAdapter} from "shared/api/circuitdesigner/input/InputAdapter";
-import {Bounds, OrientedBounds} from "shared/api/circuit/internal/assembly/PrimBounds";
+import { CleanupFunc } from "shared/api/circuit/utils/types";
+import { MultiObservable } from "shared/api/circuit/utils/Observable";
+import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { InputAdapter } from "shared/api/circuitdesigner/input/InputAdapter";
+import { Bounds, OrientedBounds } from "shared/api/circuit/internal/assembly/PrimBounds";
 
-import {RenderHelper}      from "./rendering/RenderHelper";
-import {RenderState}       from "./rendering/RenderState";
-import {RenderScheduler}   from "./rendering/RenderScheduler";
-import {PrimRenderer}      from "./rendering/renderers/PrimRenderer";
-import {RenderGrid}        from "./rendering/renderers/GridRenderer";
-import {DebugRenderBounds} from "./rendering/renderers/DebugRenderer";
+import { RenderHelper } from "./rendering/RenderHelper";
+import { RenderState } from "./rendering/RenderState";
+import { RenderScheduler } from "./rendering/RenderScheduler";
+import { PrimRenderer } from "./rendering/renderers/PrimRenderer";
+import { RenderGrid } from "./rendering/renderers/GridRenderer";
+import { DebugRenderBounds } from "./rendering/renderers/DebugRenderer";
 
-import {Cursor} from "../../input/Cursor";
+import { Cursor } from "../../input/Cursor";
 
-import {CircuitDesigner, CircuitDesignerOptions} from "../CircuitDesigner";
-import {AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents} from "../Viewport";
+import { CircuitDesigner, CircuitDesignerOptions } from "../CircuitDesigner";
+import { AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents } from "../Viewport";
 
-import {DebugOptions}                          from "./DebugOptions";
-import {IsDefined} from "shared/api/circuit/utils/Reducers";
-import {DirtyVar} from "shared/api/circuit/utils/DirtyVar";
-import {Matrix2x3} from "math/Matrix";
-import {ToolManager} from "./ToolManager";
-
+import { DebugOptions } from "./DebugOptions";
+import { IsDefined } from "shared/api/circuit/utils/Reducers";
+import { DirtyVar } from "shared/api/circuit/utils/DirtyVar";
+import { Matrix2x3 } from "math/Matrix";
+import { ToolManager } from "./ToolManager";
 
 export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
     public readonly canvas: HTMLCanvasElement;
@@ -58,7 +57,7 @@ export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {
     }
     public get cursor(): Cursor | undefined {
         const cursor = this.canvas.style.cursor;
-        return (cursor === "" ? undefined : cursor as Cursor);
+        return cursor === "" ? undefined : (cursor as Cursor);
     }
 
     public detach(): void {
@@ -81,7 +80,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
 
     public canvasInfo?: AttachedCanvasInfoImpl;
 
-    protected state: { margin: Margin, debugOptions: DebugOptions };
+    protected state: { margin: Margin; debugOptions: DebugOptions };
 
     public constructor(
         ctx: CircuitContext<T>,
@@ -96,15 +95,15 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
         this.designer = designer;
         this.toolManager = toolManager;
         this.state = {
-            margin:       { left: 0, right: 0, top: 0, bottom: 0 },
+            margin: { left: 0, right: 0, top: 0, bottom: 0 },
             debugOptions: {
-                debugPrims:              false,
-                debugPrimBounds:         false,
+                debugPrims: false,
+                debugPrimBounds: false,
                 debugPrimOrientedBounds: false,
 
                 debugComponentBounds: false,
-                debugPortBounds:      false,
-                debugWireBounds:      false,
+                debugPortBounds: false,
+                debugWireBounds: false,
 
                 debugPressableBounds: false,
             },
@@ -122,11 +121,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             const { cx, cy, zoom } = this.camera;
 
             const screenSize = this.canvasInfo?.screenSize ?? V(0, 0);
-            return new Matrix2x3(
-                V(cx - screenSize.x/2 * zoom, cy - screenSize.y/2 * -zoom),
-                0,
-                V(zoom, -zoom)
-            );
+            return new Matrix2x3(V(cx - (screenSize.x / 2) * zoom, cy - (screenSize.y / 2) * -zoom), 0, V(zoom, -zoom));
         });
 
         // Re-render when camera changes
@@ -134,21 +129,25 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             this.cameraMat.setDirty();
 
             // No canvas attached -> no need to render
-            if (!this.canvasInfo)
-                {return;}
+            if (!this.canvasInfo) {
+                return;
+            }
 
-            if (ev.type === "change")
-                {this.scheduler.requestRender();}
+            if (ev.type === "change") {
+                this.scheduler.requestRender();
+            }
         });
 
         // Re-render when assembler changes
         this.ctx.assembler.subscribe((data) => {
             // No canvas attached -> no need to render
-            if (!this.canvasInfo)
-                {return;}
+            if (!this.canvasInfo) {
+                return;
+            }
 
-            if (data.type === "onchange")
-                {this.scheduler.requestRender();}
+            if (data.type === "onchange") {
+                this.scheduler.requestRender();
+            }
         });
 
         // Re-render when current tool changes state (For tool-renderers)
@@ -158,8 +157,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
                 // TODO: Render in another canvas
                 curToolCallbackCleanup = tool.subscribe((_) => {
                     // No canvas attached -> no need to render
-                    if (!this.canvasInfo)
-                        {return;}
+                    if (!this.canvasInfo) {
+                        return;
+                    }
 
                     this.scheduler.requestRender();
                 });
@@ -172,8 +172,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
     }
 
     protected render() {
-        if (!this.canvasInfo)
-            {throw new Error("Viewport: Attempted Circuit render before a canvas was set!");}
+        if (!this.canvasInfo) {
+            throw new Error("Viewport: Attempted Circuit render before a canvas was set!");
+        }
 
         const { renderer } = this.canvasInfo;
         const renderState: RenderState = {
@@ -185,7 +186,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             // if (!prim.cull(this.camera))
             //     return;
             this.primRenderer.render(renderer.ctx, prim, this.debugOptions);
-        }
+        };
 
         // Reassemble and get the cache
         this.ctx.assembler.reassemble();
@@ -198,20 +199,19 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             renderer.transform(this.cameraMat.get().inverse());
 
             // Render grid
-            if (renderState.options.showGrid)
-                {RenderGrid(renderState);}
+            if (renderState.options.showGrid) {
+                RenderGrid(renderState);
+            }
 
             // Render wires (by depth)
-            assembly.wireOrder.forEach((wireId) =>
-                assembly.wirePrims.get(wireId)!.forEach(renderPrim));
+            assembly.wireOrder.forEach((wireId) => assembly.wirePrims.get(wireId)!.forEach(renderPrim));
 
             // Render components (by depth)
             assembly.componentOrder.forEach((compId) => {
                 const prims = assembly.componentPrims.get(compId)!;
 
                 // Draw ports first
-                assembly.portPrims.get(compId)?.forEach((prims) =>
-                    prims.forEach(renderPrim));
+                assembly.portPrims.get(compId)?.forEach((prims) => prims.forEach(renderPrim));
 
                 // Draw prims for component
                 prims.forEach(renderPrim);
@@ -224,44 +224,47 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             if (this.debugOptions.debugPrimBounds) {
                 const wireBounds = [...assembly.wirePrims.values()].flat().map(Bounds).filter(IsDefined);
                 const compBounds = [...assembly.componentPrims.values()].flat().map(Bounds).filter(IsDefined);
-                const portBounds = ([...assembly.portPrims.values()]
-                    .map((m) => [...m.values()])).flat(2).map(Bounds).filter(IsDefined);
+                const portBounds = [...assembly.portPrims.values()]
+                    .map((m) => [...m.values()])
+                    .flat(2)
+                    .map(Bounds)
+                    .filter(IsDefined);
 
-                wireBounds.forEach((b) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#ff5555"));
-                portBounds.forEach((b) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#00ff99"));
-                compBounds.forEach((b) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#00ff00"));
+                wireBounds.forEach((b) => DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#ff5555"));
+                portBounds.forEach((b) => DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#00ff99"));
+                compBounds.forEach((b) => DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#00ff00"));
             }
             if (this.debugOptions.debugPrimOrientedBounds) {
                 const wireBounds = [...assembly.wirePrims.values()].flat().map(OrientedBounds).filter(IsDefined);
                 const compBounds = [...assembly.componentPrims.values()].flat().map(OrientedBounds).filter(IsDefined);
-                const portBounds = ([...assembly.portPrims.values()]
-                    .map((m) => [...m.values()])).flat(2).map(OrientedBounds).filter(IsDefined);
+                const portBounds = [...assembly.portPrims.values()]
+                    .map((m) => [...m.values()])
+                    .flat(2)
+                    .map(OrientedBounds)
+                    .filter(IsDefined);
 
-                wireBounds.forEach((b) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#55ff55"));
-                portBounds.forEach((b) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#99ff00"));
-                compBounds.forEach((b) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#9803fc"));
+                wireBounds.forEach((b) => DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#55ff55"));
+                portBounds.forEach((b) => DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#99ff00"));
+                compBounds.forEach((b) => DebugRenderBounds(this.primRenderer, renderer.ctx, b, "#9803fc"));
             }
 
             if (this.debugOptions.debugComponentBounds) {
-                this.designer.circuit.getComponents().forEach((comp) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, comp.bounds, "#00ff00"));
+                this.designer.circuit
+                    .getComponents()
+                    .forEach((comp) => DebugRenderBounds(this.primRenderer, renderer.ctx, comp.bounds, "#00ff00"));
             }
 
             if (this.debugOptions.debugWireBounds) {
-                this.designer.circuit.getWires().forEach((wire) =>
-                    DebugRenderBounds(this.primRenderer, renderer.ctx, wire.bounds, "#00ff00"));
+                this.designer.circuit
+                    .getWires()
+                    .forEach((wire) => DebugRenderBounds(this.primRenderer, renderer.ctx, wire.bounds, "#00ff00"));
             }
 
             if (this.debugOptions.debugPortBounds) {
                 this.designer.circuit.getComponents().forEach((comp) => {
                     comp.allPorts.forEach((port) =>
-                        DebugRenderBounds(this.primRenderer, renderer.ctx, port.bounds, "#00ff00"));
+                        DebugRenderBounds(this.primRenderer, renderer.ctx, port.bounds, "#00ff00"),
+                    );
                 });
             }
         }
@@ -272,8 +275,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
             renderer: {
                 draw: (prim: Prim, space = "world") => {
                     renderer.save();
-                    if (space === "world")
-                        {renderer.transform(this.cameraMat.get().inverse());}
+                    if (space === "world") {
+                        renderer.transform(this.cameraMat.get().inverse());
+                    }
                     this.primRenderer.render(renderer.ctx, prim);
                     renderer.restore();
                 },
@@ -301,8 +305,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
         return this.state.debugOptions;
     }
     public setRenderOptions(options: Partial<Pick<RenderOptions, "showGrid">>): void {
-        if (options.showGrid !== undefined)
-            {this.ctx.renderOptions.showGrid = options.showGrid;}
+        if (options.showGrid !== undefined) {
+            this.ctx.renderOptions.showGrid = options.showGrid;
+        }
         this.scheduler.requestRender();
     }
 
@@ -323,8 +328,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
     }
 
     public attachCanvas(canvas: HTMLCanvasElement): CleanupFunc {
-        if (this.canvasInfo)
-            {throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");}
+        if (this.canvasInfo) {
+            throw new Error("Viewport.attachCanvas failed! Should detach the current canvas first!");
+        }
 
         this.canvasInfo = new AttachedCanvasInfoImpl(canvas, this.options.dragTime, (input: InputAdapter) => {
             // Forward inputs to ToolManager
@@ -340,7 +346,7 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
                 u1();
                 this.scheduler.block();
                 this.canvasInfo = undefined;
-            }
+            };
         });
 
         return () => this.canvasInfo?.detach();
@@ -365,7 +371,9 @@ export class ViewportImpl<T extends CircuitAPITypes> extends MultiObservable<Vie
 
         const screenSize = canvasInfo.screenSize.sub(V(marginSize.x, marginSize.y));
         // this.toWorldPos(screenSize) gets a negative number for y which is why we scale by -1, see #1461
-        const worldSize = this.toWorldPos(screenSize).sub(this.toWorldPos(V(0, 0))).scale(V(1, -1));
+        const worldSize = this.toWorldPos(screenSize)
+            .sub(this.toWorldPos(V(0, 0)))
+            .scale(V(1, -1));
 
         // Determine which bbox dimension will limit zoom level
         const ratio = V(bbox.width / worldSize.x, bbox.height / worldSize.y);

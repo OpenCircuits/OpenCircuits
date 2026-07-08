@@ -1,17 +1,19 @@
-import {Vector} from "Vector";
-import {Observable} from "shared/api/circuit/utils/Observable";
+import { Vector } from "Vector";
+import { Observable } from "shared/api/circuit/utils/Observable";
 
-
-export type CameraEvent = {
-    type: "dragStart";
-} | {
-    type: "dragEnd";
-} | {
-    type: "change";
-    dx: number;
-    dy: number;
-    dz: number;
-}
+export type CameraEvent =
+    | {
+          type: "dragStart";
+      }
+    | {
+          type: "dragEnd";
+      }
+    | {
+          type: "change";
+          dx: number;
+          dy: number;
+          dz: number;
+      };
 
 export interface ReadonlyCamera {
     readonly cx: number;

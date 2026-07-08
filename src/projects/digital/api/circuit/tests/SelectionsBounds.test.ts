@@ -1,10 +1,9 @@
 import "shared/tests/helpers/Extensions";
 
-import {V}    from "Vector";
-import {Rect} from "math/Rect";
+import { V } from "Vector";
+import { Rect } from "math/Rect";
 
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("SelectionsBounds", () => {
     test("Single Selection", () => {

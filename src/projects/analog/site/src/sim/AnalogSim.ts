@@ -1,12 +1,37 @@
-import {AnalogSim, AnalysisInfo} from "analog/api/circuit/public";
-import {NGSpiceLib} from "analog/api/circuit/sim/lib/NGSpiceLib";
-import {CreateWASMInstance} from "analog/api/circuit/sim/lib/WASM";
-import {Netlist} from "analog/api/circuit/sim/Netlist";
-import {CircuitInternal} from "shared/api/circuit/internal";
-import {CircuitToNetlist} from "analog/api/circuit/sim/NetlistGenerator";
+import { AnalogSim, AnalysisInfo } from "analog/api/circuit/public";
+import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
+import { CreateWASMInstance } from "analog/api/circuit/sim/lib/WASM";
+import { Netlist } from "analog/api/circuit/sim/Netlist";
+import { CircuitInternal } from "shared/api/circuit/internal";
+import { CircuitToNetlist } from "analog/api/circuit/sim/NetlistGenerator";
 
-type RawLetter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N"
-                        | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
+type RawLetter =
+    | "A"
+    | "B"
+    | "C"
+    | "D"
+    | "E"
+    | "F"
+    | "G"
+    | "H"
+    | "I"
+    | "J"
+    | "K"
+    | "L"
+    | "M"
+    | "N"
+    | "O"
+    | "P"
+    | "Q"
+    | "R"
+    | "S"
+    | "T"
+    | "U"
+    | "V"
+    | "W"
+    | "X"
+    | "Y"
+    | "Z";
 type Letter = RawLetter | Lowercase<RawLetter>;
 
 type NGSymbol = Letter;
@@ -17,21 +42,18 @@ type NGNetlistOPAnalysis = [".op"];
 type NGNetlistDCSweepAnalysis = [
     ".dc",
     NGElementID, // srcname
-    NGUnit,      // vstart
-    NGUnit,      // vstop
-    NGUnit,      // vincr
+    NGUnit, // vstart
+    NGUnit, // vstop
+    NGUnit, // vincr
 ];
 type NGNetlistTranAnalysis = [
     ".tran",
-    NGUnit,  // tstep
-    NGUnit,  // tstop
+    NGUnit, // tstep
+    NGUnit, // tstop
     NGUnit?, // <tstart>
     NGUnit?, // <<tmax>>
 ];
-type NGNetlistAnalysis =
-    | NGNetlistOPAnalysis
-    | NGNetlistDCSweepAnalysis
-    | NGNetlistTranAnalysis;
+type NGNetlistAnalysis = NGNetlistOPAnalysis | NGNetlistDCSweepAnalysis | NGNetlistTranAnalysis;
 
 type NGNetlistElement = [
     `${NGSymbol}${NGElementID | ""}`, // symbol + uid
@@ -40,12 +62,7 @@ type NGNetlistElement = [
     ...Array<string | `${string}=${string}`>, // values, options
 ];
 
-type NGNetlist = [
-    [".title",string],
-    ...Array<NGNetlistElement | NGNetlistAnalysis>,
-    [".end"],
-    ["\0"],
-]
+type NGNetlist = [[".title", string], ...Array<NGNetlistElement | NGNetlistAnalysis>, [".end"], ["\0"]];
 
 type WASMLib = ReturnType<typeof CreateWASMInstance<NGSpiceLib>>;
 
@@ -54,10 +71,13 @@ interface SimData {
     plotIDs: string[];
     curPlotID: string;
     vecIDs: Record<string, string[]>;
-    vecs: Record<VecSimDataKey, {
-        len: number;
-        data: number[];
-    }>;
+    vecs: Record<
+        VecSimDataKey,
+        {
+            len: number;
+            data: number[];
+        }
+    >;
 }
 
 class NGSpiceLibImpl {
@@ -79,15 +99,10 @@ class NGSpiceLibImpl {
     private convertNetlist(netlist: Netlist): NGNetlist {
         return [
             [".title", netlist.title || "Untitled"],
-            ...netlist.elements.map((e) => [
-                `${e.symbol}${e.uid}`,
-                e.node1, e.node2,
-                ...(e.values ?? []),
-            ] as NGNetlistElement),
-            ...netlist.analyses.map(({ kind, ...a }) => [
-                `.${kind}`,
-                ...Object.values(a),
-            ] as NGNetlistAnalysis),
+            ...netlist.elements.map(
+                (e) => [`${e.symbol}${e.uid}`, e.node1, e.node2, ...(e.values ?? [])] as NGNetlistElement,
+            ),
+            ...netlist.analyses.map(({ kind, ...a }) => [`.${kind}`, ...Object.values(a)] as NGNetlistAnalysis),
             [".end"],
             ["\0"],
         ];
@@ -95,8 +110,7 @@ class NGSpiceLibImpl {
 
     public uploadNetlist(netlist: Netlist): void {
         // If netlist already exists, free it
-        if (this.netlistPtrs)
-            this.netlistPtrs.forEach((ptr) => this.lib.free_array(ptr));
+        if (this.netlistPtrs) this.netlistPtrs.forEach((ptr) => this.lib.free_array(ptr));
 
         const ngNetList = this.convertNetlist(netlist);
 
@@ -116,15 +130,17 @@ class NGSpiceLibImpl {
         // Gather data (slice off end which has "const" plot/data)
         const plotIDPtrs = this.lib.get_array(plotIdsPtr, { type: "string*" }).slice(0, -1);
         const plotIDs = plotIDPtrs.map((ptr) => this.lib.get_array(ptr, { type: "char" }));
-        
+
         const curPlotPtr = this.lib._OC_get_cur_plot();
         const curPlotID = curPlotPtr ? this.lib.get_array(curPlotPtr, { type: "char" }) : "";
-    
+
         // Get vec IDs
-        const vecIDs = Object.fromEntries(plotIDPtrs.map((plotIDPtr, i) => {
-            const vecIdsPtr = this.lib._OC_get_vector_ids(plotIDPtr);
-            return [plotIDs[i], vecIdsPtr ? this.lib.get_array(vecIdsPtr, { type: "string" }) : []];
-        }));
+        const vecIDs = Object.fromEntries(
+            plotIDPtrs.map((plotIDPtr, i) => {
+                const vecIdsPtr = this.lib._OC_get_vector_ids(plotIDPtr);
+                return [plotIDs[i], vecIdsPtr ? this.lib.get_array(vecIdsPtr, { type: "string" }) : []];
+            }),
+        );
 
         // Get vec data
         const allIDs = plotIDs.flatMap((plotID) => vecIDs[plotID].map((id) => `${plotID}.${id}`));

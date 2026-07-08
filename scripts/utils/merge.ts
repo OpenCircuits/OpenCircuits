@@ -6,25 +6,19 @@
  * @returns       New object with merged key/values.
  */
 export default function mergeDeep(...objects: object[]): object {
-    const isObject = (
-        (obj: unknown): obj is object =>
-            (obj && typeof obj === "object")
-    );
+    const isObject = (obj: unknown): obj is object => obj && typeof obj === "object";
 
     return objects.reduce((prev, obj) => {
         Object.keys(obj).forEach((key) => {
-            if (key === "__proto__" || key === "constructor" || key === "prototype")
-                return;
+            if (key === "__proto__" || key === "constructor" || key === "prototype") return;
             const pVal = prev[key];
             const oVal = obj[key];
 
             if (Array.isArray(pVal) && Array.isArray(oVal)) {
                 prev[key] = [...pVal, ...oVal];
-            }
-            else if (isObject(pVal) && isObject(oVal)) {
+            } else if (isObject(pVal) && isObject(oVal)) {
                 prev[key] = mergeDeep(pVal, oVal);
-            }
-            else {
+            } else {
                 prev[key] = oVal;
             }
         });

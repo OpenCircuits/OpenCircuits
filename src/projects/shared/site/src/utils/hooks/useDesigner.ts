@@ -1,7 +1,6 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
-import {CircuitDesigner} from "shared/api/circuitdesigner/public/CircuitDesigner";
-
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 const { setCurDesigner, useCurDesigner } = (() => {
     let curDesigner: CircuitDesigner | undefined;
@@ -13,13 +12,16 @@ const { setCurDesigner, useCurDesigner } = (() => {
             callbacks.forEach((c) => c(designer));
         },
         useCurDesigner: () => {
-            if (!curDesigner)
-                {throw new Error("useCurDesigner: No designer set!");}
+            if (!curDesigner) {
+                throw new Error("useCurDesigner: No designer set!");
+            }
 
             const [curDesignerState, setCurDesigner] = useState<CircuitDesigner>(curDesigner);
             useEffect(() => {
                 callbacks.add(setCurDesigner);
-                return () => { callbacks.delete(setCurDesigner); };
+                return () => {
+                    callbacks.delete(setCurDesigner);
+                };
             }, [setCurDesigner]);
 
             return curDesignerState;
@@ -27,4 +29,4 @@ const { setCurDesigner, useCurDesigner } = (() => {
     };
 })();
 
-export {setCurDesigner, useCurDesigner};
+export { setCurDesigner, useCurDesigner };

@@ -1,5 +1,4 @@
-import {getStackTrace, isError} from "./Errors";
-
+import { getStackTrace, isError } from "./Errors";
 
 /**
  * This function manages a loading screen. The loading screen will iterate over the provided
@@ -16,17 +15,13 @@ import {getStackTrace, isError} from "./Errors";
 export async function LoadingScreen(
     id: string,
     initialPercent: number,
-    segments: Array<[
-        number,
-        string,
-        (onProgress: (percentDone: number) => void) => Promise<void>,
-    ]>
+    segments: Array<[number, string, (onProgress: (percentDone: number) => void) => Promise<void>]>,
 ): Promise<void> {
     const loadingText = document.getElementById(`${id}-text`)!;
-    const loadingBar  = document.getElementById(`${id}-progress-bar`)!;
+    const loadingBar = document.getElementById(`${id}-progress-bar`)!;
 
-    const setText     = (text: string)   => loadingText.innerHTML = text;
-    const setProgress = (amount: number) => loadingBar.style.width = amount + "%";
+    const setText = (text: string) => (loadingText.innerHTML = text);
+    const setProgress = (amount: number) => (loadingBar.style.width = amount + "%");
 
     let errored = false;
     let curPercent = initialPercent;
@@ -38,10 +33,11 @@ export async function LoadingScreen(
         try {
             await fn((percentDone) => {
                 // Update "sub-percent", i.e. for Images, would show progress as images load
-                if (errored)
-                    {return;}
+                if (errored) {
+                    return;
+                }
                 setProgress(curPercent + (endPercent - curPercent) * percentDone);
-                setText(`${label} (${Math.floor(percentDone*100)}%)`);
+                setText(`${label} (${Math.floor(percentDone * 100)}%)`);
             });
         } catch (e) {
             // It's assumed any errors not caught within the segment function
@@ -54,18 +50,14 @@ export async function LoadingScreen(
                 issueURL.searchParams.set(
                     "body",
                     `Auto-generated error:\nError occurred while "${label}"\n${e.name}: ${e.message}\n` +
-                        `${getStackTrace(e).join("\n")}\n`
+                        `${getStackTrace(e).join("\n")}\n`,
                 );
             }
-            issueURL.searchParams.set(
-                "title",
-                String(e)
-            );
+            issueURL.searchParams.set("title", String(e));
 
             // Set loading bar to red w/ Error and link to create issue for the error
             loadingBar.style.backgroundColor = "#f44336";
-            loadingText.innerHTML =
-                `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
+            loadingText.innerHTML = `<a href="${issueURL.toString()}" target="_blank" style="-webkit-touch-callout: default;">
                     Error occurred while "${label}". Please refresh the page.
                     <br />
                     If this error continues to occur, please click this text to submit a bug report.

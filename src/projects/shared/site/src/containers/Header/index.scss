@@ -3,7 +3,6 @@
 @use "~shared/site/utils/constants" as *;
 @use "~shared/site/utils/theme" as *;
 
-
 header {
     z-index: 3;
 
@@ -41,7 +40,8 @@ header {
 
         height: 100%;
 
-        &:first-of-type, &:last-of-type {
+        &:first-of-type,
+        &:last-of-type {
             flex: 1;
         }
         &:first-of-type {

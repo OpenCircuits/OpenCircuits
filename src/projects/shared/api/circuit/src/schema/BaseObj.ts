@@ -1,6 +1,5 @@
-import {GUID} from "./GUID";
-import {Prop} from "./Prop";
-
+import { GUID } from "./GUID";
+import { Prop } from "./Prop";
 
 export interface BaseObj {
     kind: string;

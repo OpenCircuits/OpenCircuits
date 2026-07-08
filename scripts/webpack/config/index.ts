@@ -1,17 +1,16 @@
 import FriendlyErrorsWebpackPlugin from "friendly-errors-webpack-plugin";
-import webpack                     from "webpack";
+import webpack from "webpack";
 
 import mergeDeep from "../../utils/merge.js";
 
-import CSSConfig  from "./css.js";
+import CSSConfig from "./css.js";
 import HTMLConfig from "./html.js";
-import IMGConfig  from "./img.js";
-import TSConfig   from "./ts.js";
+import IMGConfig from "./img.js";
+import TSConfig from "./ts.js";
 import WASMConfig from "./wasm.js";
 
-import type {Config}        from "./types";
-import type {Configuration} from "webpack";
-
+import type { Config } from "./types";
+import type { Configuration } from "webpack";
 
 /**
  * Creates the webpack configuration.
@@ -24,15 +23,18 @@ export default (config: Config): Configuration => {
 
     return mergeDeep(
         {
-            mode, target, entry, stats,
+            mode,
+            target,
+            entry,
+            stats,
 
             output: {
-                path:       buildDir,
+                path: buildDir,
                 publicPath: "/",
 
                 // Extract the JS to /static/js/
-                filename:      (isProd ? "static/js/[name].[contenthash:8].js" : undefined),
-                chunkFilename: (isProd ? "static/js/[name].[contenthash:8].chunk.js" : undefined),
+                filename: isProd ? "static/js/[name].[contenthash:8].js" : undefined,
+                chunkFilename: isProd ? "static/js/[name].[contenthash:8].chunk.js" : undefined,
             },
 
             plugins: [
@@ -41,9 +43,7 @@ export default (config: Config): Configuration => {
                 // Stringify environment variables
                 new webpack.DefinePlugin({
                     "process.env": Object.fromEntries(
-                        Object.entries(env).map(
-                            ([key, val]) => [key, JSON.stringify(val)]
-                        )
+                        Object.entries(env).map(([key, val]) => [key, JSON.stringify(val)]),
                     ),
                 }),
             ],
@@ -52,12 +52,12 @@ export default (config: Config): Configuration => {
                 level: "error",
             },
 
-            devtool: (isDev ? "inline-source-map" : undefined),
+            devtool: isDev ? "inline-source-map" : undefined,
         },
-         IMGConfig(config),
-         CSSConfig(config),
-          TSConfig(config),
+        IMGConfig(config),
+        CSSConfig(config),
+        TSConfig(config),
         HTMLConfig(config),
         WASMConfig(config),
     );
-}
+};

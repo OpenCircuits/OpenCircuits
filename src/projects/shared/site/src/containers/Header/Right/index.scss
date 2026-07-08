@@ -2,7 +2,6 @@
 @use "~shared/site/utils/theme" as *;
 @use "../constants" as *;
 
-
 .header__right {
     padding: 5px 0;
 
@@ -28,7 +27,6 @@
             }
         }
     }
-
 
     &__btns {
         display: flex;
@@ -62,7 +60,8 @@
             }
         }
 
-        & div, button {
+        & div,
+        button {
             cursor: pointer;
         }
         #header-help-img {
@@ -103,7 +102,7 @@
 
             border-radius: 6px 0 6px 6px;
             background-color: #fff;
-            box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2);
+            box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
 
             overflow-y: auto;
 
@@ -127,7 +126,8 @@
                 color: $secondary-color;
                 vertical-align: middle;
             }
-            & > div, & > a {
+            & > div,
+            & > a {
                 display: flex;
                 float: left;
 

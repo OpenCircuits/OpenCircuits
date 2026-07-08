@@ -1,12 +1,11 @@
-import {themes as prismThemes} from "prism-react-renderer";
-import type {Config} from "@docusaurus/types";
+import { themes as prismThemes } from "prism-react-renderer";
+import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
-
 
 // This runs in Node.js - Don"t use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-    title:   "OpenCircuits",
+    title: "OpenCircuits",
     tagline: "The free, online, circuit designer",
     favicon: "img/favicon.ico",
 
@@ -16,7 +15,7 @@ const config: Config = {
     },
 
     // Set the production url of your site here
-    url:     "https://docs.opencircuits.com",
+    url: "https://docs.opencircuits.com",
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often "/<projectName>/"
     baseUrl: "/",
@@ -24,10 +23,10 @@ const config: Config = {
     // GitHub pages deployment config.
     // If you aren"t using GitHub pages, you don"t need these.
     organizationName: "OpenCircuits", // Usually your GitHub org/user name.
-    projectName:      "OpenCircuits", // Usually your repo name.
-    trailingSlash:    false,
+    projectName: "OpenCircuits", // Usually your repo name.
+    trailingSlash: false,
 
-    onBrokenLinks:         "throw",
+    onBrokenLinks: "throw",
     onBrokenMarkdownLinks: "warn",
 
     // Even if you don"t use internationalization, you can use this field to set
@@ -35,7 +34,7 @@ const config: Config = {
     // may want to replace "en" with "zh-Hans".
     i18n: {
         defaultLocale: "en",
-        locales:       ["en"],
+        locales: ["en"],
     },
 
     presets: [
@@ -43,10 +42,10 @@ const config: Config = {
             "classic",
             {
                 docs: {
-                    path:          "../../../../docs",
+                    path: "../../../../docs",
                     routeBasePath: "/",
-                    sidebarPath:   "./sidebars.ts",
-                    editUrl:       ({ docPath }) =>
+                    sidebarPath: "./sidebars.ts",
+                    editUrl: ({ docPath }) =>
                         `https://github.com/OpenCircuits/OpenCircuits/edit/master/docs/${docPath}`,
                 },
                 theme: {
@@ -58,35 +57,35 @@ const config: Config = {
 
     themeConfig: {
         // Replace with your project"s social card
-        image:  "img/docusaurus-social-card.jpg",
+        image: "img/docusaurus-social-card.jpg",
         navbar: {
             title: "OpenCircuits",
-            logo:  {
+            logo: {
                 alt: "OpenCircuits Logo",
                 src: "img/icon.svg",
             },
             items: [
                 {
-                    label:     "Docs",
-                    type:      "docSidebar",
+                    label: "Docs",
+                    type: "docSidebar",
                     sidebarId: "introSidebar",
-                    position:  "left",
+                    position: "left",
                 },
                 {
-                    label:     "API",
-                    type:      "docSidebar",
+                    label: "API",
+                    type: "docSidebar",
                     sidebarId: "apiSidebar",
-                    position:  "left",
+                    position: "left",
                 },
                 {
-                    label:     "Other",
-                    type:      "docSidebar",
+                    label: "Other",
+                    type: "docSidebar",
                     sidebarId: "otherSidebar",
-                    position:  "left",
+                    position: "left",
                 },
                 {
-                    href:     "https://github.com/OpenCircuits/OpenCircuits",
-                    label:    "GitHub",
+                    href: "https://github.com/OpenCircuits/OpenCircuits",
+                    label: "GitHub",
                     position: "right",
                 },
             ],
@@ -99,15 +98,15 @@ const config: Config = {
                     items: [
                         {
                             label: "Introduction",
-                            to:    "/",
+                            to: "/",
                         },
                         {
                             label: "Installation",
-                            to:    "/Introduction/GettingStarted/Installation",
+                            to: "/Introduction/GettingStarted/Installation",
                         },
                         {
                             label: "API",
-                            to:    "/API",
+                            to: "/API",
                         },
                     ],
                 },
@@ -116,7 +115,7 @@ const config: Config = {
                     items: [
                         {
                             label: "Discord",
-                            href:  "https://discord.gg/bCV2tYFer9",
+                            href: "https://discord.gg/bCV2tYFer9",
                         },
                     ],
                 },
@@ -125,7 +124,7 @@ const config: Config = {
                     items: [
                         {
                             label: "GitHub",
-                            href:  "https://github.com/OpenCircuits/OpenCircuits",
+                            href: "https://github.com/OpenCircuits/OpenCircuits",
                         },
                     ],
                 },
@@ -133,7 +132,7 @@ const config: Config = {
             copyright: `Copyright © ${new Date().getFullYear()} OpenCircuits. Built with Docusaurus.`,
         },
         prism: {
-            theme:     prismThemes.vsLight,
+            theme: prismThemes.vsLight,
             darkTheme: prismThemes.vsDark,
         },
     } satisfies Preset.ThemeConfig,

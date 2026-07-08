@@ -1,5 +1,4 @@
-import {useEffect, useState} from "react";
-
+import { useEffect, useState } from "react";
 
 export const useWindowSize = () => {
     const getSize = () => ({
@@ -22,4 +21,4 @@ export const useWindowSize = () => {
     }, []); // Empty array ensures that the effect is only run once
 
     return size;
-}
+};

@@ -1,5 +1,4 @@
-import React, {useEffect} from "react";
-
+import React, { useEffect } from "react";
 
 export const useDocEvent = <K extends keyof DocumentEventMap>(
     event: K,
@@ -11,4 +10,4 @@ export const useDocEvent = <K extends keyof DocumentEventMap>(
         document.addEventListener(event, listener, options);
         return () => document.removeEventListener(event, listener, options);
     }, deps);
-}
+};

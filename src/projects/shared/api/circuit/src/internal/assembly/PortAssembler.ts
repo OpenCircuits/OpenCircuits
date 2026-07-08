@@ -1,34 +1,37 @@
-import {V, Vector} from "Vector";
+import { V, Vector } from "Vector";
 
-import {Schema} from "shared/api/circuit/schema";
+import { Schema } from "shared/api/circuit/schema";
 
-import {GUID} from "..";
-import {Assembler, AssemblerParams, AssemblyReason} from "./Assembler";
-import {PortPos} from "./AssemblyCache";
-import {Prim} from "./Prim";
-import {Rect} from "math/Rect";
+import { GUID } from "..";
+import { Assembler, AssemblerParams, AssemblyReason } from "./Assembler";
+import { PortPos } from "./AssemblyCache";
+import { Prim } from "./Prim";
+import { Rect } from "math/Rect";
 
+export type PartialPortPos =
+    | {
+          origin: Vector;
+          target: Vector;
+          dir?: undefined;
+      }
+    | {
+          origin: Vector;
+          target?: undefined;
+          dir: Vector;
+      }
+    | PortPos;
 
-export type PartialPortPos = {
-    origin: Vector;
-    target: Vector;
-    dir?: undefined;
-} | {
-    origin: Vector;
-    target?: undefined;
-    dir: Vector;
-} | PortPos;
-
-export type PortFactory = Record<
-    string,
-    (parent: Schema.Component, index: number, total: number) => PartialPortPos
->;
-
+export type PortFactory = Record<string, (parent: Schema.Component, index: number, total: number) => PartialPortPos>;
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace PositioningHelpers {
-    export function ConstantSpacing(index: number, total: number, size: number, opts: { spacing: number, shift?: number } = { spacing: 0.5 }) {
-        return (index - (total - 1)/2 + (opts?.shift ?? 0)) * opts?.spacing / size;
+    export function ConstantSpacing(
+        index: number,
+        total: number,
+        size: number,
+        opts: { spacing: number; shift?: number } = { spacing: 0.5 },
+    ) {
+        return ((index - (total - 1) / 2 + (opts?.shift ?? 0)) * opts?.spacing) / size;
     }
 }
 
@@ -36,7 +39,11 @@ export class PortAssembler extends Assembler<Schema.Component> {
     private readonly factory: PortFactory;
     private readonly calcCompSize: (comp: Schema.Component) => Vector;
 
-    public constructor(params: AssemblerParams, factory: PortFactory, calcCompSize: (comp: Schema.Component) => Vector) {
+    public constructor(
+        params: AssemblerParams,
+        factory: PortFactory,
+        calcCompSize: (comp: Schema.Component) => Vector,
+    ) {
         super(params);
 
         this.factory = factory;
@@ -49,8 +56,9 @@ export class PortAssembler extends Assembler<Schema.Component> {
         const compSize = this.calcCompSize(parent);
 
         const origin = pPos.origin;
-        const target = (pPos.target ?? origin.add(pPos.dir.scale(this.options.defaultPortLength).scale(compSize.reciprocal())));
-        const dir    = (pPos.dir    ?? target.sub(origin).normalize());
+        const target =
+            pPos.target ?? origin.add(pPos.dir.scale(this.options.defaultPortLength).scale(compSize.reciprocal()));
+        const dir = pPos.dir ?? target.sub(origin).normalize();
 
         return { origin, target, dir };
     }
@@ -61,16 +69,16 @@ export class PortAssembler extends Assembler<Schema.Component> {
         return {
             origin: transform.toWorldSpace(origin),
             target: transform.toWorldSpace(target),
-            dir:    dir.rotate(transform.angle),
+            dir: dir.rotate(transform.angle),
         };
     }
 
     public override assemble(parent: Schema.Component, reasons: Set<AssemblyReason>) {
-        const added            = reasons.has(AssemblyReason.Added);
+        const added = reasons.has(AssemblyReason.Added);
         const transformChanged = reasons.has(AssemblyReason.TransformChanged);
-        const portAmtChanged   = reasons.has(AssemblyReason.PortsChanged);
+        const portAmtChanged = reasons.has(AssemblyReason.PortsChanged);
         const selectionChanged = reasons.has(AssemblyReason.SelectionChanged);
-        const propChanged      = reasons.has(AssemblyReason.PropChanged);
+        const propChanged = reasons.has(AssemblyReason.PropChanged);
 
         const parentSelected = this.isSelected(parent.id);
 
@@ -101,31 +109,34 @@ export class PortAssembler extends Assembler<Schema.Component> {
                 this.cache.portPositions.set(portID, pos);
 
                 // Get port name for label
-                const name = this.circuit.getPortByID(portID)
-                    .map((p) => p.props.name ?? parentInfo.getDefaultPortName(p)).unwrap();
+                const name = this.circuit
+                    .getPortByID(portID)
+                    .map((p) => p.props.name ?? parentInfo.getDefaultPortName(p))
+                    .unwrap();
                 if (name) {
                     const padding = 0.1;
 
                     const localPos = this.cache.localPortPositions.get(portID)!;
-                    const textBounds = this.options.textMeasurer?.getBounds(this.options.fontStyle(), name)
-                        ?? new Rect(V(), V());
+                    const textBounds =
+                        this.options.textMeasurer?.getBounds(this.options.fontStyle(), name) ?? new Rect(V(), V());
 
-                    const textSize = textBounds.size.add(2*padding);
+                    const textSize = textBounds.size.add(2 * padding);
 
                     // Text pos is the backwards from the origin by the text size
                     const textPos = localPos.origin.add(
-                        localPos.dir.scale(textSize.scale(-0.5)).scale(parentTransform.scale.reciprocal()));
+                        localPos.dir.scale(textSize.scale(-0.5)).scale(parentTransform.scale.reciprocal()),
+                    );
 
                     // Clamp the position inside the box
                     const pos = parentTransform.toWorldSpace(Vector.Clamp(textPos, V(-0.5, -0.5), V(0.5, 0.5)));
 
                     labelPrims.push({
-                        kind:      "Text",
-                        contents:  name,
-                        pos:       pos.add(-textBounds.x, -textBounds.y),
-                        angle:     parentTransform.angle,
+                        kind: "Text",
+                        contents: name,
+                        pos: pos.add(-textBounds.x, -textBounds.y),
+                        angle: parentTransform.angle,
                         fontStyle: this.options.fontStyle(),
-                    })
+                    });
                 }
 
                 // Assemble the port-line and port-circle
@@ -135,18 +146,18 @@ export class PortAssembler extends Assembler<Schema.Component> {
                     portID,
                     [
                         {
-                            kind:  "Line",
-                            p1:    pos.origin,
-                            p2:    pos.target,
+                            kind: "Line",
+                            p1: pos.origin,
+                            p2: pos.target,
                             style: lineStyle,
 
                             ignoreHit: true,
                         },
                         {
-                            kind:   "Circle",
-                            pos:    pos.target,
+                            kind: "Circle",
+                            pos: pos.target,
                             radius: this.options.defaultPortRadius,
-                            style:  circleStyle,
+                            style: circleStyle,
                         },
                     ],
                 ] satisfies [GUID, Prim[]];

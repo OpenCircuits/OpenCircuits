@@ -1,9 +1,8 @@
 import "shared/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuit} from "./helpers/CreateTestCircuit";
-
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("PlaceComponentAt", () => {
     test("Basic Placement", () => {
@@ -23,9 +22,9 @@ describe("PlaceComponentAt", () => {
         const l1 = circuit.placeComponentAt("LED", V(5, 0));
 
         expect(circuit.getObjs()).toHaveLength(2 + 2 + 4 + 2);
-        expect(s1.pos).toEqual(V(-5,  5));
+        expect(s1.pos).toEqual(V(-5, 5));
         expect(s2.pos).toEqual(V(-5, -5));
-        expect(c1.pos).toEqual(V(0,   0));
-        expect(l1.pos).toEqual(V(5,   0));
+        expect(c1.pos).toEqual(V(0, 0));
+        expect(l1.pos).toEqual(V(5, 0));
     });
 });

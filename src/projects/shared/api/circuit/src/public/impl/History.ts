@@ -1,10 +1,9 @@
-import {CircuitInternal} from "shared/api/circuit/internal";
+import { CircuitInternal } from "shared/api/circuit/internal";
 
-import {CircuitHistory, CircuitHistoryEvent} from "../History";
+import { CircuitHistory, CircuitHistoryEvent } from "../History";
 
-import {ObservableImpl} from "../../utils/Observable";
-import {LogEntry} from "../../internal/impl/CircuitLog";
-
+import { ObservableImpl } from "../../utils/Observable";
+import { LogEntry } from "../../internal/impl/CircuitLog";
 
 export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements CircuitHistory {
     protected readonly internal: CircuitInternal;
@@ -15,10 +14,11 @@ export class HistoryImpl extends ObservableImpl<CircuitHistoryEvent> implements 
         this.internal = internal;
 
         this.internal["log"].subscribe((ev) => {
-            if (ev.accepted.length === 0)
-                {return;}
+            if (ev.accepted.length === 0) {
+                return;
+            }
             this.publish({ type: "change" });
-        })
+        });
     }
 
     public getUndoStack(): readonly LogEntry[] {

@@ -1,19 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/api/circuit/tests/helpers/Extensions";
 
-import {V} from "Vector";
+import { V } from "Vector";
 
-import {CreateTestCircuitDesigner} from "tests/helpers/CreateTestCircuitDesigner";
-import {LineCurve} from "math/Line";
-
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
+import { LineCurve } from "math/Line";
 
 describe("SplitWireTool", () => {
     test("Click to Connect Comp -> Comp", () => {
         const [designer, input, _, { PlaceAt, GetPort }] = CreateTestCircuitDesigner();
         const [obj1, obj2] = PlaceAt(V(0, 0), V(2, 0));
 
-        input.click(GetPort(obj1).targetPos)
-            .click(GetPort(obj2).targetPos);
+        input.click(GetPort(obj1).targetPos).click(GetPort(obj2).targetPos);
 
         expect(obj1).toBeConnectedTo(obj2);
     });
@@ -23,26 +21,17 @@ describe("SplitWireTool", () => {
         const [obj1, obj2] = PlaceAt(V(-1, 0), V(4, 2));
 
         // Connect Comp -> Comp
-        input.drag(GetPort(obj1).targetPos,
-                   GetPort(obj2).targetPos);
+        input.drag(GetPort(obj1).targetPos, GetPort(obj2).targetPos);
 
         expect(obj1).toBeConnectedTo(obj2);
 
         // Split into Snap position
         const wire = GetPort(obj1).connections[0];
-        input.press(wire.shape.getPos(0.5))
-             .move(V(2, 0))
-             .release();
+        input.press(wire.shape.getPos(0.5)).move(V(2, 0)).release();
         expect(obj1).not.toBeConnectedTo(obj2);
-        input.pressKey("Control")
-             .pressKey("z")
-             .releaseKey("z")
-             .releaseKey("Control");
+        input.pressKey("Control").pressKey("z").releaseKey("z").releaseKey("Control");
         expect(obj1).toBeConnectedTo(obj2);
-        input.pressKey("Control")
-             .pressKey("y")
-             .releaseKey("y")
-             .releaseKey("Control");
+        input.pressKey("Control").pressKey("y").releaseKey("y").releaseKey("Control");
         expect(obj1).not.toBeConnectedTo(obj2);
     });
 
@@ -51,13 +40,11 @@ describe("SplitWireTool", () => {
         const [obj1, obj2] = PlaceAt(V(0, 0), V(4, 0));
 
         // Connect Comp -> Comp
-        input.drag(GetPort(obj1).targetPos,
-                   GetPort(obj2).targetPos);
+        input.drag(GetPort(obj1).targetPos, GetPort(obj2).targetPos);
 
         // Split into Snap position
         const wire = GetPort(obj1).connections[0];
-        input.press(wire.shape.getPos(0.5))
-            .moveTo(V(2, 0));
+        input.press(wire.shape.getPos(0.5)).moveTo(V(2, 0));
 
         const node = GetPort(obj1).connectedPorts[0].parent;
         expect(node.isNode()).toBeTruthy();
@@ -66,8 +53,7 @@ describe("SplitWireTool", () => {
         expect(node.pos).toApproximatelyEqual(V(2, 0));
 
         // Move down
-        input.move(V(0, -1))
-            .release();
+        input.move(V(0, -1)).release();
 
         expect(GetPort(node).connections[0].shape).not.toBeInstanceOf(LineCurve);
         expect(GetPort(node).connections[1].shape).not.toBeInstanceOf(LineCurve);
@@ -79,18 +65,13 @@ describe("SplitWireTool", () => {
         const [obj1, obj2] = PlaceAt(V(-1, 0), V(8, 2));
 
         // Connect Comp -> Comp
-        input.drag(GetPort(obj1).targetPos,
-                   GetPort(obj2).targetPos);
+        input.drag(GetPort(obj1).targetPos, GetPort(obj2).targetPos);
 
         expect(obj1).toBeConnectedTo(obj2);
 
         // Split twice
-        input.press(GetPort(obj1).connections[0].shape.getPos(0.5))
-                .moveTo(V(0, -2))
-                .release();
-        input.press(GetPort(obj2).connections[0].shape.getPos(0.5))
-                .moveTo(V(9, -2))
-                .release();
+        input.press(GetPort(obj1).connections[0].shape.getPos(0.5)).moveTo(V(0, -2)).release();
+        input.press(GetPort(obj2).connections[0].shape.getPos(0.5)).moveTo(V(9, -2)).release();
 
         const node1 = GetPort(obj1).connectedPorts[0].parent;
         expect(node1.isNode()).toBeTruthy();

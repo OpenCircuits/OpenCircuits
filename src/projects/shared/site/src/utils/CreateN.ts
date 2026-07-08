@@ -1,15 +1,14 @@
-import {Vector} from "Vector";
+import { Vector } from "Vector";
 
-import {CircuitInfo} from "shared/api/circuit/utils/CircuitInfo";
+import { CircuitInfo } from "shared/api/circuit/utils/CircuitInfo";
 
-import {GroupAction} from "shared/api/circuit/actions/GroupAction";
+import { GroupAction } from "shared/api/circuit/actions/GroupAction";
 
-import {PlaceGroup} from "shared/api/circuit/actions/units/Place";
+import { PlaceGroup } from "shared/api/circuit/actions/units/Place";
 
-import {AnyComponent} from "shared/api/circuit/models/types";
+import { AnyComponent } from "shared/api/circuit/models/types";
 
-import {CreateComponent} from "shared/api/circuit/models/utils/CreateComponent";
-
+import { CreateComponent } from "shared/api/circuit/models/utils/CreateComponent";
 
 export function Create(itemKind: AnyComponent["kind"], pos: Vector, zIndex: number) {
     const [component, ...ports] = CreateComponent(itemKind, zIndex);
@@ -23,7 +22,7 @@ export function CreateNComponents(
     itemKind: AnyComponent["kind"],
     N: number,
     pos: Vector,
-    zIndex: number
+    zIndex: number,
 ) {
     return new GroupAction(
         new Array(N).fill(0).map((_) => {
