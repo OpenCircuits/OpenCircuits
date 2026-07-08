@@ -5,9 +5,22 @@ type Props = {
     data?: string;
     async?: boolean;
 }
-export function Request({ method, url, headers, data, async }: Props): Promise<string> {
+type TextProps = Props & {
+    responseType?: "" | "text";
+}
+type ByteProps = Props & {
+    responseType: "arraybuffer";
+}
+
+export function Request(props: TextProps): Promise<string>;
+export function Request(props: ByteProps): Promise<ArrayBuffer>;
+export function Request({ method, url, headers, data, async, responseType }: TextProps | ByteProps): Promise<string | ArrayBuffer> {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
+
+        if (responseType) {
+            xhr.responseType = responseType;
+        }
 
         // Open request
         xhr.open(method, url, async ?? true);
