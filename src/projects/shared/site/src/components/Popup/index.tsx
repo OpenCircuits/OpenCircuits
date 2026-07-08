@@ -7,11 +7,10 @@ type Props = {
     readonly isOpen: boolean;
     readonly close: () => void;
     readonly className?: string;
-    readonly width?: number;
-    readonly height?: number;
+    readonly style?: React.CSSProperties;
     readonly children: React.ReactNode;
 };
-export const Popup = ({ title, isOpen, close, className, width, height, children }: Props) => (
+export const Popup = ({ title, isOpen, close, className, style, children }: Props) => (
     <>
         <Overlay isOpen={isOpen} close={close} />
 
@@ -19,10 +18,12 @@ export const Popup = ({ title, isOpen, close, className, width, height, children
             className={"popup " + (className ?? "")}
             style={{
                 display: isOpen ? "initial" : "none",
-                width: `${width}%`,
-                height: `${height}%`,
+                ...style,
             }}
         >
+            <button className="popup-close-btn" onClick={close}>
+                &times;
+            </button>
             <h1>{title}</h1>
             <hr />
             {children}

@@ -9,7 +9,7 @@
         border: 1px solid #bbb;
         border-radius: 3px;
     }
-    & button {
+    & button:not(.popup-close-btn) {
         font-size: 0.8em;
 
         width: 30%;

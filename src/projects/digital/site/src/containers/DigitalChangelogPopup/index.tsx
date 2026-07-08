@@ -59,10 +59,13 @@ export const DigitalChangelogPopup = () => {
                     </div>
 
                     <div className="digital-changelog__card">
-                        <div className="digital-changelog__card-icon">📈</div>
+                        <div className="digital-changelog__card-icon">💻</div>
                         <div className="digital-changelog__card-content">
-                            <h3>Analog Preview</h3>
-                            <p>Began the initial implementation of Analog circuits (OpenCircuitsEE).</p>
+                            <h3>JavaScript API</h3>
+                            <p>
+                                Programmatically edit the circuit in the JS console using the new <code>Circuit</code>{" "}
+                                global.
+                            </p>
                         </div>
                     </div>
 

@@ -25,7 +25,7 @@ export const LoginPopup = () => {
         <Popup
             title="Login"
             className="login__popup"
-            width={40}
+            style={{ width: "80%", maxWidth: "600px" }}
             isOpen={curPopup === "login"}
             close={() => dispatch(CloseHeaderPopups())}
         >
