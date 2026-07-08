@@ -123,11 +123,11 @@ function getProjectDefinitions(
 const devPages: Readonly<Record<DevPageNames, PageDetails>> = {
     digital: {
         port: 3000,
-        command: `node ./build/scripts/start.js ${path.join("src", "projects", "digital", "site")}`,
+        command: `node ./scripts/start.ts ${path.join("src", "projects", "digital", "site")}`,
     },
     landing: {
         port: 3000,
-        command: `node ./build/scripts/start.js ${path.join("src", "other", "pages", "landing")}`,
+        command: `node ./scripts/start.ts ${path.join("src", "other", "pages", "landing")}`,
     },
 };
 
@@ -136,8 +136,8 @@ const prodPages: Readonly<Record<ProdPageNames, PageDetails>> = {
         port: 8080,
         // server path is hardcoded with forward slash
         command:
-            `node ./build/scripts/build.js src/server ${path.join("src", "projects", "digital", "site")} ` +
-            "&& node ./build/scripts/start.js src/server",
+            `node ./scripts/build.ts src/server ${path.join("src", "projects", "digital", "site")} ` +
+            "&& node ./scripts/start.ts src/server",
     },
 };
 
