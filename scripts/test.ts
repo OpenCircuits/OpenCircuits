@@ -30,11 +30,22 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
             silent: false,
             passWithNoTests: true,
             config: JSON.stringify({
-                "preset": "ts-jest",
                 "testEnvironment": "jsdom",
                 "moduleNameMapper": getAliases(path.resolve(process.cwd(), dir), "jest"),
 
                 "transform": {
+                    "^.+\\.(t|j)sx?$": [
+                        "@swc/jest",
+                        {
+                            "jsc": {
+                                "transform": {
+                                    "react": {
+                                        "runtime": "automatic",
+                                    },
+                                },
+                            },
+                        },
+                    ],
                     "^.+\\.scss$": path.resolve("scripts/test/scssTransform.ts"),
                     "^.+\\.svg$": path.resolve("scripts/test/svgTransform.ts"),
                 },

@@ -1,5 +1,5 @@
 import { Matcher, screen } from "@testing-library/react";
-import { UserEvent } from "@testing-library/user-event/dist/types/setup";
+import { UserEvent } from "@testing-library/user-event";
 
 /**
  * Presses a button or switch toggle.
