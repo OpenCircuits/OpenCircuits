@@ -434,10 +434,22 @@ export default defineConfig({
     },
     "overrides": [
         {
+            "files": ["docs/**"],
+            "rules": {
+                "react/jsx-filename-extension": [
+                    "error",
+                    {
+                        "extensions": [".jsx", ".tsx"],
+                    },
+                ],
+            },
+        },
+        {
             "files": ["scripts/**"],
             "rules": {
                 "no-console": "off",
                 "import/extensions": "off",
+                "unicorn/no-process-exit": "off",
             },
         },
         {

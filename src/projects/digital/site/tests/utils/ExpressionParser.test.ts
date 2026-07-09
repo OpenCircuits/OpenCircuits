@@ -54,7 +54,9 @@ function testInputs(inputs: Array<[string, DigitalComponent]>, output: DigitalCo
     for (let num = 0; num < 2 ** inputs.length; num++) {
         let testTitle = "Inputs on:";
         for (let index = 0; index < inputs.length; index++) {
-            if (num & (2 ** index)) testTitle += " " + inputs[index][0];
+            if (num & (2 ** index)) {
+                testTitle += " " + inputs[index][0];
+            }
         }
         if (testTitle === "Inputs on:") {
             testTitle += " [none]";

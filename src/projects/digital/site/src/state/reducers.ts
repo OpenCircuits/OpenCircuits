@@ -11,8 +11,6 @@ import { userInfoReducer } from "shared/site/state/UserInfo";
 import { icDesignerReducer } from "./ICDesigner";
 import { icViewerReducer } from "./ICViewer";
 
-import { AppState } from ".";
-
 export const reducers = combineReducers({
     user: userInfoReducer,
     circuit: circuitInfoReducer,

@@ -21,7 +21,7 @@ export const Popup = ({ title, isOpen, close, className, style, children }: Prop
                 ...style,
             }}
         >
-            <button className="popup-close-btn" onClick={close}>
+            <button type="button" className="popup-close-btn" onClick={close}>
                 &times;
             </button>
             <h1>{title}</h1>
