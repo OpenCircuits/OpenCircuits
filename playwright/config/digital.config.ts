@@ -1,4 +1,4 @@
-import baseConfig, { DevProjects, DevWebServers } from "./base.config.ts";
+import baseConfig, { DevProjects, DevWebServers } from "./base.config";
 
 import type { PlaywrightTestConfig } from "@playwright/test";
 

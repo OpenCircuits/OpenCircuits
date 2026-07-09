@@ -33,6 +33,7 @@ describe("New Circuit Integration", () => {
     beforeAll(() => {
         // jsdom does not implement document.elementFromPoint, but ItemNav's global drop handler
         // uses it on any pointerup event (which userEvent.click triggers). We must mock it.
+        // oxlint-disable-next-line unicorn/no-null
         document.elementFromPoint = jest.fn(() => null);
 
         // Mock confirm because the designer is not 'saved' after placing a switch
