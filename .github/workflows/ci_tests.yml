@@ -102,4 +102,4 @@ jobs:
       - run: yarn --immutable
 
       - name: Check code formatting
-        run: fmt:check
+        run: yarn fmt:check
