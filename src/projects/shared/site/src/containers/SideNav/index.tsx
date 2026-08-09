@@ -165,9 +165,9 @@ export const SideNav = ({ exampleCircuits }: Props) => {
                                     href={`https://github.com/OpenCircuits/OpenCircuits/commit/${process.env.OC_GIT_COMMIT}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    title={`Commit ${process.env.OC_GIT_COMMIT.substring(0, 7)}`}
+                                    title={`Commit ${process.env.OC_GIT_COMMIT.slice(0, 7)}`}
                                 >
-                                    {process.env.OC_VERSION || process.env.OC_GIT_COMMIT.substring(0, 7)}
+                                    {process.env.OC_VERSION || process.env.OC_GIT_COMMIT.slice(0, 7)}
                                 </a>
                             ) : (
                                 <span>{process.env.OC_VERSION}</span>

@@ -11,9 +11,13 @@ function getGitCommit() {
 
 function getVersion(dir: string) {
     const pkgPath = path.join(dir, "package.json");
-    if (!existsSync(pkgPath)) throw new Error(`No package.json found at ${pkgPath}`);
+    if (!existsSync(pkgPath)) {
+        throw new Error(`No package.json found at ${pkgPath}`);
+    }
     const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
-    if (!pkg.version) throw new Error(`No version found in ${pkgPath}`);
+    if (!pkg.version) {
+        throw new Error(`No version found in ${pkgPath}`);
+    }
     return "v" + pkg.version;
 }
 

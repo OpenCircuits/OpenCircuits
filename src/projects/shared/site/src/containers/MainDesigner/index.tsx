@@ -76,7 +76,7 @@ export const MainDesigner = ({ otherPlace }: Props) => {
                 throw new Error("MainDesigner.Droppable.onDrop failed: canvas.current is null");
             }
             if (typeof itemKind !== "string") {
-                throw new Error(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);
+                throw new TypeError(`MainDesigner.Droppable.onDrop failed: Unknown itemKind! ${itemKind}`);
             }
 
             const amt = typeof num === "number" ? num : 1;
