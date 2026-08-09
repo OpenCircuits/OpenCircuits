@@ -64,7 +64,7 @@ import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelp
 import { DigitalProtoSchema } from "digital/site/proto";
 import { CreateCircuit, DigitalCircuit, DigitalObjContainer } from "digital/api/circuit/public";
 import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
-import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
+import { TimedScheduler } from "./utils/TimedScheduler";
 import { DigitalCircuitToProto, DigitalProtoToCircuit } from "digital/site/proto/bridge";
 import { PrintDebugStats } from "./proto/debug";
 import { CUR_SAVE_VERSION } from "./utils/Constants";
@@ -195,7 +195,8 @@ async function Init(): Promise<void> {
                             circuit,
                         );
                         // Setup propagator
-                        circuit["ctx"].simRunner = new TimedDigitalSimRunner(circuit["ctx"].sim, 1000 / 20);
+                        circuit.sim.setScheduler(new TimedScheduler());
+                        circuit.sim.propagationTime = 1000 / 20;
 
                         return designer;
                     },

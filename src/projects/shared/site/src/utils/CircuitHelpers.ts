@@ -64,6 +64,7 @@ export const CircuitHelpers: CircuitHelpers = {
     LoadNewCircuit(data) {
         // Create new circuit to override old one
         const circuit = CircuitHelpers.DeserializeCircuit(data);
+        console.log("IMPORTING: ", (circuit as any)["sim"]["propagationTime"]);
         const newDesigner = CircuitHelpers.CreateAndInitializeDesigner();
         newDesigner.circuit.import(circuit, { loadMetadata: true });
         newDesigner.circuit.history.clear();

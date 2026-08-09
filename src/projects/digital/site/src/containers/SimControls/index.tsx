@@ -18,7 +18,7 @@ const MIN_SPEED = 0.1,
 export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isPaused, setIsPaused] = useState(circuit.sim.isPaused);
-    const [curSpeed, setCurSpeed] = useState(1000 / circuit.sim.propagationTime);
+    const [curSpeed, setCurSpeed] = useState(1000 / (circuit.sim.propagationTime ?? 50));
 
     useEffect(
         () =>
@@ -30,11 +30,20 @@ export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) =
                     setIsPaused(false);
                 }
                 if (ev.type === "propagationTimeChanged") {
-                    setCurSpeed(1000 / ev.newTime);
+                    if (ev.newTime) {
+                        setCurSpeed(1000 / ev.newTime);
+                    }
                 }
             }),
         [circuit, setIsPaused, setCurSpeed],
     );
+
+    useEffect(() => {
+        setIsPaused(circuit.sim.isPaused);
+        if (circuit.sim.propagationTime) {
+            setCurSpeed(1000 / circuit.sim.propagationTime);
+        }
+    }, [circuit, circuit.sim.isPaused, circuit.sim.propagationTime, setIsPaused, setCurSpeed]);
 
     const updateSpeed = (newSpeed: number) => {
         circuit.sim.propagationTime = 1000 / Clamp(newSpeed, 0.1, 1000);

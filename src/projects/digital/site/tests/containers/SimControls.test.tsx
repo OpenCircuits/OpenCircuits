@@ -21,21 +21,11 @@ import { App } from "digital/site/containers/App";
 import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelpers";
 import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
 
-import { OpenHistoryBox } from "shared/site/state/ItemNav";
-import { ToggleSideNav } from "shared/site/state/SideNav";
-
-import { V } from "Vector";
-
-describe("New Circuit Integration", () => {
+describe("SimControls Integration", () => {
     let store: ReturnType<typeof configureStore>;
-    let curDesigner: DigitalCircuitDesigner;
 
     beforeAll(() => {
-        // jsdom does not implement document.elementFromPoint, but ItemNav's global drop handler
-        // uses it on any pointerup event (which userEvent.click triggers). We must mock it.
         document.elementFromPoint = jest.fn(() => null);
-
-        // Mock confirm because the designer is not 'saved' after placing a switch
         jest.spyOn(window, "confirm").mockImplementation(() => true);
     });
 
@@ -50,7 +40,7 @@ describe("New Circuit Integration", () => {
             CreateAndInitializeDesigner(tools) {
                 const circuit = CreateCircuit();
                 circuit.sim.setScheduler(new TimedScheduler());
-                circuit.sim.propagationTime = 1000 / 20;
+                circuit.sim.propagationTime = 1000 / 20; // propagationTime = 50
                 const designer = CreateDesigner(
                     tools?.config ?? {
                         defaultTool: new DefaultTool(),
@@ -60,7 +50,6 @@ describe("New Circuit Integration", () => {
                     -1,
                     circuit,
                 );
-                curDesigner = designer;
                 return designer;
             },
             Serialize: () => ({ data: new Blob(), version: "" }),
@@ -72,7 +61,7 @@ describe("New Circuit Integration", () => {
         setCurDesigner(mainDesigner);
     });
 
-    test("New Circuit resets HistoryBox", async () => {
+    test("SimControls updates when new circuit is loaded", async () => {
         const user = userEvent.setup();
 
         render(
@@ -81,31 +70,33 @@ describe("New Circuit Integration", () => {
             </Provider>,
         );
 
-        // Open HistoryBox
+        // Open SimControls
+        const controlsBtn = screen.getByTitle("Simulation Controls");
+        await user.click(controlsBtn);
+
+        // Verify initial speed (1000 / 50 = 20)
+        // Note: spinbutton is the <input type="number"> in NumberInputField
+        const speedInput = screen.getByRole("spinbutton");
+        expect(speedInput).toHaveValue(20);
+
+        // Load new circuit with different propagation time
         act(() => {
-            store.dispatch(OpenHistoryBox());
+            // Override DeserializeCircuit to simulate a saved file with a different speed
+            const prevDeserialize = CircuitHelpers.DeserializeCircuit;
+            CircuitHelpers.DeserializeCircuit = () => {
+                const c = CreateCircuit();
+                c.sim.propagationTime = 100; // Speed 10
+                return c;
+            };
+
+            CircuitHelpers.LoadNewCircuit("{}");
+
+            CircuitHelpers.DeserializeCircuit = prevDeserialize;
         });
 
-        // Push an operation to history by placing a component within a transaction
-        act(() => {
-            curDesigner.circuit.beginTransaction();
-            curDesigner.circuit.placeComponentAt("Switch", V(0, 0));
-            curDesigner.circuit.commitTransaction("Placed Switch");
-        });
-
-        // Verify the history box shows the entry
-        expect(screen.getByText("Placed Switch")).toBeVisible();
-
-        // Open SideNav
-        act(() => {
-            store.dispatch(ToggleSideNav());
-        });
-
-        // Click "New Circuit"
-        const newCircuitBtn = screen.getByText("New Circuit");
-        await user.click(newCircuitBtn);
-
-        // Check if "Placed Switch" is gone
-        expect(screen.queryByText("Placed Switch")).toBeNull();
+        // The state update in SimControls might be asynchronous because it's in a useEffect.
+        // Wait for the new value to appear.
+        const speedInput2 = await screen.findByDisplayValue("10.0");
+        expect(speedInput2).toBeVisible();
     });
 });

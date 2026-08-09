@@ -22,7 +22,6 @@ import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
 import { V } from "Vector";
 import { configureStore } from "@reduxjs/toolkit";
 import { Signal } from "digital/api/circuit/schema/Signal";
-import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro
@@ -37,7 +36,7 @@ describe("Main Popup", () => {
         undefined,
         circuit,
     );
-    circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+    circuit.sim.propagationTime = 0;
     const store = configureStore({ reducer: reducers });
     const user = userEvent.setup();
 

@@ -16,7 +16,7 @@ import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
 import { Cleanups } from "shared/api/circuit/utils/types";
 import { CloseICViewer } from "digital/site/state/ICViewer";
 import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
-import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
+import { TimedScheduler } from "digital/site/utils/TimedScheduler";
 import { GUID } from "shared/api/circuit/schema";
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
@@ -85,8 +85,8 @@ export const ICViewer = () => {
         );
 
         // Setup propagator
-        // TODO: We need a way to choose between sim-runners through the API
-        circuit["ctx"].simRunner = new TimedDigitalSimRunner(circuit["ctx"].sim, 1);
+        circuit.sim.setScheduler(new TimedScheduler());
+        circuit.sim.propagationTime = 1;
 
         // Synchronize current debug info from mainInfo
         designer.viewport.debugOptions = mainDesigner.viewport.debugOptions;

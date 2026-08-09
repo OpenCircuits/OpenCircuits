@@ -15,7 +15,6 @@ import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateToke
 import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
 import { Signal } from "digital/api/circuit/schema/Signal";
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
-import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 /**
  * This function is used to create and run a separate test for every combination of switch states.
@@ -144,7 +143,7 @@ function runTests(numInputs: number, expression: string, expected: boolean[], op
             expect(result).toBeOk();
         });
         const circuit = result.unwrap();
-        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+        circuit.sim.propagationTime = 0;
 
         const inputComponents: Array<[string, DigitalComponent]> = [];
         for (let i = 0; i < numInputs; i++) {
@@ -429,7 +428,7 @@ describe("Expression Parser", () => {
             const result = ExpressionToCircuit(inputMap, "a", o);
             expect(result).toBeOk();
             const circuit = result.unwrap();
-            circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+            circuit.sim.propagationTime = 0;
 
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
@@ -443,7 +442,7 @@ describe("Expression Parser", () => {
 
             const result = ExpressionToCircuit(inputMap, "a", o);
             const circuit = result.unwrap();
-            circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+            circuit.sim.propagationTime = 0;
 
             const output = circuit.getComponents().find((comp) => comp.kind === "LED");
             expect(output).toBeDefined();
@@ -459,7 +458,7 @@ describe("Expression Parser", () => {
                 expect(result).toBeOk();
             });
             const circuit = result.unwrap();
-            circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+            circuit.sim.propagationTime = 0;
 
             const inputComp = circuit.getComponents().find((o) => o.name === "longName");
             test("Input component found", () => {

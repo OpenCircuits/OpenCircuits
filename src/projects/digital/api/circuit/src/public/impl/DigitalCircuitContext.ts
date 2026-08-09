@@ -5,7 +5,6 @@ import {
 } from "shared/api/circuit/public/impl/CircuitContext";
 
 import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
-import { DigitalSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 import { GUID } from "shared/api/circuit/schema";
 import { DigitalObjInfoProvider } from "../../internal/DigitalComponents";
 import { MakeDigitalCircuitAssembler } from "../../internal/assembly/DigitalCircuitAssembler";
@@ -27,7 +26,6 @@ export class DigitalCircuitContext extends CircuitContext<DigitalAPITypes> {
     public readonly factory: CircuitAPIFactory<DigitalAPITypes>;
 
     public readonly sim: DigitalSim;
-    public simRunner?: DigitalSimRunner;
 
     public constructor(id: GUID) {
         super(id, new DigitalObjInfoProvider());
