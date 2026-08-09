@@ -190,7 +190,7 @@ export function DigitalProtoToCircuit(proto: DigitalProtoSchema.DigitalCircuit):
 
     ProtoToCircuit(proto.circuit, circuit, (id) => CreateCircuit(id), DigitalKindMaps[1]);
 
-    circuit.sim.propagationTime = proto.propagationTime;
+    circuit.sim.propagationTime = proto.propagationTime > 0 ? proto.propagationTime : 50;
 
     // Load simulation state
     for (const [ic, initialSimState] of proto.circuit.ics.zip(proto.icInitialSimStates)) {
