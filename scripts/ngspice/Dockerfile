@@ -13,7 +13,7 @@ RUN /emsdk/emsdk install latest
 RUN /emsdk/emsdk activate latest
 
 # Clone NGSpice repo and build
-RUN git clone https://git.code.sf.net/p/ngspice/ngspice /ngspice
+RUN git clone --depth 1 --branch ngspice-46 https://git.code.sf.net/p/ngspice/ngspice /ngspice
 WORKDIR /ngspice/
 
 ## Remove `getrusage` since Emscripten doesn't support it as a syscall
