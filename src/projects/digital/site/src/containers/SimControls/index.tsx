@@ -15,14 +15,18 @@ import "./index.scss";
 const MIN_SPEED = 0.1,
     MAX_SPEED = 1000;
 
+const DEFAULT_PROPAGATION_TIME = 50;
+
 export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isPaused, setIsPaused] = useState(circuit.sim.isPaused);
-    const [curSpeed, setCurSpeed] = useState(1000 / (circuit.sim.propagationTime ?? 50));
+    const [curSpeed, setCurSpeed] = useState(1000 / (circuit.sim.propagationTime ?? DEFAULT_PROPAGATION_TIME));
 
     useEffect(
-        () =>
-            circuit.sim.subscribe((ev) => {
+        () => {
+            setIsPaused(circuit.sim.isPaused);
+            setCurSpeed(1000 / (circuit.sim.propagationTime ?? DEFAULT_PROPAGATION_TIME));
+            return circuit.sim.subscribe((ev) => {
                 if (ev.type === "pause") {
                     setIsPaused(true);
                 }
@@ -30,20 +34,12 @@ export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) =
                     setIsPaused(false);
                 }
                 if (ev.type === "propagationTimeChanged") {
-                    if (ev.newTime) {
-                        setCurSpeed(1000 / ev.newTime);
-                    }
+                    setCurSpeed(1000 / (ev.newTime ?? DEFAULT_PROPAGATION_TIME));
                 }
-            }),
+            })
+        },
         [circuit, setIsPaused, setCurSpeed],
     );
-
-    useEffect(() => {
-        setIsPaused(circuit.sim.isPaused);
-        if (circuit.sim.propagationTime) {
-            setCurSpeed(1000 / circuit.sim.propagationTime);
-        }
-    }, [circuit, circuit.sim.isPaused, circuit.sim.propagationTime, setIsPaused, setCurSpeed]);
 
     const updateSpeed = (newSpeed: number) => {
         circuit.sim.propagationTime = 1000 / Clamp(newSpeed, 0.1, 1000);
