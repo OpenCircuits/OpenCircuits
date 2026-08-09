@@ -13,11 +13,14 @@ RUN /emsdk/emsdk install latest
 RUN /emsdk/emsdk activate latest
 
 # Clone NGSpice repo and build
-RUN git clone https://git.code.sf.net/p/ngspice/ngspice /ngspice
+RUN git clone --depth 1 --branch ngspice-46 https://git.code.sf.net/p/ngspice/ngspice /ngspice
 WORKDIR /ngspice/
 
 ## Remove `getrusage` since Emscripten doesn't support it as a syscall
 RUN sed -i "s/AC_CHECK_FUNCS(\[times getrusage\])/AC_CHECK_FUNCS(\[times\])/g" ./configure.ac
+
+## Remove `/proc/meminfo` check since WASM does not have access to it at runtime (even though the build container does)
+RUN sed -i "s|AC_CHECK_HEADERS(\[/proc/meminfo\])||g" ./configure.ac
 
 ## Remove template specialization of is_compound for dual::dual
 RUN sed -i '/^\/\/\/ Duals are compound types\.$/,/^struct is_compound<duals::dual<T>> : true_type {};$/d' /ngspice/src/include/cppduals/duals/dual
