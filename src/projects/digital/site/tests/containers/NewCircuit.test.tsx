@@ -3,8 +3,6 @@ import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { V } from "Vector";
-
-import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import "shared/site/tests/helpers/Extensions";
 
 import { CreateCircuit } from "digital/api/circuit/public";
@@ -14,19 +12,21 @@ import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
 import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 
 import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelpers";
+import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
 
 import "digital/api/circuit/tests/helpers/Extensions";
-
-import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
 
 import { OpenHistoryBox } from "shared/site/state/ItemNav";
 import { ToggleSideNav } from "shared/site/state/SideNav";
 
+import { TimedScheduler } from "digital/site/utils/TimedScheduler";
+
 import { reducers } from "digital/site/state/reducers";
+
+import "@testing-library/jest-dom";
 
 import { App } from "digital/site/containers/App";
 import "shared/tests/helpers/Extensions";
-import "@testing-library/jest-dom";
 
 describe("New Circuit Integration", () => {
     let store: ReturnType<typeof configureStore>;
@@ -52,7 +52,8 @@ describe("New Circuit Integration", () => {
         SetCircuitHelpers({
             CreateAndInitializeDesigner(tools) {
                 const circuit = CreateCircuit();
-                circuit["ctx"].simRunner = new TimedDigitalSimRunner(circuit["ctx"].sim, 1000 / 20);
+                circuit.sim.setScheduler(new TimedScheduler());
+                circuit.sim.propagationTime = 1000 / 20;
                 const designer = CreateDesigner(
                     tools?.config ?? {
                         defaultTool: new DefaultTool(),

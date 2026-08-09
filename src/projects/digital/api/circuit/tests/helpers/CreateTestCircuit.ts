@@ -1,17 +1,11 @@
 import { V, Vector } from "Vector";
 
-import { uuid } from "shared/api/circuit/public";
 import { MapObj } from "shared/api/circuit/utils/Functions";
 
-import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
-import { DigitalCircuit } from "digital/api/circuit/public";
+import { CreateCircuit, DigitalCircuit } from "digital/api/circuit/public";
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
 import { DigitalPort } from "digital/api/circuit/public/DigitalPort";
 import { DigitalWire } from "digital/api/circuit/public/DigitalWire";
-import { DigitalCircuitImpl } from "digital/api/circuit/public/impl/DigitalCircuit";
-import { Signal } from "digital/api/circuit/schema/Signal";
-
-import "./Extensions";
 
 export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
     const helpers = {
@@ -66,10 +60,10 @@ export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
 }
 
 export function CreateTestCircuit(sim = true): [DigitalCircuit, ReturnType<typeof CreateTestCircuitHelpers>] {
-    const circuit = new DigitalCircuitImpl(uuid());
+    const circuit = CreateCircuit();
 
     if (sim) {
-        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+        circuit.sim.propagationTime = 0;
     }
 
     return [circuit, CreateTestCircuitHelpers(circuit)];

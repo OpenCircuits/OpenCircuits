@@ -14,14 +14,18 @@ import "./index.scss";
 const MIN_SPEED = 0.1,
     MAX_SPEED = 1000;
 
+const DEFAULT_PROPAGATION_TIME = 50;
+
 export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isPaused, setIsPaused] = useState(circuit.sim.isPaused);
-    const [curSpeed, setCurSpeed] = useState(1000 / circuit.sim.propagationTime);
+    const [curSpeed, setCurSpeed] = useState(1000 / (circuit.sim.propagationTime ?? DEFAULT_PROPAGATION_TIME));
 
     useEffect(
-        () =>
-            circuit.sim.subscribe((ev) => {
+        () => {
+            setIsPaused(circuit.sim.isPaused);
+            setCurSpeed(1000 / (circuit.sim.propagationTime ?? DEFAULT_PROPAGATION_TIME));
+            return circuit.sim.subscribe((ev) => {
                 if (ev.type === "pause") {
                     setIsPaused(true);
                 }
@@ -29,9 +33,10 @@ export const SimControls = ({ circuit }: { readonly circuit: DigitalCircuit }) =
                     setIsPaused(false);
                 }
                 if (ev.type === "propagationTimeChanged") {
-                    setCurSpeed(1000 / ev.newTime);
+                    setCurSpeed(1000 / (ev.newTime ?? DEFAULT_PROPAGATION_TIME));
                 }
-            }),
+            })
+        },
         [circuit, setIsPaused, setCurSpeed],
     );
 

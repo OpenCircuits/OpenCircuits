@@ -1,8 +1,5 @@
 import "shared/api/circuit/tests/helpers/Extensions";
-import { uuid } from "shared/api/circuit/public";
-
-import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
-import { DigitalCircuitImpl } from "digital/api/circuit/public/impl/DigitalCircuit";
+import { CreateCircuit } from "digital/api/circuit/public";
 import { DigitalAPITypes } from "digital/api/circuit/public/impl/DigitalCircuitContext";
 import { CreateTestCircuitHelpers } from "digital/api/circuit/tests/helpers/CreateTestCircuit";
 
@@ -30,7 +27,6 @@ import { TranslateTool } from "shared/api/circuitdesigner/tools/TranslateTool";
 import { WiringTool } from "shared/api/circuitdesigner/tools/WiringTool";
 
 import { CreateDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import { InteractionHandler } from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
 
 export function GetDefaultTools(): ToolConfig<DigitalAPITypes> {
     return {
@@ -64,10 +60,10 @@ export function GetDefaultTools(): ToolConfig<DigitalAPITypes> {
 }
 
 export function CreateCircuitDesigner(toolConfig = GetDefaultTools(), sim = true) {
-    const circuit = new DigitalCircuitImpl(uuid());
+    const circuit = CreateCircuit();
 
     if (sim) {
-        circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+        circuit.sim.propagationTime = 0;
     }
 
     const designer = CreateDesigner(toolConfig, [], -1, circuit);

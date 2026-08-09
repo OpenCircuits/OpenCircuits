@@ -2,14 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
+import "shared/site/tests/helpers/Extensions";
 import { PressToggle } from "shared/site/tests/helpers/PressToggle";
 import { V } from "Vector";
-import "shared/site/tests/helpers/Extensions";
 
-import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 import { CreateCircuit } from "digital/api/circuit/public";
-import "digital/api/circuit/tests/helpers/Extensions";
 import { Signal } from "digital/api/circuit/schema/Signal";
+import "digital/api/circuit/tests/helpers/Extensions";
 
 import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
 
@@ -20,8 +19,6 @@ import { OpenHeaderPopup } from "shared/site/state/Header";
 import { reducers } from "digital/site/state/reducers";
 
 import { ExprToCircuitPopup } from "digital/site/containers/ExprToCircuitPopup";
-import "shared/tests/helpers/Extensions";
-import "@testing-library/jest-dom";
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro
@@ -36,7 +33,7 @@ describe("Main Popup", () => {
         undefined,
         circuit,
     );
-    circuit["ctx"].simRunner = new InstantSimRunner(circuit["ctx"].sim);
+    circuit.sim.propagationTime = 0;
     const store = configureStore({ reducer: reducers });
     const user = userEvent.setup();
 

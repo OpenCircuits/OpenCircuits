@@ -8,7 +8,6 @@ import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 import { GUID } from "shared/api/circuit/schema";
 
 import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
-import { DigitalSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 
 import { MakeDigitalCircuitAssembler } from "../../internal/assembly/DigitalCircuitAssembler";
 import { DigitalObjInfoProvider } from "../../internal/DigitalComponents";
@@ -28,7 +27,6 @@ export class DigitalCircuitContext extends CircuitContext<DigitalAPITypes> {
     public readonly factory: CircuitAPIFactory<DigitalAPITypes>;
 
     public readonly sim: DigitalSim;
-    public simRunner?: DigitalSimRunner;
 
     public constructor(id: GUID) {
         super(id, new DigitalObjInfoProvider());

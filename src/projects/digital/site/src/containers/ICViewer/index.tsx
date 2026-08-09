@@ -3,7 +3,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { GUID } from "shared/api/circuit/schema";
 import { Cleanups } from "shared/api/circuit/utils/types";
 
-import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import { CreateCircuit } from "digital/api/circuit/public";
 
 import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
@@ -16,15 +15,8 @@ import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesig
 import { InteractionHandler } from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
 
 import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
-import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
 
-import { IC_DESIGNER_VH, IC_DESIGNER_VW } from "digital/site/utils/Constants";
-import { useDigitalDispatch, useDigitalSelector } from "digital/site/utils/hooks/useDigital";
-import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
-
-import { CloseICViewer } from "digital/site/state/ICViewer";
-
-import "./index.scss";
+import { TimedScheduler } from "digital/site/utils/TimedScheduler";
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 
@@ -92,8 +84,8 @@ export const ICViewer = () => {
         );
 
         // Setup propagator
-        // TODO: We need a way to choose between sim-runners through the API
-        circuit["ctx"].simRunner = new TimedDigitalSimRunner(circuit["ctx"].sim, 1);
+        circuit.sim.setScheduler(new TimedScheduler());
+        circuit.sim.propagationTime = 1;
 
         // Synchronize current debug info from mainInfo
         designer.viewport.debugOptions = mainDesigner.viewport.debugOptions;

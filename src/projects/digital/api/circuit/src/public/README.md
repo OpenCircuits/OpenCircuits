@@ -8,8 +8,9 @@ This directory defines the public-facing TypeScript interfaces for the digital c
 - **`DigitalComponent.ts`**: Defines the `DigitalComponent` interface, extending the base `Component` with potential digital-specific mutations or type narrowing.
 - **`DigitalComponentInfo.ts`**: Defines the `DigitalComponentInfo` interface, providing static blueprints for digital components.
 - **`DigitalPort.ts`**: Defines the `DigitalPort` interface, extending the base `Port` to include methods for querying the current `Signal` flowing through it.
-- **`DigitalSim.ts`**: Exposes public interfaces for interacting with the simulation runner (e.g., Play, Pause, Set Tick Rate).
+- **`DigitalSim.ts`**: Exposes public interfaces for interacting with the simulation (e.g., Play, Pause, Set Propagation Time).
 - **`DigitalWire.ts`**: Defines the `DigitalWire` interface.
+- **`Scheduler.ts`**: Defines the `Scheduler` interface for timed simulation stepping.
 - **`Utilities.ts`**: Contains helpful type-guards (`isDigitalComponent`, `isDigitalPort`, etc.) to narrow generic objects into their digital counterparts at runtime.
 
 ## Sub-Directories

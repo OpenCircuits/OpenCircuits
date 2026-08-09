@@ -9,7 +9,6 @@ import { Provider } from "react-redux";
 import { Circuit } from "shared/api/circuit/public/Circuit";
 import { ObjContainer } from "shared/api/circuit/public/ObjContainer";
 
-import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import { CreateCircuit, DigitalCircuit, DigitalObjContainer } from "digital/api/circuit/public";
 
 import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
@@ -64,6 +63,7 @@ import { AppStore } from "./state";
 import { reducers } from "./state/reducers";
 import { DigitalWiringToolRenderer } from "./tools/renderers/DigitalWiringToolRenderer";
 import { CUR_SAVE_VERSION } from "./utils/Constants";
+import { TimedScheduler } from "./utils/TimedScheduler";
 import { VersionMigrator } from "./utils/VersionMigrator";
 
 async function Init(): Promise<void> {
@@ -190,7 +190,8 @@ async function Init(): Promise<void> {
                             circuit,
                         );
                         // Setup propagator
-                        circuit["ctx"].simRunner = new TimedDigitalSimRunner(circuit["ctx"].sim, 1000 / 20);
+                        circuit.sim.setScheduler(new TimedScheduler());
+                        circuit.sim.propagationTime = 1000 / 20;
 
                         return designer;
                     },
