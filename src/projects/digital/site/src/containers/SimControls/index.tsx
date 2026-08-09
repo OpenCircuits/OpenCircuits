@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
-
 import { Clamp } from "math/MathUtils";
+import { useEffect, useState } from "react";
 import { InputField, NumberInputField } from "shared/site/components/InputField";
 
 import { DigitalCircuit } from "digital/api/circuit/public";
 
+import controlsIcon from "./controls.svg";
 import pauseIcon from "./pause.svg";
 import resumeIcon from "./resume.svg";
 import stepIcon from "./step.svg";
-import controlsIcon from "./controls.svg";
 
 import "./index.scss";
 

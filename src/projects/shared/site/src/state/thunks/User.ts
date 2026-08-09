@@ -1,8 +1,7 @@
 import { ThunkAction } from "redux-thunk";
 
-import { QueryUserCircuits } from "shared/site/api/Circuits";
-
 import { AuthState } from "shared/site/api/auth/AuthState";
+import { QueryUserCircuits } from "shared/site/api/Circuits";
 
 import { SharedAppState } from "..";
 import { AllSharedActions } from "../actions";

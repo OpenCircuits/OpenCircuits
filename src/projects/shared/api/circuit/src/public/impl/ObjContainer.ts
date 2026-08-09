@@ -1,15 +1,14 @@
-import { Vector } from "Vector";
-import { Rect } from "math/Rect";
 import { CalculateMidpoint } from "math/MathUtils";
-
-import { GUID } from "../../internal";
-import { ObjContainer } from "../ObjContainer";
-import { AddErrE } from "../../utils/MultiError";
-
-import { CircuitContext } from "./CircuitContext";
-import { CircuitAPITypes } from "./Types";
+import { Rect } from "math/Rect";
+import { Vector } from "Vector";
 
 import "shared/api/circuit/utils/Array";
+
+import { GUID } from "../../internal";
+import { AddErrE } from "../../utils/MultiError";
+import { ObjContainer } from "../ObjContainer";
+import { CircuitContext } from "./CircuitContext";
+import { CircuitAPITypes } from "./Types";
 
 export class ObjContainerImpl<T extends CircuitAPITypes> implements ObjContainer {
     protected readonly ctx: CircuitContext<T>;

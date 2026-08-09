@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import "tests/helpers/Extensions";
-
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 import { V } from "Vector";
 
 import { Circuit } from "shared/api/circuit/public";
-
-import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import "tests/helpers/Extensions";
 
 describe("Circuit", () => {
     // test("begin/commit/cancelTransaction", () => {

@@ -1,10 +1,9 @@
 import { Vector } from "Vector";
 
-import { AddErrE } from "shared/api/circuit/utils/MultiError";
 import { GUID } from "shared/api/circuit/internal";
+import { AddErrE } from "shared/api/circuit/utils/MultiError";
 
 import { Port } from "../Port";
-
 import { BaseObjectImpl } from "./BaseObject";
 import { CircuitContext } from "./CircuitContext";
 import { CircuitAPITypes } from "./Types";

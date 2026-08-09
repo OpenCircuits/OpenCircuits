@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import "shared/api/circuit/utils/Array";
+
 import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
 
 import { ItemNav, type ItemNavItem, type ItemNavSection } from "shared/site/containers/ItemNav";
 
+import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
 import { SmartPlaceOptions } from "digital/site/utils/SmartPlace";
 
-import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
-
 import { Config as itemNavConfig } from "./config";
-
 import switchIcon from "./icons/inputs/switch.svg";
-import ledIcon from "./icons/outputs/led.svg";
 import muxIcon from "./icons/other/multiplexer.svg";
-
-import "shared/api/circuit/utils/Array";
+import ledIcon from "./icons/outputs/led.svg";
 
 // List that represents the order of smart place options cycle
 const SmartPlaceOrder = [

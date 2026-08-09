@@ -1,10 +1,9 @@
-import "shared/api/circuit/tests/helpers/Extensions";
-
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 import { V } from "Vector";
 
-import { MIDDLE_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+import "shared/api/circuit/tests/helpers/Extensions";
 
-import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
+import { MIDDLE_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 
 describe("PanTool", () => {
     test("Drag without alt key", () => {

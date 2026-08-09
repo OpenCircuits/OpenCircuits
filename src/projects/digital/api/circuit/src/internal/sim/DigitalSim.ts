@@ -1,10 +1,10 @@
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
-import { AddErrE } from "shared/api/circuit/utils/MultiError";
-import { MapObj } from "shared/api/circuit/utils/Functions";
 import { CircuitInternal, GUID } from "shared/api/circuit/internal";
 import { ReadonlyCircuitStorage } from "shared/api/circuit/internal/impl/CircuitDocument";
-import { Schema } from "shared/api/circuit/schema";
 import { ReadonlyObjContainer } from "shared/api/circuit/public/ObjContainer";
+import { Schema } from "shared/api/circuit/schema";
+import { MapObj } from "shared/api/circuit/utils/Functions";
+import { AddErrE } from "shared/api/circuit/utils/MultiError";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 import { DigitalSchema } from "digital/api/circuit/schema";
 import { Signal } from "digital/api/circuit/schema/Signal";

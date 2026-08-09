@@ -3,7 +3,6 @@ import { ComponentInfoImpl } from "shared/api/circuit/public/impl/ComponentInfo"
 import { DigitalComponentConfigurationInfo } from "digital/api/circuit/internal/DigitalComponents";
 
 import { DigitalComponentInfo } from "../DigitalComponentInfo";
-
 import { DigitalAPITypes } from "./DigitalCircuitContext";
 
 export class DigitalComponentInfoImpl extends ComponentInfoImpl<DigitalAPITypes> implements DigitalComponentInfo {

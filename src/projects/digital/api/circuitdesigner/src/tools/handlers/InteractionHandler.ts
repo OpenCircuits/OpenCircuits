@@ -1,13 +1,13 @@
-import { V, Vector } from "Vector";
-import { Transform } from "math/Transform";
 import { CircleContains, RectContains } from "math/MathUtils";
+import { Transform } from "math/Transform";
+import { V, Vector } from "Vector";
+
+import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
+import { DigitalAPITypes } from "digital/api/circuit/public/impl/DigitalCircuitContext";
+import { Signal } from "digital/api/circuit/schema/Signal";
 
 import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 import { ToolHandler, ToolHandlerResponse } from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
-
-import { Signal } from "digital/api/circuit/schema/Signal";
-import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
-import { DigitalAPITypes } from "digital/api/circuit/public/impl/DigitalCircuitContext";
 
 function isPressableComponent(obj: DigitalAPITypes["Obj"] | undefined): obj is DigitalComponent {
     return !!obj && obj.kind === "Button";

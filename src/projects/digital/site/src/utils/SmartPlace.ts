@@ -1,5 +1,6 @@
-import { V, Vector } from "Vector";
 import { Rect } from "math/Rect";
+import { V, Vector } from "Vector";
+
 import { DigitalCircuit } from "digital/api/circuit/public";
 
 export const enum SmartPlaceOptions {

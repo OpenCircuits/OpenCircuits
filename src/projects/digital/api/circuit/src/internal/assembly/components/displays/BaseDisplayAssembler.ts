@@ -1,17 +1,18 @@
 import { V, Vector } from "Vector";
 
+import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import {
     ComponentAssembler,
     ComponentExtraAssemblerParams,
 } from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
+import { PositioningHelpers } from "shared/api/circuit/internal/assembly/PortAssembler";
+import { Style } from "shared/api/circuit/internal/assembly/Style";
+import { Schema } from "shared/api/circuit/schema";
 
 import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
 import { Signal } from "digital/api/circuit/schema/Signal";
-import { Schema } from "shared/api/circuit/schema";
-import { Style } from "shared/api/circuit/internal/assembly/Style";
+
 import { SEGMENT_POINTS, SEGMENT_SIZE, SegmentType, Segments } from "./SegmentDisplayConstants";
-import { PositioningHelpers } from "shared/api/circuit/internal/assembly/PortAssembler";
 
 export interface BaseDisplayAssemblerParams extends ComponentExtraAssemblerParams {
     kind: string;

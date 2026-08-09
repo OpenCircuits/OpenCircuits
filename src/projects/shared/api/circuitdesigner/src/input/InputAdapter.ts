@@ -1,15 +1,12 @@
 import Hammer from "hammerjs";
-
-import { DRAG_TIME, LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON } from "./Constants";
-
-import { V, Vector } from "Vector";
-
 import { CalculateMidpoint } from "math/MathUtils";
+import { V, Vector } from "Vector";
 
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-import { Key } from "./Key";
+import { DRAG_TIME, LEFT_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON } from "./Constants";
 import { InputAdapterEvent } from "./InputAdapterEvent";
+import { Key } from "./Key";
 import { UserInputState } from "./UserInputState";
 
 export class UserInputStateImpl implements UserInputState {

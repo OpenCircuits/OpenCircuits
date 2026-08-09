@@ -2,14 +2,14 @@
 // to the wire rep (DigitalCircuit.proto) and vice versa.
 import { Schema } from "shared/api/circuit/schema";
 
+import { CircuitToProto, MakeConversionMaps, ProtoToCircuit } from "shared/site/proto/bridge";
+
+import { CreateCircuit, DigitalCircuit, ReadonlyDigitalCircuit } from "digital/api/circuit/public";
 import { DigitalSchema } from "digital/api/circuit/schema";
 import { Signal } from "digital/api/circuit/schema/Signal";
 
-import { CircuitToProto, MakeConversionMaps, ProtoToCircuit } from "shared/site/proto/bridge";
-
-import * as DigitalProtoSchema from "./DigitalCircuit";
-import { CreateCircuit, DigitalCircuit, ReadonlyDigitalCircuit } from "digital/api/circuit/public";
 import { CUR_SAVE_VERSION } from "../utils/Constants";
+import * as DigitalProtoSchema from "./DigitalCircuit";
 
 const InputOutputGroups = { "inputs": 0, "outputs": 1 };
 const FlipFlopGroups = { "pre": 0, "clr": 1, "clk": 2, "Q": 3, "Qinv": 4 };

@@ -1,5 +1,6 @@
-import path from "node:path";
 import { getTsconfig } from "get-tsconfig";
+
+import path from "node:path";
 
 /**
  * Gets the file aliases.

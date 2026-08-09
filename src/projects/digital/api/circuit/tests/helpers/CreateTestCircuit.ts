@@ -1,15 +1,17 @@
-import "./Extensions";
+import { V, Vector } from "Vector";
 
+import { uuid } from "shared/api/circuit/public";
+import { MapObj } from "shared/api/circuit/utils/Functions";
+
+import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 import { DigitalCircuit } from "digital/api/circuit/public";
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
-import { Signal } from "digital/api/circuit/schema/Signal";
-import { V, Vector } from "Vector";
 import { DigitalPort } from "digital/api/circuit/public/DigitalPort";
 import { DigitalWire } from "digital/api/circuit/public/DigitalWire";
-import { MapObj } from "shared/api/circuit/utils/Functions";
-import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
 import { DigitalCircuitImpl } from "digital/api/circuit/public/impl/DigitalCircuit";
-import { uuid } from "shared/api/circuit/public";
+import { Signal } from "digital/api/circuit/schema/Signal";
+
+import "./Extensions";
 
 export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
     const helpers = {

@@ -1,20 +1,18 @@
 import { Fragment, useState } from "react";
+import { InputField } from "shared/site/components/InputField";
+import { Popup } from "shared/site/components/Popup";
 
 import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { NoAuthState } from "shared/site/api/auth/NoAuthState";
 
 import { CloseHeaderPopups } from "shared/site/state/Header";
-
 import { Login } from "shared/site/state/thunks/User";
 
-import { InputField } from "shared/site/components/InputField";
-import { Popup } from "shared/site/components/Popup";
-
+import { GetAuthMethods } from "./GetAuthMethods";
 import { GoogleAuthButton } from "./GoogleSignInButton";
 
 import "./index.scss";
-import { GetAuthMethods } from "./GetAuthMethods";
 
 export const LoginPopup = () => {
     const { curPopup } = useSharedSelector((state) => ({ curPopup: state.header.curPopup }));

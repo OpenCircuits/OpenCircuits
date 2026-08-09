@@ -1,32 +1,33 @@
 import { useLayoutEffect, useRef, useState } from "react";
-
 import { V } from "Vector";
 
 import { Cleanups } from "shared/api/circuit/utils/types";
 
+import { CreateCircuit, DigitalCircuit } from "digital/api/circuit/public";
+
 import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
 import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
 import { FitToScreenHandler } from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
 import { RedoHandler } from "shared/api/circuitdesigner/tools/handlers/RedoHandler";
 import { UndoHandler } from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import { ZoomHandler } from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
-
-import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
-import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
-import { TextModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
-
-import { CreateCircuit, DigitalCircuit } from "digital/api/circuit/public";
+import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
 
 import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import { ICResizeTool } from "digital/api/circuitdesigner/tools/ICResizeTool";
 import { ICPortTool } from "digital/api/circuitdesigner/tools/ICPortTool";
+import { ICResizeTool } from "digital/api/circuitdesigner/tools/ICResizeTool";
 
+import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
+import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
+
+import { TextModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/TextModuleInputField";
+
+import { CalculateICDisplay } from "digital/site/utils/CircuitUtils";
 import { IC_DESIGNER_VH, IC_DESIGNER_VW } from "digital/site/utils/Constants";
 import { useDigitalDispatch, useDigitalSelector } from "digital/site/utils/hooks/useDigital";
 import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
+
 import { CloseICDesigner } from "digital/site/state/ICDesigner";
-import { CalculateICDisplay } from "digital/site/utils/CircuitUtils";
 
 import "./index.scss";
 

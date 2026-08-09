@@ -1,4 +1,5 @@
 import { ChangelogPopup } from "shared/site/containers/ChangelogPopup";
+
 import "./index.scss";
 
 export const DigitalChangelogPopup = () => (

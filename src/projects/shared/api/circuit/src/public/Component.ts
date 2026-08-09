@@ -1,10 +1,10 @@
 import type { Vector } from "Vector";
 
+import type { PortConfig } from "../internal/impl/ObjInfo";
 import type { BaseObject, ReadonlyBaseObject } from "./BaseObject";
 import type { ComponentInfo } from "./ComponentInfo";
 import type { Port, ReadonlyPort } from "./Port";
 import type { ReadonlyWire, Wire } from "./Wire";
-import type { PortConfig } from "../internal/impl/ObjInfo";
 
 export type { PortConfig } from "../internal/impl/ObjInfo";
 

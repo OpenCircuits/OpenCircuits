@@ -1,11 +1,8 @@
-import type { Arguments } from "yargs";
-
-import path from "node:path";
-
 import chalk from "chalk";
 import jest from "jest";
 import open from "open";
 import prompts from "prompts";
+import type { Arguments } from "yargs";
 import yargs from "yargs/yargs";
 
 import getEnv from "./utils/env.ts";
@@ -17,6 +14,8 @@ import {
     getProjectCircuitDirs,
     getProjectSiteDirs,
 } from "./utils/getDirs.ts";
+
+import path from "node:path";
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "test";

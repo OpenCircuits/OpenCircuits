@@ -1,12 +1,12 @@
+import { Rect } from "math/Rect";
 import { V } from "Vector";
 
-import { Rect } from "math/Rect";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import { Tool, ToolEvent } from "./Tool";
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 export class SelectionBoxTool extends ObservableImpl<ToolEvent> implements Tool {
     private rect: Rect;

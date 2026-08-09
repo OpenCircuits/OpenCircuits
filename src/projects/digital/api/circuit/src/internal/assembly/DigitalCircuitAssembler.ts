@@ -1,37 +1,36 @@
 import { V } from "Vector";
 
 import { CircuitInternal } from "shared/api/circuit/internal";
-
 import { Assembler, AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import { RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";
-import { NodeAssembler } from "shared/api/circuit/internal/assembly/common/NodeAssembler";
 import { ICComponentAssembler } from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
 import { LabelAssembler } from "shared/api/circuit/internal/assembly/common/LabelAssembler";
+import { NodeAssembler } from "shared/api/circuit/internal/assembly/common/NodeAssembler";
+import { RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";
 
 import { ContextPath, DigitalSim } from "../sim/DigitalSim";
-import { DigitalWireAssembler } from "./DigitalWireAssembler";
-import { ANDGateAssembler } from "./components/gates/ANDGateAssembler";
-import { ORGateAssembler } from "./components/gates/ORGateAssembler";
-import { LEDAssembler } from "./components/LEDAssembler";
-import { SwitchAssembler } from "./components/SwitchAssembler";
 import { ButtonAssembler } from "./components/ButtonAssembler";
 import { ClockAssembler } from "./components/ClockAssembler";
+import { ComparatorAssembler } from "./components/ComparatorAssembler";
 import { ConstantHighAssembler } from "./components/ConstantHighAssembler";
 import { ConstantLowAssembler } from "./components/ConstantLowAssembler";
 import { ConstantNumberAssembler } from "./components/ConstantNumberAssembler";
+import { BaseDisplayAssembler } from "./components/displays/BaseDisplayAssembler";
 import { SegmentDisplayAssembler } from "./components/displays/SegmentDisplayAssembler";
-import { BUFGateAssembler } from "./components/gates/BUFGateAssembler";
-import { TwoInputFlipFlopAssembler } from "./components/flipflops/TwoInputFlipFlopAssembler";
+import { ASCIIFont, BCDFont } from "./components/displays/SegmentDisplayConstants";
+import { EncoderAssembler } from "./components/EncoderAssembler";
 import { OneInputFlipFlopAssembler } from "./components/flipflops/OneInputFlipFlopAssembler";
+import { TwoInputFlipFlopAssembler } from "./components/flipflops/TwoInputFlipFlopAssembler";
+import { ANDGateAssembler } from "./components/gates/ANDGateAssembler";
+import { BUFGateAssembler } from "./components/gates/BUFGateAssembler";
+import { ORGateAssembler } from "./components/gates/ORGateAssembler";
 import { OneInputLatchAssembler } from "./components/latches/OneInputLatchAssembler";
 import { TwoInputLatchAssembler } from "./components/latches/TwoInputLatchAssembler";
-import { OscilloscopeAssembler } from "./components/OscilloscopeAssembler";
+import { LEDAssembler } from "./components/LEDAssembler";
 import { MultiplexerAssembler } from "./components/MultiplexerAssembler";
-import { EncoderAssembler } from "./components/EncoderAssembler";
-import { ComparatorAssembler } from "./components/ComparatorAssembler";
-import { BaseDisplayAssembler } from "./components/displays/BaseDisplayAssembler";
-import { ASCIIFont, BCDFont } from "./components/displays/SegmentDisplayConstants";
+import { OscilloscopeAssembler } from "./components/OscilloscopeAssembler";
+import { SwitchAssembler } from "./components/SwitchAssembler";
+import { DigitalWireAssembler } from "./DigitalWireAssembler";
 
 export class DigitalCircuitAssembler extends CircuitAssembler {
     public constructor(

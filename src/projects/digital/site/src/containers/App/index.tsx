@@ -1,47 +1,48 @@
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+
+import { ToolHandler } from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
+
+import { InteractionHandler } from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
+
 import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
+
+import { BackendCircuitMetadata } from "shared/site/api/Circuits";
 
 import { ContextMenu } from "shared/site/containers/ContextMenu";
 import { HistoryBox } from "shared/site/containers/HistoryBox";
 import { ImageExporterPopup } from "shared/site/containers/ImageExporterPopup";
 import { LoginPopup } from "shared/site/containers/LoginPopup";
-import { DigitalChangelogPopup } from "digital/site/containers/DigitalChangelogPopup";
 import { SelectionPopup } from "shared/site/containers/SelectionPopup";
-import { SideNav } from "shared/site/containers/SideNav";
-
 import { PropertyModule } from "shared/site/containers/SelectionPopup/modules/PropertyModule";
+import { SideNav } from "shared/site/containers/SideNav";
 
 import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
 
+import { DigitalChangelogPopup } from "digital/site/containers/DigitalChangelogPopup";
 import { DigitalHeader } from "digital/site/containers/DigitalHeader";
 import { DigitalItemNav } from "digital/site/containers/DigitalItemNav";
 import { DigitalMainDesigner } from "digital/site/containers/DigitalMainDesigner";
-
+import { ExprToCircuitPopup } from "digital/site/containers/ExprToCircuitPopup";
+import { ICDesigner } from "digital/site/containers/ICDesigner";
+import { ICViewer } from "digital/site/containers/ICViewer";
 import { KeyboardShortcutsPopup } from "digital/site/containers/KeyboardShortcutsPopup";
 import { QuickStartPopup } from "digital/site/containers/QuickStartPopup";
-
-import { DigitalPropInfo } from "digital/site/containers/SelectionPopup/propinfo";
-
 import { BusButtonModule } from "digital/site/containers/SelectionPopup/modules/BusButtonModule";
-import { CreateICButtonModule } from "digital/site/containers/SelectionPopup/modules/CreateICButtonModule";
 import { ClearButtonModule } from "digital/site/containers/SelectionPopup/modules/ClearButtonModule";
+import { CreateICButtonModule } from "digital/site/containers/SelectionPopup/modules/CreateICButtonModule";
 import { PauseButtonModule } from "digital/site/containers/SelectionPopup/modules/PauseButtonModule";
 import { PortCountModule } from "digital/site/containers/SelectionPopup/modules/PortCountModule";
 import { ReplaceComponentDropdownModule } from "digital/site/containers/SelectionPopup/modules/ReplaceComponentDropdownModule";
 import { SyncButtonModule } from "digital/site/containers/SelectionPopup/modules/SyncButtonModule";
 import { ViewICButtonModule } from "digital/site/containers/SelectionPopup/modules/ViewICButtonModule";
+import { DigitalPropInfo } from "digital/site/containers/SelectionPopup/propinfo";
+
+import { SimControls } from "../SimControls";
 
 import docsConfig from "digital/site/data/docsUrlConfig.json";
 import exampleConfig from "digital/site/data/examples.json";
 
 import "./index.scss";
-import { ICDesigner } from "digital/site/containers/ICDesigner";
-import { ICViewer } from "digital/site/containers/ICViewer";
-import { ExprToCircuitPopup } from "digital/site/containers/ExprToCircuitPopup";
-import { InteractionHandler } from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
-import { ToolHandler } from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
-import { BackendCircuitMetadata } from "shared/site/api/Circuits";
-import { SimControls } from "../SimControls";
-import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 
 const exampleCircuits = exampleConfig.examples.map(
     (example) =>

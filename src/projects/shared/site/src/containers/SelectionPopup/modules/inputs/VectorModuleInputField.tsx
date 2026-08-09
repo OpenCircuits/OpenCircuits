@@ -1,10 +1,7 @@
-import { useRef } from "react";
-
-import { V, Vector } from "Vector";
-
 import { Clamp } from "math/MathUtils";
-
+import { useRef } from "react";
 import { NumberInputField } from "shared/site/components/InputField";
+import { V, Vector } from "Vector";
 
 import { SharedModuleInputFieldProps, useBaseModule } from "./ModuleInputField";
 

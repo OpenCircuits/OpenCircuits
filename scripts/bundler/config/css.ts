@@ -1,5 +1,6 @@
-import type { Config } from "./types";
 import type { Configuration } from "@rspack/core";
+
+import type { Config } from "./types";
 
 /**
  * Creates the bundler configuration for CSS.

@@ -1,16 +1,14 @@
+import { Transform } from "math/Transform";
+import { parseColor } from "svg2canvas";
 import { V, Vector } from "Vector";
 
-import { Transform } from "math/Transform";
-
 import { Schema } from "shared/api/circuit/schema";
+import "shared/api/circuit/utils/Array";
 
 import { Assembler, AssemblerParams, AssemblyReason, AssemblyReasonPropMapping } from "./Assembler";
 import { PortAssembler, PortFactory } from "./PortAssembler";
 import { BaseShapePrimWithoutStyle, GroupPrim, Prim, SVGPrim, TextPrim } from "./Prim";
 import { FontStyle, Style } from "./Style";
-import { parseColor } from "svg2canvas";
-
-import "shared/api/circuit/utils/Array";
 
 export interface ComponentBaseShapePrimAssembly {
     kind: "BaseShape";

@@ -1,6 +1,6 @@
-import baseConfig from "./playwright/config/digital.config";
-
 import type { PlaywrightTestConfig } from "@playwright/test";
+
+import baseConfig from "./playwright/config/digital.config";
 
 // Change the baseConfig import to change which test are run by default
 const overrides: PlaywrightTestConfig = {

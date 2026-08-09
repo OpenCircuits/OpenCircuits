@@ -1,7 +1,7 @@
 import { Circuit } from "shared/api/circuit/public";
 
-import { DEFAULT_THUMBNAIL_SIZE, THUMBNAIL_ZOOM_PADDING_RATIO } from "./Constants";
 import { CircuitHelpers } from "./CircuitHelpers";
+import { DEFAULT_THUMBNAIL_SIZE, THUMBNAIL_ZOOM_PADDING_RATIO } from "./Constants";
 
 export const GenerateThumbnail = (() => {
     const canvas = document.createElement("canvas");

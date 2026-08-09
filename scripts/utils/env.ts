@@ -1,9 +1,9 @@
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
-import childProcess from "node:child_process";
-
 import dotEnv from "dotenv";
 import dotEnvExpand from "dotenv-expand";
+
+import childProcess from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
 function getGitCommit() {
     return childProcess.execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();

@@ -1,15 +1,18 @@
 import { V } from "Vector";
+
+import { Circuit } from "shared/api/circuit/public";
 import { Camera } from "shared/api/circuit/public/Camera";
+import { Err, Ok, Result } from "shared/api/circuit/utils/Result";
+
 import { DigitalCircuit } from "digital/api/circuit/public";
+import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
+
+import { CalculateICDisplay } from "digital/site/utils/CircuitUtils";
 import { ExpressionToCircuit } from "digital/site/utils/ExpressionParser";
-import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateTokens";
 import { OrganizeMinDepth } from "digital/site/utils/ExpressionParser/ComponentOrganizer";
 import { OperatorFormat, OperatorFormatLabel } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
-import { Circuit } from "shared/api/circuit/public";
-import { Err, Ok, Result } from "shared/api/circuit/utils/Result";
-import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
-import { CalculateICDisplay } from "digital/site/utils/CircuitUtils";
+import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateTokens";
 
 export type ExprToCirGeneratorOptions = {
     input: InputTypes;

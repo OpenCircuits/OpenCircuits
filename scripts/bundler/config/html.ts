@@ -1,9 +1,9 @@
-import path from "node:path";
-
 import { rspack } from "@rspack/core";
+import type { Configuration } from "@rspack/core";
 
 import type { Config } from "./types";
-import type { Configuration } from "@rspack/core";
+
+import path from "node:path";
 
 /**
  * Creates the bundler configuration for HTML.

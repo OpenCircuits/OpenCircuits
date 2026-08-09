@@ -1,7 +1,8 @@
-import { DigitalCircuitContext } from "./DigitalCircuitContext";
 import { GUID } from "shared/api/circuit/public";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+
 import { DigitalSim, DigitalSimEv } from "../DigitalSim";
+import { DigitalCircuitContext } from "./DigitalCircuitContext";
 
 export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements DigitalSim {
     protected readonly ctx: DigitalCircuitContext;

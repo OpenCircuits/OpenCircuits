@@ -1,3 +1,4 @@
+import { Rect } from "math/Rect";
 import { V, Vector } from "Vector";
 
 import { Schema } from "shared/api/circuit/schema";
@@ -6,7 +7,6 @@ import { GUID } from "..";
 import { Assembler, AssemblerParams, AssemblyReason } from "./Assembler";
 import { PortPos } from "./AssemblyCache";
 import { Prim } from "./Prim";
-import { Rect } from "math/Rect";
 
 export type PartialPortPos =
     | {

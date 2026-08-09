@@ -1,5 +1,9 @@
+import { GUID, ICInfo, uuid } from "shared/api/circuit/public";
 import { CircuitImpl } from "shared/api/circuit/public/impl/Circuit";
 import { IntegratedCircuitImpl } from "shared/api/circuit/public/impl/IntegratedCircuit";
+import { MapObjKeys } from "shared/api/circuit/utils/Functions";
+
+import { DigitalSchema } from "digital/api/circuit/schema";
 
 import {
     APIToDigital,
@@ -10,10 +14,7 @@ import {
     ReadonlyDigitalObjContainer,
 } from "../DigitalCircuit";
 import { DigitalAPITypes, DigitalCircuitContext } from "./DigitalCircuitContext";
-import { DigitalSchema } from "digital/api/circuit/schema";
-import { GUID, ICInfo, uuid } from "shared/api/circuit/public";
 import { DigitalSelectionsImpl } from "./DigitalSelections";
-import { MapObjKeys } from "shared/api/circuit/utils/Functions";
 import { DigitalSimImpl } from "./DigitalSim";
 
 export class DigitalCircuitImpl extends CircuitImpl<DigitalAPITypes> implements DigitalCircuit {

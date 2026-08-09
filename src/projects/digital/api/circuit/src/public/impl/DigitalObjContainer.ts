@@ -1,10 +1,9 @@
 import { GUID } from "shared/api/circuit/public";
-import { FilterObj } from "shared/api/circuit/utils/Functions";
 import { ObjContainerImpl } from "shared/api/circuit/public/impl/ObjContainer";
+import { FilterObj } from "shared/api/circuit/utils/Functions";
 
 import { DigitalObjContainer } from "../DigitalCircuit";
 import { ReadonlySimState } from "../DigitalSim";
-
 import { DigitalAPITypes, DigitalCircuitContext } from "./DigitalCircuitContext";
 
 export class DigitalObjContainerImpl extends ObjContainerImpl<DigitalAPITypes> implements DigitalObjContainer {

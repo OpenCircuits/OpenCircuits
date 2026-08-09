@@ -1,10 +1,9 @@
 import { Rect } from "math/Rect";
 
-import { AddErrE } from "shared/api/circuit/utils/MultiError";
 import { GUID, Prop } from "shared/api/circuit/internal";
+import { AddErrE } from "shared/api/circuit/utils/MultiError";
 
 import { BaseObject } from "../BaseObject";
-
 import { CircuitContext } from "./CircuitContext";
 import { CircuitAPITypes } from "./Types";
 

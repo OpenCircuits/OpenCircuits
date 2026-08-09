@@ -1,11 +1,9 @@
+import { Rect } from "math/Rect";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import { V } from "Vector";
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
-
-import { V } from "Vector";
-
-import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
-import { Rect } from "math/Rect";
 
 // NOTE: For (most) of these, make sure the `SelectionsEvent` fires correctly
 describe("Selections", () => {

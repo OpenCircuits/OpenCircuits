@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-
 import { Vector } from "Vector";
 
 import { DragDropHandlers } from "./DragDropHandlers";

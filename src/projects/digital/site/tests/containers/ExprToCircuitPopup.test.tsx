@@ -1,28 +1,27 @@
-import "shared/site/tests/helpers/Extensions";
-import "shared/tests/helpers/Extensions";
-import "digital/api/circuit/tests/helpers/Extensions";
-
-import "@testing-library/jest-dom";
+import { configureStore } from "@reduxjs/toolkit";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
+import { PressToggle } from "shared/site/tests/helpers/PressToggle";
+import { V } from "Vector";
+import "shared/site/tests/helpers/Extensions";
+
+import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
+import { CreateCircuit } from "digital/api/circuit/public";
+import "digital/api/circuit/tests/helpers/Extensions";
+import { Signal } from "digital/api/circuit/schema/Signal";
+
+import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
+
+import { CreateDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 
 import { OpenHeaderPopup } from "shared/site/state/Header";
-
-import { PressToggle } from "shared/site/tests/helpers/PressToggle";
 
 import { reducers } from "digital/site/state/reducers";
 
 import { ExprToCircuitPopup } from "digital/site/containers/ExprToCircuitPopup";
-
-import { CreateCircuit } from "digital/api/circuit/public";
-
-import { CreateDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { V } from "Vector";
-import { configureStore } from "@reduxjs/toolkit";
-import { Signal } from "digital/api/circuit/schema/Signal";
-import { InstantSimRunner } from "digital/api/circuit/internal/sim/DigitalSimRunner";
+import "shared/tests/helpers/Extensions";
+import "@testing-library/jest-dom";
 
 // beforeAll and beforeEach can be used to avoid duplicating store/render code, but is not recommended
 //  see: https://testing-library.com/docs/user-event/intro

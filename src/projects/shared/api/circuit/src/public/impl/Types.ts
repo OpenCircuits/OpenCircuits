@@ -1,14 +1,14 @@
-import type { Vector } from "Vector";
 import type { Rect } from "math/Rect";
+import type { Vector } from "Vector";
 
-import type { Component, Node, ReadonlyComponent, ReadonlyNode } from "../Component";
-import type { Port, ReadonlyPort } from "../Port";
-import type { ReadonlyWire, Wire } from "../Wire";
 import type { Circuit, ReadonlyCircuit } from "../Circuit";
-import type { ObjContainer, ReadonlyObjContainer } from "../ObjContainer";
-import type { ReadonlySelections, Selections } from "../Selections";
+import type { Component, Node, ReadonlyComponent, ReadonlyNode } from "../Component";
 import type { ComponentInfo } from "../ComponentInfo";
 import type { ICInfo, IntegratedCircuit, ReadonlyIntegratedCircuit } from "../IntegratedCircuit";
+import type { ObjContainer, ReadonlyObjContainer } from "../ObjContainer";
+import type { Port, ReadonlyPort } from "../Port";
+import type { ReadonlySelections, Selections } from "../Selections";
+import type { ReadonlyWire, Wire } from "../Wire";
 
 export type CircuitTypes = {
     CircuitT: Circuit;

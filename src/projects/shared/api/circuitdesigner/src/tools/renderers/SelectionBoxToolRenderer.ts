@@ -1,7 +1,6 @@
 import { Transform } from "math/Transform";
 
 import { SelectionBoxTool } from "../SelectionBoxTool";
-
 import { ToolRenderer } from "./ToolRenderer";
 
 export const SelectionBoxToolRenderer: ToolRenderer = {

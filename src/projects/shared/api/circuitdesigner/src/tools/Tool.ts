@@ -1,6 +1,8 @@
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
-import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+
 import { Cursor } from "../input/Cursor";
 
 export interface ToolEvent {

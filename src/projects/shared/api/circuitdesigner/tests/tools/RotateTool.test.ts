@@ -1,11 +1,10 @@
-import "shared/api/circuit/tests/helpers/Extensions";
-
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 import { V, Vector } from "Vector";
+
+import "shared/api/circuit/tests/helpers/Extensions";
 import { Component } from "shared/api/circuit/public";
 
 import { ROTATION_CIRCLE_RADIUS } from "shared/api/circuitdesigner/tools/RotateTool";
-
-import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 
 describe("RotateTool", () => {
     describe("Single Object", () => {

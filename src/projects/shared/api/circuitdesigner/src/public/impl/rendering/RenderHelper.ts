@@ -1,6 +1,5 @@
-import { V, Vector } from "Vector";
-
 import { Matrix2x3 } from "math/Matrix";
+import { V, Vector } from "Vector";
 
 import { Style } from "shared/api/circuit/internal/assembly/Style";
 

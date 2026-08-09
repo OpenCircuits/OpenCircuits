@@ -1,23 +1,30 @@
-import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
-
-import "./index.scss";
-import { useDigitalDispatch, useDigitalSelector } from "digital/site/utils/hooks/useDigital";
-import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { IC_DESIGNER_VH, IC_DESIGNER_VW } from "digital/site/utils/Constants";
-import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
-import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+
+import { GUID } from "shared/api/circuit/schema";
+import { Cleanups } from "shared/api/circuit/utils/types";
+
+import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 import { CreateCircuit } from "digital/api/circuit/public";
+
+import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
+import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
 import { FitToScreenHandler } from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
 import { ZoomHandler } from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
+import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
+
+import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import { InteractionHandler } from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
-import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
-import { Cleanups } from "shared/api/circuit/utils/types";
-import { CloseICViewer } from "digital/site/state/ICViewer";
+
 import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
-import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
-import { GUID } from "shared/api/circuit/schema";
+import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
+
+import { IC_DESIGNER_VH, IC_DESIGNER_VW } from "digital/site/utils/Constants";
+import { useDigitalDispatch, useDigitalSelector } from "digital/site/utils/hooks/useDigital";
+import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
+
+import { CloseICViewer } from "digital/site/state/ICViewer";
+
+import "./index.scss";
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 

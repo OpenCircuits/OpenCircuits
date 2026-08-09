@@ -1,8 +1,6 @@
-import { useState } from "react";
-
-import { V, Vector } from "Vector";
-
 import { Rect, RectProps } from "math/Rect";
+import { useState } from "react";
+import { V, Vector } from "Vector";
 
 import { useDocEvent } from "shared/site/utils/hooks/useDocEvent";
 import { useMousePos } from "shared/site/utils/hooks/useMousePos";

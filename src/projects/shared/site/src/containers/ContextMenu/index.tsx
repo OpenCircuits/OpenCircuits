@@ -1,23 +1,21 @@
+import { CalculateMidpoint, Clamp } from "math/MathUtils";
 import { useRef, useState } from "react";
-
 import { V } from "Vector";
 
-import { useDocEvent } from "shared/site/utils/hooks/useDocEvent";
-import { useHistory } from "shared/site/utils/hooks/useHistory";
-import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
-
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { CleanUp } from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
 import { DuplicateSelections } from "shared/api/circuitdesigner/tools/handlers/DuplicateHandler";
 import { FitToScreen } from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
 import { DoPaste } from "shared/api/circuitdesigner/tools/handlers/PasteHandler";
 
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { CircuitHelpers } from "shared/site/utils/CircuitHelpers";
+import { useDocEvent } from "shared/site/utils/hooks/useDocEvent";
+import { useHistory } from "shared/site/utils/hooks/useHistory";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { CloseContextMenu, OpenContextMenu } from "shared/site/state/ContextMenu";
 
 import "./index.scss";
-import { CircuitHelpers } from "shared/site/utils/CircuitHelpers";
-import { CalculateMidpoint, Clamp } from "math/MathUtils";
 
 function isClipboardSupported(type: "read" | "write"): boolean {
     return (

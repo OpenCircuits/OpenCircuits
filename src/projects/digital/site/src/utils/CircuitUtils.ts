@@ -1,6 +1,7 @@
 import { linspace } from "math/MathUtils";
-import { Circuit, ReadonlyICPin, ReadonlyIntegratedCircuitDisplay } from "shared/api/circuit/public";
 import { V } from "Vector";
+
+import { Circuit, ReadonlyICPin, ReadonlyIntegratedCircuitDisplay } from "shared/api/circuit/public";
 
 export function CalculateICDisplay(circuit: Circuit): ReadonlyIntegratedCircuitDisplay {
     const inputs = circuit.getComponents().filter((comp) => comp.kind === "InputPin");

@@ -1,38 +1,33 @@
 import { ItemNavConfig } from "shared/site/containers/ItemNav";
 
-import buttonIcon from "./icons/inputs/button.svg";
-import switchIcon from "./icons/inputs/switch.svg";
-import constantLowIcon from "./icons/inputs/constantlow.svg";
-import constantHighIcon from "./icons/inputs/constanthigh.svg";
-import constantNumberIcon from "./icons/inputs/constantnumber.svg";
-import clockIcon from "./icons/inputs/clock.svg";
-
-import ledIcon from "./icons/outputs/led.svg";
-import sevenSegmentDisplayIcon from "./icons/outputs/sevensegmentdisplay.svg";
-import oscilloscopeIcon from "./icons/outputs/oscilloscope.svg";
-
-import bufGateIcon from "./icons/gates/bufgate.svg";
-import notGateIcon from "./icons/gates/notgate.svg";
-import andGateIcon from "./icons/gates/andgate.svg";
-import nandGateIcon from "./icons/gates/nandgate.svg";
-import orGateIcon from "./icons/gates/orgate.svg";
-import norGateIcon from "./icons/gates/norgate.svg";
-import xorGateIcon from "./icons/gates/xorgate.svg";
-import xnorGateIcon from "./icons/gates/xnorgate.svg";
-
-import srFlipFlopIcon from "./icons/flipflops/srflipflop.svg";
-import jkFlipFlopIcon from "./icons/flipflops/jkflipflop.svg";
 import dFlipFlopIcon from "./icons/flipflops/dflipflop.svg";
+import jkFlipFlopIcon from "./icons/flipflops/jkflipflop.svg";
+import srFlipFlopIcon from "./icons/flipflops/srflipflop.svg";
 import tFlipFlopIcon from "./icons/flipflops/tflipflop.svg";
-
-import srLatchIcon from "./icons/latches/srlatch.svg";
+import andGateIcon from "./icons/gates/andgate.svg";
+import bufGateIcon from "./icons/gates/bufgate.svg";
+import nandGateIcon from "./icons/gates/nandgate.svg";
+import norGateIcon from "./icons/gates/norgate.svg";
+import notGateIcon from "./icons/gates/notgate.svg";
+import orGateIcon from "./icons/gates/orgate.svg";
+import xnorGateIcon from "./icons/gates/xnorgate.svg";
+import xorGateIcon from "./icons/gates/xorgate.svg";
+import buttonIcon from "./icons/inputs/button.svg";
+import clockIcon from "./icons/inputs/clock.svg";
+import constantHighIcon from "./icons/inputs/constanthigh.svg";
+import constantLowIcon from "./icons/inputs/constantlow.svg";
+import constantNumberIcon from "./icons/inputs/constantnumber.svg";
+import switchIcon from "./icons/inputs/switch.svg";
 import dLatchIcon from "./icons/latches/dlatch.svg";
-
-import multiplexerIcon from "./icons/other/multiplexer.svg";
+import srLatchIcon from "./icons/latches/srlatch.svg";
+import decoderIcon from "./icons/other/decoder.svg";
 import demultiplexerIcon from "./icons/other/demultiplexer.svg";
 import encoderIcon from "./icons/other/encoder.svg";
-import decoderIcon from "./icons/other/decoder.svg";
 import labelIcon from "./icons/other/label.svg";
+import multiplexerIcon from "./icons/other/multiplexer.svg";
+import ledIcon from "./icons/outputs/led.svg";
+import oscilloscopeIcon from "./icons/outputs/oscilloscope.svg";
+import sevenSegmentDisplayIcon from "./icons/outputs/sevensegmentdisplay.svg";
 
 export const Config: ItemNavConfig = {
     "sections": [

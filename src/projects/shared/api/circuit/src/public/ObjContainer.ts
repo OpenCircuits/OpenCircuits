@@ -1,11 +1,11 @@
-import { Vector } from "Vector";
 import { Rect } from "math/Rect";
+import { Vector } from "Vector";
 
-import { Component, ReadonlyComponent } from "./Component";
-import { ReadonlyWire, Wire } from "./Wire";
-import { Port, ReadonlyPort } from "./Port";
-import { IntegratedCircuit } from "./IntegratedCircuit";
 import { GUID } from "../schema";
+import { Component, ReadonlyComponent } from "./Component";
+import { IntegratedCircuit } from "./IntegratedCircuit";
+import { Port, ReadonlyPort } from "./Port";
+import { ReadonlyWire, Wire } from "./Wire";
 
 interface BaseReadonlyObjContainer<PortT, CompT, WireT, ICT, ObjCT> {
     // Returns the bounding box of all the objects in the container.

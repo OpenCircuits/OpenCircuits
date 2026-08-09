@@ -1,27 +1,11 @@
-import "./Extensions";
-
 import { V, Vector } from "Vector";
 
-import { Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
-
-import { Schema } from "shared/api/circuit/schema";
-
-import { Circuit, Component, Port, Wire, uuid } from "shared/api/circuit/public";
-import { CircuitImpl } from "shared/api/circuit/public/impl/Circuit";
-import {
-    CachedCircuitAPIFactoryImpl,
-    CircuitAPIFactory,
-    CircuitContext,
-} from "shared/api/circuit/public/impl/CircuitContext";
-import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
-import { ComponentImpl } from "shared/api/circuit/public/impl/Component";
-import { ComponentInfoImpl } from "shared/api/circuit/public/impl/ComponentInfo";
-import { PortImpl } from "shared/api/circuit/public/impl/Port";
-import { WireImpl } from "shared/api/circuit/public/impl/Wire";
-
 import { GUID } from "shared/api/circuit/internal";
+import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import { ICComponentAssembler } from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
 import { NodeAssembler } from "shared/api/circuit/internal/assembly/common/NodeAssembler";
+import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import { WireAssembler } from "shared/api/circuit/internal/assembly/WireAssembler";
 import {
     BaseComponentConfigurationInfo,
@@ -30,13 +14,26 @@ import {
     BaseWireConfigurationInfo,
     PortConfig,
 } from "shared/api/circuit/internal/impl/ObjInfo";
-import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
-import { MapObj } from "shared/api/circuit/utils/Functions";
-import { ICComponentAssembler } from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
-import { SelectionsImpl } from "shared/api/circuit/public/impl/Selections";
-import { ObjContainerImpl } from "shared/api/circuit/public/impl/ObjContainer";
+import { Circuit, Component, Port, Wire, uuid } from "shared/api/circuit/public";
+import { CircuitImpl } from "shared/api/circuit/public/impl/Circuit";
+import {
+    CachedCircuitAPIFactoryImpl,
+    CircuitAPIFactory,
+    CircuitContext,
+} from "shared/api/circuit/public/impl/CircuitContext";
+import { ComponentImpl } from "shared/api/circuit/public/impl/Component";
+import { ComponentInfoImpl } from "shared/api/circuit/public/impl/ComponentInfo";
 import { IntegratedCircuitImpl } from "shared/api/circuit/public/impl/IntegratedCircuit";
+import { ObjContainerImpl } from "shared/api/circuit/public/impl/ObjContainer";
+import { PortImpl } from "shared/api/circuit/public/impl/Port";
+import { SelectionsImpl } from "shared/api/circuit/public/impl/Selections";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { WireImpl } from "shared/api/circuit/public/impl/Wire";
+import { Schema } from "shared/api/circuit/schema";
+import { MapObj } from "shared/api/circuit/utils/Functions";
+import { Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
+
+import "./Extensions";
 
 // TestCircuit is a circuit with the following specifications:
 // Components:

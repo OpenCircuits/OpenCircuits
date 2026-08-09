@@ -1,7 +1,6 @@
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
-
 import { GUID } from "shared/api/circuit/schema";
 import { uuid } from "shared/api/circuit/schema/GUID";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 import { CircuitOp } from "./CircuitOps";
 

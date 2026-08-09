@@ -1,5 +1,6 @@
-import type { Config } from "./types.ts";
 import type { Configuration } from "@rspack/core";
+
+import type { Config } from "./types.ts";
 
 /**
  * Returns the wasm bundler configuration.

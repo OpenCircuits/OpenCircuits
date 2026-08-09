@@ -1,6 +1,7 @@
 import { SVGDrawing } from "svg2canvas";
 
 import { BaseShapePrimWithoutStyle, Prim } from "shared/api/circuit/internal/assembly/Prim";
+
 import { DebugOptions } from "shared/api/circuitdesigner/public/impl/DebugOptions";
 
 function DrawBaseShapePrim(ctx: CanvasRenderingContext2D, prim: BaseShapePrimWithoutStyle): void {

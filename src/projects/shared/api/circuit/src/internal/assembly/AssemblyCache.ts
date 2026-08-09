@@ -1,7 +1,6 @@
-import { Vector } from "Vector";
-
 import { Curve } from "math/Curve";
 import { Transform } from "math/Transform";
+import { Vector } from "Vector";
 
 import { GUID } from "..";
 import { Prim } from "./Prim";

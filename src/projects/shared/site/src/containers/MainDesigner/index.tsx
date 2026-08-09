@@ -1,20 +1,18 @@
+import { Rect } from "math/Rect";
 import { useEffect, useLayoutEffect, useRef } from "react";
-
-import { HEADER_HEIGHT } from "shared/site/utils/Constants";
-
+import { useDrop } from "shared/site/components/DragDroppable/useDrop";
 import { V, Vector } from "Vector";
 
 import { Circuit } from "shared/api/circuit/public";
 
+import { HEADER_HEIGHT } from "shared/site/utils/Constants";
 import { useCurDesigner } from "shared/site/utils/hooks/useDesigner";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
 
-import { useDrop } from "shared/site/components/DragDroppable/useDrop";
+import { SetCircuitSaved } from "shared/site/state/CircuitInfo";
 
 import "./index.scss";
-import { SetCircuitSaved } from "shared/site/state/CircuitInfo";
-import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
-import { Rect } from "math/Rect";
 
 function PlaceNComponents(circuit: Circuit, itemKind: string, N: number, startPos: Vector) {
     circuit.beginTransaction();

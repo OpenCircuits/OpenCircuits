@@ -1,8 +1,8 @@
+import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
 /**
  * @jest-environment node
  */
 import { CreateWASMInstance } from "analog/api/circuit/sim/lib/WASM";
-import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
 
 import initNGSpice from "./lib/ngspice_node.js";
 

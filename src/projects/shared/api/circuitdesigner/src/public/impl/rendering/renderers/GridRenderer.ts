@@ -1,5 +1,6 @@
 import { Rect } from "math/Rect";
 import { V, Vector } from "Vector";
+
 import { RenderState } from "../RenderState";
 
 export function RenderGrid({ circuit, renderer, options }: RenderState) {

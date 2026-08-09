@@ -1,9 +1,9 @@
-import { MakeDefaultPropInfoGetter } from "shared/site/containers/SelectionPopup/propinfo/PropInfo";
 import {
     DEFAULT_COMPONENT_PROP_INFO,
     DEFAULT_PORT_PROP_INFO,
     DEFAULT_WIRE_PROP_INFO,
 } from "shared/site/containers/SelectionPopup/propinfo/DefaultPropInfo";
+import { MakeDefaultPropInfoGetter } from "shared/site/containers/SelectionPopup/propinfo/PropInfo";
 
 export const DigitalPropInfo = MakeDefaultPropInfoGetter({
     "DigitalPort": DEFAULT_PORT_PROP_INFO,

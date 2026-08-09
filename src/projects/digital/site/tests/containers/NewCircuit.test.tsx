@@ -1,30 +1,32 @@
-import "shared/site/tests/helpers/Extensions";
-import "shared/tests/helpers/Extensions";
-import "digital/api/circuit/tests/helpers/Extensions";
-
-import "@testing-library/jest-dom";
+import { configureStore } from "@reduxjs/toolkit";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
+import { V } from "Vector";
 
-import { configureStore } from "@reduxjs/toolkit";
-
-import { reducers } from "digital/site/state/reducers";
+import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
+import "shared/site/tests/helpers/Extensions";
 
 import { CreateCircuit } from "digital/api/circuit/public";
 
-import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
 import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { TimedDigitalSimRunner } from "digital/api/circuit/internal/sim/TimedDigitalSimRunner";
 
-import { App } from "digital/site/containers/App";
+import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+
 import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelpers";
+
+import "digital/api/circuit/tests/helpers/Extensions";
+
 import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
 
 import { OpenHistoryBox } from "shared/site/state/ItemNav";
 import { ToggleSideNav } from "shared/site/state/SideNav";
 
-import { V } from "Vector";
+import { reducers } from "digital/site/state/reducers";
+
+import { App } from "digital/site/containers/App";
+import "shared/tests/helpers/Extensions";
+import "@testing-library/jest-dom";
 
 describe("New Circuit Integration", () => {
     let store: ReturnType<typeof configureStore>;

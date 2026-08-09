@@ -1,6 +1,6 @@
+import { V } from "Vector";
 import "shared/tests/helpers/Extensions";
 
-import { V } from "Vector";
 import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("DigitalPort", () => {

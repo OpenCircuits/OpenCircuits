@@ -1,33 +1,28 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-
-import { HEADER_HEIGHT } from "shared/site/utils/Constants";
-
 import { Clamp } from "math/MathUtils";
-
-import { ImageExportOptions, SaveImage } from "shared/site/utils/ImageExporter";
-
-import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
-
-import { CloseHeaderPopups } from "shared/site/state/Header";
-
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
-
-import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
-import { FitToScreen, FitToScreenHandler } from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
-import { ZoomHandler } from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
-
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ButtonToggle } from "shared/site/components/ButtonToggle";
 import { InputField } from "shared/site/components/InputField";
 import { Popup } from "shared/site/components/Popup";
 import { SwitchToggle } from "shared/site/components/SwitchToggle";
 
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
+import { FitToScreen, FitToScreenHandler } from "shared/api/circuitdesigner/tools/handlers/FitToScreenHandler";
+import { ToolHandler } from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
+import { ZoomHandler } from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
+import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
+
+import { CircuitHelpers } from "shared/site/utils/CircuitHelpers";
+import { HEADER_HEIGHT } from "shared/site/utils/Constants";
+import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
+import { ImageExportOptions, SaveImage } from "shared/site/utils/ImageExporter";
+
+import { CloseHeaderPopups } from "shared/site/state/Header";
+
 import fitScreenIcon from "./fitscreen.svg";
 
 import "./index.scss";
-import { CircuitHelpers } from "shared/site/utils/CircuitHelpers";
-import { ToolHandler } from "shared/api/circuitdesigner/tools/handlers/ToolHandler";
-import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
 
 const MIN_IMG_SIZE = 50;
 const MAX_IMG_SIZE = 10_000;

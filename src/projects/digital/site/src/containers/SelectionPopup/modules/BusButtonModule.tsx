@@ -1,11 +1,13 @@
+import { CalculateMidpoint } from "math/MathUtils";
+import { Transform } from "math/Transform";
+import { V } from "Vector";
+
 /* eslint-disable unicorn/no-null */
 import { DigitalCircuit, isComponent, isInputPort, isOutputPort } from "digital/api/circuit/public";
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
 import { DigitalPort } from "digital/api/circuit/public/DigitalPort";
-import { CalculateMidpoint } from "math/MathUtils";
-import { Transform } from "math/Transform";
+
 import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
-import { V } from "Vector";
 
 /**
  * For use in component bussing (#1056):

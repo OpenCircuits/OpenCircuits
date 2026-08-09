@@ -1,7 +1,7 @@
 import { Result } from "shared/api/circuit/utils/Result";
+
 import { OperatorFormat } from "./Constants/DataStructures";
 import { FORMATS } from "./Constants/Formats";
-
 import { GenerateInputTree } from "./GenerateInputTree";
 import { GenerateTokens } from "./GenerateTokens";
 import { TreeToCircuit } from "./TreeToCircuit";

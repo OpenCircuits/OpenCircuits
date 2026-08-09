@@ -1,9 +1,8 @@
 import { Clamp } from "math/MathUtils";
-
+import { useCallback } from "react";
 import { NumberInputField } from "shared/site/components/InputField";
 
 import { DefaultConfig, SharedModuleInputFieldProps, useBaseModule } from "./ModuleInputField";
-import { useCallback } from "react";
 
 type Props = SharedModuleInputFieldProps<number> & {
     readonly kind: "float" | "int";

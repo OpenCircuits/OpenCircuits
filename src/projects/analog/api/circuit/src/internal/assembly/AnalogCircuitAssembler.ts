@@ -1,14 +1,13 @@
 import { V } from "Vector";
 
 import { CircuitInternal } from "shared/api/circuit/internal";
-
 import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import { WireAssembler } from "shared/api/circuit/internal/assembly/WireAssembler";
-import { RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";
-import { NodeAssembler } from "shared/api/circuit/internal/assembly/common/NodeAssembler";
 import { ICComponentAssembler } from "shared/api/circuit/internal/assembly/common/ICComponentAssembler";
 import { LabelAssembler } from "shared/api/circuit/internal/assembly/common/LabelAssembler";
+import { NodeAssembler } from "shared/api/circuit/internal/assembly/common/NodeAssembler";
 import { SVGComponentAssembler } from "shared/api/circuit/internal/assembly/common/SVGComponentAssembler";
+import { RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";
+import { WireAssembler } from "shared/api/circuit/internal/assembly/WireAssembler";
 
 const TOP = { origin: V(0, 0.5), dir: V(0, 1) };
 const BOTTOM = { origin: V(0, -0.5), dir: V(0, -1) };

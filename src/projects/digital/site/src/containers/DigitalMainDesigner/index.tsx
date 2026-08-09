@@ -1,6 +1,6 @@
-import { MainDesigner } from "shared/site/containers/MainDesigner";
-
 import { DigitalCircuit } from "digital/api/circuit/public";
+
+import { MainDesigner } from "shared/site/containers/MainDesigner";
 
 import { SmartPlace, SmartPlaceOptions } from "digital/site/utils/SmartPlace";
 

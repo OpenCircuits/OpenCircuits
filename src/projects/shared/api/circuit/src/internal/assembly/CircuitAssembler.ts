@@ -1,21 +1,19 @@
-import { Vector } from "Vector";
 import { Curve } from "math/Curve";
 import { Rect } from "math/Rect";
+import { Vector } from "Vector";
 
-import { None, Option, Some } from "shared/api/circuit/utils/Result";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { None, Option, Some } from "shared/api/circuit/utils/Result";
+import "shared/api/circuit/utils/Map";
 
 import { GUID } from "..";
+import { IsDefined } from "../../utils/Reducers";
 import { CircuitInternal } from "../impl/CircuitInternal";
-
 import { Assembler, AssemblerParams, AssemblyReason } from "./Assembler";
 import { AssemblyCache, DepthList, PortPos, ReadonlyAssemblyCache } from "./AssemblyCache";
 import { Bounds } from "./PrimBounds";
 import { HitTest, IntersectionTest } from "./PrimHitTests";
 import { RenderOptions } from "./RenderOptions";
-
-import "shared/api/circuit/utils/Map";
-import { IsDefined } from "../../utils/Reducers";
 
 export type CircuitAssemblerEvent = {
     type: "onchange";

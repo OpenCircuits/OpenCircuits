@@ -1,4 +1,5 @@
 import { Rect } from "math/Rect";
+
 import { TextMeasurer } from "shared/api/circuit/internal/assembly/RenderOptions";
 import { FontStyle } from "shared/api/circuit/internal/assembly/Style";
 

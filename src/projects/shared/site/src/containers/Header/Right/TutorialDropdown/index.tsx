@@ -1,17 +1,17 @@
+import githubIcon from "shared/site/img/github.svg";
+
 import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { CloseHeaderMenus, OpenHeaderMenu, OpenHeaderPopup } from "shared/site/state/Header";
 
 import { Dropdown } from "../Dropdown";
-
-import githubIcon from "shared/site/img/github.svg";
 import helpIcon from "./help.svg";
-import tourIcon from "./tour_general.svg";
-import quickStartIcon from "./quick_start.svg";
-import videoTutorialsIcon from "./video_tutorials.svg";
-import userGuideIcon from "./user_guide.svg";
 import helpCenterIcon from "./help_center.svg";
 import keyboardIcon from "./keyboard.svg";
+import quickStartIcon from "./quick_start.svg";
+import tourIcon from "./tour_general.svg";
+import userGuideIcon from "./user_guide.svg";
+import videoTutorialsIcon from "./video_tutorials.svg";
 
 export const TutorialDropdown = () => {
     const { curMenu } = useSharedSelector((state) => ({ curMenu: state.header.curMenu }));

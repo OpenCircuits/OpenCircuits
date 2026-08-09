@@ -1,8 +1,8 @@
 import "digital/api/circuit/tests/helpers/Extensions";
-import "shared/tests/helpers/Extensions";
-
 import { CreateTestCircuit } from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+
 import { ICValidationStatus, IsValidIC } from "digital/site/utils/ICValidation";
+import "shared/tests/helpers/Extensions";
 
 describe("ICValidation", () => {
     describe("Valid cases", () => {

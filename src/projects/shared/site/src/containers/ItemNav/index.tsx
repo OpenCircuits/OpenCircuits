@@ -1,14 +1,13 @@
+import { Clamp } from "math/MathUtils";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
-
-import { ITEMNAV_HEIGHT, ITEMNAV_WIDTH } from "shared/site/utils/Constants";
-import { RIGHT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
-
+import { DragDropHandlers } from "shared/site/components/DragDroppable/DragDropHandlers";
+import { Draggable } from "shared/site/components/DragDroppable/Draggable";
 import { V, Vector } from "Vector";
 
-import { Clamp } from "math/MathUtils";
-
+import { RIGHT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 import type { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 
+import { ITEMNAV_HEIGHT, ITEMNAV_WIDTH } from "shared/site/utils/Constants";
 import { useDocEvent } from "shared/site/utils/hooks/useDocEvent";
 import { useHistory } from "shared/site/utils/hooks/useHistory";
 import { useKey } from "shared/site/utils/hooks/useKey";
@@ -20,12 +19,9 @@ import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
 import { SetCurPressedObjID } from "shared/site/state/CircuitInfo";
 import { CloseHistoryBox, CloseItemNav, OpenHistoryBox, OpenItemNav, SetCurItem } from "shared/site/state/ItemNav";
 
-import { DragDropHandlers } from "shared/site/components/DragDroppable/DragDropHandlers";
-import { Draggable } from "shared/site/components/DragDroppable/Draggable";
-
-import undoIcon from "./undo.svg";
-import redoIcon from "./redo.svg";
 import historyIcon from "./history.svg";
+import redoIcon from "./redo.svg";
+import undoIcon from "./undo.svg";
 
 // TODO: Should be able to derive desktop width off of the value in _constants.scss but it isn't working
 // import styles from "./index.scss";

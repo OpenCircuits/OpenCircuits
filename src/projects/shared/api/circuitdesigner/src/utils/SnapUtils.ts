@@ -1,5 +1,6 @@
-import { Port } from "shared/api/circuit/public";
 import { V, Vector } from "Vector";
+
+import { Port } from "shared/api/circuit/public";
 
 const WIRE_SNAP_THRESHOLD = 0.2;
 

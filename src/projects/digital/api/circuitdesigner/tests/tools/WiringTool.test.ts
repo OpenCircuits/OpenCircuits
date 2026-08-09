@@ -1,10 +1,9 @@
+import { CreateCircuitDesigner } from "tests/helpers/CreateCircuitDesigner";
+import { V } from "Vector";
+
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/api/circuit/tests/helpers/Extensions";
-
-import { V } from "Vector";
-
-import { CreateCircuitDesigner } from "tests/helpers/CreateCircuitDesigner";
 
 describe("WiringTool", () => {
     test("Click to Connect Switch -> LED", () => {

@@ -1,10 +1,8 @@
+import { Rect } from "math/Rect";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import { V } from "Vector";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "tests/helpers/Extensions";
-
-import { V } from "Vector";
-import { Rect } from "math/Rect";
-
-import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 describe("Wire", () => {
     describe("Bounds", () => {

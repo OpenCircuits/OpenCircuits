@@ -1,10 +1,9 @@
+import type { Configuration } from "@rspack/core";
 import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
 import { TsCheckerRspackPlugin } from "ts-checker-rspack-plugin";
 
 import getAliases from "../../utils/getAliases.ts";
-
 import type { Config } from "./types.ts";
-import type { Configuration } from "@rspack/core";
 
 /**
  * Returns the typescript bundler configuration.

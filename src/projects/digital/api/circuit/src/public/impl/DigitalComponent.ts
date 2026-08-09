@@ -1,9 +1,8 @@
-import { ComponentImpl } from "shared/api/circuit/public/impl/Component";
 import { GUID } from "shared/api/circuit/public";
+import { ComponentImpl } from "shared/api/circuit/public/impl/Component";
 
 import { DigitalComponent } from "../DigitalComponent";
 import { DigitalPort } from "../DigitalPort";
-
 import { DigitalAPITypes, DigitalCircuitContext } from "./DigitalCircuitContext";
 
 export class DigitalComponentImpl extends ComponentImpl<DigitalAPITypes> implements DigitalComponent {

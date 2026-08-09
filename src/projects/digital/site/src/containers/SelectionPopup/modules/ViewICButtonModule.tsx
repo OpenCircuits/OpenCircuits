@@ -1,7 +1,10 @@
-import { OpenICViewer } from "digital/site/state/ICViewer";
-import { useDigitalDispatch } from "digital/site/utils/hooks/useDigital";
 import { Circuit, Component } from "shared/api/circuit/public";
+
 import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
+
+import { useDigitalDispatch } from "digital/site/utils/hooks/useDigital";
+
+import { OpenICViewer } from "digital/site/state/ICViewer";
 
 type Props = {
     readonly circuit: Circuit;

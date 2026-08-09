@@ -1,6 +1,7 @@
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 
 import { useSharedDispatch } from "shared/site/utils/hooks/useShared";
+
 import { CloseHeaderPopups } from "shared/site/state/Header";
 
 import googleIcon from "./google.svg";

@@ -2,8 +2,8 @@ import { Vector } from "Vector";
 
 import { Schema } from "shared/api/circuit/schema";
 
-import { ComponentAssembler, ComponentExtraAssemblerParams, ComponentPrimAssembly } from "../ComponentAssembler";
 import { AssemblerParams } from "../Assembler";
+import { ComponentAssembler, ComponentExtraAssemblerParams, ComponentPrimAssembly } from "../ComponentAssembler";
 import { PortFactory } from "../PortAssembler";
 
 // Utility class for statically-sized components so that they don't need to overwrite the method.

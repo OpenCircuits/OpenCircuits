@@ -1,4 +1,5 @@
 import { DigitalCircuit, DigitalComponent } from "digital/api/circuit/public";
+
 import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
 type Props = {
