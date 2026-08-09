@@ -15,8 +15,14 @@ import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesig
 import { InteractionHandler } from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
 
 import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";
+import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
 
+import { IC_DESIGNER_VH, IC_DESIGNER_VW } from "digital/site/utils/Constants";
+import { useDigitalDispatch, useDigitalSelector } from "digital/site/utils/hooks/useDigital";
+import { useCurDigitalDesigner } from "digital/site/utils/hooks/useDigitalDesigner";
 import { TimedScheduler } from "digital/site/utils/TimedScheduler";
+
+import { CloseICViewer } from "digital/site/state/ICViewer";
 
 const IC_VIEWER_ZOOM_PADDING_RATIO = 1.5;
 

@@ -11,6 +11,8 @@ import {
     Token,
 } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
 import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
+import { GenerateInputTree } from "digital/site/utils/ExpressionParser/GenerateInputTree";
+import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateTokens";
 
 /**
  * This function is used to create and run a separate test for every combination of switch states.

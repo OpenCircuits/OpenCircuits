@@ -3,6 +3,7 @@ import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 import { DigitalSim, DigitalSimEv } from "../DigitalSim";
 import { Scheduler } from "../Scheduler";
+import type { DigitalCircuitContext } from "./DigitalCircuitContext";
 
 export class DigitalSimImpl extends ObservableImpl<DigitalSimEv> implements DigitalSim {
     protected readonly ctx: DigitalCircuitContext;

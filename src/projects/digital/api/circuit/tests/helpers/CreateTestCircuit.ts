@@ -6,6 +6,7 @@ import { CreateCircuit, DigitalCircuit } from "digital/api/circuit/public";
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
 import { DigitalPort } from "digital/api/circuit/public/DigitalPort";
 import { DigitalWire } from "digital/api/circuit/public/DigitalWire";
+import { Signal } from "digital/api/circuit/schema/Signal";
 
 export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
     const helpers = {
