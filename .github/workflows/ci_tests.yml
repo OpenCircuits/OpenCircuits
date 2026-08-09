@@ -83,3 +83,23 @@ jobs:
 
       - name: Run tests [TypeScript]
         run: yarn test --ci
+
+  format:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: "package.json"
+          cache: "yarn"
+
+      - run: yarn --immutable
+
+      - name: Check code formatting
+        run: fmt:check
