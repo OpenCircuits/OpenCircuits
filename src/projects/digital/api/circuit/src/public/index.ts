@@ -8,6 +8,7 @@ export * from "./DigitalComponentInfo";
 export * from "./DigitalPort";
 export * from "./DigitalWire";
 export * from "./DigitalSim";
+export * from "./Scheduler";
 export * from "./Utilities";
 
 export function CreateCircuit(id = uuid()) {

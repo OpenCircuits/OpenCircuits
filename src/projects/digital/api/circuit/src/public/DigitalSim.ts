@@ -2,6 +2,7 @@ import type { GUID } from "shared/api/circuit/schema";
 import type { Observable } from "shared/api/circuit/utils/Observable";
 
 import type { DigitalSchema } from "../schema";
+import type { Scheduler } from "./Scheduler";
 
 export interface ReadonlySimState {
     // PortID -> Signal
@@ -23,16 +24,19 @@ export type DigitalSimEv =
       }
     | {
           type: "propagationTimeChanged";
-          newTime: number;
+          newTime: number | undefined;
       };
 export interface ReadonlyDigitalSim extends Observable<DigitalSimEv> {
-    readonly propagationTime: number;
+    readonly propagationTime: number | undefined;
     readonly isPaused: boolean;
+    readonly scheduler?: Scheduler;
 
     readonly state: ReadonlySimState;
 }
 export interface DigitalSim extends ReadonlyDigitalSim {
-    propagationTime: number;
+    propagationTime: number | undefined;
+
+    setScheduler(scheduler: Scheduler | undefined): void;
 
     resume(): void;
     pause(): void;
