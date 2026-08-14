@@ -1,6 +1,7 @@
-import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
-import { V } from "Vector";
 import "shared/tests/helpers/Extensions";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import "tests/helpers/Extensions";
+import { V } from "Vector";
 
 describe("Clock", () => {
     test("Turns off/on expectedly", () => {

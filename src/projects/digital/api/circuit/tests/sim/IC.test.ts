@@ -3,6 +3,7 @@ import { V } from "Vector";
 
 import { Signal } from "digital/api/circuit/schema/Signal";
 import "shared/tests/helpers/Extensions";
+import "tests/helpers/Extensions";
 
 describe("IC", () => {
     describe("Basic ANDGate IC", () => {

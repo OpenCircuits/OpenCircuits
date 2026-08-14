@@ -1,7 +1,7 @@
-import "shared/api/circuit/tests/helpers/Extensions";
 import { CreateCircuit } from "digital/api/circuit/public";
 import { DigitalAPITypes } from "digital/api/circuit/public/impl/DigitalCircuitContext";
 import { CreateTestCircuitHelpers } from "digital/api/circuit/tests/helpers/CreateTestCircuit";
+import "shared/api/circuit/tests/helpers/Extensions";
 
 import { ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { SetupMockCanvas } from "shared/api/circuitdesigner/tests/helpers/CreateTestCircuitDesigner";
@@ -27,6 +27,7 @@ import { TranslateTool } from "shared/api/circuitdesigner/tools/TranslateTool";
 import { WiringTool } from "shared/api/circuitdesigner/tools/WiringTool";
 
 import { CreateDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+import { InteractionHandler } from "digital/api/circuitdesigner/tools/handlers/InteractionHandler";
 
 export function GetDefaultTools(): ToolConfig<DigitalAPITypes> {
     return {

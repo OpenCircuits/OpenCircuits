@@ -4,9 +4,11 @@ import "shared/tests/helpers/Extensions";
 import { Signal } from "digital/api/circuit/schema/Signal";
 
 import { ExpressionToCircuit } from "digital/site/utils/ExpressionParser";
-import {
+import type {
     InputToken,
     InputTreeBinOpNode,
+    InputTreeIdent,
+    InputTreeUnOpNode,
     OperatorFormat,
     Token,
 } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
