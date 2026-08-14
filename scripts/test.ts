@@ -50,10 +50,7 @@ async function LaunchTest(args: Arguments, dir: string, flags: Record<string, un
                 },
 
                 "setupFiles": ["jest-canvas-mock"],
-                "setupFilesAfterEnv": [
-                    "@testing-library/jest-dom/extend-expect",
-                    path.resolve("scripts/test/setupFileAfterEnv.ts"),
-                ],
+                "setupFilesAfterEnv": [path.resolve("scripts/test/setupFileAfterEnv.ts")],
             }),
         },
         [dir],
