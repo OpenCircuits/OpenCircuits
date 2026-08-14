@@ -1,8 +1,10 @@
-import { Clamp } from "math/MathUtils";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { DragDropHandlers } from "shared/site/components/DragDroppable/DragDropHandlers";
 import { Draggable } from "shared/site/components/DragDroppable/Draggable";
+
 import { V, Vector } from "Vector";
+
+import { Clamp } from "math/MathUtils";
 
 import { RIGHT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 import type { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";

@@ -1,4 +1,5 @@
 import { blend, parseColor } from "svg2canvas";
+
 import { V, Vector } from "Vector";
 
 import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";

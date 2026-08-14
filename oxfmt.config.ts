@@ -37,10 +37,17 @@ export default defineConfig({
         },
     ],
     sortImports: {
-        customGroups: [...groups, { groupName: "data", elementNamePattern: ["**/data/**/*"] }],
+        customGroups: [
+            { groupName: "vector", elementNamePattern: ["Vector"] },
+            { groupName: "math", elementNamePattern: ["math/**/*"] },
+            ...groups,
+            { groupName: "data", elementNamePattern: ["**/data/**/*"] },
+        ],
         newlinesBetween: true,
         groups: [
             ["value-external", "type-external"],
+            ["vector"],
+            ["math"],
             ...groups.map(({ groupName }) => groupName),
             ["parent", "sibling"],
             ["data"],

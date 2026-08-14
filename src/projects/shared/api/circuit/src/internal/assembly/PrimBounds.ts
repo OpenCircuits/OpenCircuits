@@ -1,7 +1,8 @@
+import { V } from "Vector";
+
 import { CalculateMidpoint } from "math/MathUtils";
 import { Rect } from "math/Rect";
 import { Transform } from "math/Transform";
-import { V } from "Vector";
 
 import { IsDefined } from "../../utils/Reducers";
 import { Prim } from "./Prim";

@@ -1,6 +1,7 @@
-import { Clamp } from "math/MathUtils";
 import { useCallback } from "react";
 import { NumberInputField } from "shared/site/components/InputField";
+
+import { Clamp } from "math/MathUtils";
 
 import { DefaultConfig, SharedModuleInputFieldProps, useBaseModule } from "./ModuleInputField";
 

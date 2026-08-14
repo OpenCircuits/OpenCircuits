@@ -1,6 +1,7 @@
+import { Vector } from "Vector";
+
 import { CalculateMidpoint } from "math/MathUtils";
 import { Rect } from "math/Rect";
-import { Vector } from "Vector";
 
 import "shared/api/circuit/utils/Array";
 

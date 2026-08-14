@@ -1,5 +1,6 @@
-import type { Rect } from "math/Rect";
 import type { Vector } from "Vector";
+
+import type { Rect } from "math/Rect";
 
 import type { Circuit, ReadonlyCircuit } from "../Circuit";
 import type { Component, Node, ReadonlyComponent, ReadonlyNode } from "../Component";

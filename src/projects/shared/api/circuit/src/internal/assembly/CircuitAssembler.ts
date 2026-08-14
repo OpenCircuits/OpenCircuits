@@ -1,6 +1,7 @@
+import { Vector } from "Vector";
+
 import { Curve } from "math/Curve";
 import { Rect } from "math/Rect";
-import { Vector } from "Vector";
 
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 import { None, Option, Some } from "shared/api/circuit/utils/Result";

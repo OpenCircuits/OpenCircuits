@@ -1,6 +1,7 @@
+import { V, Vector } from "Vector";
+
 import { Rect } from "math/Rect";
 import { Transform } from "math/Transform";
-import { V, Vector } from "Vector";
 
 import { Schema } from "../../../schema";
 import { MapObj } from "../../../utils/Functions";

@@ -1,6 +1,7 @@
+import { V } from "Vector";
+
 import { CalculateMidpoint } from "math/MathUtils";
 import { Transform } from "math/Transform";
-import { V } from "Vector";
 
 /* eslint-disable unicorn/no-null */
 import { DigitalCircuit, isComponent, isInputPort, isOutputPort } from "digital/api/circuit/public";

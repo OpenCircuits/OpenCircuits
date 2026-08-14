@@ -1,6 +1,7 @@
-import { Clamp } from "math/MathUtils";
 import { useEffect, useState } from "react";
 import { InputField, NumberInputField } from "shared/site/components/InputField";
+
+import { Clamp } from "math/MathUtils";
 
 import { DigitalCircuit } from "digital/api/circuit/public";
 

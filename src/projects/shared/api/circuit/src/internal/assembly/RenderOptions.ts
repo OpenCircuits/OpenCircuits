@@ -1,5 +1,6 @@
-import { Rect } from "math/Rect";
 import { ColorToHex, blend, parseColor } from "svg2canvas";
+
+import { Rect } from "math/Rect";
 
 import { FontStyle, Style, TextAlign, TextBaseline } from "./Style";
 

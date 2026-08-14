@@ -1,5 +1,6 @@
-import { Margin } from "math/Rect";
 import { Vector } from "Vector";
+
+import { Margin } from "math/Rect";
 
 import { Prim } from "shared/api/circuit/internal/assembly/Prim";
 import { RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";

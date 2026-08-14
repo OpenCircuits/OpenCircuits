@@ -1,6 +1,7 @@
+import { V, Vector } from "Vector";
+
 import { GetNearestPointOnRect } from "math/MathUtils";
 import { Rect } from "math/Rect";
-import { V, Vector } from "Vector";
 
 import { Circuit, GUID, ICPin } from "shared/api/circuit/public";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";

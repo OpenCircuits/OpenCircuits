@@ -1,5 +1,6 @@
-import { Clamp } from "math/MathUtils";
 import { V, Vector } from "Vector";
+
+import { Clamp } from "math/MathUtils";
 
 import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";

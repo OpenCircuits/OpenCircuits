@@ -1,7 +1,9 @@
-import { Rect } from "math/Rect";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { useDrop } from "shared/site/components/DragDroppable/useDrop";
+
 import { V, Vector } from "Vector";
+
+import { Rect } from "math/Rect";
 
 import { Circuit } from "shared/api/circuit/public";
 

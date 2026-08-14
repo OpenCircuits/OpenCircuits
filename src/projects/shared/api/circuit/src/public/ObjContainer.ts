@@ -1,5 +1,6 @@
-import { Rect } from "math/Rect";
 import { Vector } from "Vector";
+
+import { Rect } from "math/Rect";
 
 import { GUID } from "../schema";
 import { Component, ReadonlyComponent } from "./Component";

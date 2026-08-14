@@ -1,5 +1,6 @@
-import { Rect } from "math/Rect";
 import { Vector } from "Vector";
+
+import { Rect } from "math/Rect";
 
 import { CircuitInternal, GUID, uuid } from "shared/api/circuit/internal";
 import { Schema } from "shared/api/circuit/schema";

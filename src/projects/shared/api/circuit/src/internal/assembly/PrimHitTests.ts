@@ -1,7 +1,8 @@
+import { Vector } from "Vector";
+
 import { LineCurve } from "math/Line";
 import { CircleContains, CurveContains, RectContains } from "math/MathUtils";
 import { Rect } from "math/Rect";
-import { Vector } from "Vector";
 
 import { Prim } from "./Prim";
 import { Bounds, OrientedBounds } from "./PrimBounds";

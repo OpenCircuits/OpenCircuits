@@ -1,7 +1,9 @@
+import { SVGDrawing } from "svg2canvas";
+
+import { V, Vector } from "Vector";
+
 import { Matrix2x3 } from "math/Matrix";
 import { Margin, Rect } from "math/Rect";
-import { SVGDrawing } from "svg2canvas";
-import { V, Vector } from "Vector";
 
 import { Bounds, OrientedBounds } from "shared/api/circuit/internal/assembly/PrimBounds";
 import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";

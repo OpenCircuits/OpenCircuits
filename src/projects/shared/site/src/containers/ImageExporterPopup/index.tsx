@@ -1,9 +1,10 @@
-import { Clamp } from "math/MathUtils";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ButtonToggle } from "shared/site/components/ButtonToggle";
 import { InputField } from "shared/site/components/InputField";
 import { Popup } from "shared/site/components/Popup";
 import { SwitchToggle } from "shared/site/components/SwitchToggle";
+
+import { Clamp } from "math/MathUtils";
 
 import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";

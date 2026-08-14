@@ -1,5 +1,6 @@
-import { Rect } from "math/Rect";
 import { V, Vector } from "Vector";
+
+import { Rect } from "math/Rect";
 
 import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";

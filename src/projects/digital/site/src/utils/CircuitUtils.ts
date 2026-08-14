@@ -1,5 +1,6 @@
-import { linspace } from "math/MathUtils";
 import { V } from "Vector";
+
+import { linspace } from "math/MathUtils";
 
 import { Circuit, ReadonlyICPin, ReadonlyIntegratedCircuitDisplay } from "shared/api/circuit/public";
 

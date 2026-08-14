@@ -1,5 +1,6 @@
-import { Rect } from "math/Rect";
 import { Vector } from "Vector";
+
+import { Rect } from "math/Rect";
 
 import { FastCircuitDiff } from "shared/api/circuit/internal/impl/FastCircuitDiff";
 import { GUID } from "shared/api/circuit/schema";

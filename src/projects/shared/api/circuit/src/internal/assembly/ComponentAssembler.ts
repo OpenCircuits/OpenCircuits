@@ -1,6 +1,8 @@
-import { Transform } from "math/Transform";
 import { parseColor } from "svg2canvas";
+
 import { V, Vector } from "Vector";
+
+import { Transform } from "math/Transform";
 
 import { Schema } from "shared/api/circuit/schema";
 import "shared/api/circuit/utils/Array";

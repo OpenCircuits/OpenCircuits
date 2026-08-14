@@ -1,6 +1,7 @@
+import { V, Vector } from "Vector";
+
 import { CircleContains, RectContains } from "math/MathUtils";
 import { Transform } from "math/Transform";
-import { V, Vector } from "Vector";
 
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
 import { DigitalAPITypes } from "digital/api/circuit/public/impl/DigitalCircuitContext";

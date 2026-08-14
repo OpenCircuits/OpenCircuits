@@ -1,5 +1,6 @@
-import { Rect } from "math/Rect";
 import { V } from "Vector";
+
+import { Rect } from "math/Rect";
 
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 

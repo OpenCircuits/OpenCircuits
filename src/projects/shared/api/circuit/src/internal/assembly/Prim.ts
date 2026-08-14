@@ -1,8 +1,10 @@
+import { Color } from "svg2canvas";
+
+import { Vector } from "Vector";
+
 import { BezierCurve } from "math/BezierCurve";
 import { QuadCurve } from "math/QuadCurve";
 import { Transform } from "math/Transform";
-import { Color } from "svg2canvas";
-import { Vector } from "Vector";
 
 import { FontStyle, Style } from "./Style";
 

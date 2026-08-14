@@ -1,6 +1,8 @@
-import { LineCurve } from "math/Line";
 import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
+
 import { V } from "Vector";
+
+import { LineCurve } from "math/Line";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/api/circuit/tests/helpers/Extensions";

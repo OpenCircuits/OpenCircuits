@@ -1,6 +1,8 @@
-import { CalculateMidpoint, Clamp } from "math/MathUtils";
 import { useRef, useState } from "react";
+
 import { V } from "Vector";
+
+import { CalculateMidpoint, Clamp } from "math/MathUtils";
 
 import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { CleanUp } from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";

@@ -1,6 +1,7 @@
+import { V, Vector } from "Vector";
+
 import { RectContains } from "math/MathUtils";
 import { Transform } from "math/Transform";
-import { V, Vector } from "Vector";
 
 import { Circuit, GUID } from "shared/api/circuit/public";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";

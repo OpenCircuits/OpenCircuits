@@ -1,6 +1,8 @@
-import { Clamp } from "math/MathUtils";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+
 import { V } from "Vector";
+
+import { Clamp } from "math/MathUtils";
 
 import { Obj } from "shared/api/circuit/public";
 

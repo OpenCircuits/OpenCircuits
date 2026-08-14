@@ -1,5 +1,6 @@
-import { CircleContains } from "math/MathUtils";
 import { Vector } from "Vector";
+
+import { CircleContains } from "math/MathUtils";
 
 import { Circuit, Port } from "shared/api/circuit/public";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";

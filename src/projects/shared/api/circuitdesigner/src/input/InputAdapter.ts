@@ -1,6 +1,8 @@
 import Hammer from "hammerjs";
-import { CalculateMidpoint } from "math/MathUtils";
+
 import { V, Vector } from "Vector";
+
+import { CalculateMidpoint } from "math/MathUtils";
 
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 

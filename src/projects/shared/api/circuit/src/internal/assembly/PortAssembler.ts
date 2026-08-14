@@ -1,5 +1,6 @@
-import { Rect } from "math/Rect";
 import { V, Vector } from "Vector";
+
+import { Rect } from "math/Rect";
 
 import { Schema } from "shared/api/circuit/schema";
 

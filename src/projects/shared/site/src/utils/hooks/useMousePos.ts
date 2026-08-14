@@ -1,6 +1,8 @@
-import { CalculateMidpoint } from "math/MathUtils";
 import { useEffect, useState } from "react";
+
 import { V, Vector } from "Vector";
+
+import { CalculateMidpoint } from "math/MathUtils";
 
 import { useDocEvent } from "./useDocEvent";
 
