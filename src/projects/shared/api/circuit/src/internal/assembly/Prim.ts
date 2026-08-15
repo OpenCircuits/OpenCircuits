@@ -3,8 +3,8 @@ import { Color } from "svg2canvas";
 import { Vector } from "Vector";
 
 import { BezierCurve } from "math/BezierCurve";
-import { Transform } from "math/Transform";
 import { QuadCurve } from "math/QuadCurve";
+import { Transform } from "math/Transform";
 
 import { FontStyle, Style } from "./Style";
 

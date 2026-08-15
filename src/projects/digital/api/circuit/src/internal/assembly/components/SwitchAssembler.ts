@@ -1,11 +1,11 @@
 import { V, Vector } from "Vector";
 
-import { Schema } from "shared/api/circuit/schema";
-
-import { Signal } from "digital/api/circuit/schema/Signal";
-import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
 import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";
+import { Schema } from "shared/api/circuit/schema";
+
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
+import { Signal } from "digital/api/circuit/schema/Signal";
 
 export class SwitchAssembler extends ComponentAssembler {
     protected readonly sim: DigitalSim;

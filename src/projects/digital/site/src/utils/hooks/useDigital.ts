@@ -2,7 +2,6 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 
 import { AppState } from "digital/site/state";
-
 import { AllActions } from "digital/site/state/actions";
 
 export const useDigitalDispatch = () => useDispatch<ThunkDispatch<AppState, undefined, AllActions>>();

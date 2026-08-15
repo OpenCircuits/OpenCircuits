@@ -1,9 +1,9 @@
+import { Popup } from "shared/site/components/Popup";
+import { ShortcutKey } from "shared/site/components/ShortcutKey";
+
 import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { CloseHeaderPopups } from "shared/site/state/Header";
-
-import { Popup } from "shared/site/components/Popup";
-import { ShortcutKey } from "shared/site/components/ShortcutKey";
 
 export const QuickStartPopup = () => {
     const { curPopup } = useSharedSelector((state) => ({ curPopup: state.header.curPopup }));

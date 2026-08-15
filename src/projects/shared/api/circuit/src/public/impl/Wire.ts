@@ -1,10 +1,9 @@
 import { Curve } from "math/Curve";
 
-import { AddErrE } from "shared/api/circuit/utils/MultiError";
 import { GUID } from "shared/api/circuit/internal";
+import { AddErrE } from "shared/api/circuit/utils/MultiError";
 
 import { Wire } from "../Wire";
-
 import { BaseObjectImpl } from "./BaseObject";
 import { CircuitContext } from "./CircuitContext";
 import { CircuitAPITypes } from "./Types";

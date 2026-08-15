@@ -1,7 +1,6 @@
 import { isComponent } from "shared/api/circuit/public";
 
 import { ROTATION_CIRCLE_RADIUS, ROTATION_CIRCLE_THICKNESS, RotateTool } from "../RotateTool";
-
 import { ToolRenderer } from "./ToolRenderer";
 
 export const RotateToolRenderer: ToolRenderer = {

@@ -2,10 +2,10 @@ import { Vector } from "Vector";
 
 import { GUID } from "shared/api/circuit/schema";
 
-import { ReadonlyComponent } from "./Component";
-import { ReadonlyWire } from "./Wire";
-import { ReadonlyObjContainer } from "./ObjContainer";
 import { ReadonlyCircuit } from "./Circuit";
+import { ReadonlyComponent } from "./Component";
+import { ReadonlyObjContainer } from "./ObjContainer";
+import { ReadonlyWire } from "./Wire";
 
 export interface ICInfo {
     circuit: ReadonlyCircuit;

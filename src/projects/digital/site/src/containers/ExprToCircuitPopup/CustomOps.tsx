@@ -1,8 +1,7 @@
 import React from "react";
+import { InputField } from "shared/site/components/InputField";
 
 import { OperatorFormat, TokenType } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
-
-import { InputField } from "shared/site/components/InputField";
 
 type Props = {
     readonly customOps: OperatorFormat;

@@ -1,9 +1,8 @@
 import { GUID, Schema } from "shared/api/circuit/schema";
-import { assertNever } from "../utils/TypeEnforcement";
-
-import { CircuitOp } from "./CircuitOps";
-
 import "shared/api/circuit/utils/Map";
+
+import { assertNever } from "../utils/TypeEnforcement";
+import { CircuitOp } from "./CircuitOps";
 
 // FastCircuitDiff is a simple, coarse description of how a circuit changed, primarily for invalidating objects computed
 // from circuit objects, namely the view.  This avoids the potentially complex logic of CircuitDiff for high-throughput

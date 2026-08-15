@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import "tests/helpers/Extensions";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 import { V } from "Vector";
 
-import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 import { Rect } from "math/Rect";
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import "tests/helpers/Extensions";
 
 // NOTE: For (most) of these, make sure the `SelectionsEvent` fires correctly
 describe("Selections", () => {

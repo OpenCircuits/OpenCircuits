@@ -1,47 +1,46 @@
-import "digital/api/circuit/tests/helpers/Extensions";
-import "shared/tests/helpers/Extensions";
-
 import { V } from "Vector";
 
+import "digital/api/circuit/tests/helpers/Extensions";
 import { Signal } from "digital/api/circuit/schema/Signal";
 import { CreateTestCircuit } from "digital/api/circuit/tests/helpers/CreateTestCircuit";
-
-import { DigitalProtoToCircuit } from "digital/site/proto/bridge";
 
 import { IMPORT_IC_CLOCK_MESSAGE } from "digital/site/utils/Constants";
 import { VersionMigrator } from "digital/site/utils/VersionMigrator";
 
-import switchCircuit from "./TestCircuitData/3_0/Switch.json";
-import orCircuit from "./TestCircuitData/3_0/OR.json";
-import poweredOrCircuit from "./TestCircuitData/3_0/PoweredOR.json";
-import threeInputAndCircuit from "./TestCircuitData/3_0/ThreeInputAND.json";
-import allInputsCircuit from "./TestCircuitData/3_0/Inputs.json";
-import ledCiruit from "./TestCircuitData/3_0/LED.json";
-import segmentDisplayCircuit from "./TestCircuitData/3_0/SegmentDisplays.json";
-import oscilloscopeCircuit from "./TestCircuitData/3_0/Oscilloscope.json";
-import srFlipFlopCircuit from "./TestCircuitData/3_0/SRFlipFlop.json";
-import jkFlipFlopCircuit from "./TestCircuitData/3_0/JKFlipFlop.json";
-import dFlipFlopCircuit from "./TestCircuitData/3_0/DFlipFlop.json";
-import tFlipFlopCircuit from "./TestCircuitData/3_0/TFlipFlop.json";
-import dLatchCircuit from "./TestCircuitData/3_0/DLatch.json";
-import srLatchCircuit from "./TestCircuitData/3_0/SRLatch.json";
-import multiplexerCircuit from "./TestCircuitData/3_0/Multiplexer.json";
-import demultiplexerCircuit from "./TestCircuitData/3_0/Demultiplexer.json";
-import encoderDecoderCircuit from "./TestCircuitData/3_0/EncoderDecoder.json";
-import comparatorCircuit from "./TestCircuitData/3_0/Comparator.json";
-import labelCircuit from "./TestCircuitData/3_0/Label.json";
-import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
-import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
+import { DigitalProtoToCircuit } from "digital/site/proto/bridge";
+import "shared/tests/helpers/Extensions";
+
+import nestedICNotInDesignerCircuit from "./TestCircuitData/2_1/NestedICNotInDesigner.json";
+import allSidesICCircuit from "./TestCircuitData/3_0/AllSidesIC.json";
 import basicICCircuit from "./TestCircuitData/3_0/BasicIC.json";
-import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
-import zIndexCircuit from "./TestCircuitData/3_0/ZIndex.json";
 import clockInICOffCircuit from "./TestCircuitData/3_0/ClockInICOff.json";
 import clockInICOnCircuit from "./TestCircuitData/3_0/ClockInICOn.json";
-import threeInputICCircuit from "./TestCircuitData/3_0/ThreeInputIC.json";
-import inputOrderICCircuit from "./TestCircuitData/3_0/InputOrderIC.json";
-import allSidesICCircuit from "./TestCircuitData/3_0/AllSidesIC.json";
+import comparatorCircuit from "./TestCircuitData/3_0/Comparator.json";
+import demultiplexerCircuit from "./TestCircuitData/3_0/Demultiplexer.json";
+import dFlipFlopCircuit from "./TestCircuitData/3_0/DFlipFlop.json";
+import dLatchCircuit from "./TestCircuitData/3_0/DLatch.json";
+import encoderDecoderCircuit from "./TestCircuitData/3_0/EncoderDecoder.json";
 import flipFlopInICCircuit from "./TestCircuitData/3_0/FlipFlopInIC.json";
-import nestedICNotInDesignerCircuit from "./TestCircuitData/2_1/NestedICNotInDesigner.json";
+import icDataOnlyCircuit from "./TestCircuitData/3_0/ICDataOnly.json";
+import inputOrderICCircuit from "./TestCircuitData/3_0/InputOrderIC.json";
+import allInputsCircuit from "./TestCircuitData/3_0/Inputs.json";
+import jkFlipFlopCircuit from "./TestCircuitData/3_0/JKFlipFlop.json";
+import labelCircuit from "./TestCircuitData/3_0/Label.json";
+import ledCiruit from "./TestCircuitData/3_0/LED.json";
+import multiplexerCircuit from "./TestCircuitData/3_0/Multiplexer.json";
+import nestedICCircuit from "./TestCircuitData/3_0/NestedIC.json";
+import nodesCircuit from "./TestCircuitData/3_0/Nodes.json";
+import orCircuit from "./TestCircuitData/3_0/OR.json";
+import oscilloscopeCircuit from "./TestCircuitData/3_0/Oscilloscope.json";
+import poweredOrCircuit from "./TestCircuitData/3_0/PoweredOR.json";
+import segmentDisplayCircuit from "./TestCircuitData/3_0/SegmentDisplays.json";
+import srFlipFlopCircuit from "./TestCircuitData/3_0/SRFlipFlop.json";
+import srLatchCircuit from "./TestCircuitData/3_0/SRLatch.json";
+import switchCircuit from "./TestCircuitData/3_0/Switch.json";
+import tFlipFlopCircuit from "./TestCircuitData/3_0/TFlipFlop.json";
+import threeInputAndCircuit from "./TestCircuitData/3_0/ThreeInputAND.json";
+import threeInputICCircuit from "./TestCircuitData/3_0/ThreeInputIC.json";
+import zIndexCircuit from "./TestCircuitData/3_0/ZIndex.json";
 
 describe("DigitalVersionMigrator", () => {
     describe("From version 3.0", () => {

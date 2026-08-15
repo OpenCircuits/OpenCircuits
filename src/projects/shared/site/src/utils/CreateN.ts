@@ -1,14 +1,10 @@
 import { Vector } from "Vector";
 
-import { CircuitInfo } from "shared/api/circuit/utils/CircuitInfo";
-
 import { GroupAction } from "shared/api/circuit/actions/GroupAction";
-
 import { PlaceGroup } from "shared/api/circuit/actions/units/Place";
-
 import { AnyComponent } from "shared/api/circuit/models/types";
-
 import { CreateComponent } from "shared/api/circuit/models/utils/CreateComponent";
+import { CircuitInfo } from "shared/api/circuit/utils/CircuitInfo";
 
 export function Create(itemKind: AnyComponent["kind"], pos: Vector, zIndex: number) {
     const [component, ...ports] = CreateComponent(itemKind, zIndex);

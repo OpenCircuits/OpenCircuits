@@ -1,9 +1,9 @@
-import { Observable } from "shared/api/circuit/utils/Observable";
 import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { Observable } from "shared/api/circuit/utils/Observable";
 
+import { DefaultTool } from "../tools/DefaultTool";
 import { Tool } from "../tools/Tool";
 import { Viewport } from "./Viewport";
-import { DefaultTool } from "../tools/DefaultTool";
 
 export interface CircuitDesignerOptions<T extends CircuitAPITypes = CircuitAPITypes> {
     dragTime?: number;

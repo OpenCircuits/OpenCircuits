@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import "tests/helpers/Extensions";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 import { V } from "Vector";
-import { Rect } from "math/Rect";
 
-import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import { Rect } from "math/Rect";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import "tests/helpers/Extensions";
 
 describe("Wire", () => {
     describe("Bounds", () => {

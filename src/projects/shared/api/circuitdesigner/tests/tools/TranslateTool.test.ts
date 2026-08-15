@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import "shared/api/circuit/tests/helpers/Extensions";
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 
 import { V } from "Vector";
 
-import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import "shared/api/circuit/tests/helpers/Extensions";
 
 describe("TranslateTool", () => {
     describe("Single Object", () => {

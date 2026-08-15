@@ -1,14 +1,15 @@
 import { V, Vector } from "Vector";
 
 import { Component } from "shared/api/circuit/public";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { SnapToConnections, SnapToGrid } from "shared/api/circuitdesigner/utils/SnapUtils";
-import { Tool, ToolEvent } from "./Tool";
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+
 import { Cursor } from "../input/Cursor";
+import { Tool, ToolEvent } from "./Tool";
 
 export class TranslateTool extends ObservableImpl<ToolEvent> implements Tool {
     private components: Component[];

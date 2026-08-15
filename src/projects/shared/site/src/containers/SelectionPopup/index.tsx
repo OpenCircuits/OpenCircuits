@@ -1,21 +1,21 @@
-import { Obj } from "shared/api/circuit/public";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-
-import { DOUBLE_CLICK_DURATION, HEADER_HEIGHT } from "shared/site/utils/Constants";
 
 import { V } from "Vector";
 
 import { Clamp } from "math/MathUtils";
 
-import { useSharedSelector } from "shared/site/utils/hooks/useShared";
+import { Obj } from "shared/api/circuit/public";
 
 import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+
+import { DOUBLE_CLICK_DURATION, HEADER_HEIGHT } from "shared/site/utils/Constants";
+import { useEvent } from "shared/site/utils/hooks/useEvent";
+import { useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { TitleModule } from "./modules/TitleModule";
 import { useSelectionProps } from "./modules/useSelectionProps";
 
 import "./index.scss";
-import { useEvent } from "shared/site/utils/hooks/useEvent";
 
 type Props = {
     readonly designer: CircuitDesigner;

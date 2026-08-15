@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/tests/helpers/Extensions";
-
+import "tests/helpers/Extensions";
 import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("DigitalComponent", () => {

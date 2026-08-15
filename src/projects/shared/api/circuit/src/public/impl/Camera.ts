@@ -1,11 +1,11 @@
 import { V, Vector } from "Vector";
+
 import { Clamp } from "math/MathUtils";
 
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 import { Camera, CameraEvent } from "../Camera";
-
 import { CircuitAPITypes } from "./Types";
 
 export const MIN_ZOOM = 1e-6;

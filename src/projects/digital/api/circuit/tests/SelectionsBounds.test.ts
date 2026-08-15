@@ -1,7 +1,7 @@
-import "shared/tests/helpers/Extensions";
-
 import { V } from "Vector";
+
 import { Rect } from "math/Rect";
+import "shared/tests/helpers/Extensions";
 
 import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 

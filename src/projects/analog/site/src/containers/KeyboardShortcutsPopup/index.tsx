@@ -1,13 +1,11 @@
 import React, { useState } from "react";
+import { Popup } from "shared/site/components/Popup";
+import { ShortcutKey } from "shared/site/components/ShortcutKey";
 
 import { GetOS } from "shared/site/utils/GetOS";
-
 import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { CloseHeaderPopups } from "shared/site/state/Header";
-
-import { Popup } from "shared/site/components/Popup";
-import { ShortcutKey } from "shared/site/components/ShortcutKey";
 
 import "./index.scss";
 

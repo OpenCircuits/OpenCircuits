@@ -1,15 +1,13 @@
 import { rspack } from "@rspack/core";
+import type { Configuration } from "@rspack/core";
 
 import mergeDeep from "../../utils/merge.ts";
-
 import CSSConfig from "./css.ts";
 import HTMLConfig from "./html.ts";
 import IMGConfig from "./img.ts";
 import TSConfig from "./ts.ts";
-import WASMConfig from "./wasm.ts";
-
 import type { Config } from "./types";
-import type { Configuration } from "@rspack/core";
+import WASMConfig from "./wasm.ts";
 
 /**
  * Creates the bundler configuration.

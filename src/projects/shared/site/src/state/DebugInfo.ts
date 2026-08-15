@@ -1,7 +1,6 @@
 import { DebugOptions } from "shared/api/circuitdesigner/public/impl/DebugOptions";
 
 import { DEBUG_VALUES_COOKIE_KEY } from "shared/site/utils/Constants";
-
 import { GetCookie, SetCookie } from "shared/site/utils/Cookies";
 import { CreateState } from "shared/site/utils/CreateState";
 

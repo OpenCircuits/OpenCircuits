@@ -1,5 +1,7 @@
-import { DigitalComponent } from "digital/api/circuit/public";
 import { Circuit } from "shared/api/circuit/public";
+
+import { DigitalComponent } from "digital/api/circuit/public";
+
 import { SelectModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
 import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 

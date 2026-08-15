@@ -3,14 +3,14 @@ import { SVGDrawing } from "svg2canvas";
 import { Circuit } from "shared/api/circuit/public";
 import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";
 import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 import { Tool } from "shared/api/circuitdesigner/tools/Tool";
 
 import { CircuitDesigner, CircuitDesignerEv, CircuitDesignerOptions } from "../CircuitDesigner";
 import { Viewport } from "../Viewport";
-import { ViewportImpl } from "./Viewport";
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 import { ToolManager } from "./ToolManager";
+import { ViewportImpl } from "./Viewport";
 
 export class CircuitDesignerImpl<CircuitT extends Circuit, T extends CircuitAPITypes>
     extends ObservableImpl<CircuitDesignerEv>

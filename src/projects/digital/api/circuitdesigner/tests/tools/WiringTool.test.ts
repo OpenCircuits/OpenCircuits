@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import "shared/api/circuit/tests/helpers/Extensions";
+import { CreateCircuitDesigner } from "tests/helpers/CreateCircuitDesigner";
 
 import { V } from "Vector";
 
-import { CreateCircuitDesigner } from "tests/helpers/CreateCircuitDesigner";
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import "shared/api/circuit/tests/helpers/Extensions";
 
 describe("WiringTool", () => {
     test("Click to Connect Switch -> LED", () => {

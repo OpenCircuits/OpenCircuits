@@ -1,8 +1,7 @@
 import { Circuit, Component } from "shared/api/circuit/public";
 
-import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
-
 import { SelectModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
+import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
 type Props = {
     readonly circuit: Circuit;

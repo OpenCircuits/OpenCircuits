@@ -1,13 +1,13 @@
 import { Vector } from "Vector";
+
 import { Rect } from "math/Rect";
+
+import "shared/api/circuit/utils/Array";
 
 import { ObservableImpl } from "../../utils/Observable";
 import { Selections, SelectionsEvent } from "../Selections";
-
 import { CircuitContext } from "./CircuitContext";
 import { CircuitAPITypes } from "./Types";
-
-import "shared/api/circuit/utils/Array";
 
 export class SelectionsImpl<T extends CircuitAPITypes> extends ObservableImpl<SelectionsEvent> implements Selections {
     protected readonly ctx: CircuitContext<T>;

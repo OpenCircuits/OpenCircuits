@@ -1,6 +1,6 @@
 import { DigitalComponent } from "./DigitalComponent";
-import { DigitalWire } from "./DigitalWire";
 import { DigitalPort } from "./DigitalPort";
+import { DigitalWire } from "./DigitalWire";
 
 export const isComponent = (obj: DigitalComponent | DigitalWire | DigitalPort): obj is DigitalComponent =>
     obj.baseKind === "Component";

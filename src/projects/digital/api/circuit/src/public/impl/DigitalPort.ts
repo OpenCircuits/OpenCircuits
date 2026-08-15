@@ -4,7 +4,6 @@ import { PortImpl } from "shared/api/circuit/public/impl/Port";
 import { Signal } from "digital/api/circuit/schema/Signal";
 
 import { DigitalPort } from "../DigitalPort";
-
 import { DigitalCircuitContext, DigitalAPITypes } from "./DigitalCircuitContext";
 
 export class DigitalPortImpl extends PortImpl<DigitalAPITypes> implements DigitalPort {

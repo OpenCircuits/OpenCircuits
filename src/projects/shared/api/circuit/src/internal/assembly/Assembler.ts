@@ -1,7 +1,6 @@
 import { GUID, Schema } from "shared/api/circuit/schema";
 
 import { CircuitInternal } from "../impl/CircuitInternal";
-
 import { AssemblyCache } from "./AssemblyCache";
 import { RenderOptions } from "./RenderOptions";
 

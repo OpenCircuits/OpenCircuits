@@ -1,7 +1,6 @@
-import { HEADER_HEIGHT, ITEMNAV_HEIGHT, ITEMNAV_WIDTH } from "shared/site/utils/Constants";
-
 import { Rect } from "math/Rect";
 
+import { HEADER_HEIGHT, ITEMNAV_HEIGHT, ITEMNAV_WIDTH } from "shared/site/utils/Constants";
 import { useSharedSelector } from "shared/site/utils/hooks/useShared";
 import { useWindowSize } from "shared/site/utils/hooks/useWindowSize";
 

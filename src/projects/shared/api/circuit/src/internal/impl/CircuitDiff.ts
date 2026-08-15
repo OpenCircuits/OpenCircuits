@@ -1,9 +1,8 @@
 import { GUID, Schema } from "shared/api/circuit/schema";
-import { assertNever } from "../utils/TypeEnforcement";
-
-import { CircuitOp } from "./CircuitOps";
-
 import "core/utils/Map";
+
+import { assertNever } from "../utils/TypeEnforcement";
+import { CircuitOp } from "./CircuitOps";
 
 export interface ComponentPortDiff {
     added: Map<GUID, Schema.Port>;

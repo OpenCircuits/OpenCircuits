@@ -11,13 +11,11 @@ import {
 } from "shared/site/api/Circuits";
 
 import { SetCircuitId, SetCircuitName, SetCircuitSaved, _SetCircuitLoading } from "shared/site/state/CircuitInfo";
-
 import { LoadUserCircuits } from "shared/site/state/thunks/User";
 
-import { GenerateThumbnail } from "./GenerateThumbnail";
-
-import { CircuitHelpers } from "./CircuitHelpers";
 import { SaveCircuit } from "../state/thunks/SaveCircuit";
+import { CircuitHelpers } from "./CircuitHelpers";
+import { GenerateThumbnail } from "./GenerateThumbnail";
 
 const blobToString = (rawContents: Blob) =>
     new Promise<string>((resolve, reject) => {

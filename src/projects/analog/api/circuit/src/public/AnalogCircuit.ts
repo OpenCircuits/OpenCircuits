@@ -1,3 +1,4 @@
+import { CircuitInternal } from "shared/api/circuit/internal";
 import type {
     Circuit,
     Component,
@@ -17,8 +18,8 @@ import type {
     Selections,
     Wire,
 } from "shared/api/circuit/public";
+
 import type { AnalogSim } from "./AnalogSim";
-import { CircuitInternal } from "shared/api/circuit/internal";
 
 export type AnalogTypes = {
     CircuitT: AnalogCircuit;

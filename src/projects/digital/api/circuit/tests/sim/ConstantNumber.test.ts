@@ -1,6 +1,6 @@
 import "shared/tests/helpers/Extensions";
-
 import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import "tests/helpers/Extensions";
 
 describe("ConstantNumber", () => {
     test("Default outputs 0", () => {

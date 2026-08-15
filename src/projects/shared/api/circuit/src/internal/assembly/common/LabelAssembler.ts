@@ -2,10 +2,10 @@ import { V, Vector } from "Vector";
 
 import { Rect } from "math/Rect";
 
-import { Schema } from "shared/api/circuit/schema";
 import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";
 import { FontStyle } from "shared/api/circuit/internal/assembly/Style";
+import { Schema } from "shared/api/circuit/schema";
 
 export class LabelAssembler extends ComponentAssembler {
     public constructor(params: AssemblerParams) {

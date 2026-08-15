@@ -1,5 +1,10 @@
+import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
 import "shared/tests/helpers/Extensions";
-import {
+
+import { Signal } from "digital/api/circuit/schema/Signal";
+
+import { ExpressionToCircuit } from "digital/site/utils/ExpressionParser";
+import type {
     InputToken,
     InputTreeBinOpNode,
     InputTreeIdent,
@@ -7,14 +12,9 @@ import {
     OperatorFormat,
     Token,
 } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
-
-import { GenerateInputTree } from "digital/site/utils/ExpressionParser/GenerateInputTree";
-
-import { ExpressionToCircuit } from "digital/site/utils/ExpressionParser";
-import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateTokens";
 import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
-import { Signal } from "digital/api/circuit/schema/Signal";
-import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
+import { GenerateInputTree } from "digital/site/utils/ExpressionParser/GenerateInputTree";
+import { GenerateTokens } from "digital/site/utils/ExpressionParser/GenerateTokens";
 
 /**
  * This function is used to create and run a separate test for every combination of switch states.

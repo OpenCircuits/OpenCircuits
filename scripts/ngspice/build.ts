@@ -1,7 +1,7 @@
+import CopyDir from "../utils/copyDir.ts";
+
 import { execSync } from "node:child_process";
 import path from "node:path";
-
-import CopyDir from "../utils/copyDir.ts";
 
 const pwd = path.resolve(process.cwd(), "scripts/ngspice");
 

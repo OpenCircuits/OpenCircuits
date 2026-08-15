@@ -1,9 +1,10 @@
-import { InputTree } from "./Constants/DataStructures";
+import { V } from "Vector";
 
 import { CreateCircuit, DigitalCircuit } from "digital/api/circuit/public";
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
 import { DigitalPort } from "digital/api/circuit/public/DigitalPort";
-import { V } from "Vector";
+
+import { InputTree } from "./Constants/DataStructures";
 
 /**
  * Used to get the string for the Create funciton from the operation.

@@ -1,4 +1,5 @@
 import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+
 import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 export const SelectionHandler: ToolHandler = {

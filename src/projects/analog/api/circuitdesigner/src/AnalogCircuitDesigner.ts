@@ -1,4 +1,5 @@
 import { CreateCircuit } from "analog/api/circuit/public";
+import { AnalogAPITypes } from "analog/api/circuit/public/impl/AnalogCircuit";
 
 import { CircuitDesigner, ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { CircuitDesignerImpl } from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
@@ -6,7 +7,6 @@ import { CanvasTextMeasurer } from "shared/api/circuitdesigner/public/impl/rende
 import { ToolRenderer } from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 
 import { SVGs } from "./rendering/svgs";
-import { AnalogAPITypes } from "analog/api/circuit/public/impl/AnalogCircuit";
 
 export interface AnalogCircuitDesigner extends CircuitDesigner<AnalogAPITypes> {}
 

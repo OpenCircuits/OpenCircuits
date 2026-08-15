@@ -1,7 +1,7 @@
-import "shared/tests/helpers/Extensions";
+import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
 
 import { Signal } from "digital/api/circuit/schema/Signal";
-import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+import "shared/tests/helpers/Extensions";
 
 describe("Flip Flops", () => {
     const ON = Signal.On,

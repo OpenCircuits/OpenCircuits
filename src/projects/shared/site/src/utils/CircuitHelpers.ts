@@ -1,8 +1,10 @@
-import { CircuitDesigner, ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
-import { setCurDesigner } from "./hooks/useDesigner";
-import { ToolRenderer } from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
 import { Circuit } from "shared/api/circuit/public";
 import { ObjContainer } from "shared/api/circuit/public/ObjContainer";
+
+import { CircuitDesigner, ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { ToolRenderer } from "shared/api/circuitdesigner/tools/renderers/ToolRenderer";
+
+import { setCurDesigner } from "./hooks/useDesigner";
 
 // These are helpers that need to be overridden per-circuit-type (digital, analog, etc.)
 // But are used more broadly by the shared site.

@@ -1,7 +1,7 @@
 import { GUID } from "shared/api/circuit/schema";
 
-import { Observable } from "../utils/Observable";
 import { CircuitOp } from "../internal/impl/CircuitOps";
+import { Observable } from "../utils/Observable";
 
 export interface CircuitHistoryEvent {
     type: "change";

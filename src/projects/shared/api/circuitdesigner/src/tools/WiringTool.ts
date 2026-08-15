@@ -2,16 +2,16 @@ import { Vector } from "Vector";
 
 import { CircleContains } from "math/MathUtils";
 
+import { Circuit, Port } from "shared/api/circuit/public";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 import { MinDist } from "shared/api/circuit/utils/Reducers";
 
-import { Circuit, Port } from "shared/api/circuit/public";
-
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { LEFT_MOUSE_BUTTON, RIGHT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
-import { Tool, ToolEvent } from "./Tool";
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+
 import { Cursor } from "../input/Cursor";
+import { Tool, ToolEvent } from "./Tool";
 
 // The distance away from the port in selection for wiring.
 export const WIRING_PORT_SELECT_RADIUS = 0.34;

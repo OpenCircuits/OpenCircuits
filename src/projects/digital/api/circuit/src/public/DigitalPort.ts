@@ -1,8 +1,8 @@
 import type { Port, ReadonlyPort } from "shared/api/circuit/public";
 
-import type { APIToDigital } from "./DigitalCircuit";
-
 import { Signal } from "digital/api/circuit/schema/Signal";
+
+import type { APIToDigital } from "./DigitalCircuit";
 
 interface BaseDigitalPort {
     readonly isInputPort: boolean;

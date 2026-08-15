@@ -1,12 +1,12 @@
-import "./Extensions";
+import { V, Vector } from "Vector";
+
+import { MapObj } from "shared/api/circuit/utils/Functions";
 
 import { CreateCircuit, DigitalCircuit } from "digital/api/circuit/public";
 import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
-import { Signal } from "digital/api/circuit/schema/Signal";
-import { V, Vector } from "Vector";
 import { DigitalPort } from "digital/api/circuit/public/DigitalPort";
 import { DigitalWire } from "digital/api/circuit/public/DigitalWire";
-import { MapObj } from "shared/api/circuit/utils/Functions";
+import { Signal } from "digital/api/circuit/schema/Signal";
 
 export function CreateTestCircuitHelpers(circuit: DigitalCircuit) {
     const helpers = {

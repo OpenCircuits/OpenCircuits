@@ -1,8 +1,10 @@
 import { useEffect } from "react";
-import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
-import { CloseHeaderPopups, OpenHeaderPopup } from "shared/site/state/Header";
 import { Popup } from "shared/site/components/Popup";
+
 import { GetCookie, SetCookie } from "shared/site/utils/Cookies";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
+
+import { CloseHeaderPopups, OpenHeaderPopup } from "shared/site/state/Header";
 
 type Props = {
     version: string;

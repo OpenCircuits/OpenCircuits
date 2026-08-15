@@ -1,5 +1,3 @@
-import { ErrE, Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
-
 import {
     BaseComponentConfigurationInfo,
     BaseObjInfoProvider,
@@ -11,6 +9,7 @@ import {
 } from "shared/api/circuit/internal/impl/ObjInfo";
 import { GUID, Schema } from "shared/api/circuit/schema";
 import { MapObj } from "shared/api/circuit/utils/Functions";
+import { ErrE, Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
 
 type DigitalPortGroupInfo = Record<string, "input" | "output">;
 

@@ -1,17 +1,16 @@
-import path from "node:path";
-
-import address from "address";
-import chalk from "chalk";
 import { rspack } from "@rspack/core";
 import { RspackDevServer } from "@rspack/dev-server";
+import address from "address";
+import chalk from "chalk";
 
 import openBrowser from "../utils/browser/openBrowser.ts";
 import choosePort from "../utils/choosePort.ts";
 import copyDir from "../utils/copyDir.ts";
 import getEnv from "../utils/env.ts";
-
 import config from "./config/index.ts";
 import customDevServer from "./customDevServer.ts";
+
+import path from "node:path";
 
 /**
  * Basic bundler creation.

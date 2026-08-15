@@ -1,10 +1,10 @@
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { Tool } from "shared/api/circuitdesigner/tools/Tool";
 import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
 import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
+import { Tool } from "shared/api/circuitdesigner/tools/Tool";
 
 export type ToolManagerEvent =
     | {

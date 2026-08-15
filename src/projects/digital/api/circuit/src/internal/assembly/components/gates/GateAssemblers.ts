@@ -1,15 +1,15 @@
 import { Vector } from "Vector";
 
+import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import {
     ComponentAssembler,
     ComponentBaseShapePrimAssembly,
     ComponentExtraAssemblerParams,
 } from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import { PortFactory } from "shared/api/circuit/internal/assembly/PortAssembler";
+import { Schema } from "shared/api/circuit/schema";
 
 import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
-import { Schema } from "shared/api/circuit/schema";
 
 export type SimplifiedAssembly = {
     assemble: ComponentBaseShapePrimAssembly["assemble"];

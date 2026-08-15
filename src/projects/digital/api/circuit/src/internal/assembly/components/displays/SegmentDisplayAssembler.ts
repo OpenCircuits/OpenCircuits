@@ -1,8 +1,11 @@
-import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
-import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
-import { BaseDisplayAssembler } from "./BaseDisplayAssembler";
 import { Vector } from "Vector";
+
+import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
 import { Schema } from "shared/api/circuit/schema";
+
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
+
+import { BaseDisplayAssembler } from "./BaseDisplayAssembler";
 import { SegmentType, Segments } from "./SegmentDisplayConstants";
 
 export class SegmentDisplayAssembler extends BaseDisplayAssembler {

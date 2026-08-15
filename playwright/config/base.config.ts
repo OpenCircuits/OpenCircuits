@@ -1,6 +1,6 @@
 import { devices } from "@playwright/test";
-
 import type { PlaywrightTestConfig, PlaywrightTestOptions, PlaywrightWorkerOptions, Project } from "@playwright/test";
+
 import path from "node:path";
 
 type DevPageNames = "digital" | "landing";

@@ -1,16 +1,14 @@
 import { Circuit, Obj, Prop } from "shared/api/circuit/public";
 
-import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import { ColorModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/ColorModuleInputField";
 import { NumberModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/NumberModuleInputField";
 import { SelectModuleInputField } from "shared/site/containers/SelectionPopup/modules/inputs/SelectModuleInputField";
-
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
 
 import { PropInfoEntry, PropInfoGetter } from "../propinfo/PropInfo";
 import { GetPropsWithInfoFor } from "../propinfo/PropUtils";
-
 import { TextModuleInputField } from "./inputs/TextModuleInputField";
 
 type Props = {

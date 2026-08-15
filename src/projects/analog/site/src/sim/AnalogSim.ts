@@ -1,8 +1,9 @@
+import { CircuitInternal } from "shared/api/circuit/internal";
+
 import { AnalogSim, AnalysisInfo } from "analog/api/circuit/public";
 import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
 import { CreateWASMInstance } from "analog/api/circuit/sim/lib/WASM";
 import { Netlist } from "analog/api/circuit/sim/Netlist";
-import { CircuitInternal } from "shared/api/circuit/internal";
 import { CircuitToNetlist } from "analog/api/circuit/sim/NetlistGenerator";
 
 type RawLetter =

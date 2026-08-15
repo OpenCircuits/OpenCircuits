@@ -1,10 +1,11 @@
 import { V, Vector } from "Vector";
 
-import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
 import { AssemblerParams, AssemblyReason } from "shared/api/circuit/internal/assembly/Assembler";
 import { ComponentAssembler } from "shared/api/circuit/internal/assembly/ComponentAssembler";
-import { Schema } from "shared/api/circuit/schema";
 import { PositioningHelpers } from "shared/api/circuit/internal/assembly/PortAssembler";
+import { Schema } from "shared/api/circuit/schema";
+
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
 
 const MULTIPLEXER_HEIGHT_OFFSET = 0.5;
 export class MultiplexerAssembler extends ComponentAssembler {

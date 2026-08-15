@@ -1,14 +1,14 @@
-import { existsSync } from "node:fs";
-import os from "node:os";
-import path from "node:path";
-
 import chalk from "chalk";
 import prompts from "prompts";
 import yargs from "yargs";
 
-import { FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir } from "./utils/getDirs.ts";
 import startBundler from "./bundler/index.ts";
+import { FindDir, getOtherPageDirs, getProjectSiteDirs, getServerDir } from "./utils/getDirs.ts";
 import { Spawn } from "./utils/spawn.ts";
+
+import { existsSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "development";

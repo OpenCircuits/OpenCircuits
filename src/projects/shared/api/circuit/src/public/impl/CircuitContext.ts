@@ -2,9 +2,9 @@ import { CircuitInternal, GUID } from "shared/api/circuit/internal";
 import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import { DefaultRenderOptions, RenderOptions } from "shared/api/circuit/internal/assembly/RenderOptions";
 
-import { ObjInfoProvider } from "../../internal/impl/ObjInfo";
-import { CircuitLog } from "../../internal/impl/CircuitLog";
 import { CircuitDocument } from "../../internal/impl/CircuitDocument";
+import { CircuitLog } from "../../internal/impl/CircuitLog";
+import { ObjInfoProvider } from "../../internal/impl/ObjInfo";
 import { CircuitAPITypes } from "./Types";
 
 export interface CircuitAPIFactory<T extends CircuitAPITypes> {

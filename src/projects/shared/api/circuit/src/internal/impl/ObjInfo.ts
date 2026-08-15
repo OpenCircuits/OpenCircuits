@@ -1,6 +1,6 @@
+import { GUID, Schema } from "shared/api/circuit/schema";
 import { ErrE, Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
 
-import { GUID, Schema } from "shared/api/circuit/schema";
 import { uuid } from "../../public";
 
 export type PortConfig = Record<string, number>;

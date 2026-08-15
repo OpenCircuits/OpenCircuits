@@ -1,31 +1,30 @@
 import { SVGDrawing } from "svg2canvas";
 
 import { V, Vector } from "Vector";
+
+import { Matrix2x3 } from "math/Matrix";
 import { Margin, Rect } from "math/Rect";
 
-import { CleanupFunc } from "shared/api/circuit/utils/types";
-import { MultiObservable } from "shared/api/circuit/utils/Observable";
+import { Bounds, OrientedBounds } from "shared/api/circuit/internal/assembly/PrimBounds";
 import { CircuitContext } from "shared/api/circuit/public/impl/CircuitContext";
 import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
-import { InputAdapter } from "shared/api/circuitdesigner/input/InputAdapter";
-import { Bounds, OrientedBounds } from "shared/api/circuit/internal/assembly/PrimBounds";
+import { DirtyVar } from "shared/api/circuit/utils/DirtyVar";
+import { MultiObservable } from "shared/api/circuit/utils/Observable";
+import { IsDefined } from "shared/api/circuit/utils/Reducers";
+import { CleanupFunc } from "shared/api/circuit/utils/types";
 
-import { RenderHelper } from "./rendering/RenderHelper";
-import { RenderState } from "./rendering/RenderState";
-import { RenderScheduler } from "./rendering/RenderScheduler";
-import { PrimRenderer } from "./rendering/renderers/PrimRenderer";
-import { RenderGrid } from "./rendering/renderers/GridRenderer";
-import { DebugRenderBounds } from "./rendering/renderers/DebugRenderer";
+import { InputAdapter } from "shared/api/circuitdesigner/input/InputAdapter";
 
 import { Cursor } from "../../input/Cursor";
-
 import { CircuitDesigner, CircuitDesignerOptions } from "../CircuitDesigner";
 import { AttachedCanvasInfo, Prim, RenderOptions, Viewport, ViewportEvents } from "../Viewport";
-
 import { DebugOptions } from "./DebugOptions";
-import { IsDefined } from "shared/api/circuit/utils/Reducers";
-import { DirtyVar } from "shared/api/circuit/utils/DirtyVar";
-import { Matrix2x3 } from "math/Matrix";
+import { DebugRenderBounds } from "./rendering/renderers/DebugRenderer";
+import { RenderGrid } from "./rendering/renderers/GridRenderer";
+import { PrimRenderer } from "./rendering/renderers/PrimRenderer";
+import { RenderHelper } from "./rendering/RenderHelper";
+import { RenderScheduler } from "./rendering/RenderScheduler";
+import { RenderState } from "./rendering/RenderState";
 import { ToolManager } from "./ToolManager";
 
 export class AttachedCanvasInfoImpl implements AttachedCanvasInfo {

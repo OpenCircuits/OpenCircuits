@@ -1,7 +1,6 @@
-import "shared/api/circuitdesigner/types/declarations";
-
 import { SVGDrawing } from "svg2canvas";
 
+import "shared/api/circuitdesigner/types/declarations";
 import { ToSVGDrawing } from "shared/api/circuitdesigner/utils/ToSVGDrawing";
 
 import capacitorSVG from "./capacitor.svg";

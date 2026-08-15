@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AdjustableElement } from "shared/site/components/AdjustableElement";
 
 import { CircuitHistoryEntry, CircuitHistoryOp } from "shared/api/circuit/public";
 
@@ -10,8 +11,6 @@ import { useHistory } from "shared/site/utils/hooks/useHistory";
 import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { CloseHistoryBox } from "shared/site/state/ItemNav";
-
-import { AdjustableElement } from "shared/site/components/AdjustableElement";
 
 import infoIcon from "./info.svg";
 

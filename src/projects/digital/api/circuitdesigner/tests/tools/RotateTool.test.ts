@@ -1,12 +1,12 @@
+import { CreateCircuitDesigner } from "tests/helpers/CreateCircuitDesigner";
+
+import { V } from "Vector";
+
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "shared/api/circuit/tests/helpers/Extensions";
 
-import { V } from "Vector";
-
 import { ROTATION_CIRCLE_RADIUS } from "shared/api/circuitdesigner/tools/RotateTool";
-
-import { CreateCircuitDesigner } from "tests/helpers/CreateCircuitDesigner";
 
 describe("RotateTool", () => {
     describe("Single Object", () => {

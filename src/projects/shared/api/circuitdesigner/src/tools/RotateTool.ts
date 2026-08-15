@@ -1,14 +1,14 @@
 import { V, Vector } from "Vector";
 
 import { Circuit, Component, isComponent } from "shared/api/circuit/public";
-
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
-import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
-
-import { Tool, ToolEvent } from "./Tool";
-import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
 import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+
+import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
+
 import { Cursor } from "../input/Cursor";
+import { Tool, ToolEvent } from "./Tool";
 
 export const ROTATION_CIRCLE_RADIUS = 1.5;
 export const ROTATION_CIRCLE_THICKNESS = 0.1;

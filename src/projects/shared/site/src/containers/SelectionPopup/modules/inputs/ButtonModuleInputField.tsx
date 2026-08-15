@@ -1,5 +1,4 @@
 import { Action } from "shared/api/circuit/actions/Action";
-
 import { Prop } from "shared/api/circuit/models/PropInfo";
 
 import { ModuleSubmitInfo } from "./ModuleInputField";
