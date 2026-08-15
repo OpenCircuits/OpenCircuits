@@ -1,16 +1,13 @@
 import { ItemNavConfig } from "shared/site/containers/ItemNav";
 
-import voltageSourceIcon from "./icons/sources/voltagesource.svg";
-import currentSourceIcon from "./icons/sources/currentsource.svg";
-
-import groundIcon from "./icons/essentials/ground.svg";
-import resistorIcon from "./icons/essentials/resistor.svg";
 import capacitorIcon from "./icons/essentials/capacitor.svg";
+import groundIcon from "./icons/essentials/ground.svg";
 import inductorIcon from "./icons/essentials/inductor.svg";
-
+import resistorIcon from "./icons/essentials/resistor.svg";
 import oscilloscopeIcon from "./icons/measurements/oscilloscope.svg";
-
 import labelIcon from "./icons/other/label.svg";
+import currentSourceIcon from "./icons/sources/currentsource.svg";
+import voltageSourceIcon from "./icons/sources/voltagesource.svg";
 
 export default {
     "sections": [

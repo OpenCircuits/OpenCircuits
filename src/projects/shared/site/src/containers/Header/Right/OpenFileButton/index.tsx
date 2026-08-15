@@ -1,14 +1,11 @@
 import React from "react";
-
-import { OVERWRITE_CIRCUIT_MESSAGE } from "shared/site/utils/Constants";
+import { InputField } from "shared/site/components/InputField";
 
 import { useAPIMethods } from "shared/site/utils/ApiMethods";
-import { LoadFile } from "shared/site/utils/Importer";
-
+import { OVERWRITE_CIRCUIT_MESSAGE } from "shared/site/utils/Constants";
 import { useCurDesigner } from "shared/site/utils/hooks/useDesigner";
 import { useSharedSelector } from "shared/site/utils/hooks/useShared";
-
-import { InputField } from "shared/site/components/InputField";
+import { LoadFile } from "shared/site/utils/Importer";
 
 import openIcon from "./open.svg";
 

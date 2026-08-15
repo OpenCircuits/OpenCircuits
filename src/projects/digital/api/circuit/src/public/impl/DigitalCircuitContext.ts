@@ -1,23 +1,24 @@
+import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import {
     CachedCircuitAPIFactoryImpl,
     CircuitAPIFactory,
     CircuitContext,
 } from "shared/api/circuit/public/impl/CircuitContext";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { GUID } from "shared/api/circuit/schema";
 
 import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
-import { GUID } from "shared/api/circuit/schema";
-import { DigitalObjInfoProvider } from "../../internal/DigitalComponents";
+
 import { MakeDigitalCircuitAssembler } from "../../internal/assembly/DigitalCircuitAssembler";
-import { DigitalComponentImpl } from "./DigitalComponent";
-import { DigitalWireImpl } from "./DigitalWire";
-import { DigitalPortImpl } from "./DigitalPort";
+import { DigitalObjInfoProvider } from "../../internal/DigitalComponents";
+import { DigitalPropagators } from "../../internal/sim/DigitalPropagators";
+import { DigitalTypes } from "../DigitalCircuit";
 import { DigitalIntegratedCircuitImpl } from "./DigitalCircuit";
+import { DigitalComponentImpl } from "./DigitalComponent";
 import { DigitalComponentInfoImpl } from "./DigitalComponentInfo";
 import { DigitalObjContainerImpl } from "./DigitalObjContainer";
-import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import { DigitalPropagators } from "../../internal/sim/DigitalPropagators";
-import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
-import { DigitalTypes } from "../DigitalCircuit";
+import { DigitalPortImpl } from "./DigitalPort";
+import { DigitalWireImpl } from "./DigitalWire";
 
 export type DigitalAPITypes = CircuitAPITypes<DigitalTypes>;
 

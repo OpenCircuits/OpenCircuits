@@ -5,7 +5,6 @@ import { ThunkAction } from "redux-thunk";
 import { BackendCircuitMetadata, CreateUserCircuit, UpdateUserCircuit } from "shared/site/api/Circuits";
 
 import { SharedAppState } from "shared/site/state";
-
 import { AllSharedActions } from "shared/site/state/actions";
 import { SetCircuitId, _SetCircuitSavingFinish, _SetCircuitSavingStart } from "shared/site/state/CircuitInfo";
 

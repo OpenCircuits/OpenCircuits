@@ -1,6 +1,9 @@
-import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
-import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
 import { V } from "Vector";
+
+import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
+
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
+
 import { FlipFlopAssembler } from "./FlipFlopAssembler";
 
 export class TwoInputFlipFlopAssembler extends FlipFlopAssembler {

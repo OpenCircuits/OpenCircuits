@@ -1,4 +1,5 @@
 import { Circuit } from "shared/api/circuit/public";
+
 import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 export function DuplicateSelections(circuit: Circuit): void {

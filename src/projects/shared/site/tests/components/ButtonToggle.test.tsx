@@ -1,8 +1,7 @@
-import "@testing-library/jest-dom";
 import { Matcher, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
 import { ButtonToggle } from "shared/site/components/ButtonToggle";
+import "@testing-library/jest-dom";
 
 /**
  * Gets the ButtonToggle or SwitchToggle image elements associated with the provided text.

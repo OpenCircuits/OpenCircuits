@@ -1,19 +1,12 @@
-import "shared/api/circuit/tests/helpers/Extensions";
-
 import { setupJestCanvasMock } from "jest-canvas-mock";
 
+import "shared/api/circuit/tests/helpers/Extensions";
+import { uuid } from "shared/api/circuit/public";
+import { CreateTestCircuitHelpers, TestCircuitImpl } from "shared/api/circuit/tests/helpers/CreateTestCircuit";
+
 import { CircuitDesigner, ToolConfig } from "shared/api/circuitdesigner/public/CircuitDesigner";
-
 import { CircuitDesignerImpl } from "shared/api/circuitdesigner/public/impl/CircuitDesigner";
-
 import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
-import { TranslateTool } from "shared/api/circuitdesigner/tools/TranslateTool";
-import { SelectionBoxTool } from "shared/api/circuitdesigner/tools/SelectionBoxTool";
-import { RotateTool } from "shared/api/circuitdesigner/tools/RotateTool";
-import { WiringTool } from "shared/api/circuitdesigner/tools/WiringTool";
-import { SplitWireTool } from "shared/api/circuitdesigner/tools/SplitWireTool";
-
 import { CleanupHandler } from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
 import { DeleteHandler } from "shared/api/circuitdesigner/tools/handlers/DeleteHandler";
 import { DeselectAllHandler } from "shared/api/circuitdesigner/tools/handlers/DeselectAllHandler";
@@ -27,11 +20,14 @@ import { SelectPathHandler } from "shared/api/circuitdesigner/tools/handlers/Sel
 import { SnipNodesHandler } from "shared/api/circuitdesigner/tools/handlers/SnipNodesHandler";
 import { UndoHandler } from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import { ZoomHandler } from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
-
-import { CreateTestCircuitHelpers, TestCircuitImpl } from "shared/api/circuit/tests/helpers/CreateTestCircuit";
+import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
+import { RotateTool } from "shared/api/circuitdesigner/tools/RotateTool";
+import { SelectionBoxTool } from "shared/api/circuitdesigner/tools/SelectionBoxTool";
+import { SplitWireTool } from "shared/api/circuitdesigner/tools/SplitWireTool";
+import { TranslateTool } from "shared/api/circuitdesigner/tools/TranslateTool";
+import { WiringTool } from "shared/api/circuitdesigner/tools/WiringTool";
 
 import { MockInputFacade } from "./MockInputFacade";
-import { uuid } from "shared/api/circuit/public";
 
 export function GetDefaultTools(): ToolConfig {
     return {

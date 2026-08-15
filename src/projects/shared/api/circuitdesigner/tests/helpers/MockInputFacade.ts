@@ -1,6 +1,7 @@
+import { V, Vector } from "Vector";
+
 import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 import { Key } from "shared/api/circuitdesigner/input/Key";
-import { V, Vector } from "Vector";
 import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
 
 export class MockInputFacade {

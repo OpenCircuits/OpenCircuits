@@ -1,5 +1,6 @@
-import { Circuit, CircuitHistoryEntry } from "shared/api/circuit/public";
 import { useEffect, useState } from "react";
+
+import { Circuit, CircuitHistoryEntry } from "shared/api/circuit/public";
 
 export const useHistory = (circuit: Circuit) => {
     const [state, setState] = useState<{

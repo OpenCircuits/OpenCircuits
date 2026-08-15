@@ -1,10 +1,9 @@
 import { AUTO_SAVE_COOKIE_KEY } from "shared/site/utils/Constants";
-
 import { GetCookie, SetCookie } from "shared/site/utils/Cookies";
 import { CreateState } from "shared/site/utils/CreateState";
 
-import { BackendCircuitMetadata } from "shared/site/api/Circuits";
 import { AuthState } from "shared/site/api/auth/AuthState";
+import { BackendCircuitMetadata } from "shared/site/api/Circuits";
 
 const [initialState, actions, reducer] = CreateState()(
     {

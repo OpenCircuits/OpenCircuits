@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE } from "shared/site/utils/Constants";
-
 import { useAPIMethods } from "shared/site/utils/ApiMethods";
+import { CircuitHelpers } from "shared/site/utils/CircuitHelpers";
+import { DEV_CACHED_CIRCUIT_FILE, OVERWRITE_CIRCUIT_MESSAGE } from "shared/site/utils/Constants";
 import { useCurDesigner } from "shared/site/utils/hooks/useDesigner";
 import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
@@ -11,10 +11,8 @@ import { DevCreateFile, DevGetFile, DevListFiles } from "shared/site/api/Dev";
 import { CloseHeaderMenus, HeaderPopups, OpenHeaderMenu, OpenHeaderPopup } from "shared/site/state/Header";
 
 import { Dropdown } from "../Dropdown";
-import { CircuitHelpers } from "shared/site/utils/CircuitHelpers";
-
-import wrenchIcon from "./wrench.svg";
 import cacheIcon from "./cache.svg";
+import wrenchIcon from "./wrench.svg";
 
 export type Utility = {
     popupName: HeaderPopups;

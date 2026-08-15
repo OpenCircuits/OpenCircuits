@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-
 import { pageActions } from "shared/helpers/actions";
 
 test("Load first example circuit", async ({ page }) => {

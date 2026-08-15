@@ -1,4 +1,3 @@
-import { MakeDefaultPropInfoGetter, PropInfoEntry } from "shared/site/containers/SelectionPopup/propinfo/PropInfo";
 import {
     AngleInfo,
     DEFAULT_COMPONENT_PROP_INFO,
@@ -8,6 +7,7 @@ import {
     MakeUnitInfo,
     TimeInfo,
 } from "shared/site/containers/SelectionPopup/propinfo/DefaultPropInfo";
+import { MakeDefaultPropInfoGetter, PropInfoEntry } from "shared/site/containers/SelectionPopup/propinfo/PropInfo";
 
 const VoltageInfo = (key: string, label: string, initial = 0, initialU = " "): PropInfoEntry => ({
     id: key,

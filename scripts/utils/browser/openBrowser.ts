@@ -1,12 +1,12 @@
+import chalk from "chalk";
+import spawn from "cross-spawn";
+import open from "open";
+
 /**
  * Adapted from Facebook, create-react-app:
  *  https://github.com/facebook/create-react-app/blob/main/packages/react-dev-utils/openBrowser.js .
  */
 import { execSync } from "node:child_process";
-
-import chalk from "chalk";
-import spawn from "cross-spawn";
-import open from "open";
 
 // https://github.com/sindresorhus/open#app
 const OSX_CHROME = "google chrome";

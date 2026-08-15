@@ -1,6 +1,8 @@
-import { AnalysisInfo } from "analog/api/circuit/public";
 import { CircuitInternal } from "shared/api/circuit/internal";
 import { Schema } from "shared/api/circuit/schema";
+
+import { AnalysisInfo } from "analog/api/circuit/public";
+
 import { Netlist } from "./Netlist";
 
 type PathPart = Schema.Wire | Schema.Component | Schema.Port;

@@ -1,7 +1,8 @@
+import { V } from "Vector";
 import "shared/tests/helpers/Extensions";
+import "tests/helpers/Extensions";
 
 import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
-import { V } from "Vector";
 
 describe("DigitalCircuit", () => {
     describe("Simulation State", () => {

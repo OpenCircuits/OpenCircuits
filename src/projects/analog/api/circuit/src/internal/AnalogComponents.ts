@@ -1,7 +1,3 @@
-/* eslint-disable key-spacing */
-import { ErrE, Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
-import { MapObj } from "shared/api/circuit/utils/Functions";
-
 import {
     BaseComponentConfigurationInfo,
     BaseObjInfoProvider,
@@ -10,8 +6,10 @@ import {
     PortConfig,
     PropTypeMap,
 } from "shared/api/circuit/internal/impl/ObjInfo";
-
 import { Schema } from "shared/api/circuit/schema";
+import { MapObj } from "shared/api/circuit/utils/Functions";
+/* eslint-disable key-spacing */
+import { ErrE, Ok, OkVoid, Result } from "shared/api/circuit/utils/Result";
 
 export class AnalogComponentInfo extends BaseComponentConfigurationInfo {
     protected override getPortInfo(_p: PortConfig, _group: string, _i: number): Pick<Schema.Port, "kind" | "props"> {

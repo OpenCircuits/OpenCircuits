@@ -1,9 +1,13 @@
-import { OpenICDesigner } from "digital/site/state/ICDesigner";
-import { ICValidationStatus, IsValidIC } from "digital/site/utils/ICValidation";
-import { useDigitalDispatch } from "digital/site/utils/hooks/useDigital";
 import { useState } from "react";
+
 import { Circuit, Component } from "shared/api/circuit/public";
+
 import { useSelectionProps } from "shared/site/containers/SelectionPopup/modules/useSelectionProps";
+
+import { useDigitalDispatch } from "digital/site/utils/hooks/useDigital";
+import { ICValidationStatus, IsValidIC } from "digital/site/utils/ICValidation";
+
+import { OpenICDesigner } from "digital/site/state/ICDesigner";
 
 // No error message for Valid (which is set to 0)
 const errorMessages: Record<Exclude<ICValidationStatus, 0>, string> = {

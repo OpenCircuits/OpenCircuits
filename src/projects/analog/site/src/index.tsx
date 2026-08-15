@@ -1,25 +1,18 @@
+import { configureStore } from "@reduxjs/toolkit";
 import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence } from "firebase/auth";
-
 import React from "react";
 import { createRoot } from "react-dom/client";
 import ReactGA from "react-ga4";
 import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
 
-import { GetCookie } from "shared/site/utils/Cookies";
-import { LoadingScreen } from "shared/site/utils/LoadingScreen";
+// import {DigitalProtoSchema} from "digital/site/proto";
+import { CreateCircuit } from "analog/api/circuit/public";
+import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
+import { CreateWASMInstance } from "analog/api/circuit/sim/lib/WASM";
 
-import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
-
+import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
 import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
-import { TranslateTool } from "shared/api/circuitdesigner/tools/TranslateTool";
-import { SelectionBoxTool } from "shared/api/circuitdesigner/tools/SelectionBoxTool";
-import { RotateTool } from "shared/api/circuitdesigner/tools/RotateTool";
-import { WiringTool } from "shared/api/circuitdesigner/tools/WiringTool";
-import { SplitWireTool } from "shared/api/circuitdesigner/tools/SplitWireTool";
-
 import { CleanupHandler } from "shared/api/circuitdesigner/tools/handlers/CleanupHandler";
 import { CopyHandler } from "shared/api/circuitdesigner/tools/handlers/CopyHandler";
 import { DeleteHandler } from "shared/api/circuitdesigner/tools/handlers/DeleteHandler";
@@ -35,41 +28,41 @@ import { SelectPathHandler } from "shared/api/circuitdesigner/tools/handlers/Sel
 import { SnipNodesHandler } from "shared/api/circuitdesigner/tools/handlers/SnipNodesHandler";
 import { UndoHandler } from "shared/api/circuitdesigner/tools/handlers/UndoHandler";
 import { ZoomHandler } from "shared/api/circuitdesigner/tools/handlers/ZoomHandler";
-
-import { SelectionBoxToolRenderer } from "shared/api/circuitdesigner/tools/renderers/SelectionBoxToolRenderer";
+import { PanTool } from "shared/api/circuitdesigner/tools/PanTool";
 import { RotateToolRenderer } from "shared/api/circuitdesigner/tools/renderers/RotateToolRenderer";
+import { SelectionBoxToolRenderer } from "shared/api/circuitdesigner/tools/renderers/SelectionBoxToolRenderer";
 import { WiringToolRenderer } from "shared/api/circuitdesigner/tools/renderers/WiringToolRenderer";
+import { RotateTool } from "shared/api/circuitdesigner/tools/RotateTool";
+import { SelectionBoxTool } from "shared/api/circuitdesigner/tools/SelectionBoxTool";
+import { SplitWireTool } from "shared/api/circuitdesigner/tools/SplitWireTool";
+import { TranslateTool } from "shared/api/circuitdesigner/tools/TranslateTool";
+import { WiringTool } from "shared/api/circuitdesigner/tools/WiringTool";
 
 import { CreateDesigner } from "analog/api/circuitdesigner/AnalogCircuitDesigner";
 
-import { DevGetFile, DevListFiles } from "shared/site/api/Dev";
+import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelpers";
+import { DEV_CACHED_CIRCUIT_FILE } from "shared/site/utils/Constants";
+import { GetCookie } from "shared/site/utils/Cookies";
+import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
+import { LoadingScreen } from "shared/site/utils/LoadingScreen";
 
+import { GoogleAuthState } from "shared/site/api/auth/GoogleAuthState";
 import { NoAuthState } from "shared/site/api/auth/NoAuthState";
+import { DevGetFile, DevListFiles } from "shared/site/api/Dev";
 
 import { Login } from "shared/site/state/thunks/User";
 
-import { AppStore } from "./state";
-import { reducers } from "./state/reducers";
-
-import { App } from "./containers/App";
-import { DEV_CACHED_CIRCUIT_FILE } from "shared/site/utils/Constants";
-import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelpers";
-
-// import {DigitalProtoSchema} from "digital/site/proto";
-import { CreateCircuit } from "analog/api/circuit/public";
-import { DRAG_TIME } from "shared/api/circuitdesigner/input/Constants";
 // import {DigitalCircuitToProto, DigitalProtoToCircuit} from "digital/site/proto/bridge";
 // import {PrintDebugStats} from "./proto/debug";
 // import {CUR_SAVE_VERSION} from "./utils/Constants";
 import { GetAuthMethods } from "shared/site/containers/LoginPopup/GetAuthMethods";
-import { GoogleAuthState } from "shared/site/api/auth/GoogleAuthState";
 
+import { App } from "./containers/App";
+import { AnalogSimImpl, MakeAnalogSim } from "./sim/AnalogSim";
 import NGSpiceFactory from "./sim/lib/ngspice.js";
 import NGSpiceWasmUrl from "./sim/lib/ngspice.wasm";
-
-import { NGSpiceLib } from "analog/api/circuit/sim/lib/NGSpiceLib";
-import { AnalogSimImpl, MakeAnalogSim } from "./sim/AnalogSim";
-import { CreateWASMInstance } from "analog/api/circuit/sim/lib/WASM";
+import { AppStore } from "./state";
+import { reducers } from "./state/reducers";
 
 async function Init(): Promise<void> {
     const startPercent = 10;

@@ -3,9 +3,9 @@ import { V } from "Vector";
 import { FMod } from "math/MathUtils";
 import { QuadCurve } from "math/QuadCurve";
 
-import { Schema } from "shared/api/circuit/schema";
 import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
 import { PositioningHelpers } from "shared/api/circuit/internal/assembly/PortAssembler";
+import { Schema } from "shared/api/circuit/schema";
 
 import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
 

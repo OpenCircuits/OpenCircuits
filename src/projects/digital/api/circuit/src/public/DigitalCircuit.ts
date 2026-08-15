@@ -7,15 +7,16 @@ import type {
     ReadonlySelections,
     Selections,
 } from "shared/api/circuit/public";
-
-import type { DigitalComponentInfo } from "./DigitalComponentInfo";
-import type { DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode } from "./DigitalComponent";
-import type { DigitalWire, ReadonlyDigitalWire } from "./DigitalWire";
-import type { DigitalPort, ReadonlyDigitalPort } from "./DigitalPort";
-import type { DigitalSchema } from "digital/api/circuit/schema";
-import type { ObjContainer, ReadonlyObjContainer } from "shared/api/circuit/public/ObjContainer";
 import type { ReplaceAPITypes } from "shared/api/circuit/public/impl/Types";
+import type { ObjContainer, ReadonlyObjContainer } from "shared/api/circuit/public/ObjContainer";
+
+import type { DigitalSchema } from "digital/api/circuit/schema";
+
+import type { DigitalComponent, DigitalNode, ReadonlyDigitalComponent, ReadonlyDigitalNode } from "./DigitalComponent";
+import type { DigitalComponentInfo } from "./DigitalComponentInfo";
+import type { DigitalPort, ReadonlyDigitalPort } from "./DigitalPort";
 import type { DigitalSim, ReadonlyDigitalSim, ReadonlySimState } from "./DigitalSim";
+import type { DigitalWire, ReadonlyDigitalWire } from "./DigitalWire";
 
 export type DigitalTypes = {
     CircuitT: DigitalCircuit;

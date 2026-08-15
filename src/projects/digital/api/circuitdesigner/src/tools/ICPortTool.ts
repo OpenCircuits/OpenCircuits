@@ -1,16 +1,16 @@
 import { V, Vector } from "Vector";
 
-import { Rect } from "math/Rect";
 import { GetNearestPointOnRect } from "math/MathUtils";
+import { Rect } from "math/Rect";
 
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 import { Circuit, GUID, ICPin } from "shared/api/circuit/public";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
-import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
 import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 import { Cursor } from "shared/api/circuitdesigner/input/Cursor";
 import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
+import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
 import { Tool, ToolEvent } from "shared/api/circuitdesigner/tools/Tool";
 
 // TODO: This should be moved to the `shared` layer at some point since ICs are a generic concept.

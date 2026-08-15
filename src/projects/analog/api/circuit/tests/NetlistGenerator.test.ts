@@ -1,7 +1,8 @@
-import { CircuitToNetlist } from "analog/api/circuit/sim/NetlistGenerator";
+import { V } from "Vector";
+
 import { CreateCircuit } from "analog/api/circuit/public";
 import { AnalogCircuitImpl } from "analog/api/circuit/public/impl/AnalogCircuit";
-import { V } from "Vector";
+import { CircuitToNetlist } from "analog/api/circuit/sim/NetlistGenerator";
 
 describe("NetlistGenerator", () => {
     it("should generate a valid netlist for a simple circuit with Ground", () => {

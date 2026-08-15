@@ -1,6 +1,6 @@
-import baseConfig, { DevProjects, DevWebServers, ProdProjects, ProdWebServers } from "./base.config";
-
 import type { PlaywrightTestConfig } from "@playwright/test";
+
+import baseConfig, { DevProjects, DevWebServers, ProdProjects, ProdWebServers } from "./base.config";
 
 const overrides: PlaywrightTestConfig = {
     testDir: ".././",

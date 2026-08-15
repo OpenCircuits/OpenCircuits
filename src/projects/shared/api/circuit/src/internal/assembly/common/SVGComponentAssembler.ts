@@ -1,7 +1,7 @@
 import { Vector } from "Vector";
 
-import { ComponentExtraAssemblerParams } from "../ComponentAssembler";
 import { AssemblerParams, AssemblyReason } from "../Assembler";
+import { ComponentExtraAssemblerParams } from "../ComponentAssembler";
 import { PortFactory } from "../PortAssembler";
 import { StaticComponentAssembler } from "./StaticComponentAssembler";
 

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { DRAG_TIME, RIGHT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
-
 import { V, Vector } from "Vector";
+
+import { DRAG_TIME, RIGHT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
 
 import { useDocEvent } from "shared/site/utils/hooks/useDocEvent";
 import { useWindowKeyDownEvent } from "shared/site/utils/hooks/useKeyDownEvent";

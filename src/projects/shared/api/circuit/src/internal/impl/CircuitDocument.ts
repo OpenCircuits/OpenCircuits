@@ -1,8 +1,9 @@
+import { GUID, Schema } from "shared/api/circuit/schema";
 import { AddErrE } from "shared/api/circuit/utils/MultiError";
 import { ErrE, Ok, OkVoid, Result, ResultUtil, WrapResOrE } from "shared/api/circuit/utils/Result";
 
-import { GUID, Schema } from "shared/api/circuit/schema";
-
+import { ObservableImpl } from "../../utils/Observable";
+import { CircuitLog, LogEntry, LogEntryType } from "./CircuitLog";
 import {
     CanCommuteOps,
     CircuitOp,
@@ -17,6 +18,7 @@ import {
     TransformCircuitOps,
     UpdateICMetadataOp,
 } from "./CircuitOps";
+import { FastCircuitDiff, FastCircuitDiffBuilder } from "./FastCircuitDiff";
 import {
     ComponentConfigurationInfo,
     ObjInfo,
@@ -26,9 +28,6 @@ import {
     PortListToConfig,
     WireConfigurationInfo,
 } from "./ObjInfo";
-import { CircuitLog, LogEntry, LogEntryType } from "./CircuitLog";
-import { ObservableImpl } from "../../utils/Observable";
-import { FastCircuitDiff, FastCircuitDiffBuilder } from "./FastCircuitDiff";
 
 export interface ReadonlyCircuitStorage<M extends Schema.CircuitMetadata = Schema.CircuitMetadata> {
     readonly id: GUID;

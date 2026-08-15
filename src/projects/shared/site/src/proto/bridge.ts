@@ -4,11 +4,8 @@
 // to the wire rep (Circuit.proto) and vice versa.
 
 import * as uuid from "uuid";
+import { V } from "Vector";
 
-import { InvertRecord, MapObj } from "shared/api/circuit/utils/Functions";
-import { GUID, Schema } from "shared/api/circuit/schema";
-
-import * as ProtoSchema from "./Circuit";
 import {
     Circuit,
     Component,
@@ -19,9 +16,12 @@ import {
     ReadonlyWire,
     Wire,
 } from "shared/api/circuit/public";
-import { V } from "Vector";
 import { BaseObject } from "shared/api/circuit/public/BaseObject";
+import { GUID, Schema } from "shared/api/circuit/schema";
+import { InvertRecord, MapObj } from "shared/api/circuit/utils/Functions";
 import { InvertMap } from "shared/api/circuit/utils/Map";
+
+import * as ProtoSchema from "./Circuit";
 
 export interface CompConversionInfo {
     kind: number;

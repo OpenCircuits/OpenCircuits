@@ -1,8 +1,10 @@
-import { DigitalCircuitImpl } from "digital/api/circuit/public/impl/DigitalCircuit";
-import { GroupPrim } from "shared/api/circuit/internal/assembly/Prim";
-import "shared/tests/helpers/Extensions";
-
 import { CreateTestCircuit } from "tests/helpers/CreateTestCircuit";
+
+import { GroupPrim } from "shared/api/circuit/internal/assembly/Prim";
+
+import { DigitalCircuitImpl } from "digital/api/circuit/public/impl/DigitalCircuit";
+import "shared/tests/helpers/Extensions";
+import "tests/helpers/Extensions";
 
 describe("DigitalSim", () => {
     describe("Deletion", () => {

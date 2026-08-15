@@ -1,7 +1,7 @@
 import { Schema } from "shared/api/circuit/schema";
 
-import { BCDtoDecimal, DecimalToBCD } from "digital/api/circuit/utils/MathUtil";
 import { Signal } from "digital/api/circuit/schema/Signal";
+import { BCDtoDecimal, DecimalToBCD } from "digital/api/circuit/utils/MathUtil";
 
 import { PropagatorInfo, PropagatorsMap } from "./DigitalSim";
 

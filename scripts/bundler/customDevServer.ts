@@ -1,10 +1,9 @@
-import fs from "node:fs";
-import path from "node:path";
-
-import type { IncomingMessage, ServerResponse } from "node:http";
-
-import bodyParser from "body-parser";
 import type { DevServer, DevServerMiddleware } from "@rspack/core";
+import bodyParser from "body-parser";
+
+import fs from "node:fs";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import path from "node:path";
 
 interface DevRequest extends IncomingMessage {
     body?: string;

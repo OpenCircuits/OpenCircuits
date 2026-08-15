@@ -1,7 +1,7 @@
 import { Component, Node, ReadonlyComponent, ReadonlyNode } from "shared/api/circuit/public";
 
-import { DigitalPort, ReadonlyDigitalPort } from "./DigitalPort";
 import { APIToDigital } from "./DigitalCircuit";
+import { DigitalPort, ReadonlyDigitalPort } from "./DigitalPort";
 
 interface BaseReadonlyDigitalComponent<P, N> {
     readonly inputs: P[];

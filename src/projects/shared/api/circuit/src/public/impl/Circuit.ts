@@ -1,22 +1,21 @@
 import { Vector } from "Vector";
+
 import { Rect } from "math/Rect";
 
+import { CircuitInternal, GUID, uuid } from "shared/api/circuit/internal";
 import { Schema } from "shared/api/circuit/schema";
 
-import { CircuitInternal, GUID, uuid } from "shared/api/circuit/internal";
-
-import { Circuit, CircuitEvent } from "../Circuit";
-
-import { CircuitContext } from "./CircuitContext";
 import { ObservableImpl } from "../../utils/Observable";
-import { ReadonlyComponent } from "../Component";
-import { ReadonlyWire } from "../Wire";
-import { ReadonlyPort } from "../Port";
 import { Camera } from "../Camera";
-import { CameraImpl } from "./Camera";
-import { HistoryImpl } from "./History";
+import { Circuit, CircuitEvent } from "../Circuit";
+import { ReadonlyComponent } from "../Component";
 import { CircuitHistory } from "../History";
 import { IntegratedCircuit } from "../IntegratedCircuit";
+import { ReadonlyPort } from "../Port";
+import { ReadonlyWire } from "../Wire";
+import { CameraImpl } from "./Camera";
+import { CircuitContext } from "./CircuitContext";
+import { HistoryImpl } from "./History";
 import { CircuitAPITypes } from "./Types";
 
 function ConvertComp(c: ReadonlyComponent): Schema.Component {

@@ -1,26 +1,26 @@
+import { CircuitInternal } from "shared/api/circuit/internal";
+import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import { GUID } from "shared/api/circuit/public";
+import { CircuitImpl } from "shared/api/circuit/public/impl/Circuit";
 import {
     CachedCircuitAPIFactoryImpl,
     CircuitAPIFactory,
     CircuitContext,
 } from "shared/api/circuit/public/impl/CircuitContext";
-import { CircuitImpl } from "shared/api/circuit/public/impl/Circuit";
+import { ComponentImpl } from "shared/api/circuit/public/impl/Component";
+import { ComponentInfoImpl } from "shared/api/circuit/public/impl/ComponentInfo";
 import { IntegratedCircuitImpl } from "shared/api/circuit/public/impl/IntegratedCircuit";
-import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
+import { ObjContainerImpl } from "shared/api/circuit/public/impl/ObjContainer";
+import { PortImpl } from "shared/api/circuit/public/impl/Port";
+import { SelectionsImpl } from "shared/api/circuit/public/impl/Selections";
+import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { WireImpl } from "shared/api/circuit/public/impl/Wire";
 
 import { AnalogObjInfoProvider } from "analog/api/circuit/internal/AnalogComponents";
 import { MakeAnalogCircuitAssembler } from "analog/api/circuit/internal/assembly/AnalogCircuitAssembler";
 
-import { ComponentImpl } from "shared/api/circuit/public/impl/Component";
-import { WireImpl } from "shared/api/circuit/public/impl/Wire";
-import { PortImpl } from "shared/api/circuit/public/impl/Port";
-import { ComponentInfoImpl } from "shared/api/circuit/public/impl/ComponentInfo";
-import { ObjContainerImpl } from "shared/api/circuit/public/impl/ObjContainer";
-import { SelectionsImpl } from "shared/api/circuit/public/impl/Selections";
-import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
 import { AnalogCircuit, AnalogTypes } from "../AnalogCircuit";
 import { AnalogSim } from "../AnalogSim";
-import { CircuitInternal } from "shared/api/circuit/internal";
 
 export type AnalogAPITypes = CircuitAPITypes<AnalogTypes>;
 

@@ -1,9 +1,10 @@
+import { V } from "Vector";
+
+import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
 import "shared/tests/helpers/Extensions";
 
-import { V } from "Vector";
-import { CircuitAssembler } from "shared/api/circuit/internal/assembly/CircuitAssembler";
-import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 import { DigitalCircuitImpl } from "../src/public/impl/DigitalCircuit";
+import { CreateTestCircuit } from "./helpers/CreateTestCircuit";
 
 describe("CircuitAssembler", () => {
     const expectNoDirty = (assembler: CircuitAssembler) => {

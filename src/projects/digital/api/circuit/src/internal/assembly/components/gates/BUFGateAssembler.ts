@@ -1,6 +1,9 @@
-import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
-import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
 import { V } from "Vector";
+
+import { AssemblerParams } from "shared/api/circuit/internal/assembly/Assembler";
+
+import { DigitalSim } from "digital/api/circuit/internal/sim/DigitalSim";
+
 import { GateAssembler } from "./GateAssemblers";
 
 export class BUFGateAssembler extends GateAssembler {

@@ -1,8 +1,10 @@
-import { Result } from "shared/api/circuit/utils/Result";
-import crypto from "node:crypto";
-import { Component, Obj } from "../../src/public";
-import { ObjContainer } from "shared/api/circuit/public/ObjContainer";
 import { BaseObject } from "shared/api/circuit/public/BaseObject";
+import { ObjContainer } from "shared/api/circuit/public/ObjContainer";
+import { Result } from "shared/api/circuit/utils/Result";
+
+import { Component, Obj } from "../../src/public";
+
+import crypto from "node:crypto";
 
 // Define crypto for Jest for uuid generation
 Object.defineProperty(window, "crypto", { value: crypto });

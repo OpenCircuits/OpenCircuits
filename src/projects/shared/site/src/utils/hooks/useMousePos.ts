@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { useDocEvent } from "./useDocEvent";
-import { CalculateMidpoint } from "math/MathUtils";
+
 import { V, Vector } from "Vector";
+
+import { CalculateMidpoint } from "math/MathUtils";
+
+import { useDocEvent } from "./useDocEvent";
 
 export const useMousePos = () => {
     const [pos, setPos] = useState({

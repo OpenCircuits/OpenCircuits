@@ -20,6 +20,6 @@
     "strict": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "types": ["node"]
+    "types": ["jest", "node"]
   }
 }

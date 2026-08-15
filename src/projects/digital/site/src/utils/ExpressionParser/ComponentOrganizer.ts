@@ -1,6 +1,6 @@
 import { Vector } from "Vector";
-import { Circuit } from "shared/api/circuit/public";
 
+import { Circuit } from "shared/api/circuit/public";
 import { CreateGraph } from "shared/api/circuit/utils/CircuitUtils";
 
 const ORGANIZE_SEP_X = 4;

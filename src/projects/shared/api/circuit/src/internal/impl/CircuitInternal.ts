@@ -1,15 +1,14 @@
-import { ErrE, OkVoid, Result, ResultUtil } from "shared/api/circuit/utils/Result";
-
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 import { GUID, Schema } from "shared/api/circuit/schema";
 import { uuid } from "shared/api/circuit/schema/GUID";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
+import { ErrE, OkVoid, Result, ResultUtil } from "shared/api/circuit/utils/Result";
 
+import { AddErrE } from "../../utils/MultiError";
+import { CircuitDocument } from "./CircuitDocument";
 import { LogEntryType } from "./CircuitLog";
 import { InvertCircuitOp, UpdateICMetadataOp } from "./CircuitOps";
-import { ComponentConfigurationInfo, PortConfig, PortConfigurationInfo, WireConfigurationInfo } from "./ObjInfo";
-import { CircuitDocument } from "./CircuitDocument";
 import { FastCircuitDiff } from "./FastCircuitDiff";
-import { AddErrE } from "../../utils/MultiError";
+import { ComponentConfigurationInfo, PortConfig, PortConfigurationInfo, WireConfigurationInfo } from "./ObjInfo";
 
 export type InternalEvent = {
     type: "CircuitOp";

@@ -1,20 +1,19 @@
 import { useEffect } from "react";
+import { InputField } from "shared/site/components/InputField";
 
 import { useAPIMethods } from "shared/site/utils/ApiMethods";
-import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 import { useCurDesigner } from "shared/site/utils/hooks/useDesigner";
+import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
 
 import { SetCircuitName, ToggleCircuitLocked } from "shared/site/state/CircuitInfo";
 import { CloseHistoryBox, OpenHistoryBox } from "shared/site/state/ItemNav";
 import { ToggleSideNav } from "shared/site/state/SideNav";
 
-import { InputField } from "shared/site/components/InputField";
-
-import historyLightIcon from "./history-light.svg";
-import lockOpenIcon from "./lock_open.svg";
-import lockIcon from "./lock.svg";
 import contentCopyIcon from "./content_copy.svg";
 import errorIcon from "./error.svg";
+import historyLightIcon from "./history-light.svg";
+import lockIcon from "./lock.svg";
+import lockOpenIcon from "./lock_open.svg";
 
 import "./index.scss";
 

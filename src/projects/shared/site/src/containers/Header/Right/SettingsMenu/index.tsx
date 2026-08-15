@@ -1,4 +1,7 @@
 import { useEffect } from "react";
+import { SwitchToggle } from "shared/site/components/SwitchToggle";
+
+import { DebugOptions } from "shared/api/circuitdesigner/public/impl/DebugOptions";
 
 import { useCurDesigner } from "shared/site/utils/hooks/useDesigner";
 import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/useShared";
@@ -6,13 +9,8 @@ import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/us
 import { ToggleDebugValue } from "shared/site/state/DebugInfo";
 import { CloseHeaderMenus, OpenHeaderMenu } from "shared/site/state/Header";
 
-import { SwitchToggle } from "shared/site/components/SwitchToggle";
-
 import { Dropdown } from "../Dropdown";
-
 import { AutoSaveToggle } from "./AutoSaveToggle";
-import { DebugOptions } from "shared/api/circuitdesigner/public/impl/DebugOptions";
-
 import settingsIcon from "./settings.svg";
 
 export const SettingsMenu = () => {

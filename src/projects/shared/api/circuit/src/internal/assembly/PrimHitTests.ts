@@ -1,9 +1,10 @@
 import { Vector } from "Vector";
-import { CircleContains, CurveContains, RectContains } from "math/MathUtils";
+
 import { LineCurve } from "math/Line";
+import { CircleContains, CurveContains, RectContains } from "math/MathUtils";
+import { Rect } from "math/Rect";
 
 import { Prim } from "./Prim";
-import { Rect } from "math/Rect";
 import { Bounds, OrientedBounds } from "./PrimBounds";
 
 export function HitTest(prim: Prim, pt: Vector): boolean {

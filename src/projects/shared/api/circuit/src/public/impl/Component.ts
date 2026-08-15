@@ -1,15 +1,14 @@
 import { V, Vector } from "Vector";
 
-import { AddErrE } from "shared/api/circuit/utils/MultiError";
-import { MapObj } from "shared/api/circuit/utils/Functions";
 import { GUID } from "shared/api/circuit/internal";
 import { Schema } from "shared/api/circuit/schema";
+import { MapObj } from "shared/api/circuit/utils/Functions";
+import { AddErrE } from "shared/api/circuit/utils/MultiError";
 
 import { Component, Node, PortConfig } from "../Component";
-
+import { Wire } from "../Wire";
 import { BaseObjectImpl } from "./BaseObject";
 import { CircuitContext } from "./CircuitContext";
-import { Wire } from "../Wire";
 import { CircuitAPITypes } from "./Types";
 
 export class ComponentImpl<T extends CircuitAPITypes> extends BaseObjectImpl<T> implements Component, Node {

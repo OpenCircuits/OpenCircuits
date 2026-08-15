@@ -1,5 +1,6 @@
-import { AnalysisInfo } from "analog/api/circuit/public";
 import { GUID } from "shared/api/circuit/schema";
+
+import { AnalysisInfo } from "analog/api/circuit/public";
 
 export interface NetlistElement {
     symbol: string;

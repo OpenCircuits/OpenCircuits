@@ -1,14 +1,13 @@
 import { useState } from "react";
 
+import collapseIcon from "./collapse.svg";
 import { DownloadMenuDropdown } from "./DownloadMenuDropdown";
+import expandIcon from "./expand.svg";
 import { OpenFileButton } from "./OpenFileButton";
 import { SettingsMenu } from "./SettingsMenu";
 import { SignInOutButtons } from "./SignInOutButtons";
 import { TutorialDropdown } from "./TutorialDropdown";
 import { UtilitiesDropdown, Utility } from "./UtilitiesDropdown";
-
-import expandIcon from "./expand.svg";
-import collapseIcon from "./collapse.svg";
 
 import "./index.scss";
 

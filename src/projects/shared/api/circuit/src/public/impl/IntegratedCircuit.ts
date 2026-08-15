@@ -2,8 +2,8 @@ import { V, Vector } from "Vector";
 
 import { GUID } from "shared/api/circuit/internal";
 
-import { CircuitContext } from "./CircuitContext";
 import { ICPin, IntegratedCircuit, IntegratedCircuitDisplay } from "../IntegratedCircuit";
+import { CircuitContext } from "./CircuitContext";
 import { CircuitAPITypes } from "./Types";
 
 class IntegratedCircuitPinImpl<T extends CircuitAPITypes> implements ICPin {

@@ -1,6 +1,6 @@
-import { Signal } from "digital/api/circuit/schema/Signal";
-import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
 import { DigitalPort } from "digital/api/circuit/public";
+import { DigitalComponent } from "digital/api/circuit/public/DigitalComponent";
+import { Signal } from "digital/api/circuit/schema/Signal";
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace

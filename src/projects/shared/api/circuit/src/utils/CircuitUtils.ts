@@ -1,4 +1,5 @@
 import { Graph } from "math/Graph";
+
 import { Circuit } from "../public/Circuit";
 
 /**

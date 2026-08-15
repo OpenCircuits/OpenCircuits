@@ -1,25 +1,26 @@
 import "shared/site/tests/helpers/Extensions";
 import "shared/tests/helpers/Extensions";
 import "digital/api/circuit/tests/helpers/Extensions";
-
 import "@testing-library/jest-dom";
+import { configureStore } from "@reduxjs/toolkit";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 
-import { configureStore } from "@reduxjs/toolkit";
+import { CreateCircuit } from "digital/api/circuit/public";
+
+import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
+
+import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
+
+import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelpers";
+import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
+
+import { TimedScheduler } from "digital/site/utils/TimedScheduler";
 
 import { reducers } from "digital/site/state/reducers";
 
-import { CreateCircuit } from "digital/api/circuit/public";
-
-import { CreateDesigner, DigitalCircuitDesigner } from "digital/api/circuitdesigner/DigitalCircuitDesigner";
-import { DefaultTool } from "shared/api/circuitdesigner/tools/DefaultTool";
-import { TimedScheduler } from "digital/site/utils/TimedScheduler";
-
 import { App } from "digital/site/containers/App";
-import { CircuitHelpers, SetCircuitHelpers } from "shared/site/utils/CircuitHelpers";
-import { setCurDesigner } from "shared/site/utils/hooks/useDesigner";
 
 describe("SimControls Integration", () => {
     let store: ReturnType<typeof configureStore>;

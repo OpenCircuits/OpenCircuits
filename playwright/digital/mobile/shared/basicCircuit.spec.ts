@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-
 import { pageActions } from "shared/helpers/actions";
 
 test("Basic Switch/LED Test", async ({ page }) => {

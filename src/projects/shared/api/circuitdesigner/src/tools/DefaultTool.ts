@@ -1,10 +1,10 @@
 import { CircuitAPITypes } from "shared/api/circuit/public/impl/Types";
+import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
-import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 import { InputAdapterEvent } from "shared/api/circuitdesigner/input/InputAdapterEvent";
+import { CircuitDesigner } from "shared/api/circuitdesigner/public/CircuitDesigner";
 
 import { ToolHandler, ToolHandlerResponse } from "./handlers/ToolHandler";
-import { ObservableImpl } from "shared/api/circuit/utils/Observable";
 
 export class DefaultTool<T extends CircuitAPITypes = CircuitAPITypes> extends ObservableImpl<{
     type: "handlerFired";

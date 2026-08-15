@@ -4,15 +4,18 @@
 // Migration logic for old circuit files, version <= 3.0
 import * as uuid from "uuid";
 
-import { IMPORT_IC_CLOCK_MESSAGE } from "../../Constants";
 import { GUID } from "shared/api/circuit/public";
-import { Get } from "shared/api/circuit/utils/Reducers";
 import { MapObj } from "shared/api/circuit/utils/Functions";
-import * as V3_0Schema from "./Schema";
-import { Decompress, Entry, MakeEntry } from "./SerialeazyUtils";
+import { Get } from "shared/api/circuit/utils/Reducers";
+
 import { ProtoSchema } from "shared/site/proto";
+
 import { DigitalProtoSchema } from "digital/site/proto";
 import { CompressSignals, DigitalKindMaps, StateFullKinds } from "digital/site/proto/bridge";
+
+import { IMPORT_IC_CLOCK_MESSAGE } from "../../Constants";
+import * as V3_0Schema from "./Schema";
+import { Decompress, Entry, MakeEntry } from "./SerialeazyUtils";
 
 enum Warnings {
     ClockInIC,

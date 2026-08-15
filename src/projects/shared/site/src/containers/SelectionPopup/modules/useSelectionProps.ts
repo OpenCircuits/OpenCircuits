@@ -1,5 +1,6 @@
-import { Circuit, Obj, Prop } from "shared/api/circuit/public";
 import React, { useCallback, useEffect, useState } from "react";
+
+import { Circuit, Obj, Prop } from "shared/api/circuit/public";
 
 // type ToArray<T> = T extends T ? T[] : never;
 type KeysOfUnion<T> = T extends T ? keyof T : never;

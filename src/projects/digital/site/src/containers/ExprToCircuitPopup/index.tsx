@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { ButtonToggle } from "shared/site/components/ButtonToggle";
+import { InputField } from "shared/site/components/InputField";
+import { Popup } from "shared/site/components/Popup";
 
 import { Camera } from "shared/api/circuit/public/Camera";
-
-import { OperatorFormat, OperatorFormatLabel } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
-import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
 
 import { DigitalCircuit } from "digital/api/circuit/public";
 
@@ -11,9 +11,8 @@ import { useSharedDispatch, useSharedSelector } from "shared/site/utils/hooks/us
 
 import { CloseHeaderPopups } from "shared/site/state/Header";
 
-import { ButtonToggle } from "shared/site/components/ButtonToggle";
-import { InputField } from "shared/site/components/InputField";
-import { Popup } from "shared/site/components/Popup";
+import { OperatorFormat, OperatorFormatLabel } from "digital/site/utils/ExpressionParser/Constants/DataStructures";
+import { FORMATS } from "digital/site/utils/ExpressionParser/Constants/Formats";
 
 import { BooleanOption } from "./BooleanOption";
 import { CustomOps } from "./CustomOps";

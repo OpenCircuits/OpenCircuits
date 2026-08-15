@@ -1,10 +1,10 @@
 import { V, Vector } from "Vector";
+
 import { BezierCurve } from "math/BezierCurve";
 
 import { RenderHelper } from "shared/api/circuitdesigner/public/Viewport";
 
 import { WiringTool } from "../WiringTool";
-
 import { ToolRenderer, ToolRendererArgs } from "./ToolRenderer";
 
 function DrawX(renderer: RenderHelper, pos: Vector, len: number, col: string, strokeW: number) {

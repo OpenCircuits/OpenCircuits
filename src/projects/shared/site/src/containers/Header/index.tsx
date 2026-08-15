@@ -1,9 +1,9 @@
+import github from "shared/site/img/github.svg";
+
 import { Utility } from "shared/site/containers/Header/Right/UtilitiesDropdown";
 
 import { HeaderLeft } from "./Left";
 import { HeaderRight } from "./Right";
-
-import github from "shared/site/img/github.svg";
 
 import "./index.scss";
 

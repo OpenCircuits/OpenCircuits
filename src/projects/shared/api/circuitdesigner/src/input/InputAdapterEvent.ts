@@ -1,7 +1,7 @@
 import { Vector } from "Vector";
-import { UserInputState } from "./UserInputState";
 
 import { Key } from "./Key";
+import { UserInputState } from "./UserInputState";
 
 export interface BaseInputEvent {
     input: UserInputState;

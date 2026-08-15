@@ -1,6 +1,8 @@
-import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
-import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 import { Component } from "shared/api/circuit/public";
+
+import { LEFT_MOUSE_BUTTON } from "shared/api/circuitdesigner/input/Constants";
+
+import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 /**
  * Gets all the components connected to this component

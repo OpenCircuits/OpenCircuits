@@ -1,8 +1,7 @@
 import { useState } from "react";
+import { InputField } from "shared/site/components/InputField";
 
 import { AnalogCircuit, AnalysisInfo } from "analog/api/circuit/public";
-
-import { InputField } from "shared/site/components/InputField";
 
 import "./index.scss";
 

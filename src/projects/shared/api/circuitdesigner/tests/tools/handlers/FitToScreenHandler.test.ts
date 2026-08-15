@@ -1,8 +1,8 @@
-import "shared/api/circuit/tests/helpers/Extensions";
+import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
 
 import { V } from "Vector";
 
-import { CreateTestCircuitDesigner } from "tests/helpers/CreateTestCircuitDesigner";
+import "shared/api/circuit/tests/helpers/Extensions";
 
 describe("FitToScreenHandler", () => {
     test("Fit to Screen of a Single Object", () => {

@@ -4,8 +4,8 @@ import { CalculateMidpoint } from "math/MathUtils";
 import { Rect } from "math/Rect";
 import { Transform } from "math/Transform";
 
-import { Prim } from "./Prim";
 import { IsDefined } from "../../utils/Reducers";
+import { Prim } from "./Prim";
 
 export function Bounds(prim: Prim): Rect | undefined {
     switch (prim.kind) {

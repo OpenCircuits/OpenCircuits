@@ -1,7 +1,8 @@
 import { Circuit } from "shared/api/circuit/public";
 
-import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 import { Viewport } from "shared/api/circuitdesigner/public/Viewport";
+
+import { ToolHandler, ToolHandlerResponse } from "./ToolHandler";
 
 const FIT_PADDING_RATIO = 1.2;
 

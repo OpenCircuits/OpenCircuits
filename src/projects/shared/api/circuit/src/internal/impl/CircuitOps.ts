@@ -1,7 +1,6 @@
+import { Schema } from "shared/api/circuit/schema";
 /* eslint-disable sonarjs/prefer-single-boolean-return */
 import { None, Ok, Option, Result, ResultUtil, Some } from "shared/api/circuit/utils/Result";
-
-import { Schema } from "shared/api/circuit/schema";
 
 export interface PlaceComponentOp {
     kind: "PlaceComponentOp";

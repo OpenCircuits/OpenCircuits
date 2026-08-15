@@ -1,20 +1,20 @@
 import { Vector } from "Vector";
 
-import { GUID } from "shared/api/circuit/schema";
+import { Rect } from "math/Rect";
 
 import { FastCircuitDiff } from "shared/api/circuit/internal/impl/FastCircuitDiff";
+import { GUID } from "shared/api/circuit/schema";
 
+import { Observable } from "../utils/Observable";
+import { Camera, ReadonlyCamera } from "./Camera";
 import { Component, ReadonlyComponent } from "./Component";
 import { ComponentInfo } from "./ComponentInfo";
-import { Port, ReadonlyPort } from "./Port";
-import { ReadonlyWire, Wire } from "./Wire";
-import { ReadonlySelections, Selections } from "./Selections";
-import { Observable } from "../utils/Observable";
-import { ObjContainer, ReadonlyObjContainer } from "./ObjContainer";
-import { Rect } from "math/Rect";
-import { Camera, ReadonlyCamera } from "./Camera";
 import { CircuitHistory } from "./History";
 import { ICInfo, IntegratedCircuit } from "./IntegratedCircuit";
+import { ObjContainer, ReadonlyObjContainer } from "./ObjContainer";
+import { Port, ReadonlyPort } from "./Port";
+import { ReadonlySelections, Selections } from "./Selections";
+import { ReadonlyWire, Wire } from "./Wire";
 
 // TODO[master](leon) - make this more user friendly
 export type CircuitEvent =
